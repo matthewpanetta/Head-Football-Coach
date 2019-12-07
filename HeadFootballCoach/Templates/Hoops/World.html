@@ -1,0 +1,534 @@
+<div>
+  {% include "Hoops/NavBar.html" %}
+</div>
+{% load static %}
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader'>
+      <div class='worldHeaderStatsBox' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
+        <div class="playerHeaderStatsHeader" style="background-color:{{playerTeam.TeamColor_Primary_HEX}}">{{currentSeason.LeagueSeasonDisplay}} Stat Leaders</div>
+        <div class='playerHeaderStats'>
+          <div>
+            <div class='w3-display-container'>
+              <div class='w3-row playerHeaderStatsHeaderRowLine'>
+                <div class='w3-col s4 playerHeaderStatsHeaderRow'>Points</div>
+                <div class='w3-col s4 playerHeaderStatsHeaderRow'>Rebounds</div>
+                <div class='w3-col s4 playerHeaderStatsHeaderRow'>Assist</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class='w3-display-container'>
+              {% for leader in leaders %}
+              <div class='w3-row playerHeaderStatsValueRowLine'>
+                <div class='w3-col s4 playerHeaderStatsValueRow'>
+                  <a href='/World/{{page.WorldID}}/Player/{{leader.PPG.PlayerID}}'>{{leader.PPG.PlayerID__PlayerFirstName}} {{leader.PPG.PlayerID__PlayerLastName}}</a>, <a
+                    href='/World/{{page.WorldID}}/Team/{{leader.PPG.TeamSeasonID__TeamID_id}}'>{{leader.PPG.TeamSeasonID__TeamID__Abbreviation}}</a> - {{leader.PPG.PPG}}
+                </div>
+                <div class='w3-col s4 playerHeaderStatsValueRow'>
+                  <a href='/World/{{page.WorldID}}/Player/{{leader.RPG.PlayerID}}'>{{leader.RPG.PlayerID__PlayerFirstName}} {{leader.RPG.PlayerID__PlayerLastName}}</a>, <a
+                    href='/World/{{page.WorldID}}/Team/{{leader.RPG.TeamSeasonID__TeamID_id}}'>{{leader.RPG.TeamSeasonID__TeamID__Abbreviation}}</a> - {{leader.RPG.RPG}}
+                </div>
+                <div class='w3-col s4 playerHeaderStatsValueRow'>
+                  <a href='/World/{{page.WorldID}}/Player/{{leader.APG.PlayerID}}'>{{leader.APG.PlayerID__PlayerFirstName}} {{leader.APG.PlayerID__PlayerLastName}}</a>, <a
+                    href='/World/{{page.WorldID}}/Team/{{leader.APG.TeamSeasonID__TeamID_id}}'>{{leader.APG.TeamSeasonID__TeamID__Abbreviation}}</a> - {{leader.APG.APG}}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-conference-standings-tab">Conference Standings</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-headlines-tab">Headlines</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-top-players-tab">Top Players</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-history-tab">History</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-award-races-tab">Award Races</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content show active" style="display:block;"  id="nav-overview">
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col s3">
+              <div class="w3-card">
+                <div>
+                  Top 25
+                  <span class='RankingsAsOf'>as of {{currentSeason.RankingsLastCalculated}}</span>
+                </div>
+                <div class='w3-display-container Top25w3-display-container'>
+                  {% for team in allTeams %}
+                  <div class='w3-row'>
+                    <div class="w3-col s2 worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle">
+                      <span class='Top25RankNumberw3-display-middle '>{{ team.NationalRank }}</span>
+                      {% if team.NationalRankDelta < 0 %}
+                      <span class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaRed'>&#8595;{{team.NationalRankDeltaAbs}}</span>
+                      {% elif team.NationalRankDelta > 0 %}
+                      <span class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaGreen'>&#8593;{{team.NationalRankDeltaAbs}}</span>
+                      {% endif %}
+                    </div>
+                    <div class='w3-col s8 worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
+                      <a  class='' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
+
+                        <img class='worldTeamLogo' src='{{team.TeamSeasonID__TeamID__TeamLogoURL}}' alt="My image">
+                        <span>{{ team.TeamSeasonID__TeamID__TeamName }} {{ team.TeamSeasonID__TeamID__TeamNickname }}</span>
+                      </a>
+                    </div>
+                    <div class='w3-col s2 worldOverviewTop25TeamLineRecord w3-cell w3-cell-middle'>
+                      <span class=''>{{team.TeamSeasonID__Wins}} - {{team.TeamSeasonID__Losses}}</span>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <div class="w3-col  s4">
+              <div class="w3-card">
+                <div class="w3-bar boxscore-bar" id="nav-tab-{{game.GameID}}">
+                  <div class="w3-bar-item fontweight500">Upcoming Games</div>
+                  <button GameViewSelection="{{game.HomeTeam.TeamID}}" class="w3-bar-item upcoming-gameview-tab w3-button tab selected-upcoming-gameview-tab" id="upcoming-gameview-all-tab">All</button>
+                  <button GameViewSelection="{{game.HomeTeam.TeamID}}" class="w3-bar-item upcoming-gameview-tab w3-button tab" id="upcoming-gameview-top25-tab">Top 25</button>
+                  <button GameViewSelection="{{game.HomeTeam.TeamID}}" class="w3-bar-item upcoming-gameview-tab w3-button tab" id="upcoming-gameview-national-tab">National</button>
+                </div>
+                <div class="list-group list-group-flush">
+                  {% for game in games%}
+                  <div BoxScoreGameID="{{game.GameID}}" class="overviewRecentGameDisplay w3-row w3-display-container w3-white w3-border w3-border-grey">
+                    <div class="w3-col s7 height100 w3-display-container">
+                      <div class=" w3-col s12 w3-display-container w3-display-topmiddle">
+                        <div class=" w3-display-container">
+                          <span class='w3-display-right font10 padBottom20'>{{game.OverviewText}}</span>
+                        </div>
+                        <div class=" w3-display-container">
+                          <img class="overviewRecentGameDisplayTeamLogo" src="{{game.AwayTeamID.TeamLogoURL}}" alt="">
+                          <span class='font10'>{{game.AwayTeamGameID.Rank}}</span>
+                          <span class='font12 {{game.AwayTeamGameID.TeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.AwayTeamID.TeamID}}">{{game.AwayTeamID.TeamName}}</a></span>
+                          <span class='font10'>{{game.AwayTeamSeasonID.Wins}} - {{game.AwayTeamSeasonID.Losses}}</span>
+                        </div>
+                        <div class=" w3-display-container">
+                          <img class="overviewRecentGameDisplayTeamLogo" src="{{game.HomeTeamID.TeamLogoURL}}" alt="">
+                          <span class='font10'>{{game.HomeTeamGameID.Rank}}</span>
+                          <span class='font12 {{game.HomeTeamGameID.TeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.HomeTeamID.TeamID}}">{{game.HomeTeamID.TeamName}}</a></span>
+                          <span class='font10'>{{game.HomeTeamSeasonID.Wins}} - {{game.HomeTeamSeasonID.Losses}}</span>
+                        </div>
+                      </div>
+                      <div class="w3-display-bottomleft teamScheduleGameDashboardGameDisplayBoxScoreText">
+                        <a href="/World/{{page.WorldID}}/Game/{{game.GameID}}">
+                          Preview | {{game.DateShortDisplay}}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <div class="w3-col s3">
+              <div class="w3-card">
+                <div class="w3-bar boxscore-bar" id="nav-tab-{{game.GameID}}">
+                  <div class="w3-bar-item fontweight500">Recent Games</div>
+                  <button GameFilterSelection="All" class="w3-bar-item recent-gameview-tab w3-button tab" id="recent-gameview-all-tab">All</button>
+                  <button GameFilterSelection="Top 25" class="w3-bar-item recent-gameview-tab w3-button tab selected-recent-gameview-tab" id="recent-gameview-top25-tab">Top 25</button>
+                  <button GameFilterSelection="National" class="w3-bar-item recent-gameview-tab w3-button tab" id="recent-gameview-national-tab">National</button>
+                </div>
+                <div class="">
+                  <div class="w3-row worldScheduleGameDashboard w3-display-container w3-light-grey">
+                    {% for game in recentGames%}
+                    <div BoxScoreGameID="{{game.GameID}}" class="overviewRecentGameDisplay w3-row w3-display-container w3-white w3-border w3-border-grey">
+                      <div class="w3-col s7 height100 w3-display-container">
+                        <div class=" w3-col s12 w3-display-container w3-display-topmiddle">
+                          <div class=" w3-display-container">
+                            <span class='w3-display-right font10 padBottom20'>{{game.OverviewText}}</span>
+                          </div>
+                          <div class=" w3-display-container">
+                            <img class="overviewRecentGameDisplayTeamLogo" src="{{game.AwayTeamID.TeamLogoURL}}" alt="">
+                            <span class='font10'>{{game.AwayTeamRank}}</span>
+                            <span class='font12 {{game.AwayTeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.AwayTeam.TeamID}}">{{game.AwayTeamID.TeamName}}</a></span>
+                            <span class='font10'>{{game.AwayTeamGameID.TeamRecord}}</span>
+                            <span class='w3-display-right {{game.AwayTeamWinningGameBold}}'>{{game.AwayTeamGameID.TeamScore}}</span>
+                          </div>
+                          <div class=" w3-display-container">
+                            <img class='overviewRecentGameDisplayTeamLogo' src="{{game.HomeTeamID.TeamLogoURL}}" alt="">
+                            <span class='font10'>{{game.HomeTeamRank}}</span>
+                            <span class='font12 {{game.HomeTeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.HomeTeam.TeamID}}">{{game.HomeTeamID.TeamName}}</a></span>
+                            <span class='font10'>{{game.HomeTeamGameID.TeamRecord}}</span>
+                            <span class='w3-display-right {{game.HomeTeamWinningGameBold}}'>{{game.HomeTeamGameID.TeamScore}}</span>
+
+                          </div>
+                        </div>
+                        <div class="w3-display-bottomleft teamScheduleGameDashboardGameDisplayBoxScoreText">
+                          <a href="/World/{{page.WorldID}}/Game/{{game.GameID}}">
+                            Box Score
+                          </a>
+                        </div>
+                        <div class="w3-display-bottomright teamScheduleGameDashboardGameDisplayBoxScoreText">
+                          {{game.DateShortDisplay}}
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" style="display:none;" id="nav-conference-standings">
+        <div class='w3-display-container' id='ConferenceStandingTabContainer'>
+          <div class='w3-row-padding w3-hide' id='ConferenceStandingTableClone'>
+            <div class='w3-col s10'>
+              <span data-field='ConferenceName'></span>
+              <table class="w3-table w3-table-all">
+                <thead>
+                  <tr>
+                    <th scope="col">Team</th>
+                    <th class='initialSortColumn' scope="col">Conference Rank</th>
+                    <th scope="col" data-defaultsort="asc">Wins</th>
+                    <th scope="col">Losses</th>
+                    <th scope="col" data-defaultsort="asc">Conf. Wins</th>
+                    <th scope="col">Conf. Losses</th>
+                    <th scope="col" data-defaultsort="asc">PPG</th>
+                    <th scope="col" data-defaultsort="asc">PAPG</th>
+                    <th scope="col" data-defaultsort="asc">MOV</th>
+                    <th scope="col" data-defaultsort="asc">FG %</th>
+                    <th scope="col" data-defaultsort="asc">3P %</th>
+                    <th scope="col" data-defaultsort="asc">Pace</th>
+                    <th scope="col" data-defaultsort="asc">ORTG</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr id='ConferenceStandingRowClone' class='w3-hide'>
+                    <td>
+                      <a href="" href-field='TeamIDURL'>
+                        <img class='worldConferenceStandingTeamLogo' src='' img-src-field='TeamLogoURL' alt="My image">
+                        <span data-field='RankDisplayString'></span>
+                        <span data-field='TeamName'></span>
+                      </a>
+                    </td>
+                    <td data-field='ConferenceRank'></td>
+                    <td data-field='Wins'></td>
+                    <td data-field='Losses'></td>
+                    <td data-field='ConferenceWins'></td>
+                    <td data-field='ConferenceLosses'></td>
+                    <td data-field='PPG'></td>
+                    <td data-field='PAPG'></td>
+                    <td data-field='PointDiffPG'></td>
+                    <td data-field='FGPercentage'></td>
+                    <td data-field='ThreePointPercentage'></td>
+                    <td data-field='Pace'></td>
+                    <td data-field='ORTG'></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-team-stats">
+        <div class='w3-display-container' id='TeamStatsTabContainer'>
+          <div class='w3-row-padding w3-hide' id='TeamStatsTableClone'>
+            <div class='w3-col s10'>
+              <table class="w3-table w3-table-all">
+                <thead>
+                  <tr>
+                    <th scope="col">Team</th>
+                    <th class='initialSortColumn' scope="col">National Rank</th>
+                    <th class='initialSortColumn' scope="col">Conference</th>
+                    <th scope="col" data-defaultsort="asc">Wins</th>
+                    <th scope="col">Losses</th>
+                    <th scope="col" data-defaultsort="asc">Conf. Wins</th>
+                    <th scope="col">Conf. Losses</th>
+                    <th scope="col" data-defaultsort="asc">PPG</th>
+                    <th scope="col" data-defaultsort="asc">PAPG</th>
+                    <th scope="col" data-defaultsort="asc">MOV</th>
+                    <th scope="col" data-defaultsort="asc">FG %</th>
+                    <th scope="col" data-defaultsort="asc">3P %</th>
+                    <th scope="col" data-defaultsort="asc">Reb %</th>
+                    <th scope="col" data-defaultsort="asc">Pace</th>
+                    <th scope="col" data-defaultsort="asc">ORTG</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr id='TeamStatsRowClone' class='w3-hide'>
+                    <td>
+                      <a href="" href-field='TeamIDURL'>
+                        <img class='worldConferenceStandingTeamLogo' src='' img-src-field='TeamLogoURL' alt="My image">
+                        <span data-field='RankDisplayString'></span>
+                        <span data-field='TeamName'></span>
+                      </a>
+                    </td>
+                    <td data-field='NationalRank'></td>
+                    <td data-field='ConferenceName'></td>
+                    <td data-field='Wins'></td>
+                    <td data-field='Losses'></td>
+                    <td data-field='ConferenceWins'></td>
+                    <td data-field='ConferenceLosses'></td>
+                    <td data-field='PPG'></td>
+                    <td data-field='PAPG'></td>
+                    <td data-field='PointDiffPG'></td>
+                    <td data-field='FGPercentage'></td>
+                    <td data-field='ThreePointPercentage'></td>
+                    <td data-field='ReboundPercentage'></td>
+                    <td data-field='Pace'></td>
+                    <td data-field='ORTG'></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-award-races">
+        <div class='w3-display-container' id='AwardRacesTabContainer'>
+          <div class='w3-row-padding w3-hide' id='AwardRacesTableClone'>
+            <div class='w3-col s10'>
+              <table class="w3-table w3-table-all">
+                <thead>
+                  <tr>
+                    <th class='initialSortColumn' scope="col">Team</th>
+                    <th scope="col">Player</th>
+                    <th scope="col">Pos.</th>
+                    <th scope="col" data-defaultsort="asc">Ovr.</th>
+                    <th scope="col" data-defaultsort="asc">PPG</th>
+                    <th scope="col">RPG</th>
+                    <th scope="col" data-defaultsort="asc">APG</th>
+                    <th scope="col" data-defaultsort="asc">PER</th>
+                    <th scope="col" data-defaultsort="asc">Pub. Shares</th>
+                    <th scope="col" data-defaultsort="asc">Win Shares</th>
+                    <th scope="col" data-defaultsort="asc">Award Shares</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr id='AwardRacesRowClone' class='w3-hide'>
+                    <td>
+                      <a href="" href-field='TeamIDURL'>
+                        <img class='worldConferenceStandingTeamLogo' src='' img-src-field='TeamLogoURL' alt="My image">
+                        <span data-field='RankDisplayString'></span>
+                        <span data-field='TeamName'></span>
+                      </a>
+                    </td>
+                    <td>
+                      <a href="" href-field='PlayerIDURL'>
+                        <span data-field='FullName'></span>
+                      </a>
+                    </td>
+                    <td data-field='Position'></td>
+                    <td data-field='OverallRating'></td>
+                    <td data-field='PPG'></td>
+                    <td data-field='RPG'></td>
+                    <td data-field='APG'></td>
+                    <td data-field='PER'></td>
+                    <td data-field='PublicityShares'></td>
+                    <td data-field='WinShares'></td>
+                    <td data-field='AwardShares'></td>
+
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-schedule">
+        <div class="w3-display-container">
+          <div class="w3-row">
+            <div class="w3-col s6">
+              <div class="card">
+                <div class="card-header">
+                  Schedule
+                </div>
+                <ul class="list-group list-group-flush">
+                  {% for game in games%}
+                  <a class='teamGameCell' href="/World/{{page.WorldID}}/Game/{{ game.GameID }}/">
+                    <li class="list-group-item">
+                      <div class='w3-display-container'>
+
+                        <div class='w3-row'>
+                          <div class="w3-col s8">{{game.VsString}}</div>
+                          <div class="w3-col s1 teamGameResultLetter{{game.GameResultLetter}}">{{game.GameResultLetter}}</div>
+                          <div class="w3-col s3">{{game.GameDisplay}}</div>
+                        </div>
+                      </div>
+                    </li>
+                  </a>
+                  {% endfor %}
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-analytics">
+        Analytics Window
+        <div id="map" style="width: 930px; height: 630px; border: solid 3px red;"></div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-headlines">
+        Headlines
+        <div class='w3-display-container'>
+          {% for headline in headlines %}
+          <div class='w3-row'>
+            {{headline.HeadlineTextHTML|safe}}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-top-players">
+        <div class='w3-display-container'>
+          <div class='w3-row'>
+            <div class='w3-col s1'></div>
+            <div class='w3-col s10'>
+              <article>
+                <header>
+                  Head Coach
+                </header>
+                {{HC.CoachFirstName}} {{HC.CoachLastName}}
+              </article>
+            </div>
+            <div class='w3-col s1'></div>
+          </div>
+          <div class='w3-row'>
+            <div class='w3-col s1'></div>
+            <div class='w3-col s5'>{{AHC.CoachFirstName}} {{AHC.CoachLastName}}</div>
+            <div class='w3-col s5'>{{AC.CoachFirstName}} {{AC.CoachLastName}}</div>
+            <div class='w3-col s1'></div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-history">
+        <div class='w3-container'>
+          <div class='w3-row-padding'>
+
+            <div class='w3-col s8'>
+              <table id='LeagueSeasonHistoryResultsTable' class='w3-table w3-table-all'>
+                <thead id='LeagueSeasonHistoryTable'>
+                  <th>Season</th>
+                  <th>Champions</th>
+                  <th>Runner Up</th>
+                  <th>Final Four</th>
+                  <th>Final Four</th>
+                  <th>POTY</th>
+                </thead>
+                <tr id='LeagueSeasonHistoryRowClone' class='hidden'>
+                  <td class='LeagueSeasonHistoryRowCell' data-field='Season' data-value=""></td>
+                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='ChampionTeam'></a><span span-field='ChampionTeam'></span></td>
+                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='RunnerUpTeam'></a><span span-field='RunnerUpTeam'></span></td>
+                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='FinalFourTeam1'></a><span span-field='FinalFourTeam1'></span></td>
+                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='FinalFourTeam2'></a><span span-field='FinalFourTeam2'></span></td>
+                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='POTY'></a></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class='w3-row-padding WorldHistoryPlayerLeaderRow'>
+            <div class='w3-col s4'>
+              <table id='WorldHistoryPlayerLeadersPPG' class='w3-table w3-table-all'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Seasons</th>
+                  <th>Team</th>
+                  <th>PPG</th>
+                </thead>
+                <tr id='WorldHistoryPlayerLeadersPPGRowClone' class='hidden'>
+                  <td class='WorldHistoricalLeaderPPGRowCell' data-field='PPGRank' data-value=""></td>
+                  <td class='WorldHistoricalLeaderPPGRowCell' data-value=""><a href="" data-field='FullName' href-field='PlayerIDURL'></a></td>
+                  <td class='WorldHistoricalLeaderPPGRowCell' data-field='Seasons' data-value=""></td>
+                  <td class='WorldHistoricalLeaderPPGRowCell' data-value=""><a href="" data-field='TeamSeasonID__TeamID__Abbreviation' href-field='TeamIDURL'></a></td>
+                  <td class='WorldHistoricalLeaderPPGRowCell' data-field='PPG' data-value=""></td>
+                </tr>
+              </table>
+            </div>
+            <div class='w3-col s4'>
+              <table id='WorldHistoryPlayerLeadersRPG' class='w3-table w3-table-all'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Seasons</th>
+                  <th>Team</th>
+                  <th>RPG</th>
+                </thead>
+                <tr id='WorldHistoryPlayerLeadersRPGRowClone' class='hidden'>
+                  <td class='WorldHistoricalLeaderRPGRowCell' data-field='RPGRank' data-value=""></td>
+                  <td class='WorldHistoricalLeaderRPGRowCell' data-value=""><a href="" data-field='FullName' href-field='PlayerIDURL'></a></td>
+                  <td class='WorldHistoricalLeaderRPGRowCell' data-field='Seasons' data-value=""></td>
+                  <td class='WorldHistoricalLeaderRPGRowCell' data-value=""><a href="" data-field='TeamSeasonID__TeamID__Abbreviation' href-field='TeamIDURL'></a></td>
+                  <td class='WorldHistoricalLeaderRPGRowCell' data-field='RPG' data-value=""></td>
+                </tr>
+              </table>
+            </div>
+            <div class='w3-col s4'>
+              <table id='WorldHistoryPlayerLeadersAPG' class='w3-table w3-table-all'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Seasons</th>
+                  <th>Team</th>
+                  <th>APG</th>
+                </thead>
+                <tr id='WorldHistoryPlayerLeadersAPGRowClone' class='hidden'>
+                  <td class='WorldHistoricalLeaderAPGRowCell' data-field='APGRank' data-value=""></td>
+                  <td class='WorldHistoricalLeaderAPGRowCell' data-value=""><a href="" data-field='FullName' href-field='PlayerIDURL'></a></td>
+                  <td class='WorldHistoricalLeaderAPGRowCell' data-field='Seasons' data-value=""></td>
+                  <td class='WorldHistoricalLeaderAPGRowCell' data-value=""><a href="" data-field='TeamSeasonID__TeamID__Abbreviation' href-field='TeamIDURL'></a></td>
+                  <td class='WorldHistoricalLeaderAPGRowCell' data-field='APG' data-value=""></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class='row'>
+            <div class='w3-col s1'></div>
+            <div class='w3-col s10'>
+              {% for Banner in WorldHistory %}
+                <div class='teamHeaderRankBox' style='border-color:{{team.TeamColor_Primary_HEX}}'>
+                  <div class="teamHeaderRankHeader" style="background-color:{{team.TeamColor_Primary_HEX}}">{{Banner.Banner}}</div>
+                  <ul class='teamHeaderRank'>
+                    <li>
+                      <div class='container'>
+                        <div class='row teamHeaderRankHeaderRowLine'>
+                          <div class='w3-col s12 teamHeaderRankHeaderRow'>{{Banner.Season}}</div>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class='container'>
+                        <div class='row'>
+                          <div class='w3-col s12 teamHeaderRankValueRow'>{{Banner.Season}}</div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                {% endfor %}
+            </div>
+            <div class='w3-col s1'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'Pages/World.js' %}" type="module"></script>
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>

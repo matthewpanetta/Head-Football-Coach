@@ -1,0 +1,128 @@
+{% include "Hoops/NavBar.html" %}
+{% load static %}
+
+
+<body>
+  <div class="PageContent">
+    <h2>
+      <img class='teamTeamLogo' src='/static/img/TeamLogos/{{team.LogoURL}}.png' alt="My image">
+      <span class='teamSchoolName'>{{ team.SchoolName }}</span>
+
+      <span class='teamTeamName'>{{team.TeamName}}</span>
+      <span class='teamRecord'>{{record.Wins}} - {{record.Losses}} </span>
+    </h2>
+
+
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-lineups" role="tab" aria-controls="nav-overview" aria-selected="true">Lineups</a>
+        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-strategy" role="tab" aria-controls="nav-roster" aria-selected="false">Strategy</a>
+      </div>
+    </nav>
+
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade  show active" id="nav-lineups" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <div class='container'>
+          <div class='row'>
+            <div class='col-12'>
+              <table class="table table-striped sortable">
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Height</th>
+                    <th scope="col">Class</th>
+                    <th scope="col">Overall</th>
+                    <th scope="col" data-defaultsort="asc">Potential</th>
+                    <th scope="col" data-defaultsort="asc">MPG</th>
+                    <th scope="col" data-defaultsort="asc">PPG</th>
+                    <th scope="col" data-defaultsort="asc">RPG</th>
+                    <th scope="col" data-defaultsort="asc">APG</th>
+                    <th scope="col" data-defaultsort="asc">ORTG</th>
+                    <th scope="col" data-defaultsort="asc">DRTG</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for player in players %}
+                  <tr>
+                    <td data-value="{{player.PlayerLastName}}"><a href="/Player/{{ player.PlayerID }}/">{{ player.FullName }}</a></td>
+                    <td data-value="{{player.PositionSortOrder}}">{{player.Position}}</td>
+                    <td data-value="{{player.Height}}"">{{player.HeightFormatted}}</td>
+                    <td data-value="{{player.ClassSortOrder}}">{{player.Class}}</td>
+                    <td>{{player.OverallRating}}</td>
+                    <td>{{player.PotentialRating}}</td>
+                    <td>{{player.MPG}}</td>
+                    <td>{{player.PPG}}</td>
+                    <td>{{player.RPG}}</td>
+                    <td>{{player.APG}}</td>
+                    <td>{{player.ORTG}}</td>
+                    <td>{{player.DTRG}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade " id="nav-strategy" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="container">
+          <div class="row">
+
+            <div class="col-3">
+              <div class="card">
+                <div class="card-header">
+
+                </div>
+                <ul class="list-group list-group-flush">
+                </ul>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="card">
+                <div class="card-header">
+
+                </div>
+                <ul class="list-group list-group-flush">
+
+                </ul>
+              </div>
+
+            </div>
+            <div class="col-3">
+              <div class="card">
+                <div class="card-header">
+                </div>
+                <ul class="list-group list-group-flush">
+
+                </ul>
+              </div>
+             </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'bootstrap-sortable.js' %}"></script>
+<script src="{% static 'moment.min.js' %}"></script>
+<script src="{% static 'map-lib/Raphael.js' %}"></script>
+<script src="{% static 'jquery.usmap.js' %}"></script>
+<script>
+</script>
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/bootstrap-sortable.css' %}">

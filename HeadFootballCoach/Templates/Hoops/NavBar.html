@@ -1,0 +1,55 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'w3/w3.css' %}">
+
+<head>
+  <title>{{page.PageTitle}}</title>
+  <link rel="icon" href="{{page.TabIcon}}">
+</head>
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" style='display:none;' id='DataPassthru'></div>
+
+
+<div class='w3-top'>
+<div class="w3-bar w3-light-grey">
+  <a href="/World/{{page.WorldID}}" class="w3-bar-item w3-button navNCAALogoLink"><img src="/static/img/TeamLogos/ncaa-text.png" class='navNCAALogo' alt=""></a>
+  <a href="/World/{{page.WorldID}}/Bracket" class="w3-bar-item w3-button">Tournament Bracket</a>
+  <div class="w3-dropdown-hover">
+    <button class="w3-button">{{date.Date}}</button>
+    <div class="w3-dropdown-content w3-bar-block w3-card-4">
+      <a href="#" id='SimNextWeek' class="w3-bar-item w3-button">Sim This Week</a>
+      <a href="#" id='SimNextMonth' class="w3-bar-item w3-button">Sim Next 4 Weeks</a>
+      <a href="#" id='SimRegularSeason' class="w3-bar-item w3-button">Sim to end of Regular Season</a>
+    </div>
+  </div>
+  <div class="w3-dropdown-hover">
+    <button class="w3-button">Search</button>
+    <div class="w3-dropdown-content w3-bar-block w3-card-4">
+      <div class="w3-bar-item">
+        <input type='text' class="" placeholder="Seach..." id='navSearchInput'>
+        <button type="button" class='w3-button' name="button" id='navSearchButton'>Search</button>
+      </div>
+    </div>
+  </div>
+  <a href="/" class="w3-bar-item w3-button w3-right navHomeLink">Home Page</a>
+</div>
+</div>
+
+<div class="w3-sidebar w3-bar-block">
+  <a href="/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}" class="w3-bar-item w3-button SideNavGroup">{{userTeam.Name}}</a>
+  <a href="/World/{{page.WorldID}}/ManageTeam" class="w3-bar-item w3-button SideNavItem">Manage Lineup</a>
+  <a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">Recruiting</a>
+</div>
+
+<div class="w3-modal" tabindex="-1" role="dialog" id='SimDayModal'>
+  <div class="s8">
+    <div class="w3-modal-content w3-container">
+      <div class="modal-body w3-row-padding">
+        <p>Simulating {{date.Date}}...</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+{% load static %}
+
+<div class='w3-container ' id='ShootingChart'>
+
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'bootstrap-sortable.js' %}"></script>
+<script src="{% static 'moment.min.js' %}"></script>
+<script src="{% static 'Pages/index.js' %}"></script>
+
+
+<!-- Load c3.css -->
+<link href="{% static 'c3/c3.css' %}" rel="stylesheet">
+<!-- Load d3.js and c3.js -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="{% static 'c3/c3.js' %}"></script>
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+  var chart = c3.generate({
+    bindto: '#ShootingChart',
+      data: {
+        columns: [
+          ['ThreePointPercentage' {% for OvrGroup in ThreePointRating_Percentage_Map %} , {{OvrGroup.ThreePointPercentage}} {% endfor %}],
+        ],
+        type: 'bar'
+      },
+      bar: {
+          width: {
+              ratio: 0.5 // this makes bar width 50% of length between ticks
+          }
+        }
+  });
+
+
+  chart.resize({
+    height: 800,
+    width: 800
+  });
+  });
+
+</script>
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/bootstrap-sortable.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'w3/w3.css' %}">

@@ -1,0 +1,11 @@
+<h1>Season Schedule!</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="/Sim/" method="get">
+{% for date in calendar %}
+    <input type="radio" name="date" id="date{{ forloop.counter }}" value="{{ date }}">
+    <label for="date{{ forloop.counter }}">{{ date }}</label><br>
+{% endfor %}
+<input type="submit" value="Sim Next Day">
+</form>

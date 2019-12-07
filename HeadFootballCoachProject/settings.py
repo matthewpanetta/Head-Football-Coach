@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'HeadFootballCoach.apps.HeadfootballcoachConfig',
 ]
 
 MIDDLEWARE = [
@@ -49,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'HeadFootballCoachProject.urls'
+ROOT_URLCONF = 'HeadFootballCoach.urls'
 
 TEMPLATES = [
     {
