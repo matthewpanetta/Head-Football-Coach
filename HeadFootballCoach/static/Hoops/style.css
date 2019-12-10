@@ -293,7 +293,7 @@
 }
 
 .gameTeamStatBox > .statBar {
-  width: calc(100% - 20px);
+  width: calc(100% - 25px);
   margin-top: 4px;
   margin-bottom: 4px;
   font-size: 12px;
@@ -1016,4 +1016,93 @@ input[type=text], input[type=password] {
 
 .gameHeaderTeamContainerRecord {
   font-size: 10px;
+}
+
+.ScoringSummaryTeamLogo > img {
+  width: 28px;
+}
+
+
+.table-row {
+  display: table-row;
+}
+
+.table-row > div{
+  display: table-cell;
+  float: none !important;
+  padding: 4px 12px;
+  vertical-align: middle;
+}
+
+.ScoringSummaryDriveDescription {
+  font-style: italic;
+}
+
+.ScoringSummary * {
+  font-size: 14px;
+}
+
+.ScoringSummaryDrive * {
+  font-size: 12px;
+}
+
+.ScoringSummary table{
+  width: 96%;
+}
+
+.ScoringSummary table tbody tr:nth-child(even) {
+    background: #f9f9fb;
+}
+
+.ScoringSummaryTeamScore {
+  text-align: right;
+  width: 50px;
+}
+
+.ScoringSummaryScoreRow {
+  border-top: 1px solid #dcdddf;
+  padding: 6px 0px;
+}
+
+
+.ScoringSummaryQuarterHeader th {
+  padding: 8px 0px;
+}
+
+.bar-percentage{
+  transition: width .4s ease;
+  background-color: #d00;
+  border-radius: 5px;
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+  text-indent: -9000px;
+}
+
+.compareLineGraph .bar-total {
+    border-radius: 5px;
+    height: 10px;
+    float: left;
+    margin-top: 9px;
+    margin-bottom: 9px;
+    width: calc(100% - 40px);
+}
+.bar-total {
+    display: inline-block;
+    height: 8px;
+    overflow: hidden;
+    padding: 0;
+    width: calc(100% - 40px);
+    background-color: #dcdddf;
+}
+
+.compareLineGraph .chartValue {
+    float: right;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1;
+    margin-top: 4.5px;
+    text-align: right;
+    color: #2b2c2d;
 }

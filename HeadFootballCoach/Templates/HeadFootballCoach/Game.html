@@ -1,0 +1,380 @@
+<div>
+  {% include "HeadFootballCoach/NavBar.html" %}
+</div>
+{% load static %}
+
+<body>
+  <div class='PageContent'>
+
+    <div class="w3-container">
+      <div class='w3-row-padding'>
+        <div class='w3-col s2 text-left'>
+          <a href="/World/{{page.WorldID}}/Team/{{awayTeam.TeamID}}"><img class='gameTeamLogo' src='{{awayTeam.LogoURL}}' alt="My image"></a>
+        </div>
+        <div class="w3-col s2 gameHeaderTeamContent away">
+          <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
+            <div class="gameHeaderTeamContainerInfo">
+              <div class="gameHeaderTeamContainerName">
+                {{game.AwayTeamRankDisplayString}} {{awayTeam.TeamName}} {{awayTeam.TeamNickname}}
+              </div>
+              <div class="gameHeaderTeamContainerRecord">
+                {{game.AwayTeamRecord}}
+              </div>
+            </div>
+          </div>
+          <div class="gameHeaderScoreContainer gameOutcome{{game.AwayOutcomeLetter}}">
+              {{game.AwayPoints}}
+          </div>
+        </div>
+        <div class='w3-col s4 text-center'>
+          {% if game.WasPlayed == 1 %}
+          <table class='gameBoxScoreTable w3-table-all'>
+            <thead>
+              <th></th>
+              {% for EventPeriod in boxScore %}
+              <th class='w3-center'>{{EventPeriod.PeriodTitle}}</th>
+              {% endfor %}
+              <th class='w3-center'>F</th>
+            </thead>
+            <tr>
+              <td class='gameBoxScoreTeamName'>{{awayTeam.Abbreviation}}</td>
+              {% for EventPeriod in boxScore %}
+              <td class='w3-center'>{{EventPeriod.AwayPoints}}</td>
+              {% endfor %}
+              <td class='w3-center'>{{game.AwayPoints}}</td>
+            </tr>
+            <tr>
+              <td class='gameBoxScoreTeamName'>{{homeTeam.Abbreviation}}</td>
+              {% for EventPeriod in boxScore %}
+              <td class='w3-center'>{{EventPeriod.HomePoints}}</td>
+              {% endfor %}
+              <td class='w3-center'>{{game.HomePoints}}</td>
+            </tr>
+          </table>
+          {%else%}
+          {{game.DateShortDisplay}}
+          {% endif %}
+
+        </div>
+        <div class="w3-col s2 gameHeaderTeamContent home">
+          <div class="gameHeaderScoreContainer gameOutcome{{game.HomeOutcomeLetter}}">
+              {{game.HomePoints}}
+          </div>
+          <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
+            <div class="gameHeaderTeamContainerInfo">
+              <div class="gameHeaderTeamContainerName">
+                {{game.HomeTeamRankDisplayString}} {{homeTeam.TeamName}} {{homeTeam.TeamNickname}}
+              </div>
+              <div class="gameHeaderTeamContainerRecord">
+                {{game.HomeTeamRecord}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='w3-col s2 text-left'>
+          <a href="/World/{{page.WorldID}}/Team/{{homeTeam.TeamID}}"><img class='gameTeamLogo' src='{{homeTeam.LogoURL}}' alt="My image"></a>
+        </div>
+      </div>
+
+      <nav>
+        <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+          <button class="w3-bar-item w3-button tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+          <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-boxscore-tab">Box Score</button>
+        </div>
+      </nav>
+      <div class="" id="nav-tabContent">
+        <div class="tab-pane show active tab-content" id="nav-overview">
+          <div class="w3-display-container">
+            <div class="w3-row-padding">
+              <div class='w3-col s3'>
+                <div class='w3-card'>
+                  <div class='w3-container'>
+                    <h1 class='w3-medium bold w3-margin-8'>Team Stats {{TeamStatHeaderSuffix}}</h1>
+                  </div>
+                  <div class='w3-container'>
+                    {% for Stat in TeamStatBox %}
+                    <div class='gameTeamStatBox w3-border-top w3-border-right w3-border-bottom w3-border-gray'>
+                      <h3>{{Stat.StatName}}</h3>
+                      <div class='gameTeamStatAbbreviation'>{{awayTeam.Abbreviation}}</div>
+                      <span style="background-color:#f2f2f2;" class="bar-total"><span style="background-color:#{{awayTeam.TeamColor_Primary_HEX}} !important; height: 8px; width:{{Stat.AwayRatio}}%" class=" bar-percentage"></span></span>
+                      <span class='font12'>{{Stat.AwayValue}}</span>
+                      <span style="background-color:#f2f2f2;" class="bar-total"><span style="background-color:#{{homeTeam.TeamColor_Primary_HEX}} !important; height: 8px; width:{{Stat.HomeRatio}}%" class=" bar-percentage"></span></span>
+                      <span class='font12'>{{Stat.HomeValue}}</span>
+                      <div class='gameTeamStatAbbreviation'>{{homeTeam.Abbreviation}}</div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+
+              </div>
+              <div class='w3-col s6'>
+                <div class="w3-card w3-margin-bottom">
+                  <header>
+                    Scoring Summary
+                  </header>
+                  <div class="ScoringSummary w3-row-padding">
+                    <table>
+                      <tbody>
+                        {% for Period in ScoringSummary %}
+                          <tr class='ScoringSummaryQuarterHeader'>
+                            <th colspan='2'>{{Period.PeriodName}}</th>
+                            <th class='ScoringSummaryTeamScore'>{{homeTeam.Abbreviation}}</th>
+                            <th class='ScoringSummaryTeamScore'>{{awayTeam.Abbreviation}}</th>
+                          </tr>
+                          {% for Score in Period.ScoreList %}
+                          <tr class='ScoringSummaryScoreRow'>
+                            <td class='ScoringSummaryTeamLogo'>
+                                <img src="{{Score.ScoringTeamID__TeamLogoURL}}" alt="">
+                            </td>
+                            <td>
+                                <div class="table-row">
+                                  <div class="">
+                                    {{Score.PlayType}}
+                                  </div>
+                                  <div class="">
+                                    {{Score.DisplayTime}}
+                                  </div>
+                                  <div class="ScoringSummaryDrive">
+                                    <div class="">
+                                      {{Score.PlayDescription}}
+                                    </div>
+                                    <div class="ScoringSummaryDriveDescription">
+                                      {{Score.DriveDescription}}
+                                    </div>
+                                  </div>
+                                </div>
+                            </td>
+                              <td class='ScoringSummaryTeamScore'>{{Score.HomePoints}}</td>
+                              <td class='ScoringSummaryTeamScore'>{{Score.AwayPoints}}</td>
+                          </tr>
+                          {% endfor %}
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div  class='w3-card' id="GameFlowChart"></div>
+              </div>
+              <div class='w3-col s3'>
+                {% for Conference in ConferenceStandings%}
+                <div class="w3-card w3-margin-8">
+
+                  <div class="w3-card-header">
+                    {{Conference.ConferenceName}} Standings
+                  </div>
+                  <table id='teamOverviewConferenceStandings'>
+                    <thead>
+                      <th>Team</th>
+                      <th>Conf</th>
+                      <th>GB</th>
+                      <th>Record</th>
+                    </thead>
+                    {% for standingTeam in Conference.conferenceTeams %}
+                    <tr class='{{standingTeam.BoldTeam}}'>
+                      <td>
+                        <a href="/World/{{page.WorldID}}/Team/{{ standingTeam.TeamID }}/">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.LogoURL}}" />
+                          {{standingTeam.NationalRankDisplay}} {{standingTeam.Name }}
+                        </a>
+                      </td>
+                      <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
+                      <td>{{standingTeam.ConferenceGB}}</td>
+                      <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane tab-content" style='display:none;' id="nav-boxscore">
+          <div class='container'>
+            {% for StatGrouping in BoxScoreStatGroupings %}
+            <div class='w3-row-padding'>
+
+              <div class='w3-col s6'>
+                <img class='gameBoxScoreTeamLogo' src='{{homeTeam.LogoURL}}'  />
+                {{homeTeam.TeamName}} {{StatGrouping.StatGroupName}}
+                <table id='gameAwayTeamBoxScore' class='table table-striped'>
+                  <thead>
+                      {% for Stat in StatGrouping.Stats %}
+                      {% if Stat.DisplayColumn %}
+                      <th scope="col" data-defaultsort="asc">{{Stat.DisplayName}}</th>
+                      {% endif %}
+                      {% endfor %}
+                  </thead>
+                  {% for player in StatGrouping.HomeTeam %}
+                  {%if StatGrouping.StatGroupName == 'Rushing' %}
+                  <tr>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
+                    <td>{{player.RUS_Carries}}</td>
+                    <td>{{player.RUS_Yards}}</td>
+                    <td>{{player.RUS_TD}}</td>
+                  </tr>
+                  {% endif %}
+
+                  {%if StatGrouping.StatGroupName == 'Passing' %}
+                  <tr>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
+                    <td>{{player.PAS_Completions}} / {{player.PAS_Attempts}}</td>
+                    <td>{{player.PAS_Yards}}</td>
+                    <td>{{player.PAS_TD}}</td>
+                    <td>{{player.PAS_INT}}</td>
+                    <td>{{player.PAS_Sacks}} - {{player.PAS_SackYards}}</td>
+                  </tr>
+                  {% endif %}
+                  {% endfor %}
+                </table>
+              </div>
+              <div class='w3-col s6'>
+                <img class='gameBoxScoreTeamLogo' src='{{awayTeam.LogoURL}}'  />
+                {{awayTeam.TeamName}} {{StatGrouping.StatGroupName}}
+                <table id='gameAwayTeamBoxScore' class='table table-striped'>
+                  <thead>
+                      {% for Stat in StatGrouping.Stats %}
+                      {% if Stat.DisplayColumn %}
+                      <th scope="col" data-defaultsort="asc">{{Stat.DisplayName}}</th>
+                      {% endif %}
+                      {% endfor %}
+                  </thead>
+                  {% for player in StatGrouping.AwayTeam %}
+                  {%if StatGrouping.StatGroupName == 'Rushing' %}
+                  <tr>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
+                    <td>{{player.RUS_Carries}}</td>
+                    <td>{{player.RUS_Yards}}</td>
+                    <td>{{player.RUS_TD}}</td>
+                  </tr>
+                  {% endif %}
+
+                  {%if StatGrouping.StatGroupName == 'Passing' %}
+                  <tr>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
+                    <td>{{player.PAS_Completions}} / {{player.PAS_Attempts}}</td>
+                    <td>{{player.PAS_Yards}}</td>
+                    <td>{{player.PAS_TD}}</td>
+                    <td>{{player.PAS_INT}}</td>
+                    <td>{{player.PAS_Sacks}} - {{player.PAS_SackYards}}</td>
+                  </tr>
+                  {% endif %}
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'bootstrap-sortable.js' %}"></script>
+<!-- Load c3.css -->
+<link href="{% static 'c3/c3.css' %}" rel="stylesheet">
+
+<!-- Load d3.js and c3.js -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="{% static 'c3/c3.js' %}"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/bootstrap-sortable.css' %}">
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+
+    let colors = {}
+    colors['{{homeTeam.TeamName}}'] = '{{homeTeam.TeamColor_Primary_HEX}}';
+    colors['{{awayTeam.TeamName}}'] = '{{awayTeam.TeamColor_Primary_HEX}}';
+
+    if ('{{game.WasPlayed}}' == 'True'){
+
+
+      var chart = c3.generate({
+        bindto: '#GameFlowChart',
+        data: {
+          x: 'x',
+          columns: [
+            ['x' ,0 {%for event in gameEvents %}{% if event.IsScoringPlay %}, {{event.GameTime}} {% endif %}{% endfor %}],
+            ['{{homeTeam.TeamName}}' ,0 {% for event in gameEvents %}{% if event.IsScoringPlay %}, {{event.HomePoints}} {% endif %}{% endfor %}],
+            ['{{awayTeam.TeamName}}' ,0 {% for event in gameEvents %}{% if event.IsScoringPlay %}, {{event.AwayPoints}} {% endif %}{% endfor %}]
+          ],
+          colors: colors,
+          types: {
+              '{{homeTeam.TeamName}}': 'step',
+              '{{awayTeam.TeamName}}': 'step'
+          }
+        },
+        axis: {
+          x: {
+            tick: {
+              format: function(s) {
+                console.log(s);
+                var SecondsInToThisHalf = s;
+                var PeriodList = ['1st', '2nd', '3rd', '4th', 'OT1', 'OT2', 'OT3']
+                var PeriodCount = 0;
+                var SecondsInPeriod = 15 * 60;
+                while (SecondsInToThisHalf > SecondsInPeriod) {
+                  SecondsInToThisHalf -= SecondsInPeriod;
+                  PeriodCount +=1;
+                }
+                var Period = PeriodList[PeriodCount] + ' | ';
+
+                var Secs = SecondsInToThisHalf%60;
+                var Secs = (Secs.length == 1) ? '0'+Secs : Secs;
+                var Mins = parseInt(SecondsInToThisHalf / 60);
+                var Time = Mins + ':' + Secs
+
+                console.log(Period, Time, s)
+                return Period + Time
+
+              }
+            },
+            min: 0
+          },
+          y: {
+            padding: {
+              top: 0,
+              bottom: 0
+            }
+          }
+        },
+        point: {
+          show: false
+        }
+      });
+  }
+    else {
+
+            var chart = c3.generate({
+              bindto: '#GameFlowChart',
+              data: {
+                  columns: [
+                      ['{{homeTeam.TeamName}}', {{game.HomeTeamWinChance}}],
+                      ['{{awayTeam.TeamName}}', {{game.AwayTeamWinChance}}],
+                  ],
+                  type : 'donut',
+                  onclick: function (d, i) { console.log("onclick", d, i); },
+                  onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+                  onmouseout: function (d, i) { console.log("onmouseout", d, i); },
+                  colors: colors
+              },
+              donut: {
+                  title: "{{homeTeam.TeamName}} | {{awayTeam.TeamName}}"
+              }
+          });
+    }
+  });
+
+</script>

@@ -51,34 +51,37 @@ def CalculateRankings(LS, WorldID):
         TeamDict[t]['Wins'] = 0
         TeamDict[t]['MediaShares'] = 0
         TeamDict[t]['WinningPercentage'] = 0
+        TeamDict[t]['TeamPrestige'] =  t.TeamPrestige
         if TS.GamesPlayed > 0:
             TeamDict[t]['MarginOfVictory'] = round((TS.Points - TS.PointsAllowed) / TS.GamesPlayed,3)
-            TeamDict[t]['Wins'] = TS.Wins - TS.Losses
+            TeamDict[t]['Wins'] = TS.Wins - (5 * TS.Losses)
             TeamDict[t]['MediaShares'] = TS.RegionalBroadcast + (5* TS.NationalBroadcast )
             TeamDict[t]['WinningPercentage'] = round(TS.Wins / TS.GamesPlayed,2)
 
+        print(t, TeamDict[t])
+
     Counter = 1
-    for t in sorted(TeamDict, key = lambda k: TeamDict[k]['TeamOverallRating'], reverse=False):
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['TeamOverallRating'], TeamDict[k]['TeamPrestige']), reverse=False):
         TeamDict[t]['TeamOverallRatingRank'] = Counter
         Counter +=1
 
     Counter = 1
-    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['WinningPercentage'], TeamDict[k]['TeamOverallRating']), reverse=False):
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['WinningPercentage'], TeamDict[t]['TeamPrestige']), reverse=False):
         TeamDict[t]['WinningPercentageRank'] = Counter
         Counter +=1
 
     Counter = 1
-    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['MarginOfVictory'], TeamDict[k]['TeamOverallRating']), reverse=False):
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['MarginOfVictory'], TeamDict[t]['TeamPrestige']), reverse=False):
         TeamDict[t]['MarginOfVictoryRank'] = Counter
         Counter +=1
 
     Counter = 1
-    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['Wins'], TeamDict[k]['TeamOverallRating']), reverse=False):
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['Wins'], TeamDict[t]['TeamPrestige']), reverse=False):
         TeamDict[t]['WinsRank'] = Counter
         Counter +=1
 
     Counter = 1
-    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['MediaShares'], TeamDict[k]['TeamOverallRating']), reverse=False):
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['MediaShares'], TeamDict[t]['TeamPrestige']), reverse=False):
         TeamDict[t]['MediaSharesRank'] = Counter
         Counter +=1
         TeamDict[t]['RankValue'] = 0

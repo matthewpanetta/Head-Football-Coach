@@ -1,0 +1,107 @@
+{% load static %}
+
+
+<div class="w3-display-topmiddle indexWorldContainer">
+  World List
+  <ul class="w3-ul w3-card-4">
+    {% for World in Worlds %}
+
+    <li class="w3-bar indexWorldSelectionBar">
+      <a href="/World/{{World.WorldID}}">
+        <span class="w3-bar-item w3-button w3-white w3-xlarge w3-right">×</span>
+        <img src="{{World.LogoURL}}" class="w3-bar-item w3-circle w3-hide-small" style="width:85px">
+        <div class="w3-bar-item">
+          <span class="w3-large">{{World.TeamNameAndRecord}}</span><br>
+          <span>{{World.CurrentDate}}</span>
+        </div>
+      </a>
+    </li>
+
+    {% endfor %}
+
+    <li class="w3-bar indexWorldSelectionBar" id='indexCreateWorldButton'>
+      <a href="#">
+        <div class="w3-bar-item">
+          <span class="w3-large">New World</span><br>
+          <span>World click</span>
+        </div>
+      </a>
+    </li>
+
+  </ul>
+</div>
+
+
+
+
+<div id="indexCreateWorldModal" class="w3-modal">
+  <div class="w3-modal-content w3-animate-zoom">
+    <header class="w3-container w3-blue-grey">
+      <span onclick="document.getElementById('id01').style.display='none'"
+      class="w3-button w3-display-topright">&times;</span>
+      <h2>New College Football World</h2>
+    </header>
+    <div class="w3-container">
+      <span id='indexCreateWorldModalCloseButton'
+      class="w3-button w3-display-topright">&times;</span>
+      <div class="">
+        Conferences to include
+        {% for Conference in PossibleConferences %}
+        <label class='indexCreateWorldModalInputLabel'>
+          <input type="checkbox" checked="checked" name="{{Conference.ConferenceFormValue}}"> {{Conference.ConferenceDisplayName}}
+        </label>
+        {% endfor %}
+      </div>
+      <button type="button" name="button" id='indexCreateWorldModalContinueButton' >
+          Continue
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<div id="indexChooseTeamModal" class="w3-modal">
+  <div class="w3-modal-content">
+    <header class="w3-container w3-blue-grey">
+      <span onclick="document.getElementById('id01').style.display='none'"
+      class="w3-button w3-display-topright">&times;</span>
+      <h2>New College Hoops World - Choose your team!</h2>
+    </header>
+    <div class="w3-container">
+      <span id='indexChooseTeamModalCloseButton'
+      class="w3-button w3-display-topright">&times;</span>
+      <div class="" id='indexChooseTeamModalTeamList'>
+        Team List
+      </div>
+      <button type="button" name="button" id='indexChooseTeamModalContinueButton' >
+          Continue
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="CloneContainer hidden">
+  <div class="indexChooseTeamModalTeamListTeamDiv hidden" id='indexChooseTeamModalTeamListTeamDivClone'>
+    <img class="indexChooseTeamModalTeamListTeamLogo" src=""/>
+    <span class="indexChooseTeamModalTeamListTeamName"></span>
+  </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'bootstrap-sortable.js' %}"></script>
+<script src="{% static 'moment.min.js' %}"></script>
+<script src="{% static 'Pages/index.js' %}"></script>
+<script>
+</script>
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/bootstrap-sortable.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'w3/w3.css' %}">

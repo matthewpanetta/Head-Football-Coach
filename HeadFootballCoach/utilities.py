@@ -4,6 +4,15 @@ import numpy
 from math import sin, cos, sqrt, atan2, radians, log
 
 
+
+def SecondsToMinutes(Sec):
+    Sec = int(Sec)
+    RSecs = str(Sec % 60)
+    if len(RSecs) == 1:
+        RSecs = '0'+RSecs
+    return str(int(Sec / 60)) + ':' +RSecs
+
+
 def UniqueFromQuerySet(QS, Field):
     DistinctValues = []
     for u in QS:
@@ -99,6 +108,15 @@ def NormalBounds(Mean, Sigma, Min, Max):
         r = (2 * Min) - r
     if r > Max:
         r = (2 * Max) - r
+    return r
+
+def NormalTrunc(Mean, Sigma, Min, Max):
+
+    r = Min
+
+    while (r <= Min or r >= Max):
+        r = numpy.random.normal(Mean, Sigma)
+
     return r
 
 def IntMin(a,b):

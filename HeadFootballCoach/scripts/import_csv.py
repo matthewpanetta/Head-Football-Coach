@@ -163,7 +163,7 @@ def LoadNames(FilePath):
             V = Row[FieldCount]
             if V == '':
                 V = None
-            LineDict[Headers[FieldCount]] = V
+            LineDict[Headers[FieldCount]] = V.strip()
             FieldCount +=1
 
         FieldExclusions = []
@@ -219,14 +219,46 @@ def PopulateSystemTournamentRounds():
         return None
 
 
-def createGeography(inputFile):
+def createGeography(inputFile, CountData):
 
     #Region.objects.all().delete()
+
+    CityCountData = {}
+
+    f2 = open(CountData, 'r')
+
+    linecount = 0
+    for l2 in f2:
+        linecount +=1
+        FieldCount = 0
+        if linecount == 1:
+            #print('header row')
+            headers = l2.strip().split(',')
+
+        else:
+            LineDict2 = {}
+            data2 = l2.strip().split(',')
+            for field in data2:
+                LineDict2[headers[FieldCount]] = data2[FieldCount]
+                FieldCount +=1
+
+            St = LineDict2['StateName']
+            Ci = LineDict2['CityName']
+            C  = LineDict2['Count']
+
+            if St not in CityCountData:
+                CityCountData[St] = {}
+            if Ci not in CityCountData[St]:
+                CityCountData[St][Ci] = 0
+            CityCountData[St][Ci] = C
+
+    f2.close()
 
     f = open(inputFile, 'r')
 
     linecount = 0
     for l in f:
+        #print(linecount, l)
         linecount +=1
         FieldCount = 0
         if linecount == 1:
@@ -240,30 +272,33 @@ def createGeography(inputFile):
                 LineDict[headers[FieldCount]] = data[FieldCount]
                 FieldCount +=1
 
-            #print(LineDict)
-
             if int(LineDict['GeoLevel']) == 4:
                 #print('Region!')
 
-                R = Region( RegionName = LineDict['RegionName'], RegionAbbreviation=LineDict['RegionAbbreviation'], YouthEngagement=LineDict['YouthEngagement'])
+                R = Region( RegionName = LineDict['RegionName'], RegionAbbreviation=LineDict['RegionAbbreviation'], YouthEngagement=0)
                 R.save()
             elif int(LineDict['GeoLevel']) == 3:
                 #print('Nation!')
 
                 R = Region.objects.get(RegionName = LineDict['RegionName'])
 
-                N = Nation( NationName = LineDict['NationName'], NationAbbreviation=LineDict['NationAbbreviation'], RegionID = R, YouthEngagement=LineDict['YouthEngagement'])
+                N = Nation( NationName = LineDict['NationName'], NationAbbreviation=LineDict['NationAbbreviation'], RegionID = R, YouthEngagement=0)
                 N.save()
             elif int(LineDict['GeoLevel']) == 2:
                 #print('State!')
 
                 N = Nation.objects.get(NationName = LineDict['NationName'])
 
-                S = State( StateName = LineDict['StateName'], StateAbbreviation=LineDict['StateAbbreviation'], NationID = N, YouthEngagement=LineDict['YouthEngagement'])
+                S = State( StateName = LineDict['StateName'], StateAbbreviation=LineDict['StateAbbreviation'], NationID = N, YouthEngagement=0)
                 S.save()
             elif int(LineDict['GeoLevel']) == 1:
 
                 S = State.objects.get(StateName = LineDict['StateName'])
+
+                LineDict['YouthEngagement'] = 1
+                if LineDict['StateAbbreviation'] in CityCountData:
+                    if LineDict['CityName'] in CityCountData[LineDict['StateAbbreviation']]:
+                        LineDict['YouthEngagement'] += (100 * int(CityCountData[LineDict['StateAbbreviation']][LineDict['CityName']]))
 
                 C = City(CityName = LineDict['CityName'], StateID = S, Population=LineDict['Population'], Latitude=LineDict['Latitude'], Longitude=LineDict['Longitude'], YouthEngagement=LineDict['YouthEngagement'])
                 C.save()
@@ -411,7 +446,7 @@ def import_Team( File, WorldID, LeagueID):
             LineDict['CityID'] = CityToPopulate
             LineDict['WorldID'] = WorldID
             LineDict['ConferenceID'] = ConferenceID
-            LineDict['TeamJerseyStyle'] = JerseyOptions[linecount % 4]
+            LineDict['TeamJerseyStyle'] = JerseyOptions[0]
             LineDict['TeamJerseyInvert'] = random.choice([True, False])
 
             Name = LineDict['TeamName'] + ' ' + LineDict['TeamNickname']
@@ -519,7 +554,7 @@ def LoadData(WorldID, LeagueID):
         start = time.time()
 
     if NameList.objects.count() == 0:
-        LoadNames( 'HeadFootballCoach/scripts/data_import/NameList.csv')
+        LoadNames( 'HeadFootballCoach/scripts/data_import/Names.csv')
 
     if System_PlayerArchetypeRatingModifier.objects.count() == 0:
         LoadPlayerSkillModifiers('HeadFootballCoach/scripts/data_import/PlayerSkillModifiers.csv')
@@ -543,7 +578,7 @@ def LoadData(WorldID, LeagueID):
         start = time.time()
 
     if CreateGeography:
-        createGeography('HeadFootballCoach/scripts/data_import/uscitiesv1.5.csv')
+        createGeography('HeadFootballCoach/scripts/data_import/uscitiesv1.5.csv', 'HeadFootballCoach/scripts/data_import/RecruitingData/Cities.csv')
     #import_League('FullCourtHeadFootballCoach/scripts/data_import/League.csv')
 
     if DoAudit:

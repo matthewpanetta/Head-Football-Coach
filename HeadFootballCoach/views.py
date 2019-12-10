@@ -8,7 +8,7 @@ import random
 import numpy
 from .resources import PlayerDeparture,NewSeasonCutover, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, CreateTeamSeasons, EndRegularSeason
 from .scripts.rankings import    CalculateConferenceRankings,CalculateRankings, SelectBroadcast
-from .utilities import MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
+from .utilities import SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
 from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting
 import math
@@ -40,14 +40,17 @@ def GetUserTeam(WorldID):
 
 
 
-def GetAllTeams(WorldID, SortType='National', GroupingName=None):
+def GetAllTeams(WorldID, SortType='National', GroupingName=None, GroupingID=None):
 
     TeamDictStarter = Team.objects.filter(WorldID = WorldID)
 
     if SortType == 'National':
         return sorted(TeamDictStarter, key = lambda k: k.CurrentTeamSeason.NationalRank, reverse = False)
     elif SortType == 'Conference':
-        TeamDictStarter = TeamDictStarter.filter(ConferenceID__ConferenceName = GroupingName)
+        if GroupingName is not None:
+            TeamDictStarter = TeamDictStarter.filter(ConferenceID__ConferenceName = GroupingName)
+        else:
+            TeamDictStarter = TeamDictStarter.filter(ConferenceID = GroupingID)
         return sorted(TeamDictStarter, key = lambda k: k.CurrentTeamSeason.ConferenceRank, reverse = False)
 
     return None
@@ -181,7 +184,7 @@ def Page_Audit(request):
     #AuditGroups = sorted(AuditGroups, key=lambda k: -1 * k['AverageTimeElapsed'])
     context = {'AuditGroups': AuditGroups}
 
-    return render(request, 'Hoops/audit.html', context)
+    return render(request, 'HeadFootballCoach/audit.html', context)
 
 
 def Page_Teams(request, WorldID):
@@ -190,7 +193,7 @@ def Page_Teams(request, WorldID):
 
     context = {'AuditGroups': AuditGroups}
 
-    return render(request, 'Hoops/audit.html', context)
+    return render(request, 'HeadFootballCoach/audit.html', context)
 
 
 def Page_TeamHistory(request, WorldID, TeamID):
@@ -199,7 +202,7 @@ def Page_TeamHistory(request, WorldID, TeamID):
 
     context = {'AuditGroups': AuditGroups}
 
-    return render(request, 'Hoops/audit.html', context)
+    return render(request, 'HeadFootballCoach/audit.html', context)
 
 def Page_Conference(request, WorldID, ConferenceID):
 
@@ -207,7 +210,7 @@ def Page_Conference(request, WorldID, ConferenceID):
 
     context = {'AuditGroups': AuditGroups}
 
-    return render(request, 'Hoops/audit.html', context)
+    return render(request, 'HeadFootballCoach/audit.html', context)
 
 def Page_Conferences(request, WorldID):
 
@@ -215,7 +218,7 @@ def Page_Conferences(request, WorldID):
 
     context = {'AuditGroups': AuditGroups}
 
-    return render(request, 'Hoops/audit.html', context)
+    return render(request, 'HeadFootballCoach/audit.html', context)
 
 
 def Page_Audit_ShootingPercentages(request, WorldID):
@@ -253,7 +256,7 @@ def Page_Audit_ShootingPercentages(request, WorldID):
 
     print(context)
 
-    return render(request, 'Hoops/auditshooting.html', context)
+    return render(request, 'HeadFootballCoach/auditshooting.html', context)
 
 
 def Page_Index(request):
@@ -263,8 +266,8 @@ def Page_Index(request):
 
     if InTesting:
         World.objects.all().delete()
-        #Region.objects.all().delete()
-        System_TournamentRound.objects.all().delete()
+        Region.objects.all().delete()
+        #System_TournamentRound.objects.all().delete()
         #NameList.objects.all().delete()
 
 
@@ -302,10 +305,10 @@ def Page_Index(request):
 
     context = {'Worlds': Worlds}
     context['PossibleConferences'] = ConfList
-    return render(request, 'Hoops/index.html', context)
+    return render(request, 'HeadFootballCoach/index.html', context)
 
 def Page_Search(request, WorldID, SearchInput):
-    page = {'PageTitle': 'College Hoops', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     context = {'page': page, 'result': 'success', 'WorldID': WorldID, 'SearchInput': SearchInput}
     CurrentWorld = World.objects.get(WorldID=WorldID)
 
@@ -324,11 +327,11 @@ def Page_Search(request, WorldID, SearchInput):
     context['Players'] = Players
     context['Teams'] = Teams
 
-    return render(request, 'Hoops/Search.html', context)
+    return render(request, 'HeadFootballCoach/Search.html', context)
 
 def Page_World(request, WorldID):
     DoAudit = True
-    page = {'PageTitle': 'College Hoops', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     CurrentWorld  = World.objects.get(WorldID = WorldID)
     StartDate     = Calendar.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
@@ -341,7 +344,7 @@ def Page_World(request, WorldID):
     AllTeams = TeamSeasonDateRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).filter(NationalRank__lte = 25).order_by('NationalRank').select_related('TeamSeasonID__TeamID').values('TeamSeasonID__TeamID','TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__Wins', 'TeamSeasonID__Losses', 'NationalRank', 'NationalRankDelta').annotate(NationalRankDeltaAbs=Func(F('NationalRankDelta'), function='ABS'))
 
     UpcomingDateWindow = StartDate.NextDayN(7)
-    RecentDateWindow = StartDate.NextDayN(-3)
+    RecentDateWindow = StartDate.NextDayN(-7)
 
     GameList = Game.objects.filter(WorldID = CurrentWorld)
     UpcomingGames = GameList.filter(GameDateID__lt = UpcomingDateWindow.DateID).filter(WasPlayed = 0).order_by('GameDateID')
@@ -359,48 +362,47 @@ def Page_World(request, WorldID):
         start = time.time()
 
     Leaders = []
-    TopScorers = []
-    TopRebounders = []
-    TopAssisters = []
+    TopRushers = []
+    TopPassers = []
+    TopReceivers = []
     AllPlayers = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(GamesPlayed__gt=0).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason)
     if AllPlayers.count() > 0:
 
-        TopPlayers = AllPlayers.order_by('-Points').values('PlayerTeamSeasonID', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation','TeamSeasonID__TeamID_id', 'PlayerID__PlayerFirstName','PlayerID__PlayerLastName', 'PlayerID', 'GamesPlayed')
+        TopPlayers = AllPlayers.order_by('-RUS_Yards').values('PlayerTeamSeasonID', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation','TeamSeasonID__TeamID_id', 'PlayerID__PlayerFirstName','PlayerID__PlayerLastName', 'PlayerID', 'GamesPlayed', 'RUS_Yards', 'PAS_Yards', 'REC_Yards')
+
+        for P in TopPlayers:
+            if not P['GamesPlayed'] > 0:
+                continue
+
+            RUS_YardsPG = 1.0 * P['RUS_Yards'] / P['GamesPlayed']
+            PAS_YardsPG = 1.0 * P['PAS_Yards'] / P['GamesPlayed']
+            REC_YardsPG = 1.0 * P['REC_Yards'] / P['GamesPlayed']
+
+            if len(TopRushers) < 3 or RUS_YardsPG > TopRushers[-1]['RUS_YardsPG']:
+                if len(TopRushers) >= 3:
+                    TopRushers.pop()
+                P['RUS_YardsPG'] = round(RUS_YardsPG,1)
+                TopRushers.append(P)
+                TopRushers = sorted(TopRushers, key=lambda k: k['RUS_YardsPG'], reverse=True)
+
+            if len(TopPassers) < 3 or PAS_YardsPG > TopPassers[-1]['PAS_YardsPG']:
+                if len(TopPassers) >= 3:
+                    TopPassers.pop()
+                P['PAS_YardsPG'] = round(PAS_YardsPG,1)
+                TopPassers.append(P)
+                TopPassers = sorted(TopPassers, key=lambda k: k['PAS_YardsPG'], reverse=True)
+
+            if len(TopReceivers) < 3 or REC_YardsPG > TopReceivers[-1]['REC_YardsPG']:
+                if len(TopReceivers) >= 3:
+                    TopReceivers.pop()
+                P['REC_YardsPG'] = round(REC_YardsPG,1)
+                TopReceivers.append(P)
+                TopReceivers = sorted(TopReceivers, key=lambda k: k['REC_YardsPG'], reverse=True)
 
 
-        # TopScorers = []
-        # TopAssisters = []
-        # TopRebounders = []
-        # for P in TopPlayers:
-        #     if P['GamesPlayed'] == 0:
-        #         continue
-        #
-        #     RPG = 1.0 * P['Rebounds'] / P['GamesPlayed']
-        #     APG = 1.0 * P['Assists'] / P['GamesPlayed']
-        #     PPG = 1.0 * P['Points'] / P['GamesPlayed']
-        #
-        #     if len(TopRebounders) < 3 or RPG > TopRebounders[-1]['RPG']:
-        #         if len(TopRebounders) >= 3:
-        #             TopRebounders.pop()
-        #         P['RPG'] = round(RPG,1)
-        #         TopRebounders.append(P)
-        #         TopRebounders = sorted(TopRebounders, key=lambda k: k['RPG'], reverse=True)
-        #     if len(TopAssisters) < 3 or APG > TopAssisters[-1]['APG']:
-        #         if len(TopAssisters) >= 3:
-        #             TopAssisters.pop()
-        #         P['APG'] = round(APG,1)
-        #         TopAssisters.append(P)
-        #         TopAssisters = sorted(TopAssisters, key=lambda k: k['APG'], reverse=True)
-        #     if len(TopScorers) < 3 or PPG > TopScorers[-1]['PPG']:
-        #         if len(TopScorers) >= 3:
-        #             TopScorers.pop()
-        #         P['PPG'] = round(PPG,1)
-        #         TopScorers.append(P)
-        #         TopScorers = sorted(TopScorers, key=lambda k: k['PPG'], reverse=True)
-
-
-        # for u in range(0,3):
-        #     Leaders.append({'PPG': TopScorers[u], 'RPG': TopRebounders[u], 'APG': TopAssisters[u]})
+        for u in range(0,3):
+            Leaders.append({'RUS_YardsPG': TopRushers[u], 'PAS_YardsPG': TopPassers[u], 'REC_YardsPG': TopReceivers[u]})
+            print(Leaders[-1])
 
         if DoAudit:
             end = time.time()
@@ -409,7 +411,7 @@ def Page_World(request, WorldID):
     context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'leaders':Leaders, 'page': page, 'userTeam': UserTeam, 'date': StartDate , 'games': UpcomingGames}
 
     context['recentGames'] = RecentGames
-    return render(request, 'Hoops/World.html', context)
+    return render(request, 'HeadFootballCoach/World.html', context)
 
 
 def Page_Player(request, WorldID, PlayerID):
@@ -442,61 +444,34 @@ def Page_Player(request, WorldID, PlayerID):
             PlayerDict[u] = PlayerSkills[u]
 
 
-        PlayerStats = PlayerGameStat.objects.filter(WorldID=WorldID).filter(PlayerTeamSeasonID = PTS).select_related('TeamGameID').values().order_by('TeamGameID__GameID')
+        PlayerStats = PlayerGameStat.objects.filter(WorldID=WorldID).filter(PlayerTeamSeasonID = PTS)
 
         SeasonStats = {}
-        CareerHigh = {'Points': {'Game': None, 'Value': 0}, 'Assists':{'Game': None, 'Value': 0}, 'Minutes': {'Game': None, 'Value': 0}, 'Rebounds': {'Game': None, 'Value': 0}, 'FGM': {'Game': None, 'Value': 0}, 'FGA': {'Game': None, 'Value': 0}, 'ThreePM': {'Game': None, 'Value': 0},'ThreePA':{'Game': None, 'Value': 0}, 'Blocks': {'Game': None, 'Value': 0}, 'Steals': {'Game': None, 'Value': 0}}
+        PAS_Yards_CareerHigh = PlayerStats.order_by('-PAS_Yards').first()
+        RUS_Yards_CareerHigh = PlayerStats.order_by('-RUS_Yards').first()
+        REC_Yards_CareerHigh = PlayerStats.order_by('-REC_Yards').first()
+        CareerHigh = {'PAS_Yards': {'Stat': 'Passing Yards', 'Game': PAS_Yards_CareerHigh.TeamGameID.GameID, 'Value': PAS_Yards_CareerHigh.PAS_Yards}, 'RUS_Yards':{'Stat': 'Rushing Yards', 'Game': RUS_Yards_CareerHigh.TeamGameID.GameID, 'Value': RUS_Yards_CareerHigh.RUS_Yards}, 'REC_Yards': {'Stat': 'Receiving Yards Yards', 'Game': REC_Yards_CareerHigh.TeamGameID.GameID, 'Value': REC_Yards_CareerHigh.REC_Yards}}
 
+        print(CareerHigh)
         GameCount = 0
-        for G in PlayerStats:
+        GameStats = []
+        for G in PlayerStats.order_by('TeamGameID__GameID'):
 
-            print(G)
-
+            PlayerStatDict = G.__dict__
             GameObject = G.TeamGameID.GameID
             SeasonOfGame = GameObject.LeagueSeasonID
-            if SeasonOfGame not in SeasonStats:
-                SeasonStats[SeasonOfGame] = {'GamesPlayed':0}
-            SeasonStats[SeasonOfGame]['Season'] = str(SeasonOfGame.LeagueSeasonDisplay)
-            SeasonStats[SeasonOfGame]['GamesPlayed'] +=1
-            G['GameOfSeason'] = SeasonStats[SeasonOfGame]['GamesPlayed']
 
+            GameCount +=1
+            PlayerStatDict['GameOfSeason'] = GameCount
 
-            PTS = PlayerTeamSeason.objects.get(WorldID=WorldID,PlayerID = PlayerQuerySet, TeamSeasonID__LeagueSeasonID = SeasonOfGame)
             SeasonTeam =  PTS.TeamSeasonID.TeamID
-            SeasonStats[SeasonOfGame]['TeamName'] =SeasonTeam.TeamName
-            SeasonStats[SeasonOfGame]['TeamID'] = SeasonTeam
-            SeasonStats[SeasonOfGame]['TeamAbbreviation'] = SeasonTeam.Abbreviation
-            SeasonStats[SeasonOfGame]['PlayerClass'] = PTS.PlayerClass
-
-            for Stat in G:
-                if Stat in ['PlayerID', 'GameID', 'PlayerGameStat']:
-                    continue
-                if Stat not in SeasonStats[SeasonOfGame]:
-                    SeasonStats[SeasonOfGame][Stat] = 0
-                SeasonStats[SeasonOfGame][Stat] += G[Stat]
-
-                if Stat in CareerHigh and G[Stat] > CareerHigh[Stat]['Value']:
-                    CareerHigh[Stat]['Game'], CareerHigh[Stat]['Value'] = G['PlayerGameStat'], G[Stat]
 
             if PTS.TeamSeasonID.TeamID == GameObject.HomeTeamID:
-                G['Opponent'] = GameObject.AwayTeamID
+                PlayerStatDict['Opponent'] = GameObject.AwayTeamID
             else:
-                G['Opponent'] = GameObject.HomeTeamID
+                PlayerStatDict['Opponent'] = GameObject.HomeTeamID
 
-        for S in SeasonStats:
-            SeasonStats[S]['IsCurrent'] = S.IsCurrent
-            if SeasonStats[S]['GamesPlayed'] > 0:
-                SeasonStats[S]['PPG'] = round(SeasonStats[S]['Points'] / SeasonStats[S]['GamesPlayed'],1)
-                SeasonStats[S]['RPG'] = round(SeasonStats[S]['Rebounds'] / SeasonStats[S]['GamesPlayed'],1)
-                SeasonStats[S]['APG'] = round(SeasonStats[S]['Assists'] / SeasonStats[S]['GamesPlayed'],1)
-                SeasonStats[S]['BPG'] = round(SeasonStats[S]['Blocks'] / SeasonStats[S]['GamesPlayed'],1)
-                SeasonStats[S]['SPG'] = round(SeasonStats[S]['Steals'] / SeasonStats[S]['GamesPlayed'],1)
-                SeasonStats[S]['MPG'] = round(SeasonStats[S]['Minutes'] / SeasonStats[S]['GamesPlayed'],1)
-                SeasonStats[S]['FGPercent'] = int(SeasonStats[S]['FGM'] * 100 / SeasonStats[S]['FGA'])
-                if SeasonStats[S]['ThreePA'] > 0:
-                    SeasonStats[S]['3PPercent'] = int(SeasonStats[S]['ThreePM'] * 100 / SeasonStats[S]['ThreePA'])
-                else:
-                    SeasonStats[S]['3PPercent'] = 0
+            GameStats.append(PlayerStatDict)
 
         CareerHighList = []
         for ch in CareerHigh:
@@ -506,14 +481,11 @@ def Page_Player(request, WorldID, PlayerID):
         for u in SeasonStats:
             SeasonStatList.append(SeasonStats[u])
 
-        for g in PlayerStats:
-            TotalGames = SeasonStatList[0]['GamesPlayed']
-            if g['GameOfSeason'] > TotalGames - 5:
+        for g in GameStats:
+            if g['GameOfSeason'] > PlayerStats.count() - 5:
                 g['RecentGame'] = 1
             else:
                 g['RecentGame'] = 0
-
-        PlayerStats = sorted(PlayerStats, key=lambda t: t['GameID'].GameDateID.DateID)
 
         context['gameStats'] = PlayerStats
         context['careerHigh'] = CareerHighList
@@ -532,7 +504,7 @@ def Page_Player(request, WorldID, PlayerID):
 
     context['page'] = page
 
-    return render(request, 'Hoops/Player.html', context)
+    return render(request, 'HeadFootballCoach/Player.html', context)
 
 
 
@@ -556,9 +528,44 @@ def Page_Game(request, WorldID, GameID):
 
     context = {}
 
+    BoxScoreStatGroupings = [
+        {
+            'StatGroupName': 'Passing',
+            'Stats': [
+                {'FieldName': 'FullName', 'DisplayName': 'Player Name', 'DisplayColumn': True},
+                {'FieldName': 'PlayerID', 'DisplayName': ''},
+                {'FieldName': 'PAS_Completions', 'DisplayName': 'C/ATT', 'DisplayColumn': True},
+                {'FieldName': 'PAS_Attempts', 'DisplayName': 'A', 'DisplayColumn': False},
+                {'FieldName': 'PAS_Yards', 'DisplayName': 'Yards', 'DisplayColumn': True},
+                {'FieldName': 'PAS_TD', 'DisplayName': 'TD', 'DisplayColumn': True},
+                {'FieldName': 'PAS_INT', 'DisplayName': 'INT', 'DisplayColumn': True},
+                {'FieldName': 'PAS_Sacks', 'DisplayName': 'Sck/Yrd', 'DisplayColumn': True},
+                {'FieldName': 'PAS_SackYards', 'DisplayName': 'Sack Yards', 'DisplayColumn': False}
+            ]
+        },
+        {
+            'StatGroupName': 'Rushing',
+            'Stats': [
+                {'FieldName': 'FullName', 'DisplayName': 'Player Name', 'DisplayColumn': True},
+                {'FieldName': 'PlayerID', 'DisplayName': ''},
+                {'FieldName': 'RUS_Carries', 'DisplayName': 'Car', 'DisplayColumn': True},
+                {'FieldName': 'RUS_Yards', 'DisplayName': 'Yards', 'DisplayColumn': True},
+                {'FieldName': 'RUS_TD', 'DisplayName': 'TDs', 'DisplayColumn': True},
+            ],
+        },
+    ]
+
+    context['ConferenceStandings'] = []
+    TeamList = [u.TeamSeasonID.TeamID for u in GameQuerySet.teamgame_set.all()]
+    Conferences = list(set([u.ConferenceID for u in TeamList]))
+    print(Conferences)
+    for C in Conferences:
+        CDict = {'ConferenceName': C.ConferenceName}
+        CDict['conferenceTeams'] = C.ConferenceStandings(Small=True, HighlightedTeams=TeamList)
+        context['ConferenceStandings'].append(CDict)
 
     if GameDict['WasPlayed'] == 1:
-        if GameDict['HomeTeamScore'] > GameDict['AwayTeamScore']:
+        if GameDict['HomePoints'] > GameDict['AwayPoints']:
             #AwayOutcomeLetter
             GameDict['AwayOutcomeLetter'] = 'L'
             GameDict['HomeOutcomeLetter'] = 'W'
@@ -570,56 +577,91 @@ def Page_Game(request, WorldID, GameID):
         GameEvents = GameEvent.objects.filter(WorldID=WorldID).filter(GameID = GameID)
 
         EventPeriods = GameEvents.values('EventPeriod').distinct()
-        GameEvents = GameEvents.values('EventPeriod', 'EventTime', 'HomeTeamScore', 'AwayTeamScore')
+        GameEvents = GameEvents.values('EventPeriod', 'EventTime', 'HomePoints', 'AwayPoints', 'IsScoringPlay', 'IsScoringPlay', 'PlayDescription', 'DriveDescription', 'ScoringTeamID__Abbreviation', 'PlayType', 'ScoringTeamID__TeamLogoURL')
+
 
         for GE in GameEvents:
-            GE['GameTime'] = (GE['EventPeriod'] -1) * 1200  + GE['EventTime'] if GE['EventPeriod'] in [1,2] else 2400  + GE['EventTime']
+            GE['GameTime'] = (GE['EventPeriod'] -1) * (60*15)  + ((60*15) - GE['EventTime']) if GE['EventPeriod'] in [1,2,3,4] else (60*60)  + GE['EventTime']
 
 
-        PeriodNameMap = {1: '1st', 2: '2nd', 3:'OT', 4: '2OT', 5: '3OT'}
+
+        PeriodTitleMap = {1: '1st', 2: '2nd', 3:'3rd', 4: '4th', 5: 'OT', 6: '2OT', 7: '3OT'}
+        PeriodNameMap = {1: '1st Quarter', 2: '2nd Quarter', 3:'3rd Quarter', 4: '4th Quarter', 5: 'Overtime 1', 6: 'Overtime 2', 7: 'Overtime 3'}
 
         BoxScore = []
+        ScoringSummary = []
         HomeScoreLastPeriod = 0
         AwayScoreLastPeriod = 0
         for EP in EventPeriods:
             EventPeriod = EP['EventPeriod']
-            HomeScoreEndOfPeriod = GameEvents.filter(EventPeriod = EventPeriod).aggregate(Max('HomeTeamScore'))
-            HomeScoreEndOfPeriod = HomeScoreEndOfPeriod['HomeTeamScore__max']
-            AwayScoreEndOfPeriod = GameEvents.filter(EventPeriod = EventPeriod).aggregate(Max('AwayTeamScore'))
-            AwayScoreEndOfPeriod = AwayScoreEndOfPeriod['AwayTeamScore__max']
+            PeriodEvents = GameEvents.filter(EventPeriod = EventPeriod)
+            HomeScoreEndOfPeriod = PeriodEvents.aggregate(Max('HomePoints'))
+            HomeScoreEndOfPeriod = HomeScoreEndOfPeriod['HomePoints__max']
+            AwayScoreEndOfPeriod = PeriodEvents.aggregate(Max('AwayPoints'))
+            AwayScoreEndOfPeriod = AwayScoreEndOfPeriod['AwayPoints__max']
 
             HomeScoreThisPeriod = HomeScoreEndOfPeriod - HomeScoreLastPeriod
             AwayScoreThisPeriod = AwayScoreEndOfPeriod - AwayScoreLastPeriod
 
-            PeriodBoxScore = {'HomeTeamScore': HomeScoreThisPeriod,'AwayTeamScore': AwayScoreThisPeriod}
+            PeriodBoxScore = {'HomePoints': HomeScoreThisPeriod,'AwayPoints': AwayScoreThisPeriod}
 
-            PeriodBoxScore['PeriodName'] = PeriodNameMap[EventPeriod]
+            PeriodBoxScore['PeriodTitle'] = PeriodTitleMap[EventPeriod]
             BoxScore.append(PeriodBoxScore)
 
             HomeScoreLastPeriod = HomeScoreEndOfPeriod
             AwayScoreLastPeriod = AwayScoreEndOfPeriod
 
-        GameDict['HomeFGPercent'] = round(GameDict['HomeTeamFGM'] * 100 / GameDict['HomeTeamFGA'],1) if  GameDict['HomeTeamFGA'] > 0 else 0.0
-        GameDict['AwayFGPercent'] = round(GameDict['AwayTeamFGM'] * 100 / GameDict['AwayTeamFGA'],1) if  GameDict['AwayTeamFGA'] > 0 else 0.0
-        GameDict['Home3PTPercent'] = round(GameDict['HomeTeam3PM'] * 100 / GameDict['HomeTeam3PA'],1) if  GameDict['HomeTeam3PA'] > 0 else 0.0
-        GameDict['Away3PTPercent'] = round(GameDict['AwayTeam3PM'] * 100 / GameDict['AwayTeam3PA'],1) if  GameDict['AwayTeam3PA'] > 0 else 0.0
+
+            PeriodScoringSummary = {}
+            ScoreList = []
+
+            for Event in PeriodEvents:
+                Event['DisplayTime'] = SecondsToMinutes(Event['EventTime'])
+
+                if Event['IsScoringPlay'] == True:
+                    ScoreList.append(Event)
+
+            PeriodScoringSummary['PeriodName'] = PeriodNameMap[EventPeriod]
+            PeriodScoringSummary['ScoreList'] = ScoreList
+
+            if len(PeriodScoringSummary['ScoreList']) > 0:
+                ScoringSummary.append(PeriodScoringSummary)
 
 
+        GameDict['HomeTotalYards'] = GameDict['HomeRUS_Yards'] + GameDict['HomeREC_Yards'] + GameDict['HomePAS_Yards']
+        GameDict['AwayTotalYards'] = GameDict['AwayRUS_Yards'] + GameDict['AwayREC_Yards'] + GameDict['AwayPAS_Yards']
 
-        TeamStatBox = {
-            'HomeReboundBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['HomeTeamRebounds'] * 100 / Max_Int(Max_Int(GameDict['HomeTeamRebounds'], GameDict['AwayTeamRebounds']),1))),
-            'AwayReboundBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['AwayTeamRebounds'] * 100 / Max_Int(Max_Int(GameDict['HomeTeamRebounds'], GameDict['AwayTeamRebounds']),1))),
-            'HomeFGBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['HomeFGPercent'] * 100 / Max_Int(Max_Int(GameDict['HomeFGPercent'], GameDict['AwayFGPercent']),1))),
-            'AwayFGBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['AwayFGPercent'] * 100 / Max_Int(Max_Int(GameDict['HomeFGPercent'], GameDict['AwayFGPercent']),1))),
-            'Home3PBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['Home3PTPercent'] * 100 / Max_Int(Max_Int(GameDict['Home3PTPercent'], GameDict['Away3PTPercent']),1))),
-            'Away3PBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['Away3PTPercent'] * 100 / Max_Int(Max_Int(GameDict['Home3PTPercent'], GameDict['Away3PTPercent']),1))),
-            'HomeAssistBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['HomeTeamAssists'] * 100 / Max_Int(Max_Int(GameDict['HomeTeamAssists'], GameDict['AwayTeamAssists']),1))),
-            'AwayAssistBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['AwayTeamAssists'] * 100 / Max_Int(Max_Int(GameDict['HomeTeamAssists'], GameDict['AwayTeamAssists']),1)))
-        }
+        TeamStatBox = []
+        StatBoxStats = ['TotalYards', 'Turnovers', 'TimeOfPossession', 'FirstDowns']
+        StatBoxFormatting = {'TimeOfPossession': 'Seconds'}
+        for Stat in StatBoxStats:
+            HomeValue = GameDict['Home'+Stat]
+            AwayValue = GameDict['Away'+Stat]
+            MaxValue  = HomeValue if HomeValue > AwayValue else AwayValue
+            HomeRatio = round(float(HomeValue) * 100.0 / float(MaxValue),1) if MaxValue != 0 else 0
+            AwayRatio = round(float(AwayValue) * 100.0 / float(MaxValue),1) if MaxValue != 0 else 0
+
+            HomeRatio = 5 if HomeRatio == 0 else HomeRatio
+            AwayRatio = 5 if AwayRatio == 0 else AwayRatio
+
+            if Stat in StatBoxFormatting:
+                if StatBoxFormatting[Stat] == 'Seconds':
+                    HomeValue = SecondsToMinutes(HomeValue)
+                    AwayValue = SecondsToMinutes(AwayValue)
+            StatDict = {'StatName': Stat, 'HomeValue': HomeValue, 'AwayValue': AwayValue, 'HomeRatio': HomeRatio, 'AwayRatio': AwayRatio}
+            TeamStatBox.append(StatDict)
+
         context['gameEvents'] = GameEvents
+        context['ScoringSummary'] = ScoringSummary
+
+        print('Scoring Summary')
+        for P in ScoringSummary:
+            print(P['PeriodName'])
+            for S in P['ScoreList']:
+                print(S)
 
 
-        PlayerGames = PlayerGameStat.objects.filter(GameID = GameQuerySet).order_by('-Minutes').values('Minutes', 'Points', 'FGM', 'FGA', 'ThreePM', 'ThreePA', 'FTM', 'FTA', 'OffensiveRebounds', 'Rebounds', 'Assists', 'Steals', 'Blocks', 'Turnovers', 'GameScore', 'PlusMinus', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__Position','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'Started')
+        PlayerGames = PlayerGameStat.objects.filter(TeamGameID__GameID = GameQuerySet).order_by('-GameScore').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__Position','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted')
         for u in PlayerGames:
             #PlayerSeason = u.PlayerTeamSeasonID
             #P = PlayerSeason.PlayerID
@@ -629,48 +671,52 @@ def Page_Game(request, WorldID, GameID):
             #for Stat in GameStatDict:
             #    P[Stat] = GameStatDict[Stat]
 
-            u['DREB'] = u['Rebounds'] - u['OffensiveRebounds']
-            u['Minutes'] = int(u['Minutes'])
-
             u['FullName'] = u['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + u['PlayerTeamSeasonID__PlayerID__PlayerLastName']
             u['Position'] = u['PlayerTeamSeasonID__PlayerID__Position']
             u['PlayerID'] = u['PlayerTeamSeasonID__PlayerID_id']
 
             u['Bench'] = False
 
-            if u['Started'] == False and u['Minutes'] > 0:
-                u['Bench'] = True
+
+            print('Stats for:', u['FullName'], u['Position'])
+            for StatGrouping in BoxScoreStatGroupings:
+                if 'HomeTeam' not in StatGrouping:
+                    StatGrouping['HomeTeam'] = []
+                if 'AwayTeam' not in StatGrouping:
+                    StatGrouping['AwayTeam'] = []
+
+                PlayerStatGroup = {}
+                NonZeroStat = False
+                for Stat in StatGrouping['Stats']:
+                    PlayerStatGroup[Stat['FieldName']] = u[Stat['FieldName']]
+                    if u[Stat['FieldName']] != 0 and Stat['FieldName'] not in ['FullName', 'PlayerID']:
+                        print(Stat['FieldName'], u[Stat['FieldName']])
+                        NonZeroStat = True
+
+                PlayerStatGroup ['PlayerID'] = u['PlayerID']
+                PlayerStatGroup ['FullName'] = u['FullName']
+                if NonZeroStat:
+                    if u['PlayerTeamSeasonID__TeamSeasonID__TeamID_id'] == HomeTeam.TeamID:
+                        StatGrouping['HomeTeam'].append(PlayerStatGroup)
+                    else:
+                        StatGrouping['AwayTeam'].append(PlayerStatGroup)
 
             PlayerToAdd = u
 
-            if u['PlayerTeamSeasonID__TeamSeasonID__TeamID_id'] == HomeTeam.TeamID:
-                HomePlayers.append(PlayerToAdd)
-            else:
-                AwayPlayers.append(PlayerToAdd)
+
+        print(BoxScoreStatGroupings)
+
 
 
     else:
         HomeTS = HomeTeam.CurrentTeamSeason
         AwayTS = AwayTeam.CurrentTeamSeason
-        GameDict['HomeFGPercent'] = round(HomeTS.FGM * 100 / HomeTS.FGA,1) if  HomeTS.FGA > 0 else 0.0
-        GameDict['AwayFGPercent'] = round(AwayTS.FGM * 100 / AwayTS.FGA,1) if  AwayTS.FGA > 0 else 0.0
-        GameDict['Home3PTPercent'] = round(HomeTS.ThreePM * 100 / HomeTS.ThreePA,1) if  HomeTS.ThreePA > 0 else 0.0
-        GameDict['Away3PTPercent'] = round(AwayTS.ThreePM * 100 / AwayTS.ThreePA,1) if  AwayTS.ThreePA > 0 else 0.0
-
         context['TeamStatHeaderSuffix'] = ' - This Season'
 
-        GameDict['HomeTeamRebounds'] = round(HomeTS.Rebounds * 100 / HomeTS.ReboundChances, 1) if HomeTS.ReboundChances > 0 else 0.0
-        GameDict['AwayTeamRebounds'] = round(AwayTS.Rebounds * 100 / AwayTS.ReboundChances, 1) if AwayTS.ReboundChances > 0 else 0.0
 
         TeamStatBox = {
-            'HomeReboundBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['HomeTeamRebounds'] * 100 / Max_Int(Max_Int(GameDict['HomeTeamRebounds'], GameDict['AwayTeamRebounds']),1))),
-            'AwayReboundBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['AwayTeamRebounds'] * 100 / Max_Int(Max_Int(GameDict['HomeTeamRebounds'], GameDict['AwayTeamRebounds']),1))),
-            'HomeFGBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['HomeFGPercent'] * 100 / Max_Int(Max_Int(GameDict['HomeFGPercent'], GameDict['AwayFGPercent']),1))),
-            'AwayFGBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['AwayFGPercent'] * 100 / Max_Int(Max_Int(GameDict['HomeFGPercent'], GameDict['AwayFGPercent']),1))),
-            'Home3PBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['Home3PTPercent'] * 100 / Max_Int(Max_Int(GameDict['Home3PTPercent'], GameDict['Away3PTPercent']),1))),
-            'Away3PBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['Away3PTPercent'] * 100 / Max_Int(Max_Int(GameDict['Home3PTPercent'], GameDict['Away3PTPercent']),1))),
-            'HomeAssistBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['HomeTeamAssists'] * 100 / Max_Int(Max_Int(GameDict['HomeTeamAssists'], GameDict['AwayTeamAssists']),1))),
-            'AwayAssistBarPercent': Max_Int(PillStatBoxFloor,int(GameDict['AwayTeamAssists'] * 100 / Max_Int(Max_Int(GameDict['HomeTeamAssists'], GameDict['AwayTeamAssists']),1)))
+            'HomeReboundBarPercent': 20,
+            'AwayReboundBarPercent': 40
         }
 
         GameDict['HomeTeamWinChance'] = 1.03 * (((HomeTS.Points - HomeTS.PointsAllowed) * 100.0 / (HomeTS.Possessions + 1)) ** 5 + HomeTS.TeamOverallRating ** 3 )
@@ -682,7 +728,7 @@ def Page_Game(request, WorldID, GameID):
     page = {'PageTitle': AwayTeam.TeamName + ' @ ' + HomeTeam.TeamName, 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     context['page'] = page
     context['userTeam'] = UserTeam
-    context['teamStatBox'] = TeamStatBox
+    context['TeamStatBox'] = TeamStatBox
     context['game'] = GameDict
     context['allTeams'] = allTeams
     context['date'] = CurrentDate(WorldID)
@@ -691,12 +737,19 @@ def Page_Game(request, WorldID, GameID):
     context['boxScore'] = BoxScore
     context['homePlayers'] = HomePlayers
     context['awayPlayers'] = AwayPlayers
+    context['BoxScoreStatGroupings'] = BoxScoreStatGroupings
+
+    print('TeamStatBox', TeamStatBox)
+
+    for Stat in TeamStatBox:
+        print(Stat['StatName'], Stat)
+
 
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
         A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 3, AuditDescription = 'Page_Game')
-    return render(request, 'Hoops/Game.html', context)
+    return render(request, 'HeadFootballCoach/Game.html', context)
 
 def GET_TeamHistory(request, WorldID, TeamID):
 
@@ -878,28 +931,27 @@ def GET_AllTeamStats(request, WorldID):
 
     TeamStats = []
 
-    TeamsInWorld = TeamSeasonDateRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=1).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).values('TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__ConferenceRank', 'NationalRank', 'TeamSeasonID__Wins', 'TeamSeasonID__GamesPlayed','TeamSeasonID__Losses','TeamSeasonID__ConferenceWins', 'TeamSeasonID__ConferenceLosses', 'TeamSeasonID__Points', 'TeamSeasonID__PointsAllowed',  'TeamSeasonID__FGM', 'TeamSeasonID__FGA', 'TeamSeasonID__ThreePM','TeamSeasonID__ThreePA', 'TeamSeasonID__Possessions').order_by('-NationalRank')#sorted(Team.objects.filter(WorldID = CurrentWorld).filter(ConferenceID = conf), key=lambda t: t.CurrentTeamSeason.ConferenceRank)
+    TeamsInWorld = TeamSeasonDateRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=1).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).values('TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__ConferenceRank', 'NationalRank', 'TeamSeasonID__Wins', 'TeamSeasonID__GamesPlayed','TeamSeasonID__Losses','TeamSeasonID__ConferenceWins', 'TeamSeasonID__ConferenceLosses', 'TeamSeasonID__Points', 'TeamSeasonID__PointsAllowed',  'TeamSeasonID__RUS_Yards', 'TeamSeasonID__RUS_TD', 'TeamSeasonID__PAS_Yards','TeamSeasonID__PAS_TD', 'TeamSeasonID__Possessions').order_by('-NationalRank')#sorted(Team.objects.filter(WorldID = CurrentWorld).filter(ConferenceID = conf), key=lambda t: t.CurrentTeamSeason.ConferenceRank)
     for t in TeamsInWorld:
 
         t = dict((key.replace('TeamSeasonID__', '').replace('TeamID__','').replace('_id',''), value) for (key, value) in t.items())
 
         t['TeamIDURL'] = TeamHrefBase + str(t['TeamID'])
         if t['GamesPlayed'] == 0:
-            t['PPG'] = 0
-            t['PAPG'] = 0
-            t['Pace'] = 0
-            t['PointDiffPG'] = 0
-            t['FGPercentage'] = 0
-            t['ThreePointPercentage'] = 0
-            t['ORTG'] = 0
+            t['RUS_Yards'] = 0
+            t['RUS_TD'] = 0
+            t['PAS_Yards'] = 0
+            t['PAS_TD'] = 0
+            t['PPG'] = 0.0
+            t['PAPG'] = 0.0
         else:
-            t['PPG'] = round(1.0 * t['Points'] / t['GamesPlayed'] , 1)
-            t['PAPG'] = round(1.0 * t['PointsAllowed'] / t['GamesPlayed'] , 1)
-            t['Pace'] = round(1.0 * t['Possessions'] / t['GamesPlayed'] , 1)
-            t['PointDiffPG'] = round(1.0 * (t['Points'] - t['PointsAllowed']) / t['GamesPlayed'] , 1)
-            t['FGPercentage'] = str(round(100.0 * t['FGM'] / t['FGA'] , 1)) + '%'
-            t['ThreePointPercentage'] = str(round(100.0 * t['ThreePM'] / t['ThreePA'] , 1)) + '%'
-            t['ORTG'] = round(100.0 * t['Points'] / t['Possessions'] , 1)
+            t['RUS_YardsPG'] = round(1.0 * t['RUS_Yards'] / t['GamesPlayed'] , 1)
+            t['RUS_TDPG'] = round(1.0 * t['RUS_TD'] / t['GamesPlayed'] , 1)
+            t['PAS_YardsPG'] = round(1.0 * t['PAS_Yards'] / t['GamesPlayed'] , 1)
+            t['PAS_TDPG'] = round(1.0 * t['PAS_TD'] / t['GamesPlayed'] , 1)
+            t['Diff'] = round(1.0 * (t['Points'] - t['PointsAllowed']) / t['GamesPlayed'] , 1)
+            t['PPG'] = round(1.0 * (t['Points']) / t['GamesPlayed'] , 1)
+            t['PAPG'] = round(1.0 * (t['PointsAllowed']) / t['GamesPlayed'] , 1)
 
 
         TeamStats.append(t)
@@ -1153,8 +1205,8 @@ def Page_Team(request,WorldID, TeamID):
         ThisGame['HomeTeamRank'] = u.HomeTeamRank
         ThisGame['AwayTeamRank'] = u.AwayTeamRank
 
-        ThisGame['HomeTeamScore'] = HomeTeamGame.TeamScore
-        ThisGame['AwayTeamScore'] = AwayTeamGame.TeamScore
+        ThisGame['HomePoints'] = HomeTeamGame.Points
+        ThisGame['AwayPoints'] = AwayTeamGame.Points
 
         ThisGame['HomeTeamWinningGameBold'] = ''
         ThisGame['AwayTeamWinningGameBold'] = ''
@@ -1186,8 +1238,8 @@ def Page_Team(request,WorldID, TeamID):
         if u.WasPlayed == 1:
             ThisGame['OverviewText'] = 'FINAL'
             if u.HomeTeamID == ThisTeam:
-                ThisGame['GameDisplay'] =  str(HomeTeamGame.TeamScore) +'-'+str(AwayTeamGame.TeamScore)
-                if HomeTeamGame.TeamScore > AwayTeamGame.TeamScore:
+                ThisGame['GameDisplay'] =  str(HomeTeamGame.Points) +'-'+str(AwayTeamGame.Points)
+                if HomeTeamGame.Points > AwayTeamGame.Points:
                     ThisGame['GameResultLetter'] = 'W'
                     ThisGame['HomeTeamWinningGameBold'] = 'TeamWinningGameBold'
                     ThisGame['AwayTeamWinningGameBold'] = 'TeamLosingGame'
@@ -1196,8 +1248,8 @@ def Page_Team(request,WorldID, TeamID):
                     ThisGame['AwayTeamWinningGameBold'] = 'TeamWinningGameBold'
                     ThisGame['HomeTeamWinningGameBold'] = 'TeamLosingGame'
             else:
-                ThisGame['GameDisplay'] =  str(AwayTeamGame.TeamScore) +'-'+str(HomeTeamGame.TeamScore )
-                if HomeTeamGame.TeamScore  < AwayTeamGame.TeamScore:
+                ThisGame['GameDisplay'] =  str(AwayTeamGame.Points) +'-'+str(HomeTeamGame.Points )
+                if HomeTeamGame.Points  < AwayTeamGame.Points:
                     ThisGame['GameResultLetter'] = 'W'
                     ThisGame['AwayTeamWinningGameBold'] = 'TeamWinningGameBold'
                     ThisGame['HomeTeamWinningGameBold'] = 'TeamLosingGame'
@@ -1212,8 +1264,8 @@ def Page_Team(request,WorldID, TeamID):
         else:
             ThisGame['GameDisplay'] = 'Preview'#u.GameDateID.Date
             ThisGame['OverviewText'] = ThisGame['DateShortDisplay']
-            ThisGame['HomeTeamScore'] = ''
-            ThisGame['AwayTeamScore'] = ''
+            ThisGame['HomePoints'] = ''
+            ThisGame['AwayPoints'] = ''
 
         Games.append(ThisGame)
 
@@ -1253,7 +1305,7 @@ def Page_Team(request,WorldID, TeamID):
         end = time.time()
         TimeElapsed = end - start
         A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 8, AuditDescription='Page_team' )
-    return render(request, 'Hoops/Team.html', context)
+    return render(request, 'HeadFootballCoach/Team.html', context)
 
 
 def POST_SimDay(request, WorldID):
@@ -1301,7 +1353,7 @@ def POST_SimDay(request, WorldID):
         print('Simming day ', u)
         date = Calendar.objects.get(WorldID = WorldID, IsCurrent=1)
 
-        GameSet = date.game_set.all()#Game.objects.filter(WorldID = WorldID).filter(GameDateID = date.DateID).filter(WasPlayed = False)
+        GameSet = date.game_set.filter(WasPlayed = 0)#Game.objects.filter(WorldID = WorldID).filter(GameDateID = date.DateID).filter(WasPlayed = False)
         for game in GameSet:
 
             if DoAudit:
@@ -1427,7 +1479,7 @@ def Page_PlayerAnalytics(request):
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent=1)
     AllPlayers = PlayerTeamSeason.objects.filter(SeasonID = CurrentSeason)
 
-    return render(request, 'Hoops/TopPlayers.html', context)
+    return render(request, 'HeadFootballCoach/TopPlayers.html', context)
 
 
 
@@ -1458,11 +1510,11 @@ def Page_Bracket(request, WorldID):
         #
         if HomeTeam is not None:
             if G.TournamentRoundID.TournamentRoundNumber in [1,2]:
-                BracketDict.append({'TeamGameID': ((G.TournamentGameNumber) * 2), 'GameID': G.GameID, 'TournamentgameNumber':G.TournamentGameNumber, 'round': G.TournamentRoundID.TournamentRoundNumber, 'points': IfNull(G.AwayTeamScore,0), 'seed': AwayTeam.CurrentTeamSeason.TournamentSeed, 'name': AwayTeam.Name, 'teamid': AwayTeam.TeamID, 'logourl': AwayTeam.LogoURL, 'color': AwayTeam.TeamColor_Primary_HEX, 'Region': G.TournamentRegionID.TournamentRegionName})
-                BracketDict.append({'TeamGameID': ((G.TournamentGameNumber) * 2)+1, 'GameID': G.GameID, 'TournamentgameNumber':G.TournamentGameNumber,'round': G.TournamentRoundID.TournamentRoundNumber, 'points': IfNull(G.HomeTeamScore,0), 'seed': HomeTeam.CurrentTeamSeason.TournamentSeed, 'name': HomeTeam.Name, 'teamid': HomeTeam.TeamID, 'logourl': HomeTeam.LogoURL, 'color': HomeTeam.TeamColor_Primary_HEX, 'Region': G.TournamentRegionID.TournamentRegionName})
+                BracketDict.append({'TeamGameID': ((G.TournamentGameNumber) * 2), 'GameID': G.GameID, 'TournamentgameNumber':G.TournamentGameNumber, 'round': G.TournamentRoundID.TournamentRoundNumber, 'points': IfNull(G.AwayPoints,0), 'seed': AwayTeam.CurrentTeamSeason.TournamentSeed, 'name': AwayTeam.Name, 'teamid': AwayTeam.TeamID, 'logourl': AwayTeam.LogoURL, 'color': AwayTeam.TeamColor_Primary_HEX, 'Region': G.TournamentRegionID.TournamentRegionName})
+                BracketDict.append({'TeamGameID': ((G.TournamentGameNumber) * 2)+1, 'GameID': G.GameID, 'TournamentgameNumber':G.TournamentGameNumber,'round': G.TournamentRoundID.TournamentRoundNumber, 'points': IfNull(G.HomePoints,0), 'seed': HomeTeam.CurrentTeamSeason.TournamentSeed, 'name': HomeTeam.Name, 'teamid': HomeTeam.TeamID, 'logourl': HomeTeam.LogoURL, 'color': HomeTeam.TeamColor_Primary_HEX, 'Region': G.TournamentRegionID.TournamentRegionName})
             else:
-                BracketDict.append({'TeamGameID': ((G.TournamentGameNumber) * 2), 'GameID': G.GameID, 'TournamentgameNumber':G.TournamentGameNumber,'round': G.TournamentRoundID.TournamentRoundNumber, 'points': IfNull(G.HomeTeamScore,0), 'seed': HomeTeam.CurrentTeamSeason.TournamentSeed, 'name': HomeTeam.Name, 'teamid': HomeTeam.TeamID, 'logourl': HomeTeam.LogoURL, 'color': HomeTeam.TeamColor_Primary_HEX, 'Region': G.TournamentRegionID.TournamentRegionName})
-                BracketDict.append({'TeamGameID': ((G.TournamentGameNumber) * 2) + 1, 'GameID': G.GameID, 'TournamentgameNumber':G.TournamentGameNumber, 'round': G.TournamentRoundID.TournamentRoundNumber, 'points': IfNull(G.AwayTeamScore,0), 'seed': AwayTeam.CurrentTeamSeason.TournamentSeed, 'name': AwayTeam.Name, 'teamid': AwayTeam.TeamID, 'logourl': AwayTeam.LogoURL, 'color': AwayTeam.TeamColor_Primary_HEX, 'Region': G.TournamentRegionID.TournamentRegionName})
+                BracketDict.append({'TeamGameID': ((G.TournamentGameNumber) * 2), 'GameID': G.GameID, 'TournamentgameNumber':G.TournamentGameNumber,'round': G.TournamentRoundID.TournamentRoundNumber, 'points': IfNull(G.HomePoints,0), 'seed': HomeTeam.CurrentTeamSeason.TournamentSeed, 'name': HomeTeam.Name, 'teamid': HomeTeam.TeamID, 'logourl': HomeTeam.LogoURL, 'color': HomeTeam.TeamColor_Primary_HEX, 'Region': G.TournamentRegionID.TournamentRegionName})
+                BracketDict.append({'TeamGameID': ((G.TournamentGameNumber) * 2) + 1, 'GameID': G.GameID, 'TournamentgameNumber':G.TournamentGameNumber, 'round': G.TournamentRoundID.TournamentRoundNumber, 'points': IfNull(G.AwayPoints,0), 'seed': AwayTeam.CurrentTeamSeason.TournamentSeed, 'name': AwayTeam.Name, 'teamid': AwayTeam.TeamID, 'logourl': AwayTeam.LogoURL, 'color': AwayTeam.TeamColor_Primary_HEX, 'Region': G.TournamentRegionID.TournamentRegionName})
 
             MaxTournamentGameNumber = Max_Int(MaxTournamentGameNumber,((G.TournamentGameNumber) * 2) + 1 )
         else:
@@ -1486,8 +1538,8 @@ def Page_Bracket(request, WorldID):
         #BracketData['results'][0].append(str(TR.TournamentRoundNumber) + 'games')
         ThisRoundData = []
         for G in Game.objects.filter(LeagueSeasonID = CurrentSeason).filter(TournamentRoundID=TR).order_by('-TournamentRoundID', '-TournamentRegionID','-GameDateID'):
-            HTS = G.HomeTeamScore
-            ATS = G.AwayTeamScore
+            HTS = G.HomePoints
+            ATS = G.AwayPoints
 
             UserData = {'GameID': G.GameID}
             FlippedUserData = {'GameID': G.GameID}
@@ -1507,7 +1559,7 @@ def Page_Bracket(request, WorldID):
     #print(Teams)
     BracketData = json.dumps(BracketData)
     context = {'page': page, 'BracketData':BracketData,'MaxRound':MaxRound, 'userTeam': UserTeam, 'Teams': Teams, 'date': CurrentDate(WorldID) , 'allTeams': SortedTeams, 'bracketjson': BracketDict}
-    return render(request, 'Hoops/Bracket.html', context)
+    return render(request, 'HeadFootballCoach/Bracket.html', context)
 
 
 
@@ -1542,14 +1594,14 @@ def Page_ManageTeam(request):
 
         if u.WasPlayed == 1:
             if u.HomeTeamID == TeamID:
-                ThisGame['GameDisplay'] =  str(u.HomeTeamScore) +'-'+str(u.AwayTeamScore)
-                if u.HomeTeamScore > u.AwayTeamScore:
+                ThisGame['GameDisplay'] =  str(u.HomePoints) +'-'+str(u.AwayPoints)
+                if u.HomePoints > u.AwayPoints:
                     ThisGame['GameResultLetter'] = 'W'
                 else:
                     ThisGame['GameResultLetter'] = 'L'
             else:
-                ThisGame['GameDisplay'] =  str(u.AwayTeamScore) +'-'+str(u.HomeTeamScore)
-                if u.HomeTeamScore < u.AwayTeamScore:
+                ThisGame['GameDisplay'] =  str(u.AwayPoints) +'-'+str(u.HomePoints)
+                if u.HomePoints < u.AwayPoints:
                     ThisGame['GameResultLetter'] = 'W'
                 else:
                     ThisGame['GameResultLetter'] = 'L'
@@ -1639,7 +1691,7 @@ def Page_ManageTeam(request):
 
     context = {'page': page, 'conferenceStandings': ConferenceRanking, 'playerState': PlayerState, 'userTeam': UserTeam, 'team': team, 'games':Games, 'date': date, 'players':Players, 'allTeams': allTeams, 'record': Record}
 
-    return render(request, 'Hoops/ManageTeam.html', context)
+    return render(request, 'HeadFootballCoach/ManageTeam.html', context)
 
 def Page_Coach(request, CoachID):
 
@@ -1665,7 +1717,7 @@ def Page_Coach(request, CoachID):
     date = CurrentDate(WorldID)
     context['date'] = date
 
-    return render(request, 'Hoops/Coach.html', context)
+    return render(request, 'HeadFootballCoach/Coach.html', context)
 
 def Page_Recruiting(request, WorldID):
 
@@ -1679,7 +1731,7 @@ def Page_Recruiting(request, WorldID):
     UserTeam = GetUserTeam(WorldID)
     TeamID = UserTeam
     TS = TeamSeason.objects.get(WorldID = WorldID, LeagueSeasonID = CurrentSeason, TeamID = TeamID)
-    page = {'PageTitle': 'College Hoops - Recruiting', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    page = {'PageTitle': 'College HeadFootballCoach - Recruiting', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
 
     context = {'page': page, 'userTeam': UserTeam, 'date': date}
     context['Players'] =  Player.objects.filter(WorldID = WorldID).filter(IsRecruit = True).order_by('Recruiting_NationalRank')
@@ -1717,7 +1769,7 @@ def Page_Recruiting(request, WorldID):
 
 
     #print(context)
-    return render(request, 'Hoops/Recruiting.html', context)
+    return render(request, 'HeadFootballCoach/Recruiting.html', context)
 
 
 def Page_Season(request, WorldID, SeasonStartYear):
@@ -1784,9 +1836,9 @@ def Page_Season(request, WorldID, SeasonStartYear):
             HistoricalLeaders.append(u)
 
 
-    page = {'PageTitle': 'College Hoops - '+ str(SeasonStartYear) +' Season', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    page = {'PageTitle': 'College HeadFootballCoach - '+ str(SeasonStartYear) +' Season', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
 
     context = {'page': page, 'userTeam': UserTeam, 'date': date}
     for u in context:
         print(u, context[u])
-    return render(request, 'Hoops/Season.html', context)
+    return render(request, 'HeadFootballCoach/Season.html', context)
