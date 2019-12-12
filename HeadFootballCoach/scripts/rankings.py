@@ -41,6 +41,8 @@ def CalculateRankings(LS, WorldID):
     CurrentWorld = WorldID
     TeamList = sorted(TeamDictStarter, key = lambda k: k.CurrentTeamSeason.RankingTuple, reverse = True)
 
+    Next7Days = CurrentDate.NextDayN(7).DateID
+
     TeamDict = {}
 
     for t in TeamDictStarter:
@@ -61,29 +63,60 @@ def CalculateRankings(LS, WorldID):
         print(t, TeamDict[t])
 
     Counter = 1
+    PrevT = None
     for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['TeamOverallRating'], TeamDict[k]['TeamPrestige']), reverse=False):
-        TeamDict[t]['TeamOverallRatingRank'] = Counter
+        if PrevT is not None and TeamDict[t]['TeamOverallRating'] == TeamDict[PrevT]['TeamOverallRating']:
+            TeamDict[t]['TeamOverallRatingRank'] = TeamDict[PrevT]['TeamOverallRatingRank']
+        else:
+            TeamDict[t]['TeamOverallRatingRank'] = Counter
+
         Counter +=1
+        PrevT = t
 
     Counter = 1
-    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['WinningPercentage'], TeamDict[t]['TeamPrestige']), reverse=False):
-        TeamDict[t]['WinningPercentageRank'] = Counter
+    PrevT = None
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['WinningPercentage'], TeamDict[k]['TeamPrestige']), reverse=False):
+        if PrevT is not None and TeamDict[t]['WinningPercentage'] == TeamDict[PrevT]['WinningPercentage']:
+            TeamDict[t]['WinningPercentageRank'] = TeamDict[PrevT]['WinningPercentageRank']
+        else:
+            TeamDict[t]['WinningPercentageRank'] = Counter
+
         Counter +=1
+        PrevT = t
 
     Counter = 1
-    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['MarginOfVictory'], TeamDict[t]['TeamPrestige']), reverse=False):
-        TeamDict[t]['MarginOfVictoryRank'] = Counter
+    PrevT = None
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['MarginOfVictory'], TeamDict[k]['TeamPrestige']), reverse=False):
+        if PrevT is not None and TeamDict[t]['MarginOfVictory'] == TeamDict[PrevT]['MarginOfVictory']:
+            TeamDict[t]['MarginOfVictoryRank'] = TeamDict[PrevT]['MarginOfVictoryRank']
+        else:
+            TeamDict[t]['MarginOfVictoryRank'] = Counter
+
         Counter +=1
+        PrevT = t
 
     Counter = 1
-    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['Wins'], TeamDict[t]['TeamPrestige']), reverse=False):
-        TeamDict[t]['WinsRank'] = Counter
+    PrevT = None
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['Wins'], TeamDict[k]['TeamPrestige']), reverse=False):
+        if PrevT is not None and TeamDict[t]['Wins'] == TeamDict[PrevT]['Wins']:
+            TeamDict[t]['WinsRank'] = TeamDict[PrevT]['WinsRank']
+        else:
+            TeamDict[t]['WinsRank'] = Counter
+
         Counter +=1
+        PrevT = t
+
 
     Counter = 1
-    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['MediaShares'], TeamDict[t]['TeamPrestige']), reverse=False):
-        TeamDict[t]['MediaSharesRank'] = Counter
+    PrevT = None
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['MediaShares'], TeamDict[k]['TeamPrestige']), reverse=False):
+        if PrevT is not None and TeamDict[t]['MediaShares'] == TeamDict[PrevT]['MediaShares']:
+            TeamDict[t]['MediaSharesRank'] = TeamDict[PrevT]['MediaSharesRank']
+        else:
+            TeamDict[t]['MediaSharesRank'] = Counter
+
         Counter +=1
+        PrevT = t
         TeamDict[t]['RankValue'] = 0
         TeamDict[t]['RankValue'] =  (1000 *TeamDict[t]['NationalChampion'])
         TeamDict[t]['RankValue'] += (.1   * TeamDict[t]['MediaSharesRank'])
@@ -96,10 +129,9 @@ def CalculateRankings(LS, WorldID):
     for t in sorted(TeamDict, key = lambda t: TeamDict[t]['RankValue'], reverse=True):
         TeamDict[t]['Rank'] = Counter
         Counter +=1
-        #print(TeamDict[t])
 
     RankCount = 0
-    for t in sorted(TeamDict, key = lambda k: TeamDict[k]['Rank'], reverse=True):
+    for t in sorted(TeamDict, key = lambda k: TeamDict[k]['Rank'], reverse=False):
         print(t, TeamDict[t])
 
         TS = TeamDict[t]['CurrentTeamSeason']
@@ -113,6 +145,12 @@ def CalculateRankings(LS, WorldID):
 
         TSDR.IsCurrent = True
         TSDR.save()
+
+        NextTeamGame = TS.teamgame_set.filter(GameID__WasPlayed = False).filter(GameID__GameDateID_id__lte = Next7Days).first()
+        if NextTeamGame is not None:
+            NextTeamGame.TeamSeasonDateRankID = TSDR
+            NextTeamGame.save()
+
 
     CurrentSeason.RankingsLastCalculated =CurrentDate.Date
     CurrentSeason.save()

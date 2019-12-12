@@ -46,9 +46,9 @@ def RandomInteger(a,b):
 
 def GameSim(game):
 
-    # PlayType =["ast", "blkAtRim", "blkLowPost", "blkMidRange", "blkTp", "drb", "fgAtRim", "fgAtRimAndOne", "fgLowPost", "fgLowPostAndOne", "fgMidRange", "fgMidRangeAndOne", "foulOut", "ft", "injury", "missAtRim", "missFt", "missLowPost", "missMidRange", "missTp", "orb", "overtime", "pf", "quarter", "stl", "sub", "tov", "tp", "tpAndOne"]
+    # PlayType =["ast", "blkAtRim", "blkLowPost", "blkMidRange", "blkTp", "drb", "KCK_FGAtRim", "KCK_FGAtRimAndOne", "fgLowPost", "fgLowPostAndOne", "KCK_FGMidRange", "KCK_FGMidRangeAndOne", "foulOut", "ft", "injury", "missAtRim", "missFt", "missLowPost", "missMidRange", "missTp", "orb", "overtime", "pf", "quarter", "stl", "sub", "tov", "tp", "tpAndOne"]
     # ShotType = ["atRim" , "ft" , "lowPost" , "midRange" , "threePointer"]
-    # Stat =[ "ast", "ba", "benchTime", "blk", "FieldTime", "drb", "energy", "fg", "fgAtRim", "fgLowPost", "fgMidRange", "fga", "fgaAtRim", "fgaLowPost", "fgaMidRange" , "ft", "fta", "gs", "min", "orb", "pf", "pts", "stl", "tov", "tp", "tpa"]
+    # Stat =[ "ast", "ba", "benchTime", "blk", "FieldTime", "drb", "energy", "fg", "KCK_FGAtRim", "fgLowPost", "KCK_FGMidRange", "KCK_FGA", "KCK_FGAAtRim", "KCK_FGALowPost", "KCK_FGAMidRange" , "ft", "fta", "gs", "min", "orb", "pf", "pts", "stl", "tov", "tp", "tpa"]
     #
     # CompositeRating = ["blocking", "fouling", "passing", "rebounding", "stealing", "turnovers", "usage"]
 
@@ -171,7 +171,7 @@ def GameSim(game):
 
     AllPlayers = {}
 
-    KeysToSave = []#['PlusMinus', 'GamesStarted', 'Points', 'FGA', 'ThreePA', 'FGM', 'ThreePM', 'InsideShotA', 'InsideShotM', 'MidRangeShotA', 'MidRangeShotM', 'Minutes', 'Rebounds', 'OffensiveRebounds','ReboundChances','Assists','Possessions']
+    KeysToSave = []#['PlusMinus', 'GamesStarted', 'Points', 'KCK_FGA', 'ThreePA', 'KCK_FGM', 'ThreePM', 'InsideShotA', 'InsideShotM', 'MidRangeShotA', 'MidRangeShotM', 'Minutes', 'Rebounds', 'OffensiveRebounds','ReboundChances','Assists','Possessions']
 
     SkillMultiplierExclusions = ['PlayerSeasonSkillID', 'PlayerID', 'LeagueSeasonID', 'WorldID', '_state', 'WorldID_id', 'PlayerID_id']
     for P in HomeTeamPlayers+AwayTeamPlayers:
@@ -207,13 +207,13 @@ def GameSim(game):
                 AllPlayers[PlayerID]['PlayerSkills'][Skill] = int(  AllPlayers[PlayerID]['PlayerSkills'][Skill] * SkillMultiplier  )
 
 
-        AllPlayers[PlayerID]['GameStats'] = { 'GamesStarted':0, 'RUS_Yards':0, 'RUS_Carries':0, 'RUS_TD':0, 'PAS_Attempts':0, 'PAS_Completions':0, 'PAS_Yards':0, 'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'GamesPlayed':0, 'GameScore': 0}
+        AllPlayers[PlayerID]['GameStats'] = { 'GamesStarted':0, 'RUS_Yards':0, 'RUS_Carries':0, 'RUS_TD':0, 'PAS_Attempts':0, 'PAS_Completions':0, 'PAS_Yards':0, 'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'PNT_Punts': 0,'GamesPlayed':0, 'GameScore': 0,'KCK_FGA': 0, 'KCK_FGM': 0}
 
         AllPlayers[PlayerID]['Energy'] = 100
 
     GameDict = {}
     for T in [HomeTeam, AwayTeam]:
-        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'FirstDowns':0,'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0,'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast}
+        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts','FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast}
 
 
     TeamPlayers = {HomeTeam:{'PlayersOnField':{},'AllPlayers':{}}, AwayTeam:{'PlayersOnField':{},'AllPlayers':{}}}
@@ -253,6 +253,9 @@ def GameSim(game):
     ChangeInPossesion = False
     TurnoverOnDowns = False
     OffensiveTouchdown = False
+    FinalPeriod = False
+    IsCloseGame = True
+    HalfEndPeriod = False
 
     Down = 1
     YardsToGo = 10
@@ -277,12 +280,23 @@ def GameSim(game):
     for Period in Periods:
         SecondsLeftInPeriod = SecondsInPeriod
 
+        if Period not in [1,2,3]:
+            FinalPeriod = True
+        if Period not in [1,3]:
+            HalfEndPeriod = True
 
         while SecondsLeftInPeriod > 0:
             TurnoverOnDowns = False
             OffensiveTouchdown = False
             SwitchPossession = False
             Kickoff = False
+            Punt = False
+            IsLateGame = False
+            IncompletePass = False
+            FieldGoalMake = False
+            FieldGoalMiss = False
+            SecondsThisPlay = SecondsLeftInPeriod
+
 
             if ConfigureTeams:
                 ConfigureTeams = False
@@ -299,20 +313,141 @@ def GameSim(game):
                 LinebackerTalent    = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] for u in DefensiveTeamPlayers['OLB'] + OffensiveTeamPlayers['MLB']], IntCastFlag=True)
                 SecondaryTalent     = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] for u in DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S']  ], IntCastFlag=True)
 
+                KickerTalent        = OffensiveTeamPlayers['K'][0]
 
 
 
-            PlayChoices = {
-                'Run': 55,
-                'Pass': 45
-            }
+            if FinalPeriod and SecondsLeftInPeriod <= (5 * 60):
+                IsLateGame = True
+            PlayChoices = None
+
+            #2 minute drill
+            if HalfEndPeriod and SecondsLeftInPeriod <= (2 * 60):
+                OffensivePointDifferential = GameDict[OffensiveTeam]['Points'] - GameDict[DefensiveTeam]['Points']
+                #run out clock end of first half
+                if FinalPeriod:
+                    if not IsCloseGame:
+                        if Down == 4:
+                            PlayChoices = {
+                                'Run': 0,
+                                'Pass': 0,
+                                'Punt': 100,
+                                'Field Goal': 0
+                            }
+                        else:
+                            PlayChoices = {
+                                'Run': 80,
+                                'Pass': 20,
+                                'Punt': 0,
+                                'Field Goal': 0
+                            }
+                    else:
+                        if Down == 4:
+                            if BallSpot > 70 and OffensivePointDifferential in [-3, -2, -1, 0, 1, 4,5,6]:
+                                PlayChoices = {'Run': 0,'Pass': 0,'Punt': 0,'Field Goal': 100}
+                            elif OffensivePointDifferential < -3:
+                                if YardsToGo <= 1:
+                                    PlayChoices = {'Run': 90,'Pass': 10,'Punt': 0,'Field Goal': 0}
+                                elif YardsToGo >1 and YardsToGo <= 4:
+                                    PlayChoices = {'Run': 50,'Pass': 50,'Punt': 0,'Field Goal': 0}
+                                else:
+                                    PlayChoices = {'Run': 0,'Pass': 100,'Punt': 0,'Field Goal': 0}
+                            elif YardsToGo <= 2:
+                                PlayChoices = {'Run': 70,'Pass': 15,'Punt': 15,'Field Goal': 0}
+                            else:
+                                PlayChoices = {'Run': 1,'Pass': 9,'Punt': 90,'Field Goal': 0}
+
+                        else:
+                            if SecondsLeftInPeriod <= 20 and BallSpot > 70 and OffensivePointDifferential in [-3, -2, -1, 0]:
+                                PlayChoices = {'Run': 0,'Pass': 0,'Punt': 0,'Field Goal': 100}
+                            elif OffensivePointDifferential > 0:
+                                if Down == 3 and YardsToGo > 5:
+                                    PlayChoices = {'Run': 15,'Pass': 85,'Punt': 0,'Field Goal': 0}
+                                else:
+                                    PlayChoices = {'Run': 85,'Pass': 15,'Punt': 0,'Field Goal': 0}
+                            else:
+                                PlayChoices = {'Run': 30,'Pass': 70,'Punt': 0,'Field Goal': 0}
+                else:
+                    if SecondsLeftInPeriod <= (60) and BallSpot < 30 and Down < 4:
+                        PlayChoices = {'Run': 90,'Pass': 10,'Punt': 0,'Field Goal': 0}
+
+                    elif SecondsLeftInPeriod <= (60) and BallSpot < 30 and Down == 4:
+                        if YardsToGo > 4:
+                            PlayChoices = {'Run': 0,'Pass': 0,'Punt': 100,'Field Goal': 0}
+                        else:
+                            PlayChoices = {'Run': 15,'Pass': 15,'Punt': 70,'Field Goal': 0}
+
+                    elif SecondsLeftInPeriod <= (60) and BallSpot < 70:
+                        if SecondsLeftInPeriod < 20 or Down == 4:
+                            if BallSpot > 95:
+                                PlayChoices = {'Run': 33,'Pass': 33,'Punt': 0,'Field Goal': 33}
+                            else:
+                                PlayChoices = {'Run': 5,'Pass': 25,'Punt': 0,'Field Goal': 70}
+                        PlayChoices = {'Run': 10,'Pass': 90,'Punt': 0,'Field Goal': 0}
+
+                    elif Down < 4:
+                        PlayChoices = {'Run': 10,'Pass': 90,'Punt': 0,'Field Goal': 0}
+                    else:
+                        PlayChoices = {'Run': 0,'Pass': 0,'Punt': 100,'Field Goal': 0}
+
+
+            elif Down == 3:
+                if YardsToGo < 2:
+                    PlayChoices = {'Run': 90,'Pass': 10,'Punt': 0,'Field Goal': 0}
+                elif YardsToGo > 6:
+                    PlayChoices = {'Run': 10,'Pass': 90,'Punt': 0,'Field Goal': 0}
+                else:
+                    PlayChoices = {'Run': 30,'Pass': 70,'Punt': 0,'Field Goal': 0}
+            elif Down == 4:
+                if BallSpot > 70:
+                    if YardsToGo <= 1:
+                        PlayChoices = {'Run': 70,'Pass': 0,'Punt': 0,'Field Goal': 30}
+                    elif YardsToGo > 1 and YardsToGo < 4:
+                        PlayChoices = {'Run': 15,'Pass': 15,'Punt': 0,'Field Goal': 70}
+                    else:
+                        PlayChoices = {'Run': 1,'Pass': 2,'Punt': 0,'Field Goal': 97}
+                elif BallSpot > 55:
+                    if YardsToGo <= 1:
+                        PlayChoices = {'Run': 70,'Pass': 0,'Punt': 30,'Field Goal': 0}
+                    elif YardsToGo > 1 and YardsToGo < 4:
+                        PlayChoices = {'Run': 15,'Pass': 15,'Punt': 70,'Field Goal': 0}
+                    else:
+                        PlayChoices = {'Run': 1,'Pass': 2,'Punt': 97,'Field Goal': 0}
+                elif BallSpot < 30:
+                    if YardsToGo <= 1:
+                        PlayChoices = {'Run': 10,'Pass': 0,'Punt': 90,'Field Goal': 0}
+                    elif YardsToGo > 1 and YardsToGo < 4:
+                        PlayChoices = {'Run': 2,'Pass': 2,'Punt': 96,'Field Goal': 0}
+                    else:
+                        PlayChoices = {'Run': 0,'Pass': 1,'Punt': 99,'Field Goal': 0}
+                else:
+                    if YardsToGo <= 1:
+                        PlayChoices = {'Run': 50,'Pass': 10,'Punt': 40,'Field Goal': 0}
+                    elif YardsToGo > 1 and YardsToGo < 4:
+                        PlayChoices = {'Run': 25,'Pass': 25,'Punt': 50,'Field Goal': 0}
+                    else:
+                        PlayChoices = {'Run': 5,'Pass': 15,'Punt': 80,'Field Goal': 0}
+
+            else:
+                PlayChoices = {'Run': 55,'Pass': 45,'Punt': 0,'Field Goal': 0}
+
+
+            #Not Late Game, far on 4th
+            if PlayChoices is None:
+                print('Could not find play. Period:', Period, 'BallSpot:', BallSpot, 'Down:', Down, 'YardsToGo:', YardsToGo, 'SecondsLeftInPeriod:', SecondsLeftInPeriod)
+                PlayChoices = {'Run': 55,'Pass': 45,'Punt': 0,'Field Goal': 0}
+
+
+
 
             PlayChoice = WeightedProbabilityChoice(PlayChoices, 'Run')
+            if PlayChoice == 'Field Goal':
+                print('Opting for field goal, but can\'t')
 
             if PlayChoice == 'Run':
                 RunningBackPlayerID = OffensiveTeamPlayers['RB'][0]
                 RunGameModifier = (RunningbackTalent + OffensiveLineTalent) / DefensiveLineTalent / 2.0
-                YardsThisPlay = round(NormalTrunc(2.5 + RunGameModifier, 2, -2, 12),0)
+                YardsThisPlay = round(NormalTrunc(4 * RunGameModifier, 2, -0.5, 12),0)
 
                 GameDict[OffensiveTeam]['RUS_Yards'] += YardsThisPlay
                 GameDict[OffensiveTeam]['RUS_Carries'] += 1
@@ -326,17 +461,54 @@ def GameSim(game):
                 PassGameModifier = (QuarterbackTalent + ReceiverTalent + OffensiveLineTalent) / (DefensiveLineTalent + SecondaryTalent) / 1.5
 
                 if (random.uniform(0,1) < (.6 * PassGameModifier)) :
-                    YardsThisPlay = round(NormalTrunc(3 + PassGameModifier, 4, -2, 20),0)
+                    YardsThisPlay = round(NormalTrunc(5 * PassGameModifier, 4, -1, 20),0)
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Completions'] += 1
                     GameDict[OffensiveTeam]['PAS_Completions'] += 1
                 else:
                     YardsThisPlay = 0
+                    IncompletePass = True
 
                 GameDict[OffensiveTeam]['PAS_Yards'] += YardsThisPlay
                 AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Yards'] += YardsThisPlay
 
+            elif PlayChoice == 'Punt':
+                Punt = True
+                GameDict[OffensiveTeam]['PNT_Punts'] += 1
 
-            SecondsThisPlay = int(NormalTrunc(25,4, 12, 35))
+            elif PlayChoice == 'Field Goal':
+                YardsThisPlay = 0
+                KickerPlayerID = OffensiveTeamPlayers['K'][0]
+                AllPlayers[KickerPlayerID]['GameStats']['KCK_FGA'] += 1
+                GameDict[OffensiveTeam]['KCK_FGA'] += 1
+
+                KickGameModifier = KickerTalent / 100.0
+                r = random.uniform(0,1)
+                FieldGoalDistance = 100 - BallSpot + 17
+                KickDifficultModifier = 0
+                if FieldGoalDistance < 25:
+                    KickDifficultModifier += .25
+                elif FieldGoalDistance < 35:
+                    KickDifficultModifier -= .05
+                elif FieldGoalDistance < 45:
+                    KickDifficultModifier -= .25
+                else:
+                    KickDifficultModifier -= .5
+
+                if r < (KickGameModifier + KickDifficultModifier):
+                    AllPlayers[KickerPlayerID]['GameStats']['KCK_FGM'] += 1
+                    GameDict[OffensiveTeam]['KCK_FGM'] += 1
+
+                    FieldGoalMake = True
+                else:
+                    FieldGoalMiss = False
+
+
+
+
+
+            SecondsThisPlay = Min(SecondsThisPlay, int(NormalTrunc(25,4, 12, 35)))
+            if IncompletePass:
+                SecondsThisPlay = Max(8, SecondsThisPlay)
             GameDict[OffensiveTeam]['TimeOfPossession'] += SecondsThisPlay
             SecondsLeftInPeriod -= SecondsThisPlay
 
@@ -350,6 +522,12 @@ def GameSim(game):
 
             #Check for first down
             if YardsToGo < 0:
+
+                if Down == 4:
+                    GameDict[OffensiveTeam]['ThirdDownConversion'] +=1
+                elif Down == 5:
+                    GameDict[OffensiveTeam]['FourthDownConversion'] +=1
+
                 Down = 1
                 YardsToGo = 10
                 GameDict[OffensiveTeam]['FirstDowns'] +=1
@@ -367,14 +545,19 @@ def GameSim(game):
                     GameDict[OffensiveTeam]['PAS_TD'] += 1
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_TD'] += 1
 
+
                 print(OffensiveTeam, ' touchdown! ', OffensiveTeam, ': ', GameDict[OffensiveTeam]['Points'],' , ', DefensiveTeam, ': ', GameDict[DefensiveTeam]['Points'])
                 Kickoff = True
 
+            elif FieldGoalMake:
+                GameDict[OffensiveTeam]['Points'] += 3
+                print(OffensiveTeam, ' field goal! ', OffensiveTeam, ': ', GameDict[OffensiveTeam]['Points'],' , ', DefensiveTeam, ': ', GameDict[DefensiveTeam]['Points'])
             #check for turnover
-            elif Down > 4 and YardsToGo > 0:
+            elif Down > 4 and YardsToGo > 0 and not Punt:
                 TurnoverOnDowns = True
                 print('Turnover on downs - ', OffensiveTeam)
                 GameDict[OffensiveTeam]['Turnovers'] += 1
+
 
 
 
@@ -386,9 +569,25 @@ def GameSim(game):
                 GameEventsToSave.append(GE)
                 SwitchPossession = True
 
+                if abs(GameDict[OffensiveTeam]['Points'] - GameDict[DefensiveTeam]['Points']) > 21:
+                    IsCloseGame = False
+
             elif  TurnoverOnDowns:
                 GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='TO-D', IsScoringPlay = False, HomePoints = GameDict[HomeTeam]['Points'], AwayPoints = GameDict[AwayTeam]['Points'], EventPeriod = Period, EventTime = SecondsLeftInPeriod)
                 GameEventsToSave.append(GE)
+                SwitchPossession = True
+            elif Punt:
+                GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='PUNT', IsScoringPlay = False, HomePoints = GameDict[HomeTeam]['Points'], AwayPoints = GameDict[AwayTeam]['Points'], EventPeriod = Period, EventTime = SecondsLeftInPeriod)
+                GameEventsToSave.append(GE)
+                SwitchPossession = True
+            elif FieldGoalMake:
+                PlayDescription = AllPlayers[KickerPlayerID]['PlayerName'] + ' ' + str(FieldGoalDistance) + ' Yd ' + PlayChoice
+                DriveDescription = str(DrivePlayCount) + ' plays, ' + str(int(BallSpot - DriveStartBallSpot)) + ' yards, ' + SecondsToMinutes(DriveDuration)
+                GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='FG', IsScoringPlay = True, ScoringTeamID=OffensiveTeam,HomePoints = GameDict[HomeTeam]['Points'], AwayPoints = GameDict[AwayTeam]['Points'], EventPeriod = Period, EventTime = SecondsLeftInPeriod, PlayDescription=PlayDescription, DriveDescription=DriveDescription)
+                GameEventsToSave.append(GE)
+                SwitchPossession = True
+                Kickoff = True
+            elif FieldGoalMiss:
                 SwitchPossession = True
 
 
@@ -403,8 +602,19 @@ def GameSim(game):
 
                 if Kickoff:
                     BallSpot = 20
-                else:
+                elif Punt:
+                    OrigBallSpot = BallSpot
+                    BallSpot = BallSpot + 35
                     BallSpot = 100 - BallSpot
+                    if BallSpot < 10:
+                        BallSpot = 20
+                    print('Punt from ', OrigBallSpot, 'to', BallSpot)
+                elif TurnoverOnDowns:
+                    BallSpot = 100 - BallSpot
+                elif FieldGoalMiss:
+                    BallSpot = 100 - BallSpot
+                    if BallSpot < 20:
+                        BallSpot = 20
                 DriveStartBallSpot = BallSpot
                 DrivePlayCount = 0
 
@@ -559,6 +769,13 @@ def GameSim(game):
     GameEvent.objects.bulk_create(GameEventsToSave, ignore_conflicts=True)
     HomeTeamGame.TeamRecord = str(getattr(HomeTeam.CurrentTeamSeason, 'Wins')) + '-' + str(getattr(HomeTeam.CurrentTeamSeason, 'Losses'))
     AwayTeamGame.TeamRecord = str(getattr(AwayTeam.CurrentTeamSeason, 'Wins')) + '-' + str(getattr(AwayTeam.CurrentTeamSeason, 'Losses'))
+
+    if HomeTeamGame.TeamSeasonDateRankID is None:
+        HomeTeamSeasonDateRankID = HomeTeamSeason.teamseasondaterank_set.filter(IsCurrent = 1).first()
+        AwayTeamSeasonDateRankID = AwayTeamSeason.teamseasondaterank_set.filter(IsCurrent = 1).first()
+
+        HomeTeamGame.TeamSeasonDateRankID = HomeTeamSeasonDateRankID
+        AwayTeamGame.TeamSeasonDateRankID = AwayTeamSeasonDateRankID
 
     HomeTeamGame.save()
     AwayTeamGame.save()

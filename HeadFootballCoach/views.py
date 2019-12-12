@@ -266,7 +266,7 @@ def Page_Index(request):
 
     if InTesting:
         World.objects.all().delete()
-        Region.objects.all().delete()
+        #Region.objects.all().delete()
         #System_TournamentRound.objects.all().delete()
         #NameList.objects.all().delete()
 
@@ -585,8 +585,8 @@ def Page_Game(request, WorldID, GameID):
 
 
 
-        PeriodTitleMap = {1: '1st', 2: '2nd', 3:'3rd', 4: '4th', 5: 'OT', 6: '2OT', 7: '3OT'}
-        PeriodNameMap = {1: '1st Quarter', 2: '2nd Quarter', 3:'3rd Quarter', 4: '4th Quarter', 5: 'Overtime 1', 6: 'Overtime 2', 7: 'Overtime 3'}
+        PeriodTitleMap = {1: '1st', 2: '2nd', 3:'3rd', 4: '4th', 5: 'OT', 6: '2OT', 7: '3OT', 8: '4OT', 9: '5OT', 10: '6OT', 11: '7OT'}
+        PeriodNameMap = {1: '1st Quarter', 2: '2nd Quarter', 3:'3rd Quarter', 4: '4th Quarter', 5: 'Overtime 1', 6: 'Overtime 2', 7: 'Overtime 3', 8: 'Overtime 4', 9: 'Overtime 5', 10: 'Overtime 6', 11: 'Overtime 7'}
 
         BoxScore = []
         ScoringSummary = []
@@ -1274,7 +1274,7 @@ def Page_Team(request,WorldID, TeamID):
     ThisTeamConference = ThisTeam.ConferenceID.ConferenceName
 
     allTeams = GetAllTeams(WorldID, 'National', None)
-    conferenceTeams = GetAllTeams(WorldID, 'Conference', ThisTeamConference)
+    conferenceTeams = ThisTeam.ConferenceID.ConferenceStandings(Small=True, HighlightedTeams=[ThisTeam])
 
     TopPlayers = ThisTeam.CurrentTeamSeason.GetTeamLeaders(['GamesPlayed'])
 
@@ -1300,6 +1300,8 @@ def Page_Team(request,WorldID, TeamID):
     context['MaxWeeklyRank'] = MaxWeeklyRank
     context['teamLeaders'] = TopPlayers
     context['TeamHistory'] = TeamHistory
+
+    print(context['conferenceTeams'])
 
     if DoAudit:
         end = time.time()

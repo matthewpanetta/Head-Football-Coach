@@ -585,7 +585,7 @@ input[type=text], input[type=password] {
   overflow: hidden;
 }
 
-.overviewRecentGameDisplay {
+.overviewRecentGameDisplay, .overviewUpcomingGameDisplay {
   height: 80px;
   margin-top: -1px;
 }

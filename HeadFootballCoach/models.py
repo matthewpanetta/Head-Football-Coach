@@ -918,6 +918,11 @@ class TeamSeason(models.Model):
     PNT_Within20 = models.SmallIntegerField(default=0, null=True, blank=True)
 
     Turnovers = models.SmallIntegerField(default=0, null=True, blank=True)
+    ThirdDownAttempt = models.PositiveSmallIntegerField(default=0)
+    ThirdDownConversion = models.PositiveSmallIntegerField(default=0)
+    FourthDownAttempt = models.PositiveSmallIntegerField(default=0)
+    FourthDownConversion = models.PositiveSmallIntegerField(default=0)
+    FirstDowns = models.PositiveSmallIntegerField(default=0)
 
     GamesPlayed = models.PositiveSmallIntegerField(default=0)
     Wins = models.PositiveSmallIntegerField(default=0)
@@ -1024,7 +1029,7 @@ class TeamSeason(models.Model):
 
     @property
     def NationalRank(self):
-        R = TeamSeasonDateRank.objects.filter(TeamSeasonID = self, IsCurrent = True).first()
+        R = self.teamseasondaterank_set.filter(IsCurrent = True).first()
 
         if R is None:
             return None
@@ -1364,10 +1369,19 @@ class Game(models.Model):
 
         Results = {}
 
-        AwayPGS = self.AwayTeamGameID.playergamestat_set.values('RUS_Yards', 'RUS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
-        HomePGS = self.HomeTeamGameID.playergamestat_set.values('RUS_Yards', 'RUS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
+        AwayPGS = self.AwayTeamGameID.playergamestat_set.values('RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
+        HomePGS = self.HomeTeamGameID.playergamestat_set.values('RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
         HomePlayers = []
         AwayPlayers = []
+
+        GameScoreMap = [
+            {'Stat': 'RUS_Yards', 'PointToStatRatio': 1.0 / 10, 'DisplayName': 'rush yards'},
+            {'Stat': 'RUS_TD'   , 'PointToStatRatio': 6.0 / 1,  'DisplayName': 'rush TDs'},
+            {'Stat': 'PAS_Yards', 'PointToStatRatio': 1.0 / 25, 'DisplayName': 'pass yards'},
+            {'Stat': 'PAS_TD',    'PointToStatRatio': 5.0 / 1,  'DisplayName': 'pass TDs'},
+            {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 10, 'DisplayName': 'rec. yards'},
+            {'Stat': 'REC_TD',    'PointToStatRatio': 6.0 / 1,  'DisplayName': 'rec. TDs'},
+        ]
 
 
         HomePlayers = HomePGS[0:3]
@@ -1377,8 +1391,16 @@ class Game(models.Model):
         for P in HomePlayers:
             PlayerName = P['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + P['PlayerTeamSeasonID__PlayerID__PlayerLastName']
             PlayerPosition = P['PlayerTeamSeasonID__PlayerID__Position']
-            PlayerStats = str(P['RUS_Yards']) + ' Rush Yards, ' +str(P['RUS_TD']) + ' Rush TDs'
             PlayerID = P['PlayerTeamSeasonID__PlayerID_id']
+
+            PlayerStats = ''
+            for Stat in sorted(GameScoreMap, key=lambda k: P[k['Stat']] * k['PointToStatRatio'], reverse=True)[:2]:
+                if P[Stat['Stat']] > 0:
+                    PlayerStats += str(P[Stat['Stat']]) + ' ' + Stat['DisplayName'] + ', '
+
+            if len(PlayerStats) >= 2:
+                PlayerStats = PlayerStats[:-2]
+
             Results['HomeTeamPlayer'+str(counter)] = {'PlayerName': PlayerName, 'PlayerPosition': PlayerPosition, 'PlayerStats': PlayerStats, 'PlayerID': PlayerID}
             counter +=1
 
@@ -1386,11 +1408,20 @@ class Game(models.Model):
         for P in AwayPlayers:
             PlayerName = P['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + P['PlayerTeamSeasonID__PlayerID__PlayerLastName']
             PlayerPosition = P['PlayerTeamSeasonID__PlayerID__Position']
-            PlayerStats = str(P['RUS_Yards']) + ' Rush Yards, ' +str(P['RUS_TD']) + ' Rush TDs'
             PlayerID = P['PlayerTeamSeasonID__PlayerID_id']
+
+            PlayerStats = ''
+            for Stat in sorted(GameScoreMap, key=lambda k: P[k['Stat']] * k['PointToStatRatio'], reverse=True)[:2]:
+                if P[Stat['Stat']] > 0:
+                    PlayerStats += str(P[Stat['Stat']]) + ' ' + Stat['DisplayName'] + ', '
+
+            if len(PlayerStats) >= 2:
+                PlayerStats = PlayerStats[:-2]
+
             Results['AwayTeamPlayer'+str(counter)] = {'PlayerName': PlayerName, 'PlayerPosition': PlayerPosition, 'PlayerStats': PlayerStats, 'PlayerID': PlayerID}
             counter +=1
-        print(Results)
+
+
         return Results
 
     @property
@@ -1456,15 +1487,46 @@ class Game(models.Model):
 
     @property
     def AwayTeamRank(self):
-        if self.AwayTeamGameID.TeamSeasonDateRankID is None:
+        TSDR = self.AwayTeamGameID.TeamSeasonDateRankID
+        if TSDR is None:
             R = self.AwayTeamSeasonID.NationalRank
         else:
-            R = self.AwayTeamGameID.TeamSeasonDateRankID.NationalRank
+            R = TSDR.NationalRank
         if R > 25:
             return ''
 
         return '(' + str(R) + ')'
 
+    @property
+    def HomeTeamRankValue(self):
+        if self.HomeTeamGameID.TeamSeasonDateRankID is None:
+            return self.HomeTeamSeasonID.NationalRank
+        else:
+            return self.HomeTeamGameID.TeamSeasonDateRankID.NationalRank
+
+    @property
+    def AwayTeamRankValue(self):
+        TSDR = self.AwayTeamGameID.TeamSeasonDateRankID
+        if TSDR is None:
+            return self.AwayTeamSeasonID.NationalRank
+        else:
+            return TSDR.NationalRank
+
+    @property
+    def WorldPageFilterAttributes(self):
+        Attr = 'AllGame=1 '
+
+        if self.AwayTeamGameID.TeamSeasonDateRankID.NationalRank <= 25 or self.HomeTeamGameID.TeamSeasonDateRankID.NationalRank <= 25:
+            Attr += 'Top25Game=1 '
+        else:
+            Attr += 'Top25Game=0 '
+
+        if self.NationalBroadcast or self.RegionalBroadcast:
+            Attr += 'NationalGame=1 '
+        else:
+            Attr += 'NationalGame=0 '
+
+        return Attr
 
     @property
     def WinningTeam(self):
@@ -1667,6 +1729,11 @@ class TeamGame(models.Model):
     Turnovers = models.SmallIntegerField(default=0, null=True, blank=True)
     TimeOfPossession = models.PositiveSmallIntegerField(default = 0)
     FirstDowns = models.PositiveSmallIntegerField(default=0)
+
+    ThirdDownAttempt = models.PositiveSmallIntegerField(default=0)
+    ThirdDownConversion = models.PositiveSmallIntegerField(default=0)
+    FourthDownAttempt = models.PositiveSmallIntegerField(default=0)
+    FourthDownConversion = models.PositiveSmallIntegerField(default=0)
 
 class PlayerSeasonSkill(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)

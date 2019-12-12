@@ -286,16 +286,16 @@
                       <th>Record</th>
                     </thead>
                     {% for standingTeam in conferenceTeams %}
-                    <tr>
+                    <tr class='{{standingTeam.BoldTeam}}'>
                       <td>
                         <a href="/World/{{page.WorldID}}/Team/{{ standingTeam.TeamID }}/">
                           <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.LogoURL}}" />
-                          {{standingTeam.CurrentTeamSeason.NationalRankDisplay}} {{standingTeam.Name }}
+                          {{standingTeam.NationalRankDisplay}} {{standingTeam.Name }}
                         </a>
                       </td>
-                      <td>{{standingTeam.CurrentTeamSeason.ConferenceWins}}-{{standingTeam.CurrentTeamSeason.ConferenceLosses}}</td>
-                      <td>{{standingTeam.CurrentTeamSeason.ConferenceGB}}</td>
-                      <td>{{standingTeam.CurrentTeamSeason.Wins}}-{{standingTeam.CurrentTeamSeason.Losses}}</td>
+                      <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
+                      <td>{{standingTeam.ConferenceGB}}</td>
+                      <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
                     </tr>
                     {% endfor %}
                   </table>
