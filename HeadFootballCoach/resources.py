@@ -1,4 +1,4 @@
-from .models import Audit,TeamGame, NameList, League, TournamentRegion, System_TournamentRound, TournamentRound, TeamSeasonDateRank, World, Headline, Tournament, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
+from .models import Audit,TeamGame, NameList, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
 import random
 from datetime import timedelta, date
 import numpy
@@ -163,8 +163,9 @@ def CreateSchedule(LS, WorldID):
 
     if LastGame is not None:
         LastGameDate = LastGame.GameDateID
-        TournamentStartDate = LastGameDate.NextDayN(1)
-        CurrentSeason.RegularSeasonEndDateID = TournamentStartDate
+        PlayoffStartDate = LastGameDate.NextDayN(1)
+        CurrentSeason.RegularSeasonEndDateID = PlayoffStartDate
+        CurrentSeason.BowlSelectionDateID = PlayoffStartDate.NextDayN(7)
 
     if FirstGame is not None:
         CurrentSeason.RegularSeasonStartDateID = FirstGame.GameDateID
@@ -623,98 +624,97 @@ def EndRegularSeason(WorldID):
     CalculateRankings(CurrentSeason, CurrentWorld)
 
 
-    if CurrentSeason.TournamentCreated == False:
+    if CurrentSeason.BowlsCreated == False:
 
 
-        #TeamsInTournament = 64
-        NumberOfTeamsInTournament = CurrentLeague.NumberOfTournamentTeams
-        GamesInTournament = NumberOfTeamsInTournament - 1
-        Regions = ['South','East','West','Midwest']
-        NumberOfTournamentRounds = int(log(NumberOfTeamsInTournament,2))
+        #TeamsInPlayoff = 64
+        NumberOfTeamsInPlayoff = CurrentLeague.NumberOfPlayoffTeams
+        GamesInPlayoff = NumberOfTeamsInPlayoff - 1
+        NumberOfPlayoffRounds = int(log(NumberOfTeamsInPlayoff,2))
 
         TeamSeasonList = TeamSeason.objects.filter(WorldID= CurrentWorld).filter(LeagueSeasonID = CurrentSeason)
         for TS in TeamSeasonList:
             if TS.ConferenceRank == 1:
                 TS.ConferenceChampion = True
                 TS.save()
-        for TS in sorted(TeamSeasonList, key=lambda k: k.TournamentBidRankingTuple)[:NumberOfTeamsInTournament]:
-            TS.TournamentBid = True
+        for TS in sorted(TeamSeasonList, key=lambda k: k.PlayoffBidRankingTuple)[:NumberOfTeamsInPlayoff]:
+            TS.PlayoffBid = True
             TS.save()
 
-        TournamentRankCount = 1
-        for TS in sorted(TeamSeasonList.filter(TournamentBid = True), key=lambda k: k.NationalRank):
-            TS.TournamentRank = TournamentRankCount
+        PlayoffRankCount = 1
+        for TS in sorted(TeamSeasonList.filter(PlayoffBid = True), key=lambda k: k.NationalRank):
+            TS.PlayoffRank = PlayoffRankCount
             TS.save()
-            TournamentRankCount +=1
+            PlayoffRankCount +=1
 
-        LastRoundDate = Today.NextDayN(3 * NumberOfTournamentRounds)
+        LastRoundDate = Today.NextDayN(3 * NumberOfPlayoffRounds)
         ThisRoundDate = LastRoundDate.NextDayN(0)
 
         DefaultSeedOrder = [1,8,4,5,3,6,7,2]
         SeedOrder = []
         for u in DefaultSeedOrder:
-            if u <= NumberOfTeamsInTournament / 8:
+            if u <= NumberOfTeamsInPlayoff / 8:
                 SeedOrder.append(u)
         print('Seed order!!', SeedOrder)
-        print('NumberOfTeamsInTournament',NumberOfTeamsInTournament,'GamesInTournament',GamesInTournament,'NumberOfTournamentRounds',NumberOfTournamentRounds)
+        print('NumberOfTeamsInPlayoff',NumberOfTeamsInPlayoff,'GamesInPlayoff',GamesInPlayoff,'NumberOfPlayoffRounds',NumberOfPlayoffRounds)
 
-        T = Tournament(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, TournamentStarted = True, IsPostseason = True, TeamsInTournament = NumberOfTeamsInTournament, RoundsInTournament = NumberOfTournamentRounds)
+        T = Playoff(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, PlayoffStarted = True, IsPostseason = True, TeamsInPlayoff = NumberOfTeamsInPlayoff, RoundsInPlayoff = NumberOfPlayoffRounds)
         T.save()
-        TournamentGameNumber = 1
-        for TournamentRoundNumber in range(1,NumberOfTournamentRounds+1):
-            TournamentRoundDict = {'WorldID': CurrentWorld, 'TournamentID': T, 'RoundStarted': False, 'TournamentRoundNumber': TournamentRoundNumber}
+        PlayoffGameNumber = 1
+        for PlayoffRoundNumber in range(1,NumberOfPlayoffRounds+1):
+            PlayoffRoundDict = {'WorldID': CurrentWorld, 'PlayoffID': T, 'RoundStarted': False, 'PlayoffRoundNumber': PlayoffRoundNumber}
 
-            System_TournamentRound_Clone = System_TournamentRound.objects.get(TournamentRoundNumber = TournamentRoundNumber)
+            System_PlayoffRound_Clone = System_PlayoffRound.objects.get(PlayoffRoundNumber = PlayoffRoundNumber)
 
-            MinGameNumber = System_TournamentRound_Clone.MinGameNumber
-            MaxGameNumber = System_TournamentRound_Clone.MaxGameNumber
-            NumberOfGames = System_TournamentRound_Clone.NumberOfGames
-            NumberOfTeams = System_TournamentRound_Clone.NumberOfTeams
-            IsChampionshipRound = System_TournamentRound_Clone.IsChampionshipRound
+            MinGameNumber = System_PlayoffRound_Clone.MinGameNumber
+            MaxGameNumber = System_PlayoffRound_Clone.MaxGameNumber
+            NumberOfGames = System_PlayoffRound_Clone.NumberOfGames
+            NumberOfTeams = System_PlayoffRound_Clone.NumberOfTeams
+            IsChampionshipRound = System_PlayoffRound_Clone.IsChampionshipRound
 
-            TournamentRoundDict['MinGameNumber'] = MinGameNumber
-            TournamentRoundDict['MaxGameNumber'] = MaxGameNumber
-            TournamentRoundDict['NumberOfGames'] = NumberOfGames
-            TournamentRoundDict['NumberOfTeams'] = NumberOfTeams
-            TournamentRoundDict['IsChampionshipRound'] = IsChampionshipRound
+            PlayoffRoundDict['MinGameNumber'] = MinGameNumber
+            PlayoffRoundDict['MaxGameNumber'] = MaxGameNumber
+            PlayoffRoundDict['NumberOfGames'] = NumberOfGames
+            PlayoffRoundDict['NumberOfTeams'] = NumberOfTeams
+            PlayoffRoundDict['IsChampionshipRound'] = IsChampionshipRound
 
-            if TournamentRoundNumber in [1,2]:
-                TournamentRoundDict['IsFinalFour'] = True
-            if TournamentRoundNumber == NumberOfTournamentRounds:
-                TournamentRoundDict['RoundStarted'] = True
+            if PlayoffRoundNumber in [1,2]:
+                PlayoffRoundDict['IsFinalFour'] = True
+            if PlayoffRoundNumber == NumberOfPlayoffRounds:
+                PlayoffRoundDict['RoundStarted'] = True
             ThisRoundDate = ThisRoundDate.NextDayN(-2)
 
-            TR = TournamentRound(**TournamentRoundDict)
+            TR = PlayoffRound(**PlayoffRoundDict)
             TR.save()
 
-            if TournamentRoundNumber < NumberOfTournamentRounds:
+            if PlayoffRoundNumber < NumberOfPlayoffRounds:
                 for G in range(0,NumberOfGames):
 
-                    NewGame = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, GameDateID = ThisRoundDate, TournamentID = T, GameTime = '19:05', TournamentRoundID = TR, TournamentGameNumber = TournamentGameNumber)
+                    NewGame = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, GameDateID = ThisRoundDate, PlayoffID = T, GameTime = '19:05', PlayoffRoundID = TR, PlayoffGameNumber = PlayoffGameNumber)
                     NewGame.save()
-                    TournamentGameNumber +=1
+                    PlayoffGameNumber +=1
 
-            elif TournamentRoundNumber == NumberOfTournamentRounds:
-                #TournamentGameNumber = GamesInTournament + 1
-                for G in range(1,int(NumberOfTeamsInTournament) + 1):
+            elif PlayoffRoundNumber == NumberOfPlayoffRounds:
+                #PlayoffGameNumber = GamesInPlayoff + 1
+                for G in range(1,int(NumberOfTeamsInPlayoff) + 1):
 
                     HighSeed = G
 
-                    Region, created = TournamentRegion.objects.get_or_create(TournamentRegionName = Regions[G % 4])
+                    Region, created = PlayoffRegion.objects.get_or_create(PlayoffRegionName = Regions[G % 4])
 
                     #HighSeedTeam = TeamSeason.objects.get(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, NationalRank = HighSeed)
                     #LowSeedTeam  = TeamSeason.objects.get(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, NationalRank = LowSeed)
 
-                    HighSeedTeam = TeamSeason.objects.get(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, TournamentRank = HighSeed)
+                    HighSeedTeam = TeamSeason.objects.get(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, PlayoffRank = HighSeed)
 
-                    HighSeedTeam.TournamentRegionID = Region
+                    HighSeedTeam.PlayoffRegionID = Region
 
 
                     HighSeedTeam.save()
 
                 for R in Regions:
-                    Region, created = TournamentRegion.objects.get_or_create(TournamentRegionName = R)
-                    TeamsInRegion = sorted([u for u in TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason, WorldID = CurrentWorld, TournamentRegionID = Region)], key=lambda b: b.NationalRank )
+                    Region, created = PlayoffRegion.objects.get_or_create(PlayoffRegionName = R)
+                    TeamsInRegion = sorted([u for u in TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason, WorldID = CurrentWorld, PlayoffRegionID = Region)], key=lambda b: b.NationalRank )
 
                     TeamPairs = []
 
@@ -728,40 +728,40 @@ def EndRegularSeason(WorldID):
                         HighSeed = TeamPair['HighSeed']
                         LowSeed = TeamPair['LowSeed']
 
-                        GameNum = TournamentGameNumber#AdjustedGameNumberMap[math.ceil(TournamentGameNumber / 4.0)] + ((TournamentGameNumber % 4) * 8)
+                        GameNum = PlayoffGameNumber#AdjustedGameNumberMap[math.ceil(PlayoffGameNumber / 4.0)] + ((PlayoffGameNumber % 4) * 8)
 
-                        HighSeedTeam.TournamentSeed = HighSeed
-                        LowSeedTeam.TournamentSeed  = LowSeed
+                        HighSeedTeam.PlayoffSeed = HighSeed
+                        LowSeedTeam.PlayoffSeed  = LowSeed
 
                         HighSeedTeam.save()
                         LowSeedTeam.save()
 
-                        NewGame = Game(WorldID=CurrentWorld, TournamentRegionID = Region, LeagueSeasonID = CurrentSeason, GameDateID = ThisRoundDate, TournamentID = T, GameTime = '19:05', TournamentRoundID = TR, HomeTeamSeed = HighSeed, AwayTeamSeed = LowSeed, HomeTeamID = HighSeedTeam.TeamID, AwayTeamID = LowSeedTeam.TeamID, TournamentGameNumber = TournamentGameNumber)
+                        NewGame = Game(WorldID=CurrentWorld, PlayoffRegionID = Region, LeagueSeasonID = CurrentSeason, GameDateID = ThisRoundDate, PlayoffID = T, GameTime = '19:05', PlayoffRoundID = TR, HomeTeamSeed = HighSeed, AwayTeamSeed = LowSeed, HomeTeamID = HighSeedTeam.TeamID, AwayTeamID = LowSeedTeam.TeamID, PlayoffGameNumber = PlayoffGameNumber)
                         NewGame.save()
 
-                        TournamentGameNumber +=1
+                        PlayoffGameNumber +=1
 
-            FinalFourRegion, created = TournamentRegion.objects.get_or_create(IsFinalFour = True, TournamentRegionName = 'Final Four')
-            for G in Game.objects.filter(TournamentRoundID = TR).filter(WorldID = CurrentWorld):
-                print(G, G.TournamentRegionID, G.NextTournamentGameID)
-                Region = G.TournamentRegionID
-                ThisGame = G.NextTournamentGameID
+            FinalFourRegion, created = PlayoffRegion.objects.get_or_create(IsFinalFour = True, PlayoffRegionName = 'Final Four')
+            for G in Game.objects.filter(PlayoffRoundID = TR).filter(WorldID = CurrentWorld):
+                print(G, G.PlayoffRegionID, G.NextPlayoffGameID)
+                Region = G.PlayoffRegionID
+                ThisGame = G.NextPlayoffGameID
                 if ThisGame is None:
                     continue
                 else:
                     while ThisGame is not None:
-                        if ThisGame.TournamentRoundID.IsFinalFour and ThisGame.TournamentRegionID is None:
-                            ThisGame.TournamentRegionID = FinalFourRegion
+                        if ThisGame.PlayoffRoundID.IsFinalFour and ThisGame.PlayoffRegionID is None:
+                            ThisGame.PlayoffRegionID = FinalFourRegion
                             ThisGame.save()
-                        elif ThisGame.TournamentRegionID is None:
-                            ThisGame.TournamentRegionID = Region
+                        elif ThisGame.PlayoffRegionID is None:
+                            ThisGame.PlayoffRegionID = Region
                             ThisGame.save()
 
-                        ThisGame = ThisGame.NextTournamentGameID
+                        ThisGame = ThisGame.NextPlayoffGameID
 
 
 
-        TournamentDict = {}
+        PlayoffDict = {}
 
 
         AdjustedGameNumberMap = {
@@ -775,9 +775,9 @@ def EndRegularSeason(WorldID):
             8:	2
         }
 
-        TR = TournamentRound.objects.filter(TournamentID = T, TournamentRoundNumber = NumberOfTournamentRounds).first()
+        TR = PlayoffRound.objects.filter(PlayoffID = T, PlayoffRoundNumber = NumberOfPlayoffRounds).first()
 
-        CurrentSeason.TournamentCreated = True
+        CurrentSeason.BowlsCreated = True
         CurrentSeason.save()
     CurrentSeason.save()
     return None
@@ -857,11 +857,11 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     LS = LeagueSeason(WorldID = WorldID, LeagueID=LeagueID, IsCurrent = True, SeasonStartYear = StartYear, SeasonEndYear = StartYear+1)
 
 
-    LS.CoachCarouselDateID            = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 4).filter(Date__day = 20).first()
-    LS.PlayerDepartureDayDateID       = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 5).filter(Date__day =  1).first()
-    LS.RecruitingSigningDayDateID     = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 5).filter(Date__day = 10).first()
-    LS.IncomingPlayerArrivalDayDateID = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 8).filter(Date__day =  1).first()
-    LS.NextSeasonCutoverDayDateID     = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 9).filter(Date__day =  1).first()
+    LS.CoachCarouselDateID            = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 2).filter(Date__day =  1).first()
+    LS.PlayerDepartureDayDateID       = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 2).filter(Date__day =  1).first()
+    LS.RecruitingSigningDayDateID     = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 5).filter(Date__day =  1).first()
+    LS.IncomingPlayerArrivalDayDateID = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 5).filter(Date__day =  2).first()
+    LS.NextSeasonCutoverDayDateID     = Calendar.objects.filter(WorldID = WorldID).filter(Date__year = StartYear+1).filter(Date__month = 8).filter(Date__day =  1).first()
 
     LS.save()
 
