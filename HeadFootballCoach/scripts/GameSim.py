@@ -213,7 +213,7 @@ def GameSim(game):
 
     GameDict = {}
     for T in [HomeTeam, AwayTeam]:
-        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts','FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast}
+        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts':0,'FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast}
 
 
     TeamPlayers = {HomeTeam:{'PlayersOnField':{},'AllPlayers':{}}, AwayTeam:{'PlayersOnField':{},'AllPlayers':{}}}
@@ -634,6 +634,7 @@ def GameSim(game):
         GameDict[AwayTeam]['Losses'] =1
         game.WinningTeamID = HomeTeam
         game.LosingTeamID = AwayTeam
+        HomeTeamGame.IsWinningTeam = True
         WinningTeam = HomeTeam
         LosingTeam = AwayTeam
 
@@ -642,6 +643,7 @@ def GameSim(game):
         GameDict[AwayTeam]['Wins'] =1
         game.WinningTeamID = AwayTeam
         game.LosingTeamID = HomeTeam
+        AwayTeamGame.IsWinningTeam = True
         WinningTeam = AwayTeam
         LosingTeam = HomeTeam
 

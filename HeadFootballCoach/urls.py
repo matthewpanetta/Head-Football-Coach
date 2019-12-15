@@ -35,6 +35,7 @@ urlpatterns = [
     path('World/<int:WorldID>/Season/<int:SeasonStartYear>/', views.Page_Season, name='Season'),
     path('World/<int:WorldID>/Conference/<int:ConferenceID>/', views.Page_Conference, name='Conference'),
     path('World/<int:WorldID>/Conferences/', views.Page_Conferences, name='Conferences'),
+    path('World/<int:WorldID>/Top25/', views.Page_Top25, name='Top25'),
 
     path('World/<int:WorldID>/Search/<str:SearchInput>/', views.Page_Search, name='Search'),
 

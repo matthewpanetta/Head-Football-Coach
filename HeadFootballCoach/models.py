@@ -490,6 +490,13 @@ class Team(models.Model):
         return 50
 
     @property
+    def HistoricalTeamWins(self):
+        return TeamGame.objects.filter(TeamSeasonID__TeamID = self).filter(IsWinningTeam = True).filter(GameID__WasPlayed=True).count()
+    @property
+    def HistoricalTeamLosses(self):
+        return TeamGame.objects.filter(TeamSeasonID__TeamID = self).filter(IsWinningTeam = False).filter(GameID__WasPlayed=True).count()
+
+    @property
     def luma(self):
         color = self.TeamColor_Secondary_HEX
         R_String = color[0:2]
@@ -1682,6 +1689,7 @@ class TeamGame(models.Model):
     TeamGameID = models.AutoField(primary_key = True)
 
     IsHomeTeam = models.BooleanField(default=False)
+    IsWinningTeam = models.BooleanField(default=False)
     Points = models.PositiveSmallIntegerField(default=None, blank=True, null=True)
     TeamRecord = models.CharField(max_length = 20, default=None, blank=True, null=True)
 

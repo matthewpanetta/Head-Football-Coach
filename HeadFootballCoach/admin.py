@@ -24,7 +24,8 @@ class NameListAdmin(admin.ModelAdmin):
     list_display = [field.name for field in NameList._meta.get_fields() if field.name not in ('tournament', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'TournamentSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class CalendarAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Calendar._meta.get_fields() if field.name not in ('tournament','headline', 'game', 'teamseasondaterank', 'driver', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'TournamentSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    #list_display = [field.name for field in Calendar._meta.get_fields() if field.name not in ('teamseason', 'tournament','headline', 'game', 'teamseasondaterank', 'driver', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'TournamentSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = ('WorldID', 'Date', 'IsCurrent')
 
 class HeadlineAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Headline._meta.get_fields() if field.name not in ('tournament', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'TournamentSeed', 'NationalBroadcast', 'RegionalBroadcast')

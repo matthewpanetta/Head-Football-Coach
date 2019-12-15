@@ -188,12 +188,23 @@ def Page_Audit(request):
 
 
 def Page_Teams(request, WorldID):
+    page = {'PageTitle': 'College Football Teams', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    TeamList = Team.objects.filter(WorldID = WorldID)
 
-    AuditGroups = Audit.objects.values('ManualAuditKey').order_by('ManualAuditKey').annotate(AverageTimeElapsed=Avg('TimeElapsed'), NumberOfSamples=Count('TimeElapsed'), AuditNote=Max('ManualAuditNote'))
+    TeamList = sorted(TeamList, key=lambda T: (T.HistoricalTeamWins, T.HistoricalTeamWins-T.HistoricalTeamLosses), reverse=True)
+    context = {'TeamList': TeamList}
+    context['page'] = page
 
-    context = {'AuditGroups': AuditGroups}
+    return render(request, 'HeadFootballCoach/Teams.html', context)
 
-    return render(request, 'HeadFootballCoach/audit.html', context)
+
+def Page_Top25(request, WorldID):
+
+    TeamList = Team.objects.filter(WorldID = WorldID)
+
+    context = {'': None}
+
+    return render(request, 'HeadFootballCoach/Teams.html', context)
 
 
 def Page_TeamHistory(request, WorldID, TeamID):
