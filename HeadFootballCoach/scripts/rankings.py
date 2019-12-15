@@ -26,7 +26,7 @@ def CalculateConferenceRankings(LS, WorldID):
         ConfRankTracker[t.ConferenceID.ConferenceName]['Counter'] +=1
         RankCount +=1
 
-        if CurrentSeason.PlayoffCreated == False:
+        if CurrentSeason.TournamentCreated == False:
             TS.ConferenceRank = ConfRankTracker[t.ConferenceID.ConferenceName]['Counter']
             TS.ConferenceGB   = round((ConfRankTracker[t.ConferenceID.ConferenceName]['TopTeamRecord']['Wins'] - TS.ConferenceWins + TS.ConferenceLosses - ConfRankTracker[t.ConferenceID.ConferenceName]['TopTeamRecord']['Losses']) / 2.0, 1)
         TS.save()
@@ -56,7 +56,7 @@ def CalculateRankings(LS, WorldID):
         TeamDict[t]['TeamPrestige'] =  t.TeamPrestige
         if TS.GamesPlayed > 0:
             TeamDict[t]['MarginOfVictory'] = round((TS.Points - TS.PointsAllowed) / TS.GamesPlayed,3)
-            TeamDict[t]['Wins'] = 0 - (5 * TS.Losses)
+            TeamDict[t]['Wins'] = TS.Wins - (5 * TS.Losses)
             TeamDict[t]['MediaShares'] = TS.RegionalBroadcast + (5* TS.NationalBroadcast )
             TeamDict[t]['WinningPercentage'] = round(TS.Wins / TS.GamesPlayed,2)
 

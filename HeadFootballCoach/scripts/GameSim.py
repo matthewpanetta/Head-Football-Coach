@@ -1,4 +1,4 @@
-from ..models import World, CoachTeamSeason, Coach, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerSeasonSkill, PlayerGameStat
+from ..models import World, CoachTeamSeason, Coach, Calendar, Headline, Tournament, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerSeasonSkill, PlayerGameStat
 import random
 from .rankings import CalculateRankings
 from ..utilities import WeightedProbabilityChoice, IfNull, SecondsToMinutes, Average, NormalTrunc
@@ -213,7 +213,7 @@ def GameSim(game):
 
     GameDict = {}
     for T in [HomeTeam, AwayTeam]:
-        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts':0,'FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast}
+        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts','FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast}
 
 
     TeamPlayers = {HomeTeam:{'PlayersOnField':{},'AllPlayers':{}}, AwayTeam:{'PlayersOnField':{},'AllPlayers':{}}}
@@ -441,13 +441,12 @@ def GameSim(game):
 
 
             PlayChoice = WeightedProbabilityChoice(PlayChoices, 'Run')
-
+            if PlayChoice == 'Field Goal':
+                print('Opting for field goal, but can\'t')
 
             if PlayChoice == 'Run':
                 RunningBackPlayerID = OffensiveTeamPlayers['RB'][0]
                 RunGameModifier = (RunningbackTalent + OffensiveLineTalent) / DefensiveLineTalent / 2.0
-                RunGameModifier = RunGameModifier ** 3
-
                 YardsThisPlay = round(NormalTrunc(4 * RunGameModifier, 2, -0.5, 12),0)
 
                 GameDict[OffensiveTeam]['RUS_Yards'] += YardsThisPlay
@@ -462,7 +461,6 @@ def GameSim(game):
                 PassGameModifier = (QuarterbackTalent + ReceiverTalent + OffensiveLineTalent) / (DefensiveLineTalent + SecondaryTalent) / 1.5
 
                 if (random.uniform(0,1) < (.6 * PassGameModifier)) :
-                    PassGameModifier = PassGameModifier ** 2
                     YardsThisPlay = round(NormalTrunc(5 * PassGameModifier, 4, -1, 20),0)
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Completions'] += 1
                     GameDict[OffensiveTeam]['PAS_Completions'] += 1
@@ -513,9 +511,6 @@ def GameSim(game):
                 SecondsThisPlay = Max(8, SecondsThisPlay)
             GameDict[OffensiveTeam]['TimeOfPossession'] += SecondsThisPlay
             SecondsLeftInPeriod -= SecondsThisPlay
-
-            if Down == 3:
-                GameDict[OffensiveTeam]['ThirdDownAttempt'] += 1
 
             YardsToGo -= YardsThisPlay
             BallSpot += YardsThisPlay
