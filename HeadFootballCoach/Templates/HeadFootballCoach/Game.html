@@ -225,6 +225,15 @@
                     <td>{{player.PAS_Sacks}} - {{player.PAS_SackYards}}</td>
                   </tr>
                   {% endif %}
+
+                  {%if StatGrouping.StatGroupName == 'Defense' %}
+                  <tr>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
+                    <td>{{player.DEF_Tackles}}</td>
+                    <td>{{player.DEF_Sacks}}</td>
+                    <td>{{player.DEF_INT}}</td>
+                  </tr>
+                  {% endif %}
                   {% endfor %}
                 </table>
               </div>
@@ -257,6 +266,15 @@
                     <td>{{player.PAS_TD}}</td>
                     <td>{{player.PAS_INT}}</td>
                     <td>{{player.PAS_Sacks}} - {{player.PAS_SackYards}}</td>
+                  </tr>
+                  {% endif %}
+
+                  {%if StatGrouping.StatGroupName == 'Defense' %}
+                  <tr>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
+                    <td>{{player.DEF_Tackles}}</td>
+                    <td>{{player.DEF_Sacks}}</td>
+                    <td>{{player.DEF_INT}}</td>
                   </tr>
                   {% endif %}
                   {% endfor %}

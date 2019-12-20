@@ -128,7 +128,7 @@
                       </div>
                       <div class="w3-display-bottomleft teamScheduleGameDashboardGameDisplayBoxScoreText">
                         <a href="/World/{{page.WorldID}}/Game/{{game.GameID}}">
-                          Preview | {{game.DateShortDisplay}}
+                          Preview | {{game.GameDateID.WeekID}} | {{game.GameHeadlineDisplay}}
                         </a>
                       </div>
                     </div>
@@ -176,7 +176,7 @@
                           </a>
                         </div>
                         <div class="w3-display-bottomright teamScheduleGameDashboardGameDisplayBoxScoreText">
-                          {{game.DateShortDisplay}}
+                          {{game.GameDateID.WeekID}}
                         </div>
                       </div>
                     </div>

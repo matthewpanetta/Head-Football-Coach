@@ -25,7 +25,7 @@
           {{team.CurrentTeamSeason.Wins}} - {{team.CurrentTeamSeason.Losses}}
         </span>
         <div class='teamOverviewInfo'>
-          {{team.CityID.CityName}}, {{team.CityID.StateID.StateName}} | {{team.ConferenceName}}
+          {{team.CityID.CityName}}, {{team.CityID.StateID.StateName}} | <a href="/World/{{page.WorldID}}/Conference/{{team.ConferenceID_id}}">{{team.ConferenceID.ConferenceName}}</a>
         </div>
       </div>
       <div class='teamHeaderRankBox' style='border-color:{{team.TeamColor_Primary_HEX}}'>
@@ -69,8 +69,8 @@
                 <div class="w3-card w3-light-grey w3-col s12">
                   <div class="w3-row teamScheduleBar w3-white">
                     {% for game in games%}
-                    <div BoxScoreGameID="{{game.GameID}}" class="w3-col teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
-                      <span class="teamScheduleGameBoxShortDate w3-display-topleft">{{game.DateShortDisplay}}</span>
+                    <div BoxScoreGameID="{{game.GameID}}" class="w3-col s1 teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
+                      <span class="teamScheduleGameBoxShortDate w3-display-topleft">{{game.Week}}</span>
                       <img class='teamScheduleOpponentLogo' src='{{game.OpponentLogoURL}}' />
 
                       <div class="width100 w3-display-bottommiddle">
@@ -206,7 +206,7 @@
                     <div class="w3-col s6 teamTeamLeaderBox">
                       <h2 class='teamTeamLeaderBoxStat'>{{teamLeader.Stat}}</h2>
                       <div class="" style='display:inline-block; margin-top: -10px;'>
-                        <div class="teamTeamLeaderBoxPlayerFace inline-block" id='teamTeamLeaderBoxPlayerFace{{forloop.counter}}' PlayerFaceJson='{{teamLeader.PlayerFaceJson|safe}}' {%if teamLeader.PlayerFaceJson%} style='margin-top:5px;'
+                        <div class="teamTeamLeaderBoxPlayerFace inline-block" id="teamTeamLeaderBoxPlayerFace{{forloop.counter}}" PlayerFaceJson='{{teamLeader.PlayerFaceJson|safe}}' {%if teamLeader.PlayerFaceJson%} style='margin-top:5px;'
                           {% endif %}></div>
                         <div class="inline-block w3-cell-bottom">
                           <div class="">
@@ -411,7 +411,7 @@
                 <table class="w3-table-all">
                   <tbody id='TeamScheduleContainer'>
                     <tr class='w3-hide' id='TeamScheduleRowPlayedGames'>
-                      <td>Date</td>
+                      <td>Week</td>
                       <td>Opponent</td>
                       <td>Record</td>
                       <td>Outcome</td>
@@ -424,14 +424,14 @@
                         <span data-field='OpponentRank'></span>
                         <a href="" href-field='TeamIDURL' data-field='TeamName'></a>
                       </td>
-                      <td>Team Record</td>
+                      <td data-field='GameResultLetter'></td>
                       <td class="w3-col TeamScheduleGameCell">
                         <span data-field='GameResultLetter' class-field='GameResultLetterClass'></span>
-                        <a href="" href-field='GameIDURL' data-field='GameDisplay'></a>
+                        <a href=""  href-field='GameIDURL' data-field='GameDisplay'></a>
                       </td>
                     </tr>
                     <tr class='w3-hide' id='TeamScheduleRowFutureGames'>
-                      <td>Date</td>
+                      <td>Week</td>
                       <td>Opponent</td>
                       <td></td>
                       <td></td>
@@ -480,7 +480,7 @@
                   <th>Season</th>
                   <th>Record</th>
                   <th>Conf Record</th>
-                  <th>Tournament Seed</th>
+                  <th>Playoff Seed</th>
                   <th>Recruit Class Rank</th>
                   <th>Result</th>
                 </thead>
@@ -488,7 +488,7 @@
                   <td class='TeamSeasonHistoryRowCell' data-field='LeagueSeasonDisplay' data-value=""></td>
                   <td class='TeamSeasonHistoryRowCell' data-field='TeamRecord' data-value=""></td>
                   <td class='TeamSeasonHistoryRowCell' data-field='TeamConferenceRecord' data-value=""></td>
-                  <td class='TeamSeasonHistoryRowCell' data-field='TournamentSeed' data-value=""></td>
+                  <td class='TeamSeasonHistoryRowCell' data-field='PlayoffSeed' data-value=""></td>
                   <td class='TeamSeasonHistoryRowCell' data-field='RecruitingClassRank' data-value=""></td>
                   <td class='TeamSeasonHistoryRowCell' data-field='SeasonResultDisplay' data-value=""></td>
                 </tr>

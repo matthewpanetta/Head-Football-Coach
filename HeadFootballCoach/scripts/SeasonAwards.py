@@ -45,3 +45,26 @@ def NationalAwards(WorldID, CurrentSeason):
         CurrentSeason.save()
 
     return None
+
+
+
+def ChoosePlayersOfTheWeek(LS, WorldID):
+    CurrentSeason = LS
+    CurrentDate = Calendar.objects.get(WorldID=WorldID, IsCurrent = 1)
+    CurrentWorld = WorldID
+
+    LastWeek = CurrentDate.NextDayN(-1)
+    LastWeekID = LastWeek.WeekID
+
+    print('LastWeek', LastWeek)
+    PTG = PlayerGameStat.objects.filter(WorldID = CurrentWorld).filter(TeamGameID__GameID__GameDateID__gte = LastWeek.DateID).filter(TeamGameID__GameID__WasPlayed = True).order_by('-GameScore')
+
+    NationalPlayerOfTheWeek = PTG[0].PlayerTeamSeasonID
+
+    Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsNationalAward = True, IsWeekAward = True, PlayerTeamSeasonID = NationalPlayerOfTheWeek, WeekID = LastWeekID)
+    Award.save()
+    for Conf in CurrentWorld.conference_set.all():
+        ConfPTG = PTG.filter(TeamGameID__TeamSeasonID__TeamID__ConferenceID = Conf).order_by('-GameScore')
+        ConferencePlayerOfTheWeek = ConfPTG[0].PlayerTeamSeasonID
+        Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsConferenceAward = True, IsWeekAward = True, ConferenceID = Conf, PlayerTeamSeasonID = ConferencePlayerOfTheWeek, WeekID = LastWeekID)
+        Award.save()

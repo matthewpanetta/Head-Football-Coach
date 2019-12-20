@@ -31,7 +31,7 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert){
   console.log(DataPassthruHolder, PrimaryColor, SecondaryColor,WorldID , PlayerID);
 
   console.log('face before generate', face, TeamJerseyStyle, TeamJerseyInvert);
-  if (face == '' || face == undefined){
+  if (true === false){//(face == '' || face == undefined){
     console.log('face was empty');
     face = generate();
 

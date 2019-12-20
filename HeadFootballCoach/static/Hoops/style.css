@@ -704,6 +704,10 @@ input[type=text], input[type=password] {
   height: 30px;
 }
 
+.conferenceOverviewLogo {
+  width: 50px;
+}
+
 #teamOverviewConferenceStandings {
   font-size: 12px;
   width: 100%;

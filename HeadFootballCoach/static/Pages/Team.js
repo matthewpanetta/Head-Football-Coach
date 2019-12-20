@@ -509,7 +509,7 @@ $(document).ready(function(){
   console.log('in Team.js file')
   //GetTeamHistory(WorldID, TeamID);
   GetTeamRoster(WorldID, TeamID);
-  //GetTeamSchedule(WorldID, TeamID);
+  GetTeamSchedule(WorldID, TeamID);
 
   DrawFaces(TeamJerseyStyle, TeamJerseyInvert);
 

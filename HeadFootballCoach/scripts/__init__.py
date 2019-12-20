@@ -209,14 +209,5 @@ print('------------------------------------------------')
 
 import numpy
 
+
 ResultsDict = {}
-
-def myround(x, base=5):
-    return int(base * round(x/base))
-
-for u in range(0,1000):
-    r = myround(int(numpy.random.normal(50,15)))
-    if r not in ResultsDict:
-        ResultsDict[r] = 0
-    ResultsDict[r] +=1
-    #print(r)

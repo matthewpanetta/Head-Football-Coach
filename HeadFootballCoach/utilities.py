@@ -5,6 +5,16 @@ from math import sin, cos, sqrt, atan2, radians, log
 
 
 
+def NormalVariance(Modifier):
+    Mean = 1
+    Sigma = .1
+    r = NormalTrunc(Mean * Modifier, Sigma, Mean - (5*Sigma), Mean + (5*Sigma))
+    v = (r - Mean) / Sigma * 2
+    if v == 0:
+        v = 0.0000000001
+    g = int(abs(v) - Mean) * (v / abs(v))
+    return g
+
 def SecondsToMinutes(Sec):
     Sec = int(Sec)
     RSecs = str(Sec % 60)
@@ -172,6 +182,8 @@ def MapNumberValuesToLetterGrade(NumberValue):
 
     return 'No Grade'
 
+def UniformTwoDecimals():
+    return round(random.uniform(0,1),2)
 
 def DistanceBetweenCities(CityA, CityB):
 

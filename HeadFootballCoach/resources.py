@@ -1,4 +1,4 @@
-from .models import Audit,TeamGame, NameList, League, TournamentRegion, System_TournamentRound, TournamentRound, TeamSeasonDateRank, World, Headline, Tournament, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
+from .models import Audit,TeamGame,Bowl, NameList, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
 import random
 from datetime import timedelta, date
 import numpy
@@ -8,7 +8,7 @@ from django.db.models import Count
 from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, SelectBroadcast
 from .scripts.SeasonAwards import NationalAwards
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
-from .utilities import DistanceBetweenCities, WeightedProbabilityChoice, NormalBounds, Min, Max
+from .utilities import DistanceBetweenCities, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc
 from math import sin, cos, sqrt, atan2, radians, log
 import time
 
@@ -71,8 +71,9 @@ def CreateSchedule(LS, WorldID):
 
     ScheduleDict = {}
     for t in TeamList:
-        ScheduleDict[t] = {'NonConferenceGames': 0, 'HomeGames': 0, 'AwayGames': 0}
+        ScheduleDict[t] = {'CurrentTeamSeason': t.CurrentTeamSeason, 'NonConferenceGames': 0, 'HomeGames': 0, 'AwayGames': 0, 'WeeksScheduled': [], 'OpposingTeams': []}
 
+    WeeksInSeason = 14
     GamePerTeam = 12
     NonConferenceGames = 4
     ConferenceGames = GamePerTeam - NonConferenceGames
@@ -85,46 +86,10 @@ def CreateSchedule(LS, WorldID):
 
     NonConf_rr = round_robin(TeamList, NonConferenceGames)
 
+    allweeks = range(0,WeeksInSeason)
     weekcount = 0
     GamesToSave = []
     TeamGamesToSave = []
-    for week in NonConf_rr:
-        print('Creating Schedule for week', week)
-        WeekOpenPool = []
-        WeekGameCount = 0
-        WeekGameLen = len(week)
-        for game in week:
-            if WeekGameCount > 200:
-                return None
-            WeekGameCount +=1
-            HomeTeam, AwayTeam = game[0], game[1]
-            if ScheduleDict[HomeTeam]['HomeGames'] > ScheduleDict[AwayTeam]['HomeGames']:
-                HomeTeam, AwayTeam = AwayTeam,HomeTeam
-            if HomeTeam.ConferenceID == AwayTeam.ConferenceID:
-                continue
-
-            if ScheduleDict[HomeTeam]['NonConferenceGames'] > NonConferenceGames or  ScheduleDict[AwayTeam]['NonConferenceGames'] > NonConferenceGames:
-                continue
-
-            ScheduleDict[HomeTeam]['HomeGames'] +=1
-            ScheduleDict[AwayTeam]['AwayGames'] +=1
-            ScheduleDict[HomeTeam]['NonConferenceGames'] +=1
-            ScheduleDict[AwayTeam]['NonConferenceGames'] +=1
-
-            G = Game(WorldID=WorldID, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', GameDateID = StartDay.NextDayN(weekcount * WeekInterval ))
-
-            G.save()
-
-            HomeTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = HomeTeam.CurrentTeamSeason, IsHomeTeam = True,  GameID = G)
-            AwayTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = AwayTeam.CurrentTeamSeason, IsHomeTeam = False, GameID = G)
-
-            TeamGamesToSave.append(HomeTeamGame)
-            TeamGamesToSave.append(AwayTeamGame)
-
-            print(AwayTeamGame, HomeTeamGame)
-            #G.save()
-
-        weekcount +=1
 
 
     ConfWeekCount = weekcount
@@ -136,22 +101,92 @@ def CreateSchedule(LS, WorldID):
 
         print('Creating Schedule for ',Conf)
         TeamsInConference = [u for u in Conf.team_set.all()]
-        Conf_rr = round_robin(TeamsInConference, ConferenceGames)
-        weekcount = 0
+        TeamsInConferenceCount = len(TeamsInConference)
+
+        TeamsInConference += [None] *  (WeeksInSeason - TeamsInConferenceCount)
+        print(Conf, TeamsInConference)
+
+        Conf_rr = round_robin(TeamsInConference, WeeksInSeason)
+        weekcount = WeeksInSeason
         for week in Conf_rr:
             for game in week:
                 HomeTeam, AwayTeam = game[0], game[1]
 
-                G = Game(WorldID=WorldID, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', GameDateID = StartDay.NextDayN((ConfWeekCount+weekcount) * WeekInterval ))
-                G.save()
+                if HomeTeam is not None and AwayTeam is not None:
+                    if len(ScheduleDict[HomeTeam]['WeeksScheduled']) < 8 and len(ScheduleDict[AwayTeam]['WeeksScheduled']) < 8 :
+                        if (ScheduleDict[HomeTeam]['HomeGames'] - ScheduleDict[HomeTeam]['AwayGames']) > (ScheduleDict[AwayTeam]['HomeGames'] - ScheduleDict[AwayTeam]['AwayGames']):
+                            HomeTeam, AwayTeam = AwayTeam, HomeTeam
 
-                HomeTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = HomeTeam.CurrentTeamSeason, IsHomeTeam = True,  GameID = G)
-                AwayTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = AwayTeam.CurrentTeamSeason, IsHomeTeam = False, GameID = G)
-                TeamGamesToSave.append(HomeTeamGame)
-                TeamGamesToSave.append(AwayTeamGame)
+                        PossibleRivalries = TeamRivalry.objects.filter(Team1TeamID = HomeTeam).filter(Team2TeamID = AwayTeam) | TeamRivalry.objects.filter(Team2TeamID = HomeTeam).filter(Team1TeamID = AwayTeam)
+                        TeamRivalryID = PossibleRivalries.first()
+
+                        GD = StartDay.NextDayN(weekcount * WeekInterval )
+                        G = Game(WorldID=WorldID, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', GameDateID = GD, TeamRivalryID=TeamRivalryID)
+                        G.save()
+
+                        HomeTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = ScheduleDict[HomeTeam]['CurrentTeamSeason'], IsHomeTeam = True,  GameID = G)
+                        AwayTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = ScheduleDict[AwayTeam]['CurrentTeamSeason'], IsHomeTeam = False, GameID = G)
+                        TeamGamesToSave.append(HomeTeamGame)
+                        TeamGamesToSave.append(AwayTeamGame)
+
+                        ScheduleDict[HomeTeam]['HomeGames'] +=1
+                        ScheduleDict[AwayTeam]['AwayGames'] +=1
+
+                        ScheduleDict[HomeTeam]['WeeksScheduled'].append(weekcount)
+                        ScheduleDict[AwayTeam]['WeeksScheduled'].append(weekcount)
+
+                        ScheduleDict[HomeTeam]['OpposingTeams'].append(AwayTeam)
+                        ScheduleDict[AwayTeam]['OpposingTeams'].append(HomeTeam)
 
 
-            weekcount +=1
+            weekcount -=1
+
+
+    ScheduleLoopCount = 0
+    UnscheduledTeams = [t for t in ScheduleDict if ScheduleDict[t]['NonConferenceGames'] < NonConferenceGames]
+    while len(UnscheduledTeams) >= 2 and ScheduleLoopCount < 100:
+        rr = round_robin(UnscheduledTeams, 1)
+        for week in rr:
+            for game in week:
+                HomeTeam, AwayTeam = game[0], game[1]
+
+                WeekForGame = [w for w in allweeks if w not in ScheduleDict[HomeTeam]['WeeksScheduled'] and w not in ScheduleDict[AwayTeam]['WeeksScheduled']]
+                if len(WeekForGame) == 0:
+                    continue
+                else:
+                    WeekForGame = random.choice(WeekForGame)
+
+                if HomeTeam is not None and AwayTeam is not None and WeekForGame is not None and HomeTeam.ConferenceID != AwayTeam.ConferenceID and HomeTeam not in ScheduleDict[AwayTeam]['OpposingTeams']:
+                    if (ScheduleDict[HomeTeam]['HomeGames'] - ScheduleDict[HomeTeam]['AwayGames']) > (ScheduleDict[AwayTeam]['HomeGames'] - ScheduleDict[AwayTeam]['AwayGames']):
+                        HomeTeam, AwayTeam = AwayTeam, HomeTeam
+
+                    PossibleRivalries = TeamRivalry.objects.filter(Team1TeamID = HomeTeam).filter(Team2TeamID = AwayTeam) | TeamRivalry.objects.filter(Team2TeamID = HomeTeam).filter(Team1TeamID = AwayTeam)
+                    TeamRivalryID = PossibleRivalries.first()
+
+                    G = Game(WorldID=WorldID, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', GameDateID = StartDay.NextDayN((WeekForGame) * WeekInterval ), TeamRivalryID=TeamRivalryID)
+                    G.save()
+
+                    HomeTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = ScheduleDict[HomeTeam]['CurrentTeamSeason'], IsHomeTeam = True,  GameID = G)
+                    AwayTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = ScheduleDict[AwayTeam]['CurrentTeamSeason'], IsHomeTeam = False, GameID = G)
+                    TeamGamesToSave.append(HomeTeamGame)
+                    TeamGamesToSave.append(AwayTeamGame)
+
+                    ScheduleDict[HomeTeam]['HomeGames'] +=1
+                    ScheduleDict[AwayTeam]['AwayGames'] +=1
+
+                    ScheduleDict[HomeTeam]['WeeksScheduled'].append(WeekForGame)
+                    ScheduleDict[AwayTeam]['WeeksScheduled'].append(WeekForGame)
+
+                    ScheduleDict[HomeTeam]['OpposingTeams'].append(AwayTeam)
+                    ScheduleDict[AwayTeam]['OpposingTeams'].append(HomeTeam)
+
+                    ScheduleDict[HomeTeam]['NonConferenceGames'] += 1
+                    ScheduleDict[AwayTeam]['NonConferenceGames'] += 1
+
+
+        ScheduleLoopCount +=1
+        UnscheduledTeams = [t for t in ScheduleDict if ScheduleDict[t]['NonConferenceGames'] < NonConferenceGames]
+
 
     Game.objects.bulk_create(GamesToSave, ignore_conflicts=True)
     TeamGame.objects.bulk_create(TeamGamesToSave, ignore_conflicts=True)
@@ -163,8 +198,8 @@ def CreateSchedule(LS, WorldID):
 
     if LastGame is not None:
         LastGameDate = LastGame.GameDateID
-        TournamentStartDate = LastGameDate.NextDayN(1)
-        CurrentSeason.RegularSeasonEndDateID = TournamentStartDate
+        PlayoffStartDate = LastGameDate.NextDayN(1)
+        CurrentSeason.RegularSeasonEndDateID = PlayoffStartDate
 
     if FirstGame is not None:
         CurrentSeason.RegularSeasonStartDateID = FirstGame.GameDateID
@@ -217,7 +252,7 @@ def GeneratePlayer(t, s, c, WorldID):
 
     PlayerClass = random.choice(PlayerClasses)
     #PlayerPosition = random.choice(Positions)
-    PlayerNumber = random.randint(1,90)
+    PlayerNumber = 0
 
     PlayerNameTuple  = RandomName()
     PlayerFirstName = PlayerNameTuple[0]
@@ -227,34 +262,37 @@ def GeneratePlayer(t, s, c, WorldID):
 
     PlayerRatings = {}
 
-
-    P=Player(WorldID=WorldID, Class = PlayerClass, PlayerFirstName = PlayerFirstName, PlayerLastName = PlayerLastName, JerseyNumber = PlayerNumber, Height = PlayerHeight, Weight = PlayerWeight, CityID = PlayerCityID, Position = PlayerPosition, IsRecruit = IsRecruit)
-
-
+    PlayerDict = {'WorldID':WorldID, 'Class':PlayerClass, 'PlayerFirstName': PlayerFirstName, 'PlayerLastName':PlayerLastName, 'JerseyNumber':PlayerNumber, 'Height':PlayerHeight, 'Weight': PlayerWeight, 'CityID': PlayerCityID, 'Position': PlayerPosition, 'IsRecruit':IsRecruit}
 
     #PST = PlayerTeamSeason(PlayerID = P, SeasonID = s, TeamID = t)
-    P.LeadershipRating = NormalBounds(55,15,2,98)
-    P.ClutchRating = NormalBounds(55,15,2,98)
-    P.FriendlyRating = NormalBounds(55,15,2,98)
-    P.WorkEthicRating = NormalBounds(55,12,2,98)
-    P.MicrowaveRating = NormalBounds(55,12,2,98)
-    P.ExpressiveRating = NormalBounds(55,12,2,98)
-    P.DesireForWinnerRating = NormalBounds(55,15,2,98)
-    P.LoyaltyRating = NormalBounds(50,20,2,98)
-    P.DesireForPlayingTimeRating = NormalBounds(55,20,2,98)
+    PlayerDict['Personality_LeadershipRating'] = NormalBounds(55,15,2,98)
+    PlayerDict['Personality_ClutchRating'] = NormalBounds(55,15,2,98)
+    PlayerDict['Personality_FriendlyRating'] = NormalBounds(55,15,2,98)
+    PlayerDict['Personality_WorkEthicRating'] = NormalBounds(55,12,2,98)
+    PlayerDict['Personality_ExpressiveRating'] = NormalBounds(55,12,2,98)
+    PlayerDict['Personality_DesireForWinnerRating'] = NormalBounds(55,15,2,98)
+    PlayerDict['Personality_LoyaltyRating'] = NormalBounds(50,20,2,98)
+    PlayerDict['Personality_DesireForPlayingTimeRating'] = NormalBounds(55,20,2,98)
 
-    P.save()
-
-    PlayerSkill = PlayerSeasonSkill(WorldID=WorldID, PlayerID = P, LeagueSeasonID = s)
-
-
-    P.save()
-
-    PlayerSkill.save()
-    PlayerSkill.PopulateOverallRating()
-    PlayerSkill.save()
+    P = Player(**PlayerDict)
 
     return P
+
+def PopulatePlayerSkills(P, s, WorldID):
+    IsRecruit = P.IsRecruit
+    if IsRecruit:
+        OvrMultiplier = .9
+    else:
+        OvrMultiplier = 1
+    PlayerSkill = PlayerSeasonSkill(WorldID=WorldID, PlayerID = P, LeagueSeasonID = s )
+
+    Ovr = OvrMultiplier * NormalTrunc(78,6,60,99)
+    PlayerSkill.OverallRating = Ovr
+
+    for Skill in [field.name for field in PlayerSeasonSkill._meta.get_fields() if '_Rating' in field.name ]:
+        setattr(PlayerSkill, Skill, OvrMultiplier * NormalTrunc(Ovr,6,50,99))
+
+    return PlayerSkill
 
 
 def GenerateCoach(WorldID):
@@ -294,6 +332,24 @@ def CreatePlayers(LS, WorldID):
         'Class': {'Freshman': 12, 'Sophomore':12, 'Junior': 12, 'Senior': 12},
         'Positions': {'QB': 3, 'RB': 3, 'FB':0, 'WR': 5, 'TE': 3, 'OT': 4, 'OG': 4, 'OC': 2, 'DE': 4, 'DT': 3, 'OLB': 4, 'MLB': 3, 'CB': 5, 'S': 4, 'K': 1, 'P': 1}
 
+    }
+    PositionNumbers = {
+        'QB': [(1,18)],
+        'RB': [(20, 35)],
+        'FB': [(20, 59)],
+        'WR': [(1,19), (80, 89)],
+        'TE': [(70,89) ],
+        'OT': [(50,69)],
+        'OG': [(50,69)],
+        'OC': [(50,69)],
+        'DE': [(50,59), (70, 79), (90,99)],
+        'DT': [(50,59), (70, 79), (90,99)],
+        'OLB': [(40,59)],
+        'MLB': [(40,59)],
+        'CB': [(20,45)],
+        'S': [(20,45)],
+        'K': [(60,99)],
+        'P': [(60,99)],
     }
     TeamRosterCompositionNeeds = {}
 
@@ -351,6 +407,10 @@ def CreatePlayers(LS, WorldID):
     Player.objects.bulk_create(PlayerPool, ignore_conflicts=True)
 
     PlayerList = Player.objects.filter(WorldID = WorldID)
+    PlayerSkillPool = []
+    for P in PlayerList:
+        PlayerSkillPool.append(PopulatePlayerSkills(P, CurrentSeason, WorldID))
+    PlayerSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=True)
     PlayerPool = [u for u in PlayerList.values('PlayerID', 'Class', 'Position', 'playerseasonskill__OverallRating').order_by('-playerseasonskill__OverallRating')]#sorted(PlayerPool, key = lambda k: k.CurrentSkills.OverallRating, reverse = True)
 
     PlayersTeamSeasonToSave = []
@@ -398,6 +458,23 @@ def CreatePlayers(LS, WorldID):
         TS.PopulateTeamOverallRating()
         TS.save()
 
+        TakenNumbers = []
+        for PTS in TS.playerteamseason_set.filter(PlayerID__JerseyNumber = 0):
+            P = PTS.PlayerID
+            Pos = P.Position
+            NumberRanges = PositionNumbers[Pos]
+            PlayerNumbers = []
+            for Ranges in NumberRanges:
+                PlayerNumbers += [u for u in range(Ranges[0], Ranges[1]+1) if u not in TakenNumbers]
+            if len(PlayerNumbers) > 0:
+                N = random.choice(PlayerNumbers)
+                P.JerseyNumber = N
+                TakenNumbers.append(N)
+                P.save()
+
+
+
+
     CurrentSeason.PlayersCreated = True
     CurrentSeason.save()
 
@@ -435,6 +512,13 @@ def CreateRecruitingClass(LS, WorldID):
         RecruitPool.append(GeneratePlayer(None, CurrentSeason, 'HS Senior', WorldID))
         #print(PlayerCount, len(RecruitPool))
     Player.objects.bulk_create(RecruitPool, ignore_conflicts=True)
+
+    RecruitPool = Player.objects.filter(WorldID = CurrentWorld).filter(IsRecruit = True)
+
+    RecruitSkillPool = []
+    for P in RecruitPool:
+        RecruitSkillPool.append(PopulatePlayerSkills(P, CurrentSeason, CurrentWorld))
+    PlayerSeasonSkill.objects.bulk_create(RecruitSkillPool, ignore_conflicts=True)
 
 
     RecruitPool = sorted(RecruitPool, key = lambda k: NormalBounds(k.OverallRating,3,10,99), reverse = True)
@@ -522,13 +606,18 @@ def CreateRecruitingClass(LS, WorldID):
     print('Creating RecruitTeamSeasons')
     for Recruit in RecruitPool:
         RecruitCount +=1
-        PlayerStar = WeightedProbabilityChoice(PositionStarList[Recruit.Position], 'QB')
+        Pos = Recruit.Position
+        PlayerStar = 1#WeightedProbabilityChoice(PositionStarList[Pos], 'QB')
         #print(Recruit.PlayerFirstName, Recruit.PlayerLastName, RecruitCount, PlayerStar)
-        PositionalRankingTracker[Recruit.Position] +=1
+        PositionalRankingTracker[Pos] +=1
+
+        for Star in sorted(StarDistribution, key=lambda k: k, reverse=True):
+            if PlayerStar == 1 and StarDistribution[Star] * NumberOfRecruits > RecruitCount:
+                PlayerStar = Star
 
         Recruit.RecruitingStars = PlayerStar
         Recruit.Recruiting_NationalRank = RecruitCount
-        Recruit.Recruiting_NationalPositionalRank = PositionalRankingTracker[Recruit.Position]
+        Recruit.Recruiting_NationalPositionalRank = PositionalRankingTracker[Pos]
 
         RecruitPreferences = RandomRecruitPreference(RecruitPreferenceBase)
 
@@ -619,170 +708,67 @@ def EndRegularSeason(WorldID):
     #put tourney check here
     Today = Calendar.objects.get(WorldID=WorldID, IsCurrent=1)
 
-    print('time to do tourney stuff!')
-    CalculateRankings(CurrentSeason, CurrentWorld)
+    if CurrentSeason.ConferenceChampionshipsCreated == False:
+        ConferenceChampionshipDate = Today.NextDayN(7)
 
+        print('time to do Conf Champ stuff!')
+        CalculateRankings(CurrentSeason, CurrentWorld)
+        for Conf in CurrentWorld.conference_set.all():
+            TeamSeasonList = TeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamID__ConferenceID = Conf).filter(ConferenceRank__lte = 2)
 
-    if CurrentSeason.TournamentCreated == False:
+            HomeTS = TeamSeasonList.filter(ConferenceRank = 1).first()
+            AwayTS = TeamSeasonList.filter(ConferenceRank = 2).first()
 
+            G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', GameDateID = ConferenceChampionshipDate, IsConferenceChampionship=True)
+            G.save()
 
-        #TeamsInTournament = 64
-        NumberOfTeamsInTournament = CurrentLeague.NumberOfTournamentTeams
-        GamesInTournament = NumberOfTeamsInTournament - 1
-        Regions = ['South','East','West','Midwest']
-        NumberOfTournamentRounds = int(log(NumberOfTeamsInTournament,2))
+            HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G)
+            AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G)
 
-        TeamSeasonList = TeamSeason.objects.filter(WorldID= CurrentWorld).filter(LeagueSeasonID = CurrentSeason)
-        for TS in TeamSeasonList:
-            if TS.ConferenceRank == 1:
-                TS.ConferenceChampion = True
-                TS.save()
-        for TS in sorted(TeamSeasonList, key=lambda k: k.TournamentBidRankingTuple)[:NumberOfTeamsInTournament]:
-            TS.TournamentBid = True
-            TS.save()
+            HomeTeamGame.save()
+            AwayTeamGame.save()
 
-        TournamentRankCount = 1
-        for TS in sorted(TeamSeasonList.filter(TournamentBid = True), key=lambda k: k.NationalRank):
-            TS.TournamentRank = TournamentRankCount
-            TS.save()
-            TournamentRankCount +=1
-
-        LastRoundDate = Today.NextDayN(3 * NumberOfTournamentRounds)
-        ThisRoundDate = LastRoundDate.NextDayN(0)
-
-        DefaultSeedOrder = [1,8,4,5,3,6,7,2]
-        SeedOrder = []
-        for u in DefaultSeedOrder:
-            if u <= NumberOfTeamsInTournament / 8:
-                SeedOrder.append(u)
-        print('Seed order!!', SeedOrder)
-        print('NumberOfTeamsInTournament',NumberOfTeamsInTournament,'GamesInTournament',GamesInTournament,'NumberOfTournamentRounds',NumberOfTournamentRounds)
-
-        T = Tournament(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, TournamentStarted = True, IsPostseason = True, TeamsInTournament = NumberOfTeamsInTournament, RoundsInTournament = NumberOfTournamentRounds)
-        T.save()
-        TournamentGameNumber = 1
-        for TournamentRoundNumber in range(1,NumberOfTournamentRounds+1):
-            TournamentRoundDict = {'WorldID': CurrentWorld, 'TournamentID': T, 'RoundStarted': False, 'TournamentRoundNumber': TournamentRoundNumber}
-
-            System_TournamentRound_Clone = System_TournamentRound.objects.get(TournamentRoundNumber = TournamentRoundNumber)
-
-            MinGameNumber = System_TournamentRound_Clone.MinGameNumber
-            MaxGameNumber = System_TournamentRound_Clone.MaxGameNumber
-            NumberOfGames = System_TournamentRound_Clone.NumberOfGames
-            NumberOfTeams = System_TournamentRound_Clone.NumberOfTeams
-            IsChampionshipRound = System_TournamentRound_Clone.IsChampionshipRound
-
-            TournamentRoundDict['MinGameNumber'] = MinGameNumber
-            TournamentRoundDict['MaxGameNumber'] = MaxGameNumber
-            TournamentRoundDict['NumberOfGames'] = NumberOfGames
-            TournamentRoundDict['NumberOfTeams'] = NumberOfTeams
-            TournamentRoundDict['IsChampionshipRound'] = IsChampionshipRound
-
-            if TournamentRoundNumber in [1,2]:
-                TournamentRoundDict['IsFinalFour'] = True
-            if TournamentRoundNumber == NumberOfTournamentRounds:
-                TournamentRoundDict['RoundStarted'] = True
-            ThisRoundDate = ThisRoundDate.NextDayN(-2)
-
-            TR = TournamentRound(**TournamentRoundDict)
-            TR.save()
-
-            if TournamentRoundNumber < NumberOfTournamentRounds:
-                for G in range(0,NumberOfGames):
-
-                    NewGame = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, GameDateID = ThisRoundDate, TournamentID = T, GameTime = '19:05', TournamentRoundID = TR, TournamentGameNumber = TournamentGameNumber)
-                    NewGame.save()
-                    TournamentGameNumber +=1
-
-            elif TournamentRoundNumber == NumberOfTournamentRounds:
-                #TournamentGameNumber = GamesInTournament + 1
-                for G in range(1,int(NumberOfTeamsInTournament) + 1):
-
-                    HighSeed = G
-
-                    Region, created = TournamentRegion.objects.get_or_create(TournamentRegionName = Regions[G % 4])
-
-                    #HighSeedTeam = TeamSeason.objects.get(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, NationalRank = HighSeed)
-                    #LowSeedTeam  = TeamSeason.objects.get(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, NationalRank = LowSeed)
-
-                    HighSeedTeam = TeamSeason.objects.get(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, TournamentRank = HighSeed)
-
-                    HighSeedTeam.TournamentRegionID = Region
-
-
-                    HighSeedTeam.save()
-
-                for R in Regions:
-                    Region, created = TournamentRegion.objects.get_or_create(TournamentRegionName = R)
-                    TeamsInRegion = sorted([u for u in TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason, WorldID = CurrentWorld, TournamentRegionID = Region)], key=lambda b: b.NationalRank )
-
-                    TeamPairs = []
-
-                    for u in SeedOrder:
-                        Pair = {'HighSeedTeam':TeamsInRegion[u - 1], 'HighSeed': u, 'LowSeedTeam': TeamsInRegion[TeamsInRegion.__len__() - u], 'LowSeed': TeamsInRegion.__len__() - u + 1}
-                        print(Pair)
-                        TeamPairs.append(Pair)
-                    for TeamPair in TeamPairs:
-                        HighSeedTeam = TeamPair['HighSeedTeam']
-                        LowSeedTeam = TeamPair['LowSeedTeam']
-                        HighSeed = TeamPair['HighSeed']
-                        LowSeed = TeamPair['LowSeed']
-
-                        GameNum = TournamentGameNumber#AdjustedGameNumberMap[math.ceil(TournamentGameNumber / 4.0)] + ((TournamentGameNumber % 4) * 8)
-
-                        HighSeedTeam.TournamentSeed = HighSeed
-                        LowSeedTeam.TournamentSeed  = LowSeed
-
-                        HighSeedTeam.save()
-                        LowSeedTeam.save()
-
-                        NewGame = Game(WorldID=CurrentWorld, TournamentRegionID = Region, LeagueSeasonID = CurrentSeason, GameDateID = ThisRoundDate, TournamentID = T, GameTime = '19:05', TournamentRoundID = TR, HomeTeamSeed = HighSeed, AwayTeamSeed = LowSeed, HomeTeamID = HighSeedTeam.TeamID, AwayTeamID = LowSeedTeam.TeamID, TournamentGameNumber = TournamentGameNumber)
-                        NewGame.save()
-
-                        TournamentGameNumber +=1
-
-            FinalFourRegion, created = TournamentRegion.objects.get_or_create(IsFinalFour = True, TournamentRegionName = 'Final Four')
-            for G in Game.objects.filter(TournamentRoundID = TR).filter(WorldID = CurrentWorld):
-                print(G, G.TournamentRegionID, G.NextTournamentGameID)
-                Region = G.TournamentRegionID
-                ThisGame = G.NextTournamentGameID
-                if ThisGame is None:
-                    continue
-                else:
-                    while ThisGame is not None:
-                        if ThisGame.TournamentRoundID.IsFinalFour and ThisGame.TournamentRegionID is None:
-                            ThisGame.TournamentRegionID = FinalFourRegion
-                            ThisGame.save()
-                        elif ThisGame.TournamentRegionID is None:
-                            ThisGame.TournamentRegionID = Region
-                            ThisGame.save()
-
-                        ThisGame = ThisGame.NextTournamentGameID
-
-
-
-        TournamentDict = {}
-
-
-        AdjustedGameNumberMap = {
-            1:	1,
-            2:	7,
-            3:	5,
-            4:	3,
-            5:	4,
-            6:	6,
-            7:	8,
-            8:	2
-        }
-
-        TR = TournamentRound.objects.filter(TournamentID = T, TournamentRoundNumber = NumberOfTournamentRounds).first()
-
-        CurrentSeason.TournamentCreated = True
+        CurrentSeason.BowlCreationDateID = ConferenceChampionshipDate
+        CurrentSeason.ConferenceChampionshipsCreated = True
         CurrentSeason.save()
-    CurrentSeason.save()
     return None
 
 
+def CreateBowls(WorldID):
+    CurrentSeason = LeagueSeason.objects.filter(WorldID=WorldID).filter(IsCurrent = 1).first()
+    CurrentLeague = CurrentSeason.LeagueID
+    CurrentWorld = World.objects.get(WorldID=WorldID)
+    #put tourney check here
+    Today = Calendar.objects.get(WorldID=WorldID, IsCurrent=1)
+
+
+    print('CurrentSeason.PlayoffCreated', CurrentSeason.PlayoffCreated)
+    if CurrentSeason.PlayoffCreated == False:
+        BowlDate = Today.NextDayN(7)
+        print('time to do Bowl stuff!')
+        #CalculateRankings(CurrentSeason, CurrentWorld)
+
+        for B in Bowl.objects.filter(WorldID = CurrentWorld).filter(BowlPrestige__gte = 7):
+
+
+            HomeTS = TeamSeasonDateRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).filter(NationalRank = B.Team1Rank).first().TeamSeasonID
+            AwayTS = TeamSeasonDateRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).filter(NationalRank = B.Team2Rank).first().TeamSeasonID
+            HomeTSDR = HomeTS.teamseasondaterank_set.filter(IsCurrent=1).first()
+            AwayTSDR = AwayTS.teamseasondaterank_set.filter(IsCurrent=1).first()
+            print(B.__dict__, HomeTS, AwayTS)
+            G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', GameDateID = BowlDate, BowlID = B)
+            G.save()
+
+            HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G, TeamSeasonDateRankID=HomeTSDR)
+            AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G, TeamSeasonDateRankID=AwayTSDR)
+
+            HomeTeamGame.save()
+            AwayTeamGame.save()
+        #CalculateRankings(CurrentSeason, CurrentWorld)
+
+        CurrentSeason.PlayoffCreated = True
+        CurrentSeason.save()
+    return None
 
 def GraduateSeniors(WorldID, CurrentSeason):
 
@@ -888,7 +874,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
         if DoAudit:
             end = time.time()
             TimeElapsed = end - start
-            A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Create Players')
+            A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='Create Players')
 
         CreateCoaches(LS, WorldID)
 
@@ -900,7 +886,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Create Recruiting Class')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='Create Recruiting Class')
     if DoAudit:
         start = time.time()
 

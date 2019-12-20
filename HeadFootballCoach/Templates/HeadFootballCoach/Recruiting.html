@@ -33,14 +33,11 @@
                       <div class="mock-row-pick-number">
                         {{player.Recruiting_NationalRank}}
                       </div>
-                      <div class="mock-row-logo">
-                        {%if player.RecruitingSignedTeam %}
-                        <a href="/World/{{page.WorldID}}/Team/{{player.RecruitingSignedTeam}}">
-                          <img class='recruitingCommitTeamLogo' src='{{player.RecruitingStatusLogoURL}}' alt=''>
-                        </a>
-                        {% endif %}
+                      <div class="mock-row-logo" PlayerFaceJson="{{player.PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if player.PlayerFaceJson|length > 0%}1{%else%}0{%endif%}">
+
+                        <div class="PlayerFaceDisplay" id="PlayerFaceDisplay{{player.PlayerID}}" style='height: 70px;width: 40px;'></div>
                       </div>
-                      <div class="mock-row-player"><a class="primary-hover" href="/players/cole-anthony">
+                      <div class="mock-row-player"><a class="primary-hover" href="/World/{{page.WorldID}}/Player/{{player.PlayerID}}">
                           <div class="mock-row-name">{{player.FullName}}</div>
                           <div class="mock-row-school-position">{{player.Position}} | {{player.CityID.CityName}}, {{player.CityID.StateID.StateAbbreviation}} </div>
                         </a> </div>
@@ -81,6 +78,13 @@
                           <div class="stat pts">
                             <div class="value stat-quality good4">27.4</div>
                             <div class="label">pts</div>
+                          </div>
+                          <div class="stat pts">
+                            {%if player.RecruitingSignedTeam %}
+                            <a href="/World/{{page.WorldID}}/Team/{{player.RecruitingSignedTeam}}">
+                              <img class='recruitingCommitTeamLogo' src='{{player.RecruitingStatusLogoURL}}' alt=''>
+                            </a>
+                            {% endif %}
                           </div>
                           <div class="stat reb">
                             <div class="value stat-quality good4">10.6</div>
@@ -360,6 +364,8 @@
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{% static 'facesjs-master/src/generate.js' %}"></script>
+<script src="{% static 'Pages/Recruiting.js' %}" type="module"></script>
   <script>
 
   function IntToHeight(Val){

@@ -4,7 +4,7 @@ import random
 import time
 from django.db.models import Max
 from django.shortcuts import get_object_or_404
-from .utilities import GetValuesOfObject, MapNumberValuesToLetterGrade, Average
+from .utilities import GetValuesOfObject, MapNumberValuesToLetterGrade, Average, UniformTwoDecimals
 # Create your models here.
 
 
@@ -77,9 +77,9 @@ class System_PlayerArchetypeRatingModifier(models.Model):
     KickReturn_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
 
 
-class System_TournamentRound(models.Model):
-    TournamentRoundID = models.AutoField(primary_key = True)
-    TournamentRoundNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
+class System_PlayoffRound(models.Model):
+    PlayoffRoundID = models.AutoField(primary_key = True)
+    PlayoffRoundNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
     MinGameNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
     MaxGameNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
     NumberOfGames = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
@@ -92,28 +92,28 @@ class System_TournamentRound(models.Model):
             app_label = 'HeadFootballCoach'
     def __str__(self):
 
-        return 'Round ' + str(self.TournamentRoundNumber) + ' in tournament, with ' + str(self.NumberOfGames) + ' games'
+        return 'Round ' + str(self.PlayoffRoundNumber) + ' in Playoff, with ' + str(self.NumberOfGames) + ' games'
 
     @property
     def NextRound(self):
-        return System_TournamentRound.objects.filter(TournamentRoundNumber = self.TournamentRoundNumber - 1).first()
+        return System_PlayoffRound.objects.filter(PlayoffRoundNumber = self.PlayoffRoundNumber - 1).first()
 
-class System_TournamentGame(models.Model):
-    TournamentGameID = models.AutoField(primary_key = True)
+class System_PlayoffGame(models.Model):
+    PlayoffGameID = models.AutoField(primary_key = True)
 
-    ThisTournamentRoundID = models.ForeignKey(System_TournamentRound, on_delete=models.CASCADE,related_name="ThisTournamentRoundID"  )
+    ThisPlayoffRoundID = models.ForeignKey(System_PlayoffRound, on_delete=models.CASCADE,related_name="ThisPlayoffRoundID"  )
 
-    NextTournamentRoundID = models.ForeignKey(System_TournamentRound, on_delete=models.CASCADE,related_name="NextTournamentRoundID" ,blank=True, null=True, default=None )
-    NextTournamentGameID = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True, default=None)
+    NextPlayoffRoundID = models.ForeignKey(System_PlayoffRound, on_delete=models.CASCADE,related_name="NextPlayoffRoundID" ,blank=True, null=True, default=None )
+    NextPlayoffGameID = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True, default=None)
 
     GameNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
-    TournamentGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
-    NextTournamentGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
+    PlayoffGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
+    NextPlayoffGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
     def __str__(self):
-        return 'Game number ' + str(self.GameNumber) + ' in tournament, in round ' + str(self.ThisTournamentRoundID.TournamentRoundNumber)
+        return 'Game number ' + str(self.GameNumber) + ' in Playoff, in round ' + str(self.ThisPlayoffRoundID.PlayoffRoundNumber)
 
     #############################
 
@@ -302,7 +302,7 @@ class League(models.Model):
     GameStructureID = models.ForeignKey(GameStructure, on_delete=models.CASCADE)
 
 
-    NumberOfTournamentTeams = models.PositiveSmallIntegerField(default = 64)
+    NumberOfPlayoffTeams = models.PositiveSmallIntegerField(default = 64)
     HomeFieldAdvantage      = models.DecimalField(default=1.02, max_digits=8, decimal_places=5 )
     PlayTimeTalentFactor    = models.DecimalField(default=5.0, max_digits=8, decimal_places=5 )
 
@@ -310,18 +310,30 @@ class League(models.Model):
 
     LeagueLogoURL = models.CharField(max_length = 200, default='')
 
-    LEAGUETYPE_CHOICES = [('1','Pro'), ('2','International'), ('3', 'College'), ('4', 'High School'), ('5', 'International Tournament'), ('6', 'Amateur Tournament')]
+    LEAGUETYPE_CHOICES = [('1','Pro'), ('2','International'), ('3', 'College'), ('4', 'High School'), ('5', 'International Playoff'), ('6', 'Amateur Playoff')]
 
     LeagueType = models.CharField(max_length=19, choices=LEAGUETYPE_CHOICES, default='1')
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
+class Week(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    WeekID = models.AutoField(primary_key=True)
+
+    WeekNumber = models.PositiveSmallIntegerField(default = 0)
+
+    def __str__(self):
+        return 'Week ' + str(self.WeekNumber)
+
+
 class Calendar(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
     DateID = models.AutoField(primary_key=True)
     Date = models.DateField()
     IsCurrent = models.BooleanField(default = False)
+
+    WeekID = models.ForeignKey(Week, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
     BroadcastSelected = models.BooleanField(default=False)
 
@@ -393,25 +405,29 @@ class Conference(models.Model):
     ConferenceName = models.CharField(max_length = 40, default='')
     ConferenceAbbreviation = models.CharField(max_length = 10, default='')
     ConferencePrestige = models.PositiveSmallIntegerField(default = 0)
+    ConferenceLogoURL = models.CharField(max_length = 99, default=None, null=True, blank=True)
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
-    def ConferenceStandings(self, Small=True, HighlightedTeams=None):
+    def ConferenceStandings(self, Small=True, HighlightedTeams=[]):
         Standings = []
         Teams = self.team_set.all()
         for T in Teams:
             CTS = T.CurrentTeamSeason
-            TeamDict = {'Name': T.Name,'NationalRank': CTS.NationalRank,'NationalRankDisplay': CTS.NationalRankDisplay,'ConferenceWins': CTS.ConferenceWins,'ConferenceLosses': CTS.ConferenceLosses,'ConferenceGB': CTS.ConferenceGB,'Wins': CTS.Wins,'Losses': CTS.Losses, 'LogoURL': T.TeamLogoURL, 'TeamID': T.TeamID, 'BoldTeam': ''}
+            TeamDict = {'Name': T.Name,'NationalRank': CTS.NationalRank,'NationalRankDisplay': CTS.NationalRankDisplay,'ConferenceWins': CTS.ConferenceWins,'ConferenceLosses': CTS.ConferenceLosses,'ConferenceGB': CTS.ConferenceGB,'ConferenceRank': CTS.ConferenceRank,'Wins': CTS.Wins,'Losses': CTS.Losses, 'LogoURL': T.TeamLogoURL, 'TeamID': T.TeamID, 'BoldTeam': ''}
             if Small:
                 TeamDict['Name'] = T.TeamName
 
             if T in HighlightedTeams:
                 TeamDict['BoldTeam'] = 'bold'
             Standings.append(TeamDict)
-        Standings = sorted(Standings, key=lambda k: (k['ConferenceGB'], k['NationalRank']))
+        Standings = sorted(Standings, key=lambda k: k['ConferenceRank'])
 
         return Standings
+
+    def __str__(self):
+        return self.ConferenceName
 
 
 class Team(models.Model):
@@ -429,7 +445,7 @@ class Team(models.Model):
     TeamLogoURL = models.CharField(max_length = 99, default=None, null=True, blank=True)
     TeamColor_Primary_HEX = models.CharField(max_length=6)
     TeamColor_Secondary_HEX = models.CharField(max_length=6)
-    TeamJerseyStyle = models.CharField(max_length = 20, default='jersey2')
+    TeamJerseyStyle = models.CharField(max_length = 20, default='football')
     TeamJerseyInvert = models.BooleanField( default=False)
     ConferenceID   = models.ForeignKey(Conference, on_delete=models.CASCADE, blank=True, null=True, default=None)
     TeamPrestige = models.PositiveSmallIntegerField(default = 0)
@@ -515,6 +531,21 @@ class Team(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
+
+
+class TeamRivalry(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    TeamRivalryID = models.AutoField(primary_key = True)
+
+    Team1TeamID = models.ForeignKey(Team, on_delete=models.CASCADE,related_name="Team1"  )
+    Team2TeamID = models.ForeignKey(Team, on_delete=models.CASCADE,related_name="Team2"  )
+
+    RivalryName = models.CharField(max_length = 100, default=None, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.Team1TeamID) + ' vs. ' + str(self.Team2TeamID) + ' in the ' + str(self.RivalryName)
+
+
 class TeamConference(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
     TeamConferenceID = models.AutoField(primary_key=True)
@@ -523,6 +554,19 @@ class TeamConference(models.Model):
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
+
+class Bowl(models.Model):
+    WorldID  = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
+
+    BowlID   = models.AutoField(primary_key = True)
+    BowlName = models.CharField(max_length=50)
+    Team1Rank = models.PositiveSmallIntegerField(default = 0)
+    Team2Rank = models.PositiveSmallIntegerField(default = 0)
+    IsNationalChampionship = models.BooleanField(default=False)
+    BowlPrestige = models.PositiveSmallIntegerField(default = 0)
+
+    def __str__(self):
+        return self.BowlName
 
 class Player(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
@@ -533,11 +577,11 @@ class Player(models.Model):
     Class                   = models.CharField(max_length= 20)
     IsCurrentlyRedshirted   = models.BooleanField(default=False)
     WasPreviouslyRedshirted = models.BooleanField(default=False)
-    JerseyNumber            = models.PositiveSmallIntegerField(default = 1)
+    JerseyNumber            = models.PositiveSmallIntegerField(default = 0)
     Height                  = models.PositiveSmallIntegerField(default = 60) #inches
     Weight                  = models.PositiveSmallIntegerField(default = 185) #pounds
     CityID                  = models.ForeignKey(City, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    Position                = models.CharField(max_length = 2, default='PG')
+    Position                = models.CharField(max_length = 3, default='QB')
 
     PlayerFaceJson          = models.CharField(max_length=2000, default='' )
 
@@ -585,6 +629,208 @@ class Player(models.Model):
 
     def __str__(self):
         return self.PlayerFirstName + ' ' + self.PlayerLastName + ' #' + str(self.JerseyNumber)
+
+
+    @property
+    def CurrentTeamSeason(self):
+        CurrentPTS = self.playerteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+        if CurrentPTS is not None:
+            return CurrentPTS.TeamSeasonID
+        return None
+
+    @property
+    def TeamJerseyStyle(self):
+
+        # TS = self.CurrentTeamSeason
+        # if TS is not None:
+        #     return str(TS.TeamID.TeamJerseyStyle)
+
+        return 'football'
+
+    @property
+    def TeamJerseyInvert(self):
+
+        TS = self.CurrentTeamSeason
+        if TS is not None:
+            return str(TS.TeamID.TeamJerseyInvert)
+
+        return 'True'
+
+    def GeneratePlayerFaceJSon(self):
+        colors = [{
+            'skin': "#f2d6cb",
+            'hair': [
+              "#272421",
+              "#3D2314",
+              "#5A3825",
+              "#CC9966",
+              "#2C1608",
+              "#B55239",
+              "#e9c67b",
+              "#D7BF91"
+            ]
+          },
+          {
+            'skin': "#ddb7a0",
+            'hair': [
+              "#272421",
+              "#3D2314",
+              "#5A3825",
+              "#CC9966",
+              "#2C1608",
+              "#B55239",
+              "#e9c67b",
+              "#D7BF91"
+            ]
+          },
+          {
+            'skin': "#ce967d",
+            'hair': ["#272421", "#423125"]
+          },
+          {
+            'skin': "#bb876f",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#aa816f",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#a67358",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#ad6453",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#74453d",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#a67358",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#ad6453",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#74453d",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#5c3937",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#a67358",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#ad6453",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#74453d",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#5c3937",
+            'hair': ["#272421"]
+          }
+        ]
+        svgsIndex = {
+          "accessories": ["headband-high", "headband", "none"],
+          "body": ["body"],
+          "ear": ["ear1", "ear2", "ear3"],
+          "eye": ["eye1", "eye2", "eye3", "eye4", "eye5", "eye6", "eye7", "eye8", "eye9"],
+          "eyeLine": ["line1", "line2", "line3", "line4", "line5", "line6", "none"],
+          "eyebrow": ["eyebrow1", "eyebrow10", "eyebrow11", "eyebrow12", "eyebrow2", "eyebrow3", "eyebrow4", "eyebrow5", "eyebrow6", "eyebrow7", "eyebrow8", "eyebrow9"],
+          "facialHair": ["beard1", "beard2", "fullgoatee", "goatee-thin", "goatee1-stache", "goatee1", "goatee2", "goatee3", "goatee4", "goatee5", "goatee6", "goatee7", "goatee8", "handlebar", "honest-abe-stache", "honest-abe", "mustache-thin", "mustache1", "none", "soul-stache", "soul"],
+          "glasses": ["facemask", "glasses1-primary", "glasses1-secondary", "glasses2-black", "glasses2-primary", "glasses2-secondary", "none"],
+          "hair": ["afro", "bald", "cornrows", "crop", "high", "juice", "messy-short", "middle-part", "parted", "short-fade", "short", "short2", "spike", "spike2"],
+          "head": ["head1", "head2", "head3", "head4", "head5", "head6", "head7", "head8"],
+          "jersey": [ "football"],
+          "miscLine": ["chin1", "chin2",  "none"],#"forehead1", "forehead2", "forehead3", "forehead4", "forehead5",
+          "mouth": ["angry", "closed", "mouth", "side", "smile-closed", "smile", "smile2", "smile3", "straight"],
+          "nose": ["honker", "nose1", "nose2", "nose3", "nose4", "nose5", "nose6", "nose7", "nose8", "pinocchio"],
+          "smileLine": ["line1", "line2", "line3", "line4", "none"]
+        }
+
+        eyeAngle = round(random.uniform(0,25) - 10, 0)
+
+        palette = random.choice(colors)
+        skinColor = palette['skin']
+        hairColor = random.choice(palette['hair'])
+        isFlipped = 'false' if random.uniform(0,1) < 0.5 else 'true'
+
+        face = {
+        'fatness': round(random.uniform(0,1), 2),
+        'body': {
+          'id': random.choice(svgsIndex['body']),
+          'color': skinColor
+        },
+        'jersey': {
+          'id': random.choice(svgsIndex['jersey'])
+        },
+        'ear': {
+          'id': random.choice(svgsIndex['ear']),
+          'size': round(random.uniform(0,.5) + .75,2)
+        },
+        'head': {
+          'id': random.choice(svgsIndex['head']),
+          'shave': 'rgba(0,0,0,' + str(round(random.uniform(0,1) / 5.0 if random.uniform(0,1) < 0.25 else 0,2)) + ')'
+
+        },
+        'eyeLine': {
+          'id': random.choice(svgsIndex['eyeLine']) if random.uniform(0,1) < 0.75 else 'none'
+        },
+        'smileLine': {
+          'id': random.choice(svgsIndex['smileLine']) if random.uniform(0,1) < 0.75 else 'none',
+          'size': round(random.uniform(0,1) + .5,2)
+        },
+        'miscLine': {
+          'id': random.choice(svgsIndex['miscLine']) if random.uniform(0,1) < 0.5 else 'none'
+        },
+        'facialHair': {
+          'id': random.choice(svgsIndex['facialHair']) if random.uniform(0,1) < 0.5 else 'none'
+        },
+        'eye': {
+          'id': random.choice(svgsIndex['eye']),
+          'angle': eyeAngle
+        },
+        'eyebrow': {
+          'id': random.choice(svgsIndex['eyebrow']),
+          'angle': round(random.uniform(0,35) - 15,2)
+        },
+        'hair': {
+          'id': random.choice(svgsIndex['hair']),
+          'color': hairColor
+        },
+        'mouth': {
+          'id': random.choice(svgsIndex['mouth']),
+          'flip': isFlipped
+        },
+        'nose': {
+          'id': random.choice(svgsIndex['nose']),
+          'flip': isFlipped,
+          'size': round(random.uniform(0,.75) + .5,2)
+        },
+        'glasses': {
+          'id': random.choice(svgsIndex['glasses']) if random.uniform(0,1) < 0.04 else 'none'
+        },
+        'accessories': {
+          'id': random.choice(svgsIndex['accessories']) if random.uniform(0,1) < 0.1 else 'none'
+        }
+      }
+
+        print(face)
+        self.PlayerFaceJson = face
+        self.save()
+
+        return None
+
     @property
     def PlayerIDURL(self):
         return '/World/' + str(self.WorldID_id) + '/Player/' + str(self.PlayerID)
@@ -744,7 +990,9 @@ class Player(models.Model):
             'PositionSortOrder': PositionSortOrder[self.Position],
             'ClassSortOrder': ClassSortOrder[self.Class],
             'RecruitingStars': self.RecruitingStars,
-            'IsRecruit': self.IsRecruit
+            'IsRecruit': self.IsRecruit,
+            'TeamJerseyStyle': self.TeamJerseyStyle,
+            'TeamJerseyInvert': self.TeamJerseyInvert
         }
     class Meta:
               # specify this model as an Abstract Model
@@ -761,13 +1009,15 @@ class LeagueSeason(models.Model):
     PlayersCreated  = models.BooleanField(default=False)
     CoachesCreated  = models.BooleanField(default=False)
     TeamSeasonsCreated = models.BooleanField(default=False)
-    TournamentCreated = models.BooleanField(default=False)
+    ConferenceChampionshipsCreated = models.BooleanField(default=False)
+    PlayoffCreated = models.BooleanField(default=False)
     AwardsCreated    = models.BooleanField(default=False)
     OffseasonStarted = models.BooleanField(default=False)
 
 
     RegularSeasonStartDateID = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="RegularSeasonStartDateID", default=None)
     RegularSeasonEndDateID   = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="RegularSeasonEndDateID", default=None)
+    BowlCreationDateID       = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="BowlCreationDateID", default=None)
 
     CoachCarouselDateID     = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="CoachCarouselDateID", default=None)
     CoachCarouselExecuted = models.BooleanField(default=False)
@@ -801,34 +1051,34 @@ class LeagueSeason(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
-class Tournament(models.Model):
+class Playoff(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    TournamentID = models.AutoField(primary_key = True)
+    PlayoffID = models.AutoField(primary_key = True)
     LeagueSeasonID = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     MostOutstandingPlayer = models.ForeignKey(Player, on_delete=models.CASCADE, blank = True, null=True)
     ChampionTeam = models.ForeignKey(Team, on_delete=models.CASCADE, blank = True, null=True)
 
-    TournamentStarted = models.BooleanField(default = False)
-    TournamentCompleted = models.BooleanField(default = False)
+    PlayoffStarted = models.BooleanField(default = False)
+    PlayoffCompleted = models.BooleanField(default = False)
 
     IsPostseason = models.BooleanField(default = False)
-    TeamsInTournament = models.PositiveSmallIntegerField(default = 0)
-    RoundsInTournament = models.PositiveSmallIntegerField(default = 0)
+    TeamsInPlayoff = models.PositiveSmallIntegerField(default = 0)
+    RoundsInPlayoff = models.PositiveSmallIntegerField(default = 0)
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
 
-class TournamentRound(models.Model):
+class PlayoffRound(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    TournamentRoundID = models.AutoField(primary_key = True)
-    TournamentID = models.ForeignKey(Tournament,on_delete=models.CASCADE, null=True, blank=True, default=None)
+    PlayoffRoundID = models.AutoField(primary_key = True)
+    PlayoffID = models.ForeignKey(Playoff,on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     RoundStarted = models.BooleanField(default = False)
     RoundCompleted = models.BooleanField(default = False)
 
-    TournamentRoundNumber = models.PositiveSmallIntegerField(default = 1)
+    PlayoffRoundNumber = models.PositiveSmallIntegerField(default = 1)
 
     MinGameNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
     MaxGameNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
@@ -842,29 +1092,29 @@ class TournamentRound(models.Model):
 
     def __str__(self):
 
-        return 'Round ' + str(self.TournamentRoundNumber) + ' in tournament, with ' + str(self.NumberOfGames) + ' games'
+        return 'Round ' + str(self.PlayoffRoundNumber) + ' in Playoff, with ' + str(self.NumberOfGames) + ' games'
 
     @property
     def NextRound(self):
-        return TournamentRound.objects.filter(WorldID = self.WorldID).filter(TournamentRoundNumber = self.TournamentRoundNumber - 1).first()
+        return PlayoffRound.objects.filter(WorldID = self.WorldID).filter(PlayoffRoundNumber = self.PlayoffRoundNumber - 1).first()
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
-class TournamentRegion(models.Model):
+class PlayoffRegion(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    TournamentRegionID = models.AutoField(primary_key = True)
+    PlayoffRegionID = models.AutoField(primary_key = True)
 
-    TournamentRegionName = models.CharField(max_length=50)
+    PlayoffRegionName = models.CharField(max_length=50)
     IsFinalFour = models.BooleanField(default = False)
 
     def __str__(self):
 
-        return self.TournamentRegionName + ' is Final Four? ' + str(self.IsFinalFour)
+        return self.PlayoffRegionName + ' is Final Four? ' + str(self.IsFinalFour)
 
     @property
     def NextRound(self):
-        return TournamentRound.objects.filter(WorldID = self.WorldID).filter(TournamentRoundNumber = self.TournamentRoundNumber - 1).first()
+        return PlayoffRound.objects.filter(WorldID = self.WorldID).filter(PlayoffRoundNumber = self.PlayoffRoundNumber - 1).first()
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
@@ -900,6 +1150,7 @@ class TeamSeason(models.Model):
     FUM_Fumbles = models.SmallIntegerField(default=0, null=True, blank=True)
     FUM_Lost = models.SmallIntegerField(default=0, null=True, blank=True)
     FUM_Recovered = models.SmallIntegerField(default=0, null=True, blank=True)
+    FUM_Forced = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_Tackles = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_SoloTackles = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -941,9 +1192,9 @@ class TeamSeason(models.Model):
     ConferenceGB   = models.DecimalField(default = 0, max_digits = 5, decimal_places=1)
     WinStreak = models.PositiveSmallIntegerField(default=0)
 
-    TournamentRegionID = models.ForeignKey(TournamentRegion, default=None, on_delete=models.CASCADE, null=True, blank=True)
-    TournamentSeed = models.PositiveSmallIntegerField(default=None, null=True, blank=True)
-    TournamentRank = models.PositiveSmallIntegerField(default=None, null=True, blank=True)
+    PlayoffRegionID = models.ForeignKey(PlayoffRegion, default=None, on_delete=models.CASCADE, null=True, blank=True)
+    PlayoffSeed = models.PositiveSmallIntegerField(default=None, null=True, blank=True)
+    PlayoffRank = models.PositiveSmallIntegerField(default=None, null=True, blank=True)
 
     ConferenceChampion = models.BooleanField(default=False)
     NationalRunnerUp = models.BooleanField(default=False)
@@ -978,6 +1229,15 @@ class TeamSeason(models.Model):
             RecruitingValue = sum([int(u['PlayerID__RecruitingStars'])**3 for u in RTS]) * 1.0
         return RecruitingValue
 
+    @property
+    def DefeatedTeams(self):
+        OpposingTeams = []
+        Games = self.teamgame_set.filter(IsWinningTeam=True)
+        for TG in Games:
+            OpposingTeams.append(TG.OpposingTeamGame.TeamSeasonID)
+
+        return OpposingTeams
+
 
     def UpdateWinStreak(self, DidWin):
 
@@ -996,7 +1256,7 @@ class TeamSeason(models.Model):
             self.WinStreak  -= 1
 
     @property
-    def TournamentBidRankingTuple(self):
+    def PlayoffBidRankingTuple(self):
         if self.ConferenceChampion:
             return (0, self.NationalRank)
         return (1, self.NationalRank)
@@ -1011,6 +1271,17 @@ class TeamSeason(models.Model):
     def ConferenceRankingTuple(self):
         TeamCount = Team.objects.filter(WorldID = self.WorldID).count()
         return (self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank)
+
+    @property
+    def ConferenceRankingDict(self):
+        TeamCount = Team.objects.filter(WorldID = self.WorldID).count()
+        D = {}
+        D['NetWins'] = {'Value': self.ConferenceWins - self.ConferenceLosses, 'Function': 'SortReverse'}
+        D['Wins']    = {'Value': self.ConferenceWins , 'Function': 'SortReverse'}
+        D['NationalRank'] = {'Value': self.NationalRank, 'Funtion': 'Sort'}
+        D['DefeatedTeams'] = {'Value': [self.DefeatedTeams], 'Function': 'HTH'}
+        return D
+
 
     @property
     def NationalRankObject(self):
@@ -1089,10 +1360,10 @@ class TeamSeason(models.Model):
 
     @property
     def SeasonResultDisplay(self):
-        if self.LeagueSeasonID.TournamentCreated == False:
+        if self.LeagueSeasonID.PlayoffCreated == False:
             return 'On going!'
-        elif self.TournamentBid == False:
-            return 'Missed Tournament'
+        elif self.PlayoffBid == False:
+            return 'Missed Playoff'
         elif self.NationalChampion == True:
             return 'National Champions!'
         elif self.NationalRunnerUp == True:
@@ -1100,7 +1371,7 @@ class TeamSeason(models.Model):
         elif self.FinalFour == True:
             return 'Final Four Appearance!'
         else:
-            return 'Made tournament'
+            return 'Made Playoff'
 
 
         return None
@@ -1165,6 +1436,7 @@ class PlayerTeamSeason(models.Model):
     FUM_Fumbles = models.SmallIntegerField(default=0, null=True, blank=True)
     FUM_Lost = models.SmallIntegerField(default=0, null=True, blank=True)
     FUM_Recovered = models.SmallIntegerField(default=0, null=True, blank=True)
+    FUM_Forced = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_Tackles = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_SoloTackles = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1284,11 +1556,11 @@ class PlayerTeamSeasonAward(models.Model):
     IsConferenceAward  = models.BooleanField(default = False)
     IsNationalAward    = models.BooleanField(default = False)
 
-    IsMonthAward      = models.BooleanField(default = False)
     IsWeekAward       = models.BooleanField(default = False)
     IsSeasonAward     = models.BooleanField(default = False)
-    IsTournamentAward = models.BooleanField(default = False)
+    IsPlayoffAward = models.BooleanField(default = False)
 
+    WeekID             = models.ForeignKey(Week, on_delete=models.CASCADE, null=True, blank=True, default=None)
     ConferenceID       = models.ForeignKey(Conference, on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     def __str__(self):
@@ -1307,25 +1579,29 @@ class PlayerTeamSeasonAward(models.Model):
 
     @property
     def AwardName(self):
-        str = ''
+        s = ''
         GroupingName = ''
         if self.IsNationalAward:
             GroupingName = 'NCAA'
         elif self.IsConferenceAward:
-            GroupingName = self.ConferenceID.ConferenceDisplayName
+            GroupingName = self.ConferenceID.ConferenceName
 
 
-        if self.IsPlayerOfTheYear:
-            str += 'MVP of ' + GroupingName
+        if self.IsTopPlayer:
+            s += 'MVP of ' + GroupingName
         else:
             if self.IsFirstTeam:
-                str += 'First Team ' + GroupingName
+                s += 'First Team ' + GroupingName
             elif self.IsSecondTeam:
-                str += 'Second Team ' + GroupingName
+                s += 'Second Team ' + GroupingName
             elif self.IsFreshmanTeam:
-                str += 'First Team Freshman ' + GroupingName
+                s += 'First Team Freshman ' + GroupingName
 
-        return str
+        if self.IsWeekAward:
+            w = str(self.WeekID) if self.WeekID is not None else ''
+            s += ' for ' + w
+
+        return s
 
     class Meta:
               # specify this model as an Abstract Model
@@ -1356,12 +1632,17 @@ class Game(models.Model):
     GameID = models.AutoField(primary_key = True)
     LeagueSeasonID = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None)
     GameDateID = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    TournamentID = models.ForeignKey(Tournament, on_delete=models.CASCADE, blank = True, null=True)
+    PlayoffID = models.ForeignKey(Playoff, on_delete=models.CASCADE, blank = True, null=True)
     GameTime = models.CharField(max_length = 5)
     WasPlayed = models.BooleanField(default = False)
 
     WinningTeamID = models.ForeignKey(Team, default = None, null=True, blank=True, on_delete=models.CASCADE ,related_name="WinningTeamID")
     LosingTeamID = models.ForeignKey(Team, default = None, null=True, blank=True, on_delete=models.CASCADE, related_name="LosingTeamID")
+
+    TeamRivalryID = models.ForeignKey(TeamRivalry, default = None, null=True, blank=True, on_delete=models.CASCADE)
+    BowlID        = models.ForeignKey(Bowl, default = None, null=True, blank=True, on_delete=models.CASCADE)
+
+    IsConferenceChampionship = models.BooleanField(default = False)
 
     NationalBroadcast = models.BooleanField(default = False)
     RegionalBroadcast = models.BooleanField(default = False)
@@ -1432,18 +1713,18 @@ class Game(models.Model):
         return Results
 
     @property
-    def NextTournamentGameID(self):
-        System_Game_Clone = System_TournamentGame.objects.get(GameNumber = self.TournamentGameNumber).NextTournamentGameID
+    def NextPlayoffGameID(self):
+        System_Game_Clone = System_PlayoffGame.objects.get(GameNumber = self.PlayoffGameNumber).NextPlayoffGameID
         if System_Game_Clone is not None:
-            return Game.objects.get(WorldID = self.WorldID, TournamentRoundID = self.TournamentRoundID.NextRound, TournamentGameNumber = System_Game_Clone.GameNumber)
+            return Game.objects.get(WorldID = self.WorldID, PlayoffRoundID = self.PlayoffRoundID.NextRound, PlayoffGameNumber = System_Game_Clone.GameNumber)
         return None
 
-    # NextTournamentRoundID = models.ForeignKey(System_TournamentRound, on_delete=models.CASCADE,related_name="NextTournamentRoundID" ,blank=True, null=True, default=None )
-    # NextTournamentGameID = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True, default=None)
+    # NextPlayoffRoundID = models.ForeignKey(System_PlayoffRound, on_delete=models.CASCADE,related_name="NextPlayoffRoundID" ,blank=True, null=True, default=None )
+    # NextPlayoffGameID = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True, default=None)
     #
     # GameNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
-    # TournamentGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
-    # NextTournamentGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
+    # PlayoffGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
+    # NextPlayoffGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
 
     @property
     def WinningTeamSeed(self):
@@ -1564,16 +1845,19 @@ class Game(models.Model):
         return self.GameDateID.ShortDisplayDayOfWeek
     @property
     def GameHeadlineDisplay(self):
-        TournamentRoundMap = {
-            6: 'Round of 64',
-            5: 'Round of 32',
-            4: 'Sweet Sixteen',
-            3: 'Elite Eight',
-            2: 'Final Four',
-            1: 'National Championship'
-        }
-        if self.TournamentRoundID is not None:
-            return TournamentRoundMap[self.TournamentRoundID.TournamentRoundNumber]
+
+
+        if self.BowlID is not None:
+            if self.BowlID.IsNationalChampionship == True:
+                return 'National Championship'
+            else:
+                return self.BowlID.BowlName
+        elif self.IsConferenceChampionship:
+            return self.HomeTeamID.ConferenceID.ConferenceName + ' Championship'
+        elif self.TeamRivalryID is not None:
+            if self.TeamRivalryID.RivalryName is not None:
+                return self.TeamRivalryID.RivalryName
+            return 'Rivalry game!'
         elif self.NationalBroadcast:
             return 'National Broadcast'
         elif self.RegionalBroadcast:
@@ -1585,9 +1869,12 @@ class Game(models.Model):
     def GameDisplay(self):
         TeamsInGame = self.teamgame_set.all().order_by('IsHomeTeam')
         if self.WasPlayed == 1:
-            GameDisplay = str(TeamsInGame[0].Points) +'-'+str(TeamsInGame[1].Points)
+            Points = [TeamsInGame[0].Points, TeamsInGame[1].Points]
+            Points = sorted(Points, reverse=True)
+            Points = [str(u) for u in Points]
+            GameDisplay = '-'.join(Points)
         else:
-            GameDisplay = self.GameDateID.Date
+            GameDisplay = 'Preview'#self.GameDateID.Date
 
         return GameDisplay
 
@@ -1606,7 +1893,7 @@ class Game(models.Model):
         else:
             GameDisplay = self.GameDateID.Date
 
-        TeamGames = self.teamgame_set.all().values('Points', 'IsHomeTeam' ,'RUS_Yards', 'PAS_Yards', 'REC_Yards', 'Turnovers', 'TimeOfPossession', 'FirstDowns')
+        TeamGames = self.teamgame_set.all().values('Points', 'IsHomeTeam' ,'RUS_Yards', 'PAS_Yards', 'REC_Yards', 'Turnovers', 'TimeOfPossession', 'FirstDowns', 'PNT_Punts', 'DEF_Sacks', 'DEF_Tackles', 'ThirdDownConversion', 'ThirdDownAttempt')
         HomeTeamGame = TeamGames.filter(IsHomeTeam = True).first()
         AwayTeamGame = TeamGames.filter(IsHomeTeam = False).first()
 
@@ -1634,6 +1921,16 @@ class Game(models.Model):
             'AwayTimeOfPossession': AwayTeamGame['TimeOfPossession'],
             'HomeFirstDowns': HomeTeamGame['FirstDowns'],
             'AwayFirstDowns': AwayTeamGame['FirstDowns'],
+            'HomePNT_Punts': HomeTeamGame['PNT_Punts'],
+            'AwayPNT_Punts': AwayTeamGame['PNT_Punts'],
+            'HomeThirdDownConversion': HomeTeamGame['ThirdDownConversion'],
+            'AwayThirdDownConversion': AwayTeamGame['ThirdDownConversion'],
+            'HomeThirdDownAttempt': HomeTeamGame['ThirdDownAttempt'],
+            'AwayThirdDownAttempt': AwayTeamGame['ThirdDownAttempt'],
+            'HomeDEF_Tackles': HomeTeamGame['DEF_Tackles'],
+            'AwayDEF_Tackles': AwayTeamGame['DEF_Tackles'],
+            'HomeDEF_Sacks': HomeTeamGame['DEF_Sacks'],
+            'AwayDEF_Sacks': AwayTeamGame['DEF_Sacks'],
         }
     class Meta:
               # specify this model as an Abstract Model
@@ -1690,7 +1987,7 @@ class TeamGame(models.Model):
 
     IsHomeTeam = models.BooleanField(default=False)
     IsWinningTeam = models.BooleanField(default=False)
-    Points = models.PositiveSmallIntegerField(default=None, blank=True, null=True)
+    Points = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     TeamRecord = models.CharField(max_length = 20, default=None, blank=True, null=True)
 
     PAS_Completions = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1710,6 +2007,7 @@ class TeamGame(models.Model):
     FUM_Fumbles = models.SmallIntegerField(default=0, null=True, blank=True)
     FUM_Lost = models.SmallIntegerField(default=0, null=True, blank=True)
     FUM_Recovered = models.SmallIntegerField(default=0, null=True, blank=True)
+    FUM_Forced = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_Tackles = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_SoloTackles = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1742,6 +2040,11 @@ class TeamGame(models.Model):
     ThirdDownConversion = models.PositiveSmallIntegerField(default=0)
     FourthDownAttempt = models.PositiveSmallIntegerField(default=0)
     FourthDownConversion = models.PositiveSmallIntegerField(default=0)
+
+
+    @property
+    def OpposingTeamGame(self):
+        return self.GameID.teamgame_set.exclude(IsHomeTeam = self.IsHomeTeam).first()
 
 class PlayerSeasonSkill(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
@@ -1848,6 +2151,7 @@ class PlayerGameStat(models.Model):
     FUM_Fumbles = models.SmallIntegerField(default=0, null=True, blank=True)
     FUM_Lost = models.SmallIntegerField(default=0, null=True, blank=True)
     FUM_Recovered = models.SmallIntegerField(default=0, null=True, blank=True)
+    FUM_Forced = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_Tackles = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_SoloTackles = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1957,9 +2261,9 @@ class Coach(models.Model):
         return 0
 
     @property
-    def CareerTournamentBids(self):
+    def CareerPlayoffBids(self):
         CTS = CoachTeamSeason.objects.filter(CoachID = self)
-        return sum([u.TeamSeasonID.TournamentBid for u in CTS])
+        return sum([u.TeamSeasonID.PlayoffBid for u in CTS])
 
 
     class Meta:
@@ -2087,16 +2391,3 @@ class Driver(models.Model):
             'CurrentDay': self.CurrentDay,
             'CurrentTeam': self.CurrentTeam
         }
-
-
-class TeamRivalry(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    TeamRivalryID = models.AutoField(primary_key = True)
-
-    Team1TeamID = models.ForeignKey(Team, on_delete=models.CASCADE,related_name="Team1"  )
-    Team2TeamID = models.ForeignKey(Team, on_delete=models.CASCADE,related_name="Team2"  )
-
-    RivalryName = models.CharField(max_length = 100, default=None, blank=True, null=True)
-
-    def __str__(self):
-        return str(self.Team1TeamID) + ' vs. ' + str(self.Team2TeamID) + ' in the ' + self.RivalryName

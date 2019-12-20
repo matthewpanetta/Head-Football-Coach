@@ -1,4 +1,4 @@
-from ..models import Headline,World, Tournament, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
+from ..models import Headline,World, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
 from random import uniform, randint
 import numpy
 from ..utilities import WeightedProbabilityChoice, Min, DistanceBetweenCities, GetValuesOfSingleObject, NormalBounds
@@ -34,10 +34,10 @@ def WeeklyRecruiting(WorldID):
     RecruitsPerWeek = 6
 
     for T in Team.objects.all():
-        print('Recruiting for ', T)
+        #print('Recruiting for ', T)
         for RTS in sorted([u for u in RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__TeamID = T) if u.PlayerID.RecruitSigned == False], key=lambda t: t.MatchRating * t.PlayerID.OverallRating, reverse=True)[:RecruitsPerWeek]:
             TS = RTS.TeamSeasonID
-            print(T, 'is recruiting', RTS)
+            #print(T, 'is recruiting', RTS)
             r = uniform(.7,1.3)
             RTS.InterestLevel += RTS.MatchRating * r * (RTS.PlayerID.RecruitingSpeed / 100.0)
 
@@ -61,10 +61,10 @@ def WeeklyRecruiting(WorldID):
     RecruitsPerWeek = 6
 
     for T in Team.objects.all():
-        print('Recruiting for ', T)
+        #print('Recruiting for ', T)
         for RTS in sorted([u for u in RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__TeamID = T) if u.PlayerID.RecruitSigned == False], key=lambda t: t.MatchRating * t.PlayerID.OverallRating, reverse=True)[:RecruitsPerWeek]:
             TS = RTS.TeamSeasonID
-            print(T, 'is recruiting', RTS)
+            #print(T, 'is recruiting', RTS)
             r = uniform(.7,1.3)
             RTS.InterestLevel += RTS.MatchRating * r * (RTS.PlayerID.RecruitingSpeed / 100.0)
 
@@ -165,7 +165,7 @@ def FindRecruitTopPreferences(Recruit):
 
 def FindNewTeamsForRecruit(WorldID, Recruit, RecruitTopPreferences=None):
 
-    TeamContactsPerRecruit = 20
+    TeamContactsPerRecruit = 10
     RecruitStateInterestModifier = 1
     RecruitTeamPrestigeInterestModifier = 15
 
@@ -178,8 +178,8 @@ def FindNewTeamsForRecruit(WorldID, Recruit, RecruitTopPreferences=None):
         'Home Town':     {'LowerBound': 0, 'UpperBound': 40, 'PointValue': 200},
         'Local':         {'LowerBound': 41, 'UpperBound': 150, 'PointValue': 65},
         'Regional':      {'LowerBound': 151, 'UpperBound': 500, 'PointValue': 40},
-        'National':      {'LowerBound': 501, 'UpperBound': 4000, 'PointValue': 20},
-        'International': {'LowerBound': 4001, 'UpperBound': 10000, 'PointValue': 5},
+        'National':      {'LowerBound': 501, 'UpperBound': 1500, 'PointValue': 20},
+        'International': {'LowerBound': 1501, 'UpperBound': 10000, 'PointValue': 5},
     }
 
     PreferenceRatingMap = {
@@ -241,7 +241,7 @@ def FindNewTeamsForRecruit(WorldID, Recruit, RecruitTopPreferences=None):
     return RTSToSave
 
 def FakeWeeklyRecruiting(WorldID):
-    print('Doing fake recruiting!!')
+    #print('Doing fake recruiting!!')
     CurrentWorld = World.objects.get(WorldID = WorldID)
     CurrentDay = Calendar.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
@@ -258,17 +258,17 @@ def FakeWeeklyRecruiting(WorldID):
     RecruitsNeedToSignPerWeek = int(RecruitList.count() / WeeksUntilEndOfSeason)
 
     for Recruit in RecruitList.order_by('Recruiting_NationalRank')[:RecruitsNeedToSignPerWeek]:
-        print()
+        #print()
         NumTeamRange = randint(1,8)
         RecruitingTeams = RecruitTeamSeason.objects.filter(WorldID=CurrentWorld).filter(TeamSeasonID__ScholarshipsToOffer__gt = 0).filter(PlayerID = Recruit)
         if RecruitingTeams.count() == 0:
             PlayersThatNeedMoreTeams.append(Recruit)
             continue
         NumTeamRange = Min(NumTeamRange, RecruitingTeams.count())
-        print(Recruit, ' rated ', Recruit.OverallRating,' talking to ', NumTeamRange, ' teams')
+        #print(Recruit, ' rated ', Recruit.OverallRating,' talking to ', NumTeamRange, ' teams')
         RTS_List = [(u, u.MatchRating)  for u in RecruitingTeams.order_by('-MatchRating')[:NumTeamRange]]
         for S in RTS_List:
-            print(S)
+            #print(S)
             RTS = S[0]
             RTS.OfferMade = True
             RTS.InterestLevel += RTS.MatchRating
@@ -276,8 +276,8 @@ def FakeWeeklyRecruiting(WorldID):
 
         RecruitChoice = WeightedProbabilityChoice(RTS_List, RTS_List[0][0])
 
-        print('chooses!! - ')
-        print(RecruitChoice.TeamSeasonID)
+        #print('chooses!! - ')
+        #print(RecruitChoice.TeamSeasonID)
 
         RecruitChoice.InterestLevel +=500
 

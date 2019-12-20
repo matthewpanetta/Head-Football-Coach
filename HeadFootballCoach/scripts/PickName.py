@@ -60,7 +60,7 @@ PositionMeasurementsList = {
 
 import random
 import numpy
-from ..models import NameList, Region, Nation, State, City, League, Headline, Tournament, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, Calendar, GameEvent, PlayerSeasonSkill ,LeagueSeason
+from ..models import NameList, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, Calendar, GameEvent, PlayerSeasonSkill ,LeagueSeason
 from django.db.models import  Count,  Sum, Max
 
 

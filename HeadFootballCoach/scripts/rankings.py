@@ -1,5 +1,6 @@
 
-from ..models import World, TeamSeasonDateRank, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat
+from ..models import World, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat
+import itertools
 
 def Min(a,b):
     if a > b:
@@ -13,23 +14,82 @@ def CalculateConferenceRankings(LS, WorldID):
     CurrentDate = Calendar.objects.get(WorldID=WorldID, IsCurrent = 1)
     CurrentWorld = WorldID
 
-    TeamList = sorted(TeamDictStarter, key = lambda k: k.CurrentTeamSeason.ConferenceRankingTuple, reverse = True)
     RankCount = 0
     ConfRankTracker = {}
 
-    for t in TeamList:
 
-        if t.ConferenceID.ConferenceName not in ConfRankTracker:
-            ConfRankTracker[t.ConferenceID.ConferenceName] = {'Counter': 0, 'TopTeam': t, 'TopTeamRecord': {'Wins': t.CurrentTeamSeason.ConferenceWins, 'Losses': t.CurrentTeamSeason.ConferenceLosses}}
+    for Conf in Conference.objects.filter(WorldID = CurrentWorld):
+        print()
+        print('Calculating rankings for ', Conf)
+        ConfName = Conf.ConferenceName
+        ConfTeams = TeamSeason.objects.filter(WorldID=CurrentWorld).filter(TeamID__ConferenceID = Conf)
+        ConfTeams = sorted(ConfTeams, key = lambda k: k.ConferenceRankingTuple, reverse = True)
+        ConfRankTracker[ConfName] = {'Counter': 0, 'TopTeam': None, 'Teams':{}, 'TopTeamRecord': {'Wins': None, 'Losses': None}}
 
-        TS = t.CurrentTeamSeason
-        ConfRankTracker[t.ConferenceID.ConferenceName]['Counter'] +=1
-        RankCount +=1
+        ConfTeamDict = {'NetWins': {}}
 
-        if CurrentSeason.TournamentCreated == False:
-            TS.ConferenceRank = ConfRankTracker[t.ConferenceID.ConferenceName]['Counter']
-            TS.ConferenceGB   = round((ConfRankTracker[t.ConferenceID.ConferenceName]['TopTeamRecord']['Wins'] - TS.ConferenceWins + TS.ConferenceLosses - ConfRankTracker[t.ConferenceID.ConferenceName]['TopTeamRecord']['Losses']) / 2.0, 1)
-        TS.save()
+        RankCount = 1
+        RankCountWithTies = 1
+        for TS in ConfTeams:
+            ConfRankTracker[ConfName]['Teams'][TS] = {}
+            if ConfRankTracker[ConfName]['TopTeamRecord']['Wins'] is None or ConfRankTracker[ConfName]['TopTeamRecord']['Losses'] is None:
+                ConfRankTracker[ConfName]['TopTeamRecord']['Losses'] = TS.ConferenceLosses
+                ConfRankTracker[ConfName]['TopTeamRecord']['Wins']   = TS.ConferenceWins
+                ConfRankTracker[ConfName]['TopTeam'] = TS
+
+
+
+            ConfRankTracker[ConfName]['Counter'] +=1
+            RankCount +=1
+
+            NetWins = TS.ConferenceWins - TS.ConferenceLosses
+            if NetWins not in ConfTeamDict['NetWins']:
+                ConfTeamDict['NetWins'][NetWins] = []
+            ConfTeamDict['NetWins'][NetWins].append(TS)
+            RankCount +=1
+            if len(ConfTeamDict['NetWins'][NetWins]) == 1:
+                RankCountWithTies +=1
+
+            ConfRankTracker[ConfName]['Teams'][TS]['ConferenceGB']   = round((ConfRankTracker[ConfName]['TopTeamRecord']['Wins'] - TS.ConferenceWins + TS.ConferenceLosses - ConfRankTracker[ConfName]['TopTeamRecord']['Losses']) / 2.0, 1)
+            ConfRankTracker[ConfName]['Teams'][TS]['ConferenceRank'] = ConfRankTracker[ConfName]['Counter']
+            ConfRankTracker[ConfName]['Teams'][TS]['DefeatedTeams'] = TS.DefeatedTeams
+            ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'] = 0
+            ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'] = RankCountWithTies
+            ConfRankTracker[ConfName]['Teams'][TS]['MOV'] = TS.Points - TS.PointsAllowed
+
+
+
+        for NetWins in ConfTeamDict['NetWins']:
+            if len(ConfTeamDict['NetWins'][NetWins]) > 1:
+                print()
+                print('Tied with ', NetWins)
+                c = itertools.combinations(ConfTeamDict['NetWins'][NetWins], 2)
+                for TiedTeams in c:
+                    #print(u)
+                    Team1, Team2 = TiedTeams[0], TiedTeams[1]
+                    if Team1 in ConfRankTracker[ConfName]['Teams'][Team2]['DefeatedTeams']:
+                        ConfRankTracker[ConfName]['Teams'][Team2]['TiebreakerCount'] +=1
+                        ConfRankTracker[ConfName]['Teams'][Team1]['TiebreakerCount'] -=1
+                    elif Team2 in ConfRankTracker[ConfName]['Teams'][Team1]['DefeatedTeams']:
+                        ConfRankTracker[ConfName]['Teams'][Team2]['TiebreakerCount'] -=1
+                        ConfRankTracker[ConfName]['Teams'][Team1]['TiebreakerCount'] +=1
+                for TS in ConfTeamDict['NetWins'][NetWins]:
+                    print(TS, ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'])
+
+
+        RankCount = 1
+        for TS in sorted(ConfRankTracker[ConfName]['Teams'], key=lambda TS: (ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'], -1*ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], -1*ConfRankTracker[ConfName]['Teams'][TS]['MOV']),reverse=False):
+
+            print('TeamRankDetails: ', str(TS).ljust(50), '  RankCountWithTies:',ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'],'  TiebreakerCount:',ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], '  ConferenceGB:',ConfRankTracker[ConfName]['Teams'][TS]['ConferenceGB'], '  MOV:',ConfRankTracker[ConfName]['Teams'][TS]['MOV'])
+            if CurrentSeason.PlayoffCreated == False:
+                TS.ConferenceRank = RankCount
+                TS.ConferenceGB   = ConfRankTracker[ConfName]['Teams'][TS]['ConferenceGB']
+
+                TS.save()
+            RankCount +=1
+
+
+
 
 def CalculateRankings(LS, WorldID):
 
@@ -41,7 +101,7 @@ def CalculateRankings(LS, WorldID):
     CurrentWorld = WorldID
     TeamList = sorted(TeamDictStarter, key = lambda k: k.CurrentTeamSeason.RankingTuple, reverse = True)
 
-    Next7Days = CurrentDate.NextDayN(7).DateID
+    Next7Days = CurrentDate.NextDayN(7)
 
     TeamDict = {}
 
@@ -60,7 +120,6 @@ def CalculateRankings(LS, WorldID):
             TeamDict[t]['MediaShares'] = TS.RegionalBroadcast + (5* TS.NationalBroadcast )
             TeamDict[t]['WinningPercentage'] = round(TS.Wins / TS.GamesPlayed,2)
 
-        print(t, TeamDict[t])
 
     Counter = 1
     PrevT = None
@@ -132,7 +191,7 @@ def CalculateRankings(LS, WorldID):
 
     RankCount = 0
     for t in sorted(TeamDict, key = lambda k: TeamDict[k]['Rank'], reverse=False):
-        print(t, TeamDict[t])
+        #print(t, TeamDict[t])
 
         TS = TeamDict[t]['CurrentTeamSeason']
 
@@ -146,10 +205,13 @@ def CalculateRankings(LS, WorldID):
         TSDR.IsCurrent = True
         TSDR.save()
 
-        NextTeamGame = TS.teamgame_set.filter(GameID__WasPlayed = False).filter(GameID__GameDateID_id__lte = Next7Days).first()
+        NextTeamGame = TS.teamgame_set.filter(GameID__WasPlayed = False).filter(GameID__GameDateID__Date__lte = Next7Days.Date).order_by('GameID__GameDateID').first()
+        #print()
+        #print(t, 'Rank', TeamDict[t]['Rank'], 'NextGame:', NextTeamGame)
         if NextTeamGame is not None:
             NextTeamGame.TeamSeasonDateRankID = TSDR
             NextTeamGame.save()
+            #print('Adding TSDR', TSDR, NextTeamGame, 'against', NextTeamGame.OpposingTeamGame)
 
 
     CurrentSeason.RankingsLastCalculated =CurrentDate.Date
@@ -160,13 +222,13 @@ def CalculateRankings(LS, WorldID):
 def SelectBroadcast(LS, WorldID):
 
     CurrentDate = Calendar.objects.get(WorldID=WorldID, IsCurrent = 1)
-    for N in range(0,8):
+    for N in range(0,7):
         SelectedDate = CurrentDate.NextDayN(N)
         if SelectedDate.BroadcastSelected == True:
             continue
 
         GamesOnSelectedDay = Game.objects.filter(WorldID=WorldID, GameDateID = SelectedDate)
-        #GamesOnSelectedDay = sorted(GamesOnSelectedDay, key=lambda r: r.HomeTeamID.CurrentTeamSeason.NationalRank + r.AwayTeamID.CurrentTeamSeason.NationalRank + Min(r.HomeTeamID.CurrentTeamSeason.NationalRank , r.AwayTeamID.CurrentTeamSeason.NationalRank) - (r.AwayTeamID.TeamPrestige / 4) - (r.HomeTeamID.TeamPrestige / 4)) #TODO
+        GamesOnSelectedDay = sorted(GamesOnSelectedDay, key=lambda r: r.HomeTeamRankValue + r.AwayTeamRankValue + Min(r.HomeTeamRankValue , r.AwayTeamRankValue) - (r.AwayTeamID.TeamPrestige) - (r.HomeTeamID.TeamPrestige )) #TODO
         RegionalGames = GamesOnSelectedDay[1:3]
         for g in RegionalGames:
             print('Regional game!!' , g)

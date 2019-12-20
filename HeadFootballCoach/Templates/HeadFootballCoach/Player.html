@@ -97,6 +97,9 @@
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-stats-tab">Stats</button>
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-analytics-tab">Analytics</button>
         {% endif %}
+        {% if Awards %}
+        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-awards-tab">Awards</button>
+        {%endif%}
       </div>
     </nav>
     <div  id="nav-tabContent">
@@ -104,53 +107,14 @@
         <div class='w3-container'>
           <div class='w3-row'>
             <div class='w3-col s6 playerOverviewRatingBox'>
+              {% for Skill in Skills%}
               <div class='playerOverviewRatingBoxGrouping'>
-                <span class='playerOverviewRatingAbbreviation'>Overall Rating</span>
+                <span class='playerOverviewRatingAbbreviation'>{{Skill.SkillName}}</span>
                 <div class="w3-light-grey w3-round-xlarge statBar">
-                  <div class="w3-container w3-blue w3-round-xlarge" style="background-color:#{{playerTeam.TeamColor_Primary_HEX}} !important; width:{{player.Player.CurrentSkills.OverallRating}}%">{{player.Player.CurrentSkills.OverallRating}}</div>
+                  <div class="w3-container w3-blue w3-round-xlarge" style="background-color:#{{playerTeam.TeamColor_Primary_HEX}} !important; width:{{Skill.Value}}%">{{Skill.Value}}</div>
                 </div>
               </div>
-              <div class='playerOverviewRatingBoxGrouping'>
-                <span class='playerOverviewRatingAbbreviation'>Inside Shooting Rating</span>
-                <div class="w3-light-grey w3-round-xlarge statBar">
-                  <div class="w3-container w3-blue w3-round-xlarge" style="background-color:#{{playerTeam.TeamColor_Primary_HEX}} !important; width:{{player.Player.CurrentSkills.InsideShootingRating}}%">
-                    {{player.Player.CurrentSkills.InsideShootingRating}}</div>
-                </div>
-              </div>
-              <div class='playerOverviewRatingBoxGrouping'>
-                <span class='playerOverviewRatingAbbreviation'>Three Point Shooting Rating</span>
-                <div class="w3-light-grey w3-round-xlarge statBar">
-                  <div class="w3-container w3-blue w3-round-xlarge" style="background-color:#{{playerTeam.TeamColor_Primary_HEX}} !important; width:{{player.Player.CurrentSkills.ThreePointRating}}%">{{player.Player.CurrentSkills.ThreePointRating}}
-                  </div>
-                </div>
-              </div>
-              <div class='playerOverviewRatingBoxGrouping'>
-                <span class='playerOverviewRatingAbbreviation'>Passing Rating</span>
-                <div class="w3-light-grey w3-round-xlarge statBar">
-                  <div class="w3-container w3-blue w3-round-xlarge" style="background-color:#{{playerTeam.TeamColor_Primary_HEX}} !important; width:{{player.Player.CurrentSkills.PassingRating}}%">{{player.Player.CurrentSkills.PassingRating}}</div>
-                </div>
-              </div>
-              <div class='playerOverviewRatingBoxGrouping'>
-                <span class='playerOverviewRatingAbbreviation'>Free Throw Rating</span>
-                <div class="w3-light-grey w3-round-xlarge statBar">
-                  <div class="w3-container w3-blue w3-round-xlarge" style="background-color:#{{playerTeam.TeamColor_Primary_HEX}} !important; width:{{player.Player.CurrentSkills.FreeThrowRating}}%">{{player.Player.CurrentSkills.FreeThrowRating}}
-                  </div>
-                </div>
-              </div>
-              <div class='playerOverviewRatingBoxGrouping'>
-                <span class='playerOverviewRatingAbbreviation'>Rebounding Rating</span>
-                <div class="w3-light-grey w3-round-xlarge statBar">
-                  <div class="w3-container w3-blue w3-round-xlarge" style="background-color:#{{playerTeam.TeamColor_Primary_HEX}} !important; width:{{player.Player.CurrentSkills.ReboundingRating}}%">{{player.Player.CurrentSkills.ReboundingRating}}
-                  </div>
-                </div>
-              </div>
-              <div class='playerOverviewRatingBoxGrouping'>
-                <span class='playerOverviewRatingAbbreviation'>Dribbling Rating</span>
-                <div class="w3-light-grey w3-round-xlarge statBar">
-                  <div class="w3-container w3-blue w3-round-xlarge" style="background-color:#{{playerTeam.TeamColor_Primary_HEX}} !important; width:{{player.Player.CurrentSkills.DribblingRating}}%">{{player.Player.CurrentSkills.DribblingRating}}
-                  </div>
-                </div>
-              </div>
+              {% endfor %}
             </div>
             <div class='w3-col s6'>
               Recent Games
@@ -287,30 +251,22 @@
                   <tr>
                     <th scope="col">Opponent</th>
                     <th class='initialSortColumn' data-defaultsort="asc">Date</th>
-                    <th scope="col" data-defaultsort="desc">Minutes</th>
-                    <th scope="col" data-defaultsort="desc">Points</th>
-                    <th scope="col" data-defaultsort="desc">FG</th>
-                    <th scope="col" data-defaultsort="desc">3P</th>
-                    <th scope="col" data-defaultsort="desc">Rebounds</th>
-                    <th scope="col" data-defaultsort="desc">Assists</th>
-                    <th scope="col" data-defaultsort="desc">Blocks</th>
-                    <th scope="col" data-defaultsort="desc">Steals</th>
+                    <th scope="col" data-defaultsort="desc">Pass Yards</th>
+                    <th scope="col" data-defaultsort="desc">Pass TDs</th>
+                    <th scope="col" data-defaultsort="desc">Rush Yards</th>
+                    <th scope="col" data-defaultsort="desc">Rush TDs</th>
                     <th scope="col" data-defaultsort="desc">Game Score</th>
                   </tr>
                 </thead>
                 <tbody>
                   {% for game in gameStats %}
                   <tr>
-                    <td><img class='playerSeasonStatOpponentLogo' src='{{game.Opponent.LogoURL}}' /><a href='/World/{{page.WorldID}}/Team/{{game.Opponent.TeamID}}'>{{game.Opponent}}</a></td>
-                    <td data-value="{{game.GameID.GameDateID.DateID}}">{{game.GameID.GameDateID.Date}}</td>
-                    <td>{{game.Minutes}}</td>
-                    <td>{{game.Points}}</td>
-                    <td>{{game.FGM}} - {{game.FGA}} </td>
-                    <td>{{game.ThreePM}} - {{game.ThreePA}} </td>
-                    <td>{{game.Rebounds}}</td>
-                    <td>{{game.Assists}}</td>
-                    <td>{{game.Blocks}}</td>
-                    <td>{{game.Steals}}</td>
+                    <td><img class='playerSeasonStatOpponentLogo' src='{{game.TeamGameID.OpposingTeamGame.TeamSeasonID.TeamID.LogoURL}}' /><a href='/World/{{page.WorldID}}/Team/{{game.TeamGameID.OpposingTeamGame.TeamSeasonID.TeamID.TeamID}}'>{{game.TeamGameID.OpposingTeamGame.TeamSeasonID.TeamID.Name}}</a></td>
+                    <td data-value="{{game.GameID.GameDateID.DateID}}">{{game.TeamGameID.GameID.GameDateID.Date}}</td>
+                    <td>{{game.PAS_Yards}}</td>
+                    <td>{{game.PAS_TD}}</td>
+                    <td>{{game.RUS_Yards}}</td>
+                    <td>{{game.RUS_TD}}</td>
                     <td>{{game.GameScore}}</td>
                   </tr>
                   {% endfor %}
@@ -396,6 +352,22 @@
         </div>
       </div>
       {% endif %}
+      <div class="tab-content" style='display:none;' id="nav-awards" >
+        <div class='w3-container'>
+          <div class='w3-row-padding'>
+            <div class='w3-col s6'>
+              Awards
+              <table>
+                {% for Award in Awards%}
+                <tr>
+                  <td>{{Award.AwardName}} x{{Award.AwardCount}}</td>
+                </tr>
+                {%endfor%}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="" id='face'>
@@ -462,9 +434,9 @@ $(document).ready(function(){
   console.log("player.PlayerFaceJson", {{player.PlayerFaceJson|safe}});
 
   {% if player.PlayerFaceJson|length > 0 %}
-    BuildFace({{player.PlayerFaceJson|safe}}, '{{playerTeam.TeamJerseyStyle}}', '{{playerTeam.TeamJerseyInvert}}');
+    BuildFace({{player.PlayerFaceJson|safe}}, "{{player.TeamJerseyStyle}}", "{{player.TeamJerseyInvert}}");
   {% else %}
-    BuildFace(undefined, '{{playerTeam.TeamJerseyStyle}}', '{{playerTeam.TeamJerseyInvert}}');
+    BuildFace(undefined, "{{player.TeamJerseyStyle}}", "{{player.TeamJerseyInvert}}");
   {% endif %}
 
 
