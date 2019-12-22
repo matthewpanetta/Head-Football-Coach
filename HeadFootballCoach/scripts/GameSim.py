@@ -219,13 +219,13 @@ def GameSim(game):
                 AllPlayers[PlayerID]['PlayerSkills'][Skill] = int(  AllPlayers[PlayerID]['PlayerSkills'][Skill] * SkillMultiplier  )
 
 
-        AllPlayers[PlayerID]['GameStats'] = { 'GamesStarted':0, 'RUS_Yards':0, 'RUS_Carries':0, 'RUS_TD':0, 'PAS_Attempts':0, 'PAS_Completions':0, 'PAS_Yards':0, 'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'PNT_Punts': 0,'GamesPlayed':0, 'GameScore': 0,'KCK_FGA': 0, 'KCK_FGM': 0, 'DEF_Tackles':0, 'DEF_Sacks':0, 'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0}
+        AllPlayers[PlayerID]['GameStats'] = { 'GamesStarted':0, 'RUS_Yards':0, 'RUS_Carries':0, 'RUS_TD':0, 'PAS_Attempts':0, 'PAS_Completions':0, 'PAS_Yards':0, 'PAS_TD':0, 'REC_Yards':0,'REC_Receptions':0, 'REC_TD':0, 'PNT_Punts': 0,'GamesPlayed':0, 'GameScore': 0,'KCK_FGA': 0, 'KCK_FGM': 0, 'DEF_Tackles':0, 'DEF_Sacks':0, 'DEF_INT':0,'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0}
 
         AllPlayers[PlayerID]['Energy'] = 100
 
     GameDict = {}
     for T in [HomeTeam, AwayTeam]:
-        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts':0,'FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0, 'DEF_Tackles':0, 'DEF_Sacks':0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast}
+        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts':0,'FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_Receptions':0,'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0, 'DEF_Tackles':0, 'DEF_Sacks':0,'DEF_INT':0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast}
 
 
     TeamPlayers = {HomeTeam:{'PlayersOnField':{},'AllPlayers':{}}, AwayTeam:{'PlayersOnField':{},'AllPlayers':{}}}
@@ -453,7 +453,7 @@ def GameSim(game):
                         PlayChoices = {'Run': 5,'Pass': 15,'Punt': 80,'Field Goal': 0}
 
             else:
-                PlayChoices = {'Run': 50,'Pass': 50,'Punt': 0,'Field Goal': 0}
+                PlayChoices = {'Run': 45,'Pass': 55,'Punt': 0,'Field Goal': 0}
 
 
             #Not Late Game, far on 4th
@@ -468,9 +468,12 @@ def GameSim(game):
 
             if PlayChoice == 'Run':
                 RunningBackPlayerID = OffensiveTeamPlayers['RB'][0]
-                RunGameModifier = (RunningbackTalent + OffensiveLineTalent) / DefensiveLineTalent / 2.0
+                RunGameModifier = (RunningbackTalent + OffensiveLineTalent) * 1.0 / DefensiveLineTalent / 2.0
                 RunGameModifier = RunGameModifier ** 1.1
                 YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 2, -0.5, 12),0)
+
+                if YardsThisPlay > 6 and (random.uniform(0,1) < (.05 * ((RunningbackTalent / 90) ** 6))):
+                    YardsThisPlay = round(NormalTrunc(30, 20, 28, 100),0)
 
                 GameDict[OffensiveTeam]['RUS_Yards'] += YardsThisPlay
                 GameDict[OffensiveTeam]['RUS_Carries'] += 1
@@ -481,22 +484,26 @@ def GameSim(game):
                 QuarterbackPlayerID = OffensiveTeamPlayers['QB'][0]
                 AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Attempts'] += 1
                 GameDict[OffensiveTeam]['PAS_Attempts'] += 1
-                PassGameModifier = ((3 * QuarterbackTalent) + ReceiverTalent + OffensiveLineTalent) / (DefensiveLineTalent + SecondaryTalent) / 2.5
+                PassGameModifier = ((3.0 * QuarterbackTalent) + ReceiverTalent + OffensiveLineTalent) / (DefensiveLineTalent + SecondaryTalent) / 2.5
+                PassRushModifier = OffensiveLineTalent * 1.0 / DefensiveLineTalent
+                if Down == 3 and YardsToGo > 4:
+                    PassRushModifier /= 1.1
 
-
-                if (random.uniform(0,1) < (.03 / PassGameModifier)):
+                #INTERCEPTED
+                if (random.uniform(0,1) < (.0243 / PassGameModifier)):
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_INT'] += 1
                     GameDict[OffensiveTeam]['PAS_INT'] += 1
                     Turnover = True
                     YardsThisPlay = 0
 
-                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['DE']  + OffensiveTeamPlayers['DT'] + DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S'] + DefensiveTeamPlayers['OLB']  + OffensiveTeamPlayers['MLB']  ]
-                    DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
+                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 4) for u in DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
+                    DefensiveIntercepter = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
-                    AllPlayers[DefensiveTackler]['GameStats']['DEF_Tackles'] += 1
-                    GameDict[DefensiveTeam]['DEF_Tackles'] += 1
+                    AllPlayers[DefensiveIntercepter]['GameStats']['DEF_INT'] += 1
+                    GameDict[DefensiveTeam]['DEF_INT'] += 1
 
-                elif (random.uniform(0,1) < (.08 / (PassGameModifier ** 2))):
+                #Play was SACK
+                elif (random.uniform(0,1) < (.10 / (PassRushModifier ** 4))):
                     YardsThisPlay = round(NormalTrunc(-5, 2, -10, -1),0)
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Sacks'] += 1
                     GameDict[OffensiveTeam]['PAS_Sacks'] += 1
@@ -504,7 +511,7 @@ def GameSim(game):
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_SackYards'] += abs(YardsThisPlay)
                     GameDict[OffensiveTeam]['PAS_SackYards'] += abs(YardsThisPlay)
 
-                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['DE']  + OffensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + OffensiveTeamPlayers['MLB']  ]
+                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     AllPlayers[DefensiveTackler]['GameStats']['DEF_Sacks'] += 1
@@ -513,12 +520,18 @@ def GameSim(game):
                     AllPlayers[DefensiveTackler]['GameStats']['DEF_Tackles'] += 1
                     GameDict[DefensiveTeam]['DEF_Tackles'] += 1
 
-
-                elif (random.uniform(0,1) < (.6 * PassGameModifier)) :
+                #PASS COMPLETE
+                elif (random.uniform(0,1) < (.6224 * PassGameModifier)) :
                     PassGameModifier = PassGameModifier ** 1.1
-                    YardsThisPlay = round(NormalTrunc(5.5 * PassGameModifier, 4, 0, 30),0)
+                    YardsThisPlay = round(NormalTrunc(12 * PassGameModifier, 4, 0, 40),0)
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Completions'] += 1
                     GameDict[OffensiveTeam]['PAS_Completions'] += 1
+
+                    WideReceivers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 3) for u in OffensiveTeamPlayers['WR'] ]
+                    WideReceiverPlayer = WeightedProbabilityChoice(WideReceivers, WideReceivers[0])
+
+                    AllPlayers[WideReceiverPlayer]['GameStats']['REC_Receptions'] += 1
+                    GameDict[OffensiveTeam]['REC_Receptions'] += 1
 
                     DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S'] + DefensiveTeamPlayers['OLB']  + OffensiveTeamPlayers['MLB']  ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
@@ -526,12 +539,16 @@ def GameSim(game):
                     AllPlayers[DefensiveTackler]['GameStats']['DEF_Tackles'] += 1
                     GameDict[DefensiveTeam]['DEF_Tackles'] += 1
 
+                    GameDict[OffensiveTeam]['PAS_Yards'] += YardsThisPlay
+                    AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Yards'] += YardsThisPlay
+                    AllPlayers[WideReceiverPlayer]['GameStats']['REC_Yards'] += YardsThisPlay
+
+                #Incomplete pass
                 else:
                     YardsThisPlay = 0
                     IncompletePass = True
 
-                GameDict[OffensiveTeam]['PAS_Yards'] += YardsThisPlay
-                AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Yards'] += YardsThisPlay
+
 
             elif PlayChoice == 'Punt':
                 Punt = True
@@ -574,8 +591,8 @@ def GameSim(game):
             SecondsThisPlay = Min(SecondsThisPlay, int(NormalTrunc(27,4, 16, 35)))
             if IncompletePass:
                 SecondsThisPlay = 8
-            if random.uniform(0,1) < .10: #run out of bounds
-                SecondsThisPlay = Min(8, SecondsThisPlay)
+            if random.uniform(0,1) < .08: #run out of bounds
+                SecondsThisPlay = 8
             GameDict[OffensiveTeam]['TimeOfPossession'] += SecondsThisPlay
             SecondsLeftInPeriod -= SecondsThisPlay
 
@@ -611,6 +628,7 @@ def GameSim(game):
                 elif PlayChoice == 'Pass':
                     GameDict[OffensiveTeam]['PAS_TD'] += 1
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_TD'] += 1
+                    AllPlayers[WideReceiverPlayer]['GameStats']['REC_TD'] += 1
 
 
                 #print(OffensiveTeam, ' touchdown! ', OffensiveTeam, ': ', GameDict[OffensiveTeam]['Points'],' , ', DefensiveTeam, ': ', GameDict[DefensiveTeam]['Points'])
@@ -628,9 +646,6 @@ def GameSim(game):
                 #print('Turnover on downs - ', OffensiveTeam)
                 GameDict[OffensiveTeam]['Turnovers'] += 1
 
-            if SecondsLeftInPeriod < 0 and HalfEndPeriod:
-                Kickoff = True
-                SwitchPossession = True
 
 
 
@@ -640,7 +655,7 @@ def GameSim(game):
                 if PlayChoice == 'Run':
                     PlayDescription = AllPlayers[RunningBackPlayerID]['PlayerName'] + ' ' + str(int(100 - (BallSpot - YardsThisPlay))) + ' Yd ' + PlayChoice
                 elif PlayChoice == 'Pass':
-                    PlayDescription = AllPlayers[QuarterbackPlayerID]['PlayerName'] + ' ' + str(int(100 - (BallSpot - YardsThisPlay))) + ' Yd ' + PlayChoice
+                    PlayDescription = AllPlayers[QuarterbackPlayerID]['PlayerName'] + ' ' + str(int(100 - (BallSpot - YardsThisPlay))) + ' Yd ' + PlayChoice + ' to ' + AllPlayers[WideReceiverPlayer]['PlayerName']
                 DriveDescription = str(DrivePlayCount) + ' plays, ' + str(int(100 - DriveStartBallSpot)) + ' yards, ' + SecondsToMinutes(DriveDuration)
                 GE = GameEvent(GameID = game, WorldID = CurrentWorld, DriveDescription=DriveDescription, PlayDescription = PlayDescription, PlayType='TD', IsScoringPlay = True,ScoringTeamID=OffensiveTeam, HomePoints = GameDict[HomeTeam]['Points'], AwayPoints = GameDict[AwayTeam]['Points'], EventPeriod = Period, EventTime = SecondsLeftInPeriod)
                 GameEventsToSave.append(GE)
@@ -670,8 +685,16 @@ def GameSim(game):
                 GameEventsToSave.append(GE)
                 SwitchPossession = True
                 Kickoff = True
+
             elif FieldGoalMiss:
                 SwitchPossession = True
+
+
+            if SecondsLeftInPeriod < 0 and HalfEndPeriod:
+                Kickoff = True
+                if OffensiveTeam == AwayTeam:
+                    SwitchPossession = True
+                    OffensiveTeam, DefensiveTeam = DefensiveTeam, OffensiveTeam
 
 
             if SwitchPossession:
@@ -702,7 +725,7 @@ def GameSim(game):
                 DrivePlayCount = 0
 
                 if InOvertime and GameDict[HomeTeam]['Points'] != GameDict[AwayTeam]['Points']:
-                    SecondsLeftInPeriod == 0
+                    SecondsLeftInPeriod = 0
 
         if Period == max(Periods) and GameDict[HomeTeam]['Points'] == GameDict[AwayTeam]['Points']:
             Periods.append(Period+1)

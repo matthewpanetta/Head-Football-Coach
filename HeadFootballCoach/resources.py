@@ -103,7 +103,7 @@ def CreateSchedule(LS, WorldID):
         TeamsInConference = [u for u in Conf.team_set.all()]
         TeamsInConferenceCount = len(TeamsInConference)
 
-        TeamsInConference += [None] *  (WeeksInSeason - TeamsInConferenceCount)
+        #TeamsInConference +=  (WeeksInSeason - TeamsInConferenceCount)
         print(Conf, TeamsInConference)
 
         Conf_rr = round_robin(TeamsInConference, WeeksInSeason)
@@ -528,10 +528,10 @@ def CreateRecruitingClass(LS, WorldID):
 
     NumberOfRecruits = len(RecruitPool)
 
-    StarDistribution = {5:.075,
-                        4:.200,
-                        3:.400,
-                        2:.700,
+    StarDistribution = {5:.0166,
+                        4:.1,
+                        3:.3,
+                        2:.6,
                         1: 1.0}
 
     RecruitPreferenceBase = [

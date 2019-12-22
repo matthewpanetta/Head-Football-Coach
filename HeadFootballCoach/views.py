@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from django.db.models import Max, Avg, Count, Func, F, Sum
-from django.db.models.functions import Length
+from django.db.models import Max, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value
+from django.db.models.functions import Length, Concat
 from .models import Audit, League, TeamGame, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
 from datetime import timedelta, date
 import random
@@ -20,7 +20,9 @@ from .scripts.serializers import TeamSerializer,TeamSeasonSerializer
 from django.core import serializers
 import time
 
-
+class Round(Func):
+  function = 'ROUND'
+  arity = 2
 
 def Max_Int(a,b):
     if a > b:
@@ -62,7 +64,11 @@ def GetAllTeams(WorldID, SortType='National', GroupingName=None, GroupingID=None
 
 def CurrentDate(WorldID):
 
-    CurrentDate = Calendar.objects.get(WorldID = WorldID, IsCurrent = 1)
+    if isinstance(WorldID, int):
+        WorldID = World.objects.filter(WorldID = WorldID).first()
+
+    CurrentDate = WorldID.calendar_set.filter(IsCurrent = 1).first()
+    #CurrentDate = Calendar.objects.get(WorldID = WorldID, IsCurrent = 1)
 
     return CurrentDate
 
@@ -403,7 +409,7 @@ def Page_World(request, WorldID):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Page_World - Return teams and games')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='Page_World - Return teams and games')
 
     if DoAudit:
         start = time.time()
@@ -415,46 +421,36 @@ def Page_World(request, WorldID):
     AllPlayers = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(GamesPlayed__gt=0).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason)
     if AllPlayers.count() > 0:
 
-        TopPlayers = AllPlayers.order_by('-RUS_Yards').values('PlayerTeamSeasonID', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation','TeamSeasonID__TeamID_id', 'PlayerID__PlayerFirstName','PlayerID__PlayerLastName', 'PlayerID', 'GamesPlayed', 'RUS_Yards', 'PAS_Yards', 'REC_Yards')
+        TopPlayers = AllPlayers.values('PlayerTeamSeasonID', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation','TeamSeasonID__TeamID_id', 'PlayerID__PlayerFirstName','PlayerID__PlayerLastName', 'PlayerID', 'GamesPlayed', 'RUS_Yards', 'PAS_Yards', 'REC_Yards').annotate(
+            PAS_YardsPG=Case(
+                When(GamesPlayed=0, then=0.0),
+                default=(Round(F('PAS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                output_field=FloatField()
+            ),
+            RUS_YardsPG=Case(
+                When(GamesPlayed=0, then=0.0),
+                default=(Round(F('RUS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                output_field=FloatField()
+            ),
+            REC_YardsPG=Case(
+                When(GamesPlayed=0, then=0.0),
+                default=(Round(F('REC_Yards')* 1.0 / F('GamesPlayed'),1)),
+                output_field=FloatField()
+            )
+        )
 
-        for P in TopPlayers:
-            if not P['GamesPlayed'] > 0:
-                continue
-
-            RUS_YardsPG = 1.0 * P['RUS_Yards'] / P['GamesPlayed']
-            PAS_YardsPG = 1.0 * P['PAS_Yards'] / P['GamesPlayed']
-            REC_YardsPG = 1.0 * P['REC_Yards'] / P['GamesPlayed']
-
-            if len(TopRushers) < 3 or RUS_YardsPG > TopRushers[-1]['RUS_YardsPG']:
-                if len(TopRushers) >= 3:
-                    TopRushers.pop()
-                P['RUS_YardsPG'] = round(RUS_YardsPG,1)
-                TopRushers.append(P)
-                TopRushers = sorted(TopRushers, key=lambda k: k['RUS_YardsPG'], reverse=True)
-
-            if len(TopPassers) < 3 or PAS_YardsPG > TopPassers[-1]['PAS_YardsPG']:
-                if len(TopPassers) >= 3:
-                    TopPassers.pop()
-                P['PAS_YardsPG'] = round(PAS_YardsPG,1)
-                TopPassers.append(P)
-                TopPassers = sorted(TopPassers, key=lambda k: k['PAS_YardsPG'], reverse=True)
-
-            if len(TopReceivers) < 3 or REC_YardsPG > TopReceivers[-1]['REC_YardsPG']:
-                if len(TopReceivers) >= 3:
-                    TopReceivers.pop()
-                P['REC_YardsPG'] = round(REC_YardsPG,1)
-                TopReceivers.append(P)
-                TopReceivers = sorted(TopReceivers, key=lambda k: k['REC_YardsPG'], reverse=True)
-
+        TopPassers   = TopPlayers.filter(PAS_Yards__gt = 0).order_by('-PAS_YardsPG')[0:3]
+        TopRushers   = TopPlayers.filter(RUS_Yards__gt = 0).order_by('-RUS_YardsPG')[0:3]
+        TopReceivers = TopPlayers.filter(REC_Yards__gt = 0).order_by('-REC_YardsPG')[0:3]
+        print('TopPassers.query',TopPassers.query)
 
         for u in range(0,3):
             Leaders.append({'RUS_YardsPG': TopRushers[u], 'PAS_YardsPG': TopPassers[u], 'REC_YardsPG': TopReceivers[u]})
-            print(Leaders[-1])
 
         if DoAudit:
             end = time.time()
             TimeElapsed = end - start
-            A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription = 'Page_World - return league leaders')
+            A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 7, AuditDescription = 'Page_World - return league leaders')
     context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'leaders':Leaders, 'page': page, 'userTeam': UserTeam, 'date': StartDate , 'games': UpcomingGames}
 
     context['recentGames'] = RecentGames
@@ -464,13 +460,28 @@ def Page_World(request, WorldID):
 def Page_Player(request, WorldID, PlayerID):
 
 
-    PlayerQuerySet = get_object_or_404(Player, pk=PlayerID)
     CurrentWorld = World.objects.filter(WorldID = WorldID).first()
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
-    if len(PlayerQuerySet.PlayerFaceJson) == 0:
-        PlayerQuerySet.GeneratePlayerFaceJSon()
-    PlayerDict = PlayerQuerySet.ReturnAsDict()
-    PlayerDict['Player'] = PlayerQuerySet
+    PlayerObject = Player.objects.filter(WorldID = CurrentWorld).filter(PlayerID = PlayerID)
+    if len(PlayerObject.first().PlayerFaceJson) == 0:
+        PlayerObject.first().GeneratePlayerFaceJSon()
+    PlayerDict = PlayerObject.values('PlayerID', 'PlayerLastName', 'PlayerFirstName', 'PlayerFaceJson', 'Class', 'IsCurrentlyRedshirted','WasPreviouslyRedshirted','JerseyNumber','Height', 'Weight', 'CityID', 'Position', 'CityID__CityName', 'CityID__StateID__StateName', 'RecruitingStars', 'IsRecruit').annotate(
+        HometownAndState=Concat(F('CityID__CityName'), Value(', '), F('CityID__StateID__StateName')),
+        FullName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName')),
+        HeightFeet = (F('Height') / 12),
+        HeightInches = (F('Height') % 12),
+        HeightFormatted = Concat('HeightFeet', Value('\''), 'HeightInches', Value('"'), output_field=CharField())
+    ).first()
+
+    PlayerObject = PlayerObject.first()
+
+    CurrentPlayerTeamSeason = PlayerObject.playerteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+    CurrentPlayerSeasonSkill = PlayerObject.playerseasonskill_set.filter(LeagueSeasonID__IsCurrent = True).first()
+
+    if len(PlayerDict['PlayerFaceJson']) == 0:
+        PlayerObject.GeneratePlayerFaceJSon()
+    #PlayerDict = PlayerQuerySet.ReturnAsDict()
+    PlayerDict['Player'] = PlayerObject
     allTeams = GetAllTeams(WorldID)
 
 
@@ -479,9 +490,52 @@ def Page_Player(request, WorldID, PlayerID):
 
     page = {'PageTitle': PlayerDict['FullName'] + ' - HS Recruit', 'WorldID': WorldID, 'PrimaryColor': 'Blue', 'SecondaryColor': 'Red'}
 
-    context = {'userTeam': UserTeam, 'player':PlayerDict,  'allTeams': allTeams, 'date': CurrentDate(WorldID)}
+    context = {'userTeam': UserTeam, 'player':PlayerDict,  'allTeams': allTeams, 'date': CurrentDate(CurrentWorld)}
 
     RatingNameMap = {}
+
+    BoxScoreStatGroupings = [
+        {
+            'StatGroupName': 'Passing',
+            'Stats': [
+                {'FieldName': 'PAS_CompletionsAndAttempts', 'DisplayName': 'C/ATT', 'DisplayColumn': True, 'DisplayOrder': 2},
+                {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'DisplayColumn': True, 'DisplayOrder': 2},
+                {'FieldName': 'PAS_YardsPerAttempt', 'DisplayName': 'YPA', 'DisplayColumn': True, 'DisplayOrder': 2.5},
+                {'FieldName': 'PAS_Attempts', 'DisplayName': 'A', 'DisplayColumn': False, 'DisplayOrder': 3},
+                {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'DisplayColumn': True, 'DisplayOrder': 4},
+                {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TD', 'DisplayColumn': True, 'DisplayOrder': 5},
+                {'FieldName': 'PAS_INT', 'DisplayName': 'INT', 'DisplayColumn': True, 'DisplayOrder': 6},
+                {'FieldName': 'PAS_SacksAndYards', 'DisplayName': 'Sck/Yrd', 'DisplayColumn': True, 'DisplayOrder': 7},
+                {'FieldName': 'PAS_SackYards', 'DisplayName': 'Sack Yards', 'DisplayColumn': False, 'DisplayOrder': 998}
+            ]
+        },
+        {
+            'StatGroupName': 'Rushing',
+            'Stats': [
+                {'FieldName': 'RUS_Carries', 'DisplayName': 'Car', 'DisplayColumn': True, 'DisplayOrder': 2},
+                {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'DisplayColumn': True, 'DisplayOrder': 3},
+                {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'YPC', 'DisplayColumn': True, 'DisplayOrder': 3.5},
+                {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'DisplayColumn': True, 'DisplayOrder': 4},
+            ],
+        },
+        {
+            'StatGroupName': 'Receiving',
+            'Stats': [
+                {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'DisplayColumn': True, 'DisplayOrder': 2},
+                {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'DisplayColumn': True, 'DisplayOrder': 3},
+                {'FieldName': 'REC_YardsPerCatch', 'DisplayName': 'YPC', 'DisplayColumn': True, 'DisplayOrder': 3.5},
+                {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'DisplayColumn': True, 'DisplayOrder': 4},
+            ],
+        },
+        {
+            'StatGroupName': 'Defense',
+            'Stats': [
+                {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'DisplayColumn': True, 'DisplayOrder': 2},
+                {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'DisplayColumn': True, 'DisplayOrder': 3},
+                {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'DisplayColumn': True, 'DisplayOrder': 4},
+            ],
+        },
+    ]
     PositionRatingMap = {'QB': ['OverallRating', 'ThrowPower_Rating', 'ShortThrowAccuracy_Rating', 'MediumThrowAccuracy_Rating', 'DeepThrowAccuracy_Rating', 'ThrowOnRun_Rating', 'ThrowUnderPressure_Rating', 'PlayAction_Rating', 'Awareness_Rating', 'Speed_Rating'],
                          'RB': ['OverallRating', 'Agility_Rating', 'Speed_Rating', 'Acceleration_Rating', 'Carrying_Rating', 'Elusiveness_Rating', 'BallCarrierVision_Rating', 'BreakTackle_Rating', 'Awareness_Rating', 'Speed_Rating'],
                          'FB': ['OverallRating', 'Agility_Rating', 'Speed_Rating', 'Acceleration_Rating', 'Carrying_Rating', 'Elusiveness_Rating', 'BallCarrierVision_Rating', 'BreakTackle_Rating', 'Awareness_Rating', 'Speed_Rating'],
@@ -502,89 +556,127 @@ def Page_Player(request, WorldID, PlayerID):
 
 
     if PlayerDict['IsRecruit'] == False:
-        PTS = PlayerTeamSeason.objects.filter(WorldID=WorldID).filter(PlayerID = PlayerQuerySet).get(TeamSeasonID__LeagueSeasonID = CurrentSeason)
+        PTS = CurrentPlayerTeamSeason
         PT = PTS.TeamSeasonID.TeamID
         PlayerTeam = PT
 
         page = {'PageTitle': PlayerDict['FullName'] + ' - ' + PlayerTeam.TeamName, 'WorldID': WorldID, 'PrimaryColor': PlayerTeam.TeamColor_Primary_HEX, 'SecondaryColor': PlayerTeam.SecondaryColor_Display}
 
-        PlayerSkills = PlayerSeasonSkill.objects.get(WorldID=WorldID, PlayerID = PlayerQuerySet, LeagueSeasonID = CurrentSeason)
-
-        PlayerSkills = PlayerSkills.__dict__
+        PlayerSkills = CurrentPlayerSeasonSkill.__dict__
 
         PlayerDict['Skills'] = []
         for u in PositionRatingMap[PlayerDict['Position']]:
             PlayerDict['Skills'].append({'SkillName': u, 'Value':PlayerSkills[u]})
-        print('Skills', PlayerDict['Skills'])
 
 
-        PlayerStats = PlayerGameStat.objects.filter(WorldID=WorldID).filter(PlayerTeamSeasonID = PTS).order_by('TeamGameID__GameID__GameDateID')
-
-        SeasonStats = {}
+        #PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__GameDateID')
+        PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__GameDateID').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__Position','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT', 'TeamGameID', 'TeamGameID__GameID', 'TeamGameID__GameID__GameDateID__WeekID__WeekNumber').annotate(  # call `annotate`
+                PAS_CompletionPercentage=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1)),
+                    output_field=FloatField()
+                ),
+                PAS_YardsPerAttempt=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Round(Sum(F('PAS_Yards')) * 1.0 / Sum(F('PAS_Attempts')),1)),
+                    output_field=FloatField()
+                ),
+                PAS_YardsPerCompletion=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('PAS_Completions')),1)),
+                    output_field=FloatField()
+                ),
+                RUS_YardsPerCarry=Case(
+                    When(RUS_Carries=0, then=0.0),
+                    default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('RUS_Carries')),1)),
+                    output_field=FloatField()
+                ),
+                PAS_CompletionsAndAttempts=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Concat('PAS_Completions', Value('-') ,'PAS_Attempts')),
+                    output_field=CharField()
+                ),
+                PAS_SacksAndYards=Case(
+                    When(PAS_Attempts=0, then=0),
+                    default=(Concat('PAS_Sacks', Value('-') ,'PAS_SackYards')),
+                    output_field=CharField()
+                ),
+                REC_YardsPerCatch=Case(
+                    When(REC_Receptions=0, then=0.0),
+                    default=(Round(Sum(F('REC_Yards'))* 1.0 / Sum(F('REC_Receptions')),1)),
+                    output_field=FloatField()
+                ),
+            )
+        SeasonStats = PTS.__dict__
         CareerHigh = {}
         if PlayerStats.count() >0:
             PAS_Yards_CareerHigh = PlayerStats.order_by('-PAS_Yards').first()
             RUS_Yards_CareerHigh = PlayerStats.order_by('-RUS_Yards').first()
             REC_Yards_CareerHigh = PlayerStats.order_by('-REC_Yards').first()
-            CareerHigh = {'PAS_Yards': {'Stat': 'Passing Yards', 'Game': PAS_Yards_CareerHigh.TeamGameID.GameID, 'Value': PAS_Yards_CareerHigh.PAS_Yards}, 'RUS_Yards':{'Stat': 'Rushing Yards', 'Game': RUS_Yards_CareerHigh.TeamGameID.GameID, 'Value': RUS_Yards_CareerHigh.RUS_Yards}, 'REC_Yards': {'Stat': 'Receiving Yards Yards', 'Game': REC_Yards_CareerHigh.TeamGameID.GameID, 'Value': REC_Yards_CareerHigh.REC_Yards}}
+            CareerHigh = {'PAS_Yards': {'Stat': 'Passing Yards', 'Game': PAS_Yards_CareerHigh['TeamGameID__GameID'], 'Value': PAS_Yards_CareerHigh['PAS_Yards']}, 'RUS_Yards':{'Stat': 'Rushing Yards', 'Game': RUS_Yards_CareerHigh['TeamGameID__GameID'], 'Value': RUS_Yards_CareerHigh['RUS_Yards']}, 'REC_Yards': {'Stat': 'Receiving Yards Yards', 'Game': REC_Yards_CareerHigh['TeamGameID__GameID'], 'Value': REC_Yards_CareerHigh['REC_Yards']}}
 
-        print(CareerHigh)
-        GameCount = 0
+        PlayerStatCategoriesTaken = []
+        PlayerStatCategories = []
+        for G in PlayerStats:
+            for S in ['RUS_Yards', 'RUS_TD', 'RUS_Carries','RUS_YardsPerCarry', 'PAS_Yards', 'PAS_TD', 'PAS_CompletionsAndAttempts','PAS_CompletionPercentage', 'PAS_SacksAndYards', 'PAS_INT', 'REC_Yards','REC_Receptions','REC_YardsPerCatch', 'REC_TD',  'GameScore','DEF_Tackles', 'DEF_Sacks', 'DEF_INT']:
+                if str(G[S]) != '0' and str(G[S]) != '0.0' and S not in PlayerStatCategoriesTaken:
+                    PlayerStatCategoriesTaken.append(S)
+                    for StatGroup in BoxScoreStatGroupings:
+                        for Stat in StatGroup['Stats']:
+                            if S == Stat['FieldName']:
+                                PlayerStatCategories.append({'FieldName': S, 'DisplayName': Stat['DisplayName']})
+
+
+        PlayerStats = [u for u in PlayerStats]
+        RecentGameStats = []
+        for G in PlayerStats:
+            print('G', G['RUS_Yards'],G['RUS_TD'],G['RUS_YardsPerCarry'] )
+            G['Stats'] = []
+            OpposingTeamGame = TeamGame.objects.filter(TeamGameID = G['TeamGameID']).first().OpposingTeamGame
+            G['OpposingTeamID'] = OpposingTeamGame.TeamSeasonID.TeamID_id
+            G['OpposingTeamLogoURL'] = OpposingTeamGame.TeamSeasonID.TeamID.TeamLogoURL
+            for StatCategory in PlayerStatCategories:
+                SC = {}
+                SC['Value'] = G[StatCategory['FieldName']]
+                SC['FieldName'] = StatCategory['FieldName']
+                G['Stats'].append(SC)
+            RecentGameStats.append(G)
+            if len(RecentGameStats) > 5:
+                RecentGameStats.pop(0)
+        GameStats = PlayerStats
+
+
         GameStats = []
-        for G in PlayerStats.order_by('TeamGameID__GameID__GameDateID'):
 
-            PlayerStatDict = G.__dict__
-            GameObject = G.TeamGameID.GameID
-            SeasonOfGame = GameObject.LeagueSeasonID
-
-            GameCount +=1
-            PlayerStatDict['GameOfSeason'] = GameCount
-
-            SeasonTeam =  PTS.TeamSeasonID.TeamID
-
-            if PTS.TeamSeasonID.TeamID == GameObject.HomeTeamID:
-                PlayerStatDict['Opponent'] = GameObject.AwayTeamID
-            else:
-                PlayerStatDict['Opponent'] = GameObject.HomeTeamID
-
-            GameStats.append(PlayerStatDict)
 
         CareerHighList = []
         for ch in CareerHigh:
             CareerHighList.append({'Stat': ch, 'Game': CareerHigh[ch]['Game'], 'Value': CareerHigh[ch]['Value']})
 
-        SeasonStatList = []
-        for u in SeasonStats:
-            SeasonStatList.append(SeasonStats[u])
-
-        for g in GameStats:
-            if g['GameOfSeason'] > PlayerStats.count() - 5:
-                g['RecentGame'] = 1
-            else:
-                g['RecentGame'] = 0
-
-        context['gameStats'] = PlayerStats
+        context['GameStats'] = GameStats
+        context['RecentGameStats'] = RecentGameStats
         context['careerHigh'] = CareerHighList
-        context['seasonStats'] = SeasonStatList
+        context['seasonStats'] = PlayerTeamSeason.objects.filter(PlayerID = PlayerObject).order_by('-TeamSeasonID__LeagueSeasonID__SeasonStartYear')
         context['playerTeam'] = PlayerTeam
+        context['PlayerStatCategories'] = PlayerStatCategories
         context['Skills'] = PlayerDict['Skills']
 
         Awards = []
         AwardQS = PlayerTeamSeasonAward.objects.filter(PlayerTeamSeasonID__PlayerID = PlayerDict['Player'])
         for Award in AwardQS.values('IsWeekAward', 'IsSeasonAward', 'IsConferenceAward', 'ConferenceID', 'IsNationalAward').annotate(AwardCount = Count('PlayerTeamSeasonAwardID')).order_by('-AwardCount'):
-            str = ''
+            s = ''
             if Award['IsNationalAward']:
-                str += 'National Player of the '
+                s += 'National Player of the '
             elif Award['IsConferenceAward']:
                 Conf = CurrentWorld.conference_set.filter(ConferenceID = Award['ConferenceID']).first()
-                str += Conf.ConferenceName + ' Player of the '
+                s += Conf.ConferenceName + ' Player of the '
 
             if Award['IsWeekAward']:
-                str += 'Week'
+                s += 'Week'
             elif Award['IsSeasonAward']:
-                str+= 'Year'
+                s+= 'Year'
 
-            Award['AwardName'] = str
+            Award['AwardName'] = s
 
             print(Award)
             Awards.append(Award)
@@ -604,10 +696,6 @@ def Page_Player(request, WorldID, PlayerID):
 
 
     context['page'] = page
-
-
-    for u in context:
-        print(u, context[u])
     return render(request, 'HeadFootballCoach/Player.html', context)
 
 
@@ -623,6 +711,7 @@ def Page_Game(request, WorldID, GameID):
     allTeams = GetAllTeams(WorldID)
     HomeTeam = GameDict['HomeTeamID']
     AwayTeam = GameDict['AwayTeamID']
+    CurrentWorld = World.objects.filter(WorldID = WorldID).first()
 
     Events = []
     BoxScore = []
@@ -636,35 +725,48 @@ def Page_Game(request, WorldID, GameID):
         {
             'StatGroupName': 'Passing',
             'Stats': [
-                {'FieldName': 'FullName', 'DisplayName': 'Player Name', 'DisplayColumn': True},
-                {'FieldName': 'PlayerID', 'DisplayName': ''},
-                {'FieldName': 'PAS_Completions', 'DisplayName': 'C/ATT', 'DisplayColumn': True},
-                {'FieldName': 'PAS_Attempts', 'DisplayName': 'A', 'DisplayColumn': False},
-                {'FieldName': 'PAS_Yards', 'DisplayName': 'Yards', 'DisplayColumn': True},
-                {'FieldName': 'PAS_TD', 'DisplayName': 'TD', 'DisplayColumn': True},
-                {'FieldName': 'PAS_INT', 'DisplayName': 'INT', 'DisplayColumn': True},
-                {'FieldName': 'PAS_Sacks', 'DisplayName': 'Sck/Yrd', 'DisplayColumn': True},
-                {'FieldName': 'PAS_SackYards', 'DisplayName': 'Sack Yards', 'DisplayColumn': False}
+                {'FieldName': 'FullName', 'DisplayName': 'Player Name', 'DisplayColumn': True, 'DisplayOrder': 1},
+                {'FieldName': 'PlayerID', 'DisplayName': '', 'DisplayColumn': False,'DisplayOrder': 999},
+                {'FieldName': 'PAS_CompletionsAndAttempts', 'DisplayName': 'C/ATT', 'DisplayColumn': True, 'DisplayOrder': 2},
+                {'FieldName': 'PAS_YardsPerAttempt', 'DisplayName': 'YPA', 'DisplayColumn': True, 'DisplayOrder': 2.5},
+                {'FieldName': 'PAS_Attempts', 'DisplayName': 'A', 'DisplayColumn': False, 'DisplayOrder': 3},
+                {'FieldName': 'PAS_Yards', 'DisplayName': 'Yards', 'DisplayColumn': True, 'DisplayOrder': 4},
+                {'FieldName': 'PAS_TD', 'DisplayName': 'TD', 'DisplayColumn': True, 'DisplayOrder': 5},
+                {'FieldName': 'PAS_INT', 'DisplayName': 'INT', 'DisplayColumn': True, 'DisplayOrder': 6},
+                {'FieldName': 'PAS_SacksAndYards', 'DisplayName': 'Sck/Yrd', 'DisplayColumn': True, 'DisplayOrder': 7},
+                {'FieldName': 'PAS_SackYards', 'DisplayName': 'Sack Yards', 'DisplayColumn': False, 'DisplayOrder': 998}
             ]
         },
         {
             'StatGroupName': 'Rushing',
             'Stats': [
-                {'FieldName': 'FullName', 'DisplayName': 'Player Name', 'DisplayColumn': True},
-                {'FieldName': 'PlayerID', 'DisplayName': ''},
-                {'FieldName': 'RUS_Carries', 'DisplayName': 'Car', 'DisplayColumn': True},
-                {'FieldName': 'RUS_Yards', 'DisplayName': 'Yards', 'DisplayColumn': True},
-                {'FieldName': 'RUS_TD', 'DisplayName': 'TDs', 'DisplayColumn': True},
+                {'FieldName': 'FullName', 'DisplayName': 'Player Name', 'DisplayColumn': True, 'DisplayOrder': 1},
+                {'FieldName': 'PlayerID', 'DisplayName': '', 'DisplayColumn': False,'DisplayOrder': 999},
+                {'FieldName': 'RUS_Carries', 'DisplayName': 'Car', 'DisplayColumn': True, 'DisplayOrder': 2},
+                {'FieldName': 'RUS_Yards', 'DisplayName': 'Yards', 'DisplayColumn': True, 'DisplayOrder': 3},
+                {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'YPC', 'DisplayColumn': True, 'DisplayOrder': 3.5},
+                {'FieldName': 'RUS_TD', 'DisplayName': 'TDs', 'DisplayColumn': True, 'DisplayOrder': 4},
+            ],
+        },
+        {
+            'StatGroupName': 'Receiving',
+            'Stats': [
+                {'FieldName': 'FullName', 'DisplayName': 'Player Name', 'DisplayColumn': True, 'DisplayOrder': 1},
+                {'FieldName': 'PlayerID', 'DisplayName': '', 'DisplayColumn': False,'DisplayOrder': 999},
+                {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'DisplayColumn': True, 'DisplayOrder': 2},
+                {'FieldName': 'REC_Yards', 'DisplayName': 'Yards', 'DisplayColumn': True, 'DisplayOrder': 3},
+                {'FieldName': 'REC_YardsPerCatch', 'DisplayName': 'YPC', 'DisplayColumn': True, 'DisplayOrder': 3.5},
+                {'FieldName': 'REC_TD', 'DisplayName': 'TDs', 'DisplayColumn': True, 'DisplayOrder': 4},
             ],
         },
         {
             'StatGroupName': 'Defense',
             'Stats': [
-                {'FieldName': 'FullName', 'DisplayName': 'Player Name', 'DisplayColumn': True},
-                {'FieldName': 'PlayerID', 'DisplayName': ''},
-                {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'DisplayColumn': True},
-                {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'DisplayColumn': True},
-                {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'DisplayColumn': True},
+                {'FieldName': 'FullName', 'DisplayName': 'Player Name', 'DisplayColumn': True, 'DisplayOrder': 1},
+                {'FieldName': 'PlayerID', 'DisplayName': '', 'DisplayColumn': False,'DisplayOrder': 999},
+                {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'DisplayColumn': True, 'DisplayOrder': 2},
+                {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'DisplayColumn': True, 'DisplayOrder': 3},
+                {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'DisplayColumn': True, 'DisplayOrder': 4},
             ],
         },
     ]
@@ -742,31 +844,31 @@ def Page_Game(request, WorldID, GameID):
                 ScoringSummary.append(PeriodScoringSummary)
 
 
-        GameDict['HomeTotalYards'] = GameDict['HomeRUS_Yards'] + GameDict['HomeREC_Yards'] + GameDict['HomePAS_Yards']
-        GameDict['AwayTotalYards'] = GameDict['AwayRUS_Yards'] + GameDict['AwayREC_Yards'] + GameDict['AwayPAS_Yards']
-
-        GameDict['HomeThirdDownPercentage'] = round(GameDict['HomeThirdDownConversion'] * 100.0 / GameDict['HomeThirdDownAttempt'] if GameDict['HomeThirdDownAttempt'] > 0 else 0.0,1)
-        GameDict['AwayThirdDownPercentage'] = round(GameDict['AwayThirdDownConversion'] * 100.0 / GameDict['AwayThirdDownAttempt'] if GameDict['AwayThirdDownAttempt'] > 0 else 0.0,1)
-
         TeamStatBox = []
-        StatBoxStats = ['TotalYards', 'Turnovers', 'TimeOfPossession', 'FirstDowns', 'ThirdDownPercentage', 'PNT_Punts', 'DEF_Sacks' ]
-        StatBoxFormatting = {'TimeOfPossession': 'Seconds'}
+        StatBoxStats  = [{'FieldName': 'TotalYards', 'DisplayName': 'Total Yards'}, {'FieldName': 'FirstDowns', 'DisplayName': 'First Downs'}]
+        StatBoxStats += [{'FieldName': 'TimeOfPossession', 'DisplayName': 'Time Of Possession', 'Formatting': 'Seconds'}, {'FieldName': 'Turnovers', 'DisplayName': 'Turnovers'}]
+        StatBoxStats += [{'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks'} , {'FieldName': 'PNT_Punts', 'DisplayName': 'Punts'}]
+        StatBoxStats += [{'FieldName': 'ThirdDownPercentage', 'DisplayName': '3rd Down %', 'Formatting': 'Percentage'}, {'FieldName': 'FourthDownPercentage', 'DisplayName': '4th Down %', 'Formatting': 'Percentage'}]
         for Stat in StatBoxStats:
-            HomeValue = GameDict['Home'+Stat]
-            AwayValue = GameDict['Away'+Stat]
-            MaxValue  = HomeValue if HomeValue > AwayValue else AwayValue
-            HomeRatio = round(float(HomeValue) * 100.0 / float(MaxValue),1) if MaxValue != 0 else 0
-            AwayRatio = round(float(AwayValue) * 100.0 / float(MaxValue),1) if MaxValue != 0 else 0
+            StatName = Stat['FieldName']
+            Stat['HomeValue'] = GameDict['Home'+StatName]
+            Stat['AwayValue'] = GameDict['Away'+StatName]
+            MaxValue  = Stat['HomeValue'] if Stat['HomeValue'] > Stat['AwayValue'] else Stat['AwayValue']
+            Stat['HomeRatio'] = round(float(Stat['HomeValue']) * 100.0 / float(MaxValue),1) if MaxValue != 0 else 0
+            Stat['AwayRatio'] = round(float(Stat['AwayValue']) * 100.0 / float(MaxValue),1) if MaxValue != 0 else 0
 
-            HomeRatio = 5 if HomeRatio == 0 else HomeRatio
-            AwayRatio = 5 if AwayRatio == 0 else AwayRatio
+            Stat['HomeRatio'] = 5 if Stat['HomeRatio'] == 0 else Stat['HomeRatio']
+            Stat['AwayRatio'] = 5 if Stat['AwayRatio'] == 0 else Stat['AwayRatio']
 
-            if Stat in StatBoxFormatting:
-                if StatBoxFormatting[Stat] == 'Seconds':
-                    HomeValue = SecondsToMinutes(HomeValue)
-                    AwayValue = SecondsToMinutes(AwayValue)
-            StatDict = {'StatName': Stat, 'HomeValue': HomeValue, 'AwayValue': AwayValue, 'HomeRatio': HomeRatio, 'AwayRatio': AwayRatio}
-            TeamStatBox.append(StatDict)
+            if 'Formatting' in Stat:
+                if Stat['Formatting'] == 'Seconds':
+                    Stat['HomeValue'] = SecondsToMinutes(Stat['HomeValue'])
+                    Stat['AwayValue'] = SecondsToMinutes(Stat['AwayValue'])
+                elif Stat['Formatting'] == 'Percentagexxx':
+                    Stat['HomeValue'] = str(Stat['HomeValue']) + '%'
+                    Stat['AwayValue'] = str(Stat['AwayValue']) + '%'
+            #StatDict = {'StatName': Stat, 'HomeValue': HomeValue, 'AwayValue': AwayValue, 'HomeRatio': HomeRatio, 'AwayRatio': AwayRatio}
+            TeamStatBox.append(Stat)
 
         context['gameEvents'] = GameEvents
         context['ScoringSummary'] = ScoringSummary
@@ -778,15 +880,45 @@ def Page_Game(request, WorldID, GameID):
                 print(S)
 
 
-        PlayerGames = PlayerGameStat.objects.filter(TeamGameID__GameID = GameQuerySet).order_by('-GameScore').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__Position','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT')
+        PlayerGames = PlayerGameStat.objects.filter(TeamGameID__GameID = GameQuerySet).order_by('-GameScore').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__Position','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT').annotate(  # call `annotate`
+                PAS_CompletionPercentage=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1)),
+                    output_field=FloatField()
+                ),
+                PAS_YardsPerAttempt=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Round(Sum(F('PAS_Yards')) * 1.0 / Sum(F('PAS_Attempts')),1)),
+                    output_field=FloatField()
+                ),
+                PAS_YardsPerCompletion=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('PAS_Completions')),1)),
+                    output_field=FloatField()
+                ),
+                RUS_YardsPerCarry=Case(
+                    When(RUS_Carries=0, then=0.0),
+                    default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('RUS_Carries')),1)),
+                    output_field=FloatField()
+                ),
+                PAS_CompletionsAndAttempts=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Concat('PAS_Completions', Value('-') ,'PAS_Attempts')),
+                    output_field=CharField()
+                ),
+                PAS_SacksAndYards=Case(
+                    When(PAS_Attempts=0, then=0),
+                    default=(Concat('PAS_Sacks', Value('-') ,'PAS_SackYards')),
+                    output_field=CharField()
+                ),
+                REC_YardsPerCatch=Case(
+                    When(REC_Receptions=0, then=0.0),
+                    default=(Round(Sum(F('REC_Yards'))* 1.0 / Sum(F('REC_Receptions')),1)),
+                    output_field=FloatField()
+                ),
+            )
         for u in PlayerGames:
-            #PlayerSeason = u.PlayerTeamSeasonID
-            #P = PlayerSeason.PlayerID
-            #P = P.ReturnAsDict()
 
-            #GameStatDict = u.ReturnAsDict()
-            #for Stat in GameStatDict:
-            #    P[Stat] = GameStatDict[Stat]
 
             u['FullName'] = u['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + u['PlayerTeamSeasonID__PlayerID__PlayerLastName']
             u['Position'] = u['PlayerTeamSeasonID__PlayerID__Position']
@@ -802,13 +934,17 @@ def Page_Game(request, WorldID, GameID):
                 if 'AwayTeam' not in StatGrouping:
                     StatGrouping['AwayTeam'] = []
 
-                PlayerStatGroup = {}
+                PlayerStatGroup = {'Stats':[]}
                 NonZeroStat = False
                 for Stat in StatGrouping['Stats']:
+                    if Stat['FieldName'] in ['FullName', 'PlayerID'] or Stat['DisplayColumn'] == False:
+                        continue
+                    PSG = {'DisplayName': Stat['FieldName'], 'Value': u[Stat['FieldName']]}
                     PlayerStatGroup[Stat['FieldName']] = u[Stat['FieldName']]
                     if u[Stat['FieldName']] != 0 and Stat['FieldName'] not in ['FullName', 'PlayerID']:
-                        print(Stat['FieldName'], u[Stat['FieldName']])
                         NonZeroStat = True
+                    PlayerStatGroup['Stats'].append(PSG)
+
 
                 PlayerStatGroup ['PlayerID'] = u['PlayerID']
                 PlayerStatGroup ['FullName'] = u['FullName']
@@ -848,24 +984,28 @@ def Page_Game(request, WorldID, GameID):
     context['TeamStatBox'] = TeamStatBox
     context['game'] = GameDict
     context['allTeams'] = allTeams
-    context['date'] = CurrentDate(WorldID)
+    context['date'] = CurrentDate(CurrentWorld)
     context['homeTeam'] =  HomeTeam
     context['awayTeam'] = AwayTeam
     context['boxScore'] = BoxScore
     context['homePlayers'] = HomePlayers
     context['awayPlayers'] = AwayPlayers
     context['BoxScoreStatGroupings'] = BoxScoreStatGroupings
+    print()
+    print('Showing Stat Groups')
+    for StatGrouping in BoxScoreStatGroupings:
+        print(StatGrouping)
 
     print('TeamStatBox', TeamStatBox)
 
     for Stat in TeamStatBox:
-        print(Stat['StatName'], Stat)
+        print(Stat['FieldName'], Stat)
 
 
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 3, AuditDescription = 'Page_Game')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 5, AuditDescription = 'Page_Game')
     return render(request, 'HeadFootballCoach/Game.html', context)
 
 def GET_TeamHistory(request, WorldID, TeamID):
@@ -998,7 +1138,7 @@ def GET_ConferenceStandings(request, WorldID, ConferenceID = None):
 
     for conf in ConferenceList:
         ThisConference = {'ConferenceName': conf.ConferenceName, 'ConferenceTeams': []}
-        TeamsInConference = TeamSeasonDateRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=1).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).filter(TeamSeasonID__TeamID__ConferenceID = conf).values('TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__ConferenceRank', 'NationalRank', 'TeamSeasonID__Wins', 'TeamSeasonID__GamesPlayed','TeamSeasonID__Losses','TeamSeasonID__ConferenceWins', 'TeamSeasonID__ConferenceLosses', 'TeamSeasonID__Points', 'TeamSeasonID__PointsAllowed',  'TeamSeasonID__FGM', 'TeamSeasonID__FGA', 'TeamSeasonID__ThreePM','TeamSeasonID__ThreePA', 'TeamSeasonID__Possessions').order_by('-NationalRank')#sorted(Team.objects.filter(WorldID = CurrentWorld).filter(ConferenceID = conf), key=lambda t: t.CurrentTeamSeason.ConferenceRank)
+        TeamsInConference = TeamSeasonDateRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=1).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).filter(TeamSeasonID__TeamID__ConferenceID = conf).values('TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__ConferenceRank', 'NationalRank', 'TeamSeasonID__Wins', 'TeamSeasonID__GamesPlayed','TeamSeasonID__Losses','TeamSeasonID__ConferenceWins', 'TeamSeasonID__ConferenceLosses', 'TeamSeasonID__Points', 'TeamSeasonID__PointsAllowed', 'TeamSeasonID__Possessions').order_by('-NationalRank')#sorted(Team.objects.filter(WorldID = CurrentWorld).filter(ConferenceID = conf), key=lambda t: t.CurrentTeamSeason.ConferenceRank)
         for t in TeamsInConference:
 
             t = dict((key.replace('TeamSeasonID__', '').replace('TeamID__','').replace('_id',''), value) for (key, value) in t.items())
@@ -1007,22 +1147,6 @@ def GET_ConferenceStandings(request, WorldID, ConferenceID = None):
             #'ConferenceRank', 'NationalRankDisplay', 'Wins', 'Losses','ConferenceWins', 'ConferenceLosses', 'PPG', 'PAPG', 'PointDiffPG', 'FGPercentage', 'ThreePointPercentage', 'Pace', 'ORTG'
 
             t['TeamIDURL'] = TeamHrefBase + str(t['TeamID'])
-            if t['GamesPlayed'] == 0:
-                t['PPG'] = 0
-                t['PAPG'] = 0
-                t['Pace'] = 0
-                t['PointDiffPG'] = 0
-                t['FGPercentage'] = 0
-                t['ThreePointPercentage'] = 0
-                t['ORTG'] = 0
-            else:
-                t['PPG'] = round(1.0 * t['Points'] / t['GamesPlayed'] , 1)
-                t['PAPG'] = round(1.0 * t['PointsAllowed'] / t['GamesPlayed'] , 1)
-                t['Pace'] = round(1.0 * t['Possessions'] / t['GamesPlayed'] , 1)
-                t['PointDiffPG'] = round(1.0 * (t['Points'] - t['PointsAllowed']) / t['GamesPlayed'] , 1)
-                t['FGPercentage'] = round(1.0 * t['FGM'] / t['FGA'] , 2)
-                t['ThreePointPercentage'] = round(1.0 * t['ThreePM'] / t['ThreePA'] , 2)
-                t['ORTG'] = round(100.0 * t['Points'] / t['Possessions'] , 1)
 
 
             ThisConference['ConferenceTeams'].append(t)
@@ -1033,7 +1157,7 @@ def GET_ConferenceStandings(request, WorldID, ConferenceID = None):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='GET_ConferenceStandings')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='GET_ConferenceStandings')
 
     return JsonResponse(context, safe=False)
 
@@ -1048,40 +1172,64 @@ def GET_AllTeamStats(request, WorldID):
     CurrentWorld = World.objects.get(WorldID = WorldID)
     CurrentSeason = LeagueSeason.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
     TeamHrefBase = '/World/' + str(WorldID) + '/Team/'
+    ConferenceHrefBase = '/World/' + str(WorldID) + '/Conference/'
 
     TeamStats = []
 
-    TeamsInWorld = TeamSeasonDateRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=1).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).values('TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__ConferenceRank', 'NationalRank', 'TeamSeasonID__Wins', 'TeamSeasonID__GamesPlayed','TeamSeasonID__Losses','TeamSeasonID__ConferenceWins', 'TeamSeasonID__ConferenceLosses', 'TeamSeasonID__Points', 'TeamSeasonID__PointsAllowed',  'TeamSeasonID__RUS_Yards', 'TeamSeasonID__RUS_TD', 'TeamSeasonID__PAS_Yards','TeamSeasonID__PAS_TD', 'TeamSeasonID__Possessions').order_by('-NationalRank')#sorted(Team.objects.filter(WorldID = CurrentWorld).filter(ConferenceID = conf), key=lambda t: t.CurrentTeamSeason.ConferenceRank)
+    TeamsInWorld = TeamSeasonDateRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=1).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).values('TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__ConferenceID__ConferenceID','TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation', 'TeamSeasonID__ConferenceRank', 'NationalRank', 'TeamSeasonID__Wins', 'TeamSeasonID__GamesPlayed','TeamSeasonID__Losses','TeamSeasonID__ConferenceWins', 'TeamSeasonID__ConferenceLosses', 'TeamSeasonID__Points', 'TeamSeasonID__PointsAllowed',  'TeamSeasonID__RUS_Yards', 'TeamSeasonID__RUS_TD', 'TeamSeasonID__PAS_Yards','TeamSeasonID__PAS_TD', 'TeamSeasonID__Possessions').order_by('-NationalRank').annotate(
+        PAS_YardsPG=Case(
+            When(TeamSeasonID__GamesPlayed=0, then=0.0),
+            default=(Round(Sum(F('TeamSeasonID__PAS_Yards'))* 1.0 / Sum(F('TeamSeasonID__GamesPlayed')),1)),
+            output_field=FloatField()
+        ),
+        PAS_TDPG=Case(
+            When(TeamSeasonID__GamesPlayed=0, then=0.0),
+            default=(Round(Sum(F('TeamSeasonID__PAS_TD'))* 1.0 / Sum(F('TeamSeasonID__GamesPlayed')),1)),
+            output_field=FloatField()
+        ),
+        RUS_YardsPG=Case(
+            When(TeamSeasonID__GamesPlayed=0, then=0.0),
+            default=(Round(Sum(F('TeamSeasonID__RUS_Yards'))* 1.0 / Sum(F('TeamSeasonID__GamesPlayed')),1)),
+            output_field=FloatField()
+        ),
+        RUS_TDPG=Case(
+            When(TeamSeasonID__GamesPlayed=0, then=0.0),
+            default=(Round(Sum(F('TeamSeasonID__RUS_TD'))* 1.0 / Sum(F('TeamSeasonID__GamesPlayed')),1)),
+            output_field=FloatField()
+        ),
+        Diff=Case(
+            When(TeamSeasonID__GamesPlayed=0, then=0.0),
+            default=(Round(Sum(F('TeamSeasonID__Points') - F('TeamSeasonID__PointsAllowed'))* 1.0 / Sum(F('TeamSeasonID__GamesPlayed')),1)),
+            output_field=FloatField()
+        ),
+        PPG=Case(
+            When(TeamSeasonID__GamesPlayed=0, then=0.0),
+            default=(Round(Sum(F('TeamSeasonID__Points'))* 1.0 / Sum(F('TeamSeasonID__GamesPlayed')),1)),
+            output_field=FloatField()
+        ),
+        PAPG=Case(
+            When(TeamSeasonID__GamesPlayed=0, then=0.0),
+            default=(Round(Sum(F('TeamSeasonID__PointsAllowed'))* 1.0 / Sum(F('TeamSeasonID__GamesPlayed')),1)),
+            output_field=FloatField()
+        )
+    )
     for t in TeamsInWorld:
 
-        t = dict((key.replace('TeamSeasonID__', '').replace('TeamID__','').replace('_id',''), value) for (key, value) in t.items())
+        t = dict((key.replace('TeamSeasonID__TeamID__ConferenceID__','').replace('TeamSeasonID__', '').replace('TeamID__','').replace('_id',''), value) for (key, value) in t.items())
 
         t['TeamIDURL'] = TeamHrefBase + str(t['TeamID'])
-        if t['GamesPlayed'] == 0:
-            t['RUS_Yards'] = 0
-            t['RUS_TD'] = 0
-            t['PAS_Yards'] = 0
-            t['PAS_TD'] = 0
-            t['PPG'] = 0.0
-            t['PAPG'] = 0.0
-        else:
-            t['RUS_YardsPG'] = round(1.0 * t['RUS_Yards'] / t['GamesPlayed'] , 1)
-            t['RUS_TDPG'] = round(1.0 * t['RUS_TD'] / t['GamesPlayed'] , 1)
-            t['PAS_YardsPG'] = round(1.0 * t['PAS_Yards'] / t['GamesPlayed'] , 1)
-            t['PAS_TDPG'] = round(1.0 * t['PAS_TD'] / t['GamesPlayed'] , 1)
-            t['Diff'] = round(1.0 * (t['Points'] - t['PointsAllowed']) / t['GamesPlayed'] , 1)
-            t['PPG'] = round(1.0 * (t['Points']) / t['GamesPlayed'] , 1)
-            t['PAPG'] = round(1.0 * (t['PointsAllowed']) / t['GamesPlayed'] , 1)
+        t['ConferenceIDURL'] = ConferenceHrefBase + str(t['ConferenceID'])
 
 
         TeamStats.append(t)
+        print(t)
 
     context['TeamStats'] = TeamStats
 
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='GET_TeamStats')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='GET_TeamStats')
 
     return JsonResponse(context, safe=False)
 
@@ -1238,7 +1386,7 @@ def GET_WorldHistory(request, WorldID):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Get_WorldHistory' )
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='Get_WorldHistory' )
     context = {'status':'success', 'WorldID': WorldID}
 
     context['WorldHistory'] = WorldHistory
@@ -1271,6 +1419,8 @@ def Page_Team(request,WorldID, TeamID):
     date = CurrentDate(WorldID)
     AllTeams = Team.objects.filter(WorldID = WorldID)
     CurrentWorld = World.objects.get(WorldID = WorldID)
+    date = CurrentDate(CurrentWorld)
+
     ThisTeam = Team.objects.get(WorldID = WorldID, TeamID = TeamID)#.values('ConferenceName')
 
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent=1)
@@ -1429,7 +1579,7 @@ def Page_Team(request,WorldID, TeamID):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 8, AuditDescription='Page_team' )
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 9, AuditDescription='Page_team' )
     return render(request, 'HeadFootballCoach/Team.html', context)
 
 
@@ -1489,7 +1639,7 @@ def POST_SimDay(request, WorldID):
             if DoAudit:
                 end = time.time()
                 TimeElapsed = end - start
-                A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='GameSim')
+                A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 3, AuditDescription='GameSim')
 
 
         if date.DayOfWeek == 6:#day of week = Sunday
@@ -1561,6 +1711,7 @@ def Page_Bracket(request, WorldID):
 
 
     Teams = GetAllTeams(WorldID)
+    CurrentWorld = World.objects.filter(WorldID = WorldID).first()
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent=1)
     SortedTeams = GetAllTeams(WorldID)
     UserTeam = GetUserTeam(WorldID)
@@ -1641,7 +1792,7 @@ def Page_ManageTeam(request):
 
     UserTeam = GetUserTeam(WorldID)
     TeamID = UserTeam['TeamID']
-
+    CurrentWorld = World.objects.filter(WorldID = WorldID).first()
     TeamDict = GetAllTeams(WorldID)
     HomeTeamGames = Game.objects.filter(HomeTeamID__isnull=False).filter(HomeTeamID = TeamID)
     AwayTeamGames = Game.objects.filter(HomeTeamID__isnull=False).filter(AwayTeamID = TeamID)
@@ -1754,7 +1905,7 @@ def Page_ManageTeam(request):
     ThisTeamConference = ThisTeam.ConferenceID.ConferenceName
 
 #Get Current Date
-    date = CurrentDate(WorldID)
+    date = CurrentDate(CurrentWorld)
 
     allTeams = GetAllTeams(WorldID)
     allTeams = sorted(allTeams, key = lambda k: k['TeamName'])
@@ -1770,7 +1921,7 @@ def Page_ManageTeam(request):
 def Page_Coach(request, CoachID):
 
     context = {}
-
+    CurrentWorld = World.objects.filter(WorldID = WorldID).first()
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
 
     C = Coach.objects.get(CoachID = CoachID)
@@ -1796,7 +1947,7 @@ def Page_Coach(request, CoachID):
 def Page_Recruiting(request, WorldID):
 
     DoAudit = True
-
+    CurrentWorld = World.objects.filter(WorldID = WorldID).first()
     if DoAudit:
         start = time.time()
 
@@ -1844,7 +1995,7 @@ def Page_Recruiting(request, WorldID):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='Page_Recruiting')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 3, AuditDescription='Page_Recruiting')
 
 
     #print(context)

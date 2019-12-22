@@ -94,7 +94,7 @@
                   <div class='w3-container'>
                     {% for Stat in TeamStatBox %}
                     <div class='gameTeamStatBox w3-border-top w3-border-right w3-border-bottom w3-border-gray'>
-                      <h3>{{Stat.StatName}}</h3>
+                      <h3>{{Stat.DisplayName}}</h3>
                       <div class='gameTeamStatAbbreviation'>{{awayTeam.Abbreviation}}</div>
                       <span style="background-color:#f2f2f2;" class="bar-total"><span style="background-color:#{{awayTeam.TeamColor_Primary_HEX}} !important; height: 8px; width:{{Stat.AwayRatio}}%" class=" bar-percentage"></span></span>
                       <span class='font12'>{{Stat.AwayValue}}</span>
@@ -206,34 +206,12 @@
                       {% endfor %}
                   </thead>
                   {% for player in StatGrouping.HomeTeam %}
-                  {%if StatGrouping.StatGroupName == 'Rushing' %}
                   <tr>
                     <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
-                    <td>{{player.RUS_Carries}}</td>
-                    <td>{{player.RUS_Yards}}</td>
-                    <td>{{player.RUS_TD}}</td>
+                    {% for Stat in player.Stats%}
+                    <td>{{Stat.Value}}</td>
+                    {%endfor %}
                   </tr>
-                  {% endif %}
-
-                  {%if StatGrouping.StatGroupName == 'Passing' %}
-                  <tr>
-                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
-                    <td>{{player.PAS_Completions}} / {{player.PAS_Attempts}}</td>
-                    <td>{{player.PAS_Yards}}</td>
-                    <td>{{player.PAS_TD}}</td>
-                    <td>{{player.PAS_INT}}</td>
-                    <td>{{player.PAS_Sacks}} - {{player.PAS_SackYards}}</td>
-                  </tr>
-                  {% endif %}
-
-                  {%if StatGrouping.StatGroupName == 'Defense' %}
-                  <tr>
-                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
-                    <td>{{player.DEF_Tackles}}</td>
-                    <td>{{player.DEF_Sacks}}</td>
-                    <td>{{player.DEF_INT}}</td>
-                  </tr>
-                  {% endif %}
                   {% endfor %}
                 </table>
               </div>
@@ -249,34 +227,12 @@
                       {% endfor %}
                   </thead>
                   {% for player in StatGrouping.AwayTeam %}
-                  {%if StatGrouping.StatGroupName == 'Rushing' %}
                   <tr>
                     <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
-                    <td>{{player.RUS_Carries}}</td>
-                    <td>{{player.RUS_Yards}}</td>
-                    <td>{{player.RUS_TD}}</td>
+                    {% for Stat in player.Stats%}
+                    <td>{{Stat.Value}}</td>
+                    {%endfor %}
                   </tr>
-                  {% endif %}
-
-                  {%if StatGrouping.StatGroupName == 'Passing' %}
-                  <tr>
-                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
-                    <td>{{player.PAS_Completions}} / {{player.PAS_Attempts}}</td>
-                    <td>{{player.PAS_Yards}}</td>
-                    <td>{{player.PAS_TD}}</td>
-                    <td>{{player.PAS_INT}}</td>
-                    <td>{{player.PAS_Sacks}} - {{player.PAS_SackYards}}</td>
-                  </tr>
-                  {% endif %}
-
-                  {%if StatGrouping.StatGroupName == 'Defense' %}
-                  <tr>
-                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
-                    <td>{{player.DEF_Tackles}}</td>
-                    <td>{{player.DEF_Sacks}}</td>
-                    <td>{{player.DEF_INT}}</td>
-                  </tr>
-                  {% endif %}
                   {% endfor %}
                 </table>
               </div>

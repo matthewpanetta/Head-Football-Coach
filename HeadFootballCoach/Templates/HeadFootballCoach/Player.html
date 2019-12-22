@@ -29,7 +29,7 @@
           {% if player.IsRecruit %}
           <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
           {% else %}
-          <a href="/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}">{{player.TeamName}}</a>
+          <a href="/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}">{{playerTeam.TeamName}} {{playerTeam.TeamNickname}}</a>
           {% endif %}
           | #{{player.JerseyNumber}} | {{player.Position}}
         </div>
@@ -41,7 +41,7 @@
         </li>
         <li class='playerHeaderHtWt'>
           <div class='playerHeaderBioDescription'>HT/WT</div>
-          <div>{{player.HeightFormatted}}, {{player.WeightFormatted}}</div>
+          <div>{{player.HeightFormatted}}, {{player.Weight}} lbs</div>
         </li>
         <li class='playerHeaderHometown'>
           <div class='playerHeaderBioDescription'>HOMETOWN</div>
@@ -123,28 +123,20 @@
                   <tr>
                     <th scope="col">OPP</th>
                     <th class='initialSortColumn' data-defaultsort="asc">Date</th>
-                    <th scope="col" data-defaultsort="desc">MIN</th>
-                    <th scope="col" data-defaultsort="desc">PTS</th>
-                    <th scope="col" data-defaultsort="desc">FG</th>
-                    <th scope="col" data-defaultsort="desc">3P</th>
-                    <th scope="col" data-defaultsort="desc">REB</th>
-                    <th scope="col" data-defaultsort="desc">AST</th>
+                    {%for Stat in PlayerStatCategories%}
+                    <th>{{Stat.DisplayName}}</th>
+                    {%endfor%}
                   </tr>
                 </thead>
                 <tbody>
-                  {% for game in gameStats %}
-                  {% if game.RecentGame == 1 %}
+                  {% for game in RecentGameStats %}
                   <tr>
-                    <td><a href='/World/{{page.WorldID}}/Team/{{game.Opponent.TeamID}}'><img class='playerSeasonStatOpponentLogo' src='{{game.Opponent.LogoURL}}' /></a></td>
-                    <td data-value="{{game.GameID.GameDateID.DateID}}">{{game.GameID.GameDateID.Date}}</td>
-                    <td>{{game.Minutes}}</td>
-                    <td>{{game.Points}}</td>
-                    <td>{{game.FGM}} - {{game.FGA}} </td>
-                    <td>{{game.ThreePM}} - {{game.ThreePA}} </td>
-                    <td>{{game.Rebounds}}</td>
-                    <td>{{game.Assists}}</td>
+                    <td><a href='/World/{{page.WorldID}}/Team/{{game.OpposingTeamID}}'><img class='playerSeasonStatOpponentLogo' src='{{game.OpposingTeamLogoURL}}' /></a></td>
+                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">Week {{game.TeamGameID__GameID__GameDateID__WeekID__WeekNumber}}</a></td>
+                    {%for Stat in game.Stats%}
+                    <td>{{Stat.Value}}</td>
+                    {%endfor%}
                   </tr>
-                  {% endif %}
                   {% endfor %}
                 </tbody>
               </table>
@@ -434,9 +426,9 @@ $(document).ready(function(){
   console.log("player.PlayerFaceJson", {{player.PlayerFaceJson|safe}});
 
   {% if player.PlayerFaceJson|length > 0 %}
-    BuildFace({{player.PlayerFaceJson|safe}}, "{{player.TeamJerseyStyle}}", "{{player.TeamJerseyInvert}}");
+    BuildFace({{player.PlayerFaceJson|safe}}, "{{playerTeam.TeamJerseyStyle}}", "{{player.TeamJerseyInvert}}");
   {% else %}
-    BuildFace(undefined, "{{player.TeamJerseyStyle}}", "{{player.TeamJerseyInvert}}");
+    BuildFace(undefined, "{{playerTeam.TeamJerseyStyle}}", "{{player.TeamJerseyInvert}}");
   {% endif %}
 
 
