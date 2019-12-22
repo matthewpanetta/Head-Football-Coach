@@ -1,0 +1,20 @@
+﻿PositionAbbreviation,PositionName,PositionCountPerAwardTeam,PositionMinimumCountPerTeam,PositionSortOrder,PositionGrouping,Occurance,HeightAverage,HeightStd,WeightAverage,WeightStd
+QB,Quarterback,1,3,1,Offense,852,74.4,1.73,196.45,15.43
+RB,Running Back,1,3,2,Offense,1080,70.51,1.73,191.69,16.36
+FB,Fullback,0,1,3,Offense,40,73,1.47,232,14.12
+WR,Wide Receiver,3,5,4,Offense,1751,73.17,2.3,183.67,15.07
+TE,Tight End,1,2,5,Offense,582,76.42,1.26,229.05,13.15
+OT,Offensive Tackle,2,4,6,Offense,1169,77.4,1.16,285.06,23.29
+OG,Offensive Guard,2,4,7,Offense,796,75.63,1.1,292.36,22.27
+OC,Offensive Center,1,2,8,Offense,247,74.98,1.01,283.92,15.91
+DE,Defensive End,2,4,9,Defense,1312,75.73,1.37,238.76,18.83
+DT,Defensive Tackle,2,3,10,Defense,841,74.57,1.46,282.73,23.55
+OLB,Outside Linebacker,2,3,11,Defense,932,74,1.39,212.09,12.56
+MLB,Middle Linebacker,1,2,12,Defense,624,73.3,1.32,220.63,11.75
+CB,Cornerback,2,4,13,Defense,1257,71.58,1.61,175.16,9.9
+S,Safety,2,4,14,Defense,989,72.64,1.5,187.73,10.83
+K,Kicker,1,1,15,Special Teams,148,71.89,2,178.32,15.76
+P,Punter,1,1,16,Special Teams,79,73.86,1.69,191.54,17.31
+KR,Kick Returner,0,0,17,Special Teams,0,71,1,175,8
+PR,Punt Returner,0,0,18,Special Teams,0,71,1,175,8
+ATH,Athlete,0,0,19,Special Teams,0,71,1,175,8

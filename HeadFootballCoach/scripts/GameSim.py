@@ -1,4 +1,4 @@
-from ..models import World, CoachTeamSeason, Coach, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerSeasonSkill, PlayerGameStat
+from ..models import World, CoachTeamSeason, Coach, Week, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerSeasonSkill, PlayerGameStat
 import random
 from .rankings import CalculateRankings
 from ..utilities import WeightedProbabilityChoice, IfNull, SecondsToMinutes, Average, NormalTrunc
@@ -73,7 +73,7 @@ def GameSim(game):
     CurrentSeason = LeagueSeason.objects.get(WorldID = CurrentWorld, IsCurrent=1)
     CurrentLeague = game.LeagueSeasonID.LeagueID
 
-    CurrentDay = Calendar.objects.get(WorldID = CurrentWorld, IsCurrent=1)
+    CurrentWeek = Week.objects.get(WorldID = CurrentWorld, IsCurrent=1)
 
     HomeTeamGame = game.HomeTeamGameID
     AwayTeamGame = game.AwayTeamGameID
@@ -192,9 +192,10 @@ def GameSim(game):
         PlayerDict = P.__dict__
         PTS = PlayerTeamSeason.objects.get(TeamSeasonID__LeagueSeasonID = CurrentSeason, PlayerID = P)
         PlayerID = PlayerDict['PlayerID']
-        PlayerDict['PlayerTeam'] = PSD.PlayerID.CurrentPlayerTeamSeason.TeamSeasonID.TeamID
+        PlayerDict['PlayerTeam'] = P.CurrentPlayerTeamSeason.TeamSeasonID.TeamID
         AllPlayers[PlayerID] = PlayerDict
         AllPlayers[PlayerID]['PlayerName'] = PlayerDict['PlayerFirstName'] +' '+PlayerDict['PlayerLastName']
+        AllPlayers[PlayerID]['Position'] = P.PositionID.PositionAbbreviation
 
 
         SkillMultiplier = 1.0
@@ -472,8 +473,8 @@ def GameSim(game):
                 RunGameModifier = RunGameModifier ** 1.1
                 YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 2, -0.5, 12),0)
 
-                if YardsThisPlay > 6 and (random.uniform(0,1) < (.05 * ((RunningbackTalent / 90) ** 6))):
-                    YardsThisPlay = round(NormalTrunc(30, 20, 28, 100),0)
+                if YardsThisPlay > 6 and (random.uniform(0,1) < (.05 * ((RunningbackTalent / 85) ** 6))):
+                    YardsThisPlay = round(NormalTrunc(30, 50, 28, 100),0)
 
                 GameDict[OffensiveTeam]['RUS_Yards'] += YardsThisPlay
                 GameDict[OffensiveTeam]['RUS_Carries'] += 1
@@ -521,7 +522,7 @@ def GameSim(game):
                     GameDict[DefensiveTeam]['DEF_Tackles'] += 1
 
                 #PASS COMPLETE
-                elif (random.uniform(0,1) < (.6224 * PassGameModifier)) :
+                elif (random.uniform(0,1) < (.7024 * PassGameModifier)) :
                     PassGameModifier = PassGameModifier ** 1.1
                     YardsThisPlay = round(NormalTrunc(12 * PassGameModifier, 4, 0, 40),0)
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Completions'] += 1
@@ -596,8 +597,9 @@ def GameSim(game):
             GameDict[OffensiveTeam]['TimeOfPossession'] += SecondsThisPlay
             SecondsLeftInPeriod -= SecondsThisPlay
 
-            YardsToGo -= YardsThisPlay
-            BallSpot += YardsThisPlay
+            if PlayChoice in ['Run', 'Pass']:
+                YardsToGo -= YardsThisPlay
+                BallSpot += YardsThisPlay
 
             Down +=1
             DrivePlayCount +=1
@@ -734,8 +736,8 @@ def GameSim(game):
 
     game.WasPlayed = 1
     print('FINAL -- ', OffensiveTeam, ': ', GameDict[OffensiveTeam]['Points'],' , ', DefensiveTeam, ': ', GameDict[DefensiveTeam]['Points'])
-    game.HomeTeamSeasonDateRankID = HomeTeam.CurrentTeamSeason.NationalRankObject
-    game.AwayTeamSeasonDateRankID = AwayTeam.CurrentTeamSeason.NationalRankObject
+    game.HomeTeamSeasonWeekRankID = HomeTeam.CurrentTeamSeason.NationalRankObject
+    game.AwayTeamSeasonWeekRankID = AwayTeam.CurrentTeamSeason.NationalRankObject
 
 
     if GameDict[HomeTeam]['Points'] > GameDict[AwayTeam]['Points']:
@@ -909,12 +911,12 @@ def GameSim(game):
                     TS.save()
 
 
-    if HomeTeamGame.TeamSeasonDateRankID is None:
-        HomeTeamSeasonDateRankID = HomeTeamSeason.teamseasondaterank_set.filter(IsCurrent = 1).first()
-        AwayTeamSeasonDateRankID = AwayTeamSeason.teamseasondaterank_set.filter(IsCurrent = 1).first()
+    if HomeTeamGame.TeamSeasonWeekRankID is None:
+        HomeTeamSeasonWeekRankID = HomeTeamSeason.teamseasonweekrank_set.filter(IsCurrent = 1).first()
+        AwayTeamSeasonWeekRankID = AwayTeamSeason.teamseasonweekrank_set.filter(IsCurrent = 1).first()
 
-        HomeTeamGame.TeamSeasonDateRankID = HomeTeamSeasonDateRankID
-        AwayTeamGame.TeamSeasonDateRankID = AwayTeamSeasonDateRankID
+        HomeTeamGame.TeamSeasonWeekRankID = HomeTeamSeasonWeekRankID
+        AwayTeamGame.TeamSeasonWeekRankID = AwayTeamSeasonWeekRankID
 
     HomeTeamGame.save()
     AwayTeamGame.save()

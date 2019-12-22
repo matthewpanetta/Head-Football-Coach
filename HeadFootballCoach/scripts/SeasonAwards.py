@@ -1,4 +1,4 @@
-from ..models import PlayerTeamSeasonAward, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat
+from ..models import PlayerTeamSeasonAward, Team, Position, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat
 
 
 def NationalAwards(WorldID, CurrentSeason):
@@ -50,21 +50,25 @@ def NationalAwards(WorldID, CurrentSeason):
 
 def ChoosePlayersOfTheWeek(LS, WorldID):
     CurrentSeason = LS
-    CurrentDate = Calendar.objects.get(WorldID=WorldID, IsCurrent = 1)
+    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
     CurrentWorld = WorldID
 
-    LastWeek = CurrentDate.NextDayN(-1)
-    LastWeekID = LastWeek.WeekID
 
-    print('LastWeek', LastWeek)
-    PTG = PlayerGameStat.objects.filter(WorldID = CurrentWorld).filter(TeamGameID__GameID__GameDateID__gte = LastWeek.DateID).filter(TeamGameID__GameID__WasPlayed = True).order_by('-GameScore')
+    for PositionGroupID in PositionGroup.objects.exclude(PositionGroupName = 'Special Teams'):
+        print(PositionGroupID)
 
-    NationalPlayerOfTheWeek = PTG[0].PlayerTeamSeasonID
+        PTG = PlayerGameStat.objects.filter(WorldID = CurrentWorld).filter(TeamGameID__GameID__WeekID = CurrentWeek).filter(PlayerTeamSeasonID__PlayerID__PositionID__PositionGroupID = PositionGroupID).filter(TeamGameID__GameID__WasPlayed = True).order_by('-GameScore')
 
-    Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsNationalAward = True, IsWeekAward = True, PlayerTeamSeasonID = NationalPlayerOfTheWeek, WeekID = LastWeekID)
-    Award.save()
-    for Conf in CurrentWorld.conference_set.all():
-        ConfPTG = PTG.filter(TeamGameID__TeamSeasonID__TeamID__ConferenceID = Conf).order_by('-GameScore')
-        ConferencePlayerOfTheWeek = ConfPTG[0].PlayerTeamSeasonID
-        Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsConferenceAward = True, IsWeekAward = True, ConferenceID = Conf, PlayerTeamSeasonID = ConferencePlayerOfTheWeek, WeekID = LastWeekID)
+
+        if PTG.count() == 0:
+            continue
+
+        NationalPlayerOfTheWeek = PTG[0].PlayerTeamSeasonID
+
+        Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsNationalAward = True, IsWeekAward = True, IsPositionGroupAward = True, PositionGroupID = PositionGroupID, PlayerTeamSeasonID = NationalPlayerOfTheWeek, WeekID = CurrentWeek)
         Award.save()
+        for Conf in CurrentWorld.conference_set.all():
+            ConfPTG = PTG.filter(TeamGameID__TeamSeasonID__TeamID__ConferenceID = Conf).order_by('-GameScore')
+            ConferencePlayerOfTheWeek = ConfPTG[0].PlayerTeamSeasonID
+            Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsConferenceAward = True, IsWeekAward = True, ConferenceID = Conf, PlayerTeamSeasonID = ConferencePlayerOfTheWeek, IsPositionGroupAward = True, PositionGroupID = PositionGroupID, WeekID = CurrentWeek)
+            Award.save()

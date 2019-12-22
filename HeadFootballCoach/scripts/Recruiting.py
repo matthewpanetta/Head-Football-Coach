@@ -1,4 +1,4 @@
-from ..models import Headline,World, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
+from ..models import Headline,World, Playoff,Week, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
 from random import uniform, randint
 import numpy
 from ..utilities import WeightedProbabilityChoice, Min, DistanceBetweenCities, GetValuesOfSingleObject, NormalBounds
@@ -243,14 +243,12 @@ def FindNewTeamsForRecruit(WorldID, Recruit, RecruitTopPreferences=None):
 def FakeWeeklyRecruiting(WorldID):
     #print('Doing fake recruiting!!')
     CurrentWorld = World.objects.get(WorldID = WorldID)
-    CurrentDay = Calendar.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
+    CurrentWeek = Week.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
-
-    RegularSeasonEndDateID = CurrentSeason.RegularSeasonEndDateID
 
     PlayersThatNeedMoreTeams = []
 
-    WeeksUntilEndOfSeason = int(CurrentDay.DaysBetween(RegularSeasonEndDateID) / 7)
+    WeeksUntilEndOfSeason = CurrentWeek.WeeksUntilEndOfSeason
     if WeeksUntilEndOfSeason == 0:
         return None
 

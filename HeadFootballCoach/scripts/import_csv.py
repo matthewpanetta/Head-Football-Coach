@@ -1,6 +1,6 @@
 
 
-from ..models import System_PlayerArchetypeRatingModifier, Phase, Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
+from ..models import System_PlayerArchetypeRatingModifier, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
 import os
 from ..utilities import Max
 from datetime import timedelta, date
@@ -132,6 +132,57 @@ def ImportBowls(WorldID):
                 del LineDict[FE]
 
             Bowl.objects.create(**LineDict)
+
+
+
+def ImportPositions():
+
+    FilePath = 'HeadFootballCoach/scripts/data_import/Position.csv'
+
+    f = open(FilePath, 'r', encoding='utf-8-sig')
+    NameStartStopTracker = 0
+    FieldExclusions = ['PositionGrouping']
+    linecount = 0
+    for line in f:
+        KeepRow = False
+        #print()
+        linecount +=1
+        if linecount == 1:
+            Headers = line.strip().split(',')
+            continue
+
+        #print(line)
+        Row = line.strip().split(',')
+        LineDict = {}
+        FieldCount = 0
+
+        for f in Row:
+            V = Row[FieldCount]
+            if V == '':
+                V = None
+            LineDict[Headers[FieldCount]] = V
+            FieldCount +=1
+
+
+        KeepRow = True
+
+
+        if KeepRow:
+
+            OccuranceModifier = 1
+            if int(LineDict['Occurance']) == 0:
+                OccuranceModifier = 0
+
+            LineDict['RandomStart'] = NameStartStopTracker
+            NameStartStopTracker += int(LineDict['Occurance']) + OccuranceModifier
+            LineDict['RandomStop'] = NameStartStopTracker - OccuranceModifier
+
+            LineDict['PositionGroupID'], created = PositionGroup.objects.get_or_create(PositionGroupName = LineDict['PositionGrouping'])
+
+            for FE in FieldExclusions:
+                del LineDict[FE]
+
+            Position.objects.create(**LineDict)
 
 
 def import_TeamRivalries(FilePath, WorldID, LeagueID):
@@ -290,6 +341,9 @@ def createGeography(inputFile, CountData):
                 CityCountData[St][Ci] = 0
             CityCountData[St][Ci] = C
 
+    for u in sorted(CityCountData):
+        print(u, CityCountData[u])
+
     f2.close()
 
     f = open(inputFile, 'r')
@@ -329,6 +383,7 @@ def createGeography(inputFile, CountData):
 
                 S = State( StateName = LineDict['StateName'], StateAbbreviation=LineDict['StateAbbreviation'], NationID = N, YouthEngagement=0)
                 S.save()
+                print('Creating State-', LineDict['StateName'])
             elif int(LineDict['GeoLevel']) == 1:
 
                 S = State.objects.get(StateName = LineDict['StateName'])
@@ -345,7 +400,7 @@ def createGeography(inputFile, CountData):
 
     #print(headers)
 
-def createCalendar(StartYear=2019, StartAfterMonthDay=(8,25), WorldID=None):
+def createCalendar(StartYear=2019, StartAfterMonthDay=(8,25), WorldID=None, LeagueSeasonID=None):
 
     #Calendar.objects.all().delete()
 
@@ -398,7 +453,7 @@ def createCalendar(StartYear=2019, StartAfterMonthDay=(8,25), WorldID=None):
     W = None
     for W in AnnualScheduleOfEvents:
 
-        P,st = Phase.objects.get_or_create(WorldID = WorldID, PhaseName = W['Phase'])
+        P,st = Phase.objects.get_or_create(WorldID = WorldID, PhaseName = W['Phase'], LeagueSeasonID=LeagueSeasonID)
 
         W['PhaseID'] = P
         for FE in FieldExclusions:
@@ -621,6 +676,9 @@ def LoadData(WorldID, LeagueID):
     PopulateSystemPlayoffRounds()
     ImportBowls(WorldID)
 
+    if Position.objects.all().count() == 0:
+        ImportPositions()
+
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
@@ -656,15 +714,6 @@ def LoadData(WorldID, LeagueID):
     if DoAudit:
         start = time.time()
 
-    if CreateCalendar:
-        createCalendar(StartYear=2019, StartAfterMonthDay=(8,25), WorldID=WorldID)
-
-    if DoAudit:
-        end = time.time()
-        TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Create calendar')
-    if DoAudit:
-        start = time.time()
 
     if CreateGeography:
         createGeography('HeadFootballCoach/scripts/data_import/uscitiesv1.5.csv', 'HeadFootballCoach/scripts/data_import/RecruitingData/Cities.csv')

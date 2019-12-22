@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Audit, Bowl, Week, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, Nation, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill,Driver, PlayerGameStat
+from .models import Audit, Position, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, Nation, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill,Driver, PlayerGameStat
 # Register your models here.
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
@@ -22,7 +22,7 @@ class StateAdmin(admin.ModelAdmin):
 
 class CityAdmin(admin.ModelAdmin):
     list_display = [field.name for field in City._meta.get_fields() if field.name not in ('playoff','player', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
-
+    list_filter = ['StateID']
 class NameListAdmin(admin.ModelAdmin):
     list_display = [field.name for field in NameList._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
@@ -47,7 +47,7 @@ class CoachAdmin(admin.ModelAdmin):
 
 
 class PlayerSkillAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in PlayerSeasonSkill._meta.get_fields()] + ['PopulateOverallRating']#( 'PlayerID', 'OverallRating',  'InsideShootingRating', 'DunkLayupRating', 'ThreePointRating', 'PassingRating', 'DribblingRating')
+    list_display = [field.name for field in PlayerSeasonSkill._meta.get_fields()]#( 'PlayerID', 'OverallRating',  'InsideShootingRating', 'DunkLayupRating', 'ThreePointRating', 'PassingRating', 'DribblingRating')
 
 class RecruitTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -81,6 +81,8 @@ class TeamAdmin(admin.ModelAdmin):
 
 class TeamSeasonDateRankAdmin(admin.ModelAdmin):
     list_display = [field.name for field in TeamSeasonDateRank._meta.get_fields() if field.name not in ('teamgame','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+class TeamSeasonWeekRankAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in TeamSeasonWeekRank._meta.get_fields() if field.name not in ('teamgame','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class TeamGameAdmin(admin.ModelAdmin):
     list_display = [field.name for field in TeamGame._meta.get_fields() if field.name not in ('playergamestat','teamgame','Playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -94,6 +96,12 @@ class System_PlayerArchetypeRatingModifierAdmin(admin.ModelAdmin):
 
 class WeekAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Week._meta.get_fields() if field.name not in ('playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+class PhaseAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Phase._meta.get_fields() if field.name not in ('week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+class PositionAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Position._meta.get_fields() if field.name not in ('player', 'week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+class PositionGroupAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in PositionGroup._meta.get_fields() if field.name not in ('position', 'player', 'week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 
 admin.site.register(User)
@@ -126,6 +134,7 @@ admin.site.register(State, StateAdmin)
 admin.site.register(City, CityAdmin)
 admin.site.register(NameList, NameListAdmin)
 admin.site.register(TeamSeasonDateRank, TeamSeasonDateRankAdmin)
+admin.site.register(TeamSeasonWeekRank, TeamSeasonWeekRankAdmin)
 admin.site.register(System_PlayoffRound)
 admin.site.register(System_PlayoffGame)
 admin.site.register(PlayoffRound)
@@ -136,5 +145,8 @@ admin.site.register(GameStructure, GameStructureAdmin)
 admin.site.register(TeamGame, TeamGameAdmin)
 admin.site.register(TeamRivalry, TeamRivalryAdmin)
 admin.site.register(Week, WeekAdmin)
+admin.site.register(Phase, PhaseAdmin)
+admin.site.register(Position, PositionAdmin)
+admin.site.register(PositionGroup, PositionGroupAdmin)
 admin.site.register(Bowl, BowlAdmin)
 admin.site.register(System_PlayerArchetypeRatingModifier, System_PlayerArchetypeRatingModifierAdmin)

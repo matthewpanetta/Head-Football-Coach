@@ -49,7 +49,7 @@
                     {% endfor %}
                   </table>
                 </div>
-                <div class="w3-card w3-col s3">
+                <div class="w3-card w3-col s4">
                   <table id='teamOverviewConferenceStandings'>
                     <thead>
                       <th>Conference</th>
@@ -70,23 +70,25 @@
                     {% endfor %}
                   </table>
                 </div>
-                <div class="w3-card w3-col s3">
+                <div class="w3-card w3-col s4">
                   <table id='teamOverviewConferenceStandings'>
                     <thead>
                       <th>Week</th>
+                      <th>Group</th>
                       <th>Team</th>
                       <th>Player</th>
                     </thead>
                     {% for Award in ConferenceAwards %}
                     <tr class='{{standingTeam.BoldTeam}}'>
                       <td>{{Award.WeekID}}</td>
+                      <td>{{Award.PositionGroupID.PositionGroupName}}</td>
                       <td>
                         <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
                           <img class='teamOverviewConferenceStandingsTeamLogo' src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.LogoURL}}" />
                            {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
                         </a>
                       </td>
-                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.Position}}</td>
+                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}</td>
                     </tr>
                     {% endfor %}
                   </table>

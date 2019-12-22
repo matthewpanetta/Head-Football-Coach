@@ -120,7 +120,37 @@ class System_PlayoffGame(models.Model):
     def __str__(self):
         return 'Game number ' + str(self.GameNumber) + ' in Playoff, in round ' + str(self.ThisPlayoffRoundID.PlayoffRoundNumber)
 
+class PositionGroup(models.Model):
+    PositionGroupID = models.AutoField(primary_key = True)
+    PositionGroupName = models.CharField(max_length=20, blank=True, null=True, default=None)
+
+class Position(models.Model):
+    PositionID = models.AutoField(primary_key = True)
+    PositionAbbreviation = models.CharField(max_length=6, blank=True, null=True, default=None)
+    PositionName = models.CharField(max_length=20, blank=True, null=True, default=None)
+
+    PositionCountPerAwardTeam   = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+    PositionMinimumCountPerTeam = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+
+    PositionGroupID = models.ForeignKey(PositionGroup, on_delete=models.CASCADE, null=True, blank=True, default=None)
+
+    PositionSortOrder = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+
+    HeightAverage = models.DecimalField(default = 72, max_digits = 6, decimal_places=2)
+    HeightStd = models.DecimalField(default = 1, max_digits = 6, decimal_places=2)
+    WeightAverage = models.DecimalField(default = 200, max_digits = 6, decimal_places=2)
+    WeightStd = models.DecimalField(default = 10, max_digits = 6, decimal_places=2)
+
+    Occurance = models.IntegerField( blank=True, null=True)
+
+    RandomStart = models.IntegerField(blank=True, null=True)
+    RandomStop   = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return self.PositionName
     #############################
+
+
 
 class User(models.Model):
     UserID = models.AutoField(primary_key = True)
@@ -322,9 +352,39 @@ class League(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
+
+class LeagueSeason(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    LeagueID = models.ForeignKey(League, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    LeagueSeasonID = models.AutoField(primary_key = True, db_index=True)
+    SeasonStartYear = models.PositiveSmallIntegerField(default = 0)
+    SeasonEndYear = models.PositiveSmallIntegerField(default = 9999)
+    IsCurrent = models.BooleanField(default = False, db_index=True)
+    ScheduleCreated = models.BooleanField(default=False)
+    PlayersCreated  = models.BooleanField(default=False)
+    CoachesCreated  = models.BooleanField(default=False)
+    TeamSeasonsCreated = models.BooleanField(default=False)
+    ConferenceChampionshipsCreated = models.BooleanField(default=False)
+    PlayoffCreated = models.BooleanField(default=False)
+    AwardsCreated    = models.BooleanField(default=False)
+    OffseasonStarted = models.BooleanField(default=False)
+
+    @property
+    def LeagueSeasonDisplay(self):
+        return str(self.SeasonStartYear) + '-' + str(self.SeasonEndYear) + ' Season'
+
+    def __str__(self):
+
+        return str(self.SeasonStartYear) + '-' + str(self.SeasonEndYear) + ' Season in World ' + str(self.WorldID)
+    class Meta:
+              # specify this model as an Abstract Model
+            app_label = 'HeadFootballCoach'
+
 class Phase(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     PhaseID = models.AutoField(primary_key=True, db_index=True)
+
+    LeagueSeasonID = models.ForeignKey(LeagueSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
 
     PhaseName = models.CharField(max_length=50, blank=True, null=True, default=None)
 
@@ -347,6 +407,14 @@ class Week(models.Model):
     @property
     def NextWeek(self):
         return Week.objects.filter(WeekNumber = self.WeekNumber + 1).first()
+
+    @property
+    def PreviousWeek(self):
+        return Week.objects.filter(WeekNumber = self.WeekNumber - 1).first()
+
+    @property
+    def WeeksUntilEndOfSeason(self):
+        return Week.objects.filter(WorldID = self.WorldID).filter(PhaseID__PhaseName = 'Regular Season').filter(LastWeekInPhase = True).first().WeekNumber - self.WeekNumber
 
 
 class Calendar(models.Model):
@@ -603,7 +671,7 @@ class Player(models.Model):
     Height                  = models.PositiveSmallIntegerField(default = 60) #inches
     Weight                  = models.PositiveSmallIntegerField(default = 185) #pounds
     CityID                  = models.ForeignKey(City, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    Position                = models.CharField(max_length = 3, default='QB')
+    PositionID              = models.ForeignKey(Position, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
     PlayerFaceJson          = models.CharField(max_length=2000, default='' )
 
@@ -952,7 +1020,7 @@ class Player(models.Model):
             StatDict = {'PlayerID': self}
             StatDict['Seasons'] = [u.TeamSeasonID.LeagueSeasonID for u in PTS]
         else:
-            SelfAttributes = ['FullName', 'Position', 'PlayerID']
+            SelfAttributes = ['FullName', 'PositionID', 'PlayerID']
             SelfValues = GetValuesOfObject(self, SelfAttributes)
             StatDict = SelfValues[0]
             StatDict['Seasons'] = str(min([u.TeamSeasonID.LeagueSeasonID.SeasonStartYear for u in PTS])) + ' to ' + str(max([u.TeamSeasonID.LeagueSeasonID.SeasonEndYear for u in PTS]))
@@ -976,7 +1044,6 @@ class Player(models.Model):
         #ThisTeamSeason = TeamSeason.objects.get(SeasonID = CurrentSeason, TeamID = )
         ThisPlayerTeamSeason = PlayerTeamSeason.objects.filter(PlayerID = self.PlayerID)
 
-        PositionSortOrder = {'QB':1, 'RB': 2, 'FB': 2.5, 'WR': 3, 'TE': 4, 'OT': 5, 'OG': 6, 'OC': 7, 'DE': 8, 'DT': 9, 'OLB':10, 'MLB': 11, 'CB': 12, 'S': 13, 'K': 14, 'P':15}
         ClassSortOrder = {'HS Junior': -1,'HS Senior': 0, 'Freshman': 1, 'Sophomore': 2, 'Junior': 3, 'Senior': 4, 'Graduated': 5}
 
         TeamID = None
@@ -1007,42 +1074,15 @@ class Player(models.Model):
             'WeightFormatted': str(self.Weight) + ' lbs',
             'TeamID': TeamID,
             'TeamName': TeamName,
-            'Position':self.Position,
+            'Position':self.PositionID.PositionAbbreviation,
             'HometownAndState': self.HometownAndState,
-            'PositionSortOrder': PositionSortOrder[self.Position],
+            'PositionSortOrder': self.PositionID.PositionSortOrder,
             'ClassSortOrder': ClassSortOrder[self.Class],
             'RecruitingStars': self.RecruitingStars,
             'IsRecruit': self.IsRecruit,
             'TeamJerseyStyle': self.TeamJerseyStyle,
             'TeamJerseyInvert': self.TeamJerseyInvert
         }
-    class Meta:
-              # specify this model as an Abstract Model
-            app_label = 'HeadFootballCoach'
-
-class LeagueSeason(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
-    LeagueID = models.ForeignKey(League, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    LeagueSeasonID = models.AutoField(primary_key = True, db_index=True)
-    SeasonStartYear = models.PositiveSmallIntegerField(default = 0)
-    SeasonEndYear = models.PositiveSmallIntegerField(default = 9999)
-    IsCurrent = models.BooleanField(default = False, db_index=True)
-    ScheduleCreated = models.BooleanField(default=False)
-    PlayersCreated  = models.BooleanField(default=False)
-    CoachesCreated  = models.BooleanField(default=False)
-    TeamSeasonsCreated = models.BooleanField(default=False)
-    ConferenceChampionshipsCreated = models.BooleanField(default=False)
-    PlayoffCreated = models.BooleanField(default=False)
-    AwardsCreated    = models.BooleanField(default=False)
-    OffseasonStarted = models.BooleanField(default=False)
-
-    @property
-    def LeagueSeasonDisplay(self):
-        return str(self.SeasonStartYear) + '-' + str(self.SeasonEndYear) + ' Season'
-
-    def __str__(self):
-
-        return str(self.SeasonStartYear) + '-' + str(self.SeasonEndYear) + ' Season in World ' + str(self.WorldID)
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
@@ -1282,7 +1322,7 @@ class TeamSeason(models.Model):
 
     @property
     def NationalRankObject(self):
-        return TeamSeasonWeekRankID.objects.get(TeamSeasonID = self, IsCurrent = True)
+        return TeamSeasonWeekRank.objects.get(TeamSeasonID = self, IsCurrent = True)
 
     @property
     def LeagueSeasonDisplay(self):
@@ -1378,7 +1418,7 @@ class TeamSeason(models.Model):
         return len(RecruitTeamSeason.objects.filter(TeamSeasonID = self))
 
     def GetTeamLeaders(self, Fields):
-        PTS = self.playerteamseason_set.filter(GamesPlayed__gt = 0).values('PlayerID_id', 'GamesPlayed',  'PlayerID__PlayerFaceJson', 'PlayerID__Position', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName')
+        PTS = self.playerteamseason_set.filter(GamesPlayed__gt = 0).values('PlayerID_id', 'GamesPlayed',  'PlayerID__PlayerFaceJson', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName')
         PTS = [u for u in PTS if (float(u['GamesPlayed']) * 1.0 / u['GamesPlayed']) >= 10.0]
         Results = []
         for P in PTS:
@@ -1392,7 +1432,7 @@ class TeamSeason(models.Model):
                 TopPlayer = sorted(PTS, key=lambda k: k[Field], reverse=True)
 
                 FieldResults['PlayerName'] = TopPlayer['PlayerID__PlayerFirstName'] + ' ' + TopPlayer['PlayerID__PlayerLastName']
-                FieldResults['PlayerPosition'] = TopPlayer['PlayerID__Position']
+                FieldResults['PlayerPosition'] = TopPlayer['PlayerID__PositionID__PositionAbbreviation']
                 FieldResults['Value'] = TopPlayer[Field]
                 FieldResults['PlayerID'] = TopPlayer['PlayerID_id']
                 FieldResults['PlayerFaceJson'] = TopPlayer['PlayerID__PlayerFaceJson']
@@ -1472,7 +1512,7 @@ class PlayerTeamSeason(models.Model):
             'FullName': PlayerObject.FullName,
             'JerseyNumber': PlayerObject.JerseyNumber,
             'PlayerID': PlayerObject.PlayerID,
-            'Position': PlayerObject.Position,
+            'Position': PlayerObject.PositionID.PositionAbbreviation,
             'HeightFormatted': PlayerObject.HeightFormatted,
             'WeightFormatted': PlayerObject.WeightFormatted,
             'OverallRating': PlayerObject.OverallRating,
@@ -1555,7 +1595,15 @@ class PlayerTeamSeasonAward(models.Model):
 
     IsWeekAward       = models.BooleanField(default = False)
     IsSeasonAward     = models.BooleanField(default = False)
+    IsPreseasonAward  = models.BooleanField(default = False)
     IsPlayoffAward = models.BooleanField(default = False)
+
+    IsIndividualAward = models.BooleanField(default = False)
+    IsPositionGroupAward = models.BooleanField(default = False)
+    IsPositionAward = models.BooleanField(default = False)
+
+    PositionID         = models.ForeignKey(Position, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    PositionGroupID    = models.ForeignKey(PositionGroup, on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     WeekID             = models.ForeignKey(Week, on_delete=models.CASCADE, null=True, blank=True, default=None)
     ConferenceID       = models.ForeignKey(Conference, on_delete=models.CASCADE, null=True, blank=True, default=None)
@@ -1583,6 +1631,8 @@ class PlayerTeamSeasonAward(models.Model):
         elif self.IsConferenceAward:
             GroupingName = self.ConferenceID.ConferenceName
 
+        if self.IsPositionGroupAward:
+            s += self.PositionGroupID.PositionGroupName + ' '
 
         if self.IsTopPlayer:
             s += 'MVP of ' + GroupingName
@@ -1675,8 +1725,8 @@ class Game(models.Model):
 
         Results = {}
 
-        AwayPGS = self.AwayTeamGameID.playergamestat_set.values('FUM_Recovered','FUM_Forced','FUM_Fumbles','DEF_TD','PAS_INT','PAS_Sacks','DEF_Sacks','DEF_Tackles','DEF_Deflections','DEF_INT','RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
-        HomePGS = self.HomeTeamGameID.playergamestat_set.values('FUM_Recovered','FUM_Forced','FUM_Fumbles','DEF_TD','PAS_INT','PAS_Sacks','DEF_Sacks','DEF_Tackles','DEF_Deflections','DEF_INT','RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
+        AwayPGS = self.AwayTeamGameID.playergamestat_set.values('FUM_Recovered','FUM_Forced','FUM_Fumbles','DEF_TD','PAS_INT','PAS_Sacks','DEF_Sacks','DEF_Tackles','DEF_Deflections','DEF_INT','RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
+        HomePGS = self.HomeTeamGameID.playergamestat_set.values('FUM_Recovered','FUM_Forced','FUM_Fumbles','DEF_TD','PAS_INT','PAS_Sacks','DEF_Sacks','DEF_Tackles','DEF_Deflections','DEF_INT','RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
         HomePlayers = []
         AwayPlayers = []
 
@@ -1706,7 +1756,7 @@ class Game(models.Model):
         counter = 1
         for P in HomePlayers:
             PlayerName = P['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + P['PlayerTeamSeasonID__PlayerID__PlayerLastName']
-            PlayerPosition = P['PlayerTeamSeasonID__PlayerID__Position']
+            PlayerPosition = P['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation']
             PlayerID = P['PlayerTeamSeasonID__PlayerID_id']
 
             PlayerStats = ''
@@ -1723,7 +1773,7 @@ class Game(models.Model):
         counter = 1
         for P in AwayPlayers:
             PlayerName = P['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + P['PlayerTeamSeasonID__PlayerID__PlayerLastName']
-            PlayerPosition = P['PlayerTeamSeasonID__PlayerID__Position']
+            PlayerPosition = P['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation']
             PlayerID = P['PlayerTeamSeasonID__PlayerID_id']
 
             PlayerStats = ''

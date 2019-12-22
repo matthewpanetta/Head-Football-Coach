@@ -1,13 +1,15 @@
-from .models import Audit,TeamGame,Bowl, NameList, Week, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
+from .models import Audit,TeamGame,Bowl,Position, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
 import random
 from datetime import timedelta, date
 import numpy
 from .scripts.PickName import RandomName, RandomPositionAndMeasurements, RandomCity
 import math
-from django.db.models import Count
+from django.db.models import F, Count
+#from django.db.models import Max, Avg, Count, Func,  Sum, Case, When, FloatField, CharField, Value
 from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, SelectBroadcast
 from .scripts.SeasonAwards import NationalAwards
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
+from .scripts.import_csv import createCalendar
 from .utilities import DistanceBetweenCities, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc
 from math import sin, cos, sqrt, atan2, radians, log
 import time
@@ -206,7 +208,8 @@ def GeneratePlayer(t, s, c, WorldID):
         if c == 'HS Senior':
             IsRecruit = True
 
-    Positions = ['QB', 'RB', 'FB', 'WR', 'TE', 'OT', 'OG', 'OC', 'DE', 'DT', 'OLB', 'MLB', 'CB', 'S', 'K', 'P']
+    Positions = Position.objects.all()#['QB', 'RB', 'FB', 'WR', 'TE', 'OT', 'OG', 'OC', 'DE', 'DT', 'OLB', 'MLB', 'CB', 'S', 'K', 'P']
+
 
 
     ClassOverallPercentage = {
@@ -228,7 +231,7 @@ def GeneratePlayer(t, s, c, WorldID):
 
 
     PlayerPositionAndHeight = RandomPositionAndMeasurements()
-    PlayerPosition = PlayerPositionAndHeight['Position']
+    PlayerPositionID = PlayerPositionAndHeight['PositionID']
     PlayerWeight = PlayerPositionAndHeight['Weight']
     PlayerHeight = PlayerPositionAndHeight['Height']
 
@@ -245,7 +248,7 @@ def GeneratePlayer(t, s, c, WorldID):
 
     PlayerRatings = {}
 
-    PlayerDict = {'WorldID':WorldID, 'Class':PlayerClass, 'PlayerFirstName': PlayerFirstName, 'PlayerLastName':PlayerLastName, 'JerseyNumber':PlayerNumber, 'Height':PlayerHeight, 'Weight': PlayerWeight, 'CityID': PlayerCityID, 'Position': PlayerPosition, 'IsRecruit':IsRecruit}
+    PlayerDict = {'WorldID':WorldID, 'Class':PlayerClass, 'PlayerFirstName': PlayerFirstName, 'PlayerLastName':PlayerLastName, 'JerseyNumber':PlayerNumber, 'Height':PlayerHeight, 'Weight': PlayerWeight, 'CityID': PlayerCityID, 'PositionID': PlayerPositionID, 'IsRecruit':IsRecruit}
 
     #PST = PlayerTeamSeason(PlayerID = P, SeasonID = s, TeamID = t)
     PlayerDict['Personality_LeadershipRating'] = NormalBounds(55,15,2,98)
@@ -313,8 +316,7 @@ def CreatePlayers(LS, WorldID):
 
     MinimumRosterComposition = {
         'Class': {'Freshman': 12, 'Sophomore':12, 'Junior': 12, 'Senior': 12},
-        'Positions': {'QB': 3, 'RB': 3, 'FB':0, 'WR': 5, 'TE': 3, 'OT': 4, 'OG': 4, 'OC': 2, 'DE': 4, 'DT': 3, 'OLB': 4, 'MLB': 3, 'CB': 5, 'S': 4, 'K': 1, 'P': 1}
-
+        'Position': [u for u in Position.objects.all().values('PositionAbbreviation', 'PositionMinimumCountPerTeam').annotate(Position = F('PositionAbbreviation'))]
     }
     PositionNumbers = {
         'QB': [(1,18)],
@@ -394,7 +396,7 @@ def CreatePlayers(LS, WorldID):
     for P in PlayerList:
         PlayerSkillPool.append(PopulatePlayerSkills(P, CurrentSeason, WorldID))
     PlayerSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=True)
-    PlayerPool = [u for u in PlayerList.values('PlayerID', 'Class', 'Position', 'playerseasonskill__OverallRating').order_by('-playerseasonskill__OverallRating')]#sorted(PlayerPool, key = lambda k: k.CurrentSkills.OverallRating, reverse = True)
+    PlayerPool = [u for u in PlayerList.values('PlayerID', 'Class', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating').annotate(Position = F('PositionID__PositionAbbreviation')).order_by('-playerseasonskill__OverallRating')]#sorted(PlayerPool, key = lambda k: k.CurrentSkills.OverallRating, reverse = True)
 
     PlayersTeamSeasonToSave = []
     print(PlayerPool)
@@ -405,7 +407,8 @@ def CreatePlayers(LS, WorldID):
         for T in sorted(Round['TeamsInThisRound'], key=lambda k: random.random()):
             TS = T.CurrentTeamSeason
             if T not in TeamRosterCompositionNeeds:
-                TeamRosterCompositionNeeds[T] = {        'Class': {'Freshman': 12, 'Sophomore':12, 'Junior': 12, 'Senior': 12},'Position': {'QB': 3, 'FB':0, 'ATH':0, 'RB': 3, 'WR': 5, 'TE': 3, 'OT': 4, 'OG': 4, 'OC': 2, 'DE': 4, 'DT': 3, 'OLB': 4, 'MLB': 3, 'CB': 5, 'S': 4, 'K': 1, 'P': 1}}
+                TeamRosterCompositionNeeds[T] = {'Class': MinimumRosterComposition['Class'], 'Position': {Pos['Position']: Pos['PositionMinimumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}}
+            print('TeamRosterCompositionNeeds', T, TeamRosterCompositionNeeds[T])
             ClassesNeeded =   [u for u in TeamRosterCompositionNeeds[T]['Class']    if TeamRosterCompositionNeeds[T]['Class'][u]    > 0 ]
             PositionsNeeded = [u for u in TeamRosterCompositionNeeds[T]['Position'] if TeamRosterCompositionNeeds[T]['Position'][u] > 0 ]
 
@@ -444,7 +447,7 @@ def CreatePlayers(LS, WorldID):
         TakenNumbers = []
         for PTS in TS.playerteamseason_set.filter(PlayerID__JerseyNumber = 0):
             P = PTS.PlayerID
-            Pos = P.Position
+            Pos = P.PositionID.PositionAbbreviation
             NumberRanges = PositionNumbers[Pos]
             PlayerNumbers = []
             for Ranges in NumberRanges:
@@ -687,25 +690,29 @@ def EndRegularSeason(WorldID):
     CurrentWorld = World.objects.get(WorldID=WorldID)
     #put tourney check here
 
+    CurrentWeek = Week.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
+    NextWeek = CurrentWeek.NextWeek
+
 
     print('time to do Conf Champ stuff!')
-    CalculateRankings(CurrentSeason, CurrentWorld)
     for Conf in CurrentWorld.conference_set.all():
         TeamSeasonList = TeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamID__ConferenceID = Conf).filter(ConferenceRank__lte = 2)
 
         HomeTS = TeamSeasonList.filter(ConferenceRank = 1).first()
         AwayTS = TeamSeasonList.filter(ConferenceRank = 2).first()
 
-        G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', GameDateID = ConferenceChampionshipDate, IsConferenceChampionship=True)
+        G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', WeekID = NextWeek, IsConferenceChampionship=True)
         G.save()
 
-        HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G)
-        AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G)
+        HomeTSWR = TeamSeasonWeekRank.objects.filter(TeamSeasonID = HomeTS).filter(IsCurrent=1).first()
+        AwayTSWR = TeamSeasonWeekRank.objects.filter(TeamSeasonID = AwayTS).filter(IsCurrent=1).first()
+
+        HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G, TeamSeasonWeekRankID = HomeTSWR)
+        AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G, TeamSeasonWeekRankID = AwayTSWR)
 
         HomeTeamGame.save()
         AwayTeamGame.save()
 
-    CurrentSeason.BowlCreationDateID = ConferenceChampionshipDate
     CurrentSeason.ConferenceChampionshipsCreated = True
     CurrentSeason.save()
     return None
@@ -806,18 +813,31 @@ def NewSeasonCutover(WorldID):
 
 def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
 
-    CurrentWeek = Week.objects.get(WorldID = WorldID, IsCurrent = True)
-    StartYear = 2019#TODOCurrentDate.Year
-    if not IsFirstLeagueSeason:
+
+    if  IsFirstLeagueSeason:
+        StartYear = 2019
+    else:
         CurrentLeagueSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1, LeagueID=LeagueID)
         CurrentLeagueSeason.IsCurrent = False
         CurrentLeagueSeason.save()
+
+        StartYear = CurrentLeagueSeason.SeasonEndYear
 
 
     LS = LeagueSeason(WorldID = WorldID, LeagueID=LeagueID, IsCurrent = True, SeasonStartYear = StartYear, SeasonEndYear = StartYear+1)
     LS.save()
 
     DoAudit = True
+    if DoAudit:
+        start = time.time()
+
+    createCalendar(StartYear=StartYear, StartAfterMonthDay=(8,25), WorldID=WorldID, LeagueSeasonID=LS)
+
+    if DoAudit:
+        end = time.time()
+        TimeElapsed = end - start
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Create calendar')
+
 
     if DoAudit:
         start = time.time()
@@ -833,13 +853,13 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if IsFirstLeagueSeason:
         if DoAudit:
             start = time.time()
-        #CreatePlayers(LS, WorldID)
+        CreatePlayers(LS, WorldID)
         if DoAudit:
             end = time.time()
             TimeElapsed = end - start
             A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='Create Players')
 
-        #CreateCoaches(LS, WorldID)
+        CreateCoaches(LS, WorldID)
 
     if DoAudit:
         start = time.time()

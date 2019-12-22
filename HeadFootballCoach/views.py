@@ -72,6 +72,15 @@ def CurrentDate(WorldID):
 
     return CurrentDate
 
+def GetCurrentWeek(WorldID):
+
+    if isinstance(WorldID, int):
+        WorldID = World.objects.filter(WorldID = WorldID).first()
+
+    CurrentWeek = WorldID.week_set.filter(IsCurrent = 1).first()
+
+    return CurrentWeek
+
 
 
 def POST_PickTeam(request, WorldID):
@@ -268,7 +277,8 @@ def Page_Conference(request, WorldID, ConferenceID):
     context['Conference'] = ThisConference
     context['ConferenceStandings'] = ConferenceStandings
     context['OpposingConferences'] = OpposingConferences
-    context['ConferenceAwards'] = PlayerTeamSeasonAward.objects.filter(IsWeekAward = True).filter(WorldID = CurrentWorld).filter(ConferenceID = ThisConference).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('WeekID')
+    context['CurrentWeek'] = GetCurrentWeek(CurrentWorld)
+    context['ConferenceAwards'] = PlayerTeamSeasonAward.objects.filter(IsWeekAward = True).filter(WorldID = CurrentWorld).filter(ConferenceID = ThisConference).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('WeekID', 'PositionGroupID')
     for u in ConferenceStandings:
         print(u)
 
@@ -333,7 +343,7 @@ def Page_Index(request):
         #NameList.objects.all().delete()
 
 
-    WorldFields = ['WorldID','CurrentDate']
+    WorldFields = ['WorldID','CurrentWeek']
     World__UserTeamFields = ['LogoURL', 'TeamNameAndRecord']
 
     ExtractData()
@@ -353,12 +363,12 @@ def Page_Index(request):
 
         Worlds.append(ThisWorld)
 
-    NumConferencesToInclude = 3
+    NumConferencesToInclude = 2
     PossibleConferences = [
-         {'ConferenceDisplayName': 'Big 12', 'ConferenceFormValue': 'Big 12 Conference'},
-         {'ConferenceDisplayName': 'ACC', 'ConferenceFormValue': 'Atlantic Coast Conference'},
-         {'ConferenceDisplayName': 'SEC', 'ConferenceFormValue': 'Southeastern Conference'},
-         {'ConferenceDisplayName': 'Pac-12', 'ConferenceFormValue': 'Pac-12 Conference'},
+         #{'ConferenceDisplayName': 'Big 12', 'ConferenceFormValue': 'Big 12 Conference'},
+         #{'ConferenceDisplayName': 'ACC', 'ConferenceFormValue': 'Atlantic Coast Conference'},
+         #{'ConferenceDisplayName': 'SEC', 'ConferenceFormValue': 'Southeastern Conference'},
+         #{'ConferenceDisplayName': 'Pac-12', 'ConferenceFormValue': 'Pac-12 Conference'},
          {'ConferenceDisplayName': 'American', 'ConferenceFormValue': 'American Athletic Conference'},
          #{'ConferenceDisplayName': 'Mountain West', 'ConferenceFormValue': 'Mountain West Conference'},
          {'ConferenceDisplayName': 'Big 10', 'ConferenceFormValue': 'Big Ten Conference'},
@@ -463,7 +473,7 @@ def Page_World(request, WorldID):
             end = time.time()
             TimeElapsed = end - start
             A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 7, AuditDescription = 'Page_World - return league leaders')
-    context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'leaders':Leaders, 'page': page, 'userTeam': UserTeam, 'Week': CurrentWeek , 'games': UpcomingGames}
+    context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'leaders':Leaders, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek , 'games': UpcomingGames}
 
     context['recentGames'] = RecentGames
     return render(request, 'HeadFootballCoach/World.html', context)
@@ -477,12 +487,13 @@ def Page_Player(request, WorldID, PlayerID):
     PlayerObject = Player.objects.filter(WorldID = CurrentWorld).filter(PlayerID = PlayerID)
     if len(PlayerObject.first().PlayerFaceJson) == 0:
         PlayerObject.first().GeneratePlayerFaceJSon()
-    PlayerDict = PlayerObject.values('PlayerID', 'PlayerLastName', 'PlayerFirstName', 'PlayerFaceJson', 'Class', 'IsCurrentlyRedshirted','WasPreviouslyRedshirted','JerseyNumber','Height', 'Weight', 'CityID', 'Position', 'CityID__CityName', 'CityID__StateID__StateName', 'RecruitingStars', 'IsRecruit').annotate(
+    PlayerDict = PlayerObject.values('PlayerID', 'PlayerLastName', 'PlayerFirstName', 'PlayerFaceJson', 'Class', 'IsCurrentlyRedshirted','WasPreviouslyRedshirted','JerseyNumber','Height', 'Weight', 'CityID', 'PositionID__PositionAbbreviation', 'CityID__CityName', 'CityID__StateID__StateName', 'RecruitingStars', 'IsRecruit').annotate(
         HometownAndState=Concat(F('CityID__CityName'), Value(', '), F('CityID__StateID__StateName')),
         FullName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName')),
         HeightFeet = (F('Height') / 12),
         HeightInches = (F('Height') % 12),
-        HeightFormatted = Concat('HeightFeet', Value('\''), 'HeightInches', Value('"'), output_field=CharField())
+        HeightFormatted = Concat('HeightFeet', Value('\''), 'HeightInches', Value('"'), output_field=CharField()),
+        Position = F('PositionID__PositionAbbreviation')
     ).first()
 
     PlayerObject = PlayerObject.first()
@@ -502,7 +513,7 @@ def Page_Player(request, WorldID, PlayerID):
 
     page = {'PageTitle': PlayerDict['FullName'] + ' - HS Recruit', 'WorldID': WorldID, 'PrimaryColor': 'Blue', 'SecondaryColor': 'Red'}
 
-    context = {'userTeam': UserTeam, 'player':PlayerDict,  'allTeams': allTeams, 'date': CurrentDate(CurrentWorld)}
+    context = {'userTeam': UserTeam, 'player':PlayerDict,  'allTeams': allTeams, 'CurrentWeek': GetCurrentWeek(CurrentWorld)}
 
     RatingNameMap = {}
 
@@ -582,7 +593,7 @@ def Page_Player(request, WorldID, PlayerID):
 
 
         #PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__GameDateID')
-        PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__WeekID').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__Position','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT', 'TeamGameID', 'TeamGameID__GameID', 'TeamGameID__GameID__WeekID__WeekNumber').annotate(  # call `annotate`
+        PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__WeekID').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT', 'TeamGameID', 'TeamGameID__GameID', 'TeamGameID__GameID__WeekID__WeekNumber').annotate(  # call `annotate`
                 PAS_CompletionPercentage=Case(
                     When(PAS_Attempts=0, then=0.0),
                     default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1)),
@@ -618,6 +629,8 @@ def Page_Player(request, WorldID, PlayerID):
                     default=(Round(Sum(F('REC_Yards'))* 1.0 / Sum(F('REC_Receptions')),1)),
                     output_field=FloatField()
                 ),
+                Position = F('PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation')
+
             )
         SeasonStats = PTS.__dict__
         CareerHigh = {}
@@ -642,11 +655,11 @@ def Page_Player(request, WorldID, PlayerID):
         PlayerStats = [u for u in PlayerStats]
         RecentGameStats = []
         for G in PlayerStats:
-            print('G', G['RUS_Yards'],G['RUS_TD'],G['RUS_YardsPerCarry'] )
             G['Stats'] = []
             OpposingTeamGame = TeamGame.objects.filter(TeamGameID = G['TeamGameID']).first().OpposingTeamGame
             G['OpposingTeamID'] = OpposingTeamGame.TeamSeasonID.TeamID_id
             G['OpposingTeamLogoURL'] = OpposingTeamGame.TeamSeasonID.TeamID.TeamLogoURL
+            G['OpposingTeamName'] = OpposingTeamGame.TeamSeasonID.TeamID.TeamName
             for StatCategory in PlayerStatCategories:
                 SC = {}
                 SC['Value'] = G[StatCategory['FieldName']]
@@ -690,7 +703,6 @@ def Page_Player(request, WorldID, PlayerID):
 
             Award['AwardName'] = s
 
-            print(Award)
             Awards.append(Award)
         context['Awards'] = Awards
 
@@ -892,7 +904,7 @@ def Page_Game(request, WorldID, GameID):
                 print(S)
 
 
-        PlayerGames = PlayerGameStat.objects.filter(TeamGameID__GameID = GameQuerySet).order_by('-GameScore').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__Position','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT').annotate(  # call `annotate`
+        PlayerGames = PlayerGameStat.objects.filter(TeamGameID__GameID = GameQuerySet).order_by('-GameScore').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT').annotate(  # call `annotate`
                 PAS_CompletionPercentage=Case(
                     When(PAS_Attempts=0, then=0.0),
                     default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1)),
@@ -933,10 +945,12 @@ def Page_Game(request, WorldID, GameID):
 
 
             u['FullName'] = u['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + u['PlayerTeamSeasonID__PlayerID__PlayerLastName']
-            u['Position'] = u['PlayerTeamSeasonID__PlayerID__Position']
+            u['Position'] = u['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation']
             u['PlayerID'] = u['PlayerTeamSeasonID__PlayerID_id']
 
             u['Bench'] = False
+
+
 
 
             print('Stats for:', u['FullName'], u['Position'])
@@ -996,7 +1010,7 @@ def Page_Game(request, WorldID, GameID):
     context['TeamStatBox'] = TeamStatBox
     context['game'] = GameDict
     context['allTeams'] = allTeams
-    context['date'] = CurrentDate(CurrentWorld)
+    context['CurrentWeek'] = GetCurrentWeek(CurrentWorld)
     context['homeTeam'] =  HomeTeam
     context['awayTeam'] = AwayTeam
     context['boxScore'] = BoxScore
@@ -1083,14 +1097,16 @@ def GET_TeamSchedule(request, WorldID, TeamID):
 
     GamesForThisTeam = TeamGame.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID = CurrentTeamSeason).order_by('GameID__WeekID')
 
-    GameFields = ['GameIDURL', 'GameDisplay', 'HomeTeamRank', 'AwayTeamRank', 'WeekID']
+    GameFields = ['GameIDURL', 'GameDisplay', 'HomeTeamRank', 'AwayTeamRank']
     OpponentFields = ['TeamIDURL', 'TeamName', 'LogoURL']
     TeamGameFields = ['TeamRecord']
+    WeekFields = ['WeekName']
 
     FutureGames = []
     PlayedGames = []
     for TG in GamesForThisTeam:
         G = TG.GameID
+        WeekValues = GetValuesOfSingleObject(G.WeekID, WeekFields)
         GameValues = GetValuesOfSingleObject(G, GameFields)
         if TeamID == G.HomeTeamID:
             OpponentValues = GetValuesOfSingleObject(G.AwayTeamID, OpponentFields)
@@ -1099,7 +1115,7 @@ def GET_TeamSchedule(request, WorldID, TeamID):
             OpponentValues = GetValuesOfSingleObject(G.HomeTeamID, OpponentFields)
             OpponentTGValues = GetValuesOfSingleObject(G.HomeTeamGameID, TeamGameFields)
 
-        GameInfo = MergeDicts([GameValues, OpponentValues, OpponentTGValues])
+        GameInfo = MergeDicts([GameValues, OpponentValues, OpponentTGValues, WeekValues])
 
         if TeamID == G.HomeTeamID:
             GameInfo['AtOrVs'] = 'vs'
@@ -1428,10 +1444,9 @@ def Page_Team(request,WorldID, TeamID):
     if DoAudit:
         start = time.time()
 #Get Schedule
-    date = CurrentDate(WorldID)
     AllTeams = Team.objects.filter(WorldID = WorldID)
     CurrentWorld = World.objects.get(WorldID = WorldID)
-    date = CurrentDate(CurrentWorld)
+    CurrentWeek = GetCurrentWeek(CurrentWorld)
 
     ThisTeam = Team.objects.get(WorldID = WorldID, TeamID = TeamID)#.values('ConferenceName')
 
@@ -1578,7 +1593,7 @@ def Page_Team(request,WorldID, TeamID):
 
     page = {'PageTitle':ThisTeam.Name, 'WorldID': WorldID, 'PrimaryColor': ThisTeam.TeamColor_Primary_HEX, 'SecondaryColor': ThisTeam.SecondaryColor_Display, 'TeamJerseyStyle': ThisTeam.TeamJerseyStyle, 'TeamJerseyInvert':ThisTeam.TeamJerseyInvert, 'TabIcon':ThisTeam.LogoURL }
 
-    context = {'conferenceTeams': conferenceTeams, 'page': page, 'userTeam': UserTeam, 'team': ThisTeam, 'games':Games, 'allGames': teamgames, 'date': date, 'allTeams': allTeams}
+    context = {'conferenceTeams': conferenceTeams, 'page': page, 'userTeam': UserTeam, 'team': ThisTeam, 'games':Games, 'allGames': teamgames, 'CurrentWeek': CurrentWeek, 'allTeams': allTeams}
     context['SignedRecruits'] = SignedRecruits
     context['TeamWeeklyRanks'] = TeamWeeklyRanks
     context['MaxWeeklyRank'] = MaxWeeklyRank
@@ -1598,11 +1613,9 @@ def Page_Team(request,WorldID, TeamID):
 def POST_SimDay(request, WorldID):
 
     DayString = request.POST['Days']
-    print('DayString = request.POST[""]', DayString , request, request.POST['Days'])
     days = 0
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
     CurrentWorld = World.objects.get(WorldID=WorldID)
-    #put tourney check here
 
     AllowInterruptions = CurrentWorld.AllowInterruptions
     BreakAfterNextDay = False
@@ -1636,7 +1649,7 @@ def POST_SimDay(request, WorldID):
         print('Simming Week')
         ThisWeek = Week.objects.get(WorldID = WorldID, IsCurrent=1)
 
-        GameSet = ThisWeek.game_set.filter(WasPlayed = 0)#Game.objects.filter(WorldID = WorldID).filter(GameDateID = date.DateID).filter(WasPlayed = False)
+        GameSet = ThisWeek.game_set.filter(WasPlayed = 0)
         for game in GameSet:
 
             if DoAudit:
@@ -1652,25 +1665,24 @@ def POST_SimDay(request, WorldID):
 
         if ThisWeek.PhaseID.PhaseName in ['Regular Season', 'Conference Championships', 'Bowls']:
             CalculateRankings(CurrentSeason, CurrentWorld)
-            CalculateConferenceRankings(CurrentSeason, CurrentWorld)
-
-            SelectBroadcast(CurrentSeason, CurrentWorld)
             ChoosePlayersOfTheWeek(CurrentSeason, CurrentWorld)
-            FakeWeeklyRecruiting(WorldID)
 
 
         if ThisWeek.PhaseID.PhaseName == 'Regular Season':
             #DO TOURNEY STUFF HERE
-            print('End regular season!!!')
-            EndRegularSeason(WorldID)
+            CalculateConferenceRankings(CurrentSeason, CurrentWorld)
+            SelectBroadcast(CurrentSeason, CurrentWorld)
+            FakeWeeklyRecruiting(WorldID)
+
+            if ThisWeek.LastWeekInPhase:
+                print('End regular season!!!')
+                EndRegularSeason(WorldID)
+
 
         if ThisWeek.PhaseID.PhaseName == 'Conference Championships':
             #DO TOURNEY STUFF HERE
             print('Creating bowls!!!')
             CreateBowls(WorldID)
-
-
-
 
         NextWeek(WorldID)
 
@@ -1762,7 +1774,8 @@ def Page_Bracket(request, WorldID):
         BracketData['results'][0].append(ThisRoundData)
     #print(Teams)
     BracketData = json.dumps(BracketData)
-    context = {'page': page, 'BracketData':BracketData,'MaxRound':MaxRound, 'userTeam': UserTeam, 'Teams': Teams, 'date': CurrentDate(WorldID) , 'allTeams': SortedTeams, 'bracketjson': BracketDict}
+    context = {'page': page, 'BracketData':BracketData,'MaxRound':MaxRound, 'userTeam': UserTeam, 'Teams': Teams, 'CurrentWeek': GetCurrentWeek(WorldID) , 'allTeams': SortedTeams, 'bracketjson': BracketDict}
+    print('CurrentWeek', context['CurrentWeek'])
     return render(request, 'HeadFootballCoach/Bracket.html', context)
 
 
@@ -1884,7 +1897,7 @@ def Page_ManageTeam(request):
     ThisTeamConference = ThisTeam.ConferenceID.ConferenceName
 
 #Get Current Date
-    date = CurrentDate(CurrentWorld)
+    CurrentWeek = GetCurrentWeek(CurrentWorld)
 
     allTeams = GetAllTeams(WorldID)
     allTeams = sorted(allTeams, key = lambda k: k['TeamName'])
@@ -1893,7 +1906,7 @@ def Page_ManageTeam(request):
     team = Team.objects.get(WorldID=WorldID, TeamID = TeamID)
 
 
-    context = {'page': page, 'conferenceStandings': ConferenceRanking, 'playerState': PlayerState, 'userTeam': UserTeam, 'team': team, 'games':Games, 'date': date, 'players':Players, 'allTeams': allTeams, 'record': Record}
+    context = {'page': page, 'conferenceStandings': ConferenceRanking, 'playerState': PlayerState, 'userTeam': UserTeam, 'team': team, 'games':Games, 'CurrentWeek': CurrentWeek, 'players':Players, 'allTeams': allTeams, 'record': Record}
 
     return render(request, 'HeadFootballCoach/ManageTeam.html', context)
 
@@ -1918,8 +1931,8 @@ def Page_Coach(request, CoachID):
 
     CoachCareerTotals = {'YearsExperience': CTS.count()}
     context['CoachCareerTotals'] = CoachCareerTotals
-    date = CurrentDate(WorldID)
-    context['date'] = date
+    CurrentWeek = GetCurrentWeek(WorldID)
+    context['CurrentWeek'] = CurrentWeek
 
     return render(request, 'HeadFootballCoach/Coach.html', context)
 
@@ -1931,13 +1944,13 @@ def Page_Recruiting(request, WorldID):
         start = time.time()
 
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
-    date = CurrentDate(WorldID)
+    CurrentWeek = GetCurrentWeek(WorldID)
     UserTeam = GetUserTeam(WorldID)
     TeamID = UserTeam
     TS = TeamSeason.objects.get(WorldID = WorldID, LeagueSeasonID = CurrentSeason, TeamID = TeamID)
     page = {'PageTitle': 'College HeadFootballCoach - Recruiting', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
 
-    context = {'page': page, 'userTeam': UserTeam, 'date': date}
+    context = {'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek}
     context['Players'] = []
 
     for P in Player.objects.filter(WorldID = WorldID).filter(IsRecruit = True).annotate(json_len=Length('PlayerFaceJson')).filter(json_len__lte = 0).order_by('Recruiting_NationalRank')[:100]:
@@ -1985,7 +1998,7 @@ def Page_Season(request, WorldID, SeasonStartYear):
 
     ThisSeason = LeagueSeason.objects.get(WorldID = WorldID, SeasonStartYear = SeasonStartYear)
     CurrentWorld = World.objects.get(WorldID = WorldID)
-    date = CurrentDate(WorldID)
+    CurrentWeek = GetCurrentWeek(WorldID)
     UserTeam = GetUserTeam(WorldID)
     TeamID = UserTeam
     context = {}
@@ -2047,7 +2060,7 @@ def Page_Season(request, WorldID, SeasonStartYear):
 
     page = {'PageTitle': 'College HeadFootballCoach - '+ str(SeasonStartYear) +' Season', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
 
-    context = {'page': page, 'userTeam': UserTeam, 'date': date}
+    context = {'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek}
     for u in context:
         print(u, context[u])
     return render(request, 'HeadFootballCoach/Season.html', context)
