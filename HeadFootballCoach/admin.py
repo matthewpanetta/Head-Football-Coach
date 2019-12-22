@@ -54,7 +54,7 @@ class RecruitTeamSeasonAdmin(admin.ModelAdmin):
 
 
 class TeamSeasonAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in TeamSeason._meta.get_fields() if field.name not in ('teamgame','playerteamseason', 'teamseasondaterank', 'coachteamseason', 'recruitteamseason')] + ['TeamOverallRating']#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in TeamSeason._meta.get_fields() if field.name not in ('teamseasonweekrank','teamgame','playerteamseason', 'teamseasondaterank', 'coachteamseason', 'recruitteamseason')] + ['TeamOverallRating']#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
     #search_fields = ('CoachFirstName', 'CoachLastName', 'CoachID' )
 
 
@@ -93,7 +93,7 @@ class System_PlayerArchetypeRatingModifierAdmin(admin.ModelAdmin):
     list_display = [field.name for field in System_PlayerArchetypeRatingModifier._meta.get_fields() if field.name not in ('hold')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class WeekAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Week._meta.get_fields() if field.name not in ('playerteamseasonaward', 'hold', 'calendar')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in Week._meta.get_fields() if field.name not in ('playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 
 admin.site.register(User)

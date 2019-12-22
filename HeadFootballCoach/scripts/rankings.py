@@ -1,5 +1,5 @@
 
-from ..models import World, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat
+from ..models import World, Week,TeamSeasonWeekRank, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat
 import itertools
 
 def Min(a,b):
@@ -11,7 +11,7 @@ def Min(a,b):
 def CalculateConferenceRankings(LS, WorldID):
     TeamDictStarter = Team.objects.filter(WorldID=WorldID)
     CurrentSeason = LS
-    CurrentDate = Calendar.objects.get(WorldID=WorldID, IsCurrent = 1)
+    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
     CurrentWorld = WorldID
 
     RankCount = 0
@@ -97,11 +97,10 @@ def CalculateRankings(LS, WorldID):
 
     TeamDictStarter = Team.objects.filter(WorldID=WorldID)
     CurrentSeason = LS
-    CurrentDate = Calendar.objects.get(WorldID=WorldID, IsCurrent = 1)
+    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
+    NextWeek = CurrentWeek.NextWeek
     CurrentWorld = WorldID
     TeamList = sorted(TeamDictStarter, key = lambda k: k.CurrentTeamSeason.RankingTuple, reverse = True)
-
-    Next7Days = CurrentDate.NextDayN(7)
 
     TeamDict = {}
 
@@ -195,7 +194,7 @@ def CalculateRankings(LS, WorldID):
 
         TS = TeamDict[t]['CurrentTeamSeason']
 
-        TSDR = TeamSeasonDateRank(TeamSeasonID = TS, WorldID = CurrentWorld, DateID = CurrentDate, NationalRank = TeamDict[t]['Rank'], IsCurrent = False)
+        TSDR = TeamSeasonWeekRank(TeamSeasonID = TS, WorldID = CurrentWorld, WeekID = CurrentWeek, NationalRank = TeamDict[t]['Rank'], IsCurrent = False)
         if TS.NationalRank is not None:
             OldTSDR = TS.NationalRankObject
             TSDR.NationalRankDelta = OldTSDR.NationalRank - TeamDict[t]['Rank']
@@ -205,40 +204,39 @@ def CalculateRankings(LS, WorldID):
         TSDR.IsCurrent = True
         TSDR.save()
 
-        NextTeamGame = TS.teamgame_set.filter(GameID__WasPlayed = False).filter(GameID__GameDateID__Date__lte = Next7Days.Date).order_by('GameID__GameDateID').first()
+        NextTeamGame = TS.teamgame_set.filter(GameID__WasPlayed = False).filter(GameID__WeekID = NextWeek).first()
         #print()
         #print(t, 'Rank', TeamDict[t]['Rank'], 'NextGame:', NextTeamGame)
         if NextTeamGame is not None:
-            NextTeamGame.TeamSeasonDateRankID = TSDR
+            NextTeamGame.TeamSeasonWeekRankID = TSDR
             NextTeamGame.save()
-            #print('Adding TSDR', TSDR, NextTeamGame, 'against', NextTeamGame.OpposingTeamGame)
 
-
-    CurrentSeason.RankingsLastCalculated =CurrentDate.Date
     CurrentSeason.save()
 
     return None
 
 def SelectBroadcast(LS, WorldID):
 
-    CurrentDate = Calendar.objects.get(WorldID=WorldID, IsCurrent = 1)
-    for N in range(0,7):
-        SelectedDate = CurrentDate.NextDayN(N)
-        if SelectedDate.BroadcastSelected == True:
-            continue
+    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
 
-        GamesOnSelectedDay = Game.objects.filter(WorldID=WorldID, GameDateID = SelectedDate)
-        GamesOnSelectedDay = sorted(GamesOnSelectedDay, key=lambda r: r.HomeTeamRankValue + r.AwayTeamRankValue + Min(r.HomeTeamRankValue , r.AwayTeamRankValue) - (r.AwayTeamID.TeamPrestige) - (r.HomeTeamID.TeamPrestige )) #TODO
-        RegionalGames = GamesOnSelectedDay[1:3]
-        for g in RegionalGames:
-            print('Regional game!!' , g)
-            g.RegionalBroadcast = True
-            g.save()
+    if CurrentWeek.BroadcastSelected == True:
+        return None
 
-        if len(GamesOnSelectedDay) > 0:
-            NationalGame = GamesOnSelectedDay[0]
-            print('National Game!!', NationalGame)
-            NationalGame.NationalBroadcast = True
-            NationalGame.save()
+    GamesThisWeek = Game.objects.filter(WorldID=WorldID, WeekID = CurrentWeek)
+    GamesThisWeek = sorted(GamesThisWeek, key=lambda r: r.HomeTeamRankValue + r.AwayTeamRankValue + Min(r.HomeTeamRankValue , r.AwayTeamRankValue) - (r.AwayTeamID.TeamPrestige) - (r.HomeTeamID.TeamPrestige )) #TODO
+    RegionalGames = GamesThisWeek[1:3]
+    for g in RegionalGames:
+        print('Regional game!!' , g)
+        g.RegionalBroadcast = True
+        g.save()
+
+    if len(GamesThisWeek) > 0:
+        NationalGame = GamesThisWeek[0]
+        print('National Game!!', NationalGame)
+        NationalGame.NationalBroadcast = True
+        NationalGame.save()
+
+    CurrentWeek.BroadcastSelected = True
+    CurrentWeek.save()
 
     return None

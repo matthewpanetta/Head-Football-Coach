@@ -1,6 +1,6 @@
 
 
-from ..models import System_PlayerArchetypeRatingModifier, Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
+from ..models import System_PlayerArchetypeRatingModifier, Phase, Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
 import os
 from ..utilities import Max
 from datetime import timedelta, date
@@ -345,29 +345,72 @@ def createGeography(inputFile, CountData):
 
     #print(headers)
 
-def createCalendar(StartDate, NumDays, WorldID):
+def createCalendar(StartYear=2019, StartAfterMonthDay=(8,25), WorldID=None):
 
     #Calendar.objects.all().delete()
 
-    SD = date(StartDate[0], StartDate[1], StartDate[2])
-    DatesToSave = []
+    print('StartYear', StartYear,'StartAfterMonthDay', StartAfterMonthDay)
+    SD = date(StartYear, StartAfterMonthDay[0], StartAfterMonthDay[1])
+
+    WeeksInRegularSeason = 15
+    AnnualScheduleOfEvents = [
+        {'Phase': 'Preseason', 'WeekNumber': 0, 'WeekName': 'Preseason', 'LastWeekInPhase': True},
+    ]
+    for WeekCount in range(1, WeeksInRegularSeason+1):
+        WeekDict = {'Phase': 'Regular Season', 'WeekNumber': WeekCount, 'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False}
+        if WeekCount == WeeksInRegularSeason:
+            WeekDict['LastWeekInPhase'] = True
+        AnnualScheduleOfEvents.append(WeekDict)
+
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Conference Championships', 'WeekNumber': WeekCount, 'WeekName': 'Conference Championship Week', 'LastWeekInPhase': True})
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Bowls', 'WeekNumber': WeekCount, 'WeekName': 'Bowl Season', 'LastWeekInPhase': False})
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Bowls', 'WeekNumber': WeekCount, 'WeekName': 'Season Recap', 'LastWeekInPhase': True})
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Coach Carousel', 'LastWeekInPhase': False})
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Draft Departures', 'LastWeekInPhase': False})
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Transfer Announcements', 'LastWeekInPhase': False})
+
+    for u in range(0,4):
+        WeekCount += 1
+        AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False})
+
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'National Signing Day', 'LastWeekInPhase': False})
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Prepare for Summer Camps', 'LastWeekInPhase': False})
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Training Results', 'LastWeekInPhase': False})
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Cut Players', 'LastWeekInPhase': False})
+    WeekCount += 1
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Advance to Next Season', 'LastWeekInPhase': True})
+
+
+    WeeksToSave = []
+    PhaseList = []
+    FieldExclusions = ['Phase']
     WeekCount = 1
     W = None
-    for u in range(NumDays):
+    for W in AnnualScheduleOfEvents:
 
-        if u % 7 == 0:
-            W = Week(WorldID = WorldID, WeekNumber = WeekCount)
-            WeekCount +=1
-            W.save()
+        P,st = Phase.objects.get_or_create(WorldID = WorldID, PhaseName = W['Phase'])
 
-        D = SD + timedelta(days=u)
-        IsCurrent = 0
-        if u==0:
-            IsCurrent = 1
-        C = Calendar(WorldID = WorldID, Date = D, IsCurrent = IsCurrent, WeekID = W)
-        DatesToSave.append(C)
+        W['PhaseID'] = P
+        for FE in FieldExclusions:
+            del W[FE]
 
-    Calendar.objects.bulk_create(DatesToSave)
+        if W['WeekNumber'] == 0:
+            W['IsCurrent'] = True
+        W['WorldID'] = WorldID
+        NewWeek = Week(**W)
+        WeeksToSave.append(NewWeek)
+
+    Week.objects.bulk_create(WeeksToSave)
 
     WorldID.HasCalendar = True
     WorldID.save()
@@ -614,8 +657,7 @@ def LoadData(WorldID, LeagueID):
         start = time.time()
 
     if CreateCalendar:
-        Years = 10
-        createCalendar(  (2019,8,25)  , 365 * Years, WorldID)
+        createCalendar(StartYear=2019, StartAfterMonthDay=(8,25), WorldID=WorldID)
 
     if DoAudit:
         end = time.time()

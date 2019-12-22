@@ -13,11 +13,10 @@
 <div class='w3-top'>
 <div class="w3-bar w3-light-grey">
   <a href="/World/{{page.WorldID}}" class="w3-bar-item w3-button navNCAALogoLink"><img src="/static/img/TeamLogos/ncaa-text.png" class='navNCAALogo' alt=""></a>
-  <a href="/World/{{page.WorldID}}/Bracket" class="w3-bar-item w3-button">Tournament Bracket</a>
   <div class="w3-dropdown-hover">
-    <button class="w3-button">{{date.WeekID}}</button>
+    <button class="w3-button">{{Week.WeekName}}</button>
     <div class="w3-dropdown-content w3-bar-block w3-card-4">
-      <a href="#" id='SimNextWeek' class="w3-bar-item w3-button">Sim This Week</a>
+      <a href="#" id='SimThisWeek' class="w3-bar-item w3-button">Sim This Week</a>
       <a href="#" id='SimNextMonth' class="w3-bar-item w3-button">Sim Next 4 Weeks</a>
       <a href="#" id='SimRegularSeason' class="w3-bar-item w3-button">Sim to end of Regular Season</a>
     </div>

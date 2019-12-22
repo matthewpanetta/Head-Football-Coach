@@ -322,14 +322,31 @@ class League(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
+class Phase(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    PhaseID = models.AutoField(primary_key=True, db_index=True)
+
+    PhaseName = models.CharField(max_length=50, blank=True, null=True, default=None)
+
 class Week(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     WeekID = models.AutoField(primary_key=True, db_index=True)
+    PhaseID = models.ForeignKey(Phase, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
 
     WeekNumber = models.PositiveSmallIntegerField(default = 0, db_index=True)
+    WeekName = models.CharField(max_length=50, blank=True, null=True, default=None)
+
+    IsCurrent = models.BooleanField(default=False)
+    BroadcastSelected = models.BooleanField(default=False)
+
+    LastWeekInPhase = models.BooleanField(default = False)
 
     def __str__(self):
         return 'Week ' + str(self.WeekNumber)
+
+    @property
+    def NextWeek(self):
+        return Week.objects.filter(WeekNumber = self.WeekNumber + 1).first()
 
 
 class Calendar(models.Model):
@@ -1019,35 +1036,9 @@ class LeagueSeason(models.Model):
     AwardsCreated    = models.BooleanField(default=False)
     OffseasonStarted = models.BooleanField(default=False)
 
-
-    RegularSeasonStartDateID = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="RegularSeasonStartDateID", default=None)
-    RegularSeasonEndDateID   = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="RegularSeasonEndDateID", default=None)
-    BowlCreationDateID       = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="BowlCreationDateID", default=None)
-
-    CoachCarouselDateID     = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="CoachCarouselDateID", default=None)
-    CoachCarouselExecuted = models.BooleanField(default=False)
-
-    RecruitingSigningDayDateID     = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="RecruitingSigningDayDateID", default=None)
-    RecruitingSigningDayExecuted = models.BooleanField(default=False)
-
-    PlayerDepartureDayDateID     = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="PlayerDepartureDayDateID", default=None)
-    PlayerDepartureDayExecuted = models.BooleanField(default=False)
-
-    NextSeasonCutoverDayDateID     = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="NextSeasonCutoverDayDateID", default=None)
-    NextSeasonCutoverDayExecuted = models.BooleanField(default=False)
-
-    IncomingPlayerArrivalDayDateID     = models.ForeignKey(Calendar, on_delete=models.CASCADE, blank=True, null=True,related_name="IncomingPlayerArrivalDayDateID", default=None)
-    IncomingPlayerArrivalDayExecuted = models.BooleanField(default=False)
-
-    RankingsLastCalculated = models.DateField(default = None, null=True, blank=True)
-
     @property
     def LeagueSeasonDisplay(self):
         return str(self.SeasonStartYear) + '-' + str(self.SeasonEndYear) + ' Season'
-
-    @property
-    def RegularSeasonEndDate(self):
-        return Calendar.objects.get(WorldID = self.WorldID, DateID = self.RegularSeasonEndDateID)
 
     def __str__(self):
 
@@ -1275,6 +1266,7 @@ class TeamSeason(models.Model):
     @property
     def ConferenceRankingTuple(self):
         TeamCount = Team.objects.filter(WorldID = self.WorldID).count()
+        print('self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank', self.ConferenceWins , self.ConferenceLosses,self.ConferenceWins , TeamCount , self.NationalRank)
         return (self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank)
 
     @property
@@ -1290,7 +1282,7 @@ class TeamSeason(models.Model):
 
     @property
     def NationalRankObject(self):
-        return TeamSeasonDateRank.objects.get(TeamSeasonID = self, IsCurrent = True)
+        return TeamSeasonWeekRankID.objects.get(TeamSeasonID = self, IsCurrent = True)
 
     @property
     def LeagueSeasonDisplay(self):
@@ -1312,7 +1304,7 @@ class TeamSeason(models.Model):
 
     @property
     def NationalRank(self):
-        R = self.teamseasondaterank_set.filter(IsCurrent = True).first()
+        R = self.teamseasonweekrank_set.filter(IsCurrent = True).first()
 
         if R is None:
             return None
@@ -1612,6 +1604,27 @@ class PlayerTeamSeasonAward(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
+class TeamSeasonWeekRank(models.Model):
+    WorldID        = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
+    TeamSeasonWeekRankID = models.AutoField(primary_key = True, db_index=True)
+    TeamSeasonID   = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
+    WeekID         = models.ForeignKey(Week,   on_delete=models.CASCADE, db_index=True)
+    IsCurrent      = models.BooleanField(default = True, db_index=True)
+    NationalRank   = models.PositiveSmallIntegerField(default = None, null=True, blank=True)
+    NationalRankDelta   = models.SmallIntegerField(default = None, null=True, blank=True)
+
+    PollPoints = models.PositiveSmallIntegerField(default = None, null=True, blank=True)
+
+
+    def __str__(self):
+
+        return str(self.TeamSeasonID) + ' is ranked ' + str(self.NationalRank)
+
+    class Meta:
+              # specify this model as an Abstract Model
+            app_label = 'HeadFootballCoach'
+
+
 class TeamSeasonDateRank(models.Model):
     WorldID        = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     TeamSeasonDateRankID = models.AutoField(primary_key = True, db_index=True)
@@ -1636,7 +1649,7 @@ class Game(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     GameID = models.AutoField(primary_key = True, db_index=True)
     LeagueSeasonID = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None, db_index=True)
-    GameDateID = models.ForeignKey(Calendar, on_delete=models.CASCADE, db_index=True)
+    WeekID = models.ForeignKey(Week, on_delete=models.CASCADE, db_index=True, null=True, blank=True, default=None)
     PlayoffID = models.ForeignKey(Playoff, on_delete=models.CASCADE, blank = True, null=True)
     GameTime = models.CharField(max_length = 5)
     WasPlayed = models.BooleanField(default = False, db_index=True)
@@ -1779,10 +1792,10 @@ class Game(models.Model):
         return self.AwayTeamRecord
     @property
     def HomeTeamRank(self):
-        if self.HomeTeamGameID.TeamSeasonDateRankID is None:
+        if self.HomeTeamGameID.TeamSeasonWeekRankID is None:
             R = self.HomeTeamSeasonID.NationalRank
         else:
-            R = self.HomeTeamGameID.TeamSeasonDateRankID.NationalRank
+            R = self.HomeTeamGameID.TeamSeasonWeekRankID.NationalRank
         if R > 25:
             return ''
 
@@ -1790,7 +1803,7 @@ class Game(models.Model):
 
     @property
     def AwayTeamRank(self):
-        TSDR = self.AwayTeamGameID.TeamSeasonDateRankID
+        TSDR = self.AwayTeamGameID.TeamSeasonWeekRankID
         if TSDR is None:
             R = self.AwayTeamSeasonID.NationalRank
         else:
@@ -1802,14 +1815,14 @@ class Game(models.Model):
 
     @property
     def HomeTeamRankValue(self):
-        if self.HomeTeamGameID.TeamSeasonDateRankID is None:
+        if self.HomeTeamGameID.TeamSeasonWeekRankID is None:
             return self.HomeTeamSeasonID.NationalRank
         else:
-            return self.HomeTeamGameID.TeamSeasonDateRankID.NationalRank
+            return self.HomeTeamGameID.TeamSeasonWeekRankID.NationalRank
 
     @property
     def AwayTeamRankValue(self):
-        TSDR = self.AwayTeamGameID.TeamSeasonDateRankID
+        TSDR = self.AwayTeamGameID.TeamSeasonWeekRankID
         if TSDR is None:
             return self.AwayTeamSeasonID.NationalRank
         else:
@@ -1819,7 +1832,7 @@ class Game(models.Model):
     def WorldPageFilterAttributes(self):
         Attr = 'AllGame=1 '
 
-        if self.AwayTeamGameID.TeamSeasonDateRankID.NationalRank <= 25 or self.HomeTeamGameID.TeamSeasonDateRankID.NationalRank <= 25:
+        if self.AwayTeamGameID.TeamSeasonWeekRankID.NationalRank <= 25 or self.HomeTeamGameID.TeamSeasonWeekRankID.NationalRank <= 25:
             Attr += 'Top25Game=1 '
         else:
             Attr += 'Top25Game=0 '
@@ -1854,10 +1867,10 @@ class Game(models.Model):
         return ''
     @property
     def DateShortDisplay(self):
-        return self.GameDateID.ShortDisplay
+        return self.WeekID.WeekName
     @property
     def DateShortDisplayDayOfWeek(self):
-        return self.GameDateID.ShortDisplayDayOfWeek
+        return self.WeekID.WeekName
     @property
     def GameHeadlineDisplay(self):
 
@@ -1898,7 +1911,7 @@ class Game(models.Model):
         #return teamgame_set.objects.all()
         HomeTeam = self.teamgame_set.filter(IsHomeTeam = True).first()
         AwayTeam = self.teamgame_set.filter(IsHomeTeam = False).first()
-        return HomeTeam.TeamSeasonID.TeamID.__str__() + ' vs ' + AwayTeam.TeamSeasonID.TeamID.__str__() + ' on ' + str(self.GameDateID.Date)
+        return HomeTeam.TeamSeasonID.TeamID.__str__() + ' vs ' + AwayTeam.TeamSeasonID.TeamID.__str__() + ' in ' + str(self.WeekID.WeekName)
 
 
     def ReturnAsDict(self):
@@ -1906,7 +1919,7 @@ class Game(models.Model):
         if self.WasPlayed == 1:
             GameDisplay = str(TeamsInGame[0].Points) +'-'+str(TeamsInGame[1].Points)
         else:
-            GameDisplay = self.GameDateID.Date
+            GameDisplay = self.WeekID.WeekName
 
         TeamGames = self.teamgame_set.all().values('Points', 'IsHomeTeam' ,'RUS_Yards', 'PAS_Yards', 'REC_Yards', 'REC_TD', 'REC_Receptions', 'Turnovers', 'TimeOfPossession', 'FirstDowns', 'PNT_Punts', 'DEF_Sacks', 'DEF_Tackles', 'ThirdDownConversion', 'ThirdDownAttempt', 'FourthDownConversion', 'FourthDownAttempt').annotate(  # call `annotate`
                 TotalYards=F('PAS_Yards') + F('RUS_Yards'),
@@ -1950,8 +1963,8 @@ class Game(models.Model):
         GameDict = {
             'GameID': self.GameID,
             'LeagueSeasonID': self.LeagueSeasonID,
-            'GameDate': self.GameDateID.Date,
-            'Date': self.GameDateID.Date,
+            'GameDate': self.WeekID.WeekName,
+            'Date': self.WeekID.WeekName,
             'GameTime': self.GameTime,
             'WasPlayed': self.WasPlayed,
             'AwayTeamID': self.AwayTeamID,
@@ -2016,7 +2029,7 @@ class TeamGame(models.Model):
 
     GameID = models.ForeignKey(Game, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
-    TeamSeasonDateRankID  = models.ForeignKey(TeamSeasonDateRank, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    TeamSeasonWeekRankID  = models.ForeignKey(TeamSeasonWeekRank, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
 
     TeamGameID = models.AutoField(primary_key = True, db_index=True)
 
@@ -2374,7 +2387,7 @@ class RecruitTeamSeason(models.Model):
 class Headline(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
     HeadlineID = models.AutoField(primary_key = True)
-    DateID = models.ForeignKey(Calendar, on_delete=models.CASCADE)
+    DateID = models.ForeignKey(Week, on_delete=models.CASCADE)
     LeagueSeasonID = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None)
 
 
@@ -2415,7 +2428,7 @@ class Driver(models.Model):
     #DriverID = models.AutoField( blank=True, null=True, default=None)
     #WorldID = models.ForeignKey(World, on_delete=models.CASCADE)
     CurrentSeason = models.ForeignKey(LeagueSeason , on_delete=models.CASCADE)
-    CurrentDay =  models.ForeignKey(Calendar , on_delete=models.CASCADE)
+    CurrentWeek =  models.ForeignKey(Week , on_delete=models.CASCADE, blank=True, null=True, default=None)
     CurrentTeam = models.ForeignKey(Team, on_delete=models.CASCADE,null=True, blank=True)
     class Meta:
               # specify this model as an Abstract Model

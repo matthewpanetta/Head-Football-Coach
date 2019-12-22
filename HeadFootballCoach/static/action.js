@@ -44,7 +44,7 @@ $(document).ready(function() {
     $(window).unbind();
   });
 
-  $('#SimNextWeek, #SimNextMonth, #SimRegularSeason').click(function(e) {
+  $('#SimThisWeek, #SimNextMonth, #SimRegularSeason').click(function(e) {
 
     $('#SimDayModal').css({'display': 'block'});
 
