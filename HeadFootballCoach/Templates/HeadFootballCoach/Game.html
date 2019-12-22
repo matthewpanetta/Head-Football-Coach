@@ -306,7 +306,10 @@
                 var Period = PeriodList[PeriodCount] + ' | ';
 
                 var Secs = SecondsInToThisHalf%60;
-                var Secs = (Secs.length == 1) ? '0'+Secs : Secs;
+                if (Secs < 10){
+                  Secs = '0'+Secs;
+                }
+
                 var Mins = parseInt(SecondsInToThisHalf / 60);
                 var Time = Mins + ':' + Secs
 

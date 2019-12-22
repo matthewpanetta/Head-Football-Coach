@@ -1662,8 +1662,8 @@ class Game(models.Model):
 
         Results = {}
 
-        AwayPGS = self.AwayTeamGameID.playergamestat_set.values('RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
-        HomePGS = self.HomeTeamGameID.playergamestat_set.values('RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
+        AwayPGS = self.AwayTeamGameID.playergamestat_set.values('FUM_Recovered','FUM_Forced','FUM_Fumbles','DEF_TD','PAS_INT','PAS_Sacks','DEF_Sacks','DEF_Tackles','DEF_Deflections','DEF_INT','RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
+        HomePGS = self.HomeTeamGameID.playergamestat_set.values('FUM_Recovered','FUM_Forced','FUM_Fumbles','DEF_TD','PAS_INT','PAS_Sacks','DEF_Sacks','DEF_Tackles','DEF_Deflections','DEF_INT','RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__Position', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
         HomePlayers = []
         AwayPlayers = []
 
@@ -1674,6 +1674,16 @@ class Game(models.Model):
             {'Stat': 'PAS_TD',    'PointToStatRatio': 5.0 / 1,  'DisplayName': 'pass TDs'},
             {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 10, 'DisplayName': 'rec. yards'},
             {'Stat': 'REC_TD',    'PointToStatRatio': 6.0 / 1,  'DisplayName': 'rec. TDs'},
+            {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1,  'DisplayName': 'rec. TDs'},
+            {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 1,  'DisplayName': 'sacked'},
+            {'Stat': 'DEF_Sacks',  'PointToStatRatio': 4.0 / 1,  'DisplayName': 'sacks'},
+            {'Stat': 'DEF_Tackles',  'PointToStatRatio': 1.0 / 1,  'DisplayName': 'tackles'},
+            {'Stat': 'DEF_Deflections',  'PointToStatRatio': 1.0 / 1,  'DisplayName': 'deflections'},
+            {'Stat': 'DEF_INT',  'PointToStatRatio': 4.0 / 1,  'DisplayName': 'interceptions'},
+            {'Stat': 'DEF_TD',  'PointToStatRatio': 6.0 / 1,  'DisplayName': 'D TDs'},
+            {'Stat': 'FUM_Fumbles',  'PointToStatRatio': -3.0 / 1,  'DisplayName': 'fumbles'},
+            {'Stat': 'FUM_Forced',  'PointToStatRatio': 2.0 / 1,  'DisplayName': 'fumbles forced'},
+            {'Stat': 'FUM_Recovered',  'PointToStatRatio': 2.0 / 1,  'DisplayName': 'fumbles recovered'},
         ]
 
 

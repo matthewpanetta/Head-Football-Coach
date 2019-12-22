@@ -165,7 +165,7 @@ def GameSim(game):
     SubsEveryN = 12
     SynergyFactor = 0.1
     Overtimes = 0
-    TalentRandomness = float(0.05)
+    TalentRandomness = 0.0#float(0.05)
     HomeFieldAdvantage = float(CurrentLeague.HomeFieldAdvantage)
     GlobalScoreNormalizationFactor = .4
 
