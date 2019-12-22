@@ -118,6 +118,7 @@ def CalculateRankings(LS, WorldID):
             TeamDict[t]['Wins'] = TS.Wins - (5 * TS.Losses)
             TeamDict[t]['MediaShares'] = TS.RegionalBroadcast + (5* TS.NationalBroadcast )
             TeamDict[t]['WinningPercentage'] = round(TS.Wins / TS.GamesPlayed,2)
+            TeamDict[t]['ConferenceChampion'] = TS.ConferenceChampion
 
 
     Counter = 1
@@ -127,6 +128,17 @@ def CalculateRankings(LS, WorldID):
             TeamDict[t]['TeamOverallRatingRank'] = TeamDict[PrevT]['TeamOverallRatingRank']
         else:
             TeamDict[t]['TeamOverallRatingRank'] = Counter
+
+        Counter +=1
+        PrevT = t
+
+    Counter = 1
+    PrevT = None
+    for t in sorted(TeamDict, key = lambda k: (TeamDict[k]['ConferenceChampion'], TeamDict[k]['TeamPrestige']), reverse=False):
+        if PrevT is not None and TeamDict[t]['ConferenceChampion'] == TeamDict[PrevT]['ConferenceChampion']:
+            TeamDict[t]['ConferenceChampionRank'] = TeamDict[PrevT]['ConferenceChampionRank']
+        else:
+            TeamDict[t]['ConferenceChampionRank'] = Counter
 
         Counter +=1
         PrevT = t
@@ -182,6 +194,7 @@ def CalculateRankings(LS, WorldID):
         TeamDict[t]['RankValue'] += ( 1   * TeamDict[t]['WinningPercentageRank'])
         TeamDict[t]['RankValue'] += ( 1   * TeamDict[t]['MarginOfVictoryRank'])
         TeamDict[t]['RankValue'] += (.075 * TeamDict[t]['TeamOverallRatingRank'])
+        TeamDict[t]['RankValue'] += (1    * TeamDict[t]['ConferenceChampionRank'])
 
     Counter = 1
     for t in sorted(TeamDict, key = lambda t: TeamDict[t]['RankValue'], reverse=True):

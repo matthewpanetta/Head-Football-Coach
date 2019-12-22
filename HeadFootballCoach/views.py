@@ -1678,11 +1678,15 @@ def POST_SimDay(request, WorldID):
                 print('End regular season!!!')
                 EndRegularSeason(WorldID)
 
-
-        if ThisWeek.PhaseID.PhaseName == 'Conference Championships':
+        elif ThisWeek.PhaseID.PhaseName == 'Conference Championships':
             #DO TOURNEY STUFF HERE
             print('Creating bowls!!!')
             CreateBowls(WorldID)
+
+        elif ThisWeek.PhaseID.PhaseName == 'Bowls':
+            #DO TOURNEY STUFF HERE
+            print('End Season')
+            EndSeason(WorldID)
 
         NextWeek(WorldID)
 

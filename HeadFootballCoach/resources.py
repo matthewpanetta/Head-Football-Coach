@@ -693,25 +693,25 @@ def EndRegularSeason(WorldID):
     CurrentWeek = Week.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
     NextWeek = CurrentWeek.NextWeek
 
+    if CurrentSeason.ConferenceChampionshipsCreated == False:
+        print('time to do Conf Champ stuff!')
+        for Conf in CurrentWorld.conference_set.all():
+            TeamSeasonList = TeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamID__ConferenceID = Conf).filter(ConferenceRank__lte = 2)
 
-    print('time to do Conf Champ stuff!')
-    for Conf in CurrentWorld.conference_set.all():
-        TeamSeasonList = TeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamID__ConferenceID = Conf).filter(ConferenceRank__lte = 2)
+            HomeTS = TeamSeasonList.filter(ConferenceRank = 1).first()
+            AwayTS = TeamSeasonList.filter(ConferenceRank = 2).first()
 
-        HomeTS = TeamSeasonList.filter(ConferenceRank = 1).first()
-        AwayTS = TeamSeasonList.filter(ConferenceRank = 2).first()
+            G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', WeekID = NextWeek, IsConferenceChampionship=True)
+            G.save()
 
-        G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', WeekID = NextWeek, IsConferenceChampionship=True)
-        G.save()
+            HomeTSWR = TeamSeasonWeekRank.objects.filter(TeamSeasonID = HomeTS).filter(IsCurrent=1).first()
+            AwayTSWR = TeamSeasonWeekRank.objects.filter(TeamSeasonID = AwayTS).filter(IsCurrent=1).first()
 
-        HomeTSWR = TeamSeasonWeekRank.objects.filter(TeamSeasonID = HomeTS).filter(IsCurrent=1).first()
-        AwayTSWR = TeamSeasonWeekRank.objects.filter(TeamSeasonID = AwayTS).filter(IsCurrent=1).first()
+            HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G, TeamSeasonWeekRankID = HomeTSWR)
+            AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G, TeamSeasonWeekRankID = AwayTSWR)
 
-        HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G, TeamSeasonWeekRankID = HomeTSWR)
-        AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G, TeamSeasonWeekRankID = AwayTSWR)
-
-        HomeTeamGame.save()
-        AwayTeamGame.save()
+            HomeTeamGame.save()
+            AwayTeamGame.save()
 
     CurrentSeason.ConferenceChampionshipsCreated = True
     CurrentSeason.save()
@@ -724,32 +724,70 @@ def CreateBowls(WorldID):
     CurrentWorld = World.objects.get(WorldID=WorldID)
     #put tourney check here
 
+    CurrentWeek = Week.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
+    NextWeek = CurrentWeek.NextWeek
+
 
     print('CurrentSeason.PlayoffCreated', CurrentSeason.PlayoffCreated)
     print('time to do Bowl stuff!')
     #CalculateRankings(CurrentSeason, CurrentWorld)
 
-    for B in Bowl.objects.filter(WorldID = CurrentWorld).filter(BowlPrestige__gte = 7):
+    if CurrentSeason.PlayoffCreated == False:
+        TeamRanksAvailable = []
+        for u in TeamSeasonWeekRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).values('NationalRank'):
+            TeamRanksAvailable.append(u['NationalRank'])
 
+        for B in Bowl.objects.filter(WorldID = CurrentWorld).filter(BowlPrestige__gte = 7).order_by('Team1Rank'):
 
-        HomeTS = TeamSeasonDateRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).filter(NationalRank = B.Team1Rank).first().TeamSeasonID
-        AwayTS = TeamSeasonDateRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).filter(NationalRank = B.Team2Rank).first().TeamSeasonID
-        HomeTSDR = HomeTS.teamseasondaterank_set.filter(IsCurrent=1).first()
-        AwayTSDR = AwayTS.teamseasondaterank_set.filter(IsCurrent=1).first()
-        print(B.__dict__, HomeTS, AwayTS)
-        G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', GameDateID = BowlDate, BowlID = B)
-        G.save()
+            HomeTSWR = TeamSeasonWeekRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).filter(NationalRank = TeamRanksAvailable.pop(0)).first()
+            HomeTS   = HomeTSWR.TeamSeasonID
 
-        HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G, TeamSeasonDateRankID=HomeTSDR)
-        AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G, TeamSeasonDateRankID=AwayTSDR)
+            AwayTSWR = None
+            TeamRankCount = 0
+            while AwayTSWR is None:
+                AttemptedRank = TeamRanksAvailable[TeamRankCount]
+                AwayTSWR = TeamSeasonWeekRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).exclude(TeamSeasonID__TeamID__ConferenceID = HomeTS.TeamID.ConferenceID).filter(NationalRank = AttemptedRank).first()
+                TeamRankCount +=1
 
-        HomeTeamGame.save()
-        AwayTeamGame.save()
-    #CalculateRankings(CurrentSeason, CurrentWorld)
+            if AttemptedRank in TeamRanksAvailable:
+                TeamRanksAvailable.remove(AttemptedRank)
+
+            AwayTS = AwayTSWR.TeamSeasonID
+
+            G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = '7:05', WeekID = NextWeek, BowlID = B)
+            G.save()
+
+            HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G, TeamSeasonWeekRankID=HomeTSWR)
+            AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G, TeamSeasonWeekRankID=AwayTSWR)
+
+            HomeTeamGame.save()
+            AwayTeamGame.save()
+        #CalculateRankings(CurrentSeason, CurrentWorld)
 
     CurrentSeason.PlayoffCreated = True
     CurrentSeason.save()
     return None
+
+
+
+
+def EndSeason(WorldID):
+    CurrentSeason = LeagueSeason.objects.filter(WorldID=WorldID).filter(IsCurrent = 1).first()
+    CurrentLeague = CurrentSeason.LeagueID
+    CurrentWorld = World.objects.get(WorldID=WorldID)
+    #put tourney check here
+
+    CurrentWeek = Week.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
+    NextWeek = CurrentWeek.NextWeek
+
+    if CurrentSeason.AwardsCreated == False:
+        print('Assigning awards!')
+        NationalAwards(WorldID, CurrentSeason)
+
+    CurrentSeason.AwardsCreated = True
+    CurrentSeason.save()
+    return None
+
 
 def GraduateSeniors(WorldID, CurrentSeason):
 
@@ -788,7 +826,6 @@ def BeginOffseason(WorldID):
     CurrentSeason.OffseasonStarted = True
     CurrentSeason.save()
 
-    NationalAwards(WorldID, CurrentSeason)
 
     #InitializeLeagueSeason(WorldID, IsFirstLeagueSeason=False)
 
