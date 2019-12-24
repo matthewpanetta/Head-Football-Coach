@@ -1,0 +1,77 @@
+{% include "HeadFootballCoach/NavBar.html" %}
+{% load static %}
+
+<div WorldID="{{page.WorldID}}" TeamJerseyInvert="{{page.TeamJerseyInvert}}" TeamJerseyStyle="{{page.TeamJerseyStyle}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;'
+  id='PageDataPassthru'></div>
+
+<link href="https://fonts.googleapis.com/css?family=Volkhov&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+
+<body>
+  <div class="PageContent">
+    <div class='TeamHeader'></div>
+    Awards
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-roster-tab">Roster</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style='display:block;' id="nav-overview">
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col w3-display-container">
+              <div class="w3-row-padding">
+                <div class="w3-card w3-col s5">
+                  <div class="w3-bar conference-bar">
+                    <div class="w3-bar-item fontweight500">Group</div>
+                    {% for Conf in ConferenceAwards%}
+                    <button ConferenceSelection="{{Conf.Conferece.ConferenceID}}" class="w3-bar-item conference-weeklyaward-tab w3-button tab {{Conf.ConferenceSelected}}" id="conference-weeklyaward-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
+                    {% endfor %}
+                  </div>
+                  <table id='teamOverviewConferenceStandings'>
+                    <thead>
+                      <th>Week</th>
+                      <th>Group</th>
+                      <th>Team</th>
+                      <th>Player</th>
+                    </thead>
+                    {% for Conf in ConferenceAwards %}
+                    {% for Award in Conf.WeeklyAwards%}
+                    <tr class='{{Conf.ShowConference}}'>
+                      <td>{{Award.WeekID}}</td>
+                      <td>{{Award.PositionGroupID.PositionGroupName}}</td>
+                      <td>
+                        <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
+                          <img class='awardConferenceWeeklyAwardTeamLogo' src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.LogoURL}}" />
+                           {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
+                        </a>
+                      </td>
+                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+
+<script src="{% static 'common/jquery-3.3.1.slim.min.js' %}"></script>
+<script src="{% static 'common/jquery.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+<script src="{% static 'facesjs-master/src/generate.js' %}"></script>
+<script src="{% static 'common/bootstrap.min.js' %}"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'Pages/Awards.js' %}"></script>
+<script src="{% static 'common/loader.js' %}"></script>

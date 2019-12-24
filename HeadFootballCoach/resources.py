@@ -7,7 +7,7 @@ import math
 from django.db.models import F, Count
 #from django.db.models import Max, Avg, Count, Func,  Sum, Case, When, FloatField, CharField, Value
 from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, SelectBroadcast
-from .scripts.SeasonAwards import NationalAwards
+from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
 from .scripts.import_csv import createCalendar
 from .utilities import DistanceBetweenCities, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc
@@ -265,18 +265,24 @@ def GeneratePlayer(t, s, c, WorldID):
     return P
 
 def PopulatePlayerSkills(P, s, WorldID):
-    IsRecruit = P.IsRecruit
-    if IsRecruit:
-        OvrMultiplier = .9
-    else:
-        OvrMultiplier = 1
+    PlayerClass = P.Class
+
+    ClassOverallModifier = {
+        'HS Senior': .92,
+        'Freshman': .95,
+        'Sophomore': .975,
+        'Junior': .99,
+        'Senior': 1,
+    }
+
+    OvrMultiplier = NormalTrunc(ClassOverallModifier[PlayerClass], .02, .85, 1.1)
     PlayerSkill = PlayerSeasonSkill(WorldID=WorldID, PlayerID = P, LeagueSeasonID = s )
 
-    Ovr = OvrMultiplier * NormalTrunc(78,6,60,99)
+    Ovr =  NormalTrunc(OvrMultiplier * 78,6,60,99)
     PlayerSkill.OverallRating = Ovr
 
     for Skill in [field.name for field in PlayerSeasonSkill._meta.get_fields() if '_Rating' in field.name ]:
-        setattr(PlayerSkill, Skill, OvrMultiplier * NormalTrunc(Ovr,6,50,99))
+        setattr(PlayerSkill, Skill, NormalTrunc(OvrMultiplier * Ovr,6,50,99))
 
     return PlayerSkill
 
@@ -388,7 +394,6 @@ def CreatePlayers(LS, WorldID):
     for PlayerCount in range(0,NumberOfPlayersNeeded):
         #print(PlayerCount)
         PlayerPool.append(GeneratePlayer(None, CurrentSeason, None, WorldID))
-    print('PlayerPool',PlayerPool)
     Player.objects.bulk_create(PlayerPool, ignore_conflicts=True)
 
     PlayerList = Player.objects.filter(WorldID = WorldID)
@@ -399,7 +404,6 @@ def CreatePlayers(LS, WorldID):
     PlayerPool = [u for u in PlayerList.values('PlayerID', 'Class', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating').annotate(Position = F('PositionID__PositionAbbreviation')).order_by('-playerseasonskill__OverallRating')]#sorted(PlayerPool, key = lambda k: k.CurrentSkills.OverallRating, reverse = True)
 
     PlayersTeamSeasonToSave = []
-    print(PlayerPool)
     for Round in LotteryOrder:
         if Round['TeamsInThisRoundCount'] == 0:
             continue
@@ -408,7 +412,6 @@ def CreatePlayers(LS, WorldID):
             TS = T.CurrentTeamSeason
             if T not in TeamRosterCompositionNeeds:
                 TeamRosterCompositionNeeds[T] = {'Class': MinimumRosterComposition['Class'], 'Position': {Pos['Position']: Pos['PositionMinimumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}}
-            print('TeamRosterCompositionNeeds', T, TeamRosterCompositionNeeds[T])
             ClassesNeeded =   [u for u in TeamRosterCompositionNeeds[T]['Class']    if TeamRosterCompositionNeeds[T]['Class'][u]    > 0 ]
             PositionsNeeded = [u for u in TeamRosterCompositionNeeds[T]['Position'] if TeamRosterCompositionNeeds[T]['Position'][u] > 0 ]
 
@@ -922,6 +925,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     CalculateRankings(LS, WorldID)
     CalculateConferenceRankings(LS, WorldID)
     SelectBroadcast(LS, WorldID)
+    SelectPreseasonAllAmericans(WorldID, LS)
 
     if DoAudit:
         end = time.time()

@@ -430,10 +430,60 @@ function AddRecentGamesListeners(){
 
 
 
+function AddPreseasonAllAmericanListeners(){
+
+  $('.preseason-allamerican-conference-bar button').on('click', function(event, target) {
+
+    var TargetTab = $(event.target);
+    var TargetTabID = TargetTab.attr('id');
+    var TargetRowID =  $(TargetTab).attr('id').replace('-tab', '');
+
+    $('.'+TargetRowID).each(function(index, object){
+      $(object).removeClass('preseason-allamerican-conf-hide');
+    });
+
+    $('.selected-preseason-award-conference-tab').each(function(index,object){
+      $(object).removeClass('selected-preseason-award-conference-tab');
+      var ObjectID = $(object).attr('id').replace('-tab', '');
+
+      $('.'+ObjectID).each(function(index, object){
+        $(object).addClass('preseason-allamerican-conf-hide');
+      });
+    });
+    $(TargetTab).addClass('selected-preseason-award-conference-tab');
+  });
+
+
+  $('.preseason-allamerican-team-bar button').on('click', function(event, target) {
+
+    var TargetTab = $(event.target);
+    var TargetTabID = TargetTab.attr('id');
+    var TargetRowID =  $(TargetTab).attr('id').replace('-tab', '');
+
+    $('.'+TargetRowID).each(function(index, object){
+      $(object).removeClass('preseason-allamerican-team-hide');
+    });
+
+    $('.selected-preseason-award-team-tab').each(function(index,object){
+      $(object).removeClass('selected-preseason-award-team-tab');
+      var ObjectID = $(object).attr('id').replace('-tab', '');
+
+      $('.'+ObjectID).each(function(index, object){
+        $(object).addClass('preseason-allamerican-team-hide');
+      });
+    });
+    $(TargetTab).addClass('selected-preseason-award-team-tab');
+  });
+}
+
+
+
+
 $(document).ready(function(){
 
   AddUpcomingGameListeners();
   AddRecentGamesListeners();
+  AddPreseasonAllAmericanListeners();
 
   var DataPassthruHolder = $('#PageDataPassthru')[0];
   var WorldID = parseInt($(DataPassthruHolder).attr('WorldID'));

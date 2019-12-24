@@ -112,6 +112,7 @@ def CalculateRankings(LS, WorldID):
         TeamDict[t]['Wins'] = 0
         TeamDict[t]['MediaShares'] = 0
         TeamDict[t]['WinningPercentage'] = 0
+        TeamDict[t]['ConferenceChampion'] = 0
         TeamDict[t]['TeamPrestige'] =  t.TeamPrestige
         if TS.GamesPlayed > 0:
             TeamDict[t]['MarginOfVictory'] = round((TS.Points - TS.PointsAllowed) / TS.GamesPlayed,3)

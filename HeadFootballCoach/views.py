@@ -7,7 +7,7 @@ from .models import Audit, League, TeamGame,Week,Phase, TeamSeasonWeekRank, Team
 from datetime import timedelta, date
 import random
 import numpy
-from .resources import CreateBowls, PlayerDeparture,NewSeasonCutover, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, CreateTeamSeasons, EndRegularSeason
+from .resources import CreateBowls, EndSeason, PlayerDeparture,NewSeasonCutover, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, CreateTeamSeasons, EndRegularSeason
 from .scripts.rankings import     CalculateConferenceRankings,CalculateRankings, SelectBroadcast
 from .utilities import SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
@@ -363,13 +363,13 @@ def Page_Index(request):
 
         Worlds.append(ThisWorld)
 
-    NumConferencesToInclude = 2
+    NumConferencesToInclude = 3
     PossibleConferences = [
-         #{'ConferenceDisplayName': 'Big 12', 'ConferenceFormValue': 'Big 12 Conference'},
+         {'ConferenceDisplayName': 'Big 12', 'ConferenceFormValue': 'Big 12 Conference'},
          #{'ConferenceDisplayName': 'ACC', 'ConferenceFormValue': 'Atlantic Coast Conference'},
-         #{'ConferenceDisplayName': 'SEC', 'ConferenceFormValue': 'Southeastern Conference'},
+         {'ConferenceDisplayName': 'SEC', 'ConferenceFormValue': 'Southeastern Conference'},
          #{'ConferenceDisplayName': 'Pac-12', 'ConferenceFormValue': 'Pac-12 Conference'},
-         {'ConferenceDisplayName': 'American', 'ConferenceFormValue': 'American Athletic Conference'},
+         #{'ConferenceDisplayName': 'American', 'ConferenceFormValue': 'American Athletic Conference'},
          #{'ConferenceDisplayName': 'Mountain West', 'ConferenceFormValue': 'Mountain West Conference'},
          {'ConferenceDisplayName': 'Big 10', 'ConferenceFormValue': 'Big Ten Conference'},
     ]
@@ -413,6 +413,7 @@ def Page_World(request, WorldID):
     LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
 
+
     if DoAudit:
         start = time.time()
 
@@ -436,6 +437,31 @@ def Page_World(request, WorldID):
     if DoAudit:
         start = time.time()
 
+    PreseasonAllAmericans = []
+    if CurrentWeek.PhaseID.PhaseName == 'Preseason':
+        print('It is the preseason!')
+        PreseasonAllAmericans = []
+        AllAwards = PlayerTeamSeasonAward.objects.filter(IsPreseasonAward = True).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('PositionID__PositionSortOrder')
+        for Conf in [None] + [ u for u in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName')]:
+            print('AllAmericans for ', Conf)
+            ConferenceName = Conf.ConferenceName if Conf is not None else 'National'
+            if Conf is None:
+                ConfDict = {'Conference': {'ConferenceName': 'National', 'ConferenceAbbreviation': 'National', 'ConferenceID': 0}, 'ShowConference': '', 'ConferenceSelected': 'selected-preseason-award-conference-tab', 'Teams' : []}
+                PTSA = AllAwards.filter(IsNationalAward = True)
+                for TD in [{'IsFirstTeam': 1, 'IsSecondTeam': 0}, {'IsFirstTeam': 0, 'IsSecondTeam': 1}]:
+                    T = 'FirstTeam' if TD['IsFirstTeam'] == 1 else 'SecondTeam'
+                    ShowTeam = '' if T == 'FirstTeam' else 'preseason-allamerican-team-hide'
+                    ConfDict['Teams'].append({'Team': PTSA.filter(IsFirstTeam = TD['IsFirstTeam']).filter(IsSecondTeam = TD['IsSecondTeam']), 'TeamName': T, 'ShowTeam': ShowTeam})
+            else:
+                ConfDict = {'Conference': {'ConferenceName': Conf.ConferenceName, 'ConferenceAbbreviation': Conf.ConferenceAbbreviation, 'ConferenceID': Conf.ConferenceID}, 'ShowConference': 'preseason-allamerican-conf-hide', 'ConferenceSelected': '', 'Teams' : []}
+                PTSA = AllAwards.filter(IsConferenceAward = True).filter(ConferenceID = Conf)
+                for TD in [{'IsFirstTeam': 1, 'IsSecondTeam': 0}, {'IsFirstTeam': 0, 'IsSecondTeam': 1}]:
+                    T = 'FirstTeam' if TD['IsFirstTeam'] == 1 else 'SecondTeam'
+                    ShowTeam = '' if T == 'FirstTeam' else 'preseason-allamerican-team-hide'
+                    ConfDict['Teams'].append({'Team':PTSA.filter(IsFirstTeam = TD['IsFirstTeam']).filter(IsSecondTeam = TD['IsSecondTeam']), 'TeamName': T, 'ShowTeam': ShowTeam})
+            PreseasonAllAmericans.append(ConfDict)
+        print()
+        print('Preseason Awards', PreseasonAllAmericans)
     Leaders = []
     TopRushers = []
     TopPassers = []
@@ -476,7 +502,55 @@ def Page_World(request, WorldID):
     context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'leaders':Leaders, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek , 'games': UpcomingGames}
 
     context['recentGames'] = RecentGames
+    context['PreseasonAllAmericans'] = PreseasonAllAmericans
     return render(request, 'HeadFootballCoach/World.html', context)
+
+
+
+def Page_Awards(request, WorldID):
+    DoAudit = True
+    page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    CurrentWorld  = World.objects.get(WorldID = WorldID)
+    CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
+    LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
+    CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
+    UserTeam = GetUserTeam(WorldID)
+    AllAwards = PlayerTeamSeasonAward.objects.filter(WorldID = CurrentWorld).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('WeekID', 'PositionGroupID')
+
+    ConferenceAwards = []
+
+    AwardDict = {'Conference': {'ConferenceName': 'National', 'ConferenceAbbreviation': 'National', 'ConferenceID': 0}, 'ShowConference': '', 'ConferenceSelected': 'selected-upcoming-gameview-tab'}
+    AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsNationalAward = True).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
+    AwardDict['AllConferenceAwards'] = []
+    for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
+        AllAwards.filter(IsSeasonAward = True).filter(IsNationalAward = True).filter(IsPositionAward=True).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
+        if AllConferenceGroup == 'First Team':
+            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
+        elif AllConferenceGroup == 'Second Team':
+            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
+        elif AllConferenceGroup == 'Freshman Team':
+            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
+    ConferenceAwards.append(AwardDict)
+
+    for Conf in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName'):
+        AwardDict = {'Conference': Conf, 'ConferenceSelected': '', 'ShowConference': 'w3-hide', }
+        AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
+        AwardDict['AllConferenceAwards'] = []
+        for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
+            AllAwards.filter(IsSeasonAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
+            if AllConferenceGroup == 'First Team':
+                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
+            elif AllConferenceGroup == 'Second Team':
+                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
+            elif AllConferenceGroup == 'Freshman Team':
+                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
+        ConferenceAwards.append(AwardDict)
+    for c in ConferenceAwards:
+        print()
+        print(c)
+
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'ConferenceAwards': ConferenceAwards}
+    return render(request, 'HeadFootballCoach/Awards.html', context)
 
 
 def Page_Player(request, WorldID, PlayerID):
@@ -688,7 +762,7 @@ def Page_Player(request, WorldID, PlayerID):
 
         Awards = []
         AwardQS = PlayerTeamSeasonAward.objects.filter(PlayerTeamSeasonID__PlayerID = PlayerDict['Player'])
-        for Award in AwardQS.values('IsWeekAward', 'IsSeasonAward', 'IsConferenceAward', 'ConferenceID', 'IsNationalAward').annotate(AwardCount = Count('PlayerTeamSeasonAwardID')).order_by('-AwardCount'):
+        for Award in AwardQS.values('IsWeekAward', 'IsSeasonAward', 'IsPreseasonAward', 'IsConferenceAward', 'ConferenceID', 'IsNationalAward').annotate(AwardCount = Count('PlayerTeamSeasonAwardID')).order_by('-AwardCount'):
             s = ''
             if Award['IsNationalAward']:
                 s += 'National Player of the '
@@ -700,6 +774,8 @@ def Page_Player(request, WorldID, PlayerID):
                 s += 'Week'
             elif Award['IsSeasonAward']:
                 s+= 'Year'
+            elif Award['IsPreseasonAward']:
+                s+= 'Preseason'
 
             Award['AwardName'] = s
 
@@ -1687,6 +1763,9 @@ def POST_SimDay(request, WorldID):
             #DO TOURNEY STUFF HERE
             print('End Season')
             EndSeason(WorldID)
+
+        elif ThisWeek.PhaseID.PhaseName == 'Preseason':
+            SelectBroadcast(CurrentSeason, CurrentWorld)
 
         NextWeek(WorldID)
 

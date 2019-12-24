@@ -3,8 +3,8 @@
 </div>
 {% load static %}
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+<link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 
 
@@ -98,6 +98,7 @@
               </div>
             </div>
             <div class="w3-col  s4">
+              {% if   CurrentWeek.PhaseID.PhaseName != 'Preseason' %}
               <div class="w3-card">
                 <div class="w3-bar boxscore-bar" id="nav-tab-{{game.GameID}}">
                   <div class="w3-bar-item fontweight500">Upcoming Games</div>
@@ -136,6 +137,45 @@
                   {% endfor %}
                 </div>
               </div>
+              {% elif CurrentWeek.PhaseID.PhaseName == 'Preseason' %}
+              <div class="w3-card">
+                <div class="w3-bar preseason-allamerican-team-bar" id="nav-tab-preseason-allamerican-team">
+                  <div class="w3-bar-item fontweight500">Preseason All-Americans</div>
+                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab w3-button tab selected-preseason-award-team-tab" id="preseason-allamerican-team-firstteam-tab">First Team</button>
+                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab w3-button tab" id="preseason-allamerican-team-secondteam-tab">Second Team</button>
+                </div>
+                <div class="w3-bar preseason-allamerican-conference-bar w3-margin-bottom" id="nav-tab-preseason-allamerican-conference">
+                  {% for Conf in PreseasonAllAmericans%}
+                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab w3-button tab {{Conf.ConferenceSelected}}" id="preseason-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
+                  {% endfor %}
+                </div>
+                <div class="list-group list-group-flush">
+                  <table id='teamOverviewConferenceStandings'>
+                    <thead class=''>
+                      <th>Pos</th>
+                      <th>Team</th>
+                      <th>Player</th>
+                    </thead>
+                    {% for Conf in PreseasonAllAmericans%}
+                    {% for AwardTeam in Conf.Teams %}
+                    {% for Award in AwardTeam.Team %}
+                    <tr class='{{Conf.ShowConference}} {{AwardTeam.ShowTeam}} pre-season-allamarican-row preseason-allamerican-conference-{{Conf.Conference.ConferenceID}} preseason-allamerican-team-{{AwardTeam.TeamName}}'>
+                      <td>{{Award.PositionID.PositionAbbreviation}}</td>
+                      <td>
+                        <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.LogoURL}}" />
+                           {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
+                        </a>
+                      </td>
+                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.Class}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+              {% endif %}
             </div>
             <div class="w3-col s3">
               <div class="w3-card">
@@ -527,10 +567,9 @@
   </div>
 </body>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="{% static 'common/jquery-3.3.1.slim.min.js' %}"></script>
+<script src="{% static 'common/jquery.min.js' %}"></script>
+<script src="{% static 'common/popper.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
 <script src="{% static 'action.js' %}"></script>
 <script src="{% static 'Pages/World.js' %}" type="module"></script>
-
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>

@@ -3,8 +3,8 @@
 </div>
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+<link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" PlayerID="{{player.PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
 
@@ -371,9 +371,9 @@
 
 
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="{% static 'common/jquery-3.3.1.slim.min.js' %}"></script>
+<script src="{% static 'common/jquery.min.js' %}"></script>
+<script src="{% static 'common/popper.min.js' %}"></script>
 <script src="{% static 'action.js' %}"></script>
 <script src="{% static 'bootstrap-sortable.js' %}"></script>
 <script src="{% static 'facesjs-master/src/generate.js' %}"></script>
@@ -382,10 +382,10 @@
 <!-- Load c3.css -->
 <link href="{% static 'c3/c3.css' %}" rel="stylesheet">
 <!-- Load d3.js and c3.js -->
-<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="{% static 'common/d3.v5.min.js' %}"></script>
 <script src="{% static 'c3/c3.js' %}"></script>
 
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
 
 
 

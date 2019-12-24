@@ -41,13 +41,14 @@ class GameStructureAdmin(admin.ModelAdmin):
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Player._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'playerseasonskill', 'recruitteamseason')]#('PlayerFirstName', 'PlayerLastName', 'Position', 'Class', 'IsRecruit','PlayerID', 'OverallRating', 'CurrentTeam', 'PassingRating', 'DribblingRating', 'CityID')
-
+    list_filter = ['PositionID', 'Class']
 class CoachAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Coach._meta.get_fields() if field.name not in ['coachteamseason']]
 
 
 class PlayerSkillAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerSeasonSkill._meta.get_fields()]#( 'PlayerID', 'OverallRating',  'InsideShootingRating', 'DunkLayupRating', 'ThreePointRating', 'PassingRating', 'DribblingRating')
+    list_filter = ['PlayerID__PositionID', 'PlayerID__Class']
 
 class RecruitTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -75,7 +76,7 @@ class GameEventAdmin(admin.ModelAdmin):
 
 class PlayerTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeason._meta.get_fields() if field.name not in ('Player1PlayerTeamSeasonID','Player2PlayerTeamSeasonID','playergamestat', 'playerteamseasonaward','Playoff', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
-
+    list_filter = ['PlayerID__PositionID', 'PlayerID__Class']
 class TeamAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Team._meta.get_fields() if field.name not in ('gameevent','playoff','teamconference','teamseason','driver',  'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 

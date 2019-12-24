@@ -1647,6 +1647,8 @@ class PlayerTeamSeasonAward(models.Model):
         if self.IsWeekAward:
             w = str(self.WeekID) if self.WeekID is not None else ''
             s += ' for ' + w
+        elif self.IsPreseasonAward:
+            s += 'in the Preseason'
 
         return s
 

@@ -696,11 +696,11 @@ input[type=text], input[type=password] {
 /*  opacity: .7;*/
 }
 
-.selected-boxscore-tab, .selected-upcoming-gameview-tab, .selected-recent-gameview-tab, .selected-roster-tab {
+.selected-boxscore-tab, .selected-upcoming-gameview-tab, .selected-recent-gameview-tab, .selected-roster-tab, .selected-award-team-tab, .selected-preseason-award-conference-tab, .selected-preseason-award-team-tab {
   border-bottom: 3px solid #2c394c !important;
 }
 
-.teamOverviewConferenceStandingsTeamLogo, .recruitingCommitTeamLogo {
+.teamOverviewConferenceStandingsTeamLogo, .recruitingCommitTeamLogo, .awardConferenceWeeklyAwardTeamLogo {
   height: 30px;
 }
 
@@ -1109,4 +1109,8 @@ input[type=text], input[type=password] {
     margin-top: 4.5px;
     text-align: right;
     color: #2b2c2d;
+}
+
+.preseason-allamerican-conf-hide, .preseason-allamerican-team-hide {
+  display:none;
 }
