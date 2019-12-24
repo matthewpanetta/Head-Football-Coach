@@ -867,6 +867,10 @@ def Page_Game(request, WorldID, GameID):
                 {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'DisplayColumn': True, 'DisplayOrder': 2},
                 {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'DisplayColumn': True, 'DisplayOrder': 3},
                 {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'DisplayColumn': True, 'DisplayOrder': 4},
+                {'FieldName': 'FUM_Forced', 'DisplayName': 'FF', 'DisplayColumn': True, 'DisplayOrder': 5},
+                {'FieldName': 'FUM_Recovered', 'DisplayName': 'FR', 'DisplayColumn': True, 'DisplayOrder': 6},
+                {'FieldName': 'FUM_ReturnYards', 'DisplayName': 'FYards', 'DisplayColumn': True, 'DisplayOrder': 7},
+                {'FieldName': 'FUM_ReturnTD', 'DisplayName': 'FTDs', 'DisplayColumn': True, 'DisplayOrder': 8},
             ],
         },
     ]
@@ -980,7 +984,7 @@ def Page_Game(request, WorldID, GameID):
                 print(S)
 
 
-        PlayerGames = PlayerGameStat.objects.filter(TeamGameID__GameID = GameQuerySet).order_by('-GameScore').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT').annotate(  # call `annotate`
+        PlayerGames = PlayerGameStat.objects.filter(TeamGameID__GameID = GameQuerySet).order_by('-GameScore').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT', 'FUM_Lost', 'FUM_Forced', 'FUM_Fumbles', 'FUM_ReturnTD', 'FUM_Recovered', 'FUM_ReturnYards').annotate(  # call `annotate`
                 PAS_CompletionPercentage=Case(
                     When(PAS_Attempts=0, then=0.0),
                     default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1)),
