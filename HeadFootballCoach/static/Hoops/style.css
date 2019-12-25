@@ -1114,3 +1114,28 @@ input[type=text], input[type=password] {
 .preseason-allamerican-conf-hide, .preseason-allamerican-team-hide {
   display:none;
 }
+
+.table_title {
+  position: relative;
+  text-align: left;
+  text-transform: capitalize;
+  color: #2b2c2d;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 21px;
+  margin-bottom: 8px;
+  margin-top: 8px;
+}
+
+.colgroup-border-right {
+  border-right: 1px solid black;
+}
+
+td {
+  color: #6c6d6f;
+  font-size: 12px;
+}
+
+th {
+  font-size: 12px;
+}

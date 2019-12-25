@@ -492,7 +492,7 @@ $(document).ready(function(){
 
   console.log('in Team.js file')
 
-  //GetConferenceStandings(WorldID);
+  GetConferenceStandings(WorldID);
   GetTeamStats(WorldID);
   //GetAwardRaces(WorldID);
   //GetWorldHistory(WorldID);

@@ -124,8 +124,10 @@ def NormalTrunc(Mean, Sigma, Min, Max):
 
     r = Min
 
-    while (r <= Min or r >= Max):
+    LoopCount = 0
+    while (r <= Min or r >= Max) and LoopCount < 100:
         r = numpy.random.normal(Mean, Sigma)
+        LoopCount +=1
 
     return r
 

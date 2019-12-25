@@ -135,6 +135,43 @@ def GameSim(game):
         'P': 1
     }
 
+    PositionEnergyMap = {
+        'QB': .005,
+        'RB': .025,
+        'FB': .015,
+        'WR': .015,
+        'TE': .015,
+        'OT': .01,
+        'OG': .01,
+        'OC': .01,
+        'DE': .025,
+        'DT': .025,
+        'OLB': .015,
+        'MLB': .015,
+        'CB': .015,
+        'S': .01,
+        'K': .005,
+        'P': .005
+    }
+
+    PositionEnergyMap = {
+        'QB': 0,
+        'RB': .015,
+        'FB': .015,
+        'WR': .015,
+        'TE': .015,
+        'OT': .015,
+        'OG': .015,
+        'OC': .015,
+        'DE': .015,
+        'DT': .015,
+        'OLB': .015,
+        'MLB': .015,
+        'CB': .015,
+        'S': .015,
+        'K': .015,
+        'P': .015
+    }
 
 
     PositionOverlapMap = {
@@ -164,6 +201,8 @@ def GameSim(game):
 
     SubsEveryN = 12
     SynergyFactor = 0.1
+    EnergyRegenerationRate = .01
+    DefaultEnergyNormalizationFactor = 4
     Overtimes = 0
     TalentRandomness = 0.0#float(0.05)
     HomeFieldAdvantage = float(CurrentLeague.HomeFieldAdvantage)
@@ -222,7 +261,7 @@ def GameSim(game):
 
         AllPlayers[PlayerID]['GameStats'] = { 'GamesStarted':0, 'RUS_Yards':0, 'RUS_Carries':0, 'RUS_TD':0, 'PAS_Attempts':0, 'PAS_Completions':0, 'PAS_Yards':0, 'PAS_TD':0, 'REC_Yards':0,'REC_Receptions':0, 'REC_TD':0, 'PNT_Punts': 0,'GamesPlayed':0, 'GameScore': 0,'KCK_FGA': 0, 'KCK_FGM': 0, 'DEF_Tackles':0, 'DEF_Sacks':0, 'DEF_INT':0,'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0,'FUM_Lost': 0, 'FUM_Forced': 0, 'FUM_Fumbles': 0, 'FUM_Recovered': 0,'FUM_ReturnTD': 0,'FUM_ReturnYards': 0,}
 
-        AllPlayers[PlayerID]['Energy'] = 100
+        AllPlayers[PlayerID]['Energy'] = 1
 
     GameDict = {}
     for T in [HomeTeam, AwayTeam]:
@@ -254,9 +293,8 @@ def GameSim(game):
             NumberOfStarters = PlayerStartersByPosition[Position]
             TeamPlayers[Team]['AllPlayers'][Position] = sorted(TeamPlayers[Team]['AllPlayers'][Position], key=lambda k: AllPlayers[k]['PlayerSkills']['OverallRating'], reverse=True)
             for u in range(0,NumberOfStarters):
-                PlayerToStart = TeamPlayers[Team]['AllPlayers'][Position].pop(0)
+                PlayerToStart = TeamPlayers[Team]['AllPlayers'][Position][u]
                 TeamPlayers[Team]['PlayersOnField'][Position].append(PlayerToStart)
-                TeamPlayers[Team]['AllPlayers'][Position].append(PlayerToStart)
                 AllPlayers[PlayerToStart]['GameStats']['GamesStarted'] = 1
 
 
@@ -288,6 +326,9 @@ def GameSim(game):
     SecondaryTalent = 0
     LinebackerTalent = 0
     RunningbackTalent = 0
+
+    TotalPlayCount = 0
+    SubsEveryN = 6
 
     ConfigureTeams = True
 
@@ -324,24 +365,46 @@ def GameSim(game):
             FumbleRecoveryYards = 0
             SecondsThisPlay = SecondsLeftInPeriod
 
+            TotalPlayCount += 1
+            if TotalPlayCount % SubsEveryN == 0:
+                ConfigureTeams = True
+                if IsCloseGame:
+                    EnergyNormalizationFactor = DefaultEnergyNormalizationFactor
+                else:
+                    EnergyNormalizationFactor = 1
+
+                for Team in GameDict:
+                    for Position in PlayerStartersByPosition:
+                        TeamPlayers[Team]['PlayersOnField'][Position] = []
+
+
+                    for Position in TeamPlayers[Team]['AllPlayers']:
+                        NumberOfStarters = PlayerStartersByPosition[Position]
+                        if len(TeamPlayers[Team]['AllPlayers'][Position]) < NumberOfStarters:
+                            PositionOverlapList = PositionOverlapMap[Position]
+                            for Backups in PositionOverlapList:
+                                TeamPlayers[Team]['AllPlayers'][Position] += TeamPlayers[Team]['AllPlayers'][Backups]
+
+                        TeamPlayers[Team]['AllPlayers'][Position] = sorted(TeamPlayers[Team]['AllPlayers'][Position], key=lambda k: AllPlayers[k]['PlayerSkills']['OverallRating'] * (AllPlayers[k]['Energy'] ** (1/float(EnergyNormalizationFactor))), reverse=True)
+                        for u in range(0,NumberOfStarters):
+                            PlayerOnField = TeamPlayers[Team]['AllPlayers'][Position][u]
+                            TeamPlayers[Team]['PlayersOnField'][Position].append(PlayerOnField)
+
 
             if ConfigureTeams:
                 ConfigureTeams = False
                 OffensiveTeamPlayers = TeamPlayers[OffensiveTeam]['PlayersOnField']
                 DefensiveTeamPlayers = TeamPlayers[DefensiveTeam]['PlayersOnField']
 
+                QuarterbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in OffensiveTeamPlayers['QB']], IntCastFlag=True)
+                RunningbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in OffensiveTeamPlayers['RB']], IntCastFlag=True)
+                ReceiverTalent      = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in OffensiveTeamPlayers['WR']], IntCastFlag=True)
+                OffensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OG'] + OffensiveTeamPlayers['OC']], IntCastFlag=True)
 
-                QuarterbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] for u in OffensiveTeamPlayers['QB']], IntCastFlag=True)
-                RunningbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] for u in OffensiveTeamPlayers['RB']], IntCastFlag=True)
-                ReceiverTalent      = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] for u in OffensiveTeamPlayers['WR']], IntCastFlag=True)
-                OffensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] for u in OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OG'] + OffensiveTeamPlayers['OC']], IntCastFlag=True)
-
-                DefensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] for u in DefensiveTeamPlayers['DE']  + OffensiveTeamPlayers['DT'] ], IntCastFlag=True)
-                LinebackerTalent    = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] for u in DefensiveTeamPlayers['OLB'] + OffensiveTeamPlayers['MLB']], IntCastFlag=True)
-                SecondaryTalent     = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] for u in DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S']  ], IntCastFlag=True)
-
+                DefensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in DefensiveTeamPlayers['DE']  + OffensiveTeamPlayers['DT'] ], IntCastFlag=True)
+                LinebackerTalent    = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in DefensiveTeamPlayers['OLB'] + OffensiveTeamPlayers['MLB']], IntCastFlag=True)
+                SecondaryTalent     = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S']  ], IntCastFlag=True)
                 KickerTalent        = OffensiveTeamPlayers['K'][0]
-
 
 
             if FinalPeriod and SecondsLeftInPeriod <= (5 * 60):
@@ -469,9 +532,7 @@ def GameSim(game):
 
 
 
-
             PlayChoice = WeightedProbabilityChoice(PlayChoices, 'Run')
-
             if PlayChoice == 'Run':
                 RunningBackPlayerID = OffensiveTeamPlayers['RB'][0]
                 RunGameModifier = (RunningbackTalent + OffensiveLineTalent) * 1.0 / DefensiveLineTalent / 2.0
@@ -479,7 +540,7 @@ def GameSim(game):
                 YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 5, -0.5, 12),0)
 
                 #Run is a fumble
-                if random.uniform(0,1.1) < (.0125 / ((RunningbackTalent / 85) ** 6)):
+                if random.uniform(0,1) < (.0125 / ((RunningbackTalent / 85) ** 6)):
                     DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['HitPower_Rating'] ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DE']+DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']+DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
                     DefensiveFumbleForcerID = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
@@ -492,7 +553,7 @@ def GameSim(game):
 
                     #Offense recovers
                     if random.uniform(0,1) < .40:
-                        OffensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['HitPower_Rating'] ** 4) for u in OffensiveTeamPlayers['OT']  + OffensiveTeamPlayers['OG']+OffensiveTeamPlayers['OC']  + OffensiveTeamPlayers['WR']+OffensiveTeamPlayers['TE']  + OffensiveTeamPlayers['RB'] ]
+                        OffensivePlayers = [(u, 1) for u in OffensiveTeamPlayers['OT']  + OffensiveTeamPlayers['OG']+OffensiveTeamPlayers['OC']  + OffensiveTeamPlayers['WR']+OffensiveTeamPlayers['TE']  + OffensiveTeamPlayers['RB'] ]
                         FumbleRecovererID = WeightedProbabilityChoice(OffensivePlayers, OffensivePlayers[0])
 
                         GameDict[OffensiveTeam]['FUM_Recovered'] += 1
@@ -506,7 +567,11 @@ def GameSim(game):
 
                         FumbleBallSpot = BallSpot + YardsThisPlay
                         OpposingFumbleBallSpot = 100 - FumbleBallSpot
-                        FumbleRecoveryYards = random.randint(0,100)
+                        if random.uniform(0,1) < .33:
+                            FumbleRecoveryYards = round(NormalTrunc(0,2,-10,20), 0)
+                        else:
+                            FumbleRecoveryYards = random.randint(0,100)
+
                         if FumbleRecoveryYards > OpposingFumbleBallSpot:
                             GameDict[DefensiveTeam]['FUM_ReturnTD'] += 1
                             AllPlayers[FumbleRecovererID]['GameStats']['FUM_ReturnTD'] += 1
@@ -797,6 +862,20 @@ def GameSim(game):
 
                 if InOvertime and GameDict[HomeTeam]['Points'] != GameDict[AwayTeam]['Points']:
                     SecondsLeftInPeriod = 0
+
+
+            for P in AllPlayers:
+                AllPlayers[P]['Energy'] += EnergyRegenerationRate
+                if AllPlayers[P]['Energy'] > 1 :
+                    AllPlayers[P]['Energy'] = 1
+
+            for T in [DefensiveTeamPlayers, OffensiveTeamPlayers]:
+                for Pos in T:
+                    for P in T[Pos]:
+                        AllPlayers[P]['Energy'] -= PositionEnergyMap[Pos]
+                        if AllPlayers[P]['Energy'] <=0 :
+                            AllPlayers[P]['Energy'] = 0.001
+
 
         if Period == max(Periods) and GameDict[HomeTeam]['Points'] == GameDict[AwayTeam]['Points']:
             Periods.append(Period+1)

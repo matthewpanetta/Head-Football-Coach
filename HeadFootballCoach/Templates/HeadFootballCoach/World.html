@@ -232,17 +232,22 @@
       <div class="tab-content" style="display:none;" id="nav-conference-standings">
         <div class='w3-display-container' id='ConferenceStandingTabContainer'>
           <div class='w3-row-padding w3-hide' id='ConferenceStandingTableClone'>
-            <div class='w3-col s10'>
-              <span data-field='ConferenceName'></span>
+            <div class='w3-col s8'>
+              <span data-field='ConferenceName' class='table_title'></span>
               <table class="w3-table w3-table-all">
+                <colgroup>
+                    <col span="1" class='colgroup-border-right'>
+                    <col span="3" class='colgroup-border-right'>
+                    <col >
+                </colgroup>
                 <thead>
                   <tr>
                     <th scope="col">Team</th>
                     <th class='initialSortColumn' scope="col">Conference Rank</th>
-                    <th scope="col" data-defaultsort="asc">Wins</th>
-                    <th scope="col">Losses</th>
                     <th scope="col" data-defaultsort="asc">Conf. Wins</th>
                     <th scope="col">Conf. Losses</th>
+                    <th scope="col" data-defaultsort="asc">Wins</th>
+                    <th scope="col">Losses</th>
                     <th scope="col" data-defaultsort="asc">PPG</th>
                     <th scope="col" data-defaultsort="asc">PAPG</th>
                     <th scope="col" data-defaultsort="asc">MOV</th>
@@ -262,10 +267,10 @@
                       </a>
                     </td>
                     <td data-field='ConferenceRank'></td>
-                    <td data-field='Wins'></td>
-                    <td data-field='Losses'></td>
                     <td data-field='ConferenceWins'></td>
                     <td data-field='ConferenceLosses'></td>
+                    <td data-field='Wins'></td>
+                    <td data-field='Losses'></td>
                     <td data-field='PPG'></td>
                     <td data-field='PAPG'></td>
                     <td data-field='Diff'></td>

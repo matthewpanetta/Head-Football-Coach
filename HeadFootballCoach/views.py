@@ -1244,9 +1244,10 @@ def GET_ConferenceStandings(request, WorldID, ConferenceID = None):
     TeamSeasonFields = ['ConferenceRank', 'NationalRankDisplay', 'Wins', 'Losses','ConferenceWins', 'ConferenceLosses', 'PPG', 'PAPG', 'PointDiffPG', 'FGPercentage', 'ThreePointPercentage', 'Pace', 'ORTG']
     TeamHrefBase = '/World/' + str(WorldID) + '/Team/'
 
+    print('ConferenceList', ConferenceList)
     for conf in ConferenceList:
         ThisConference = {'ConferenceName': conf.ConferenceName, 'ConferenceTeams': []}
-        TeamsInConference = TeamSeasonDateRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=1).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).filter(TeamSeasonID__TeamID__ConferenceID = conf).values('TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__ConferenceRank', 'NationalRank', 'TeamSeasonID__Wins', 'TeamSeasonID__GamesPlayed','TeamSeasonID__Losses','TeamSeasonID__ConferenceWins', 'TeamSeasonID__ConferenceLosses', 'TeamSeasonID__Points', 'TeamSeasonID__PointsAllowed', 'TeamSeasonID__Possessions').order_by('-NationalRank')#sorted(Team.objects.filter(WorldID = CurrentWorld).filter(ConferenceID = conf), key=lambda t: t.CurrentTeamSeason.ConferenceRank)
+        TeamsInConference = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=1).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).filter(TeamSeasonID__TeamID__ConferenceID = conf).values('TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__ConferenceRank', 'NationalRank', 'TeamSeasonID__Wins', 'TeamSeasonID__GamesPlayed','TeamSeasonID__Losses','TeamSeasonID__ConferenceWins', 'TeamSeasonID__ConferenceLosses', 'TeamSeasonID__Points', 'TeamSeasonID__PointsAllowed', 'TeamSeasonID__Possessions').order_by('-NationalRank')#sorted(Team.objects.filter(WorldID = CurrentWorld).filter(ConferenceID = conf), key=lambda t: t.CurrentTeamSeason.ConferenceRank)
         for t in TeamsInConference:
 
             t = dict((key.replace('TeamSeasonID__', '').replace('TeamID__','').replace('_id',''), value) for (key, value) in t.items())
@@ -1262,6 +1263,7 @@ def GET_ConferenceStandings(request, WorldID, ConferenceID = None):
         ConferenceStandings.append(ThisConference)
 
     context['ConferenceStandings'] = ConferenceStandings
+    print(context)
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
