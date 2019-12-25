@@ -412,28 +412,18 @@ def GameSim(game):
             PlayChoices = None
 
             #2 minute drill
-            if HalfEndPeriod and SecondsLeftInPeriod <= (2 * 60):
+            if HalfEndPeriod and SecondsLeftInPeriod <= (3 * 60):
                 OffensivePointDifferential = GameDict[OffensiveTeam]['Points'] - GameDict[DefensiveTeam]['Points']
                 #run out clock end of first half
                 if FinalPeriod:
                     if not IsCloseGame:
                         if Down == 4:
-                            PlayChoices = {
-                                'Run': 0,
-                                'Pass': 0,
-                                'Punt': 100,
-                                'Field Goal': 0
-                            }
+                            PlayChoices = {'Run': 0,'Pass': 0,'Punt': 100,'Field Goal': 0}
                         else:
-                            PlayChoices = {
-                                'Run': 80,
-                                'Pass': 20,
-                                'Punt': 0,
-                                'Field Goal': 0
-                            }
+                            PlayChoices = {'Run': 80,'Pass': 20,'Punt': 0,'Field Goal': 0}
                     else:
                         if Down == 4:
-                            if BallSpot > 70 and OffensivePointDifferential in [-3, -2, -1, 0, 1, 4,5,6]:
+                            if BallSpot > 70 and OffensivePointDifferential in [-3, -2, -1, 0, 1, 4,5,6,11,12,13,14]:
                                 PlayChoices = {'Run': 0,'Pass': 0,'Punt': 0,'Field Goal': 100}
                             elif OffensivePointDifferential < -3:
                                 if YardsToGo <= 1:
@@ -451,7 +441,7 @@ def GameSim(game):
                                     PlayChoices = {'Run': 1,'Pass': 9,'Punt': 90,'Field Goal': 0}
 
                         else:
-                            if SecondsLeftInPeriod <= 20 and BallSpot > 70 and OffensivePointDifferential in [-3, -2, -1, 0]:
+                            if SecondsLeftInPeriod <= 30 and BallSpot > 70 and OffensivePointDifferential in [-3, -2, -1, 0]:
                                 PlayChoices = {'Run': 0,'Pass': 0,'Punt': 0,'Field Goal': 100}
                             elif OffensivePointDifferential > 0:
                                 if Down == 3 and YardsToGo > 5:
@@ -470,7 +460,7 @@ def GameSim(game):
                         else:
                             PlayChoices = {'Run': 15,'Pass': 15,'Punt': 70,'Field Goal': 0}
 
-                    elif SecondsLeftInPeriod <= (60) and BallSpot < 70:
+                    elif SecondsLeftInPeriod <= (60) and BallSpot > 70:
                         if SecondsLeftInPeriod < 20 or Down == 4:
                             if BallSpot > 95:
                                 PlayChoices = {'Run': 33,'Pass': 33,'Punt': 0,'Field Goal': 33}
@@ -525,14 +515,13 @@ def GameSim(game):
                 PlayChoices = {'Run': 45,'Pass': 55,'Punt': 0,'Field Goal': 0}
 
 
-            #Not Late Game, far on 4th
             if PlayChoices is None:
                 print('Could not find play. Period:', Period, 'BallSpot:', BallSpot, 'Down:', Down, 'YardsToGo:', YardsToGo, 'SecondsLeftInPeriod:', SecondsLeftInPeriod)
                 PlayChoices = {'Run': 55,'Pass': 45,'Punt': 0,'Field Goal': 0}
 
-
-
             PlayChoice = WeightedProbabilityChoice(PlayChoices, 'Run')
+
+
             if PlayChoice == 'Run':
                 RunningBackPlayerID = OffensiveTeamPlayers['RB'][0]
                 RunGameModifier = (RunningbackTalent + OffensiveLineTalent) * 1.0 / DefensiveLineTalent / 2.0
@@ -881,6 +870,9 @@ def GameSim(game):
             Periods.append(Period+1)
 
 
+
+    GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='FINAL', IsScoringPlay = False, HomePoints = GameDict[HomeTeam]['Points'], AwayPoints = GameDict[AwayTeam]['Points'], EventPeriod = Period, EventTime = 0, PlayDescription='End of game')
+    GameEventsToSave.append(GE)
 
     game.WasPlayed = 1
     print('FINAL -- ', OffensiveTeam, ': ', GameDict[OffensiveTeam]['Points'],' , ', DefensiveTeam, ': ', GameDict[DefensiveTeam]['Points'])

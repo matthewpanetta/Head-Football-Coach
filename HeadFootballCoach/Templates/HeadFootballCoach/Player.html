@@ -192,84 +192,64 @@
       {% else %}
       <div class="tab-content" style='display:none;' id="nav-stats" >
         <div class='w3-container'>
-          <div class='w3-row'>
-            <div class='w3-col s12'>
-              Season Stats
+          <div class='w3-row-padding'>
+            <div class='w3-col s8'>
+              <span class='table_title'>Season Stats</span>
               <table class="table table-striped sortable">
                 <thead>
                   <tr>
-                    <th scope="col">Season</th>
-                    <th scope="col">Team</th>
-                    <th scope="col">Class</th>
-                    <th scope="col">Overall</th>
-                    <th scope="col" data-defaultsort="desc">Minutes</th>
-                    <th scope="col" data-defaultsort="desc">Points</th>
-                    <th scope="col" data-defaultsort="desc">FG %</th>
-                    <th scope="col" data-defaultsort="desc">3P %</th>
-                    <th scope="col" data-defaultsort="desc">Rebounds</th>
-                    <th scope="col" data-defaultsort="desc">Assists</th>
-                    <th scope="col" data-defaultsort="desc">Blocks</th>
-                    <th scope="col" data-defaultsort="desc">Steals</th>
-                    <th scope="col" data-defaultsort="desc">PER</th>
+                    <th class='initialSortColumn' data-defaultsort="asc">Season</th>
+                    <th class='initialSortColumn' data-defaultsort="asc">Class</th>
+                    {%for Stat in PlayerStatCategories%}
+                    <th>{{Stat.DisplayName}}</th>
+                    {%endfor%}
                   </tr>
                 </thead>
                 <tbody>
-                  {% for season in seasonStats %}
+                  {% for SeasonStat in SeasonStats %}
                   <tr>
-                    <td>{{season.Season}}</td>
-                    <td><a href="/World/{{page.WorldID}}/Team/{{season.TeamID.TeamID}}">{{season.TeamAbbreviation}}</a></td>
-                    <td data-value="{{season.ClassSortOrder}}">{{season.PlayerClass}}</td>
-                    <td>{{player.OverallRating}}</td>
-                    <td>{{season.MPG}}</td>
-                    <td>{{season.PPG}}</td>
-                    <td>{{season.FGPercent}}</td>
-                    <td>{{season.3PPercent}}</td>
-                    <td>{{season.RPG}}</td>
-                    <td>{{season.APG}}</td>
-                    <td>{{season.BPG}}</td>
-                    <td>{{season.SPG}}</td>
-                    <td>{{season.PER}}</td>
+                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">{{SeasonStat.TeamSeasonID__LeagueSeasonID__SeasonStartYear}}</a></td>
+                    <td>{{SeasonStat.PlayerID__Class}}</td>
+                    {%for Stat in SeasonStat.Stats%}
+                    <td>{{Stat.Value}}</td>
+                    {%endfor%}
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
             </div>
           </div>
-          <div class='w3-row'>
-            <div class='w3-col s12'>
-              Game Stats
+          <div class='w3-row-padding'>
+            <div class='w3-col s8'>
+              <span class='table_title'>Game Stats</span>
               <table class="table table-striped sortable">
                 <thead>
                   <tr>
-                    <th scope="col">Opponent</th>
+                    <th scope="col">OPP</th>
                     <th class='initialSortColumn' data-defaultsort="asc">Date</th>
-                    <th scope="col" data-defaultsort="desc">Pass Yards</th>
-                    <th scope="col" data-defaultsort="desc">Pass TDs</th>
-                    <th scope="col" data-defaultsort="desc">Rush Yards</th>
-                    <th scope="col" data-defaultsort="desc">Rush TDs</th>
-                    <th scope="col" data-defaultsort="desc">Game Score</th>
+                    {%for Stat in PlayerStatCategories%}
+                    <th>{{Stat.DisplayName}}</th>
+                    {%endfor%}
                   </tr>
                 </thead>
                 <tbody>
-                  {% for game in gameStats %}
+                  {% for game in GameStats %}
                   <tr>
-                    <td><img class='playerSeasonStatOpponentLogo' src='{{game.TeamGameID.OpposingTeamGame.TeamSeasonID.TeamID.LogoURL}}' /><a href='/World/{{page.WorldID}}/Team/{{game.TeamGameID.OpposingTeamGame.TeamSeasonID.TeamID.TeamID}}'>{{game.TeamGameID.OpposingTeamGame.TeamSeasonID.TeamID.Name}}</a></td>
-                    <td data-value="{{game.GameID.GameDateID.DateID}}">{{game.TeamGameID.GameID.GameDateID.Date}}</td>
-                    <td>{{game.PAS_Yards}}</td>
-                    <td>{{game.PAS_TD}}</td>
-                    <td>{{game.RUS_Yards}}</td>
-                    <td>{{game.RUS_TD}}</td>
-                    <td>{{game.GameScore}}</td>
+                    <td><a href='/World/{{page.WorldID}}/Team/{{game.OpposingTeamID}}'><img class='playerSeasonStatOpponentLogo' src='{{game.OpposingTeamLogoURL}}' />{{game.OpposingTeamName}}</a></td>
+                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">Week {{game.TeamGameID__GameID__WeekID__WeekNumber}}</a></td>
+                    {%for Stat in game.Stats%}
+                    <td>{{Stat.Value}}</td>
+                    {%endfor%}
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
             </div>
           </div>
-          <div class='w3-row'>
+          <div class='w3-row-padding'>
             <div class='w3-col s6'>
               <div>
-                Career Highs
+                <span class='table_title'>Career Highs</span>
                 <div class='w3-container'>
                   {% for stat in careerHigh %}
                   <div class='w3-row'>

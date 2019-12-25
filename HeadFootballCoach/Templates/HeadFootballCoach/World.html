@@ -232,7 +232,7 @@
       <div class="tab-content" style="display:none;" id="nav-conference-standings">
         <div class='w3-display-container' id='ConferenceStandingTabContainer'>
           <div class='w3-row-padding w3-hide' id='ConferenceStandingTableClone'>
-            <div class='w3-col s8'>
+            <div class='w3-col s8 w3-margin-top'>
               <span data-field='ConferenceName' class='table_title'></span>
               <table class="w3-table w3-table-all">
                 <colgroup>
@@ -243,18 +243,14 @@
                 <thead>
                   <tr>
                     <th scope="col">Team</th>
-                    <th class='initialSortColumn' scope="col">Conference Rank</th>
-                    <th scope="col" data-defaultsort="asc">Conf. Wins</th>
-                    <th scope="col">Conf. Losses</th>
-                    <th scope="col" data-defaultsort="asc">Wins</th>
-                    <th scope="col">Losses</th>
+                    <th class='initialSortColumn' scope="col">Conf. Rank</th>
+                    <th scope="col" data-defaultsort="asc">Conf. W-L</th>
+                    <th scope="col" data-defaultsort="asc">W-L</th>
                     <th scope="col" data-defaultsort="asc">PPG</th>
                     <th scope="col" data-defaultsort="asc">PAPG</th>
                     <th scope="col" data-defaultsort="asc">MOV</th>
-                    <th scope="col" data-defaultsort="asc">Rush PG</th>
-                    <th scope="col" data-defaultsort="asc">Rush TD</th>
                     <th scope="col" data-defaultsort="asc">Pass PG</th>
-                    <th scope="col" data-defaultsort="asc">Pass TD</th>
+                    <th scope="col" data-defaultsort="asc">Rush PG</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -262,22 +258,18 @@
                     <td>
                       <a href="" href-field='TeamIDURL'>
                         <img class='worldConferenceStandingTeamLogo' src='' img-src-field='TeamLogoURL' alt="My image">
-                        <span data-field='RankDisplayString'></span>
+                        <span data-field='NationalRankDisplay'></span>
                         <span data-field='TeamName'></span>
                       </a>
                     </td>
                     <td data-field='ConferenceRank'></td>
-                    <td data-field='ConferenceWins'></td>
-                    <td data-field='ConferenceLosses'></td>
-                    <td data-field='Wins'></td>
-                    <td data-field='Losses'></td>
+                    <td data-field='ConferenceWinsLosses'></td>
+                    <td data-field='WinsLosses'></td>
                     <td data-field='PPG'></td>
                     <td data-field='PAPG'></td>
-                    <td data-field='Diff'></td>
-                    <td data-field='RUS_YardsPG'></td>
-                    <td data-field='RUS_TDPG'></td>
+                    <td data-field='MOV'></td>
                     <td data-field='PAS_YardsPG'></td>
-                    <td data-field='PAS_TDPG'></td>
+                    <td data-field='RUS_YardsPG'></td>
                   </tr>
                 </tbody>
               </table>
@@ -295,17 +287,13 @@
                     <th scope="col">Team</th>
                     <th class='initialSortColumn' scope="col">National Rank</th>
                     <th class='initialSortColumn' scope="col">Conference</th>
-                    <th scope="col" data-defaultsort="asc">Wins</th>
-                    <th scope="col">Losses</th>
-                    <th scope="col" data-defaultsort="asc">Conf. Wins</th>
-                    <th scope="col">Conf. Losses</th>
+                    <th scope="col" data-defaultsort="asc">Conf. W-L</th>
+                    <th scope="col" data-defaultsort="asc">W-L</th>
                     <th scope="col" data-defaultsort="asc">PPG</th>
                     <th scope="col" data-defaultsort="asc">PAPG</th>
                     <th scope="col" data-defaultsort="asc">MOV</th>
                     <th scope="col" data-defaultsort="asc">Rush PG</th>
-                    <th scope="col" data-defaultsort="asc">Rush TD</th>
                     <th scope="col" data-defaultsort="asc">Pass PG</th>
-                    <th scope="col" data-defaultsort="asc">Pass TD</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -323,17 +311,13 @@
                         <span data-field='ConferenceAbbreviation'></span>
                       </a>
                     </td>
-                    <td data-field='Wins'></td>
-                    <td data-field='Losses'></td>
-                    <td data-field='ConferenceWins'></td>
-                    <td data-field='ConferenceLosses'></td>
+                    <td data-field='ConferenceWinsLosses'></td>
+                    <td data-field='WinsLosses'></td>
                     <td data-field='PPG'></td>
                     <td data-field='PAPG'></td>
-                    <td data-field='Diff'></td>
+                    <td data-field='MOV'></td>
                     <td data-field='RUS_YardsPG'></td>
-                    <td data-field='RUS_TDPG'></td>
                     <td data-field='PAS_YardsPG'></td>
-                    <td data-field='PAS_TDPG'></td>
                   </tr>
                 </tbody>
               </table>
