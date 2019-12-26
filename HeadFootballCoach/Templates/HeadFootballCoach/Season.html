@@ -1,5 +1,5 @@
 <div>
-  {% include "Hoops/NavBar.html" %}
+  {% include "HeadFootballCoach/NavBar.html" %}
 </div>
 {% load static %}
 
@@ -60,25 +60,42 @@
       <div class="tab-content show active" style="display:block;"  id="nav-overview">
         <div class="w3-display-container">
           <div class="w3-row-padding">
-            <div class="w3-col s3">
+            <div class="w3-col s6">
               <div class="w3-card">
-                <div class='w3-display-container Top25w3-display-container'>
-                  <div class='w3-row'>
-                    National Champions
-                    {{NationalChampionTeam.TeamName}} - <span>{{NationalChampionTeam.TeamRecord}}</span>
-                  </div>
-                  <div class='w3-row'>
-                    National Runners Up
-                    {{NationalRunnersUp.TeamName}} - <span>{{NationalRunnersUp.TeamRecord}}</span>
-                  </div>
-                  <div class='w3-row'>
-                    Final Four
-                    {{FinalFourTeam1.TeamName}} - <span>{{FinalFourTeam1.TeamRecord}}</span>
-                  </div>
-                  <div class='w3-row'>
-                    Final Four
-                    {{FinalFourTeam2.TeamName}} - <span>{{FinalFourTeam2.TeamRecord}}</span>
-                  </div>
+                <div class="w3-bar preseason-allamerican-team-bar" id="nav-tab-preseason-allamerican-team">
+                  <div class="w3-bar-item fontweight500">Preseason All-Americans</div>
+                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab w3-button tab selected-season-award-team-tab" id="season-allamerican-team-firstteam-tab">First Team</button>
+                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab w3-button tab" id="season-allamerican-team-secondteam-tab">Second Team</button>
+                </div>
+                <div class="w3-bar season-allamerican-conference-bar w3-margin-bottom" id="nav-tab-season-allamerican-conference">
+                  {% for Conf in AllAmericans%}
+                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab w3-button tab {{Conf.ConferenceSelected}}" id="season-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
+                  {% endfor %}
+                </div>
+                <div class="list-group list-group-flush">
+                  <table id='teamOverviewConferenceStandings'>
+                    <thead class=''>
+                      <th>Pos</th>
+                      <th>Team</th>
+                      <th>Player</th>
+                    </thead>
+                    {% for Conf in AllAmericans%}
+                    {% for AwardTeam in Conf.Teams %}
+                    {% for Award in AwardTeam.Team %}
+                    <tr class='{{Conf.ShowConference}} {{AwardTeam.ShowTeam}} season-allamarican-row season-allamerican-conference-{{Conf.Conference.ConferenceID}} season-allamerican-team-{{AwardTeam.TeamName}}'>
+                      <td>{{Award.PositionID.PositionAbbreviation}}</td>
+                      <td>
+                        <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.LogoURL}}" />
+                           {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
+                        </a>
+                      </td>
+                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.Class}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                  </table>
                 </div>
               </div>
             </div>
@@ -144,5 +161,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="{% static 'action.js' %}"></script>
+<script src="{% static 'Pages/Season.js' %}"></script>
 
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>

@@ -1044,6 +1044,7 @@ input[type=text], input[type=password] {
 
 .ScoringSummary * {
   font-size: 14px;
+  margin: 2px 0px;
 }
 
 .ScoringSummaryDrive * {
@@ -1111,7 +1112,7 @@ input[type=text], input[type=password] {
     color: #2b2c2d;
 }
 
-.preseason-allamerican-conf-hide, .preseason-allamerican-team-hide {
+.preseason-allamerican-conf-hide, .preseason-allamerican-team-hide , .season-allamerican-conf-hide, .season-allamerican-team-hide {
   display:none;
 }
 
@@ -1128,14 +1129,18 @@ input[type=text], input[type=password] {
 }
 
 .colgroup-border-right {
-  border-right: 1px solid black;
+  border-right: 1px solid #cccccc;
+}
+
+.colgroup-border-left {
+  border-left: 1px solid #cccccc;
 }
 
 td {
   color: #6c6d6f;
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 th {
-  font-size: 12px;
+  font-size: 12.5px;
 }

@@ -413,19 +413,15 @@ def Page_World(request, WorldID):
     LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
 
-
     if DoAudit:
         start = time.time()
 
-    #AllTeams = sorted(Team.objects.filter(WorldID = CurrentWorld), key=lambda p: p.CurrentTeamSeason.NationalRank)
-    #AllTeams = [u.TeamSeasonID.TeamID for u in TeamSeasonDateRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).filter(NationalRank__lte = 25).order_by('NationalRank').select_related('TeamSeasonID__TeamID')]
     AllTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).filter(NationalRank__lte = 25).order_by('NationalRank').select_related('TeamSeasonID__TeamID').values('TeamSeasonID__TeamID','TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__Wins', 'TeamSeasonID__Losses', 'NationalRank', 'NationalRankDelta').annotate(NationalRankDeltaAbs=Func(F('NationalRankDelta'), function='ABS'))
 
 
     GameList = Game.objects.filter(WorldID = CurrentWorld)
     UpcomingGames = GameList.filter(WeekID = CurrentWeek).filter(WasPlayed = 0)
     RecentGames   = GameList.filter(WeekID = LastWeek).filter(WasPlayed = 1)
-    #TODO#RecentGames   = RecentGames.filter(HomeTeamSeasonDateRankID__NationalRank__lte=25) | RecentGames.filter(AwayTeamSeasonDateRankID__NationalRank__lte=25)
 
     UserTeam = GetUserTeam(WorldID)
 
@@ -1761,6 +1757,7 @@ def POST_SimDay(request, WorldID):
 
     AllowInterruptions = CurrentWorld.AllowInterruptions
     BreakAfterNextDay = False
+    RedirectHref = ''
 
     if DayString == 'SimThisWeek':
         Weeks = 1
@@ -1768,6 +1765,7 @@ def POST_SimDay(request, WorldID):
         Weeks = 4
     elif DayString == 'SimRegularSeason':
         Weeks = 15
+
 
 
     DevelopmentGroupMonths = {
@@ -1822,6 +1820,7 @@ def POST_SimDay(request, WorldID):
 
         elif ThisWeek.PhaseID.PhaseName == 'Conference Championships':
             #DO TOURNEY STUFF HERE
+            CalculateConferenceRankings(CurrentSeason, CurrentWorld)
             print('Creating bowls!!!')
             CreateBowls(WorldID)
 
@@ -1830,12 +1829,14 @@ def POST_SimDay(request, WorldID):
             print('End Season')
             EndSeason(WorldID)
 
+            RedirectHref = "/World/"+ str(WorldID) +"/Season/" + str(CurrentSeason.SeasonStartYear)
+
         elif ThisWeek.PhaseID.PhaseName == 'Preseason':
             SelectBroadcast(CurrentSeason, CurrentWorld)
 
         NextWeek(WorldID)
 
-    return JsonResponse({'success':'value'})
+    return JsonResponse({'success':'value', 'redirect': RedirectHref})
 
 
 def Page_PlayerAnalytics(request):
@@ -2152,64 +2153,36 @@ def Page_Season(request, WorldID, SeasonStartYear):
     TeamID = UserTeam
     context = {}
 
-    TeamHistoryFields  = ['TeamName', 'TeamRecord', 'TeamID_id', 'TeamSeasonID']
-    LeagueSeasonFields = ['LeagueSeasonID', 'SeasonStartYear']
-    POTYFields = ['PlayerID', 'TeamSeasonID']
-
-    SeasonHistoryObject = {}
-
-    SeasonHistoryObject['Season'] = {'data-field': ThisSeason.SeasonStartYear, 'href-field':  ThisSeason.LeagueSeasonID}
-
-    FinalFourTeams = TeamSeason.objects.filter(WorldID = CurrentWorld).filter(LeagueSeasonID = ThisSeason).filter(FinalFour = True)
-
-    if FinalFourTeams.count() > 0:
-
-        ChampionTeam = FinalFourTeams.filter(NationalChampion = True).first()
-        RunnerUpTeam = FinalFourTeams.filter(NationalRunnerUp = True).first()
-        FinalFourTeam1 = FinalFourTeams.filter(NationalChampion = False).filter(NationalRunnerUp = False).order_by('-TeamID').first()
-        FinalFourTeam2 = FinalFourTeams.filter(NationalChampion = False).filter(NationalRunnerUp = False).order_by( 'TeamID').first()
-
-        TeamHrefBase = '/World/' + str(WorldID) + '/Team/'
-        PlayerHrefBase = '/World/' + str(WorldID) + '/Player/'
-
-        SeasonHistoryObject['ChampionTeam'] = {'data-field': ChampionTeam.TeamName, 'span-field': ChampionTeam.TeamRecord, 'href-field': TeamHrefBase + str(ChampionTeam.TeamID_id)}
-        SeasonHistoryObject['RunnerUpTeam'] = {'data-field': RunnerUpTeam.TeamName, 'span-field': RunnerUpTeam.TeamRecord, 'href-field': TeamHrefBase + str(RunnerUpTeam.TeamID_id)}
-        SeasonHistoryObject['FinalFourTeam1'] = {'data-field': FinalFourTeam1.TeamName, 'span-field': FinalFourTeam1.TeamRecord, 'href-field': TeamHrefBase + str(FinalFourTeam1.TeamID_id)}
-        SeasonHistoryObject['FinalFourTeam2'] = {'data-field': FinalFourTeam2.TeamName, 'span-field': FinalFourTeam2.TeamRecord, 'href-field': TeamHrefBase + str(FinalFourTeam2.TeamID_id)}
-
-        PlayerOfTheYear = PlayerTeamSeasonAward.objects.filter(WorldID = CurrentWorld).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID = ThisSeason).filter(IsNationalAward = True).filter(IsPlayerOfTheYear = True).first()
-        SeasonHistoryObject['POTY'] = {'data-field': PlayerOfTheYear.PlayerTeamSeasonID.PlayerID.FullName, 'href-field': PlayerHrefBase + str(PlayerOfTheYear.PlayerTeamSeasonID.PlayerID.PlayerID)}
-
-        context['SeasonHistoryObject'] = SeasonHistoryObject
-
-    TeamPlayerHistoryLeaders = []
-    AllHistoricalPlayersStats = [u.PlayerID.PlayerTeamCareerStatTotals(None, ['Points', 'Rebounds', 'Assists'], True, False) for u in PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = ThisSeason)]
-
-    NumberOfHistoricalLeadersShown = 5
-    HistoricalLeaders = []
-    rank = 1
-    for u in sorted(AllHistoricalPlayersStats, key=lambda t: t['PointsPG'], reverse=True)[0:NumberOfHistoricalLeadersShown]:
-        u['PPGRank'] = rank
-        rank +=1
-
-    rank = 1
-    for u in sorted(AllHistoricalPlayersStats, key=lambda t: t['ReboundsPG'], reverse=True)[0:NumberOfHistoricalLeadersShown]:
-        u['RPGRank'] = rank
-        rank +=1
-
-    rank = 1
-    for u in sorted(AllHistoricalPlayersStats, key=lambda t: t['AssistsPG'], reverse=True)[0:NumberOfHistoricalLeadersShown]:
-        u['APGRank'] = rank
-        rank +=1
-
-    for u in AllHistoricalPlayersStats:
-        if 'APGRank' in u or 'PPGRank' in u or 'RPGRank' in u:
-            HistoricalLeaders.append(u)
+    AllAmericans = []
+    if CurrentWeek.PhaseID.PhaseName == 'Bowls':
+        print('It is the preseason!')
+        AllAmericans = []
+        AllAwards = PlayerTeamSeasonAward.objects.filter(IsSeasonAward = True).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('PositionID__PositionSortOrder')
+        for Conf in [None] + [ u for u in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName')]:
+            print('AllAmericans for ', Conf)
+            ConferenceName = Conf.ConferenceName if Conf is not None else 'National'
+            if Conf is None:
+                ConfDict = {'Conference': {'ConferenceName': 'National', 'ConferenceAbbreviation': 'National', 'ConferenceID': 0}, 'ShowConference': '', 'ConferenceSelected': 'selected-season-award-conference-tab', 'Teams' : []}
+                PTSA = AllAwards.filter(IsNationalAward = True)
+                for TD in [{'IsFirstTeam': 1, 'IsSecondTeam': 0}, {'IsFirstTeam': 0, 'IsSecondTeam': 1}]:
+                    T = 'FirstTeam' if TD['IsFirstTeam'] == 1 else 'SecondTeam'
+                    ShowTeam = '' if T == 'FirstTeam' else 'season-allamerican-team-hide'
+                    ConfDict['Teams'].append({'Team': PTSA.filter(IsFirstTeam = TD['IsFirstTeam']).filter(IsSecondTeam = TD['IsSecondTeam']), 'TeamName': T, 'ShowTeam': ShowTeam})
+            else:
+                ConfDict = {'Conference': {'ConferenceName': Conf.ConferenceName, 'ConferenceAbbreviation': Conf.ConferenceAbbreviation, 'ConferenceID': Conf.ConferenceID}, 'ShowConference': 'season-allamerican-conf-hide', 'ConferenceSelected': '', 'Teams' : []}
+                PTSA = AllAwards.filter(IsConferenceAward = True).filter(ConferenceID = Conf)
+                for TD in [{'IsFirstTeam': 1, 'IsSecondTeam': 0}, {'IsFirstTeam': 0, 'IsSecondTeam': 1}]:
+                    T = 'FirstTeam' if TD['IsFirstTeam'] == 1 else 'SecondTeam'
+                    ShowTeam = '' if T == 'FirstTeam' else 'season-allamerican-team-hide'
+                    ConfDict['Teams'].append({'Team':PTSA.filter(IsFirstTeam = TD['IsFirstTeam']).filter(IsSecondTeam = TD['IsSecondTeam']), 'TeamName': T, 'ShowTeam': ShowTeam})
+            AllAmericans.append(ConfDict)
+        print()
+        print('Preseason Awards', AllAmericans)
 
 
     page = {'PageTitle': 'College HeadFootballCoach - '+ str(SeasonStartYear) +' Season', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
 
-    context = {'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek}
+    context = {'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'AllAmericans': AllAmericans}
     for u in context:
         print(u, context[u])
     return render(request, 'HeadFootballCoach/Season.html', context)

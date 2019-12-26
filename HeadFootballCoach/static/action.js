@@ -81,7 +81,14 @@ $(document).ready(function() {
       },
       dataType: 'json',
       success: function(res, status) {
-        location.reload();
+        console.log(res, status);
+        if (res['redirect'] == '')  {
+          location.reload();
+        }
+        else {
+          window.location = res['redirect'];
+        }
+        //
       },
       error: function(res) {
         alert(res.status);

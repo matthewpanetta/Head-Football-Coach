@@ -8,6 +8,7 @@ class Round(Func):
 def NationalAwards(WorldID, CurrentSeason):
 
     CurrentWorld = World.objects.get(WorldID = WorldID)
+    print('-----Assigning Awards------')
 
     AwardsToCreate = []
     if CurrentSeason.AwardsCreated:
@@ -31,7 +32,7 @@ def NationalAwards(WorldID, CurrentSeason):
                 PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PlayerOfTheYearPTS['PlayerTeamSeasonID'])
                 PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=True, IsNationalAward=True, IsSeasonAward=True)
             else:
-                PlayerOfTheYearPTS = AllPlayers.filter(PlayerTeamSeasonID__TeamSeasonID__TeamID__ConferenceID = Conf).first()
+                PlayerOfTheYearPTS = AllPlayers.filter(TeamSeasonID__TeamID__ConferenceID = Conf).first()
                 PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PlayerOfTheYearPTS['PlayerTeamSeasonID'])
                 PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=True, IsConferenceAward=True, IsSeasonAward=True, ConferenceID = Conf)
 
@@ -58,20 +59,15 @@ def NationalAwards(WorldID, CurrentSeason):
 
 
                 FreshmanPositionPlayers = AllPlayers.filter(PlayerID__PositionID = Pos).filter(PlayerID__Class = 'Freshman')
-                for PlayerCount in range(0,Pos.PositionCountPerAwardTeam * 2):
-                    IsFirstTeam = False
-                    IsSecondTeam = False
-                    if PlayerCount < Pos.PositionCountPerAwardTeam:
-                        IsFirstTeam = True
-                    else:
-                        IsSecondTeam = True
+                for PlayerCount in range(0,Pos.PositionCountPerAwardTeam):
+                    IsFreshmanTeam = False
 
                     if Conf is None:
                         PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = FreshmanPositionPlayers[PlayerCount]['PlayerTeamSeasonID'])
-                        PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=False, PositionID = Pos, IsFirstTeam=IsFirstTeam, IsSecondTeam=IsSecondTeam, IsNationalAward=True, IsSeasonAward=True)
+                        PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=False, PositionID = Pos, IsFreshmanTeam=True, IsNationalAward=True, IsSeasonAward=True)
                     else:
                         PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = FreshmanPositionPlayers[PlayerCount]['PlayerTeamSeasonID'])
-                        PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=False, PositionID = Pos, IsFirstTeam=IsFirstTeam, IsSecondTeam=IsSecondTeam, IsConferenceAward=True, ConferenceID=Conf, IsSeasonAward=True)
+                        PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=False, PositionID = Pos, IsFreshmanTeam=True, IsConferenceAward=True, ConferenceID=Conf, IsSeasonAward=True)
 
                     AwardsToCreate.append(PlayerAward)
 

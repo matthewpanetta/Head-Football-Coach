@@ -1276,6 +1276,15 @@ class TeamSeason(models.Model):
 
         return OpposingTeams
 
+    @property
+    def LostToTeams(self):
+        OpposingTeams = []
+        Games = self.teamgame_set.filter(IsWinningTeam=False).filter(GameID__WasPlayed = True)
+        for TG in Games:
+            OpposingTeams.append(TG.OpposingTeamGame.TeamSeasonID)
+
+        return OpposingTeams
+
 
     def UpdateWinStreak(self, DidWin):
 
@@ -2011,7 +2020,6 @@ class Game(models.Model):
                 )
             )
 
-        print('TeamGames.query', TeamGames.query)
 
         HomeTeamGame = TeamGames.filter(IsHomeTeam = True).first()
         AwayTeamGame = TeamGames.filter(IsHomeTeam = False).first()
@@ -2026,6 +2034,7 @@ class Game(models.Model):
             'AwayTeamID': self.AwayTeamID,
             'HomeTeamID': self.HomeTeamID,
             'GameDisplay':GameDisplay,
+            'GameHeadlineDisplay': self.GameHeadlineDisplay
         }
 
         for Stat in HomeTeamGame:

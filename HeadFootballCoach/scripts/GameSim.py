@@ -636,7 +636,7 @@ def GameSim(game):
                     AllPlayers[WideReceiverPlayer]['GameStats']['REC_Receptions'] += 1
                     GameDict[OffensiveTeam]['REC_Receptions'] += 1
 
-                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S'] + DefensiveTeamPlayers['OLB']  + OffensiveTeamPlayers['MLB']  ]
+                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S'] + DefensiveTeamPlayers['OLB']  + OffensiveTeamPlayers['MLB']  ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     AllPlayers[DefensiveTackler]['GameStats']['DEF_Tackles'] += 1

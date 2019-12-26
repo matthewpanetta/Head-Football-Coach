@@ -11,6 +11,9 @@
   <div class='PageContent'>
 
     <div class="w3-container">
+      <div class="w3-row-padding">
+        {{game.GameHeadlineDisplay}}
+      </div>
       <div class='w3-row-padding'>
         <div class='w3-col s2 text-left'>
           <a href="/World/{{page.WorldID}}/Team/{{awayTeam.TeamID}}"><img class='gameTeamLogo' src='{{awayTeam.LogoURL}}' alt="My image"></a>
@@ -41,18 +44,18 @@
               <th class='w3-center'>F</th>
             </thead>
             <tr>
-              <td class='gameBoxScoreTeamName'>{{awayTeam.Abbreviation}}</td>
+              <td class='gameBoxScoreTeamName colgroup-border-right'>{{awayTeam.Abbreviation}}</td>
               {% for EventPeriod in boxScore %}
               <td class='w3-center'>{{EventPeriod.AwayPoints}}</td>
               {% endfor %}
-              <td class='w3-center'>{{game.AwayPoints}}</td>
+              <td class='w3-center colgroup-border-left gameOutcome{{game.AwayOutcomeLetter}}'>{{game.AwayPoints}}</td>
             </tr>
             <tr>
-              <td class='gameBoxScoreTeamName'>{{homeTeam.Abbreviation}}</td>
+              <td class='gameBoxScoreTeamName colgroup-border-right'>{{homeTeam.Abbreviation}}</td>
               {% for EventPeriod in boxScore %}
               <td class='w3-center'>{{EventPeriod.HomePoints}}</td>
               {% endfor %}
-              <td class='w3-center'>{{game.HomePoints}}</td>
+              <td class='w3-center colgroup-border-left gameOutcome{{game.HomeOutcomeLetter}}'>{{game.HomePoints}}</td>
             </tr>
           </table>
           {%else%}
@@ -121,7 +124,7 @@
                       <tbody>
                         {% for Period in ScoringSummary %}
                           <tr class='ScoringSummaryQuarterHeader'>
-                            <th colspan='2'>{{Period.PeriodName}}</th>
+                            <th colspan='4'>{{Period.PeriodName}}</th>
                             <th class='ScoringSummaryTeamScore'>{{homeTeam.Abbreviation}}</th>
                             <th class='ScoringSummaryTeamScore'>{{awayTeam.Abbreviation}}</th>
                           </tr>
@@ -130,23 +133,19 @@
                             <td class='ScoringSummaryTeamLogo'>
                                 <img src="{{Score.ScoringTeamID__TeamLogoURL}}" alt="">
                             </td>
-                            <td>
-                                <div class="table-row">
-                                  <div class="">
-                                    {{Score.PlayType}}
-                                  </div>
-                                  <div class="">
-                                    {{Score.DisplayTime}}
-                                  </div>
-                                  <div class="ScoringSummaryDrive">
-                                    <div class="">
-                                      {{Score.PlayDescription}}
-                                    </div>
-                                    <div class="ScoringSummaryDriveDescription">
-                                      {{Score.DriveDescription}}
-                                    </div>
-                                  </div>
-                                </div>
+                            <td class="">
+                              {{Score.PlayType}}
+                            </td>
+                            <td class="">
+                              {{Score.DisplayTime}}
+                            </td>
+                            <td class="ScoringSummaryDrive">
+                              <div class="">
+                                {{Score.PlayDescription}}
+                              </div>
+                              <div class="ScoringSummaryDriveDescription">
+                                {{Score.DriveDescription}}
+                              </div>
                             </td>
                               <td class='ScoringSummaryTeamScore'>{{Score.HomePoints}}</td>
                               <td class='ScoringSummaryTeamScore'>{{Score.AwayPoints}}</td>
