@@ -141,7 +141,7 @@ def CreateSchedule(LS, WorldID):
 
 
     ScheduleLoopCount = 0
-    UnscheduledTeams = [t for t in ScheduleDict if ScheduleDict[t]['NonConferenceGames'] < NonConferenceGames]
+    UnscheduledTeams = [t for t in ScheduleDict if len(ScheduleDict[t]['WeeksScheduled']) < GamePerTeam]
     while len(UnscheduledTeams) >= 2 and ScheduleLoopCount < 100:
         rr = round_robin(UnscheduledTeams, 1)
         for week in rr:
@@ -184,7 +184,7 @@ def CreateSchedule(LS, WorldID):
 
 
         ScheduleLoopCount +=1
-        UnscheduledTeams = [t for t in ScheduleDict if ScheduleDict[t]['NonConferenceGames'] < NonConferenceGames]
+        UnscheduledTeams = [t for t in ScheduleDict if len(ScheduleDict[t]['WeeksScheduled']) < GamePerTeam]
 
 
     Game.objects.bulk_create(GamesToSave, ignore_conflicts=True)

@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" PlayerID="{{player.PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
 
+
 <body>
 
 
@@ -117,14 +118,16 @@
               {% endfor %}
             </div>
             <div class='w3-col s6'>
-              Recent Games
+              <span class='table_title'>Recent Games</span>
               <table class="table table-striped sortable">
                 <thead>
                   <tr>
-                    <th scope="col">OPP</th>
-                    <th class='initialSortColumn' data-defaultsort="asc">Date</th>
+                    <th class='teamColorBorder' scope="col">OPP</th>
+                    <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
                     {%for Stat in PlayerStatCategories%}
-                    <th>{{Stat.DisplayName}}</th>
+                    {% if Stat.SeasonAggregateValue == False %}
+                    <th class='teamColorBorder'>{{Stat.DisplayName}}</th>
+                    {% endif %}
                     {%endfor%}
                   </tr>
                 </thead>
@@ -152,11 +155,11 @@
               <table class="table table-striped sortable" id='playerRecruitingTeamTable'>
                 <thead>
                   <tr>
-                    <th scope="col">Team</th>
-                    <th scope="col">Signed?</th>
-                    <th scope="col">Scholarship Offered?</th>
-                    <th scope="col">Interest Level</th>
-                    <th scope="col">Match Rating</th>
+                    <th class='teamColorBorder' scope="col">Team</th>
+                    <th class='teamColorBorder' scope="col">Signed?</th>
+                    <th class='teamColorBorder' scope="col">Scholarship Offered?</th>
+                    <th class='teamColorBorder' scope="col">Interest Level</th>
+                    <th class='teamColorBorder' scope="col">Match Rating</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -198,10 +201,10 @@
               <table class="table table-striped sortable">
                 <thead>
                   <tr>
-                    <th class='initialSortColumn' data-defaultsort="asc">Season</th>
-                    <th class='initialSortColumn' data-defaultsort="asc">Class</th>
+                    <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Season</th>
+                    <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Class</th>
                     {%for Stat in PlayerStatCategories%}
-                    <th>{{Stat.DisplayName}}</th>
+                    <th class='teamColorBorder'>{{Stat.DisplayName}}</th>
                     {%endfor%}
                   </tr>
                 </thead>
@@ -225,10 +228,12 @@
               <table class="table table-striped sortable">
                 <thead>
                   <tr>
-                    <th scope="col">OPP</th>
-                    <th class='initialSortColumn' data-defaultsort="asc">Date</th>
+                    <th class='teamColorBorder' scope="col">OPP</th>
+                    <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
                     {%for Stat in PlayerStatCategories%}
-                    <th>{{Stat.DisplayName}}</th>
+                    {% if Stat.SeasonAggregateValue == False %}
+                    <th class='teamColorBorder'>{{Stat.DisplayName}}</th>
+                    {% endif %}
                     {%endfor%}
                   </tr>
                 </thead>
@@ -414,3 +419,11 @@ $(document).ready(function(){
 
 });
 </script>
+
+
+<style media="screen">
+  .teamColorBorder {
+    border-top-color: #{{page.PrimaryColor}}  !important;
+    border-bottom-color: #{{page.PrimaryColor}} !important;
+  }
+</style>

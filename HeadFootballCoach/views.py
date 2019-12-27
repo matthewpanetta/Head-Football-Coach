@@ -549,6 +549,99 @@ def Page_Awards(request, WorldID):
     return render(request, 'HeadFootballCoach/Awards.html', context)
 
 
+
+def Page_PlayerStats(request, WorldID):
+    DoAudit = True
+    page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    CurrentWorld  = World.objects.get(WorldID = WorldID)
+    CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
+    LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
+    CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
+    UserTeam = GetUserTeam(WorldID)
+    AllAwards = PlayerTeamSeasonAward.objects.filter(WorldID = CurrentWorld).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('WeekID', 'PositionGroupID')
+
+    ConferenceAwards = []
+
+    AwardDict = {'Conference': {'ConferenceName': 'National', 'ConferenceAbbreviation': 'National', 'ConferenceID': 0}, 'ShowConference': '', 'ConferenceSelected': 'selected-upcoming-gameview-tab'}
+    AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsNationalAward = True).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
+    AwardDict['AllConferenceAwards'] = []
+    for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
+        AllAwards.filter(IsSeasonAward = True).filter(IsNationalAward = True).filter(IsPositionAward=True).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
+        if AllConferenceGroup == 'First Team':
+            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
+        elif AllConferenceGroup == 'Second Team':
+            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
+        elif AllConferenceGroup == 'Freshman Team':
+            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
+    ConferenceAwards.append(AwardDict)
+
+    for Conf in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName'):
+        AwardDict = {'Conference': Conf, 'ConferenceSelected': '', 'ShowConference': 'w3-hide', }
+        AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
+        AwardDict['AllConferenceAwards'] = []
+        for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
+            AllAwards.filter(IsSeasonAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
+            if AllConferenceGroup == 'First Team':
+                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
+            elif AllConferenceGroup == 'Second Team':
+                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
+            elif AllConferenceGroup == 'Freshman Team':
+                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
+        ConferenceAwards.append(AwardDict)
+    for c in ConferenceAwards:
+        print()
+        print(c)
+
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'ConferenceAwards': ConferenceAwards}
+    return render(request, 'HeadFootballCoach/PlayerStats.html', context)
+
+
+def Page_TeamStats(request, WorldID):
+    DoAudit = True
+    page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    CurrentWorld  = World.objects.get(WorldID = WorldID)
+    CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
+    LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
+    CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
+    UserTeam = GetUserTeam(WorldID)
+    AllAwards = PlayerTeamSeasonAward.objects.filter(WorldID = CurrentWorld).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('WeekID', 'PositionGroupID')
+
+    ConferenceAwards = []
+
+    AwardDict = {'Conference': {'ConferenceName': 'National', 'ConferenceAbbreviation': 'National', 'ConferenceID': 0}, 'ShowConference': '', 'ConferenceSelected': 'selected-upcoming-gameview-tab'}
+    AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsNationalAward = True).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
+    AwardDict['AllConferenceAwards'] = []
+    for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
+        AllAwards.filter(IsSeasonAward = True).filter(IsNationalAward = True).filter(IsPositionAward=True).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
+        if AllConferenceGroup == 'First Team':
+            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
+        elif AllConferenceGroup == 'Second Team':
+            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
+        elif AllConferenceGroup == 'Freshman Team':
+            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
+    ConferenceAwards.append(AwardDict)
+
+    for Conf in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName'):
+        AwardDict = {'Conference': Conf, 'ConferenceSelected': '', 'ShowConference': 'w3-hide', }
+        AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
+        AwardDict['AllConferenceAwards'] = []
+        for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
+            AllAwards.filter(IsSeasonAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
+            if AllConferenceGroup == 'First Team':
+                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
+            elif AllConferenceGroup == 'Second Team':
+                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
+            elif AllConferenceGroup == 'Freshman Team':
+                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
+        ConferenceAwards.append(AwardDict)
+    for c in ConferenceAwards:
+        print()
+        print(c)
+
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'ConferenceAwards': ConferenceAwards}
+    return render(request, 'HeadFootballCoach/TeamStats.html', context)
+
+
 def Page_Player(request, WorldID, PlayerID):
 
 
@@ -591,41 +684,44 @@ def Page_Player(request, WorldID, PlayerID):
         {
             'StatGroupName': 'Passing',
             'Stats': [
-                {'FieldName': 'PAS_CompletionsAndAttempts', 'DisplayName': 'C/ATT', 'DisplayColumn': True, 'DisplayOrder': 2},
-                {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'DisplayColumn': True, 'DisplayOrder': 2},
-                {'FieldName': 'PAS_YardsPerAttempt', 'DisplayName': 'YPA', 'DisplayColumn': True, 'DisplayOrder': 2.5},
-                {'FieldName': 'PAS_Attempts', 'DisplayName': 'A', 'DisplayColumn': False, 'DisplayOrder': 3},
-                {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'DisplayColumn': True, 'DisplayOrder': 4},
-                {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TD', 'DisplayColumn': True, 'DisplayOrder': 5},
-                {'FieldName': 'PAS_INT', 'DisplayName': 'INT', 'DisplayColumn': True, 'DisplayOrder': 6},
-                {'FieldName': 'PAS_SacksAndYards', 'DisplayName': 'Sck/Yrd', 'DisplayColumn': True, 'DisplayOrder': 7},
-                {'FieldName': 'PAS_SackYards', 'DisplayName': 'Sack Yards', 'DisplayColumn': False, 'DisplayOrder': 998}
+                {'FieldName': 'PAS_CompletionsAndAttempts', 'DisplayName': 'C/ATT', 'DisplayColumn': True, 'DisplayOrder': 2, 'SeasonAggregateValue': False},
+                {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'DisplayColumn': True, 'DisplayOrder': 2, 'SeasonAggregateValue': False},
+                {'FieldName': 'PAS_YardsPerAttempt', 'DisplayName': 'YPA', 'DisplayColumn': True, 'DisplayOrder': 2.5, 'SeasonAggregateValue': False},
+                {'FieldName': 'PAS_Attempts', 'DisplayName': 'A', 'DisplayColumn': False, 'DisplayOrder': 3, 'SeasonAggregateValue': False},
+                {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'DisplayColumn': True, 'DisplayOrder': 4, 'SeasonAggregateValue': False},
+                {'FieldName': 'PAS_YardsPerGame', 'DisplayName': 'Pass YPG', 'DisplayColumn': True, 'DisplayOrder': 4.5, 'SeasonAggregateValue': True},
+                {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TD', 'DisplayColumn': True, 'DisplayOrder': 5, 'SeasonAggregateValue': False},
+                {'FieldName': 'PAS_INT', 'DisplayName': 'INT', 'DisplayColumn': True, 'DisplayOrder': 6, 'SeasonAggregateValue': False},
+                {'FieldName': 'PAS_SacksAndYards', 'DisplayName': 'Sck/Yrd', 'DisplayColumn': True, 'DisplayOrder': 7, 'SeasonAggregateValue': False},
+                {'FieldName': 'PAS_SackYards', 'DisplayName': 'Sack Yards', 'DisplayColumn': False, 'DisplayOrder': 998, 'SeasonAggregateValue': False}
             ]
         },
         {
             'StatGroupName': 'Rushing',
             'Stats': [
-                {'FieldName': 'RUS_Carries', 'DisplayName': 'Car', 'DisplayColumn': True, 'DisplayOrder': 2},
-                {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'DisplayColumn': True, 'DisplayOrder': 3},
-                {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'YPC', 'DisplayColumn': True, 'DisplayOrder': 3.5},
-                {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'DisplayColumn': True, 'DisplayOrder': 4},
+                {'FieldName': 'RUS_Carries', 'DisplayName': 'Car', 'DisplayColumn': True, 'DisplayOrder': 2, 'SeasonAggregateValue': False},
+                {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'DisplayColumn': True, 'DisplayOrder': 3, 'SeasonAggregateValue': False},
+                {'FieldName': 'RUS_YardsPerGame', 'DisplayName': 'Rush YPG', 'DisplayColumn': True, 'DisplayOrder': 3.2, 'SeasonAggregateValue': True},
+                {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'YPC', 'DisplayColumn': True, 'DisplayOrder': 3.5, 'SeasonAggregateValue': False},
+                {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'DisplayColumn': True, 'DisplayOrder': 4, 'SeasonAggregateValue': False},
             ],
         },
         {
             'StatGroupName': 'Receiving',
             'Stats': [
-                {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'DisplayColumn': True, 'DisplayOrder': 2},
-                {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'DisplayColumn': True, 'DisplayOrder': 3},
-                {'FieldName': 'REC_YardsPerCatch', 'DisplayName': 'YPC', 'DisplayColumn': True, 'DisplayOrder': 3.5},
-                {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'DisplayColumn': True, 'DisplayOrder': 4},
+                {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'DisplayColumn': True, 'DisplayOrder': 2, 'SeasonAggregateValue': False},
+                {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'DisplayColumn': True, 'DisplayOrder': 3, 'SeasonAggregateValue': False},
+                {'FieldName': 'REC_YardsPerGame', 'DisplayName': 'Rec YPG', 'DisplayColumn': True, 'DisplayOrder': 3.2, 'SeasonAggregateValue': True},
+                {'FieldName': 'REC_YardsPerCatch', 'DisplayName': 'YPC', 'DisplayColumn': True, 'DisplayOrder': 3.5, 'SeasonAggregateValue': False},
+                {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'DisplayColumn': True, 'DisplayOrder': 4, 'SeasonAggregateValue': False},
             ],
         },
         {
             'StatGroupName': 'Defense',
             'Stats': [
-                {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'DisplayColumn': True, 'DisplayOrder': 2},
-                {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'DisplayColumn': True, 'DisplayOrder': 3},
-                {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'DisplayColumn': True, 'DisplayOrder': 4},
+                {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'DisplayColumn': True, 'DisplayOrder': 2, 'SeasonAggregateValue': False},
+                {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'DisplayColumn': True, 'DisplayOrder': 3, 'SeasonAggregateValue': False},
+                {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'DisplayColumn': True, 'DisplayOrder': 4, 'SeasonAggregateValue': False},
             ],
         },
     ]
@@ -699,6 +795,21 @@ def Page_Player(request, WorldID, PlayerID):
                     default=(Round(Sum(F('REC_Yards'))* 1.0 / Sum(F('REC_Receptions')),1)),
                     output_field=FloatField()
                 ),
+                REC_YardsPerGame=Case(
+                    When(REC_Receptions=0, then=0.0),
+                    default=(Round(Sum(F('REC_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
+                    output_field=FloatField()
+                ),
+                RUS_YardsPerGame=Case(
+                    When(RUS_Carries=0, then=0.0),
+                    default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
+                    output_field=FloatField()
+                ),
+                PAS_YardsPerGame=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
+                    output_field=FloatField()
+                ),
                 Position = F('PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation')
 
             )
@@ -740,6 +851,21 @@ def Page_Player(request, WorldID, PlayerID):
                     default=(Round(Sum(F('REC_Yards'))* 1.0 / Sum(F('REC_Receptions')),1)),
                     output_field=FloatField()
                 ),
+                REC_YardsPerGame=Case(
+                    When(REC_Receptions=0, then=0.0),
+                    default=(Round(Sum(F('REC_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
+                    output_field=FloatField()
+                ),
+                RUS_YardsPerGame=Case(
+                    When(RUS_Carries=0, then=0.0),
+                    default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
+                    output_field=FloatField()
+                ),
+                PAS_YardsPerGame=Case(
+                    When(PAS_Attempts=0, then=0.0),
+                    default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
+                    output_field=FloatField()
+                ),
                 Position = F('PlayerID__PositionID__PositionAbbreviation')
             )
 
@@ -753,15 +879,16 @@ def Page_Player(request, WorldID, PlayerID):
         PlayerStatCategoriesTaken = []
         PlayerStatCategories = []
         for G in PlayerStats:
-            for S in ['RUS_Yards', 'RUS_TD', 'RUS_Carries','RUS_YardsPerCarry', 'PAS_Yards', 'PAS_TD', 'PAS_CompletionsAndAttempts','PAS_CompletionPercentage', 'PAS_SacksAndYards', 'PAS_INT', 'REC_Yards','REC_Receptions','REC_YardsPerCatch', 'REC_TD',  'GameScore','DEF_Tackles', 'DEF_Sacks', 'DEF_INT']:
+            for S in ['RUS_Yards', 'RUS_TD', 'RUS_Carries','RUS_YardsPerCarry', 'PAS_Yards', 'PAS_YardsPerGame','RUS_YardsPerGame','REC_YardsPerGame', 'PAS_TD', 'PAS_CompletionsAndAttempts','PAS_CompletionPercentage', 'PAS_SacksAndYards', 'PAS_INT', 'REC_Yards','REC_Receptions','REC_YardsPerCatch', 'REC_TD',  'GameScore','DEF_Tackles', 'DEF_Sacks', 'DEF_INT']:
                 if str(G[S]) != '0' and str(G[S]) != '0.0' and S not in PlayerStatCategoriesTaken:
                     PlayerStatCategoriesTaken.append(S)
                     for StatGroup in BoxScoreStatGroupings:
                         for Stat in StatGroup['Stats']:
                             if S == Stat['FieldName']:
-                                PlayerStatCategories.append({'FieldName': S, 'DisplayName': Stat['DisplayName']})
+                                PlayerStatCategories.append({'FieldName': S, 'DisplayName': Stat['DisplayName'], 'DisplayOrder': Stat['DisplayOrder'], 'SeasonAggregateValue': Stat['SeasonAggregateValue']})
 
 
+        PlayerStatCategories = sorted(PlayerStatCategories, key=lambda k: k['DisplayOrder'])
         PlayerStats = [u for u in PlayerStats]
         RecentGameStats = []
         for G in PlayerStats:
@@ -770,7 +897,11 @@ def Page_Player(request, WorldID, PlayerID):
             G['OpposingTeamID'] = OpposingTeamGame.TeamSeasonID.TeamID_id
             G['OpposingTeamLogoURL'] = OpposingTeamGame.TeamSeasonID.TeamID.TeamLogoURL
             G['OpposingTeamName'] = OpposingTeamGame.TeamSeasonID.TeamID.TeamName
+            print('PlayerStatCategories', PlayerStatCategories)
             for StatCategory in PlayerStatCategories:
+                print(StatCategory)
+                if StatCategory['SeasonAggregateValue'] == True:
+                    continue
                 SC = {}
                 SC['Value'] = G[StatCategory['FieldName']]
                 SC['FieldName'] = StatCategory['FieldName']
@@ -945,8 +1076,8 @@ def Page_Game(request, WorldID, GameID):
 
 
         for GE in GameEvents:
-            GE['GameTime'] = (GE['EventPeriod'] -1) * (60*15)  + ((60*15) - GE['EventTime']) if GE['EventPeriod'] in [1,2,3,4] else (60*60)  + GE['EventTime']
-
+            GE['GameTime'] = (GE['EventPeriod'] -1) * (60*15)  + ((60*15) - GE['EventTime']) #if GE['EventPeriod'] in [1,2,3,4] else (60*60)  + GE['EventTime']
+            print('Event period-', GE['EventPeriod'], 'Eventtime - ', GE['EventTime'], 'resulting GameTime', GE['GameTime'])
 
 
         PeriodTitleMap = {1: '1st', 2: '2nd', 3:'3rd', 4: '4th', 5: 'OT', 6: '2OT', 7: '3OT', 8: '4OT', 9: '5OT', 10: '6OT', 11: '7OT'}
@@ -1313,7 +1444,11 @@ def GET_ConferenceStandings(request, WorldID, ConferenceID = None):
                 output_field=FloatField()
             ),
             MOV= Round(F('PPG') - F('PAPG'), 1),
-            NationalRankDisplay =  Concat(Value('(') , F('NationalRank'), Value(')'), output_field=CharField()),
+            NationalRankDisplay =  Case(
+                When(NationalRank__gt = 25, then=Value('')),
+                default=(Concat(Value('(') , F('NationalRank'), Value(')'), output_field=CharField())),
+                output_field = CharField()
+            ),
             WinsLosses =  Concat( F('TeamSeasonID__Wins'), Value('-'), F('TeamSeasonID__Losses'), output_field=CharField()),
             ConferenceWinsLosses =  Concat( F('TeamSeasonID__ConferenceWins'), Value('-'), F('TeamSeasonID__ConferenceLosses'), output_field=CharField()),
 
@@ -1713,7 +1848,7 @@ def Page_Team(request,WorldID, TeamID):
     allTeams = GetAllTeams(WorldID, 'National', None)
     conferenceTeams = ThisTeam.ConferenceID.ConferenceStandings(Small=True, HighlightedTeams=[ThisTeam])
 
-    TopPlayers = ThisTeam.CurrentTeamSeason.GetTeamLeaders(['GamesPlayed'])
+    TopPlayers = ThisTeam.CurrentTeamSeason.GetTeamLeaders()
 
     UserTeam = GetUserTeam(WorldID)
 

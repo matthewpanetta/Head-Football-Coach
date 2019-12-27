@@ -202,17 +202,20 @@
                   <div class="w3-row">
                     {% for teamLeader in teamLeaders %}
                     <div class="w3-col s6 teamTeamLeaderBox">
-                      <h2 class='teamTeamLeaderBoxStat'>{{teamLeader.Stat}}</h2>
+                      <h2 class='teamTeamLeaderBoxStat'>{{teamLeader.DisplayName}}</h2>
                       <div class="" style='display:inline-block; margin-top: -10px;'>
-                        <div class="teamTeamLeaderBoxPlayerFace inline-block" id="teamTeamLeaderBoxPlayerFace{{forloop.counter}}" PlayerFaceJson='{{teamLeader.PlayerFaceJson|safe}}' {%if teamLeader.PlayerFaceJson%} style='margin-top:5px;'
-                          {% endif %}></div>
+                        <div class="teamTeamLeaderBoxPlayerFace inline-block" id="teamTeamLeaderBoxPlayerFace{{forloop.counter}}" PlayerFaceJson="{{teamLeader.PTS.PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if teamLeader.PTS.PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
+                            <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
+
+                            </div>
+                        </div>
                         <div class="inline-block w3-cell-bottom">
                           <div class="">
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{teamLeader.PlayerID}}">{{teamLeader.PlayerName}}</a></span>
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{teamLeader.PlayerPosition}}</span>
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{teamLeader.PTS.PlayerID}}">{{teamLeader.PTS.PlayerName}}</a></span>
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{teamLeader.PTS.PlayerPosition}}</span>
                           </div>
                           <div class="">
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{teamLeader.Value}}</span>
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{teamLeader.Value}} total{% if teamLeader.ValuePerGame%}, {{teamLeader.ValuePerGame}} per game{%endif%}</span>
                           </div>
                         </div>
 

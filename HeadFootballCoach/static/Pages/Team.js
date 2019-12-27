@@ -476,19 +476,13 @@ function DrawFaces(TeamJerseyStyle, TeamJerseyInvert){
   console.log('In Draw Face')
 //  BuildFace({{player.PlayerFaceJson|safe}}, '{{playerTeam.TeamJerseyStyle}}', '{{playerTeam.TeamJerseyInvert}}');
 
-  $.each($('.teamTeamLeaderBoxPlayerFace'), function(index,FaceDiv){
-    console.log('FaceDiv', $(FaceDiv));
-    var FaceElement = $(FaceDiv)[0];
-    if ($(FaceDiv).attr('PlayerFaceJson').length == 0) {
-      var TeamLogo = $('.teamTeamLogo')[0];
-      var TeamLogoSrc = $(TeamLogo).attr('src');
-      console.log('Adding team logo!', TeamLogoSrc, FaceElement);
-      $(FaceElement).append('<img class="teamTeamLeaderBoxTeamLogo" src="'+TeamLogoSrc+'"  >');
-      return 0;
-    }
-
-    var PlayerFaceJson = JSON.parse($(FaceElement).attr('PlayerFaceJson'));
-    BuildFace(PlayerFaceJson, TeamJerseyStyle, TeamJerseyInvert, $(FaceElement).attr('id'));
+  console.log("$('[hasplayerfacejson='1']')", $('[hasplayerfacejson="1"]'));
+  $.each($('[hasplayerfacejson="1"]'), function(index,FaceDiv){
+    var FaceElement = $(FaceDiv).find('.PlayerFaceDisplay')[0];
+    var FaceJson = $(FaceDiv).attr('PlayerFaceJson').replace(/'/g, '"');
+    var PlayerFaceJson = JSON.parse(FaceJson);
+    console.log('PlayerFaceJSON', PlayerFaceJson, 'attaching to', FaceElement)
+    BuildFace(PlayerFaceJson, undefined, undefined, $(FaceElement).attr('id'));
   });
 }
 
@@ -510,7 +504,6 @@ $(document).ready(function(){
   //GetTeamHistory(WorldID, TeamID);
   GetTeamRoster(WorldID, TeamID);
   GetTeamSchedule(WorldID, TeamID);
-
   DrawFaces(TeamJerseyStyle, TeamJerseyInvert);
 
 });
@@ -529,26 +522,6 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, DOMID=undefined){
 
   console.log('face before generate', face, TeamJerseyStyle, TeamJerseyInvert);
   if (face == '' || face == undefined){
-    /*
-    console.log('face was empty');
-    face = generate();
-
-    $.ajax({
-      method: "POST",
-      url: "/World/"+WorldID+"/Player/"+PlayerID+"/SetPlayerFaceJSON",
-      data: {
-        csrfmiddlewaretoken: csrftoken,
-        PlayerFaceJson: JSON.stringify(face)
-      },
-      dataType: 'json',
-      success: function(res, status) {
-        console.log(res, status);
-      },
-      error: function(res) {
-        alert(res.status);
-      }
-    });
-    */
     return 0;
   }
   if (TeamJerseyInvert == 'True') {
@@ -558,7 +531,7 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, DOMID=undefined){
     var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#000000"]}
 
   }
-  overrides['jersey'] = {'id': TeamJerseyStyle}
+  //overrides['jersey'] = {'id': TeamJerseyStyle}
 
   console.log('face after generate', face);
   if (DOMID == undefined){

@@ -37,6 +37,9 @@ urlpatterns = [
     path('World/<int:WorldID>/Conferences/', views.Page_Conferences, name='Conferences'),
     path('World/<int:WorldID>/Top25/', views.Page_Top25, name='Top25'),
     path('World/<int:WorldID>/Awards/', views.Page_Awards, name='Awards'),
+    path('World/<int:WorldID>/PlayerStats/', views.Page_PlayerStats, name='PlayerStats'),
+    path('World/<int:WorldID>/TeamStats/', views.Page_TeamStats, name='TeamStats'),
+
 
     path('World/<int:WorldID>/Search/<str:SearchInput>/', views.Page_Search, name='Search'),
 
@@ -57,7 +60,6 @@ urlpatterns = [
     path('World/<int:WorldID>/AwardRaces', views.GET_AwardRaces, name='AwardRaces'),
 
     path('audit/', views.Page_Audit, name='Audit'),
-    path('audit/ShootingPercentages/<int:WorldID>/', views.Page_Audit_ShootingPercentages, name='AuditShootingPercentages'),
     path('admin/', admin.site.urls),
 
 ]

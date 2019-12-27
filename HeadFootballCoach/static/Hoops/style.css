@@ -1139,6 +1139,7 @@ input[type=text], input[type=password] {
 td {
   color: #6c6d6f;
   font-size: 12.5px;
+  vertical-align: middle !important;
 }
 
 th {

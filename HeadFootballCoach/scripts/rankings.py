@@ -232,11 +232,12 @@ def CalculateRankings(LS, WorldID):
 def SelectBroadcast(LS, WorldID):
 
     CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
+    NextWeek = CurrentWeek.NextWeek
 
     if CurrentWeek.BroadcastSelected == True:
         return None
 
-    GamesThisWeek = Game.objects.filter(WorldID=WorldID, WeekID = CurrentWeek)
+    GamesThisWeek = Game.objects.filter(WorldID=WorldID, WeekID = NextWeek)
     GamesThisWeek = sorted(GamesThisWeek, key=lambda r: r.HomeTeamRankValue + r.AwayTeamRankValue + Min(r.HomeTeamRankValue , r.AwayTeamRankValue) - (r.AwayTeamID.TeamPrestige) - (r.HomeTeamID.TeamPrestige )) #TODO
     RegionalGames = GamesThisWeek[1:3]
     for g in RegionalGames:

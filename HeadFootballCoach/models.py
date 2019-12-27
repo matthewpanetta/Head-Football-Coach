@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models import F, Case, When, Sum, FloatField, Func
+from django.db.models import F, Case, When, Sum, FloatField, Func, Value, CharField
+from django.db.models.functions import  Concat
 from django.utils.timezone import now
 import random
 import time
@@ -11,7 +12,7 @@ from .utilities import GetValuesOfObject, MapNumberValuesToLetterGrade, Average,
 
 class Round(Func):
   function = 'ROUND'
-  arity = 1
+  arity = 2
 
 #####  CONSTRAINTS   ########
 
@@ -1426,29 +1427,64 @@ class TeamSeason(models.Model):
 
     @property
     def NumberOfRecruitContacts(self):
-        return len(RecruitTeamSeason.objects.filter(TeamSeasonID = self))
+        return RecruitTeamSeason.objects.filter(TeamSeasonID = self).count()
 
-    def GetTeamLeaders(self, Fields):
-        PTS = self.playerteamseason_set.filter(GamesPlayed__gt = 0).values('PlayerID_id', 'GamesPlayed',  'PlayerID__PlayerFaceJson', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName')
-        PTS = [u for u in PTS if (float(u['GamesPlayed']) * 1.0 / u['GamesPlayed']) >= 10.0]
+    def GetTeamLeaders(self, Fields=None):
+        Fields = [
+            {'FieldName': 'GameScorePerGame', 'DisplayName': 'Game Score', 'SecondarySort': 'PAS_Yards'},
+            {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'SecondarySort': 'PAS_Attempts'},
+            {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'SecondarySort': 'RUS_TD'},
+            {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'SecondarySort': 'REC_TD'},
+            {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'SecondarySort': 'DEF_Tackles'},
+            {'FieldName': 'DEF_INT', 'DisplayName': 'Interceptions', 'SecondarySort': 'DEF_Tackles'},
+        ]
+        PTS = self.playerteamseason_set.filter(GamesPlayed__gt = 0).values('PlayerID_id', 'GamesPlayed',  'PlayerID__PlayerFaceJson', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName','GameScore', 'PAS_Yards', 'RUS_Yards', 'REC_Yards', 'DEF_Sacks', 'DEF_INT').annotate(
+            PlayerName = Concat(F('PlayerID__PlayerFirstName'), Value(' '), F('PlayerID__PlayerLastName'), output_field=CharField()),
+            PlayerFaceJson = F('PlayerID__PlayerFaceJson'),
+            PlayerPosition = F('PlayerID__PositionID__PositionAbbreviation'),
+            PlayerID = F('PlayerID_id'),
+            GameScorePerGame = Case(
+                When(GamesPlayed = 0, then=0.0),
+                default=Round(F('GameScore') * 1.0 / F('GamesPlayed'), 1),
+                output_field=FloatField()
+            ),
+            REC_YardsPerGame = Case(
+                When(GamesPlayed = 0, then=0.0),
+                default=Round(F('REC_Yards') * 1.0 / F('GamesPlayed'), 1),
+                output_field=FloatField()
+            ),
+            RUS_YardsPerGame = Case(
+                When(GamesPlayed = 0, then=0.0),
+                default=Round(F('RUS_Yards') * 1.0 / F('GamesPlayed'), 1),
+                output_field=FloatField()
+            ),
+            PAS_YardsPerGame = Case(
+                When(GamesPlayed = 0, then=0.0),
+                default=Round(F('PAS_Yards') * 1.0 / F('GamesPlayed'), 1),
+                output_field=FloatField()
+            )
+
+        )
+
         Results = []
-        for P in PTS:
-            P['Games'] = round(1.0 * P['GamesPlayed'] / P['GamesPlayed'],1)
+
+        if PTS.count() > 0:
+            for Field in Fields:
+                TopPlayer = PTS.order_by('-'+Field['FieldName'], '-'+Field['SecondarySort']).first()
+                Field['Value'] = TopPlayer[Field['FieldName']]
+                if Field['FieldName'] + 'PerGame' in TopPlayer and TopPlayer['GamesPlayed'] > 1:
+                    Field['ValuePerGame'] = TopPlayer[Field['FieldName'] + 'PerGame']
+                    print('PerGameValue', Field['ValuePerGame'])
+                Field['PTS'] = TopPlayer
+
+                if  len(TopPlayer['PlayerFaceJson']) == 0:
+                    PlayerObject = Player.objects.filter(PlayerID = TopPlayer['PlayerID']).first()
+                    PlayerObject.GeneratePlayerFaceJSon()
+                    Field['PTS']['PlayerFaceJson'] = PlayerObject.PlayerFaceJson
 
 
-        for Field in Fields:
-            FieldResults = {}
-            FieldResults['Stat'] = Field
-            if len(PTS) > 0:
-                TopPlayer = sorted(PTS, key=lambda k: k[Field], reverse=True)
+                Results.append(Field)
 
-                FieldResults['PlayerName'] = TopPlayer['PlayerID__PlayerFirstName'] + ' ' + TopPlayer['PlayerID__PlayerLastName']
-                FieldResults['PlayerPosition'] = TopPlayer['PlayerID__PositionID__PositionAbbreviation']
-                FieldResults['Value'] = TopPlayer[Field]
-                FieldResults['PlayerID'] = TopPlayer['PlayerID_id']
-                FieldResults['PlayerFaceJson'] = TopPlayer['PlayerID__PlayerFaceJson']
-
-            Results.append(FieldResults)
         return Results
     class Meta:
               # specify this model as an Abstract Model
@@ -1990,32 +2026,32 @@ class Game(models.Model):
                 TotalYards=F('PAS_Yards') + F('RUS_Yards'),
                 ThirdDownPercentage=Case(
                     When(ThirdDownAttempt=0, then=0),
-                    default=(Round(Sum(F('ThirdDownConversion'))* 100.0 / Sum(F('ThirdDownAttempt')))),
+                    default=(Round(Sum(F('ThirdDownConversion'))* 100.0 / Sum(F('ThirdDownAttempt')),1)),
                     output_field=FloatField()
                 ),
                 FourthDownPercentage=Case(
                     When(FourthDownAttempt=0, then=0),
-                    default=(Round(Sum(F('FourthDownConversion'))* 100.0 / Sum(F('FourthDownAttempt')))),
+                    default=(Round(Sum(F('FourthDownConversion'))* 100.0 / Sum(F('FourthDownAttempt')),1)),
                     output_field=FloatField()
                 ),
                 PAS_CompletionPercentage=Case(
                     When(PAS_Attempts=0, then=0.0),
-                    default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts'))) ),
+                    default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1) ),
                     output_field=FloatField()
                 ),
                 PAS_YardsPerAttempt=Case(
                     When(PAS_Attempts=0, then=0.0),
-                    default=(Round(Sum(F('PAS_Yards')) * 1.0 / Sum(F('PAS_Attempts')))),
+                    default=(Round(Sum(F('PAS_Yards')) * 1.0 / Sum(F('PAS_Attempts')),1)),
                     output_field=FloatField()
                 ),
                 PAS_YardsPerCompletion=Case(
                     When(PAS_Attempts=0, then=0.0),
-                    default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('PAS_Completions')))),
+                    default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('PAS_Completions')),1)),
                     output_field=FloatField()
                 ),
                 RUS_YardsPerCarry=Case(
                     When(RUS_Carries=0, then=0.0),
-                    default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('RUS_Carries')))),
+                    default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('RUS_Carries')),1)),
                     output_field=FloatField()
                 )
             )
@@ -2295,6 +2331,7 @@ class PlayerGameStat(models.Model):
 
     GameScore = models.DecimalField(default = 0, max_digits=13, decimal_places=8)
 
+    GamesPlayed = models.PositiveSmallIntegerField(default=0)
     GamesStarted = models.SmallIntegerField(default = 0)
 
     def ReturnAsDict(self):

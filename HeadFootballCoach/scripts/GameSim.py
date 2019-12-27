@@ -581,6 +581,12 @@ def GameSim(game):
                 AllPlayers[RunningBackPlayerID]['GameStats']['RUS_Yards'] += YardsThisPlay
                 AllPlayers[RunningBackPlayerID]['GameStats']['RUS_Carries'] += 1
 
+                DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
+                DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
+
+                AllPlayers[DefensiveTackler]['GameStats']['DEF_Tackles'] += 1
+                GameDict[DefensiveTeam]['DEF_Tackles'] += 1
+
             elif PlayChoice == 'Pass':
                 QuarterbackPlayerID = OffensiveTeamPlayers['QB'][0]
                 AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Attempts'] += 1
@@ -614,7 +620,7 @@ def GameSim(game):
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_SackYards'] += abs(YardsThisPlay)
                     GameDict[OffensiveTeam]['PAS_SackYards'] += abs(YardsThisPlay)
 
-                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
+                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     AllPlayers[DefensiveTackler]['GameStats']['DEF_Sacks'] += 1
@@ -627,11 +633,16 @@ def GameSim(game):
                 elif (random.uniform(0,1) < (.7024 * PassGameModifier)) :
                     PassGameModifier = PassGameModifier ** 1.1
                     YardsThisPlay = round(NormalTrunc(12 * PassGameModifier, 4, 0, 40),0)
+
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Completions'] += 1
                     GameDict[OffensiveTeam]['PAS_Completions'] += 1
 
                     WideReceivers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 3) for u in OffensiveTeamPlayers['WR'] ]
                     WideReceiverPlayer = WeightedProbabilityChoice(WideReceivers, WideReceivers[0])
+                    WideReceiverTalent = AllPlayers[WideReceiverPlayer]['PlayerSkills']['OverallRating']
+
+                    if YardsThisPlay >= 20 and (random.uniform(0,1) < (.05 * ((WideReceiverTalent / 85) ** 6))):
+                        YardsThisPlay = round(NormalTrunc(30, 50, 28, 100),0)
 
                     AllPlayers[WideReceiverPlayer]['GameStats']['REC_Receptions'] += 1
                     GameDict[OffensiveTeam]['REC_Receptions'] += 1
@@ -871,8 +882,9 @@ def GameSim(game):
 
 
 
-    GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='FINAL', IsScoringPlay = False, HomePoints = GameDict[HomeTeam]['Points'], AwayPoints = GameDict[AwayTeam]['Points'], EventPeriod = Period, EventTime = 0, PlayDescription='End of game')
-    GameEventsToSave.append(GE)
+    if Period < 5:
+        GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='FINAL', IsScoringPlay = False, HomePoints = GameDict[HomeTeam]['Points'], AwayPoints = GameDict[AwayTeam]['Points'], EventPeriod = Period, EventTime = 0, PlayDescription='End of game')
+        GameEventsToSave.append(GE)
 
     game.WasPlayed = 1
     print('FINAL -- ', OffensiveTeam, ': ', GameDict[OffensiveTeam]['Points'],' , ', DefensiveTeam, ': ', GameDict[DefensiveTeam]['Points'])
