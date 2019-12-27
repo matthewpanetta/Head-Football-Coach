@@ -82,7 +82,7 @@
                     {% for Conf in AllAmericans%}
                     {% for AwardTeam in Conf.Teams %}
                     {% for Award in AwardTeam.Team %}
-                    <tr class='{{Conf.ShowConference}} {{AwardTeam.ShowTeam}} season-allamarican-row season-allamerican-conference-{{Conf.Conference.ConferenceID}} season-allamerican-team-{{AwardTeam.TeamName}}'>
+                    <tr class='{{Conf.ShowConference}} {{AwardTeam.ShowTeam}} season-allamerican-row season-allamerican-conference-{{Conf.Conference.ConferenceID}} season-allamerican-team-{{AwardTeam.TeamName}}'>
                       <td>{{Award.PositionID.PositionAbbreviation}}</td>
                       <td>
                         <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">

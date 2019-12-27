@@ -55,7 +55,11 @@ def CalculateConferenceRankings(LS, WorldID):
             ConfRankTracker[ConfName]['Teams'][TS]['DefeatedTeams'] = TS.DefeatedTeams
             ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'] = 0
             ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'] = RankCountWithTies
+            ConfRankTracker[ConfName]['Teams'][TS]['IsConferenceChampionship'] = TS.IsConferenceChampionship
             ConfRankTracker[ConfName]['Teams'][TS]['MOV'] = TS.Points - TS.PointsAllowed
+
+            if TS.IsConferenceChampionship:
+                ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'] += 10000
 
 
 
@@ -191,8 +195,8 @@ def CalculateRankings(LS, WorldID):
         TeamDict[t]['RankValue'] = 0
         TeamDict[t]['RankValue'] =  (1000 *TeamDict[t]['NationalChampion'])
         TeamDict[t]['RankValue'] += (.1   * TeamDict[t]['MediaSharesRank'])
-        TeamDict[t]['RankValue'] += ( 1   * TeamDict[t]['WinsRank'])
-        TeamDict[t]['RankValue'] += ( 1   * TeamDict[t]['WinningPercentageRank'])
+        TeamDict[t]['RankValue'] += (10   * TeamDict[t]['WinsRank'])
+        #TeamDict[t]['RankValue'] += ( 1   * TeamDict[t]['WinningPercentageRank'])
         TeamDict[t]['RankValue'] += ( 1   * TeamDict[t]['MarginOfVictoryRank'])
         TeamDict[t]['RankValue'] += (.075 * TeamDict[t]['TeamOverallRatingRank'])
         TeamDict[t]['RankValue'] += (1    * TeamDict[t]['ConferenceChampionRank'])

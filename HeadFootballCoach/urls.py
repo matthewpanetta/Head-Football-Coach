@@ -58,6 +58,7 @@ urlpatterns = [
     path('World/<int:WorldID>/ConferenceStandings/<int:ConferenceID>', views.GET_ConferenceStandings, name='ConferenceStandings'),
     path('World/<int:WorldID>/AllTeamStats', views.GET_AllTeamStats, name='AllTeamStats'),
     path('World/<int:WorldID>/AwardRaces', views.GET_AwardRaces, name='AwardRaces'),
+    path('World/<int:WorldID>/LeagueLeaders', views.GET_LeagueLeaders, name='LeagueLeaders'),
 
     path('audit/', views.Page_Audit, name='Audit'),
     path('admin/', admin.site.urls),

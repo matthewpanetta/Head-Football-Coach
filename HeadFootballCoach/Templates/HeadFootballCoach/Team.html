@@ -312,11 +312,11 @@
                   </div>
                   <table id='teamOverviewConferenceStandings'>
                     <thead>
-                      <th>Player</th>
-                      <th>Hometown</th>
-                      <th>*</th>
-                      <th>Rank</th>
-                      <th>Overall</th>
+                      <th class='teamColorBorder'>Player</th>
+                      <th class='teamColorBorder'>Hometown</th>
+                      <th class='teamColorBorder'>*</th>
+                      <th class='teamColorBorder'>Rank</th>
+                      <th class='teamColorBorder'>Overall</th>
                     </thead>
                     {% for Recruit in SignedRecruits %}
                     <tr >
@@ -352,25 +352,25 @@
               <table class="table table-striped sortable" id='teamRosterTable'>
                 <thead>
                   <tr>
-                    <th table-data-context="All" class='TeamRosterHeaderCell' scope="col">Name</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell' scope="col">#</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell' scope="col">Position</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell' scope="col">Height</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell' scope="col">Class</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell' scope="col">Overall</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell' scope="col" data-defaultsort="asc">MPG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell' scope="col" data-defaultsort="asc">PPG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell' scope="col" data-defaultsort="asc">RPG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell' scope="col" data-defaultsort="asc">APG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell' scope="col" data-defaultsort="asc">PER</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell' scope="col" data-defaultsort="asc">ORTG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell' scope="col" data-defaultsort="asc">DRTG</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide' scope="col" data-defaultsort="asc">Inside</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide' scope="col" data-defaultsort="asc">Reb</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide' scope="col" data-defaultsort="asc">Playmaking</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide' scope="col" data-defaultsort="asc">Outside Shooting</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide' scope="col" data-defaultsort="asc">Athletic</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide' scope="col" data-defaultsort="asc">IQ</th>
+                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Name</th>
+                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">#</th>
+                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Position</th>
+                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Height</th>
+                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Class</th>
+                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Overall</th>
+                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">MPG</th>
+                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">PPG</th>
+                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">RPG</th>
+                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">APG</th>
+                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">PER</th>
+                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">ORTG</th>
+                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">DRTG</th>
+                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Inside</th>
+                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Reb</th>
+                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Playmaking</th>
+                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Outside Shooting</th>
+                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Athletic</th>
+                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">IQ</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -475,73 +475,52 @@
       <div class="tab-content" style='display:none;' id="nav-history">
         <div class='w3-display-container'>
           <div class='w3-row-padding'>
-            <div class='w3-col s10'>
+            <div class='w3-col s8'>
+              <div class="w3-card">
               <table id='teamSeasonHistoryResultsTable' class='display table sortable'>
                 <thead id='TeamSeasonHistoryTable'>
-                  <th>Season</th>
-                  <th>Record</th>
-                  <th>Conf Record</th>
-                  <th>Playoff Seed</th>
-                  <th>Recruit Class Rank</th>
-                  <th>Result</th>
+                  <th class=' teamColorBorder'>Season</th>
+                  <th class=' teamColorBorder'>Final Rank</th>
+                  <th class=' teamColorBorder'>Record</th>
+                  <th class=' teamColorBorder'>Conf Record</th>
+                  <th class=' teamColorBorder'>Conf Rank</th>
+                  <th class=' teamColorBorder'>Bowl</th>
+                  <th class=' teamColorBorder'>Recruit Class Rank</th>
                 </thead>
                 <tr id='TeamSeasonHistoryRowClone' class='hidden'>
-                  <td class='TeamSeasonHistoryRowCell' data-field='LeagueSeasonDisplay' data-value=""></td>
+                  <td class='TeamSeasonHistoryRowCell' data-value=""><a href-field="SeasonRecapLink" data-field='SeasonYear'></a></td>
+                  <td class='TeamSeasonHistoryRowCell' data-field='FinalRank' data-value=""></td>
                   <td class='TeamSeasonHistoryRowCell' data-field='TeamRecord' data-value=""></td>
                   <td class='TeamSeasonHistoryRowCell' data-field='TeamConferenceRecord' data-value=""></td>
-                  <td class='TeamSeasonHistoryRowCell' data-field='PlayoffSeed' data-value=""></td>
+                  <td class='TeamSeasonHistoryRowCell' data-field='ConferenceRank' data-value=""></td>
+                  <td class='TeamSeasonHistoryRowCell' data-field='' data-value="">
+                      <span data-field='BowlResult'></span>
+                      <a href-field='BowlHref'><span data-field='BowlScore'></span></a>
+                      <span data-field='String_BowlVs'></span>
+                      <a href-field='BowlOpponentHref'><span data-field='BowlOpponent'></span></a>
+                      <span data-field='String_BowlIn'></span>
+                      <span data-field='BowlName'></span>
+                  </td>
                   <td class='TeamSeasonHistoryRowCell' data-field='RecruitingClassRank' data-value=""></td>
-                  <td class='TeamSeasonHistoryRowCell' data-field='SeasonResultDisplay' data-value=""></td>
                 </tr>
               </table>
+              </div>
             </div>
           </div>
-          <div class='w3-row-padding teamHistoryPlayerLeaderRow'>
-            <div class='w3-col s4'>
-              <table id='teamHistoryPlayerLeadersPPG' class='display table sortable'>
+          <div class='w3-row-padding' id='teamHistoryPlayerLeaderRow'>
+            <div id='teamHistoryPlayerLeadersClone' class='w3-col s3 w3-hide'>
+              <table id='' class='display table sortable'>
                 <thead>
-                  <th>Rank</th>
-                  <th>Player</th>
-                  <th>Seasons</th>
-                  <th>PPG</th>
+                  <th class='teamColorBorder'>Rank</th>
+                  <th class='teamColorBorder'>Player</th>
+                  <th class='teamColorBorder'>Season</th>
+                  <th class='teamColorBorder' data-field='DisplayName'></th>
                 </thead>
-                <tr id='teamHistoryPlayerLeadersPPGRowClone' class='hidden'>
-                  <td class='TeamHistoricalLeaderPPGRowCell' data-field='PPGRank' data-value=""></td>
-                  <td class='TeamHistoricalLeaderPPGRowCell' data-field='FullName' data-value=""><a href="" href-field='PlayerID'></a></td>
-                  <td class='TeamHistoricalLeaderPPGRowCell' data-field='Seasons' data-value=""></td>
-                  <td class='TeamHistoricalLeaderPPGRowCell' data-field='PointsPG' data-value=""></td>
-                </tr>
-              </table>
-            </div>
-            <div class='w3-col s4'>
-              <table id='teamHistoryPlayerLeadersRPG' class='display table sortable'>
-                <thead>
-                  <th>Rank</th>
-                  <th>Player</th>
-                  <th>Seasons</th>
-                  <th>RPG</th>
-                </thead>
-                <tr id='teamHistoryPlayerLeadersRPGRowClone' class='hidden'>
-                  <td class='TeamHistoricalLeaderRPGRowCell' data-field='RPGRank' data-value=""></td>
-                  <td class='TeamHistoricalLeaderRPGRowCell' data-field='FullName' data-value=""><a href="" href-field='PlayerID'></a></td>
-                  <td class='TeamHistoricalLeaderRPGRowCell' data-field='Seasons' data-value=""></td>
-                  <td class='TeamHistoricalLeaderRPGRowCell' data-field='ReboundsPG' data-value=""></td>
-                </tr>
-              </table>
-            </div>
-            <div class='w3-col s4'>
-              <table id='teamHistoryPlayerLeadersAPG' class='display table sortable'>
-                <thead>
-                  <th>Rank</th>
-                  <th>Player</th>
-                  <th>Seasons</th>
-                  <th>APG</th>
-                </thead>
-                <tr id='teamHistoryPlayerLeadersAPGRowClone' class='hidden'>
-                  <td class='TeamHistoricalLeaderAPGRowCell' data-field='APGRank' data-value=""></td>
-                  <td class='TeamHistoricalLeaderAPGRowCell' data-field='FullName' data-value=""><a href-field='PlayerID'></a></td>
-                  <td class='TeamHistoricalLeaderAPGRowCell' data-field='Seasons' data-value=""></td>
-                  <td class='TeamHistoricalLeaderAPGRowCell' data-field='AssistsPG' data-value=""></td>
+                <tr id='teamHistoryPlayerLeadersRowClone' class='w3-hide'>
+                  <td class='TeamHistoricalLeaderRowCell' data-field='ValueRank' data-value=""></td>
+                  <td class='TeamHistoricalLeaderRowCell' data-value=""><a href="" href-field='PlayerHref' ><span data-field='PlayerName'></span>, </a><span data-field='PlayerPosition'></span></td>
+                  <td class='TeamHistoricalLeaderRowCell' data-field='SeasonYear' data-value=""></td>
+                  <td class='TeamHistoricalLeaderRowCell' data-field='Value' data-value=""></td>
                 </tr>
               </table>
             </div>
@@ -620,3 +599,10 @@
         chart.draw(data, options);
       }
     </script>
+
+<style media="screen">
+  .teamColorBorder {
+    border-top-color: #{{page.PrimaryColor}}  !important;
+    border-bottom-color: #{{page.PrimaryColor}} !important;
+  }
+</style>

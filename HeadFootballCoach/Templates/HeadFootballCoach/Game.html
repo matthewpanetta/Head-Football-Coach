@@ -78,7 +78,7 @@
             </div>
           </div>
         </div>
-        <div class='w3-col s2 text-left'>
+        <div class='w3-col s2 text-right'>
           <a href="/World/{{page.WorldID}}/Team/{{homeTeam.TeamID}}"><img class='gameTeamLogo' src='{{homeTeam.LogoURL}}' alt="My image"></a>
         </div>
       </div>
@@ -197,7 +197,7 @@
             {% for StatGrouping in BoxScoreStatGroupings %}
             <div class='w3-row-padding'>
 
-              <div class='w3-col s6'>
+              <div class='w3-col s6 gamePlayerBoxStats'>
                 <img class='gameBoxScoreTeamLogo' src='{{homeTeam.LogoURL}}'  />
                 {{homeTeam.TeamName}} {{StatGrouping.StatGroupName}}
                 <table id='gameAwayTeamBoxScore' class='table table-striped'>
@@ -264,6 +264,9 @@
 <!-- Load d3.js and c3.js -->
 <script src="{% static 'common/d3.v5.min.js' %}"></script>
 <script src="{% static 'c3/c3.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+
+<script src="{% static 'Pages/Game.js' %}"></script>
 
 
 <script type="text/javascript">
@@ -296,7 +299,6 @@
           x: {
             tick: {
               format: function(s) {
-                console.log(s);
                 var SecondsInToThisHalf = s;
                 var PeriodList = ['1st', '2nd', '3rd', '4th', 'OT1', 'OT2', 'OT3']
                 var PeriodCount = 0;
@@ -316,7 +318,6 @@
                 var Mins = parseInt(SecondsInToThisHalf / 60);
                 var Time = Mins + ':' + Secs
 
-                console.log(Period, Time, s)
                 return Period + Time
 
               }

@@ -31,8 +31,11 @@ function PopulateTeamSeasonHistoryTable(TeamSeasonHistory, WorldID){
     $(TeamSeasonHistoryTemplate).removeClass('hidden');
     $(TeamSeasonHistoryTemplate).removeAttr('id');
     $.each(TeamSeason, function(TeamSeasonAttr,TeamSeasonAttrValue){
-      var FieldCell = $(TeamSeasonHistoryTemplate).find('.TeamSeasonHistoryRowCell[data-field="'+TeamSeasonAttr+'"]');
+      var FieldCell = $(TeamSeasonHistoryTemplate).find('.TeamSeasonHistoryRowCell[data-field="'+TeamSeasonAttr+'"], .TeamSeasonHistoryRowCell [data-field="'+TeamSeasonAttr+'"]');
       FieldCell.text(TeamSeasonAttrValue);
+
+      var LinkCell = $(TeamSeasonHistoryTemplate).find('.TeamSeasonHistoryRowCell[href-field="'+TeamSeasonAttr+'"], .TeamSeasonHistoryRowCell [href-field="'+TeamSeasonAttr+'"]');
+      LinkCell.attr('href', TeamSeasonAttrValue);
     });
 
     TeamSeasonHistoryTable.append(TeamSeasonHistoryTemplate);
@@ -48,117 +51,58 @@ function PopulateTeamSeasonHistoryTable(TeamSeasonHistory, WorldID){
 
 
 function PopulateHistoricalLeadersTable(HistoricalLeaders, WorldID){
-  var PPGHistoricalLeadersTable = $('#teamHistoryPlayerLeadersPPG');
-  //console.log('TeamSeasonHistoryTable', HistoricalLeadersTable);
-  var PPGHistoricalLeaders = $.grep(HistoricalLeaders, function(t){
-    //return t;
-    return 'PPGRank' in t && t.PPGRank <= 5  ;
-  });
-  var PPGHistoricalLeaders = PPGHistoricalLeaders.sort((a, b) => (a.PPGRank > b.PPGRank) ? 1 : -1);
+  console.log('HistoricalLeaders', HistoricalLeaders);
+  var LeaderDisplayTemplate = $('#teamHistoryPlayerLeaderRow');
+  var LeaderDisplay = undefined;
 
-  $.each(PPGHistoricalLeaders, function(index, PlayerStats){
+  var BoxCount = 0;
+  $.each(HistoricalLeaders, function(index, LeaderGroup){
+    console.log('LeaderGroup', LeaderGroup);
 
-    var HistoricalLeadersTemplate = $('#teamHistoryPlayerLeadersPPGRowClone').clone();
-    //console.log('PlayerStats', PlayerStats, 'HistoricalLeadersTemplate', HistoricalLeadersTemplate);
+    if (BoxCount % 3 == 0) {
+      LeaderDisplay = $(LeaderDisplayTemplate).clone();
+      $(LeaderDisplayTemplate).before($(LeaderDisplay));
+    }
 
-    $(HistoricalLeadersTemplate).removeClass('hidden');
-    $(HistoricalLeadersTemplate).removeAttr('id');
-    $.each(PlayerStats, function(PlayerStatsAttr,PlayerStatsValue){
-      var FieldCell = $(HistoricalLeadersTemplate).find('.TeamHistoricalLeaderPPGRowCell[data-field="'+PlayerStatsAttr+'"] a');
-      if (FieldCell.length == 0) {
-        var FieldCell = $(HistoricalLeadersTemplate).find('.TeamHistoricalLeaderPPGRowCell[data-field="'+PlayerStatsAttr+'"]');
-      }
-      else {
-        var HrefField = FieldCell.attr('href-field');
-        FieldCell.attr('href', '/World/'+WorldID+'/Player/'+PlayerStats[HrefField]);
-      }
-      FieldCell.text(PlayerStatsValue);
-      //console.log(FieldCell);
+    var TeamHistoryLeaderTableTemplate = $('#teamHistoryPlayerLeadersClone').clone();
+
+    $(TeamHistoryLeaderTableTemplate).removeClass('w3-hide');
+    $(TeamHistoryLeaderTableTemplate).removeAttr('id');
+
+    var th = $(TeamHistoryLeaderTableTemplate).find('th[data-field="DisplayName"]');
+    $(th).text(LeaderGroup['DisplayName']);
+    console.log(TeamHistoryLeaderTableTemplate);
+
+    $.each(LeaderGroup['Players'], function(ind, Player){
+      console.log('Player', Player);
+
+      var TeamHistoryLeaderRowTemplate = $(TeamHistoryLeaderTableTemplate).find('#teamHistoryPlayerLeadersRowClone').clone();
+
+      $(TeamHistoryLeaderRowTemplate).removeClass('w3-hide');
+      $(TeamHistoryLeaderRowTemplate).removeAttr('id');
+
+      $.each(Player, function(PlayerAttr,PlayerValue){
+        var FieldCell = $(TeamHistoryLeaderRowTemplate).find('.TeamHistoricalLeaderRowCell[data-field="'+PlayerAttr+'"], .TeamHistoricalLeaderRowCell [data-field="'+PlayerAttr+'"]');
+        FieldCell.text(PlayerValue);
+
+        var LinkCell = $(TeamHistoryLeaderRowTemplate).find('.TeamHistoricalLeaderRowCell[href-field="'+PlayerAttr+'"], .TeamHistoricalLeaderRowCell [href-field="'+PlayerAttr+'"]');
+        LinkCell.attr('href', PlayerValue);
+
+      });
+
+      var Table = $(TeamHistoryLeaderTableTemplate).find('table');
+      $(Table).removeClass('w3-hide');
+      $(Table).append($(TeamHistoryLeaderRowTemplate));
+
     });
 
-    PPGHistoricalLeadersTable.append(HistoricalLeadersTemplate);
+    $(LeaderDisplay).append($(TeamHistoryLeaderTableTemplate));
+    BoxCount++;
+
   });
 
-  $('#teamHistoryPlayerLeadersPPG').DataTable( {
-        "searching": false,
-          "info": false,
-          "paging":   false,
-          "order": [[ 0, "asc" ]]
-      } );
+  $('#teamHistoryPlayerLeadersClone').remove();
 
-
-//------------------------------------------------------------
-  var RPGHistoricalLeadersTable = $('#teamHistoryPlayerLeadersRPG');
-  //console.log('TeamSeasonHistoryTable', HistoricalLeadersTable);
-  var RPGHistoricalLeaders = $.grep(HistoricalLeaders, function(t){
-    //return t;
-    return 'RPGRank' in t && t.RPGRank <= 5  ;
-  });
-  var RPGHistoricalLeaders = RPGHistoricalLeaders.sort((a, b) => (a.RPGRank > b.RPGRank) ? 1 : -1);
-
-  $.each(RPGHistoricalLeaders, function(index, PlayerStats){
-
-    var HistoricalLeadersTemplate = $('#teamHistoryPlayerLeadersRPGRowClone').clone();
-
-    $(HistoricalLeadersTemplate).removeClass('hidden');
-    $(HistoricalLeadersTemplate).removeAttr('id');
-    $.each(PlayerStats, function(PlayerStatsAttr,PlayerStatsValue){
-      var FieldCell = $(HistoricalLeadersTemplate).find('.TeamHistoricalLeaderRPGRowCell[data-field="'+PlayerStatsAttr+'"] a');
-      if (FieldCell.length == 0) {
-        var FieldCell = $(HistoricalLeadersTemplate).find('.TeamHistoricalLeaderRPGRowCell[data-field="'+PlayerStatsAttr+'"]');
-      }
-      else {
-        var HrefField = FieldCell.attr('href-field');
-        FieldCell.attr('href', '/World/'+WorldID+'/Player/'+PlayerStats[HrefField]);
-            }
-      FieldCell.text(PlayerStatsValue);
-    });
-
-    RPGHistoricalLeadersTable.append(HistoricalLeadersTemplate);
-  });
-
-  $('#teamHistoryPlayerLeadersRPG').DataTable( {
-        "searching": false,
-          "info": false,
-          "paging":   false,
-          "order": [[ 0, "asc" ]]
-      } );
-
-
-//------------------------------------------------------------
-  var APGHistoricalLeadersTable = $('#teamHistoryPlayerLeadersAPG');
-  var APGHistoricalLeaders = $.grep(HistoricalLeaders, function(t){
-    return 'APGRank' in t && t.APGRank <= 5  ;
-  });
-  var APGHistoricalLeaders = APGHistoricalLeaders.sort((a, b) => (a.APGRank > b.APGRank) ? 1 : -1);
-
-  $.each(APGHistoricalLeaders, function(index, PlayerStats){
-
-    var HistoricalLeadersTemplate = $('#teamHistoryPlayerLeadersAPGRowClone').clone();
-
-    $(HistoricalLeadersTemplate).removeClass('hidden');
-    $(HistoricalLeadersTemplate).removeAttr('id');
-    $.each(PlayerStats, function(PlayerStatsAttr,PlayerStatsValue){
-      var FieldCell = $(HistoricalLeadersTemplate).find('.TeamHistoricalLeaderAPGRowCell[data-field="'+PlayerStatsAttr+'"] a');
-      if (FieldCell.length == 0) {
-        var FieldCell = $(HistoricalLeadersTemplate).find('.TeamHistoricalLeaderAPGRowCell[data-field="'+PlayerStatsAttr+'"]');
-      }
-      else {
-        var HrefField = FieldCell.attr('href-field');
-        FieldCell.attr('href', '/World/'+WorldID+'/Player/'+PlayerStats[HrefField]);
-      }
-      FieldCell.text(PlayerStatsValue);
-    });
-
-    APGHistoricalLeadersTable.append(HistoricalLeadersTemplate);
-  });
-
-  $('#teamHistoryPlayerLeadersAPG').DataTable( {
-        "searching": false,
-          "info": false,
-          "paging":   false,
-          "order": [[ 0, "asc" ]]
-      } );
 }
 
 
@@ -200,7 +144,6 @@ function PopulateTeamRosterTable(Roster, WorldID){
 function PopulateTeamSchedule(Games, WorldID){
 
     var TeamScheduleContainer = $('#TeamScheduleContainer');
-    console.log('TeamScheduleContainer', TeamScheduleContainer);
 
     var RowCount = 0;
 
@@ -216,7 +159,6 @@ function PopulateTeamSchedule(Games, WorldID){
       TeamScheduleRowClone = $(TeamScheduleRowClone[0])
       $(TeamScheduleRowClone).removeClass('w3-hide');
       $(TeamScheduleRowClone).removeAttr('id');
-      console.log('TeamScheduleRowClone', TeamScheduleRowClone);
 
       RowCount += 1;
       if (RowCount % 2 == 1) {
@@ -258,7 +200,6 @@ function PopulateTeamSchedule(Games, WorldID){
         TeamScheduleRowClone = $(TeamScheduleRowClone[0])
         $(TeamScheduleRowClone).removeClass('w3-hide');
         $(TeamScheduleRowClone).removeAttr('id');
-        console.log('TeamScheduleRowClone', TeamScheduleRowClone);
 
         RowCount += 1;
         if (RowCount % 2 == 1) {
@@ -367,32 +308,22 @@ function AddScheduleListeners(){
   $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+SelectedGameID+'"]').removeClass('w3-hide');
 
 
-  console.log($('.teamScheduleGameBox'));
   $('.teamScheduleGameBox').on('click', function(event, target) {
 
     var ClickedTab = $(event.target).closest('.teamScheduleGameBox');
     var SelectedGameID = ClickedTab.attr('BoxScoreGameID');
-    console.log('Schedulebox clicked', event, target);
     $.each($('.SelectedGameBox'), function(index, tab){
       var TargetTab = $(tab);
-      console.log(TargetTab);
       $(TargetTab).css('backgroundColor', '');
       $(TargetTab).removeClass('SelectedGameBox');
-      console.log(TargetTab);
 
       var UnselectedGameID = TargetTab.attr('BoxScoreGameID');
-      console.log('UnselectedGameID',UnselectedGameID);
 
-      console.log('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+UnselectedGameID+'"]', $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+UnselectedGameID+'"]'));
       $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+UnselectedGameID+'"]').addClass('w3-hide')
     });
 
-    console.log('ClickedTab', ClickedTab);
     $(ClickedTab).addClass('SelectedGameBox');
     $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+SelectedGameID+'"]').removeClass('w3-hide')
-
-//    $(ClickedTab).css({'background-color': "#{{playerTeam.TeamColor_Secondary_HEX}}"});
-  //  $(ClickedTab).css('background-color', 'black');
 
   });
 }
@@ -402,10 +333,8 @@ function AddBoxScoreListeners(){
   var InitialBoxScore = $('.selected-boxscore-tab')[0];
 
   var SelectedTeamID = $(InitialBoxScore).attr('TeamID');
-  //$('.team-highlights[TeamID="'+SelectedTeamID+'"]').removeClass('w3-hide');
 
 
-  console.log($('.selected-boxscore-tab'));
   $('.boxscore-tab').on('click', function(event, target) {
 
     var ClickedTab = $(event.target)
@@ -413,29 +342,20 @@ function AddBoxScoreListeners(){
     var SelectedTeamID = ClickedTab.attr('TeamID');
     var SelectedGameID = ClickedTab.attr('GameID');
 
-    console.log('$("#'+ClickedTabParent+' > .selected-boxscore-tab")', $('#'+ClickedTabParent+' > .selected-boxscore-tab'));
     $.each($('#'+ClickedTabParent+' > .selected-boxscore-tab'), function(index, tab){
       var TargetTab = $(tab);
-      console.log('TargetTab',TargetTab);
       $(TargetTab).removeClass('selected-boxscore-tab');
-      console.log('TargetTab',TargetTab);
       var TargetTabParent = TargetTab.closest('.boxscore-bar').attr('id');
 
 
       var UnselectedTeamID = TargetTab.attr('TeamID');
       var UnselectedGameID = TargetTab.attr('GameID');
-      console.log('UnselectedGameID',UnselectedTeamID);
 
-      console.log('.team-highlights[TeamID="'+UnselectedTeamID+'"][GameID="'+UnselectedGameID+'"]', $('.team-highlights[TeamID="'+UnselectedTeamID+'"][GameID="'+UnselectedGameID+'"]'));
       $('.team-highlights[TeamID="'+UnselectedTeamID+'"][GameID="'+UnselectedGameID+'"]').addClass('w3-hide')
     });
 
-    console.log('ClickedTab', ClickedTab);
     $(ClickedTab).addClass('selected-boxscore-tab');
     $('.team-highlights[TeamID="'+SelectedTeamID+'"]').removeClass('w3-hide')
-
-//    $(ClickedTab).css({'background-color': "#{{playerTeam.TeamColor_Secondary_HEX}}"});
-  //  $(ClickedTab).css('background-color', 'black');
 
   });
 }
@@ -444,7 +364,6 @@ function AddRosterListeners(){
   console.log('Adding roster listeners!');
 
   $('#roster-bar button').on('click', function(event, target){
-    console.log(this, event, target);
 
     var ClickedTab = $(event.target)
     var ClickedTabParent = ClickedTab.closest('.roster-bar').attr('id');
@@ -452,9 +371,7 @@ function AddRosterListeners(){
 
     $.each($('.selected-roster-tab'), function(index, tab){
       var TargetTab = $(tab);
-      console.log('TargetTab',TargetTab);
       $(TargetTab).removeClass('selected-roster-tab');
-      console.log('TargetTab',TargetTab);
       var TargetTabParent = TargetTab.closest('.boxscore-bar').attr('id');
 
 
@@ -463,7 +380,6 @@ function AddRosterListeners(){
       $('.TeamRosterHeaderCell[table-data-context="'+UnselectedDataContext+'"]').addClass('w3-hide')
     });
 
-    console.log('ClickedTab', ClickedTab);
     $(ClickedTab).addClass('selected-roster-tab');
     $('.TeamRosterPlayerRowCell[table-data-context="'+SelectedDataContext+'"]').removeClass('w3-hide')
     $('.TeamRosterHeaderCell[table-data-context="'+SelectedDataContext+'"]').removeClass('w3-hide')
@@ -473,15 +389,11 @@ function AddRosterListeners(){
 }
 
 function DrawFaces(TeamJerseyStyle, TeamJerseyInvert){
-  console.log('In Draw Face')
-//  BuildFace({{player.PlayerFaceJson|safe}}, '{{playerTeam.TeamJerseyStyle}}', '{{playerTeam.TeamJerseyInvert}}');
 
-  console.log("$('[hasplayerfacejson='1']')", $('[hasplayerfacejson="1"]'));
   $.each($('[hasplayerfacejson="1"]'), function(index,FaceDiv){
     var FaceElement = $(FaceDiv).find('.PlayerFaceDisplay')[0];
     var FaceJson = $(FaceDiv).attr('PlayerFaceJson').replace(/'/g, '"');
     var PlayerFaceJson = JSON.parse(FaceJson);
-    console.log('PlayerFaceJSON', PlayerFaceJson, 'attaching to', FaceElement)
     BuildFace(PlayerFaceJson, undefined, undefined, $(FaceElement).attr('id'));
   });
 }
@@ -501,7 +413,7 @@ $(document).ready(function(){
 
 
   console.log('in Team.js file')
-  //GetTeamHistory(WorldID, TeamID);
+  GetTeamHistory(WorldID, TeamID);
   GetTeamRoster(WorldID, TeamID);
   GetTeamSchedule(WorldID, TeamID);
   DrawFaces(TeamJerseyStyle, TeamJerseyInvert);
@@ -513,14 +425,11 @@ $(document).ready(function(){
 
 function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, DOMID=undefined){
   var DataPassthruHolder = $('#PageDataPassthru')[0];
-  console.log('DataPassthruHolder',DataPassthruHolder);
   var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
   var PlayerID   = parseInt($(DataPassthruHolder).attr('PlayerID'));
   var PrimaryColor    = $(DataPassthruHolder).attr('PrimaryColor');
   var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryColor');
-  console.log(DataPassthruHolder, PrimaryColor, SecondaryColor,WorldID , PlayerID);
 
-  console.log('face before generate', face, TeamJerseyStyle, TeamJerseyInvert);
   if (face == '' || face == undefined){
     return 0;
   }
@@ -533,10 +442,8 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, DOMID=undefined){
   }
   //overrides['jersey'] = {'id': TeamJerseyStyle}
 
-  console.log('face after generate', face);
   if (DOMID == undefined){
     DOMID = 'PlayerFace';
   }
-  console.log('displaying!!', DOMID, face, overrides)
   display(DOMID, face, overrides);
 }

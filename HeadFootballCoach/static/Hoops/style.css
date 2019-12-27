@@ -209,7 +209,7 @@
   font-weight: 400;
 }
 
-.teamRecord , .gameOutcomeL{
+.teamRecord , .gameOutcomeL, .playerStatZero {
   font-weight: 200;
 }
 
@@ -696,7 +696,7 @@ input[type=text], input[type=password] {
 /*  opacity: .7;*/
 }
 
-.selected-boxscore-tab, .selected-upcoming-gameview-tab, .selected-recent-gameview-tab, .selected-roster-tab, .selected-award-team-tab, .selected-preseason-award-conference-tab, .selected-preseason-award-team-tab {
+.selected-boxscore-tab, .selected-upcoming-gameview-tab, .selected-recent-gameview-tab, .selected-roster-tab, .selected-award-team-tab, .selected-preseason-award-conference-tab, .selected-preseason-award-team-tab, .selected-season-award-conference-tab, .selected-season-award-team-tab {
   border-bottom: 3px solid #2c394c !important;
 }
 
@@ -1136,7 +1136,7 @@ input[type=text], input[type=password] {
   border-left: 1px solid #cccccc;
 }
 
-td {
+td, .td-style {
   color: #6c6d6f;
   font-size: 12.5px;
   vertical-align: middle !important;

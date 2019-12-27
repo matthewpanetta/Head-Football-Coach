@@ -15,7 +15,6 @@ function AddSeasonAllAmericanListeners(){
 
     $('.selected-season-award-conference-tab').each(function(index,object){
       $(object).removeClass('selected-season-award-conference-tab');
-      console.log('Removing broder from', object)
       var ObjectID = $(object).attr('id').replace('-tab', '');
 
       $('.'+ObjectID).each(function(index, object){

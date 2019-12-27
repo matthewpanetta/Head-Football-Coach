@@ -674,7 +674,7 @@ class Player(models.Model):
     CityID                  = models.ForeignKey(City, on_delete=models.CASCADE, blank=True, null=True, default=None)
     PositionID              = models.ForeignKey(Position, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
-    PlayerFaceJson          = models.CharField(max_length=2000, default='' )
+    PlayerFaceJson          = models.CharField(max_length=2000, default='' , blank=True)
 
     IsRecruit                 = models.BooleanField(default=False, db_index=True)
     RecruitingStars           = models.PositiveSmallIntegerField(default=0)
@@ -1319,7 +1319,7 @@ class TeamSeason(models.Model):
     def ConferenceRankingTuple(self):
         TeamCount = Team.objects.filter(WorldID = self.WorldID).count()
         print('self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank', self.ConferenceWins , self.ConferenceLosses,self.ConferenceWins , TeamCount , self.NationalRank)
-        return (self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank)
+        return (self.IsConferenceChampionship, self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank)
 
     @property
     def ConferenceRankingDict(self):

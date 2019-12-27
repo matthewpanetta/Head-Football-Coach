@@ -524,7 +524,7 @@ def GameSim(game):
 
             if PlayChoice == 'Run':
                 RunningBackPlayerID = OffensiveTeamPlayers['RB'][0]
-                RunGameModifier = (RunningbackTalent + OffensiveLineTalent) * 1.0 / DefensiveLineTalent / 2.0
+                RunGameModifier = (2 * RunningbackTalent + OffensiveLineTalent) * 1.0 / DefensiveLineTalent / 3.0
                 RunGameModifier = RunGameModifier ** 1.1
                 YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 5, -0.5, 12),0)
 
@@ -930,14 +930,14 @@ def GameSim(game):
     ElementsToSave = []
     PlayerGameStatToSave = []
 
-    StatDictExclusions = ['GamesPlayed']
+    StatDictExclusions = []
     for P in AllPlayers:
         ThisPlayerTeamSeason = PlayerTeamSeason.objects.get(WorldID = CurrentWorld, PlayerID = P, TeamSeasonID__LeagueSeasonID = CurrentSeason)
 
         #if AllPlayers[P]['GameStats']['Minutes'] == 0:
         #    continue
         StatDict = {}
-        ThisPlayerTeamSeason.GamesPlayed +=1
+        #ThisPlayerTeamSeason.GamesPlayed +=1
 
         StatDict = AllPlayers[P]['GameStats']
 
