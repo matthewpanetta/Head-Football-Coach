@@ -40,6 +40,9 @@ def NationalAwards(WorldID, CurrentSeason):
 
             for Pos in Position.objects.filter(Occurance__gt = 0):
                 PositionPlayers = AllPlayers.filter(PlayerID__PositionID = Pos)
+                if Conf is not None:
+                    PositionPlayers = PositionPlayers.filter(TeamSeasonID__TeamID__ConferenceID = Conf)
+
                 for PlayerCount in range(0,Pos.PositionCountPerAwardTeam * 2):
                     IsFirstTeam = False
                     IsSecondTeam = False
@@ -58,7 +61,7 @@ def NationalAwards(WorldID, CurrentSeason):
                     AwardsToCreate.append(PlayerAward)
 
 
-                FreshmanPositionPlayers = AllPlayers.filter(PlayerID__PositionID = Pos).filter(PlayerID__Class = 'Freshman')
+                FreshmanPositionPlayers = PositionPlayers.filter(PlayerID__Class = 'Freshman')
                 for PlayerCount in range(0,Pos.PositionCountPerAwardTeam):
                     IsFreshmanTeam = False
 
@@ -82,7 +85,7 @@ def NationalAwards(WorldID, CurrentSeason):
 def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
     CurrentWorld = WorldID
 
-    AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
+    AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).exclude(PlayerID__Class = 'Freshman').values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
         GameScorePerGame=Case(
             When(GamesPlayed=0, then=0.0),
             default=(Round(F('GameScore')* 1.0 / F('GamesPlayed'),1)),

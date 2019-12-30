@@ -20,14 +20,15 @@ def CalculateGameScore(PlayerGameStats):
         {'Stat': 'REC_TD',    'PointToStatRatio': 6.0 / 1},
         {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1},
         {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 1},
-        {'Stat': 'DEF_Sacks',  'PointToStatRatio': 4.0 / 1},
+        {'Stat': 'DEF_Sacks',  'PointToStatRatio': 2.0 / 1},
         {'Stat': 'DEF_Tackles',  'PointToStatRatio': 1.0 / 1},
+        {'Stat': 'DEF_TacklesForLoss',  'PointToStatRatio': 2.0 / 1},
         {'Stat': 'DEF_Deflections',  'PointToStatRatio': 1.0 / 1},
-        {'Stat': 'DEF_INT',  'PointToStatRatio': 4.0 / 1},
+        {'Stat': 'DEF_INT',  'PointToStatRatio': 6.0 / 1},
         {'Stat': 'DEF_TD',  'PointToStatRatio': 6.0 / 1},
         {'Stat': 'FUM_Fumbles',  'PointToStatRatio': -3.0 / 1},
-        {'Stat': 'FUM_Forced',  'PointToStatRatio': 2.0 / 1},
-        {'Stat': 'FUM_Recovered',  'PointToStatRatio': 2.0 / 1},
+        {'Stat': 'FUM_Forced',  'PointToStatRatio': 3.0 / 1},
+        {'Stat': 'FUM_Recovered',  'PointToStatRatio': 3.0 / 1},
     ]
 
     GameScore = 0
@@ -48,6 +49,26 @@ def Min(a,b):
         return b
     else:
         return a
+
+def DetermineGoForTwo(OffensivePointDifferential, Period, SecondsLeftInPeriod, CoachObj):
+    #For sure go for 2
+    FourthAggr = CoachObj['FourthDownAggressiveness']
+    if Period <= 2:
+        if random.uniform(0,1) < (0 + (FourthAggr)):
+            return True
+        return False
+    elif abs(OffensivePointDifferential) > 20:
+        return False
+    else:
+        if OffensivePointDifferential in [-18, -13, -10, -5, -2, 1, 4, 5, 12, 15, 19]:
+            return True
+        #For sure go for 1
+        elif OffensivePointDifferential in [-22, -17, -15, -12, -9, -8, -7, -4, -1, 0, 2, 3, 6, 8, 9, 16]:
+            return False
+        else:
+            if random.uniform(0,1) < (.2 + (FourthAggr)):
+                return True
+            return False
 
 
 def RandomInteger(a,b):
@@ -100,21 +121,41 @@ def GameSim(game):
         AwayTeam: {'Coach': AwayHeadCoach.CoachID.__dict__, 'CoachTeamSeason': AwayHeadCoach.__dict__}
     }
 
+    for CT in CoachDict:
+        C = CoachDict[CT]['Coach']
+        CoachDict[CT]['Tendencies'] = {}
+        CoachDict[CT]['Tendencies']['FourthDownAggressiveness'] = ( C['SituationalAggressivenessTendency'] / 10.0)
+        CoachDict[CT]['Tendencies']['TwoPointAggressiveness'] = (C['SituationalAggressivenessTendency'] / 10.0)
+        CoachDict[CT]['Tendencies']['Playcall_PassRatio'] = (C['PlaycallPassTendency'] / 55.0) ** .5
+        CoachDict[CT]['Tendencies']['Playcall_RunRatio'] = ((100 - C['PlaycallPassTendency']) / 45.0) ** .5
+        CoachDict[CT]['Tendencies']['PlayClockAggressiveness'] = (C['PlayClockAggressivenessTendency'] / 10.0)
+
+        #print(CT, 'Run:', CoachDict[CT]['Tendencies']['Playcall_RunRatio'], 'Pass:', CoachDict[CT]['Tendencies']['Playcall_PassRatio'] )
+
 
     HeadCoachDiff = CoachDict[HomeTeam]['Coach']['GameplanRating'] - CoachDict[AwayTeam]['Coach']['GameplanRating']#HomeHeadCoach.CoachID.GameplanRating - AwayHeadCoach.CoachID.GameplanRating
     if HeadCoachDiff == 0:
         HomeCoachFactor = 1.0
     elif HeadCoachDiff > 0 and HeadCoachDiff < 8 :
-        HomeCoachFactor = 1.03
+        HomeCoachFactor = 1.02
     elif HeadCoachDiff >= 8:
-        HomeCoachFactor = 1.06
+        HomeCoachFactor = 1.04
     elif HeadCoachDiff < 0 and HeadCoachDiff > -8 :
-        HomeCoachFactor = .97
+        HomeCoachFactor = .98
     elif HeadCoachDiff <= -8:
-        HomeCoachFactor = .94
+        HomeCoachFactor = .96
     else:
         HomeCoachFactor = 1.0
 
+    PlayClockUrgencyTimeParameters = {
+        -3: {'Mean': 36, 'Sigma': 4, 'Min': 30, 'Max': 40},
+        -2: {'Mean': 32, 'Sigma': 6, 'Min': 26, 'Max': 40},
+        -1: {'Mean': 29, 'Sigma': 6, 'Min': 24, 'Max': 40},
+         0: {'Mean': 26, 'Sigma': 8, 'Min': 12, 'Max': 40},
+         1: {'Mean': 22, 'Sigma': 6, 'Min': 12, 'Max': 28},
+         2: {'Mean': 18, 'Sigma': 6, 'Min': 12, 'Max': 26},
+         3: {'Mean': 12, 'Sigma': 4, 'Min':  8, 'Max': 16},
+    }
 
     PlayerStartersByPosition = {
         'QB': 1,
@@ -155,16 +196,16 @@ def GameSim(game):
     }
 
     PositionEnergyMap = {
-        'QB': 0,
-        'RB': .015,
+        'QB': .015,
+        'RB': .02,
         'FB': .015,
         'WR': .015,
         'TE': .015,
         'OT': .015,
         'OG': .015,
         'OC': .015,
-        'DE': .015,
-        'DT': .015,
+        'DE': .02,
+        'DT': .02,
         'OLB': .015,
         'MLB': .015,
         'CB': .015,
@@ -259,13 +300,14 @@ def GameSim(game):
                 AllPlayers[PlayerID]['PlayerSkills'][Skill] = int(  AllPlayers[PlayerID]['PlayerSkills'][Skill] * SkillMultiplier  )
 
 
-        AllPlayers[PlayerID]['GameStats'] = { 'GamesStarted':0, 'RUS_Yards':0, 'RUS_Carries':0, 'RUS_TD':0, 'PAS_Attempts':0, 'PAS_Completions':0, 'PAS_Yards':0, 'PAS_TD':0, 'REC_Yards':0,'REC_Receptions':0, 'REC_TD':0, 'PNT_Punts': 0,'GamesPlayed':0, 'GameScore': 0,'KCK_FGA': 0, 'KCK_FGM': 0, 'DEF_Tackles':0, 'DEF_Sacks':0, 'DEF_INT':0,'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0,'FUM_Lost': 0, 'FUM_Forced': 0, 'FUM_Fumbles': 0, 'FUM_Recovered': 0,'FUM_ReturnTD': 0,'FUM_ReturnYards': 0,}
+        AllPlayers[PlayerID]['GameStats'] = { 'GamesStarted':0, 'RUS_Yards':0, 'RUS_Carries':0, 'RUS_TD':0, 'PAS_Attempts':0, 'PAS_Completions':0, 'PAS_Yards':0, 'PAS_TD':0, 'REC_Yards':0,'REC_Receptions':0, 'REC_TD':0, 'PNT_Punts': 0,'GamesPlayed':0, 'GameScore': 0,'KCK_FGA': 0, 'KCK_FGM': 0, 'KCK_XPA':0, 'KCK_XPM':0, 'DEF_Tackles':0, 'DEF_TacklesForLoss': 0, 'DEF_Sacks':0, 'DEF_INT':0,'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0,'FUM_Lost': 0, 'FUM_Forced': 0, 'FUM_Fumbles': 0, 'FUM_Recovered': 0,'FUM_ReturnTD': 0,'FUM_ReturnYards': 0, 'KCK_FGA29':0, 'KCK_FGM29':0,'KCK_FGA39':0, 'KCK_FGM39':0,'KCK_FGA49':0, 'KCK_FGM49':0,'KCK_FGA50':0, 'KCK_FGM50':0, }
 
         AllPlayers[PlayerID]['Energy'] = 1
+        AllPlayers[PlayerID]['AdjustedOverallRating'] = 100
 
     GameDict = {}
     for T in [HomeTeam, AwayTeam]:
-        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts':0,'FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_Receptions':0,'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0, 'DEF_Tackles':0, 'DEF_Sacks':0,'DEF_INT':0, 'FUM_Lost': 0, 'FUM_Forced': 0, 'FUM_Fumbles': 0, 'FUM_Recovered': 0,'FUM_ReturnTD': 0,'FUM_ReturnYards': 0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast}
+        GameDict[T] = {'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts':0,'FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_Receptions':0,'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'KCK_FGA29':0,'KCK_FGM29':0,'KCK_FGA39':0, 'KCK_FGM39':0,'KCK_FGA49':0, 'KCK_FGM49':0,'KCK_FGA50':0, 'KCK_FGM50':0,'KCK_XPA':0, 'KCK_XPM':0, 'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0, 'DEF_Tackles':0, 'DEF_Sacks':0,'DEF_INT':0, 'DEF_TacklesForLoss': 0, 'FUM_Lost': 0, 'FUM_Forced': 0, 'FUM_Fumbles': 0, 'FUM_Recovered': 0,'FUM_ReturnTD': 0,'FUM_ReturnYards': 0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast, 'TwoPointAttempt': 0, 'TwoPointConversion': 0}
 
 
     TeamPlayers = {HomeTeam:{'PlayersOnField':{},'AllPlayers':{}}, AwayTeam:{'PlayersOnField':{},'AllPlayers':{}}}
@@ -362,16 +404,57 @@ def GameSim(game):
             DefensiveTouchdown = False
             FumbleOnPlay = False
             InterceptionOnPlay = False
+            TwoPointConversionAttempt = False
+            TwoPointConversionSuccess = False
+            ExtraPointAttempt = False
+            ExtraPointSuccess = False
+            PlayClockUrgency = 0 # -3 Chew clock, 3 Very Fast
             FumbleRecoveryYards = 0
             SecondsThisPlay = SecondsLeftInPeriod
 
             TotalPlayCount += 1
             if TotalPlayCount % SubsEveryN == 0:
                 ConfigureTeams = True
-                if IsCloseGame:
-                    EnergyNormalizationFactor = DefaultEnergyNormalizationFactor
+                ScoreDiff = abs(GameDict[HomeTeam]['Points'] - GameDict[AwayTeam]['Points'])
+                if FinalPeriod and SecondsLeftInPeriod < (60 * 5):
+                    if ScoreDiff > 34:
+                        EnergyNormalizationFactor = .25
+                    elif ScoreDiff > 27:
+                        EnergyNormalizationFactor = .5
+                    elif ScoreDiff > 20:
+                        EnergyNormalizationFactor = 2
+                    elif ScoreDiff <= 8:
+                         EnergyNormalizationFactor = 8
+                    elif ScoreDiff <= 17:
+                         EnergyNormalizationFactor = 6
+                    else:
+                        EnergyNormalizationFactor = DefaultEnergyNormalizationFactor
+                elif FinalPeriod and SecondsLeftInPeriod < (60 * 10):
+                    if ScoreDiff > 34:
+                        EnergyNormalizationFactor = .5
+                    elif ScoreDiff > 27:
+                        EnergyNormalizationFactor = .75
+                    elif ScoreDiff > 20:
+                        EnergyNormalizationFactor = 3
+                    elif ScoreDiff <= 8:
+                         EnergyNormalizationFactor = 6
+                    elif ScoreDiff <= 17:
+                         EnergyNormalizationFactor = 4
+                    else:
+                        EnergyNormalizationFactor = DefaultEnergyNormalizationFactor
+                elif FinalPeriod or (Period == 3 and SecondsLeftInPeriod < (60 * 5)):
+                    if ScoreDiff > 34:
+                        EnergyNormalizationFactor = 1
+                    elif ScoreDiff > 27:
+                        EnergyNormalizationFactor = 1.5
+                    elif ScoreDiff > 20:
+                        EnergyNormalizationFactor = 3.5
+                    else:
+                        EnergyNormalizationFactor = DefaultEnergyNormalizationFactor
+                elif ScoreDiff > 28:
+                    EnergyNormalizationFactor = 2
                 else:
-                    EnergyNormalizationFactor = 1
+                    EnergyNormalizationFactor = DefaultEnergyNormalizationFactor
 
                 for Team in GameDict:
                     for Position in PlayerStartersByPosition:
@@ -385,7 +468,16 @@ def GameSim(game):
                             for Backups in PositionOverlapList:
                                 TeamPlayers[Team]['AllPlayers'][Position] += TeamPlayers[Team]['AllPlayers'][Backups]
 
-                        TeamPlayers[Team]['AllPlayers'][Position] = sorted(TeamPlayers[Team]['AllPlayers'][Position], key=lambda k: AllPlayers[k]['PlayerSkills']['OverallRating'] * (AllPlayers[k]['Energy'] ** (1/float(EnergyNormalizationFactor))), reverse=True)
+                        for u in AllPlayers:
+                            if AllPlayers[u]['Position'] == 'QB' and EnergyNormalizationFactor == DefaultEnergyNormalizationFactor:
+                                AllPlayers[u]['AdjustedOverallRating'] = AllPlayers[u]['PlayerSkills']['OverallRating']
+                            elif AllPlayers[u]['Position'] == 'QB':
+                                AllPlayers[u]['AdjustedOverallRating'] = AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/float(10 * EnergyNormalizationFactor)))
+                            else:
+                                AllPlayers[u]['AdjustedOverallRating'] = AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/float(EnergyNormalizationFactor)))
+
+                        TeamPlayers[Team]['AllPlayers'][Position] = sorted(TeamPlayers[Team]['AllPlayers'][Position], key=lambda k: AllPlayers[k]['AdjustedOverallRating'], reverse=True)
+
                         for u in range(0,NumberOfStarters):
                             PlayerOnField = TeamPlayers[Team]['AllPlayers'][Position][u]
                             TeamPlayers[Team]['PlayersOnField'][Position].append(PlayerOnField)
@@ -396,16 +488,17 @@ def GameSim(game):
                 OffensiveTeamPlayers = TeamPlayers[OffensiveTeam]['PlayersOnField']
                 DefensiveTeamPlayers = TeamPlayers[DefensiveTeam]['PlayersOnField']
 
-                QuarterbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in OffensiveTeamPlayers['QB']], IntCastFlag=True)
-                RunningbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in OffensiveTeamPlayers['RB']], IntCastFlag=True)
-                ReceiverTalent      = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in OffensiveTeamPlayers['WR']], IntCastFlag=True)
-                OffensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OG'] + OffensiveTeamPlayers['OC']], IntCastFlag=True)
+                QuarterbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in OffensiveTeamPlayers['QB']], IntCastFlag=True)
+                RunningbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in OffensiveTeamPlayers['RB']], IntCastFlag=True)
+                ReceiverTalent      = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in OffensiveTeamPlayers['WR']], IntCastFlag=True)
+                OffensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OG'] + OffensiveTeamPlayers['OC']], IntCastFlag=True)
 
-                DefensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in DefensiveTeamPlayers['DE']  + OffensiveTeamPlayers['DT'] ], IntCastFlag=True)
-                LinebackerTalent    = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in DefensiveTeamPlayers['OLB'] + OffensiveTeamPlayers['MLB']], IntCastFlag=True)
-                SecondaryTalent     = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * AllPlayers[u]['Energy'] for u in DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S']  ], IntCastFlag=True)
-                KickerTalent        = OffensiveTeamPlayers['K'][0]
+                DefensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in DefensiveTeamPlayers['DE']  + OffensiveTeamPlayers['DT'] ], IntCastFlag=True)
+                LinebackerTalent    = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in DefensiveTeamPlayers['OLB'] + OffensiveTeamPlayers['MLB']], IntCastFlag=True)
+                SecondaryTalent     = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S']  ], IntCastFlag=True)
+                KickerPlayerID      = OffensiveTeamPlayers['K'][0]
 
+                KickerTalent        = AllPlayers[KickerPlayerID]['PlayerSkills']['OverallRating']
 
             if FinalPeriod and SecondsLeftInPeriod <= (5 * 60):
                 IsLateGame = True
@@ -417,12 +510,14 @@ def GameSim(game):
                 #run out clock end of first half
                 if FinalPeriod:
                     if not IsCloseGame:
+                        PlayClockUrgency = -2
                         if Down == 4:
                             PlayChoices = {'Run': 0,'Pass': 0,'Punt': 100,'Field Goal': 0}
                         else:
                             PlayChoices = {'Run': 80,'Pass': 20,'Punt': 0,'Field Goal': 0}
                     else:
                         if Down == 4:
+                            PlayClockUrgency = 1
                             if BallSpot > 70 and OffensivePointDifferential in [-3, -2, -1, 0, 1, 4,5,6,11,12,13,14]:
                                 PlayChoices = {'Run': 0,'Pass': 0,'Punt': 0,'Field Goal': 100}
                             elif OffensivePointDifferential < -3:
@@ -442,17 +537,21 @@ def GameSim(game):
 
                         else:
                             if SecondsLeftInPeriod <= 30 and BallSpot > 70 and OffensivePointDifferential in [-3, -2, -1, 0]:
+                                PlayClockUrgency = 2
                                 PlayChoices = {'Run': 0,'Pass': 0,'Punt': 0,'Field Goal': 100}
                             elif OffensivePointDifferential > 0:
+                                PlayClockUrgency = -3
                                 if Down == 3 and YardsToGo > 5:
                                     PlayChoices = {'Run': 15,'Pass': 85,'Punt': 0,'Field Goal': 0}
                                 else:
                                     PlayChoices = {'Run': 85,'Pass': 15,'Punt': 0,'Field Goal': 0}
                             else:
+                                PlayClockUrgency = 2
                                 PlayChoices = {'Run': 30,'Pass': 70,'Punt': 0,'Field Goal': 0}
                 else:
                     if SecondsLeftInPeriod <= (60) and BallSpot < 30 and Down < 4:
                         PlayChoices = {'Run': 90,'Pass': 10,'Punt': 0,'Field Goal': 0}
+                        PlayClockUrgency = -3
 
                     elif SecondsLeftInPeriod <= (60) and BallSpot < 30 and Down == 4:
                         if YardsToGo > 4:
@@ -462,19 +561,24 @@ def GameSim(game):
 
                     elif SecondsLeftInPeriod <= (60) and BallSpot > 70:
                         if SecondsLeftInPeriod < 20 or Down == 4:
+                            PlayClockUrgency = 2
                             if BallSpot > 95:
                                 PlayChoices = {'Run': 33,'Pass': 33,'Punt': 0,'Field Goal': 33}
                             else:
                                 PlayChoices = {'Run': 5,'Pass': 25,'Punt': 0,'Field Goal': 70}
                         PlayChoices = {'Run': 10,'Pass': 90,'Punt': 0,'Field Goal': 0}
+                        PlayClockUrgency = -2
 
                     elif Down < 4:
                         PlayChoices = {'Run': 10,'Pass': 90,'Punt': 0,'Field Goal': 0}
+                        PlayClockUrgency = 1
+
                     else:
                         PlayChoices = {'Run': 0,'Pass': 0,'Punt': 100,'Field Goal': 0}
 
 
             elif Down == 3:
+                PlayClockUrgency = 0
                 if YardsToGo < 2:
                     PlayChoices = {'Run': 90,'Pass': 10,'Punt': 0,'Field Goal': 0}
                 elif YardsToGo > 6:
@@ -482,6 +586,7 @@ def GameSim(game):
                 else:
                     PlayChoices = {'Run': 30,'Pass': 70,'Punt': 0,'Field Goal': 0}
             elif Down == 4:
+                PlayClockUrgency = 0
                 if BallSpot > 70:
                     if YardsToGo <= 1:
                         PlayChoices = {'Run': 70,'Pass': 0,'Punt': 0,'Field Goal': 30}
@@ -512,7 +617,12 @@ def GameSim(game):
                         PlayChoices = {'Run': 5,'Pass': 15,'Punt': 80,'Field Goal': 0}
 
             else:
+                PlayClockUrgency = 0
                 PlayChoices = {'Run': 45,'Pass': 55,'Punt': 0,'Field Goal': 0}
+
+
+            PlayChoices['Run'] = int(PlayChoices['Run'] * CoachDict[OffensiveTeam]['Tendencies']['Playcall_RunRatio'])
+            PlayChoices['Pass'] = int(PlayChoices['Pass'] * CoachDict[OffensiveTeam]['Tendencies']['Playcall_PassRatio'])
 
 
             if PlayChoices is None:
@@ -526,7 +636,7 @@ def GameSim(game):
                 RunningBackPlayerID = OffensiveTeamPlayers['RB'][0]
                 RunGameModifier = (2 * RunningbackTalent + OffensiveLineTalent) * 1.0 / DefensiveLineTalent / 3.0
                 RunGameModifier = RunGameModifier ** 1.1
-                YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 5, -0.5, 12),0)
+                YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 5, -2, 12),0)
 
                 #Run is a fumble
                 if random.uniform(0,1) < (.0125 / ((RunningbackTalent / 85) ** 6)):
@@ -541,7 +651,7 @@ def GameSim(game):
                     FumbleOnPlay = True
 
                     #Offense recovers
-                    if random.uniform(0,1) < .40:
+                    if random.uniform(0,1) < .55:
                         OffensivePlayers = [(u, 1) for u in OffensiveTeamPlayers['OT']  + OffensiveTeamPlayers['OG']+OffensiveTeamPlayers['OC']  + OffensiveTeamPlayers['WR']+OffensiveTeamPlayers['TE']  + OffensiveTeamPlayers['RB'] ]
                         FumbleRecovererID = WeightedProbabilityChoice(OffensivePlayers, OffensivePlayers[0])
 
@@ -553,6 +663,9 @@ def GameSim(game):
 
                         GameDict[DefensiveTeam]['FUM_Recovered'] += 1
                         AllPlayers[FumbleRecovererID]['GameStats']['FUM_Recovered'] += 1
+
+                        GameDict[OffensiveTeam]['FUM_Lost'] += 1
+                        AllPlayers[RunningBackPlayerID]['GameStats']['FUM_Lost'] += 1
 
                         FumbleBallSpot = BallSpot + YardsThisPlay
                         OpposingFumbleBallSpot = 100 - FumbleBallSpot
@@ -576,6 +689,7 @@ def GameSim(game):
                 elif YardsThisPlay > 8 and (random.uniform(0,1) < (.05 * ((RunningbackTalent / 85) ** 6))):
                     YardsThisPlay = round(NormalTrunc(30, 50, 28, 100),0)
 
+
                 GameDict[OffensiveTeam]['RUS_Yards'] += YardsThisPlay
                 GameDict[OffensiveTeam]['RUS_Carries'] += 1
                 AllPlayers[RunningBackPlayerID]['GameStats']['RUS_Yards'] += YardsThisPlay
@@ -587,7 +701,12 @@ def GameSim(game):
                 AllPlayers[DefensiveTackler]['GameStats']['DEF_Tackles'] += 1
                 GameDict[DefensiveTeam]['DEF_Tackles'] += 1
 
+                if YardsThisPlay < 0:
+                        AllPlayers[DefensiveTackler]['GameStats']['DEF_TacklesForLoss'] += 1
+                        GameDict[DefensiveTeam]['DEF_TacklesForLoss'] += 1
+
             elif PlayChoice == 'Pass':
+                PassOutcome = ''
                 QuarterbackPlayerID = OffensiveTeamPlayers['QB'][0]
                 AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Attempts'] += 1
                 GameDict[OffensiveTeam]['PAS_Attempts'] += 1
@@ -596,8 +715,20 @@ def GameSim(game):
                 if Down == 3 and YardsToGo > 4:
                     PassRushModifier /= 1.1
 
+                if (random.uniform(0,1) < (.0203 / PassGameModifier)):
+                    PassOutcome = 'Interception'
+                    if GameDict[DefensiveTeam]['DEF_INT'] >= 4 and random.uniform(0,1) < .95 :
+                        PassOutcome = 'Incompletion'
+                elif (random.uniform(0,1) < (.08 / (PassRushModifier ** 4))):
+                    PassOutcome = 'Sack'
+                elif (random.uniform(0,1) < (.7024 * (PassGameModifier ** .75))) :
+                    PassOutcome = 'Completion'
+                else:
+                    PassOutcome = 'Incompletion'
+
+
                 #INTERCEPTED
-                if (random.uniform(0,1) < (.0243 / PassGameModifier)):
+                if PassOutcome == 'Interception':
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_INT'] += 1
                     GameDict[OffensiveTeam]['PAS_INT'] += 1
                     Turnover = True
@@ -612,7 +743,7 @@ def GameSim(game):
                     GameDict[DefensiveTeam]['DEF_INT'] += 1
 
                 #Play was SACK
-                elif (random.uniform(0,1) < (.10 / (PassRushModifier ** 4))):
+                elif PassOutcome == 'Sack':
                     YardsThisPlay = round(NormalTrunc(-5, 2, -10, -1),0)
                     AllPlayers[QuarterbackPlayerID]['GameStats']['PAS_Sacks'] += 1
                     GameDict[OffensiveTeam]['PAS_Sacks'] += 1
@@ -629,8 +760,11 @@ def GameSim(game):
                     AllPlayers[DefensiveTackler]['GameStats']['DEF_Tackles'] += 1
                     GameDict[DefensiveTeam]['DEF_Tackles'] += 1
 
+                    AllPlayers[DefensiveTackler]['GameStats']['DEF_TacklesForLoss'] += 1
+                    GameDict[DefensiveTeam]['DEF_TacklesForLoss'] += 1
+
                 #PASS COMPLETE
-                elif (random.uniform(0,1) < (.7024 * PassGameModifier)) :
+                elif PassOutcome == 'Completion' :
                     PassGameModifier = PassGameModifier ** 1.1
                     YardsThisPlay = round(NormalTrunc(12 * PassGameModifier, 4, 0, 40),0)
 
@@ -658,7 +792,7 @@ def GameSim(game):
                     AllPlayers[WideReceiverPlayer]['GameStats']['REC_Yards'] += YardsThisPlay
 
                 #Incomplete pass
-                else:
+                elif PassOutcome == 'Incompletion':
                     YardsThisPlay = 0
                     IncompletePass = True
 
@@ -672,25 +806,40 @@ def GameSim(game):
             elif PlayChoice == 'Field Goal':
                 YardsThisPlay = 0
                 KickerPlayerID = OffensiveTeamPlayers['K'][0]
-                AllPlayers[KickerPlayerID]['GameStats']['KCK_FGA'] += 1
-                GameDict[OffensiveTeam]['KCK_FGA'] += 1
+
+                FGMField = ''
+                FGAField = ''
 
                 KickGameModifier = KickerTalent / 100.0
                 r = random.uniform(0,1)
                 FieldGoalDistance = 100 - BallSpot + 17
                 KickDifficultModifier = 0
-                if FieldGoalDistance < 25:
+                if FieldGoalDistance <= 29:
                     KickDifficultModifier += .25
-                elif FieldGoalDistance < 35:
+                    FGMField, FGAField = 'KCK_FGM29', 'KCK_FGA29'
+                elif FieldGoalDistance <= 39:
                     KickDifficultModifier -= .05
-                elif FieldGoalDistance < 45:
+                    FGMField, FGAField = 'KCK_FGM39', 'KCK_FGA39'
+                elif FieldGoalDistance <= 49:
                     KickDifficultModifier -= .25
+                    FGMField, FGAField = 'KCK_FGM49', 'KCK_FGA49'
                 else:
                     KickDifficultModifier -= .5
+                    FGMField, FGAField = 'KCK_FGM50', 'KCK_FGA50'
+
+                AllPlayers[KickerPlayerID]['GameStats']['KCK_FGA'] += 1
+                GameDict[OffensiveTeam]['KCK_FGA'] += 1
+
+                AllPlayers[KickerPlayerID]['GameStats'][FGAField] += 1
+                GameDict[OffensiveTeam][FGAField] += 1
+
 
                 if r < (KickGameModifier + KickDifficultModifier):
                     AllPlayers[KickerPlayerID]['GameStats']['KCK_FGM'] += 1
                     GameDict[OffensiveTeam]['KCK_FGM'] += 1
+
+                    AllPlayers[KickerPlayerID]['GameStats'][FGMField] += 1
+                    GameDict[OffensiveTeam][FGMField] += 1
 
                     FieldGoalMake = True
                 else:
@@ -703,7 +852,24 @@ def GameSim(game):
                 GameDict[OffensiveTeam]['FourthDownAttempt'] +=1
 
 
-            SecondsThisPlay = Min(SecondsThisPlay, int(NormalTrunc(27,4, 16, 35)))
+            if CoachDict[OffensiveTeam]['Tendencies']['PlayClockAggressiveness'] > 0:
+                PlayClockUrgency += 1
+                if CoachDict[OffensiveTeam]['Tendencies']['PlayClockAggressiveness'] >= 3 or (CoachDict[OffensiveTeam]['Tendencies']['PlayClockAggressiveness'] == 2 and random.uniform(0,1) < .25):
+                    PlayClockUrgency += 1
+                if PlayClockUrgency > 3:
+                    PlayClockUrgency = 3
+            elif CoachDict[OffensiveTeam]['Tendencies']['PlayClockAggressiveness'] < 0:
+                PlayClockUrgency -= 1
+                if CoachDict[OffensiveTeam]['Tendencies']['PlayClockAggressiveness'] <= -3 or (CoachDict[OffensiveTeam]['Tendencies']['PlayClockAggressiveness'] == -2 and random.uniform(0,1) < .25):
+                    PlayClockUrgency -= 1
+                if PlayClockUrgency < -3:
+                    PlayClockUrgency = -3
+
+
+            PlayClockUrgencyValues = PlayClockUrgencyTimeParameters[PlayClockUrgency]
+            SecondsThisPlay = Min(SecondsThisPlay, int(NormalTrunc(PlayClockUrgencyValues['Mean'], PlayClockUrgencyValues['Sigma'], PlayClockUrgencyValues['Min'], PlayClockUrgencyValues['Max'])))
+
+
             if IncompletePass:
                 SecondsThisPlay = 8
             if random.uniform(0,1) < .08: #run out of bounds
@@ -736,7 +902,26 @@ def GameSim(game):
             #check for touchdown
             if BallSpot >= 100:
                 OffensiveTouchdown = True
-                GameDict[OffensiveTeam]['Points'] += 7
+                GameDict[OffensiveTeam]['Points'] += 6
+                OffensivePointDifferential = GameDict[OffensiveTeam]['Points'] - GameDict[DefensiveTeam]['Points']
+                #Todo GO FOR 2
+                if DetermineGoForTwo(OffensivePointDifferential, Period, SecondsLeftInPeriod, CoachDict[OffensiveTeam]['Tendencies']):
+                    TwoPointConversionAttempt = True
+                    GameDict[OffensiveTeam]['TwoPointAttempt'] +=1
+                    if random.uniform(0,1) < .55:
+                        GameDict[OffensiveTeam]['Points'] += 2
+                        TwoPointConversionSuccess = True
+                        GameDict[OffensiveTeam]['TwoPointConversion'] +=1
+                else:
+                    ExtraPointAttempt = True
+                    GameDict[OffensiveTeam]['KCK_XPA'] +=1
+                    AllPlayers[KickerPlayerID]['GameStats']['KCK_XPA'] += 1
+                    if random.uniform(0, 1) < ((KickerTalent / 90.0) ** (1/2.0)):
+                        ExtraPointSuccess = True
+                        GameDict[OffensiveTeam]['Points'] += 1
+                        GameDict[OffensiveTeam]['KCK_XPM'] += 1
+                        AllPlayers[KickerPlayerID]['GameStats']['KCK_XPM'] += 1
+
                 if PlayChoice == 'Run':
                     GameDict[OffensiveTeam]['RUS_TD'] += 1
                     AllPlayers[RunningBackPlayerID]['GameStats']['RUS_TD'] += 1
@@ -753,7 +938,29 @@ def GameSim(game):
 
             #check for turnover
             elif Turnover and DefensiveTouchdown:
-                GameDict[DefensiveTeam]['Points'] += 7
+                GameDict[DefensiveTeam]['Points'] += 6
+                OffensivePointDifferential = GameDict[DefensiveTeam]['Points'] - GameDict[OffensiveTeam]['Points']
+                #Todo GO FOR 2
+                if DetermineGoForTwo(OffensivePointDifferential, Period, SecondsLeftInPeriod, CoachDict[DefensiveTeam]['Tendencies']):
+                    TwoPointConversionAttempt = True
+                    GameDict[OffensiveTeam]['TwoPointAttempt'] +=1
+                    if random.uniform(0,1) < .55:
+                        GameDict[DefensiveTeam]['Points'] += 2
+                        TwoPointConversionSuccess = True
+                        GameDict[OffensiveTeam]['TwoPointConversion'] +=1
+                else:
+                    KickerPlayerID      = DefensiveTeamPlayers['K'][0]
+                    KickerTalent        = AllPlayers[KickerPlayerID]['PlayerSkills']['OverallRating']
+
+                    ExtraPointAttempt = True
+                    GameDict[DefensiveTeam]['KCK_XPA'] +=1
+                    AllPlayers[KickerPlayerID]['GameStats']['KCK_XPA'] += 1
+                    if random.uniform(0, 1) < ((KickerTalent / 90.0) ** (1/2.0)):
+                        ExtraPointSuccess = True
+                        GameDict[DefensiveTeam]['Points'] += 1
+                        GameDict[DefensiveTeam]['KCK_XPM'] += 1
+                        AllPlayers[KickerPlayerID]['GameStats']['KCK_XPM'] += 1
+
                 GameDict[OffensiveTeam]['Turnovers'] += 1
                 Kickoff = True
 
@@ -771,7 +978,20 @@ def GameSim(game):
                     PlayDescription = AllPlayers[RunningBackPlayerID]['PlayerName'] + ' ' + str(int(100 - (BallSpot - YardsThisPlay))) + ' Yd ' + PlayChoice
                 elif PlayChoice == 'Pass':
                     PlayDescription = AllPlayers[QuarterbackPlayerID]['PlayerName'] + ' ' + str(int(100 - (BallSpot - YardsThisPlay))) + ' Yd ' + PlayChoice + ' to ' + AllPlayers[WideReceiverPlayer]['PlayerName']
+
                 DriveDescription = str(DrivePlayCount) + ' plays, ' + str(int(100 - DriveStartBallSpot)) + ' yards, ' + SecondsToMinutes(DriveDuration)
+
+                if TwoPointConversionAttempt:
+                    if TwoPointConversionSuccess:
+                        DriveDescription += '  -  2pt conversion good'
+                    else:
+                        DriveDescription += '  -  2pt conversion NO GOOD'
+                elif ExtraPointAttempt:
+                    if ExtraPointSuccess:
+                        DriveDescription += '  -  Extra point good'
+                    else:
+                        DriveDescription += '  -  Extra point MISSED'
+
                 GE = GameEvent(GameID = game, WorldID = CurrentWorld, DriveDescription=DriveDescription, PlayDescription = PlayDescription, PlayType='TD', IsScoringPlay = True,ScoringTeamID=OffensiveTeam, HomePoints = GameDict[HomeTeam]['Points'], AwayPoints = GameDict[AwayTeam]['Points'], EventPeriod = Period, EventTime = SecondsLeftInPeriod)
                 GameEventsToSave.append(GE)
                 SwitchPossession = True

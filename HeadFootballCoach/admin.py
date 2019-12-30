@@ -45,6 +45,17 @@ class PlayerAdmin(admin.ModelAdmin):
 class CoachAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Coach._meta.get_fields() if field.name not in ['coachteamseason']]
 
+class CoachTeamSeasonAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in CoachTeamSeason._meta.get_fields() if field.name not in ('position', 'player', 'week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')] + ['SituationalAggressivenessTendency','PlayClockAggressivenessTendency','PlaycallPassTendency']
+    list_filter = ['Position', 'TeamSeasonID__TeamID__TeamName']
+
+    def SituationalAggressivenessTendency(self, obj):
+        return obj.CoachID.SituationalAggressivenessTendency
+    def PlayClockAggressivenessTendency(self, obj):
+        return obj.CoachID.PlayClockAggressivenessTendency
+    def PlaycallPassTendency(self, obj):
+        return obj.CoachID.PlaycallPassTendency
+
 class PlayerSkillAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerSeasonSkill._meta.get_fields()]
     list_filter = ['PlayerID__PositionID', 'PlayerID__Class']
@@ -123,7 +134,7 @@ admin.site.register(PlayerSeasonSkill, PlayerSkillAdmin)
 admin.site.register(Driver)
 admin.site.register(PlayerGameStat, PlayerGameStatAdmin)
 admin.site.register(Coach, CoachAdmin)
-admin.site.register(CoachTeamSeason)
+admin.site.register(CoachTeamSeason, CoachTeamSeasonAdmin)
 admin.site.register(RecruitTeamSeason, RecruitTeamSeasonAdmin)
 admin.site.register(TeamSeason, TeamSeasonAdmin)
 admin.site.register(Playoff)

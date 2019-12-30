@@ -420,9 +420,9 @@ def createCalendar(StartYear=2019, StartAfterMonthDay=(8,25), WorldID=None, Leag
     WeekCount += 1
     AnnualScheduleOfEvents.append({'Phase': 'Conference Championships', 'WeekNumber': WeekCount, 'WeekName': 'Conference Championship Week', 'LastWeekInPhase': True})
     WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Bowls', 'WeekNumber': WeekCount, 'WeekName': 'Bowl Season', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Bowls', 'WeekNumber': WeekCount, 'WeekName': 'Bowl Season', 'LastWeekInPhase': True})
     WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Bowls', 'WeekNumber': WeekCount, 'WeekName': 'Season Recap', 'LastWeekInPhase': True})
+    AnnualScheduleOfEvents.append({'Phase': 'Season Recap', 'WeekNumber': WeekCount, 'WeekName': 'Season Recap', 'LastWeekInPhase': True})
     WeekCount += 1
     AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Coach Carousel', 'LastWeekInPhase': False})
     WeekCount += 1

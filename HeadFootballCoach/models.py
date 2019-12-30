@@ -6,7 +6,7 @@ import random
 import time
 from django.db.models import Max
 from django.shortcuts import get_object_or_404
-from .utilities import GetValuesOfObject, MapNumberValuesToLetterGrade, Average, UniformTwoDecimals
+from .utilities import GetValuesOfObject, MapNumberValuesToLetterGrade, Average, UniformTwoDecimals, WeightedProbabilityChoice
 # Create your models here.
 
 
@@ -60,9 +60,10 @@ class System_PlayerArchetypeRatingModifier(models.Model):
     Carrying_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Catching_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     CatchInTraffic_Rating       = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    ShortRouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    MediumRouteRunning_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    DeepRouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #ShortRouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #MediumRouteRunning_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #DeepRouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    RouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     SpectacularCatch_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Release_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     HitPower_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
@@ -388,6 +389,9 @@ class Phase(models.Model):
     LeagueSeasonID = models.ForeignKey(LeagueSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
 
     PhaseName = models.CharField(max_length=50, blank=True, null=True, default=None)
+
+    def __str__(self):
+        return self.PhaseName
 
 class Week(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
@@ -791,11 +795,7 @@ class Player(models.Model):
             'hair': ["#272421"]
           },
           {
-            'skin': "#ad6453",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#74453d",
+            'skin': "#a67358",
             'hair': ["#272421"]
           },
           {
@@ -804,6 +804,22 @@ class Player(models.Model):
           },
           {
             'skin': "#ad6453",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#ad6453",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#ad6453",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#74453d",
+            'hair': ["#272421"]
+          },
+          {
+            'skin': "#74453d",
             'hair': ["#272421"]
           },
           {
@@ -812,18 +828,6 @@ class Player(models.Model):
           },
           {
             'skin': "#5c3937",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#a67358",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#ad6453",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#74453d",
             'hair': ["#272421"]
           },
           {
@@ -851,7 +855,21 @@ class Player(models.Model):
 
         eyeAngle = round(random.uniform(0,25) - 10, 0)
 
-        palette = random.choice(colors)
+        if self.PositionID.PositionAbbreviation in ['QB', 'OT', 'OG', 'OC', 'K', 'P']:
+            WPC = [(u, len(u['hair'])) for u in colors]
+            palette = WeightedProbabilityChoice(WPC, colors[0])
+            print('WPC 1', WPC, 'chosen:', palette)
+
+        elif self.PositionID.PositionAbbreviation in ['MLB', 'DE', 'TE']:
+            WPC =  [(u, 1) for u in colors]
+            palette = WeightedProbabilityChoice(WPC, colors[0])
+            print('WPC 2', WPC, 'chosen:', palette)
+        else:
+            WPC = [(u, (10 - len(u['hair'])) ** 2) for u in colors]
+            palette = WeightedProbabilityChoice(WPC, colors[0])
+            print('WPC 3', WPC, 'chosen:', palette)
+
+
         skinColor = palette['skin']
         hairColor = random.choice(palette['hair'])
         isFlipped = 'false' if random.uniform(0,1) < 0.5 else 'true'
@@ -872,7 +890,6 @@ class Player(models.Model):
         'head': {
           'id': random.choice(svgsIndex['head']),
           'shave': 'rgba(0,0,0,' + str(round(random.uniform(0,1) / 5.0 if random.uniform(0,1) < 0.25 else 0,2)) + ')'
-
         },
         'eyeLine': {
           'id': random.choice(svgsIndex['eyeLine']) if random.uniform(0,1) < 0.75 else 'none'
@@ -1207,6 +1224,14 @@ class TeamSeason(models.Model):
     PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM29 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA39 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM39 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA49 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM49 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA50 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1219,6 +1244,8 @@ class TeamSeason(models.Model):
     ThirdDownConversion = models.PositiveSmallIntegerField(default=0)
     FourthDownAttempt = models.PositiveSmallIntegerField(default=0)
     FourthDownConversion = models.PositiveSmallIntegerField(default=0)
+    TwoPointAttempt = models.PositiveSmallIntegerField(default=0)
+    TwoPointConversion = models.PositiveSmallIntegerField(default=0)
     FirstDowns = models.PositiveSmallIntegerField(default=0)
 
     GamesPlayed = models.PositiveSmallIntegerField(default=0)
@@ -1319,7 +1346,7 @@ class TeamSeason(models.Model):
     def ConferenceRankingTuple(self):
         TeamCount = Team.objects.filter(WorldID = self.WorldID).count()
         print('self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank', self.ConferenceWins , self.ConferenceLosses,self.ConferenceWins , TeamCount , self.NationalRank)
-        return (self.IsConferenceChampionship, self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank)
+        return (self.ConferenceChampion, self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank)
 
     @property
     def ConferenceRankingDict(self):
@@ -1540,6 +1567,14 @@ class PlayerTeamSeason(models.Model):
     PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM29 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA39 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM39 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA49 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM49 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA50 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2176,6 +2211,14 @@ class TeamGame(models.Model):
     PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM29 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA39 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM39 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA49 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM49 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA50 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2191,7 +2234,8 @@ class TeamGame(models.Model):
     ThirdDownConversion = models.PositiveSmallIntegerField(default=0)
     FourthDownAttempt = models.PositiveSmallIntegerField(default=0)
     FourthDownConversion = models.PositiveSmallIntegerField(default=0)
-
+    TwoPointAttempt = models.PositiveSmallIntegerField(default=0)
+    TwoPointConversion = models.PositiveSmallIntegerField(default=0)
 
     @property
     def OpposingTeamGame(self):
@@ -2212,7 +2256,7 @@ class PlayerSeasonSkill(models.Model):
     Awareness_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Jumping_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Injury_Rating               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Toughness_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #Toughness_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     ThrowPower_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     ShortThrowAccuracy_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     MediumThrowAccuracy_Rating  = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
@@ -2220,25 +2264,27 @@ class PlayerSeasonSkill(models.Model):
     ThrowOnRun_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     ThrowUnderPressure_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     PlayAction_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Trucking_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #Trucking_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Elusiveness_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     BallCarrierVision_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    StiffArm_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    SpinMove_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #StiffArm_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #SpinMove_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     JukeMove_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     BreakTackle_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Carrying_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Catching_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     CatchInTraffic_Rating       = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    ShortRouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    MediumRouteRunning_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    DeepRouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    SpectacularCatch_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #ShortRouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #MediumRouteRunning_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #DeepRouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    RouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #SpectacularCatch_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Release_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     HitPower_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Tackle_Rating               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    PowerMoves_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    FinesseMoves_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    PassRush_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #PowerMoves_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #FinesseMoves_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     BlockShedding_Rating        = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Pursuit_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     PlayRecognition_Rating      = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
@@ -2322,6 +2368,15 @@ class PlayerGameStat(models.Model):
     PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM29 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA39 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM39 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA49 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM49 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGA50 = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
+
     KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2381,8 +2436,9 @@ class Coach(models.Model):
     ValueSizeTendency        = models.PositiveSmallIntegerField(default = 0)
 
     #GameStrategy
-    OnsideKickTendency = models.PositiveSmallIntegerField(default = 5)
+    SituationalAggressivenessTendency = models.SmallIntegerField(default = 0)
     PlaycallPassTendency = models.PositiveSmallIntegerField(default = 55)
+    PlayClockAggressivenessTendency = models.SmallIntegerField(default = 0)
 
     #Playbooks
     OffensivePlaybook = models.CharField(max_length=100, default = None, null=True, blank=True)

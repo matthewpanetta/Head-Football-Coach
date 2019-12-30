@@ -11,7 +11,7 @@
   <div class='PageContent'>
 
     <div class="w3-container">
-      <div class="w3-row-padding">
+      <div class="w3-row-padding GameHeadlineDisplay">
         {{game.GameHeadlineDisplay}}
       </div>
       <div class='w3-row-padding'>
@@ -196,7 +196,27 @@
           <div class='container'>
             {% for StatGrouping in BoxScoreStatGroupings %}
             <div class='w3-row-padding'>
-
+              <div class='w3-col s6 gamePlayerBoxStats'>
+                <img class='gameBoxScoreTeamLogo' src='{{awayTeam.LogoURL}}'  />
+                {{awayTeam.TeamName}} {{StatGrouping.StatGroupName}}
+                <table id='gameAwayTeamBoxScore' class='table table-striped'>
+                  <thead>
+                      {% for Stat in StatGrouping.Stats %}
+                      {% if Stat.DisplayColumn %}
+                      <th scope="col" data-defaultsort="asc">{{Stat.DisplayName}}</th>
+                      {% endif %}
+                      {% endfor %}
+                  </thead>
+                  {% for player in StatGrouping.AwayTeam %}
+                  <tr>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
+                    {% for Stat in player.Stats%}
+                    <td>{{Stat.Value}}</td>
+                    {%endfor %}
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
               <div class='w3-col s6 gamePlayerBoxStats'>
                 <img class='gameBoxScoreTeamLogo' src='{{homeTeam.LogoURL}}'  />
                 {{homeTeam.TeamName}} {{StatGrouping.StatGroupName}}
@@ -218,27 +238,7 @@
                   {% endfor %}
                 </table>
               </div>
-              <div class='w3-col s6'>
-                <img class='gameBoxScoreTeamLogo' src='{{awayTeam.LogoURL}}'  />
-                {{awayTeam.TeamName}} {{StatGrouping.StatGroupName}}
-                <table id='gameAwayTeamBoxScore' class='table table-striped'>
-                  <thead>
-                      {% for Stat in StatGrouping.Stats %}
-                      {% if Stat.DisplayColumn %}
-                      <th scope="col" data-defaultsort="asc">{{Stat.DisplayName}}</th>
-                      {% endif %}
-                      {% endfor %}
-                  </thead>
-                  {% for player in StatGrouping.AwayTeam %}
-                  <tr>
-                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
-                    {% for Stat in player.Stats%}
-                    <td>{{Stat.Value}}</td>
-                    {%endfor %}
-                  </tr>
-                  {% endfor %}
-                </table>
-              </div>
+
             </div>
             {% endfor %}
 
@@ -359,3 +359,10 @@
   });
 
 </script>
+
+
+<style media="screen">
+  .GameHeadlineDisplay {
+    background: linear-gradient(to right,#{{awayTeam.TeamColor_Primary_HEX}},#{{homeTeam.TeamColor_Primary_HEX}});
+  }
+</style>

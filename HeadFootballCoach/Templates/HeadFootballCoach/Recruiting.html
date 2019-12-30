@@ -1,7 +1,7 @@
 {% include "HeadFootballCoach/NavBar.html" %}
 {% load static %}
 
-
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" PlayerID="{{player.PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
 <body>
   <div class="PageContent">
     <h2>
@@ -39,7 +39,7 @@
                       </div>
                       <div class="mock-row-player"><a class="primary-hover" href="/World/{{page.WorldID}}/Player/{{player.PlayerID}}">
                           <div class="mock-row-name">{{player.FullName}}</div>
-                          <div class="mock-row-school-position">{{player.Position}} | {{player.CityID.CityName}}, {{player.CityID.StateID.StateAbbreviation}} </div>
+                          <div class="mock-row-school-position">{{player.PositionID.PositionAbbreviation}} | {{player.CityID.CityName}}, {{player.CityID.StateID.StateAbbreviation}} </div>
                         </a> </div>
                       <div class="mock-row-measurements">
                         <div class="section height-weight">

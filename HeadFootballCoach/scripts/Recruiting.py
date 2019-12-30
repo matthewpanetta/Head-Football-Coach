@@ -235,7 +235,7 @@ def FindNewTeamsForRecruit(WorldID, Recruit, RecruitTopPreferences=None):
     RTSToSave = []
     NumberOfTeamsToAdd = Min(TeamContactsPerRecruit, TeamList.count())
     for T in sorted(RecruitTeamDict['TeamList'], key = lambda k: k['MatchValue'] , reverse=True)[:NumberOfTeamsToAdd - 1]:
-        RTS =  RecruitTeamSeason(WorldID=CurrentWorld, TeamSeasonID = T['TeamObject'].CurrentTeamSeason, PlayerID = Recruit, ScoutedOverall = NormalBounds(Recruit.OverallRating, 1.5, 0,99), MatchRating = T['MatchValue'])
+        RTS =  RecruitTeamSeason(WorldID=CurrentWorld, TeamSeasonID = T['TeamObject'].CurrentTeamSeason, PlayerID = Recruit, ScoutedOverall = NormalBounds(Recruit.OverallRating, 1.5, 0,99), MatchRating = T['MatchValue'], InterestLevel = T['MatchValue'])
         RTSToSave.append(RTS)
 
     return RTSToSave

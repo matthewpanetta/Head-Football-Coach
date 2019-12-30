@@ -28,37 +28,12 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert){
   var PlayerID   = parseInt($(DataPassthruHolder).attr('PlayerID'));
   var PrimaryColor    = $(DataPassthruHolder).attr('PrimaryColor');
   var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryColor');
-  console.log(DataPassthruHolder, PrimaryColor, SecondaryColor,WorldID , PlayerID);
+  //console.log('Datapassthru', DataPassthruHolder, PrimaryColor, SecondaryColor,WorldID , PlayerID);
 
   console.log('face before generate', face, TeamJerseyStyle, TeamJerseyInvert);
-  if (true === false){//(face == '' || face == undefined){
-    console.log('face was empty');
-    face = generate();
 
-    $.ajax({
-      method: "POST",
-      url: "/World/"+WorldID+"/Player/"+PlayerID+"/SetPlayerFaceJSON",
-      data: {
-        csrfmiddlewaretoken: csrftoken,
-        PlayerFaceJson: JSON.stringify(face)
-      },
-      dataType: 'json',
-      success: function(res, status) {
-        console.log(res, status);
-      },
-      error: function(res) {
-        alert(res.status);
-      }
-    });
-  }
-  if (TeamJerseyInvert == 'True') {
-    var overrides = {"teamColors":["#FFFFFF", "#"+PrimaryColor,"#"+SecondaryColor]}
-  }
-  else {
-    var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#000000"]}
-
-  }
-  overrides['jersey'] = {'id': TeamJerseyStyle}
+  var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#000000"]}
+  overrides['jersey'] = {'id': 'football'}
 
   console.log('face after generate', face);
   display('PlayerFace', face, overrides);

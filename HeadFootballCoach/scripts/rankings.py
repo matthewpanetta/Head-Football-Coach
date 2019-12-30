@@ -55,10 +55,10 @@ def CalculateConferenceRankings(LS, WorldID):
             ConfRankTracker[ConfName]['Teams'][TS]['DefeatedTeams'] = TS.DefeatedTeams
             ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'] = 0
             ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'] = RankCountWithTies
-            ConfRankTracker[ConfName]['Teams'][TS]['IsConferenceChampionship'] = TS.IsConferenceChampionship
+            ConfRankTracker[ConfName]['Teams'][TS]['ConferenceChampion'] = TS.ConferenceChampion
             ConfRankTracker[ConfName]['Teams'][TS]['MOV'] = TS.Points - TS.PointsAllowed
 
-            if TS.IsConferenceChampionship:
+            if TS.ConferenceChampion:
                 ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'] += 10000
 
 

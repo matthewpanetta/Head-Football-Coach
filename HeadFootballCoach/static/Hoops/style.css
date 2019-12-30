@@ -319,7 +319,7 @@
   font-size: 10px;
 }
 
-.gameBoxScoreTeamLogo, .teamScheduleTeamLogo {
+.gameBoxScoreTeamLogo, .teamScheduleTeamLogo, .worldTeamStatLogo {
   height: 30px;
 }
 
@@ -717,12 +717,18 @@ input[type=text], input[type=password] {
   background-color: #f2f2f2;
 }
 
+
+
 .evenRow {
   background-color: #f2f2f2;
 }
 
+ .worldPreseasonTopRecruits td {
+   padding: 6px 10px;
+ }
 
-#teamOverviewConferenceStandings  td,#teamOverviewConferenceStandings  th  {
+
+#teamOverviewConferenceStandings  td,#teamOverviewConferenceStandings  th {
   padding: 0px 10px;
 }
 
@@ -749,7 +755,7 @@ input[type=text], input[type=password] {
   font-weight: 500;
 }
 
-.overviewRecentGameDisplayTeamLogo {
+.overviewRecentGameDisplayTeamLogo, .PreseasonRecruitTeamLogo img {
   height: 30px;
 }
 
@@ -1145,3 +1151,25 @@ td, .td-style {
 th {
   font-size: 12.5px;
 }
+
+.worldLeagueLeaderTeamLogo {
+  height: 24px;
+}
+
+td.WorldLeagueLeaderRowCell {
+  padding: .15rem !important;
+}
+
+.GameHeadlineDisplay {
+  font-weight: 600;
+  color: white;
+}
+
+.teamTableBorder {
+  border-left: 12px solid;
+}
+
+
+.padding-right {
+   padding-right: 12px;
+ }

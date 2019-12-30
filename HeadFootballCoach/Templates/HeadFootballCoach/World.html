@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
 
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
@@ -55,8 +56,9 @@
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-conference-standings-tab">Conference Standings</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-headlines-tab">Headlines</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-top-players-tab">League Leaders</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">League Leaders</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-player-stats-tab">Player Stats</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-history-tab">History</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-award-races-tab">Award Races</button>
       </div>
@@ -85,9 +87,10 @@
                     <div class='w3-col s8 worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
                       <a  class='' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
 
-                        <img class='worldTeamLogo' src='{{team.TeamSeasonID__TeamID__TeamLogoURL}}' alt="My image">
+                        <img class='worldTeamLogo' src='{{team.TeamSeasonID__TeamID__TeamLogoURL}}' alt="">
                         <span>{{ team.TeamSeasonID__TeamID__TeamName }} {{ team.TeamSeasonID__TeamID__TeamNickname }}</span>
                       </a>
+                      <img class='worldTeamLogo {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
                     </div>
                     <div class='w3-col s2 worldOverviewTop25TeamLineRecord w3-cell w3-cell-middle'>
                       <span class=''>{{team.TeamSeasonID__Wins}} - {{team.TeamSeasonID__Losses}}</span>
@@ -98,7 +101,7 @@
               </div>
             </div>
             <div class="w3-col  s4">
-              {% if   CurrentWeek.PhaseID.PhaseName != 'Preseason' %}
+              {% if   CurrentWeek.PhaseID.PhaseName == 'Regular Season' or CurrentWeek.PhaseID.PhaseName == 'Conference Championships' or CurrentWeek.PhaseID.PhaseName == 'Bowls' %}
               <div class="w3-card">
                 <div class="w3-bar boxscore-bar" id="nav-tab-{{game.GameID}}">
                   <div class="w3-bar-item fontweight500">Upcoming Games</div>
@@ -175,9 +178,49 @@
                   </table>
                 </div>
               </div>
+              {% elif CurrentWeek.PhaseID.PhaseName == 'Season Recap' %}
+              <div class="w3-card">
+                <div class="w3-bar preseason-allamerican-team-bar" id="nav-tab-preseason-allamerican-team">
+                  <div class="w3-bar-item fontweight500">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
+                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab w3-button tab selected-preseason-award-team-tab" id="preseason-allamerican-team-firstteam-tab">First Team</button>
+                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab w3-button tab" id="preseason-allamerican-team-secondteam-tab">Second Team</button>
+                </div>
+                <div class="w3-bar preseason-allamerican-conference-bar w3-margin-bottom" id="nav-tab-preseason-allamerican-conference">
+                  {% for Conf in SeasonAllAmericans%}
+                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab w3-button tab {{Conf.ConferenceSelected}}" id="preseason-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
+                  {% endfor %}
+                </div>
+                <div class="list-group list-group-flush">
+                  <table id='teamOverviewConferenceStandings'>
+                    <thead class=''>
+                      <th>Pos</th>
+                      <th>Team</th>
+                      <th>Player</th>
+                    </thead>
+                    {% for Conf in SeasonAllAmericans%}
+                    {% for AwardTeam in Conf.Teams %}
+                    {% for Award in AwardTeam.Team %}
+                    <tr class='{{Conf.ShowConference}} {{AwardTeam.ShowTeam}} season-allamarican-row season-allamerican-conference-{{Conf.Conference.ConferenceID}} season-allamerican-team-{{AwardTeam.TeamName}}'>
+                      <td>{{Award.PositionID.PositionAbbreviation}}</td>
+                      <td>
+                        <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.LogoURL}}" />
+                           {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
+                        </a>
+                      </td>
+                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.Class}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+
               {% endif %}
             </div>
             <div class="w3-col s3">
+              {% if   CurrentWeek.PhaseID.PhaseName == 'Regular Season' or CurrentWeek.PhaseID.PhaseName == 'Conference Championships' or CurrentWeek.PhaseID.PhaseName == 'Bowls' or CurrentWeek.PhaseID.PhaseName == 'Season Recap' %}
               <div class="w3-card">
                 <div class="w3-bar boxscore-bar" id="nav-tab-{{game.GameID}}">
                   <div class="w3-bar-item fontweight500">Recent Games</div>
@@ -224,6 +267,35 @@
                   </div>
                 </div>
               </div>
+              {% elif CurrentWeek.PhaseID.PhaseName == 'Preseason' %}
+              <div class="w3-card">
+                Top Recruits
+                <div class="list-group list-group-flush">
+                  <table class='worldPreseasonTopRecruits'>
+                    <thead class=''>
+                      <th>Rank</th>
+                      <th>Player</th>
+                      <th>Pos</th>
+                      <th>Hometown</th>
+                    </thead>
+                    {% for Recruit in PreseasonTopProspects%}
+                    <tr id='PreseasonRecruit{{forloop.counter}}' class='{%if forloop.counter|divisibleby:2 %}evenRow{% endif %}'>
+                      <td>{{Recruit.Recruiting_NationalRank}}</td>
+                      <td><a href="{{Recruit.PlayerHref}}">{{Recruit.PlayerName}}</a></td>
+                      <td>{{Recruit.PositionID__PositionAbbreviation}}</td>
+                      <td>{{Recruit.CityID__CityName}}, {{Recruit.CityID__StateID__StateName}}</td>
+                      <td><i class="fas fa-angle-down"></i></td>
+                    </tr>
+                    <tr id='PreseasonRecruit{{forloop.counter}}-info' class='w3-hide {%if forloop.counter|divisibleby:2 %}evenRow{% endif %}'>
+                      {% for Team in Recruit.RecruitingTeams%}
+                      <td class='PreseasonRecruitTeamLogo'>#{{forloop.counter}} <img src="{{Team.TeamSeasonID__TeamID__TeamLogoURL}}" alt=""></td>
+                      {% endfor %}
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -249,8 +321,6 @@
                     <th scope="col" data-defaultsort="asc">PPG</th>
                     <th scope="col" data-defaultsort="asc">PAPG</th>
                     <th scope="col" data-defaultsort="asc">MOV</th>
-                    <th scope="col" data-defaultsort="asc">Pass PG</th>
-                    <th scope="col" data-defaultsort="asc">Rush PG</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -268,8 +338,6 @@
                     <td data-field='PPG'></td>
                     <td data-field='PAPG'></td>
                     <td data-field='MOV'></td>
-                    <td data-field='PAS_YardsPG'></td>
-                    <td data-field='RUS_YardsPG'></td>
                   </tr>
                 </tbody>
               </table>
@@ -277,10 +345,52 @@
           </div>
         </div>
       </div>
+      <div class="tab-content" style="display:none;"  id="nav-player-stats">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding' >
+            <div class='w3-col s9'>
+              <table class="w3-table w3-table-all" id='WorldPlayerStats'  style="width:100%">
+                <thead>
+                  <tr>
+                    <th data-data="PlayerTeam">Team</th>
+                    <th data-data="PlayerName">Player</th>
+                    <th data-data="Class">Class</th>
+                    <th data-data="Position">Position</th>
+                    <th data-data="playerseasonskill__OverallRating">OVR</th>
+                    <th data-data="playerteamseason__PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Pass Yards</th>
+                    <th data-data="playerteamseason__PAS_CompletionPercentage" class='WorldPlayerStats-Stat-Passing'>Pass %</th>
+                    <th data-data="playerteamseason__PAS_YPG" class='WorldPlayerStats-Stat-Passing'>Pass YPG</th>
+                    <th data-data="playerteamseason__PAS_TD" class='WorldPlayerStats-Stat-Passing'>Pass TDs</th>
+                    <th data-data="playerteamseason__PAS_INT" class='WorldPlayerStats-Stat-Passing'>Pass INT</th>
+                    <th data-data="playerteamseason__RUS_Yards" class='WorldPlayerStats-Stat-Rushing'>Rush Yards</th>
+                    <th data-data="playerteamseason__RUS_YPC" class='WorldPlayerStats-Stat-Rushing'>Rush YPC</th>
+                    <th data-data="playerteamseason__RUS_YPG" class='WorldPlayerStats-Stat-Rushing'>Rush YPG</th>
+                    <th data-data="playerteamseason__RUS_TD" class='WorldPlayerStats-Stat-Rushing'>Rush TDs</th>
+                    <th data-data="playerteamseason__FUM_Fumbles" class='WorldPlayerStats-Stat-Rushing'>Rush Fum</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            <div class='w3-col s2'>
+              Selected Stat Filtering
+              <div class='w3-display-container' id='worldplayerstat-statgroup-div'>
+                <input class="w3-radio" type="radio" name="worldplayerstat-statgroup-selected" value="" checked>
+                <label>None</label>
+
+                <input class="w3-radio" type="radio" name="worldplayerstat-statgroup-selected" value="WorldPlayerStats-Stat-Passing">
+                <label>Passing</label>
+
+                <input class="w3-radio" type="radio" name="worldplayerstat-statgroup-selected" value="WorldPlayerStats-Stat-Rushing">
+                <label>Rushing</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="tab-content" style="display:none;"  id="nav-team-stats">
         <div class='w3-display-container' id='TeamStatsTabContainer'>
           <div class='w3-row-padding w3-hide' id='TeamStatsTableClone'>
-            <div class='w3-col s10'>
+            <div class='w3-col s11'>
               <table class="w3-table w3-table-all">
                 <thead>
                   <tr>
@@ -294,6 +404,16 @@
                     <th scope="col" data-defaultsort="asc">MOV</th>
                     <th scope="col" data-defaultsort="asc">Rush PG</th>
                     <th scope="col" data-defaultsort="asc">Pass PG</th>
+                    <th scope="col" data-defaultsort="asc">% Pass Plays</th>
+                    <th scope="col" data-defaultsort="asc">Sacks Allowed</th>
+                    <th scope="col" data-defaultsort="asc">% Scoring Drives</th>
+                    <th scope="col" data-defaultsort="asc">% Turnover Drives</th>
+                    <th scope="col" data-defaultsort="asc">Points / Drive</th>
+                    <th scope="col" data-defaultsort="asc">TOP / Drive</th>
+                    <th scope="col" data-defaultsort="asc">Yards / Drive</th>
+                    <th scope="col" data-defaultsort="asc">Plays / Drive</th>
+                    <th scope="col" data-defaultsort="asc">Seconds / Play</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -318,6 +438,15 @@
                     <td data-field='MOV'></td>
                     <td data-field='RUS_YardsPG'></td>
                     <td data-field='PAS_YardsPG'></td>
+                    <td data-field='PercentPassPlays'></td>
+                    <td data-field='SacksAllowed'></td>
+                    <td data-field='PercentOfScoringDrives'></td>
+                    <td data-field='PercentOfTurnoverDrives'></td>
+                    <td data-field='PointsPerDrive'></td>
+                    <td data-field='TimeOfPossessionPerDrive'></td>
+                    <td data-field='YardsPerDrive'></td>
+                    <td data-field='PlaysPerDrive'></td>
+                    <td data-field='SecondsPerPlay'></td>
                   </tr>
                 </tbody>
               </table>
@@ -420,25 +549,25 @@
           {% endfor %}
         </div>
       </div>
-      <div class="tab-content" style="display:none;"  id="nav-top-players">
+      <div class="tab-content" style="display:none;"  id="nav-league-leaders">
         <div class='w3-display-container'>
-          <div class='w3-row'>
-            <div class='w3-col s1'></div>
-            <div class='w3-col s10'>
-              <article>
-                <header>
-                  Head Coach
-                </header>
-                {{HC.CoachFirstName}} {{HC.CoachLastName}}
-              </article>
+          <div class='w3-row-padding' id='worldLeagueLeaderRow'>
+            <div id='worldLeagueLeadersClone' class='w3-col s3 w3-hide'>
+              <table id='' class='display table sortable w3-table'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Team</th>
+                  <th data-field='DisplayName'></th>
+                </thead>
+                <tr id='worldLeagueLeadersRowClone' class='w3-hide'>
+                  <td class='WorldLeagueLeaderRowCell' data-field='ValueRank' data-value=""></td>
+                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href="" href-field='PlayerHref' ><span data-field='PlayerName'></span>, </a><span data-field='PlayerPosition'></span></td>
+                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href-field='PlayerTeamHref'><img src="" src-field='PlayerTeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
+                  <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value=""></td>
+                </tr>
+              </table>
             </div>
-            <div class='w3-col s1'></div>
-          </div>
-          <div class='w3-row'>
-            <div class='w3-col s1'></div>
-            <div class='w3-col s5'>{{AHC.CoachFirstName}} {{AHC.CoachLastName}}</div>
-            <div class='w3-col s5'>{{AC.CoachFirstName}} {{AC.CoachLastName}}</div>
-            <div class='w3-col s1'></div>
           </div>
         </div>
       </div>
@@ -562,3 +691,9 @@
 <script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
 <script src="{% static 'action.js' %}"></script>
 <script src="{% static 'Pages/World.js' %}" type="module"></script>
+
+<script>
+      $(document).ready(function() {
+
+      });
+  </script>

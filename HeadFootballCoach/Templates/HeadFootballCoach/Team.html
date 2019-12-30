@@ -56,6 +56,7 @@
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-analytics-tab">Analytics</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-coaches-tab">Coaches</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-history-tab">Team History</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-records-tab">Team Records</button>
       </div>
     </nav>
     <div id="nav-tabContent">
@@ -507,6 +508,22 @@
               </div>
             </div>
           </div>
+          <div class='w3-row-padding'>
+            <div class='w3-col s10'>
+              {% for Banner in TeamHistory %}
+                <div class="teamAchievementFlag" style='background: #{{page.PrimaryColor}}; border-color: #{{page.SecondaryColor}};'>
+                  <div class='teamAchievementFlagYear'>{{Banner.Season}}</div>
+                  <div class="teamAchievementFlagTitle">{{team.TeamName}}</div>
+                  <div class="teamAchievementFlagTitle BannerLine1">{{Banner.BannerLine1}}</div>
+                  <div class="teamAchievementFlagTitle BannerLine2">{{Banner.BannerLine2}}</div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-records">
+        <div class='w3-display-container'>
           <div class='w3-row-padding' id='teamHistoryPlayerLeaderRow'>
             <div id='teamHistoryPlayerLeadersClone' class='w3-col s3 w3-hide'>
               <table id='' class='display table sortable'>
@@ -523,18 +540,6 @@
                   <td class='TeamHistoricalLeaderRowCell' data-field='Value' data-value=""></td>
                 </tr>
               </table>
-            </div>
-          </div>
-          <div class='w3-row-padding'>
-            <div class='w3-col s10'>
-              {% for Banner in TeamHistory %}
-                <div class="teamAchievementFlag" style='background: #{{page.PrimaryColor}}; border-color: #{{page.SecondaryColor}};'>
-                  <div class='teamAchievementFlagYear'>{{Banner.Season}}</div>
-                  <div class="teamAchievementFlagTitle">{{team.TeamName}}</div>
-                  <div class="teamAchievementFlagTitle BannerLine1">{{Banner.BannerLine1}}</div>
-                  <div class="teamAchievementFlagTitle BannerLine2">{{Banner.BannerLine2}}</div>
-                </div>
-              {% endfor %}
             </div>
           </div>
         </div>

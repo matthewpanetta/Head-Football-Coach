@@ -135,7 +135,7 @@
                   {% for game in RecentGameStats %}
                   <tr>
                     <td><a href='/World/{{page.WorldID}}/Team/{{game.OpposingTeamID}}'><img class='playerSeasonStatOpponentLogo' src='{{game.OpposingTeamLogoURL}}' />{{game.OpposingTeamName}}</a></td>
-                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">Week {{game.TeamGameID__GameID__WeekID__WeekNumber}}</a></td>
+                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">{{game.TeamGameID__GameID__WeekID__WeekName}}</a></td>
                     {%for Stat in game.Stats%}
                     <td class='{% if Stat.Value == 0%} playerStatZero {%endif%}'>{{Stat.Value}}</td>
                     {%endfor%}
@@ -241,7 +241,7 @@
                   {% for game in GameStats %}
                   <tr>
                     <td><a href='/World/{{page.WorldID}}/Team/{{game.OpposingTeamID}}'><img class='playerSeasonStatOpponentLogo' src='{{game.OpposingTeamLogoURL}}' />{{game.OpposingTeamName}}</a></td>
-                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">Week {{game.TeamGameID__GameID__WeekID__WeekNumber}}</a></td>
+                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">{{game.TeamGameID__GameID__WeekID__WeekName}}</a></td>
                     {%for Stat in game.Stats%}
                     <td class='{% if Stat.Value == 0%} playerStatZero {%endif%}'>{{Stat.Value}}</td>
                     {%endfor%}

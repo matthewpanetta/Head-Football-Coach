@@ -10,7 +10,7 @@ from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, Se
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
 from .scripts.import_csv import createCalendar
-from .utilities import DistanceBetweenCities, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc
+from .utilities import DistanceBetweenCities, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc, NormalVariance
 from math import sin, cos, sqrt, atan2, radians, log
 import time
 
@@ -308,6 +308,10 @@ def GenerateCoach(WorldID):
     C.PatienceTendency = NormalBounds(50, 10, 30,99)
     C.VeteranTendency  = NormalBounds(50, 10, 30,99)
 
+    C.SituationalAggressivenessTendency = NormalVariance(1.0)
+    C.PlayClockAggressivenessTendency = NormalVariance(1.0)
+    C.PlaycallPassTendency = int(NormalTrunc(55,10,30,85))
+
     C.save()
 
     return C
@@ -551,43 +555,8 @@ def CreateRecruitingClass(LS, WorldID):
         'TelevisionExposureValue':'TelevisionExposureRating'
     }
 
-    PositionStarList = {
-    #'ATH': {1:24, 2: 319, 3: 571, 4: 75, 5: 4},
-    'CB': {1:22, 2: 442, 3: 657, 4: 123, 5: 13},
-    'DE': {1:25, 2: 388, 3: 739, 4: 142, 5: 18},
-    'DT': {1:14, 2: 276, 3: 443, 4: 90, 5: 18},
-    'FB': {1:3, 2: 13, 3: 22, 4: 2},
-    'K': {1:8, 2: 82, 3: 58},
-    'OC': {1:6, 2: 68, 3: 93, 4: 18, 5: 2},
-    'OG': {1:33, 2: 300, 3: 386, 4: 75, 5: 2},
-    'OLB': {1:19, 2: 297, 3: 526, 4: 81, 5: 9},
-    'OT': {1:36, 2: 371, 3: 640, 4: 108, 5: 14},
-    'P': {1:1, 2: 41, 3: 37},
-    'RB': {1:29, 2: 338, 3: 595, 4: 109, 5: 9},
-    'S': {1:21, 2: 299, 3: 582, 4: 82, 5: 5},
-    'TE': {1:13, 2: 203, 3: 309, 4: 56, 5: 1},
-    'WR': {1:44, 2: 577, 3: 930, 4: 186, 5: 14},
-    'QB': {1:29, 2: 284, 3: 436, 4: 93, 5: 10},
-    'MLB': {1:18, 2: 249, 3: 291, 4: 62, 5: 4},
-    }
 
-    PositionalRankingTracker = {'ATH': 0,#993,
-    'CB': 0,
-    'DE': 0,
-    'DT': 0,
-    'FB': 0,
-    'K': 0,
-    'OC': 0,
-    'OG': 0,
-    'OLB': 0,
-    'OT': 0,
-    'P': 0,
-    'RB': 0,
-    'S': 0,
-    'TE': 0,
-    'WR': 0,
-    'QB': 0,
-    'MLB': 0}
+    PositionalRankingTracker = {}
 
 
     RecruitCount = 0
@@ -595,9 +564,11 @@ def CreateRecruitingClass(LS, WorldID):
     print('Creating RecruitTeamSeasons')
     for Recruit in RecruitPool:
         RecruitCount +=1
-        Pos = Recruit.Position
+        Pos = Recruit.PositionID
         PlayerStar = 1#WeightedProbabilityChoice(PositionStarList[Pos], 'QB')
         #print(Recruit.PlayerFirstName, Recruit.PlayerLastName, RecruitCount, PlayerStar)
+        if Pos not in PositionalRankingTracker:
+            PositionalRankingTracker[Pos] = 0
         PositionalRankingTracker[Pos] +=1
 
         for Star in sorted(StarDistribution, key=lambda k: k, reverse=True):
@@ -904,7 +875,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         start = time.time()
 
-    #CreateRecruitingClass(LS, WorldID)
+    CreateRecruitingClass(LS, WorldID)
 
     if DoAudit:
         end = time.time()
