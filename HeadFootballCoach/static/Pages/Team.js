@@ -428,7 +428,7 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, DOMID=undefined){
   var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
   var PlayerID   = parseInt($(DataPassthruHolder).attr('PlayerID'));
   var PrimaryColor    = $(DataPassthruHolder).attr('PrimaryColor');
-  var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryColor');
+  var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryJerseyColor');
 
   if (face == '' || face == undefined){
     return 0;

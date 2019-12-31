@@ -209,7 +209,7 @@
                   </thead>
                   {% for player in StatGrouping.AwayTeam %}
                   <tr>
-                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}' class='{{player.GameStarted_Class}}'>{{player.FullName}}</a></td>
                     {% for Stat in player.Stats%}
                     <td>{{Stat.Value}}</td>
                     {%endfor %}
@@ -230,7 +230,7 @@
                   </thead>
                   {% for player in StatGrouping.HomeTeam %}
                   <tr>
-                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}'>{{player.FullName}}</a></td>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}' class='{{player.GameStarted_Class}}'>{{player.FullName}}</a></td>
                     {% for Stat in player.Stats%}
                     <td>{{Stat.Value}}</td>
                     {%endfor %}

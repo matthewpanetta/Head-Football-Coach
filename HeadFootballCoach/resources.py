@@ -1,4 +1,4 @@
-from .models import Audit,TeamGame,Bowl,Position, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
+from .models import Audit,TeamGame,Bowl,Position,Class, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
 import random
 from datetime import timedelta, date
 import numpy
@@ -198,18 +198,11 @@ def GeneratePlayer(t, s, c, WorldID):
     OverallMean = 70
     OverallSigma = 9
 
-    PlayerClasses = ['Freshman', 'Sophomore', 'Junior', 'Senior']
-    IsRecruit = False
-    if c == None:
-        PlayerClasses = ['Freshman', 'Sophomore', 'Junior', 'Senior']
-
-    else:
+    PlayerClasses = list(Class.objects.filter(IsRecruit = False).exclude(ClassName = 'Graduate'))
+    if c is not None:
         PlayerClasses = [c]
-        if c == 'HS Senior':
-            IsRecruit = True
 
-    Positions = Position.objects.all()#['QB', 'RB', 'FB', 'WR', 'TE', 'OT', 'OG', 'OC', 'DE', 'DT', 'OLB', 'MLB', 'CB', 'S', 'K', 'P']
-
+    Positions = Position.objects.all()
 
 
     ClassOverallPercentage = {
@@ -220,23 +213,13 @@ def GeneratePlayer(t, s, c, WorldID):
         'Senior': (.90, 1)
     }
 
-    # factorAthleticism  = NormalBounds(1, 0.2, 0.2, 1.35)
-    # factorShooting     = NormalBounds(1, 0.2, 0.2, 1.35)
-    # factorSkill        = NormalBounds(1, 0.2, 0.2, 1.35)
-    # factorIns          = NormalBounds(1, 0.2, 0.2, 1.35)
-    # athleticismRatings = ["StrengthRating", "SpeedRating", "JumpingRating", "EnduranceRating", "DunkLayupRating"]
-    # shootingRatings    = ["FreeThrowRating", "MidrangeRating", "ThreePointRating"]
-    # skillRatings       = ["OffensiveIQRating", "DefensiveIQRating", "DribblingRating", "PassingRating"]
-    # insideRatings      = ["InsideShootingRating", "ReboundingRating"]
-
-
     PlayerPositionAndHeight = RandomPositionAndMeasurements()
     PlayerPositionID = PlayerPositionAndHeight['PositionID']
     PlayerWeight = PlayerPositionAndHeight['Weight']
     PlayerHeight = PlayerPositionAndHeight['Height']
 
 
-    PlayerClass = random.choice(PlayerClasses)
+    PlayerClassID = random.choice(PlayerClasses)
     #PlayerPosition = random.choice(Positions)
     PlayerNumber = 0
 
@@ -248,7 +231,7 @@ def GeneratePlayer(t, s, c, WorldID):
 
     PlayerRatings = {}
 
-    PlayerDict = {'WorldID':WorldID, 'Class':PlayerClass, 'PlayerFirstName': PlayerFirstName, 'PlayerLastName':PlayerLastName, 'JerseyNumber':PlayerNumber, 'Height':PlayerHeight, 'Weight': PlayerWeight, 'CityID': PlayerCityID, 'PositionID': PlayerPositionID, 'IsRecruit':IsRecruit}
+    PlayerDict = {'WorldID':WorldID, 'ClassID':PlayerClassID, 'PlayerFirstName': PlayerFirstName, 'PlayerLastName':PlayerLastName, 'JerseyNumber':PlayerNumber, 'Height':PlayerHeight, 'Weight': PlayerWeight, 'CityID': PlayerCityID, 'PositionID': PlayerPositionID, 'IsRecruit':PlayerClassID.IsRecruit}
 
     #PST = PlayerTeamSeason(PlayerID = P, SeasonID = s, TeamID = t)
     PlayerDict['Personality_LeadershipRating'] = NormalBounds(55,15,2,98)
@@ -265,7 +248,7 @@ def GeneratePlayer(t, s, c, WorldID):
     return P
 
 def PopulatePlayerSkills(P, s, WorldID):
-    PlayerClass = P.Class
+    PlayerClass = P.ClassID.ClassName
 
     ClassOverallModifier = {
         'HS Senior': .92,
@@ -325,7 +308,7 @@ def CreatePlayers(LS, WorldID):
     LotteryOrder = []
 
     MinimumRosterComposition = {
-        'Class': {'Freshman': 12, 'Sophomore':12, 'Junior': 12, 'Senior': 12},
+        'ClassID': {c.ClassID: 12 for c in Class.objects.filter(IsRecruit = False).exclude(ClassName = 'Graduate')},
         'Position': [u for u in Position.objects.all().values('PositionAbbreviation', 'PositionMinimumCountPerTeam').annotate(Position = F('PositionAbbreviation'))]
     }
     PositionNumbers = {
@@ -405,7 +388,7 @@ def CreatePlayers(LS, WorldID):
     for P in PlayerList:
         PlayerSkillPool.append(PopulatePlayerSkills(P, CurrentSeason, WorldID))
     PlayerSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=True)
-    PlayerPool = [u for u in PlayerList.values('PlayerID', 'Class', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating').annotate(Position = F('PositionID__PositionAbbreviation')).order_by('-playerseasonskill__OverallRating')]#sorted(PlayerPool, key = lambda k: k.CurrentSkills.OverallRating, reverse = True)
+    PlayerPool = [u for u in PlayerList.values('PlayerID', 'ClassID', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating').annotate(Position = F('PositionID__PositionAbbreviation')).order_by('-playerseasonskill__OverallRating')]#sorted(PlayerPool, key = lambda k: k.CurrentSkills.OverallRating, reverse = True)
 
     PlayersTeamSeasonToSave = []
     for Round in LotteryOrder:
@@ -415,8 +398,8 @@ def CreatePlayers(LS, WorldID):
         for T in sorted(Round['TeamsInThisRound'], key=lambda k: random.random()):
             TS = T.CurrentTeamSeason
             if T not in TeamRosterCompositionNeeds:
-                TeamRosterCompositionNeeds[T] = {'Class': MinimumRosterComposition['Class'], 'Position': {Pos['Position']: Pos['PositionMinimumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}}
-            ClassesNeeded =   [u for u in TeamRosterCompositionNeeds[T]['Class']    if TeamRosterCompositionNeeds[T]['Class'][u]    > 0 ]
+                TeamRosterCompositionNeeds[T] = {'ClassID': MinimumRosterComposition['ClassID'], 'Position': {Pos['Position']: Pos['PositionMinimumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}}
+            ClassesNeeded =   [u for u in TeamRosterCompositionNeeds[T]['ClassID']    if TeamRosterCompositionNeeds[T]['ClassID'][u]    > 0 ]
             PositionsNeeded = [u for u in TeamRosterCompositionNeeds[T]['Position'] if TeamRosterCompositionNeeds[T]['Position'][u] > 0 ]
 
             ClassNeedsMet = False
@@ -427,7 +410,7 @@ def CreatePlayers(LS, WorldID):
             if len(PositionsNeeded) == 0:
                 PositionNeedsMet = True
 
-            AvailablePlayers = [u for u in PlayerPool  if (ClassNeedsMet or u['Class'] in ClassesNeeded) and (PositionNeedsMet or u['Position'] in PositionsNeeded)]
+            AvailablePlayers = [u for u in PlayerPool  if (ClassNeedsMet or u['ClassID'] in ClassesNeeded) and (PositionNeedsMet or u['Position'] in PositionsNeeded)]
             if len(AvailablePlayers) == 0:
                 PlayerForTeam = PlayerPool[-1]
             elif len(AvailablePlayers) < 21:
@@ -437,11 +420,13 @@ def CreatePlayers(LS, WorldID):
                 PlayerForTeam = random.choice(AvailablePlayers)
             PlayerPool.remove(PlayerForTeam)
 
-            TeamRosterCompositionNeeds[T]['Class'][PlayerForTeam['Class']] -=1
+            print("PlayerForTeam['ClassID']",PlayerForTeam['ClassID'], TeamRosterCompositionNeeds[T]['ClassID'])
+
+            TeamRosterCompositionNeeds[T]['ClassID'][PlayerForTeam['ClassID']] -=1
             TeamRosterCompositionNeeds[T]['Position'][PlayerForTeam['Position']] -=1
 
             P = PlayerList.filter(PlayerID = PlayerForTeam['PlayerID']).first()
-            PTS = PlayerTeamSeason(WorldID=WorldID, TeamSeasonID = TS, PlayerID = P, PlayerClass = PlayerForTeam['Class'])
+            PTS = PlayerTeamSeason(WorldID=WorldID, TeamSeasonID = TS, PlayerID = P, ClassID = P.ClassID)
             PlayersTeamSeasonToSave.append(PTS)
 
     PlayerTeamSeason.objects.bulk_create(PlayersTeamSeasonToSave, ignore_conflicts=True)
@@ -495,14 +480,15 @@ def CreateRecruitingClass(LS, WorldID):
     for T in AllTeams:
         TS = TeamSeason.objects.get(TeamID=T, WorldID = WorldID, LeagueSeasonID = CurrentSeason)
         PTS = PlayerTeamSeason.objects.filter(TeamSeasonID = TS)
-        TeamSeniors = PTS.filter(PlayerClass = 'Senior').count()
+        TeamSeniors = PTS.filter(ClassID__ClassName = 'Senior').count()
         TS.ScholarshipsToOffer = TeamSeniors
         TS.save()
 
     RecruitPool = []
     print('Creating ',NumberOfPlayersNeeded,' recruits')
+    SeniorClassID = Class.objects.filter(ClassName = 'HS Senior').first()
     for PlayerCount in range(0,NumberOfPlayersNeeded):
-        RecruitPool.append(GeneratePlayer(None, CurrentSeason, 'HS Senior', WorldID))
+        RecruitPool.append(GeneratePlayer(None, CurrentSeason, SeniorClassID, WorldID))
         #print(PlayerCount, len(RecruitPool))
     Player.objects.bulk_create(RecruitPool, ignore_conflicts=True)
 
@@ -765,30 +751,17 @@ def EndSeason(WorldID):
 
 def GraduateSeniors(WorldID, CurrentSeason):
 
-    SeniorList = Player.objects.filter(WorldID = WorldID).filter(PlayerClass = 'Senior')
+    SeniorList = Player.objects.filter(WorldID = WorldID).filter(ClassID__ClassName = 'Senior')
     for P in SeniorList:
         P.PlayerClass = 'Graduated'
         P.save()
 
 
 def AddYearToPlayers(WorldID, CurrentSeason):
-    ClassNextYearMap = {
-        'HS Junior': 'HS Senior',
-        'HS Senior': 'Freshman',
-        'Freshman': 'Sophomore',
-        'Sophomore': 'Junior',
-        'Junior': 'Senior',
-        'Senior': 'Graduated'
-    }
-
-    PlayerList = Player.objects.filter(WorldID = WorldID).exclude(PlayerClass='Graduated')
-    for P in PlayerList:
-        P.PlayerClass = ClassNextYearMap[P.PlayerClass]
-        P.save()
+    return None
 
 
 def AddRecruitsToTeams(WorldID, CurrentSeason):
-
 
     return None
 

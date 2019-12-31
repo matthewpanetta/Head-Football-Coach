@@ -170,7 +170,7 @@
                            {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
                         </a>
                       </td>
-                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.Class}}</td>
+                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.ClassID.ClassAbbreviation}}</td>
                     </tr>
                     {% endfor %}
                     {% endfor %}
@@ -180,14 +180,15 @@
               </div>
               {% elif CurrentWeek.PhaseID.PhaseName == 'Season Recap' %}
               <div class="w3-card">
-                <div class="w3-bar preseason-allamerican-team-bar" id="nav-tab-preseason-allamerican-team">
+                <div class="w3-bar season-allamerican-team-bar" id="nav-tab-season-allamerican-team">
                   <div class="w3-bar-item fontweight500">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
-                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab w3-button tab selected-preseason-award-team-tab" id="preseason-allamerican-team-firstteam-tab">First Team</button>
-                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab w3-button tab" id="preseason-allamerican-team-secondteam-tab">Second Team</button>
+                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab w3-button tab selected-season-award-team-tab" id="season-allamerican-team-firstteam-tab">First Team</button>
+                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab w3-button tab" id="season-allamerican-team-secondteam-tab">Second Team</button>
+                  <button TeamSelection='Freshman Team' class="w3-bar-item award-team-tab w3-button tab" id="season-allamerican-team-freshman-tab">Freshmen</button>
                 </div>
-                <div class="w3-bar preseason-allamerican-conference-bar w3-margin-bottom" id="nav-tab-preseason-allamerican-conference">
+                <div class="w3-bar season-allamerican-conference-bar w3-margin-bottom" id="nav-tab-season-allamerican-conference">
                   {% for Conf in SeasonAllAmericans%}
-                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab w3-button tab {{Conf.ConferenceSelected}}" id="preseason-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
+                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab w3-button tab {{Conf.ConferenceSelected}}" id="season-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
                   {% endfor %}
                 </div>
                 <div class="list-group list-group-flush">
@@ -208,7 +209,7 @@
                            {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
                         </a>
                       </td>
-                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.Class}}</td>
+                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.PlayerID.ClassID.ClassAbbreviation}}</td>
                     </tr>
                     {% endfor %}
                     {% endfor %}
@@ -354,7 +355,7 @@
                   <tr>
                     <th data-data="PlayerTeam">Team</th>
                     <th data-data="PlayerName">Player</th>
-                    <th data-data="Class">Class</th>
+                    <th data-data="ClassID__ClassAbbreviation">Class</th>
                     <th data-data="Position">Position</th>
                     <th data-data="playerseasonskill__OverallRating">OVR</th>
                     <th data-data="playerteamseason__PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Pass Yards</th>

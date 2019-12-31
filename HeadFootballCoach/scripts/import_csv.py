@@ -1,6 +1,6 @@
 
 
-from ..models import System_PlayerArchetypeRatingModifier, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
+from ..models import System_PlayerArchetypeRatingModifier, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
 import os
 from ..utilities import Max
 from datetime import timedelta, date
@@ -183,6 +183,44 @@ def ImportPositions():
                 del LineDict[FE]
 
             Position.objects.create(**LineDict)
+
+
+
+def ImportClasses():
+
+    FilePath = 'HeadFootballCoach/scripts/data_import/Class.csv'
+    FieldExclusions = []
+    f = open(FilePath, 'r', encoding='utf-8-sig')
+    linecount = 0
+    for line in f:
+        KeepRow = False
+        #print()
+        linecount +=1
+        if linecount == 1:
+            Headers = line.strip().split(',')
+            continue
+
+        #print(line)
+        Row = line.strip().split(',')
+        LineDict = {}
+        FieldCount = 0
+
+        for f in Row:
+            V = Row[FieldCount]
+            if V == '':
+                V = None
+            LineDict[Headers[FieldCount]] = V
+            FieldCount +=1
+
+
+        KeepRow = True
+
+
+        if KeepRow:
+            for FE in FieldExclusions:
+                del LineDict[FE]
+
+            Class.objects.create(**LineDict)
 
 
 def import_TeamRivalries(FilePath, WorldID, LeagueID):
@@ -528,6 +566,8 @@ def import_Team( File, WorldID, LeagueID):
             'Pac-12 Conference': 'Pac-12',
             'American Athletic Conference': 'AAC',
             'Mountain West Conference': 'MWC',
+            'Sample Conference 1': 'SC1',
+            'Sample Conference 2': 'SC2',
             'Big East Conference': 'Big East'
         }
 
@@ -678,6 +718,9 @@ def LoadData(WorldID, LeagueID):
 
     if Position.objects.all().count() == 0:
         ImportPositions()
+
+    if Class.objects.all().count() == 0:
+        ImportClasses()
 
     if DoAudit:
         end = time.time()

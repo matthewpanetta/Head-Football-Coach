@@ -122,6 +122,16 @@ class System_PlayoffGame(models.Model):
     def __str__(self):
         return 'Game number ' + str(self.GameNumber) + ' in Playoff, in round ' + str(self.ThisPlayoffRoundID.PlayoffRoundNumber)
 
+class Class(models.Model):
+    ClassID = models.AutoField(primary_key = True)
+    ClassAbbreviation = models.CharField(max_length=6, blank=True, null=True, default=None)
+    ClassName = models.CharField(max_length=20, blank=True, null=True, default=None)
+
+    IsRecruit = models.BooleanField(default=False)
+
+    ClassSortOrder = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+
+
 class PositionGroup(models.Model):
     PositionGroupID = models.AutoField(primary_key = True)
     PositionGroupName = models.CharField(max_length=20, blank=True, null=True, default=None)
@@ -151,6 +161,11 @@ class Position(models.Model):
     def __str__(self):
         return self.PositionName
     #############################
+
+    @property
+    def OccurancePercent(self):
+        OC = Position.objects.all().aggregate(OccuranceSum=Sum(F('Occurance')))
+        return (self.Occurance / OC['OccuranceSum']) * 70
 
 
 
@@ -669,7 +684,7 @@ class Player(models.Model):
     PlayerID                = models.AutoField(primary_key = True, db_index=True)
     PlayerFirstName         = models.CharField(max_length=50)
     PlayerLastName          = models.CharField(max_length=50)
-    Class                   = models.CharField(max_length= 20)
+    ClassID                 = models.ForeignKey(Class, on_delete=models.CASCADE, blank=True, null=True, default=None)
     IsCurrentlyRedshirted   = models.BooleanField(default=False)
     WasPreviouslyRedshirted = models.BooleanField(default=False)
     JerseyNumber            = models.PositiveSmallIntegerField(default = 0)
@@ -1009,13 +1024,6 @@ class Player(models.Model):
     @property
     def OverallRating(self):
         return self.CurrentSkills.OverallRating
-    @property
-    def SearchResultDisplay(self):
-        PlayerClass = self.Class[0:2]
-        if PlayerClass != 'HS':
-            return ''#str(self.CurrentPlayerTeamSeason.PPG) + ' PPG | ' + str(self.CurrentPlayerTeamSeason.RPG) + ' RPG | ' + str(self.CurrentPlayerTeamSeason.APG) + ' APG'
-        else:
-            return str(self.RecruitingStars) + ' * Recruit'
 
     @property
     def CurrentPlayerTeamSeason(self):
@@ -1062,8 +1070,6 @@ class Player(models.Model):
         #ThisTeamSeason = TeamSeason.objects.get(SeasonID = CurrentSeason, TeamID = )
         ThisPlayerTeamSeason = PlayerTeamSeason.objects.filter(PlayerID = self.PlayerID)
 
-        ClassSortOrder = {'HS Junior': -1,'HS Senior': 0, 'Freshman': 1, 'Sophomore': 2, 'Junior': 3, 'Senior': 4, 'Graduated': 5}
-
         TeamID = None
         TeamName = None
         for PTS in ThisPlayerTeamSeason:
@@ -1095,7 +1101,6 @@ class Player(models.Model):
             'Position':self.PositionID.PositionAbbreviation,
             'HometownAndState': self.HometownAndState,
             'PositionSortOrder': self.PositionID.PositionSortOrder,
-            'ClassSortOrder': ClassSortOrder[self.Class],
             'RecruitingStars': self.RecruitingStars,
             'IsRecruit': self.IsRecruit,
             'TeamJerseyStyle': self.TeamJerseyStyle,
@@ -1197,6 +1202,14 @@ class TeamSeason(models.Model):
     RUS_Carries = models.SmallIntegerField(default=0, null=True, blank=True)
     RUS_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     RUS_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_20 = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_BrokenTackles = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_YardsAfterContact = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_Drops = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_YardsAfterCatch = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Targets = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1217,11 +1230,16 @@ class TeamSeason(models.Model):
     DEF_INT = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_INTYards = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_INTTD = models.SmallIntegerField(default=0, null=True, blank=True)
+    DEF_Safeties = models.SmallIntegerField(default=0, null=True, blank=True)
+
     KR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    KR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
+    PR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    PR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1234,10 +1252,14 @@ class TeamSeason(models.Model):
     KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_Kickoffs = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Within20 = models.SmallIntegerField(default=0, null=True, blank=True)
+    BLK_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
+    BLK_Pancakes = models.SmallIntegerField(default=0, null=True, blank=True)
 
     Turnovers = models.SmallIntegerField(default=0, null=True, blank=True)
     ThirdDownAttempt = models.PositiveSmallIntegerField(default=0)
@@ -1522,13 +1544,15 @@ class PlayerTeamSeason(models.Model):
     PlayerTeamSeasonID = models.AutoField(primary_key = True, db_index=True)
     PlayerID = models.ForeignKey(Player, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
-    PlayerClass = models.CharField(max_length = 20, default='')
+    ClassID = models.ForeignKey(Class, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
 
     #Season Stats
     GamesPlayed = models.PositiveSmallIntegerField(default=0, db_index=True)
     GamesStarted =  models.PositiveSmallIntegerField(default=0)
     GameScore = models.DecimalField(default = 0, max_digits=13, decimal_places=8)
+    PlaysOnField = models.PositiveSmallIntegerField(default=0)
+    TeamGamesPlayed = models.PositiveSmallIntegerField(default=0)
 
     PAS_Completions = models.SmallIntegerField(default=0, null=True, blank=True)
     PAS_Attempts = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1540,6 +1564,14 @@ class PlayerTeamSeason(models.Model):
     RUS_Carries = models.SmallIntegerField(default=0, null=True, blank=True)
     RUS_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     RUS_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_20 = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_BrokenTackles = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_YardsAfterContact = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_Drops = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_YardsAfterCatch = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Targets = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1560,11 +1592,15 @@ class PlayerTeamSeason(models.Model):
     DEF_INT = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_INTYards = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_INTTD = models.SmallIntegerField(default=0, null=True, blank=True)
+    DEF_Safeties = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    KR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
+    PR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    PR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -1577,10 +1613,14 @@ class PlayerTeamSeason(models.Model):
     KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_Kickoffs = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Within20 = models.SmallIntegerField(default=0, null=True, blank=True)
+    BLK_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
+    BLK_Pancakes = models.SmallIntegerField(default=0, null=True, blank=True)
 
 
     def __str__(self):
@@ -1600,7 +1640,7 @@ class PlayerTeamSeason(models.Model):
             'HeightFormatted': PlayerObject.HeightFormatted,
             'WeightFormatted': PlayerObject.WeightFormatted,
             'OverallRating': PlayerObject.OverallRating,
-            'PlayerClass': self.PlayerClass,
+            'PlayerClass': self.ClassID.ClassName,
             'ORTG': 0,
             'DRTG': 0
         }
@@ -1662,6 +1702,18 @@ class PlayerTeamSeason(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
+
+class PlayerTeamSeasonDepthChart(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    PlayerTeamSeasonDepthChartID = models.AutoField(primary_key = True, db_index=True)
+    PlayerTeamSeasonID = models.ForeignKey(PlayerTeamSeason, on_delete=models.CASCADE, db_index=True)
+
+    PositionID = models.ForeignKey(Position, on_delete=models.CASCADE)
+    DepthPosition = models.PositiveSmallIntegerField(default = 0)
+    IsStarter = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.PlayerTeamSeasonID.PlayerID) + ' is ' + str(self.PositionID.PositionAbbreviation) + ' #' + str(self.DepthPostion) + ' for ' + str(self.PlayerTeamSeasonID.TeamSeasonID.TeamID)
 
 class PlayerTeamSeasonAward(models.Model):
     WorldID        = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
@@ -2184,7 +2236,14 @@ class TeamGame(models.Model):
     RUS_Carries = models.SmallIntegerField(default=0, null=True, blank=True)
     RUS_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     RUS_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_20 = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_BrokenTackles = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_YardsAfterContact = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_Drops = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_YardsAfterCatch = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Targets = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_TD = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2204,11 +2263,14 @@ class TeamGame(models.Model):
     DEF_INT = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_INTYards = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_INTTD = models.SmallIntegerField(default=0, null=True, blank=True)
+    DEF_Safeties = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    PR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    PR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2221,10 +2283,15 @@ class TeamGame(models.Model):
     KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_Kickoffs = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Within20 = models.SmallIntegerField(default=0, null=True, blank=True)
+    BLK_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
+    BLK_Pancakes = models.SmallIntegerField(default=0, null=True, blank=True)
+
 
     Turnovers = models.SmallIntegerField(default=0, null=True, blank=True)
     TimeOfPossession = models.PositiveSmallIntegerField(default = 0)
@@ -2341,6 +2408,14 @@ class PlayerGameStat(models.Model):
     RUS_Carries = models.SmallIntegerField(default=0, null=True, blank=True)
     RUS_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     RUS_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_20 = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_BrokenTackles = models.SmallIntegerField(default=0, null=True, blank=True)
+    RUS_YardsAfterContact = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_Drops = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
+    REC_YardsAfterCatch = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     REC_Targets = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2361,11 +2436,15 @@ class PlayerGameStat(models.Model):
     DEF_INT = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_INTYards = models.SmallIntegerField(default=0, null=True, blank=True)
     DEF_INTTD = models.SmallIntegerField(default=0, null=True, blank=True)
+    DEF_Safeties = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    KR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
+    PR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    PR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2376,18 +2455,23 @@ class PlayerGameStat(models.Model):
     KCK_FGM49 = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGA50 = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
-
     KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_Kickoffs = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Within20 = models.SmallIntegerField(default=0, null=True, blank=True)
+    BLK_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
+    BLK_Pancakes = models.SmallIntegerField(default=0, null=True, blank=True)
 
     GameScore = models.DecimalField(default = 0, max_digits=13, decimal_places=8)
 
     GamesPlayed = models.PositiveSmallIntegerField(default=0)
     GamesStarted = models.SmallIntegerField(default = 0)
+    PlaysOnField = models.PositiveSmallIntegerField(default=0)
+    TeamGamesPlayed = models.PositiveSmallIntegerField(default=0)
 
     def ReturnAsDict(self):
         ThisPlayer = self.PlayerTeamSeasonID.PlayerID

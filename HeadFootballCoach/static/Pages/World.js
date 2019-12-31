@@ -501,6 +501,53 @@ function AddPreseasonAllAmericanListeners(){
 }
 
 
+function AddSeasonAllAmericanListeners(){
+
+  $('.season-allamerican-conference-bar button').on('click', function(event, target) {
+
+    var TargetTab = $(event.target);
+    var TargetTabID = TargetTab.attr('id');
+    var TargetRowID =  $(TargetTab).attr('id').replace('-tab', '');
+
+    $('.'+TargetRowID).each(function(index, object){
+      $(object).removeClass('season-allamerican-conf-hide');
+    });
+
+    $('.selected-season-award-conference-tab').each(function(index,object){
+      $(object).removeClass('selected-season-award-conference-tab');
+      var ObjectID = $(object).attr('id').replace('-tab', '');
+
+      $('.'+ObjectID).each(function(index, object){
+        $(object).addClass('season-allamerican-conf-hide');
+      });
+    });
+    $(TargetTab).addClass('selected-season-award-conference-tab');
+  });
+
+
+  $('.season-allamerican-team-bar button').on('click', function(event, target) {
+
+    var TargetTab = $(event.target);
+    var TargetTabID = TargetTab.attr('id');
+    var TargetRowID =  $(TargetTab).attr('id').replace('-tab', '');
+
+    $('.'+TargetRowID).each(function(index, object){
+      $(object).removeClass('season-allamerican-team-hide');
+    });
+
+    $('.selected-season-award-team-tab').each(function(index,object){
+      $(object).removeClass('selected-season-award-team-tab');
+      var ObjectID = $(object).attr('id').replace('-tab', '');
+
+      $('.'+ObjectID).each(function(index, object){
+        $(object).addClass('season-allamerican-team-hide');
+      });
+    });
+    $(TargetTab).addClass('selected-season-award-team-tab');
+  });
+}
+
+
 
 function PopulateLeagueLeadersTable(LeagueLeaders, WorldID){
   //console.log('LeagueLeaders', LeagueLeaders);
@@ -595,9 +642,9 @@ function GetPlayerStats(WorldID){
           {"data": "PlayerName", "searchable": true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
               $(td).html("<a href='"+DataObject['PlayerHref']+"'>"+StringValue+"</a>");
           }},
-          {"data": "Class", "sortable": true},
+          {"data": "ClassID__ClassAbbreviation", "sortable": true},
           {"data": "PositionID__PositionAbbreviation", "sortable": true},
-          {"data": "playerseasonskill__OverallRating", "sortable": true},
+          {"data": "playerseasonskill__OverallRating", "sortable": true, 'orderSequence':["desc"]},
 
           {"data": "playerteamseason__PAS_Yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerteamseason__PAS_CompletionPercentage", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
@@ -611,7 +658,7 @@ function GetPlayerStats(WorldID){
           {"data": "playerteamseason__RUS_TD", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerteamseason__FUM_Fumbles", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
       ],
-      'order': [[ 4, "desc" ]]
+      'order': [[ 4, "desc" ]],
   });
 
   $('#worldplayerstat-statgroup-div input').on('change', function(Obj){
@@ -644,6 +691,7 @@ $(document).ready(function(){
   AddUpcomingGameListeners();
   AddRecentGamesListeners();
   AddPreseasonAllAmericanListeners();
+  AddSeasonAllAmericanListeners();
 
   var DataPassthruHolder = $('#PageDataPassthru')[0];
   var WorldID = parseInt($(DataPassthruHolder).attr('WorldID'));
