@@ -27,7 +27,7 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert){
   var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
   var PlayerID   = parseInt($(DataPassthruHolder).attr('PlayerID'));
   var PrimaryColor    = $(DataPassthruHolder).attr('PrimaryColor');
-  var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryColor');
+  var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryJerseyColor');
   //console.log('Datapassthru', DataPassthruHolder, PrimaryColor, SecondaryColor,WorldID , PlayerID);
 
   console.log('face before generate', face, TeamJerseyStyle, TeamJerseyInvert);

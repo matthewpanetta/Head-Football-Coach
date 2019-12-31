@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
-<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" PlayerID="{{player.PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" SecondaryJerseyColor="{{page.SecondaryJerseyColor}}" TeamID="{{team.TeamID}}" PlayerID="{{player.PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
 
 
 <body>
@@ -38,7 +38,7 @@
       <ul class='playerHeaderBio' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
         <li class='playerHeaderClass'>
           <div class='playerHeaderBioDescription'>CLASS</div>
-          <div>{{player.Class}}</div>
+          <div>{{player.ClassID__ClassName}}</div>
         </li>
         <li class='playerHeaderHtWt'>
           <div class='playerHeaderBioDescription'>HT/WT</div>
@@ -212,7 +212,7 @@
                   {% for SeasonStat in SeasonStats %}
                   <tr>
                     <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">{{SeasonStat.TeamSeasonID__LeagueSeasonID__SeasonStartYear}}</a></td>
-                    <td>{{SeasonStat.PlayerID__Class}}</td>
+                    <td>{{SeasonStat.PlayerTeamSeasonID__ClassID__ClassName}}</td>
                     {%for Stat in SeasonStat.Stats%}
                     <td class='{% if Stat.Value == 0%} playerStatZero {%endif%}'>{{Stat.Value}}</td>
                     {%endfor%}

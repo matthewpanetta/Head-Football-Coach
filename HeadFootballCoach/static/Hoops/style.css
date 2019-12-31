@@ -201,7 +201,7 @@
   padding: .45rem !important;
 }
 
-.teamSchoolName, .gameSchoolName , .gameOutcomeW{
+.teamSchoolName, .gameSchoolName , .gameOutcomeW, .gamePlayerStarted{
   font-weight: 700;
 }
 
