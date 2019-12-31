@@ -16,8 +16,8 @@ def NationalAwards(WorldID, CurrentSeason):
     else:
         AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
             GameScorePerGame=Case(
-                When(GamesPlayed=0, then=0.0),
-                default=(Round(F('GameScore')* 1.0 / F('GamesPlayed'),1)),
+                When(TeamGamesPlayed=0, then=0.0),
+                default=(Round(F('GameScore')* 1.0 / F('TeamGamesPlayed'),1)),
                 output_field=FloatField()
             ),
             OverallRating=Max(
@@ -61,7 +61,7 @@ def NationalAwards(WorldID, CurrentSeason):
                     AwardsToCreate.append(PlayerAward)
 
 
-                FreshmanPositionPlayers = PositionPlayers.filter(PlayerID__Class = 'Freshman')
+                FreshmanPositionPlayers = PositionPlayers.filter(PlayerID__ClassID__ClassName = 'Freshman')
                 for PlayerCount in range(0,Pos.PositionCountPerAwardTeam):
                     IsFreshmanTeam = False
 
@@ -85,7 +85,7 @@ def NationalAwards(WorldID, CurrentSeason):
 def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
     CurrentWorld = WorldID
 
-    AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).exclude(PlayerID__Class = 'Freshman').values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
+    AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).exclude(PlayerID__ClassID__ClassName = 'Freshman').values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
         GameScorePerGame=Case(
             When(GamesPlayed=0, then=0.0),
             default=(Round(F('GameScore')* 1.0 / F('GamesPlayed'),1)),
@@ -103,6 +103,8 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
             PositionPlayers = AllPlayers.filter(PlayerID__PositionID = Pos)
             if Conf is not None:
                 PositionPlayers = PositionPlayers.filter(TeamSeasonID__TeamID__ConferenceID = Conf)
+
+            print('# of players at this position and conference:', Conf, Pos, PositionPlayers.count())
 
             for PlayerCount in range(0,Pos.PositionCountPerAwardTeam * 2):
                 IsFirstTeam = False
@@ -135,7 +137,6 @@ def ChoosePlayersOfTheWeek(LS, WorldID):
 
 
     for PositionGroupID in PositionGroup.objects.exclude(PositionGroupName = 'Special Teams'):
-        print(PositionGroupID)
 
         PTG = PlayerGameStat.objects.filter(WorldID = CurrentWorld).filter(TeamGameID__GameID__WeekID = CurrentWeek).filter(PlayerTeamSeasonID__PlayerID__PositionID__PositionGroupID = PositionGroupID).filter(TeamGameID__GameID__WasPlayed = True).order_by('-GameScore')
 

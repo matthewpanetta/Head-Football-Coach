@@ -207,7 +207,11 @@ print('------------------------------------------------')
 #     f.write(LN+',0,1,'+str(LastNameList[LN])+'\n')
 # f.close()
 
-import numpy
+from ..models import PlayerTeamSeason, PlayerGameStat, Audit
 
 
-ResultsDict = {}
+print(PlayerGameStat.objects.filter(WorldID = None).count())
+
+PlayerGameStat.objects.filter(WorldID = None).delete()
+
+print(PlayerGameStat.objects.filter(WorldID = None).count())

@@ -1,4 +1,8 @@
 ﻿TeamID,TeamName,TeamNickname,LeagueName,Abbreviation,City,State,Country,ConferenceName,TeamTalent,TeamColor_Primary_HEX,TeamColor_Secondary_HEX,TeamPrestige,FacilitiesRating,ProPotentialRating,CampusLifestyleRating,AcademicPrestigeRating,TelevisionExposureRating,CoachStabilityRating,LocationRating
+,Sample Team South,Eels,NCAA,ST1,Jackson,Mississippi,USA,Sample Conference 1,90,BB0000,FFFFFF,8,50,50,80,30,50,50,40
+,Sample Team East,Hedgehogs,NCAA,ST2,Baltimore,Maryland,USA,Sample Conference 1,90,A0000B,FEE123,6,50,50,80,30,50,50,40
+,Sample Team North,Yetis,NCAA,ST3,Minneapolis,Minnesota,USA,Sample Conference 2,70,D65918,B7A57A,4,50,50,80,30,50,50,40
+,Sample Team West,Gunners,NCAA,ST4,Oakland,California,USA,Sample Conference 2,60,00274C,FF4208,2,50,50,80,30,50,50,40
 ,Clemson,Tigers,NCAA,CLEM,Clemson,South Carolina,USA,Atlantic Coast Conference,71,F06014,441F6F,10,50,50,80,30,50,50,40
 ,Alabama,Crimson Tide,NCAA,BAMA,Tuscaloosa,Alabama,USA,Southeastern Conference,50,A80532,FFFFFF,10,50,50,55,40,50,50,40
 ,Notre Dame,Fighting Irish,NCAA,ND,South Bend,Indiana,USA,Atlantic Coast Conference,80,0C2340,C99700,9,50,50,10,70,50,50,40
@@ -77,9 +81,9 @@
 ,Air Force,Falcons,NCAA,AFA,Colorado Springs,Colorado,USA,Mountain West Conference,50,0061AA,FFFFFF,3,50,50,30,30,50,50,40
 ,Colorado State,Rams,NCAA,CSU,Fort Collins,Colorado,USA,Mountain West Conference,50,008C75,F8E793,3,50,50,30,30,50,50,55
 ,Fresno State,Bulldogs,NCAA,FRES,Fresno,California,USA,Mountain West Conference,50,E5003F,94183,3,50,50,30,30,50,50,35
-,Nevada,Wolf Pack,NCAA,NEV,Reno,Nevada,USA,Mountain West Conference,50,,,3,50,50,30,30,50,50,40
-,San Diego State,Aztecs,NCAA,SDST,San Diego,California,USA,Mountain West Conference,50,,,3,50,50,30,30,50,50,85
-,UNLV,Rebels,NCAA,UNLV,Las Vegas,Nevada,USA,Mountain West Conference,50,,,3,50,50,30,30,50,50,75
+,Nevada,Wolf Pack,NCAA,NEV,Reno,Nevada,USA,Mountain West Conference,50,16234D,0,3,50,50,30,30,50,50,40
+,San Diego State,Aztecs,NCAA,SDST,San Diego,California,USA,Mountain West Conference,50,AF182A,0,3,50,50,30,30,50,50,85
+,UNLV,Rebels,NCAA,UNLV,Las Vegas,Nevada,USA,Mountain West Conference,50,C20035,C6C8C9,3,50,50,30,30,50,50,75
 ,Wyoming,Cowboys,NCAA,WYO,Laramie,Wyoming,USA,Mountain West Conference,50,6F4220,FFC425,3,50,50,30,30,50,50,30
 ,Connecticut,Huskies,NCAA,UCONN,Storrs,Connecticut,USA,American Athletic Conference,75,0A1D5A,FFFFFF,2,50,50,60,40,50,50,45
 ,East Carolina,Pirates,NCAA,ECU,Greenville,North Carolina,USA,American Athletic Conference,61,4A1F68,FFCE28,2,50,50,60,10,50,50,45

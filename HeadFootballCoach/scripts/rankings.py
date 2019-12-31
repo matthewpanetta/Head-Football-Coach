@@ -19,8 +19,6 @@ def CalculateConferenceRankings(LS, WorldID):
 
 
     for Conf in Conference.objects.filter(WorldID = CurrentWorld):
-        print()
-        print('Calculating rankings for ', Conf)
         ConfName = Conf.ConferenceName
         ConfTeams = TeamSeason.objects.filter(WorldID=CurrentWorld).filter(TeamID__ConferenceID = Conf)
         ConfTeams = sorted(ConfTeams, key = lambda k: k.ConferenceRankingTuple, reverse = True)
@@ -65,8 +63,6 @@ def CalculateConferenceRankings(LS, WorldID):
 
         for NetWins in ConfTeamDict['NetWins']:
             if len(ConfTeamDict['NetWins'][NetWins]) > 1:
-                print()
-                print('Tied with ', NetWins)
                 c = itertools.combinations(ConfTeamDict['NetWins'][NetWins], 2)
                 for TiedTeams in c:
                     #print(u)
@@ -84,7 +80,6 @@ def CalculateConferenceRankings(LS, WorldID):
         RankCount = 1
         for TS in sorted(ConfRankTracker[ConfName]['Teams'], key=lambda TS: (ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'], -1*ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], -1*ConfRankTracker[ConfName]['Teams'][TS]['MOV']),reverse=False):
 
-            print('TeamRankDetails: ', str(TS).ljust(50), '  RankCountWithTies:',ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'],'  TiebreakerCount:',ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], '  ConferenceGB:',ConfRankTracker[ConfName]['Teams'][TS]['ConferenceGB'], '  MOV:',ConfRankTracker[ConfName]['Teams'][TS]['MOV'])
             if CurrentSeason.PlayoffCreated == False:
                 TS.ConferenceRank = RankCount
                 TS.ConferenceGB   = ConfRankTracker[ConfName]['Teams'][TS]['ConferenceGB']
@@ -96,8 +91,6 @@ def CalculateConferenceRankings(LS, WorldID):
 
 
 def CalculateRankings(LS, WorldID):
-
-    print('Calculating Rankings!!')
 
     TeamDictStarter = Team.objects.filter(WorldID=WorldID)
     CurrentSeason = LS
@@ -245,13 +238,11 @@ def SelectBroadcast(LS, WorldID):
     GamesThisWeek = sorted(GamesThisWeek, key=lambda r: r.HomeTeamRankValue + r.AwayTeamRankValue + Min(r.HomeTeamRankValue , r.AwayTeamRankValue) - (r.AwayTeamID.TeamPrestige) - (r.HomeTeamID.TeamPrestige )) #TODO
     RegionalGames = GamesThisWeek[1:3]
     for g in RegionalGames:
-        print('Regional game!!' , g)
         g.RegionalBroadcast = True
         g.save()
 
     if len(GamesThisWeek) > 0:
         NationalGame = GamesThisWeek[0]
-        print('National Game!!', NationalGame)
         NationalGame.NationalBroadcast = True
         NationalGame.save()
 
