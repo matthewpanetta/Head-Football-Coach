@@ -416,7 +416,7 @@ def CreatePlayers(LS, WorldID):
             elif len(AvailablePlayers) < 21:
                 PlayerForTeam = random.choice(AvailablePlayers)
             else:
-                AvailablePlayers = AvailablePlayers[:int(len(AvailablePlayers)/20)]
+                AvailablePlayers = AvailablePlayers[:int(len(AvailablePlayers)/12)]
                 PlayerForTeam = random.choice(AvailablePlayers)
             PlayerPool.remove(PlayerForTeam)
 

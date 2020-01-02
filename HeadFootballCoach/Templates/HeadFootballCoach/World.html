@@ -327,13 +327,13 @@
                 <tbody>
                   <tr id='ConferenceStandingRowClone' class='w3-hide'>
                     <td>
-                      <a href="" href-field='TeamIDURL'>
+                      <a href="" href-field='TeamHref'>
                         <img class='worldConferenceStandingTeamLogo' src='' img-src-field='TeamLogoURL' alt="My image">
                         <span data-field='NationalRankDisplay'></span>
                         <span data-field='TeamName'></span>
                       </a>
                     </td>
-                    <td data-field='ConferenceRank'></td>
+                    <td data-field='teamseason__ConferenceRank'></td>
                     <td data-field='ConferenceWinsLosses'></td>
                     <td data-field='WinsLosses'></td>
                     <td data-field='PPG'></td>
@@ -358,16 +358,16 @@
                     <th data-data="ClassID__ClassAbbreviation">Class</th>
                     <th data-data="Position">Position</th>
                     <th data-data="playerseasonskill__OverallRating">OVR</th>
-                    <th data-data="playerteamseason__PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Pass Yards</th>
-                    <th data-data="playerteamseason__PAS_CompletionPercentage" class='WorldPlayerStats-Stat-Passing'>Pass %</th>
-                    <th data-data="playerteamseason__PAS_YPG" class='WorldPlayerStats-Stat-Passing'>Pass YPG</th>
-                    <th data-data="playerteamseason__PAS_TD" class='WorldPlayerStats-Stat-Passing'>Pass TDs</th>
-                    <th data-data="playerteamseason__PAS_INT" class='WorldPlayerStats-Stat-Passing'>Pass INT</th>
-                    <th data-data="playerteamseason__RUS_Yards" class='WorldPlayerStats-Stat-Rushing'>Rush Yards</th>
-                    <th data-data="playerteamseason__RUS_YPC" class='WorldPlayerStats-Stat-Rushing'>Rush YPC</th>
-                    <th data-data="playerteamseason__RUS_YPG" class='WorldPlayerStats-Stat-Rushing'>Rush YPG</th>
-                    <th data-data="playerteamseason__RUS_TD" class='WorldPlayerStats-Stat-Rushing'>Rush TDs</th>
-                    <th data-data="playerteamseason__FUM_Fumbles" class='WorldPlayerStats-Stat-Rushing'>Rush Fum</th>
+                    <th data-data="PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Pass Yards</th>
+                    <th data-data="PAS_CompletionPercentage" class='WorldPlayerStats-Stat-Passing'>Pass %</th>
+                    <th data-data="PAS_YPG" class='WorldPlayerStats-Stat-Passing'>Pass YPG</th>
+                    <th data-data="PAS_TD" class='WorldPlayerStats-Stat-Passing'>Pass TDs</th>
+                    <th data-data="PAS_INT" class='WorldPlayerStats-Stat-Passing'>Pass INT</th>
+                    <th data-data="RUS_Yards" class='WorldPlayerStats-Stat-Rushing'>Rush Yards</th>
+                    <th data-data="RUS_YPC" class='WorldPlayerStats-Stat-Rushing'>Rush YPC</th>
+                    <th data-data="RUS_YPG" class='WorldPlayerStats-Stat-Rushing'>Rush YPG</th>
+                    <th data-data="RUS_TD" class='WorldPlayerStats-Stat-Rushing'>Rush TDs</th>
+                    <th data-data="FUM_Fumbles" class='WorldPlayerStats-Stat-Rushing'>Rush Fum</th>
                   </tr>
                 </thead>
               </table>
@@ -426,10 +426,10 @@
                         <span data-field='TeamName'></span>
                       </a>
                     </td>
-                    <td data-field='NationalRank'></td>
+                    <td data-field='teamseason__teamseasonweekrank__NationalRank'></td>
                     <td>
-                      <a href="" href-field='ConferenceIDURL'>
-                        <span data-field='ConferenceAbbreviation'></span>
+                      <a href="" href-field='ConferenceHref'>
+                        <span data-field='ConferenceID__ConferenceAbbreviation'></span>
                       </a>
                     </td>
                     <td data-field='ConferenceWinsLosses'></td>

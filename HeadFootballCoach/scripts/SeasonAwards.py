@@ -15,6 +15,8 @@ def NationalAwards(WorldID, CurrentSeason):
         return None
     else:
         AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
+            TeamGamesPlayed=Sum('playergamestat__TeamGamesPlayed'),
+            GameScore=Sum('playergamestat__GameScore'),
             GameScorePerGame=Case(
                 When(TeamGamesPlayed=0, then=0.0),
                 default=(Round(F('GameScore')* 1.0 / F('TeamGamesPlayed'),1)),
@@ -86,9 +88,11 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
     CurrentWorld = WorldID
 
     AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).exclude(PlayerID__ClassID__ClassName = 'Freshman').values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
+        TeamGamesPlayed=Sum('playergamestat__TeamGamesPlayed'),
+        GameScore=Sum('playergamestat__GameScore'),
         GameScorePerGame=Case(
-            When(GamesPlayed=0, then=0.0),
-            default=(Round(F('GameScore')* 1.0 / F('GamesPlayed'),1)),
+            When(TeamGamesPlayed=0, then=0.0),
+            default=(Round(F('GameScore')* 1.0 / F('TeamGamesPlayed'),1)),
             output_field=FloatField()
         ),
         OverallRating=Max(
