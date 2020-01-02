@@ -304,6 +304,8 @@ def GameSim(game):
     for T in [{'Team': HomeTeam, 'TeamGame': HomeTeamGame, 'TeamSeason': HomeTeamSeason}, {'Team':AwayTeam, 'TeamGame': AwayTeamGame, 'TeamSeason': AwayTeamSeason}]:
         GameDict[T['Team']] = {'TeamGame': T['TeamGame'], 'TeamSeason': T['TeamSeason']}
 
+        GameDict[T['Team']]['TeamGame'].GamesPlayed = 1
+
         #{'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts':0,'FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_Receptions':0,'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'KCK_FGA29':0,'KCK_FGM29':0,'KCK_FGA39':0, 'KCK_FGM39':0,'KCK_FGA49':0, 'KCK_FGM49':0,'KCK_FGA50':0, 'KCK_FGM50':0,'KCK_XPA':0, 'KCK_XPM':0, 'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0, 'DEF_Tackles':0, 'DEF_Sacks':0,'DEF_INT':0, 'DEF_TacklesForLoss': 0, 'FUM_Lost': 0, 'FUM_Forced': 0, 'FUM_Fumbles': 0, 'FUM_Recovered': 0,'FUM_ReturnTD': 0,'FUM_ReturnYards': 0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast, 'TwoPointAttempt': 0, 'TwoPointConversion': 0}
 
 
@@ -716,6 +718,7 @@ def GameSim(game):
 
                 if PassOutcome != 'Sack':
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_Targets += 1
+                    GameDict[OffensiveTeam]['TeamGame'].REC_Targets += 1
 
 
                 #INTERCEPTED
@@ -780,13 +783,12 @@ def GameSim(game):
                         YardsThisPlay = 100 - BallSpot
 
                     GameDict[OffensiveTeam]['TeamGame'].PAS_Yards += YardsThisPlay
+                    GameDict[OffensiveTeam]['TeamGame'].REC_Yards += YardsThisPlay
+                    GameDict[OffensiveTeam]['TeamGame'].REC_LNG = Max(GameDict[OffensiveTeam]['TeamGame'].REC_LNG, YardsThisPlay)
+
                     AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_Yards += YardsThisPlay
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_Yards += YardsThisPlay
-
-
-                    GameDict[OffensiveTeam]['TeamGame'].REC_LNG = Max(GameDict[OffensiveTeam]['TeamGame'].REC_LNG, YardsThisPlay)
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_LNG = Max(AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_LNG, YardsThisPlay)
-
 
                 #Incomplete pass
                 elif PassOutcome == 'Incompletion':
@@ -910,6 +912,8 @@ def GameSim(game):
                     AllPlayers[RunningBackPlayerID]['PlayerGameStat'].RUS_TD += 1
                 elif PlayChoice == 'Pass':
                     GameDict[OffensiveTeam]['TeamGame'].PAS_TD += 1
+                    GameDict[OffensiveTeam]['TeamGame'].REC_TD += 1
+
                     AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_TD += 1
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_TD += 1
 

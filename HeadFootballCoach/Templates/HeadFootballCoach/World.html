@@ -20,29 +20,17 @@
         <div class='playerHeaderStats'>
           <div>
             <div class='w3-display-container'>
-              <div class='w3-row playerHeaderStatsHeaderRowLine'>
-                <div class='w3-col s4 playerHeaderStatsHeaderRow'>Rushing</div>
-                <div class='w3-col s4 playerHeaderStatsHeaderRow'>Receiving</div>
-                <div class='w3-col s4 playerHeaderStatsHeaderRow'>Passing</div>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class='w3-display-container'>
-              {% for leader in leaders %}
-              <div class='w3-row playerHeaderStatsValueRowLine'>
-                <div class='w3-col s4 playerHeaderStatsValueRow'>
-                  <a href='/World/{{page.WorldID}}/Player/{{leader.RUS_YardsPG.PlayerID}}'>{{leader.RUS_YardsPG.PlayerID__PlayerFirstName}} {{leader.RUS_YardsPG.PlayerID__PlayerLastName}}</a>, <a
-                    href='/World/{{page.WorldID}}/Team/{{leader.RUS_YardsPG.TeamSeasonID__TeamID_id}}'>{{leader.RUS_YardsPG.TeamSeasonID__TeamID__Abbreviation}}</a> - {{leader.RUS_YardsPG.RUS_YardsPG}}
+              {% for LeaderGroup in leaders %}
+              <div class='w3-col s4 playerHeaderStatsValueRowLine'>
+                <div class="playerHeaderStatsHeaderRow">
+                  {{LeaderGroup.Stat}}
                 </div>
-                <div class='w3-col s4 playerHeaderStatsValueRow'>
-                  <a href='/World/{{page.WorldID}}/Player/{{leader.REC_YardsPG.PlayerID}}'>{{leader.REC_YardsPG.PlayerID__PlayerFirstName}} {{leader.REC_YardsPG.PlayerID__PlayerLastName}}</a>, <a
-                    href='/World/{{page.WorldID}}/Team/{{leader.REC_YardsPG.TeamSeasonID__TeamID_id}}'>{{leader.REC_YardsPG.TeamSeasonID__TeamID__Abbreviation}}</a> - {{leader.REC_YardsPG.REC_YardsPG}}
+                {% for Leader in LeaderGroup.Players %}
+                <div class='playerHeaderStatsValueRow'>
+                  <a href='/World/{{page.WorldID}}/Player/{{Leader.PlayerID}}'>{{Leader.PlayerID__PlayerFirstName}} {{Leader.PlayerID__PlayerLastName}}</a>, <a
+                    href='/World/{{page.WorldID}}/Team/{{Leader.TeamSeasonID__TeamID_id}}'>{{Leader.TeamSeasonID__TeamID__Abbreviation}}</a> - {{Leader.Value}}
                 </div>
-                <div class='w3-col s4 playerHeaderStatsValueRow'>
-                  <a href='/World/{{page.WorldID}}/Player/{{leader.PAS_YardsPG.PlayerID}}'>{{leader.PAS_YardsPG.PlayerID__PlayerFirstName}} {{leader.PAS_YardsPG.PlayerID__PlayerLastName}}</a>, <a
-                    href='/World/{{page.WorldID}}/Team/{{leader.PAS_YardsPG.TeamSeasonID__TeamID_id}}'>{{leader.PAS_YardsPG.TeamSeasonID__TeamID__Abbreviation}}</a> - {{leader.PAS_YardsPG.PAS_YardsPG}}
-                </div>
+                {% endfor %}
               </div>
               {% endfor %}
             </div>
@@ -71,7 +59,6 @@
               <div class="w3-card">
                 <div>
                   Top 25
-                  <span class='RankingsAsOf'>as of {{currentSeason.RankingsLastCalculated}}</span>
                 </div>
                 <div class='w3-display-container Top25w3-display-container'>
                   {% for team in allTeams %}
@@ -348,8 +335,29 @@
       </div>
       <div class="tab-content" style="display:none;"  id="nav-player-stats">
         <div class='w3-display-container' >
-          <div class='w3-row-padding' >
-            <div class='w3-col s9'>
+          <div class="w3-row-padding">
+            <div class='w3-col s6'>
+              <div class='w3-display-container w3-row-padding' id='worldplayerstat-statgroup-div'>
+                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Passing'>
+                  Passing
+                </div>
+                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Rushing'>
+                  Rushing
+                </div>
+                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Receiving'>
+                  Receiving
+                </div>
+                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Defense'>
+                  Defense
+                </div>
+                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Kicking'>
+                  Kicking
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class='w3-row-padding'>
+            <div class='w3-col s11'>
               <table class="w3-table w3-table-all" id='WorldPlayerStats'  style="width:100%">
                 <thead>
                   <tr>
@@ -367,23 +375,26 @@
                     <th data-data="RUS_YPC" class='WorldPlayerStats-Stat-Rushing'>Rush YPC</th>
                     <th data-data="RUS_YPG" class='WorldPlayerStats-Stat-Rushing'>Rush YPG</th>
                     <th data-data="RUS_TD" class='WorldPlayerStats-Stat-Rushing'>Rush TDs</th>
+                    <th data-data="RUS_LNG" class='WorldPlayerStats-Stat-Rushing'>Rush LNG</th>
+                    <th data-data="RUS_20" class='WorldPlayerStats-Stat-Rushing'>Rush 20+</th>
                     <th data-data="FUM_Fumbles" class='WorldPlayerStats-Stat-Rushing'>Rush Fum</th>
+                    <th data-data="REC_Yards" class='WorldPlayerStats-Stat-Receiving'>Rec Yards</th>
+                    <th data-data="REC_Receptions" class='WorldPlayerStats-Stat-Receiving'>Rec Catches</th>
+                    <th data-data="REC_YPC" class='WorldPlayerStats-Stat-Receiving'>Rec YPC</th>
+                    <th data-data="REC_YPG" class='WorldPlayerStats-Stat-Receiving'>Rec YPG</th>
+                    <th data-data="REC_TD" class='WorldPlayerStats-Stat-Receiving'>Rec TDs</th>
+                    <th data-data="REC_Targets" class='WorldPlayerStats-Stat-Receiving'>Rec Targets</th>
+                    <th data-data="REC_LNG" class='WorldPlayerStats-Stat-Receiving'>Rec LNG</th>
+
+                    <th data-data="DEF_Tackles" class='WorldPlayerStats-Stat-Defense'>Tackles</th>
+                    <th data-data="DEF_TacklesForLoss" class='WorldPlayerStats-Stat-Defense'>TFL</th>
+                    <th data-data="DEF_Sacks" class='WorldPlayerStats-Stat-Defense'>Sacks</th>
+                    <th data-data="DEF_INT" class='WorldPlayerStats-Stat-Defense'>INTs</th>
+                    <th data-data="FUM_Forced" class='WorldPlayerStats-Stat-Defense'>FF</th>
+                    <th data-data="FUM_Recovered" class='WorldPlayerStats-Stat-Defense'>FR</th>
                   </tr>
                 </thead>
               </table>
-            </div>
-            <div class='w3-col s2'>
-              Selected Stat Filtering
-              <div class='w3-display-container' id='worldplayerstat-statgroup-div'>
-                <input class="w3-radio" type="radio" name="worldplayerstat-statgroup-selected" value="" checked>
-                <label>None</label>
-
-                <input class="w3-radio" type="radio" name="worldplayerstat-statgroup-selected" value="WorldPlayerStats-Stat-Passing">
-                <label>Passing</label>
-
-                <input class="w3-radio" type="radio" name="worldplayerstat-statgroup-selected" value="WorldPlayerStats-Stat-Rushing">
-                <label>Rushing</label>
-              </div>
             </div>
           </div>
         </div>
@@ -391,7 +402,7 @@
       <div class="tab-content" style="display:none;"  id="nav-team-stats">
         <div class='w3-display-container' id='TeamStatsTabContainer'>
           <div class='w3-row-padding w3-hide' id='TeamStatsTableClone'>
-            <div class='w3-col s11'>
+            <div class='w3-col s12'>
               <table class="w3-table w3-table-all">
                 <thead>
                   <tr>

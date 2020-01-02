@@ -1805,7 +1805,6 @@ class Game(models.Model):
             R = self.HomeTeamSeasonID.NationalRank
         else:
             R = self.HomeTeamGameID.TeamSeasonWeekRankID.NationalRank
-        print('getting hometeam rank!', self, R)
         if R > 25:
             return ''
 

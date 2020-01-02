@@ -424,10 +424,6 @@ def Page_World(request, WorldID):
     LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
 
-
-    for TS in TeamSeason.objects.all():
-        TS.PopulateTeamOverallRating()
-
     if DoAudit:
         start = time.time()
 
@@ -568,17 +564,14 @@ def Page_World(request, WorldID):
             )
         )
 
-        TopPassers   = TopPlayers.filter(PAS_Yards__gt = 0).order_by('-PAS_YardsPG')[0:3]
-        TopRushers   = TopPlayers.filter(RUS_Yards__gt = 0).order_by('-RUS_YardsPG')[0:3]
-        TopReceivers = TopPlayers.filter(REC_Yards__gt = 0).order_by('-REC_YardsPG')[0:3]
-
-        for u in range(0,3):
-            Leaders.append({'RUS_YardsPG': TopRushers[u], 'PAS_YardsPG': TopPassers[u], 'REC_YardsPG': TopReceivers[u]})
+        Leaders.append({'Stat': 'Pass YPG', 'Players': TopPlayers.filter(PAS_Yards__gt = 0).annotate(Value = F('PAS_YardsPG')).order_by('-PAS_YardsPG')[0:3]})
+        Leaders.append({'Stat': 'Rush YPG', 'Players': TopPlayers.filter(RUS_Yards__gt = 0).annotate(Value = F('RUS_YardsPG')).order_by('-RUS_YardsPG')[0:3]})
+        Leaders.append({'Stat': 'Rec YPG', 'Players': TopPlayers.filter(REC_Yards__gt = 0).annotate(Value = F('REC_YardsPG')).order_by('-REC_YardsPG')[0:3]})
 
         if DoAudit:
             end = time.time()
             TimeElapsed = end - start
-            A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 8, AuditDescription = 'Page_World - return league leaders')
+            A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 9, AuditDescription = 'Page_World - return league leaders')
     context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'leaders':Leaders, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek , 'games': UpcomingGames}
 
     context['recentGames'] = RecentGames
@@ -2075,7 +2068,11 @@ def GET_PlayerStats(request, WorldID):
         RUS_Carries=Sum('playerteamseason__playergamestat__RUS_Carries'),
         RUS_TD=Sum('playerteamseason__playergamestat__RUS_TD'),
         RUS_Yards=Sum('playerteamseason__playergamestat__RUS_Yards'),
+        RUS_20=Sum('playerteamseason__playergamestat__RUS_20'),
         REC_Yards=Sum('playerteamseason__playergamestat__REC_Yards'),
+        REC_Receptions=Sum('playerteamseason__playergamestat__REC_Receptions'),
+        REC_Targets=Sum('playerteamseason__playergamestat__REC_Targets'),
+        REC_TD=Sum('playerteamseason__playergamestat__REC_TD'),
         FUM_Fumbles=Sum('playerteamseason__playergamestat__FUM_Fumbles'),
         DEF_Sacks=Sum('playerteamseason__playergamestat__DEF_Sacks'),
         DEF_INT=Sum('playerteamseason__playergamestat__DEF_INT'),
@@ -2098,11 +2095,23 @@ def GET_PlayerStats(request, WorldID):
                             default=(Round(F('RUS_Yards')* 1.0 / F('GamesPlayed'),1)),
                             output_field=FloatField()
                         ),
+        REC_YPG = Case(
+                            When(REC_Receptions=0, then=0.0),
+                            default=(Round(F('REC_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
         RUS_YPC = Case(
                             When(RUS_Carries=0, then=0.0),
                             default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
                             output_field=FloatField()
                         ),
+        REC_YPC = Case(
+                            When(REC_Receptions=0, then=0.0),
+                            default=(Round(F('REC_Yards')* 1.0 / F('REC_Receptions'),1)),
+                            output_field=FloatField()
+                        ),
+        RUS_LNG = Max('playerteamseason__playergamestat__RUS_LNG'),
+        REC_LNG = Max('playerteamseason__playergamestat__REC_LNG'),
     ).order_by(*OrderList)
 
 

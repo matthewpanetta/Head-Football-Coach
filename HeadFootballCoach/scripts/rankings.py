@@ -16,8 +16,8 @@ def CalculateConferenceRankings(LS, WorldID):
 
     for Conf in Conference.objects.filter(WorldID = CurrentWorld):
         ConfName = Conf.ConferenceName
-        ConfTeams = TeamSeason.objects.filter(WorldID=CurrentWorld).filter(TeamID__ConferenceID = Conf).values(
-            'TeamSeasonID', 'TeamID', 'ConferenceWins', 'ConferenceLosses', 'ConferenceChampion', 'teamseasonweekrank__NationalRank'
+        ConfTeams = TeamSeason.objects.filter(WorldID=CurrentWorld).filter(TeamID__ConferenceID = Conf).filter(teamseasonweekrank__IsCurrent = True).values(
+                'TeamID__TeamName', 'TeamSeasonID', 'TeamID', 'ConferenceWins', 'ConferenceLosses', 'ConferenceChampion', 'teamseasonweekrank__NationalRank'
         ).annotate(
             NetWins = F('ConferenceWins') - F('ConferenceLosses'),
             GamesPlayed = Sum('teamgame__GamesPlayed'),
@@ -31,16 +31,25 @@ def CalculateConferenceRankings(LS, WorldID):
                 default= ( Sum('opposingteamgame__Points') * 1.0 / F('GamesPlayed') ),
                 output_field=FloatField()
             ) ,
-            MOV = F('PPG') - F('PAPG')
+            MOV = Case(
+                When(GamesPlayed = 0, then=0),
+                default= ( (Sum('teamgame__Points') - Sum('opposingteamgame__Points') * 1.0) / F('GamesPlayed') ),
+                output_field=FloatField()
+            )
         ).order_by('-ConferenceChampion', '-NetWins', '-ConferenceWins', 'teamseasonweekrank__NationalRank')
 
         ConfRankTracker[ConfName] = {'Counter': 0, 'TopTeam': None, 'Teams':{}, 'TopTeamRecord': {'Wins': None, 'Losses': None}}
 
         ConfTeamDict = {'NetWins': {}}
 
+        print()
+        print(ConfTeams.query)
+        print()
+
         RankCount = 1
         RankCountWithTies = 1
         for TS in ConfTeams:
+            print(TS)
             TS['TeamSeason'] = TeamSeason.objects.get(TeamSeasonID = TS['TeamSeasonID'])
             if ConfRankTracker[ConfName]['TopTeamRecord']['Wins'] is None or ConfRankTracker[ConfName]['TopTeamRecord']['Losses'] is None:
                 ConfRankTracker[ConfName]['TopTeamRecord']['Losses'] = TS['ConferenceLosses']
@@ -60,7 +69,6 @@ def CalculateConferenceRankings(LS, WorldID):
             TS['TiebreakerCount'] = 0
             TS['RankCountWithTies'] = RankCountWithTies
             TS['ConferenceChampion'] = TS['ConferenceChampion']
-            TS['MOV'] = TS['MOV']
 
             if TS['ConferenceChampion']:
                 TS['TiebreakerCount'] += 10000
@@ -87,6 +95,8 @@ def CalculateConferenceRankings(LS, WorldID):
 
 
         RankCount = 1
+        for TS in ConfRankTracker[ConfName]['Teams']:
+            print(ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'], ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], ConfRankTracker[ConfName]['Teams'][TS]['MOV'])
         for TS in sorted(ConfRankTracker[ConfName]['Teams'], key=lambda TS: (ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'], -1*ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], -1*ConfRankTracker[ConfName]['Teams'][TS]['MOV']),reverse=False):
 
             if CurrentSeason.PlayoffCreated == False:

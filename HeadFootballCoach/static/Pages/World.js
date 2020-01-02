@@ -611,7 +611,9 @@ function GetPlayerStats(WorldID){
 
   var ColumnMap = {
     'WorldPlayerStats-Stat-Passing': [5,6,7,8,9],
-    'WorldPlayerStats-Stat-Rushing': [10,11,12,13,14],
+    'WorldPlayerStats-Stat-Rushing': [10,11,12,13,14,15, 16],
+    'WorldPlayerStats-Stat-Receiving': [17,18,19,20,21,22,23],
+    'WorldPlayerStats-Stat-Defense': [24,25,26,27,28,29]
   };
 
   var ColumnsToAlwaysShow = [0,1,2,3,4];
@@ -656,15 +658,45 @@ function GetPlayerStats(WorldID){
           {"data": "RUS_YPC", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "RUS_YPG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "RUS_TD", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "RUS_LNG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "RUS_20", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "FUM_Fumbles", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
+          {"data": "REC_Yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "REC_Receptions", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "REC_YPC", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "REC_YPG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "REC_TD", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "REC_Targets", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "REC_LNG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
+          {"data": "DEF_Tackles", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "DEF_TacklesForLoss", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "DEF_Sacks", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "DEF_INT", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "FUM_Forced", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "FUM_Recovered", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
       ],
       'order': [[ 4, "desc" ]],
   });
 
-  $('#worldplayerstat-statgroup-div input').on('change', function(Obj){
+
+  $('.WorldPlayerStats-Stat').on('click', function(Obj){
     var Target = Obj.target;
-    var Val = $(Target).attr('value');
-    var ColumnsToShow = ColumnMap[Val];
+
+    if (!$(Target).hasClass('WorldPlayerStats-Stat-Selected')) {
+      $('.WorldPlayerStats-Stat-Selected').each(function(ind, obj){
+        $(obj).removeClass('WorldPlayerStats-Stat-Selected');
+      });
+
+      $(Target).addClass('WorldPlayerStats-Stat-Selected');
+      var Val = $(Target).attr('id');
+      var ColumnsToShow = ColumnMap[Val];
+    }
+    else {
+      $(Target).removeClass('WorldPlayerStats-Stat-Selected');
+      var ColumnsToShow = [];
+    }
 
     table.columns().every( function (i,o) {
       var column = table.column( i );
@@ -680,8 +712,6 @@ function GetPlayerStats(WorldID){
       }
     });
   })
-
-
 }
 
 
