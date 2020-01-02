@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import F, Case, When, Sum, FloatField, Func, Value, CharField
+from django.db.models import F, Case, When, Sum, FloatField, Func, Value, CharField, Avg, Count
 from django.db.models.functions import  Concat
 from django.utils.timezone import now
 import random
@@ -1021,9 +1021,6 @@ class Player(models.Model):
     def CurrentSkills(self):
         PSS = self.playerseasonskill_set.filter(LeagueSeasonID__IsCurrent = True).first()
         return PSS
-    @property
-    def OverallRating(self):
-        return self.CurrentSkills.OverallRating
 
     @property
     def CurrentPlayerTeamSeason(self):
@@ -1036,31 +1033,11 @@ class Player(models.Model):
     def RecruitTeamSeasonUserTeam(self):
         RTS = self.recruitteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).filter(TeamSeasonID__TeamID__IsUserTeam = True).first()
         return RTS
-    def PlayerTeamCareerStatTotals(self, T, StatList, PerGameFlag, IncludeSelfReference):
-        PTS = PlayerTeamSeason.objects.filter(PlayerID = self)
 
-        if T is not None:
-            PTS = PTS.filter(TeamSeasonID__TeamID = T)
+    @property
+    def OverallRating(self):
+        return self.CurrentSkills.OverallRating
 
-        if IncludeSelfReference:
-            StatDict = {'PlayerID': self}
-            StatDict['Seasons'] = [u.TeamSeasonID.LeagueSeasonID for u in PTS]
-        else:
-            SelfAttributes = ['FullName', 'PositionID', 'PlayerID']
-            SelfValues = GetValuesOfObject(self, SelfAttributes)
-            StatDict = SelfValues[0]
-            StatDict['Seasons'] = str(min([u.TeamSeasonID.LeagueSeasonID.SeasonStartYear for u in PTS])) + ' to ' + str(max([u.TeamSeasonID.LeagueSeasonID.SeasonEndYear for u in PTS]))
-
-        GamesPlayed = sum([u.GamesPlayed for u in PTS])
-        for Stat in StatList:
-            StatDict[Stat] = sum([getattr(u, Stat) for u in PTS])
-
-            if PerGameFlag:
-                if GamesPlayed == 0:
-                    StatDict[Stat + 'PG'] = 0
-                else:
-                    StatDict[Stat + 'PG'] = round(sum([getattr(u, Stat) for u in PTS]) / GamesPlayed,1)
-        return StatDict
 
     def ReturnAsDict(self):
 
@@ -1186,90 +1163,6 @@ class TeamSeason(models.Model):
 
     ScholarshipsToOffer = models.PositiveSmallIntegerField(default = 0)
 
-    #Season Stats
-    Points = models.PositiveSmallIntegerField(default=0)
-    PointsAllowed = models.PositiveSmallIntegerField(default=0)
-    Possessions = models.PositiveSmallIntegerField(default=0)
-    FirstDowns = models.PositiveSmallIntegerField(default=0)
-    TimeOfPossession = models.PositiveSmallIntegerField(default = 0)
-    PAS_Completions = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_Attempts = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_INT = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_SackYards = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_Carries = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_20 = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_BrokenTackles = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_YardsAfterContact = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Drops = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_YardsAfterCatch = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Targets = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_Fumbles = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_Lost = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_Recovered = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_Forced = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_ReturnYards = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_ReturnTD = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_Tackles = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_SoloTackles = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_TacklesForLoss = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_Deflections = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_QBHits = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_INT = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_INTYards = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_INTTD = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_Safeties = models.SmallIntegerField(default=0, null=True, blank=True)
-
-    KR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
-    KR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    KR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    KR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
-    PR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
-    PR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    PR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM29 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA39 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM39 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA49 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM49 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA50 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_Kickoffs = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
-    PNT_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    PNT_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    PNT_Within20 = models.SmallIntegerField(default=0, null=True, blank=True)
-    BLK_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    BLK_Pancakes = models.SmallIntegerField(default=0, null=True, blank=True)
-
-    Turnovers = models.SmallIntegerField(default=0, null=True, blank=True)
-    ThirdDownAttempt = models.PositiveSmallIntegerField(default=0)
-    ThirdDownConversion = models.PositiveSmallIntegerField(default=0)
-    FourthDownAttempt = models.PositiveSmallIntegerField(default=0)
-    FourthDownConversion = models.PositiveSmallIntegerField(default=0)
-    TwoPointAttempt = models.PositiveSmallIntegerField(default=0)
-    TwoPointConversion = models.PositiveSmallIntegerField(default=0)
-    FirstDowns = models.PositiveSmallIntegerField(default=0)
-
     GamesPlayed = models.PositiveSmallIntegerField(default=0)
     Wins = models.PositiveSmallIntegerField(default=0)
     Losses = models.PositiveSmallIntegerField(default=0)
@@ -1300,13 +1193,17 @@ class TeamSeason(models.Model):
 
 
     def PopulateTeamOverallRating(self):
-        AllPlayers = PlayerTeamSeason.objects.filter(WorldID=self.WorldID).filter(TeamSeasonID = self)
-        NumberOfPlayers = AllPlayers.count()
+        AllPlayers = PlayerTeamSeason.objects.filter(WorldID=self.WorldID).filter(TeamSeasonID = self).filter(PlayerID__playerseasonskill__LeagueSeasonID__IsCurrent = True).values('TeamSeasonID').annotate(
+            SumOverallRating = Sum('PlayerID__playerseasonskill__OverallRating'),
+            NumberOfPlayers = Count('PlayerID__playerseasonskill__OverallRating'),
+            OverallRating = F('SumOverallRating') * 1.0 / F('NumberOfPlayers')
+        )
 
-        #self.TeamOverallRating =  int(Average([u.ThisPlayerSeasonSkill.OverallRating for u in AllPlayers]))
-        #self.save()
+        print(AllPlayers.query)
 
-        self.TeamOverallRating = 70#TODO
+        print(AllPlayers)
+
+        self.TeamOverallRating = AllPlayers[0]['OverallRating']#TODO
         self.save()
 
     @property
@@ -1487,11 +1384,32 @@ class TeamSeason(models.Model):
             {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'SecondarySort': 'DEF_Tackles'},
             {'FieldName': 'DEF_INT', 'DisplayName': 'Interceptions', 'SecondarySort': 'DEF_Tackles'},
         ]
-        PTS = self.playerteamseason_set.filter(GamesPlayed__gt = 0).values('PlayerID_id', 'GamesPlayed',  'PlayerID__PlayerFaceJson', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName','GameScore', 'PAS_Yards', 'RUS_Yards', 'REC_Yards', 'DEF_Sacks', 'DEF_INT').annotate(
+        PTS = self.playerteamseason_set.values('PlayerID_id', 'PlayerID__PlayerFaceJson', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
             PlayerName = Concat(F('PlayerID__PlayerFirstName'), Value(' '), F('PlayerID__PlayerLastName'), output_field=CharField()),
             PlayerFaceJson = F('PlayerID__PlayerFaceJson'),
             PlayerPosition = F('PlayerID__PositionID__PositionAbbreviation'),
             PlayerID = F('PlayerID_id'),
+            GameScore=Sum('playergamestat__GameScore'),
+            GamesPlayed=Sum('playergamestat__GamesPlayed'),
+            RUS_Yards=Sum('playergamestat__RUS_Yards'),
+            RUS_TD=Sum('playergamestat__RUS_TD'),
+            RUS_Carries=Sum('playergamestat__RUS_Carries'),
+            REC_Receptions=Sum('playergamestat__REC_Receptions'),
+            REC_TD=Sum('playergamestat__REC_TD'),
+            PAS_Yards=Sum('playergamestat__PAS_Yards'),
+            PAS_TD=Sum('playergamestat__PAS_TD'),
+            PAS_Sacks=Sum('playergamestat__PAS_Sacks'),
+            PAS_SackYards=Sum('playergamestat__PAS_SackYards'),
+            PAS_Attempts=Sum('playergamestat__PAS_Attempts'),
+            PAS_Completions=Sum('playergamestat__PAS_Completions'),
+            PAS_INT=Sum('playergamestat__PAS_INT'),
+            REC_Yards=Sum('playergamestat__REC_Yards'),
+            DEF_Sacks=Sum('playergamestat__DEF_Sacks'),
+            DEF_INT=Sum('playergamestat__DEF_INT'),
+            DEF_Tackles=Sum('playergamestat__DEF_Tackles'),
+            DEF_TacklesForLoss=Sum('playergamestat__DEF_TacklesForLoss'),
+            FUM_Forced=Sum('playergamestat__FUM_Forced'),
+            FUM_Recovered=Sum('playergamestat__FUM_Recovered'),
             GameScorePerGame = Case(
                 When(GamesPlayed = 0, then=0.0),
                 default=Round(F('GameScore') * 1.0 / F('GamesPlayed'), 1),
@@ -1512,8 +1430,7 @@ class TeamSeason(models.Model):
                 default=Round(F('PAS_Yards') * 1.0 / F('GamesPlayed'), 1),
                 output_field=FloatField()
             )
-
-        )
+        ).filter(GamesPlayed__gt = 0)
 
         Results = []
 
@@ -1545,82 +1462,6 @@ class PlayerTeamSeason(models.Model):
     PlayerID = models.ForeignKey(Player, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
     ClassID = models.ForeignKey(Class, on_delete=models.CASCADE, blank=True, null=True, default=None)
-
-
-    #Season Stats
-    GamesPlayed = models.PositiveSmallIntegerField(default=0, db_index=True)
-    GamesStarted =  models.PositiveSmallIntegerField(default=0)
-    GameScore = models.DecimalField(default = 0, max_digits=13, decimal_places=8)
-    PlaysOnField = models.PositiveSmallIntegerField(default=0)
-    TeamGamesPlayed = models.PositiveSmallIntegerField(default=0)
-
-    PAS_Completions = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_Attempts = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_INT = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    PAS_SackYards = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_Carries = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_20 = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_BrokenTackles = models.SmallIntegerField(default=0, null=True, blank=True)
-    RUS_YardsAfterContact = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Drops = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_YardsAfterCatch = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Receptions = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_Targets = models.SmallIntegerField(default=0, null=True, blank=True)
-    REC_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_Fumbles = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_Lost = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_Recovered = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_Forced = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_ReturnYards = models.SmallIntegerField(default=0, null=True, blank=True)
-    FUM_ReturnTD = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_Tackles = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_SoloTackles = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_TacklesForLoss = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_Deflections = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_QBHits = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_INT = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_INTYards = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_INTTD = models.SmallIntegerField(default=0, null=True, blank=True)
-    DEF_Safeties = models.SmallIntegerField(default=0, null=True, blank=True)
-    KR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
-    KR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    KR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    KR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
-    PR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    PR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
-    PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
-    PR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA29 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM29 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA39 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM39 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA49 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM49 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGA50 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_FGM50 = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_XPA = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_Kickoffs = models.SmallIntegerField(default=0, null=True, blank=True)
-    KCK_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
-    PNT_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
-    PNT_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    PNT_Within20 = models.SmallIntegerField(default=0, null=True, blank=True)
-    BLK_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
-    BLK_Pancakes = models.SmallIntegerField(default=0, null=True, blank=True)
 
 
     def __str__(self):
@@ -1928,27 +1769,7 @@ class Game(models.Model):
 
         return Results
 
-    @property
-    def NextPlayoffGameID(self):
-        System_Game_Clone = System_PlayoffGame.objects.get(GameNumber = self.PlayoffGameNumber).NextPlayoffGameID
-        if System_Game_Clone is not None:
-            return Game.objects.get(WorldID = self.WorldID, PlayoffRoundID = self.PlayoffRoundID.NextRound, PlayoffGameNumber = System_Game_Clone.GameNumber)
-        return None
 
-    # NextPlayoffRoundID = models.ForeignKey(System_PlayoffRound, on_delete=models.CASCADE,related_name="NextPlayoffRoundID" ,blank=True, null=True, default=None )
-    # NextPlayoffGameID = models.ForeignKey('self',on_delete=models.CASCADE,blank=True, null=True, default=None)
-    #
-    # GameNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
-    # PlayoffGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
-    # NextPlayoffGameNumberInRound = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
-
-    @property
-    def WinningTeamSeed(self):
-        if self.HomeTeamID == self.WinningTeamID:
-            return self.HomeTeamSeed
-        elif self.AwayTeamID == self.WinningTeamID:
-            return self.AwayTeamSeed
-        return None
     @property
     def HomeTeamGameID(self):
         return self.teamgame_set.filter(IsHomeTeam=True).first()
@@ -1984,6 +1805,7 @@ class Game(models.Model):
             R = self.HomeTeamSeasonID.NationalRank
         else:
             R = self.HomeTeamGameID.TeamSeasonWeekRankID.NationalRank
+        print('getting hometeam rank!', self, R)
         if R > 25:
             return ''
 
@@ -2015,7 +1837,6 @@ class Game(models.Model):
             return self.AwayTeamSeasonID.NationalRank
         else:
             return TSDR.NationalRank
-
     @property
     def WorldPageFilterAttributes(self):
         Attr = 'AllGame=1 '
@@ -2217,6 +2038,7 @@ class TeamGame(models.Model):
 
     GameID = models.ForeignKey(Game, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    OpposingTeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True, related_name='opposingteamgame')
     TeamSeasonWeekRankID  = models.ForeignKey(TeamSeasonWeekRank, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
 
     TeamGameID = models.AutoField(primary_key = True, db_index=True)
@@ -2225,6 +2047,7 @@ class TeamGame(models.Model):
     IsWinningTeam = models.BooleanField(default=False)
     Points = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     TeamRecord = models.CharField(max_length = 20, default=None, blank=True, null=True)
+    GamesPlayed = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
 
     PAS_Completions = models.SmallIntegerField(default=0, null=True, blank=True)
     PAS_Attempts = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2292,7 +2115,7 @@ class TeamGame(models.Model):
     BLK_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
     BLK_Pancakes = models.SmallIntegerField(default=0, null=True, blank=True)
 
-
+    Possessions = models.SmallIntegerField(default=0, null=True, blank=True)
     Turnovers = models.SmallIntegerField(default=0, null=True, blank=True)
     TimeOfPossession = models.PositiveSmallIntegerField(default = 0)
     FirstDowns = models.PositiveSmallIntegerField(default=0)
@@ -2377,11 +2200,6 @@ class PlayerSeasonSkill(models.Model):
             AggregateDict[Grade]['LetterGrade'] = MapNumberValuesToLetterGrade(AggregateDict[Grade]['NumberValue'])
 
         return AggregateDict
-
-
-    def PopulateOverallRating(self):
-        self.OverallRating = random.randint(30,70)
-        self.save()
 
 
     def __str__(self):

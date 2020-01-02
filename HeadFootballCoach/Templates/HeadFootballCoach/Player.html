@@ -212,7 +212,7 @@
                   {% for SeasonStat in SeasonStats %}
                   <tr>
                     <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">{{SeasonStat.TeamSeasonID__LeagueSeasonID__SeasonStartYear}}</a></td>
-                    <td>{{SeasonStat.PlayerTeamSeasonID__ClassID__ClassName}}</td>
+                    <td>{{SeasonStat.ClassID__ClassName}}</td>
                     {%for Stat in SeasonStat.Stats%}
                     <td class='{% if Stat.Value == 0%} playerStatZero {%endif%}'>{{Stat.Value}}</td>
                     {%endfor%}

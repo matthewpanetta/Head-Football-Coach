@@ -206,12 +206,3 @@ print('------------------------------------------------')
 # for LN in LastNameList:
 #     f.write(LN+',0,1,'+str(LastNameList[LN])+'\n')
 # f.close()
-
-from ..models import PlayerTeamSeason, PlayerGameStat, Audit
-
-
-print(PlayerGameStat.objects.filter(WorldID = None).count())
-
-PlayerGameStat.objects.filter(WorldID = None).delete()
-
-print(PlayerGameStat.objects.filter(WorldID = None).count())
