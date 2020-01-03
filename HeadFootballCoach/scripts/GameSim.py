@@ -1128,6 +1128,8 @@ def GameSim(game):
     GameDict[WinningTeam]['TeamSeason'].Wins +=1
     GameDict[LosingTeam]['TeamSeason'].Losses +=1
 
+    GameDict[WinningTeam]['TeamGame'].IsWinningTeam = True
+
     if HomeTeam.ConferenceID == AwayTeam.ConferenceID:
         GameDict[WinningTeam]['TeamSeason'].ConferenceWins +=1
         GameDict[LosingTeam]['TeamSeason'].ConferenceLosses +=1

@@ -290,9 +290,9 @@
                     {% for standingTeam in conferenceTeams %}
                     <tr class='{{standingTeam.BoldTeam}}'>
                       <td>
-                        <a href="/World/{{page.WorldID}}/Team/{{ standingTeam.TeamID }}/">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.LogoURL}}" />
-                          {{standingTeam.NationalRankDisplay}} {{standingTeam.Name }}
+                        <a href="{{standingTeam.TeamHref}}">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamLogoURL}}" />
+                          {{standingTeam.NationalRankDisplay}} {{standingTeam.TeamName }}
                         </a>
                       </td>
                       <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
