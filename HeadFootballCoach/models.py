@@ -521,6 +521,7 @@ class Conference(models.Model):
             app_label = 'HeadFootballCoach'
 
     def ConferenceStandings(self, Small=True, HighlightedTeams=[], WorldID = None):
+
         if WorldID is None:
             WorldID = self.WorldID.WorldID
         Standings = self.team_set.all().filter(teamseason__teamseasonweekrank__IsCurrent = True).values(
