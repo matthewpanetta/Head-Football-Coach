@@ -60,70 +60,93 @@
                 <div>
                   Top 25
                 </div>
-                <div class='w3-display-container Top25w3-display-container'>
+                <table class='display table sortable w3-table'>
+                  <colgroup>
+                      <col span="1">
+                      <col span="1">
+                      <col span="1">
+                  </colgroup>
                   {% for team in allTeams %}
-                  <div class='w3-row'>
-                    <div class="w3-col s2 worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle">
-                      <span class='Top25RankNumberw3-display-middle '>{{ team.NationalRank }}</span>
+                  <tr class='teamTableBorder'  style='border-left-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}}'>
+                    <td class="worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle">
+                      <div class='Top25RankNumberw3-display-middle '>{{ team.NationalRank }}</div>
                       {% if team.NationalRankDelta < 0 %}
-                      <span class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaRed'>&#8595;{{team.NationalRankDeltaAbs}}</span>
+                      <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaRed'>&#8595;{{team.NationalRankDeltaAbs}}</div>
                       {% elif team.NationalRankDelta > 0 %}
-                      <span class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaGreen'>&#8593;{{team.NationalRankDeltaAbs}}</span>
+                      <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaGreen'>&#8593;{{team.NationalRankDeltaAbs}}</div>
                       {% endif %}
-                    </div>
-                    <div class='w3-col s8 worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
+                    </td>
+                    <td class='worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
                       <a  class='' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
-
                         <img class='worldTeamLogo' src='{{team.TeamSeasonID__TeamID__TeamLogoURL}}' alt="">
                         <span>{{ team.TeamSeasonID__TeamID__TeamName }} {{ team.TeamSeasonID__TeamID__TeamNickname }}</span>
                       </a>
                       <img class='worldTeamLogo {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
-                    </div>
-                    <div class='w3-col s2 worldOverviewTop25TeamLineRecord w3-cell w3-cell-middle'>
+                    </td>
+                    <td class='worldOverviewTop25TeamLineRecord w3-cell  w3-cell-middle'>
                       <span class=''>{{team.TeamSeasonID__Wins}} - {{team.TeamSeasonID__Losses}}</span>
-                    </div>
-                  </div>
+                    </td>
+                  </tr>
                   {% endfor %}
-                </div>
+                </table>
               </div>
             </div>
-            <div class="w3-col  s4">
+            <div class="w3-col  s3">
               {% if   CurrentWeek.PhaseID.PhaseName == 'Regular Season' or CurrentWeek.PhaseID.PhaseName == 'Conference Championships' or CurrentWeek.PhaseID.PhaseName == 'Bowls' %}
-              <div class="w3-card">
-                <div class="w3-bar boxscore-bar" id="nav-tab-{{game.GameID}}">
-                  <div class="w3-bar-item fontweight500">Upcoming Games</div>
+              <div class="w3-card background-eee">
+                <div class="w3-bar boxscore-bar background-white" id="nav-tab-{{game.GameID}}">
+                  <div class="w3-bar-item fontweight500">This Week</div>
                   <button GameFilterSelection="allgame" class="w3-bar-item upcoming-gameview-tab w3-button tab selected-upcoming-gameview-tab" id="upcoming-gameview-allgame-tab">All</button>
                   <button GameFilterSelection="top25game" class="w3-bar-item upcoming-gameview-tab w3-button tab" id="upcoming-gameview-top25game-tab">Top 25</button>
                   <button GameFilterSelection="nationalgame" class="w3-bar-item upcoming-gameview-tab w3-button tab" id="upcoming-gameview-nationalgame-tab">National</button>
                 </div>
-                <div class="list-group list-group-flush">
+                <div class="">
                   {% for game in games%}
-                  <div BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="overviewUpcomingGameDisplay w3-row w3-display-container w3-white w3-border w3-border-grey">
-                    <div class="w3-col s7 height100 w3-display-container">
-                      <div class=" w3-col s12 w3-display-container w3-display-topmiddle">
-                        <div class=" w3-display-container">
-                          <span class='w3-display-right font10 padBottom20'>{{game.OverviewText}}</span>
+                  <table BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="bottom-border width100 worldUpcomingTable">
+                    <colgroup>
+                        <col span="2">
+                        <col span="2">
+                        <col span="2">
+                        <col span="2">
+                        <col span="2">
+                    </colgroup>
+                    <thead>
+                      <th class="bottom-border left-text" colspan="2">
+                        <span class='font10 padBottom20 margin-8'>{{game.GameTime}}</span>
+                      </th>
+                      <th class="bottom-border" colspan="7">
+                        <span class='font10'>{{game.GameHeadlineDisplay}}</span>
+                      </th>
+                      <th class="bottom-border" colspan="2">
+                        <span class='font10 padBottom20'><a href="{{game.GameHref}}">Preview</a></span>
+                      </th>
+                    </thead>
+                    {% for TeamGame in game.TeamGames %}
+                    <tr class=" w3-margin">
+                      <td  colspan='2'>
+                          <img class="overviewRecentGameDisplayTeamLogo"   src="{{TeamGame.TeamSeasonID__TeamID__TeamLogoURL}}" alt="">
+                      </td>
+                      <td class='worldUpcomingGameCell' colspan='4'>
+                        <div class='margin0'><span class='font10'>{{TeamGame.NationalRankDisplay}}</span> <a href="{{TeamGame.TeamHref}}" class='font16'>{{TeamGame.TeamSeasonID__TeamID__TeamName}}</a></div>
+                        <div class="">
+                          <span class='font10'>({{TeamGame.TeamRecordDisplay}})</span>
                         </div>
-                        <div class=" w3-display-container">
-                          <img class="overviewRecentGameDisplayTeamLogo" src="{{game.AwayTeamID.TeamLogoURL}}" alt="">
-                          <span class='font10'>{{game.AwayTeamRank}}</span>
-                          <span class='font12 {{game.AwayTeamGameID.TeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.AwayTeamID.TeamID}}">{{game.AwayTeamID.TeamName}}</a></span>
-                          <span class='font10'>{{game.AwayTeamSeasonID.Wins}} - {{game.AwayTeamSeasonID.Losses}}</span>
+                      </td>
+                      <td class='center-text' colspan='2'>
+                        <h2 class='font16'>{{TeamGame.PPG_Rank}}</h2>
+                        <div class="">
+                          <span class='font8 margin-right-4 '>Off Rank</span>
                         </div>
-                        <div class=" w3-display-container">
-                          <img class="overviewRecentGameDisplayTeamLogo" src="{{game.HomeTeamID.TeamLogoURL}}" alt="">
-                          <span class='font10'>{{game.HomeTeamRank}}</span>
-                          <span class='font12 {{game.HomeTeamGameID.TeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.HomeTeamID.TeamID}}">{{game.HomeTeamID.TeamName}}</a></span>
-                          <span class='font10'>{{game.HomeTeamSeasonID.Wins}} - {{game.HomeTeamSeasonID.Losses}}</span>
+                      </td>
+                      <td class='center-text' colspan='2'>
+                        <h2 class='font16'>{{TeamGame.PAPG_Rank}}</h2>
+                        <div class="">
+                          <span class='font8 margin-right-4 '>Def Rank</span>
                         </div>
-                      </div>
-                      <div class="w3-display-bottomleft teamScheduleGameDashboardGameDisplayBoxScoreText">
-                        <a href="/World/{{page.WorldID}}/Game/{{game.GameID}}">
-                          Preview | {{CurrentWeek}} | {{game.GameHeadlineDisplay}}
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    </table>
                   {% endfor %}
                 </div>
               </div>
@@ -209,50 +232,54 @@
             </div>
             <div class="w3-col s3">
               {% if   CurrentWeek.PhaseID.PhaseName == 'Regular Season' or CurrentWeek.PhaseID.PhaseName == 'Conference Championships' or CurrentWeek.PhaseID.PhaseName == 'Bowls' or CurrentWeek.PhaseID.PhaseName == 'Season Recap' %}
-              <div class="w3-card">
-                <div class="w3-bar boxscore-bar" id="nav-tab-{{game.GameID}}">
+              <div class="w3-card background-eee">
+                <div class="w3-bar boxscore-bar background-white" id="nav-tab-{{game.GameID}}">
                   <div class="w3-bar-item fontweight500">Recent Games</div>
                   <button GameFilterSelection="allgame" class="w3-bar-item recent-gameview-tab w3-button tab selected-recent-gameview-tab" id="recent-gameview-allgame-tab">All</button>
                   <button GameFilterSelection="top25game" class="w3-bar-item recent-gameview-tab w3-button tab" id="recent-gameview-top25game-tab">Top 25</button>
                   <button GameFilterSelection="nationalgame" class="w3-bar-item recent-gameview-tab w3-button tab" id="recent-gameview-nationalgame-tab">National</button>
                 </div>
                 <div class="">
-                  <div class="w3-row worldScheduleGameDashboard w3-display-container w3-light-grey">
-                    {% for game in recentGames%}
-                    <div BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="overviewRecentGameDisplay w3-row w3-display-container w3-white w3-border w3-border-grey">
-                      <div class="w3-col s7 height100 w3-display-container">
-                        <div class=" w3-col s12 w3-display-container w3-display-topmiddle">
-                          <div class=" w3-display-container">
-                            <span class='w3-display-right font10 padBottom20'>{{game.OverviewText}}</span>
-                          </div>
-                          <div class=" w3-display-container">
-                            <img class="overviewRecentGameDisplayTeamLogo" src="{{game.AwayTeamID.TeamLogoURL}}" alt="">
-                            <span class='font10'>{{game.AwayTeamRank}}</span>
-                            <span class='font12 {{game.AwayTeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.AwayTeamID.TeamID}}">{{game.AwayTeamID.TeamName}}</a></span>
-                            <span class='font10'>{{game.AwayTeamGameID.TeamRecord}}</span>
-                            <span class='w3-display-right {{game.AwayTeamWinningGameBold}}'>{{game.AwayTeamGameID.Points}}</span>
-                          </div>
-                          <div class=" w3-display-container">
-                            <img class='overviewRecentGameDisplayTeamLogo' src="{{game.HomeTeamID.TeamLogoURL}}" alt="">
-                            <span class='font10'>{{game.HomeTeamRank}}</span>
-                            <span class='font12 {{game.HomeTeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.HomeTeamID.TeamID}}">{{game.HomeTeamID.TeamName}}</a></span>
-                            <span class='font10'>{{game.HomeTeamGameID.TeamRecord}}</span>
-                            <span class='w3-display-right {{game.HomeTeamWinningGameBold}}'>{{game.HomeTeamGameID.Points}}</span>
-
-                          </div>
+                  {% for game in recentGames%}
+                  <table BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="bottom-border width100 worldUpcomingTable">
+                    <colgroup>
+                        <col span="2">
+                        <col span="2">
+                        <col span="2">
+                        <col span="2">
+                        <col span="2">
+                    </colgroup>
+                    <thead>
+                      <th class="bottom-border left-text" colspan="2">
+                        <span class='font10 padBottom20 margin-8'>{{game.GameTime}}</span>
+                      </th>
+                      <th class="bottom-border" colspan="7">
+                        <span class='font10'>{{game.GameHeadlineDisplay}}</span>
+                      </th>
+                      <th class="bottom-border" colspan="2">
+                        <span class='font10 padBottom20'><a href="{{game.GameHref}}">Box Score</a></span>
+                      </th>
+                    </thead>
+                    {% for TeamGame in game.TeamGames %}
+                    <tr class="{{TeamGame.TeamWinningGameBold}} w3-margin">
+                      <td  colspan='2'>
+                          <img class="overviewRecentGameDisplayTeamLogo"   src="{{TeamGame.TeamSeasonID__TeamID__TeamLogoURL}}" alt="">
+                      </td>
+                      <td class='worldUpcomingGameCell' colspan='4'>
+                        <div class='margin0'><span class='font10'>{{TeamGame.NationalRankDisplay}}</span> <a href="{{TeamGame.TeamHref}}" class='font16'>{{TeamGame.TeamSeasonID__TeamID__TeamName}}</a></div>
+                        <div class="">
+                          <span class='font10'>({{TeamGame.TeamRecordDisplay}})</span>
                         </div>
-                        <div class="w3-display-bottomleft teamScheduleGameDashboardGameDisplayBoxScoreText">
-                          <a href="/World/{{page.WorldID}}/Game/{{game.GameID}}">
-                            Box Score
-                          </a>
-                        </div>
-                        <div class="w3-display-bottomright teamScheduleGameDashboardGameDisplayBoxScoreText">
-                          {{game.GameDateID.WeekID}}
-                        </div>
-                      </div>
-                    </div>
+                      </td>
+                      <td class='center-text' colspan='2'>
+                        <h2 class='font16'>{{TeamGame.Points}}</h2>
+                      </td>
+                      <td class='center-text' colspan='2'>
+                      </td>
+                    </tr>
                     {% endfor %}
-                  </div>
+                    </table>
+                  {% endfor %}
                 </div>
               </div>
               {% elif CurrentWeek.PhaseID.PhaseName == 'Preseason' %}
@@ -431,7 +458,7 @@
                 <tbody>
                   <tr id='TeamStatsRowClone' class='w3-hide'>
                     <td>
-                      <a href="" href-field='TeamIDURL'>
+                      <a href="" href-field='TeamHref'>
                         <img class='worldConferenceStandingTeamLogo' src='' img-src-field='TeamLogoURL' alt="My image">
                         <span data-field='RankDisplayString'></span>
                         <span data-field='TeamName'></span>
@@ -565,7 +592,7 @@
         <div class='w3-display-container'>
           <div class='w3-row-padding' id='worldLeagueLeaderRow'>
             <div id='worldLeagueLeadersClone' class='w3-col s3 w3-hide'>
-              <table id='' class='display table sortable w3-table'>
+              <table id='' class='display table sortable w3-table-all'>
                 <thead>
                   <th>Rank</th>
                   <th>Player</th>
@@ -573,7 +600,7 @@
                   <th data-field='DisplayName'></th>
                 </thead>
                 <tr id='worldLeagueLeadersRowClone' class='w3-hide'>
-                  <td class='WorldLeagueLeaderRowCell' data-field='ValueRank' data-value=""></td>
+                  <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value=""></td>
                   <td class='WorldLeagueLeaderRowCell' data-value=""><a href="" href-field='PlayerHref' ><span data-field='PlayerName'></span>, </a><span data-field='PlayerPosition'></span></td>
                   <td class='WorldLeagueLeaderRowCell' data-value=""><a href-field='PlayerTeamHref'><img src="" src-field='PlayerTeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
                   <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value=""></td>

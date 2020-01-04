@@ -72,6 +72,12 @@
 
 }
 
+.worldUpcomingGameCell {
+  min-width: 200px;
+  max-width: 200px;
+  text-align: left;
+}
+
 .teamHeaderRank {
   padding:0;
   margin-bottom: 5px;
@@ -110,6 +116,7 @@
   text-align: center;
   margin-left: 12%;
   overflow: hidden;
+  width: 300px;
 }
 
 .worldHeaderStatsBox {
@@ -288,6 +295,10 @@
   padding-left: 10px;
 }
 
+.font-size-16 {
+  font-size: 16px;
+}
+
 .gameTeamStatBox > h3 {
   font-size: 14px;
 }
@@ -370,6 +381,10 @@ article > header {
   /*height: 100%;*/
   top: 20%;
   /*position: absolute;*/
+}
+
+.worldOverviewTop25TeamLineRecord {
+  font-size: 12px;
 }
 
 .playerSeasonStatOpponentLogo, .coachSeasonStatOpponentLogo {
@@ -645,8 +660,17 @@ input[type=text], input[type=password] {
   opacity: 50%;
 }
 
+.font8 {
+  font-size: 8px;
+  opacity: 50%;
+}
+
 .font12 {
   font-size: 12px;
+}
+
+.font16 {
+  font-size: 16px;
 }
 
 .teamScheduleGameDashboardGameDisplayTeams {
@@ -661,18 +685,20 @@ input[type=text], input[type=password] {
   padding-left: 10px;
 }
 
-.TeamWinningGameBold {
+.TeamWinningGameBold, .TeamWinningGameBold * {
   font-weight: 700;
 }
 
 .TeamLosingGame {
-  opacity: .5;
+  opacity: .75;
 
 }
 
-.padBottom20 {
+.padBottom20, .padBottom10 {
   padding-bottom: 10px;
 }
+
+
 
 .teamScheduleGameDashboardGameDisplayBoxScorePlayerName {
   font-family: "Antenna Bold",Arial;
@@ -755,8 +781,13 @@ input[type=text], input[type=password] {
   font-weight: 500;
 }
 
+.margin0 {
+  margin:0;
+}
+
 .overviewRecentGameDisplayTeamLogo, .PreseasonRecruitTeamLogo img {
   height: 30px;
+  margin: 8px 6px;
 }
 
 
@@ -1044,6 +1075,10 @@ input[type=text], input[type=password] {
   vertical-align: middle;
 }
 
+.w3-padding-4 {
+  padding: 4px 4px;
+}
+
 .ScoringSummaryDriveDescription {
   font-style: italic;
 }
@@ -1160,6 +1195,12 @@ td.WorldLeagueLeaderRowCell {
   padding: .15rem !important;
 }
 
+
+td.WorldLeagueLeaderRowCell.NameCell {
+  min-width: 150px;
+}
+
+
 .GameHeadlineDisplay {
   font-weight: 600;
   color: white;
@@ -1188,4 +1229,41 @@ td.WorldLeagueLeaderRowCell {
    color: white;
    border:1px solid white;
    font-weight: 600;
+ }
+
+ .Top25w3-display-container, .scoreboard table {
+   width: 100%;
+ }
+
+ .bottom-border {
+   border-bottom: 1px solid #888;
+ }
+
+ .margin-right-4 {
+   margin-right: 4px;
+ }
+
+ .margin-8 {
+   margin: 8px;
+ }
+
+ .center-text {
+   text-align: center;
+ }
+
+ .left-text {
+   text-align: left;
+ }
+
+ .worldUpcomingTable {
+   margin-bottom: 24px;
+   background-color: white;
+ }
+
+ .background-white {
+   background-color: white;
+ }
+
+ .background-eee {
+   background-color: #eee;
  }

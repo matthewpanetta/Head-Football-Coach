@@ -520,19 +520,32 @@ class Conference(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
-    def ConferenceStandings(self, Small=True, HighlightedTeams=[]):
-        Standings = []
-        Teams = self.team_set.all()
-        for T in Teams:
-            CTS = T.CurrentTeamSeason
-            TeamDict = {'Name': T.Name,'NationalRank': CTS.NationalRank,'NationalRankDisplay': CTS.NationalRankDisplay,'ConferenceWins': CTS.ConferenceWins,'ConferenceLosses': CTS.ConferenceLosses,'ConferenceGB': CTS.ConferenceGB,'ConferenceRank': CTS.ConferenceRank,'Wins': CTS.Wins,'Losses': CTS.Losses, 'LogoURL': T.TeamLogoURL, 'TeamID': T.TeamID, 'BoldTeam': ''}
-            if Small:
-                TeamDict['Name'] = T.TeamName
+    def ConferenceStandings(self, Small=True, HighlightedTeams=[], WorldID = None):
 
-            if T in HighlightedTeams:
-                TeamDict['BoldTeam'] = 'bold'
-            Standings.append(TeamDict)
-        Standings = sorted(Standings, key=lambda k: k['ConferenceRank'])
+        if WorldID is None:
+            WorldID = self.WorldID.WorldID
+        Standings = self.team_set.all().filter(teamseason__teamseasonweekrank__IsCurrent = True).values(
+            'TeamLogoURL', 'TeamName', 'teamseason__teamseasonweekrank__NationalRank', 'teamseason__ConferenceWins', 'teamseason__ConferenceLosses', 'teamseason__ConferenceGB', 'teamseason__ConferenceRank', 'teamseason__Wins', 'teamseason__Losses', 'TeamLogoURL', 'TeamID'
+        ).annotate(
+            TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), output_field=CharField()),
+            NationalRankDisplay = Case(
+                When(teamseason__teamseasonweekrank__NationalRank__gt = 25, then=Value('')),
+                default=Concat(Value('('), F('teamseason__teamseasonweekrank__NationalRank'), Value(')'), output_field=CharField()),
+                output_field=CharField()
+            ),
+            NationalRank = F('teamseason__teamseasonweekrank__NationalRank'),
+            ConferenceWins = F('teamseason__ConferenceWins'),
+            ConferenceLosses = F('teamseason__ConferenceLosses'),
+            Wins = F('teamseason__Wins'),
+            Losses = F('teamseason__Losses'),
+            ConferenceGB = F('teamseason__ConferenceGB'),
+            ConferenceRank = F('teamseason__ConferenceRank'),
+            BoldTeam = Case(
+                When(TeamName__in = HighlightedTeams, then=Value('bold')),
+                default=Value(''),
+                output_field=CharField()
+            ),
+        ).order_by('ConferenceRank')
 
         return Standings
 

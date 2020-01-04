@@ -50,41 +50,21 @@
         </li>
       </ul>
       <div class='playerHeaderStatsBox' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
-        {% for season in seasonStats %}
-        {% if season.IsCurrent == 1 %}
-        <div class="playerHeaderStatsHeader" style="background-color:{{playerTeam.TeamColor_Primary_HEX}}">{{season.Season}} Stats</div>
-        <div class="w3-col w3-display-container s3">
-          <div class="w3-row">
-            MPG
+        {% for SeasonStat in SeasonStats %}
+        {% if SeasonStat.TeamSeasonID__LeagueSeasonID__IsCurrent == 1 %}
+        <div class="playerHeaderStatsHeader" style="background-color:{{playerTeam.TeamColor_Primary_HEX}}">{{SeasonStat.TeamSeasonID__LeagueSeasonID__SeasonStartYear}} Stats</div>
+        {%for Stat in SeasonStat.Stats%}
+        {% if Stat.SmallDisplay %}
+        <div class="w3-col w3-display-container s4">
+          <div class="w3-row playerOverviewRatingAbbreviation">
+            {{Stat.DisplayName}}
           </div>
-          <div class="w3-row">
-            {{season.MPG}}
-          </div>
-        </div>
-        <div class="w3-col w3-display-container s3">
-          <div class="w3-row">
-            PPG
-          </div>
-          <div class="w3-row">
-            {{season.PPG}}
+          <div class="w3-row font-size-16">
+            {{Stat.Value}}
           </div>
         </div>
-        <div class="w3-col w3-display-container s3">
-          <div class="w3-row">
-            RPG
-          </div>
-          <div class="w3-row">
-            {{season.RPG}}
-          </div>
-        </div>
-        <div class="w3-col w3-display-container s3">
-          <div class="w3-row">
-            APG
-          </div>
-          <div class="w3-row">
-            {{season.APG}}
-          </div>
-        </div>
+        {% endif %}
+        {%endfor%}
         {% endif %}
         {% endfor %}
       </div>
