@@ -455,20 +455,8 @@
         <div class='container'>
           <div class='row'>
             <div class='w3-col s1'></div>
-            <div class='w3-col s10'>
-              <article>
-                <header>
-                  Head Coach
-                </header>
-                <a href="/World/{{page.WorldID}}/Coach/{{HC.CoachID.CoachID}}">{{HC.CoachFirstName}} {{HC.CoachLastName}}</a>
-              </article>
+            <div class='w3-col s10' id='CoachChart'>
             </div>
-            <div class='w3-col s1'></div>
-          </div>
-          <div class='row'>
-            <div class='w3-col s1'></div>
-            <div class='w3-col s5'><a href="/World/{{page.WorldID}}/Coach/{{AHC.CoachID}}">{{AHC.CoachFirstName}} {{AHC.CoachLastName}}</a></div>
-            <div class='w3-col s5'><a href="/World/{{page.WorldID}}/Coach/{{AC.CoachID}}">{{AC.CoachFirstName}} {{AC.CoachLastName}}</a></div>
             <div class='w3-col s1'></div>
           </div>
         </div>
@@ -523,8 +511,14 @@
         </div>
       </div>
       <div class="tab-content" style='display:none;' id="nav-records">
+        <div class="w3-bar boxscore-bar background-white team-record-bar">
+          <div class="w3-bar-item fontweight500">Team Records</div>
+          <button class="w3-bar-item w3-button tab team-record-tab selected-team-record-tab" id="Team-Record-Season-tab" timeframe='Season'>Season</button>
+          <button class="w3-bar-item w3-button tab team-record-tab" id="Team-Record-Career-tab" timeframe='Career'>Career</button>
+          <button class="w3-bar-item w3-button tab team-record-tab" id="Team-Record-Game-tab" timeframe='Game'>Single Game</button>
+        </div>
         <div class='w3-display-container'>
-          <div class='w3-row-padding' id='teamHistoryPlayerLeaderRow'>
+          <div class='w3-row-padding' id='teamHistoryPlayerLeaderRowClone'>
             <div id='teamHistoryPlayerLeadersClone' class='w3-col s3 w3-hide'>
               <table id='' class='display table sortable'>
                 <thead>
@@ -536,7 +530,7 @@
                 <tr id='teamHistoryPlayerLeadersRowClone' class='w3-hide'>
                   <td class='TeamHistoricalLeaderRowCell' data-field='ValueRank' data-value=""></td>
                   <td class='TeamHistoricalLeaderRowCell' data-value=""><a href="" href-field='PlayerHref' ><span data-field='PlayerName'></span>, </a><span data-field='PlayerPosition'></span></td>
-                  <td class='TeamHistoricalLeaderRowCell' data-field='SeasonYear' data-value=""></td>
+                  <td class='TeamHistoricalLeaderRowCell' data-field='Timeframe' data-value=""></td>
                   <td class='TeamHistoricalLeaderRowCell' data-field='Value' data-value=""></td>
                 </tr>
               </table>
@@ -553,57 +547,16 @@
 <script src="{% static 'common/jquery.min.js' %}"></script>
 <script src="{% static 'common/popper.min.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+<script src="{% static 'Highcharts/code/highcharts.js' %}"></script>
+<script src="{% static 'Highcharts/code/modules/sankey.js' %}"></script>
+<script src="{% static 'Highcharts/code/modules/organization.js' %}"></script>
+<script src="{% static 'Highcharts/code/modules/accessibility.js' %}"></script>
+
 <script src="{% static 'Pages/Team.js' %}" type="module"></script>
 <script src="{% static 'facesjs-master/src/generate.js' %}"></script>
 <script src="{% static 'common/bootstrap.min.js' %}"></script>
 <script src="{% static 'action.js' %}"></script>
 <script src="{% static 'common/loader.js' %}"></script>
-    <script type="text/javascript">
-
-      // Load the Visualization API and the corechart package.
-      google.charts.load('current', {'packages':['corechart']});
-
-      // Set a callback to run when the Google Visualization API is loaded.
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-
-      var data = new google.visualization.DataTable();
-      data.addColumn('date', 'Date');
-      data.addColumn('number', 'Rank');
-
-      data.addRows([
-      {% for WeeklyRank in TeamWeeklyRanks %}
-      [{{WeeklyRank.DateID.JSDateDefinition}},  {{WeeklyRank.NationalRank}}],
-      {% endfor %}
-      ]);
-
-      var options = {
-        chart: {
-          title: '{{team.TeamName}} Rank',
-          subtitle: 'in millions of dollars (USD)'
-        },
-        width: 900,
-        height: 500,
-        vAxis: {
-            direction: -1,
-            viewWindowMode:'explicit',
-            viewWindow: {
-              max:{{MaxWeeklyRank}},
-              min:1
-            }
-        },
-        hAxis: {
-            showTextEvery: 4
-        }
-      };
-
-
-        var chart = new google.visualization.LineChart(document.getElementById('TeamRankTrend'));
-
-        chart.draw(data, options);
-      }
-    </script>
 
 <style media="screen">
   .teamColorBorder {

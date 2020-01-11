@@ -1,4 +1,4 @@
-<div>
+td<div>
   {% include "HeadFootballCoach/NavBar.html" %}
 </div>
 {% load static %}
@@ -82,6 +82,7 @@
                         <span>{{ team.TeamSeasonID__TeamID__TeamName }} {{ team.TeamSeasonID__TeamID__TeamNickname }}</span>
                       </a>
                       <img class='worldTeamLogo {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
+                      <img class='worldTeamLogo {{team.AdditionalDisplayLogo2Class}}' src='{{team.AdditionalDisplayLogo2}}' alt="">
                     </td>
                     <td class='worldOverviewTop25TeamLineRecord w3-cell  w3-cell-middle'>
                       <span class=''>{{team.TeamSeasonID__Wins}} - {{team.TeamSeasonID__Losses}}</span>
@@ -91,7 +92,7 @@
                 </table>
               </div>
             </div>
-            <div class="w3-col  s3">
+            <div class="w3-col  s4">
               {% if   CurrentWeek.PhaseID.PhaseName == 'Regular Season' or CurrentWeek.PhaseID.PhaseName == 'Conference Championships' or CurrentWeek.PhaseID.PhaseName == 'Bowls' %}
               <div class="w3-card background-eee">
                 <div class="w3-bar boxscore-bar background-white" id="nav-tab-{{game.GameID}}">
@@ -133,13 +134,13 @@
                         </div>
                       </td>
                       <td class='center-text' colspan='2'>
-                        <h2 class='font16'>{{TeamGame.PPG_Rank}}</h2>
+                        <h2 class='font16'>{{TeamGame.PPP_Rank}}</h2>
                         <div class="">
                           <span class='font8 margin-right-4 '>Off Rank</span>
                         </div>
                       </td>
                       <td class='center-text' colspan='2'>
-                        <h2 class='font16'>{{TeamGame.PAPG_Rank}}</h2>
+                        <h2 class='font16'>{{TeamGame.PAPP_Rank}}</h2>
                         <div class="">
                           <span class='font8 margin-right-4 '>Def Rank</span>
                         </div>
@@ -234,7 +235,7 @@
               {% if   CurrentWeek.PhaseID.PhaseName == 'Regular Season' or CurrentWeek.PhaseID.PhaseName == 'Conference Championships' or CurrentWeek.PhaseID.PhaseName == 'Bowls' or CurrentWeek.PhaseID.PhaseName == 'Season Recap' %}
               <div class="w3-card background-eee">
                 <div class="w3-bar boxscore-bar background-white" id="nav-tab-{{game.GameID}}">
-                  <div class="w3-bar-item fontweight500">Recent Games</div>
+                  <div class="w3-bar-item fontweight500">{{LastWeek.WeekName}}</div>
                   <button GameFilterSelection="allgame" class="w3-bar-item recent-gameview-tab w3-button tab selected-recent-gameview-tab" id="recent-gameview-allgame-tab">All</button>
                   <button GameFilterSelection="top25game" class="w3-bar-item recent-gameview-tab w3-button tab" id="recent-gameview-top25game-tab">Top 25</button>
                   <button GameFilterSelection="nationalgame" class="w3-bar-item recent-gameview-tab w3-button tab" id="recent-gameview-nationalgame-tab">National</button>
@@ -363,7 +364,7 @@
       <div class="tab-content" style="display:none;"  id="nav-player-stats">
         <div class='w3-display-container' >
           <div class="w3-row-padding">
-            <div class='w3-col s6'>
+            <div class='w3-col s8'>
               <div class='w3-display-container w3-row-padding' id='worldplayerstat-statgroup-div'>
                 <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Passing'>
                   Passing
@@ -393,6 +394,7 @@
                     <th data-data="ClassID__ClassAbbreviation">Class</th>
                     <th data-data="Position">Position</th>
                     <th data-data="playerseasonskill__OverallRating">OVR</th>
+                    <th data-data="GameScore">Game Score</th>
                     <th data-data="PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Pass Yards</th>
                     <th data-data="PAS_CompletionPercentage" class='WorldPlayerStats-Stat-Passing'>Pass %</th>
                     <th data-data="PAS_YPG" class='WorldPlayerStats-Stat-Passing'>Pass YPG</th>
@@ -421,6 +423,41 @@
                     <th data-data="FUM_Recovered" class='WorldPlayerStats-Stat-Defense'>FR</th>
                   </tr>
                 </thead>
+                <tfoot>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
@@ -635,62 +672,7 @@
               </table>
             </div>
           </div>
-          <div class='w3-row-padding WorldHistoryPlayerLeaderRow'>
-            <div class='w3-col s4'>
-              <table id='WorldHistoryPlayerLeadersPPG' class='w3-table w3-table-all'>
-                <thead>
-                  <th>Rank</th>
-                  <th>Player</th>
-                  <th>Seasons</th>
-                  <th>Team</th>
-                  <th>PPG</th>
-                </thead>
-                <tr id='WorldHistoryPlayerLeadersPPGRowClone' class='hidden'>
-                  <td class='WorldHistoricalLeaderPPGRowCell' data-field='PPGRank' data-value=""></td>
-                  <td class='WorldHistoricalLeaderPPGRowCell' data-value=""><a href="" data-field='FullName' href-field='PlayerIDURL'></a></td>
-                  <td class='WorldHistoricalLeaderPPGRowCell' data-field='Seasons' data-value=""></td>
-                  <td class='WorldHistoricalLeaderPPGRowCell' data-value=""><a href="" data-field='TeamSeasonID__TeamID__Abbreviation' href-field='TeamIDURL'></a></td>
-                  <td class='WorldHistoricalLeaderPPGRowCell' data-field='PPG' data-value=""></td>
-                </tr>
-              </table>
-            </div>
-            <div class='w3-col s4'>
-              <table id='WorldHistoryPlayerLeadersRPG' class='w3-table w3-table-all'>
-                <thead>
-                  <th>Rank</th>
-                  <th>Player</th>
-                  <th>Seasons</th>
-                  <th>Team</th>
-                  <th>RPG</th>
-                </thead>
-                <tr id='WorldHistoryPlayerLeadersRPGRowClone' class='hidden'>
-                  <td class='WorldHistoricalLeaderRPGRowCell' data-field='RPGRank' data-value=""></td>
-                  <td class='WorldHistoricalLeaderRPGRowCell' data-value=""><a href="" data-field='FullName' href-field='PlayerIDURL'></a></td>
-                  <td class='WorldHistoricalLeaderRPGRowCell' data-field='Seasons' data-value=""></td>
-                  <td class='WorldHistoricalLeaderRPGRowCell' data-value=""><a href="" data-field='TeamSeasonID__TeamID__Abbreviation' href-field='TeamIDURL'></a></td>
-                  <td class='WorldHistoricalLeaderRPGRowCell' data-field='RPG' data-value=""></td>
-                </tr>
-              </table>
-            </div>
-            <div class='w3-col s4'>
-              <table id='WorldHistoryPlayerLeadersAPG' class='w3-table w3-table-all'>
-                <thead>
-                  <th>Rank</th>
-                  <th>Player</th>
-                  <th>Seasons</th>
-                  <th>Team</th>
-                  <th>APG</th>
-                </thead>
-                <tr id='WorldHistoryPlayerLeadersAPGRowClone' class='hidden'>
-                  <td class='WorldHistoricalLeaderAPGRowCell' data-field='APGRank' data-value=""></td>
-                  <td class='WorldHistoricalLeaderAPGRowCell' data-value=""><a href="" data-field='FullName' href-field='PlayerIDURL'></a></td>
-                  <td class='WorldHistoricalLeaderAPGRowCell' data-field='Seasons' data-value=""></td>
-                  <td class='WorldHistoricalLeaderAPGRowCell' data-value=""><a href="" data-field='TeamSeasonID__TeamID__Abbreviation' href-field='TeamIDURL'></a></td>
-                  <td class='WorldHistoricalLeaderAPGRowCell' data-field='APG' data-value=""></td>
-                </tr>
-              </table>
-            </div>
-          </div>
+
           <div class='row'>
             <div class='w3-col s1'></div>
             <div class='w3-col s10'>

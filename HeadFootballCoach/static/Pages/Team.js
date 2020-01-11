@@ -51,8 +51,13 @@ function PopulateTeamSeasonHistoryTable(TeamSeasonHistory, WorldID){
 
 
 function PopulateHistoricalLeadersTable(HistoricalLeaders, WorldID){
+  console.log('trying to remove .teamHistoryPlayerLeaderRow');
+  $('.teamHistoryPlayerLeaderRow').each(function(ind, obj){
+    console.log('removing ', obj);
+    $(obj).remove();
+  });
   console.log('HistoricalLeaders', HistoricalLeaders);
-  var LeaderDisplayTemplate = $('#teamHistoryPlayerLeaderRow');
+  var LeaderDisplayTemplate = $('#teamHistoryPlayerLeaderRowClone');
   var LeaderDisplay = undefined;
 
   var BoxCount = 0;
@@ -61,6 +66,7 @@ function PopulateHistoricalLeadersTable(HistoricalLeaders, WorldID){
 
     if (BoxCount % 3 == 0) {
       LeaderDisplay = $(LeaderDisplayTemplate).clone();
+      $(LeaderDisplay).removeAttr('id').addClass('teamHistoryPlayerLeaderRow');
       $(LeaderDisplayTemplate).before($(LeaderDisplay));
     }
 
@@ -101,7 +107,7 @@ function PopulateHistoricalLeadersTable(HistoricalLeaders, WorldID){
 
   });
 
-  $('#teamHistoryPlayerLeadersClone').remove();
+  //$('#teamHistoryPlayerLeadersClone').remove();
 
 }
 
@@ -245,8 +251,52 @@ function GetTeamHistory(WorldID, TeamID){
     success: function(res, status) {
       console.log(res, status);
       PopulateTeamSeasonHistoryTable(res.TeamSeasonHistory, WorldID);
-      PopulateHistoricalLeadersTable(res.HistoricalLeaders, WorldID);
 
+    },
+    error: function(res) {
+      alert(res.status);
+    }
+  });
+
+  return null;
+}
+
+
+function GetTeamHistoricalLeaders(WorldID, TeamID, Timeframe){
+
+  $.ajax({
+    method: "GET",
+    url: "/World/"+WorldID+"/Team/"+TeamID+"/TeamHistoricalLeaders/"+Timeframe,
+    data: {
+      csrfmiddlewaretoken: csrftoken
+    },
+    dataType: 'json',
+    success: function(res, status) {
+      console.log(res, status);
+      PopulateHistoricalLeadersTable(res.HistoricalLeaders, WorldID);
+    },
+    error: function(res) {
+      alert(res.status);
+    }
+  });
+
+  return null;
+}
+
+
+function GetTeamCoaches(WorldID, TeamID){
+
+
+  $.ajax({
+    method: "GET",
+    url: "/World/"+WorldID+"/Team/"+TeamID+"/TeamCoaches",
+    data: {
+      csrfmiddlewaretoken: csrftoken
+    },
+    dataType: 'json',
+    success: function(res, status) {
+      console.log(res, status);
+      DrawCoachOrgChart(res.TeamInfo, res.CoachOrg);
     },
     error: function(res) {
       alert(res.status);
@@ -329,6 +379,32 @@ function AddScheduleListeners(){
 }
 
 
+
+function AddHistoricalLeaderListeners(WorldID, TeamID){
+
+  $('.team-record-bar button').on('click', function(event, target) {
+
+    var ClickedTab = $(event.target)
+    console.log('ClickedTab AddHistoricalLeaderListeners', ClickedTab);
+    var ClickedTabValue = ClickedTab.attr('timeframe');
+
+    if (! $(ClickedTab).hasClass('selected-team-record-tab')) {
+      $('.selected-team-record-tab').each(function(ind, obj){
+        $(obj).removeClass('selected-team-record-tab');
+      })
+      $(ClickedTab).addClass('selected-team-record-tab');
+    }
+
+    $('[timeframe="'+ClickedTabValue+'"]').each(function(ind, obj){
+      $(obj).removeClass('w3-hide');
+    });
+
+    GetTeamHistoricalLeaders(WorldID, TeamID, ClickedTabValue);
+
+  });
+}
+
+
 function AddBoxScoreListeners(){
   var InitialBoxScore = $('.selected-boxscore-tab')[0];
 
@@ -398,25 +474,172 @@ function DrawFaces(TeamJerseyStyle, TeamJerseyInvert){
   });
 }
 
+function DrawCoachOrgChart(TeamInfo, CoachOrg){
+
+  console.log('TeamInfo, CoachOrg', TeamInfo, CoachOrg);
+  var TeamName = TeamInfo.TeamName;
+  var TeamLogoURL = TeamInfo.TeamLogoURL;
+
+  Highcharts.chart('CoachChart', {
+    chart: {
+        height: 600,
+        inverted: true
+    },
+
+    title: {
+        text: 'Coach Org Chart'
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var nodeName = point.toNode.name,
+                    nodeId = point.toNode.id,
+                    nodeDesc = nodeName === nodeId ? nodeName : nodeName + ', ' + nodeId,
+                    parentDesc = point.fromNode.id;
+                return point.index + '. ' + nodeDesc + ', reports to ' + parentDesc + '.';
+            }
+        }
+    },
+
+    series: [{
+        type: 'organization',
+        name: TeamName,
+        keys: ['from', 'to', 'weight'],
+        data: [
+            ['HC', 'OC', 3],
+            ['HC', 'STC', 3],
+            ['HC', 'DC', 3],
+            ['OC', 'QBC', 1],
+            ['OC', 'RBC', 1],
+            ['OC', 'WRC', 1],
+            ['OC', 'OLC', 1],
+            ['DC', 'DLC', 1],
+            ['DC', 'LBC', 1],
+            ['DC', 'DBC', 1],
+        ],
+        levels: [
+          {level: 0},
+          {level: 1},
+          {level: 2},
+          {level: 3},
+        ],
+        nodes: [{
+            id: 'HC',
+            title: 'Head Coach',
+            name: CoachOrg.HC.CoachName,
+            image: TeamLogoURL,
+            column: 0
+        }, {
+            id: 'OC',
+            title: 'Offensive Coordinator',
+            name: CoachOrg.OC.CoachName,
+            image: TeamLogoURL,
+            column: 1
+        },  {
+            id: 'STC',
+            title: 'Special Teams Coach',
+            name: CoachOrg.STC.CoachName,
+            image: TeamLogoURL,
+            column: 1
+        },{
+            id: 'DC',
+            title: 'Defensive Coordinator',
+            name: CoachOrg.DC.CoachName,
+            image: TeamLogoURL,
+            column: 1
+        }, {
+            id: 'QBC',
+            title: 'QB Coach',
+            name: CoachOrg.QBC.CoachName,
+            image: TeamLogoURL,
+            column: 2
+        }, {
+            id: 'RBC',
+            title: 'RB Coach',
+            name: CoachOrg.RBC.CoachName,
+            image: TeamLogoURL,
+            column: 2
+        }, {
+            id: 'WRC',
+            title: 'WR Coach',
+            name: CoachOrg.WRC.CoachName,
+            image: TeamLogoURL,
+            column: 3
+        }, {
+            id: 'OLC',
+            title: 'O Line Coach',
+            name: CoachOrg.OLC.CoachName,
+            image: TeamLogoURL,
+            column: 3
+        }, {
+            id: 'DLC',
+            title: 'D Line Coach',
+            name: CoachOrg.DLC.CoachName,
+            image: TeamLogoURL,
+            column: 2
+        }, {
+            id: 'LBC',
+            title: 'LB Coach',
+            name: CoachOrg.LBC.CoachName,
+            image: TeamLogoURL,
+            column: 2
+        }, {
+            id: 'DBC',
+            title: 'D Back Coach',
+            name: CoachOrg.DBC.CoachName,
+            image: TeamLogoURL,
+            column: 3
+        }],
+        colorByPoint: false,
+        color: 'white',
+        dataLabels: {
+            color: 'black'
+        },
+        borderColor: 'black',
+        nodeWidth: 150
+    }],
+    tooltip: {
+        outside: true
+    },
+    exporting: {
+        allowHTML: true,
+        sourceWidth: 800,
+        sourceHeight: 600
+    }
+
+});
+}
+
 
 
 $(document).ready(function(){
-
-  AddScheduleListeners();
-  AddBoxScoreListeners();
 
   var DataPassthruHolder = $('#PageDataPassthru')[0];
   var WorldID = parseInt($(DataPassthruHolder).attr('WorldID'));
   var TeamID  = parseInt($(DataPassthruHolder).attr('TeamID'));
   var TeamJerseyStyle  = $(DataPassthruHolder).attr('TeamJerseyStyle');
   var TeamJerseyInvert  = $(DataPassthruHolder).attr('TeamJerseyInvert');
+  var TeamName = '';
+  var CoachOrg = '';
 
+  AddScheduleListeners();
+  AddBoxScoreListeners();
+  AddHistoricalLeaderListeners(WorldID, TeamID);
 
   console.log('in Team.js file')
   GetTeamHistory(WorldID, TeamID);
+  GetTeamHistoricalLeaders(WorldID, TeamID, 'Season');
   GetTeamRoster(WorldID, TeamID);
   GetTeamSchedule(WorldID, TeamID);
+  GetTeamCoaches(WorldID, TeamID);
   DrawFaces(TeamJerseyStyle, TeamJerseyInvert);
+
+
+
+
+  //DrawCoachOrgChart(TeamName, CoachOrg);
+  //GET_HistoricalTeamLeaders
 
 });
 

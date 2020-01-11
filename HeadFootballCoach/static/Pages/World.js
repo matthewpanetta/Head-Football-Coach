@@ -609,18 +609,25 @@ function PopulateLeagueLeadersTable(LeagueLeaders, WorldID){
 
 function GetPlayerStats(WorldID){
 
+  var ColumnAjaxMap = {
+    3: "/GetPlayerPositions/",
+    2: "/GetClasses/"
+  }
+
   var ColumnMap = {
-    'WorldPlayerStats-Stat-Passing': [5,6,7,8,9],
-    'WorldPlayerStats-Stat-Rushing': [10,11,12,13,14,15, 16],
-    'WorldPlayerStats-Stat-Receiving': [17,18,19,20,21,22,23],
-    'WorldPlayerStats-Stat-Defense': [24,25,26,27,28,29]
+    'WorldPlayerStats-Stat-Passing': [6,7,8,9,10],
+    'WorldPlayerStats-Stat-Rushing': [11,12,13,14,15, 16,17],
+    'WorldPlayerStats-Stat-Receiving': [18,19,20,21,22,23,24],
+    'WorldPlayerStats-Stat-Defense': [25,26,27,28,29,30]
   };
 
-  var ColumnsToAlwaysShow = [0,1,2,3,4];
+
+  var ColumnsToAlwaysShow = [0,1,2,3,4,5];
 
   var table = $('#WorldPlayerStats').DataTable({
+      "dom": '',
       "serverSide": true,
-      "filter": false,
+      "filter": true,
       "ordering": true,
       "lengthChange" : false,
       "pageLength": 15,
@@ -630,13 +637,18 @@ function GetPlayerStats(WorldID){
       'ajax': {
           "url": "/World/"+WorldID+"/PlayerStats",
           "type": "GET",
+          "data": function ( d ) {
+
+            console.log('Going to post... ', d);
+            return d;
+          },
           "dataSrc": function ( json ) {
                console.log('json', json);
                return json['data'];
           }
        },
       "columns": [
-        {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+        {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).html("<a href='"+DataObject['PlayerTeamHref']+"'><img class='worldTeamStatLogo padding-right' src='"+DataObject['playerteamseason__TeamSeasonID__TeamID__TeamLogoURL']+"'/>"+StringValue+"</a>");
             $(td).attr('style', 'border-left-color: #' + DataObject['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
             $(td).addClass('teamTableBorder');
@@ -644,9 +656,13 @@ function GetPlayerStats(WorldID){
           {"data": "PlayerName", "searchable": true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
               $(td).html("<a href='"+DataObject['PlayerHref']+"'>"+StringValue+"</a>");
           }},
-          {"data": "ClassID__ClassAbbreviation", "sortable": true},
-          {"data": "PositionID__PositionAbbreviation", "sortable": true},
+          {"data": "ClassID__ClassAbbreviation", "sortable": true, 'searchable': true},
+          {"data": "PositionID__PositionAbbreviation", "sortable": true, 'searchable': true},
           {"data": "playerseasonskill__OverallRating", "sortable": true, 'orderSequence':["desc"]},
+          {"data": "GameScore", "sortable": true, 'orderSequence':["desc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+
+              $(td).html(parseInt(StringValue));
+          }},
 
           {"data": "PAS_Yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "PAS_CompletionPercentage", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
@@ -678,6 +694,33 @@ function GetPlayerStats(WorldID){
           {"data": "FUM_Recovered", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
       ],
       'order': [[ 4, "desc" ]],
+      'initComplete': function () {
+
+        this.api().columns([2,3]).every( function (ColumnIndex, CounterIndex) {
+
+            console.log('initComplete', ColumnIndex, CounterIndex, this);
+            var column = this;
+            var select = $('<select class="datatable-tfoot"><option value=""></option></select>')
+                .appendTo( $(column.footer()).empty() )
+                .on( 'change', function () {
+                    var val = $(this).val();
+                    column.search( this.value ).draw();
+                } );
+
+            // If I add extra data in my JSON, how do I access it here besides column.data?
+
+            $.ajax({
+               url: ColumnAjaxMap[ColumnIndex],
+               success: function (data) {
+                 console.log('Ajax return', data)
+                 $.each(data, function(ind, elem){
+                    select.append( '<option value="'+elem+'">'+elem+'</option>' )
+                 });
+               }
+             });
+
+        });
+    }
   });
 
 
@@ -712,6 +755,7 @@ function GetPlayerStats(WorldID){
       }
     });
   })
+
 }
 
 
@@ -734,7 +778,7 @@ $(document).ready(function(){
   GetTeamStats(WorldID);
   GetLeagueLeaders(WorldID);
   //GetAwardRaces(WorldID);
-  //GetWorldHistory(WorldID);
+  GetWorldHistory(WorldID);
   GetPlayerStats(WorldID);
 
 });

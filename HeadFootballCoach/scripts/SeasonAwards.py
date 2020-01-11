@@ -25,7 +25,7 @@ def NationalAwards(WorldID, CurrentSeason):
             OverallRating=Max(
                 'PlayerID__playerseasonskill__OverallRating'
             ),
-        ).order_by('-GameScorePerGame', '-OverallRating')
+        ).order_by('-GameScore', '-OverallRating')
 
         for Conf in [u for u in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName')] + [None]:
 

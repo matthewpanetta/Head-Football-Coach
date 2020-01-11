@@ -6,7 +6,7 @@ import random
 import time
 from django.db.models import Max
 from django.shortcuts import get_object_or_404
-from .utilities import GetValuesOfObject, MapNumberValuesToLetterGrade, Average, UniformTwoDecimals, WeightedProbabilityChoice
+from .utilities import GetValuesOfObject, MapNumberValuesToLetterGrade, Average, UniformTwoDecimals, WeightedProbabilityChoice, SecondsToMinutes
 # Create your models here.
 
 
@@ -132,6 +132,26 @@ class Class(models.Model):
     ClassSortOrder = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
 
 
+class CoachPosition(models.Model):
+    CoachPositionID = models.AutoField(primary_key = True)
+    CoachPositionAbbreviation = models.CharField(max_length=6, blank=True, null=True, default=None)
+    CoachPositionName = models.CharField(max_length=20, blank=True, null=True, default=None)
+
+    CoachPositionCountPerTeam = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+
+    CoachPositionSortOrder = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+
+    CoachPositionParentID = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, default=None)
+
+    IsHeadCoach = models.BooleanField(default = False)
+    IsCoordinator = models.BooleanField(default = False)
+    IsPositionCoach = models.BooleanField(default = False)
+
+    def __str__(self):
+        return self.CoachPositionName
+    #############################
+
+
 class PositionGroup(models.Model):
     PositionGroupID = models.AutoField(primary_key = True)
     PositionGroupName = models.CharField(max_length=20, blank=True, null=True, default=None)
@@ -145,6 +165,7 @@ class Position(models.Model):
     PositionMinimumCountPerTeam = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
 
     PositionGroupID = models.ForeignKey(PositionGroup, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    CoachPositionID = models.ForeignKey(CoachPosition, on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     PositionSortOrder = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
 
@@ -389,6 +410,10 @@ class LeagueSeason(models.Model):
     @property
     def LeagueSeasonDisplay(self):
         return str(self.SeasonStartYear) + '-' + str(self.SeasonEndYear) + ' Season'
+
+    @property
+    def NextLeagueSeason(self):
+        return LeagueSeason.objects.filter(WorldID = self.WorldID).filter(SeasonStartYear = self.SeasonEndYear).first()
 
     def __str__(self):
 
@@ -1182,6 +1207,8 @@ class TeamSeason(models.Model):
     ConferenceWins = models.PositiveSmallIntegerField(default=0)
     ConferenceLosses = models.PositiveSmallIntegerField(default=0)
 
+    ExpectedWins = models.PositiveSmallIntegerField(default=0)
+
     ConferenceRank = models.PositiveSmallIntegerField(default=0)
     ConferenceGB   = models.DecimalField(default = 0, max_digits = 5, decimal_places=1)
     WinStreak = models.PositiveSmallIntegerField(default=0)
@@ -1218,6 +1245,11 @@ class TeamSeason(models.Model):
 
         self.TeamOverallRating = AllPlayers[0]['OverallRating']#TODO
         self.save()
+
+
+    @property
+    def NextTeamSeasonID(self):
+        return self.TeamID.teamseason_set.order_by('-LeagueSeasonID__SeasonStartYear').first()
 
     @property
     def RecruitingClassValue(self):
@@ -2017,7 +2049,7 @@ class GameEvent(models.Model):
     EventPeriod = models.PositiveSmallIntegerField(default = 0)
 
     IsScoringPlay = models.BooleanField(default = True)
-    ScoringTeamID = models.ForeignKey(Team, on_delete=models.CASCADE, default=None, blank=True, null=True)
+    DisplayTeamID = models.ForeignKey(Team, on_delete=models.CASCADE, default=None, blank=True, null=True)
     PlayType = models.CharField(max_length=6, default=None, blank=True, null=True)
     PlayDescription = models.CharField(max_length=100, default=None, blank=True, null=True)
     DriveDescription = models.CharField(max_length=100, default=None, blank=True, null=True)
@@ -2059,6 +2091,7 @@ class TeamGame(models.Model):
     IsWinningTeam = models.BooleanField(default=False)
     Points = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     TeamRecord = models.CharField(max_length = 20, default=None, blank=True, null=True)
+    TeamConferenceRecord = models.CharField(max_length = 20, default=None, blank=True, null=True)
     GamesPlayed = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
 
     PAS_Completions = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2138,6 +2171,9 @@ class TeamGame(models.Model):
     FourthDownConversion = models.PositiveSmallIntegerField(default=0)
     TwoPointAttempt = models.PositiveSmallIntegerField(default=0)
     TwoPointConversion = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self):
+        return str(self.TeamSeasonID) + ' vs ' + str(self.OpposingTeamGame.TeamSeasonID)
 
     @property
     def OpposingTeamGame(self):
@@ -2295,6 +2331,7 @@ class PlayerGameStat(models.Model):
     PNT_Within20 = models.SmallIntegerField(default=0, null=True, blank=True)
     BLK_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
     BLK_Pancakes = models.SmallIntegerField(default=0, null=True, blank=True)
+    BLK_Blocks = models.SmallIntegerField(default=0, null=True, blank=True)
 
     GameScore = models.DecimalField(default = 0, max_digits=13, decimal_places=8)
 
@@ -2330,7 +2367,9 @@ class Coach(models.Model):
     CoachID = models.AutoField(primary_key = True)
     CoachFirstName = models.CharField(max_length = 20)
     CoachLastName = models.CharField(max_length = 20)
-    CoachAge      = models.CharField(max_length = 20)
+    CoachAge      = models.PositiveSmallIntegerField(default=20)
+
+    IsActiveCoach = models.BooleanField(default = True)
 
     ReputationRating = models.PositiveSmallIntegerField(default = 0)
     CharismaRating = models.PositiveSmallIntegerField(default = 0)
@@ -2359,7 +2398,11 @@ class Coach(models.Model):
     DefensivePlaybook = models.CharField(max_length=100, default = None, null=True, blank=True)
 
     def __str__(self):
-        return self.CoachFirstName + ' ' + self.CoachLastName
+        return self.CoachFirstName + ' ' + self.CoachLastName + ' is the ' + str(self.CurrentCoachTeamSeason.CoachPositionID) + ' for ' + str(self.CurrentCoachTeamSeason.TeamSeasonID)
+
+    @property
+    def CurrentCoachTeamSeason(self):
+        return self.coachteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
 
     @property
     def CareerWins(self):
@@ -2400,11 +2443,15 @@ class CoachTeamSeason(models.Model):
     CoachID = models.ForeignKey(Coach, on_delete=models.CASCADE)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE)
 
-    Position = models.CharField(max_length = 20) #Choices - Head Coach, Associate Head Coach, Assistant Coach
+    CoachPositionID = models.ForeignKey(CoachPosition, on_delete=models.CASCADE, blank=True, null=True, default=None)
     Salary   = models.PositiveSmallIntegerField(default = 200000)
 
     NationalCoachOfTheYearAward = models.BooleanField(default = False)
     ConferenceCoachOfTheYearAward = models.BooleanField(default = False)
+
+    RetiredAfterSeason = models.BooleanField(default = False)
+    FiredAfterSeason = models.BooleanField(default = False)
+    LeftForNewJobAfterSeason = models.BooleanField(default = False)
 
     JobSecurity = models.PositiveSmallIntegerField(default = 100) #Scale 1 - 100
 
@@ -2515,3 +2562,32 @@ class Driver(models.Model):
             'CurrentDay': self.CurrentDay,
             'CurrentTeam': self.CurrentTeam
         }
+
+class PlayChoiceLog(models.Model):
+    PlayChoiceLogID = models.AutoField(primary_key = True)
+
+    GameID = models.ForeignKey(Game, on_delete=models.CASCADE,null=True, blank=True)
+
+    BallSpot = models.SmallIntegerField(blank=True, null=True, default=None)
+    YardsToGo = models.SmallIntegerField(blank=True, null=True, default=None)
+    Down = models.SmallIntegerField(blank=True, null=True, default=None)
+    OffensivePointDifferential = models.SmallIntegerField(blank=True, null=True, default=None)
+    Period = models.SmallIntegerField(blank=True, null=True, default=None)
+    SecondsLeftInPeriod = models.SmallIntegerField(blank=True, null=True, default=None)
+
+    Run_Prob = models.SmallIntegerField(blank=True, null=True, default=None)
+    Pass_Prob = models.SmallIntegerField(blank=True, null=True, default=None)
+    Punt_Prob = models.SmallIntegerField(blank=True, null=True, default=None)
+    FG_Prob = models.SmallIntegerField(blank=True, null=True, default=None)
+    PlayClockUrgency = models.SmallIntegerField(blank=True, null=True, default=None)
+
+    @property
+    def TimeLeftInPeriod(self):
+        return SecondsToMinutes(self.SecondsLeftInPeriod)
+
+    @property
+    def PointDifferentialGroup(self):
+        return 'Hello'
+
+    def __str__(self):
+        return 'PlayChoiceLogID:' + str(self.PlayChoiceLogID) + ' for ' + str(self.GameID) + ' Period: ' + str(self.Period) + ', Time left: ' + SecondsToMinutes(self.SecondsLeftInPeriod) + ' OffensivePointDifferential: ' + str(self.OffensivePointDifferential)

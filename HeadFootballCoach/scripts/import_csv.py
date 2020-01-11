@@ -1,6 +1,6 @@
 
 
-from ..models import System_PlayerArchetypeRatingModifier, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
+from ..models import System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
 import os
 from ..utilities import Max
 from datetime import timedelta, date
@@ -141,7 +141,7 @@ def ImportPositions():
 
     f = open(FilePath, 'r', encoding='utf-8-sig')
     NameStartStopTracker = 0
-    FieldExclusions = ['PositionGrouping']
+    FieldExclusions = ['PositionGrouping', 'FK_CoachPositionAbbreviation']
     linecount = 0
     for line in f:
         KeepRow = False
@@ -178,11 +178,53 @@ def ImportPositions():
             LineDict['RandomStop'] = NameStartStopTracker - OccuranceModifier
 
             LineDict['PositionGroupID'], created = PositionGroup.objects.get_or_create(PositionGroupName = LineDict['PositionGrouping'])
+            LineDict['CoachPositionID'] = CoachPosition.objects.get(CoachPositionAbbreviation = LineDict['FK_CoachPositionAbbreviation'])
 
             for FE in FieldExclusions:
                 del LineDict[FE]
 
             Position.objects.create(**LineDict)
+
+
+def ImportCoachPositions():
+
+    FilePath = 'HeadFootballCoach/scripts/data_import/CoachPosition.csv'
+
+    f = open(FilePath, 'r', encoding='utf-8-sig')
+    FieldExclusions = ['FK_CoachPositionParentAbbreviation']
+    linecount = 0
+    for line in f:
+        KeepRow = False
+        #print()
+        linecount +=1
+        if linecount == 1:
+            Headers = line.strip().split(',')
+            #print('Headers:', Headers)
+            continue
+
+        #print(line)
+        Row = line.strip().split(',')
+        LineDict = {}
+        FieldCount = 0
+
+        for f in Row:
+            V = Row[FieldCount]
+            if V == '':
+                V = None
+            LineDict[Headers[FieldCount]] = V
+            FieldCount +=1
+
+        KeepRow = True
+
+        if KeepRow:
+            if LineDict['FK_CoachPositionParentAbbreviation'] is not None:
+                LineDict['CoachPositionParentID'] = CoachPosition.objects.get(CoachPositionAbbreviation = LineDict['FK_CoachPositionParentAbbreviation'])
+
+            for FE in FieldExclusions:
+                del LineDict[FE]
+
+            CoachPos = CoachPosition(**LineDict)
+            CoachPos.save()
 
 
 
@@ -715,6 +757,9 @@ def LoadData(WorldID, LeagueID):
 
     PopulateSystemPlayoffRounds()
     ImportBowls(WorldID)
+
+    if CoachPosition.objects.all().count() == 0:
+        ImportCoachPositions()
 
     if Position.objects.all().count() == 0:
         ImportPositions()

@@ -38,6 +38,9 @@
       <a href="/World/{{page.WorldID}}/TeamStats" class="w3-bar-item w3-button">Team Stats</a>
     </div>
   </div>
+  {% if CurrentWeek.WeekName == 'Coach Carousel'%}
+  <a href="/World/{{page.WorldID}}/CoachCarousel" class="w3-bar-item w3-button">Coach Carousel</a>
+  {%endif%}
   <a href="/" class="w3-bar-item w3-button w3-right navHomeLink">Home Page</a>
 </div>
 </div>

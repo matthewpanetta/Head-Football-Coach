@@ -6,7 +6,6 @@ import time
 
 def CreateDepthChart(CurrentWorld=None, TS=None, T=None):
 
-    print('Creating depth chart for ', TS)
     if TS is None:
         TS = T.CurrentTeamSeason
     DoAudit = True
@@ -79,9 +78,6 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None):
             DepthPosition = len(PositionDepthChart[DepthPos]['Starters']) + len(PositionDepthChart[DepthPos]['Bench'])
             DC = PlayerTeamSeasonDepthChart(WorldID = CurrentWorld, PlayerTeamSeasonID=PTS, PositionID=PositionID, IsStarter = False, DepthPosition=DepthPosition)
             DCToSave.append(DC)
-
-    for Pos in PositionDepthChart:
-        print(Pos, PositionDepthChart[Pos])
 
     PlayerTeamSeasonDepthChart.objects.bulk_create(DCToSave, ignore_conflicts=True)
 

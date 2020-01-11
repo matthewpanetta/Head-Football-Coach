@@ -116,10 +116,12 @@
               </div>
               <div class='w3-col s6'>
                 <div class="w3-card w3-margin-bottom">
-                  <header>
-                    Scoring Summary
-                  </header>
-                  <div class="ScoringSummary w3-row-padding">
+                  <div class="ScoringSummary">
+                    <div class="w3-bar boxscore-bar background-white drive-event-bar">
+                      <div class="w3-bar-item fontweight500">Scoring Summary</div>
+                      <button class="w3-bar-item w3-button tab selected-drive-event-tab" id="DriveEndingEvent-Score-tab">Scoring Drives</button>
+                      <button class="w3-bar-item w3-button tab" id="DriveEndingEvent-All-tab">All Drives</button>
+                    </div>
                     <table>
                       <tbody>
                         {% for Period in ScoringSummary %}
@@ -129,9 +131,9 @@
                             <th class='ScoringSummaryTeamScore'>{{awayTeam.Abbreviation}}</th>
                           </tr>
                           {% for Score in Period.ScoreList %}
-                          <tr class='ScoringSummaryScoreRow'>
+                          <tr class='ScoringSummaryScoreRow {{Score.DriveEventClass}} teamTableBorder' style='border-left-color: {{Score.DisplayTeamID__TeamColor_Primary_HEX}}'>
                             <td class='ScoringSummaryTeamLogo'>
-                                <img src="{{Score.ScoringTeamID__TeamLogoURL}}" alt="">
+                                <img src="{{Score.DisplayTeamID__TeamLogoURL}}" alt="">
                             </td>
                             <td class="">
                               {{Score.PlayType}}
@@ -156,7 +158,7 @@
                     </table>
                   </div>
                 </div>
-                <div  class='w3-card' id="GameFlowChart"></div>
+                <div  class='w3-card w3-margin-bottom' id="GameFlowChart"></div>
               </div>
               <div class='w3-col s3'>
                 {% for Conference in ConferenceStandings%}
@@ -261,99 +263,119 @@
 <!-- Load c3.css -->
 <link href="{% static 'c3/c3.css' %}" rel="stylesheet">
 
-<!-- Load d3.js and c3.js -->
 <script src="{% static 'common/d3.v5.min.js' %}"></script>
 <script src="{% static 'c3/c3.js' %}"></script>
+
 <script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+
+<script src="{% static 'Highcharts/code/highcharts.js' %}"></script>
 
 <script src="{% static 'Pages/Game.js' %}"></script>
 
 
 <script type="text/javascript">
+
+  function SecondsToMinutes(s) {
+      var SecondsInToThisHalf = s;
+      var PeriodList = ['1st', '2nd', '3rd', '4th', 'OT1', 'OT2', 'OT3']
+      var PeriodCount = 0;
+      var SecondsInPeriod = 15 * 60;
+      while (SecondsInToThisHalf > SecondsInPeriod) {
+        SecondsInToThisHalf -= SecondsInPeriod;
+        PeriodCount +=1;
+      }
+      var Period = PeriodList[PeriodCount] + ' | ';
+
+      SecondsInToThisHalf = SecondsInPeriod - SecondsInToThisHalf;
+      var Secs = SecondsInToThisHalf%60;
+      if (Secs < 10){
+        Secs = '0'+Secs;
+      }
+
+      var Mins = parseInt(SecondsInToThisHalf / 60);
+      var Time = Mins + ':' + Secs
+
+      return Period + Time
+  }
+
   $(document).ready(function() {
-
-
     let colors = {}
     colors['{{homeTeam.TeamName}}'] = '{{homeTeam.TeamColor_Primary_HEX}}';
     colors['{{awayTeam.TeamName}}'] = '{{awayTeam.TeamColor_Primary_HEX}}';
 
+    var SeriesValues = [{% for event in gameEvents %}{'eventTime': {{event.GameTime}}, 'homePoints': {{event.HomePoints}}, 'awayPoints': {{event.AwayPoints}}},{% endfor %}];
+    var HomeSeries = [];
+    var AwaySeries = [];
+    $.each(SeriesValues, function(ind, obj){
+      obj.formattedTime = SecondsToMinutes(obj['eventTime']);
+      obj.x = obj['eventTime'];
+      obj.y = obj['homePoints'];
+      HomeSeries.push(obj);
+      obj.y = obj['awayPoints'];
+      AwaySeries.push(obj);
+    });
+
     if ('{{game.WasPlayed}}' == 'True'){
-
-
-      var chart = c3.generate({
-        bindto: '#GameFlowChart',
-        data: {
-          x: 'x',
-          columns: [
-            ['x' ,0 {%for event in gameEvents %}, {{event.GameTime}}{% endfor %}],
-            ['{{homeTeam.TeamName}}' ,0 {% for event in gameEvents %}, {{event.HomePoints}} {% endfor %}],
-            ['{{awayTeam.TeamName}}' ,0 {% for event in gameEvents %}, {{event.AwayPoints}} {% endfor %}]
-          ],
-          colors: colors,
-          types: {
-              '{{homeTeam.TeamName}}': 'step',
-              '{{awayTeam.TeamName}}': 'step'
-          }
-        },
-        axis: {
-          x: {
-            tick: {
-              format: function(s) {
-                var SecondsInToThisHalf = s;
-                var PeriodList = ['1st', '2nd', '3rd', '4th', 'OT1', 'OT2', 'OT3']
-                var PeriodCount = 0;
-                var SecondsInPeriod = 15 * 60;
-                while (SecondsInToThisHalf > SecondsInPeriod) {
-                  SecondsInToThisHalf -= SecondsInPeriod;
-                  PeriodCount +=1;
-                }
-                var Period = PeriodList[PeriodCount] + ' | ';
-
-                SecondsInToThisHalf = SecondsInPeriod - SecondsInToThisHalf;
-                var Secs = SecondsInToThisHalf%60;
-                if (Secs < 10){
-                  Secs = '0'+Secs;
-                }
-
-                var Mins = parseInt(SecondsInToThisHalf / 60);
-                var Time = Mins + ':' + Secs
-
-                return Period + Time
-
-              }
-            },
-            min: 0
-          },
-          y: {
-            padding: {
-              top: 0,
-              bottom: 0
-            }
-          }
-        },
-        point: {
-          show: false
-        }
-      });
-  }
-    else {
-
-            var chart = c3.generate({
-              bindto: '#GameFlowChart',
-              data: {
-                  columns: [
-                      ['{{homeTeam.TeamName}}', {{game.HomeTeamWinChance}}],
-                      ['{{awayTeam.TeamName}}', {{game.AwayTeamWinChance}}],
-                  ],
-                  type : 'donut',
-                  onclick: function (d, i) { console.log("onclick", d, i); },
-                  onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-                  onmouseout: function (d, i) { console.log("onmouseout", d, i); },
-                  colors: colors
+      var myChart = Highcharts.chart('GameFlowChart', {
+              chart: {
+                  type: 'line'
               },
-              donut: {
-                  title: "{{homeTeam.TeamName}} | {{awayTeam.TeamName}}"
-              }
+              tooltip: {
+                  shared: true,
+                  headerFormat: '<span style="font-size: 10px">{point.point.formattedTime}</span><br/>',
+
+                  snap: 50,
+              },
+              title: {
+                  text: '{{homeTeam.TeamName}} vs {{awayTeam.TeamName}}'
+              },
+              colors: ['#{{homeTeam.TeamColor_Primary_HEX}}', '#{{awayTeam.TeamColor_Primary_HEX}}'],
+              yAxis: {
+                title: {
+                    enabled: false
+                }
+              },
+              xAxis: {
+                  labels: {
+                      formatter: function () {
+                        return SecondsToMinutes(this.value);
+                      }
+                    },
+                    plotLines: [{
+                        color: '#BBB',
+                        width: .5,
+                        value: 900
+                    },{
+                        color: '#666',
+                        width: 1,
+                        value: 1800
+                    },{
+                        color: '#BBB',
+                        width: .5,
+                        value: 2700
+                    },{
+                        color: '#BBB',
+                        width: .5,
+                        value: 3600
+                    }]
+              },
+              series: [{
+                  name: '{{homeTeam.TeamName}}',
+                  data: [{x:0, y:0, formattedTime: '1st | 15:00'},
+                        {% for event in gameEvents %}
+                            {x:{{event.GameTime}}, y:{{event.HomePoints}}, formattedTime: '{{event.DisplayTime}}'},
+                        {% endfor %}],
+                  step: true,
+                  lineWidth: 4
+              }, {
+                  name: '{{awayTeam.TeamName}}',
+                  data: [{x:0, y:0, formattedTime: '1st | 15:00'},
+                        {% for event in gameEvents %}
+                            {x:{{event.GameTime}}, y:{{event.AwayPoints}}, formattedTime: '{{event.DisplayTime}}'},
+                        {% endfor %}],
+                  step: true,
+                  lineWidth: 4
+              }]
           });
     }
   });
