@@ -22,10 +22,17 @@ def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
             C.IsActiveCoach = False
             C.save()
 
-    GoodPerformingCoaches = Coach.objects.filter(coachteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).annotate(
+            CTS = C.CurrentCoachTeamSeason
+            CTS.RetiredAfterSeason = True
+            CTS.save()
+
+    ActiveCoaches = Coach.objects.filter(coachteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).annotate(
         TeamPrestige = F('coachteamseason__TeamSeasonID__TeamID__TeamPrestige'),
         TeamWins = F('coachteamseason__TeamSeasonID__Wins'),
-    ).filter(TeamPrestige__lt = F('TeamWins')).filter(IsActiveCoach = True)
+    ).filter(IsActiveCoach = True)
+
+    GoodPerformingCoaches = ActiveCoaches.filter(TeamPrestige__lt = F('TeamWins'))
+    PoorPerformingCoaches = ActiveCoaches.exclude(TeamPrestige__lt = F('TeamWins'))
 
     CTSToSave = []
     for C in GoodPerformingCoaches:
@@ -33,6 +40,11 @@ def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
         CurrentCTS = C.coachteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
         CTS = CoachTeamSeason(WorldID=CurrentWorld, TeamSeasonID = TS, CoachID = C, CoachPositionID = CurrentCTS.CoachPositionID)
         CTSToSave.append(CTS)
+
+    for C in PoorPerformingCoaches:
+        CTS = C.CurrentCoachTeamSeason
+        CTS.FiredAfterSeason = True
+        CTS.save()
 
     CoachTeamSeason.objects.bulk_create(CTSToSave)
 

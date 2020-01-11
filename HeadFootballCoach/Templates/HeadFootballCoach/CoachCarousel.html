@@ -48,6 +48,50 @@
             <div class="w3-col s5">
               <div class="w3-card">
                 <span class='table_title'>Coach Movement</span>
+                  <table class='display table sortable w3-table-all'>
+                    <thead>
+                      <th>Coach</th>
+                      <th>Previous Job</th>
+                      <th>Reason for leaving</th>
+                    </thead>
+                    <tbody>
+                      {% for Coach in RetiredCoaches %}
+                      <tr>
+                        <td>
+                          <a href="{{Coach.CoachHref}}">
+                            {{Coach.CoachName}}
+                          </a>
+                        </td>
+                        <td>{{Coach.coachteamseason__CoachPositionID__CoachPositionAbbreviation}} @
+                          <a href="{{Coach.TeamHref}}">
+                            <img src="{{Coach.coachteamseason__TeamSeasonID__TeamID__TeamLogoURL}}" class='worldTeamStatLogo' alt="">
+                           {{Coach.coachteamseason__TeamSeasonID__TeamID__TeamName}}
+                           </a>
+                         </td>
+                        <td>Retired</td>
+                      </tr>
+                      {% endfor %}
+
+                      {% for Coach in FiredCoaches %}
+                      <tr>
+                        <td>
+                          <a href="{{Coach.CoachHref}}">
+                            {{Coach.CoachName}}
+                          </a>
+                        </td>
+                        <td>{{Coach.coachteamseason__CoachPositionID__CoachPositionAbbreviation}} @
+                          <a href="{{Coach.TeamHref}}">
+                            <img src="{{Coach.coachteamseason__TeamSeasonID__TeamID__TeamLogoURL}}" class='worldTeamStatLogo' alt="">
+                           {{Coach.coachteamseason__TeamSeasonID__TeamID__TeamName}}
+                           </a>
+                         </td>
+                        <td>Fired</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+
               </div>
             </div>
 

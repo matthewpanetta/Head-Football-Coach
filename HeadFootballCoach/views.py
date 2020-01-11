@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from django.db.models import Max, Min, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, BooleanField, Value, Window
+from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, CharField, BooleanField, Value, Window
 from django.db.models.functions.window import Rank
 from django.db.models.functions import Length, Concat
 from .models import Audit, League, TeamGame,Week,Phase,Position, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
@@ -364,7 +364,7 @@ def Page_Index(request):
         Worlds.append(ThisWorld)
 
     if InTesting:
-        NumConferencesToInclude = 2
+        NumConferencesToInclude = 4
     elif InDeepTesting:
         NumConferencesToInclude = 2
     else:
@@ -473,7 +473,14 @@ def Page_World(request, WorldID):
             expression=Rank(),
             order_by=F('PAPP').asc(),
         ),
+        SecondLevelWins = Sum('TeamSeasonID__opposingteamgame__TeamSeasonID__Wins'),
+        SecondLevelLosses = Sum('TeamSeasonID__opposingteamgame__TeamSeasonID__Losses')
     )
+
+    print('AllTeams query', AllTeams.query)
+
+    for T in AllTeams:
+        print(T['TeamSeasonID__TeamID__TeamName'], T['TeamSeasonID__Wins'],  T['SecondLevelWins'], T['SecondLevelLosses'])
 
 
     GameList = Game.objects.filter(WorldID = CurrentWorld).values(
@@ -492,7 +499,8 @@ def Page_World(request, WorldID):
             output_field=CharField()
         ),
         MinNationalRank = Min('teamgame__TeamSeasonWeekRankID__NationalRank'),
-    ).order_by('MinNationalRank')
+        UserTeamGame = Max('teamgame__TeamSeasonID__TeamID__IsUserTeam')
+    ).order_by('-UserTeamGame'  , 'MinNationalRank')
     UpcomingGames = GameList.filter(WeekID = CurrentWeek).filter(WasPlayed = 0)
     RecentGames   = GameList.filter(WeekID = LastWeek).filter(WasPlayed = 1)
 
@@ -2210,11 +2218,6 @@ def GET_PlayerStats(request, WorldID):
     Length = int(request.GET['length'])
     Draw = int(request.GET['draw'])
 
-    print('---Filters---', Filters)
-
-
-
-
     Players = Player.objects.filter(WorldID = WorldID).filter(**Filters).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL').annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
@@ -2867,7 +2870,16 @@ def Page_CoachCarousel(request, WorldID):
 
     context = {'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek}
 
-    FiredCoaches = Coach.objects.filter(coachteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).filter(coachteamseason__FiredAfterSeason = True)
+
+    AllCoaches = Coach.objects.filter(coachteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).values('coachteamseason__TeamSeasonID__TeamID', 'coachteamseason__TeamSeasonID__TeamID__TeamName', 'coachteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'coachteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'coachteamseason__TeamSeasonID__TeamID__TeamPrestige', 'coachteamseason__CoachPositionID__CoachPositionAbbreviation', 'coachteamseason__TeamSeasonID__Wins', 'coachteamseason__TeamSeasonID__Losses').annotate(
+        CoachHref = Concat(Value('/World/'), Value(WorldID), Value('/Coach/'), F('CoachID'), output_field=CharField()),
+        TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('coachteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
+        TeamRecord = Concat(F('coachteamseason__TeamSeasonID__Wins'), Value('-'), F('coachteamseason__TeamSeasonID__Losses'), output_field=CharField()),
+        CoachName = Concat(F('CoachFirstName'), Value(' '), F('CoachLastName'), output_field=CharField())
+    )
+
+    FiredCoaches = AllCoaches.filter(coachteamseason__FiredAfterSeason = True)
+    RetiredCoaches = AllCoaches.filter(coachteamseason__RetiredAfterSeason = True)
 
     OpenJobs = []
 
@@ -2914,7 +2926,7 @@ def Page_CoachCarousel(request, WorldID):
         print('CoachPositions-', T, TeamCoachMap[T])
 
     OpenJobs = sorted(OpenJobs, key=lambda T: (T['CoachPositionSortOrder'],-1*T['TeamPrestige'], -1*T['Wins'] ), reverse=False)
-
+    OpenJobs = OpenJobs[0:5]
 
     if DoAudit:
         end = time.time()
@@ -2922,6 +2934,12 @@ def Page_CoachCarousel(request, WorldID):
         A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Page_CoachCarousel')
 
     context['OpenJobs'] = OpenJobs
+    context['FiredCoaches'] = FiredCoaches
+    context['RetiredCoaches'] = RetiredCoaches
+
+    print('RetiredCoaches', RetiredCoaches)
+    print('FiredCoaches', FiredCoaches)
+
     #print(context)
     return render(request, 'HeadFootballCoach/CoachCarousel.html', context)
 

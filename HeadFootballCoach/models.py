@@ -2473,7 +2473,7 @@ class CoachTeamSeason(models.Model):
 
     def __str__(self):
 
-        return self.Name + ' is the ' + self.Position + ' for ' + str(self.TeamSeasonID.TeamID) + ' in ' + str(self.TeamSeasonID.LeagueSeasonID)
+        return self.Name + ' is the ' + str(self.CoachPositionID) + ' for ' + str(self.TeamSeasonID.TeamID) + ' in ' + str(self.TeamSeasonID.LeagueSeasonID)
 
     @property
     def Name(self):
