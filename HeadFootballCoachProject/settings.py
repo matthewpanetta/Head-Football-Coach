@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'HeadFootballCoach.apps.HeadfootballcoachConfig',
     'rest_framework_datatables',
+    'django.contrib.humanize',
     'debug_toolbar'
 ]
 

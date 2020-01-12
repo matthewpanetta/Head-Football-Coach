@@ -690,6 +690,8 @@ class TeamRivalry(models.Model):
 
     RivalryName = models.CharField(max_length = 100, default=None, blank=True, null=True)
 
+    PreferredWeekNumber = models.SmallIntegerField(blank=True, null=True, default=None)
+
     def __str__(self):
         return str(self.Team1TeamID) + ' vs. ' + str(self.Team2TeamID) + ' in the ' + str(self.RivalryName)
 

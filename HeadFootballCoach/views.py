@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, CharField, BooleanField, Value, Window
+from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery
 from django.db.models.functions.window import Rank
 from django.db.models.functions import Length, Concat
 from .models import Audit, League, TeamGame,Week,Phase,Position, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
@@ -431,7 +431,7 @@ def Page_World(request, WorldID):
 
     #PlayerTeamSeasonDepthChart.objects.all().delete()
 
-    AllTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).order_by('NationalRank').select_related('TeamSeasonID__TeamID').values('TeamSeasonID', 'TeamSeasonID__TeamID','TeamSeasonID__NationalChampion','TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__Wins', 'TeamSeasonID__Losses', 'NationalRank', 'NationalRankDelta', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
+    AllTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).order_by('NationalRank').select_related('TeamSeasonID__TeamID').select_related('TeamSeasonID__teamgame').select_related('TeamSeasonID__opposingteamgame').values('TeamSeasonID', 'TeamSeasonID__ConferenceRank', 'TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation', 'teamgame__GameID', 'teamgame__IsHomeTeam', 'TeamSeasonID__TeamID','TeamSeasonID__NationalChampion','TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__Wins', 'TeamSeasonID__Losses', 'NationalRank', 'NationalRankDelta', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
         NationalRankDeltaAbs=Func(F('NationalRankDelta'), function='ABS'),
         AdditionalDisplayLogo= Case(
             When(TeamSeasonID__NationalChampion=True, then=Value('/static/img/TournamentIcons/NationalChampionTrophy.png')),
@@ -453,34 +453,40 @@ def Page_World(request, WorldID):
             default=(Value('w3-hide')),
             output_field=CharField()
         ),
-        OffensivePossessions = Sum('TeamSeasonID__teamgame__Possessions'),
-        DefensivePossessions = Sum('TeamSeasonID__opposingteamgame__Possessions'),
+        OffensivePossessions = Sum('TeamSeasonID__teamgame__Possessions') / Count('TeamSeasonID__opposingteamgame', distinct=True),
+        OffensivePoints = Sum('TeamSeasonID__teamgame__Points') / Count('TeamSeasonID__opposingteamgame', distinct=True),
+        DefensivePossessions = Sum('TeamSeasonID__opposingteamgame__Possessions') / Count('TeamSeasonID__opposingteamgame', distinct=True),
+        DefensivePoints = Sum('TeamSeasonID__opposingteamgame__Points') / Count('TeamSeasonID__opposingteamgame', distinct=True),
         PPP = Case(
             When(OffensivePossessions=0, then=-1),
-            default=(Sum('TeamSeasonID__teamgame__Points') * 1.0 / F('OffensivePossessions')),
-            output_field=FloatField()
-        ),
-        PAPP = Case(
-            When(DefensivePossessions=0, then=10),
-            default=(Sum('TeamSeasonID__opposingteamgame__Points') * 1.0 / F('DefensivePossessions')),
+            default=(F('OffensivePoints') * 1.0 / F('OffensivePossessions')),
             output_field=FloatField()
         ),
         PPP_Rank = Window(
             expression=Rank(),
             order_by=F('PPP').desc(),
         ),
+        PAPP = Case(
+            When(DefensivePossessions=0, then=10),
+            default=(F('DefensivePoints') * 1.0 / F('DefensivePossessions')),
+            output_field=FloatField()
+        ),
         PAPP_Rank = Window(
             expression=Rank(),
             order_by=F('PAPP').asc(),
         ),
-        SecondLevelWins = Sum('TeamSeasonID__opposingteamgame__TeamSeasonID__Wins'),
-        SecondLevelLosses = Sum('TeamSeasonID__opposingteamgame__TeamSeasonID__Losses')
-    )
+        TeamGameCount = Count('TeamSeasonID__teamgame')
+    )[0:25]
 
     print('AllTeams query', AllTeams.query)
 
-    for T in AllTeams:
-        print(T['TeamSeasonID__TeamID__TeamName'], T['TeamSeasonID__Wins'],  T['SecondLevelWins'], T['SecondLevelLosses'])
+    # for T in AllTeams:
+    #     if T['teamgame__GameID'] is not None:
+    #         ThisWeekGame = TeamGame.objects.filter(GameID = T['teamgame__GameID']).exclude(IsHomeTeam = T['teamgame__IsHomeTeam']).values('TeamSeasonID__TeamID__TeamName').first()
+    #         T['ThisWeekText'] = 'vs ' + ThisWeekGame['TeamSeasonID__TeamID__TeamName']
+    #     else:
+    #         T['ThisWeekText'] = 'BYE'
+    #     print(T['TeamSeasonID__TeamID__TeamName'],T['ThisWeekText'], T['TeamGameCount'], T['OffensivePoints'], T['OffensivePossessions'], T['TeamSeasonID__Wins'])
 
 
     GameList = Game.objects.filter(WorldID = CurrentWorld).values(
@@ -686,7 +692,6 @@ def Page_World(request, WorldID):
             TimeElapsed = end - start
             A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 9, AuditDescription = 'Page_World - return league leaders')
 
-    AllTeams = AllTeams[0:25]
     context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'leaders':Leaders, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek , 'games': UpcomingGames, 'LastWeek': LastWeek}
 
     context['recentGames'] = RecentGames

@@ -1,11 +1,6 @@
 from django.contrib import admin
 
 from .models import Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, Nation, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart, PlayChoiceLog,CoachPosition
-# Register your models here.
-from import_export.admin import ImportExportModelAdmin
-from import_export import resources
-from django.utils.html import format_html
-from django.urls import reverse
 
 
 class BowlAdmin(admin.ModelAdmin):

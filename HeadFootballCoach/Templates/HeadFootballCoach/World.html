@@ -2,6 +2,7 @@ td<div>
   {% include "HeadFootballCoach/NavBar.html" %}
 </div>
 {% load static %}
+{% load humanize %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
@@ -76,13 +77,24 @@ td<div>
                       <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaGreen'>&#8593;{{team.NationalRankDeltaAbs}}</div>
                       {% endif %}
                     </td>
-                    <td class='worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
+                    <td>
                       <a  class='' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
                         <img class='worldTeamLogo' src='{{team.TeamSeasonID__TeamID__TeamLogoURL}}' alt="">
-                        <span>{{ team.TeamSeasonID__TeamID__TeamName }} {{ team.TeamSeasonID__TeamID__TeamNickname }}</span>
                       </a>
-                      <img class='worldTeamLogo {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
-                      <img class='worldTeamLogo {{team.AdditionalDisplayLogo2Class}}' src='{{team.AdditionalDisplayLogo2}}' alt="">
+                    </td>
+                    <td class='worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
+                      <ul class='no-list-style'>
+                        <li>
+                          <a  class='font14' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
+                            <span>{{ team.TeamSeasonID__TeamID__TeamName }} {{ team.TeamSeasonID__TeamID__TeamNickname }}</span>
+                          </a>
+                        </li>
+                        <li class='font10'>{{team.TeamSeasonID__ConferenceRank|ordinal}} in {{team.TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation}}</li>
+                      </ul>
+                    </td>
+                    <td>
+                      <img class='worldTeamLogo w3-hide {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
+                      <img class='worldTeamLogo  w3-hide {{team.AdditionalDisplayLogo2Class}}' src='{{team.AdditionalDisplayLogo2}}' alt="">
                     </td>
                     <td class='worldOverviewTop25TeamLineRecord w3-cell  w3-cell-middle'>
                       <span class=''>{{team.TeamSeasonID__Wins}} - {{team.TeamSeasonID__Losses}}</span>
