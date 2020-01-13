@@ -2512,25 +2512,16 @@ class RecruitTeamSeason(models.Model):
 class Headline(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
     HeadlineID = models.AutoField(primary_key = True)
-    DateID = models.ForeignKey(Week, on_delete=models.CASCADE)
+    WeekID = models.ForeignKey(Week, on_delete=models.CASCADE)
     LeagueSeasonID = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None)
 
 
     #Upset, #1 Seeds in Tourney, Final Four Field Set, Final Four Win, Championship, Triple Double, Award
     #New #1 team, Stat Leader
-    HeadlineType = models.CharField(max_length=40)
     HeadlineImportanceValue = models.PositiveSmallIntegerField(default = 0)
 
     HeadlineText = models.CharField(default='', max_length=400)
-    HeadlineTextHTML = models.CharField(default='', max_length=400)
-
-    Team1TeamID = models.ForeignKey(Team, default = None, null=True, blank=True, on_delete=models.CASCADE, related_name="Team1TeamID"  )
-    Team2TeamID = models.ForeignKey(Team, default = None, null=True, blank=True, on_delete=models.CASCADE, related_name="Team2TeamID"  )
-    Team3TeamID = models.ForeignKey(Team, default = None, null=True, blank=True, on_delete=models.CASCADE, related_name="Team3TeamID"  )
-    Team4TeamID = models.ForeignKey(Team, default = None, null=True, blank=True, on_delete=models.CASCADE, related_name="Team4TeamID"  )
-
-    Player1PlayerTeamSeasonID = models.ForeignKey(PlayerTeamSeason, default=None, null=True, blank=True, on_delete=models.CASCADE, related_name="Player1PlayerTeamSeasonID")
-    Player2PlayerTeamSeasonID = models.ForeignKey(PlayerTeamSeason, default=None, null=True, blank=True, on_delete=models.CASCADE, related_name="Player2PlayerTeamSeasonID")
+    HeadlineHref = models.CharField(default='', max_length=400)
 
     class Meta:
               # specify this model as an Abstract Model

@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery
 from django.db.models.functions.window import Rank
-from django.db.models.functions import Length, Concat
+from django.db.models.functions import Length, Concat, Coalesce
 from .models import Audit, League, TeamGame,Week,Phase,Position, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
 from datetime import timedelta, date
 import random
@@ -354,21 +354,16 @@ def Page_Index(request):
 
 
     Worlds=[]
-    for W in World.objects.filter(IsActive = True):
+    for W in World.objects.filter(IsActive = True).filter(week__IsCurrent = True).filter(team__IsUserTeam = True).values('WorldID', 'team__TeamLogoURL', 'team__TeamName', 'week__WeekName' ):
 
-        WorldValues = GetValuesOfSingleObject(W, WorldFields)
-        WorldUserTeamValues = GetValuesOfSingleObject(W.UserTeam, World__UserTeamFields)
-
-        ThisWorld = MergeDicts([WorldValues, WorldUserTeamValues])
-
-        Worlds.append(ThisWorld)
+        Worlds.append(W)
 
     if InTesting:
-        NumConferencesToInclude = 4
+        NumConferencesToInclude = 5
     elif InDeepTesting:
         NumConferencesToInclude = 2
     else:
-        NumConferencesToInclude = 6
+        NumConferencesToInclude = 4
     PossibleConferences = [
          {'ConferenceDisplayName': 'Big 12', 'ConferenceFormValue': 'Big 12 Conference'},
          {'ConferenceDisplayName': 'ACC', 'ConferenceFormValue': 'Atlantic Coast Conference'},
@@ -431,7 +426,7 @@ def Page_World(request, WorldID):
 
     #PlayerTeamSeasonDepthChart.objects.all().delete()
 
-    AllTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).order_by('NationalRank').select_related('TeamSeasonID__TeamID').select_related('TeamSeasonID__teamgame').select_related('TeamSeasonID__opposingteamgame').values('TeamSeasonID', 'TeamSeasonID__ConferenceRank', 'TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation', 'teamgame__GameID', 'teamgame__IsHomeTeam', 'TeamSeasonID__TeamID','TeamSeasonID__NationalChampion','TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__Wins', 'TeamSeasonID__Losses', 'NationalRank', 'NationalRankDelta', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
+    AllTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).select_related('TeamSeasonID__TeamID').select_related('TeamSeasonID__teamgame').select_related('TeamSeasonID__opposingteamgame').values('TeamSeasonID', 'TeamSeasonID__ConferenceChampion', 'TeamSeasonID__ConferenceRank', 'TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation', 'teamgame__GameID', 'teamgame__IsHomeTeam', 'TeamSeasonID__TeamID','TeamSeasonID__NationalChampion','TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__Wins', 'TeamSeasonID__Losses', 'NationalRank', 'NationalRankDelta', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
         NationalRankDeltaAbs=Func(F('NationalRankDelta'), function='ABS'),
         AdditionalDisplayLogo= Case(
             When(TeamSeasonID__NationalChampion=True, then=Value('/static/img/TournamentIcons/NationalChampionTrophy.png')),
@@ -475,18 +470,13 @@ def Page_World(request, WorldID):
             expression=Rank(),
             order_by=F('PAPP').asc(),
         ),
-        TeamGameCount = Count('TeamSeasonID__teamgame')
-    )[0:25]
+        TeamGameCount = Count('TeamSeasonID__teamgame', distinct=True)
+    ).order_by('TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation', 'TeamGameCount')#.order_by('NationalRank')
 
     print('AllTeams query', AllTeams.query)
 
-    # for T in AllTeams:
-    #     if T['teamgame__GameID'] is not None:
-    #         ThisWeekGame = TeamGame.objects.filter(GameID = T['teamgame__GameID']).exclude(IsHomeTeam = T['teamgame__IsHomeTeam']).values('TeamSeasonID__TeamID__TeamName').first()
-    #         T['ThisWeekText'] = 'vs ' + ThisWeekGame['TeamSeasonID__TeamID__TeamName']
-    #     else:
-    #         T['ThisWeekText'] = 'BYE'
-    #     print(T['TeamSeasonID__TeamID__TeamName'],T['ThisWeekText'], T['TeamGameCount'], T['OffensivePoints'], T['OffensivePossessions'], T['TeamSeasonID__Wins'])
+    for T in AllTeams:
+        print(T['TeamSeasonID__TeamID__TeamName'], T['TeamGameCount'])
 
 
     GameList = Game.objects.filter(WorldID = CurrentWorld).values(
@@ -568,6 +558,8 @@ def Page_World(request, WorldID):
 
 
     UserTeam = GetUserTeam(WorldID)
+    AllTeams = AllTeams[0:25]
+
 
     if DoAudit:
         end = time.time()
@@ -654,45 +646,13 @@ def Page_World(request, WorldID):
             SeasonAllAmericans.append(ConfDict)
         print()
         print('Season Awards', SeasonAllAmericans)
-    Leaders = []
-    TopRushers = []
-    TopPassers = []
-    TopReceivers = []
-    AllPlayers = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).annotate(GamesPlayed = Sum('playergamestat__GamesPlayed')).filter(GamesPlayed__gt=0).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason)
-    if AllPlayers.count() > 0:
-
-        TopPlayers = AllPlayers.values('PlayerTeamSeasonID', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation','TeamSeasonID__TeamID_id', 'PlayerID__PlayerFirstName','PlayerID__PlayerLastName', 'PlayerID').annotate(
-            GamesPlayed=Sum('playergamestat__GamesPlayed'),
-            RUS_Yards=Sum('playergamestat__RUS_Yards'),
-            PAS_Yards = Sum('playergamestat__PAS_Yards'),
-            REC_Yards = Sum('playergamestat__REC_Yards'),
-            PAS_YardsPG=Case(
-                When(GamesPlayed=0, then=0.0),
-                default=(Round(Sum('playergamestat__PAS_Yards')* 1.0 / Sum('playergamestat__GamesPlayed'),1)),
-                output_field=FloatField()
-            ),
-            RUS_YardsPG=Case(
-                When(GamesPlayed=0, then=0.0),
-                default=(Round(Sum('playergamestat__RUS_Yards')* 1.0 / Sum('playergamestat__GamesPlayed'),1)),
-                output_field=FloatField()
-            ),
-            REC_YardsPG=Case(
-                When(GamesPlayed=0, then=0.0),
-                default=(Round(Sum('playergamestat__REC_Yards')* 1.0 / Sum('playergamestat__GamesPlayed'),1)),
-                output_field=FloatField()
-            )
-        )
-
-        Leaders.append({'Stat': 'Pass YPG', 'Players': TopPlayers.filter(PAS_Yards__gt = 0).annotate(Value = F('PAS_YardsPG')).order_by('-PAS_YardsPG')[0:3]})
-        Leaders.append({'Stat': 'Rush YPG', 'Players': TopPlayers.filter(RUS_Yards__gt = 0).annotate(Value = F('RUS_YardsPG')).order_by('-RUS_YardsPG')[0:3]})
-        Leaders.append({'Stat': 'Rec YPG', 'Players': TopPlayers.filter(REC_Yards__gt = 0).annotate(Value = F('REC_YardsPG')).order_by('-REC_YardsPG')[0:3]})
 
         if DoAudit:
             end = time.time()
             TimeElapsed = end - start
             A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 9, AuditDescription = 'Page_World - return league leaders')
 
-    context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'leaders':Leaders, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek , 'games': UpcomingGames, 'LastWeek': LastWeek}
+    context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek , 'games': UpcomingGames, 'LastWeek': LastWeek}
 
     context['recentGames'] = RecentGames
     context['SeasonAllAmericans'] = SeasonAllAmericans
@@ -1964,7 +1924,7 @@ def GET_AllTeamStats(request, WorldID):
     TeamStats = []
 
     TeamsInWorld = Team.objects.filter(WorldID = CurrentWorld).filter(teamseason__LeagueSeasonID__IsCurrent = True).filter(teamseason__teamseasonweekrank__IsCurrent = True).values('TeamID', 'TeamLogoURL', 'TeamName', 'ConferenceID', 'ConferenceID__ConferenceAbbreviation', 'teamseason__ConferenceRank', 'teamseason__Wins', 'teamseason__ConferenceWins', 'teamseason__ConferenceLosses', 'teamseason__Losses', 'teamseason__teamseasonweekrank__NationalRank').order_by('-teamseason__teamseasonweekrank__NationalRank').annotate(
-        GamesPlayed = Sum('teamseason__teamgame__GamesPlayed'),
+        GamesPlayed = Coalesce(Sum('teamseason__teamgame__GamesPlayed'),0),
         PPG=Case(
             When(GamesPlayed=0, then=0.0),
             default=(Round(Sum('teamseason__teamgame__Points')* 1.0 / F('GamesPlayed'),1)),
@@ -1995,15 +1955,15 @@ def GET_AllTeamStats(request, WorldID):
         ConferenceWinsLosses =  Concat( F('teamseason__ConferenceWins'), Value('-'), F('teamseason__ConferenceLosses'), output_field=CharField()),
         TeamHref= Concat( Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID') , output_field=CharField()),
         ConferenceHref= Concat( Value('/World/'), Value(WorldID), Value('/Conferece/'), F('ConferenceID') , output_field=CharField()),
-        Possessions = Sum('teamseason__teamgame__Possessions'),
-        PAS_Attempts = Sum('teamseason__teamgame__PAS_Attempts'),
+        Possessions = Coalesce(Sum('teamseason__teamgame__Possessions') ,0),
+        PAS_Attempts = Coalesce(Sum('teamseason__teamgame__PAS_Attempts'),0),
         PercentPassPlays = Case(
             When(PAS_Attempts=0, then=0.0),
             default=(Round((F('PAS_Attempts') + Sum('teamseason__teamgame__PAS_Sacks'))* 100.0 / (F('PAS_Attempts') + Sum('teamseason__teamgame__PAS_Sacks')+ Sum('teamseason__teamgame__RUS_Carries')),1)),
             output_field=FloatField()
         ),
-        SacksAllowed = Sum('teamseason__teamgame__PAS_Sacks'),
-        NumberOfDrives = Sum('teamseason__teamgame__Possessions'),
+        SacksAllowed = Coalesce(Sum('teamseason__teamgame__PAS_Sacks'),0),
+        NumberOfDrives = Coalesce(Sum('teamseason__teamgame__Possessions'),0),
         PercentOfScoringDrives = Case(
             When(Possessions=0, then=0.0),
             default=(Round((Sum('teamseason__teamgame__PAS_TD') + Sum('teamseason__teamgame__RUS_TD') + Sum('teamseason__teamgame__KCK_FGM'))* 100.0 / (Sum('teamseason__teamgame__Possessions')),1)),

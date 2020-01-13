@@ -1,4 +1,5 @@
 from django.db.models import Max, Min, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value, Window
+from django.db.models.functions import Coalesce
 from django.db.models.functions.window import Rank
 from ..models import World, Week,TeamSeasonWeekRank, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat
 import itertools
@@ -19,18 +20,18 @@ def CalculateConferenceRankings(LS, WorldID):
         ConfTeams = TeamSeason.objects.filter(WorldID=CurrentWorld).filter(TeamID__ConferenceID = Conf).filter(teamseasonweekrank__IsCurrent = True).values(
                 'TeamID__TeamName', 'TeamSeasonID', 'TeamID', 'ConferenceWins', 'ConferenceLosses', 'ConferenceChampion', 'teamseasonweekrank__NationalRank'
         ).annotate(
-            NetWins = F('ConferenceWins') - F('ConferenceLosses'),
-            GamesPlayed = Sum('teamgame__GamesPlayed'),
-            PPG = Case(
+            NetWins = Coalesce(F('ConferenceWins') - F('ConferenceLosses'), 0),
+            GamesPlayed = Coalesce(Sum('teamgame__GamesPlayed'), 0),
+            PPG = Coalesce(Case(
                 When(GamesPlayed = 0, then=0),
                 default= ( Sum('teamgame__Points') * 1.0 / F('GamesPlayed') ),
                 output_field=FloatField()
-            ) ,
-            PAPG = Case(
+            ) ,0),
+            PAPG = Coalesce(Case(
                 When(GamesPlayed = 0, then=0),
                 default= ( Sum('opposingteamgame__Points') * 1.0 / F('GamesPlayed') ),
                 output_field=FloatField()
-            ) ,
+            ) ,0),
             MOV = Case(
                 When(GamesPlayed = 0, then=0),
                 default= ( (Sum('teamgame__Points') - Sum('opposingteamgame__Points') * 1.0) / F('GamesPlayed') ),
@@ -89,6 +90,7 @@ def CalculateConferenceRankings(LS, WorldID):
                         ConfRankTracker[ConfName]['Teams'][Team1]['TiebreakerCount'] +=1
 
 
+        print(ConfRankTracker[ConfName]['Teams'])
         RankCount = 1
         for TS in sorted(ConfRankTracker[ConfName]['Teams'], key=lambda TS: (ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'], -1*ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], -1*ConfRankTracker[ConfName]['Teams'][TS]['MOV']),reverse=False):
 

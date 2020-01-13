@@ -16,29 +16,16 @@ td<div>
 <body>
   <div class="PageContent">
     <div class='worldHeader'>
-      <div class='worldHeaderStatsBox' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
-        <div class="playerHeaderStatsHeader" style="background-color:{{playerTeam.TeamColor_Primary_HEX}}">{{currentSeason.LeagueSeasonDisplay}} Stat Leaders</div>
-        <div class='playerHeaderStats'>
-          <div>
-            <div class='w3-display-container'>
-              {% for LeaderGroup in leaders %}
-              <div class='w3-col s4 playerHeaderStatsValueRowLine'>
-                <div class="playerHeaderStatsHeaderRow">
-                  {{LeaderGroup.Stat}}
-                </div>
-                {% for Leader in LeaderGroup.Players %}
-                <div class='playerHeaderStatsValueRow'>
-                  <a href='/World/{{page.WorldID}}/Player/{{Leader.PlayerID}}'>{{Leader.PlayerID__PlayerFirstName}} {{Leader.PlayerID__PlayerLastName}}</a>, <a
-                    href='/World/{{page.WorldID}}/Team/{{Leader.TeamSeasonID__TeamID_id}}'>{{Leader.TeamSeasonID__TeamID__Abbreviation}}</a> - {{Leader.Value}}
-                </div>
-                {% endfor %}
-              </div>
-              {% endfor %}
-            </div>
-          </div>
+      <div class='worldHeaderStatsBox' style='border-color:{{page.PrimaryColor}}'>
+        <div class="playerHeaderStatsHeader" style="background-color:{{page.PrimaryColor}}">
+          <span class='table_title'>Headlines</span>
+          <ul>
+            {% for Headline in Headlines%}
+              <a href="{{Headline.HeadlineHref}}">{{Headline.HeadlineText}}</a>
+            {% endfor %}
+          </ul>
         </div>
       </div>
-
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
@@ -89,7 +76,11 @@ td<div>
                             <span>{{ team.TeamSeasonID__TeamID__TeamName }} {{ team.TeamSeasonID__TeamID__TeamNickname }}</span>
                           </a>
                         </li>
+                        {% if team.TeamSeasonID__ConferenceChampion %}
+                        <li class='font10 bold'>{{team.TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation}} Champions</li>
+                        {% else %}
                         <li class='font10'>{{team.TeamSeasonID__ConferenceRank|ordinal}} in {{team.TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation}}</li>
+                        {% endif %}
                       </ul>
                     </td>
                     <td>

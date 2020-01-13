@@ -502,8 +502,9 @@ def GameSim(game):
 
     for Period in Periods:
         SecondsLeftInPeriod = SecondsInPeriod
-        PlaysThisHalf = 0
 
+        if Period not in [2,4]:
+            PlaysThisHalf = 0
         if Period not in [1,2,3]:
             FinalPeriod = True
         if Period not in [1,3]:

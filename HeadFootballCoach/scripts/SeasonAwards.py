@@ -11,7 +11,7 @@ def NationalAwards(WorldID, CurrentSeason):
     print('-----Assigning Awards------')
 
     AwardsToCreate = []
-    if CurrentSeason.AwardsCreated:
+    if CurrentSeason.AwardsCreated or PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).count() == 0:
         return None
     else:
         AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
@@ -99,6 +99,9 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
             'PlayerID__playerseasonskill__OverallRating'
         ),
     ).order_by('-GameScorePerGame', '-OverallRating')
+
+    if AllPlayers.count() == 0:
+        return None
 
     AwardsToCreate = []
     for Conf in [u for u in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName')] + [None]:
