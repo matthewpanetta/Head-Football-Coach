@@ -634,14 +634,38 @@ $(document).ready(function(){
   GetTeamSchedule(WorldID, TeamID);
   GetTeamCoaches(WorldID, TeamID);
   DrawFaces(TeamJerseyStyle, TeamJerseyInvert);
-
-
-
+  DrawSchedule();
 
   //DrawCoachOrgChart(TeamName, CoachOrg);
   //GET_HistoricalTeamLeaders
 
 });
+
+function DrawSchedule(){
+
+  ResArrowSize();
+  $(window).resize(function () {
+      ResArrowSize();
+  });
+
+  //this function define the size of the items
+  function ResArrowSize() {
+
+      $('#addedStyle').remove();
+      
+      var bodyWidth = $('.SelectedGameBox').width();
+
+      var sideLength = bodyWidth / 2;
+
+      var styleAdd = '';
+      styleAdd += 'border-left-width: '+sideLength+'px;'
+      styleAdd += 'border-right-width: '+sideLength+'px;'
+      styleAdd += 'border-width: 15px '+sideLength+'px 0;'
+
+      $('<style id="addedStyle">.SelectedGameBox::after{'+styleAdd+'}</style>').appendTo('head');
+
+  }
+}
 
 
 

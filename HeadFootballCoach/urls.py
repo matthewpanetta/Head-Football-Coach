@@ -66,6 +66,7 @@ urlpatterns = [
 
     path('GetPlayerPositions/', views.GET_PlayerPositions, name='GetPlayerPositions'),
     path('GetClasses/', views.GET_Classes, name='GetClasses'),
+    path('GetConferences/<int:WorldID>', views.GET_Conferences, name='GetConferences'),
 
     path('audit/', views.Page_Audit, name='Audit'),
     path('admin/', admin.site.urls),

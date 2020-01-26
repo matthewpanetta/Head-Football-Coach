@@ -166,49 +166,6 @@ function PopulateConferenceStandings(ConferenceStandings, WorldID){
 }
 
 
-
-function PopulateTeamStats(TeamStats, WorldID){
-  var TeamStatsTabContainer = $('#TeamStatsTabContainer')[0];
-
-    var TeamStatsTableClone = $('#TeamStatsTableClone').clone();
-
-    $(TeamStatsTableClone).removeClass('w3-hide');
-    $(TeamStatsTableClone).removeAttr('id');
-
-    $(TeamStatsTabContainer).append($(TeamStatsTableClone));
-
-    $.each(TeamStats, function(index,TeamObject){
-      var TeamStatsTeamRowClone = $('#TeamStatsRowClone').clone();
-      $(TeamStatsTeamRowClone).removeClass('w3-hide');
-      $(TeamStatsTeamRowClone).removeAttr('id');
-
-      $.each(TeamObject, function(TeamAttr,TeamAttrValue){
-        var FieldCell = $(TeamStatsTeamRowClone).find('td[data-field="'+TeamAttr+'"], td span[data-field="'+TeamAttr+'"]')[0];
-        var HrefCell = $(TeamStatsTeamRowClone).find('td a[href-field="'+TeamAttr+'"]')[0];
-        var ImgCell = $(TeamStatsTeamRowClone).find('td img[img-src-field="'+TeamAttr+'"]')[0];
-
-        if (FieldCell != undefined ){
-          $(FieldCell).text(TeamAttrValue);
-        }
-        if (HrefCell != undefined){
-          $(HrefCell).attr('href', TeamAttrValue);
-        }
-        if (ImgCell != undefined){
-          $(ImgCell).attr('src', TeamAttrValue);
-        }
-      });
-      $(TeamStatsTableClone).find('tbody').append($(TeamStatsTeamRowClone));
-  });
-
-  $(TeamStatsTableClone).find('table').DataTable( {
-    "searching": false,
-      "info": false,
-      "paging":   false,
-      "order": [[ 1, "asc" ]]
-  } );
-}
-
-
 function PopulateAwardRaces(AwardRaces, WorldID){
   var AwardRacesTabContainer = $('#AwardRacesTabContainer')[0];
 
@@ -324,25 +281,131 @@ function GetLeagueLeaders(WorldID){
 
 function GetTeamStats(WorldID){
 
-  console.log('Getting team stats!');
-  $.ajax({
-    method: "GET",
-    url: "/World/"+WorldID+"/AllTeamStats",
-    data: {
-      csrfmiddlewaretoken: csrftoken
-    },
-    dataType: 'json',
-    success: function(res, status) {
-      console.log(res, status);
-      PopulateTeamStats(res.TeamStats, WorldID);
+  console.log('In Get Team Stats!')
 
-    },
-    error: function(res) {
-      alert(res.status);
+  var ColumnAjaxMap = {
+    2: "/GetConferences/"+WorldID,
+  }
+
+  var ColumnMap = {
+    'WorldTeamStats-Stat-Offense': [6,7,9,10,11],
+    'WorldTeamStats-Stat-Offense-Adv': [12,13,14,15,16,17,18],
+  };
+
+
+  var ColumnsToAlwaysShow = [0,1,2,3,4,5,6,7];
+
+  var table = $('#WorldTeamStats').DataTable({
+      "dom": '',
+      //"serverSide": true,
+      "filter": true,
+      "ordering": true,
+      "lengthChange" : false,
+      "pageLength": 75,
+      "pagingType": "full_numbers",
+      "paginationType": "full_numbers",
+      "paging": true,
+      'ajax': {
+          "url": "/World/"+WorldID+"/AllTeamStats",
+          "type": "GET",
+          "data": function ( d ) {
+
+            console.log('GetTeamStats - Going to post... ', d);
+            return d;
+          },
+          "dataSrc": function ( json ) {
+               console.log('GetTeamStats json', json);
+               return json['data'];
+          }
+       },
+      "columns": [
+        {"data": "TeamName", "sortable": true, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            $(td).html("<a href='"+DataObject['TeamHref']+"'><img class='worldTeamStatLogo padding-right' src='"+DataObject['TeamLogoURL']+"'/>"+StringValue+"</a>");
+            $(td).attr('style', 'border-left-color: #' + DataObject['TeamColor_Primary_HEX']);
+            $(td).addClass('teamTableBorder');
+        }},
+          {"data": "teamseason__teamseasonweekrank__NationalRank", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"]},
+          {"data": "ConferenceID__ConferenceAbbreviation", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"]},
+          {"data": "ConferenceWinsLosses", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
+          {"data": "WinsLosses", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
+          {"data": "PPG", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
+          {"data": "PAPG", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"]},
+          {"data": "MOV", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
+          {"data": "RUS_YardsPG", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+          {"data": "PAS_YardsPG", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+          {"data": "PercentPassPlays", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+          {"data": "SacksAllowed", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+          {"data": "PercentOfScoringDrives", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+          {"data": "PercentOfTurnoverDrives", "sortable": true, 'visible': false, 'orderSequence':["asc", "desc"]},
+          {"data": "PointsPerDrive", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+          {"data": "TimeOfPossessionPerDriveSeconds", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+          {"data": "YardsPerDrive", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+          {"data": "PlaysPerDrive", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+          {"data": "SecondsPerPlay", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"]},
+      ],
+      'order': [[ 1, "asc" ]],
+      'initComplete': function () {
+
+        this.api().columns([2]).every( function (ColumnIndex, CounterIndex) {
+
+            console.log('initComplete', ColumnIndex, CounterIndex, this);
+            var column = this;
+            var select = $('<select class="datatable-tfoot"><option value=""></option></select>')
+                .appendTo( $(column.footer()).empty() )
+                .on( 'change', function () {
+                    var val = $(this).val();
+                    column.search( this.value ).draw();
+                } );
+
+            // If I add extra data in my JSON, how do I access it here besides column.data?
+
+            $.ajax({
+               url: ColumnAjaxMap[ColumnIndex],
+               success: function (data) {
+                 console.log('Ajax return', data)
+                 $.each(data, function(ind, elem){
+                    select.append( '<option value="'+elem+'">'+elem+'</option>' )
+                 });
+               }
+             });
+
+        });
     }
   });
 
-  return null;
+
+  $('.WorldTeamStats-Stat').on('click', function(Obj){
+    var Target = Obj.target;
+
+    if (!$(Target).hasClass('WorldTeamStats-Stat-Selected')) {
+      $('.WorldTeamStats-Stat-Selected').each(function(ind, obj){
+        $(obj).removeClass('WorldTeamStats-Stat-Selected');
+      });
+
+      $(Target).addClass('WorldTeamStats-Stat-Selected');
+      var Val = $(Target).attr('id');
+      var ColumnsToShow = ColumnMap[Val];
+    }
+    else {
+      $(Target).removeClass('WorldTeamStats-Stat-Selected');
+      var ColumnsToShow = [];
+    }
+
+    table.columns().every( function (i,o) {
+      var column = table.column( i );
+      if ($.inArray(i, ColumnsToAlwaysShow) < 0 && column.visible()){
+        column.visible( false );
+      }
+    } );
+
+    $.each(ColumnsToShow, function(i,o){
+      var column = table.column( o );
+      if (! column.visible()) {
+        column.visible( true );
+      }
+    });
+  })
+
 }
 
 
@@ -762,6 +825,8 @@ function GetPlayerStats(WorldID){
 
 $(document).ready(function(){
 
+  InitializeScoreboard();
+
   AddUpcomingGameListeners();
   AddRecentGamesListeners();
   AddPreseasonAllAmericanListeners();
@@ -782,3 +847,118 @@ $(document).ready(function(){
   GetPlayerStats(WorldID);
 
 });
+
+
+function InitializeScoreboard() {
+  console.log('in InitializeScoreboard');
+    var itemsMainDiv = ('.MultiCarousel');
+    var itemsDiv = ('.MultiCarousel-inner');
+    var itemWidth = "";
+    var initialOffset = 20;
+    $('.leftLst, .rightLst').click(function () {
+        var condition = $(this).hasClass("leftLst");
+        if (condition)
+            click(0, this);
+        else
+            click(1, this)
+    });
+
+    ResCarouselSize();
+
+
+
+
+    $(window).resize(function () {
+        ResCarouselSize();
+    });
+
+    //this function define the size of the items
+    function ResCarouselSize() {
+        var incno = 0;
+        var dataItems = ("data-items");
+        var itemClass = ('.scoreboard-carousel-item');
+        var id = 0;
+        var btnParentSb = '';
+        var itemsSplit = '';
+        var sampwidth = $(itemsMainDiv).width();
+        var bodyWidth = $('body').width();
+        $(itemsDiv).each(function () {
+            id = id + 1;
+            var itemNumbers = $(this).find(itemClass).length;
+            btnParentSb = $(this).parent().attr(dataItems);
+            itemsSplit = btnParentSb.split(',');
+            $(this).parent().attr("id", "MultiCarousel" + id);
+
+
+            if (bodyWidth >= 1200) {
+                incno = itemsSplit[3];
+                itemWidth = sampwidth / incno;
+            }
+            else if (bodyWidth >= 992) {
+                incno = itemsSplit[2];
+                itemWidth = sampwidth / incno;
+            }
+            else if (bodyWidth >= 768) {
+                incno = itemsSplit[1];
+                itemWidth = sampwidth / incno;
+            }
+            else {
+                incno = itemsSplit[0];
+                itemWidth = sampwidth / incno;
+            }
+            $(this).css({ 'transform': 'translateX('+initialOffset+'px)', 'width': itemWidth * itemNumbers });
+            $(this).find(itemClass).each(function () {
+                $(this).outerWidth(itemWidth);
+            });
+
+            $(".leftLst").addClass("over");
+            $(".rightLst").removeClass("over");
+
+        });
+    }
+
+
+    //this function used to move the items
+    function ResCarousel(e, el, s) {
+        var leftBtn = ('.leftLst');
+        var rightBtn = ('.rightLst');
+        var translateXval = '';
+        var divStyle = $(el + ' ' + itemsDiv).css('transform');
+        var values = divStyle.match(/-?[\d\.]+/g);
+        var xds = Math.abs(values[4]);
+        if (e == 0) {
+            translateXval = parseInt(xds) - parseInt(itemWidth * s);
+            $(el + ' ' + rightBtn).removeClass("over");
+
+            if (translateXval <= itemWidth / 2) {
+                translateXval = -1 * initialOffset;
+                $(el + ' ' + leftBtn).addClass("over");
+            }
+        }
+        else if (e == 1) {
+            var itemsCondition = $(el).find(itemsDiv).width() - $(el).width();
+            translateXval = parseInt(xds) + parseInt(itemWidth * s);
+            $(el + ' ' + leftBtn).removeClass("over");
+
+            if (translateXval >= itemsCondition - itemWidth / 2) {
+                translateXval = itemsCondition + initialOffset;
+                $(el + ' ' + rightBtn).addClass("over");
+            }
+        }
+        $(el + ' ' + itemsDiv).css('transform', 'translateX(' + -translateXval + 'px)');
+
+    }
+
+    //It is used to get some elements from btn
+    function click(ell, ee) {
+        var Parent = "#" + $(ee).parent().attr("id");
+        var slide = $(Parent).attr("data-slide");
+        ResCarousel(ell, Parent, slide);
+    }
+
+    $('.scoreboard-carousel-item.w3-hide').each(function(ind, obj){
+      console.log('removing w3-hide', ind, obj);
+      $(obj).removeClass('w3-hide');
+    });
+
+}

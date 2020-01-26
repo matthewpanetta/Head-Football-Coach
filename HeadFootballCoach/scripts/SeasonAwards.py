@@ -67,6 +67,10 @@ def NationalAwards(WorldID, CurrentSeason):
                 for PlayerCount in range(0,Pos.PositionCountPerAwardTeam):
                     IsFreshmanTeam = False
 
+                    #print('len(FreshmanPositionPlayers) < PlayerCount', len(FreshmanPositionPlayers) , PlayerCount)
+                    if len(FreshmanPositionPlayers) <= PlayerCount:
+                        continue
+
                     if Conf is None:
                         PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = FreshmanPositionPlayers[PlayerCount]['PlayerTeamSeasonID'])
                         PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=False, PositionID = Pos, IsFreshmanTeam=True, IsNationalAward=True, IsSeasonAward=True)

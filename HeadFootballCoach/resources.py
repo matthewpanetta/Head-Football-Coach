@@ -95,9 +95,133 @@ def CreateSchedule(LS, WorldID):
 
 
     UnscheduledTeams = [t for t in ScheduleDict]
-    GamesToSchedule = [(Rivalry.Team1TeamID, Rivalry.Team2TeamID) for Rivalry in TeamRivalry.objects.filter(WorldID = WorldID) if ScheduleDict[Rivalry.Team1TeamID]['Conference'] == ScheduleDict[Rivalry.Team2TeamID]['Conference']]
+    for Rivalry in TeamRivalry.objects.filter(WorldID = WorldID):
+        TeamA, TeamB = Rivalry.Team1TeamID, Rivalry.Team2TeamID
+        DictConferenceClass = 'NonConferenceRivals'
+        if ScheduleDict[TeamA]['Conference'] == ScheduleDict[TeamA]['Conference']:
+            DictConferenceClass = 'ConferenceRivals'
+
+        ScheduleDict[TeamA][DictConferenceClass].append(TeamB)
+        ScheduleDict[TeamB][DictConferenceClass].append(TeamA)
+
+
+    GamesToSchedule = []
+    for T in UnscheduledTeams:
+        for R in ScheduleDict[T]['ConferenceRivals']:
+            GamesToSchedule.append((T, R))
+
+    for T in UnscheduledTeams:
+        for R in ScheduleDict[T]['NonConferenceRivals']:
+            GamesToSchedule.append((T, R))
 
     while len(UnscheduledTeams) >= 2 and ScheduleLoopCount < 400:
+        print()
+        print('ScheduleLoopCount', ScheduleLoopCount, 'UnscheduledTeams:', len(UnscheduledTeams))
+
+        if ScheduleLoopCount % 50 == 0 and ScheduleLoopCount > 0:
+            print()
+            print('Teams still available:')
+            for T in UnscheduledTeams:
+                print(T, [w for w in WeekMap if w not in ScheduleDict[T]['WeeksScheduled']], 'Conf games needed:',ConferenceGames - ScheduleDict[T]['ConferenceGames'], 'Non-Conf games needed:',NonConferenceGames - ScheduleDict[T]['NonConferenceGames'])
+            print()
+
+        if ScheduleLoopCount > 1 and ScheduleLoopCount < 10:
+            UnscheduledConferences = {}
+            for T in UnscheduledTeams:
+                if ScheduleDict[T]['Conference'] not in UnscheduledConferences:
+                    UnscheduledConferences[ScheduleDict[T]['Conference']] = []
+                if ScheduleDict[T]['ConferenceGames'] < ConferenceGames:
+                    UnscheduledConferences[ScheduleDict[T]['Conference']].append(T)
+
+            for Conf in UnscheduledConferences:
+                ConfTeams = UnscheduledConferences[Conf]
+                if len(ConfTeams) < 2:
+                    continue
+                rr = round_robin(ConfTeams, int(len(ConfTeams) / 5) +1  )
+                for w in rr:
+                    GamesToSchedule += w
+
+            GamesToSchedule = sorted(GamesToSchedule, key=lambda G: ScheduleDict[G[0]]['ConferenceGames'] + ScheduleDict[G[1]]['ConferenceGames'])
+        else:
+            rr = round_robin(UnscheduledTeams, 2)
+            for w in rr:
+                GamesToSchedule += w
+
+        for game in GamesToSchedule:
+            HomeTeam, AwayTeam = game[0], game[1]
+            if random.uniform(0,1) < .5:
+                HomeTeam, AwayTeam = AwayTeam, HomeTeam
+            KeepGame = True
+
+            IsConferenceGame = ScheduleDict[HomeTeam]['Conference'] == ScheduleDict[AwayTeam]['Conference']
+            if AwayTeam in ScheduleDict[HomeTeam]['OpposingTeams'] or AwayTeam in ScheduleDict[HomeTeam]['UnschedulableTeams'] :
+                KeepGame = False
+            else:
+                if IsConferenceGame:
+                    KeepGame = ScheduleDict[HomeTeam]['ConferenceGames'] < ConferenceGames and ScheduleDict[AwayTeam]['ConferenceGames'] < ConferenceGames
+                else:
+                    KeepGame = ScheduleDict[HomeTeam]['NonConferenceGames'] < NonConferenceGames and ScheduleDict[AwayTeam]['NonConferenceGames'] < NonConferenceGames
+
+
+            if KeepGame:
+                print('game', game)
+                if (ScheduleDict[HomeTeam]['HomeGames'] - ScheduleDict[HomeTeam]['AwayGames']) > (ScheduleDict[AwayTeam]['HomeGames'] - ScheduleDict[AwayTeam]['AwayGames']):
+                    HomeTeam, AwayTeam = AwayTeam, HomeTeam
+
+                PossibleRivalries = TeamRivalry.objects.filter(Team1TeamID = HomeTeam).filter(Team2TeamID = AwayTeam) | TeamRivalry.objects.filter(Team2TeamID = HomeTeam).filter(Team1TeamID = AwayTeam)
+                TeamRivalryID = PossibleRivalries.first()
+
+                GameTime = str(random.choice(GameTimeHourChoices)) + ':' + random.choice(GameTimeMinuteChoices)
+
+
+                if IsConferenceGame:
+                    WeekSet = [(w, w**4) for w in WeekMap if w not in ScheduleDict[HomeTeam]['WeeksScheduled'] and w not in ScheduleDict[AwayTeam]['WeeksScheduled']]
+                    print('    Conf WeekSet', WeekSet)
+                    if len(WeekSet) == 0:
+                        print('Couldn\'t find a week for this game!')
+                        ScheduleDict[HomeTeam]['UnschedulableTeams'].append(AwayTeam)
+                        ScheduleDict[AwayTeam]['UnschedulableTeams'].append(HomeTeam)
+                        continue
+                    WeekNumber = WeightedProbabilityChoice(WeekSet, None)
+                    ScheduleDict[HomeTeam]['ConferenceGames'] += 1
+                    ScheduleDict[AwayTeam]['ConferenceGames'] += 1
+                else:
+                    WeekSet = [(w, (WeeksInSeason - w + 1)) for w in WeekMap if w not in ScheduleDict[HomeTeam]['WeeksScheduled'] and w not in ScheduleDict[AwayTeam]['WeeksScheduled']]
+                    print('Non-Conf WeekSet', WeekSet)
+                    if len(WeekSet) == 0:
+                        print('Couldn\'t find a week for this game!')
+                        ScheduleDict[HomeTeam]['UnschedulableTeams'].append(AwayTeam)
+                        ScheduleDict[AwayTeam]['UnschedulableTeams'].append(HomeTeam)
+                        continue
+                    WeekNumber = WeightedProbabilityChoice(WeekSet, None)
+                    ScheduleDict[HomeTeam]['NonConferenceGames'] += 1
+                    ScheduleDict[AwayTeam]['NonConferenceGames'] += 1
+
+                WeekForGame = WeekMap[WeekNumber]
+
+                G = Game(WorldID=WorldID, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = GameTime, WeekID = WeekForGame, TeamRivalryID=TeamRivalryID)
+                G.save()
+
+                HomeTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = ScheduleDict[HomeTeam]['CurrentTeamSeason'], IsHomeTeam = True,  GameID = G, OpposingTeamSeasonID=ScheduleDict[AwayTeam]['CurrentTeamSeason'])
+                AwayTeamGame = TeamGame(WorldID=WorldID,TeamSeasonID = ScheduleDict[AwayTeam]['CurrentTeamSeason'], IsHomeTeam = False, GameID = G, OpposingTeamSeasonID=ScheduleDict[HomeTeam]['CurrentTeamSeason'])
+                TeamGamesToSave.append(HomeTeamGame)
+                TeamGamesToSave.append(AwayTeamGame)
+
+                ScheduleDict[HomeTeam]['HomeGames'] +=1
+                ScheduleDict[AwayTeam]['AwayGames'] +=1
+
+                ScheduleDict[HomeTeam]['WeeksScheduled'].append(WeekNumber)
+                ScheduleDict[AwayTeam]['WeeksScheduled'].append(WeekNumber)
+
+                ScheduleDict[HomeTeam]['OpposingTeams'].append(AwayTeam)
+                ScheduleDict[AwayTeam]['OpposingTeams'].append(HomeTeam)
+
+
+        GamesToSchedule = []
+        ScheduleLoopCount +=1
+        UnscheduledTeams = [t for t in ScheduleDict if len(ScheduleDict[t]['WeeksScheduled']) < GamePerTeam]
+
+    while len(UnscheduledTeams) >= 2 and ScheduleLoopCount > 400:
         print()
         print('ScheduleLoopCount', ScheduleLoopCount, 'UnscheduledTeams:', len(UnscheduledTeams))
 
@@ -866,10 +990,10 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
 
     if IsFirstLeagueSeason:
 
-        #CreateCoaches(LS, WorldID)
+        CreateCoaches(LS, WorldID)
         if DoAudit:
             start = time.time()
-        #CreatePlayers(LS, WorldID)
+        CreatePlayers(LS, WorldID)
         if DoAudit:
             end = time.time()
             TimeElapsed = end - start
@@ -879,7 +1003,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         start = time.time()
 
-    #CreateRecruitingClass(LS, WorldID)
+    CreateRecruitingClass(LS, WorldID)
 
     if DoAudit:
         end = time.time()

@@ -2523,6 +2523,8 @@ class Headline(models.Model):
     HeadlineText = models.CharField(default='', max_length=400)
     HeadlineHref = models.CharField(default='', max_length=400)
 
+    ShowNextWeek = models.BooleanField(default=False)
+
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
@@ -2556,10 +2558,44 @@ class Driver(models.Model):
             'CurrentTeam': self.CurrentTeam
         }
 
-class PlayChoiceLog(models.Model):
-    PlayChoiceLogID = models.AutoField(primary_key = True)
+class GameDrive(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    GameDriveID = models.AutoField(primary_key = True)
 
     GameID = models.ForeignKey(Game, on_delete=models.CASCADE,null=True, blank=True)
+    DriveDescription = models.CharField(max_length = 32, default = None, blank=True, null=True)
+
+    DriveDuration = models.SmallIntegerField(blank=True, null=True, default=0)
+    DrivePlayCount = models.SmallIntegerField(blank=True, null=True, default=0)
+    DriveStartBallSpot = models.SmallIntegerField(blank=True, null=True, default=0)
+    DriveYards = models.SmallIntegerField(blank=True, null=True, default=0)
+    ScoreOnDrive = models.BooleanField(default = False)
+    TurnoverOnDrive = models.BooleanField(default = False)
+    OffensiveTeamGameID = models.ForeignKey(TeamGame, on_delete=models.CASCADE, default=None, blank=True, null=True, related_name='offensivegamedrive')
+    DefensiveTeamGameID = models.ForeignKey(TeamGame, on_delete=models.CASCADE, default=None, blank=True, null=True, related_name='defensivegamedrive')
+
+    DriveDescription = models.CharField(max_length=255, default=None, blank=True, null=True)
+    HomePoints = models.SmallIntegerField(default = 0)
+    AwayPoints = models.SmallIntegerField(default = 0)
+    EventTime = models.SmallIntegerField(default = 0)
+    EventPeriod = models.SmallIntegerField(default = 0)
+
+    @property
+    def GameTime(self):
+        if self.EventPeriod in [1,2]:
+            GameTime = (self.EventPeriod -1) * 1200  + self.EventTime
+        else:
+            GameTime = 2400  + self.EventTime
+
+        return GameTime
+
+
+
+class DrivePlay(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    DrivePlayID = models.AutoField(primary_key = True)
+
+    GameDriveID = models.ForeignKey(GameDrive, on_delete=models.CASCADE,null=True, blank=True)
 
     BallSpot = models.SmallIntegerField(blank=True, null=True, default=None)
     YardsToGo = models.SmallIntegerField(blank=True, null=True, default=None)
@@ -2573,6 +2609,27 @@ class PlayChoiceLog(models.Model):
     Punt_Prob = models.SmallIntegerField(blank=True, null=True, default=None)
     FG_Prob = models.SmallIntegerField(blank=True, null=True, default=None)
     PlayClockUrgency = models.SmallIntegerField(blank=True, null=True, default=None)
+    ClockIsRunning = models.BooleanField(default=False)
+
+    PlayDescription = models.CharField(max_length=100, default=None, blank=True, null=True)
+
+    PlayYards = models.SmallIntegerField(blank=True, null=True, default=None)
+    PlayDuration = models.SmallIntegerField(blank=True, null=True, default=None)
+    IsFirstDown = models.BooleanField(default=False)
+    IsScoringPlay = models.BooleanField(default=False)
+    IsChangeOfPossessionPlay = models.BooleanField(default=False)
+
+    IsFieldGoalAttempt = models.BooleanField(default=False)
+    IsFieldGoalMake = models.BooleanField(default=False)
+    IsPunt = models.BooleanField(default=False)
+    IsPass = models.BooleanField(default=False)
+    IsRun = models.BooleanField(default=False)
+    IsKneel = models.BooleanField(default=False)
+
+    IsInterception = models.BooleanField(default=False)
+    IsFumble = models.BooleanField(default=False)
+    IsFumbleRecoveryDefense = models.BooleanField(default=False)
+    IsDefensiveTouchdown = models.BooleanField(default=False)
 
     @property
     def TimeLeftInPeriod(self):

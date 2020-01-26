@@ -31,11 +31,14 @@ def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
         TeamWins = F('coachteamseason__TeamSeasonID__Wins'),
     ).filter(IsActiveCoach = True)
 
-    GoodPerformingCoaches = ActiveCoaches.filter(TeamPrestige__lt = F('TeamWins'))
-    PoorPerformingCoaches = ActiveCoaches.exclude(TeamPrestige__lt = F('TeamWins'))
+    GoodPerformingCoaches = ActiveCoaches.filter(TeamPrestige__lt = F('TeamWins') + 1)
+    PoorPerformingCoaches = ActiveCoaches.exclude(TeamPrestige__lt = F('TeamWins') + 1)
 
     CTSToSave = []
-    for C in GoodPerformingCoaches:
+    for C in ActiveCoaches:
+        print()
+
+
         TS = C.CurrentCoachTeamSeason.TeamSeasonID.NextTeamSeasonID
         CurrentCTS = C.coachteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
         CTS = CoachTeamSeason(WorldID=CurrentWorld, TeamSeasonID = TS, CoachID = C, CoachPositionID = CurrentCTS.CoachPositionID)

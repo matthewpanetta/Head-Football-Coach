@@ -20,13 +20,13 @@
 }
 
 .playerFirstName, .coachFirstName {
-  width:100%;
+  width: 100%;
   font-weight: 100;
   display: block;
 }
 
 .playerLastName, .coachLastName {
-  width:100%;
+  width: 100%;
   font-size: 28px;
   font-weight: 500;
   display: block;
@@ -42,13 +42,12 @@
   align-items: center;
 }
 
-
-.teamHeaderRankHeaderRow{
-  font-size:11px;
+.teamHeaderRankHeaderRow {
+  font-size: 11px;
 }
 
-.teamHeaderRankValueRow{
-  font-size:17px;
+.teamHeaderRankValueRow {
+  font-size: 17px;
 }
 
 .teamHeaderRankHeaderRowLine {
@@ -66,10 +65,9 @@
   min-width: 25%;
 }
 
-.teamHeaderRankHeader{
+.teamHeaderRankHeader {
   background-color: black;
   color: white;
-
 }
 
 .worldUpcomingGameCell {
@@ -79,29 +77,30 @@
 }
 
 .teamHeaderRank {
-  padding:0;
+  padding: 0;
   margin-bottom: 5px;
 }
-.teamHeaderRank > li {
+
+.teamHeaderRank>li {
   display: table-row;
 }
-.teamHeaderRank > li > div {
+
+.teamHeaderRank>li>div {
   display: table-cell;
 }
 
-.coachHeaderStatsBox, .coachHeaderBio,.coachHeaderInfo, .playerHeaderInfo, .playerHeaderBio, .playerHeaderStatsBox, .teamHeaderRankBox {
-  display:inline-block;
+.coachHeaderStatsBox, .coachHeaderBio, .coachHeaderInfo, .playerHeaderInfo, .playerHeaderBio, .playerHeaderStatsBox, .teamHeaderRankBox {
+  display: inline-block;
   vertical-align: top;
   margin-top: 20px;
 }
 
-
-.coachHeaderStatsHeaderRow, .playerHeaderStatsHeaderRow{
-  font-size:11px;
+.coachHeaderStatsHeaderRow, .playerHeaderStatsHeaderRow {
+  font-size: 11px;
 }
 
-.coachHeaderStatsValueRow, .playerHeaderStatsValueRow{
-  font-size:17px;
+.coachHeaderStatsValueRow, .playerHeaderStatsValueRow {
+  font-size: 17px;
 }
 
 .playerHeaderStatsHeaderRowLine, .coachHeaderStatsHeaderRowLine {
@@ -120,49 +119,48 @@
 }
 
 .worldHeaderStatsBox {
-  width:60%;
   border-radius: 10px;
   border-color: #aaaaaa;
   border-width: 1px;
   border-style: solid;
   text-align: center;
-  margin-left: 12%;
   overflow: hidden;
-    display:inline-block;
-    vertical-align: top;
-    margin-top: 20px;
-  }
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 20px;
+}
 
-
-.playerHeaderStatsHeader, .coachHeaderStatsHeader{
+.playerHeaderStatsHeader, .coachHeaderStatsHeader {
   background-color: black;
   color: white;
   padding: 0px 36px;
-
 }
 
 .playerHeaderStats, .coachHeaderStats {
-  padding:0;
+  padding: 0;
   margin-bottom: 5px;
 }
-.playerHeaderStats > li, .coachHeaderStats > li {
+
+.playerHeaderStats>li, .coachHeaderStats>li {
   display: table-row;
 }
-.playerHeaderStats > li > div, .coachHeaderStats > li > div {
+
+.playerHeaderStats>li>div, .coachHeaderStats>li>div {
   display: table-cell;
 }
 
 .playerHeaderBio, .coachHeaderBio {
   border-left: 1px solid black;
   padding-left: 8px;
-  margin:20px;
+  margin: 20px;
   font-size: 12px;
 }
 
-.playerHeaderBio > li, .coachHeaderBio > li {
+.playerHeaderBio>li, .coachHeaderBio>li {
   display: table-row;
 }
-.playerHeaderBio > li > div, .coachHeaderBio > li > div {
+
+.playerHeaderBio>li>div, .coachHeaderBio>li>div {
   display: table-cell;
 }
 
@@ -171,14 +169,10 @@
   padding: 0 12px 12px 0;
 }
 
-
 .worldHeaderStatsBox .playerHeaderStatsValueRow, .worldHeaderStatsBox .coachHeaderStatsValueRow {
   /*display: table-cell;*/
-  font-size:12px !important;
+  font-size: 12px !important;
 }
-
-
-
 
 .playerTeamLogo, .coachTeamLogo, .teamTeamLogo {
   height: 150px;
@@ -186,42 +180,43 @@
   margin-right: 20px;
   vertical-align: top;
 }
+
 .gameTeamLogo {
   width: 100px;
 }
 
 .worldTeamLogoCell {
-  color:inherit;
+  color: inherit;
 }
 
 .table td.fit,
 .table th.fit {
-    white-space: nowrap;
-    width: 1%;
+  white-space: nowrap;
+  width: 1%;
 }
 
 .table {
   font-size: 14px !important;
 }
 
-.table td , .table th {
+.table td, .table th {
   padding: .45rem !important;
 }
 
-.teamSchoolName, .gameSchoolName , .gameOutcomeW, .gamePlayerStarted{
+.teamSchoolName, .gameSchoolName, .gameOutcomeW, .gamePlayerStarted {
   font-weight: 700;
 }
 
-.teamTeamName,  .gameTeamName {
+.teamTeamName, .gameTeamName {
   font-weight: 400;
 }
 
-.teamRecord , .gameOutcomeL, .playerStatZero {
+.teamRecord, .gameOutcomeL, .playerStatZero {
   font-weight: 200;
 }
 
 .teamGameCell {
-  background-color:white;
+  background-color: white;
 }
 
 .teamGameCell:hover {
@@ -245,30 +240,27 @@
 }
 
 .c3-line {
-    stroke-width: 4px !important;
+  stroke-width: 4px !important;
 }
-
 
 .w3-sidebar {
-  width:15%;
-  background-color: #f1f1f1!important
-  /*margin-top: 38px;*/
+  width: 15%;
+  background-color: #eee !important
+    /*margin-top: 38px;*/
 }
-
 
 .PageContent {
   margin-left: 15%;
   margin-top: 38px;
 }
 
-
 .w3-dropdown-content {
   z-world: 100;
 }
 
 .SideNavItem {
-  padding-top:2px;
-  padding-bottom:2px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .SideNavGroup {
@@ -276,10 +268,10 @@
 }
 
 .navNCAALogoLink {
-  width:15% !important;
+  width: 15% !important;
 }
 
-.navNCAALogo{
+.navNCAALogo {
   height: 20px;
 }
 
@@ -299,18 +291,18 @@
   font-size: 16px;
 }
 
-.gameTeamStatBox > h3 {
+.gameTeamStatBox>h3 {
   font-size: 14px;
 }
 
-.gameTeamStatBox > .statBar {
+.gameTeamStatBox>.statBar {
   width: calc(100% - 25px);
   margin-top: 4px;
   margin-bottom: 4px;
   font-size: 12px;
 }
 
-.playerOverviewRatingBox  .statBar, .coachOverviewRatingBox  .statBar {
+.playerOverviewRatingBox .statBar, .coachOverviewRatingBox .statBar {
   width: calc(100% - 10px);
   margin-top: 4px;
   margin-bottom: 4px;
@@ -322,11 +314,11 @@
   width: calc(50% - 20px);
 }
 
-.statBar > .w3-container {
+.statBar>.w3-container {
   padding: 0.05em 8px !important;
 }
 
-.gameTeamStatAbbreviation, .playerOverviewRatingAbbreviation ,  .coachOverviewRatingAbbreviation {
+.gameTeamStatAbbreviation, .playerOverviewRatingAbbreviation, .coachOverviewRatingAbbreviation {
   font-size: 10px;
 }
 
@@ -338,23 +330,23 @@
   /*width: 35px;*/
   width: 50%;
   left: 25%;
-  top: 10px;
+  top: 15px;
   position: relative;
 }
 
-.arc > path {
+.arc>path {
   stroke-width: 0.55;
   /*fill: white;*/
   stroke: #FFF;
 }
 
 article {
-  background-color: #f1f1f1!important;
+  background-color: #f1f1f1 !important;
   border-radius: 10px;
   margin-bottom: 20px;
 }
 
-article > header {
+article>header {
   display: flex;
   margin: 12px;
   height: 44px;
@@ -362,9 +354,8 @@ article > header {
   text-align: center;
 }
 
-#RecruitTable  td, #RecruitTable  th{
+#RecruitTable td, #RecruitTable th {
   padding: .25rem;
-
 }
 
 #RecruitTable button {
@@ -372,12 +363,12 @@ article > header {
   border-radius: 15px;
 }
 
-.Top25RankNumber, .worldOverviewTop25TeamLineRank{
+.Top25RankNumber, .worldOverviewTop25TeamLineRank {
   font-size: 18px;
   /*padding: 0px !important;*/
 }
 
-.Top25RankNumber, .worldOverviewTop25TeamLineRecord > span {
+.Top25RankNumber, .worldOverviewTop25TeamLineRecord>span {
   /*height: 100%;*/
   top: 20%;
   /*position: absolute;*/
@@ -393,14 +384,16 @@ article > header {
   margin-right: 8px;
 }
 
-.tooltip_templates { display: none; }
+.tooltip_templates {
+  display: none;
+}
 
 .worldOverviewTop25TeamLineName {
   font-size: 12px;
 }
 
-.Top25Container > .row {
-  border: 1px solid rgba(0,0,0,.125);
+.Top25Container>.row {
+  border: 1px solid rgba(0, 0, 0, .125);
   margin-bottom: -1px;
 }
 
@@ -432,7 +425,7 @@ article > header {
   background-color: #D2B4DE;
 }
 
-.worldScheduleGameLineNationalBroadcast , .worldScheduleGameLineRegionalBroadcast, .worldScheduleGameLineTournamentGame{
+.worldScheduleGameLineNationalBroadcast, .worldScheduleGameLineRegionalBroadcast, .worldScheduleGameLineTournamentGame {
   width: calc(100% + 4px);
   align-items: center;
   text-align: center;
@@ -450,11 +443,11 @@ article > header {
   font-size: 10px;
 }
 
-.worldOverviewTop25TeamLineRankDeltaGreen{
+.worldOverviewTop25TeamLineRankDeltaGreen {
   color: green;
 }
 
-.worldOverviewTop25TeamLineRankDeltaRed{
+.worldOverviewTop25TeamLineRankDeltaRed {
   color: red;
 }
 
@@ -467,15 +460,13 @@ article > header {
   margin-top: 10px;
 }
 
-
 #playerShotChart {
-  width:100%;
+  width: 100%;
 }
 
 .indexWorldContainer {
   width: 50%;
 }
-
 
 input[type=text], input[type=password] {
   width: 100%;
@@ -486,20 +477,18 @@ input[type=text], input[type=password] {
   box-sizing: border-box;
 }
 
-
 .indexCreateWorldModalInputLabel {
   width: 90%;
   display: inline-block;
 }
 
-.indexChooseTeamModalTeamListTeamLogo{
-  height:30px;
+.indexChooseTeamModalTeamListTeamLogo {
+  height: 30px;
 }
 
 .hidden {
   display: none;
 }
-
 
 .indexChooseTeamModalTeamListTeamDiv {
   margin: 5px;
@@ -507,7 +496,7 @@ input[type=text], input[type=password] {
   border: 1px solid black;
 }
 
-.indexChooseTeamModalTeamListTeamDiv:hover{
+.indexChooseTeamModalTeamListTeamDiv:hover {
   border: 2px solid red;
 }
 
@@ -517,28 +506,27 @@ input[type=text], input[type=password] {
 
 .teamScheduleGameBox {
   border: 1px solid #dcdcdc;
-  height: 80px;
+  height: 86px;
   cursor: pointer;
   width: 70px;
 }
 
 .teamScheduleGameBoxVsString {
   font-size: 10px;
-
 }
 
-.teamScheduleGameBoxShortDate{
-  opacity: .6;
+.teamScheduleGameBoxShortDate {
+  color: white;
   font-size: 8px;
+  width: 100%;
+  padding-left: 4px;
 }
-
 
 .teamScheduleGameBoxResult {
   font-size: 10px;
-
 }
 
-.teamScheduleGameBoxResult > div {
+.teamScheduleGameBoxResult>div {
   font-size: 10px;
   display: inline-block;
 }
@@ -550,6 +538,10 @@ input[type=text], input[type=password] {
 
 .height100 {
   height: 100%;
+}
+
+.height-70 {
+  height: 70px;
 }
 
 .SelectedGameBox {
@@ -566,12 +558,10 @@ input[type=text], input[type=password] {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 15px 35px 0;
   border-top-width: 15px;
-  border-right-width: 35px;
   border-bottom-width: 0px;
-  border-left-width: 35px;
   border-color: #2c394c transparent transparent;
+
 }
 
 .tab-content {
@@ -611,7 +601,6 @@ input[type=text], input[type=password] {
   z-index: 1;
 }
 
-
 .teamScheduleGameDashboardGameTeamDisplayOffsetTop {
   top: 2px;
   width: 100%;
@@ -624,6 +613,10 @@ input[type=text], input[type=password] {
   width: 100%;
   z-index: 2;
   height: 2px;
+}
+
+.small-logo {
+  height: 20px;
 }
 
 .teamScheduleGameDashboardGameTeamDisplayContainer {
@@ -669,12 +662,21 @@ input[type=text], input[type=password] {
 .font12 {
   font-size: 12px;
 }
+
 .font14 {
   font-size: 14px;
 }
 
 .font16 {
   font-size: 16px;
+}
+
+.min-width-100 {
+  min-width: 100px;
+}
+
+.min-width-75 {
+  min-width: 75px;
 }
 
 .teamScheduleGameDashboardGameDisplayTeams {
@@ -695,17 +697,14 @@ input[type=text], input[type=password] {
 
 .TeamLosingGame {
   opacity: .75;
-
 }
 
 .padBottom20, .padBottom10 {
   padding-bottom: 10px;
 }
 
-
-
 .teamScheduleGameDashboardGameDisplayBoxScorePlayerName {
-  font-family: "Antenna Bold",Arial;
+  font-family: "Antenna Bold", Arial;
   font-size: 12px;
   color: #000;
   font-weight: 400;
@@ -713,17 +712,17 @@ input[type=text], input[type=password] {
 }
 
 .teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition {
-  font-family: "Antenna Medium",Arial;
+  font-family: "Antenna Medium", Arial;
   font-size: 10px;
   color: #000;
   opacity: .5;
 }
 
 .teamScheduleGameDashboardGameDisplayBoxScorePlayerStats {
-  font-family: "Antenna Medium",Arial;
+  font-family: "Antenna Medium", Arial;
   font-size: 14px;
   color: #000;
-/*  opacity: .7;*/
+  /*  opacity: .7;*/
 }
 
 .selected-boxscore-tab, .selected-upcoming-gameview-tab, .selected-recent-gameview-tab, .selected-roster-tab, .selected-award-team-tab, .selected-preseason-award-conference-tab, .selected-preseason-award-team-tab, .selected-season-award-conference-tab, .selected-season-award-team-tab, .selected-drive-event-tab, .selected-team-record-tab {
@@ -747,18 +746,15 @@ input[type=text], input[type=password] {
   background-color: #f2f2f2;
 }
 
-
-
 .evenRow {
   background-color: #f2f2f2;
 }
 
- .worldPreseasonTopRecruits td {
-   padding: 6px 10px;
- }
+.worldPreseasonTopRecruits td {
+  padding: 6px 10px;
+}
 
-
-#teamOverviewConferenceStandings  td,#teamOverviewConferenceStandings  th {
+#teamOverviewConferenceStandings td, #teamOverviewConferenceStandings th {
   padding: 0px 10px;
 }
 
@@ -781,19 +777,18 @@ input[type=text], input[type=password] {
   font-size: 12px;
 }
 
-.fontweight500{
+.fontweight500 {
   font-weight: 500;
 }
 
 .margin0 {
-  margin:0;
+  margin: 0;
 }
 
 .overviewRecentGameDisplayTeamLogo, .PreseasonRecruitTeamLogo img {
   height: 30px;
   margin: 8px 6px;
 }
-
 
 .boxscore-bar .w3-button {
   padding: 8px 8px;
@@ -804,7 +799,7 @@ input[type=text], input[type=password] {
   display: flex;
 }
 
-.WorldHistoryPlayerLeaderRow *{
+.WorldHistoryPlayerLeaderRow * {
   font-size: 12px;
 }
 
@@ -822,9 +817,7 @@ input[type=text], input[type=password] {
 .teamTeamLeaderBoxPlayerFace {
   height: 50px;
   width: 40px;
-
 }
-
 
 #NavBarSearch {
   padding: 6px;
@@ -833,7 +826,6 @@ input[type=text], input[type=password] {
   margin-bottom: 0px;
   margin-right: 16px;
   font-size: 17px;
-
 }
 
 #NavBarSearchContainer button {
@@ -855,7 +847,6 @@ input[type=text], input[type=password] {
   width: 60%;
 }
 
-
 #NavBarSearchContainer {
   width: 150px;
 }
@@ -868,7 +859,7 @@ input[type=text], input[type=password] {
   font-size: 14px;
 }
 
-.recruitingFullRecruitTable  td {
+.recruitingFullRecruitTable td {
   display: inline-block;
 }
 
@@ -895,10 +886,9 @@ input[type=text], input[type=password] {
   border-right: 4px solid black;
   display: inline-block;
   margin-right: 12px;
-
 }
 
-.teamAchievementFlag  div {
+.teamAchievementFlag div {
   font-family: 'Volkhov', serif;
 }
 
@@ -930,117 +920,28 @@ input[type=text], input[type=password] {
 }
 
 .BannerLine1 {
-  margin-bottom:0px;
+  margin-bottom: 0px;
 }
 
 .BannerLine2 {
   margin-top: 0px;
-  margin-bottom:0px;
+  margin-bottom: 0px;
 }
 
 #mock-draft-board-container {
-    position: relative;
+  position: relative;
 }
 
-.mock-rows {
-    margin-top: 20px;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #D3D3D3;
-}
-
-.mock-row {
-    display: block;
-    position: relative;
-    text-align: left;
-    padding: 7px 5px;
-    border: 2px solid #D3D3D3;
-    border-bottom: none;
-}
-
-.mock-row .mock-row-pick-number {
-    font-size: 30px;
-    font-weight: 300;
-    width: 60px;
-    padding-right: 20px;
-    text-align: center;
-    position: relative;
-}
-
-.mock-row-logo > a > img {
-    height: 40px;
-    width: 40px;
-}
-.mock-row div {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.mock-row .mock-row-player {
-    padding-left: 30px;
-    width: 195px;
-}
-
-.mock-row .mock-row-measurements {
-    font-size: 12px;
-    padding-left: 30px;
-}
-
-.mock-row .mock-row-measurements .section {
-    width: 90px;
-}
-
-.mock-row .mock-row-measurements .section div {
-    display: block;
-}
-
-.mock-row .mock-row-measurements .section div:nth-child(2) {
-    padding-top: 4px;
-}
-
-.mock-row .mock-row-stats .stat {
-    width: 67px;
-    text-align: right;
-}
-
-.mock-row .mock-row-stats .stat .value {
-    font-size: 14px;
-}
-
-.mock-row .mock-row-stats .stat .label {
-    font-size: 10px;
-    padding-left: 0px;
-    padding-top: 3px;
-    text-transform: uppercase;
-}
-
-.mock-row .mock-row-player .mock-row-name {
-    margin-bottom: 3px;
-}
-.mock-row .mock-row-name, .mock-row .mock-row-school-position {
-    display: block;
-    color: black;
-}
-.mock-row .mock-row-name {
-    width: 165px;
-    white-space: nowrap;
-}
-
-.mock-row .mock-row-player .mock-row-school-position {
-    font-size: 12px;
-}
-.mock-row .mock-row-name, .mock-row .mock-row-school-position {
-    display: block;
-}
 
 .w3-margin-8 {
   margin: 8px 0px;
 }
 
-.gameHeaderTeamContainerLogo > img {
+.gameHeaderTeamContainerLogo>img {
   height: 40px;
 }
 
-.gameHeaderTeamContent.away  *{
+.gameHeaderTeamContent.away * {
   text-align: right;
   align-items: center;
   justify-content: center;
@@ -1051,7 +952,7 @@ input[type=text], input[type=password] {
 }
 
 .gameHeaderTeamContainer, .gameHeaderScoreContainer {
-  float:left;
+  float: left;
 }
 
 .gameHeaderTeamContainerName {
@@ -1063,19 +964,18 @@ input[type=text], input[type=password] {
   font-size: 10px;
 }
 
-.ScoringSummaryTeamLogo > img {
+.ScoringSummaryTeamLogo>img {
   width: 28px;
 }
-
 
 .table-row {
   display: table-row;
 }
 
-.table-row > div{
+.table-row>div {
   display: table-cell;
   float: none !important;
-  padding: 4px 12px;
+  padding: 4px 2px;
   vertical-align: middle;
 }
 
@@ -1099,12 +999,12 @@ input[type=text], input[type=password] {
   font-size: 12px;
 }
 
-.ScoringSummary table{
+.ScoringSummary table {
   width: 96%;
 }
 
 .ScoringSummary table tbody tr:nth-child(even) {
-    background: #f9f9fb;
+  background: #f9f9fb;
 }
 
 .ScoringSummaryTeamScore {
@@ -1117,12 +1017,11 @@ input[type=text], input[type=password] {
   padding: 6px 0px;
 }
 
-
 .ScoringSummaryQuarterHeader th {
   padding: 8px 0px;
 }
 
-.bar-percentage{
+.bar-percentage {
   transition: width .4s ease;
   background-color: #d00;
   border-radius: 5px;
@@ -1134,34 +1033,35 @@ input[type=text], input[type=password] {
 }
 
 .compareLineGraph .bar-total {
-    border-radius: 5px;
-    height: 10px;
-    float: left;
-    margin-top: 9px;
-    margin-bottom: 9px;
-    width: calc(100% - 40px);
+  border-radius: 5px;
+  height: 10px;
+  float: left;
+  margin-top: 9px;
+  margin-bottom: 9px;
+  width: calc(100% - 40px);
 }
+
 .bar-total {
-    display: inline-block;
-    height: 8px;
-    overflow: hidden;
-    padding: 0;
-    width: calc(100% - 40px);
-    background-color: #dcdddf;
+  display: inline-block;
+  height: 8px;
+  overflow: hidden;
+  padding: 0;
+  width: calc(100% - 40px);
+  background-color: #dcdddf;
 }
 
 .compareLineGraph .chartValue {
-    float: right;
-    font-size: 17px;
-    font-weight: 600;
-    line-height: 1;
-    margin-top: 4.5px;
-    text-align: right;
-    color: #2b2c2d;
+  float: right;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1;
+  margin-top: 4.5px;
+  text-align: right;
+  color: #2b2c2d;
 }
 
-.preseason-allamerican-conf-hide, .preseason-allamerican-team-hide , .season-allamerican-conf-hide, .season-allamerican-team-hide {
-  display:none;
+.preseason-allamerican-conf-hide, .preseason-allamerican-team-hide, .season-allamerican-conf-hide, .season-allamerican-team-hide {
+  display: none;
 }
 
 .table_title {
@@ -1202,11 +1102,9 @@ td.WorldLeagueLeaderRowCell {
   padding: .15rem !important;
 }
 
-
 td.WorldLeagueLeaderRowCell.NameCell {
   min-width: 150px;
 }
-
 
 .GameHeadlineDisplay {
   font-weight: 600;
@@ -1217,71 +1115,66 @@ td.WorldLeagueLeaderRowCell.NameCell {
   border-left: 12px solid;
 }
 
-
 .padding-right {
-   padding-right: 12px;
- }
+  padding-right: 12px;
+}
 
- .WorldPlayerStats-Stat {
-   padding: 2px 6px;
-   margin-bottom: 8px;
-   border:1px solid #BBBBBB;
-   display: inline-block;
-   width: 120px;
-   text-align: center;
- }
+.WorldPlayerStats-Stat, .WorldTeamStats-Stat {
+  padding: 2px 6px;
+  margin-bottom: 8px;
+  border: 1px solid #BBBBBB;
+  display: inline-block;
+  width: 120px;
+  text-align: center;
+}
 
- .WorldPlayerStats-Stat.WorldPlayerStats-Stat-Selected, .WorldPlayerStats-Stat:hover {
-   background-color: #1763B2;
-   color: white;
-   border:1px solid white;
-   font-weight: 600;
- }
+.WorldPlayerStats-Stat.WorldPlayerStats-Stat-Selected, .WorldPlayerStats-Stat:hover, .WorldTeamStats-Stat.WorldTeamStats-Stat-Selected, .WorldTeamStats-Stat:hover {
+  background-color: #1763B2;
+  color: white;
+  border: 1px solid white;
+  font-weight: 600;
+}
 
- .Top25w3-display-container, .scoreboard table {
-   width: 100%;
- }
+.Top25w3-display-container, .scoreboard table {
+  width: 100%;
+}
 
- .bottom-border {
-   border-bottom: 1px solid #888;
- }
+.bottom-border {
+  border-bottom: 1px solid #888;
+}
 
- .margin-right-4 {
-   margin-right: 4px;
- }
+.all-border {
+  border: 1px solid #888;
+}
 
- .margin-8 {
-   margin: 8px;
- }
+.margin-right-4 {
+  margin-right: 4px;
+}
 
- .center-text {
-   text-align: center;
- }
+.margin-8 {
+  margin: 8px;
+}
 
- .left-text {
-   text-align: left;
- }
+.center-text {
+  text-align: center;
+}
 
- .worldUpcomingTable {
-   margin-bottom: 24px;
-   background-color: white;
- }
+.left-text {
+  text-align: left;
+}
 
- .background-white {
-   background-color: white;
- }
+.worldUpcomingTable {
+  margin-bottom: 12px;
+  background-color: white;
+}
 
- .background-eee {
-   background-color: #eee;
- }
+.background-white {
+  background-color: white;
+}
 
- #WorldPlayerStats_filter {
-   margin-top: -35px;
- }
-
- #WorldPlayerStats_filter input {
-   -webkit-appearance: textfield;
- }
+.background-eee {
+  background-color: #eee;
+}
 
 tfoot td {
   border-bottom: 1px solid black;
@@ -1298,7 +1191,7 @@ tfoot td {
   background-clip: padding-box;
   border: 1px solid #ced4da;
   border-radius: .25rem;
-  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
 .negative-padding-right {
@@ -1306,7 +1199,75 @@ tfoot td {
 }
 
 .no-list-style {
-   list-style-type: none;
-   padding-left: 10px;
-   margin-bottom: 0px;
+  list-style-type: none;
+  padding-left: 10px;
+  margin-bottom: 0px;
+}
+
+.margin-bottom-12 {
+  margin-bottom: 12px;
+}
+
+.white-text {
+  color: white;
+}
+
+.gray-text {
+  color: #BBBBBB;
+}
+
+.charcoal-text {
+  color: #454545;
+}
+
+.scoreboard-slideshow {
+  overflow: hidden;
+}
+
+.table-row {
+  display: table-row;
+}
+
+.MultiCarousel {
+  float: left;
+  overflow: hidden;
+  padding: 15px;
+  width: 100%;
+  position: relative;
+}
+
+.MultiCarousel .MultiCarousel-inner {
+  transition: 1s ease all;
+  float: left;
+}
+
+.MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item {
+  float: left;
+}
+
+.MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item>div {
+  text-align: center;
+  padding: 10px;
+  margin: 10px;
+  background: #eee;
+  color: white;
+}
+
+.MultiCarousel .leftLst, .MultiCarousel .rightLst {
+  position: absolute;
+  border-radius: 50%;
+  top: calc(50% - 20px);
+}
+
+.MultiCarousel .leftLst {
+  left: 0;
+}
+
+.MultiCarousel .rightLst {
+  right: 0;
+}
+
+.MultiCarousel .leftLst.over, .MultiCarousel .rightLst.over {
+  pointer-events: none;
+  background: #aaa;
 }
