@@ -1,0 +1,135 @@
+{% include "HeadFootballCoach/NavBar.html" %}
+{% load static %}
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" PlayerID="{{player.PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
+<body>
+  <div class="PageContent">
+    <h2>
+      <img class='teamTeamLogo' src='/static/img/TeamLogos/{{team.LogoURL}}.png' alt="My image">
+      <span class='teamSchoolName'>Coach Carousel</span>
+
+    </h2>
+
+
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-saved-tab">Saved Players</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style='display:block;' id="nav-overview">
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col s10">
+              <div class="w3-card">
+                <span class='table_title'>Open Jobs</span>
+                <table class='display table sortable w3-table-all'>
+                  <thead>
+
+                  </thead>
+                  <tbody>
+                    {% for Job in OpenJobs %}
+                    <tr>
+                      <td>
+                        <a href="{{Job.TeamHref}}">
+                          <img src="{{Job.TeamLogoURL}}" class='worldTeamStatLogo' alt="">
+                          {{Job.TeamName}}
+                        </a>
+                      </td>
+                      <td>{{Job.Position}}</td>
+                      <td>{{Job.TeamRecord}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-saved">
+        <div class='container'>
+          <div class='row'>
+            <div class='col-12'>
+              <table id='recruitingTeamRecruitTable' class="table table-striped sortable">
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Height</th>
+                    <th scope="col">Class</th>
+                    <th scope="col">Overall</th>
+                    <th scope="col" data-defaultsort="asc">Potential</th>
+                    <th scope="col" data-defaultsort="asc">MPG</th>
+                    <th scope="col" data-defaultsort="asc">PPG</th>
+                    <th scope="col" data-defaultsort="asc">RPG</th>
+                    <th scope="col" data-defaultsort="asc">APG</th>
+                    <th scope="col" data-defaultsort="asc">ORTG</th>
+                    <th scope="col" data-defaultsort="asc">DRTG</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for player in players %}
+                  <tr>
+                    <a href='/World/{{page.WorldID}}/Player/{{ player.PlayerID }}/'>
+                      <td data-value='{{player.PlayerLastName}}'>{{ player.FullName }}</td>
+                    </a>
+                    <td>{{player.JerseyNumber}}</td>
+                    <td data-value='{{player.PositionSortOrder}}'>{{player.Position}}</td>
+                    <td data-value='{{player.Height}}'>{{player.HeightFormatted}}</td>
+                    <td data-value='{{player.ClassSortOrder}}'>{{player.Class}}</td>
+                    <td>{{player.OverallRating}}</td>
+                    <td>{{player.PotentialRating}}</td>
+                    <td>{{player.MPG}}</td>
+                    <td>{{player.PPG}}</td>
+                    <td>{{player.RPG}}</td>
+                    <td>{{player.APG}}</td>
+                    <td>{{player.ORTG}}</td>
+                    <td>{{player.DTRG}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'moment.min.js' %}"></script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/bootstrap-sortable.css' %}">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{% static 'facesjs-master/src/generate.js' %}"></script>
+<script src="{% static 'Pages/PlayerDepartures.js' %}" type="module"></script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    InitializeDepartureTable({{page.WorldID}}, {{userTeam}}, {{ConferenceList|safe}}, {{TeamList|safe}}, {{PositionList|safe}})
+  });
+</script>

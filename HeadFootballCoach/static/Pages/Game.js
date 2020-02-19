@@ -40,7 +40,8 @@ $(document).ready(function(){
     "searching": false,
     "info": false,
     "paging":   false,
-    "ordering": false
+    "ordering": true,
+    'order': [[1, 'desc']]
   });
 
   AddScoringSummaryListeners();

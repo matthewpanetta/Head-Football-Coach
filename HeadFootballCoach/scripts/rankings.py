@@ -3,7 +3,7 @@ from django.db.models.functions import Coalesce
 from django.db.models.functions.window import Rank
 from ..models import World, Week,TeamSeasonWeekRank, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat
 import itertools
-
+from .SRS.SRS   import CalculateSRS
 
 def CalculateConferenceRankings(LS, WorldID):
     TeamDictStarter = Team.objects.filter(WorldID=WorldID)
@@ -104,7 +104,7 @@ def CalculateConferenceRankings(LS, WorldID):
 
 
 
-def CalculateRankings(LS, WorldID):
+def CalculateRankings_old(LS, WorldID):
 
     TeamList = Team.objects.filter(WorldID=WorldID).filter(teamseason__LeagueSeasonID__IsCurrent = True).values('TeamName', 'teamseason__NationalChampion', 'teamseason__ConferenceChampion', 'TeamPrestige', 'teamseason__TeamOverallRating', 'teamseason__Wins', 'teamseason__Losses', 'teamseason__TeamSeasonID', 'teamseason__NationalBroadcast', 'teamseason__RegionalBroadcast').annotate(
         Points = Sum('teamseason__teamgame__Points'),
@@ -184,6 +184,66 @@ def CalculateRankings(LS, WorldID):
     CurrentSeason.save()
 
     return None
+
+def CalculateRankings(LS, WorldID):
+        #Custom game output
+    CurrentSeason = LS
+    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
+    NextWeek = CurrentWeek.NextWeek
+    CurrentWorld = WorldID
+    Games = WorldID.game_set.filter(WasPlayed = True)
+    TeamList = list(CurrentSeason.teamseason_set.all())
+
+    GameList = []
+    for G in Games:
+        TeamGames = G.teamgame_set.all()
+        GameInfo = {'HomeTeam': None, 'HomeTeamScore': 0, 'AwayTeam': None, 'AwayTeamScore': 0}
+        for TG in TeamGames:
+            if TG.IsHomeTeam:
+                GameInfo['HomeTeam'] = TG.TeamSeasonID
+                GameInfo['HomeTeamScore'] = TG.Points
+            else:
+                GameInfo['AwayTeam'] = TG.TeamSeasonID
+                GameInfo['AwayTeamScore'] = TG.Points
+
+        GameList.append([GameInfo['AwayTeam'], GameInfo['AwayTeamScore'], GameInfo['HomeTeam'], GameInfo['HomeTeamScore']])
+
+    RankValue  = 0
+    RankedTeamSeasons = CalculateSRS(TeamList, GameList)
+    TSDict = {}
+    for TSObj in RankedTeamSeasons:
+        TS = TSObj['TeamSeason']
+        RankValue += 1
+        TSDict[TS] = {'Rating': TSObj['Rating'], 'OverallRating': TS.TeamOverallRating, 'TeamPrestige': TS.TeamID.TeamPrestige}
+        if TSDict[TS]['OverallRating'] is None:
+            TSDict[TS]['OverallRating'] = 0
+
+        print(TSDict[TS])
+
+    RankValue  = 0
+    for TS in sorted(TSDict.keys(), key=lambda TS: (TSDict[TS]['Rating'], TSDict[TS]['OverallRating'],  TSDict[TS]['TeamPrestige']), reverse=True):
+        RankValue += 1
+
+        TSDR = TeamSeasonWeekRank(TeamSeasonID = TS, WorldID = CurrentWorld, WeekID = CurrentWeek, NationalRank = RankValue, IsCurrent = False)
+        if TS.NationalRank is not None:
+            OldTSDR = TS.NationalRankObject
+            TSDR.NationalRankDelta = OldTSDR.NationalRank - RankValue
+            OldTSDR.IsCurrent = False
+            OldTSDR.save()
+
+        TSDR.IsCurrent = True
+        TSDR.save()
+
+        NextTeamGame = TS.teamgame_set.filter(GameID__WasPlayed = False).filter(GameID__WeekID = NextWeek).first()
+
+        if NextTeamGame is not None:
+            NextTeamGame.TeamSeasonWeekRankID = TSDR
+            NextTeamGame.save()
+
+    CurrentSeason.save()
+
+    return None
+
 
 def SelectBroadcast(LS, WorldID):
 

@@ -40,6 +40,8 @@ urlpatterns = [
     path('World/<int:WorldID>/PlayerStats/', views.Page_PlayerStats, name='PlayerStats'),
     path('World/<int:WorldID>/TeamStats/', views.Page_TeamStats, name='TeamStats'),
     path('World/<int:WorldID>/CoachCarousel/', views.Page_CoachCarousel, name='CoachCarousel'),
+    path('World/<int:WorldID>/PlayerDepartures/', views.Page_PlayerDepartures, name='PlayerDepartures'),
+
 
 
     path('World/<int:WorldID>/Search/<str:SearchInput>/', views.Page_Search, name='Search'),
@@ -56,7 +58,12 @@ urlpatterns = [
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamRoster', views.GET_TeamRoster, name='TeamRoster'),
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamSchedule', views.GET_TeamSchedule, name='TeamSchedule'),
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamCoaches', views.GET_TeamCoaches, name='TeamCoaches'),
+
+    path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerCardInfo', views.GET_PlayerCardInfo, name='PlayerCardInfo'),
+
     path('World/<int:WorldID>/PlayerStats', views.GET_PlayerStats, name='PlayerStats'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerStats', views.GET_PlayerStats_Player, name='PlayerStats'),
+    path('World/<int:WorldID>/PlayerStats/Departures', views.GET_PlayerStats_Departures, name='PlayerStats_Departures'),
     path('World/<int:WorldID>/WorldHistory', views.GET_WorldHistory, name='WorldHistory'),
     path('World/<int:WorldID>/ConferenceStandings', views.GET_ConferenceStandings, name='ConferenceStandings'),
     path('World/<int:WorldID>/ConferenceStandings/<int:ConferenceID>', views.GET_ConferenceStandings, name='ConferenceStandings'),
@@ -64,12 +71,15 @@ urlpatterns = [
     path('World/<int:WorldID>/AwardRaces', views.GET_AwardRaces, name='AwardRaces'),
     path('World/<int:WorldID>/LeagueLeaders', views.GET_LeagueLeaders, name='LeagueLeaders'),
 
+
     path('GetPlayerPositions/', views.GET_PlayerPositions, name='GetPlayerPositions'),
     path('GetClasses/', views.GET_Classes, name='GetClasses'),
     path('GetConferences/<int:WorldID>', views.GET_Conferences, name='GetConferences'),
 
     path('audit/', views.Page_Audit, name='Audit'),
     path('admin/', admin.site.urls),
+    path('XFLScores/', views.XFLScores),
+    path('TestStreaming/', views.TestStreaming),
 
 ]
 

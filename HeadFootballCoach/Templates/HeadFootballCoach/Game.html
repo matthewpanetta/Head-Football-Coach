@@ -2,7 +2,7 @@
   {% include "HeadFootballCoach/NavBar.html" %}
 </div>
 {% load static %}
-
+<link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/bootstrap-sortable.css' %}">
@@ -10,7 +10,7 @@
 <body>
   <div class='PageContent'>
 
-    <div class="w3-container">
+    <div class="">
       <div class="w3-row-padding GameHeadlineDisplay">
         {{game.GameHeadlineDisplay}}
       </div>

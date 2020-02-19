@@ -26,109 +26,55 @@
           <div class="w3-row-padding">
             <div class="w3-col s8">
               <div class="w3-card">
-                <div id="mock-draft-board-container">
-                  <div class="mock-rows">
+                <div id="">
+                  <table class='width100'>
+                    <thead>
+                      <th></th>
+                    </thead>
+                    <tbody>
+
                     {% for player in Players %}
-                    <div class="mock-row" PlayerHeight='{{player.Height}}'>
-                      <div class="mock-row-pick-number">
+
+                    <tr class="" PlayerHeight='{{player.Height}}'>
+                      <td class="recruiting-player-rank">
                         {{player.Recruiting_NationalRank}}
-                      </div>
-                      <div class="mock-row-logo" PlayerFaceJson="{{player.PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if player.PlayerFaceJson|length > 0%}1{%else%}0{%endif%}">
+                      </td>
+                      <td class="" PlayerFaceJson="{{player.PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if player.PlayerFaceJson|length > 0%}1{%else%}0{%endif%}">
 
                         <div class="PlayerFaceDisplay" id="PlayerFaceDisplay{{player.PlayerID}}" style='height: 70px;width: 40px;'></div>
-                      </div>
-                      <div class="mock-row-player"><a class="primary-hover" href="/World/{{page.WorldID}}/Player/{{player.PlayerID}}">
-                          <div class="mock-row-name">{{player.FullName}}</div>
-                          <div class="mock-row-school-position">{{player.PositionID.PositionAbbreviation}} | {{player.CityID.CityName}}, {{player.CityID.StateID.StateAbbreviation}} </div>
-                        </a> </div>
-                      <div class="mock-row-measurements">
-                        <div class="section height-weight">
-                          <div>{{player.HeightFormatted}}</div>
-                          <div>{{player.WeightFormatted}}</div>
+                      </td>
+                      <td class="text-left">
+                        <div class="recruiting-player-name font16">
+                          <a  href="/World/{{page.WorldID}}/Player/{{player.PlayerID}}">
+                            {{player.FullName}}
+                          </a>
                         </div>
-                        <div class="section year-age desktop">
-                          <div>{{player.RecruitingStars}} *</div>
-                          <div>{{player.OverallRating}}</div>
+                        <div class="recruiting-player-city font10">{{player.CityID.CityName}}, {{player.CityID.StateID.StateAbbreviation}} </div>
+                      </td>
+                      <td class='font16'>{{player.PositionID.PositionAbbreviation}}</td>
+                      <td class='font16'>
+                          <span>{{player.HeightFormatted}}</span>
+                          <span> - </span>
+                          <span>{{player.WeightFormatted}}</span>
+                      </td>
+                      <td class=>
+                        <div class="section font16">
+                          <span>{{player.RecruitingStars}} *</span>
+                          <span>{{player.OverallRating}} OVR</span>
                         </div>
-                      </div>
-                      <div class="mock-row-stats">
-                        <div class="stats-per-game" style="display: none;">
-                          <div class="stat pts">
-                            <div class="value">27.0</div>
-                            <div class="label">pts</div>
-                          </div>
-                          <div class="stat reb">
-                            <div class="value">10.5</div>
-                            <div class="label">reb</div>
-                          </div>
-                          <div class="stat ast">
-                            <div class="value">4.0</div>
-                            <div class="label">ast</div>
-                          </div>
-                          <div class="stat blk desktop">
-                            <div class="value">0.5</div>
-                            <div class="label">blk</div>
-                          </div>
-                          <div class="stat stl desktop">
-                            <div class="value">1.5</div>
-                            <div class="label">stl</div>
-                          </div>
+                        <div class="font10">
+                          <span class='dot'>Natl {{player.Recruiting_NationalRank}}</span>
+                          <span class='dot'>State {{player.Recruiting_StateRank}}</span>
+                          <span>Pos {{player.Recruiting_NationalPositionalRank}}</span>
                         </div>
-                        <div class="stats-per-36" style="display: table-cell;">
-                          <div class="stat pts">
-                            <div class="value stat-quality good4">27.4</div>
-                            <div class="label">pts</div>
-                          </div>
-                          <div class="stat pts">
-                            {%if player.RecruitingSignedTeam %}
-                            <a href="/World/{{page.WorldID}}/Team/{{player.RecruitingSignedTeam}}">
-                              <img class='recruitingCommitTeamLogo' src='{{player.RecruitingStatusLogoURL}}' alt=''>
-                            </a>
-                            {% endif %}
-                          </div>
-                          <div class="stat reb">
-                            <div class="value stat-quality good4">10.6</div>
-                            <div class="label">reb</div>
-                          </div>
-                          <div class="stat ast">
-                            <div class="value stat-quality bad1">4.1</div>
-                            <div class="label">ast</div>
-                          </div>
-                          <div class="stat blk desktop">
-                            <div class="value stat-quality good1">0.5</div>
-                            <div class="label">blk</div>
-                          </div>
-                          <div class="stat stl desktop">
-                            <div class="value">1.5</div>
-                            <div class="label">stl</div>
-                          </div>
-                        </div>
-                        <div class="stats-advanced" style="display: none;">
-                          <div class="stat pts">
-                            <div class="value stat-quality bad3">.503</div>
-                            <div class="label">TS%</div>
-                          </div>
-                          <div class="stat reb">
-                            <div class="value stat-quality good4">37.5</div>
-                            <div class="label">USG</div>
-                          </div>
-                          <div class="stat ast">
-                            <div class="value stat-quality good1">8.3</div>
-                            <div class="label">OBPM</div>
-                          </div>
-                          <div class="stat blk desktop">
-                            <div class="value stat-quality good3">5.3</div>
-                            <div class="label">DBPM</div>
-                          </div>
-                          <div class="stat stl desktop">
-                            <div class="value stat-quality good3">13.6</div>
-                            <div class="label">BPM</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      </td>
+                      <td class="ratings">
+
+                      </td>
+                    </tr>
                     {% endfor %}
-                  </div>
+                  </tbody>
+                  </table>
                 </div>
               </div>
 

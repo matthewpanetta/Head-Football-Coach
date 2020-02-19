@@ -850,6 +850,10 @@ $(document).ready(function(){
 
 
 function InitializeScoreboard() {
+  if ($('.MultiCarousel-inner').children().length == 0){
+    $('.scoreboard-slideshow').remove();
+    return 0;
+  }
   console.log('in InitializeScoreboard');
     var itemsMainDiv = ('.MultiCarousel');
     var itemsDiv = ('.MultiCarousel-inner');

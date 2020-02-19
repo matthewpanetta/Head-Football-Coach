@@ -544,6 +544,7 @@ def GameSim(game):
             SubOutMultiplier = 1.0
             SubInMultiplier = 1.0
             LogDrive = False
+            Safety = False
             PuntYards = 0
 
             if PlaysThisHalf == 0 and Period > 1:
@@ -665,7 +666,14 @@ def GameSim(game):
 
             if PlayChoice == 'Run':
                 DrivePlayObject.IsRun = True
-                RunningBackPlayerID = OffensiveTeamPlayers['RB'][0]
+                r = random.uniform(0,1)
+                if r < .94:
+                    RunningBackPlayerID = OffensiveTeamPlayers['RB'][0]
+                elif r < .97:
+                    RunningBackPlayerID = OffensiveTeamPlayers['QB'][0]
+                else:
+                    RunningBackPlayerID = random.choice(OffensiveTeamPlayers['WR'])
+
                 RunGameModifier = (2 * RunningbackTalent + OffensiveLineTalent) * 1.0 / DefensiveLineTalent / 3.0
                 RunGameModifier = RunGameModifier ** 1.3
                 YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 5, -2, 12),0)
@@ -757,7 +765,7 @@ def GameSim(game):
                 LinemanSackAllowedPlayerID = None
                 OffensiveLinemen = [(u, (100 - AllPlayers[u]['PlayerSkills']['OverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
 
-                WideReceivers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 4) for u in OffensiveTeamPlayers['WR'] ]
+                WideReceivers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 4) for u in OffensiveTeamPlayers['WR'] ] + [(u, AllPlayers[u]['PlayerSkills']['OverallRating']) for u in OffensiveTeamPlayers['RB'] ]
                 WideReceiverPlayer = WeightedProbabilityChoice(WideReceivers, WideReceivers[0])
 
                 if Down == 3 and YardsToGo > 4:
@@ -803,6 +811,12 @@ def GameSim(game):
 
                     AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_SackYards += abs(YardsThisPlay)
                     GameDict[OffensiveTeam]['TeamGame'].PAS_SackYards += abs(YardsThisPlay)
+
+                    AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Yards -= abs(YardsThisPlay)
+                    GameDict[OffensiveTeam]['TeamGame'].RUS_Yards -= abs(YardsThisPlay)
+
+                    AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Carries += 1
+                    GameDict[OffensiveTeam]['TeamGame'].RUS_Carries += 1
 
                     DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
@@ -1014,6 +1028,13 @@ def GameSim(game):
 
 
                 Kickoff = True
+            elif BallSpot < 0:
+                print()
+                print('WOULD BE A SAFETY!!!!')
+                print()
+                GameDict[DefensiveTeam]['TeamGame'].Points += 2
+                Kickoff = True
+                Safety = True
 
             elif FieldGoalMake:
                 GameDict[OffensiveTeam]['TeamGame'].Points += 3
@@ -1108,16 +1129,25 @@ def GameSim(game):
                 GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='TO-D', DriveDescription=DriveDescription, PlayDescription = PlayDescription,IsScoringPlay = False, HomePoints = GameDict[HomeTeam]['TeamGame'].Points, AwayPoints = GameDict[AwayTeam]['TeamGame'].Points,DisplayTeamID=OffensiveTeam, EventPeriod = Period, EventTime = SecondsLeftInPeriod)
                 GameEventsToSave.append(GE)
                 SwitchPossession = True
-            elif  Turnover:
+            elif  Turnover or Safety:
                 if InterceptionOnPlay:
                     PlayDescription = AllPlayers[QuarterbackPlayerID]['PlayerName'] + ' intercepted by ' + AllPlayers[DefensiveIntercepter]['PlayerName']
                     PlayTypeString = 'INT'
+                    DisplayTeam = OffensiveTeam
+                    IsScoringPlay = False
+                elif Safety:
+                    PlayDescription = AllPlayers[DefensiveTackler]['PlayerName'] + ' tackle for a Safety!'
+                    PlayTypeString = 'SAF'
+                    DisplayTeam = DefensiveTeam
+                    IsScoringPlay = True
                 else:
                     PlayDescription = AllPlayers[RunningBackPlayerID]['PlayerName'] +  ' fumble recovered by ' + AllPlayers[FumbleRecovererID]['PlayerName'] + ', returned ' + str(FumbleRecoveryYards) + ' yards'
                     PlayTypeString = 'FUMB'
+                    DisplayTeam = OffensiveTeam
+                    IsScoringPlay = False
 
                 DriveDescription = str(DrivePlayCount) + ' plays, ' + str(int(BallSpot - DriveStartBallSpot)) + ' yards, ' + SecondsToMinutes(DriveDuration)
-                GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType=PlayTypeString, DriveDescription=DriveDescription, PlayDescription = PlayDescription,IsScoringPlay = False, HomePoints = GameDict[HomeTeam]['TeamGame'].Points, AwayPoints = GameDict[AwayTeam]['TeamGame'].Points,DisplayTeamID=OffensiveTeam, EventPeriod = Period, EventTime = SecondsLeftInPeriod)
+                GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType=PlayTypeString, DriveDescription=DriveDescription, PlayDescription = PlayDescription,IsScoringPlay = IsScoringPlay, HomePoints = GameDict[HomeTeam]['TeamGame'].Points, AwayPoints = GameDict[AwayTeam]['TeamGame'].Points,DisplayTeamID=DisplayTeam, EventPeriod = Period, EventTime = SecondsLeftInPeriod)
                 GameEventsToSave.append(GE)
                 SwitchPossession = True
             elif Punt:

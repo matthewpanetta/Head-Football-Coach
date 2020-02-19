@@ -30,6 +30,23 @@ $(document).ready(function() {
   var SecondaryColor = $(DataPassthruHolder).attr('SecondaryColor');
 
 
+  $.ajax({
+    method: "POST",
+    url: "/TestStreaming/",
+    data: {
+      //csrfmiddlewaretoken:'{{ csrf_token }}'
+      csrfmiddlewaretoken: csrftoken
+    },
+    dataType: 'json',
+    success: function(res, status) {
+      console.log('streaming', res, status);
+    },
+    error: function(res) {
+      console.log('streaming',res, res.status, res.responseText.split(','));
+    }
+  });
+
+
   $('#navSearchButton').on('click', function(){
     console.log('clicked on search submit!');
     var SearchInputElement = $('#navSearchInput')[0];

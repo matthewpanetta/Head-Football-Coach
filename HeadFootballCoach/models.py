@@ -379,6 +379,10 @@ class League(models.Model):
     HomeFieldAdvantage      = models.DecimalField(default=1.02, max_digits=8, decimal_places=5 )
     PlayTimeTalentFactor    = models.DecimalField(default=5.0, max_digits=8, decimal_places=5 )
 
+    PlayClockLength = models.IntegerField(default = 35)
+    PeriodLength_Minutes = models.IntegerField(default = 15)
+    OvertimeLength_Minutes = models.IntegerField(default=5)
+
     ConferenceList = models.CharField(default='', max_length=400)
 
     LeagueLogoURL = models.CharField(max_length = 200, default='')
@@ -606,6 +610,8 @@ class Team(models.Model):
     ChampionshipContenderRating =models.PositiveSmallIntegerField(default=0)
     LocationRating =models.PositiveSmallIntegerField(default=0)
 
+    StadiumCapacity = models.IntegerField(default = 30000)
+
 
     def __str__(self):
         return self.TeamName + ' ' + self.TeamNickname
@@ -673,7 +679,9 @@ class Team(models.Model):
     def SecondaryColor_Display(self):
 
         if self.luma < 225:
+
             return self.TeamColor_Secondary_HEX
+        print('Team secondary color,',self.TeamColor_Secondary_HEX,' too light, sending black instead')
         return '000000'
     class Meta:
               # specify this model as an Abstract Model
@@ -1510,11 +1518,17 @@ class PlayerTeamSeason(models.Model):
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
     ClassID = models.ForeignKey(Class, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
+    LeavingTeamAfterSeason = models.BooleanField(default=True)
+
+    QuitFootballAfterSeason = models.BooleanField(default = False)
+    GraduatedAfterSeason = models.BooleanField(default = False)
+    LeftEarlyForDraftAfterSeason = models.BooleanField(default = False)
+    TransferredAfterSeason = models.BooleanField(default = False)
 
     def __str__(self):
         T = self.TeamSeasonID.TeamID
         S = self.TeamSeasonID.LeagueSeasonID
-        return str(self.PlayerID.FullName) + ' played for ' + str(T.TeamName) + ' in ' + str(S.SeasonStartYear)
+        return str(self.PlayerID.FullName) + ' (' + str(self.PlayerID.PositionID.PositionAbbreviation) + ') played for ' + str(T.TeamName) + ' in ' + str(S.SeasonStartYear)
 
     def TeamRosterDict(self):
 
@@ -1601,7 +1615,7 @@ class PlayerTeamSeasonDepthChart(models.Model):
     IsStarter = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.PlayerTeamSeasonID.PlayerID) + ' is ' + str(self.PositionID.PositionAbbreviation) + ' #' + str(self.DepthPostion) + ' for ' + str(self.PlayerTeamSeasonID.TeamSeasonID.TeamID)
+        return str(self.PlayerTeamSeasonID.PlayerID) #+ ' is ' + str(self.PositionID.PositionAbbreviation) + ' #' + str(self.DepthPostion) + ' for ' + str(self.PlayerTeamSeasonID.TeamSeasonID.TeamID)
 
 class PlayerTeamSeasonAward(models.Model):
     WorldID        = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)

@@ -545,9 +545,9 @@ input[type=text], input[type=password] {
 }
 
 .SelectedGameBox {
-  background-color: #2c394c;
+  background-color: #111;
   color: white;
-  border: 1px solid #2c394c;
+  border: 1px solid #111;
 }
 
 .SelectedGameBox::after {
@@ -560,7 +560,7 @@ input[type=text], input[type=password] {
   border-style: solid;
   border-top-width: 15px;
   border-bottom-width: 0px;
-  border-color: #2c394c transparent transparent;
+  border-color: #111 transparent transparent;
 
 }
 
@@ -679,6 +679,10 @@ input[type=text], input[type=password] {
   min-width: 75px;
 }
 
+.padding-4-6 {
+  padding: 4px 6px;
+}
+
 .teamScheduleGameDashboardGameDisplayTeams {
   padding-left: 100px;
   padding-right: 50px;
@@ -726,7 +730,7 @@ input[type=text], input[type=password] {
 }
 
 .selected-boxscore-tab, .selected-upcoming-gameview-tab, .selected-recent-gameview-tab, .selected-roster-tab, .selected-award-team-tab, .selected-preseason-award-conference-tab, .selected-preseason-award-team-tab, .selected-season-award-conference-tab, .selected-season-award-team-tab, .selected-drive-event-tab, .selected-team-record-tab {
-  border-bottom: 3px solid #2c394c !important;
+  border-bottom: 3px solid #111 !important;
 }
 
 .teamOverviewConferenceStandingsTeamLogo, .recruitingCommitTeamLogo, .awardConferenceWeeklyAwardTeamLogo {
@@ -1151,6 +1155,10 @@ td.WorldLeagueLeaderRowCell.NameCell {
   margin-right: 4px;
 }
 
+.margin-top-24 {
+  margin-top: 24px;
+}
+
 .margin-8 {
   margin: 8px;
 }
@@ -1206,6 +1214,10 @@ tfoot td {
 
 .margin-bottom-12 {
   margin-bottom: 12px;
+}
+
+.margin-left-12 {
+  margin-left: 12px;
 }
 
 .white-text {
@@ -1270,4 +1282,23 @@ tfoot td {
 .MultiCarousel .leftLst.over, .MultiCarousel .rightLst.over {
   pointer-events: none;
   background: #aaa;
+}
+
+.recruiting-player-rank {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.dot::after {
+  content: " \2022 ";
+  color: #677A86;
+  padding: 0 3px;
+}
+
+.ellipsis {
+  text-overflow: ellipsis;
+
+  /* Required for text-overflow to do anything */
+  white-space: nowrap;
+  overflow: hidden;
 }

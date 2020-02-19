@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class='teamHeaderRankBox' style='border-color:{{team.TeamColor_Primary_HEX}}'>
-        <div class="teamHeaderRankHeader w3-row" style="background-color:{{team.TeamColor_Primary_HEX}}">Team Rankings</div>
+        <div class="teamHeaderRankHeader w3-row" style="background-color: #{{team.TeamColor_Primary_HEX}}">Team Rankings</div>
         <div class="w3-col w3-display-container s6">
           <div class="w3-row">
             {{team.ConferenceID.ConferenceAbbreviation}} Ranking
@@ -78,7 +78,7 @@
                   <div class="w3-row teamScheduleBar w3-white">
                     {% for game in games%}
                     <div BoxScoreGameID="{{game.GameID}}" class="w3-col s1 teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
-                      <div class="teamScheduleGameBoxShortDate w3-display-topleft" style='background-color: #{{game.Opponent.TeamColor_Primary_HEX}}'>{{game.Week}}</div>
+                      <div class="teamScheduleGameBoxShortDate w3-display-topleft ellipsis" style='background-color: #{{game.Opponent.TeamColor_Primary_HEX}}'>{{game.Week}}</div>
                       <img class='teamScheduleOpponentLogo' src='{{game.OpponentLogoURL}}' />
 
                       <div class="width100 w3-display-bottommiddle">
@@ -286,7 +286,7 @@
 
                 <div class="w3-card">
 
-                  <div class="w3-card-header">
+                  <div class="w3-card-header table_title">
                     {{team.ConferenceName}} Standings
                   </div>
                   <table id='teamOverviewConferenceStandings'>
@@ -318,7 +318,7 @@
                 <div class="w3-card">
 
                   <div class="w3-card-header">
-                    {{team.TeamName}} Recruits
+                    {{team.TeamName}} Signed Recruits
                   </div>
                   <table id='teamOverviewConferenceStandings'>
                     <thead>
@@ -351,64 +351,90 @@
         </div>
       </div>
       <div class="tab-content" style='display:none;' id="nav-roster">
-        <div class='container'>
-          <div class='row'>
-            <div class='w3-col s12'>
-              <div id='roster-bar' class="w3-bar">
-                <div class="w3-bar-item">
-                  Data display:
+        <div class='w3-container'>
+          <div class='w3-row-padding'>
+            <div class='w3-col s9'>
+              <div class="w3-card">
+                <div id='roster-bar' class="w3-bar">
+                  <div class="w3-bar-item">
+                    Data display:
+                  </div>
+                  <button class='w3-button w3-bar-item selected-roster-tab' type="button" table-data-context="StatsPG" name="button">Player Stats (Per Game)</button>
+                  <button class='w3-button w3-bar-item' type="button" table-data-context="Ratings" name="button">Player Ratings</button>
                 </div>
-                <button class='w3-button w3-bar-item selected-roster-tab' type="button" table-data-context="StatsPG" name="button">Player Stats (Per Game)</button>
-                <button class='w3-button w3-bar-item' type="button" table-data-context="Ratings" name="button">Player Ratings</button>
+                <table class="table table-striped sortable width100" id='teamRosterTable'>
+                  <thead>
+                    <tr>
+                      <th data-data="FullName" class='TeamRosterHeaderCell teamColorBorder' scope="col">Name</th>
+                      <th data-data="JerseyNumber" class='TeamRosterHeaderCell teamColorBorder' scope="col">#</th>
+                      <th data-data="Position" class='TeamRosterHeaderCell teamColorBorder' scope="col">Position</th>
+                      <th data-data="HeightFormatted" class='TeamRosterHeaderCell teamColorBorder' scope="col">Height</th>
+                      <th data-data="PlayerClass" class='TeamRosterHeaderCell teamColorBorder' scope="col">Class</th>
+                      <th data-data="OverallRating" class='TeamRosterHeaderCell teamColorBorder' scope="col">Overall</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
-              <table class="table table-striped sortable" id='teamRosterTable'>
-                <thead>
+            </div>
+            <div class="w3-col s3">
+              <div class="w3-card" id='teamRosterPlayerHighlight'>
+                <div>
+                  <span class='table_title' data-field='PlayerName'>Click on a player for more info</span>
+                </div>
+                <table class="playerinfo">
                   <tr>
-                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Name</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">#</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Position</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Height</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Class</th>
-                    <th table-data-context="All" class='TeamRosterHeaderCell teamColorBorder' scope="col">Overall</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">MPG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">PPG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">RPG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">APG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">PER</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">ORTG</th>
-                    <th table-data-context="StatsPG" class='TeamRosterHeaderCell teamColorBorder' scope="col" data-defaultsort="asc">DRTG</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Inside</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Reb</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Playmaking</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Outside Shooting</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">Athletic</th>
-                    <th table-data-context="Ratings" class='TeamRosterHeaderCell w3-hide teamColorBorder' scope="col" data-defaultsort="asc">IQ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr id='TeamRosterPlayerRowClone' class='hidden'>
-                    <td table-data-context="All" class='TeamRosterPlayerRowCell' data-field='FullName' data-value=""><a href="" href-field='PlayerID'></a></td>
-                    <td table-data-context="All" class='TeamRosterPlayerRowCell' data-field='JerseyNumber'></td>
-                    <td table-data-context="All" class='TeamRosterPlayerRowCell' data-field='Position' data-value=""></td>
-                    <td table-data-context="All" class='TeamRosterPlayerRowCell' data-field='HeightFormatted' data-value=""></td>
-                    <td table-data-context="All" class='TeamRosterPlayerRowCell' data-field='PlayerClass' data-value=""></td>
-                    <td table-data-context="All" class='TeamRosterPlayerRowCell' data-field='OverallRating'></td>
-                    <td table-data-context="StatsPG" class='TeamRosterPlayerRowCell' data-field='MPG'></td>
-                    <td table-data-context="StatsPG" class='TeamRosterPlayerRowCell' data-field='PPG'></td>
-                    <td table-data-context="StatsPG" class='TeamRosterPlayerRowCell' data-field='RPG'></td>
-                    <td table-data-context="StatsPG" class='TeamRosterPlayerRowCell' data-field='APG'></td>
-                    <td table-data-context="StatsPG" class='TeamRosterPlayerRowCell' data-field='PER'></td>
-                    <td table-data-context="StatsPG" class='TeamRosterPlayerRowCell' data-field='ORTG'></td>
-                    <td table-data-context="StatsPG" class='TeamRosterPlayerRowCell' data-field='DRTG'></td>
-                    <td table-data-context="Ratings" class='TeamRosterPlayerRowCell w3-hide' data-field='InsideShootingGrade'></td>
-                    <td table-data-context="Ratings" class='TeamRosterPlayerRowCell w3-hide' data-field='ReboundingGrade'></td>
-                    <td table-data-context="Ratings" class='TeamRosterPlayerRowCell w3-hide' data-field='PlaymakingGrade'></td>
-                    <td table-data-context="Ratings" class='TeamRosterPlayerRowCell w3-hide' data-field='OutsideShootingGrade'></td>
-                    <td table-data-context="Ratings" class='TeamRosterPlayerRowCell w3-hide' data-field='AthleticismGrade'></td>
-                    <td table-data-context="Ratings" class='TeamRosterPlayerRowCell w3-hide' data-field='IQGrade'></td>
-                  </tr>
-                </tbody>
-              </table>
+                  <td>
+                    <div data-field='PlayerFaceJson' id='teamRosterPlayerHighlightPlayerFace' class="" style='width:80px;'>
+
+                    </div>
+                  </td>
+                  <td>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td class='font12 padding-4-6'>Home</td>
+                          <td class='font14' colspan="2" data-field='HometownAndState'>Eugene, OR</td>
+                        </tr>
+                        <tr>
+                          <td class='font12 padding-4-6'>Height</td>
+                          <td class='font14' data-field='HeightFormatted'> 6-6
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class='font12 padding-4-6'>Weight</td>
+                          <td class='font14' data-field='WeightFormatted'> 237
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class='font12 padding-4-6'>Year</td>
+                          <td class='font14' data-field='ClassID__ClassAbbreviation'>Senior</td>
+                        </tr>
+                        <tr>
+                          <td class='font12 padding-4-6'>Overall</td>
+                          <td class='font14' data-field='playerseasonskill__OverallRating'>92</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    </td>
+                    </tr>
+
+                  </table>
+
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -530,7 +556,7 @@
         </div>
         <div class='w3-display-container'>
           <div class='w3-row-padding' id='teamHistoryPlayerLeaderRowClone'>
-            <div id='teamHistoryPlayerLeadersClone' class='w3-col s3 w3-hide'>
+            <div id='teamHistoryPlayerLeadersClone' class='w3-col s4 w3-hide'>
               <table id='' class='display table sortable'>
                 <thead>
                   <th class='teamColorBorder'>Rank</th>

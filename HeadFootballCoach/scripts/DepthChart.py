@@ -16,16 +16,16 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None):
 
     PositionFillIn = {
         'QB': [],
-        'RB': [],
+        'RB': ['FB', 'WR'],
         'FB': ['RB'],
-        'WR': [],
+        'WR': ['TE'],
         'TE': ['WR'],
         'OT': ['OG', 'OC'],
         'OG': ['OT', 'OC'],
         'OC': ['OT', 'OG'],
-        'DE': ['DT'],
+        'DE': ['DT', 'OLB'],
         'DT': ['DE'],
-        'OLB': ['MLB'],
+        'OLB': ['MLB', 'DE'],
         'MLB': ['OLB'],
         'CB': ['S'],
         'S': ['CB'],
@@ -78,6 +78,33 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None):
             DepthPosition = len(PositionDepthChart[DepthPos]['Starters']) + len(PositionDepthChart[DepthPos]['Bench'])
             DC = PlayerTeamSeasonDepthChart(WorldID = CurrentWorld, PlayerTeamSeasonID=PTS, PositionID=PositionID, IsStarter = False, DepthPosition=DepthPosition)
             DCToSave.append(DC)
+
+    for PTS in Players:
+        PlayerPos = PTS.PlayerID.PositionID.PositionAbbreviation
+
+        for DepthPos in [PlayerPos] + PositionFillIn[PlayerPos]:
+            if PositionDepthChart[DepthPos]['StarterSpotsLeft'] > 0 and PTS not in PositionDepthChart[DepthPos]['Starters']:
+                PositionDepthChart[DepthPos]['StarterSpotsLeft'] -= 1
+                PositionDepthChart[DepthPos]['Starters'].append(PTS)
+
+                PositionID = Position.objects.filter(PositionAbbreviation=DepthPos).first()
+                DepthPosition = len(PositionDepthChart[DepthPos]['Starters'])
+
+                DC = PlayerTeamSeasonDepthChart(WorldID = CurrentWorld, PlayerTeamSeasonID=PTS, PositionID=PositionID, IsStarter = True, DepthPosition=DepthPosition)
+                DCToSave.append(DC)
+                PlayerHasPosition = True
+
+            if PTS not in PositionDepthChart[DepthPos]['Bench']:
+                PositionDepthChart[DepthPos]['BenchSpotsLeft'] -= 1
+                PositionDepthChart[DepthPos]['Bench'].append(PTS)
+
+                PositionID = Position.objects.filter(PositionAbbreviation=DepthPos).first()
+                DepthPosition = len(PositionDepthChart[DepthPos]['Bench'])
+
+                DC = PlayerTeamSeasonDepthChart(WorldID = CurrentWorld, PlayerTeamSeasonID=PTS, PositionID=PositionID, IsStarter = True, DepthPosition=DepthPosition)
+                DCToSave.append(DC)
+                PlayerHasPosition = True
+
 
     PlayerTeamSeasonDepthChart.objects.bulk_create(DCToSave, ignore_conflicts=True)
 

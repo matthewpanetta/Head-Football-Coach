@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
-<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" SecondaryJerseyColor="{{page.SecondaryJerseyColor}}" TeamID="{{team.TeamID}}" PlayerID="{{player.PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" SecondaryJerseyColor="{{page.SecondaryJerseyColor}}" TeamID="{{team.TeamID}}" PlayerID="{{PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
 
 
 <body>
@@ -76,7 +76,7 @@
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-recruiting-tab">Recruiting</button>
         {% else %}
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-stats-tab">Stats</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-analytics-tab">Analytics</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-game-log-tab">Game Log</button>
         {% endif %}
         {% if Awards %}
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-awards-tab">Awards</button>
@@ -175,61 +175,35 @@
       {% else %}
       <div class="tab-content" style='display:none;' id="nav-stats" >
         <div class='w3-container'>
-          <div class='w3-row-padding'>
-            <div class='w3-col s8'>
-              <span class='table_title'>Season Stats</span>
-              <table class="table table-striped sortable">
-                <thead>
-                  <tr>
-                    <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Season</th>
-                    <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Class</th>
-                    {%for Stat in PlayerStatCategories%}
-                    <th class='teamColorBorder'>{{Stat.DisplayName}}</th>
-                    {%endfor%}
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for SeasonStat in SeasonStats %}
-                  <tr>
-                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">{{SeasonStat.TeamSeasonID__LeagueSeasonID__SeasonStartYear}}</a></td>
-                    <td>{{SeasonStat.ClassID__ClassName}}</td>
-                    {%for Stat in SeasonStat.Stats%}
-                    <td class='{% if Stat.Value == 0%} playerStatZero {%endif%}'>{{Stat.Value}}</td>
-                    {%endfor%}
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
+            <div class='w3-row-padding'>
+              <div class='w3-col s10 gamePlayerBoxStats'>
+                <table id="PlayerSeasonStatTableClone" class='w3-hide width100 w3-padding' style=''>
+
+                  <tfoot>
+                    <tr>
+                    </tr>
+                  </tfoot>
+                 </table>
+                 <table id="PlayerCareerHighTableClone" class='w3-hide width100 w3-padding' style=''>
+                   <thead>
+                     <th>Stat</th>
+                     <th>Value</th>
+                     <th>Week</th>
+                   </thead>
+                  </table>
+              </div>
+
             </div>
+
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-game-log" >
+        <div class='w3-container'>
+          <div class='w3-row-padding'>
+
           </div>
           <div class='w3-row-padding'>
-            <div class='w3-col s8'>
-              <span class='table_title'>Game Stats</span>
-              <table class="table table-striped sortable">
-                <thead>
-                  <tr>
-                    <th class='teamColorBorder' scope="col">OPP</th>
-                    <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
-                    {%for Stat in PlayerStatCategories%}
-                    {% if Stat.SeasonAggregateValue == False %}
-                    <th class='teamColorBorder'>{{Stat.DisplayName}}</th>
-                    {% endif %}
-                    {%endfor%}
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for game in GameStats %}
-                  <tr>
-                    <td><a href='/World/{{page.WorldID}}/Team/{{game.OpposingTeamID}}'><img class='playerSeasonStatOpponentLogo' src='{{game.OpposingTeamLogoURL}}' />{{game.OpposingTeamName}}</a></td>
-                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">{{game.TeamGameID__GameID__WeekID__WeekName}}</a></td>
-                    {%for Stat in game.Stats%}
-                    <td class='{% if Stat.Value == 0%} playerStatZero {%endif%}'>{{Stat.Value}}</td>
-                    {%endfor%}
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+
           </div>
           <div class='w3-row-padding'>
             <div class='w3-col s6'>

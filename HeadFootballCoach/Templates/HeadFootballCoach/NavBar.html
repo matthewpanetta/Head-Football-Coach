@@ -40,6 +40,8 @@
   </div>
   {% if CurrentWeek.WeekName == 'Coach Carousel'%}
   <a href="/World/{{page.WorldID}}/CoachCarousel" class="w3-bar-item w3-button">Coach Carousel</a>
+  {% elif CurrentWeek.WeekName == 'Draft Departures'%}
+  <a href="/World/{{page.WorldID}}/PlayerDepartures" class="w3-bar-item w3-button">Players Leaving</a>
   {%endif%}
   <a href="/" class="w3-bar-item w3-button w3-right navHomeLink">Home Page</a>
 </div>
