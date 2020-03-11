@@ -154,6 +154,7 @@ const drawFeature = (svg, face, info) => {
 };
 
 const display = (container, face, overrides) => {
+  console.log('container, face, overrides', container, face, overrides);
   override(face, overrides);
 
   if (typeof container === "string") {

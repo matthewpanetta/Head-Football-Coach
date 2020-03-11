@@ -27,15 +27,25 @@
             <div class="w3-col s8">
               <div class="w3-card">
                 <div id="">
-                  <table class='width100'>
+                  <table id='recruitingMainTable' class='width100'>
                     <thead>
+                      <th>Rank</th>
                       <th></th>
+                      <th>Name</th>
+                      <th>Pos</th>
+                      <th>Ht.</th>
+                      <th>Wt.</th>
+                      <th>Int</th>
+                      <th>Ath</th>
+                      <th>Skill</th>
+                      <th>OVR</th>
+                      <th>Signed</th>
                     </thead>
                     <tbody>
 
                     {% for player in Players %}
 
-                    <tr class="" PlayerHeight='{{player.Height}}'>
+                    <tr class="">
                       <td class="recruiting-player-rank">
                         {{player.Recruiting_NationalRank}}
                       </td>
@@ -51,11 +61,43 @@
                         </div>
                         <div class="recruiting-player-city font10">{{player.CityID.CityName}}, {{player.CityID.StateID.StateAbbreviation}} </div>
                       </td>
-                      <td class='font16'>{{player.PositionID.PositionAbbreviation}}</td>
+                      <td class=>
+                        <div class="section font16">
+                          <span>{{player.PositionID.PositionAbbreviation}}</span>
+                        </div>
+                        <div class="font10">
+                          <span>Balanced</span>
+                        </div>
+                      </td>
                       <td class='font16'>
                           <span>{{player.HeightFormatted}}</span>
-                          <span> - </span>
+                      </td>
+                      <td class='font16'>
                           <span>{{player.WeightFormatted}}</span>
+                      </td>
+                      <td class=>
+                        <div class="section font16">
+                          <span>B+</span>
+                        </div>
+                        <div class="font10">
+                          <span>Intelligence</span>
+                        </div>
+                      </td>
+                      <td class=>
+                        <div class="section font16">
+                          <span>A-</span>
+                        </div>
+                        <div class="font10">
+                          <span>Athleticism</span>
+                        </div>
+                      </td>
+                      <td class=>
+                        <div class="section font16">
+                          <span>B</span>
+                        </div>
+                        <div class="font10">
+                          <span>Passing</span>
+                        </div>
                       </td>
                       <td class=>
                         <div class="section font16">
@@ -82,10 +124,20 @@
             <div class="w3-col s3">
               <div class="w3-card">
                 <div class="">
-                  <label for="PlayerHeightSliderValue">Player Height:</label>
-                  <input type="text" id="PlayerHeightSliderValue" readonly style="border:0; color:#f6931f; font-weight:bold; width:inherit;">
+                  <div class="">
+                    <label for="PlayerHeightSliderValue">Player Height:</label>
+                    <input type="text" id="PlayerHeightSliderValue" readonly style="border:0; color:charcoal; font-weight:bold; width:inherit;">
+                  </div>
+                  <div class="w3-margin" id='PlayerHeightSlider'>
+                  </div>
                 </div>
-                <div class="w3-margin" id='PlayerHeightSlider'>
+                <div class="">
+                  <div class="">
+                    <label for="PlayerOverallSliderValue">Player Overall:</label>
+                    <input type="text" id="PlayerOverallSliderValue" readonly style="border:0; color:charcoal; font-weight:bold; width:inherit;">
+                  </div>
+                  <div class="w3-margin" id='PlayerOverallSlider'>
+                  </div>
                 </div>
               </div>
             </div>
@@ -178,9 +230,9 @@
                   <tr>
                     <td data-value='{{Team.RecruitingRank}}'>{{Team.RecruitingRank}}</td>
                     <td>
-                      <a href='/World/{{page.WorldID}}/Team/{{Team.TeamID.TeamID}}'>
-                        <img class='recruitingCommitTeamLogo' src='{{Team.TeamID.TeamLogoURL}}' alt=''>
-                        {{Team.TeamID.TeamName}}
+                      <a href='/World/{{page.WorldID}}/Team/{{Team.TeamID}}'>
+                        <img class='recruitingCommitTeamLogo' src='{{Team.TeamID__TeamLogoURL}}' alt=''>
+                        {{Team.TeamID__TeamName}}
                       </a>
                     </td>
                     <td style='{{Team.RecruitsSignedStyle5}}'>{{Team.RecruitsSigned5}}</td>
@@ -284,24 +336,6 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
 
 
-<script>
-  $(document).ready(function() {
-    var RecruitTable = $('#recruitingFullRecruitTable').DataTable({
-      "order": [
-        [5, "desc"],
-        [6, "desc"]
-      ],
-      "scrollX": true,
-      autoWidth: true,
-      "pageLength": 25
-
-    });
-
-    RecruitTable.columns.adjust().draw();
-  });
-</script>
-
-
 
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -312,46 +346,3 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{% static 'facesjs-master/src/generate.js' %}"></script>
 <script src="{% static 'Pages/Recruiting.js' %}" type="module"></script>
-  <script>
-
-  function IntToHeight(Val){
-    var Feet = parseInt(Val / 12);
-    var Inches = Val % 12;
-    return Feet + '\' ' + Inches + '"';
-  }
-
-  function FilterPlayers(FilterType, Parameters, IsInt, IsRange){
-    console.log('Filtering for ', FilterType , Parameters);
-
-    $.each($('.mock-row'), function(Index,Row){
-      //console.log();
-      var RowVal = $(Row).attr(FilterType);
-      var IsHidden = $(Row).hasClass('w3-hide');
-      var ShouldBeHidden = !(IsInt && IsRange && RowVal >= Parameters[0] && RowVal <= Parameters[1]);
-      if (ShouldBeHidden && !IsHidden) {
-        $(Row).addClass('w3-hide');
-      }
-      else if (!ShouldBeHidden && IsHidden){
-        $(Row).removeClass('w3-hide');
-      }
-    });
-  }
-
-
-  $( function() {
-    console.log('Adding sliders');
-
-    $( "#PlayerHeightSlider" ).slider({
-      range: true,
-      min: 66,
-      max: 89,
-      values: [ 66, 89 ],
-      slide: function( event, ui ) {
-        $( "#PlayerHeightSliderValue" ).val( IntToHeight(ui.values[ 0 ]) + " - " + IntToHeight(ui.values[ 1 ]) );
-        FilterPlayers('playerheight', [ui.values[ 0 ], ui.values[ 1 ]], true, true);
-      }
-    });
-    $( "#PlayerHeightSliderValue" ).val( IntToHeight($( "#PlayerHeightSlider" ).slider( "values", 0 )) +
-      " - " + IntToHeight($( "#PlayerHeightSlider" ).slider( "values", 1 )) );
-  } );
-  </script>

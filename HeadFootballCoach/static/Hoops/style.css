@@ -10,6 +10,11 @@
   width: 50px;
 }
 
+.recruitingLeadingTeamLogo {
+  width: 100%;
+  max-width: 50px;
+}
+
 .teamSchoolName, .teamTeamName, .teamRecord {
   font-size: 28px;
 }
@@ -70,10 +75,13 @@
   color: white;
 }
 
-.worldUpcomingGameCell {
-  min-width: 200px;
-  max-width: 200px;
+.worldUpcomingGameCell, .worldUpcomingGameCell * {
+  width: 60%;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  white-space: nowrap;
 }
 
 .teamHeaderRank {
@@ -1151,6 +1159,9 @@ td.WorldLeagueLeaderRowCell.NameCell {
   border: 1px solid #888;
 }
 
+.gamePlayerBoxStats {
+    margin-top:16px;
+}
 .margin-right-4 {
   margin-right: 4px;
 }
@@ -1301,4 +1312,14 @@ tfoot td {
   /* Required for text-overflow to do anything */
   white-space: nowrap;
   overflow: hidden;
+}
+
+.equal-sized-item-container {
+  display: flex;
+}
+.equal-sized-item {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0;
+  margin: 0px 2px;
 }

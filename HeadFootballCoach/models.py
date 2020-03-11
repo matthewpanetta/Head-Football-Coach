@@ -745,7 +745,9 @@ class Player(models.Model):
 
     IsRecruit                 = models.BooleanField(default=False, db_index=True)
     RecruitingStars           = models.PositiveSmallIntegerField(default=0)
+    RecruitingPointsNeeded    = models.PositiveSmallIntegerField(default=2500)
     RecruitSigned             = models.BooleanField(default=False)
+    RecruitingStage           = models.CharField(max_length = 40, default='Not Recruiting')
 
     Recruiting_NationalRank = models.PositiveSmallIntegerField(default=0, db_index=True)
     Recruiting_NationalPositionalRank = models.PositiveSmallIntegerField(default=0)
@@ -1243,17 +1245,13 @@ class TeamSeason(models.Model):
 
 
     def PopulateTeamOverallRating(self):
-        AllPlayers = PlayerTeamSeason.objects.filter(WorldID=self.WorldID).filter(TeamSeasonID = self).filter(PlayerID__playerseasonskill__LeagueSeasonID__IsCurrent = True).values('TeamSeasonID').annotate(
-            SumOverallRating = Sum('PlayerID__playerseasonskill__OverallRating'),
-            NumberOfPlayers = Count('PlayerID__playerseasonskill__OverallRating'),
-            OverallRating = F('SumOverallRating') * 1.0 / F('NumberOfPlayers')
+        AllPlayers = PlayerTeamSeason.objects.filter(WorldID=self.WorldID).filter(TeamSeasonID = self).filter(PlayerID__playerseasonskill__LeagueSeasonID__IsCurrent = True).order_by('-PlayerID__playerseasonskill__OverallRating')[0:22].values('TeamSeasonID').aggregate(
+            Avg(F('PlayerID__playerseasonskill__OverallRating'))
         )
-
-        print(AllPlayers.query)
 
         print(AllPlayers)
 
-        self.TeamOverallRating = AllPlayers[0]['OverallRating']#TODO
+        self.TeamOverallRating = int(AllPlayers['PlayerID__playerseasonskill__OverallRating__avg'] )#TODO
         self.save()
 
 
@@ -2510,10 +2508,22 @@ class RecruitTeamSeason(models.Model):
 
     OfferMade = models.BooleanField(default=False)
     InterestLevel = models.PositiveSmallIntegerField(default=0)
+    MatchRating = models.PositiveSmallIntegerField(default=0)
+    IsActivelyRecruiting = models.BooleanField(default=False)
 
     ScoutedOverall = models.PositiveSmallIntegerField(default=0)
 
-    MatchRating = models.PositiveSmallIntegerField(default=0)
+    DistanceMatchRating = models.IntegerField(default = 0)
+    TeamPrestigeRating = models.IntegerField(default = 0)
+
+    Preference1Name = models.CharField(max_length = 32, default='')
+    Preference1MatchRating = models.IntegerField(default = 0)
+
+    Preference2Name = models.CharField(max_length = 32, default='')
+    Preference2MatchRating = models.IntegerField(default = 0)
+
+    Preference3Name = models.CharField(max_length = 32, default='')
+    Preference3MatchRating = models.IntegerField(default = 0)
 
     def __str__(self):
         return str(self.PlayerID) + ' ' + str(self.TeamSeasonID)
@@ -2551,6 +2561,9 @@ class Audit(models.Model):
 
     AuditDescription = models.CharField(max_length=255, blank=True, null=True, default=None)
     AuditVersion     = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
+
+    NumberTeam = models.PositiveSmallIntegerField( default=1)
+    ScalesWithTeams = models.BooleanField(default = False)
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'

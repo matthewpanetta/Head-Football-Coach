@@ -1309,7 +1309,7 @@ def GameSim(game):
 
     DrivePlay.objects.bulk_create(DrivePlaysToSave, ignore_conflicts=False, batch_size=10000)
     PlayerGameStat.objects.bulk_create(PlayerGameStatToSave, ignore_conflicts=True, batch_size=Batch_Size)
-    GameEvent.objects.bulk_create(GameEventsToSave, ignore_conflicts=True, batch_size=Batch_Size)
+    #GameEvent.objects.bulk_create(GameEventsToSave, ignore_conflicts=True, batch_size=Batch_Size)
     HomeTeamGame.TeamRecord = str(GameDict[HomeTeam]['TeamSeason'].Wins) + '-' + str(GameDict[HomeTeam]['TeamSeason'].Losses)
     AwayTeamGame.TeamRecord = str(GameDict[AwayTeam]['TeamSeason'].Wins) + '-' + str(GameDict[AwayTeam]['TeamSeason'].Losses)
 

@@ -507,10 +507,11 @@ const display = (container, face, overrides) => {
   override(face, overrides);
 
   if (typeof container === "string") {
+    //console.log('container1', container);
     container = $('#' + container).first();
   }
+  //console.log('container2', container);
   container.innerHTML = "";
-  //console.log('container', container);
 
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("version", "1.2");

@@ -4,7 +4,7 @@ import random
 import numpy
 from ..models import NameList, Region, Nation, Position, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, Calendar, GameEvent, PlayerSeasonSkill ,LeagueSeason
 from django.db.models import  Count,  Sum, Max
-
+from ..utilities import DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance
 
 def RandomName():
     DoubleLastNameOccurance = 20
@@ -47,7 +47,7 @@ def RandomPositionAndMeasurements():
     PositionCount = Positions.aggregate(Max('RandomStop'))
 
     PositionR = random.randint(1, PositionCount['RandomStop__max'])
-    PositionID = Positions.filter(RandomStart__lte=PositionR).filter( RandomStop__gte=PositionR).first()
+    PositionID = Positions.filter(RandomStart__lte=PositionR).filter( RandomStop__gte=PositionR).values('HeightAverage', 'HeightStd', 'WeightAverage', 'WeightStd', 'PositionID').first()
 
 
 
@@ -58,8 +58,8 @@ def RandomPositionAndMeasurements():
 
 
 def RandomPositionMeasurements(PositionID):
-    Height = numpy.random.normal(PositionID.HeightAverage, PositionID.HeightStd )
-    Weight = numpy.random.normal(PositionID.WeightAverage, PositionID.WeightStd )
+    Height = NormalTrunc(PositionID['HeightAverage'], PositionID['HeightStd'], 65, 82 )
+    Weight = NormalTrunc(PositionID['WeightAverage'], PositionID['WeightStd'], 150, 400 )
 
     return {'Height': Height, 'Weight': Weight}
 

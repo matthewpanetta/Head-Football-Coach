@@ -298,6 +298,7 @@ function GetTeamStats(WorldID){
   var table = $('#WorldTeamStats').DataTable({
       "dom": '',
       //"serverSide": true,
+      "scrollX": true,
       "filter": true,
       "ordering": true,
       "lengthChange" : false,

@@ -36,7 +36,7 @@ class GameStructureAdmin(admin.ModelAdmin):
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Player._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'playerseasonskill', 'recruitteamseason')]#('PlayerFirstName', 'PlayerLastName', 'Position', 'Class', 'IsRecruit','PlayerID', 'OverallRating', 'CurrentTeam', 'PassingRating', 'DribblingRating', 'CityID')
-    list_filter = ['PositionID', 'ClassID']
+    list_filter = ['PositionID', 'ClassID__ClassName']
 
 class CoachAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Coach._meta.get_fields() if field.name not in ['coachteamseason']]
@@ -54,10 +54,12 @@ class CoachTeamSeasonAdmin(admin.ModelAdmin):
 
 class PlayerSkillAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerSeasonSkill._meta.get_fields()]
-    list_filter = ['PlayerID__PositionID', 'PlayerID__ClassID']
+    list_filter = ['PlayerID__PositionID', 'PlayerID__ClassID__ClassName']
 
 class RecruitTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_filter = ['PlayerID__PositionID__PositionAbbreviation', 'PlayerID__RecruitingStars', 'Signed', 'TeamSeasonID__TeamID__TeamName',  'OfferMade', 'PlayerID__CityID__StateID__StateAbbreviation', 'Preference1Name', 'Preference2Name', 'Preference3Name']
+
 
 class TeamSeasonAdmin(admin.ModelAdmin):
     list_display = ['TeamSeasonID', 'WorldID','TeamID', 'LeagueSeasonID','TeamOverallRating', 'GamesPlayed','Wins','Losses', 'ConferenceWins',  'ConferenceLosses','ConferenceRank', 'ConferenceGB' , 'WinStreak', 'ScholarshipsToOffer']
@@ -68,6 +70,7 @@ class PlayerGameStatAdmin(admin.ModelAdmin):
 
 class AuditAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Audit._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_filter = ['AuditDescription']
 
 class GameAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Game._meta.get_fields() if field.name not in ('gamedrive', 'playchoicelog', 'teamgame','Playoff', 'playergamestat','gameevent','playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -78,7 +81,7 @@ class GameEventAdmin(admin.ModelAdmin):
 
 class PlayerTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeason._meta.get_fields() if field.name not in ('playerteamseasondepthchart','Player1PlayerTeamSeasonID','Player2PlayerTeamSeasonID','playergamestat', 'playerteamseasonaward','Playoff', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
-    list_filter = ['PlayerID__PositionID', 'PlayerID__ClassID']
+    list_filter = ['PlayerID__PositionID', 'PlayerID__ClassID__ClassName']
 
 class PlayerTeamSeasonAwardAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeasonAward._meta.get_fields() if field.name not in ('Player1PlayerTeamSeasonID','Player2PlayerTeamSeasonID','playergamestat', 'playerteamseasonaward','Playoff', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')

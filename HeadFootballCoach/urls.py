@@ -70,6 +70,7 @@ urlpatterns = [
     path('World/<int:WorldID>/AllTeamStats', views.GET_AllTeamStats, name='AllTeamStats'),
     path('World/<int:WorldID>/AwardRaces', views.GET_AwardRaces, name='AwardRaces'),
     path('World/<int:WorldID>/LeagueLeaders', views.GET_LeagueLeaders, name='LeagueLeaders'),
+    path('World/<int:WorldID>/RecruitingPlayers', views.GET_RecruitingPlayers, name='RecruitingPlayers'),
 
 
     path('GetPlayerPositions/', views.GET_PlayerPositions, name='GetPlayerPositions'),

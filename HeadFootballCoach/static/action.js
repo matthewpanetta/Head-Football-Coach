@@ -29,7 +29,7 @@ $(document).ready(function() {
   var PrimaryColor = $(DataPassthruHolder).attr('PrimaryColor');
   var SecondaryColor = $(DataPassthruHolder).attr('SecondaryColor');
 
-
+/*
   $.ajax({
     method: "POST",
     url: "/TestStreaming/",
@@ -45,7 +45,7 @@ $(document).ready(function() {
       console.log('streaming',res, res.status, res.responseText.split(','));
     }
   });
-
+*/
 
   $('#navSearchButton').on('click', function(){
     console.log('clicked on search submit!');

@@ -194,6 +194,8 @@ def CalculateRankings(LS, WorldID):
     Games = WorldID.game_set.filter(WasPlayed = True)
     TeamList = list(CurrentSeason.teamseason_set.all())
 
+    CurrentWeekNumber = CurrentWeek.WeekNumber
+
     GameList = []
     for G in Games:
         TeamGames = G.teamgame_set.all()
@@ -208,20 +210,59 @@ def CalculateRankings(LS, WorldID):
 
         GameList.append([GameInfo['AwayTeam'], GameInfo['AwayTeamScore'], GameInfo['HomeTeam'], GameInfo['HomeTeamScore']])
 
+    SRSRatingValue = 1
+    OverallRatingValue = 0
+
+    if CurrentWeekNumber <= 1:
+        SRSRatingValue = 0
+        OverallRatingValue = 1
+    elif CurrentWeekNumber >= 9:
+        SRSRatingValue = 1
+        OverallRatingValue = 0
+    else:
+        SRSRatingValue = CurrentWeekNumber / 9
+        OverallRatingValue = 1 - (CurrentWeekNumber / 9)
+
     RankValue  = 0
     RankedTeamSeasons = CalculateSRS(TeamList, GameList)
     TSDict = {}
+    OverallRatingBounds = {'MinRating': 0, 'MaxRating': 0}
+
+    for TSObj in RankedTeamSeasons:
+        TS = TSObj['TeamSeason']
+        rating = TS.TeamOverallRating
+        if OverallRatingBounds['MaxRating'] == 0 or OverallRatingBounds['MinRating'] == 0:
+            OverallRatingBounds['MaxRating'] = rating
+            OverallRatingBounds['MinRating'] = rating
+        else:
+            if rating > OverallRatingBounds['MaxRating'] or OverallRatingBounds['MaxRating'] == 0:
+                OverallRatingBounds['MaxRating'] = rating
+            if rating < OverallRatingBounds['MinRating'] or OverallRatingBounds['MinRating'] == 0:
+                OverallRatingBounds['MinRating'] = rating
+
+    RatingFloorModifier = 0 - OverallRatingBounds['MinRating']
+    RatingNormalizationModifier = 100 / (1 + OverallRatingBounds['MaxRating'] - OverallRatingBounds['MinRating'])
     for TSObj in RankedTeamSeasons:
         TS = TSObj['TeamSeason']
         RankValue += 1
-        TSDict[TS] = {'Rating': TSObj['Rating'], 'OverallRating': TS.TeamOverallRating, 'TeamPrestige': TS.TeamID.TeamPrestige}
+        TSDict[TS] = {'Rating': TSObj['Rating'] * SRSRatingValue, 'OverallRating': (TS.TeamOverallRating + RatingFloorModifier) * RatingNormalizationModifier, 'TeamPrestige': TS.TeamID.TeamPrestige}
         if TSDict[TS]['OverallRating'] is None:
             TSDict[TS]['OverallRating'] = 0
+
+        TSDict[TS]['OverallRating'] *= OverallRatingValue
+
+        TSDict[TS]['ConferenceChampModifier'] = 1.1 if TS.ConferenceChampion else 1.0
+        TSDict[TS]['NationalChampModifier'] = 2.0 if TS.NationalChampion else 1.0
+
+        TSDict[TS]['TotalRating'] = TSDict[TS]['OverallRating'] + TSObj['Rating']
+
+        TSDict[TS]['TotalRating'] *= TSDict[TS]['ConferenceChampModifier']
+        TSDict[TS]['TotalRating'] *= TSDict[TS]['NationalChampModifier']
 
         print(TSDict[TS])
 
     RankValue  = 0
-    for TS in sorted(TSDict.keys(), key=lambda TS: (TSDict[TS]['Rating'], TSDict[TS]['OverallRating'],  TSDict[TS]['TeamPrestige']), reverse=True):
+    for TS in sorted(TSDict.keys(), key=lambda TS: (TSDict[TS]['TotalRating'], TSDict[TS]['Rating'], TSDict[TS]['OverallRating'],  TSDict[TS]['TeamPrestige']), reverse=True):
         RankValue += 1
 
         TSDR = TeamSeasonWeekRank(TeamSeasonID = TS, WorldID = CurrentWorld, WeekID = CurrentWeek, NationalRank = RankValue, IsCurrent = False)

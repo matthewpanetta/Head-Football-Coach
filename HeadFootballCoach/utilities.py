@@ -206,3 +206,23 @@ def DistanceBetweenCities(CityA, CityB):
     distance = R * c
 
     return distance
+
+def DistanceBetweenCities_Dict(CityA, CityB):
+
+    # approximate radius of earth in km
+    R = 6373.0
+
+    lat1 = radians(CityA['Latitude'])
+    lon1 = radians(CityA['Longitude'])
+    lat2 = radians(CityB['Latitude'])
+    lon2 = radians(CityB['Longitude'])
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+
+    return distance

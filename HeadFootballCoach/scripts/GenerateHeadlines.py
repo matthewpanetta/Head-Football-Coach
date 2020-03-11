@@ -51,7 +51,9 @@ def GenerateHeadlines(LeagueSeasonID, WorldID):
 
         for HeadlineGame in ThisWeekHeadlineGames:
             if HeadlineGame['RivalryName'] is not None:
-                HeadlineGame['GameHeadline'] = HeadlineGame['HomeTeamRankDisplay'] + ' ' +HeadlineGame['HomeTeamName'] + ' takes on ' + HeadlineGame['AwayTeamRankDisplay'] + ' ' +HeadlineGame['AwayTeamName'] + ' in the ' + HeadlineGame['RivalryName']
+                HeadlineGame['GameHeadline'] = HeadlineGame['HomeTeamRankDisplay'] + ' ' +HeadlineGame['HomeTeamName'] + ' takes on ' + HeadlineGame['AwayTeamRankDisplay'] + ' ' +HeadlineGame['AwayTeamName']
+                if len(HeadlineGame['RivalryName']) > 0:
+                     HeadlineGame['GameHeadline'] += ' in the ' + HeadlineGame['RivalryName']
             else:
                 HeadlineGame['GameHeadline'] = HeadlineGame['HomeTeamRankDisplay'] + ' ' +HeadlineGame['HomeTeamName'] + ' takes on ' + HeadlineGame['AwayTeamRankDisplay'] + ' ' +HeadlineGame['AwayTeamName']
 
@@ -132,7 +134,7 @@ def GenerateHeadlines(LeagueSeasonID, WorldID):
 
         if HeadlineGame is not None:
 
-            HeadlineGame['GameHeadline'] = HeadlineGame['WinningTeamRankDisplay'] + ' ' +HeadlineGame['WinningTeamName'] + ' beats ' + HeadlineGame['LosingTeamRankDisplay'] + ' ' +HeadlineGame['LosingTeamName']
+            HeadlineGame['GameHeadline'] = HeadlineGame['WinningTeamRankDisplay'] + ' ' +HeadlineGame['WinningTeamName'] + ' upsets ' + HeadlineGame['LosingTeamRankDisplay'] + ' ' +HeadlineGame['LosingTeamName']
 
             H = Headline(WorldID = CurrentWorld, LeagueSeasonID = CurrentSeason, WeekID = CurrentWeek, HeadlineImportanceValue=5, HeadlineText=HeadlineGame['GameHeadline'], HeadlineHref=HeadlineGame['GameHref'])
             H.save()

@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.template import loader
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery
-from django.db.models.functions.window import Rank
+from django.db.models.functions.window import Rank, RowNumber
 from django.db.models.functions import Length, Concat, Coalesce
 from .models import Audit, League, TeamGame,Week,Phase,Position, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
 from datetime import timedelta, date
@@ -423,6 +423,7 @@ def Page_World(request, WorldID):
     CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
     LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
+    AuditTeamCount = CurrentWorld.team_set.all().count()
 
     if DoAudit:
         start = time.time()
@@ -566,7 +567,7 @@ def Page_World(request, WorldID):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 3, AuditDescription='Page_World - Return teams and games')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 3, ScalesWithTeams=True, NumberTeam=AuditTeamCount, AuditDescription='Page_World - Return teams and games')
 
     if DoAudit:
         start = time.time()
@@ -1112,6 +1113,11 @@ def Page_Player(request, WorldID, PlayerID):
                 RecentGameStats.pop()
 
         GameStats = PlayerStats
+        print()
+        print('GameStats', GameStats)
+        print()
+        print('RecentGameStats', RecentGameStats)
+        print()
 
 
 
@@ -1124,7 +1130,7 @@ def Page_Player(request, WorldID, PlayerID):
         context['careerHigh'] = CareerHighList
         context['SeasonStats'] = SeasonStats
         context['playerTeam'] = PlayerTeam
-        context['PlayerStatCategories'] = PlayerStatCategories
+        #context['PlayerStatCategories'] = PlayerStatCategories
         context['Skills'] = PlayerDict['Skills']
         context['SeasonStatGroupings'] = SeasonStatGroupings
 
@@ -1514,6 +1520,117 @@ def Page_Game(request, WorldID, GameID):
         TimeElapsed = end - start
         A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 5, AuditDescription = 'Page_Game')
     return render(request, 'HeadFootballCoach/Game.html', context)
+
+
+
+def GET_RecruitingPlayers(request, WorldID):
+
+    Columns = {}
+    Orders = {}
+    OrderList = []
+
+    Filters = {}
+
+    for u in request.GET:
+        if 'order' in u:
+            spl = u.replace(']', '').split('[')
+            OrderIndex = int(spl[1])
+            OrderAttr = spl[2]
+            OrderAttrValue = request.GET[u]
+
+            if OrderIndex not in Orders:
+                Orders[OrderIndex] = {}
+            Orders[OrderIndex][OrderAttr] = OrderAttrValue
+        elif 'columns' in u:
+            spl = u.replace(']', '').split('[')
+            ColumnIndex = int(spl[1])
+            ColumnAttr = spl[2]
+            ColumnAttrValue = request.GET[u]
+
+            if ColumnIndex not in Columns:
+                Columns[ColumnIndex] = {}
+            Columns[ColumnIndex][ColumnAttr] = ColumnAttrValue
+
+            if ColumnAttr == 'search' and spl[3] == 'value':
+                Columns[ColumnIndex]['SearchValue'] = request.GET[u]
+
+
+    for ColumnIndex in Columns:
+        if len(Columns[ColumnIndex]['SearchValue']) > 1:
+            ColName = Columns[ColumnIndex]['data']
+            Filters[ColName] = Columns[ColumnIndex]['SearchValue']
+
+    for OrderIndex in sorted(Orders):
+        if 'column' not in Orders[OrderIndex]:
+            continue
+        OrderColumnIndex = int(Orders[OrderIndex]['column'])
+        OrderColumnName = Columns[OrderColumnIndex]['data']
+        OrderDirection = Orders[OrderIndex]['dir']
+        OrderDirectionSign = '-' if OrderDirection == 'desc' else ''
+
+        OrderColumnName = OrderDirectionSign + OrderColumnName
+
+        OrderList.append(OrderColumnName)
+    OrderList.append('Recruiting_NationalRank')
+
+    AdjustedFilterList = {}
+    for Fil in Filters:
+        if '<' in Filters[Fil]:
+            vals = Filters[Fil].split('<')
+            AdjustedFilterList[Fil+'__gte'] = int(vals[0])
+            AdjustedFilterList[Fil+'__lte'] = int(vals[1])
+        else:
+            AdjustedFilterList[Fil] = Filters[Fil]
+
+    Start = int(request.GET['start'])
+    Length = int(request.GET['length'])
+    Draw = int(request.GET['draw'])
+
+
+    Players = Player.objects.filter(WorldID = WorldID).filter(**AdjustedFilterList).filter(IsRecruit = True).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).filter(recruitteamseason__TeamSeasonID__TeamID__IsUserTeam = True).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'recruitteamseason__ScoutedOverall', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerFaceJson', 'RecruitingStars', 'RecruitSigned', 'Recruiting_NationalRank', 'Recruiting_NationalPositionalRank', 'Recruiting_StateRank', 'CityID__CityName', 'CityID__StateID__StateAbbreviation', 'Height').annotate(
+        PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
+        PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
+        PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
+        HeightFeet = (F('Height') / 12),
+        HeightInches = (F('Height') % 12),
+        HeightFormatted = Concat('HeightFeet', Value('\''), 'HeightInches', Value('"'), output_field=CharField()),
+        WeightFormatted = Concat(F('Weight'), Value(' lbs'), output_field=CharField()),
+        Intelligence = Value('A', output_field=CharField()),
+        Athleticism = Value('A', output_field=CharField()),
+        Passing = Value('A', output_field=CharField()),
+
+    ).order_by(*OrderList)
+
+    recordsTotal = Players.count()
+    recordsFiltered = recordsTotal
+
+    Players = Players[Start:Start+Length]
+
+    for P in Players:
+        SignedTeam = RecruitTeamSeason.objects.filter(PlayerID_id = P['PlayerID']).values('TeamSeasonID__TeamID__TeamLogoURL', 'InterestLevel', 'Signed').annotate(
+            TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID'), output_field=CharField()),
+        ).order_by('-Signed', '-InterestLevel')[0:3]
+
+        print('Player output!!!-', P['PlayerID'], SignedTeam)
+
+        P['RecruitingTeams'] = []
+        for T in SignedTeam:
+            P['RecruitingTeams'].append(T)
+
+        if len(P['PlayerFaceJson']) == 0:
+            PlayerObj = Player.objects.get(WorldID=WorldID, PlayerID=P['PlayerID'])
+            PlayerObj.GeneratePlayerFaceJSon()
+            PlayerObj.save()
+            P['PlayerFaceJson'] = PlayerObj.PlayerFaceJson
+
+
+    context = {'data':list(Players)
+             , "draw": Draw
+             ,"recordsTotal": recordsTotal
+             ,"recordsFiltered": recordsFiltered
+        }
+    return JsonResponse(context, safe=False)
+
 
 def GET_PlayerCardInfo(request, WorldID, PlayerID):
     #Height & weight, class, overallrating
@@ -2440,10 +2557,11 @@ def GET_PlayerStats_Player(request, WorldID, PlayerID):
 
                     if Stat['ShowCareerHigh']:
                         High = GameStats.order_by('-' + Stat['FieldName']).first()
-                        CareerHighInfo = {'Field': Stat['title'], 'Value': High[Stat['FieldName']], 'Week':High['GameWeek'], 'GameHref': High['GameHref'], 'OpposingTeamName': High['playergamestat__TeamGameID__OpposingTeamSeasonID__TeamID__TeamName'], 'OpposingTeamLogo': High['playergamestat__TeamGameID__OpposingTeamSeasonID__TeamID__TeamLogoURL'] }
-                        if CareerHighInfo['Value'] > 0:
-                            print(StatGrouping['CareerHighs'])
-                            StatGrouping['CareerHighs'].append(CareerHighInfo)
+                        if   High[Stat['FieldName']] is not None:
+                            CareerHighInfo = {'Field': Stat['title'], 'Value': High[Stat['FieldName']], 'Week':High['GameWeek'], 'GameHref': High['GameHref'], 'OpposingTeamName': High['playergamestat__TeamGameID__OpposingTeamSeasonID__TeamID__TeamName'], 'OpposingTeamLogo': High['playergamestat__TeamGameID__OpposingTeamSeasonID__TeamID__TeamLogoURL'] }
+                            if CareerHighInfo['Value'] > 0:
+                                print(StatGrouping['CareerHighs'])
+                                StatGrouping['CareerHighs'].append(CareerHighInfo)
 
             CareerStatsVals = []
             for Stat in StatGrouping['Stats']:
@@ -2522,6 +2640,8 @@ def GET_PlayerStats(request, WorldID):
 
         OrderList.append(OrderColumnName)
     OrderList.append('PlayerID')
+
+    #print('Filters!!!', Filters)
 
 
     Start = int(request.GET['start'])
@@ -2614,6 +2734,7 @@ def Page_Team(request,WorldID, TeamID):
     AllTeams = Team.objects.filter(WorldID = WorldID)
     CurrentWorld = World.objects.get(WorldID = WorldID)
     CurrentWeek = GetCurrentWeek(CurrentWorld)
+    CurrentWeekNumber = CurrentWeek.WeekNumber
 
     ThisTeam = Team.objects.get(WorldID = WorldID, TeamID = TeamID)#.values('ConferenceName')
 
@@ -2635,10 +2756,10 @@ def Page_Team(request,WorldID, TeamID):
         UnplayedGamesToShow = UnplayedGamesCount
         PlayedGamesToShow = 12 - UnplayedGamesCount
 
-    if PlayedGames.count() > 0:
-        SelectedGame = PlayedGames[0].GameID
-    else:
+    if UnplayedGames.count() > 0:
         SelectedGame = UnplayedGames[0].GameID
+    else:
+        SelectedGame = PlayedGames[0].GameID
 
     teamgames = PlayedGames[:PlayedGamesToShow] | UnplayedGames[:UnplayedGamesToShow]
 
@@ -2727,6 +2848,220 @@ def Page_Team(request,WorldID, TeamID):
             GameTopPlayers = u.CalculateTopPlayers()
             for LineItem in GameTopPlayers:
                 ThisGame[LineItem] = GameTopPlayers[LineItem]
+
+            print()
+            print(ThisGame)
+        else:
+            ThisGame['GameDisplay'] = 'Preview'#u.GameDateID.Date
+            ThisGame['OverviewText'] = ThisGame['DateShortDisplay']
+            ThisGame['HomePoints'] = ''
+            ThisGame['AwayPoints'] = ''
+
+        Games.append(ThisGame)
+
+    SignedRecruits = RecruitTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__TeamID = ThisTeam).filter(Signed = True).order_by('PlayerID__Recruiting_NationalRank')
+
+    ThisTeamConference = ThisTeam.ConferenceID.ConferenceName
+
+    allTeams = GetAllTeams(WorldID, 'National', None)
+    conferenceTeams = ThisTeam.ConferenceID.ConferenceStandings(Small=True, HighlightedTeams=[ThisTeam.TeamName], WorldID=WorldID)
+
+    TopPlayers = ThisTeam.CurrentTeamSeason.GetTeamLeaders()
+
+    UserTeam = GetUserTeam(WorldID)
+
+    TeamHistory = []
+    for TS in TeamSeason.objects.filter(WorldID = WorldID).filter(TeamID = TeamID).values('NationalChampion','ConferenceChampion', 'TeamID__ConferenceID__ConferenceAbbreviation', 'LeagueSeasonID__SeasonEndYear'):
+
+        if TS['NationalChampion']:
+            TeamHistory.append({'BannerLine1': 'National', 'BannerLine2': 'Champions', 'Season': str(TS['LeagueSeasonID__SeasonEndYear'])})
+        if TS['ConferenceChampion']:
+            TeamHistory.append({'BannerLine1': TS['TeamID__ConferenceID__ConferenceAbbreviation'], 'BannerLine2': 'Champions', 'Season': str(TS['LeagueSeasonID__SeasonEndYear'])})
+
+
+    TeamWeeklyRanks = ThisTeam.CurrentTeamSeason.teamseasonweekrank_set.order_by('WeekID')
+    MaxWeeklyRank = TeamWeeklyRanks.aggregate(Max('NationalRank'))['NationalRank__max']
+    page = {'PageTitle':ThisTeam.Name, 'WorldID': WorldID, 'PrimaryColor': ThisTeam.TeamColor_Primary_HEX, 'SecondaryColor': ThisTeam.SecondaryColor_Display, 'SecondaryJerseyColor': ThisTeam.TeamColor_Secondary_HEX, 'TeamJerseyStyle': ThisTeam.TeamJerseyStyle, 'TeamJerseyInvert':ThisTeam.TeamJerseyInvert, 'TabIcon':ThisTeam.LogoURL }
+
+    context = {'conferenceTeams': conferenceTeams, 'page': page, 'userTeam': UserTeam, 'team': ThisTeam, 'games':Games, 'allGames': teamgames, 'CurrentWeek': CurrentWeek, 'allTeams': allTeams}
+    context['SignedRecruits'] = SignedRecruits
+    context['TeamWeeklyRanks'] = TeamWeeklyRanks
+    context['MaxWeeklyRank'] = MaxWeeklyRank
+    context['teamLeaders'] = TopPlayers
+    context['TeamHistory'] = TeamHistory
+    #context['TeamSchedule'] = TeamGame.objects.filter(TeamSeasonID__TeamID = ThisTeam).order_by('GameID__GameDateID')
+
+    if DoAudit:
+        end = time.time()
+        TimeElapsed = end - start
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 9, AuditDescription='Page_team' )
+    return render(request, 'HeadFootballCoach/Team.html', context)
+
+
+
+def Page_Team2(request,WorldID, TeamID):
+
+
+    DoAudit = True
+    if DoAudit:
+        start = time.time()
+#Get Schedule
+    AllTeams = Team.objects.filter(WorldID = WorldID)
+    CurrentWorld = World.objects.get(WorldID = WorldID)
+    CurrentWeek = GetCurrentWeek(CurrentWorld)
+    CurrentWeekNumber = CurrentWeek.WeekNumber
+
+    ThisTeam = Team.objects.get(WorldID = WorldID, TeamID = TeamID)#.values('ConferenceName')
+
+    CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent=1)
+
+    teamgames = TeamGame.objects.filter(WorldID = WorldID).filter(TeamSeasonID__TeamID_id = TeamID).values(
+        'GameID__WeekID__WeekName', 'GameID__WeekID__WeekNumber', 'GameID__WasPlayed', 'GameID__WeekID__PhaseID__PhaseName'
+    ).annotate(
+        HomePoints = Max(F('GameID__teamgame__Points'), filter=Q(GameID__teamgame__IsHomeTeam = True)),
+        AwayPoints = Max(F('GameID__teamgame__Points'), filter=Q(GameID__teamgame__IsHomeTeam = False)),
+        ThisTeamPoints = Max(F('GameID__teamgame__Points'), filter=Q(GameID__teamgame__TeamSeasonID__TeamID_id = TeamID)),
+        OpponentTeamPoints = Max(F('GameID__teamgame__Points'), filter=~Q(GameID__teamgame__TeamSeasonID__TeamID_id=  TeamID)),
+        HomeTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Coach/'), Max(F('GameID__teamgame__TeamSeasonID__TeamID_id'), filter=Q(GameID__teamgame__IsHomeTeam = True)), output_field=CharField()),
+        AwayTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Coach/'), Max(F('GameID__teamgame__TeamSeasonID__TeamID_id'), filter=Q(GameID__teamgame__IsHomeTeam = False)), output_field=CharField()),
+
+        GameResultLetter = Case(
+            When(GameID__WasPlayed = False, then=Value('')),
+            When(ThisTeamPoints__gte = F('OpponentTeamPoints'), then=Value('W')),
+            default=Value('L'),
+            output_field=CharField()
+        ),
+        HomeTeamWinningGameBold = Case(
+            When(GameID__WasPlayed=False, then=Value('')),
+            When(HomePoints__gt = F('AwayPoints'), then=Value('TeamWinningGameBold') ),
+            default=Value('TeamLosingGame'),
+            output_field=CharField()
+        ),
+        AwayTeamWinningGameBold = Case(
+            When(GameID__WasPlayed=False, then=Value('')),
+            When(HomePoints__lt = F('AwayPoints'), then=Value('TeamWinningGameBold') ),
+            default=Value('TeamLosingGame'),
+            output_field=CharField()
+        ),
+
+        HomeTeamRankValue = Case(
+            When(GameID__WasPlayed = True, then = Max(F('GameID__teamgame__TeamSeasonWeekRankID__NationalRank'), filter=Q(GameID__teamgame__IsHomeTeam = True))),
+            default = Max(F('GameID__teamgame__TeamSeasonID__teamseasonweekrank__NationalRank'), filter=Q(GameID__teamgame__IsHomeTeam = True)),
+            output_field=IntegerField()
+        ),
+        AwayTeamRankValue = Case(
+            When(GameID__WasPlayed = True, then = Max(F('GameID__teamgame__TeamSeasonWeekRankID__NationalRank'), filter=Q(GameID__teamgame__IsHomeTeam = False))),
+            default = Max(F('GameID__teamgame__TeamSeasonID__teamseasonweekrank__NationalRank'), filter=Q(GameID__teamgame__IsHomeTeam = False)),
+            output_field=IntegerField()
+        ),
+        HomeTeamRank = Case(
+            When(HomeTeamRankValue__lte = 25, then=Concat(Value('('), F('HomeTeamRankValue'), Value(')'), output_field=CharField())),
+            default=Value(''),
+            output_field=CharField()
+        ),
+        AwayTeamRank = Case(
+            When(AwayTeamRankValue__lte = 25, then=Concat(Value('('), F('AwayTeamRankValue'), Value(')'), output_field=CharField())),
+            default=Value(''),
+            output_field=CharField()
+        ),
+
+        HomeTeamRecord = Case(
+            When(GameID__WasPlayed = True, then=Max(F('GameID__teamgame__TeamRecord'), filter=Q(GameID__teamgame__IsHomeTeam = True))),
+            default=Concat(Max(F('GameID__teamgame__TeamSeasonID__Wins'), filter=Q(GameID__teamgame__IsHomeTeam = True)), Value('-'), Max(F('GameID__teamgame__TeamSeasonID__Losses'), filter=Q(GameID__teamgame__IsHomeTeam = True)), output_field=CharField()),
+            output_field=CharField()
+        ),
+        AwayTeamRecord = Case(
+            When(GameID__WasPlayed = True, then=Max(F('GameID__teamgame__TeamRecord'), filter=Q(GameID__teamgame__IsHomeTeam = False))),
+            default=Concat(Max(F('GameID__teamgame__TeamSeasonID__Wins'), filter=Q(GameID__teamgame__IsHomeTeam = False)), Value('-'), Max(F('GameID__teamgame__TeamSeasonID__Losses'), filter=Q(GameID__teamgame__IsHomeTeam = False)), output_field=CharField()),
+            output_field=CharField()
+        ),
+    ).order_by('GameID__WeekID')
+
+    for tg in teamgames:
+        print(tg)
+
+    PlayedGames = teamgames.filter(GameID__WasPlayed = 1).order_by('-GameID__WeekID')
+    UnplayedGames = teamgames.filter(GameID__WasPlayed = 0).order_by('GameID__WeekID')
+
+    PlayedGamesCount = PlayedGames.count()
+    UnplayedGamesCount = UnplayedGames.count()
+    PlayedGamesToShow = 6
+    UnplayedGamesToShow = 6
+    if PlayedGamesCount < 6:
+        PlayedGamesToShow = PlayedGamesCount
+        UnplayedGamesToShow = 12 - PlayedGamesCount
+    if UnplayedGamesCount < 6:
+        UnplayedGamesToShow = UnplayedGamesCount
+        PlayedGamesToShow = 12 - UnplayedGamesCount
+
+    if UnplayedGames.count() > 0:
+        SelectedGame = UnplayedGames[0].GameID
+    else:
+        SelectedGame = PlayedGames[0].GameID
+
+    teamgames = PlayedGames[:PlayedGamesToShow] | UnplayedGames[:UnplayedGamesToShow]
+
+    teamgames = sorted([u.GameID for u in teamgames], key=lambda t: t.WeekID.WeekNumber, reverse=False)
+
+
+    Games = []
+    for u in teamgames:
+        if u.WeekID.PhaseID.PhaseName in ['Regular Season']:
+            ThisGame['Week'] = 'Week ' + str(u.WeekID.WeekNumber)
+        elif u.WeekID.PhaseID.PhaseName in ['Conference Championships']:
+            ThisGame['Week'] = HomeTeam.ConferenceID.ConferenceAbbreviation + ' Championship'
+        elif u.WeekID.PhaseID.PhaseName in ['Bowls']:
+            ThisGame['Week'] = u.BowlID.BowlName
+
+        if u == SelectedGame:
+            ThisGame['SelectedGameBox'] = 'SelectedGameBox'
+
+
+
+        if u.HomeTeamID == ThisTeam:
+            #ThisGame['VsString'] = 'vs ' + AwayTeam.CurrentTeamSeason.NationalRankDisplay +' ' + AwayTeam.TeamName
+            ThisGame['VsString'] = 'vs ' + AwayTeam.CurrentTeamSeason.NationalRankDisplay +' ' +AwayTeam.Abbreviation
+            Opponent = AwayTeam
+            ThisGame['OpponentLogoURL'] = Opponent.LogoURL
+            ThisGame['OpponentPrimaryColor'] = Opponent.TeamColor_Primary_HEX
+            ThisGame['Opponent'] = AwayTeam
+        else:
+            #ThisGame['VsString'] = '@ ' +  HomeTeam.CurrentTeamSeason.NationalRankDisplay +' ' + HomeTeam.TeamName
+            ThisGame['VsString'] = '@ ' +   HomeTeam.CurrentTeamSeason.NationalRankDisplay +' ' +HomeTeam.Abbreviation
+            Opponent = HomeTeam
+            ThisGame['OpponentLogoURL'] = Opponent.LogoURL
+            ThisGame['OpponentPrimaryColor'] = Opponent.TeamColor_Primary_HEX
+            ThisGame['Opponent'] = HomeTeam
+
+        if u.WasPlayed == 1:
+            ThisGame['OverviewText'] = 'FINAL'
+            if u.HomeTeamID == ThisTeam:
+                ThisGame['GameDisplay'] =  str(HomeTeamGame.Points) +'-'+str(AwayTeamGame.Points)
+                if HomeTeamGame.Points > AwayTeamGame.Points:
+                    ThisGame['GameResultLetter'] = 'W'
+                    ThisGame['HomeTeamWinningGameBold'] = 'TeamWinningGameBold'
+                    ThisGame['AwayTeamWinningGameBold'] = 'TeamLosingGame'
+                else:
+                    ThisGame['GameResultLetter'] = 'L'
+                    ThisGame['AwayTeamWinningGameBold'] = 'TeamWinningGameBold'
+                    ThisGame['HomeTeamWinningGameBold'] = 'TeamLosingGame'
+            else:
+                ThisGame['GameDisplay'] =  str(AwayTeamGame.Points) +'-'+str(HomeTeamGame.Points )
+                if HomeTeamGame.Points  < AwayTeamGame.Points:
+                    ThisGame['GameResultLetter'] = 'W'
+                    ThisGame['AwayTeamWinningGameBold'] = 'TeamWinningGameBold'
+                    ThisGame['HomeTeamWinningGameBold'] = 'TeamLosingGame'
+                else:
+                    ThisGame['GameResultLetter'] = 'L'
+                    ThisGame['AwayTeamWinningGameBold'] = 'TeamLosingGame'
+                    ThisGame['HomeTeamWinningGameBold'] = 'TeamWinningGameBold'
+
+            GameTopPlayers = u.CalculateTopPlayers()
+            for LineItem in GameTopPlayers:
+                ThisGame[LineItem] = GameTopPlayers[LineItem]
+
+            print()
+            print(ThisGame)
         else:
             ThisGame['GameDisplay'] = 'Preview'#u.GameDateID.Date
             ThisGame['OverviewText'] = ThisGame['DateShortDisplay']
@@ -3114,34 +3449,62 @@ def Page_Recruiting(request, WorldID):
     context = {'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek}
     context['Players'] = []
 
-    for P in Player.objects.filter(WorldID = WorldID).filter(IsRecruit = True).annotate(json_len=Length('PlayerFaceJson')).filter(json_len__lte = 0).order_by('Recruiting_NationalRank')[:100]:
-        P.GeneratePlayerFaceJSon()
-
-    context['Players'] = Player.objects.filter(WorldID = WorldID).filter(IsRecruit = True).order_by('Recruiting_NationalRank')[:100]
     #print(context)
 
-    AllTeamSeasons = CurrentSeason.teamseason_set.all().order_by('RecruitingClassRank')
+    AllTeamSeasons = CurrentSeason.teamseason_set.all().values('TeamID', 'TeamID__TeamName', 'TeamID__TeamLogoURL', 'RecruitingClassRank').order_by('RecruitingClassRank').annotate(
+        RecruitsSigned5 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=5))),
+        RecruitsSigned4 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=4))),
+        RecruitsSigned3 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=3))),
+        RecruitsSigned2 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=2))),
+        RecruitsSigned1 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=1))),
+        RecruitsSigned = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True) )),
 
+        RecruitsSigned5Style = Case(
+            When(RecruitsSigned5__gte = 3, then=Value('font-weight:800;')),
+            When(RecruitsSigned5__gte = 1, then=Value('opacity: .75;')),
+            default=Value('opacity: .2;'),
+            output_field=CharField()
+        ),
+        RecruitsSigned4Style = Case(
+            When(RecruitsSigned4__gte = 3, then=Value('font-weight:800;')),
+            When(RecruitsSigned4__gte = 1, then=Value('opacity: .75;')),
+            default=Value('opacity: .2;'),
+            output_field=CharField()
+        ),
+        RecruitsSigned3Style = Case(
+            When(RecruitsSigned3__gte = 3, then=Value('font-weight:800;')),
+            When(RecruitsSigned3__gte = 1, then=Value('opacity: .75;')),
+            default=Value('opacity: .2;'),
+            output_field=CharField()
+        ),
+        RecruitsSigned2Style = Case(
+            When(RecruitsSigned2__gte = 3, then=Value('font-weight:800;')),
+            When(RecruitsSigned2__gte = 1, then=Value('opacity: .75;')),
+            default=Value('opacity: .2;'),
+            output_field=CharField()
+        ),
+        RecruitsSigned1Style = Case(
+            When(RecruitsSigned1__gte = 3, then=Value('font-weight:800;')),
+            When(RecruitsSigned1__gte = 1, then=Value('opacity: .75;')),
+            default=Value('opacity: .2;'),
+            output_field=CharField()
+        ),
+        RecruitingValue = (5 * F('RecruitsSigned5')) + (4 * F('RecruitsSigned4')) + (3 * F('RecruitsSigned3')) + (2 * F('RecruitsSigned2')) + (1 * F('RecruitsSigned1')) ,
+        RecruitingRank = Window(
+            expression=RowNumber(),
+            order_by=F("RecruitingValue").desc(),
+        )
+    ).order_by('RecruitingRank')
+    #.values('TeamID', 'RecruitingClassRank', )
+    print('AllTeamSeasons', AllTeamSeasons.query)
     RecruitingRankings = []
 
-    TeamCounter = 1
-    for TS in AllTeamSeasons:
-        RecruitingTeamObj = {'TeamID': TS.TeamID, 'RecruitingRank': TeamCounter}
+    RecruitingRankings = AllTeamSeasons
+    print('RecruitingRankings')
+    for u in RecruitingRankings:
+        print(u)
 
-        RecruitsSigned = TS.recruitteamseason_set.filter(Signed=True)
-        RecruitingTeamObj['RecruitsSigned'] = RecruitsSigned.count()
-        for Stars in [5,4,3,2,1]:
-            RecruitingTeamObj['RecruitsSigned'+str(Stars)] = RecruitsSigned.filter(PlayerID__RecruitingStars = Stars).count()
-            if RecruitingTeamObj['RecruitsSigned'+str(Stars)] == 0:
-                RecruitingTeamObj['RecruitsSignedStyle'+str(Stars)] = 'opacity: .2;'
-            if RecruitingTeamObj['RecruitsSigned'+str(Stars)] == 1:
-                RecruitingTeamObj['RecruitsSignedStyle'+str(Stars)] = 'opacity: .75;'
-            if RecruitingTeamObj['RecruitsSigned'+str(Stars)] > 2:
-                RecruitingTeamObj['RecruitsSignedStyle'+str(Stars)] = 'font-weight:800;'
 
-        TeamCounter +=1
-
-        RecruitingRankings.append(RecruitingTeamObj)
 
     context['RecruitingRankings'] = RecruitingRankings
 

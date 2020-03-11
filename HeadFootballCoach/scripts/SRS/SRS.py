@@ -23,7 +23,26 @@ def CalculateSRS(TeamList, GameList):
     teamNames = G.getTeamNames()
     count = 1
 
+    RatingBounds = {'MinRating': 0, 'MaxRating': 0}
     ReturnList = []
+    for team in sorted(teams.keys(),key=lambda team: teamNames[teams[team]].head.getRating(),reverse=True):
+        thisTeam = teams[team]
+        rating = teamNames[thisTeam].head.getRating()
+        if rating is None:
+            rating = 0
+
+        if RatingBounds['MaxRating'] == 0 or RatingBounds['MinRating'] == 0:
+            RatingBounds['MaxRating'] = rating
+            RatingBounds['MinRating'] = rating
+
+        else:
+            if rating > RatingBounds['MaxRating'] or RatingBounds['MaxRating'] is None:
+                RatingBounds['MaxRating'] = rating
+            if rating < RatingBounds['MinRating'] or RatingBounds['MinRating'] is None:
+                RatingBounds['MinRating'] = rating
+
+    RatingFloorModifier = 0 - RatingBounds['MinRating']
+    RatingNormalizationModifier = 100 / (1 + RatingBounds['MaxRating'] - RatingBounds['MinRating'])
     for team in sorted(teams.keys(),key=lambda team: teamNames[teams[team]].head.getRating(),reverse=True):
         thisTeam = teams[team]
         rating = teamNames[thisTeam].head.getRating()
@@ -31,6 +50,8 @@ def CalculateSRS(TeamList, GameList):
         L = teamNames[thisTeam].head.getLosses()
         T = teamNames[thisTeam].head.getTies()
         spacer = ' ' * (32 - len(str(team.TeamID.TeamName)))
+
+        rating = (rating + RatingFloorModifier) * RatingNormalizationModifier
         print((('{0}        {1}{2}{3}-{4}-{5}    {6}').format(count,str(team.TeamID.TeamName),spacer,W,L,T,round(rating,4))))
         ReturnList.append({'TeamSeason': team, 'Rating': rating})
         count += 1
