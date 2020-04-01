@@ -252,14 +252,13 @@
 }
 
 .w3-sidebar {
-  width: 15%;
+  /*width: 15%;*/
   background-color: #eee !important
     /*margin-top: 38px;*/
 }
 
 .PageContent {
-  margin-left: 15%;
-  margin-top: 38px;
+  margin-left: 200px;
 }
 
 .w3-dropdown-content {
@@ -271,8 +270,13 @@
   padding-bottom: 2px;
 }
 
+.SideNavGroup img {
+  width: 60px;
+}
+
 .SideNavGroup {
-  font-size: 20px;
+  font-size: 16px;
+  color: #BBB;
 }
 
 .navNCAALogoLink {

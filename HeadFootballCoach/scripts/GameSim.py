@@ -675,7 +675,7 @@ def GameSim(game):
                     RunningBackPlayerID = random.choice(OffensiveTeamPlayers['WR'])
 
                 RunGameModifier = (2 * RunningbackTalent + OffensiveLineTalent) * 1.0 / DefensiveLineTalent / 3.0
-                RunGameModifier = RunGameModifier ** 1.3
+                RunGameModifier = RunGameModifier ** 1.5
                 YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 5, -2, 12),0)
 
                 #Run is a fumble
@@ -762,6 +762,7 @@ def GameSim(game):
                 GameDict[OffensiveTeam]['TeamGame'].PAS_Attempts += 1
                 PassGameModifier = ((3.0 * QuarterbackTalent) + ReceiverTalent + OffensiveLineTalent) / (DefensiveLineTalent + SecondaryTalent) / 2.5
                 PassRushModifier = OffensiveLineTalent * 1.0 / DefensiveLineTalent
+                PassRushModifier = PassRushModifier ** 1.2
                 LinemanSackAllowedPlayerID = None
                 OffensiveLinemen = [(u, (100 - AllPlayers[u]['PlayerSkills']['OverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
 
@@ -777,7 +778,7 @@ def GameSim(game):
                         PassOutcome = 'Incompletion'
                 elif (random.uniform(0,1) < (.10 / (PassRushModifier ** 4))):
                     PassOutcome = 'Sack'
-                elif (random.uniform(0,1) < (.7024 * (PassGameModifier ** .9))) :
+                elif (random.uniform(0,1) < (.7224 * (PassGameModifier ** .9))) :
                     PassOutcome = 'Completion'
                 else:
                     PassOutcome = 'Incompletion'
@@ -838,7 +839,7 @@ def GameSim(game):
                 #PASS COMPLETE
                 elif PassOutcome == 'Completion' :
                     PassGameModifier = PassGameModifier ** 1.1
-                    YardsThisPlay = round(NormalTrunc(9.8 * PassGameModifier, 7, -10, 100),0)
+                    YardsThisPlay = round(NormalTrunc(10.1 * PassGameModifier, 7, -3, 100),0)
 
                     AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_Completions += 1
                     GameDict[OffensiveTeam]['TeamGame'].PAS_Completions += 1
@@ -1309,7 +1310,7 @@ def GameSim(game):
 
     DrivePlay.objects.bulk_create(DrivePlaysToSave, ignore_conflicts=False, batch_size=10000)
     PlayerGameStat.objects.bulk_create(PlayerGameStatToSave, ignore_conflicts=True, batch_size=Batch_Size)
-    #GameEvent.objects.bulk_create(GameEventsToSave, ignore_conflicts=True, batch_size=Batch_Size)
+    GameEvent.objects.bulk_create(GameEventsToSave, ignore_conflicts=True, batch_size=Batch_Size)
     HomeTeamGame.TeamRecord = str(GameDict[HomeTeam]['TeamSeason'].Wins) + '-' + str(GameDict[HomeTeam]['TeamSeason'].Losses)
     AwayTeamGame.TeamRecord = str(GameDict[AwayTeam]['TeamSeason'].Wins) + '-' + str(GameDict[AwayTeam]['TeamSeason'].Losses)
 

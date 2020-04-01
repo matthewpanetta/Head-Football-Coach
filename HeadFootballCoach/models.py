@@ -2511,6 +2511,8 @@ class RecruitTeamSeason(models.Model):
     MatchRating = models.PositiveSmallIntegerField(default=0)
     IsActivelyRecruiting = models.BooleanField(default=False)
 
+    RecruitingTeamRank = models.IntegerField(default = 1)
+
     ScoutedOverall = models.PositiveSmallIntegerField(default=0)
 
     DistanceMatchRating = models.IntegerField(default = 0)

@@ -36,7 +36,7 @@ class GameStructureAdmin(admin.ModelAdmin):
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Player._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'playerseasonskill', 'recruitteamseason')]#('PlayerFirstName', 'PlayerLastName', 'Position', 'Class', 'IsRecruit','PlayerID', 'OverallRating', 'CurrentTeam', 'PassingRating', 'DribblingRating', 'CityID')
-    list_filter = ['PositionID', 'ClassID__ClassName']
+    list_filter = ['PositionID', 'ClassID__ClassName', 'RecruitSigned']
 
 class CoachAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Coach._meta.get_fields() if field.name not in ['coachteamseason']]

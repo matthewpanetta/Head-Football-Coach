@@ -9,48 +9,66 @@
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" style='display:none;' id='DataPassthru'></div>
 
-
-<div class='w3-top'>
-<div class="w3-bar background-eee">
-  <a href="/World/{{page.WorldID}}" class="w3-bar-item w3-button navNCAALogoLink"><img src="/static/img/TeamLogos/ncaa-text.png" class='navNCAALogo' alt=""></a>
-  <div class="w3-dropdown-hover">
-    <button class="w3-button">{{CurrentWeek.WeekName}}</button>
-    <div class="w3-dropdown-content w3-bar-block w3-card-4">
-      <a href="#" id='SimThisWeek' class="w3-bar-item w3-button">Sim This Week</a>
-      <a href="#" id='SimNextMonth' class="w3-bar-item w3-button">Sim Next 4 Weeks</a>
-      <a href="#" id='SimRegularSeason' class="w3-bar-item w3-button">Sim to end of Regular Season</a>
-    </div>
-  </div>
-  <div class="w3-dropdown-hover">
-    <button class="w3-button">Search</button>
-    <div class="w3-dropdown-content w3-bar-block w3-card-4">
-      <div class="w3-bar-item">
-        <input type='text' class="" placeholder="Seach..." id='navSearchInput'>
-        <button type="button" class='w3-button' name="button" id='navSearchButton'>Search</button>
-      </div>
-    </div>
-  </div>
-  <div class="w3-dropdown-hover">
-    <button class="w3-button">League Info</button>
-    <div class="w3-dropdown-content w3-bar-block w3-card-4">
-      <a href="/World/{{page.WorldID}}/Awards" class="w3-bar-item w3-button">League Awards</a>
-      <a href="/World/{{page.WorldID}}/PlayerStats" class="w3-bar-item w3-button">Player Stats</a>
-      <a href="/World/{{page.WorldID}}/TeamStats" class="w3-bar-item w3-button">Team Stats</a>
-    </div>
-  </div>
-  {% if CurrentWeek.WeekName == 'Coach Carousel'%}
-  <a href="/World/{{page.WorldID}}/CoachCarousel" class="w3-bar-item w3-button">Coach Carousel</a>
-  {% elif CurrentWeek.WeekName == 'Draft Departures'%}
-  <a href="/World/{{page.WorldID}}/PlayerDepartures" class="w3-bar-item w3-button">Players Leaving</a>
-  {%endif%}
-  <a href="/" class="w3-bar-item w3-button w3-right navHomeLink">Home Page</a>
-</div>
-</div>
-
 <div class="w3-sidebar w3-bar-block">
-  <a href="/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}" class="w3-bar-item w3-button SideNavGroup">{{userTeam.Name}}</a>
-  <a href="/World/{{page.WorldID}}/ManageTeam" class="w3-bar-item w3-button SideNavItem">Manage Lineup</a>
-  <a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">Recruiting</a>
+
+  <ul class='no-list-style'>
+    <li><a href="/World/{{page.WorldID}}" class="w3-bar-item w3-button">Dashboard</a></li>
+  </ul>
+
+  <h3 class='SideNavGroup'>
+    This Week
+  </h3>
+  <ul class='no-list-style'>
+    <li><a href="#" id='SimThisWeek' class="w3-bar-item w3-button">Sim This Week</a></li>
+  </ul>
+
+  <h3 class='SideNavGroup'>
+    <img src="/static/img/TeamLogos/ncaa-text.png" class='' alt="">
+  </h3>
+  <ul class='no-list-style'>
+    <li><a href="/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}" class="w3-bar-item w3-button SideNavItem">Standings</a></li>
+    <li><a href="/World/{{page.WorldID}}/ManageTeam" class="w3-bar-item w3-button SideNavItem">Rankings</a></li>
+    <li><a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">Schedule</a></li>
+    <li><a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">Award Races</a></li>
+    <li><a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">History</a></li>
+  </ul>
+
+  <h3 class='SideNavGroup'>
+    <img src="{{userTeam.TeamLogoURL}}" alt="">
+  </h3>
+  <ul class='no-list-style'>
+    <li><a href="/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}" class="w3-bar-item w3-button SideNavItem">Roster</a></li>
+    <li><a href="/World/{{page.WorldID}}/ManageTeam" class="w3-bar-item w3-button SideNavItem">Gameplan</a></li>
+    <li><a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">Recruiting</a></li>
+  </ul>
+
+  <h3 class='SideNavGroup'>
+    Players
+  </h3>
+  <ul class='no-list-style'>
+    <li><a href="/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}" class="w3-bar-item w3-button SideNavItem">Recruiting</a></li>
+    <li><a href="/World/{{page.WorldID}}/ManageTeam" class="w3-bar-item w3-button SideNavItem">Transfer Portal</a></li>
+    <li><a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">Recruiting</a></li>
+    <li><a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">Watch List</a></li>
+  </ul>
+
+  <h3 class='SideNavGroup'>
+    Stats
+  </h3>
+  <ul class='no-list-style'>
+    <li><a href="/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}" class="w3-bar-item w3-button SideNavItem">Player Stats</a></li>
+    <li><a href="/World/{{page.WorldID}}/ManageTeam" class="w3-bar-item w3-button SideNavItem">Records</a></li>
+    <li><a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">Team Stats</a></li>
+  </ul>
+
+  <h3 class='SideNavGroup'>
+    Game
+  </h3>
+  <ul class='no-list-style'>
+    <li><a href="/" class="w3-bar-item w3-button w3-right navHomeLink">Home Page</a></li>
+    <li><a href="/World/{{page.WorldID}}/ManageTeam" class="w3-bar-item w3-button SideNavItem">Credits</a></li>
+    <li><a href="/World/{{page.WorldID}}/Recruiting" class="w3-bar-item w3-button SideNavItem">Acheivements</a></li>
+  </ul>
 </div>
 
 <div class="w3-modal" tabindex="-1" role="dialog" id='SimDayModal'>

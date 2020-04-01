@@ -6,6 +6,7 @@ from .scripts.PickName import RandomName, RandomPositionAndMeasurements, RandomC
 import math
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery
 #from django.db.models import Max, Avg, Count, Func,  Sum, Case, When, FloatField, CharField, Value
+from django.db.models.functions.window import Rank, RowNumber
 from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, SelectBroadcast
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
@@ -703,21 +704,22 @@ def CreateRecruitingClass(LS, WorldID):
 
     RecruitSchoolDistanceMap = {
         'Home Town':     {'LowerBound': 0, 'UpperBound': 40, 'PointValue': 100},
-        'Local':         {'LowerBound': 41, 'UpperBound': 200, 'PointValue': 65},
-        'Regional':      {'LowerBound': 201, 'UpperBound': 500, 'PointValue': 40},
-        'National':      {'LowerBound': 501, 'UpperBound': 1500, 'PointValue': 20},
-        'International': {'LowerBound': 1501, 'UpperBound': 10000, 'PointValue': 5},
+        'Near-by':       {'LowerBound': 41, 'UpperBound': 150, 'PointValue': 80},
+        'Local':         {'LowerBound': 151, 'UpperBound': 300, 'PointValue': 65},
+        'Regional':      {'LowerBound': 301, 'UpperBound': 500, 'PointValue': 50},
+        'National':      {'LowerBound': 501, 'UpperBound': 850, 'PointValue': 35},
+        'National':      {'LowerBound': 851, 'UpperBound': 1200, 'PointValue': 20},
+        'International': {'LowerBound': 1201, 'UpperBound': 10000, 'PointValue': 5},
     }
 
 
 
     TeamList = list(TeamSeason.objects.filter(WorldID = WorldID).filter(ScholarshipsToOffer__gte = 0).filter(coachteamseason__CoachPositionID__CoachPositionAbbreviation = 'HC').values('TeamSeasonID', 'TeamID', 'TeamID__CityID__Latitude', 'TeamID__CityID__Longitude', 'coachteamseason__CoachID__ScoutingRating' , 'TeamID__TeamPrestige', 'TeamID__FacilitiesRating', 'TeamID__ProPotentialRating', 'TeamID__CampusLifestyleRating', 'TeamID__AcademicPrestigeRating', 'TeamID__TelevisionExposureRating', 'TeamID__CoachStabilityRating', 'TeamID__ChampionshipContenderRating', 'TeamID__LocationRating').annotate(
         CoachScoutVariance = Case(
-            When(coachteamseason__CoachID__ScoutingRating__gte = 92, then=1),
-            When(coachteamseason__CoachID__ScoutingRating__gte = 80, coachteamseason__CoachID__ScoutingRating__lt = 92, then=2),
-            When(coachteamseason__CoachID__ScoutingRating__gte = 65, coachteamseason__CoachID__ScoutingRating__lt = 80, then=3),
-            When(coachteamseason__CoachID__ScoutingRating__gte = 40, coachteamseason__CoachID__ScoutingRating__lt = 65, then=4),
-            default=Value(5),
+            When(coachteamseason__CoachID__ScoutingRating__gte = 90, then=1),
+            When(coachteamseason__CoachID__ScoutingRating__gte = 70, coachteamseason__CoachID__ScoutingRating__lt = 90, then=2),
+            When(coachteamseason__CoachID__ScoutingRating__gte = 45, coachteamseason__CoachID__ScoutingRating__lt = 70, then=3),
+            default=Value(4),
             output_field = IntegerField()
         )
     ))
@@ -739,7 +741,7 @@ def CreateRecruitingClass(LS, WorldID):
 
 
     RecruitPool = Player.objects.filter(WorldID = CurrentWorld).filter(IsRecruit = True)
-    RecruitPool = sorted(RecruitPool, key = lambda k: NormalBounds(k.OverallRating,3,10,99), reverse = True)
+    RecruitPool = sorted(RecruitPool, key = lambda k: NormalBounds(k.OverallRating,2,10,99), reverse = True)
 
     RecruitCount = 0
     RTSToSave = []
@@ -804,13 +806,21 @@ def CreateRecruitingClass(LS, WorldID):
             TS['CloseToHomeValue'] = RecruitDistanceInterestValue
 
 
-            RTS = RecruitTeamSeason(WorldID = WorldID, PlayerID_id = Recruit['PlayerID'], TeamSeasonID_id = TS['TeamSeasonID'], ScoutedOverall = ScoutedOverall, IsActivelyRecruiting = False, Preference1Name = RecruitTopPreferences[1],Preference1MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[1]]], Preference2Name = RecruitTopPreferences[2],Preference2MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[2]]], Preference3Name = RecruitTopPreferences[3],Preference3MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[3]]], TeamPrestigeRating=TS['TeamPrestige'] * 10, DistanceMatchRating = RecruitDistanceInterestValue)
-            RTS.InterestLevel = (3*RTS.Preference1MatchRating) + (2*RTS.Preference2MatchRating) + (1*RTS.Preference3MatchRating) + RTS.DistanceMatchRating + (RecruitTeamPrestigeInterestModifier*RTS.TeamPrestigeRating)
+            RTS = RecruitTeamSeason(WorldID = WorldID, PlayerID_id = Recruit['PlayerID'], TeamSeasonID_id = TS['TeamSeasonID'], ScoutedOverall = ScoutedOverall, IsActivelyRecruiting = False, Preference1Name = RecruitTopPreferences[1],Preference1MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[1]]], Preference2Name = RecruitTopPreferences[2],Preference2MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[2]]], Preference3Name = RecruitTopPreferences[3],Preference3MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[3]]], TeamPrestigeRating=TS['TeamPrestige'], DistanceMatchRating = RecruitDistanceInterestValue)
+            RTS.InterestLevel = int((1.5*RTS.Preference1MatchRating) + (1.25*RTS.Preference2MatchRating) + (1*RTS.Preference3MatchRating) + RTS.DistanceMatchRating + (.5 * RTS.TeamPrestigeRating))
             RTSToSave.append(RTS)
 
 
 
     RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False)
+    RTS = RecruitTeamSeason.objects.all().annotate(RecruitingTeamRank_new = Window(
+        expression=RowNumber(),
+        partition_by=F("PlayerID"),
+        order_by=F("InterestLevel").desc(),
+    ))
+    for R in RTS:
+        R.RecruitingTeamRank = R.RecruitingTeamRank_new
+    RecruitTeamSeason.objects.bulk_update(RTS,['RecruitingTeamRank'])
     print('RecruitTeamSeasons Complete')
 
 def CreateCoaches(LS, WorldID):

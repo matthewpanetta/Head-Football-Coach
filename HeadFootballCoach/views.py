@@ -361,7 +361,7 @@ def Page_Index(request):
         Worlds.append(W)
 
     if InTesting:
-        NumConferencesToInclude = 5
+        NumConferencesToInclude = 6
     elif InDeepTesting:
         NumConferencesToInclude = 2
     else:
@@ -374,7 +374,7 @@ def Page_Index(request):
          #{'ConferenceDisplayName': 'SC1', 'ConferenceFormValue': 'Sample Conference 1'},
          #{'ConferenceDisplayName': 'SC2', 'ConferenceFormValue': 'Sample Conference 2'},
          {'ConferenceDisplayName': 'American', 'ConferenceFormValue': 'American Athletic Conference'},
-         {'ConferenceDisplayName': 'Mountain West', 'ConferenceFormValue': 'Mountain West Conference'},
+         #{'ConferenceDisplayName': 'Mountain West', 'ConferenceFormValue': 'Mountain West Conference'},
          {'ConferenceDisplayName': 'Big 10', 'ConferenceFormValue': 'Big Ten Conference'},
     ]
 
@@ -805,7 +805,7 @@ def Page_Player(request, WorldID, PlayerID):
     PlayerObject = Player.objects.filter(WorldID = CurrentWorld).filter(PlayerID = PlayerID)
     if len(PlayerObject.first().PlayerFaceJson) == 0:
         PlayerObject.first().GeneratePlayerFaceJSon()
-    PlayerDict = PlayerObject.values('PlayerID', 'PlayerLastName', 'PlayerFirstName', 'PlayerFaceJson', 'ClassID__ClassName', 'IsCurrentlyRedshirted','WasPreviouslyRedshirted','JerseyNumber','Height', 'Weight', 'CityID', 'PositionID__PositionAbbreviation', 'CityID__CityName', 'CityID__StateID__StateName', 'RecruitingStars', 'IsRecruit').annotate(
+    PlayerDict = PlayerObject.values('PlayerID', 'PlayerLastName', 'PlayerFirstName', 'PlayerFaceJson', 'ClassID__ClassName', 'IsCurrentlyRedshirted','WasPreviouslyRedshirted','JerseyNumber','Height', 'Weight', 'CityID', 'PositionID__PositionAbbreviation', 'CityID__CityName', 'CityID__StateID__StateName', 'RecruitingStars', 'IsRecruit', 'RecruitingPointsNeeded').annotate(
         HometownAndState=Concat(F('CityID__CityName'), Value(', '), F('CityID__StateID__StateName')),
         FullName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName')),
         HeightFeet = (F('Height') / 12),
@@ -1163,7 +1163,7 @@ def Page_Player(request, WorldID, PlayerID):
         page['PrimaryColor'] =  '1763B2'
         page['SecondaryColor'] = '000000'
 
-        RTS = RecruitTeamSeason.objects.filter(WorldID=WorldID).filter(PlayerID = PlayerID)
+        RTS = RecruitTeamSeason.objects.filter(WorldID=WorldID).filter(PlayerID = PlayerID).filter(Q(IsActivelyRecruiting=True) | Q(Signed=True)).order_by('-InterestLevel')
 
         context['RecruitTeamSeasons'] = RTS
 
@@ -1586,8 +1586,7 @@ def GET_RecruitingPlayers(request, WorldID):
     Length = int(request.GET['length'])
     Draw = int(request.GET['draw'])
 
-
-    Players = Player.objects.filter(WorldID = WorldID).filter(**AdjustedFilterList).filter(IsRecruit = True).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).filter(recruitteamseason__TeamSeasonID__TeamID__IsUserTeam = True).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'recruitteamseason__ScoutedOverall', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerFaceJson', 'RecruitingStars', 'RecruitSigned', 'Recruiting_NationalRank', 'Recruiting_NationalPositionalRank', 'Recruiting_StateRank', 'CityID__CityName', 'CityID__StateID__StateAbbreviation', 'Height').annotate(
+    Players = Player.objects.filter(WorldID = WorldID).filter(**AdjustedFilterList).filter(IsRecruit = True).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).filter(recruitteamseason__TeamSeasonID__TeamID__IsUserTeam = True).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'recruitteamseason__ScoutedOverall', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'RecruitingPointsNeeded', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerFaceJson', 'RecruitingStars', 'RecruitSigned', 'Recruiting_NationalRank', 'Recruiting_NationalPositionalRank', 'Recruiting_StateRank', 'CityID__CityName', 'CityID__StateID__StateAbbreviation', 'Height').annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
         PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -1598,8 +1597,12 @@ def GET_RecruitingPlayers(request, WorldID):
         Intelligence = Value('A', output_field=CharField()),
         Athleticism = Value('A', output_field=CharField()),
         Passing = Value('A', output_field=CharField()),
+        MaxInterestLevel = Subquery(RecruitTeamSeason.objects.filter(PlayerID =OuterRef('pk')).values('PlayerID').annotate(MaxInterestLevel=Max('InterestLevel')).values('MaxInterestLevel')),#Max('recruitteamseason__InterestLevel'),
+        RecruitingPointsPercent = (Round(F('MaxInterestLevel')* 100.0 / F('RecruitingPointsNeeded'),1))
 
     ).order_by(*OrderList)
+
+    print('Players query', Players.query)
 
     recordsTotal = Players.count()
     recordsFiltered = recordsTotal
@@ -1621,7 +1624,7 @@ def GET_RecruitingPlayers(request, WorldID):
             PlayerObj = Player.objects.get(WorldID=WorldID, PlayerID=P['PlayerID'])
             PlayerObj.GeneratePlayerFaceJSon()
             PlayerObj.save()
-            P['PlayerFaceJson'] = PlayerObj.PlayerFaceJson
+            P['PlayerFaceJson'] = json.dumps(PlayerObj.PlayerFaceJson)
 
 
     context = {'data':list(Players)

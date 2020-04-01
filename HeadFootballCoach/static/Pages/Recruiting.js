@@ -77,6 +77,7 @@ function DrawRecruitingTable(WorldID){
        }},
          {"data": "PlayerFaceJson", "searchable": true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).attr('HasPlayerFaceJSON', '1');
+            console.log('StringValue',StringValue);
             $(td).attr('PlayerFaceJson', StringValue);
             $(td).html("<div class='PlayerFaceDisplay' id='PlayerFaceDisplay"+DataObject.PlayerID+"' style='height: 70px;width: 40px;'></div>");
             //console.log('td', $(td), $(td).find('div'));
@@ -110,7 +111,7 @@ function DrawRecruitingTable(WorldID){
                          <span>`+StringValue+` Ovr</span>
                        </div>
                        <div class="font10">
-                         <span>`+'45'+`% Scouted</span>
+                         <span>`+DataObject.RecruitingPointsPercent+`% Signed</span>
                        </div>`)
          }},
          {"data": "RecruitSigned", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"],  'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
