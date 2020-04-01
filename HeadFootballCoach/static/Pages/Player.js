@@ -147,7 +147,7 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert){
   console.log('face before generate', face, TeamJerseyStyle, TeamJerseyInvert);
 
   var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#000000"]}
-  overrides['jersey'] = {'id': 'football2'}
+  overrides['jersey'] = {'id': 'football'}
 
   console.log('face after generate', face);
   display('PlayerFace', face, overrides);

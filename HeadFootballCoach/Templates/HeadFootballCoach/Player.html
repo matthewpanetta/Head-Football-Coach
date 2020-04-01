@@ -14,7 +14,7 @@
 
   <div class='PageContent'>
     <div class='PlayerHeader'>
-
+      <div class="team-header-color-left" style='background-color: #{{playerTeam.TeamColor_Primary_HEX}}; border-right-color: #{{page.SecondaryColor}};'></div>
       <a href='/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}'><img class='playerTeamLogo' src='{{playerTeam.LogoURL}}' alt="My image"></a>
       <div class="PlayerFace" id='PlayerFace'>
 
@@ -68,6 +68,8 @@
         {% endif %}
         {% endfor %}
       </div>
+      <div class="team-header-color-right" style='background-color: #{{playerTeam.TeamColor_Primary_HEX}}; border-left-color: #{{page.SecondaryColor}};'></div>
+
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
@@ -455,5 +457,9 @@ $(document).ready(function(){
   .teamColorBorder {
     border-top-color: #{{page.PrimaryColor}}  !important;
     border-bottom-color: #{{page.PrimaryColor}} !important;
+  }
+
+  .w3-card {
+    box-shadow: 0 2px 4px 0 #{{page.PrimaryColor}}, 0 2px 8px 0 #{{page.PrimaryColor}}
   }
 </style>

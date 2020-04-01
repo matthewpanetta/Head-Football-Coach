@@ -36,7 +36,9 @@
           <div class="w3-row-padding">
             <div class="w3-col w3-display-container">
               <div class="w3-row-padding">
-                <div class="w3-card w3-col s7">
+                <div class="w3-col s7">
+                  <div class="w3-card">
+
                   <table id='teamOverviewConferenceStandings-{{Conference.ConferenceID}}'>
                     <colgroup>
                         <col span="1" class='colgroup-border-right'>
@@ -75,14 +77,18 @@
                     {% endfor %}
                   </table>
                 </div>
-                <div class="w3-card w3-col s4">
-                  <table id='teamOverviewConferenceStandings'>
+                </div>
+                <div class="w3-col s4">
+                  <div class="w3-card ">
+
+                  <table id='conferenceStandingsOpposing-{{Conference.ConferenceID}}'>
                     <thead>
                       <th>Conference</th>
                       <th>Total Record</th>
                       <th>{{Conference.ConferenceAbbreviation}} Record vs</th>
+                      <th>{{Conference.ConferenceAbbreviation}} MOV vs</th>
                     </thead>
-                    {% for OppConf in OpposingConferences %}
+                    {% for OppConf in Conference.OpposingConferences %}
                     <tr class='{{OppConf.BoldConf}}'>
                       <td>
                         <a href="/World/{{page.WorldID}}/Conference/{{ OppConf.ConferenceID }}/">
@@ -92,9 +98,14 @@
                       </td>
                       <td>{{OppConf.Wins}} - {{OppConf.Losses}}</td>
                       <td>{{OppConf.VsWins}} - {{OppConf.VsLosses}}</td>
+                      <td>{{OppConf.MOV}}</td>
                     </tr>
                     {% endfor %}
                   </table>
+                </div>
+                <div class="w3-card">
+                  Conference Top Players Here
+                </div>
                 </div>
               </div>
             </div>
@@ -119,6 +130,19 @@
 <script type="text/javascript">
   {%for Conference in ConferenceStandings%}
   var Table = $('#teamOverviewConferenceStandings-{{Conference.ConferenceID}}').DataTable({
+      "scrollX": false,
+      "filter": true,
+      "ordering": true,
+      "lengthChange" : false,
+      "searching": false,
+      "order": [[ 1, "asc" ]],
+      "pagingType": "full_numbers",
+      "paginationType": "full_numbers",
+      "paging": false,
+      "info": false,
+  });
+
+  var OppTable = $('#conferenceStandingsOpposing-{{Conference.ConferenceID}}').DataTable({
       "scrollX": false,
       "filter": true,
       "ordering": true,

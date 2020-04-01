@@ -304,7 +304,7 @@ def Page_Conferences(request, WorldID):
     ConferenceStandings = []
 
     for conf in ConferenceList:
-        ThisConference = {'ConferenceName': conf.ConferenceName, 'ConferenceAbbreviation': conf.ConferenceAbbreviation, 'ConferenceID': conf.ConferenceID, 'ConferenceTeams': []}
+        ThisConference = {'ConferenceName': conf.ConferenceName, 'ConferenceAbbreviation': conf.ConferenceAbbreviation, 'ConferenceID': conf.ConferenceID, 'ConferenceTeams': [], 'OpposingConferences': []}
         TeamsInConference = Team.objects.filter(WorldID = CurrentWorld).filter(teamseason__LeagueSeasonID__IsCurrent = True).filter(teamseason__teamseasonweekrank__IsCurrent = True).filter(ConferenceID = conf).values('TeamID', 'TeamLogoURL', 'TeamColor_Primary_HEX','TeamName', 'teamseason__ConferenceRank', 'teamseason__teamseasonweekrank__NationalRank', 'teamseason__Wins', 'teamseason__ConferenceWins', 'teamseason__ConferenceLosses', 'teamseason__Losses', 'teamseason__ConferenceGB').annotate(
             GamesPlayed = Sum('teamseason__teamgame__GamesPlayed'),
             PPG=Case(
@@ -341,20 +341,69 @@ def Page_Conferences(request, WorldID):
         for t in TeamsInConference:
             ThisConference['ConferenceTeams'].append(t)
 
+        for OppConf in ConferenceList:#.exclude(ConferenceID = ConferenceID):
+            OppConfDict = {}
+            OppConfDict = OppConf.__dict__
+            ConfAggs = TeamSeason.objects.filter(TeamID__ConferenceID = OppConf).aggregate(Sum('Wins'), Sum('Losses'))
+            OppConfDict['Wins'] = ConfAggs['Wins__sum']
+            OppConfDict['Losses'] = ConfAggs['Losses__sum']
+
+            OppConfDict['VsWins'] = 0
+            OppConfDict['VsLosses'] = 0
+
+
+            TGAgg = None
+            TGAgg = TeamGame.objects.filter(TeamSeasonID__TeamID__ConferenceID = OppConf).filter(GameID__WasPlayed = True).filter(OpposingTeamSeasonID__TeamID__ConferenceID_id = ThisConference['ConferenceID']).values('OpposingTeamSeasonID__TeamID__ConferenceID', 'TeamSeasonID__TeamID__ConferenceID').aggregate(
+                VsLosses = Sum(Case(
+                    When(IsWinningTeam = True, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField()
+                )) / 2,
+                VsWins = Sum(Case(
+                    When(IsWinningTeam = True, then=Value(0)),
+                    default=Value(1),
+                    output_field=IntegerField()
+                )) / 2,
+                TotalGames = Count('TeamGameID'),
+                OpponentPointsScored = Sum('Points'),
+                PointsScored = Sum(Case(
+                    When(GameID__teamgame__TeamGameID = F('TeamGameID'), then=Value(0)),
+                    default=F('GameID__teamgame__Points'),
+                    output_field=IntegerField()
+                ))
+            )
+
+            OppConfDict['VsLosses'] = TGAgg['VsLosses']
+            OppConfDict['VsWins'] = TGAgg['VsWins']
+
+            if OppConf == ThisConference:
+                OppConfDict['BoldConf'] = 'bold'
+            ThisConference['OpposingConferences'].append(OppConfDict)
+
+        #ThisConference['OpposingConferences'] = OpposingConferences
+
+        print()
+        print(ThisConference['ConferenceName'] )
+        for OC in ThisConference['OpposingConferences']:
+            print(OC)
+
         ConferenceStandings.append(ThisConference)
 
+    print()
+    print('------------')
 
-    for c in ConferenceStandings:
+    for C in ConferenceStandings:
         print()
-        print(c)
+        print(C['ConferenceName'] )
+        for OC in C['OpposingConferences']:
+            print(OC)
     context['ConferenceStandings'] = ConferenceStandings
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 3, AuditDescription='GET_ConferenceStandings')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 3, AuditDescription='Conferences Page')
     page = {'PageTitle': 'Conferences', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     context['page'] = page
-
 
     return render(request, 'HeadFootballCoach/Conferences.html', context)
 

@@ -45,6 +45,7 @@
 
 .PlayerHeader, .CoachHeader {
   align-items: center;
+  height: 150px;
 }
 
 .teamHeaderRankHeaderRow {
@@ -190,7 +191,7 @@
 }
 
 .gameTeamLogo {
-  width: 100px;
+  width: 150px;
 }
 
 .worldTeamLogoCell {
@@ -867,6 +868,10 @@ input[type=text], input[type=password] {
   width: 150px;
 }
 
+.height-150 {
+  height: 150px;
+}
+
 .inline-block {
   display: inline-block;
 }
@@ -1326,4 +1331,35 @@ tfoot td {
   flex-shrink: 1;
   flex-basis: 0;
   margin: 0px 2px;
+}
+
+.team-header-color-left {
+  width: 250px;
+  margin-left: -100px;
+  height: inherit;
+  position: absolute;
+  z-index: -100;
+  transform: skewX(-45deg);
+  border-right: 30px solid;
+}
+
+.team-header-color-right {
+  width: 350px;
+  margin-right: -100px;
+  height: inherit;
+  z-index: -100;
+  transform: skewX(-45deg);
+  border-left: 30px solid;
+  float: right;
+}
+
+img.teamTeamLogo {
+  margin-left: 100px;
+}
+
+.skew-45 {
+  transform: skewX(45deg);
+}
+.skew-neg-45 {
+  transform: skewX(-45deg);
 }

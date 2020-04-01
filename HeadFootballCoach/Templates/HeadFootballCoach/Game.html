@@ -14,9 +14,9 @@
       <div class="w3-row-padding GameHeadlineDisplay">
         {{game.GameHeadlineDisplay}}
       </div>
-      <div class='w3-row-padding'>
-        <div class='w3-col s2 text-left'>
-          <a href="/World/{{page.WorldID}}/Team/{{awayTeam.TeamID}}"><img class='gameTeamLogo' src='{{awayTeam.LogoURL}}' alt="My image"></a>
+      <div class='w3-row height-150'>
+        <div class='w3-col s2 text-left skew-45' style='background-color: #{{awayTeam.TeamColor_Primary_HEX}}; border-right: 30px solid #{{awayTeam.SecondaryColor_Display}}; border-left: 30px solid #{{awayTeam.SecondaryColor_Display}}; '>
+          <a href="/World/{{page.WorldID}}/Team/{{awayTeam.TeamID}}"><img class='gameTeamLogo skew-neg-45' src='{{awayTeam.LogoURL}}' alt="My image"></a>
         </div>
         <div class="w3-col s2 gameHeaderTeamContent away">
           <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
@@ -77,10 +77,13 @@
               </div>
             </div>
           </div>
+
         </div>
-        <div class='w3-col s2 text-right'>
-          <a href="/World/{{page.WorldID}}/Team/{{homeTeam.TeamID}}"><img class='gameTeamLogo' src='{{homeTeam.LogoURL}}' alt="My image"></a>
+
+        <div class='w3-col s2 text-right skew-neg-45' style='background-color: #{{homeTeam.TeamColor_Primary_HEX}}; border-left: 30px solid #{{homeTeam.SecondaryColor_Display}};  border-right: 30px solid #{{homeTeam.SecondaryColor_Display}}; '>
+          <a href="/World/{{page.WorldID}}/Team/{{homeTeam.TeamID}}"><img class='gameTeamLogo skew-45' src='{{homeTeam.LogoURL}}' alt="My image"></a>
         </div>
+
       </div>
 
       <nav>
@@ -195,10 +198,10 @@
           </div>
         </div>
         <div class="tab-pane tab-content" style='display:none;' id="nav-boxscore">
-          <div class='container'>
+          <div class='w3-container'>
             {% for StatGrouping in BoxScoreStatGroupings %}
             <div class='w3-row-padding'>
-              <div class='w3-col s6 gamePlayerBoxStats'>
+              <div class='w3-col s5 gamePlayerBoxStats w3-card away-drop-shadow height100'>
                 <img class='gameBoxScoreTeamLogo' src='{{awayTeam.LogoURL}}'  />
                 {{awayTeam.TeamName}} {{StatGrouping.StatGroupName}}
                 <table id='gameAwayTeamBoxScore' class='table table-striped'>
@@ -219,7 +222,7 @@
                   {% endfor %}
                 </table>
               </div>
-              <div class='w3-col s6 gamePlayerBoxStats'>
+              <div class='w3-col s5 gamePlayerBoxStats w3-card home-drop-shadow height100'>
                 <img class='gameBoxScoreTeamLogo' src='{{homeTeam.LogoURL}}'  />
                 {{homeTeam.TeamName}} {{StatGrouping.StatGroupName}}
                 <table id='gameAwayTeamBoxScore' class='table table-striped'>
@@ -394,4 +397,12 @@
   .GameHeadlineDisplay {
     background: linear-gradient(to right,#{{awayTeam.TeamColor_Primary_HEX}},#{{homeTeam.TeamColor_Primary_HEX}});
   }
+
+   .away-drop-shadow {
+       box-shadow: 0 2px 4px 0 #{{awayTeam.TeamColor_Primary_HEX}}, 0 2px 8px 0 #{{awayTeam.TeamColor_Primary_HEX}}
+   }
+
+    .home-drop-shadow {
+        box-shadow: 0 2px 4px 0 #{{homeTeam.TeamColor_Primary_HEX}}, 0 2px 8px 0 #{{homeTeam.TeamColor_Primary_HEX}}
+    }
 </style>
