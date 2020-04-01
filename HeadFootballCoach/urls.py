@@ -61,7 +61,7 @@ urlpatterns = [
 
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerCardInfo', views.GET_PlayerCardInfo, name='PlayerCardInfo'),
 
-    path('World/<int:WorldID>/PlayerStats', views.GET_PlayerStats, name='PlayerStats'),
+    path('World/<int:WorldID>/PlayerStats', views.GET_PlayerStats_All, name='PlayerStats'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerStats', views.GET_PlayerStats_Player, name='PlayerStats'),
     path('World/<int:WorldID>/PlayerStats/Departures', views.GET_PlayerStats_Departures, name='PlayerStats_Departures'),
     path('World/<int:WorldID>/WorldHistory', views.GET_WorldHistory, name='WorldHistory'),

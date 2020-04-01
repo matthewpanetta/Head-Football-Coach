@@ -4,7 +4,12 @@
 {% load static %}
 {% load humanize %}
 
+
 <link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/searchPanes.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/select.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/buttons.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/fixedHeader.dataTables.min.css' %}">
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
@@ -330,27 +335,6 @@
       </div>
       <div class="tab-content" style="display:none;"  id="nav-player-stats">
         <div class='w3-display-container' >
-          <div class="w3-row-padding">
-            <div class='w3-col s8'>
-              <div class='w3-display-container w3-row-padding' id='worldplayerstat-statgroup-div'>
-                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Passing'>
-                  Passing
-                </div>
-                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Rushing'>
-                  Rushing
-                </div>
-                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Receiving'>
-                  Receiving
-                </div>
-                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Defense'>
-                  Defense
-                </div>
-                <div class="WorldPlayerStats-Stat" id='WorldPlayerStats-Stat-Kicking'>
-                  Kicking
-                </div>
-              </div>
-            </div>
-          </div>
           <div class='w3-row-padding'>
             <div class='w3-col s11'>
               <table class="w3-table w3-table-all" id='WorldPlayerStats'  style="width:100%">
@@ -677,11 +661,11 @@
 <script src="{% static 'common/jquery.min.js' %}"></script>
 <script src="{% static 'common/popper.min.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.select.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.searchPanes.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.buttons.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/buttons.colVis.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedColumns.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedHeader.min.js' %}"></script>
 <script src="{% static 'action.js' %}"></script>
 <script src="{% static 'Pages/World.js' %}" type="module"></script>
-
-<script>
-      $(document).ready(function() {
-
-      });
-  </script>

@@ -678,23 +678,34 @@ function GetPlayerStats(WorldID){
     2: "/GetClasses/"
   }
 
-  var ColumnMap = {
-    'WorldPlayerStats-Stat-Passing': [6,7,8,9,10],
-    'WorldPlayerStats-Stat-Rushing': [11,12,13,14,15, 16,17],
-    'WorldPlayerStats-Stat-Receiving': [18,19,20,21,22,23,24],
-    'WorldPlayerStats-Stat-Defense': [25,26,27,28,29,30]
+  var ShowColumnMap = {
+    'Passing': [6,7,8,9,10],
+    'Rushing': [11,12,13,14,15, 16,17],
+    'Receiving': [18,19,20,21,22,23,24],
+    'Defense': [25,26,27,28,29,30]
   };
 
+  var HideColumnMap = {
+    'Passing': [11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
+    'Rushing': [6,7,8,9,10,18,19,20,21,22,23,24,25,26,27,28,29,30],
+    'Receiving': [6,7,8,9,10,11,12,13,14,15,16,17,25,26,27,28,29,30],
+    'Defense': [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+  };
 
   var ColumnsToAlwaysShow = [0,1,2,3,4,5];
 
   var table = $('#WorldPlayerStats').DataTable({
-      "dom": '',
-      "serverSide": true,
+      "dom": 'Brtp',
+      "scrollX": true,
+      fixedColumns:   {
+            leftColumns: 2
+        },
+      fixedHeader: true,
+      //"serverSide": true,
       "filter": true,
       "ordering": true,
       "lengthChange" : false,
-      "pageLength": 15,
+      "pageLength": 25,
       "pagingType": "full_numbers",
       "paginationType": "full_numbers",
       "paging": true,
@@ -711,8 +722,48 @@ function GetPlayerStats(WorldID){
                return json['data'];
           }
        },
+       'buttons':[
+            {
+                extend: 'searchPanes',
+                config: {
+                  cascadePanes: true,
+                  viewTotal: false, //maybe true later - TODO
+                  columns:[0,2,3]
+                },
+                text: 'Filter Players'
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Passing Stats',
+                show: ShowColumnMap['Passing'],
+                hide: HideColumnMap['Passing']
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Rushing Stats',
+                show: ShowColumnMap['Rushing'],
+                hide: HideColumnMap['Rushing']
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Receiving Stats',
+                show: ShowColumnMap['Receiving'],
+                hide: HideColumnMap['Receiving']
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Defensive Stats',
+                show: ShowColumnMap['Defense'],
+                hide: HideColumnMap['Defense']
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Show all',
+                show: ':hidden'
+            }
+        ],
       "columns": [
-        {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+        {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).html("<a href='"+DataObject['PlayerTeamHref']+"'><img class='worldTeamStatLogo padding-right' src='"+DataObject['playerteamseason__TeamSeasonID__TeamID__TeamLogoURL']+"'/>"+StringValue+"</a>");
             $(td).attr('style', 'border-left-color: #' + DataObject['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
             $(td).addClass('teamTableBorder');
@@ -758,67 +809,7 @@ function GetPlayerStats(WorldID){
           {"data": "FUM_Recovered", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
       ],
       'order': [[ 4, "desc" ]],
-      'initComplete': function () {
-
-        this.api().columns([2,3]).every( function (ColumnIndex, CounterIndex) {
-
-            console.log('initComplete', ColumnIndex, CounterIndex, this);
-            var column = this;
-            var select = $('<select class="datatable-tfoot"><option value=""></option></select>')
-                .appendTo( $(column.footer()).empty() )
-                .on( 'change', function () {
-                    var val = $(this).val();
-                    column.search( this.value ).draw();
-                } );
-
-            // If I add extra data in my JSON, how do I access it here besides column.data?
-
-            $.ajax({
-               url: ColumnAjaxMap[ColumnIndex],
-               success: function (data) {
-                 console.log('Ajax return', data)
-                 $.each(data, function(ind, elem){
-                    select.append( '<option value="'+elem+'">'+elem+'</option>' )
-                 });
-               }
-             });
-
-        });
-    }
   });
-
-
-  $('.WorldPlayerStats-Stat').on('click', function(Obj){
-    var Target = Obj.target;
-
-    if (!$(Target).hasClass('WorldPlayerStats-Stat-Selected')) {
-      $('.WorldPlayerStats-Stat-Selected').each(function(ind, obj){
-        $(obj).removeClass('WorldPlayerStats-Stat-Selected');
-      });
-
-      $(Target).addClass('WorldPlayerStats-Stat-Selected');
-      var Val = $(Target).attr('id');
-      var ColumnsToShow = ColumnMap[Val];
-    }
-    else {
-      $(Target).removeClass('WorldPlayerStats-Stat-Selected');
-      var ColumnsToShow = [];
-    }
-
-    table.columns().every( function (i,o) {
-      var column = table.column( i );
-      if ($.inArray(i, ColumnsToAlwaysShow) < 0 && column.visible()){
-        column.visible( false );
-      }
-    } );
-
-    $.each(ColumnsToShow, function(i,o){
-      var column = table.column( o );
-      if (! column.visible()) {
-        column.visible( true );
-      }
-    });
-  })
 
 }
 

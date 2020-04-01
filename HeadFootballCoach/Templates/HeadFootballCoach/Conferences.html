@@ -1,0 +1,134 @@
+{% include "HeadFootballCoach/NavBar.html" %}
+{% load static %}
+
+<div WorldID="{{page.WorldID}}" TeamJerseyInvert="{{page.TeamJerseyInvert}}" TeamJerseyStyle="{{page.TeamJerseyStyle}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;'
+  id='PageDataPassthru'></div>
+
+<link href="https://fonts.googleapis.com/css?family=Volkhov&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+
+<body>
+  <div class="PageContent">
+    <div class='TeamHeader'></div>
+    {{Conference.ConferenceName}}
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        {% for Conference in ConferenceStandings%}
+        {% if forloop.counter == 1%}
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-{{Conference.ConferenceID}}-tab" style="background-color: #{{page.SecondaryColor}};">{{Conference.ConferenceAbbreviation}}</button>
+        {% else %}
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-{{Conference.ConferenceID}}-tab">{{Conference.ConferenceAbbreviation}}</button>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      {% for Conference in ConferenceStandings%}
+      {% if forloop.counter == 1%}
+      <div class="tab-content" style='display:block;' id="nav-{{Conference.ConferenceID}}">
+      {% else %}
+      <div class="tab-content" style='display:none;' id="nav-{{Conference.ConferenceID}}">
+      {% endif %}
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col w3-display-container">
+              <div class="w3-row-padding">
+                <div class="w3-card w3-col s7">
+                  <table id='teamOverviewConferenceStandings-{{Conference.ConferenceID}}'>
+                    <colgroup>
+                        <col span="1" class='colgroup-border-right'>
+                        <col span="3" class='colgroup-border-right'>
+                        <col >
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th scope="col">Team</th>
+                        <th class='initialSortColumn' scope="col">Conf. Rank</th>
+                        <th scope="col" data-defaultsort="asc">Conf. W-L</th>
+                        <th scope="col" data-defaultsort="asc">Conf. GB</th>
+
+                        <th scope="col" data-defaultsort="asc">W-L</th>
+                        <th scope="col" data-defaultsort="asc">PPG</th>
+                        <th scope="col" data-defaultsort="asc">PAPG</th>
+                        <th scope="col" data-defaultsort="asc">MOV</th>
+                      </tr>
+                    </thead>
+                    {% for standingTeam in Conference.ConferenceTeams %}
+                    <tr class='{{standingTeam.BoldTeam}} ' style=''>
+                      <td style='border-left-color: #{{standingTeam.TeamColor_Primary_HEX}}' class='teamTableBorder'>
+                        <a href="/World/{{page.WorldID}}/Team/{{ standingTeam.TeamID }}/">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamLogoURL}}" />
+                          {{standingTeam.NationalRankDisplay}} {{standingTeam.TeamName }}
+                        </a>
+                      </td>
+                      <td>{{standingTeam.teamseason__ConferenceRank}}</td>
+                      <td>{{standingTeam.teamseason__ConferenceWins}}-{{standingTeam.teamseason__ConferenceLosses}}</td>
+                      <td>{{standingTeam.teamseason__ConferenceGB}}</td>
+                      <td>{{standingTeam.teamseason__Wins}}-{{standingTeam.teamseason__Losses}}</td>
+                      <td>{{standingTeam.PPG}}</td>
+                      <td>{{standingTeam.PAPG}}</td>
+                      <td>{{standingTeam.MOV}}</td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </div>
+                <div class="w3-card w3-col s4">
+                  <table id='teamOverviewConferenceStandings'>
+                    <thead>
+                      <th>Conference</th>
+                      <th>Total Record</th>
+                      <th>{{Conference.ConferenceAbbreviation}} Record vs</th>
+                    </thead>
+                    {% for OppConf in OpposingConferences %}
+                    <tr class='{{OppConf.BoldConf}}'>
+                      <td>
+                        <a href="/World/{{page.WorldID}}/Conference/{{ OppConf.ConferenceID }}/">
+                          <img class='conferenceOverviewLogo' src="{{OppConf.ConferenceLogoURL}}" />
+                          {{OppConf.ConferenceName}}
+                        </a>
+                      </td>
+                      <td>{{OppConf.Wins}} - {{OppConf.Losses}}</td>
+                      <td>{{OppConf.VsWins}} - {{OppConf.VsLosses}}</td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+<script src="{% static 'facesjs-master/src/generate.js' %}"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="{% static 'action.js' %}"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+<script type="text/javascript">
+  {%for Conference in ConferenceStandings%}
+  var Table = $('#teamOverviewConferenceStandings-{{Conference.ConferenceID}}').DataTable({
+      "scrollX": false,
+      "filter": true,
+      "ordering": true,
+      "lengthChange" : false,
+      "searching": false,
+      "order": [[ 1, "asc" ]],
+      "pagingType": "full_numbers",
+      "paginationType": "full_numbers",
+      "paging": false,
+      "info": false,
+  });
+  {%endfor %}
+</script>
