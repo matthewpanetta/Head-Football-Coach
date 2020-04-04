@@ -206,3 +206,16 @@ print('------------------------------------------------')
 # for LN in LastNameList:
 #     f.write(LN+',0,1,'+str(LastNameList[LN])+'\n')
 # f.close()
+
+from ..utilities import NormalVariance
+
+ResultDict = {}
+TotalRuns = 1000
+for u in range(0,TotalRuns):
+    r = NormalVariance(1.0,7)
+    if r not in ResultDict:
+        ResultDict[r] = 0
+    ResultDict[r] +=1
+
+for u in sorted(ResultDict):
+    print(u, ResultDict[u] / TotalRuns)

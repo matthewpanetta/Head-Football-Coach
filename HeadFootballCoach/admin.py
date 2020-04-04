@@ -88,7 +88,7 @@ class PlayerTeamSeasonAwardAdmin(admin.ModelAdmin):
     list_filter = ['ConferenceID__ConferenceName', 'PositionID__PositionAbbreviation', 'IsSeasonAward', 'IsWeekAward', 'IsPreseasonAward', 'IsFirstTeam', 'IsSecondTeam', 'IsNationalAward', 'WeekID']
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['TeamName', 'TeamNickname', 'WorldID', 'Abbreviation',  'IsUserTeam', 'TeamPrestige', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'CityID', 'TeamLogoURL', 'ConferenceID', 'FacilitiesRating', 'ProPotentialRating', 'CampusLifestyleRating', 'AcademicPrestigeRating', 'TelevisionExposureRating', 'CoachStabilityRating', 'ChampionshipContenderRating', 'LocationRating']
+    list_display = ['TeamName', 'TeamNickname', 'WorldID', 'Abbreviation',  'IsUserTeam', 'TeamPrestige', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamJerseyInvert', 'CityID', 'TeamLogoURL', 'ConferenceID', 'FacilitiesRating', 'ProPotentialRating', 'CampusLifestyleRating', 'AcademicPrestigeRating', 'TelevisionExposureRating', 'CoachStabilityRating', 'ChampionshipContenderRating', 'LocationRating']
     list_filter = ['ConferenceID', 'WorldID', 'IsUserTeam', 'TeamPrestige']
 
 class TeamSeasonDateRankAdmin(admin.ModelAdmin):

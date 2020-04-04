@@ -673,7 +673,7 @@ def import_Team( File, WorldID, LeagueID):
             LineDict['WorldID'] = WorldID
             LineDict['ConferenceID'] = ConferenceID
             LineDict['TeamJerseyStyle'] = JerseyOptions[0]
-            LineDict['TeamJerseyInvert'] = random.choice([True, False,False,False,False])
+            #LineDict['TeamJerseyInvert'] = random.choice([True, False,False,False,False])
 
             Name = LineDict['TeamName'] + ' ' + LineDict['TeamNickname']
             NameAdjusted = Name.lower().replace(' ', '_').replace('\'', '').replace('.','').replace('&','_')

@@ -38,6 +38,7 @@ urlpatterns = [
     path('World/<int:WorldID>/Top25/', views.Page_Top25, name='Top25'),
     path('World/<int:WorldID>/Awards/', views.Page_Awards, name='Awards'),
     path('World/<int:WorldID>/PlayerStats/', views.Page_PlayerStats, name='PlayerStats'),
+    path('World/<int:WorldID>/PlayerStats/Team/<int:TeamID>/', views.Page_PlayerStats, name='PlayerStats'),
     path('World/<int:WorldID>/TeamStats/', views.Page_TeamStats, name='TeamStats'),
     path('World/<int:WorldID>/CoachCarousel/', views.Page_CoachCarousel, name='CoachCarousel'),
     path('World/<int:WorldID>/PlayerDepartures/', views.Page_PlayerDepartures, name='PlayerDepartures'),
@@ -61,7 +62,6 @@ urlpatterns = [
 
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerCardInfo', views.GET_PlayerCardInfo, name='PlayerCardInfo'),
 
-    path('World/<int:WorldID>/PlayerStats', views.GET_PlayerStats_All, name='PlayerStats'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerStats', views.GET_PlayerStats_Player, name='PlayerStats'),
     path('World/<int:WorldID>/PlayerStats/Departures', views.GET_PlayerStats_Departures, name='PlayerStats_Departures'),
     path('World/<int:WorldID>/WorldHistory', views.GET_WorldHistory, name='WorldHistory'),

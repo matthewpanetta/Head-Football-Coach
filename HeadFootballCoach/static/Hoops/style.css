@@ -269,6 +269,8 @@
 .SideNavItem {
   padding-top: 2px;
   padding-bottom: 2px;
+  color: #666;
+  font-size: 14px;
 }
 
 .SideNavGroup img {
@@ -276,8 +278,10 @@
 }
 
 .SideNavGroup {
-  font-size: 16px;
-  color: #BBB;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-top: 20px;
+  margin-bottom: 4px;
 }
 
 .navNCAALogoLink {
@@ -552,6 +556,9 @@ input[type=text], input[type=password] {
 .height100 {
   height: 100%;
 }
+.height90 {
+  height: 90%;
+}
 
 .height-70 {
   height: 70px;
@@ -684,6 +691,11 @@ input[type=text], input[type=password] {
   font-size: 16px;
 }
 
+.font20 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
 .min-width-100 {
   min-width: 100px;
 }
@@ -742,7 +754,7 @@ input[type=text], input[type=password] {
   /*  opacity: .7;*/
 }
 
-.selected-boxscore-tab, .selected-upcoming-gameview-tab, .selected-recent-gameview-tab, .selected-roster-tab, .selected-award-team-tab, .selected-preseason-award-conference-tab, .selected-preseason-award-team-tab, .selected-season-award-conference-tab, .selected-season-award-team-tab, .selected-drive-event-tab, .selected-team-record-tab {
+.selected-boxscore-tab, .selected-highlight-tab, .selected-upcoming-gameview-tab, .selected-recent-gameview-tab, .selected-roster-tab, .selected-award-team-tab, .selected-preseason-award-conference-tab, .selected-preseason-award-team-tab, .selected-season-award-conference-tab, .selected-season-award-team-tab, .selected-drive-event-tab, .selected-team-record-tab {
   border-bottom: 3px solid #111 !important;
 }
 
@@ -1362,4 +1374,34 @@ img.teamTeamLogo {
 }
 .skew-neg-45 {
   transform: skewX(-45deg);
+}
+
+.player-highlight-pills {
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.good{
+  color: #0B5001;
+  background-color: #BDEDC4;
+}
+
+.fine{
+  color: #894402;
+  background-color: #FEE98A;
+}
+
+.bad{
+  color: #8F0600;
+  background-color: #8F060022;
+}
+
+#player-highlight-info-selection-bar .w3-bar-item {
+  font-size: 14px;
+  padding: 6px 6px;
+}
+
+.tiny {
+  font-size: 10px !important;
 }

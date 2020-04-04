@@ -5,10 +5,20 @@ from math import sin, cos, sqrt, atan2, radians, log
 
 
 
-def NormalVariance(Modifier):
+def FindRange(RangeDict, Value):
+
+    for Slice in RangeDict:
+        if Value >= Slice['Floor'] and Value <= Slice['Ceiling']:
+            return Slice
+
+    return None
+
+
+def NormalVariance(Modifier, Segments = 5):
     Mean = 1
     Sigma = .1
-    r = NormalTrunc(Mean * Modifier, Sigma, Mean - (5*Sigma), Mean + (5*Sigma))
+    SegmentsPerSide = int(Segments / 2)
+    r = NormalTrunc(Mean * Modifier, Sigma, Mean - (SegmentsPerSide*Sigma), Mean + (SegmentsPerSide*Sigma))
     v = (r - Mean) / Sigma * 2
     if v == 0:
         v = 0.0000000001

@@ -94,14 +94,14 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None):
                 DCToSave.append(DC)
                 PlayerHasPosition = True
 
-            if PTS not in PositionDepthChart[DepthPos]['Bench']:
+            if PTS not in PositionDepthChart[DepthPos]['Bench'] + PositionDepthChart[DepthPos]['Starters']:
                 PositionDepthChart[DepthPos]['BenchSpotsLeft'] -= 1
                 PositionDepthChart[DepthPos]['Bench'].append(PTS)
 
                 PositionID = Position.objects.filter(PositionAbbreviation=DepthPos).first()
                 DepthPosition = len(PositionDepthChart[DepthPos]['Bench'])
 
-                DC = PlayerTeamSeasonDepthChart(WorldID = CurrentWorld, PlayerTeamSeasonID=PTS, PositionID=PositionID, IsStarter = True, DepthPosition=DepthPosition)
+                DC = PlayerTeamSeasonDepthChart(WorldID = CurrentWorld, PlayerTeamSeasonID=PTS, PositionID=PositionID, IsStarter = False, DepthPosition=DepthPosition)
                 DCToSave.append(DC)
                 PlayerHasPosition = True
 
