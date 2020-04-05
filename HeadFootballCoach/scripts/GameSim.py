@@ -14,33 +14,39 @@ def RoundUp(Val):
 def CalculateGameScore(PlayerGameStats):
 
     GameScoreMap = [
-        {'Stat': 'RUS_Yards', 'PointToStatRatio': 1.0 / 10},
-        {'Stat': 'RUS_TD'   , 'PointToStatRatio': 6.0 / 1},
-        {'Stat': 'PAS_Yards', 'PointToStatRatio': 1.0 / 25},
-        {'Stat': 'PAS_TD',    'PointToStatRatio': 5.0 / 1},
-        {'Stat': 'PAS_Completions', 'PointToStatRatio': 1.0 / 5},
-        {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 10},
-        {'Stat': 'REC_TD',    'PointToStatRatio': 6.0 / 1},
-        {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1},
-        {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 1},
-        {'Stat': 'DEF_Sacks',  'PointToStatRatio': 2.0 / 1},
-        {'Stat': 'DEF_Tackles',  'PointToStatRatio': 1.0 / 2},
-        {'Stat': 'DEF_TacklesForLoss',  'PointToStatRatio': 2.0 / 1},
-        {'Stat': 'DEF_Deflections',  'PointToStatRatio': 1.0 / 1},
-        {'Stat': 'DEF_INT',  'PointToStatRatio': 6.0 / 1},
-        {'Stat': 'DEF_TD',  'PointToStatRatio': 6.0 / 1},
-        {'Stat': 'FUM_Fumbles',  'PointToStatRatio': -3.0 / 1},
-        {'Stat': 'FUM_Forced',  'PointToStatRatio': 3.0 / 1},
-        {'Stat': 'FUM_Recovered',  'PointToStatRatio': 1.0 / 1},
-        {'Stat': 'BLK_Sacks',  'PointToStatRatio': -3.0 / 1},
-        {'Stat': 'BLK_Blocks',  'PointToStatRatio': 1.0 / 10},
+        {'Stat': 'RUS_Yards', 'PointToStatRatio': 1.0 / 10, 'Display': ' rush yards'},
+        {'Stat': 'RUS_TD'   , 'PointToStatRatio': 6.0 / 1, 'Display': ' rush TDs'},
+        {'Stat': 'PAS_Yards', 'PointToStatRatio': 1.0 / 25, 'Display': ' pass yards'},
+        {'Stat': 'PAS_TD',    'PointToStatRatio': 5.0 / 1, 'Display': ' pass TDs'},
+        {'Stat': 'PAS_Completions', 'PointToStatRatio': 1.0 / 5, 'Display': ' comp'},
+        {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 10, 'Display': ' rec. yards'},
+        {'Stat': 'REC_TD',    'PointToStatRatio': 6.0 / 1, 'Display': ' rec. TDs'},
+        {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1, 'Display': ' picks'},
+        {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 1, 'Display': ' sacked'},
+        {'Stat': 'DEF_Sacks',  'PointToStatRatio': 2.5 / 1, 'Display': ' sacks'},
+        {'Stat': 'DEF_Tackles',  'PointToStatRatio': 1.0 / 2, 'Display': ' tackles'},
+        {'Stat': 'DEF_TacklesForLoss',  'PointToStatRatio': 2.0 / 1, 'Display': ' TFLs'},
+        {'Stat': 'DEF_Deflections',  'PointToStatRatio': 2.0 / 1, 'Display': ' defl'},
+        {'Stat': 'DEF_INT',  'PointToStatRatio': 6.0 / 1, 'Display': ' INTS'},
+        {'Stat': 'DEF_TD',  'PointToStatRatio': 6.0 / 1, 'Display': ' def TDs'},
+        {'Stat': 'FUM_Fumbles',  'PointToStatRatio': -3.0 / 1, 'Display': ' fumbles'},
+        {'Stat': 'FUM_Forced',  'PointToStatRatio': 4.0 / 1, 'Display': ' fumb frcd'},
+        {'Stat': 'FUM_Recovered',  'PointToStatRatio': 1.0 / 1, 'Display': ' fumb rec.'},
+        {'Stat': 'BLK_Sacks',  'PointToStatRatio': -3.0 / 1, 'Display': ' sacks alwd.'},
+        {'Stat': 'BLK_Blocks',  'PointToStatRatio': 1.0 / 10, 'Display': ' blocks'},
     ]
 
-    GameScore = 0
+    GameSummary = {'GameScore': 0}
     for StatObj in GameScoreMap:
-        GameScore += getattr(PlayerGameStats, StatObj['Stat']) * StatObj['PointToStatRatio']
+        StatObj['DisplayValue'] = getattr(PlayerGameStats, StatObj['Stat'])
+        StatObj['GameScoreValue'] = StatObj['DisplayValue'] * StatObj['PointToStatRatio']
+        GameSummary['GameScore'] += StatObj['GameScoreValue']
 
-    return GameScore
+    Displays = [str(u['DisplayValue']) + u['Display'] for u in sorted(GameScoreMap, key=lambda k: k['GameScoreValue'],reverse=True)[:2]]
+    GameSummary['TopStatStringDisplay1'] = Displays[0]
+    GameSummary['TopStatStringDisplay2'] = Displays[1]
+
+    return GameSummary
 
 def Max(a,b):
     if a > b:
@@ -1296,7 +1302,10 @@ def GameSim(game):
 
     StatDictExclusions = []
     for P in AllPlayers:
-        AllPlayers[P]['PlayerGameStat'].GameScore = CalculateGameScore(AllPlayers[P]['PlayerGameStat'])
+        PlayerGameSummary = CalculateGameScore(AllPlayers[P]['PlayerGameStat'])
+        AllPlayers[P]['PlayerGameStat'].GameScore = PlayerGameSummary['GameScore']
+        AllPlayers[P]['PlayerGameStat'].TopStatStringDisplay1 = PlayerGameSummary['TopStatStringDisplay1']
+        AllPlayers[P]['PlayerGameStat'].TopStatStringDisplay2 = PlayerGameSummary['TopStatStringDisplay2']
         ElementsToSave.append(AllPlayers[P]['PlayerGameStat'])
 
     for T in GameDict:

@@ -2354,6 +2354,9 @@ class PlayerGameStat(models.Model):
     PlaysOnField = models.PositiveSmallIntegerField(default=0)
     TeamGamesPlayed = models.PositiveSmallIntegerField(default=0)
 
+    TopStatStringDisplay1 = models.CharField(default=None, null=True, blank=True, max_length=30)
+    TopStatStringDisplay2 = models.CharField(default=None, null=True, blank=True, max_length=30)
+
     def ReturnAsDict(self):
         ThisPlayer = self.PlayerTeamSeasonID.PlayerID
         return {
@@ -2367,14 +2370,6 @@ class PlayerGameStat(models.Model):
         return ThisPlayer.PlayerFirstName + ' ' + ThisPlayer.PlayerLastName + ' recorded '
 
 
-    @property
-    def ReboundPercentage(self):
-        if self.ReboundChances > 0:
-            return round(1.0 * self.Rebounds / self.ReboundChances,2)
-        return 0.0
-    class Meta:
-              # specify this model as an Abstract Model
-            app_label = 'HeadFootballCoach'
 
 class Coach(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)

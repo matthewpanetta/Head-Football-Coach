@@ -533,6 +533,10 @@ input[type=text], input[type=password] {
   width: 70px;
 }
 
+.weekScheduleBox {
+  cursor: pointer;
+}
+
 .teamScheduleGameBoxVsString {
   font-size: 10px;
 }
@@ -569,13 +573,14 @@ input[type=text], input[type=password] {
   height: 70px;
 }
 
-.SelectedGameBox {
+.SelectedGameBox, .SelectedWeekBox {
   background-color: #111;
   color: white;
   border: 1px solid #111;
+  z-index: 1000;
 }
 
-.SelectedGameBox::after {
+.SelectedGameBox::after , .SelectedWeekBox::after {
   content: "";
   position: absolute;
   left: 0;
@@ -677,6 +682,11 @@ input[type=text], input[type=password] {
 .font10 {
   font-size: 10px;
   opacity: 50%;
+}
+
+
+.font10-plain {
+  font-size: 10px;
 }
 
 .font8 {
@@ -1423,4 +1433,13 @@ img.teamTeamLogo {
 
 .tiny {
   font-size: 10px !important;
+}
+
+.small-logo {
+  height: 20px;
+}
+
+
+.logo-24 {
+  height: 24px;
 }

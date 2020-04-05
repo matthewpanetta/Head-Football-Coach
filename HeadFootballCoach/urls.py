@@ -44,6 +44,8 @@ urlpatterns = [
     path('World/<int:WorldID>/PlayerDepartures/', views.Page_Rankings, name='Rankings'),
 
     path('World/<int:WorldID>/Rankings/', views.Page_Rankings, name='PlayerDepartures'),
+    path('World/<int:WorldID>/Schedule', views.Page_Schedule, name='Schedule'),
+    path('World/<int:WorldID>/Schedule/Team/<int:TeamID>', views.Page_Schedule, name='Schedule'),
 
 
 

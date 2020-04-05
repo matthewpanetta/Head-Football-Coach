@@ -1,11 +1,223 @@
-<h1>Season Schedule!</h1>
+<div>
+  {% include "HeadFootballCoach/NavBar.html" %}
+</div>
+{% load static %}
+{% load humanize %}
+{% load CustomTags %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<head>
+  <style id="addedStyle">
+    .SelectedWeekBox::after {
+      border-left-width: 35px;
+      border-right-width: 35px;
+      border-width: 15px 35px 0;}
+  </style>
+</head>
 
-<form action="/Sim/" method="get">
-{% for date in calendar %}
-    <input type="radio" name="date" id="date{{ forloop.counter }}" value="{{ date }}">
-    <label for="date{{ forloop.counter }}">{{ date }}</label><br>
-{% endfor %}
-<input type="submit" value="Sim Next Day">
-</form>
+<link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/searchPanes.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/select.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/buttons.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/fixedHeader.dataTables.min.css' %}">
+<link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
+
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "HeadFootballCoach/Scoreboard.html" %}
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Top 25</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">League Leaders</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-player-stats">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding'>
+            <div class='w3-col s9'>
+              <div class="w3-card ">
+                <div class="w3-card w3-light-grey w3-col s12">
+                  <div class="w3-row-padding w3-white">
+                    {% for Week in AllWeeks%}
+                    <div WeekID="{{Week.WeekID}}" class=" w3-display-container {{Week.SelectedWeekBox}} weekScheduleBox" style='flex-grow: 1;'>
+                      <div class="ellipsis width100 font10-plain" style='background-color: black; text-align: center; color: white;'>Week</div>
+
+                      <div class="width100 height100">
+                        <div class="font20">
+                          <div >{{Week.WeekNumber}}</div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <div class="w3-row w3-display-container w3-light-grey">
+                    {% for Week in AllWeeks%}
+                    <div class="w3-display-container {{Week.ShowWeekClass}} weekScheduleDisplayContainer"  WeekID="{{Week.WeekID}}">
+                      {% for Game in Week.Games%}
+                      {% if forloop.counter0|modulo:2 == 0 %}
+                        <div class="w3-row-padding w3-margin-top">
+                      {% endif %}
+                        <div  class='w3-card w3-col s5' style='background-color: white;'>
+                          <div class="w3-container">
+                          <table class='width100' style='table-layout: fixed;'>
+                            <colgroup>
+                                <col span="1">
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 40%;'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                            </colgroup>
+                            <thead>
+                              <th></th>
+                              <th></th>
+                              {% if Game.WasPlayed %}
+                              <th><a href="{{Game.GameHref}}" class='font10 left-text'>Box Score</a></th>
+                              {% for Period in Game.PeriodScores%}
+                              <th>{{Period.EventPeriod|PeriodMap}}</td>
+                              {% endfor %}
+                              <th>F</th>
+                              {% else%}
+                              <th><a href="{{Game.GameHref}}" class='font10 left-text'>Preview</a></th>
+                              {% endif %}
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td><img src="{{Game.AwayTeamLogo}}" class='logo-24' alt=""></td>
+                                <td>{{Game.AwayTeamRank}}</td>
+                                <td class='left-text {{Game.AwayTeamWinningGameBold}}'>
+                                  <a href="{{Game.AwayTeamHref}}">{{Game.AwayTeamName}}</a>
+                                </td>
+                                {% if Game.WasPlayed %}
+                                {% for Period in Game.PeriodScores%}
+                                <td>{{ Period.AwayPointsScoredThisPeriod|default_if_none:Period.PeriodAwayPoints   }}</td>
+                                {% endfor %}
+                                <td class='{{Game.AwayTeamWinningGameBold}}'>{{Game.AwayPoints}}</td>
+                                {% endif %}
+                              </tr>
+                              <tr>
+                                <td><img src="{{Game.HomeTeamLogo}}" class='logo-24' alt=""></td>
+                                <td>{{Game.HomeTeamRank}}</td>
+                                <td class='left-text {{Game.HomeTeamWinningGameBold}}'>
+                                  <a href="{{Game.HomeTeamHref}}">{{Game.HomeTeamName}}</a>
+                                </td>
+                                {% if Game.WasPlayed %}
+                                {% for Period in Game.PeriodScores%}
+                                <td>{{ Period.HomePointsScoredThisPeriod|default_if_none:Period.PeriodHomePoints   }}</td>
+                                {% endfor %}
+                                <td class='{{Game.HomeTeamWinningGameBold}}'>{{Game.HomePoints}}</td>
+                                {% endif %}
+                              </tr>
+                            </tbody>
+                          </table>
+                          </div>
+                          {% if Game.WasPlayed %}
+                          <div class="w3-row-padding w3-margin-top">
+                            <div class="w3-col s6">
+                              <h6 class='font12'>Top Players</h6>
+                            <ul class='no-list-style'>
+                              {% for Player in Game.HomeTopPlayers%}
+                              <li class='font12'>
+                                  {{Player.PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation}}
+                                  <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}} </a>
+                                    ({{Player.PlayerTeamSeasonID__TeamSeasonID__TeamID__Abbreviation}})
+                                  <ul class='no-list-style font10'>
+                                    <li>{{Player.TopStatStringDisplay1}}</li>
+                                    <li>{{Player.TopStatStringDisplay2}}</li>
+                                  </ul>
+                              </li>
+                              {% endfor %}
+                            </ul>
+                            </div>
+                            <div class="w3-col s6">
+                              <h6 class='font12'>Top Players</h6>
+                            <ul class='no-list-style'>
+                              {% for Player in Game.AwayTopPlayers%}
+                              <li class='font12'>
+                                  {{Player.PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation}}
+                                  <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}}</a>
+                                  ({{Player.PlayerTeamSeasonID__TeamSeasonID__TeamID__Abbreviation}})
+                                  <ul class='no-list-style font10'>
+                                    <li>{{Player.TopStatStringDisplay1}}</li>
+                                    <li>{{Player.TopStatStringDisplay2}}</li>
+                                  </ul>
+                              </li>
+                              {% endfor %}
+                            </ul>
+                            </div>
+                          </div>
+                          {% endif %}
+                        </div>
+                        {% if forloop.counter0|modulo:2 == 1 %}
+                        </div>
+                        {% elif forloop.last %}
+                        </div>
+                        {% endif %}
+
+                      {% endfor %}
+                    </div>
+
+                    {% endfor %}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-league-leaders">
+        <div class='w3-display-container'>
+          <div class='w3-row-padding' id='worldLeagueLeaderRow'>
+            <div id='worldLeagueLeadersClone' class='w3-col s3 w3-hide'>
+              <table id='' class='display table sortable w3-table-all'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Team</th>
+                  <th data-field='DisplayName'></th>
+                </thead>
+                <tr id='worldLeagueLeadersRowClone' class='w3-hide'>
+                  <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value=""></td>
+                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href="" href-field='PlayerHref' ><span data-field='PlayerName'></span>, </a><span data-field='PlayerPosition'></span></td>
+                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href-field='PlayerTeamHref'><img src="" src-field='PlayerTeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
+                  <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value=""></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="{% static 'common/jquery-3.3.1.slim.min.js' %}"></script>
+<script src="{% static 'common/jquery.min.js' %}"></script>
+<script src="{% static 'facesjs-master/src/generate.js' %}"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'Pages/Schedule.js' %}" type="module"></script>
+<script src="{% static 'common/popper.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.select.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.searchPanes.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.buttons.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/buttons.colVis.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedColumns.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedHeader.min.js' %}"></script>
+
+{{ TopTeams|json_script:"top-teams-data" }}

@@ -51,17 +51,24 @@ function PopulateTop25(WorldID, data){
           }},
           {"data": "WinsLosses", "sortable": true, 'orderSequence':["desc"]},
           {"data": "LastWeekGame", "sortable": true, 'searchable': true, "fnCreatedCell": function (td, LastWeekObject, DataObject, iRow, iCol) {
-            console.log('LastWeekObject', LastWeekObject)
             if (LastWeekObject == 'BYE'){
               $(td).html('BYE')
             }
             else{
               $(td).html('<a href="'+LastWeekObject.GameHref+'">'+LastWeekObject.Points +'-'+ LastWeekObject.OpponentPoints+' </a>')
               $(td).append('<span class="'+LastWeekObject.WinLossLetter+'">'+LastWeekObject.WinLossLetter+'</span>');
-              $(td).append('<span> '+LastWeekObject.VsAtLetter+' </span><a href="'+LastWeekObject.OpponentTeamHref+'">'+ LastWeekObject.OpponentTeamName+'</a>');
+              $(td).append('<span> '+LastWeekObject.VsAtLetter+' </span><a href="'+LastWeekObject.OpponentTeamHref+'">'+LastWeekObject.OpponentNationalRankDisplay+' ' + LastWeekObject.OpponentTeamName+'</a>');
             }
           }},
-          {"data": "ConferenceWinsLosses", "sortable": true, 'searchable': true},
+          {"data": "ThisWeekGame", "sortable": true, 'searchable': true, "fnCreatedCell": function (td, ThisWeekObject, DataObject, iRow, iCol) {
+            console.log('LastWeekObject', ThisWeekObject)
+            if (ThisWeekObject == 'BYE'){
+              $(td).html('BYE')
+            }
+            else{
+              $(td).html('<span> '+ThisWeekObject.VsAtLetter+' </span><a href="'+ThisWeekObject.OpponentTeamHref+'">'+ThisWeekObject.OpponentNationalRankDisplay+' ' + ThisWeekObject.OpponentTeamName+'</a>');
+            }
+          }},
 
       ],
       'order': [[ 0, "asc" ]],
