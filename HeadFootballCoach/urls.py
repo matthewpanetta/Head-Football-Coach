@@ -33,7 +33,7 @@ urlpatterns = [
     path('World/<int:WorldID>/Recruiting/', views.Page_Recruiting, name='Recruiting'),
     path('World/<int:WorldID>/Coach/<int:CoachID>/', views.Page_Coach, name='Coach'),
     path('World/<int:WorldID>/Season/<int:SeasonStartYear>/', views.Page_Season, name='Season'),
-    path('World/<int:WorldID>/Conference/<int:ConferenceID>/', views.Page_Conference, name='Conference'),
+    path('World/<int:WorldID>/Conferences/<int:ConferenceID>/', views.Page_Conferences, name='Conferences'),
     path('World/<int:WorldID>/Conferences/', views.Page_Conferences, name='Conferences'),
     path('World/<int:WorldID>/Top25/', views.Page_Top25, name='Top25'),
     path('World/<int:WorldID>/Awards/', views.Page_Awards, name='Awards'),
@@ -41,7 +41,9 @@ urlpatterns = [
     path('World/<int:WorldID>/PlayerStats/Team/<int:TeamID>/', views.Page_PlayerStats, name='PlayerStats'),
     path('World/<int:WorldID>/TeamStats/', views.Page_TeamStats, name='TeamStats'),
     path('World/<int:WorldID>/CoachCarousel/', views.Page_CoachCarousel, name='CoachCarousel'),
-    path('World/<int:WorldID>/PlayerDepartures/', views.Page_PlayerDepartures, name='PlayerDepartures'),
+    path('World/<int:WorldID>/PlayerDepartures/', views.Page_Rankings, name='Rankings'),
+
+    path('World/<int:WorldID>/Rankings/', views.Page_Rankings, name='PlayerDepartures'),
 
 
 
