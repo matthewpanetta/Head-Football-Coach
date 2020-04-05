@@ -473,6 +473,11 @@ article>header {
   /*font-size: 30px;*/
 }
 
+.minor-bold {
+  font-weight: 600;
+  /*font-size: 30px;*/
+}
+
 .teamHistoryPlayerLeaderRow {
   margin-top: 10px;
 }
@@ -689,6 +694,10 @@ input[type=text], input[type=password] {
 
 .font16 {
   font-size: 16px;
+}
+
+.font24 {
+  font-size: 24px;
 }
 
 .font20 {
@@ -1376,7 +1385,7 @@ img.teamTeamLogo {
   transform: skewX(-45deg);
 }
 
-.player-highlight-pills {
+.player-highlight-pills, .team-highlight-pills {
     padding: 2px 6px;
     border-radius: 10px;
     font-size: 12px;
@@ -1395,6 +1404,16 @@ img.teamTeamLogo {
 .bad{
   color: #8F0600;
   background-color: #8F060022;
+}
+
+.W{
+  color: #0B5001;
+  font-weight: 600;
+}
+
+.L{
+  color: #8F0600;
+  font-weight: 600;
 }
 
 #player-highlight-info-selection-bar .w3-bar-item {

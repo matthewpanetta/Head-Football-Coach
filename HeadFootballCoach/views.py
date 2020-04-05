@@ -64,7 +64,58 @@ def GetAllTeams(WorldID, SortType='National', GroupingName=None, GroupingID=None
 
     return None
 
+def GetRecentGamesForScoreboard(CurrentWorld):
 
+    CurrentSeason = CurrentWorld.leagueseason_set.filter(IsCurrent = 1).first()
+    CurrentWeek = Week.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = True).filter(PhaseID__LeagueSeasonID = CurrentSeason).first()
+    LastWeek    = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
+
+    WorldID = CurrentWorld.WorldID
+
+    GameList = Game.objects.filter(WorldID = CurrentWorld).values(
+        'GameID', 'GameTime'
+    ).annotate(
+        GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('GameID'), output_field=CharField()),
+        GameHeadlineDisplay = Case(
+            When(BowlID__IsNationalChampionship = True, then=Value('National Championship!')),
+            When(BowlID__BowlName__isnull = False, then=F('BowlID__BowlName')),
+            When(IsConferenceChampionship = True, then= Concat(Min('teamgame__TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation'), Value(' Championship'), output_field=CharField())),
+            When(TeamRivalryID__RivalryName__isnull = False, then=F('TeamRivalryID__RivalryName')),
+            When(TeamRivalryID__isnull = False, then=Value('Rivalry game')),
+            When(NationalBroadcast = True, then=Value('National Broadcast')),
+            When(RegionalBroadcast = True, then=Value('Regional Broadcast')),
+            default=Value(''),
+            output_field=CharField()
+        ),
+        MinNationalRank = Min('teamgame__TeamSeasonWeekRankID__NationalRank'),
+        UserTeamGame = Max('teamgame__TeamSeasonID__TeamID__IsUserTeam')
+    ).order_by('-UserTeamGame'  , 'MinNationalRank')
+    RecentGames   = GameList.filter(WeekID = LastWeek).filter(WasPlayed = 1)
+
+    for G in RecentGames:
+        TGs = TeamGame.objects.filter(GameID=G['GameID']).values('TeamSeasonID__TeamID', 'TeamSeasonID', 'Points', 'TeamRecord', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation', 'TeamSeasonID__TeamID__TeamLogoURL').annotate(
+            TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID'), output_field=CharField()),
+            TeamWinningGameBold = Case(
+                #When(IsWinningTeam = True, then=Value('TeamWinningGameBold')),
+                When(Points = Max('GameID__teamgame__Points'), then=Value('TeamWinningGameBold')),
+                default=Value('TeamLosingGame'),
+                output_field=CharField()
+            ),
+            TeamRecordDisplay = Case(
+                When(GameID__WasPlayed = True, then=F('TeamRecord')),
+                default=Concat(F('TeamSeasonID__Wins'), Value('-'), F('TeamSeasonID__Losses'), output_field=CharField()),
+                output_field=CharField()
+            ),
+            NationalRankDisplay = Case(
+                When(TeamSeasonWeekRankID__NationalRank__gt = 25, then=Value('')),
+                default=Concat(Value(''), F('TeamSeasonWeekRankID__NationalRank'), output_field=CharField()),
+                output_field=CharField()
+            ),
+        ).order_by('IsHomeTeam')
+
+
+        G['TeamGames'] = TGs
+    return RecentGames
 
 
 def CurrentDate(WorldID):
@@ -259,6 +310,8 @@ def Page_Conferences(request, WorldID, ConferenceID = None):
     CurrentWorld = World.objects.get(WorldID = WorldID)
     CurrentSeason = CurrentWorld.leagueseason_set.filter(IsCurrent = 1)
 
+    context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
+
     ConferenceList = CurrentWorld.conference_set.all().annotate(
         IsChosenConference = Case(
             When(ConferenceID = ConferenceID, then=1),
@@ -390,91 +443,30 @@ def Page_Rankings(request, WorldID, ConferenceID = None):
     LastWeek    = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
 
 
-    GameList = Game.objects.filter(WorldID = CurrentWorld).values(
-        'GameID', 'GameTime'
-    ).annotate(
-        GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('GameID'), output_field=CharField()),
-        GameHeadlineDisplay = Case(
-            When(BowlID__IsNationalChampionship = True, then=Value('National Championship!')),
-            When(BowlID__BowlName__isnull = False, then=F('BowlID__BowlName')),
-            When(IsConferenceChampionship = True, then= Concat(Min('teamgame__TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation'), Value(' Championship'), output_field=CharField())),
-            When(TeamRivalryID__RivalryName__isnull = False, then=F('TeamRivalryID__RivalryName')),
-            When(TeamRivalryID__isnull = False, then=Value('Rivalry game')),
-            When(NationalBroadcast = True, then=Value('National Broadcast')),
-            When(RegionalBroadcast = True, then=Value('Regional Broadcast')),
-            default=Value(''),
-            output_field=CharField()
-        ),
-        MinNationalRank = Min('teamgame__TeamSeasonWeekRankID__NationalRank'),
-        UserTeamGame = Max('teamgame__TeamSeasonID__TeamID__IsUserTeam')
-    ).order_by('-UserTeamGame'  , 'MinNationalRank')
-    RecentGames   = GameList.filter(WeekID = LastWeek).filter(WasPlayed = 1)
-
-    for G in RecentGames:
-        TGs = TeamGame.objects.filter(GameID=G['GameID']).values('TeamSeasonID__TeamID', 'TeamSeasonID', 'Points', 'TeamRecord', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation', 'TeamSeasonID__TeamID__TeamLogoURL').annotate(
-            TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID'), output_field=CharField()),
-            TeamWinningGameBold = Case(
-                #When(IsWinningTeam = True, then=Value('TeamWinningGameBold')),
-                When(Points = Max('GameID__teamgame__Points'), then=Value('TeamWinningGameBold')),
-                default=Value('TeamLosingGame'),
-                output_field=CharField()
-            ),
-            TeamRecordDisplay = Case(
-                When(GameID__WasPlayed = True, then=F('TeamRecord')),
-                default=Concat(F('TeamSeasonID__Wins'), Value('-'), F('TeamSeasonID__Losses'), output_field=CharField()),
-                output_field=CharField()
-            ),
-            NationalRankDisplay = Case(
-                When(TeamSeasonWeekRankID__NationalRank__gt = 25, then=Value('')),
-                default=Concat(Value(''), F('TeamSeasonWeekRankID__NationalRank'), output_field=CharField()),
-                output_field=CharField()
-            ),
-        ).order_by('IsHomeTeam')
-
-
-        G['TeamGames'] = TGs
-
     TopTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=True).values(
-        'TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname',
+        'TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID',
         'NationalRank', 'NationalRankDelta',
         'TeamSeasonID__ConferenceChampion', 'TeamSeasonID__ConferenceRank', 'TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation','TeamSeasonID__NationalChampion', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX'
     ).annotate(
+        TeamFullName = Concat( F('TeamSeasonID__TeamID__TeamName'), Value(' '), F('TeamSeasonID__TeamID__TeamNickname'), output_field=CharField()),
         NationalRankDeltaAbs = Func(F('NationalRankDelta'), function='ABS'),
-        NationalRankDeltaDrop = Case(
-            When(NationalRankDelta__lt = 0, then=Value(True)),
-            default=Value(False),
-            output_field=BooleanField()
+        NationalRankDeltaShow = Case(
+            When(NationalRankDelta = 0, then=Value('')),
+            default=F('NationalRankDeltaAbs'),
+            output_field=CharField()
         ),
-        GamesPlayed = Sum('TeamSeasonID__teamgame__GamesPlayed'),
-        PPG=Case(
-            When(GamesPlayed=0, then=0.0),
-            default=(Round(Sum('TeamSeasonID__teamgame__Points')* 1.0 / F('GamesPlayed'),1)),
-            output_field=FloatField()
+        NationalRankDeltaSymbol = Case(
+            When(NationalRankDelta__lt = 0, then=Value('&#8595;')),
+            When(NationalRankDelta__gt = 0, then=Value('&#8593;')),
+            default=Value(''),
+            output_field=CharField()
         ),
-        PAPG=Case(
-            When(GamesPlayed=0, then=0.0),
-            default=(Round(Sum('TeamSeasonID__opposingteamgame__Points')* 1.0 / F('GamesPlayed'),1)),
-            output_field=FloatField()
+        NationalRankDeltaClass = Case(
+            When(NationalRankDelta__lt = 0, then=Value('L')),
+            When(NationalRankDelta__gt = 0, then=Value('W')),
+            default=Value(''),
+            output_field=CharField()
         ),
-        PPG_Rank = Window(
-            expression=Rank(),
-            order_by=F('PPG').desc(),
-        ),
-        PAPG_Rank = Window(
-            expression=Rank(),
-            order_by=F('PAPG').asc(),
-        ),
-        RUS_YardsPG=Case(
-            When(GamesPlayed=0, then=0.0),
-            default=(Round(Sum('TeamSeasonID__teamgame__RUS_Yards')* 1.0 / F('GamesPlayed'),1)),
-            output_field=FloatField()
-        ),
-        PAS_YardsPG=Case(
-            When(GamesPlayed=0, then=0.0),
-            default=(Round(Sum('TeamSeasonID__teamgame__PAS_Yards')* 1.0 / F('GamesPlayed'),1)),
-            output_field=FloatField()
-        ),
-        MOV= Round(F('PPG') - F('PAPG'), 1),
         NationalRankDisplay =  Case(
             When(NationalRank__gt = 25, then=Value('')),
             default=(Concat(Value('(') , F('NationalRank'), Value(')'), output_field=CharField())),
@@ -502,17 +494,44 @@ def Page_Rankings(request, WorldID, ConferenceID = None):
             When(TeamSeasonID__ConferenceChampion=True, then=Value('')),
             default=(Value('w3-hide')),
             output_field=CharField()
-        ),
+        )
     ).order_by('NationalRank')
 
     print()
     print('TopTeams')
     for T in TopTeams:
-        print(T)
+
+        LastWeekGame = {}
+        LWG = TeamGame.objects.filter(WorldID = WorldID).filter(GameID__WeekID = LastWeek).filter(TeamSeasonID__TeamID = T['TeamSeasonID__TeamID']).values('Points').annotate(
+            OpponentPoints = Subquery(TeamGame.objects.filter(GameID =OuterRef('GameID')).exclude(TeamGameID=OuterRef('pk')).values('TeamGameID').annotate(OpponentPoints=Max('Points')).values('OpponentPoints')),
+            WinLossLetter = Case(
+                When(IsWinningTeam = True, then=Value('W')),
+                default=Value('L'),
+                output_field=CharField()
+            ),
+            VsAtLetter = Case(
+                When(IsHomeTeam = True, then=Value('vs.')),
+                default=Value('@'),
+                output_field=CharField()
+            ),
+            OpponentTeamName = F('OpposingTeamSeasonID__TeamID__TeamName'),
+            Text = Value('', output_field=CharField()),
+            OpponentTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('OpposingTeamSeasonID__TeamID'), output_field=CharField()),
+            GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('GameID'), output_field=CharField()),
+        ).first()
 
 
-    context['Teams'] = TopTeams
-    context['recentGames'] = RecentGames
+        if LWG is None:
+            T['LastWeekGame'] = 'BYE'
+        else:
+            T['LastWeekGame'] = LWG
+
+
+    UserTeam = GetUserTeam(WorldID)
+    context['TopTeams'] = list(TopTeams)[:25]
+    context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
+    context['userTeam'] = UserTeam
+    context['CurrentWeek'] = CurrentWeek
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
@@ -733,34 +752,6 @@ def Page_World(request, WorldID):
 
     AllTeamsList = list(AllTeams)
 
-    for G in RecentGames:
-        TGs = TeamGame.objects.filter(GameID=G['GameID']).values('TeamSeasonID__TeamID', 'TeamSeasonID', 'Points', 'TeamRecord', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation', 'TeamSeasonID__TeamID__TeamLogoURL').annotate(
-            TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID'), output_field=CharField()),
-            TeamWinningGameBold = Case(
-                #When(IsWinningTeam = True, then=Value('TeamWinningGameBold')),
-                When(Points = Max('GameID__teamgame__Points'), then=Value('TeamWinningGameBold')),
-                default=Value('TeamLosingGame'),
-                output_field=CharField()
-            ),
-            TeamRecordDisplay = Case(
-                When(GameID__WasPlayed = True, then=F('TeamRecord')),
-                default=Concat(F('TeamSeasonID__Wins'), Value('-'), F('TeamSeasonID__Losses'), output_field=CharField()),
-                output_field=CharField()
-            ),
-            NationalRankDisplay = Case(
-                When(TeamSeasonWeekRankID__NationalRank__gt = 25, then=Value('')),
-                default=Concat(Value(''), F('TeamSeasonWeekRankID__NationalRank'), output_field=CharField()),
-                output_field=CharField()
-            ),
-        ).order_by('IsHomeTeam')
-
-        for TG in TGs:
-            D = [{'PPP_Rank': T['PPP_Rank'], 'PAPP_Rank': T['PAPP_Rank']} for T in AllTeamsList if T['TeamSeasonID'] == TG['TeamSeasonID']]
-            for u in D[0]:
-                TG[u] = D[0][u]
-
-        G['TeamGames'] = TGs
-
 
     for G in UpcomingGames:
         TGs = TeamGame.objects.filter(GameID=G['GameID']).values('TeamSeasonID', 'TeamSeasonID__TeamID', 'Points', 'TeamRecord', 'TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
@@ -884,7 +875,7 @@ def Page_World(request, WorldID):
 
     context = {'currentSeason': CurrentSeason, 'allTeams': AllTeams, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek , 'games': UpcomingGames, 'LastWeek': LastWeek}
 
-    context['recentGames'] = RecentGames
+    context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
     context['SeasonAllAmericans'] = SeasonAllAmericans
     context['PreseasonAllAmericans'] = PreseasonAllAmericans
     context['PreseasonTopProspects'] = PreseasonTopProspects
@@ -2032,6 +2023,17 @@ def GET_PlayerCardInfo(request, WorldID, PlayerID):
 
     context = P
 
+    return JsonResponse(context, safe=False)
+
+
+
+def GET_TeamCardInfo(request, WorldID, TeamID):
+
+    TeamInfo = Team.objects.filter(WorldID = WorldID).filter(TeamID = TeamID).values('TeamName', 'TeamNickname', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamLogoURL', 'ConferenceID__ConferenceName').annotate(
+        CityAndState = Concat(F('CityID__CityName'), Value(', '), F('CityID__StateID__StateName'), output_field=CharField()),
+    ).first()
+
+    context = TeamInfo
     return JsonResponse(context, safe=False)
 
 def GET_TeamHistory(request, WorldID, TeamID):

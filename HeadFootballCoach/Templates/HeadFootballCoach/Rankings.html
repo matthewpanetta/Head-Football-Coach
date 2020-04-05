@@ -21,53 +21,8 @@
 <body>
   <div class="PageContent">
     <div class='worldHeader w3-row background-eee'>
-      {% if recentGames%}
-      <div class="scoreboard-slideshow">
-        <div class="scoreboard-slideshow-row">
-          <div class="MultiCarousel" data-items="4,6,8,10" data-slide="3" id="MultiCarousel" data-interval="100">
-            <div class="MultiCarousel-inner">
-              {% for game in recentGames%}
-              <div class="inline-block table-cell scoreboard-carousel-item w3-hide">
-                <table BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="all-border width100 background-white height-70">
-                  <colgroup>
-                    <col span="2">
-                    <col span="2">
-                    <col span="2">
-                  </colgroup>
-                  <thead>
-                    <th class="" colspan="6">
-                      <span class='font10'></span>
-                    </th>
-                    <th class="" colspan="2">
-                      <span class='font10'><a href="{{game.GameHref}}">Recap</a></span>
-                    </th>
-                  </thead>
-                  {% for TeamGame in game.TeamGames %}
-                  <tr class="{{TeamGame.TeamWinningGameBold}} w3-margin">
-                    <td colspan='2'>
-                      <img class="small-logo margin-right-4" src="{{TeamGame.TeamSeasonID__TeamID__TeamLogoURL}}" alt="">
-                    </td>
-                    <td class='min-width-75 left-text' colspan='4'>
-                      <div class='margin0'><span class='font10'>{{TeamGame.NationalRankDisplay}}</span> <a href="{{TeamGame.TeamHref}}" class='font14'>{{TeamGame.TeamSeasonID__TeamID__Abbreviation}}</a></div>
-                    </td>
-                    <td class='center-text font14 w3-padding-4' colspan='2'>
-                      {{TeamGame.Points}}
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </table>
-              </div>
-
-              {% endfor %}
-            </div>
-            <button class="btn btn-primary leftLst">
-              <</button> <button class="btn btn-primary rightLst">>
-            </button>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-</div>
+      {% include "HeadFootballCoach/Scoreboard.html" %}
+    </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Top 25</button>
@@ -81,150 +36,44 @@
             <div class='w3-col s9'>
               <div class="w3-card ">
 
-                <table class="w3-table w3-table-all w3-hoverable" id='Top25'  style="width:100%">
+                <table class="w3-table w3-table-all w3-hoverable" id='Top25Table'  style="width:100%">
                   <thead>
                     <tr>
-                      <th data-data="PlayerTeam">Team</th>
-                      <th data-data="PlayerName">Player</th>
-                      <th data-data="ClassID__ClassAbbreviation">Class</th>
-                      <th data-data="Position">Position</th>
-                      <th data-data="playerseasonskill__OverallRating">OVR</th>
-                      <th data-data="GameScore">Game Score</th>
-                      <th data-data="PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Pass Yards</th>
-                      <th data-data="PAS_CompletionPercentage" class='WorldPlayerStats-Stat-Passing'>Pass %</th>
-                      <th data-data="PAS_YPG" class='WorldPlayerStats-Stat-Passing'>Pass YPG</th>
-                      <th data-data="PAS_TD" class='WorldPlayerStats-Stat-Passing'>Pass TDs</th>
-                      <th data-data="PAS_INT" class='WorldPlayerStats-Stat-Passing'>Pass INT</th>
-                      <th data-data="RUS_Yards" class='WorldPlayerStats-Stat-Rushing'>Rush Yards</th>
-                      <th data-data="RUS_YPC" class='WorldPlayerStats-Stat-Rushing'>Rush YPC</th>
-                      <th data-data="RUS_YPG" class='WorldPlayerStats-Stat-Rushing'>Rush YPG</th>
-                      <th data-data="RUS_TD" class='WorldPlayerStats-Stat-Rushing'>Rush TDs</th>
-                      <th data-data="RUS_LNG" class='WorldPlayerStats-Stat-Rushing'>Rush LNG</th>
-                      <th data-data="RUS_20" class='WorldPlayerStats-Stat-Rushing'>Rush 20+</th>
-                      <th data-data="FUM_Fumbles" class='WorldPlayerStats-Stat-Rushing'>Rush Fum</th>
-                      <th data-data="REC_Yards" class='WorldPlayerStats-Stat-Receiving'>Rec Yards</th>
-                      <th data-data="REC_Receptions" class='WorldPlayerStats-Stat-Receiving'>Rec Catches</th>
-                      <th data-data="REC_YPC" class='WorldPlayerStats-Stat-Receiving'>Rec YPC</th>
-                      <th data-data="REC_YPG" class='WorldPlayerStats-Stat-Receiving'>Rec YPG</th>
-                      <th data-data="REC_TD" class='WorldPlayerStats-Stat-Receiving'>Rec TDs</th>
-                      <th data-data="REC_Targets" class='WorldPlayerStats-Stat-Receiving'>Rec Targets</th>
-                      <th data-data="REC_LNG" class='WorldPlayerStats-Stat-Receiving'>Rec LNG</th>
-
-                      <th data-data="DEF_Tackles" class='WorldPlayerStats-Stat-Defense'>Tackles</th>
-                      <th data-data="DEF_TacklesForLoss" class='WorldPlayerStats-Stat-Defense'>TFL</th>
-                      <th data-data="DEF_Sacks" class='WorldPlayerStats-Stat-Defense'>Sacks</th>
-                      <th data-data="DEF_INT" class='WorldPlayerStats-Stat-Defense'>INTs</th>
-                      <th data-data="FUM_Forced" class='WorldPlayerStats-Stat-Defense'>FF</th>
-                      <th data-data="FUM_Recovered" class='WorldPlayerStats-Stat-Defense'>FR</th>
+                      <th class=''>Rank</th>
+                      <th>Team</th>
+                      <th>Record</th>
+                      <th>Last Week</th>
+                      <th>This Week</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
 
             </div>
             <div class="w3-col s3">
-              <div class="w3-card" id='teamRosterPlayerHighlight'>
-                <div class='w3-row-padding w3-hide' id='player-highlight-top-color-box' style='height: 100px;'>
+              <div class="w3-card" id='teamHighlight'>
+                <div class='w3-row-padding w3-hide' id='team-highlight-top-color-box' style='height: 100px;'>
                   <div class="w3-col s4">
-                    <img src="" src-field='playerteamseason__TeamSeasonID__TeamID__TeamLogoURL' alt="" class='height90'>
+
                   </div>
                   <div class="w3-col s8">
                   </div>
                 </div>
                 <div class="w3-row-padding w3-hide">
-                  <div data-field='PlayerFaceJson' id='teamRosterPlayerHighlightPlayerFace' class="" style='width:80px;height: 120px;margin-top: -80px;margin-bottom: 0px; background-color: white; border-radius: 200px;'>
-
-                  </div>
+                  <img src="" src-field='TeamLogoURL' alt="" style='width:140px;height: 140px;margin-top: -70px;margin-bottom: 0px; background-color: white; border-radius: 200px; padding: 5px;'>
                 </div>
 
 
-                <div class="w3-row-padding">
-                  <div class='font16' data-field='PlayerName'>Click on a player for more info</div>
-                </div>
-                <div class="w3-row-padding w3-hide">
-                  <div class='font12 bar1' data-field='PositionID__PositionName'></div>
-                </div>
-                <div class="w3-row-padding w3-hide">
-                  <div class="player-highlight-pills" css-field='OverallCss' style=''>
-                    <i class="fas fa-chart-line"></i>
-                    <span data-field='playerseasonskill__OverallRating'></span>
-                  </div>
-                  <div class="player-highlight-pills bad" style=''>
-                    <i class="fas fa-hard-hat"></i>
-                    <span data-field=''>Lazy</span>
-                  </div>
-                  <div class="player-highlight-pills good" style=''>
-                    <i class="far fa-star"></i>
-                    <span data-field=''>Captain</span>
+                <div class="w3-row-padding font24">
+                  <div class="">
+                    <span class='minor-bold' data-field='TeamName'>Click on a team for more info</span> <span data-field='TeamNickname' ></span>
                   </div>
                 </div>
                 <div  class="w3-row-padding w3-hide">
                   <ul class='no-list-style '>
-                    <li class='font12'>
-                      <span  data-field='HeightFormatted'></span> / <span  data-field='WeightFormatted'></span>
-                    </li>
-                    <li class='font12' data-field='ClassID__ClassName'></li>
-                    <li class='font12' data-field='HometownAndState'></li>
+                    <li class='font12' data-field='CityAndState'></li>
+                    <li class='font12' data-field='ConferenceID__ConferenceName'></li>
                   </ul>
-                </div>
-                <div class="w3-row-padding w3-hide">
-                  <div id='player-highlight-info-selection-bar' class="w3-bar">
-                    <button class='w3-button w3-bar-item highlight-tab selected-highlight-tab' type="button" name="button" id="highlight-ratings-tab">Player Ratings</button>
-                    <button class='w3-button w3-bar-item w3-hide highlight-tab ' type="button" name="button" id="highlight-stats-tab">Player Stats</button>
-                    <button class='w3-button w3-bar-item highlight-tab ' type="button" name="button" id="highlight-awards-tab">Awards</button>
-                    <button class='w3-button w3-bar-item highlight-tab ' type="button" name="button" id="highlight-recruiting-tab">Recruiting</button>
-                  </div>
-                </div>
-                <div class='w3-row-padding w3-hide'>
-                  <div style="width: 100%;" id='player-highlight-info-content'>
-                    <div  class="w3-container" id="highlight-ratings">
-
-                    </div>
-                    <div class="w3-container w3-hide" id="highlight-stats">
-                      stats here
-                    </div>
-                    <div class="w3-container w3-hide" id="highlight-awards">
-                      highlights here
-                    </div>
-                    <div class="w3-container w3-hide" id="highlight-recruiting">
-                      recruting here
-                    </div>
-                  </div>
                 </div>
                 </div>
               </div>
@@ -262,7 +111,6 @@
 <script src="{% static 'facesjs-master/src/generate.js' %}"></script>
 <script src="{% static 'action.js' %}"></script>
 <script src="{% static 'Pages/Rankings.js' %}" type="module"></script>
-<script src="{% static 'Pages/InitializeScoreboard.js' %}" type="module"></script>
 <script src="{% static 'common/popper.min.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.select.min.js' %}"></script>

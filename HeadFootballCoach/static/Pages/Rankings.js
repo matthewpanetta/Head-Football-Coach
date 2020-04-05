@@ -27,131 +27,73 @@ function PopulateTop25(WorldID, data){
   console.log('In PopulateTopTeams!', data)
 
 
-  var table = $('#PlayerStats').DataTable({
-      "dom": 'Brtp',
-      "scrollX": true,
+  var table = $('#Top25Table').DataTable({
+      "dom": 'rt',
       fixedHeader: true,
       //"serverSide": true,
-      "filter": true,
+      "filter": false,
       "ordering": true,
-      "lengthChange" : false,
       "pageLength": 25,
+      "lengthChange" : false,
       "pagingType": "full_numbers",
       "paginationType": "full_numbers",
-      "paging": true,
       "data": data,
-      'stateSave': true,
-       'buttons':[
-            {
-                extend: 'searchPanes',
-                config: {
-                  cascadePanes: true,
-                  viewTotal: false, //maybe true later - TODO
-                  columns:[0,2,3],
-                  collapse: 'Filter Players',
-                },
-            }
-        ],
       "columns": [
-        {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-            $(td).html("<a href='"+DataObject['PlayerTeamHref']+"'><img class='worldTeamStatLogo padding-right' src='"+DataObject['playerteamseason__TeamSeasonID__TeamID__TeamLogoURL']+"'/>"+StringValue+"</a>");
-            $(td).attr('style', 'border-left-color: #' + DataObject['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
+        {"data": "NationalRank", "sortable": true, 'className': 'Top25RankNumber', 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            $(td).attr('style', 'border-left-color: #' + DataObject['TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
             $(td).addClass('teamTableBorder');
-            $(td).parent().attr('PlayerID', DataObject['PlayerID']);
+            $(td).html('<span>'+StringValue+'</span>')
+            $(td).append('<span class="font12 w3-margin-left '+DataObject.NationalRankDeltaClass+'">'+DataObject.NationalRankDeltaSymbol+DataObject.NationalRankDeltaShow+'</span>')
         }},
-          {"data": "PlayerName", "searchable": true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-              $(td).html("<a href='"+DataObject['PlayerHref']+"'>"+StringValue+"</a>");
+          {"data": "TeamFullName", "searchable": true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            $(td).html(`<a href='`+DataObject['TeamHref']+`'><img class='worldTeamStatLogo padding-right' src='`+DataObject['TeamSeasonID__TeamID__TeamLogoURL']+`'/>`+StringValue+`</a>`);
+            $(td).parent().attr('TeamID', DataObject['TeamSeasonID__TeamID']);
           }},
-          {"data": "ClassID__ClassAbbreviation", "sortable": true, 'searchable': true},
-          {"data": "PositionID__PositionAbbreviation", "sortable": true, 'searchable': true},
-          {"data": "playerseasonskill__OverallRating", "sortable": true, 'orderSequence':["desc"]},
-          {"data": "GameScore", "sortable": true, 'orderSequence':["desc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-
-              $(td).html(parseInt(StringValue));
+          {"data": "WinsLosses", "sortable": true, 'orderSequence':["desc"]},
+          {"data": "LastWeekGame", "sortable": true, 'searchable': true, "fnCreatedCell": function (td, LastWeekObject, DataObject, iRow, iCol) {
+            console.log('LastWeekObject', LastWeekObject)
+            if (LastWeekObject == 'BYE'){
+              $(td).html('BYE')
+            }
+            else{
+              $(td).html('<a href="'+LastWeekObject.GameHref+'">'+LastWeekObject.Points +'-'+ LastWeekObject.OpponentPoints+' </a>')
+              $(td).append('<span class="'+LastWeekObject.WinLossLetter+'">'+LastWeekObject.WinLossLetter+'</span>');
+              $(td).append('<span> '+LastWeekObject.VsAtLetter+' </span><a href="'+LastWeekObject.OpponentTeamHref+'">'+ LastWeekObject.OpponentTeamName+'</a>');
+            }
           }},
+          {"data": "ConferenceWinsLosses", "sortable": true, 'searchable': true},
 
-          {"data": "PAS_Yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "PAS_CompletionPercentage", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "PAS_YPG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "PAS_TD", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "PAS_INT", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-
-          {"data": "RUS_Yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "RUS_YPC", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "RUS_YPG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "RUS_TD", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "RUS_LNG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "RUS_20", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "FUM_Fumbles", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-
-          {"data": "REC_Yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "REC_Receptions", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "REC_YPC", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "REC_YPG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "REC_TD", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "REC_Targets", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "REC_LNG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-
-          {"data": "DEF_Tackles", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "DEF_TacklesForLoss", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "DEF_Sacks", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "DEF_INT", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "FUM_Forced", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "FUM_Recovered", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
       ],
-      'order': [[ 4, "desc" ]],
+      'order': [[ 0, "asc" ]],
   });
 
 
-  console.log('This number of rows:', $('#PlayerStats tr').length);
-  $('#PlayerStats tbody').on('click', 'tr', function () {
-    var SelectedPlayerID = $(this).attr('PlayerID');
-    console.log('clicked', this, SelectedPlayerID);
+  $('#Top25Table tbody').on('click', 'tr', function () {
+    var SelectedTeamID = $(this).attr('TeamID');
+    console.log('clicked', this, SelectedTeamID);
 
     $.ajax({
-      url: '/World/'+WorldID+'/Player/'+SelectedPlayerID+'/PlayerCardInfo',
+      url: '/World/'+WorldID+'/Team/'+SelectedTeamID+'/TeamCardInfo',
       success: function (data) {
         console.log('Ajax return', data);
 
-        $('#teamRosterPlayerHighlight div.w3-hide.w3-row-padding').removeClass('w3-hide');
+        $('#teamHighlight div.w3-hide.w3-row-padding').removeClass('w3-hide');
 
-        $('#player-highlight-top-color-box').css('background-color', data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
-        $('#teamRosterPlayerHighlight').css('border-width', '4px 4px 4px 4px').css('border-style', 'solid').css('border-color', data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX']);
-        $('#teamRosterPlayerHighlight').css('box-shadow', '0px 2px 12px 0px #'+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
-        var overrides = {"teamColors":["#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'],"#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'],"#000000"]}
+        $('#team-highlight-top-color-box').css('background-color', data['TeamColor_Primary_HEX']);
+        $('#teamHighlight').css('border-width', '4px 4px 4px 4px').css('border-style', 'solid').css('border-color', data['TeamColor_Secondary_HEX']);
+        $('#teamHighlight').css('box-shadow', '0px 2px 12px 0px #'+data['TeamColor_Primary_HEX']);
+        var overrides = {"teamColors":["#"+data['TeamColor_Primary_HEX'],"#"+data['TeamColor_Secondary_HEX'],"#000000"]}
 
-        $('[css-field="OverallCss"].player-highlight-pills').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
+        $('[css-field="OverallCss"].team-highlight-pills').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
 
         $.each(data, function(key, val){
 
-          if (key == 'PlayerFaceJson'){
-            var elem = $('#teamRosterPlayerHighlight').find('[data-field="'+key+'"]');
-            elem = elem[0];
-            $(elem).empty();
+          $('#teamHighlight').find('[data-field="'+key+'"]').text(val);
+          $('#teamHighlight').find('[src-field="'+key+'"]').attr('src', val);
 
-            if (typeof val === 'string') {
-              val = $.parseJSON(val);
-            }
-            BuildFace(val, undefined, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides, $(elem).attr('id'));//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
-          }
-          else {
-            $('#teamRosterPlayerHighlight').find('[data-field="'+key+'"]').text(val);
-            $('#teamRosterPlayerHighlight').find('[src-field="'+key+'"]').attr('src', val);
-          }
         });
 
-        $('#highlight-ratings').empty();
-
-
-        $.each(data.Skills, function(SkillGroup, SkillObj){
-          var Container = $('<div class="w3-container"></div>').appendTo($('#highlight-ratings'));
-          $('<div class="w3-margin-top">'+SkillGroup+'</div>').appendTo(Container);
-          $.each(SkillObj, function(key, val){
-            $('<div class="inline-block min-width-75" style="margin: 2px 2px; "><div class="font10 width100">'+key+'  </div>  <div class="font20 width100">'+val+'</div></div>').appendTo(Container);
-          });
-        });
-
-
+        /*
         $('#highlight-awards').empty();
         if (Object.keys(data.Awards).length > 0){
           $('#highlight-awards-tab').removeClass('w3-hide');
@@ -169,51 +111,16 @@ function PopulateTop25(WorldID, data){
           $('<li>'+AwardCount+'x '+AwardName+' </li>').appendTo(Container);
 
         });
+        */
 
 
-
-        $('#highlight-stats').empty();
-        if (Object.keys(data.Stats).length > 0){
-          $('#highlight-stats-tab').removeClass('w3-hide');
-        }
-        else {
-          $('#highlight-stats-tab').addClass('w3-hide');
-          if ($('#highlight-stats-tab').hasClass('selected-highlight-tab')){
-            $('#highlight-ratings-tab').click()
-          }
-        }
-
-        $.each(data.Stats, function(StatGroup, StatObj){
-          var Container = $('<div class="w3-container"></div>').appendTo($('#highlight-stats'));
-          $('<div class="w3-margin-top">'+StatGroup+'</div>').appendTo(Container);
-          $('<div class="width100" style="width: 100%;"><table class="tiny" id="highlight-stat-statgroup-'+StatGroup+'" style="width: 100%;"></table> </div>').appendTo(Container);
-
-          var columnNames = Object.keys(StatObj[0]);
-          var columns = [];
-          for (var i in columnNames) {
-            columns.push({data: columnNames[i],
-                          title: columnNames[i]});
-          }
-
-          var table = $('#highlight-stat-statgroup-'+StatGroup).DataTable({
-            data: StatObj,
-            columns: columns,
-            responsive: true,
-            dom: 't'
-
-          });
-
-          $('#highlight-stats-tab').on('click', function(){
-            table.columns.adjust().draw();
-          })
-        });
       }
     })
 
   })
 
   $(function() {
-    var $sidebar   = $("#teamRosterPlayerHighlight"),
+    var $sidebar   = $("#teamHighlight"),
         $window    = $(window),
         offset     = $sidebar.offset(),
         topPadding = 15;
@@ -261,6 +168,7 @@ $(document).ready(function(){
   var DataPassthruHolder = $('#PageDataPassthru')[0];
   var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
   var TopTeamsData = $('#top-teams-data')[0];
+  console.log('TopTeamsData', TopTeamsData)
   TopTeamsData = JSON.parse(TopTeamsData.textContent);
   PopulateTop25(WorldID, TopTeamsData);
 
