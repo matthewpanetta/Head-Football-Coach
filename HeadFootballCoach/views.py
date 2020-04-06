@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.template import loader
-from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery
+from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, DecimalField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery, ExpressionWrapper
 from django.db.models.functions.window import Rank, RowNumber, Lag
 from django.db.models.functions import Length, Concat, Coalesce
 from .models import Audit, League, TeamGame,Week,Phase,Position, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
@@ -1062,41 +1062,93 @@ def Page_Awards(request, WorldID):
     page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     CurrentWorld  = World.objects.get(WorldID = WorldID)
     CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
-    LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
+    WeekNumber = CurrentWeek.WeekNumber
+    LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = WeekNumber-1).first()
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
     UserTeam = GetUserTeam(WorldID)
     AllAwards = PlayerTeamSeasonAward.objects.filter(WorldID = CurrentWorld).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('WeekID', 'PositionGroupID')
 
-    ConferenceAwards = []
+    WeeklyAwards = PlayerTeamSeasonAward.objects.filter(WorldID = CurrentWorld).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).filter(IsWeekAward = True).filter(WeekID__game__teamgame__playergamestat__PlayerTeamSeasonID = F('PlayerTeamSeasonID')).values(
+        'IsConferenceAward', 'IsNationalAward', 'ConferenceID__ConferenceName', 'PositionGroupID__PositionGroupName', 'WeekID__WeekName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'WeekID__game__teamgame__playergamestat__GameScore', 'WeekID__game__teamgame__playergamestat__TopStatStringDisplay1', 'WeekID__game__teamgame__playergamestat__TopStatStringDisplay2', 'WeekID__game__teamgame__IsWinningTeam', 'WeekID__game__teamgame__Points'
+    ).annotate(
+        GameWin = Case(
+            When(WeekID__game__teamgame__IsWinningTeam = True, then=Value('W')),
+            default=Value('L'),
+            output_field=CharField()
+        ),
+        PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field=CharField()),
+        TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('PlayerTeamSeasonID__TeamSeasonID__TeamID'), output_field=CharField()),
+        GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('WeekID__game__GameID'), output_field=CharField()),
+        OpponentTeamScore = Subquery(TeamGame.objects.filter(GameID=OuterRef('WeekID__game__GameID')).exclude(TeamGameID = OuterRef('WeekID__game__teamgame__GameID')).values('Points')),
+        OpponentTeamName = Subquery(TeamGame.objects.filter(GameID=OuterRef('WeekID__game__GameID')).exclude(TeamGameID = OuterRef('WeekID__game__teamgame__GameID')).values('TeamSeasonID__TeamID__TeamName')),
+    ).order_by('WeekID')
 
-    AwardDict = {'Conference': {'ConferenceName': 'National', 'ConferenceAbbreviation': 'National', 'ConferenceID': 0}, 'ShowConference': '', 'ConferenceSelected': 'selected-upcoming-gameview-tab'}
-    AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsNationalAward = True).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
-    AwardDict['AllConferenceAwards'] = []
-    for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
-        AllAwards.filter(IsSeasonAward = True).filter(IsNationalAward = True).filter(IsPositionAward=True).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
-        if AllConferenceGroup == 'First Team':
-            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
-        elif AllConferenceGroup == 'Second Team':
-            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
-        elif AllConferenceGroup == 'Freshman Team':
-            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
-    ConferenceAwards.append(AwardDict)
+    AwardDict = {}
+    AwardDict['WeeklyAwards'] = []
+    AwardDict['WeeklyAwards'].append( {'Group': 'National', 'Awards': {'Offense': list(WeeklyAwards.filter(IsNationalAward = True).filter(PositionGroupID__PositionGroupName='Offense')), 'Defense': list(WeeklyAwards.filter(IsNationalAward = True).filter(PositionGroupID__PositionGroupName='Defense'))}})
+    for C in list(Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName')):
+        AwardDict['WeeklyAwards'].append( {'Group': C.ConferenceName, 'Awards': {'Offense': list(WeeklyAwards.filter(ConferenceID = C).filter(PositionGroupID__PositionGroupName='Offense')), 'Defense': list(WeeklyAwards.filter(ConferenceID = C).filter(PositionGroupID__PositionGroupName='Defense'))}})
 
-    for Conf in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName'):
-        AwardDict = {'Conference': Conf, 'ConferenceSelected': '', 'ShowConference': 'w3-hide', }
-        AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
-        AwardDict['AllConferenceAwards'] = []
-        for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
-            AllAwards.filter(IsSeasonAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
-            if AllConferenceGroup == 'First Team':
-                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
-            elif AllConferenceGroup == 'Second Team':
-                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
-            elif AllConferenceGroup == 'Freshman Team':
-                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
-        ConferenceAwards.append(AwardDict)
 
-    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'ConferenceAwards': ConferenceAwards}
+
+    PreseasonAllAmericans = []
+    AllAwards = PlayerTeamSeasonAward.objects.filter(IsPreseasonAward = True).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('PositionID__PositionSortOrder').values(
+        'IsConferenceAward', 'IsNationalAward', 'ConferenceID__ConferenceName', 'PositionGroupID__PositionGroupName', 'WeekID__WeekName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__ClassID__ClassAbbreviation'
+    ).annotate(
+        PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field=CharField()),
+        TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('PlayerTeamSeasonID__TeamSeasonID__TeamID'), output_field=CharField()),
+    )
+    for Conf in [None] + [ u for u in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName')]:
+        ConferenceName = Conf.ConferenceName if Conf is not None else 'National'
+        if Conf is None:
+            ConfDict = {'Conference': {'ConferenceName': 'National', 'ConferenceAbbreviation': 'National', 'ConferenceID': 0}, 'ShowConference': '', 'Teams' : []}
+            PTSA = AllAwards.filter(IsNationalAward = True)
+            for TD in [{'IsFirstTeam': 1, 'IsSecondTeam': 0}, {'IsFirstTeam': 0, 'IsSecondTeam': 1}]:
+                T = 'FirstTeam' if TD['IsFirstTeam'] == 1 else 'SecondTeam'
+                ShowTeam = '' if T == 'FirstTeam' else 'preseason-allamerican-team-hide'
+                ConfDict['Teams'].append({'Team': list(PTSA.filter(IsFirstTeam = TD['IsFirstTeam']).filter(IsSecondTeam = TD['IsSecondTeam'])), 'TeamName': T, 'ShowTeam': ShowTeam})
+        else:
+            ConfDict = {'Conference': {'ConferenceName': Conf.ConferenceName, 'ConferenceAbbreviation': Conf.ConferenceAbbreviation, 'ConferenceID': Conf.ConferenceID}, 'ConferenceSelected': '', 'Teams' : []}
+            PTSA = AllAwards.filter(IsConferenceAward = True).filter(ConferenceID = Conf)
+            for TD in [{'IsFirstTeam': 1, 'IsSecondTeam': 0}, {'IsFirstTeam': 0, 'IsSecondTeam': 1}]:
+                T = 'FirstTeam' if TD['IsFirstTeam'] == 1 else 'SecondTeam'
+                ShowTeam = '' if T == 'FirstTeam' else 'preseason-allamerican-team-hide'
+                ConfDict['Teams'].append({'Team': list(PTSA.filter(IsFirstTeam = TD['IsFirstTeam']).filter(IsSecondTeam = TD['IsSecondTeam'])), 'TeamName': T, 'ShowTeam': ShowTeam})
+        PreseasonAllAmericans.append(ConfDict)
+
+    AwardDict['PreseasonAllAmericans'] = PreseasonAllAmericans
+
+
+    HeismanRace = Player.objects.filter(WorldID = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL').annotate(
+        PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
+        PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
+        PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
+        GameScore=Sum('playerteamseason__playergamestat__GameScore'),
+        TeamRank = Max('playerteamseason__TeamSeasonID__teamseasonweekrank__NationalRank', filter=Q(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True)),
+        TeamRankModifier = Case(
+            When(TeamRank = 1,       then=Value(1.25)),
+            When(TeamRank__lte = 3,  then=Value(1.15)),
+            When(TeamRank__lte = 5,  then=Value(1.05)),
+            When(TeamRank__lte = 10, then=Value(1.00)),
+            When(TeamRank__lte = 20, then=Value(0.90)),
+            When(TeamRank__lte = 30, then=Value(0.80)),
+            When(TeamRank__lte = 50, then=Value(0.65)),
+            When(TeamRank__lte = 70, then=Value(0.50)),
+            When(TeamRank__lte = 90, then=Value(0.30)),
+            default=Value(0.1),
+            output_field = DecimalField()
+        ),
+        GameScoreWeighted = ExpressionWrapper(F('GameScore') ** (WeekNumber / 15.0) * F('TeamRankModifier') * F('playerseasonskill__OverallRating') ** (1.0/WeekNumber), output_field=DecimalField()),
+        HeismanRank = Window(
+            expression=RowNumber(),
+            order_by=F("GameScoreWeighted").desc(),
+        )
+    ).order_by('-GameScoreWeighted')[:10]
+
+
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'AwardDict': AwardDict}
+    context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
+    context['HeismanRace'] = HeismanRace
     return render(request, 'HeadFootballCoach/Awards.html', context)
 
 

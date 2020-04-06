@@ -1443,3 +1443,13 @@ img.teamTeamLogo {
 .logo-24 {
   height: 24px;
 }
+
+.light-padding-top{
+  padding: 2px 0px;
+}
+
+.sideways {
+  transform: rotate(90deg);
+  transform-origin: 10px 100px;
+  position: absolute; 
+}

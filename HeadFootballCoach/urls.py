@@ -46,7 +46,7 @@ urlpatterns = [
     path('World/<int:WorldID>/Rankings/', views.Page_Rankings, name='PlayerDepartures'),
     path('World/<int:WorldID>/Schedule', views.Page_Schedule, name='Schedule'),
     path('World/<int:WorldID>/Schedule/Team/<int:TeamID>', views.Page_Schedule, name='Schedule'),
-
+    path('World/<int:WorldID>/Awards', views.Page_Awards, name='Awards'),
 
 
     path('World/<int:WorldID>/Search/<str:SearchInput>/', views.Page_Search, name='Search'),
@@ -73,7 +73,6 @@ urlpatterns = [
     path('World/<int:WorldID>/ConferenceStandings', views.GET_ConferenceStandings, name='ConferenceStandings'),
     path('World/<int:WorldID>/ConferenceStandings/<int:ConferenceID>', views.GET_ConferenceStandings, name='ConferenceStandings'),
     path('World/<int:WorldID>/AllTeamStats', views.GET_AllTeamStats, name='AllTeamStats'),
-    path('World/<int:WorldID>/AwardRaces', views.GET_AwardRaces, name='AwardRaces'),
     path('World/<int:WorldID>/LeagueLeaders', views.GET_LeagueLeaders, name='LeagueLeaders'),
     path('World/<int:WorldID>/RecruitingPlayers', views.GET_RecruitingPlayers, name='RecruitingPlayers'),
 
