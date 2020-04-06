@@ -440,6 +440,7 @@ def Page_Schedule(request, WorldID, TeamID = None):
     CurrentWorld = World.objects.get(WorldID = WorldID)
     CurrentSeason = CurrentWorld.leagueseason_set.filter(IsCurrent = 1).first()
     CurrentWeek = Week.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = True).first()
+    CurrentWeekNumber = CurrentWeek.WeekNumber
     CurrentWeekID = CurrentWeek.WeekID
 
     AllWeeks = Week.objects.filter(WorldID_id = WorldID).filter(PhaseID__LeagueSeasonID__IsCurrent = True).values('WeekID', 'WeekName', 'WeekNumber').annotate(
@@ -492,12 +493,12 @@ def Page_Schedule(request, WorldID, TeamID = None):
 
             HomeTeamRankValue = Case(
                 When(WasPlayed = True, then = Max(F('teamgame__TeamSeasonID__teamseasonweekrank__NationalRank'), filter=(Q(teamgame__IsHomeTeam = True) & Q(teamgame__TeamSeasonID__teamseasonweekrank__WeekID = W['PreviousWeekID'])))),
-                default = Max(F('teamgame__TeamSeasonID__teamseasonweekrank__NationalRank'), filter=Q(teamgame__IsHomeTeam = True)),
+                default = Max(F('teamgame__TeamSeasonID__teamseasonweekrank__NationalRank'), filter=Q(teamgame__IsHomeTeam = True) & Q(teamgame__TeamSeasonID__teamseasonweekrank__IsCurrent = True)),
                 output_field=IntegerField()
             ),
             AwayTeamRankValue = Case(
                 When(WasPlayed = True, then = Max(F('teamgame__TeamSeasonID__teamseasonweekrank__NationalRank'), filter=(Q(teamgame__IsHomeTeam = False) & Q(teamgame__TeamSeasonID__teamseasonweekrank__WeekID = W['PreviousWeekID'])))),
-                default = Max(F('teamgame__TeamSeasonID__teamseasonweekrank__NationalRank'), filter=Q(teamgame__IsHomeTeam = False)),
+                default = Max(F('teamgame__TeamSeasonID__teamseasonweekrank__NationalRank'), filter=Q(teamgame__IsHomeTeam = False) & Q(teamgame__TeamSeasonID__teamseasonweekrank__IsCurrent = True)),
                 output_field=IntegerField()
             ),
             MinTeamRankValue = Case(
