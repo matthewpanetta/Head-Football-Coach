@@ -98,8 +98,8 @@ class TeamSeasonWeekRankAdmin(admin.ModelAdmin):
     list_display = [field.name for field in TeamSeasonWeekRank._meta.get_fields() if field.name not in ('teamgame','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class TeamGameAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in TeamGame._meta.get_fields() if field.name not in ('playergamestat','teamgame','Playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
-    list_filter = ['GameID__WasPlayed']
+    list_display = ['TeamGameID', 'GameID', 'TeamSeasonID', 'IsHomeTeam', 'IsWinningTeam', 'Points']#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_filter = ['GameID__WasPlayed', 'GameID__WeekID']
 
 class TeamRivalryAdmin(admin.ModelAdmin):
     list_display = [field.name for field in TeamRivalry._meta.get_fields() if field.name not in ('hold', 'game')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')

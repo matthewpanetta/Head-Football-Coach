@@ -65,12 +65,20 @@
                       {% if forloop.counter0|modulo:2 == 0 %}
                         <div class="w3-row-padding w3-margin-top">
                       {% endif %}
-                        <div  class='w3-card w3-col s5' style='background-color: white;'>
+                        <div  class='w3-card w3-col s5 hidden-overflow' style='background-color: white; padding: 0px;'>
                           <div class="w3-container">
-                          <table class='width100' style='table-layout: fixed;'>
+                            <div class="scheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+                              <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{Game.AwayTeamPrimaryColor}}'></div>
+                              <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
+                              <img class='teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{Game.AwayTeamLogo}}' />
+                            </div>
+                            <div class="scheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+                              <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{Game.HomeTeamPrimaryColor}}'></div>
+                              <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
+                              <img class='teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{Game.HomeTeamLogo}}' />
+                            </div>
+                          <table class='width100 scheduleGameTable' style='table-layout: fixed;'>
                             <colgroup>
-                                <col span="1">
-                                <col span="1" style='width: 7%'>
                                 <col span="1" style='width: 40%;'>
                                 <col span="1" style='width: 7%'>
                                 <col span="1" style='width: 7%'>
@@ -81,8 +89,6 @@
                                 <col span="1" style='width: 7%'>
                             </colgroup>
                             <thead>
-                              <th></th>
-                              <th></th>
                               {% if Game.WasPlayed %}
                               <th><a href="{{Game.GameHref}}" class='font10 left-text'>Box Score</a></th>
                               {% for Period in Game.PeriodScores%}
@@ -95,10 +101,10 @@
                             </thead>
                             <tbody>
                               <tr>
-                                <td><img src="{{Game.AwayTeamLogo}}" class='logo-24' alt=""></td>
-                                <td>{{Game.AwayTeamRank}}</td>
-                                <td class='left-text {{Game.AwayTeamWinningGameBold}}'>
-                                  <a href="{{Game.AwayTeamHref}}">{{Game.AwayTeamName}}</a>
+                                <td class='left-text'>
+                                  <span class='font10'>{{Game.AwayTeamRank}}</span>
+                                  <a href="{{Game.AwayTeamHref}}" class='{{Game.AwayTeamWinningGameBold}}'>{{Game.AwayTeamName}}</a>
+                                  <span class='font10'>{{Game.AwayTeamRecord}}</span>
                                 </td>
                                 {% if Game.WasPlayed %}
                                 {% for Period in Game.PeriodScores%}
@@ -108,10 +114,10 @@
                                 {% endif %}
                               </tr>
                               <tr>
-                                <td><img src="{{Game.HomeTeamLogo}}" class='logo-24' alt=""></td>
-                                <td>{{Game.HomeTeamRank}}</td>
-                                <td class='left-text {{Game.HomeTeamWinningGameBold}}'>
-                                  <a href="{{Game.HomeTeamHref}}">{{Game.HomeTeamName}}</a>
+                                <td class='left-text '>
+                                  <span class='font10'>{{Game.HomeTeamRank}}</span>
+                                  <a href="{{Game.HomeTeamHref}}" class='{{Game.HomeTeamWinningGameBold}}'>{{Game.HomeTeamName}}</a>
+                                  <span class='font10'>{{Game.HomeTeamRecord}}</span>
                                 </td>
                                 {% if Game.WasPlayed %}
                                 {% for Period in Game.PeriodScores%}

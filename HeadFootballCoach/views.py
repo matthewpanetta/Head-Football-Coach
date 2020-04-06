@@ -470,11 +470,13 @@ def Page_Schedule(request, WorldID, TeamID = None):
         W['Games'] = Game.objects.filter(WeekID = W['WeekID']).values('GameID', 'WasPlayed').annotate(
             HomePoints = Max(F('teamgame__Points'), filter=Q(teamgame__IsHomeTeam = True)),
             AwayPoints = Max(F('teamgame__Points'), filter=Q(teamgame__IsHomeTeam = False)),
-            HomeTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Coach/'), Max(F('teamgame__TeamSeasonID__TeamID_id'), filter=Q(teamgame__IsHomeTeam = True)), output_field=CharField()),
-            AwayTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Coach/'), Max(F('teamgame__TeamSeasonID__TeamID_id'), filter=Q(teamgame__IsHomeTeam = False)), output_field=CharField()),
+            HomeTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), Max(F('teamgame__TeamSeasonID__TeamID_id'), filter=Q(teamgame__IsHomeTeam = True)), output_field=CharField()),
+            AwayTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), Max(F('teamgame__TeamSeasonID__TeamID_id'), filter=Q(teamgame__IsHomeTeam = False)), output_field=CharField()),
             GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('GameID'), output_field=CharField() ),
             HomeTeamLogo = Max(F('teamgame__TeamSeasonID__TeamID__TeamLogoURL'), filter=Q(teamgame__IsHomeTeam = True)),
             AwayTeamLogo = Max(F('teamgame__TeamSeasonID__TeamID__TeamLogoURL'), filter=Q(teamgame__IsHomeTeam = False)),
+            HomeTeamPrimaryColor = Max(F('teamgame__TeamSeasonID__TeamID__TeamColor_Primary_HEX'), filter=Q(teamgame__IsHomeTeam = True)),
+            AwayTeamPrimaryColor = Max(F('teamgame__TeamSeasonID__TeamID__TeamColor_Primary_HEX'), filter=Q(teamgame__IsHomeTeam = False)),
             HomeTeamName = Max(F('teamgame__TeamSeasonID__TeamID__TeamName'), filter=Q(teamgame__IsHomeTeam = True)),
             AwayTeamName = Max(F('teamgame__TeamSeasonID__TeamID__TeamName'), filter=Q(teamgame__IsHomeTeam = False)),
 

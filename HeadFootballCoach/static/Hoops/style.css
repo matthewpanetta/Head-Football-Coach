@@ -658,6 +658,25 @@ input[type=text], input[type=password] {
   z-index: 1;
 }
 
+.hidden-overflow {
+  overflow: hidden;
+}
+
+.scheduleGameTable {
+  margin-top: -40px;
+  margin-left: 50px;
+  margin-bottom: 10px;
+}
+
+.scheduleGameDashboardGameTeamDisplayContainer {
+  height: 18px;
+  width: 180px;
+  margin-bottom: 20px;
+  transform: rotate(-52deg);
+  left: -59px;
+  z-index: 10;
+}
+
 .teamScheduleGameDashboardGameTeamDisplayLogoTop {
   width: 40px;
   left: 40px;
@@ -1451,5 +1470,5 @@ img.teamTeamLogo {
 .sideways {
   transform: rotate(90deg);
   transform-origin: 10px 100px;
-  position: absolute; 
+  position: absolute;
 }
