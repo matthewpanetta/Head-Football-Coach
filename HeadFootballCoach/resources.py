@@ -410,11 +410,23 @@ def PopulatePlayerSkills(P, s, WorldID):
 
     ClassOverallModifier = {
         'HS Senior': .92,
-        'Freshman': .95,
-        'Sophomore': .975,
+        'Freshman': .90,
+        'Sophomore': .95,
         'Junior': .99,
         'Senior': 1,
     }
+
+    # 40 time calculation:
+    # (-32.16 * <40Time>) + 234.33 = SpeedRating
+    # 40Time = (SpeedRating - 234.33) / -32.16
+
+    #Bench Press calculation:
+    # Strength Rating = BenchPress + 55
+    # Bench Press = Strength Rating - 55 (floor 0)
+
+    #Standing Jump calc:
+    # JumpRating = 1.74(Inches) + 23.61
+    # VerticalInches = (JumpRating - 23.61) / 1.74
 
     OvrMultiplier = NormalTrunc(ClassOverallModifier[PlayerClass], .02, .85, 1.1)
     PlayerSkill = PlayerSeasonSkill(WorldID=WorldID, PlayerID = P, LeagueSeasonID = s )
@@ -424,6 +436,8 @@ def PopulatePlayerSkills(P, s, WorldID):
 
     for Skill in [field.name for field in PlayerSeasonSkill._meta.get_fields() if '_Rating' in field.name ]:
         setattr(PlayerSkill, Skill, NormalTrunc(OvrMultiplier * Ovr,6,50,99))
+
+    
 
     return PlayerSkill
 

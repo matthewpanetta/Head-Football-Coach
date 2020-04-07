@@ -622,7 +622,9 @@ class Team(models.Model):
         NameAdjusted = Name.lower().replace(' ', '_').replace('\'', '').replace('.','').replace('&','_')
         URL = '/static/img/TeamLogos/' + NameAdjusted + '.png'
         return URL
-
+    @property
+    def TeamHref(self):
+        return '/World/' + str(self.WorldID_id) + '/Team/' + str(self.TeamID)
     @property
     def TeamIDURL(self):
         return '/World/' + str(self.WorldID_id) + '/Team/' + str(self.TeamID)
@@ -752,6 +754,11 @@ class Player(models.Model):
     Recruiting_NationalRank = models.PositiveSmallIntegerField(default=0, db_index=True)
     Recruiting_NationalPositionalRank = models.PositiveSmallIntegerField(default=0)
     Recruiting_StateRank = models.PositiveSmallIntegerField(default=0)
+
+    Recruiting_40Time = models.DecimalField(default = 0, max_digits=4, decimal_places=2)
+    Recruiting_BenchPressReps = models.PositiveSmallIntegerField(default=0)
+    Recruiting_VerticalJump = models.DecimalField(default = 0, max_digits=6, decimal_places=3)
+
 
     Personality_LeadershipRating           = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
     Personality_ClutchRating               = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
@@ -1758,6 +1765,23 @@ class Game(models.Model):
         URL = '/World/' + str(self.WorldID_id) + '/Game/' + str(self.GameID)
         return str(URL)
 
+    @property
+    def GameHref(self):
+        URL = '/World/' + str(self.WorldID_id) + '/Game/' + str(self.GameID)
+        return str(URL)
+
+    @property
+    def TopPlayerStats(self):
+        if not self.WasPlayed:
+            return None
+
+        TopPlayers = PlayerGameStat.objects.filter(TeamGameID__GameID = self).values('PlayerTeamSeasonID__TeamSeasonID__TeamID__Abbreviation', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'TopStatStringDisplay1', 'TopStatStringDisplay2').annotate(
+            PlayerHref = Concat(Value('/World/'), Value(self.WorldID_id), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field=CharField()),
+            PlayerName = Concat( F('PlayerTeamSeasonID__PlayerID__PlayerFirstName'), Value(' '), F('PlayerTeamSeasonID__PlayerID__PlayerLastName'), output_field=CharField()),
+        ).order_by('-GameScore')[:3]
+
+        return [{'PlayerName': P['PlayerName'], 'PlayerPosition': P['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation'], 'PlayerHref': P['PlayerHref'], 'PlayerTeam': '('+P['PlayerTeamSeasonID__TeamSeasonID__TeamID__Abbreviation']+')', 'PlayerStats': [P['TopStatStringDisplay1'], P['TopStatStringDisplay2']]} for P in TopPlayers]
+
 
     def CalculateTopPlayers(self):
 
@@ -2193,6 +2217,12 @@ class TeamGame(models.Model):
     def OpposingTeamGame(self):
         return self.GameID.teamgame_set.exclude(IsHomeTeam = self.IsHomeTeam).first()
 
+    @property
+    def TeamRecordDisplay(self):
+        if self.TeamRecord is None:
+            return str(self.TeamSeasonID.Wins) + '-'+str(self.TeamSeasonID.Losses)
+        return self.TeamRecord
+
 class PlayerSeasonSkill(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     PlayerSeasonSkillID = models.AutoField(primary_key = True, db_index=True)
@@ -2612,6 +2642,31 @@ class GameDrive(models.Model):
             GameTime = 2400  + self.EventTime
 
         return GameTime
+
+
+class TeamSeasonPosition(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    TeamSeasonPositionID = models.AutoField(primary_key = True)
+
+    TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    PositionID = models.ForeignKey(Position, on_delete=models.CASCADE, blank=True, null=True, default=None)
+
+    PositionPriority = models.IntegerField(default=0) #  -3 to 3
+    PositionPreference = models.CharField(max_length = 20, default=None, blank=True, null=True)
+
+    CurrentPlayerCount = models.IntegerField(default=0)
+    MinimumPlayerCount = models.IntegerField(default=0)
+    NeededPlayerCount = models.IntegerField(default=0)
+
+    CommitPlayerCount = models.IntegerField(default=0)
+    FreshmanPlayerCount = models.IntegerField(default=0)
+    SophomorePlayerCount = models.IntegerField(default=0)
+    JuniorPlayerCount = models.IntegerField(default=0)
+    SeniorPlayerCount = models.IntegerField(default=0)
+
+    Year1PositionOverall = models.IntegerField(default=0)
+    Year2PositionOverall = models.IntegerField(default=0)
+    Year3PositionOverall = models.IntegerField(default=0)
 
 
 

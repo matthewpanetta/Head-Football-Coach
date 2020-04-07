@@ -687,10 +687,8 @@ $(document).ready(function(){
 
   console.log('in World.js file')
 
-  GetConferenceStandings(WorldID);
   GetTeamStats(WorldID);
   GetLeagueLeaders(WorldID);
-  //GetAwardRaces(WorldID);
   GetWorldHistory(WorldID);
 
 });

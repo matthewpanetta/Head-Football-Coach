@@ -26,13 +26,9 @@
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-conference-standings-tab">Conference Standings</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-headlines-tab">Headlines</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">League Leaders</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-player-stats-tab">Player Stats</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-history-tab">History</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-award-races-tab">Award Races</button>
       </div>
     </nav>
     <div id="nav-tabContent">
@@ -244,131 +240,6 @@
         </div>
       </div>
 
-      <div class="tab-content" style="display:none;" id="nav-conference-standings">
-        <div class='w3-display-container' id='ConferenceStandingTabContainer'>
-          <div class='w3-row-padding w3-hide' id='ConferenceStandingTableClone'>
-            <div class='w3-col s8 w3-margin-top'>
-              <span data-field='ConferenceName' class='table_title'></span>
-              <table class="w3-table w3-table-all">
-                <colgroup>
-                    <col span="1" class='colgroup-border-right'>
-                    <col span="3" class='colgroup-border-right'>
-                    <col >
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th scope="col">Team</th>
-                    <th class='initialSortColumn' scope="col">Conf. Rank</th>
-                    <th scope="col" data-defaultsort="asc">Conf. W-L</th>
-                    <th scope="col" data-defaultsort="asc">W-L</th>
-                    <th scope="col" data-defaultsort="asc">PPG</th>
-                    <th scope="col" data-defaultsort="asc">PAPG</th>
-                    <th scope="col" data-defaultsort="asc">MOV</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr id='ConferenceStandingRowClone' class='w3-hide'>
-                    <td>
-                      <a href="" href-field='TeamHref'>
-                        <img class='worldConferenceStandingTeamLogo' src='' img-src-field='TeamLogoURL' alt="My image">
-                        <span data-field='NationalRankDisplay'></span>
-                        <span data-field='TeamName'></span>
-                      </a>
-                    </td>
-                    <td data-field='teamseason__ConferenceRank'></td>
-                    <td data-field='ConferenceWinsLosses'></td>
-                    <td data-field='WinsLosses'></td>
-                    <td data-field='PPG'></td>
-                    <td data-field='PAPG'></td>
-                    <td data-field='MOV'></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="tab-content" style="display:none;"  id="nav-player-stats">
-        <div class='w3-display-container' >
-          <div class='w3-row-padding'>
-            <div class='w3-col s11'>
-              <table class="w3-table w3-table-all" id='WorldPlayerStats'  style="width:100%">
-                <thead>
-                  <tr>
-                    <th data-data="PlayerTeam">Team</th>
-                    <th data-data="PlayerName">Player</th>
-                    <th data-data="ClassID__ClassAbbreviation">Class</th>
-                    <th data-data="Position">Position</th>
-                    <th data-data="playerseasonskill__OverallRating">OVR</th>
-                    <th data-data="GameScore">Game Score</th>
-                    <th data-data="PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Pass Yards</th>
-                    <th data-data="PAS_CompletionPercentage" class='WorldPlayerStats-Stat-Passing'>Pass %</th>
-                    <th data-data="PAS_YPG" class='WorldPlayerStats-Stat-Passing'>Pass YPG</th>
-                    <th data-data="PAS_TD" class='WorldPlayerStats-Stat-Passing'>Pass TDs</th>
-                    <th data-data="PAS_INT" class='WorldPlayerStats-Stat-Passing'>Pass INT</th>
-                    <th data-data="RUS_Yards" class='WorldPlayerStats-Stat-Rushing'>Rush Yards</th>
-                    <th data-data="RUS_YPC" class='WorldPlayerStats-Stat-Rushing'>Rush YPC</th>
-                    <th data-data="RUS_YPG" class='WorldPlayerStats-Stat-Rushing'>Rush YPG</th>
-                    <th data-data="RUS_TD" class='WorldPlayerStats-Stat-Rushing'>Rush TDs</th>
-                    <th data-data="RUS_LNG" class='WorldPlayerStats-Stat-Rushing'>Rush LNG</th>
-                    <th data-data="RUS_20" class='WorldPlayerStats-Stat-Rushing'>Rush 20+</th>
-                    <th data-data="FUM_Fumbles" class='WorldPlayerStats-Stat-Rushing'>Rush Fum</th>
-                    <th data-data="REC_Yards" class='WorldPlayerStats-Stat-Receiving'>Rec Yards</th>
-                    <th data-data="REC_Receptions" class='WorldPlayerStats-Stat-Receiving'>Rec Catches</th>
-                    <th data-data="REC_YPC" class='WorldPlayerStats-Stat-Receiving'>Rec YPC</th>
-                    <th data-data="REC_YPG" class='WorldPlayerStats-Stat-Receiving'>Rec YPG</th>
-                    <th data-data="REC_TD" class='WorldPlayerStats-Stat-Receiving'>Rec TDs</th>
-                    <th data-data="REC_Targets" class='WorldPlayerStats-Stat-Receiving'>Rec Targets</th>
-                    <th data-data="REC_LNG" class='WorldPlayerStats-Stat-Receiving'>Rec LNG</th>
-
-                    <th data-data="DEF_Tackles" class='WorldPlayerStats-Stat-Defense'>Tackles</th>
-                    <th data-data="DEF_TacklesForLoss" class='WorldPlayerStats-Stat-Defense'>TFL</th>
-                    <th data-data="DEF_Sacks" class='WorldPlayerStats-Stat-Defense'>Sacks</th>
-                    <th data-data="DEF_INT" class='WorldPlayerStats-Stat-Defense'>INTs</th>
-                    <th data-data="FUM_Forced" class='WorldPlayerStats-Stat-Defense'>FF</th>
-                    <th data-data="FUM_Recovered" class='WorldPlayerStats-Stat-Defense'>FR</th>
-                  </tr>
-                </thead>
-                <tfoot>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="tab-content" style="display:none;"  id="nav-team-stats">
         <div class='w3-display-container' >
           <div class="w3-row-padding">
@@ -436,101 +307,7 @@
           </div>
         </div>
       </div>
-      <div class="tab-content" style="display:none;"  id="nav-award-races">
-        <div class='w3-display-container' id='AwardRacesTabContainer'>
-          <div class='w3-row-padding w3-hide' id='AwardRacesTableClone'>
-            <div class='w3-col s10'>
-              <table class="w3-table w3-table-all">
-                <thead>
-                  <tr>
-                    <th class='initialSortColumn' scope="col">Team</th>
-                    <th scope="col">Player</th>
-                    <th scope="col">Pos.</th>
-                    <th scope="col" data-defaultsort="asc">Ovr.</th>
-                    <th scope="col" data-defaultsort="asc">PPG</th>
-                    <th scope="col">RPG</th>
-                    <th scope="col" data-defaultsort="asc">APG</th>
-                    <th scope="col" data-defaultsort="asc">PER</th>
-                    <th scope="col" data-defaultsort="asc">Pub. Shares</th>
-                    <th scope="col" data-defaultsort="asc">Win Shares</th>
-                    <th scope="col" data-defaultsort="asc">Award Shares</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr id='AwardRacesRowClone' class='w3-hide'>
-                    <td>
-                      <a href="" href-field='TeamIDURL'>
-                        <img class='worldConferenceStandingTeamLogo' src='' img-src-field='TeamLogoURL' alt="My image">
-                        <span data-field='RankDisplayString'></span>
-                        <span data-field='TeamName'></span>
-                      </a>
-                    </td>
-                    <td>
-                      <a href="" href-field='PlayerIDURL'>
-                        <span data-field='FullName'></span>
-                      </a>
-                    </td>
-                    <td data-field='Position'></td>
-                    <td data-field='OverallRating'></td>
-                    <td data-field='PPG'></td>
-                    <td data-field='RPG'></td>
-                    <td data-field='APG'></td>
-                    <td data-field='PER'></td>
-                    <td data-field='PublicityShares'></td>
-                    <td data-field='WinShares'></td>
-                    <td data-field='AwardShares'></td>
 
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="tab-content" style="display:none;"  id="nav-schedule">
-        <div class="w3-display-container">
-          <div class="w3-row">
-            <div class="w3-col s6">
-              <div class="card">
-                <div class="card-header">
-                  Schedule
-                </div>
-                <ul class="list-group list-group-flush">
-                  {% for game in games%}
-                  <a class='teamGameCell' href="/World/{{page.WorldID}}/Game/{{ game.GameID }}/">
-                    <li class="list-group-item">
-                      <div class='w3-display-container'>
-
-                        <div class='w3-row'>
-                          <div class="w3-col s8">{{game.VsString}}</div>
-                          <div class="w3-col s1 teamGameResultLetter{{game.GameResultLetter}}">{{game.GameResultLetter}}</div>
-                          <div class="w3-col s3">{{game.GameDisplay}}</div>
-                        </div>
-                      </div>
-                    </li>
-                  </a>
-                  {% endfor %}
-                </ul>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="tab-content" style="display:none;"  id="nav-analytics">
-        Analytics Window
-        <div id="map" style="width: 930px; height: 630px; border: solid 3px red;"></div>
-      </div>
-      <div class="tab-content" style="display:none;"  id="nav-headlines">
-        Headlines
-        <div class='w3-display-container'>
-          {% for headline in headlines %}
-          <div class='w3-row'>
-            {{headline.HeadlineTextHTML|safe}}
-          </div>
-          {% endfor %}
-        </div>
-      </div>
       <div class="tab-content" style="display:none;"  id="nav-league-leaders">
         <div class='w3-display-container'>
           <div class='w3-row-padding' id='worldLeagueLeaderRow'>

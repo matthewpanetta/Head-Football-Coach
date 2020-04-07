@@ -473,6 +473,11 @@ article>header {
   /*font-size: 30px;*/
 }
 
+.thin-font {
+  font-weight: 200;
+  /*font-size: 30px;*/
+}
+
 .minor-bold {
   font-weight: 600;
   /*font-size: 30px;*/

@@ -431,7 +431,7 @@ def Page_Conferences(request, WorldID, ConferenceID = None):
 def Page_Schedule(request, WorldID, TeamID = None):
 
 
-    context = {'status':'success', 'WorldID': WorldID}
+    context = {'status':'success', 'WorldID': WorldID, 'TeamID': TeamID}
 
     DoAudit = False
     if DoAudit:
@@ -2330,6 +2330,11 @@ def GET_Conferences(request, WorldID):
     Conferences = list(Conference.objects.filter(WorldID_id = WorldID).values_list('ConferenceAbbreviation', flat=True).order_by('ConferenceAbbreviation'))
     return JsonResponse(Conferences, safe=False)
 
+
+def GET_Teams(request, WorldID):
+    Teams = []
+    return JsonResponse(Teams, safe=False)
+
 def GET_TeamHistoricalLeaders(request, WorldID, TeamID, Timeframe='Season'):
 
     print('Getting team hist leaders', Timeframe)
@@ -2550,16 +2555,16 @@ def GET_TeamSchedule(request, WorldID, TeamID):
     context = {'status':'success', 'WorldID': WorldID}
 
     CurrentWorld = World.objects.get(WorldID = WorldID)
-    TeamID = Team.objects.get(WorldID = CurrentWorld, TeamID = TeamID)
-    CurrentTeamSeason = TeamID.CurrentTeamSeason
+    ThisTeam = Team.objects.get(WorldID = CurrentWorld, TeamID = TeamID)
+    CurrentTeamSeason = ThisTeam.CurrentTeamSeason
     CurrentSeason = CurrentTeamSeason.LeagueSeasonID
 
     GamesForThisTeam = TeamGame.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID = CurrentTeamSeason).order_by('GameID__WeekID')
 
 
-    GameFields = ['GameIDURL', 'GameDisplay', 'HomeTeamRank', 'AwayTeamRank']
-    OpponentFields = ['TeamIDURL', 'TeamName', 'LogoURL']
-    TeamGameFields = ['TeamRecord']
+    GameFields = ['GameIDURL', 'GameDisplay', 'HomeTeamRank', 'AwayTeamRank', 'TopPlayerStats', 'GameHref']
+    OpponentFields = ['TeamIDURL', 'TeamHref', 'TeamName', 'LogoURL', 'TeamColor_Primary_HEX']
+    TeamGameFields = ['TeamRecordDisplay']
     WeekFields = ['WeekName']
 
 
@@ -2569,16 +2574,21 @@ def GET_TeamSchedule(request, WorldID, TeamID):
         G = TG.GameID
         WeekValues = GetValuesOfSingleObject(G.WeekID, WeekFields)
         GameValues = GetValuesOfSingleObject(G, GameFields)
-        if TeamID == G.HomeTeamID:
+        if ThisTeam == G.HomeTeamID:
             OpponentValues = GetValuesOfSingleObject(G.AwayTeamID, OpponentFields)
             OpponentTGValues = GetValuesOfSingleObject(G.AwayTeamGameID, TeamGameFields)
+            TGValues = GetValuesOfSingleObject(G.HomeTeamGameID, TeamGameFields)
         else:
             OpponentValues = GetValuesOfSingleObject(G.HomeTeamID, OpponentFields)
             OpponentTGValues = GetValuesOfSingleObject(G.HomeTeamGameID, TeamGameFields)
+            TGValues = GetValuesOfSingleObject(G.AwayTeamGameID, TeamGameFields)
 
-        GameInfo = MergeDicts([GameValues, OpponentValues, OpponentTGValues, WeekValues])
+        TGValues['ThisTeamRecord'] = TGValues['TeamRecordDisplay']
+        del TGValues['TeamRecordDisplay']
 
-        if TeamID == G.HomeTeamID:
+        GameInfo = MergeDicts([GameValues, OpponentValues, OpponentTGValues, TGValues, WeekValues])
+
+        if ThisTeam == G.HomeTeamID:
             GameInfo['AtOrVs'] = 'vs'
             GameInfo['OpponentRank'] = GameInfo['AwayTeamRank']
         else:
@@ -2586,11 +2596,11 @@ def GET_TeamSchedule(request, WorldID, TeamID):
             GameInfo['OpponentRank'] = GameInfo['HomeTeamRank']
 
 
-        if TeamID == G.WinningTeamID:
+        if ThisTeam == G.WinningTeamID:
             GameInfo['GameResultLetter'] = 'W'
             GameInfo['GameResultLetterClass'] = 'teamGameResultLetterW'
             PlayedGames.append(GameInfo)
-        elif TeamID == G.LosingTeamID:
+        elif ThisTeam == G.LosingTeamID:
             GameInfo['GameResultLetter'] = 'L'
             GameInfo['GameResultLetterClass'] = 'teamGameResultLetterL'
             PlayedGames.append(GameInfo)
@@ -2601,7 +2611,11 @@ def GET_TeamSchedule(request, WorldID, TeamID):
 
 
     context['Games'] = {'PlayedGames': PlayedGames, 'FutureGames': FutureGames}
+    context['TeamData'] = Team.objects.filter(WorldID = CurrentWorld).filter( TeamID = TeamID).values('TeamName', 'TeamNickname', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamLogoURL').first()
 
+    context['TeamList'] = list(Team.objects.filter(WorldID_id = WorldID).values('TeamName', 'TeamNickname', 'TeamID', 'TeamColor_Primary_HEX', 'TeamLogoURL').annotate(
+        TeamHref= Concat( Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID') , output_field=CharField())
+    ).order_by('TeamName'))
     return JsonResponse(context, safe=False)
 
 def GET_ConferenceStandings(request, WorldID, ConferenceID = None):

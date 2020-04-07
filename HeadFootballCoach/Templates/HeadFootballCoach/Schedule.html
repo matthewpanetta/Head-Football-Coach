@@ -24,7 +24,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
 
 
-<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{TeamID|default_if_none:userTeam.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 
 
 <body>
@@ -34,12 +34,21 @@
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Top 25</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">League Leaders</button>
+        {%if TeamID %}
+        <button id="nav-weekly-schedule-tab" class="w3-bar-item w3-button tab nav-tab-button">Weekly Schedule</button>
+        <button id="nav-team-schedules-tab"  class="w3-bar-item w3-button tab nav-tab-button selected-tab"  style="background-color: #{{page.SecondaryColor}};">Team Schedules</button>
+        {%else%}
+        <button id="nav-weekly-schedule-tab" class="w3-bar-item w3-button tab nav-tab-button selected-tab" style="background-color: #{{page.SecondaryColor}};">Weekly Schedule</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-schedules-tab">Team Schedules</button>
+        {%endif%}
       </div>
     </nav>
     <div id="nav-tabContent">
-      <div class="tab-content" style="display:block;"  id="nav-player-stats">
+      {%if TeamID %}
+      <div class="tab-content" style="display:none;"  id="nav-weekly-schedule">
+      {%else%}
+      <div class="tab-content" style="display:block;"  id="nav-weekly-schedule">
+      {%endif%}
         <div class='w3-display-container' >
           <div class='w3-row-padding'>
             <div class='w3-col s9'>
@@ -186,30 +195,31 @@
           </div>
         </div>
       </div>
-      <div class="tab-content" style="display:none;"  id="nav-league-leaders">
+      {%if TeamID %}
+      <div class="tab-content" style="display:block;"  id="nav-team-schedules">
+      {%else%}
+      <div class="tab-content" style="display:none;"  id="nav-team-schedules">
+      {%endif%}
         <div class='w3-display-container'>
           <div class='w3-row-padding' id='worldLeagueLeaderRow'>
-            <div id='worldLeagueLeadersClone' class='w3-col s3 w3-hide'>
-              <table id='' class='display table sortable w3-table-all'>
-                <thead>
-                  <th>Rank</th>
-                  <th>Player</th>
-                  <th>Team</th>
-                  <th data-field='DisplayName'></th>
-                </thead>
-                <tr id='worldLeagueLeadersRowClone' class='w3-hide'>
-                  <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value=""></td>
-                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href="" href-field='PlayerHref' ><span data-field='PlayerName'></span>, </a><span data-field='PlayerPosition'></span></td>
-                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href-field='PlayerTeamHref'><img src="" src-field='PlayerTeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
-                  <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value=""></td>
-                </tr>
-              </table>
-            </div>
+              <div class="w3-col s8 w3-card">
+                <table class='w3-table-all width100' id='scheduleTeamScheduleTable'>
+                  <thead>
+                    <th>Week</th>
+                    <th>Opponent</th>
+                    <th>Outcome</th>
+                    <th>W-L (Conf)</th>
+                    <th>Top Player 1</th>
+                    <th>Top Player 2</th>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 </body>
 
 <script src="{% static 'common/jquery-3.3.1.slim.min.js' %}"></script>
