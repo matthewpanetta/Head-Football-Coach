@@ -1,5 +1,5 @@
 <div>
-  {% include "HeadFootballCoach/NavBar.html" %}
+  {% include "HeadFootballCoach/ext_NavBar.html" %}
 </div>
 {% load static %}
 {% load humanize %}
@@ -101,7 +101,7 @@
                               {% if Game.WasPlayed %}
                               <th><a href="{{Game.GameHref}}" class='font10 left-text'>Box Score</a></th>
                               {% for Period in Game.PeriodScores%}
-                              <th>{{Period.EventPeriod|PeriodMap}}</td>
+                              <th>{{Period.EventPeriod|PeriodMap}}</th>
                               {% endfor %}
                               <th>F</th>
                               {% else%}
@@ -202,7 +202,7 @@
       {%endif%}
         <div class='w3-display-container'>
           <div class='w3-row-padding' id='worldLeagueLeaderRow'>
-              <div class="w3-col s8 w3-card">
+              <div class="w3-col s8 w3-card no-padding">
                 <table class='w3-table-all width100' id='scheduleTeamScheduleTable'>
                   <thead>
                     <th>Week</th>

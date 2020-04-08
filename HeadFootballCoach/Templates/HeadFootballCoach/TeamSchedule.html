@@ -1,0 +1,92 @@
+<div>
+  {% include "HeadFootballCoach/ext_NavBar.html" %}
+</div>
+{% load static %}
+{% load humanize %}
+
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/searchPanes.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/select.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/buttons.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/fixedHeader.dataTables.min.css' %}">
+<link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
+
+<head>
+  <style id="addedStyle">
+    .w3-button.dt-button {
+      border: 2px solid #{{page.PrimaryColor}} !important;
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      background-image: none !important;
+      font-weight: 500;
+      font-size: 14px!important;
+    }
+
+    .w3-button.dt-button:hover {
+      box-shadow: 0px 2px 12px #{{page.PrimaryColor}};
+      border: 3px solid #{{page.PrimaryColor}};
+    }
+  </style>
+</head>
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+
+
+<body>
+  <div class="PageContent">
+    {% include "HeadFootballCoach/ext_TeamHeader.html" %}
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">Other</button>
+        {% include "HeadFootballCoach/ext_TeamList.html" %}
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-schedule">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding'>
+            <div class='w3-col s9'>
+              <div class="w3-card ">
+
+                <table class="w3-table w3-table-all w3-hoverable" id='TeamSchedule'  style="width:100%">
+                  <thead>
+                    <th>Week</th>
+                    <th>Opponent</th>
+                    <th>Outcome</th>
+                    <th>W-L (Conf)</th>
+                    <th>Top Player 1</th>
+                    <th>Top Player 2</th>
+                  </thead>
+
+
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-league-leaders">
+        <div class='w3-display-container'>
+          <div class='w3-row-padding' id='worldLeagueLeaderRow'>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="{% static 'common/jquery-3.3.1.slim.min.js' %}"></script>
+<script src="{% static 'common/jquery.min.js' %}"></script>
+<script src="{% static 'facesjs-master/src/generate.js' %}"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'Pages/TeamSchedule.js' %}" type="module"></script>
+<script src="{% static 'common/popper.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.select.min.js' %}"></script>
+
+{{ TeamSchedule|json_script:"team-schedule-data" }}

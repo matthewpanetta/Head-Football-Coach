@@ -1,0 +1,9 @@
+{% load static %}
+<div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
+  <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Teams</button>
+  <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px">
+    {% for Team in TeamList %}
+    <a href="{{Team.TeamHref}}" class="w3-bar-item w3-button"><img src="{{Team.TeamLogoURL}}" class="small-logo" alt="">{{Team.TeamName}} {{Team.TeamNickname}}</a>
+    {% endfor %}
+  </div>
+</div>

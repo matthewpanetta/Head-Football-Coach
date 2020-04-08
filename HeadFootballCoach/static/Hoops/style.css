@@ -1,3 +1,7 @@
+* {
+  font-family: Lato;
+}
+
 .teamGameResultLetterW {
   color: green;
 }
@@ -349,6 +353,7 @@
   left: 25%;
   top: 15px;
   position: relative;
+  max-height: 40px;
 }
 
 .arc>path {
@@ -869,6 +874,11 @@ input[type=text], input[type=password] {
 .w3-row-padding {
   justify-content: space-around;
   display: flex;
+}
+
+.align-middle {
+    display: flex;
+    align-items: center;
 }
 
 .WorldHistoryPlayerLeaderRow * {
@@ -1469,7 +1479,12 @@ img.teamTeamLogo {
 }
 
 .light-padding-top{
-  padding: 2px 0px;
+  padding: 2px 0px !important;
+}
+
+
+.no-padding{
+  padding: 0px 0px !important;
 }
 
 .sideways {

@@ -1,4 +1,4 @@
-{% include "HeadFootballCoach/NavBar.html" %}
+{% include "HeadFootballCoach/ext_NavBar.html" %}
 {% load static %}
 
 <div WorldID="{{page.WorldID}}" TeamJerseyInvert="{{page.TeamJerseyInvert}}" TeamJerseyStyle="{{page.TeamJerseyStyle}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}"  SecondaryJerseyColor="{{page.SecondaryJerseyColor}}" TeamID="{{team.TeamID}}" style='display:none;'
@@ -10,6 +10,14 @@
       border-left-width: 35px;
       border-right-width: 35px;
       border-width: 15px 35px 0;}
+
+
+  </style>
+  <style >
+    button.w3-bar-item.w3-button:hover {
+      background-color: white !important;
+      color: #{{team.TeamColor_Primary_HEX}} !important;
+    }
   </style>
 </head>
 
@@ -19,47 +27,7 @@
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <body>
   <div class="PageContent">
-    <div class='TeamHeader' style='height: 150px;'>
-      <div class="team-header-color-left" style='background-color: #{{team.TeamColor_Primary_HEX}}; border-right-color: #{{page.SecondaryColor}};'></div>
-      <img class='teamTeamLogo' src='{{team.LogoURL}}' alt="My image">
-      <div class='teamHeaderInfo'>
-        <span class='teamSchoolName'>
-          {{ team.TeamName }}
-        </span>
-        <span class='teamTeamName'>
-          {{team.TeamNickname}}
-        </span>
-        <span class='teamRecord'>
-          {{team.CurrentTeamSeason.Wins}} - {{team.CurrentTeamSeason.Losses}}
-        </span>
-        <div class='teamOverviewInfo'>
-          {{team.CityID.CityName}}, {{team.CityID.StateID.StateName}} | <a href="/World/{{page.WorldID}}/Conferences/{{team.ConferenceID_id}}">{{team.ConferenceID.ConferenceName}}</a>
-        </div>
-      </div>
-      <div class='teamHeaderRankBox' style='border-color:{{team.TeamColor_Primary_HEX}}'>
-        <div class="teamHeaderRankHeader w3-row" style="background-color: #{{team.TeamColor_Primary_HEX}}">Team Rankings</div>
-        <div class="w3-col w3-display-container s6">
-          <div class="w3-row">
-            {{team.ConferenceID.ConferenceAbbreviation}} Ranking
-          </div>
-          <div class="w3-row">
-            {{team.CurrentTeamSeason.ConferenceRank}}
-          </div>
-        </div>
-        <div class="w3-col w3-display-container s6">
-          <div class="w3-row">
-            National Ranking
-          </div>
-          <div class="w3-row">
-            {{team.CurrentTeamSeason.NationalRank}}
-          </div>
-
-        </div>
-      </div>
-      <div class="team-header-color-right" style='background-color: #{{team.TeamColor_Primary_HEX}}; border-left-color: #{{page.SecondaryColor}};'></div>
-
-    </div>
-
+    {% include "HeadFootballCoach/ext_TeamHeader.html" %}
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
@@ -69,6 +37,7 @@
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-coaches-tab">Coaches</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-history-tab">Team History</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-records-tab">Team Records</button>
+        {% include "HeadFootballCoach/ext_TeamList.html" %}
       </div>
     </nav>
     <div id="nav-tabContent">

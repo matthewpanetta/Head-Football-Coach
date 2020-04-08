@@ -348,6 +348,13 @@ def CreateSchedule(LS, WorldID):
     Game.objects.bulk_create(GamesToSave, ignore_conflicts=True)
     TeamGame.objects.bulk_create(TeamGamesToSave, ignore_conflicts=True)
 
+    TeamGamesToSave = []
+    for TG in TeamGame.objects.filter(OpposingTeamGameID = None):
+        TG.OpposingTeamGameID = TG.OpposingTeamGame
+        TeamGamesToSave.append(TG)
+
+    TeamGame.objects.bulk_update(TeamGamesToSave, ['OpposingTeamGameID'])
+
     CurrentSeason.ScheduleCreated = True
     CurrentSeason.save()
 
@@ -437,7 +444,6 @@ def PopulatePlayerSkills(P, s, WorldID):
     for Skill in [field.name for field in PlayerSeasonSkill._meta.get_fields() if '_Rating' in field.name ]:
         setattr(PlayerSkill, Skill, NormalTrunc(OvrMultiplier * Ovr,6,50,99))
 
-    
 
     return PlayerSkill
 

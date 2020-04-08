@@ -88,7 +88,7 @@ class PlayerTeamSeasonAwardAdmin(admin.ModelAdmin):
     list_filter = ['ConferenceID__ConferenceName', 'PositionID__PositionAbbreviation', 'IsSeasonAward', 'IsWeekAward', 'IsPreseasonAward', 'IsFirstTeam', 'IsSecondTeam', 'IsNationalAward', 'WeekID']
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['TeamName', 'TeamNickname', 'WorldID', 'Abbreviation',  'IsUserTeam', 'TeamPrestige', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamJerseyInvert', 'CityID', 'TeamLogoURL', 'ConferenceID', 'FacilitiesRating', 'ProPotentialRating', 'CampusLifestyleRating', 'AcademicPrestigeRating', 'TelevisionExposureRating', 'CoachStabilityRating', 'ChampionshipContenderRating', 'LocationRating']
+    list_display = ['TeamName', 'TeamNickname', 'WorldID', 'Abbreviation',  'IsUserTeam', 'TeamPrestige', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamJerseyInvert', 'CityID', 'TeamLogoURL', 'ConferenceID', 'FacilitiesRating', 'ProPotentialRating', 'CampusLifestyleRating', 'AcademicPrestigeRating', 'TelevisionExposureRating', 'CoachStabilityRating', 'ChampionshipContenderRating', 'LocationRating', 'DefaultOffensiveScheme', 'DefaultDefensiveScheme']
     list_filter = ['ConferenceID', 'WorldID', 'IsUserTeam', 'TeamPrestige']
 
 class TeamSeasonDateRankAdmin(admin.ModelAdmin):
@@ -98,7 +98,7 @@ class TeamSeasonWeekRankAdmin(admin.ModelAdmin):
     list_display = [field.name for field in TeamSeasonWeekRank._meta.get_fields() if field.name not in ('teamgame','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class TeamGameAdmin(admin.ModelAdmin):
-    list_display = ['TeamGameID', 'GameID', 'TeamSeasonID', 'IsHomeTeam', 'IsWinningTeam', 'Points']#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = ['TeamGameID', 'GameID', 'TeamSeasonID', 'IsHomeTeam', 'IsWinningTeam', 'Points', 'OpposingTeamGameID']#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
     list_filter = ['GameID__WasPlayed', 'GameID__WeekID']
 
 class TeamRivalryAdmin(admin.ModelAdmin):

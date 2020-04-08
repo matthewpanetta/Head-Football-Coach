@@ -20,9 +20,12 @@ function PopulateTeamSchedule(WorldID, TeamID){
       settings.nTableWrapper = settings.context[0].nTableWrapper
     }
 
-     console.log('Done Initing', settings, json, 'wrapper', settings.nTableWrapper, 'this', this);
      var TeamData = json.TeamData;
      var FullTeamList = json.TeamList;
+
+     var Card = $(settings.nTableWrapper).parent().first();
+
+     console.log('Card', Card, $(Card))
 
      var TeamSelectList = `<select class="w3-select" name="option" style="width: 200px;" id="scheduleTeamScheduleSelect"><option value="" disabled selected>Choose team schedule</option>`;
      $.each(FullTeamList, function(ind, obj){
@@ -39,10 +42,9 @@ function PopulateTeamSchedule(WorldID, TeamID){
                                            + `<div class="w3-row-padding" style="font-size: 32px;"><div><span class="minor-bold">`+TeamData.TeamName + '</span> <span>'+ TeamData.TeamNickname + `</span><span class="thin-font"> Schedule</span></div></div>`
                                        + `<div class="w3-row-padding">`+TeamSelectList+`</div>`
                                        +`</div>`);
+    $(Card).css('box-shadow', '0px 2px 12px 0px #'+TeamData.TeamColor_Primary_HEX);
      $('#scheduleTeamScheduleSelect').change( function(){
-       console.log('changed value', this);
        var NewTeamID = $(this).find('option:selected').first().attr('value');
-       console.log('selected', NewTeamID);
        ScheduleTable.ajax.url('/World/'+WorldID+'/Team/'+NewTeamID+'/TeamSchedule').load(function(data, other){ ScheduleHeader(ScheduleTable, data, true)});
      });
    }
@@ -84,7 +86,9 @@ function PopulateTeamSchedule(WorldID, TeamID){
        {"data": "GameDisplay", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
            $(td).html("<span class='"+DataObject.GameResultLetterClass+"'>"+DataObject.GameResultLetter+"</span> <span><a href='"+DataObject['GameHref']+"'>"+StringValue+"</a></span>");
        }},
-       {"data": "ThisTeamRecord", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"]},
+       {"data": "ThisTeamRecord", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+           $(td).html("<span>"+StringValue+"</span> <span></span>");
+       }},
        {"data": "TopPlayerStats", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, TopPlayerStats, DataObject, iRow, iCol) {
          if (TopPlayerStats){
            $(td).html(`

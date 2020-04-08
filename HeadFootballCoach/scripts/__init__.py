@@ -210,7 +210,7 @@ print('------------------------------------------------')
 from ..utilities import NormalVariance
 
 ResultDict = {}
-TotalRuns = 1000
+TotalRuns = 0
 for u in range(0,TotalRuns):
     r = NormalVariance(1.0,7)
     if r not in ResultDict:

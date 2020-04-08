@@ -612,6 +612,9 @@ class Team(models.Model):
 
     StadiumCapacity = models.IntegerField(default = 30000)
 
+    DefaultOffensiveScheme = models.CharField(max_length = 15, blank=True, null=True, default=None)
+    DefaultDefensiveScheme = models.CharField(max_length = 15, blank=True, null=True, default=None)
+
 
     def __str__(self):
         return self.TeamName + ' ' + self.TeamNickname
@@ -2120,7 +2123,8 @@ class TeamGame(models.Model):
 
     GameID = models.ForeignKey(Game, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
-    OpposingTeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True, related_name='opposingteamgame')
+    OpposingTeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True, related_name='teamseason_opposingteamgame')
+    OpposingTeamGameID = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True, related_name='teamgame_opposingteamgame')
     TeamSeasonWeekRankID  = models.ForeignKey(TeamSeasonWeekRank, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
 
     TeamGameID = models.AutoField(primary_key = True, db_index=True)
@@ -2131,6 +2135,8 @@ class TeamGame(models.Model):
     TeamRecord = models.CharField(max_length = 20, default=None, blank=True, null=True)
     TeamConferenceRecord = models.CharField(max_length = 20, default=None, blank=True, null=True)
     GamesPlayed = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+
+    BiggestLead = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
 
     PAS_Completions = models.SmallIntegerField(default=0, null=True, blank=True)
     PAS_Attempts = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2222,6 +2228,12 @@ class TeamGame(models.Model):
         if self.TeamRecord is None:
             return str(self.TeamSeasonID.Wins) + '-'+str(self.TeamSeasonID.Losses)
         return self.TeamRecord
+
+    @property
+    def ConferenceTeamRecordDisplay(self):
+        if self.TeamConferenceRecord is None:
+            return str(self.TeamSeasonID.ConferenceWins) + '-'+str(self.TeamSeasonID.ConferenceLosses)
+        return self.TeamConferenceRecord
 
 class PlayerSeasonSkill(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)

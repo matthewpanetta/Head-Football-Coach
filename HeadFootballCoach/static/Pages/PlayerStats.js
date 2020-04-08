@@ -62,26 +62,43 @@ function GetPlayerStats(WorldID, data){
 
   console.log('In PlayerStats!', data)
 
-  var ColumnAjaxMap = {
-    3: "/GetPlayerPositions/",
-    2: "/GetClasses/"
-  }
+  var ColumnsToAlwaysShow = [0,1,2,3,4,5];
 
   var ShowColumnMap = {
-    'Passing': [6,7,8,9,10],
-    'Rushing': [11,12,13,14,15, 16,17],
-    'Receiving': [18,19,20,21,22,23,24],
-    'Defense': [25,26,27,28,29,30]
+    'Passing-Stats': [6,7,8,9,10],
+    'Rushing-Stats': [11,12,13,14,15, 16,17],
+    'Receiving-Stats': [18,19,20,21,22,23,24],
+    'Defense-Stats': [25,26,27,28,29,30],
+
+    'Physical-Skills': [31,32,33,34,35,36,37],
+    'Passing-Skills': [38,39,40,41,42,43,44],
+    'Defense-Skills': [45,46,47,48,49,50,51],
+    'Rushing-Skills': [52,53,54,55],
+    'Receiving-Skills': [56,57,58,59],
+    'Blocking-Skills': [60,61, 62],
+    'Kicking-Skills': [63,64],
   };
 
-  var HideColumnMap = {
-    'Passing': [11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30],
-    'Rushing': [6,7,8,9,10,18,19,20,21,22,23,24,25,26,27,28,29,30],
-    'Receiving': [6,7,8,9,10,11,12,13,14,15,16,17,25,26,27,28,29,30],
-    'Defense': [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
-  };
+  var FullColumnList = [];
+  var HideColumnMap = {}
+  $.each(ShowColumnMap, function(key, ColList){
+    $.each(ColList, function(ind, ColNum){
+      if (($.inArray( ColNum,  ColumnsToAlwaysShow)) == -1){
+        FullColumnList.push(ColNum);
+      }
+    })
+  });
 
-  var ColumnsToAlwaysShow = [0,1,2,3,4,5];
+  $.each(ShowColumnMap, function(key, ColList){
+     var cols = $.grep( FullColumnList, function( val, ind ) {
+        return $.inArray( val,  ColList) == -1
+      });
+      HideColumnMap[key] = cols;
+  });
+
+  console.log('ShowColumnMap', ShowColumnMap)
+  console.log('HideColumnMap', HideColumnMap)
+
 
   var table = $('#PlayerStats').DataTable({
       "dom": 'Brtp',
@@ -96,7 +113,6 @@ function GetPlayerStats(WorldID, data){
       "paginationType": "full_numbers",
       "paging": true,
       "data": data,
-      'stateSave': true,
        'buttons':[
             {
                 extend: 'searchPanes',
@@ -106,37 +122,80 @@ function GetPlayerStats(WorldID, data){
                   columns:[0,2,3],
                   collapse: 'Filter Players',
                 },
+                className: 'w3-button w3-small w3-round-large'
 
             },
             {
                 extend: 'colvisGroup',
                 text: 'Passing Stats',
-                show: ShowColumnMap['Passing'],
-                hide: HideColumnMap['Passing']
+                show: ShowColumnMap['Passing-Stats'],
+                hide: HideColumnMap['Passing-Stats'],
+                className: 'w3-button w3-small w3-round-large'
             },
             {
                 extend: 'colvisGroup',
                 text: 'Rushing Stats',
-                show: ShowColumnMap['Rushing'],
-                hide: HideColumnMap['Rushing']
+                show: ShowColumnMap['Rushing-Stats'],
+                hide: HideColumnMap['Rushing-Stats'],
+                className: 'w3-button w3-small w3-round-large'
             },
             {
                 extend: 'colvisGroup',
                 text: 'Receiving Stats',
-                show: ShowColumnMap['Receiving'],
-                hide: HideColumnMap['Receiving']
+                show: ShowColumnMap['Receiving-Stats'],
+                hide: HideColumnMap['Receiving-Stats'],
+                className: 'w3-button w3-small w3-round-large'
             },
             {
                 extend: 'colvisGroup',
                 text: 'Defensive Stats',
-                show: ShowColumnMap['Defense'],
-                hide: HideColumnMap['Defense']
+                show: ShowColumnMap['Defense-Stats'],
+                hide: HideColumnMap['Defense-Stats'],
+                className: 'w3-button w3-small w3-round-large'
             },
             {
                 extend: 'colvisGroup',
-                text: 'Show all',
-                show: ':hidden'
-            }
+                text: 'Physical Skills',
+                show: ShowColumnMap['Physical-Skills'],
+                hide: HideColumnMap['Physical-Skills'],
+                className: 'w3-button w3-small w3-round-large'
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Passing Skills',
+                show: ShowColumnMap['Passing-Skills'],
+                hide: HideColumnMap['Passing-Skills'],
+                className: 'w3-button w3-small w3-round-large'
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Rushing Skills',
+                show: ShowColumnMap['Rushing-Skills'],
+                hide: HideColumnMap['Rushing-Skills'],
+                className: 'w3-button w3-small w3-round-large'
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Receiving Skills',
+                show: ShowColumnMap['Receiving-Skills'],
+                hide: HideColumnMap['Receiving-Skills'],
+                className: 'w3-button w3-small w3-round-large'
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Blocking Skills',
+                show: ShowColumnMap['Blocking-Skills'],
+                hide: HideColumnMap['Blocking-Skills'],
+                className: 'w3-button w3-small w3-round-large'
+            },
+            {
+                extend: 'colvisGroup',
+                text: 'Kicking Skills',
+                show: ShowColumnMap['Kicking-Skills'],
+                hide: HideColumnMap['Kicking-Skills'],
+                className: 'w3-button w3-small w3-round-large'
+            },
+
         ],
       "columns": [
         {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
@@ -184,6 +243,48 @@ function GetPlayerStats(WorldID, data){
           {"data": "DEF_INT", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "FUM_Forced", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "FUM_Recovered", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__Strength_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Agility_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Speed_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Acceleration_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Stamina_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Jumping_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Awareness_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__ThrowPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__ShortThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__MediumThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__DeepThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__ThrowOnRun_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__ThrowUnderPressure_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__PlayAction_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__PassRush_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__BlockShedding_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Tackle_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__HitPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__ManCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__ZoneCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Press_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__Carrying_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Elusiveness_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__BallCarrierVision_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__BreakTackle_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__Catching_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__CatchInTraffic_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__RouteRunning_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Release_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__PassBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__RunBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__ImpactBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__KickPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__KickAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+
       ],
       'order': [[ 4, "desc" ]],
   });
