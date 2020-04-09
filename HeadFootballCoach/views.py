@@ -2657,7 +2657,7 @@ def GET_LeagueLeaders(request, WorldID):
     ]
 
     for LeaderField in LeagueLeaders:
-        LeaderField['Players'] = list(PlayersSeasons.order_by('-'+LeaderField['FieldName'])[0:5])
+        LeaderField['Players'] = list(PlayersSeasons.order_by('-'+LeaderField['FieldName'])[0:10])
         ValueRank = 1
         for P in LeaderField['Players']:
             P['Value'] = P[LeaderField['FieldName']]

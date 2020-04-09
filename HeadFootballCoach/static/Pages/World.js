@@ -255,30 +255,6 @@ function GetConferenceStandings(WorldID){
 }
 
 
-function GetLeagueLeaders(WorldID){
-
-  console.log('Getting conference standings!');
-  $.ajax({
-    method: "GET",
-    url: "/World/"+WorldID+"/LeagueLeaders",
-    data: {
-      csrfmiddlewaretoken: csrftoken
-    },
-    dataType: 'json',
-    success: function(res, status) {
-      console.log(res, status);
-      PopulateLeagueLeadersTable(res.LeagueLeaders, WorldID);
-
-    },
-    error: function(res) {
-      alert(res.status);
-    }
-  });
-
-  return null;
-}
-
-
 function GetTeamStats(WorldID){
 
   console.log('In Get Team Stats!')
@@ -613,66 +589,6 @@ function AddSeasonAllAmericanListeners(){
 
 
 
-function PopulateLeagueLeadersTable(LeagueLeaders, WorldID){
-  //console.log('LeagueLeaders', LeagueLeaders);
-  var LeaderDisplayTemplate = $('#worldLeagueLeaderRow');
-  var LeaderDisplay = undefined;
-
-  var BoxCount = 0;
-  $.each(LeagueLeaders, function(index, LeaderGroup){
-    //console.log('LeaderGroup', LeaderGroup);
-
-    if (BoxCount % 3 == 0) {
-      LeaderDisplay = $(LeaderDisplayTemplate).clone();
-      $(LeaderDisplayTemplate).before($(LeaderDisplay));
-    }
-
-    var TeamHistoryLeaderTableTemplate = $('#worldLeagueLeadersClone').clone();
-
-    $(TeamHistoryLeaderTableTemplate).removeClass('w3-hide');
-    $(TeamHistoryLeaderTableTemplate).removeAttr('id');
-
-    var th = $(TeamHistoryLeaderTableTemplate).find('th[data-field="DisplayName"]');
-    $(th).text(LeaderGroup['DisplayName']);
-    //console.log(TeamHistoryLeaderTableTemplate);
-
-    $.each(LeaderGroup['Players'], function(ind, Player){
-      //console.log('Player', Player);
-
-      var TeamHistoryLeaderRowTemplate = $(TeamHistoryLeaderTableTemplate).find('#worldLeagueLeadersRowClone').clone();
-
-      $(TeamHistoryLeaderRowTemplate).removeClass('w3-hide');
-      $(TeamHistoryLeaderRowTemplate).removeAttr('id');
-
-      $.each(Player, function(PlayerAttr,PlayerValue){
-        var FieldCell = $(TeamHistoryLeaderRowTemplate).find('.WorldLeagueLeaderRowCell[data-field="'+PlayerAttr+'"], .WorldLeagueLeaderRowCell [data-field="'+PlayerAttr+'"]');
-        FieldCell.text(PlayerValue);
-
-        var LinkCell = $(TeamHistoryLeaderRowTemplate).find('.WorldLeagueLeaderRowCell[href-field="'+PlayerAttr+'"], .WorldLeagueLeaderRowCell [href-field="'+PlayerAttr+'"]');
-        LinkCell.attr('href', PlayerValue);
-
-        var LinkCell = $(TeamHistoryLeaderRowTemplate).find('.WorldLeagueLeaderRowCell[src-field="'+PlayerAttr+'"], .WorldLeagueLeaderRowCell [src-field="'+PlayerAttr+'"]');
-        LinkCell.attr('src', PlayerValue);
-
-      });
-
-      var Table = $(TeamHistoryLeaderTableTemplate).find('table');
-      $(Table).removeClass('w3-hide');
-      $(Table).append($(TeamHistoryLeaderRowTemplate));
-
-    });
-
-    $(LeaderDisplay).append($(TeamHistoryLeaderTableTemplate));
-    BoxCount++;
-
-  });
-
-  $('#worldLeagueLeadersClone').remove();
-
-}
-
-
-
 $(document).ready(function(){
 
   AddUpcomingGameListeners();
@@ -688,7 +604,6 @@ $(document).ready(function(){
   console.log('in World.js file')
 
   GetTeamStats(WorldID);
-  GetLeagueLeaders(WorldID);
   GetWorldHistory(WorldID);
 
 });
