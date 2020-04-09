@@ -84,7 +84,7 @@
                 <table class="w3-table w3-table-all w3-hoverable" id='PlayerStats'  style="width:100%">
                   <thead>
                     <tr>
-                      <th data-data="PlayerTeam">Team</th>
+                      <th data-data="PlayerTeam" data-tooltip-title="Player Current Team">Team</th>
                       <th data-data="PlayerName">Player</th>
                       <th data-data="ClassID__ClassAbbreviation">Class</th>
                       <th data-data="Position">Position</th>
@@ -276,5 +276,6 @@
 <script type="text/javascript" charset="utf8" src="{% static 'common/buttons.colVis.min.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedColumns.min.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedHeader.min.js' %}"></script>
+
 
 {{ Players|json_script:"player-stat-data" }}

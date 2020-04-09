@@ -4,13 +4,13 @@ from django.template import loader
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, DecimalField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery, ExpressionWrapper
 from django.db.models.functions.window import Rank, RowNumber, Lag
 from django.db.models.functions import Length, Concat, Coalesce
-from .models import Audit, League, TeamGame,Week,Phase,Position, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
+from .models import Audit, League, TeamGame,Week,Phase,Position, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
 from datetime import timedelta, date
 import random
 import numpy
 from .resources import CreateBowls, EndSeason, PlayerDeparture,NewSeasonCutover, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, CreateTeamSeasons, EndRegularSeason
 from .scripts.rankings import     CalculateConferenceRankings,CalculateRankings, SelectBroadcast
-from .utilities import FindRange, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
+from .utilities import FindRange, NormalVariance, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
 from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting
 from .scripts.SeasonAwards import ChoosePlayersOfTheWeek
@@ -315,7 +315,7 @@ def Page_Conferences(request, WorldID, ConferenceID = None):
 
     CurrentWorld = World.objects.get(WorldID = WorldID)
     CurrentSeason = CurrentWorld.leagueseason_set.filter(IsCurrent = 1)
-
+    CurrentWeek = Week.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = True).first()
     context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
 
     ConferenceList = CurrentWorld.conference_set.all().annotate(
@@ -431,6 +431,7 @@ def Page_Conferences(request, WorldID, ConferenceID = None):
     context['page'] = page
     UserTeam = GetUserTeam(WorldID)
     context['userTeam'] = UserTeam
+    context['CurrentWeek'] = CurrentWeek
 
     return render(request, 'HeadFootballCoach/Conferences.html', context)
 
@@ -772,7 +773,7 @@ def Page_Audit_ShootingPercentages(request, WorldID):
 def Page_Index(request):
 
 
-    InTesting = False
+    InTesting = True
     InDeepTesting = False
 
     if InTesting or InDeepTesting:
@@ -868,7 +869,6 @@ def Page_World(request, WorldID):
     LastWeekHeadlines = Headline.objects.filter(WorldID = CurrentWorld).filter(WeekID=LastWeek).filter(ShowNextWeek=True).filter(HeadlineImportanceValue__gte=3).values('HeadlineText', 'HeadlineHref').order_by('-HeadlineImportanceValue')
     Headlines = CurrentHeadlines | LastWeekHeadlines
 
-    #PlayerTeamSeasonDepthChart.objects.all().delete()
 
 
     AllTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).select_related('TeamSeasonID__TeamID').select_related('TeamSeasonID__teamgame').select_related('TeamSeasonID__teamseason_opposingteamgame').values('TeamSeasonID', 'TeamSeasonID__ConferenceChampion', 'TeamSeasonID__ConferenceRank', 'TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation', 'teamgame__GameID', 'teamgame__IsHomeTeam', 'TeamSeasonID__TeamID','TeamSeasonID__NationalChampion','TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__Wins', 'TeamSeasonID__Losses', 'NationalRank', 'NationalRankDelta', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
@@ -1142,14 +1142,14 @@ def Page_Awards(request, WorldID):
         PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
         GameScore=Sum('playerteamseason__playergamestat__GameScore'),
         TeamRank = Max('playerteamseason__TeamSeasonID__teamseasonweekrank__NationalRank', filter=Q(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True)),
-        PlayerPositionModifier = Case(
+        PlayerPositionModifier = Max(Case(
             When(playerteamseason__TeamSeasonID__teamseasonweekrank__WeekID__WeekNumber__gt = 4, then=Value(1.0)),
             When(PositionID__PositionAbbreviation = 'QB', then=Value(1.25)),
             When(PositionID__PositionAbbreviation = 'RB', then=Value(1.2)),
             default=Value(0.75),
             output_field=DecimalField()
-        ),
-        PlayerOverallModifier = ExpressionWrapper((F('playerseasonskill__OverallRating') ** (1.0/(WeekNumber+1))) * F('PlayerPositionModifier'), output_field=DecimalField()),
+        )),
+        PlayerOverallModifier = ExpressionWrapper((F('playerseasonskill__OverallRating') ** (1.0/(Value(WeekNumber)+1))) * F('PlayerPositionModifier'), output_field=DecimalField()),
         TeamRankModifier = Case(
             When(Q(playerteamseason__TeamSeasonID__teamseasonweekrank__WeekID__WeekNumber__lt = 4) & Q(TeamRank__lte = 10), then=Value(1.0)),
             When(TeamRank = 1,       then=Value(1.25)),
@@ -1164,15 +1164,12 @@ def Page_Awards(request, WorldID):
             default=Value(0.1),
             output_field = DecimalField()
         ),
-        GameScoreWeighted = ExpressionWrapper(((Coalesce(F('GameScore'), Value(1)) ** (WeekNumber / 15.0)) + 1) * F('TeamRankModifier') * F('PlayerOverallModifier'), output_field=DecimalField()),
+        # GameScoreWeighted = ExpressionWrapper(((F('GameScore') ** (Value(WeekNumber) / 15.0)) + 1) * F('TeamRankModifier') * F('PlayerOverallModifier'), output_field=DecimalField()),
         HeismanRank = Window(
             expression=RowNumber(),
-            order_by=F("GameScoreWeighted").desc(),
+            order_by=F("GameScore").desc(),
         )
-    ).order_by('-GameScoreWeighted', '-GameScore', '-PlayerOverallModifier', '-TeamRankModifier')[:10]
-
-    for u in HeismanRace:
-        print(u)
+    ).order_by( '-GameScore')[:10]#'-GameScoreWeighted',, '-PlayerOverallModifier', '-TeamRankModifier'
 
 
     context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'AwardDict': AwardDict}
@@ -1229,6 +1226,10 @@ def Page_TeamRoster(request, WorldID, TeamID):
         page['TabIcon'] = TeamID.LogoURL
 
     Players = Common_PlayerStats(Filters)
+
+    for P in Players:
+        if P['PositionID__PositionAbbreviation'] == 'OC':
+            print(P['PlayerLastName'], P['PositionID__PositionAbbreviation'])
 
     context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'team': ThisTeam, 'CurrentWeek': CurrentWeek, 'Players': Players}
 

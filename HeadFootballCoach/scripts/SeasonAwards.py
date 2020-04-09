@@ -115,8 +115,6 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
             if Conf is not None:
                 PositionPlayers = PositionPlayers.filter(TeamSeasonID__TeamID__ConferenceID = Conf)
 
-            print('# of players at this position and conference:', Conf, Pos, PositionPlayers.count())
-
             for PlayerCount in range(0,Pos.PositionCountPerAwardTeam * 2):
                 IsFirstTeam = False
                 IsSecondTeam = False
@@ -125,8 +123,6 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
                 else:
                     IsSecondTeam = True
 
-                if Conf is not None:
-                    print('PositionPlayers, PlayerCount', Conf.ConferenceAbbreviation, Pos.PositionAbbreviation, PositionPlayers, PositionPlayers.count(), PlayerCount)
 
                 if Conf is None:
                     PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PositionPlayers[PlayerCount]['PlayerTeamSeasonID'])

@@ -207,7 +207,7 @@ print('------------------------------------------------')
 #     f.write(LN+',0,1,'+str(LastNameList[LN])+'\n')
 # f.close()
 
-from ..utilities import NormalVariance
+from ..utilities import NormalVariance, WeightedProbabilityChoice
 
 ResultDict = {}
 TotalRuns = 0
@@ -219,3 +219,44 @@ for u in range(0,TotalRuns):
 
 for u in sorted(ResultDict):
     print(u, ResultDict[u] / TotalRuns)
+
+# 
+# from ..models import Team
+# import pandas as pd
+# from django.db.models import Max, Min, Avg, Count, Func, F
+#
+# TeamList = list(Team.objects.filter(WorldID_id = 292).annotate(AdjustedTeamPrestige=(F('TeamPrestige')/10)**4))
+# TeamDict = {}
+# for T in TeamList:
+#     TeamDict[T] = {'TeamPrestige': T.AdjustedTeamPrestige, 'PlayerCount': 0, 'StopNumber': None, 'Top100':0, 'Top250': 0, 'Top500': 0, 'Top1000': 0}
+#
+# NumberOfPlayers = 22
+#
+# DraftOrder = []
+# for u in range(10000):
+#     T = [(T, TeamDict[T]['TeamPrestige']) for T in TeamDict if TeamDict[T]['PlayerCount'] < NumberOfPlayers]
+#     if len(T) == 0:
+#         break
+#     SelectedTeam = WeightedProbabilityChoice(T, T[0])
+#     TeamDict[SelectedTeam]['PlayerCount'] +=1
+#     if TeamDict[SelectedTeam]['PlayerCount'] >= NumberOfPlayers:
+#         TeamDict[SelectedTeam]['StopNumber'] = u
+#
+#     DraftOrder.append(SelectedTeam)
+#
+#     if u <= 100:
+#         TeamDict[SelectedTeam]['Top100'] +=1
+#     if u <= 250:
+#         TeamDict[SelectedTeam]['Top250'] +=1
+#     if u <= 500:
+#         TeamDict[SelectedTeam]['Top500'] +=1
+#     if u <= 1000:
+#         TeamDict[SelectedTeam]['Top1000'] +=1
+#
+#
+#
+# pd.set_option('display.max_rows', None)
+#
+# df = pd.DataFrame(TeamDict)
+# df = df.transpose()
+# print(df)

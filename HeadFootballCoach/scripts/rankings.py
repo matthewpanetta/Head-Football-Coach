@@ -29,12 +29,12 @@ def CalculateConferenceRankings(LS, WorldID):
             ) ,0),
             PAPG = Coalesce(Case(
                 When(GamesPlayed = 0, then=0),
-                default= ( Sum('opposingteamgame__Points') * 1.0 / F('GamesPlayed') ),
+                default= ( Sum('teamseason_opposingteamgame__Points') * 1.0 / F('GamesPlayed') ),
                 output_field=FloatField()
             ) ,0),
             MOV = Case(
                 When(GamesPlayed = 0, then=0),
-                default= ( (Sum('teamgame__Points') - Sum('opposingteamgame__Points') * 1.0) / F('GamesPlayed') ),
+                default= ( (Sum('teamgame__Points') - Sum('teamseason_opposingteamgame__Points') * 1.0) / F('GamesPlayed') ),
                 output_field=FloatField()
             )
         ).order_by('-ConferenceChampion', '-NetWins', '-ConferenceWins', 'teamseasonweekrank__NationalRank')
@@ -90,7 +90,6 @@ def CalculateConferenceRankings(LS, WorldID):
                         ConfRankTracker[ConfName]['Teams'][Team1]['TiebreakerCount'] +=1
 
 
-        print(ConfRankTracker[ConfName]['Teams'])
         RankCount = 1
         for TS in sorted(ConfRankTracker[ConfName]['Teams'], key=lambda TS: (ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'], -1*ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], -1*ConfRankTracker[ConfName]['Teams'][TS]['MOV']),reverse=False):
 
@@ -108,7 +107,7 @@ def CalculateRankings_old(LS, WorldID):
 
     TeamList = Team.objects.filter(WorldID=WorldID).filter(teamseason__LeagueSeasonID__IsCurrent = True).values('TeamName', 'teamseason__NationalChampion', 'teamseason__ConferenceChampion', 'TeamPrestige', 'teamseason__TeamOverallRating', 'teamseason__Wins', 'teamseason__Losses', 'teamseason__TeamSeasonID', 'teamseason__NationalBroadcast', 'teamseason__RegionalBroadcast').annotate(
         Points = Sum('teamseason__teamgame__Points'),
-        PointsAllowed = Sum('teamseason__opposingteamgame__Points'),
+        PointsAllowed = Sum('teamseason__teamseason_opposingteamgame__Points'),
         GamesPlayed = Sum('teamseason__teamgame__GamesPlayed'),
         MarginOfVictory = Case(
             When(GamesPlayed = 0, then=0),
@@ -259,7 +258,6 @@ def CalculateRankings(LS, WorldID):
         TSDict[TS]['TotalRating'] *= TSDict[TS]['ConferenceChampModifier']
         TSDict[TS]['TotalRating'] *= TSDict[TS]['NationalChampModifier']
 
-        print(TSDict[TS])
 
     RankValue  = 0
     for TS in sorted(TSDict.keys(), key=lambda TS: (TSDict[TS]['TotalRating'], TSDict[TS]['Rating'], TSDict[TS]['OverallRating'],  TSDict[TS]['TeamPrestige']), reverse=True):

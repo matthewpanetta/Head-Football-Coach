@@ -163,6 +163,8 @@ class Position(models.Model):
 
     PositionCountPerAwardTeam   = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
     PositionMinimumCountPerTeam = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+    PositionMaximumCountPerTeam = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+    PositionTypicalStarterCountPerTeam = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
 
     PositionGroupID = models.ForeignKey(PositionGroup, on_delete=models.CASCADE, null=True, blank=True, default=None)
     CoachPositionID = models.ForeignKey(CoachPosition, on_delete=models.CASCADE, null=True, blank=True, default=None)
@@ -933,16 +935,13 @@ class Player(models.Model):
         if self.PositionID.PositionAbbreviation in ['QB', 'OT', 'OG', 'OC', 'K', 'P']:
             WPC = [(u, len(u['hair'])) for u in colors]
             palette = WeightedProbabilityChoice(WPC, colors[0])
-            print('WPC 1', WPC, 'chosen:', palette)
 
         elif self.PositionID.PositionAbbreviation in ['MLB', 'DE', 'TE']:
             WPC =  [(u, 1) for u in colors]
             palette = WeightedProbabilityChoice(WPC, colors[0])
-            print('WPC 2', WPC, 'chosen:', palette)
         else:
             WPC = [(u, (10 - len(u['hair'])) ** 2) for u in colors]
             palette = WeightedProbabilityChoice(WPC, colors[0])
-            print('WPC 3', WPC, 'chosen:', palette)
 
 
         skinColor = palette['skin']
@@ -1008,7 +1007,6 @@ class Player(models.Model):
         }
       }
 
-        print(face)
         self.PlayerFaceJson = face
         self.save()
 
@@ -1259,8 +1257,6 @@ class TeamSeason(models.Model):
             Avg(F('PlayerID__playerseasonskill__OverallRating'))
         )
 
-        print(AllPlayers)
-
         self.TeamOverallRating = int(AllPlayers['PlayerID__playerseasonskill__OverallRating__avg'] )#TODO
         self.save()
 
@@ -1327,7 +1323,6 @@ class TeamSeason(models.Model):
     @property
     def ConferenceRankingTuple(self):
         TeamCount = Team.objects.filter(WorldID = self.WorldID).count()
-        print('self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank', self.ConferenceWins , self.ConferenceLosses,self.ConferenceWins , TeamCount , self.NationalRank)
         return (self.ConferenceChampion, self.ConferenceWins - self.ConferenceLosses,self.ConferenceWins , TeamCount - self.NationalRank)
 
     @property
@@ -1503,7 +1498,6 @@ class TeamSeason(models.Model):
                 Field['Value'] = TopPlayer[Field['FieldName']]
                 if Field['FieldName'] + 'PerGame' in TopPlayer and TopPlayer['GamesPlayed'] > 1:
                     Field['ValuePerGame'] = TopPlayer[Field['FieldName'] + 'PerGame']
-                    print('PerGameValue', Field['ValuePerGame'])
                 Field['PTS'] = TopPlayer
 
                 if  len(TopPlayer['PlayerFaceJson']) == 0:

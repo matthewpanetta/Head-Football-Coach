@@ -1,17 +1,18 @@
 from .models import Audit,TeamGame,Bowl,Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
 import random
 from datetime import timedelta, date
+import pandas as pd
 import numpy
 from .scripts.PickName import RandomName, RandomPositionAndMeasurements, RandomCity
 import math
-from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery
+from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, DecimalField, CharField, BooleanField, Value, Window, OuterRef, Subquery
 #from django.db.models import Max, Avg, Count, Func,  Sum, Case, When, FloatField, CharField, Value
 from django.db.models.functions.window import Rank, RowNumber
 from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, SelectBroadcast
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
 from .scripts.import_csv import createCalendar
-from .utilities import DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc, NormalVariance
+from .utilities import NormalVariance, DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc, NormalVariance
 from math import sin, cos, sqrt, atan2, radians, log
 import time
 
@@ -116,15 +117,6 @@ def CreateSchedule(LS, WorldID):
             GamesToSchedule.append((T, R))
 
     while len(UnscheduledTeams) >= 2 and ScheduleLoopCount < 400:
-        print()
-        print('ScheduleLoopCount', ScheduleLoopCount, 'UnscheduledTeams:', len(UnscheduledTeams))
-
-        if ScheduleLoopCount % 50 == 0 and ScheduleLoopCount > 0:
-            print()
-            print('Teams still available:')
-            for T in UnscheduledTeams:
-                print(T, [w for w in WeekMap if w not in ScheduleDict[T]['WeeksScheduled']], 'Conf games needed:',ConferenceGames - ScheduleDict[T]['ConferenceGames'], 'Non-Conf games needed:',NonConferenceGames - ScheduleDict[T]['NonConferenceGames'])
-            print()
 
         if ScheduleLoopCount > 1 and ScheduleLoopCount < 10:
             UnscheduledConferences = {}
@@ -165,7 +157,6 @@ def CreateSchedule(LS, WorldID):
 
 
             if KeepGame:
-                print('game', game)
                 if (ScheduleDict[HomeTeam]['HomeGames'] - ScheduleDict[HomeTeam]['AwayGames']) > (ScheduleDict[AwayTeam]['HomeGames'] - ScheduleDict[AwayTeam]['AwayGames']):
                     HomeTeam, AwayTeam = AwayTeam, HomeTeam
 
@@ -177,9 +168,7 @@ def CreateSchedule(LS, WorldID):
 
                 if IsConferenceGame:
                     WeekSet = [(w, w**4) for w in WeekMap if w not in ScheduleDict[HomeTeam]['WeeksScheduled'] and w not in ScheduleDict[AwayTeam]['WeeksScheduled']]
-                    print('    Conf WeekSet', WeekSet)
                     if len(WeekSet) == 0:
-                        print('Couldn\'t find a week for this game!')
                         ScheduleDict[HomeTeam]['UnschedulableTeams'].append(AwayTeam)
                         ScheduleDict[AwayTeam]['UnschedulableTeams'].append(HomeTeam)
                         continue
@@ -188,9 +177,7 @@ def CreateSchedule(LS, WorldID):
                     ScheduleDict[AwayTeam]['ConferenceGames'] += 1
                 else:
                     WeekSet = [(w, (WeeksInSeason - w + 1)) for w in WeekMap if w not in ScheduleDict[HomeTeam]['WeeksScheduled'] and w not in ScheduleDict[AwayTeam]['WeeksScheduled']]
-                    print('Non-Conf WeekSet', WeekSet)
                     if len(WeekSet) == 0:
-                        print('Couldn\'t find a week for this game!')
                         ScheduleDict[HomeTeam]['UnschedulableTeams'].append(AwayTeam)
                         ScheduleDict[AwayTeam]['UnschedulableTeams'].append(HomeTeam)
                         continue
@@ -223,15 +210,6 @@ def CreateSchedule(LS, WorldID):
         UnscheduledTeams = [t for t in ScheduleDict if len(ScheduleDict[t]['WeeksScheduled']) < GamePerTeam]
 
     while len(UnscheduledTeams) >= 2 and ScheduleLoopCount > 400:
-        print()
-        print('ScheduleLoopCount', ScheduleLoopCount, 'UnscheduledTeams:', len(UnscheduledTeams))
-
-        if ScheduleLoopCount % 50 == 0 and ScheduleLoopCount > 0:
-            print()
-            print('Teams still available:')
-            for T in UnscheduledTeams:
-                print(T, [w for w in WeekMap if w not in ScheduleDict[T]['WeeksScheduled']], 'Conf games needed:',ConferenceGames - ScheduleDict[T]['ConferenceGames'], 'Non-Conf games needed:',NonConferenceGames - ScheduleDict[T]['NonConferenceGames'])
-            print()
 
         UnscheduledConferences = {}
 
@@ -284,7 +262,6 @@ def CreateSchedule(LS, WorldID):
                         KeepGame = False
 
             if KeepGame:
-                print('game', game)
                 if (ScheduleDict[HomeTeam]['HomeGames'] - ScheduleDict[HomeTeam]['AwayGames']) > (ScheduleDict[AwayTeam]['HomeGames'] - ScheduleDict[AwayTeam]['AwayGames']):
                     HomeTeam, AwayTeam = AwayTeam, HomeTeam
 
@@ -297,9 +274,7 @@ def CreateSchedule(LS, WorldID):
 
                 if IsConferenceGame:
                     WeekSet = [(w, w**4) for w in WeekMap if w not in ScheduleDict[HomeTeam]['WeeksScheduled'] and w not in ScheduleDict[AwayTeam]['WeeksScheduled']]
-                    print('    Conf WeekSet', WeekSet)
                     if len(WeekSet) == 0:
-                        print('Couldn\t find a week for this game!')
                         ScheduleDict[HomeTeam]['UnschedulableTeams'].append(AwayTeam)
                         ScheduleDict[AwayTeam]['UnschedulableTeams'].append(HomeTeam)
                         continue
@@ -308,9 +283,7 @@ def CreateSchedule(LS, WorldID):
                     ScheduleDict[AwayTeam]['ConferenceGames'] += 1
                 else:
                     WeekSet = [(w, (WeeksInSeason - w + 1)) for w in WeekMap if w not in ScheduleDict[HomeTeam]['WeeksScheduled'] and w not in ScheduleDict[AwayTeam]['WeeksScheduled']]
-                    print('Non-Conf WeekSet', WeekSet)
                     if len(WeekSet) == 0:
-                        print('Couldn\t find a week for this game!')
                         ScheduleDict[HomeTeam]['UnschedulableTeams'].append(AwayTeam)
                         ScheduleDict[AwayTeam]['UnschedulableTeams'].append(HomeTeam)
                         continue
@@ -342,9 +315,6 @@ def CreateSchedule(LS, WorldID):
         ScheduleLoopCount +=1
         UnscheduledTeams = [t for t in ScheduleDict if len(ScheduleDict[t]['WeeksScheduled']) < GamePerTeam]
 
-    print('Ending schedule loop. ScheduleLoopCount:', ScheduleLoopCount, 'UnscheduledTeams:', UnscheduledTeams)
-
-
     Game.objects.bulk_create(GamesToSave, ignore_conflicts=True)
     TeamGame.objects.bulk_create(TeamGamesToSave, ignore_conflicts=True)
 
@@ -359,13 +329,15 @@ def CreateSchedule(LS, WorldID):
     CurrentSeason.save()
 
 
-def GeneratePlayer(t, s, c, WorldID):
+def GeneratePlayer(t, s, c, WorldID, PositionAbbreviation = None):
     OverallMean = 70
     OverallSigma = 9
 
-    PlayerClasses = list(Class.objects.filter(IsRecruit = False).exclude(ClassName = 'Graduate'))
     if c is not None:
         PlayerClasses = [c]
+    else:
+        PlayerClasses = list(Class.objects.filter(IsRecruit = False).exclude(ClassName = 'Graduate'))
+
 
     Positions = Position.objects.all()
 
@@ -378,7 +350,7 @@ def GeneratePlayer(t, s, c, WorldID):
         'Senior': (.90, 1)
     }
 
-    PlayerPositionAndHeight = RandomPositionAndMeasurements()
+    PlayerPositionAndHeight = RandomPositionAndMeasurements(PositionAbbreviation)
     PlayerPositionID = PlayerPositionAndHeight['PositionID']['PositionID']
     PlayerWeight = PlayerPositionAndHeight['Weight']
     PlayerHeight = PlayerPositionAndHeight['Height']
@@ -479,13 +451,23 @@ def GenerateCoach(WorldID):
 
 def CreatePlayers(LS, WorldID):
 
-    PlayersPerTeam = 72
-
-    LotteryOrder = []
+    PlayersPerTeam = 75
 
     MinimumRosterComposition = {
-        'ClassID': {c.ClassID: 12 for c in Class.objects.filter(IsRecruit = False).exclude(ClassName = 'Graduate')},
-        'Position': [u for u in Position.objects.all().values('PositionAbbreviation', 'PositionMinimumCountPerTeam').annotate(Position = F('PositionAbbreviation'))]
+        'ClassID': {c.ClassID: 13 for c in Class.objects.filter(IsRecruit = False).exclude(ClassName = 'Graduate')},
+        'Position': [u for u in Position.objects.all().values('PositionAbbreviation', 'PositionMinimumCountPerTeam','PositionMaximumCountPerTeam', 'PositionTypicalStarterCountPerTeam').annotate(Position = F('PositionAbbreviation'))]
+    }
+    ClassOverallNormalizer = {
+        C.ClassID: C.OverallNormalizer for C in Class.objects.filter(IsRecruit = False).exclude(ClassName = 'Graduate').annotate(
+            OverallNormalizer = Case(
+                When(ClassAbbreviation = 'FR', then=Value(1.09)),
+                When(ClassAbbreviation = 'SO', then=Value(1.06)),
+                When(ClassAbbreviation = 'JR', then=Value(1.03)),
+                When(ClassAbbreviation = 'SR', then=Value(1.0)),
+                default=Value(1.0),
+                output_field=FloatField()
+            )
+        )
     }
     PositionNumbers = {
         'QB': [(1,18)],
@@ -517,43 +499,44 @@ def CreatePlayers(LS, WorldID):
     NumberOfPlayersNeeded = PlayersPerTeam *  NumberOfTeams
     NumberOfPlayersNeeded -= PTS.count()
 
-    TeamList = AllTeams.order_by('-TeamPrestige')
-    TeamsToAddToLottery = int(NumberOfPlayersNeeded * 1.5)
-    RoundCount = 1
-    while TeamsToAddToLottery > 0:
-        NumTeamThisRound = ((RoundCount * 2) + 1)
-        if NumTeamThisRound > Min(NumberOfTeams,TeamsToAddToLottery):
-            NumTeamThisRound = Min(NumberOfTeams,TeamsToAddToLottery)
+    DraftTeamList = list(Team.objects.filter(WorldID_id = WorldID).annotate(AdjustedTeamPrestige=(F('TeamPrestige')/10)**3.5))
+    TeamDict = {}
+    for T in DraftTeamList:
+        TeamDict[T] = {'TeamPrestige': T.AdjustedTeamPrestige, 'PlayerCount': 0, 'StopNumber': None, 'Top100':0, 'Top250': 0, 'Top500': 0, 'Top1000': 0, 'PositionPreference': {}}
+        TeamDict[T]['PositionPreference']['Offense'] = NormalTrunc(1.05, 0.1, .5, 1.5)
+        TeamDict[T]['PositionPreference']['Defense'] = 2 - TeamDict[T]['PositionPreference']['Offense']
+        TeamDict[T]['PositionPreference']['Special Teams'] = .75
 
-        Round = {'RoundNumber': RoundCount, 'MaxTeamsInThisRound': NumTeamThisRound, 'TeamsInThisRoundCount':0, 'TeamsInThisRound': [], 'RoundFull': False}
+    DraftOrder = []
+    for u in range(int(NumberOfPlayersNeeded * 1.2)):
+        T = [(T, TeamDict[T]['TeamPrestige']) for T in TeamDict if TeamDict[T]['PlayerCount'] < PlayersPerTeam]
+        if len(T) == 0:
+            break
+        SelectedTeam = WeightedProbabilityChoice(T, T[0])
+        TeamDict[SelectedTeam]['PlayerCount'] +=1
+        if TeamDict[SelectedTeam]['PlayerCount'] >= PlayersPerTeam:
+            TeamDict[SelectedTeam]['StopNumber'] = u
 
-        LotteryOrder.append(Round)
+        DraftOrder.append(SelectedTeam)
 
-        TeamsToAddToLottery -= NumTeamThisRound
-        RoundCount +=1
+        if u <= 100:
+            TeamDict[SelectedTeam]['Top100'] +=1
+        if u <= 250:
+            TeamDict[SelectedTeam]['Top250'] +=1
+        if u <= 500:
+            TeamDict[SelectedTeam]['Top500'] +=1
+        if u <= 1000:
+            TeamDict[SelectedTeam]['Top1000'] +=1
 
-    for T in TeamList:
-        TS = T.teamseason_set.filter(LeagueSeasonID__IsCurrent = True).first()
-        NumPlayersNeededForThisTeam = PlayersPerTeam - TS.playerteamseason_set.count()
-        RoundCount = 0
-        for Round in LotteryOrder:
-            if Round['RoundFull']:
-                RoundCount +=1
-                continue
-            else:
-                break
 
-        while NumPlayersNeededForThisTeam > 0:
-            LotteryOrder[RoundCount]['TeamsInThisRound'].append(T)
-            LotteryOrder[RoundCount]['TeamsInThisRoundCount'] +=1
-            if LotteryOrder[RoundCount]['TeamsInThisRoundCount'] >= LotteryOrder[RoundCount]['MaxTeamsInThisRound']:
-                LotteryOrder[RoundCount]['RoundFull'] = True
-            RoundCount +=1
-            NumPlayersNeededForThisTeam -=1
+    pd.set_option('display.max_rows', None)
 
+    df = pd.DataFrame(TeamDict)
+    df = df.transpose()
+    print(df)
 
     PlayerPool = []
-    print('Creating ',NumberOfPlayersNeeded, ' players')
+    print('Creating ',int(NumberOfPlayersNeeded * 1.1), ' players')
     for PlayerCount in range(0,NumberOfPlayersNeeded):
         #print(PlayerCount)
         PlayerPool.append(GeneratePlayer(None, CurrentSeason, None, WorldID))
@@ -564,47 +547,110 @@ def CreatePlayers(LS, WorldID):
     for P in PlayerList:
         PlayerSkillPool.append(PopulatePlayerSkills(P, CurrentSeason, WorldID))
     PlayerSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=True)
-    PlayerPool = [u for u in PlayerList.values('PlayerID', 'ClassID', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating').annotate(Position = F('PositionID__PositionAbbreviation')).order_by('-playerseasonskill__OverallRating')]#sorted(PlayerPool, key = lambda k: k.CurrentSkills.OverallRating, reverse = True)
+    PlayerPool = [u for u in PlayerList.values('PlayerID', 'ClassID', 'PositionID__PositionAbbreviation','PositionID__PositionGroupID__PositionGroupName', 'playerseasonskill__OverallRating').annotate(Position = F('PositionID__PositionAbbreviation'), PositionGroup = F('PositionID__PositionGroupID__PositionGroupName')).order_by('-playerseasonskill__OverallRating')]#sorted(PlayerPool, key = lambda k: k.CurrentSkills.OverallRating, reverse = True)
 
     PlayersTeamSeasonToSave = []
-    for Round in LotteryOrder:
-        if Round['TeamsInThisRoundCount'] == 0:
-            continue
+    for T in DraftOrder:
+        TS = T.CurrentTeamSeason
+        if T not in TeamRosterCompositionNeeds:
+            TeamRosterCompositionNeeds[T] = {'ClassID': MinimumRosterComposition['ClassID'], 'PositionMaximums': {Pos['Position']: Pos['PositionMaximumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}, 'StarterPosition': {Pos['Position']: Pos['PositionTypicalStarterCountPerTeam'] for Pos in MinimumRosterComposition['Position']},'FullPosition': {Pos['Position']: Pos['PositionMinimumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}}
+        ClassesNeeded =   [u for u in TeamRosterCompositionNeeds[T]['ClassID']    if TeamRosterCompositionNeeds[T]['ClassID'][u]    > 0 ]
+        StartersNeeded = [u for u in TeamRosterCompositionNeeds[T]['StarterPosition'] if TeamRosterCompositionNeeds[T]['StarterPosition'][u] >= 0 ]
+        PositionsNeeded = [u for u in TeamRosterCompositionNeeds[T]['FullPosition'] if TeamRosterCompositionNeeds[T]['FullPosition'][u] > 0 ]
 
-        for T in sorted(Round['TeamsInThisRound'], key=lambda k: random.random()):
-            TS = T.CurrentTeamSeason
-            if T not in TeamRosterCompositionNeeds:
-                TeamRosterCompositionNeeds[T] = {'ClassID': MinimumRosterComposition['ClassID'], 'Position': {Pos['Position']: Pos['PositionMinimumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}}
-            ClassesNeeded =   [u for u in TeamRosterCompositionNeeds[T]['ClassID']    if TeamRosterCompositionNeeds[T]['ClassID'][u]    > 0 ]
-            PositionsNeeded = [u for u in TeamRosterCompositionNeeds[T]['Position'] if TeamRosterCompositionNeeds[T]['Position'][u] > 0 ]
-
-            ClassNeedsMet = False
-            PositionNeedsMet = False
-
-            if len(ClassesNeeded) == 0:
-                ClassNeedsMet = True
-            if len(PositionsNeeded) == 0:
-                PositionNeedsMet = True
-
-            AvailablePlayers = [u for u in PlayerPool  if (ClassNeedsMet or u['ClassID'] in ClassesNeeded) and (PositionNeedsMet or u['Position'] in PositionsNeeded)]
-            if len(AvailablePlayers) == 0:
-                PlayerForTeam = PlayerPool[-1]
-            elif len(AvailablePlayers) < 21:
-                PlayerForTeam = random.choice(AvailablePlayers)
+        ClassNeedModifier = {}
+        for C in TeamRosterCompositionNeeds[T]['ClassID']:
+            if TeamRosterCompositionNeeds[T]['ClassID'][C] > 6:
+                ClassNeedModifier[C] = 1.1
+            elif TeamRosterCompositionNeeds[T]['ClassID'][C] > 3:
+                ClassNeedModifier[C] = 1.05
+            elif TeamRosterCompositionNeeds[T]['ClassID'][C] > 0:
+                ClassNeedModifier[C] = 1.0
             else:
-                AvailablePlayers = AvailablePlayers[:int(len(AvailablePlayers)/12)]
-                PlayerForTeam = random.choice(AvailablePlayers)
-            PlayerPool.remove(PlayerForTeam)
+                ClassNeedModifier[C] = .95
+
+        PositionNeedModifier = {}
+        for P in TeamRosterCompositionNeeds[T]['StarterPosition']:
+            if TeamRosterCompositionNeeds[T]['StarterPosition'][P] > 0:
+                PositionNeedModifier[P] = 1.5
+            elif TeamRosterCompositionNeeds[T]['FullPosition'][P] > 0:
+                PositionNeedModifier[P] = 1.1
+            elif TeamRosterCompositionNeeds[T]['FullPosition'][P] < -2:
+                PositionNeedModifier[P] = .5
+            elif TeamRosterCompositionNeeds[T]['FullPosition'][P] <= 0:
+                PositionNeedModifier[P] = .9
+            else:
+                PositionNeedModifier[P] = 1.0
+
+        ClassNeedsMet = False
+        StarterNeedsMet = False
+        PositionNeedsMet = False
+
+        if len(ClassesNeeded) == 0:
+            ClassNeedsMet = True
+        if len(PositionsNeeded) == 0:
+            PositionNeedsMet = True
+        if len(StartersNeeded) == 0:
+            StarterNeedsMet = True
+
+        AvailablePlayers = []
+        AP_count = 0
+        while len(AvailablePlayers) == 0:
+            AvailablePlayers = [u for u in PlayerPool  if ( TeamRosterCompositionNeeds[T]['PositionMaximums'][u['Position']] > 0)]
+            if AP_count == 0:
+                AvailablePlayers = [u for u in AvailablePlayers  if (StarterNeedsMet or u['Position'] in StartersNeeded) and (ClassNeedsMet or u['ClassID'] in ClassesNeeded)]
+            elif AP_count == 1:
+                AvailablePlayers = [u for u in AvailablePlayers  if (StarterNeedsMet or u['Position'] in StartersNeeded)]
+            elif AP_count == 2:
+                AvailablePlayers = [u for u in AvailablePlayers  if (ClassNeedsMet or u['ClassID'] in ClassesNeeded) and (PositionNeedsMet or u['Position'] in PositionsNeeded)]
+            elif AP_count == 3:
+                AvailablePlayers = [u for u in AvailablePlayers  if (PositionNeedsMet or u['Position'] in PositionsNeeded)]
+            else :
+                AvailablePlayers = [u for u in PlayerPool]
+            AP_count += 1
+
+        AvailablePlayers = sorted(AvailablePlayers, key=lambda P:  P['playerseasonskill__OverallRating'] * ClassOverallNormalizer[P['ClassID']] * ClassNeedModifier[P['ClassID']] * PositionNeedModifier[P['Position']] * TeamDict[T]['PositionPreference'][P['PositionID__PositionGroupID__PositionGroupName']], reverse=True)
 
 
-            TeamRosterCompositionNeeds[T]['ClassID'][PlayerForTeam['ClassID']] -=1
-            TeamRosterCompositionNeeds[T]['Position'][PlayerForTeam['Position']] -=1
+        if len(AvailablePlayers) < 5:
+            PlayerForTeam = random.choice(AvailablePlayers)
+        else:
+            AvailablePlayers = AvailablePlayers[:4]
+            PlayerForTeam = random.choice(AvailablePlayers)
+        PlayerPool.remove(PlayerForTeam)
 
-            P = PlayerList.filter(PlayerID = PlayerForTeam['PlayerID']).first()
-            PTS = PlayerTeamSeason(WorldID=WorldID, TeamSeasonID = TS, PlayerID = P, ClassID = P.ClassID)
-            PlayersTeamSeasonToSave.append(PTS)
 
-    PlayerTeamSeason.objects.bulk_create(PlayersTeamSeasonToSave, ignore_conflicts=True)
+        TeamRosterCompositionNeeds[T]['ClassID'][PlayerForTeam['ClassID']] -=1
+        TeamRosterCompositionNeeds[T]['FullPosition'][PlayerForTeam['Position']] -=1
+        TeamRosterCompositionNeeds[T]['StarterPosition'][PlayerForTeam['Position']] -=1
+        TeamRosterCompositionNeeds[T]['PositionMaximums'][PlayerForTeam['Position']] -=1
+
+        #P = PlayerList.filter(PlayerID = PlayerForTeam['PlayerID']).first()
+        PTS = PlayerTeamSeason(WorldID=WorldID, TeamSeasonID = TS, PlayerID_id = PlayerForTeam['PlayerID'], ClassID_id = PlayerForTeam['ClassID'])
+        PlayersTeamSeasonToSave.append(PTS)
+
+    PlayerSkillPool = []
+    for T in TeamRosterCompositionNeeds:
+        TS = None
+        for Pos in TeamRosterCompositionNeeds[T]['StarterPosition']:
+            if TeamRosterCompositionNeeds[T]['StarterPosition'][Pos] > 0:
+                for u in range(TeamRosterCompositionNeeds[T]['StarterPosition'][Pos]):
+                    if TS is None:
+                        TS = T.CurrentTeamSeason
+                    print(T, 'needs', Pos)
+                    NewPlayer = GeneratePlayer(None, CurrentSeason, None, WorldID, Pos)
+                    NewPlayer.save()
+                    print('New player-', NewPlayer, NewPlayer.PositionID.PositionAbbreviation)
+
+                    PTS = PlayerTeamSeason(WorldID=WorldID, TeamSeasonID = TS, PlayerID = NewPlayer, ClassID =NewPlayer.ClassID)
+                    PlayersTeamSeasonToSave.append(PTS)
+
+                    PlayerSkillPool.append(PopulatePlayerSkills(NewPlayer, CurrentSeason, WorldID))
+
+                    print('New PTS', PTS)
+
+    PlayerSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=True)
+    PlayerTeamSeason.objects.bulk_create(PlayersTeamSeasonToSave)
 
     for T in AllTeams:
         TS = TeamSeason.objects.get(TeamID=T, WorldID = WorldID, LeagueSeasonID = CurrentSeason)
@@ -845,7 +891,7 @@ def CreateRecruitingClass(LS, WorldID):
 
 def CreateCoaches(LS, WorldID):
 
-    CoachesPerTeam = CoachPosition.objects.all()
+    CoachesPerTeam = CoachPosition.objects.filter(Q(IsCoordinator=True) | Q(IsHeadCoach=True))
 
     TeamList = TeamSeason.objects.filter(WorldID=WorldID).filter(LeagueSeasonID = LS).order_by('-TeamID__TeamPrestige')
     CurrentSeason = LS
@@ -866,7 +912,6 @@ def CreateCoaches(LS, WorldID):
     CTSToSave = []
     for Position in CoachesPerTeam:
         for TS in TeamList:
-            print('Assigning coach for ', TS, 'at', Position)
             CoachesLeft = CoachList.__len__()
             CoachToPop = random.randint(0, int(CoachesLeft / 8))
             CoachForTeam = CoachList.pop(CoachToPop)
@@ -1112,7 +1157,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         start = time.time()
 
-    CreateRecruitingClass(LS, WorldID)
+    #CreateRecruitingClass(LS, WorldID)
 
     if DoAudit:
         end = time.time()

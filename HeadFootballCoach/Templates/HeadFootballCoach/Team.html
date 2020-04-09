@@ -31,8 +31,6 @@
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-roster-tab">Roster</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-schedule-tab">Schedule</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-analytics-tab">Analytics</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-coaches-tab">Coaches</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-history-tab">Team History</button>
@@ -322,139 +320,8 @@
           </div>
         </div>
       </div>
-      <div class="tab-content" style='display:none;' id="nav-roster">
-        <div class='w3-container'>
-          <div class='w3-row-padding'>
-            <div class='w3-col s9'>
-              <div class="w3-card">
-                <div id='roster-bar' class="w3-bar">
-                  <div class="w3-bar-item">
-                    Data display:
-                  </div>
-                  <button class='w3-button w3-bar-item selected-roster-tab' type="button" table-data-context="StatsPG" name="button">Player Stats (Per Game)</button>
-                  <button class='w3-button w3-bar-item' type="button" table-data-context="Ratings" name="button">Player Ratings</button>
-                </div>
-                <table class="table table-striped sortable width100" id='teamRosterTable'>
-                  <thead>
-                    <tr>
-                      <th data-data="FullName" class='TeamRosterHeaderCell teamColorBorder' scope="col">Name</th>
-                      <th data-data="JerseyNumber" class='TeamRosterHeaderCell teamColorBorder' scope="col">#</th>
-                      <th data-data="Position" class='TeamRosterHeaderCell teamColorBorder' scope="col">Position</th>
-                      <th data-data="HeightFormatted" class='TeamRosterHeaderCell teamColorBorder' scope="col">Height</th>
-                      <th data-data="PlayerClass" class='TeamRosterHeaderCell teamColorBorder' scope="col">Class</th>
-                      <th data-data="OverallRating" class='TeamRosterHeaderCell teamColorBorder' scope="col">Overall</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </div>
-            <div class="w3-col s3">
-              <div class="w3-card" id='teamRosterPlayerHighlight'>
-                <div>
-                  <span class='table_title' data-field='PlayerName'>Click on a player for more info</span>
-                </div>
-                <table class="playerinfo">
-                  <tr>
-                  <td>
-                    <div data-field='PlayerFaceJson' id='teamRosterPlayerHighlightPlayerFace' class="" style='width:80px;'>
-
-                    </div>
-                  </td>
-                  <td>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td class='font12 padding-4-6'>Home</td>
-                          <td class='font14' colspan="2" data-field='HometownAndState'>Eugene, OR</td>
-                        </tr>
-                        <tr>
-                          <td class='font12 padding-4-6'>Height</td>
-                          <td class='font14' data-field='HeightFormatted'> 6-6
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class='font12 padding-4-6'>Weight</td>
-                          <td class='font14' data-field='WeightFormatted'> 237
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class='font12 padding-4-6'>Year</td>
-                          <td class='font14' data-field='ClassID__ClassAbbreviation'>Senior</td>
-                        </tr>
-                        <tr>
-                          <td class='font12 padding-4-6'>Overall</td>
-                          <td class='font14' data-field='playerseasonskill__OverallRating'>92</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    </td>
-                    </tr>
-
-                  </table>
-
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-      <div class="tab-content" style='display:none;' id="nav-schedule">
-        <div class="w3-container">
-          <div class="w3-row-padding">
-            <div class="w3-col s8">
-              <div class="w3-card ">
-                <div class="w3-card-header">
-                  Schedule
-                </div>
-                <table class="w3-table-all">
-                  <tbody id='TeamScheduleContainer'>
-                    <tr class='w3-hide' id='TeamScheduleRowPlayedGames'>
-                      <td>Week</td>
-                      <td>Opponent</td>
-                      <td>Record</td>
-                      <td>Outcome</td>
-                    </tr>
-                    <tr class="w3-hide w3-padding-16 TeamScheduleRow" id='TeamScheduleRowClone'>
-                      <td class='TeamScheduleGameCell' data-field='WeekName'></td>
-                      <td class="w3-col TeamScheduleGameCell">
-                        <span data-field='AtOrVs'></span>
-                        <img src="" img-src-field='LogoURL' alt="" class='teamScheduleTeamLogo'>
-                        <span data-field='OpponentRank'></span>
-                        <a href="" href-field='TeamIDURL' data-field='TeamName'></a>
-                      </td>
-                      <td data-field='GameResultLetter'></td>
-                      <td class="w3-col TeamScheduleGameCell">
-                        <span data-field='GameResultLetter' class-field='GameResultLetterClass'></span>
-                        <a href=""  href-field='GameIDURL' data-field='GameDisplay'></a>
-                      </td>
-                    </tr>
-                    <tr class='w3-hide' id='TeamScheduleRowFutureGames'>
-                      <td>Week</td>
-                      <td>Opponent</td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
+      
       <div class="tab-content" style='display:none;' id="nav-analytics">
         Analytics Window
         <div id="map" style="width: 930px; height: 630px; border: solid 3px red;"></div>

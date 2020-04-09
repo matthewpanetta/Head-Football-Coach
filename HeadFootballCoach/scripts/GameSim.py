@@ -429,8 +429,9 @@ def GameSim(game):
             ThisTeamGame = AwayTeamGame
             DC = AwayPlayerTeamSeasonDepthChart.filter(PlayerTeamSeasonID = PTS).first()
 
-        AllPlayers[PlayerID]['Position'] = DC['PositionID__PositionAbbreviation']
-        AllPlayers[PlayerID]['PositionDepthChart'] = DC['DepthPosition']
+        if DC is not None:
+            AllPlayers[PlayerID]['Position'] = DC['PositionID__PositionAbbreviation']
+            AllPlayers[PlayerID]['PositionDepthChart'] = DC['DepthPosition']
 
 
 
@@ -819,11 +820,11 @@ def GameSim(game):
                     AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_SackYards += abs(YardsThisPlay)
                     GameDict[OffensiveTeam]['TeamGame'].PAS_SackYards += abs(YardsThisPlay)
 
-                    AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Yards -= abs(YardsThisPlay)
-                    GameDict[OffensiveTeam]['TeamGame'].RUS_Yards -= abs(YardsThisPlay)
+                    #AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Yards -= abs(YardsThisPlay)
+                    #GameDict[OffensiveTeam]['TeamGame'].RUS_Yards -= abs(YardsThisPlay)
 
-                    AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Carries += 1
-                    GameDict[OffensiveTeam]['TeamGame'].RUS_Carries += 1
+                    #AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Carries += 1
+                    #GameDict[OffensiveTeam]['TeamGame'].RUS_Carries += 1
 
                     DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])

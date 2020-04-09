@@ -16,8 +16,10 @@ def RandomName():
 
 
     FirstNamesCount = FirstNames.aggregate(Max('RandomStop'))
-    FirstNameR = random.randint(1, FirstNamesCount['RandomStop__max'])
-    FirstName = FirstNames.get(RandomStart__lte=FirstNameR, RandomStop__gte=FirstNameR)
+    FirstName = None
+    while FirstName is None:
+        FirstNameR = random.randint(1, FirstNamesCount['RandomStop__max'])
+        FirstName = FirstNames.filter(RandomStart__lte=FirstNameR).filter( RandomStop__gte=FirstNameR).first()
 
 
     LastNamesCount = LastNames.aggregate(Max('RandomStop'))
@@ -31,8 +33,10 @@ def RandomName():
             if s[1] >=  random.randint(0,1000):
                 Suffix=s[0]
     for u in range(0,NumLastNames):
-        LastNameR = random.randint(1, LastNamesCount['RandomStop__max'])
-        CurrentLastName = LastNames.get(RandomStart__lte=LastNameR,   RandomStop__gte=LastNameR)
+        CurrentLastName = None
+        while CurrentLastName is None:
+            LastNameR = random.randint(1, LastNamesCount['RandomStop__max'])
+            CurrentLastName = LastNames.filter(RandomStart__lte=LastNameR).filter(   RandomStop__gte=LastNameR).first()
         LastNameList.append(CurrentLastName.Name)
 
 
@@ -41,15 +45,17 @@ def RandomName():
     return (FirstName.Name, LastName)
 
 
-def RandomPositionAndMeasurements():
+def RandomPositionAndMeasurements(PositionAbbreviation = None):
 
     Positions = Position.objects.filter(Occurance__gt = 0)
     PositionCount = Positions.aggregate(Max('RandomStop'))
 
-    PositionR = random.randint(1, PositionCount['RandomStop__max'])
-    PositionID = Positions.filter(RandomStart__lte=PositionR).filter( RandomStop__gte=PositionR).values('HeightAverage', 'HeightStd', 'WeightAverage', 'WeightStd', 'PositionID').first()
-
-
+    if PositionAbbreviation is None:
+        PositionR = random.randint(1, PositionCount['RandomStop__max'])
+        PositionID = Positions.filter(RandomStart__lte=PositionR).filter( RandomStop__gte=PositionR).values('HeightAverage', 'HeightStd', 'WeightAverage', 'WeightStd', 'PositionID').first()
+    else:
+        PositionID = Positions.filter(PositionAbbreviation = PositionAbbreviation).values('HeightAverage', 'HeightStd', 'WeightAverage', 'WeightStd', 'PositionID').first()
+        print('Got specialized request for', PositionAbbreviation, '- result:', PositionID)
 
     D = RandomPositionMeasurements(PositionID)
     D['PositionID'] = PositionID
