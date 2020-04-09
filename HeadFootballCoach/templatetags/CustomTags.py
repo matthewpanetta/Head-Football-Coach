@@ -15,3 +15,7 @@ def PeriodMap(num):
     if num in PeriodDict:
         return PeriodDict[num]
     return num
+
+@register.filter
+def keyvalue(dict, key):
+    return dict[key]

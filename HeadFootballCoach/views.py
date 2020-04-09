@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
+import pandas as pd
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, DecimalField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery, ExpressionWrapper
 from django.db.models.functions.window import Rank, RowNumber, Lag
 from django.db.models.functions import Length, Concat, Coalesce
@@ -1176,6 +1177,46 @@ def Page_Awards(request, WorldID):
     context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
     context['HeismanRace'] = HeismanRace
     return render(request, 'HeadFootballCoach/Awards.html', context)
+
+def Page_PlayerRecords(request, WorldID, TeamID=None):
+    DoAudit = True
+    page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    CurrentWorld  = World.objects.get(WorldID = WorldID)
+    CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
+    CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
+    UserTeam = GetUserTeam(WorldID)
+
+    SeasonFilters = {}
+    CareerFilters = {}
+    GameFilters = {}
+
+    if TeamID is not None:
+        Filters['TeamID'] = TeamID
+        SeasonFilters = {'TeamSeasonID__TeamID': TeamID}
+        CareerFilters = {'playerteamseason__TeamSeasonID__TeamID': TeamID}
+        GameFilters = {'PlayerTeamSeasonID__TeamSeasonID__TeamID': TeamID}
+        TeamID = Team.objects.filter(WorldID_id = WorldID).filter(TeamID = TeamID).first()
+
+        page['PageTitle'] = TeamID.TeamName + ' Players'
+        page['PrimaryColor'] = TeamID.TeamColor_Primary_HEX
+        page['SecondaryColor'] = TeamID.SecondaryColor_Display
+
+
+
+    SeasonLeaders = Common_PlayerRecords(CurrentWorld, Timeframe = 'Season', Filters=SeasonFilters, ListLength = 5)
+    CareerLeaders = Common_PlayerRecords(CurrentWorld, Timeframe = 'Career', Filters=CareerFilters, ListLength = 5)
+    GameLeaders = Common_PlayerRecords(CurrentWorld, Timeframe = 'Game', Filters=GameFilters, ListLength = 5)
+
+    print('\nSeasonLeaders')
+    for P in SeasonLeaders:
+        print(P)
+
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek}
+    context['SeasonLeaders'] = SeasonLeaders
+    context['CareerLeaders'] = CareerLeaders
+    context['GameLeaders'] = GameLeaders
+
+    return render(request, 'HeadFootballCoach/PlayerRecords.html', context)
 
 
 
@@ -2472,123 +2513,7 @@ def GET_Teams(request, WorldID):
 def GET_TeamHistoricalLeaders(request, WorldID, TeamID, Timeframe='Season'):
 
     print('Getting team hist leaders', Timeframe)
-    if Timeframe == 'Season':
-        HistoricalStats = PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__TeamID_id = TeamID ).values( 'TeamSeasonID__LeagueSeasonID__SeasonStartYear', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID_id').annotate(
-            GameScore=Sum('playergamestat__GameScore'),
-            TeamGamesPlayed=Sum('playergamestat__TeamGamesPlayed'),
-            PAS_Yards = Sum('playergamestat__PAS_Yards'),
-            PAS_TD = Sum('playergamestat__PAS_TD'),
-            PAS_Attempts = Sum('playergamestat__PAS_Attempts'),
-            PAS_Completions = Sum('playergamestat__PAS_Completions'),
-            RUS_Yards=Sum('playergamestat__RUS_Yards'),
-            RUS_TD = Sum('playergamestat__RUS_TD'),
-            RUS_Carries = Sum('playergamestat__RUS_Carries'),
-            REC_Receptions = Sum('playergamestat__REC_Receptions'),
-            REC_TD = Sum('playergamestat__REC_TD'),
-            REC_Yards = Sum('playergamestat__REC_Yards'),
-            DEF_Sacks = Sum('playergamestat__DEF_Sacks'),
-            DEF_INT = Sum('playergamestat__DEF_INT'),
-            DEF_Tackles = Sum('playergamestat__DEF_Tackles'),
-            PlayerPosition = F('PlayerID__PositionID__PositionAbbreviation'),
-            PlayerName = Concat(F('PlayerID__PlayerFirstName'), Value(' '), F('PlayerID__PlayerLastName'), output_field=CharField()),
-            PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID_id'), output_field=CharField()),
-            Timeframe = F('TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
-            TimeframeHref = Concat(Value(''), Value(''), output_field=CharField()),
-            PAS_CompletionPercentage=Case(
-                When(PAS_Attempts__lte=F('TeamGamesPlayed') * 5, then=0.0),
-                default=(Round(F('PAS_Completions')* 100.0 / F('PAS_Attempts'),1)),
-                output_field=FloatField()
-            ),
-            RUS_YardsPerCarry=Case(
-                When(RUS_Carries__lt = F('TeamGamesPlayed') * 5, then=0.0),
-                default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
-                output_field=FloatField()
-            ),
-        )
 
-    elif Timeframe == 'Career':
-        HistoricalStats = Player.objects.filter(WorldID = WorldID).filter(playerteamseason__TeamSeasonID__TeamID_id = TeamID ).values( 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'PlayerID').annotate(
-            GameScore=Sum('playerteamseason__playergamestat__GameScore'),
-            MinSeason=Min('playerteamseason__TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
-            MaxSeason=Max('playerteamseason__TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
-            TeamGamesPlayed=Sum('playerteamseason__playergamestat__TeamGamesPlayed'),
-            PAS_Yards = Sum('playerteamseason__playergamestat__PAS_Yards'),
-            PAS_TD = Sum('playerteamseason__playergamestat__PAS_TD'),
-            PAS_Attempts = Sum('playerteamseason__playergamestat__PAS_Attempts'),
-            PAS_Completions = Sum('playerteamseason__playergamestat__PAS_Completions'),
-            RUS_Yards=Sum('playerteamseason__playergamestat__RUS_Yards'),
-            RUS_TD = Sum('playerteamseason__playergamestat__RUS_TD'),
-            RUS_Carries = Sum('playerteamseason__playergamestat__RUS_Carries'),
-            REC_Receptions = Sum('playerteamseason__playergamestat__REC_Receptions'),
-            REC_TD = Sum('playerteamseason__playergamestat__REC_TD'),
-            REC_Yards = Sum('playerteamseason__playergamestat__REC_Yards'),
-            DEF_Sacks = Sum('playerteamseason__playergamestat__DEF_Sacks'),
-            DEF_INT = Sum('playerteamseason__playergamestat__DEF_INT'),
-            DEF_Tackles = Sum('playerteamseason__playergamestat__DEF_Tackles'),
-            PlayerPosition = F('PositionID__PositionAbbreviation'),
-            PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
-            PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
-            Timeframe = Concat(F('MinSeason'), Value('-'), F('MaxSeason'), output_field=CharField()),
-            TimeframeHref = Concat(Value(''), Value(''), output_field=CharField()),
-            PAS_CompletionPercentage=Case(
-                When(PAS_Attempts__lte=F('TeamGamesPlayed') * 5, then=0.0),
-                default=(Round(F('PAS_Completions')* 100.0 / F('PAS_Attempts'),1)),
-                output_field=FloatField()
-            ),
-            RUS_YardsPerCarry=Case(
-                When(RUS_Carries__lt = F('TeamGamesPlayed') * 5, then=0.0),
-                default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
-                output_field=FloatField()
-            ),
-        )
-
-    elif Timeframe == 'Game':
-        HistoricalStats = PlayerGameStat.objects.filter(WorldID = WorldID).filter(TeamGameID__TeamSeasonID__TeamID_id = TeamID ).values( 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID_id', 'GameScore', 'PAS_Yards',
-            'PAS_TD', 'PAS_Attempts', 'PAS_Completions', 'RUS_Yards', 'RUS_TD', 'RUS_Carries', 'REC_Receptions', 'REC_TD', 'REC_Yards',
-            'DEF_Sacks', 'DEF_INT', 'DEF_Tackles'
-        ).annotate(
-            MinSeason=F('PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
-            WeekName = F('TeamGameID__GameID__WeekID__WeekName'),
-            PlayerPosition = F('PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation'),
-            PlayerName = Concat(F('PlayerTeamSeasonID__PlayerID__PlayerFirstName'), Value(' '), F('PlayerTeamSeasonID__PlayerID__PlayerLastName'), output_field=CharField()),
-            PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID_id'), output_field=CharField()),
-            Timeframe = Concat(F('MinSeason'), Value(' '), F('WeekName'), output_field=CharField()),
-            TimeframeHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('TeamGameID__GameID_id'), output_field=CharField()),
-            PAS_CompletionPercentage=Case(
-                When(PAS_Attempts__lte=F('TeamGamesPlayed') * 5, then=0.0),
-                default=(Round(F('PAS_Completions')* 100.0 / F('PAS_Attempts'),1)),
-                output_field=FloatField()
-            ),
-            RUS_YardsPerCarry=Case(
-                When(RUS_Carries__lt = F('TeamGamesPlayed') * 5, then=0.0),
-                default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
-                output_field=FloatField()
-            ),
-        )
-
-
-    HistoricalLeaders = [
-        {'FieldName': 'PAS_Yards', 'DisplayName': 'Passing Yards', 'Players': []},
-        {'FieldName': 'PAS_TD', 'DisplayName': 'Passing TDs', 'Players': []},
-        {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Passing %', 'Players': []},
-        {'FieldName': 'RUS_Yards', 'DisplayName': 'Rushing Yards', 'Players': []},
-        {'FieldName': 'RUS_TD', 'DisplayName': 'Rushing TDs', 'Players': []},
-        {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'Rushing YPC', 'Players': []},
-        {'FieldName': 'REC_Yards', 'DisplayName': 'Receiving Yards', 'Players': []},
-        {'FieldName': 'REC_TD', 'DisplayName': 'Receiving TDs', 'Players': []},
-        {'FieldName': 'REC_Receptions', 'DisplayName': 'Receptions', 'Players': []},
-        {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'Players': []},
-        {'FieldName': 'DEF_INT', 'DisplayName': 'Interceptions', 'Players': []},
-        {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'Players': []},
-    ]
-
-    for LeaderField in HistoricalLeaders:
-        LeaderField['Players'] = list(HistoricalStats.order_by('-'+LeaderField['FieldName'])[0:5])
-        ValueRank = 1
-        for P in LeaderField['Players']:
-            P['Value'] = P[LeaderField['FieldName']]
-            P['ValueRank'] = ValueRank
-            ValueRank +=1
 
     context = {'status':'success', 'WorldID': WorldID}
     context['HistoricalLeaders'] = HistoricalLeaders
@@ -2602,68 +2527,8 @@ def GET_LeagueLeaders(request, WorldID):
     CurrentWorld = World.objects.filter(WorldID = WorldID).first()
 
     #HistoricalPlayersCareer = PlayerTeamSeason.objects
-    PlayersSeasons = PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).values( 'TeamSeasonID__LeagueSeasonID__SeasonStartYear', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID_id', 'TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL').annotate(
-        GameScore=Sum('playergamestat__GameScore'),
-        RUS_Yards=Sum('playergamestat__RUS_Yards'),
-        RUS_TD=Sum('playergamestat__RUS_TD'),
-        RUS_Carries=Sum('playergamestat__RUS_Carries'),
-        REC_Receptions=Sum('playergamestat__REC_Receptions'),
-        REC_TD=Sum('playergamestat__REC_TD'),
-        PAS_Yards=Sum('playergamestat__PAS_Yards'),
-        PAS_TD=Sum('playergamestat__PAS_TD'),
-        PAS_Attempts = Sum('playergamestat__PAS_Attempts'),
-        TeamGamesPlayed = Sum('playergamestat__TeamGamesPlayed'),
-        REC_Yards=Sum('playergamestat__REC_Yards'),
-        DEF_Sacks=Sum('playergamestat__DEF_Sacks'),
-        DEF_INT=Sum('playergamestat__DEF_INT'),
-        DEF_Tackles=Sum('playergamestat__DEF_Tackles'),
-        DEF_TacklesForLoss=Sum('playergamestat__DEF_TacklesForLoss'),
-        FUM_Forced=Sum('playergamestat__FUM_Forced'),
-        FUM_Recovered=Sum('playergamestat__FUM_Recovered'),
-        PlayerPosition = F('PlayerID__PositionID__PositionAbbreviation'),
-        PlayerName = Concat(F('PlayerID__PlayerFirstName'), Value(' '), F('PlayerID__PlayerLastName'), output_field=CharField()),
-        PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID_id'), output_field=CharField()),
-        PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID_id'), output_field=CharField()),
-        PlayerTeamLogoURL = F('TeamSeasonID__TeamID__TeamLogoURL'),
-        SeasonYear = F('TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
-        PAS_CompletionPercentage=Case(
-            When(PAS_Attempts__lte = F('TeamGamesPlayed') * 10, then=0.0),
-            default=(Round(Sum('playergamestat__PAS_Completions')* 100.0 / Sum('playergamestat__PAS_Attempts'),1)),
-            output_field=FloatField()
-        ),
-        RUS_YardsPerCarry=Case(
-            When(RUS_Carries__lte= F('TeamGamesPlayed') * 10, then=0.0),
-            default=(Round(Sum('playergamestat__RUS_Yards')* 1.0 / Sum('playergamestat__RUS_Carries'),1)),
-            output_field=FloatField()
-        ),
-    )
-
-    LeagueLeaders = [
-        {'FieldName': 'PAS_Yards', 'DisplayName': 'Passing Yards', 'Players': []},
-        {'FieldName': 'PAS_TD', 'DisplayName': 'Passing TDs', 'Players': []},
-        {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Passing %', 'Players': []},
-        {'FieldName': 'RUS_Yards', 'DisplayName': 'Rushing Yards', 'Players': []},
-        {'FieldName': 'RUS_TD', 'DisplayName': 'Rushing TDs', 'Players': []},
-        {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'Rushing YPC', 'Players': []},
-        {'FieldName': 'REC_Yards', 'DisplayName': 'Receiving Yards', 'Players': []},
-        {'FieldName': 'REC_TD', 'DisplayName': 'Receiving TDs', 'Players': []},
-        {'FieldName': 'REC_Receptions', 'DisplayName': 'Receptions', 'Players': []},
-        {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'Players': []},
-        {'FieldName': 'DEF_TacklesForLoss', 'DisplayName': 'Tack for loss', 'Players': []},
-        {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'Players': []},
-        {'FieldName': 'DEF_INT', 'DisplayName': 'Interceptions', 'Players': []},
-        {'FieldName': 'FUM_Forced', 'DisplayName': 'Fum forced', 'Players': []},
-        {'FieldName': 'FUM_Recovered', 'DisplayName': 'Fum rec.', 'Players': []},
-    ]
-
-    for LeaderField in LeagueLeaders:
-        LeaderField['Players'] = list(PlayersSeasons.order_by('-'+LeaderField['FieldName'])[0:10])
-        ValueRank = 1
-        for P in LeaderField['Players']:
-            P['Value'] = P[LeaderField['FieldName']]
-            P['ValueRank'] = ValueRank
-            ValueRank +=1
-
+    Filters = {'TeamSeasonID__LeagueSeasonID__IsCurrent': True}
+    LeagueLeaders = Common_PlayerRecords(CurrentWorld, Timeframe = 'Season', Filters=Filters, ListLength = 10)
 
     context = {'status':'success', 'WorldID': WorldID}
 
@@ -3474,6 +3339,137 @@ def GET_PlayerStats(request, WorldID):
         }
     return JsonResponse(context, safe=False)
 
+
+def Common_PlayerRecords(WorldID, Timeframe = 'Career', Filters={}, ListLength = 5):
+
+    print('Getting Player Records. ListLength:', ListLength, 'Timeframe:',Timeframe,' Filters:', Filters)
+    if Timeframe == 'Season':
+        HistoricalStats = PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(**Filters ).values( 'TeamSeasonID__LeagueSeasonID__SeasonStartYear', 'PlayerID__PositionID__PositionAbbreviation').annotate(
+            DEF_INT = Sum('playergamestat__DEF_INT'),
+            GameScore=Sum('playergamestat__GameScore'),
+            TeamGamesPlayed=Sum('playergamestat__TeamGamesPlayed'),
+            PAS_Yards = Sum('playergamestat__PAS_Yards'),
+            PAS_TD = Sum('playergamestat__PAS_TD'),
+            PAS_Attempts = Sum('playergamestat__PAS_Attempts'),
+            PAS_Completions = Sum('playergamestat__PAS_Completions'),
+            RUS_Yards=Sum('playergamestat__RUS_Yards'),
+            RUS_TD = Sum('playergamestat__RUS_TD'),
+            RUS_Carries = Sum('playergamestat__RUS_Carries'),
+            REC_Receptions = Sum('playergamestat__REC_Receptions'),
+            REC_TD = Sum('playergamestat__REC_TD'),
+            REC_Yards = Sum('playergamestat__REC_Yards'),
+            DEF_Sacks = Sum('playergamestat__DEF_Sacks'),
+            DEF_Tackles = Sum('playergamestat__DEF_Tackles'),
+            PlayerPosition = F('PlayerID__PositionID__PositionAbbreviation'),
+            PlayerName = Concat(F('PlayerID__PlayerFirstName'), Value(' '), F('PlayerID__PlayerLastName'), output_field=CharField()),
+            PlayerHref = Concat(Value('/World/'), Value(WorldID.WorldID), Value('/Player/'), F('PlayerID_id'), output_field=CharField()),
+            TeamLogoURL = F('TeamSeasonID__TeamID__TeamLogoURL'),
+            TeamHref = Concat(Value('/World/'), Value(WorldID.WorldID), Value('/Team/'), F('TeamSeasonID__TeamID'), output_field=CharField()),
+            Timeframe = F('TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
+            TimeframeHref = Concat(Value(''), Value(''), output_field=CharField()),
+            PAS_CompletionPercentage=Case(
+                When(PAS_Attempts__lte=F('TeamGamesPlayed') * 10, then=0.0),
+                default=(Round(F('PAS_Completions')* 100.0 / F('PAS_Attempts'),1)),
+                output_field=FloatField()
+            ),
+            RUS_YardsPerCarry=Case(
+                When(RUS_Carries__lt = F('TeamGamesPlayed') * 10, then=0.0),
+                default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
+                output_field=FloatField()
+            ),
+        ).order_by('PlayerID__PlayerLastName')
+
+    elif Timeframe == 'Career':
+        HistoricalStats = Player.objects.filter(WorldID = WorldID).filter(**Filters ).values( 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'PlayerID').annotate(
+            GameScore=Sum('playerteamseason__playergamestat__GameScore'),
+            MinSeason=Min('playerteamseason__TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
+            MaxSeason=Max('playerteamseason__TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
+            TeamGamesPlayed=Sum('playerteamseason__playergamestat__TeamGamesPlayed'),
+            PAS_Yards = Sum('playerteamseason__playergamestat__PAS_Yards'),
+            PAS_TD = Sum('playerteamseason__playergamestat__PAS_TD'),
+            PAS_Attempts = Sum('playerteamseason__playergamestat__PAS_Attempts'),
+            PAS_Completions = Sum('playerteamseason__playergamestat__PAS_Completions'),
+            RUS_Yards=Sum('playerteamseason__playergamestat__RUS_Yards'),
+            RUS_TD = Sum('playerteamseason__playergamestat__RUS_TD'),
+            RUS_Carries = Sum('playerteamseason__playergamestat__RUS_Carries'),
+            REC_Receptions = Sum('playerteamseason__playergamestat__REC_Receptions'),
+            REC_TD = Sum('playerteamseason__playergamestat__REC_TD'),
+            REC_Yards = Sum('playerteamseason__playergamestat__REC_Yards'),
+            DEF_Sacks = Sum('playerteamseason__playergamestat__DEF_Sacks'),
+            DEF_INT = Sum('playerteamseason__playergamestat__DEF_INT'),
+            DEF_Tackles = Sum('playerteamseason__playergamestat__DEF_Tackles'),
+            PlayerPosition = F('PositionID__PositionAbbreviation'),
+            PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
+            PlayerHref = Concat(Value('/World/'), Value(WorldID.WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
+            TeamLogoURL = Max('playerteamseason__TeamSeasonID__TeamID__TeamLogoURL'),
+            TeamHref = Concat(Value('/World/'), Value(WorldID.WorldID), Value('/Team/'), Max('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
+            Timeframe = Concat(F('MinSeason'), Value('-'), F('MaxSeason'), output_field=CharField()),
+            TimeframeHref = Concat(Value(''), Value(''), output_field=CharField()),
+            PAS_CompletionPercentage=Case(
+                When(PAS_Attempts__lte=F('TeamGamesPlayed') * 10, then=0.0),
+                default=(Round(F('PAS_Completions')* 100.0 / F('PAS_Attempts'),1)),
+                output_field=FloatField()
+            ),
+            RUS_YardsPerCarry=Case(
+                When(RUS_Carries__lt = F('TeamGamesPlayed') * 10, then=0.0),
+                default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
+                output_field=FloatField()
+            ),
+        ).order_by('PlayerLastName')
+
+    elif Timeframe == 'Game':
+        HistoricalStats = PlayerGameStat.objects.filter(WorldID = WorldID).filter(**Filters).values( 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID_id', 'GameScore', 'PAS_Yards',
+            'PAS_TD', 'PAS_Attempts', 'PAS_Completions', 'RUS_Yards', 'RUS_TD', 'RUS_Carries', 'REC_Receptions', 'REC_TD', 'REC_Yards',
+            'DEF_Sacks', 'DEF_INT', 'DEF_Tackles'
+        ).annotate(
+            MinSeason=F('PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
+            WeekName = F('TeamGameID__GameID__WeekID__WeekName'),
+            PlayerPosition = F('PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation'),
+            PlayerName = Concat(F('PlayerTeamSeasonID__PlayerID__PlayerFirstName'), Value(' '), F('PlayerTeamSeasonID__PlayerID__PlayerLastName'), output_field=CharField()),
+            TeamHref = Concat(Value('/World/'), Value(WorldID.WorldID), Value('/Team/'), F('PlayerTeamSeasonID__TeamSeasonID__TeamID'), output_field=CharField()),
+            TeamLogoURL = F('PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamLogoURL'),
+            PlayerHref = Concat(Value('/World/'), Value(WorldID.WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID_id'), output_field=CharField()),
+            Timeframe = Concat(F('WeekName'), Value(', '), F('MinSeason'), output_field=CharField()),
+            TimeframeHref = Concat(Value('/World/'), Value(WorldID.WorldID), Value('/Game/'), F('TeamGameID__GameID_id'), output_field=CharField()),
+            PAS_CompletionPercentage=Case(
+                When(PAS_Attempts__lte=F('TeamGamesPlayed') * 10, then=0.0),
+                default=(Round(F('PAS_Completions')* 100.0 / F('PAS_Attempts'),1)),
+                output_field=FloatField()
+            ),
+            RUS_YardsPerCarry=Case(
+                When(RUS_Carries__lt = F('TeamGamesPlayed') * 10, then=0.0),
+                default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
+                output_field=FloatField()
+            ),
+        ).order_by('PlayerTeamSeasonID__PlayerID__PlayerLastName')
+
+
+    HistoricalLeaders = [
+        {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'Players': []},
+        {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TDs', 'Players': []},
+        {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'Players': []},
+        {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'Players': []},
+        {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'Players': []},
+        {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'Rush YPC', 'Players': []},
+        {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'Players': []},
+        {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'Players': []},
+        {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'Players': []},
+        {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'Players': []},
+        {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'Players': []},
+        {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tckls', 'Players': []},
+    ]
+
+    #print(HistoricalStats.query)
+
+    for LeaderField in HistoricalLeaders:
+        LeaderField['Players'] = list(HistoricalStats.order_by('-'+LeaderField['FieldName'])[0:ListLength])
+        ValueRank = 1
+        for P in LeaderField['Players']:
+            P['Value'] = P[LeaderField['FieldName']]
+            P['ValueRank'] = ValueRank
+            ValueRank +=1
+
+    return list(HistoricalLeaders)
 
 
 def Common_PlayerStats( Filters = {}):

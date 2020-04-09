@@ -1482,6 +1482,9 @@ img.teamTeamLogo {
   padding: 2px 0px !important;
 }
 
+.margin-sides-12 {
+  margin: 0px 12px;
+}
 
 .no-padding{
   padding: 0px 0px !important;

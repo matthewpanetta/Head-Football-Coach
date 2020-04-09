@@ -60,7 +60,8 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined,
 
 function GetPlayerStats(WorldID, data){
 
-  console.log('In PlayerStats!', data)
+  console.log('In PlayerStats!', data);
+  $("#PlayerStatsParent").hide();
 
   var ColumnsToAlwaysShow = [0,1,2,3,4,5];
 
@@ -113,6 +114,16 @@ function GetPlayerStats(WorldID, data){
       "paginationType": "full_numbers",
       "paging": true,
       "data": data,
+      "fnPreDrawCallback":function(){
+            $("#PlayerStatsParent").hide();
+            //$("#loading").show();
+            //alert("Pre Draw");
+        },
+        "fnDrawCallback":function(){
+            $("#PlayerStatsParent").show();
+          //  $("#loading").hide();
+            //alert("Draw");
+        },
        'buttons':[
             {
                 extend: 'searchPanes',
