@@ -96,6 +96,7 @@ class TeamSeasonDateRankAdmin(admin.ModelAdmin):
 
 class TeamSeasonWeekRankAdmin(admin.ModelAdmin):
     list_display = [field.name for field in TeamSeasonWeekRank._meta.get_fields() if field.name not in ('teamgame','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_filter = ['TeamSeasonID__TeamID__TeamName']
 
 class TeamGameAdmin(admin.ModelAdmin):
     list_display = ['TeamGameID', 'GameID', 'TeamSeasonID', 'IsHomeTeam', 'IsWinningTeam', 'Points', 'OpposingTeamGameID']#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
