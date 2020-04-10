@@ -61,7 +61,6 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined,
 function GetPlayerStats(WorldID, data){
 
   console.log('In PlayerStats!', data);
-  $("#PlayerStatsParent").hide();
 
   var ColumnsToAlwaysShow = [0,1,2,3,4,5];
 
@@ -104,7 +103,7 @@ function GetPlayerStats(WorldID, data){
   var table = $('#PlayerStats').DataTable({
       "dom": 'Brtp',
       "scrollX": true,
-      fixedHeader: true,
+    //fixedHeader: true,
       //"serverSide": true,
       "filter": true,
       "ordering": true,
@@ -114,16 +113,6 @@ function GetPlayerStats(WorldID, data){
       "paginationType": "full_numbers",
       "paging": true,
       "data": data,
-      "fnPreDrawCallback":function(){
-            $("#PlayerStatsParent").hide();
-            //$("#loading").show();
-            //alert("Pre Draw");
-        },
-        "fnDrawCallback":function(){
-            $("#PlayerStatsParent").show();
-          //  $("#loading").hide();
-            //alert("Draw");
-        },
        'buttons':[
             {
                 extend: 'searchPanes',
@@ -318,7 +307,7 @@ function GetPlayerStats(WorldID, data){
         $('#teamRosterPlayerHighlight').css('box-shadow', '0px 2px 12px 0px #'+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
         var overrides = {"teamColors":["#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'],"#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'],"#000000"]}
 
-        $('[css-field="OverallCss"].player-highlight-pills').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
+        $('[css-field="OverallCss"].player-highlight-pills').removeClass('elite').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
 
         $.each(data, function(key, val){
 

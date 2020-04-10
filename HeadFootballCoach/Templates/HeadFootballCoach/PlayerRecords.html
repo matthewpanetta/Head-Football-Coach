@@ -17,53 +17,8 @@
 <body>
   <div class="PageContent">
     <div class='worldHeader w3-row background-eee'>
-      {% if recentGames%}
-      <div class="scoreboard-slideshow">
-        <div class="scoreboard-slideshow-row">
-          <div class="MultiCarousel" data-items="4,6,8,10" data-slide="3" id="MultiCarousel" data-interval="100">
-            <div class="MultiCarousel-inner">
-              {% for game in recentGames%}
-              <div class="inline-block table-cell scoreboard-carousel-item w3-hide">
-                <table BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="all-border width100 background-white height-70">
-                  <colgroup>
-                    <col span="2">
-                    <col span="2">
-                    <col span="2">
-                  </colgroup>
-                  <thead>
-                    <th class="" colspan="6">
-                      <span class='font10'></span>
-                    </th>
-                    <th class="" colspan="2">
-                      <span class='font10'><a href="{{game.GameHref}}">Recap</a></span>
-                    </th>
-                  </thead>
-                  {% for TeamGame in game.TeamGames %}
-                  <tr class="{{TeamGame.TeamWinningGameBold}} w3-margin">
-                    <td colspan='2'>
-                      <img class="small-logo margin-right-4" src="{{TeamGame.TeamSeasonID__TeamID__TeamLogoURL}}" alt="">
-                    </td>
-                    <td class='min-width-75 left-text' colspan='4'>
-                      <div class='margin0'><span class='font10'>{{TeamGame.NationalRankDisplay}}</span> <a href="{{TeamGame.TeamHref}}" class='font14'>{{TeamGame.TeamSeasonID__TeamID__Abbreviation}}</a></div>
-                    </td>
-                    <td class='center-text font14 w3-padding-4' colspan='2'>
-                      {{TeamGame.Points}}
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </table>
-              </div>
-
-              {% endfor %}
-            </div>
-            <button class="btn btn-primary leftLst">
-              <</button> <button class="btn btn-primary rightLst">>
-            </button>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-</div>
+      {% include "HeadFootballCoach/Scoreboard.html" %}
+    </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-career-records-tab" style="background-color: #{{page.SecondaryColor}};">Career Records</button>

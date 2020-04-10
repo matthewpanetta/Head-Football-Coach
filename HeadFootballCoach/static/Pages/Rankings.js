@@ -99,28 +99,6 @@ function PopulateTop25(WorldID, data){
           $('#teamHighlight').find('[src-field="'+key+'"]').attr('src', val);
 
         });
-
-        /*
-        $('#highlight-awards').empty();
-        if (Object.keys(data.Awards).length > 0){
-          $('#highlight-awards-tab').removeClass('w3-hide');
-          $('<div class="w3-container"></div>').appendTo($('#highlight-awards'));
-          var Container = $('<ul class="w3-ul w3-small"></ul>').appendTo($('#highlight-awards .w3-container'));
-        }
-        else {
-          $('#highlight-awards-tab').addClass('w3-hide');
-          if ($('#highlight-awards-tab').hasClass('selected-highlight-tab')){
-            $('#highlight-ratings-tab').click()
-          }
-        }
-
-        $.each(data.Awards, function(AwardName, AwardCount){
-          $('<li>'+AwardCount+'x '+AwardName+' </li>').appendTo(Container);
-
-        });
-        */
-
-
       }
     })
 

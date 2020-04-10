@@ -1249,7 +1249,7 @@ td.WorldLeagueLeaderRowCell.NameCell {
 }
 
 .center-text {
-  text-align: center;
+  text-align: center !important;
 }
 
 .left-text {
@@ -1445,6 +1445,12 @@ img.teamTeamLogo {
   background-color: #FEE98A;
 }
 
+.elite {
+  color: navy;
+  box-shadow: 0px 0px 5px navy;
+  background-color: lightblue;
+}
+
 .bad{
   color: #8F0600;
   background-color: #8F060022;
@@ -1494,4 +1500,63 @@ img.teamTeamLogo {
   transform: rotate(90deg);
   transform-origin: 10px 100px;
   position: absolute;
+}
+
+.button-active {
+  background-color: white;
+  box-shadow: 0px 2px 8px;
+  border: 1px solid black;
+  border-radius: 50px;
+  overflow: visible;
+}
+
+button.dt-button.active:not(.disabled) {
+  background-color: white;
+  box-shadow: inset 1px 1px 3px #999999;
+  border-radius: 50px;
+  background-image: none;
+}
+
+div.dt-buttons {
+  display: inline-flex;
+    background: #f1f2f3;
+    border-radius: 50px;
+    overflow: visible;
+}
+
+.dt-buttons button.dt-button {
+  font-size: 12px;
+  border: none;
+  height: 32px;
+  padding: 0px 9px;
+  background-color: transparent;
+  background-image: none;
+  overflow: visible;
+
+}
+
+.dt-buttons button.dt-button:hover {
+  color: maroon;
+  background-color: transparent;
+  background-image: none;
+  border: none;
+}
+.dt-buttons button.dt-button:focus {
+  outline: none;
+  background-color: transparent;
+  background-image: none;
+  border: none;
+  border-radius: 50px;
+}
+.dt-buttons button.dt-button.active {
+  color: maroon;
+  background-color: white;
+  box-shadow: 0 1px 6px 2px #999999;
+  border-radius: 50px;
+  background-image: none;
+}
+
+
+.col-group {
+  border-right: 1px solid grey;
 }

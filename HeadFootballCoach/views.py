@@ -1215,6 +1215,7 @@ def Page_PlayerRecords(request, WorldID, TeamID=None):
     context['SeasonLeaders'] = SeasonLeaders
     context['CareerLeaders'] = CareerLeaders
     context['GameLeaders'] = GameLeaders
+    context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
 
     return render(request, 'HeadFootballCoach/PlayerRecords.html', context)
 
@@ -1242,6 +1243,7 @@ def Page_PlayerStats(request, WorldID, TeamID = None):
 
 
     context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'Players': Players}
+    context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
     return render(request, 'HeadFootballCoach/PlayerStats.html', context)
 
 
@@ -1356,46 +1358,31 @@ def Page_TeamSchedule(request, WorldID, TeamID):
     return render(request, 'HeadFootballCoach/TeamSchedule.html', context)
 
 
-def Page_TeamStats(request, WorldID):
+def Page_TeamStats(request, WorldID, TeamID = None):
     DoAudit = True
     page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     CurrentWorld  = World.objects.get(WorldID = WorldID)
     CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
-    LastWeek        = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
     UserTeam = GetUserTeam(WorldID)
-    AllAwards = PlayerTeamSeasonAward.objects.filter(WorldID = CurrentWorld).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('WeekID', 'PositionGroupID')
+    Filters = {'WorldID': WorldID, 'teamseason__LeagueSeasonID__IsCurrent': 1, 'teamseason__teamseasonweekrank__IsCurrent': True}
 
-    ConferenceAwards = []
+    if TeamID is not None:
+        Filters['TeamID'] = TeamID
+        TeamID = Team.objects.filter(WorldID_id = WorldID).filter(TeamID = TeamID).first()
 
-    AwardDict = {'Conference': {'ConferenceName': 'National', 'ConferenceAbbreviation': 'National', 'ConferenceID': 0}, 'ShowConference': '', 'ConferenceSelected': 'selected-upcoming-gameview-tab'}
-    AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsNationalAward = True).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
-    AwardDict['AllConferenceAwards'] = []
-    for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
-        AllAwards.filter(IsSeasonAward = True).filter(IsNationalAward = True).filter(IsPositionAward=True).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
-        if AllConferenceGroup == 'First Team':
-            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
-        elif AllConferenceGroup == 'Second Team':
-            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
-        elif AllConferenceGroup == 'Freshman Team':
-            AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
-    ConferenceAwards.append(AwardDict)
+        page['PageTitle'] = TeamID.TeamName + ' Players'
+        page['PrimaryColor'] = TeamID.TeamColor_Primary_HEX
+        page['SecondaryColor'] = TeamID.SecondaryColor_Display
 
-    for Conf in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName'):
-        AwardDict = {'Conference': Conf, 'ConferenceSelected': '', 'ShowConference': 'w3-hide', }
-        AwardDict['WeeklyAwards'] = AllAwards.filter(IsWeekAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('WeekID', 'ConferenceID', 'PositionGroupID')
-        AwardDict['AllConferenceAwards'] = []
-        for AllConferenceGroup in ['First Team', 'Second Team', 'Freshman Team']:
-            AllAwards.filter(IsSeasonAward = True).filter(IsConferenceAward = True).filter(ConferenceID=Conf).order_by('PositionID', 'ConferenceID', 'PositionGroupID')
-            if AllConferenceGroup == 'First Team':
-                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFirstTeam=True)})
-            elif AllConferenceGroup == 'Second Team':
-                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsSecondTeam=True)})
-            elif AllConferenceGroup == 'Freshman Team':
-                AwardDict['AllConferenceAwards'].append({'AllConferenceGroup': AllConferenceGroup, 'AwardWinners': AllAwards.filter(IsFreshmanTeam=True)})
-        ConferenceAwards.append(AwardDict)
+    Teams = Common_TeamStats(Filters)
 
-    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'ConferenceAwards': ConferenceAwards}
+
+    print('Teams', Teams)
+
+
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'Teams': Teams}
+    context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
     return render(request, 'HeadFootballCoach/TeamStats.html', context)
 
 
@@ -2241,9 +2228,10 @@ def GET_RecruitingPlayers(request, WorldID):
 def GET_PlayerCardInfo(request, WorldID, PlayerID):
 
     OverallRange = [
-        {'Floor': 86, 'Ceiling': 100, 'Css-Class': 'good'},
-        {'Floor': 71, 'Ceiling': 85, 'Css-Class': 'fine'},
-        {'Floor': 0, 'Ceiling': 70, 'Css-Class': 'bad'},
+        {'Floor': 93, 'Ceiling': 100, 'Css-Class': 'elite'},
+        {'Floor': 82, 'Ceiling': 92, 'Css-Class': 'good'},
+        {'Floor': 70, 'Ceiling': 81, 'Css-Class': 'fine'},
+        {'Floor': 0, 'Ceiling': 69, 'Css-Class': 'bad'},
     ]
 
     SkillSetRatingMap = {
@@ -3537,6 +3525,367 @@ def Common_PlayerStats( Filters = {}):
     ).order_by('PlayerID')
 
     return list(Players)
+
+
+
+def Common_TeamStats( Filters = {}):
+
+    WorldID = Filters['WorldID']
+
+    Teams = Team.objects.filter(**Filters).values('TeamName','TeamColor_Primary_HEX', 'TeamID', 'TeamLogoURL', 'ConferenceID__ConferenceName').annotate(
+        NationalRank = Min('teamseason__teamseasonweekrank__NationalRank'),
+        TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), output_field=CharField()),
+        GamesPlayed=Sum('teamseason__teamgame__GamesPlayed'),
+        Wins = Count('teamseason__teamgame', filter=Q(teamseason__teamgame__IsWinningTeam = True)),
+        Losses = Count('teamseason__teamgame', filter=Q(teamseason__teamgame__IsWinningTeam = False) & Q(teamseason__teamgame__GameID__WasPlayed = True)),
+        Points=Sum('teamseason__teamgame__Points'),
+        Opponent_Points=Sum('teamseason__teamgame__OpposingTeamGameID__Points'),
+
+        Yards = Sum('teamseason__teamgame__PAS_Yards') + Sum('teamseason__teamgame__RUS_Yards'),
+        Yards_PerGame = Case(
+                When(GamesPlayed=0, then=0.0),
+                default=(Round(F('Yards')* 1.0 / F('GamesPlayed'),1)),
+                output_field=FloatField()
+            ),
+        Opponent_Yards = Sum('teamseason__teamgame__OpposingTeamGameID__PAS_Yards') + Sum('teamseason__teamgame__OpposingTeamGameID__RUS_Yards'),
+        Opponent_Yards_PerGame = Case(
+                When(GamesPlayed=0, then=0.0),
+                default=(Round(F('Opponent_Yards')* 1.0 / F('GamesPlayed'),1)),
+                output_field=FloatField()
+            ),
+
+        Points_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Points')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_Points_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Opponent_Points')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        MOV = Round(F('Points_PerGame') - F('Opponent_Points_PerGame'),1),
+        PAS_Yards= Sum('teamseason__teamgame__PAS_Yards'),
+        Opponent_PAS_Yards=Sum('teamseason__teamgame__OpposingTeamGameID__PAS_Yards'),
+        ###
+        PAS_Yards_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('PAS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        PAS_TD=Sum('teamseason__teamgame__PAS_TD'),
+        PAS_TD_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('PAS_TD')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        PAS_INT=Sum('teamseason__teamgame__PAS_INT'),
+        PAS_INT_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('PAS_INT')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        PAS_Attempts=Sum('teamseason__teamgame__PAS_Attempts'),
+        PAS_Attempts_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('PAS_Attempts')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        PAS_RTG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        Opponent_PAS_RTG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        PAS_LNG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        Opponent_PAS_LNG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        PAS_Sacks = Sum('teamseason__teamgame__PAS_Sacks'),
+        Opponent_PAS_Sacks = Sum('teamseason__teamgame__OpposingTeamGameID__PAS_Sacks'),
+        PAS_SackYards = Sum('teamseason__teamgame__PAS_SackYards'),
+        Opponent_PAS_SackYards = Sum('teamseason__teamgame__OpposingTeamGameID__PAS_SackYards'),
+
+        PAS_Completions=Sum('teamseason__teamgame__PAS_Completions'),
+        PAS_Completions_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('PAS_Completions')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        RUS_Carries=Sum('teamseason__teamgame__RUS_Carries'),
+        RUS_Carries_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('RUS_Carries')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        RUS_TD=Sum('teamseason__teamgame__RUS_TD'),
+        RUS_TD_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('RUS_TD')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        RUS_Yards=Sum('teamseason__teamgame__RUS_Yards'),
+        RUS_Yards_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('RUS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+
+        RUS_LNG=Max('teamseason__teamgame__RUS_LNG'),
+        Opponent_RUS_LNG=Max('teamseason__teamgame__OpposingTeamGameID__RUS_LNG'),
+        REC_LNG=Max('teamseason__teamgame__REC_LNG'),
+        Opponent_REC_LNG=Max('teamseason__teamgame__OpposingTeamGameID__REC_LNG'),
+        ##
+        Opponent_PAS_Yards_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Opponent_PAS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+
+        Opponent_PAS_TD=Sum('teamseason__teamgame__OpposingTeamGameID__PAS_TD'),
+        Opponent_PAS_TD_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Opponent_PAS_TD')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_PAS_INT=Sum('teamseason__teamgame__OpposingTeamGameID__PAS_INT'),
+        Opponent_PAS_INT_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Opponent_PAS_INT')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_PAS_Attempts=Sum('teamseason__teamgame__OpposingTeamGameID__PAS_Attempts'),
+        Opponent_PAS_Attempts_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Opponent_PAS_Attempts')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_PAS_Completions=Sum('teamseason__teamgame__OpposingTeamGameID__PAS_Completions'),
+        Opponent_PAS_Completions_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Opponent_PAS_Completions')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_RUS_Carries=Sum('teamseason__teamgame__OpposingTeamGameID__RUS_Carries'),
+        Opponent_RUS_Carries_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Opponent_RUS_Carries')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_RUS_TD=Sum('teamseason__teamgame__OpposingTeamGameID__RUS_TD'),
+        Opponent_RUS_TD_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Opponent_RUS_TD')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_RUS_Yards=Sum('teamseason__teamgame__OpposingTeamGameID__RUS_Yards'),
+        Opponent_RUS_Yards_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('Opponent_RUS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+###
+
+        REC_Yards=Sum('teamseason__teamgame__REC_Yards'),
+        REC_Yards_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('REC_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        REC_Receptions=Sum('teamseason__teamgame__REC_Receptions'),
+        REC_Receptions_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('REC_Receptions')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        REC_Targets=Sum('teamseason__teamgame__REC_Targets'),
+        REC_Targets_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('REC_Targets')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        REC_TD=Sum('teamseason__teamgame__REC_TD'),
+        REC_TD_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('REC_TD')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        FUM_Fumbles=Sum('teamseason__teamgame__FUM_Fumbles'),
+        FUM_Fumbles_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('FUM_Fumbles')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        DEF_Sacks=Sum('teamseason__teamgame__DEF_Sacks'),
+        DEF_Sacks_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('DEF_Sacks')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        DEF_INT=Sum('teamseason__teamgame__DEF_INT'),
+        DEF_INT_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('DEF_INT')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        DEF_Tackles=Sum('teamseason__teamgame__DEF_Tackles'),
+        DEF_Tackles_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('DEF_Tackles')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        DEF_TacklesForLoss=Sum('teamseason__teamgame__DEF_TacklesForLoss'),
+        DEF_TacklesForLoss_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('DEF_TacklesForLoss')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        FUM_Forced=Sum('teamseason__teamgame__FUM_Forced'),
+        FUM_Forced_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('FUM_Forced')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        RUS_20=Sum('teamseason__teamgame__RUS_20'),
+        FUM_Recovered=Sum('teamseason__teamgame__FUM_Recovered'),
+        FUM_Recovered_PerGame = Case(
+                            When(GamesPlayed=0, then=0.0),
+                            default=(Round(F('FUM_Recovered')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        PAS_CompletionPercentage = Case(
+                            When(PAS_Attempts=0, then=0.0),
+                            default=(Round(F('PAS_Completions')* 100.0 / F('PAS_Attempts'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_PAS_CompletionPercentage = Case(
+                            When(Opponent_PAS_Attempts=0, then=0.0),
+                            default=(Round(F('Opponent_PAS_Completions')* 100.0 / F('Opponent_PAS_Attempts'),1)),
+                            output_field=FloatField()
+                        ),
+        PAS_YardsPerAttempt = Case(
+                            When(PAS_Attempts=0, then=0.0),
+                            default=(Round(F('PAS_Yards')* 1.0 / F('PAS_Attempts'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_PAS_YardsPerAttempt = Case(
+                            When(PAS_Attempts=0, then=0.0),
+                            default=(Round(F('PAS_Yards')* 1.0 / F('PAS_Attempts'),1)),
+                            output_field=FloatField()
+                        ),
+        PAS_YPG = Case(
+                            When(PAS_Attempts=0, then=0.0),
+                            default=(Round(F('PAS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_PAS_YPG = Case(
+                            When(Opponent_PAS_Attempts=0, then=0.0),
+                            default=(Round(F('Opponent_PAS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        RUS_YPG = Case(
+                            When(RUS_Carries=0, then=0.0),
+                            default=(Round(F('RUS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_RUS_YPG = Case(
+                            When(Opponent_RUS_Carries=0, then=0.0),
+                            default=(Round(F('Opponent_RUS_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        REC_YPG = Case(
+                            When(REC_Receptions=0, then=0.0),
+                            default=(Round(F('REC_Yards')* 1.0 / F('GamesPlayed'),1)),
+                            output_field=FloatField()
+                        ),
+        RUS_YPC = Case(
+                            When(RUS_Carries=0, then=0.0),
+                            default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
+                            output_field=FloatField()
+                        ),
+        Opponent_RUS_YPC = Case(
+                            When(Opponent_RUS_Carries=0, then=0.0),
+                            default=(Round(F('Opponent_RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
+                            output_field=FloatField()
+                        ),
+        REC_YPC = Case(
+                            When(REC_Receptions=0, then=0.0),
+                            default=(Round(F('REC_Yards')* 1.0 / F('REC_Receptions'),1)),
+                            output_field=FloatField()
+                        ),
+
+        FirstDowns = Sum('teamseason__teamgame__FirstDowns'),
+        FirstDowns_Pass = Sum('teamseason__teamgame__FirstDowns'), #TODO
+        FirstDowns_Rush = Sum('teamseason__teamgame__FirstDowns'),#TODO
+        FirstDowns_Penalties = Sum('teamseason__teamgame__FirstDowns'),#TODO
+
+        ThirdDownConversion=Sum('teamseason__teamgame__ThirdDownConversion'),
+        ThirdDownAttempt=Sum('teamseason__teamgame__ThirdDownAttempt'),
+        ThirdDownPercentage=Case(
+                            When(ThirdDownAttempt=0, then=0.0),
+                            default=(Round(F('ThirdDownConversion')* 100.0 / F('ThirdDownAttempt'),1)),
+                            output_field=FloatField()
+                        ),
+
+        FourthDownConversion=Sum('teamseason__teamgame__FourthDownConversion'),
+        FourthDownAttempt=Sum('teamseason__teamgame__FourthDownAttempt'),
+        FourthDownPercentage=Case(
+                            When(FourthDownAttempt=0, then=0.0),
+                            default=(Round(F('FourthDownConversion')* 100.0 / F('FourthDownAttempt'),1)),
+                            output_field=FloatField()
+                        ),
+
+        Penalties = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        PenaltyYards = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+
+        FG_LNG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        FGM = Sum('teamseason__teamgame__KCK_FGM'),
+        FGA = Sum('teamseason__teamgame__KCK_FGA'),
+        FGPercent=Case(
+                            When(FGA=0, then=0.0),
+                            default=(Round(F('FGM')* 100.0 / F('FGA'),1)),
+                            output_field=FloatField()
+                        ),
+        XPM = Sum('teamseason__teamgame__KCK_XPM'),
+        XPA = Sum('teamseason__teamgame__KCK_XPA'),
+        XPPercent=Case(
+                            When(XPA=0, then=0.0),
+                            default=(Round(F('XPM')* 100.0 / F('XPA'),1)),
+                            output_field=FloatField()
+                        ),
+        FGM_29 = Sum('teamseason__teamgame__KCK_FGM29'),
+        FGA_29 = Sum('teamseason__teamgame__KCK_FGA29'),
+        FG29 = Concat(F('FGM_29'), Value('-'), F('FGA_29'), output_field=CharField()),
+
+        FGM_39 = Sum('teamseason__teamgame__KCK_FGM39'),
+        FGA_39 = Sum('teamseason__teamgame__KCK_FGA39'),
+        FG39 = Concat(F('FGM_39'), Value('-'), F('FGA_39'), output_field=CharField()),
+
+        FGM_49 = Sum('teamseason__teamgame__KCK_FGM49'),
+        FGA_49 = Sum('teamseason__teamgame__KCK_FGA49'),
+        FG49 = Concat(F('FGM_49'), Value('-'), F('FGA_49'), output_field=CharField()),
+
+        FGM_50 = Sum('teamseason__teamgame__KCK_FGM50'),
+        FGA_50 = Sum('teamseason__teamgame__KCK_FGA50'),
+        FG50 = Concat(F('FGM_50'), Value('-'), F('FGA_50'), output_field=CharField()),
+
+        PNT_LNG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        PNT_NET = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        PNT_Punts = Sum('teamseason__teamgame__PNT_Punts'),
+        PNT_Yards = Sum('teamseason__teamgame__PNT_Yards'),
+        PNT_AVG = Case(
+                            When(PNT_Punts=0, then=0.0),
+                            default=(Round(F('PNT_Yards')* 100.0 / F('PNT_Punts'),1)),
+                            output_field=FloatField()
+                        ),
+        RET_PNT_ATT = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        RET_PNT_Yards = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        RET_PNT_AVG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        RET_PNT_LNG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        RET_PNT_TD = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        RET_KCK_ATT = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        RET_KCK_Yards = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        RET_KCK_AVG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        RET_KCK_LNG = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+        RET_KCK_TD = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO
+
+    ).order_by('TeamName')
+
+    return list(Teams)
 
 
 def GET_PlayerStats_Departures(request, WorldID):

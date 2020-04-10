@@ -50,194 +50,6 @@ function PopulateTeamSeasonHistoryTable(TeamSeasonHistory, WorldID){
 }
 
 
-function PopulateHistoricalLeadersTable(HistoricalLeaders, WorldID){
-  console.log('trying to remove .teamHistoryPlayerLeaderRow');
-  $('.teamHistoryPlayerLeaderRow').each(function(ind, obj){
-    console.log('removing ', obj);
-    $(obj).remove();
-  });
-  console.log('HistoricalLeaders', HistoricalLeaders);
-  var LeaderDisplayTemplate = $('#teamHistoryPlayerLeaderRowClone');
-  var LeaderDisplay = undefined;
-
-  var BoxCount = 0;
-  $.each(HistoricalLeaders, function(index, LeaderGroup){
-    console.log('LeaderGroup', LeaderGroup);
-
-    if (BoxCount % 3 == 0) {
-      LeaderDisplay = $(LeaderDisplayTemplate).clone();
-      $(LeaderDisplay).removeAttr('id').addClass('teamHistoryPlayerLeaderRow');
-      $(LeaderDisplayTemplate).before($(LeaderDisplay));
-    }
-
-    var TeamHistoryLeaderTableTemplate = $('#teamHistoryPlayerLeadersClone').clone();
-
-    $(TeamHistoryLeaderTableTemplate).removeClass('w3-hide');
-    $(TeamHistoryLeaderTableTemplate).removeAttr('id');
-
-    var th = $(TeamHistoryLeaderTableTemplate).find('th[data-field="DisplayName"]');
-    $(th).text(LeaderGroup['DisplayName']);
-    console.log(TeamHistoryLeaderTableTemplate);
-
-    $.each(LeaderGroup['Players'], function(ind, Player){
-      console.log('Player', Player);
-
-      var TeamHistoryLeaderRowTemplate = $(TeamHistoryLeaderTableTemplate).find('#teamHistoryPlayerLeadersRowClone').clone();
-
-      $(TeamHistoryLeaderRowTemplate).removeClass('w3-hide');
-      $(TeamHistoryLeaderRowTemplate).removeAttr('id');
-
-      $.each(Player, function(PlayerAttr,PlayerValue){
-        var FieldCell = $(TeamHistoryLeaderRowTemplate).find('.TeamHistoricalLeaderRowCell[data-field="'+PlayerAttr+'"], .TeamHistoricalLeaderRowCell [data-field="'+PlayerAttr+'"]');
-        FieldCell.text(PlayerValue);
-
-        var LinkCell = $(TeamHistoryLeaderRowTemplate).find('.TeamHistoricalLeaderRowCell[href-field="'+PlayerAttr+'"], .TeamHistoricalLeaderRowCell [href-field="'+PlayerAttr+'"]');
-        LinkCell.attr('href', PlayerValue);
-
-      });
-
-      var Table = $(TeamHistoryLeaderTableTemplate).find('table');
-      $(Table).removeClass('w3-hide');
-      $(Table).append($(TeamHistoryLeaderRowTemplate));
-
-    });
-
-    $(LeaderDisplay).append($(TeamHistoryLeaderTableTemplate));
-    BoxCount++;
-
-  });
-
-  //$('#teamHistoryPlayerLeadersClone').remove();
-
-}
-
-
-function PopulateTeamRosterTable(Roster, WorldID){
-  var TeamRosterTable = $('#teamRosterTable');
-
-  $.each(Roster, function(index, Player){
-
-    var TeamRosterRowTemplate = $('#TeamRosterPlayerRowClone').clone();
-
-    $(TeamRosterRowTemplate).removeClass('hidden');
-    $(TeamRosterRowTemplate).removeAttr('id');
-    $.each(Player, function(PlayerAttr,PlayerValue){
-      var FieldCell = $(TeamRosterRowTemplate).find('.TeamRosterPlayerRowCell[data-field="'+PlayerAttr+'"] a');
-      if (FieldCell.length == 0) {
-        var FieldCell = $(TeamRosterRowTemplate).find('.TeamRosterPlayerRowCell[data-field="'+PlayerAttr+'"]');
-      }
-      else {
-        var HrefField = FieldCell.attr('href-field');
-        FieldCell.attr('href', '/World/'+WorldID+'/Player/'+Player[HrefField]);
-      }
-      FieldCell.text(PlayerValue);
-    });
-
-    TeamRosterTable.append(TeamRosterRowTemplate);
-  });
-
-  $('#teamRosterTable').DataTable( {
-        "searching": false,
-          "info": false,
-          "paging":   false,
-          "order": [[ 5, "desc" ]]
-      } );
-
-  AddRosterListeners();
-}
-
-
-function PopulateTeamSchedule(Games, WorldID){
-
-    var TeamScheduleContainer = $('#TeamScheduleContainer');
-
-    var RowCount = 0;
-
-    if (Games.PlayedGames.length > 0) {
-      var TeamScheduleRowPlayedGames = $($('#TeamScheduleRowPlayedGames')[0]);
-      TeamScheduleRowPlayedGames.removeClass('w3-hide')
-      TeamScheduleRowPlayedGames.remove();
-      $(TeamScheduleContainer).append(TeamScheduleRowPlayedGames);
-    }
-
-    $.each(Games.PlayedGames, function(index,Game){
-      var TeamScheduleRowClone = $('#TeamScheduleRowClone').clone();
-      TeamScheduleRowClone = $(TeamScheduleRowClone[0])
-      $(TeamScheduleRowClone).removeClass('w3-hide');
-      $(TeamScheduleRowClone).removeAttr('id');
-
-      RowCount += 1;
-      if (RowCount % 2 == 1) {
-        $(TeamScheduleRowClone).addClass('evenRow');
-      }
-
-      $.each(Game, function(GameAttr,GameAttrValue){
-        var FieldCell = $(TeamScheduleRowClone).find('.TeamScheduleGameCell[data-field="'+GameAttr+'"], .TeamScheduleGameCell > *[data-field="'+GameAttr+'"]')[0];
-        var HrefCell = $(TeamScheduleRowClone).find('.TeamScheduleGameCell > a[href-field="'+GameAttr+'"]')[0];
-        var ImgCell = $(TeamScheduleRowClone).find('.TeamScheduleGameCell > img[img-src-field="'+GameAttr+'"]')[0];
-        var ClassCell = $(TeamScheduleRowClone).find('.TeamScheduleGameCell > *[class-field="'+GameAttr+'"]')[0];
-
-        if (FieldCell != undefined ){
-          $(FieldCell).text(GameAttrValue);
-        }
-        if (HrefCell != undefined){
-          $(HrefCell).attr('href', GameAttrValue);
-        }
-        if (ImgCell != undefined){
-          $(ImgCell).attr('src', GameAttrValue);
-        }
-        if (ClassCell != undefined){
-          $(ClassCell).addClass(GameAttrValue);
-        }
-      });
-      $(TeamScheduleContainer).append($(TeamScheduleRowClone));
-  });
-
-
-    if (Games.FutureGames.length > 0) {
-      var TeamScheduleRowFutureGames = $($('#TeamScheduleRowFutureGames')[0]);
-      TeamScheduleRowFutureGames.removeClass('w3-hide')
-      TeamScheduleRowFutureGames.remove();
-      $(TeamScheduleContainer).append(TeamScheduleRowFutureGames);
-    }
-
-      $.each(Games.FutureGames, function(index,Game){
-        var TeamScheduleRowClone = $('#TeamScheduleRowClone').clone();
-        TeamScheduleRowClone = $(TeamScheduleRowClone[0])
-        $(TeamScheduleRowClone).removeClass('w3-hide');
-        $(TeamScheduleRowClone).removeAttr('id');
-
-        RowCount += 1;
-        if (RowCount % 2 == 1) {
-          $(TeamScheduleRowClone).addClass('evenRow');
-        }
-
-        $.each(Game, function(GameAttr,GameAttrValue){
-          var FieldCell = $(TeamScheduleRowClone).find('.TeamScheduleGameCell[data-field="'+GameAttr+'"], .TeamScheduleGameCell > *[data-field="'+GameAttr+'"]')[0];
-          var HrefCell = $(TeamScheduleRowClone).find('.TeamScheduleGameCell > a[href-field="'+GameAttr+'"]')[0];
-          var ImgCell = $(TeamScheduleRowClone).find('.TeamScheduleGameCell > img[img-src-field="'+GameAttr+'"]')[0];
-          var ClassCell = $(TeamScheduleRowClone).find('.TeamScheduleGameCell > *[class-field="'+GameAttr+'"]')[0];
-
-          if (FieldCell != undefined ){
-            $(FieldCell).text(GameAttrValue);
-          }
-          if (HrefCell != undefined){
-            $(HrefCell).attr('href', GameAttrValue);
-          }
-          if (ImgCell != undefined){
-            $(ImgCell).attr('src', GameAttrValue);
-          }
-          if (ClassCell != undefined){
-            $(ClassCell).addClass(GameAttrValue);
-          }
-        });
-        $(TeamScheduleContainer).append($(TeamScheduleRowClone));
-    });
-
-}
-
-
-
 function GetTeamHistory(WorldID, TeamID){
 
 
@@ -262,27 +74,6 @@ function GetTeamHistory(WorldID, TeamID){
 }
 
 
-function GetTeamHistoricalLeaders(WorldID, TeamID, Timeframe){
-
-  $.ajax({
-    method: "GET",
-    url: "/World/"+WorldID+"/Team/"+TeamID+"/TeamHistoricalLeaders/"+Timeframe,
-    data: {
-      csrfmiddlewaretoken: csrftoken
-    },
-    dataType: 'json',
-    success: function(res, status) {
-      console.log(res, status);
-      PopulateHistoricalLeadersTable(res.HistoricalLeaders, WorldID);
-    },
-    error: function(res) {
-      alert(res.status);
-    }
-  });
-
-  return null;
-}
-
 
 function GetTeamCoaches(WorldID, TeamID){
 
@@ -306,195 +97,6 @@ function GetTeamCoaches(WorldID, TeamID){
   return null;
 }
 
-
-function GetTeamRoster(WorldID, TeamID){
-
-  //teamRosterTable
-
-  var CurrentSelectedPlayerID = 0;
-
-  var ColumnAjaxMap = {
-    2: "/GetPlayerPositions/",
-    4: "/GetClasses/"
-  }
-
-  var table = $('#teamRosterTable').DataTable({
-      "dom": '',
-      //"serverSide": true,
-      "filter": true,
-      "ordering": true,
-      "lengthChange" : false,
-      "pageLength": 100,
-      "pagingType": "full_numbers",
-      "paginationType": "full_numbers",
-      "paging": true,
-      'ajax': {
-          "url": "/World/"+WorldID+"/Team/"+TeamID+"/TeamRoster",
-          "type": "GET",
-          "data": function ( d ) {
-
-            console.log('GetTeamRoster - Going to post... ', d);
-            return d;
-          },
-          "dataSrc": function ( json ) {
-               console.log('GetTeamRoster json', json);
-               return json['Roster'];
-          }
-       },
-      "columns": [
-        {"data": "FullName", "sortable": true, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-            $(td).parent().attr('PlayerID', DataObject['PlayerID']);
-            $(td).html("<a href='/World/"+WorldID+"/Player/"+DataObject['PlayerID']+"'>"+StringValue+"</a>");
-        }},
-        {"data": "JerseyNumber", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
-        {"data": "Position", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
-        {"data": "HeightFormatted", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
-        {"data": "PlayerClass", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
-        {"data": "OverallRating", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
-      ],
-      'order': [[ 5, "desc" ]],
-      'initComplete': function () {
-
-        this.api().columns([2,4]).every( function (ColumnIndex, CounterIndex) {
-
-            console.log('initComplete', ColumnIndex, CounterIndex, this);
-            var column = this;
-            var select = $('<select class="datatable-tfoot"><option value=""></option></select>')
-                .appendTo( $(column.footer()).empty() )
-                .on( 'change', function () {
-                    var val = $(this).val();
-                    column.search( this.value ).draw();
-                } );
-
-            // If I add extra data in my JSON, how do I access it here besides column.data?
-
-            $.ajax({
-               url: ColumnAjaxMap[ColumnIndex],
-               success: function (data) {
-                 console.log('Ajax return', data)
-                 $.each(data, function(ind, elem){
-                    select.append( '<option value="'+elem+'">'+elem+'</option>' )
-                 });
-               }
-             });
-
-        });
-
-        $('#teamRosterTable').find('tr').on('click', function(){
-          var SelectedPlayerID = $(this).attr('PlayerID');
-          console.log('clicked', this, SelectedPlayerID);
-
-          $.ajax({
-            url: '/World/'+WorldID+'/Player/'+SelectedPlayerID+'/PlayerCardInfo',
-            success: function (data) {
-              console.log('Ajax return', data);
-
-              $.each(data, function(key, val){
-
-                if (key == 'PlayerFaceJson'){
-                  var elem = $('#teamRosterPlayerHighlight').find('[data-field="'+key+'"]');
-                  elem = elem[0];
-                  $(elem).empty();
-
-                  if (typeof val === 'string') {
-                    val = $.parseJSON(val);
-                  }
-                  BuildFace(val, undefined, undefined, $(elem).attr('id'));
-                }
-                else {
-                  $('#teamRosterPlayerHighlight').find('[data-field="'+key+'"]').text(val);
-
-                }
-              })
-
-            }
-          })
-
-        })
-
-      }});
-
-  return null;
-}
-
-
-
-
-
-function GetTeamSchedule(WorldID, TeamID){
-
-  console.log('Getting team schedule!');
-  $.ajax({
-    method: "GET",
-    url: "/World/"+WorldID+"/Team/"+TeamID+"/TeamSchedule",
-    data: {
-      csrfmiddlewaretoken: csrftoken
-    },
-    dataType: 'json',
-    success: function(res, status) {
-      console.log('Team Schedule:', res, status);
-      PopulateTeamSchedule(res.Games, WorldID, )
-    },
-    error: function(res) {
-      alert(res.status);
-    }
-  });
-
-  return null;
-}
-
-function AddScheduleListeners(){
-  var InitialGameBox = $('.SelectedGameBox')[0];
-
-  var SelectedGameID = $(InitialGameBox).attr('BoxScoreGameID');
-  $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+SelectedGameID+'"]').removeClass('w3-hide');
-
-
-  $('.teamScheduleGameBox').on('click', function(event, target) {
-
-    var ClickedTab = $(event.target).closest('.teamScheduleGameBox');
-    var SelectedGameID = ClickedTab.attr('BoxScoreGameID');
-    $.each($('.SelectedGameBox'), function(index, tab){
-      var TargetTab = $(tab);
-      $(TargetTab).css('backgroundColor', '');
-      $(TargetTab).removeClass('SelectedGameBox');
-
-      var UnselectedGameID = TargetTab.attr('BoxScoreGameID');
-
-      $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+UnselectedGameID+'"]').addClass('w3-hide')
-    });
-
-    $(ClickedTab).addClass('SelectedGameBox');
-    $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+SelectedGameID+'"]').removeClass('w3-hide')
-
-  });
-}
-
-
-
-function AddHistoricalLeaderListeners(WorldID, TeamID){
-
-  $('.team-record-bar button').on('click', function(event, target) {
-
-    var ClickedTab = $(event.target)
-    console.log('ClickedTab AddHistoricalLeaderListeners', ClickedTab);
-    var ClickedTabValue = ClickedTab.attr('timeframe');
-
-    if (! $(ClickedTab).hasClass('selected-team-record-tab')) {
-      $('.selected-team-record-tab').each(function(ind, obj){
-        $(obj).removeClass('selected-team-record-tab');
-      })
-      $(ClickedTab).addClass('selected-team-record-tab');
-    }
-
-    $('[timeframe="'+ClickedTabValue+'"]').each(function(ind, obj){
-      $(obj).removeClass('w3-hide');
-    });
-
-    GetTeamHistoricalLeaders(WorldID, TeamID, ClickedTabValue);
-
-  });
-}
 
 
 function AddBoxScoreListeners(){
@@ -528,33 +130,6 @@ function AddBoxScoreListeners(){
   });
 }
 
-function AddRosterListeners(){
-  console.log('Adding roster listeners!');
-
-  $('#roster-bar button').on('click', function(event, target){
-
-    var ClickedTab = $(event.target)
-    var ClickedTabParent = ClickedTab.closest('.roster-bar').attr('id');
-    var SelectedDataContext = ClickedTab.attr('table-data-context');
-
-    $.each($('.selected-roster-tab'), function(index, tab){
-      var TargetTab = $(tab);
-      $(TargetTab).removeClass('selected-roster-tab');
-      var TargetTabParent = TargetTab.closest('.boxscore-bar').attr('id');
-
-
-      var UnselectedDataContext = TargetTab.attr('table-data-context');
-      $('.TeamRosterPlayerRowCell[table-data-context="'+UnselectedDataContext+'"]').addClass('w3-hide')
-      $('.TeamRosterHeaderCell[table-data-context="'+UnselectedDataContext+'"]').addClass('w3-hide')
-    });
-
-    $(ClickedTab).addClass('selected-roster-tab');
-    $('.TeamRosterPlayerRowCell[table-data-context="'+SelectedDataContext+'"]').removeClass('w3-hide')
-    $('.TeamRosterHeaderCell[table-data-context="'+SelectedDataContext+'"]').removeClass('w3-hide')
-
-  });
-
-}
 
 function DrawFaces(TeamJerseyStyle, TeamJerseyInvert){
 
@@ -717,13 +292,9 @@ $(document).ready(function(){
 
   AddScheduleListeners();
   AddBoxScoreListeners();
-  AddHistoricalLeaderListeners(WorldID, TeamID);
 
   console.log('in Team.js file')
   GetTeamHistory(WorldID, TeamID);
-  GetTeamHistoricalLeaders(WorldID, TeamID, 'Season');
-  GetTeamRoster(WorldID, TeamID);
-  GetTeamSchedule(WorldID, TeamID);
   GetTeamCoaches(WorldID, TeamID);
   DrawFaces(TeamJerseyStyle, TeamJerseyInvert);
   DrawSchedule();
@@ -732,6 +303,33 @@ $(document).ready(function(){
   //GET_HistoricalTeamLeaders
 
 });
+
+function AddScheduleListeners(){
+  var InitialGameBox = $('.SelectedGameBox')[0];
+
+  var SelectedGameID = $(InitialGameBox).attr('BoxScoreGameID');
+  $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+SelectedGameID+'"]').removeClass('w3-hide');
+
+
+  $('.teamScheduleGameBox').on('click', function(event, target) {
+
+    var ClickedTab = $(event.target).closest('.teamScheduleGameBox');
+    var SelectedGameID = ClickedTab.attr('BoxScoreGameID');
+    $.each($('.SelectedGameBox'), function(index, tab){
+      var TargetTab = $(tab);
+      $(TargetTab).css('backgroundColor', '');
+      $(TargetTab).removeClass('SelectedGameBox');
+
+      var UnselectedGameID = TargetTab.attr('BoxScoreGameID');
+
+      $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+UnselectedGameID+'"]').addClass('w3-hide')
+    });
+
+    $(ClickedTab).addClass('SelectedGameBox');
+    $('.teamScheduleGameDashboardGameDisplay[BoxScoreGameID="'+SelectedGameID+'"]').removeClass('w3-hide')
+
+  });
+}
 
 function DrawSchedule(){
 

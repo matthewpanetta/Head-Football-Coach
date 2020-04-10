@@ -34,7 +34,6 @@
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-analytics-tab">Analytics</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-coaches-tab">Coaches</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-history-tab">Team History</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-records-tab">Team Records</button>
         {% include "HeadFootballCoach/ext_TeamList.html" %}
       </div>
     </nav>
@@ -321,7 +320,7 @@
         </div>
       </div>
       </div>
-      
+
       <div class="tab-content" style='display:none;' id="nav-analytics">
         Analytics Window
         <div id="map" style="width: 930px; height: 630px; border: solid 3px red;"></div>
@@ -382,34 +381,6 @@
                   <div class="teamAchievementFlagTitle BannerLine2">{{Banner.BannerLine2}}</div>
                 </div>
               {% endfor %}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="tab-content" style='display:none;' id="nav-records">
-        <div class="w3-bar boxscore-bar background-white team-record-bar">
-          <div class="w3-bar-item fontweight500">Team Records</div>
-          <button class="w3-bar-item w3-button tab team-record-tab selected-team-record-tab" id="Team-Record-Season-tab" timeframe='Season'>Season</button>
-          <button class="w3-bar-item w3-button tab team-record-tab" id="Team-Record-Career-tab" timeframe='Career'>Career</button>
-          <button class="w3-bar-item w3-button tab team-record-tab" id="Team-Record-Game-tab" timeframe='Game'>Single Game</button>
-        </div>
-        <div class='w3-display-container'>
-          <div class='w3-row-padding' id='teamHistoryPlayerLeaderRowClone'>
-            <div id='teamHistoryPlayerLeadersClone' class='w3-col s4 w3-hide'>
-              <table id='' class='display table sortable'>
-                <thead>
-                  <th class='teamColorBorder'>Rank</th>
-                  <th class='teamColorBorder'>Player</th>
-                  <th class='teamColorBorder'>Season</th>
-                  <th class='teamColorBorder' data-field='DisplayName'></th>
-                </thead>
-                <tr id='teamHistoryPlayerLeadersRowClone' class='w3-hide'>
-                  <td class='TeamHistoricalLeaderRowCell' data-field='ValueRank' data-value=""></td>
-                  <td class='TeamHistoricalLeaderRowCell' data-value=""><a href="" href-field='PlayerHref' ><span data-field='PlayerName'></span>, </a><span data-field='PlayerPosition'></span></td>
-                  <td class='TeamHistoricalLeaderRowCell' data-field='Timeframe' data-value=""></td>
-                  <td class='TeamHistoricalLeaderRowCell' data-field='Value' data-value=""></td>
-                </tr>
-              </table>
             </div>
           </div>
         </div>
