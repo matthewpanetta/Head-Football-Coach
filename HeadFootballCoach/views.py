@@ -1216,7 +1216,7 @@ def Page_Awards(request, WorldID):
     context['HeismanRace'] = HeismanRace
     return render(request, 'HeadFootballCoach/Awards.html', context)
 
-def Page_PlayerRecords(request, WorldID, TeamID=None):
+def Page_PlayerRecords(request, WorldID, TeamID=None, ConferenceID = None):
     DoAudit = True
     page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     CurrentWorld  = World.objects.get(WorldID = WorldID)
@@ -1229,7 +1229,6 @@ def Page_PlayerRecords(request, WorldID, TeamID=None):
     GameFilters = {}
 
     if TeamID is not None:
-        Filters['TeamID'] = TeamID
         SeasonFilters = {'TeamSeasonID__TeamID': TeamID}
         CareerFilters = {'playerteamseason__TeamSeasonID__TeamID': TeamID}
         GameFilters = {'PlayerTeamSeasonID__TeamSeasonID__TeamID': TeamID}
@@ -1238,6 +1237,14 @@ def Page_PlayerRecords(request, WorldID, TeamID=None):
         page['PageTitle'] = TeamID.TeamName + ' Players'
         page['PrimaryColor'] = TeamID.TeamColor_Primary_HEX
         page['SecondaryColor'] = TeamID.SecondaryColor_Display
+    elif ConferenceID is not None:
+        SeasonFilters = {'TeamSeasonID__TeamID__ConferenceID': ConferenceID}
+        CareerFilters = {'playerteamseason__TeamSeasonID__TeamID__ConferenceID': ConferenceID}
+        GameFilters = {'PlayerTeamSeasonID__TeamSeasonID__TeamID__ConferenceID': ConferenceID}
+
+    ConferenceList = Conference.objects.filter(WorldID_id = WorldID).values('ConferenceName', 'ConferenceLogoURL').annotate(
+        ConferenceHref = Concat(Value('/World/'), Value(WorldID), Value('/PlayerRecords/Conference/'), F('ConferenceID'), output_field=CharField())
+    ).order_by('ConferenceName')
 
 
 
@@ -1249,7 +1256,7 @@ def Page_PlayerRecords(request, WorldID, TeamID=None):
     for P in SeasonLeaders:
         print(P)
 
-    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek}
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'ConferenceList': ConferenceList}
     context['SeasonLeaders'] = SeasonLeaders
     context['CareerLeaders'] = CareerLeaders
     context['GameLeaders'] = GameLeaders
@@ -1259,7 +1266,7 @@ def Page_PlayerRecords(request, WorldID, TeamID=None):
 
 
 
-def Page_TeamRecords(request, WorldID, TeamID=None):
+def Page_TeamRecords(request, WorldID, TeamID=None, ConferenceID = None):
     DoAudit = True
     page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     CurrentWorld  = World.objects.get(WorldID = WorldID)
@@ -1282,20 +1289,26 @@ def Page_TeamRecords(request, WorldID, TeamID=None):
         page['PrimaryColor'] = TeamID.TeamColor_Primary_HEX
         page['SecondaryColor'] = TeamID.SecondaryColor_Display
 
+    if ConferenceID is not None:
+        SeasonFilters['TeamID__ConferenceID']= ConferenceID
+        CareerFilters['ConferenceID']= ConferenceID
+        GameFilters['TeamSeasonID__TeamID__ConferenceID']= ConferenceID
 
 
     SeasonLeaders = Common_TeamRecords(CurrentWorld, Timeframe = 'Season', Filters=SeasonFilters, ListLength = 10)
     AlltimeLeaders = Common_TeamRecords(CurrentWorld, Timeframe = 'Alltime', Filters=CareerFilters, ListLength = 10)
     GameLeaders = Common_TeamRecords(CurrentWorld, Timeframe = 'Game', Filters=GameFilters, ListLength = 10)
 
-    print('\nSeasonLeaders')
-    for P in SeasonLeaders:
-        print(P)
+    ConferenceList = Conference.objects.filter(WorldID_id = WorldID).values('ConferenceName', 'ConferenceLogoURL').annotate(
+        ConferenceHref = Concat(Value('/World/'), Value(WorldID), Value('/TeamRecords/Conference/'), F('ConferenceID'), output_field=CharField())
+    ).order_by('ConferenceName')
+
 
     context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek}
     context['SeasonLeaders'] = SeasonLeaders
     context['AlltimeLeaders'] = AlltimeLeaders
     context['GameLeaders'] = GameLeaders
+    context['ConferenceList'] = ConferenceList
     context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
 
     return render(request, 'HeadFootballCoach/TeamRecords.html', context)

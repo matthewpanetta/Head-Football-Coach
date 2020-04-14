@@ -49,7 +49,9 @@ urlpatterns = [
     path('World/<int:WorldID>/Schedule', views.Page_Schedule, name='Schedule'),
 
     path('World/<int:WorldID>/PlayerRecords', views.Page_PlayerRecords, name='PlayerRecords'),
+    path('World/<int:WorldID>/PlayerRecords/Conference/<int:ConferenceID>', views.Page_PlayerRecords, name='PlayerRecords'),
     path('World/<int:WorldID>/TeamRecords', views.Page_TeamRecords, name='TeamRecords'),
+    path('World/<int:WorldID>/TeamRecords/Conference/<int:ConferenceID>', views.Page_TeamRecords, name='TeamRecords'),
     path('World/<int:WorldID>/Schedule/Team/<int:TeamID>', views.Page_Schedule, name='Schedule'),
     path('World/<int:WorldID>/Team/<int:TeamID>/Schedule', views.Page_TeamSchedule, name='Schedule'),
     path('World/<int:WorldID>/Team/<int:TeamID>/History', views.Page_TeamHistory, name='History'),

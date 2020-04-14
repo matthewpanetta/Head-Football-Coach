@@ -24,6 +24,14 @@
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-career-records-tab" style="background-color: #{{page.SecondaryColor}};">Career Records</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-season-records-tab">Season Records</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-game-records-tab">Game Records</button>
+        <div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
+          <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Conferences</button>
+          <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px">
+            {% for Conference in ConferenceList %}
+            <a href="{{Conference.ConferenceHref}}" class="w3-bar-item w3-button"><img src="{{Conference.ConferenceLogoURL}}" class="small-logo" alt="">{{Conference.ConferenceName}}</a>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </nav>
     <div id="nav-tabContent">
