@@ -366,6 +366,15 @@ def GameSim(game):
         'P': ['K', 'QB']
     }
 
+    PassRushByPosition = {
+        'DE': 1,
+        'DT': .8,
+        'OLB': .8,
+        'MLB': .6,
+        'CB': .1,
+        'S': .1,
+    }
+
 
     Periods = [1,2,3,4]
     MinutesInPeriod = 15
@@ -826,7 +835,7 @@ def GameSim(game):
                     #AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Carries += 1
                     #GameDict[OffensiveTeam]['TeamGame'].RUS_Carries += 1
 
-                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
+                    DefensivePlayers = [(u, int(PassRushByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     LinemanSackAllowedPlayerID = WeightedProbabilityChoice(OffensiveLinemen, OffensiveLinemen[0])

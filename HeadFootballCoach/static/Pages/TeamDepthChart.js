@@ -32,6 +32,18 @@ $(document).ready(function(){
 
 });
 
+function AddPositionsToTable(){
+
+  $('.player-name-position').remove();
+  $.each($('option:selected'), function(){
+    var SelectedPlayerTeamSeasonID = $(this).attr('playerteamseasonid');
+    var Position = $(this).parent().attr('positionabbreviation');
+    var SelectedRows = $('.AvailablePlayerList').find('tr[playerteamseasonid="'+SelectedPlayerTeamSeasonID+'"] .player-name');
+    $(SelectedRows).append('<span class="font10 player-name-position"> '+Position+'</span>')
+  });
+
+}
+
 
 function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
 
@@ -130,10 +142,11 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
             $(td).html("<a href='"+DataObject['PlayerTeamHref']+"'><img class='worldTeamStatLogo padding-right' src='"+DataObject['playerteamseason__TeamSeasonID__TeamID__TeamLogoURL']+"'/>"+StringValue+"</a>");
             $(td).attr('style', 'border-left-color: #' + DataObject['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
             $(td).addClass('teamTableBorder');
-            $(td).parent().attr('PlayerID', DataObject['PlayerID']);
+            $(td).parent().attr('PlayerTeamSeasonID', DataObject['PlayerTeamSeasonID']);
         }},
-        {"data": "PlayerName", "sortable": true, 'visible': true, 'orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+        {"data": "PlayerName", "sortable": true, 'visible': true, 'className': 'player-name', 'orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).html("<a href='"+DataObject['PlayerHref']+"'>"+StringValue+"</a>");
+            $(td).append('<span class="font10 player-name-position">'+''+'</span>')
         }}, //PlayerHref
         {"data": "PositionID__PositionAbbreviation", "sortable": true, 'visible': true, 'orderSequence':DescFirst},
         {"data": "playerseasonskill__OverallRating", "sortable": true, 'visible': true, 'orderSequence':DescFirst},
@@ -202,7 +215,13 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
         {"data": "playerseasonskill__KickAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':DescFirst},
       ],
       'info': false,
-      'order': [[ 2, "asc" ],[ 3, "desc" ]],
+      'order': [[ 3, "desc" ]],
+      initComplete: function(){
+        AddPositionsToTable();
+        $('select').on('change', function(){
+          AddPositionsToTable();
+        });
+      }
   });
 
   $.ajaxSetup({
@@ -215,9 +234,11 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
   });
 
 
+
+
   $('button.save-depth-chart').click(function(){
     var TeamDepthChart = [];
-    var Starters = [];
+    var Starters = {};
     var Positions = {};
     $('.w3-select').children('option:selected').each(function(){
       var Pos = $(this).parent().first().attr('positionabbreviation');
@@ -227,9 +248,13 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
         'PlayerTeamSeasonID': parseInt($(this).val())
       }
 
+      var PositionGroup = $(this).closest('.tab-content').attr('id');
+      if (!(PositionGroup in Starters)){
+        Starters[PositionGroup] = []
+      }
       if (DepthChart['PlayerTeamSeasonID'] > 0 ) {
         if ($(this).closest('td').hasClass('is-starter')){
-          Starters.push({'Name': $(this).text(), 'PlayerTeamSeasonID': parseInt($(this).val())})
+          Starters[PositionGroup].push({'Name': $(this).text(), 'PlayerTeamSeasonID': parseInt($(this).val())})
         }
 
         if (!( Pos in Positions )) {
@@ -242,15 +267,19 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
     });
 
     var DoPost = true;
-    var StarterPlayerTeamSeasonIDList = [];
-    $.each(Starters, function(ind, obj){
-      if ( $.inArray(obj.PlayerTeamSeasonID, StarterPlayerTeamSeasonIDList) == -1 ) {
-        StarterPlayerTeamSeasonIDList.push(obj.PlayerTeamSeasonID );
-      }
-      else {
-        DoPost = false;
-        alert('Cannot save depth chart. '+ obj.Name + ' is starting twice.');
-      }
+    var StarterPlayerTeamSeasonIDList = {};
+    $.each(Starters, function(key, PlayerList){
+      StarterPlayerTeamSeasonIDList[key] = [];
+      $.each(PlayerList, function(ind, obj){
+        if ( $.inArray(obj.PlayerTeamSeasonID, StarterPlayerTeamSeasonIDList[key]) == -1 ) {
+          StarterPlayerTeamSeasonIDList[key].push(obj.PlayerTeamSeasonID );
+        }
+        else {
+          DoPost = false;
+          alert('Cannot save depth chart. '+ obj.Name + ' is starting twice.');
+        }
+      })
+
     });
 
     $.each(Positions, function(Pos,PosList){
