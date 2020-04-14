@@ -1,6 +1,6 @@
 
 
-from ..models import System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
+from ..models import SubPosition, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
 import os
 from ..utilities import Max
 from datetime import timedelta, date
@@ -184,6 +184,46 @@ def ImportPositions():
                 del LineDict[FE]
 
             Position.objects.create(**LineDict)
+
+
+def ImportSubPositions():
+
+    FilePath = 'HeadFootballCoach/scripts/data_import/SubPosition.csv'
+
+    f = open(FilePath, 'r', encoding='utf-8-sig')
+    NameStartStopTracker = 0
+    FieldExclusions = ['FK_PositionAbbreviation']
+    linecount = 0
+    for line in f:
+        print(line)
+        KeepRow = False
+        linecount +=1
+        if linecount == 1:
+            Headers = line.strip().split(',')
+            continue
+
+        Row = line.strip().split(',')
+        LineDict = {}
+        FieldCount = 0
+
+        for f in Row:
+            V = Row[FieldCount]
+            if V == '':
+                V = None
+            LineDict[Headers[FieldCount]] = V
+            FieldCount +=1
+
+
+        KeepRow = True
+
+
+        if KeepRow:
+            LineDict['PositionID'] = Position.objects.get(PositionAbbreviation = LineDict['FK_PositionAbbreviation'])
+
+            for FE in FieldExclusions:
+                del LineDict[FE]
+
+            SubPosition.objects.create(**LineDict)
 
 
 def ImportCoachPositions():
@@ -762,7 +802,9 @@ def LoadData(WorldID, LeagueID):
         ImportCoachPositions()
 
     if Position.objects.all().count() == 0:
+        SubPosition.objects.all().delete()
         ImportPositions()
+        ImportSubPositions()
 
     if Class.objects.all().count() == 0:
         ImportClasses()

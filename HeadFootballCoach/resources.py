@@ -1069,6 +1069,189 @@ def AddYearToPlayers(WorldID, CurrentSeason):
     return None
 
 
+def PopulateTeamSeasonPositions():
+
+    TSPToCreate = []
+    PositionMap = {
+        'QB': {
+            'ThrowPower_Rating_Weight': 1.0,
+            'ShortThrowAccuracy_Rating_Weight': 1.0,
+            'MediumThrowAccuracy_Rating_Weight': .75,
+            'DeepThrowAccuracy_Rating_Weight': .5,
+            'ThrowOnRun_Rating_Weight': .25,
+            'ThrowUnderPressure_Rating_Weight': .25,
+            'PlayAction_Rating_Weight': .1,
+            'Awareness_Rating_Weight': 1.0,
+            'Speed_Rating_Weight': .15,
+        },
+        'RB': {
+            'Speed_Rating_Weight': .75,
+            'Acceleration_Rating_Weight': .25,
+            'Agility_Rating_Weight': .25,
+            'Elusiveness_Rating_Weight': .5,
+            'BreakTackle_Rating_Weight': .5,
+            'Carrying_Rating_Weight': .75,
+            'BallCarrierVision_Rating_Weight': .75,
+            'Catching_Rating_Weight': .125,
+            'PassBlock_Rating_Weight': .125,
+            'JukeMove_Rating_Weight': .125,
+        },
+        'FB': {
+            'Speed_Rating_Weight': .125,
+            'Acceleration_Rating_Weight': .125,
+            'Agility_Rating_Weight': .125,
+            'Elusiveness_Rating_Weight': 0,
+            'BreakTackle_Rating_Weight': 0,
+            'Carrying_Rating_Weight': .75,
+            'BallCarrierVision_Rating_Weight': 0,
+            'Catching_Rating_Weight': 0,
+            'PassBlock_Rating_Weight': .25,
+            'RunBlock_Rating_Weight': .25,
+        },
+        'WR': {
+            'Speed_Rating_Weight': 1,
+            'Acceleration_Rating_Weight': .25,
+            'Agility_Rating_Weight': .25,
+            'Jumping_Rating_Weight': .25,
+            'Catching_Rating_Weight': 1,
+            'CatchInTraffic_Rating_Weight': .5,
+            'Release_Rating_Weight': .25,
+            'RouteRunning_Rating_Weight': 1,
+        },
+        'TE': {
+            'Speed_Rating_Weight': .5,
+            'Acceleration_Rating_Weight': .25,
+            'Agility_Rating_Weight': .1,
+            'Jumping_Rating_Weight': .25,
+            'Catching_Rating_Weight': 1,
+            'CatchInTraffic_Rating_Weight': 1,
+            'Release_Rating_Weight': .25,
+            'RouteRunning_Rating_Weight': .5,
+            'PassBlock_Rating_Weight': .25,
+            'RunBlock_Rating_Weight': .25,
+        },
+        'OT': {
+            'Strength_Rating_Weight': .75,
+            'Acceleration_Rating_Weight': .25,
+            'PassBlock_Rating_Weight': 1,
+            'RunBlock_Rating_Weight': 1,
+            'Awareness_Rating_Weight': 1,
+        },
+        'OG': {
+            'Strength_Rating_Weight': .75,
+            'Acceleration_Rating_Weight': .25,
+            'PassBlock_Rating_Weight': 1,
+            'RunBlock_Rating_Weight': 1,
+            'Awareness_Rating_Weight': 1,
+        },
+        'OC': {
+            'Strength_Rating_Weight': .75,
+            'Acceleration_Rating_Weight': .25,
+            'PassBlock_Rating_Weight': 1,
+            'RunBlock_Rating_Weight': 1,
+            'Awareness_Rating_Weight': 1,
+        },
+        'DE': {
+            'Speed_Rating_Weight': 0,
+            'Acceleration_Rating_Weight': .5,
+            'Agility_Rating_Weight': 0,
+            'Strength_Rating_Weight': .25,
+            'PassRush_Rating_Weight': 1,
+            'BlockShedding_Rating_Weight': 1,
+            'Tackle_Rating_Weight': .5,
+            'HitPower_Rating_Weight': .25,
+        },
+        'DT': {
+            'Speed_Rating_Weight': 0,
+            'Acceleration_Rating_Weight': .25,
+            'Agility_Rating_Weight': 0,
+            'Strength_Rating_Weight': .75,
+            'PassRush_Rating_Weight': 1,
+            'BlockShedding_Rating_Weight': 1,
+            'Tackle_Rating_Weight': .5,
+            'HitPower_Rating_Weight': .25,
+        },
+        'OLB': {
+            'Speed_Rating_Weight': .5,
+            'Acceleration_Rating_Weight': .5,
+            'Agility_Rating_Weight': .15,
+            'Strength_Rating_Weight': .1,
+            'PassRush_Rating_Weight': .75,
+            'BlockShedding_Rating_Weight': .5,
+            'Tackle_Rating_Weight': .5,
+            'HitPower_Rating_Weight': .25,
+            'ManCoverage_Rating_Weight': 0,
+            'ZoneCoverage_Rating_Weight': 0,
+        },
+        'MLB': {
+            'Speed_Rating_Weight': .5,
+            'Acceleration_Rating_Weight': .5,
+            'Agility_Rating_Weight': .15,
+            'Strength_Rating_Weight': .1,
+            'PassRush_Rating_Weight': .1,
+            'BlockShedding_Rating_Weight': .5,
+            'Tackle_Rating_Weight': 1,
+            'HitPower_Rating_Weight': .25,
+            'ManCoverage_Rating_Weight': .125,
+            'ZoneCoverage_Rating_Weight': .125,
+        },
+        'CB': {
+            'Speed_Rating_Weight': .75,
+            'Acceleration_Rating_Weight': .15,
+            'Agility_Rating_Weight': .1,
+            'Tackle_Rating_Weight': .25,
+            'HitPower_Rating_Weight': 0,
+            'ManCoverage_Rating_Weight': 1.5,
+            'ZoneCoverage_Rating_Weight': 1.5,
+        },
+        'S': {
+            'Speed_Rating_Weight': .5,
+            'Acceleration_Rating_Weight': .25,
+            'Agility_Rating_Weight': .1,
+            'Tackle_Rating_Weight': .5,
+            'HitPower_Rating_Weight': .25,
+            'ManCoverage_Rating_Weight': 1,
+            'ZoneCoverage_Rating_Weight': 1,
+        },
+        'K': {
+            'KickPower_Rating_Weight': 1.0,
+            'KickAccuracy_Rating_Weight': 1.0,
+        },
+        'P': {
+            'KickPower_Rating_Weight': 1.0,
+            'KickAccuracy_Rating_Weight': 1.0,
+        },
+        'KR': {
+            'Speed_Rating_Weight': 1.0,
+        },
+        'PR': {
+            'Speed_Rating_Weight': 1.0,
+        },
+        'ATH': {
+            'Speed_Rating_Weight': 1.0,
+        },
+    }
+    for P in PositionMap:
+        PMap = PositionMap[P]
+        PMap['Total_Rating_Weight'] = 0
+        for W in [k for k in PMap if k!='Total_Rating_Weight']:
+            PMap['Total_Rating_Weight']+=PMap[W]
+
+    TeamSeasonPosition.objects.all().delete()
+    if TeamSeasonPosition.objects.all().count() == 0:
+        Positions = list(Position.objects.all())
+        for TS in list(TeamSeason.objects.filter(WorldID = CurrentWorld)):
+            for Pos in Positions:
+                PMap = PositionMap[Pos.PositionAbbreviation].copy()
+                PMap['TeamSeasonID'] = TS
+                PMap['PositionID'] = Pos
+                PMap['WorldID'] = CurrentWorld
+                TSP = TeamSeasonPosition(**PMap)
+                TSPToCreate.append(TSP)
+
+        TeamSeasonPosition.objects.bulk_create(TSPToCreate)
+
+
 def AddRecruitsToTeams(WorldID, CurrentSeason):
 
     return None

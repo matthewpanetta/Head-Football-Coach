@@ -44,13 +44,16 @@ urlpatterns = [
     path('World/<int:WorldID>/CoachCarousel/', views.Page_CoachCarousel, name='CoachCarousel'),
     path('World/<int:WorldID>/PlayerDepartures/', views.Page_Rankings, name='Rankings'),
 
+    path('World/<int:WorldID>/Awards', views.Page_Awards, name='Awards'),
     path('World/<int:WorldID>/Rankings/', views.Page_Rankings, name='PlayerDepartures'),
     path('World/<int:WorldID>/Schedule', views.Page_Schedule, name='Schedule'),
+
     path('World/<int:WorldID>/PlayerRecords', views.Page_PlayerRecords, name='PlayerRecords'),
     path('World/<int:WorldID>/TeamRecords', views.Page_TeamRecords, name='TeamRecords'),
     path('World/<int:WorldID>/Schedule/Team/<int:TeamID>', views.Page_Schedule, name='Schedule'),
     path('World/<int:WorldID>/Team/<int:TeamID>/Schedule', views.Page_TeamSchedule, name='Schedule'),
-    path('World/<int:WorldID>/Awards', views.Page_Awards, name='Awards'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/History', views.Page_TeamHistory, name='History'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/DepthChart', views.Page_TeamDepthChart, name='DepthChart'),
 
 
     path('World/<int:WorldID>/Search/<str:SearchInput>/', views.Page_Search, name='Search'),
@@ -60,6 +63,7 @@ urlpatterns = [
     path('World/<int:WorldID>/PickTeam/', views.POST_PickTeam, name='PickTeam'),
     path('CreateLeague/', views.POST_CreateLeague, name='CreateLeague'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/SetPlayerFaceJSON', views.POST_SetPlayerFaceJson, name='SetPlayerFaceJSON'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/SetTeamDepthChart', views.POST_SetTeamDepthChart, name='SetTeamDepthChart'),
 
     #GETS BELOW
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamHistory', views.GET_TeamHistory, name='TeamHistory'),

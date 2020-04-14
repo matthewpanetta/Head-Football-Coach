@@ -785,7 +785,7 @@ def GameSim(game):
                         PassOutcome = 'Incompletion'
                 elif (random.uniform(0,1) < (.10 / (PassRushModifier ** 4))):
                     PassOutcome = 'Sack'
-                elif (random.uniform(0,1) < (.7224 * (PassGameModifier ** .9))) :
+                elif (random.uniform(0,1) < (.7024 * (PassGameModifier ** .9))) :
                     PassOutcome = 'Completion'
                 else:
                     PassOutcome = 'Incompletion'

@@ -1,0 +1,313 @@
+<div>
+  {% include "HeadFootballCoach/ext_NavBar.html" %}
+</div>
+{% load static %}
+{% load humanize %}
+{% load CustomTags %}
+
+
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/searchPanes.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/select.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/buttons.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/fixedHeader.dataTables.min.css' %}">
+<link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
+
+<head>
+  <style id="addedStyle">
+    .w3-button.dt-button {
+      border: 2px solid #{{page.PrimaryColor}} !important;
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      background-image: none !important;
+      font-weight: 500;
+      font-size: 14px!important;
+    }
+
+    .w3-button.dt-button:hover {
+      box-shadow: 0px 2px 12px #{{page.PrimaryColor}};
+      border: 3px solid #{{page.PrimaryColor}};
+    }
+  </style>
+</head>
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+
+
+<body>
+  <div class="PageContent">
+    {% include "HeadFootballCoach/ext_TeamHeader.html" %}
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-team-history-tab" style="background-color: #{{page.SecondaryColor}};">Team History</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-career-records-tab">Career Leaders</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-season-records-tab">Player Season Records</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-game-records-tab">Player Game Records</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-season-records-tab">Team Season Records</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-game-records-tab">Team Game Records</button>
+        {% include "HeadFootballCoach/ext_TeamList.html" %}
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-team-history">
+          <div class='w3-display-container'>
+            <div class='w3-row-padding'>
+              <div class='w3-col s8'>
+                <div class="w3-card">
+                <table id='teamSeasonHistoryResultsTable' class='display table sortable'>
+                  <thead id='TeamSeasonHistoryTable'>
+                    <th class=' teamColorBorder'>Season</th>
+                    <th class=' teamColorBorder'>Final Rank</th>
+                    <th class=' teamColorBorder'>Record</th>
+                    <th class=' teamColorBorder'>Conf Record</th>
+                    <th class=' teamColorBorder'>Conf Rank</th>
+                    <th class=' teamColorBorder'>Bowl</th>
+                    <th class=' teamColorBorder'>Recruit Class Rank</th>
+                  </thead>
+                  {% for TeamSeason in TeamSeasonHistory%}
+                  <tr id='' class=''>
+                    <td class='' data-value=""><a href-field="SeasonRecapLink" data-field='SeasonYear'>{{TeamSeason.SeasonYear}}</a></td>
+                    <td class='' data-field='FinalRank' data-value="">{{TeamSeason.FinalRank}}</td>
+                    <td class='' data-field='TeamRecord' data-value="">{{TeamSeason.TeamRecord}}</td>
+                    <td class='' data-field='TeamConferenceRecord' data-value="">{{TeamSeason.TeamConferenceRecord}}</td>
+                    <td class='' data-field='ConferenceRank' data-value="">{{TeamSeason.ConferenceRank}}</td>
+                    <td class='' data-field='' data-value="">
+                        <span data-field='BowlResult'>{{TeamSeason.BowlResult}}</span>
+                        <a href-field='BowlHref' href="{{TeamSeason.BowlHref}}"><span data-field='BowlScore'>{{TeamSeason.BowlScore}}</span></a>
+                        <span data-field='String_BowlVs'>{{TeamSeason.String_BowlVs}}</span>
+                        <a href-field='BowlOpponentHref'><span data-field='BowlOpponent'>{{TeamSeason.BowlOpponentHref}}</span></a>
+                        <span data-field='String_BowlIn'>{{TeamSeason.String_BowlIn}}</span>
+                        <span data-field='BowlName'>{{TeamSeason.BowlName}}</span>
+                    </td>
+                    <td class='TeamSeasonHistoryRowCell' data-field='RecruitingClassRank' data-value="">{{TeamSeason.RecruitingClassRank}}</td>
+                  </tr>
+                  {% endfor %}
+                </table>
+                </div>
+              </div>
+            </div>
+            <div class='w3-row-padding'>
+              <div class='w3-col s10'>
+                {% for Banner in TeamHistory %}
+                  <div class="teamAchievementFlag" style='background: #{{page.PrimaryColor}}; border-color: #{{page.SecondaryColor}};'>
+                    <div class='teamAchievementFlagYear'>{{Banner.Season}}</div>
+                    <div class="teamAchievementFlagTitle">{{team.TeamName}}</div>
+                    <div class="teamAchievementFlagTitle BannerLine1">{{Banner.BannerLine1}}</div>
+                    <div class="teamAchievementFlagTitle BannerLine2">{{Banner.BannerLine2}}</div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-career-records">
+        <div class='w3-display-container'>
+          {% for Stat in CareerLeaders%}
+          {% if forloop.counter0|modulo:3 == 0%}
+          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+            {% endif %}
+            <div class='w3-card w3-col s4 margin-sides-12 no-padding'>
+              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Team</th>
+                  <th data-field='DisplayName'>{{Stat.DisplayName}}</th>
+                  <th>Seasons</th>
+                </thead>
+                <tbody>
+                  {% with StatName=Stat.FieldName %}
+                  {% for Player in Stat.Players%}
+                  <tr id='worldLeagueLeadersRowClone' class=''>
+                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.PlayerHref}}" href-field='PlayerHref' ><span data-field='PlayerName'>{{Player.PlayerName}}</span>, </a><span data-field='PlayerPosition'>{{Player.PlayerPosition}}</span></td>
+                    <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.TeamHref}}" href-field='PlayerTeamHref'><img src="{{Player.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
+                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Player|keyvalue:StatName}}</td>
+                    <td>{{Player.Timeframe}}</td>
+                  </tr>
+                  {% endfor %}
+                  {% endwith %}
+                </tbody>
+              </table>
+            </div>
+
+              {% if forloop.counter0|modulo:3 == 2%}
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-season-records">
+        <div class='w3-display-container'>
+          {% for Stat in SeasonLeaders%}
+          {% if forloop.counter0|modulo:3 == 0%}
+          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+            {% endif %}
+            <div class='w3-card w3-col s4 margin-sides-12 no-padding'>
+              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Team</th>
+                  <th data-field='DisplayName'>{{Stat.DisplayName}}</th>
+                  <th>Season</th>
+                </thead>
+                <tbody>
+                  {% with StatName=Stat.FieldName %}
+                  {% for Player in Stat.Players%}
+                  <tr id='worldLeagueLeadersRowClone' class=''>
+                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.PlayerHref}}" href-field='PlayerHref' ><span data-field='PlayerName'>{{Player.PlayerName}}</span>, </a><span data-field='PlayerPosition'>{{Player.PlayerPosition}}</span></td>
+                    <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.TeamHref}}" href-field='PlayerTeamHref'><img src="{{Player.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
+                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Player|keyvalue:StatName}}</td>
+                    <td>{{Player.Timeframe}}</td>
+                  </tr>
+                  {% endfor %}
+                  {% endwith %}
+                </tbody>
+              </table>
+            </div>
+
+              {% if forloop.counter0|modulo:3 == 2%}
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-game-records">
+        <div class='w3-display-container'>
+          {% for Stat in GameLeaders%}
+          {% if forloop.counter0|modulo:3 == 0%}
+          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+            {% endif %}
+            <div class='w3-card w3-col s4 margin-sides-12 no-padding'>
+              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Player</th>
+                  <th>Team</th>
+                  <th data-field='DisplayName'>{{Stat.DisplayName}}</th>
+                  <th>Week</th>
+                </thead>
+                <tbody>
+                  {% with StatName=Stat.FieldName %}
+                  {% for Player in Stat.Players%}
+                  <tr id='worldLeagueLeadersRowClone' class=''>
+                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.PlayerHref}}" href-field='PlayerHref' ><span data-field='PlayerName'>{{Player.PlayerName}}</span>, </a><span data-field='PlayerPosition'>{{Player.PlayerPosition}}</span></td>
+                    <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.TeamHref}}" href-field='PlayerTeamHref'><img src="{{Player.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
+                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Player|keyvalue:StatName}}</td>
+                    <td><a href="{{Player.TimeframeHref}}">{{Player.Timeframe}}</a></td>
+                  </tr>
+                  {% endfor %}
+                  {% endwith %}
+                </tbody>
+              </table>
+            </div>
+
+              {% if forloop.counter0|modulo:3 == 2%}
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-team-season-records">
+        <div class='w3-display-container'>
+          {% for Stat in TeamSeasonLeaders%}
+          {% if forloop.counter0|modulo:3 == 0%}
+          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+            {% endif %}
+            <div class='w3-card w3-col s4 margin-sides-12 no-padding'>
+              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Team</th>
+                  <th data-field='DisplayName'>{{Stat.DisplayName}}</th>
+                  <th>Season</th>
+                </thead>
+                <tbody>
+                  {% with StatName=Stat.FieldName %}
+                  {% for Team in Stat.Teams%}
+                  <tr id='worldLeagueLeadersRowClone' class=''>
+                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell' data-value="">
+                      <a href="{{Team.TeamHref}}" href-field='PlayerTeamHref'>
+                        <img src="{{Team.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
+                        <span>{{Team.TeamName}}</span>
+                      </a>
+                    </td>
+                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
+                    <td>{{Team.Timeframe}}</td>
+                  </tr>
+                  {% endfor %}
+                  {% endwith %}
+                </tbody>
+              </table>
+            </div>
+              {% if forloop.counter0|modulo:3 == 2%}
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-team-game-records">
+        <div class='w3-display-container'>
+          {% for Stat in TeamGameLeaders%}
+          {% if forloop.counter0|modulo:3 == 0%}
+          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+            {% endif %}
+            <div class='w3-card w3-col s4 margin-sides-12 no-padding'>
+              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
+                <thead>
+                  <th>Rank</th>
+                  <th>Team</th>
+                  <th data-field='DisplayName'>{{Stat.DisplayName}}</th>
+                  <th>Week</th>
+                </thead>
+                <tbody>
+                  {% with StatName=Stat.FieldName %}
+                  {% for Team in Stat.Teams%}
+                  <tr id='worldLeagueLeadersRowClone' class=''>
+                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell' data-value="">
+                      <a href="{{Team.TeamHref}}" href-field='PlayerTeamHref'>
+                        <img src="{{Team.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
+                        <span>{{Team.TeamName}}</span>
+                      </a>
+                    </td>
+                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
+                    <td><a href="{{Team.TimeframeHref}}">{{Team.Timeframe}}</a></td>
+                  </tr>
+                  {% endfor %}
+                  {% endwith %}
+                </tbody>
+              </table>
+            </div>
+
+              {% if forloop.counter0|modulo:3 == 2%}
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="{% static 'common/jquery-3.3.1.slim.min.js' %}"></script>
+<script src="{% static 'common/jquery.min.js' %}"></script>
+<script src="{% static 'facesjs-master/src/generate.js' %}"></script>
+<script src="{% static 'action.js' %}"></script>
+<script src="{% static 'common/popper.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.select.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.searchPanes.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.buttons.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/buttons.colVis.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedColumns.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedHeader.min.js' %}"></script>
+
+{{ Players|json_script:"player-stat-data" }}

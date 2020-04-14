@@ -1244,6 +1244,10 @@ td.WorldLeagueLeaderRowCell.NameCell {
   margin-top: 24px;
 }
 
+.margin-bottom-24 {
+  margin-bottom: 24px;
+}
+
 .margin-8 {
   margin: 8px;
 }
@@ -1559,4 +1563,18 @@ div.dt-buttons {
 
 .col-group {
   border-right: 1px solid grey;
+}
+
+.is-starter {
+  background-color: lightyellow;
+}
+
+.is-not-starter {
+  background-color: white;
+}
+
+.ui-state-highlight {
+  border: 1px solid #dad55e !important;
+	background: #fffa90 !important;
+	color: #777620 !important;
 }

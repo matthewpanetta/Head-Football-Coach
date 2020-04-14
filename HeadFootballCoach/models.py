@@ -191,6 +191,17 @@ class Position(models.Model):
         return (self.Occurance / OC['OccuranceSum']) * 70
 
 
+class SubPosition(models.Model):
+    SubPositionID = models.AutoField(primary_key = True)
+    PositionID = models.ForeignKey(Position, on_delete=models.CASCADE, null=True, blank=True, default=None)
+
+    SubPositionAbbreviation = models.CharField(max_length=6, blank=True, null=True, default=None)
+    SubPositionName = models.CharField(max_length=20, blank=True, null=True, default=None)
+    SubPositionSortOrder = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+    PositionTypicalStarterCountPerTeam = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+    def __str__(self):
+        return self.SubPositionName
+    #############################
 
 class User(models.Model):
     UserID = models.AutoField(primary_key = True)
@@ -1616,6 +1627,8 @@ class PlayerTeamSeasonDepthChart(models.Model):
     DepthPosition = models.PositiveSmallIntegerField(default = 0)
     IsStarter = models.BooleanField(default=False)
 
+    DepthPositionPlaysOnField = models.PositiveSmallIntegerField(default = 0)
+
     def __str__(self):
         return str(self.PlayerTeamSeasonID.PlayerID) #+ ' is ' + str(self.PositionID.PositionAbbreviation) + ' #' + str(self.DepthPostion) + ' for ' + str(self.PlayerTeamSeasonID.TeamSeasonID.TeamID)
 
@@ -2244,7 +2257,6 @@ class PlayerSeasonSkill(models.Model):
     Awareness_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Jumping_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Injury_Rating               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #Toughness_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     ThrowPower_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     ShortThrowAccuracy_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     MediumThrowAccuracy_Rating  = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
@@ -2252,27 +2264,18 @@ class PlayerSeasonSkill(models.Model):
     ThrowOnRun_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     ThrowUnderPressure_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     PlayAction_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #Trucking_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Elusiveness_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     BallCarrierVision_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #StiffArm_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #SpinMove_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     JukeMove_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     BreakTackle_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Carrying_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Catching_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     CatchInTraffic_Rating       = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #ShortRouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #MediumRouteRunning_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #DeepRouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     RouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #SpectacularCatch_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Release_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     HitPower_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Tackle_Rating               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     PassRush_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #PowerMoves_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #FinesseMoves_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     BlockShedding_Rating        = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Pursuit_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     PlayRecognition_Rating      = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
@@ -2674,6 +2677,48 @@ class TeamSeasonPosition(models.Model):
     Year2PositionOverall = models.IntegerField(default=0)
     Year3PositionOverall = models.IntegerField(default=0)
 
+
+    Strength_Rating_Weight             = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Agility_Rating_Weight              = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Speed_Rating_Weight                = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Acceleration_Rating_Weight         = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Stamina_Rating_Weight              = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Awareness_Rating_Weight            = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Jumping_Rating_Weight              = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Injury_Rating_Weight               = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    ThrowPower_Rating_Weight           = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    ShortThrowAccuracy_Rating_Weight   = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    MediumThrowAccuracy_Rating_Weight  = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    DeepThrowAccuracy_Rating_Weight    = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    ThrowOnRun_Rating_Weight           = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    ThrowUnderPressure_Rating_Weight   = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    PlayAction_Rating_Weight           = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Elusiveness_Rating_Weight          = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    BallCarrierVision_Rating_Weight    = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    JukeMove_Rating_Weight             = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    BreakTackle_Rating_Weight          = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Carrying_Rating_Weight             = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Catching_Rating_Weight             = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    CatchInTraffic_Rating_Weight       = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    RouteRunning_Rating_Weight     = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Release_Rating_Weight              = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    HitPower_Rating_Weight             = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Tackle_Rating_Weight               = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    PassRush_Rating_Weight           = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    BlockShedding_Rating_Weight        = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Pursuit_Rating_Weight              = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    PlayRecognition_Rating_Weight      = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    ManCoverage_Rating_Weight          = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    ZoneCoverage_Rating_Weight         = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    Press_Rating_Weight                = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    PassBlock_Rating_Weight            = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    RunBlock_Rating_Weight             = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    ImpactBlock_Rating_Weight          = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    KickPower_Rating_Weight            = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    KickAccuracy_Rating_Weight         = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+    KickReturn_Rating_Weight           = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
+
+    Total_Rating_Weight           = models.DecimalField(default = 0.0, max_digits = 4, decimal_places=2)
 
 
 class DrivePlay(models.Model):
