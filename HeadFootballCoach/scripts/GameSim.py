@@ -17,12 +17,12 @@ def CalculateGameScore(PlayerGameStats):
         {'Stat': 'RUS_Yards', 'PointToStatRatio': 1.0 / 10, 'Display': ' rush yards'},
         {'Stat': 'RUS_TD'   , 'PointToStatRatio': 6.0 / 1, 'Display': ' rush TDs'},
         {'Stat': 'PAS_Yards', 'PointToStatRatio': 1.0 / 25, 'Display': ' pass yards'},
-        {'Stat': 'PAS_TD',    'PointToStatRatio': 5.0 / 1, 'Display': ' pass TDs'},
-        {'Stat': 'PAS_Completions', 'PointToStatRatio': 1.0 / 5, 'Display': ' comp'},
+        {'Stat': 'PAS_TD',    'PointToStatRatio': 4.0 / 1, 'Display': ' pass TDs'},
+        {'Stat': 'PAS_Completions', 'PointToStatRatio': 1.0 / 10, 'Display': ' comp'},
         {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 10, 'Display': ' rec. yards'},
         {'Stat': 'REC_TD',    'PointToStatRatio': 6.0 / 1, 'Display': ' rec. TDs'},
         {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1, 'Display': ' picks'},
-        {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 1, 'Display': ' sacked'},
+        {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 4, 'Display': ' sacked'},
         {'Stat': 'DEF_Sacks',  'PointToStatRatio': 2.5 / 1, 'Display': ' sacks'},
         {'Stat': 'DEF_Tackles',  'PointToStatRatio': 1.0 / 2, 'Display': ' tackles'},
         {'Stat': 'DEF_TacklesForLoss',  'PointToStatRatio': 2.0 / 1, 'Display': ' TFLs'},
@@ -42,7 +42,7 @@ def CalculateGameScore(PlayerGameStats):
         StatObj['GameScoreValue'] = StatObj['DisplayValue'] * StatObj['PointToStatRatio']
         GameSummary['GameScore'] += StatObj['GameScoreValue']
 
-    Displays = [str(u['DisplayValue']) + u['Display'] for u in sorted(GameScoreMap, key=lambda k: k['GameScoreValue'],reverse=True)[:2]]
+    Displays = [str(int(u['DisplayValue'])) + u['Display'] for u in sorted(GameScoreMap, key=lambda k: k['GameScoreValue'],reverse=True)[:2]]
     GameSummary['TopStatStringDisplay1'] = Displays[0]
     GameSummary['TopStatStringDisplay2'] = Displays[1]
 

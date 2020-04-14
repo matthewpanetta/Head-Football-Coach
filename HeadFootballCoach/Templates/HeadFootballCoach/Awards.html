@@ -98,6 +98,7 @@
                       <td><a href="{{Week.PlayerHref}}/">{{Week.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Week.PlayerTeamSeasonID__PlayerID__PlayerLastName}}</a>, {{Week.PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation}}</td>
                       <td>
                         <ul class='no-list-style light-padding-top'>
+                          <li><span class='{{Week.GameWin}}'>{{Week.GameWin}}</span><span> {{Week.ScoreDisplay}}</span><span> vs.</span><span><a href="{{Week.OpponentTeamHref}}"> {{Week.OpponentTeamName}}</a></span></li>
                           <li>{{Week.WeekID__game__teamgame__playergamestat__TopStatStringDisplay1}}</li>
                           <li>{{Week.WeekID__game__teamgame__playergamestat__TopStatStringDisplay2}}</li>
                         </ul>
@@ -131,7 +132,7 @@
                   <tr playerid='{{Player.PlayerID}}'>
                     <td  class='teamTableBorder' style="border-left-color: #{{Player.playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX}}">{{Player.HeismanRank}}</td>
                     <td>
-                      <a href="{{Player.TeamHref}}">
+                      <a href="{{Player.PlayerTeamHref}}">
                         <img src="{{Player.playerteamseason__TeamSeasonID__TeamID__TeamLogoURL}}" class='worldTeamStatLogo' alt="">
                         {{Player.playerteamseason__TeamSeasonID__TeamID__TeamName}}
                       </a>

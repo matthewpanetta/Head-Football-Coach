@@ -1134,8 +1134,9 @@ def Page_Awards(request, WorldID):
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field=CharField()),
         TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('PlayerTeamSeasonID__TeamSeasonID__TeamID'), output_field=CharField()),
         GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('WeekID__game__GameID'), output_field=CharField()),
-        OpponentTeamScore = Subquery(TeamGame.objects.filter(GameID=OuterRef('WeekID__game__GameID')).exclude(TeamGameID = OuterRef('WeekID__game__teamgame__GameID')).values('Points')),
-        OpponentTeamName = Subquery(TeamGame.objects.filter(GameID=OuterRef('WeekID__game__GameID')).exclude(TeamGameID = OuterRef('WeekID__game__teamgame__GameID')).values('TeamSeasonID__TeamID__TeamName')),
+        ScoreDisplay = Concat(F('WeekID__game__teamgame__Points'), Value('-'), F('WeekID__game__teamgame__OpposingTeamGameID__Points'), output_field=CharField()), 
+        OpponentTeamName = F('WeekID__game__teamgame__OpposingTeamGameID__TeamSeasonID__TeamID__TeamName'),
+        OpponentTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('WeekID__game__teamgame__OpposingTeamGameID__TeamSeasonID__TeamID'), output_field=CharField()),
     ).order_by('WeekID')
 
     AwardDict = {}
