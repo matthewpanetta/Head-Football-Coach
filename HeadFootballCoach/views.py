@@ -1134,7 +1134,7 @@ def Page_Awards(request, WorldID):
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field=CharField()),
         TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('PlayerTeamSeasonID__TeamSeasonID__TeamID'), output_field=CharField()),
         GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('WeekID__game__GameID'), output_field=CharField()),
-        ScoreDisplay = Concat(F('WeekID__game__teamgame__Points'), Value('-'), F('WeekID__game__teamgame__OpposingTeamGameID__Points'), output_field=CharField()), 
+        ScoreDisplay = Concat(F('WeekID__game__teamgame__Points'), Value('-'), F('WeekID__game__teamgame__OpposingTeamGameID__Points'), output_field=CharField()),
         OpponentTeamName = F('WeekID__game__teamgame__OpposingTeamGameID__TeamSeasonID__TeamID__TeamName'),
         OpponentTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('WeekID__game__teamgame__OpposingTeamGameID__TeamSeasonID__TeamID'), output_field=CharField()),
     ).order_by('WeekID')
@@ -1821,7 +1821,7 @@ def Page_Player(request, WorldID, PlayerID):
 
 
         #PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__GameDateID')
-        PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__WeekID').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD', 'REC_Targets', 'FUM_Forced', 'FUM_Lost', 'FUM_Recovered', 'DEF_TacklesForLoss',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation','PlayerTeamSeasonID__ClassID__ClassName','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'GamesPlayed', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT', 'TeamGameID', 'TeamGameID__GameID', 'TeamGameID__GameID__WeekID__WeekNumber', 'TeamGameID__GameID__WeekID__WeekName', 'TeamGameID__GameID__WeekID_id').annotate(  # call `annotate`
+        PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__WeekID').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'RUS_20', 'RUS_LNG', 'REC_LNG', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD', 'REC_Targets', 'FUM_Forced', 'FUM_Lost', 'FUM_Recovered', 'DEF_TacklesForLoss',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation','PlayerTeamSeasonID__ClassID__ClassName','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'GamesPlayed', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT', 'DEF_Deflections', 'DEF_TacklesForLoss', 'FUM_Fumbles', 'TeamGameID', 'TeamGameID__GameID', 'TeamGameID__GameID__WeekID__WeekNumber', 'TeamGameID__GameID__WeekID__WeekName', 'TeamGameID__GameID__WeekID_id', 'BLK_Pancakes', 'BLK_Sacks', 'BLK_Blocks', 'KCK_FGA', 'KCK_FGM', 'KCK_XPM', 'KCK_XPA').annotate(  # call `annotate`
                 PAS_CompletionPercentage=Case(
                     When(PAS_Attempts=0, then=0.0),
                     default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1)),
@@ -1872,9 +1872,61 @@ def Page_Player(request, WorldID, PlayerID):
                     default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
                     output_field=FloatField()
                 ),
-                Position = F('PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation')
-
+                Position = F('PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation'),
+                GameOutcomeLetter = Case(
+                    When(TeamGameID__IsWinningTeam = True, then=Value('W')),
+                    When(Q(TeamGameID__IsWinningTeam = False) & Q(TeamGameID__GameID__WasPlayed = True), then=Value('L')),
+                    default=Value(''),
+                    output_field=CharField()
+                ),
+                OpponentTeamName = F('TeamGameID__OpposingTeamGameID__TeamSeasonID__TeamID__TeamName'),
+                OpponentTeamLogoURL = F('TeamGameID__OpposingTeamGameID__TeamSeasonID__TeamID__TeamLogoURL'),
+                OpponentTeamColor_Primary_HEX= F('TeamGameID__OpposingTeamGameID__TeamSeasonID__TeamID__TeamColor_Primary_HEX'),
+                OpponentTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamGameID__OpposingTeamGameID__TeamSeasonID__TeamID'), output_field=CharField()),
+                GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('TeamGameID__GameID'), output_field=CharField()),
+                GameScoreDisplay = Concat(F('TeamGameID__Points'), Value('-'), F('TeamGameID__OpposingTeamGameID__Points'), output_field=CharField()),
             ).order_by('-TeamGameID__GameID__WeekID__WeekNumber')
+
+
+        PlayerStatsShow = {'Passing': False,
+                          'Rushing': False,
+                          'Receiving': False,
+                          'Blocking': False,
+                          'Defense': False,
+                          'Kicking': False,}
+
+        PlayerStatsShowMap = {
+                    'QB': 'Passing',
+                    'RB': 'Rushing',
+                    'FB': 'Rushing',
+                    'WR': 'Receiving',
+                    'TE': 'Receiving',
+                    'OT': 'Blocking',
+                    'OG': 'Blocking',
+                    'OC': 'Blocking',
+                    'DE': 'Defense',
+                    'DT': 'Defense',
+                    'OLB': 'Defense',
+                    'MLB': 'Defense',
+                    'CB': 'Defense',
+                    'S': 'Defense',
+                    'K': 'Kicking',
+                    'P': 'Kicking'
+                          }
+        PrimaryStatShow = PlayerStatsShowMap[PlayerDict['PositionID__PositionAbbreviation']]
+        for PS in PlayerStats:
+            if PS['PAS_Attempts'] > 0:
+                PlayerStatsShow['Passing'] = True
+            if PS['RUS_Carries'] > 0:
+                PlayerStatsShow['Rushing'] = True
+            if PS['REC_Targets'] > 0:
+                PlayerStatsShow['Receiving'] = True
+            if PS['BLK_Blocks'] > 0:
+                PlayerStatsShow['Blocking'] = True
+            if PS['DEF_Tackles'] + PS['DEF_Deflections'] + PS['DEF_INT'] + PS['FUM_Forced'] > 0:
+                PlayerStatsShow['Defense'] = True
+            if PS['KCK_FGA'] + PS['KCK_XPA'] > 0:
+                PlayerStatsShow['Kicking'] = True
 
 
         SeasonStats = PlayerObject.playerteamseason_set.all().order_by('TeamSeasonID__LeagueSeasonID').values('ClassID__ClassName', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName', 'PlayerID_id', 'PlayerID__PositionID__PositionAbbreviation','TeamSeasonID__TeamID_id', 'TeamSeasonID__LeagueSeasonID__SeasonStartYear', 'TeamSeasonID__LeagueSeasonID__IsCurrent').annotate(  # call `annotate`
@@ -1968,7 +2020,6 @@ def Page_Player(request, WorldID, PlayerID):
 
             StatGrouping = []
             PlayerStatCategories = []
-            print('BoxScoreStatGroupings', SeasonStatGroupings)
             for StatGrouping in SeasonStatGroupings:
                 KeepGroup = False
                 for u in SeasonStats:
@@ -1984,7 +2035,6 @@ def Page_Player(request, WorldID, PlayerID):
 
 
                 if KeepGroup:
-                    print('Keeping', StatGrouping)
                     StatGrouping['SeasonStats'] = []
                     for u in SeasonStats:
 
@@ -1992,32 +2042,22 @@ def Page_Player(request, WorldID, PlayerID):
 
 
         PlayerStats = [u for u in PlayerStats]
-        RecentGameStats = []
         for G in PlayerStats:
             G['Stats'] = []
-            OpposingTeamGame = TeamGame.objects.filter(TeamGameID = G['TeamGameID']).first().OpposingTeamGame
-            G['OpposingTeamID'] = OpposingTeamGame.TeamSeasonID.TeamID_id
-            G['OpposingTeamLogoURL'] = OpposingTeamGame.TeamSeasonID.TeamID.TeamLogoURL
-            G['OpposingTeamName'] = OpposingTeamGame.TeamSeasonID.TeamID.TeamName
             for StatCategory in PlayerStatCategories:
-                print('StatCategory', StatCategory)
+                #print('StatCategory', StatCategory)
                 if StatCategory['SeasonAggregateValue'] == True:
                     continue
                 SC = {}
                 SC['Value'] = G[StatCategory['FieldName']]
                 SC['FieldName'] = StatCategory['FieldName']
                 G['Stats'].append(SC)
-            RecentGameStats.append(G)
-            if len(RecentGameStats) > 5:
-                RecentGameStats.pop()
 
+        RecentGameStats = PlayerStats[:5]
         GameStats = PlayerStats
-        print()
-        print('GameStats', GameStats)
-        print()
-        print('RecentGameStats', RecentGameStats)
-        print()
-
+        print('\n\nGameStats')
+        for GS in GameStats:
+            print(GS)
 
 
         CareerHighList = []
@@ -2032,6 +2072,8 @@ def Page_Player(request, WorldID, PlayerID):
         #context['PlayerStatCategories'] = PlayerStatCategories
         context['Skills'] = PlayerDict['Skills']
         context['SeasonStatGroupings'] = SeasonStatGroupings
+        context['PlayerStatsShow'] = PlayerStatsShow
+        context['PrimaryStatShow'] = PrimaryStatShow
 
         Awards = []
         AwardQS = PlayerTeamSeasonAward.objects.filter(PlayerTeamSeasonID__PlayerID = PlayerDict['Player'])

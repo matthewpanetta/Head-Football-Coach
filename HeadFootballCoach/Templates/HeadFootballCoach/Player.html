@@ -4,6 +4,10 @@
 {% load static %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/searchPanes.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/select.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/buttons.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/fixedHeader.dataTables.min.css' %}">
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" SecondaryJerseyColor="{{page.SecondaryJerseyColor}}" TeamID="{{team.TeamID}}" PlayerID="{{PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
@@ -100,31 +104,78 @@
               {% endfor %}
             </div>
             <div class='w3-col s6'>
+              <div class="w3-card">
+
               <span class='table_title'>Recent Games</span>
-              <table class="table table-striped sortable">
+              <table class="w3-table table-striped width100" id='RecentGameStats' style='width: 100%;'>
                 <thead>
                   <tr>
+                    <th colspan="3" class='center-text col-group'>GAME</th>
+                    <th colspan="8" class='center-text col-group'>PASSING STATS</th>
+                    <th colspan="7" class='center-text col-group'>RUSHING STATS</th>
+                    <th colspan="6" class='center-text col-group'>RECEIVING STATS</th>
+                    <th colspan="2" class='center-text col-group'>BLOCKING STATS</th>
+                    <th colspan="7" class='center-text col-group'>DEFENSE STATS</th>
+                    <th colspan="4" class='center-text col-group'>KICKING STATS</th>
+                  </tr>
+                  <tr>
+                    <!-- Game -->
                     <th class='teamColorBorder' scope="col">OPP</th>
                     <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
-                    {%for Stat in PlayerStatCategories%}
-                    {% if Stat.SeasonAggregateValue == False %}
-                    <th class='teamColorBorder'>{{Stat.DisplayName}}</th>
-                    {% endif %}
-                    {%endfor%}
+                    <th>Game Outcome</th>
+
+                    <!-- Passing Stats -->
+                    <th>CMP</th>
+                    <th>ATT</th>
+                    <th>CMP %</th>
+                    <th>YRDs</th>
+                    <th>YPA</th>
+                    <th>TDs</th>
+                    <th>INTs</th>
+                    <th>Sacks</th>
+
+                    <!-- Rushing Stats -->
+                    <th>CAR</th>
+                    <th>YRDs</th>
+                    <th>YPC</th>
+                    <th>TDs</th>
+                    <th>FUM</th>
+                    <th>20+</th>
+                    <th>LNG</th>
+
+                    <!-- Receiving Stats -->
+                    <th>TGT</th>
+                    <th>REC</th>
+                    <th>YRDs</th>
+                    <th>YPC</th>
+                    <th>TD</th>
+                    <th>LNG</th>
+
+                    <!-- Blocking Stats -->
+                    <th>PNC</th>
+                    <th>SCK</th>
+
+                    <!-- Defense Stats -->
+                    <th>TCK</th>
+                    <th>TFL</th>
+                    <th>SACK</th>
+                    <th>INT</th>
+                    <th>DEF</th>
+                    <th>FF</th>
+                    <th>FR</th>
+
+                    <!-- Kicking Stats -->
+                    <th>FGM</th>
+                    <th>FGA</th>
+                    <th>XPM</th>
+                    <th>XPA</th>
+
                   </tr>
                 </thead>
                 <tbody>
-                  {% for game in RecentGameStats %}
-                  <tr>
-                    <td><a href='/World/{{page.WorldID}}/Team/{{game.OpposingTeamID}}'><img class='playerSeasonStatOpponentLogo' src='{{game.OpposingTeamLogoURL}}' />{{game.OpposingTeamName}}</a></td>
-                    <td><a href="/World/{{page.WorldID}}/Game/{{game.TeamGameID__GameID}}">{{game.TeamGameID__GameID__WeekID__WeekName}}</a></td>
-                    {%for Stat in game.Stats%}
-                    <td class='{% if Stat.Value == 0%} playerStatZero {%endif%}'>{{Stat.Value}}</td>
-                    {%endfor%}
-                  </tr>
-                  {% endfor %}
                 </tbody>
               </table>
+            </div>
             </div>
           </div>
         </div>
@@ -229,35 +280,85 @@
       <div class="tab-content" style='display:none;' id="nav-game-log" >
         <div class='w3-container'>
           <div class='w3-row-padding'>
+              <div class="w3-col s10">
+                <div class="w3-card">
 
-          </div>
-          <div class='w3-row-padding'>
+                <span class='table_title'>Games</span>
+                <table class="w3-table table-striped width100" id='FullGameStats' style='width: 100%;'>
+                  <thead>
+                    <tr>
+                      <th colspan="3" class='center-text col-group'>GAME</th>
+                      <th colspan="8" class='center-text col-group'>PASSING STATS</th>
+                      <th colspan="7" class='center-text col-group'>RUSHING STATS</th>
+                      <th colspan="6" class='center-text col-group'>RECEIVING STATS</th>
+                      <th colspan="2" class='center-text col-group'>BLOCKING STATS</th>
+                      <th colspan="7" class='center-text col-group'>DEFENSE STATS</th>
+                      <th colspan="4" class='center-text col-group'>KICKING STATS</th>
+                    </tr>
+                    <tr>
+                      <!-- Game -->
+                      <th class='teamColorBorder' scope="col">OPP</th>
+                      <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
+                      <th>Game Outcome</th>
 
-          </div>
-          <div class='w3-row-padding'>
-            <div class='w3-col s6'>
-              <div>
-                <span class='table_title'>Career Highs</span>
-                <div class='w3-container'>
-                  {% for stat in careerHigh %}
-                  <div class='w3-row'>
-                    <div class='w3-col s2'>
-                      {{stat.Stat}}
-                    </div>
-                    <div class='w3-col s3'>
-                      {{stat.Value}}
-                    </div>
-                    <div class='w3-col s7'>
-                      <a href='/World/{{page.WorldID}}/Game/{{stat.Game.GameID.GameID}}'>vs. {{stat.Game.OpponentTeam}}</a>
-                    </div>
-                  </div>
-                  {% endfor %}
-                  <div>
-                  </div>
-                </div>
+                      <!-- Passing Stats -->
+                      <th>CMP</th>
+                      <th>ATT</th>
+                      <th>CMP %</th>
+                      <th>YRDs</th>
+                      <th>YPA</th>
+                      <th>TDs</th>
+                      <th>INTs</th>
+                      <th>Sacks</th>
+
+                      <!-- Rushing Stats -->
+                      <th>CAR</th>
+                      <th>YRDs</th>
+                      <th>YPC</th>
+                      <th>TDs</th>
+                      <th>FUM</th>
+                      <th>20+</th>
+                      <th>LNG</th>
+
+                      <!-- Receiving Stats -->
+                      <th>TGT</th>
+                      <th>REC</th>
+                      <th>YRDs</th>
+                      <th>YPC</th>
+                      <th>TD</th>
+                      <th>LNG</th>
+
+                      <!-- Blocking Stats -->
+                      <th>PNC</th>
+                      <th>SCK</th>
+
+                      <!-- Defense Stats -->
+                      <th>TCK</th>
+                      <th>TFL</th>
+                      <th>SACK</th>
+                      <th>INT</th>
+                      <th>DEF</th>
+                      <th>FF</th>
+                      <th>FR</th>
+
+                      <!-- Kicking Stats -->
+                      <th>FGM</th>
+                      <th>FGA</th>
+                      <th>XPM</th>
+                      <th>XPA</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
               </div>
-            </div>
+              </div>
           </div>
+          <div class='w3-row-padding'>
+
+          </div>
+
         </div>
       </div>
       <div class="tab-content" style='display:none;' id="nav-analytics" >
@@ -354,6 +455,12 @@
 <script src="{% static 'c3/c3.js' %}"></script>
 
 <script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.select.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.searchPanes.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.buttons.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/buttons.colVis.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedColumns.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedHeader.min.js' %}"></script>
 
 
 
@@ -463,3 +570,8 @@ $(document).ready(function(){
     box-shadow: 0 2px 4px 0 #{{page.PrimaryColor}}, 0 2px 8px 0 #{{page.PrimaryColor}}
   }
 </style>
+
+{{ PrimaryStatShow|json_script:"primary-stat-show" }}
+{{ PlayerStatsShow|json_script:"player-stats-show" }}
+{{ GameStats|json_script:"game-stat-data" }}
+{{ RecentGameStats|json_script:"recent-game-stat-data" }}
