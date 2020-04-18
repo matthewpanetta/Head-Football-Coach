@@ -65,7 +65,8 @@ class RecruitTeamSeasonAdmin(admin.ModelAdmin):
 
 
 class TeamSeasonAdmin(admin.ModelAdmin):
-    list_display = ['TeamSeasonID', 'WorldID','TeamID', 'LeagueSeasonID','TeamOverallRating', 'GamesPlayed','Wins','Losses', 'ConferenceWins',  'ConferenceLosses','ConferenceRank', 'ConferenceGB' , 'WinStreak', 'ScholarshipsToOffer']
+    list_display = ['TeamSeasonID', 'WorldID','TeamID', 'LeagueSeasonID','TeamOverallRating','TeamOffenseRating','TeamDefenseRating','TeamOverallRating_Grade','TeamOffenseRating_Grade','TeamDefenseRating_Grade', 'GamesPlayed','Wins','Losses', 'ConferenceWins',  'ConferenceLosses','ConferenceRank', 'ConferenceGB' , 'WinStreak', 'ScholarshipsToOffer']
+    list_filter = ['WorldID']
 
 class PlayerGameStatAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerGameStat._meta.get_fields() if field.name not in ('playerteamseason', 'teamseasondaterank', 'coachteamseason', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')

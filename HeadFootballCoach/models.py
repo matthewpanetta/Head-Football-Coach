@@ -1269,6 +1269,12 @@ class TeamSeason(models.Model):
 
 
     TeamOverallRating = models.PositiveSmallIntegerField(default=None, null=True, blank=True)
+    TeamOffenseRating = models.PositiveSmallIntegerField(default=None, null=True, blank=True)
+    TeamDefenseRating = models.PositiveSmallIntegerField(default=None, null=True, blank=True)
+
+    TeamOverallRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
+    TeamOffenseRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
+    TeamDefenseRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
     def __str__(self):
         return self.TeamID.Name  +' in ' + str(self.LeagueSeasonID)
 

@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.template import loader
 import pandas as pd
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, DecimalField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery, ExpressionWrapper
-from django.db.models.functions.window import Rank, RowNumber, Lag
+from django.db.models.functions.window import Rank, RowNumber, Lag, Ntile
 from django.db.models.functions import Length, Concat, Coalesce
 from .models import Audit, League, TeamGame,Week,Phase,Position, PositionGroup, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
 from datetime import timedelta, date
@@ -812,7 +812,7 @@ def Page_Audit_ShootingPercentages(request, WorldID):
 def Page_Index(request):
 
 
-    InTesting = True
+    InTesting = False
     InDeepTesting = False
 
     if InTesting or InDeepTesting:
@@ -904,8 +904,6 @@ def Page_World(request, WorldID):
 
     #Fields = ['(OuterRef("playerseasonskill__'+field.name+'") * F("'+field.name+'_Weight"))' for field in PlayerSeasonSkill._meta.get_fields() if '_Rating' in field.name]
     #print(' + '.join(Fields))
-
-
 
     if DoAudit:
         start = time.time()
@@ -3000,7 +2998,7 @@ def GET_TeamCardInfo(request, WorldID, TeamID):
         CityAndState = Concat(F('CityID__CityName'), Value(', '), F('CityID__StateID__StateName'), output_field=CharField()),
     ).first()
 
-    TeamRanks = TeamSeason.objects.filter(WorldID_id = WorldID).filter(teamseasonweekrank__IsCurrent = True).filter(LeagueSeasonID__IsCurrent=True).values('TeamID').annotate(
+    TeamRanks = TeamSeason.objects.filter(WorldID_id = WorldID).filter(teamseasonweekrank__IsCurrent = True).filter(LeagueSeasonID__IsCurrent=True).values('TeamID', 'TeamOverallRating_Grade', 'TeamOffenseRating_Grade', 'TeamDefenseRating_Grade').annotate(
         GamesPlayed = Sum('teamgame__GamesPlayed'),
         Points = Sum('teamgame__Points'),
         OpponentPoints = Sum('teamgame__OpposingTeamGameID__Points'),
@@ -3052,7 +3050,6 @@ def GET_TeamCardInfo(request, WorldID, TeamID):
             default=(Concat(Value('(') , F('teamseasonweekrank__NationalRank'), Value(')'), output_field=CharField())),
             output_field = CharField()
         ),
-
         )
 
     TeamRanks = [u for u in TeamRanks if u['TeamID'] == TeamID]

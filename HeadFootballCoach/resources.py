@@ -7,14 +7,64 @@ from .scripts.PickName import RandomName, RandomPositionAndMeasurements, RandomC
 import math
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, DecimalField, CharField, BooleanField, Value, Window, OuterRef, Subquery
 #from django.db.models import Max, Avg, Count, Func,  Sum, Case, When, FloatField, CharField, Value
-from django.db.models.functions.window import Rank, RowNumber
+from django.db.models.functions.window import Rank, RowNumber, Ntile
 from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, SelectBroadcast
+from .scripts.DepthChart import CreateDepthChart
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
 from .scripts.import_csv import createCalendar
 from .utilities import NormalVariance, DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc, NormalVariance
 from math import sin, cos, sqrt, atan2, radians, log
 import time
+
+
+def PopulateTeamDepthCharts(LS, WorldID):
+
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS):
+        CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID)
+
+
+def CalculateTeamOverall(LS, WorldID):
+
+
+    NtileToGradeMap = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F']
+
+    TSDict = {}
+    for TS in TeamSeason.objects.filter(WorldID = WorldID).values_list('TeamSeasonID', flat=True):
+        if TS not in TSDict:
+            TSDict[TS] = {'TeamOverallRating': 0, 'TeamOffenseRating': 0, 'TeamDefenseRating': 0, 'TeamOverallRating_Grade': '', 'TeamOffenseRating_Grade': '', 'TeamDefenseRating_Grade': '',  }
+
+    TSOvr = list(TeamSeason.objects.filter(WorldID = WorldID).filter(playerteamseason__PlayerID__playerseasonskill__LeagueSeasonID = LS).filter(playerteamseason__playerteamseasondepthchart__IsStarter = True).values('TeamSeasonID', 'playerteamseason__PlayerID__PositionID__PositionGroupID__PositionGroupName').annotate(
+        AverageOverall = Avg('playerteamseason__PlayerID__playerseasonskill__OverallRating'),
+        AverageOverall_Ntile = Window(
+            expression=Ntile(13),
+            partition_by=[F('playerteamseason__PlayerID__PositionID__PositionGroupID')],
+            order_by=F("AverageOverall").desc(),
+        )
+    ).order_by('TeamID', 'playerteamseason__PlayerID__PositionID__PositionGroupID'))
+    for TS in TSOvr:
+        if TS['playerteamseason__PlayerID__PositionID__PositionGroupID__PositionGroupName'] == 'Offense':
+            TSDict[TS['TeamSeasonID']]['TeamOffenseRating'] = int(TS['AverageOverall'])
+            TSDict[TS['TeamSeasonID']]['TeamOffenseRating_Grade'] = NtileToGradeMap[TS['AverageOverall_Ntile'] - 1]
+        else:
+            TSDict[TS['TeamSeasonID']]['TeamDefenseRating'] = int(TS['AverageOverall'])
+            TSDict[TS['TeamSeasonID']]['TeamDefenseRating_Grade'] = NtileToGradeMap[TS['AverageOverall_Ntile'] - 1]
+
+
+    TSOvr = list(TeamSeason.objects.filter(WorldID = WorldID).filter(playerteamseason__PlayerID__playerseasonskill__LeagueSeasonID = LS).filter(playerteamseason__playerteamseasondepthchart__IsStarter = True).values('TeamSeasonID').annotate(
+        AverageOverall = Avg('playerteamseason__PlayerID__playerseasonskill__OverallRating'),
+        AverageOverall_Ntile = Window(
+            expression=Ntile(13),
+            order_by=F("AverageOverall").desc(),
+        )
+    ).order_by('TeamID', 'playerteamseason__PlayerID__PositionID__PositionGroupID'))
+    for TS in TSOvr:
+        TSDict[TS['TeamSeasonID']]['TeamOverallRating'] = int(TS['AverageOverall'])
+        TSDict[TS['TeamSeasonID']]['TeamOverallRating_Grade'] = NtileToGradeMap[TS['AverageOverall_Ntile'] - 1]
+
+    for TS in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).values_list('TeamSeasonID', flat=True):
+        print(TSDict[TS])
+        TeamSeason.objects.filter(WorldID_id = WorldID).filter(TeamSeasonID = TS).update(TeamOverallRating = TSDict[TS]['TeamOverallRating'], TeamOffenseRating = TSDict[TS]['TeamOffenseRating'], TeamDefenseRating = TSDict[TS]['TeamDefenseRating'], TeamOverallRating_Grade = TSDict[TS]['TeamOverallRating_Grade'], TeamOffenseRating_Grade = TSDict[TS]['TeamOffenseRating_Grade'], TeamDefenseRating_Grade = TSDict[TS]['TeamDefenseRating_Grade'])
 
 
 def LoadNames(f):
@@ -1370,6 +1420,8 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         start = time.time()
 
+    PopulateTeamDepthCharts(LS, WorldID)
+    CalculateTeamOverall(LS, WorldID)
     CalculateRankings(LS, WorldID)
     CalculateConferenceRankings(LS, WorldID)
     SelectBroadcast(LS, WorldID)

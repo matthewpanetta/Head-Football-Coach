@@ -50,9 +50,9 @@
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         {% for PositionGroup in PositionGroups%}
         {% if forloop.counter == 1%}
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-{{PositionGroup.PositionGroupName}}-tab" style="background-color: #{{page.SecondaryColor}};">{{PositionGroup.PositionGroupName}}</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-{{PositionGroup.PositionGroupID}}-tab" style="background-color: #{{page.SecondaryColor}};">{{PositionGroup.PositionGroupName}}</button>
         {% else %}
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-{{PositionGroup.PositionGroupName}}-tab">{{PositionGroup.PositionGroupName}}</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-{{PositionGroup.PositionGroupID}}-tab">{{PositionGroup.PositionGroupName}}</button>
         {% endif %}
         {% endfor %}
         {% include "HeadFootballCoach/ext_TeamList.html" %}
@@ -61,9 +61,9 @@
     <div id="nav-tabContent">
       {% for PositionGroup in PositionGroups%}
       {% if forloop.counter == 1%}
-      <div class="tab-content" style="display:block;"  id="nav-{{PositionGroup.PositionGroupName}}">
+      <div class="tab-content" style="display:block;"  id="nav-{{PositionGroup.PositionGroupID}}">
       {% else %}
-      <div class="tab-content" style="display:none;"  id="nav-{{PositionGroup.PositionGroupName}}">
+      <div class="tab-content" style="display:none;"  id="nav-{{PositionGroup.PositionGroupID}}">
       {% endif %}
           <div class='w3-display-container'>
             <div class='w3-row-padding'>
