@@ -61,7 +61,7 @@
 
                 <div class="w3-row-padding font24">
                   <div class="">
-                    <span class='minor-bold' data-field='TeamName'>Click on a team for more info</span> <span data-field='TeamNickname' ></span>
+                    <span class='thin-font margin-right-4' data-field="NationalRankDisplay"></span><span class='minor-bold margin-right-4' data-field='TeamName'>Click on a team for more info</span> <span data-field='TeamNickname' ></span>
                   </div>
                 </div>
                 <div  class="w3-row-padding w3-hide">
@@ -69,6 +69,50 @@
                     <li class='font12' data-field='CityAndState'></li>
                     <li class='font12' data-field='ConferenceID__ConferenceName'></li>
                   </ul>
+                </div>
+                <div class="w3-row-padding w3-hide margin-top-24">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th colspan="3" class='center-text font24'>Offense</th>
+                      </tr>
+                      <tr>
+                        <td rowspan="3" class='font32 team-highlight-stat-padding bold font-black'  ordinal-field="PPG_Rank">12th</td>
+                        <td data-field="PPG" class='right-text team-highlight-stat-padding'>42</td>
+                        <td>PPG</td>
+                      </tr>
+                      <tr>
+                        <td data-field="PassYPG" class='right-text team-highlight-stat-padding'>120</td>
+                        <td>Pass YPG</td>
+                      </tr>
+                      <tr>
+                        <td data-field="RushYPG" class='right-text team-highlight-stat-padding'>110</td>
+                        <td>Rush YPG</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="w3-row-padding w3-hide margin-top-24">
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th colspan="3" class='center-text font24'>Defense</th>
+                      </tr>
+                      <tr>
+                        <td rowspan="3" class='font32 team-highlight-stat-padding bold font-black'  ordinal-field="PAPG_Rank">36th</td>
+                        <td data-field="PAPG" class='right-text team-highlight-stat-padding'>31</td>
+                        <td>PPG</td>
+                      </tr>
+                      <tr>
+                        <td data-field="OpponentPassYPG" class='right-text team-highlight-stat-padding'>120</td>
+                        <td>Pass YPG</td>
+                      </tr>
+                      <tr>
+                        <td data-field="OpponentRushYPG" class='right-text team-highlight-stat-padding'>110</td>
+                        <td>Rush YPG</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
                 </div>
               </div>

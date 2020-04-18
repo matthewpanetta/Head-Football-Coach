@@ -3,6 +3,9 @@
   <div class="team-header-color-left" style='background-color: #{{team.TeamColor_Primary_HEX}}; border-right-color: #{{page.SecondaryColor}};'></div>
   <img class='teamTeamLogo' src='{{team.LogoURL}}' alt="My image">
   <div class='teamHeaderInfo'>
+    <span class='thin-font font20'>
+        {{team.CurrentTeamSeason.NationalRankDisplay}}
+    </span>
     <span class='teamSchoolName'>
       {{ team.TeamName }}
     </span>
@@ -22,26 +25,6 @@
       {% endif %}
       <a href="/World/{{page.WorldID}}/Team/{{team.TeamID}}/{{Link.HrefExtension}}">{{Link.Display}}</a>
       {% endfor %}
-    </div>
-  </div>
-  <div class='teamHeaderRankBox' style='border-color:{{team.TeamColor_Primary_HEX}}'>
-    <div class="teamHeaderRankHeader w3-row" style="background-color: #{{team.TeamColor_Primary_HEX}}">Team Rankings</div>
-    <div class="w3-col w3-display-container s6">
-      <div class="w3-row">
-        {{team.ConferenceID.ConferenceAbbreviation}} Ranking
-      </div>
-      <div class="w3-row">
-        {{team.CurrentTeamSeason.ConferenceRank}}
-      </div>
-    </div>
-    <div class="w3-col w3-display-container s6">
-      <div class="w3-row">
-        National Ranking
-      </div>
-      <div class="w3-row">
-        {{team.CurrentTeamSeason.NationalRank}}
-      </div>
-
     </div>
   </div>
   <div class="team-header-color-right align-middle" style='background-color: #{{team.TeamColor_Primary_HEX}}; border-left-color: #{{page.SecondaryColor}};'>

@@ -474,18 +474,16 @@ article>header {
 }
 
 .bold {
-  font-weight: 800;
+  font-weight: 800 !important;
   /*font-size: 30px;*/
 }
 
 .thin-font {
-  font-weight: 200;
-  /*font-size: 30px;*/
+  font-weight: 200 !important;
 }
 
 .minor-bold {
-  font-weight: 600;
-  /*font-size: 30px;*/
+  font-weight: 600 !important;
 }
 
 .teamHistoryPlayerLeaderRow {
@@ -534,6 +532,7 @@ input[type=text], input[type=password] {
 
 .selected-tab {
   font-weight: bold;
+  color: white;
 }
 
 .teamScheduleGameBox {
@@ -1038,6 +1037,10 @@ input[type=text], input[type=password] {
   font-size: 32px;
 }
 
+.font32 {
+  font-size: 32px;
+}
+
 .gameHeaderTeamContainer, .gameHeaderScoreContainer {
   float: left;
 }
@@ -1245,6 +1248,7 @@ td.WorldLeagueLeaderRowCell.NameCell {
   margin-top: 24px;
 }
 
+
 .margin-bottom-24 {
   margin-bottom: 24px;
 }
@@ -1257,8 +1261,12 @@ td.WorldLeagueLeaderRowCell.NameCell {
   text-align: center !important;
 }
 
-.left-text {
+.left-text  {
   text-align: left;
+}
+
+.right-text {
+  text-align: right;
 }
 
 .worldUpcomingTable {
@@ -1400,7 +1408,7 @@ tfoot td {
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 0;
-  margin: 0px 2px;
+  margin: 0px 0px;
 }
 
 .team-header-color-left {
@@ -1440,6 +1448,10 @@ img.teamTeamLogo {
     font-size: 12px;
 }
 
+.team-highlight-stat-padding {
+  padding-right: 12px;
+}
+
 .good{
   color: #0B5001;
   background-color: #BDEDC4;
@@ -1469,6 +1481,100 @@ img.teamTeamLogo {
 .L{
   color: #8F0600;
   font-weight: 600;
+}
+
+.A-Plus{
+  color: #0B5001;
+  font-weight: 600;
+}
+.A{
+  color: #386616;
+  font-weight: 600;
+}
+.A-Minus{
+  color: #597827;
+  font-weight: 600;
+}
+.B-Plus{
+  color: #748533;
+  font-weight: 600;
+}
+.B{
+  color: #8b8e3c;
+  font-weight: 600;
+}
+.B-Minus{
+  color: #9e9141;
+  font-weight: 600;
+}
+.C-Plus{
+  color: #ab8f43;
+  font-weight: 600;
+}
+.C{
+  color: #b48940;
+  font-weight: 600;
+}
+.C-Minus{
+  color: #b87d3a;
+  font-weight: 600;
+}
+.D-Plus{
+  color: #b66c31;
+  font-weight: 600;
+}
+.D{
+  color: #af5624;
+  font-weight: 600;
+}
+.D-Minus{
+  color: #a23914;
+  font-weight: 600;
+}
+.F, .F-Minus{
+  color: #8f0600;
+  font-weight: 600;
+}
+
+
+.A-Plus-Fill{
+  background-color: #0B5001;
+}
+.A-Fill{
+  background-color: #386616;
+}
+.A-Minus-Fill{
+  background-color: #597827;
+}
+.B-Plus-Fill{
+  background-color: #748533;
+}
+.B-Fill{
+  background-color: #8b8e3c;
+}
+.B-Minus-Fill{
+  background-color: #9e9141;
+}
+.C-Plus-Fill{
+  background-color: #ab8f43;
+}
+.C-Fill{
+  background-color: #b48940;
+}
+.C-Minus-Fill{
+  background-color: #b87d3a;
+}
+.D-Plus-Fill{
+  background-color: #b66c31;
+}
+.D-Fill{
+  background-color: #af5624;
+}
+.D-Minus-Fill{
+  background-color: #a23914;
+}
+.F-Fill, .F-Minus-Fill{
+  background-color: #8f0600;
 }
 
 #player-highlight-info-selection-bar .w3-bar-item {
@@ -1517,48 +1623,53 @@ img.teamTeamLogo {
 
 button.dt-button.active:not(.disabled) {
   background-color: white;
-  box-shadow: inset 1px 1px 3px #999999;
-  border-radius: 50px;
+  border-bottom: 5px solid black;
   background-image: none;
 }
 
 div.dt-buttons {
-  display: inline-flex;
-    background: #f1f2f3;
-    border-radius: 50px;
+  justify-content: space-around;
+  display: flex;
+    background: white;
     overflow: visible;
+    width: 100%;
 }
 
 .dt-buttons button.dt-button {
   font-size: 12px;
   border: none;
   height: 32px;
-  padding: 0px 9px;
+  padding: 0px 2px;
   background-color: transparent;
   background-image: none;
   overflow: visible;
-
+  box-shadow: none;
+  color: black;
+  flex-grow: 1;
 }
 
-.dt-buttons button.dt-button:hover {
-  color: maroon;
+.dt-buttons button.dt-button:hover, .dt-buttons button.dt-button.active:hover:not(.disabled) {
+  color: black;
   background-color: transparent;
   background-image: none;
   border: none;
+  border-bottom: 5px solid maroon;
+  box-shadow: none;
+
 }
 .dt-buttons button.dt-button:focus {
   outline: none;
   background-color: transparent;
   background-image: none;
-  border: none;
-  border-radius: 50px;
+  border-bottom: 5px solid maroon;
+  box-shadow: none;
 }
 .dt-buttons button.dt-button.active {
   color: maroon;
   background-color: white;
-  box-shadow: 0 1px 6px 2px #999999;
-  border-radius: 50px;
+  border-bottom: 5px solid black;
   background-image: none;
+  box-shadow: none;
 }
 
 
@@ -1578,4 +1689,12 @@ div.dt-buttons {
   border: 1px solid #dad55e !important;
 	background: #fffa90 !important;
 	color: #777620 !important;
+}
+
+.center-aligned-table  td:not(.left-text), .center-aligned-table  th {
+  text-align: center;
+}
+
+.font-black {
+  color: black;
 }

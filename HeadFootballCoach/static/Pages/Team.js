@@ -299,10 +299,30 @@ $(document).ready(function(){
   DrawFaces(TeamJerseyStyle, TeamJerseyInvert);
   DrawSchedule();
 
+  var MapData = $('#map-data')[0];
+  MapData = JSON.parse(MapData.textContent);
+  //DrawMap(MapData);
+
+
   //DrawCoachOrgChart(TeamName, CoachOrg);
   //GET_HistoricalTeamLeaders
 
 });
+
+function DrawMap(MapData){
+
+  console.log('Drawing map', MapData);
+
+   var Center = {lat: parseFloat(MapData.Latitude), lng: parseFloat(MapData.Longitude)};
+
+  var map = new google.maps.Map($('#map'), {
+          center: Center,
+          zoom: 6
+        });
+
+   var marker = new google.maps.Marker({position: Center, map: map});
+}
+
 
 function AddScheduleListeners(){
   var InitialGameBox = $('.SelectedGameBox')[0];

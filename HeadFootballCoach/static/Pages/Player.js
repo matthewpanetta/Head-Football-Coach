@@ -310,8 +310,9 @@ function PopulatePlayerStats(WorldID, GameStatData, RecentGameStatData, PlayerSt
             $(td).addClass('teamTableBorder');
             $(td).parent().attr('PlayerID', DataObject['PlayerID']);
         }},
-        {"data": "TeamGameID__GameID__WeekID__WeekName", "sortable": true, 'visible': true, 'orderSequence':DescFirst},
-        {"data": "GameOutcomeLetter", "sortable": true, 'visible': true, 'className': 'col-group center-text', 'orderSequence':DescFirst,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+        {"data": "TeamGameID__GameID__WeekID__WeekNumber", "sortable": true, 'visible': true, 'orderSequence':DescFirst,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            $(td).html(DataObject.TeamGameID__GameID__WeekID__WeekName);
+        }},        {"data": "GameOutcomeLetter", "sortable": true, 'visible': true, 'className': 'col-group center-text', 'orderSequence':DescFirst,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).html("<span class='"+StringValue+"'>"+StringValue+" </span><a href='"+DataObject.GameHref+"'> "+ DataObject.GameScoreDisplay+"</a>");
         }},
         {"data": "PAS_Completions", "sortable": true, 'visible': false, 'orderSequence':DescFirst},

@@ -52,7 +52,7 @@ def CalculateSRS(TeamList, GameList):
         spacer = ' ' * (32 - len(str(team.TeamID.TeamName)))
 
         rating = (rating + RatingFloorModifier) * RatingNormalizationModifier
-        print((('{0}        {1}{2}{3}-{4}-{5}    {6}').format(count,str(team.TeamID.TeamName),spacer,W,L,T,round(rating,4))))
+        print((('{0}        {1}{2}{3}-{4}    {5}').format(count,str(team.TeamID.TeamName),spacer,W,L,round(rating,4))))
         ReturnList.append({'TeamSeason': team, 'Rating': rating})
         count += 1
 

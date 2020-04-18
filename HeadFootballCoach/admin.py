@@ -102,7 +102,7 @@ class TeamSeasonWeekRankAdmin(admin.ModelAdmin):
     list_filter = ['TeamSeasonID__TeamID__TeamName']
 
 class TeamGameAdmin(admin.ModelAdmin):
-    list_display = ['TeamGameID', 'GameID', 'TeamSeasonID', 'IsHomeTeam', 'IsWinningTeam', 'Points', 'OpposingTeamGameID']#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = ['TeamGameID', 'GameID', 'TeamSeasonID', 'IsHomeTeam', 'IsWinningTeam', 'Points', 'OpposingTeamGameID', 'OpposingTeamSeasonID']#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
     list_filter = ['GameID__WasPlayed', 'GameID__WeekID']
 
 class TeamRivalryAdmin(admin.ModelAdmin):

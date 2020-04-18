@@ -594,6 +594,17 @@ class Conference(models.Model):
     def __str__(self):
         return self.ConferenceName
 
+class Stadium(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    StadiumID = models.AutoField(primary_key = True, db_index=True)
+
+    CityID = models.ForeignKey(City, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+
+    StadiumName = models.CharField(max_length = 100, blank=True, null=True, default=None)
+    StadiumImageURL = models.CharField(max_length = 100, blank=True, null=True, default=None)
+
+    StadiumCapacity = models.IntegerField(default = 0)
+
 
 class Team(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
@@ -601,6 +612,7 @@ class Team(models.Model):
 
     TeamID = models.AutoField(primary_key = True, db_index=True)
 
+    StadiumID = models.ForeignKey(Stadium, on_delete=models.CASCADE, blank=True, null=True, default=None)
     CityID = models.ForeignKey(City, on_delete=models.CASCADE, blank=True, null=True, default=None)
     IsUserTeam = models.BooleanField(default=False)
     TeamName = models.CharField(max_length=40)
@@ -622,8 +634,6 @@ class Team(models.Model):
     CoachStabilityRating     = models.PositiveSmallIntegerField(default=0)
     ChampionshipContenderRating =models.PositiveSmallIntegerField(default=0)
     LocationRating =models.PositiveSmallIntegerField(default=0)
-
-    StadiumCapacity = models.IntegerField(default = 30000)
 
     DefaultOffensiveScheme = models.CharField(max_length = 15, blank=True, null=True, default=None)
     DefaultDefensiveScheme = models.CharField(max_length = 15, blank=True, null=True, default=None)
@@ -1749,6 +1759,9 @@ class TeamSeasonDateRank(models.Model):
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
+
+
+
 
 class Game(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)

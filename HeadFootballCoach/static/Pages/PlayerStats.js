@@ -62,43 +62,79 @@ function GetPlayerStats(WorldID, data){
 
   console.log('In PlayerStats!', data);
 
-  var ColumnsToAlwaysShow = [0,1,2,3,4,5];
-
-  var ShowColumnMap = {
-    'Passing-Stats': [6,7,8,9,10],
-    'Rushing-Stats': [11,12,13,14,15, 16,17],
-    'Receiving-Stats': [18,19,20,21,22,23,24],
-    'Defense-Stats': [25,26,27,28,29,30],
-
-    'Physical-Skills': [31,32,33,34,35,36,37],
-    'Passing-Skills': [38,39,40,41,42,43,44],
-    'Defense-Skills': [45,46,47,48,49,50,51],
-    'Rushing-Skills': [52,53,54,55],
-    'Receiving-Skills': [56,57,58,59],
-    'Blocking-Skills': [60,61, 62],
-    'Kicking-Skills': [63,64],
-  };
-
-  var FullColumnList = [];
-  var HideColumnMap = {}
-  $.each(ShowColumnMap, function(key, ColList){
-    $.each(ColList, function(ind, ColNum){
-      if (($.inArray( ColNum,  ColumnsToAlwaysShow)) == -1){
-        FullColumnList.push(ColNum);
+      var ColCategories = {
+        'Base': 6,
+        'PAS <i class="fas fa-list-ol"></i>': 5,
+        'RUSH <i class="fas fa-list-ol"></i>': 7,
+        'REC <i class="fas fa-list-ol"></i>': 7,
+        'DEF <i class="fas fa-list-ol"></i>': 7,
+        'PHY <i class="fas fa-chart-line"></i>': 7,
+        'PAS <i class="fas fa-chart-line"></i>': 7,
+        'RUS <i class="fas fa-chart-line"></i>': 4,
+        'REC <i class="fas fa-chart-line"></i>': 4,
+        'BLK <i class="fas fa-chart-line"></i>': 3,
+        'DEF <i class="fas fa-chart-line"></i>': 7,
+        'KCK <i class="fas fa-chart-line"></i>': 2,
       }
-    })
-  });
 
-  $.each(ShowColumnMap, function(key, ColList){
-     var cols = $.grep( FullColumnList, function( val, ind ) {
-        return $.inArray( val,  ColList) == -1
+      var ShowColumnMap = {}
+      var ColCounter = 0;
+      $.each(ColCategories, function(key, val){
+        ShowColumnMap[key] = []
+        for(var i = ColCounter; i < ColCounter+val; i++){
+          ShowColumnMap[key].push(i);
+        }
+        ColCounter = ColCounter + val;
+      })
+
+      var FullColumnList = [];
+      var HideColumnMap = {}
+      $.each(ShowColumnMap, function(key, ColList){
+        $.each(ColList, function(ind, ColNum){
+          if ((($.inArray( ColNum,  ShowColumnMap['Base'])) == -1)){
+            FullColumnList.push(ColNum);
+          }
+        })
       });
-      HideColumnMap[key] = cols;
-  });
 
-  console.log('ShowColumnMap', ShowColumnMap)
-  console.log('HideColumnMap', HideColumnMap)
+      $.each(ShowColumnMap, function(key, ColList){
+         var cols = $.grep( FullColumnList, function( val, ind ) {
+            return $.inArray( val,  ColList) == -1
+          });
+          HideColumnMap[key] = cols;
+      });
 
+
+      var ButtonList = [{
+          extend: 'searchPanes',
+          config: {
+            cascadePanes: true,
+            viewTotal: false, //maybe true later - TODO
+            columns:[0,2,3],
+            collapse: 'Filter Players',
+          },
+
+      }]
+
+      $.each(ColCategories, function(key, val){
+        if (key == 'Base'){
+          return true;
+        }
+        var ButtonObj = {extend: 'colvisGroup',
+                          text: key,
+                          show: ShowColumnMap[key],
+                          hide: HideColumnMap[key],
+                          action: function( e, dt, node, config){
+                            console.log('config', e, dt, node, config)
+                            dt.columns(config.show).visible(true);
+                            dt.columns(config.hide).visible(false);
+
+                           $(".dt-buttons").find("button").removeClass("active");
+                           node.addClass("active");
+
+                     }}
+        ButtonList.push(ButtonObj)
+      });
 
   var table = $('#PlayerStats').DataTable({
       "dom": 'Brtp',
@@ -113,104 +149,21 @@ function GetPlayerStats(WorldID, data){
       "paginationType": "full_numbers",
       "paging": true,
       "data": data,
-       'buttons':[
-            {
-                extend: 'searchPanes',
-                config: {
-                  cascadePanes: true,
-                  viewTotal: false, //maybe true later - TODO
-                  columns:[0,2,3],
-                  collapse: 'Filter Players',
-                },
-                className: 'w3-button w3-small w3-round-large'
-
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Passing Stats',
-                show: ShowColumnMap['Passing-Stats'],
-                hide: HideColumnMap['Passing-Stats'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Rushing Stats',
-                show: ShowColumnMap['Rushing-Stats'],
-                hide: HideColumnMap['Rushing-Stats'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Receiving Stats',
-                show: ShowColumnMap['Receiving-Stats'],
-                hide: HideColumnMap['Receiving-Stats'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Defensive Stats',
-                show: ShowColumnMap['Defense-Stats'],
-                hide: HideColumnMap['Defense-Stats'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Physical Skills',
-                show: ShowColumnMap['Physical-Skills'],
-                hide: HideColumnMap['Physical-Skills'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Passing Skills',
-                show: ShowColumnMap['Passing-Skills'],
-                hide: HideColumnMap['Passing-Skills'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Rushing Skills',
-                show: ShowColumnMap['Rushing-Skills'],
-                hide: HideColumnMap['Rushing-Skills'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Receiving Skills',
-                show: ShowColumnMap['Receiving-Skills'],
-                hide: HideColumnMap['Receiving-Skills'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Blocking Skills',
-                show: ShowColumnMap['Blocking-Skills'],
-                hide: HideColumnMap['Blocking-Skills'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-            {
-                extend: 'colvisGroup',
-                text: 'Kicking Skills',
-                show: ShowColumnMap['Kicking-Skills'],
-                hide: HideColumnMap['Kicking-Skills'],
-                className: 'w3-button w3-small w3-round-large'
-            },
-
-        ],
+       'buttons':ButtonList,
       "columns": [
-        {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+        {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, 'className': 'left-text', 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).html("<a href='"+DataObject['PlayerTeamHref']+"'><img class='worldTeamStatLogo padding-right' src='"+DataObject['playerteamseason__TeamSeasonID__TeamID__TeamLogoURL']+"'/>"+StringValue+"</a>");
             $(td).attr('style', 'border-left-color: #' + DataObject['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
             $(td).addClass('teamTableBorder');
             $(td).parent().attr('PlayerID', DataObject['PlayerID']);
         }},
-          {"data": "PlayerName", "searchable": true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+          {"data": "PlayerName", "searchable": true, 'className': 'left-text', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
               $(td).html("<a href='"+DataObject['PlayerHref']+"'>"+StringValue+"</a>");
           }},
           {"data": "ClassID__ClassAbbreviation", "sortable": true, 'searchable': true},
           {"data": "PositionID__PositionAbbreviation", "sortable": true, 'searchable': true},
           {"data": "playerseasonskill__OverallRating", "sortable": true, 'orderSequence':["desc"]},
-          {"data": "GameScore", "sortable": true, 'orderSequence':["desc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+          {"data": "GameScore", "sortable": true, 'orderSequence':["desc"], 'className': 'col-group', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
 
               $(td).html(parseInt(StringValue));
           }},
@@ -219,7 +172,7 @@ function GetPlayerStats(WorldID, data){
           {"data": "PAS_CompletionPercentage", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "PAS_YPG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "PAS_TD", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "PAS_INT", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "PAS_INT", "sortable": true, 'visible': false,'className': 'col-group', 'orderSequence':["desc"]},
 
           {"data": "RUS_Yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "RUS_YPC", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
@@ -227,7 +180,7 @@ function GetPlayerStats(WorldID, data){
           {"data": "RUS_TD", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "RUS_LNG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "RUS_20", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "FUM_Fumbles", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "FUM_Fumbles", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
           {"data": "REC_Yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "REC_Receptions", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
@@ -235,14 +188,15 @@ function GetPlayerStats(WorldID, data){
           {"data": "REC_YPG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "REC_TD", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "REC_Targets", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "REC_LNG", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "REC_LNG", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
           {"data": "DEF_Tackles", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "DEF_TacklesForLoss", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "DEF_Sacks", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "DEF_INT", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "DEF_Deflections", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "FUM_Forced", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "FUM_Recovered", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "FUM_Recovered", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
           {"data": "playerseasonskill__Strength_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__Agility_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
@@ -250,7 +204,7 @@ function GetPlayerStats(WorldID, data){
           {"data": "playerseasonskill__Acceleration_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__Stamina_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__Jumping_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Awareness_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Awareness_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
           {"data": "playerseasonskill__ThrowPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__ShortThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
@@ -258,7 +212,21 @@ function GetPlayerStats(WorldID, data){
           {"data": "playerseasonskill__DeepThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__ThrowOnRun_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__ThrowUnderPressure_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__PlayAction_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__PlayAction_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__Carrying_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Elusiveness_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__BallCarrierVision_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__BreakTackle_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__Catching_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__CatchInTraffic_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__RouteRunning_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Release_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+          {"data": "playerseasonskill__PassBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__RunBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__ImpactBlock_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
           {"data": "playerseasonskill__PassRush_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__BlockShedding_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
@@ -266,24 +234,10 @@ function GetPlayerStats(WorldID, data){
           {"data": "playerseasonskill__HitPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__ManCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__ZoneCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Press_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-
-          {"data": "playerseasonskill__Carrying_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Elusiveness_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__BallCarrierVision_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__BreakTackle_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-
-          {"data": "playerseasonskill__Catching_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__CatchInTraffic_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__RouteRunning_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Release_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-
-          {"data": "playerseasonskill__PassBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__RunBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__ImpactBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__Press_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
           {"data": "playerseasonskill__KickPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__KickAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerseasonskill__KickAccuracy_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
       ],
       'order': [[ 4, "desc" ]],
@@ -331,7 +285,7 @@ function GetPlayerStats(WorldID, data){
 
 
         $.each(data.Skills, function(SkillGroup, SkillObj){
-          var Container = $('<div class="w3-container"></div>').appendTo($('#highlight-ratings'));
+          var Container = $('<div class=""></div>').appendTo($('#highlight-ratings'));
           $('<div class="w3-margin-top">'+SkillGroup+'</div>').appendTo(Container);
           $.each(SkillObj, function(key, val){
             $('<div class="inline-block min-width-75" style="margin: 2px 2px; "><div class="font10 width100">'+key+'  </div>  <div class="font20 width100">'+val+'</div></div>').appendTo(Container);
@@ -339,11 +293,12 @@ function GetPlayerStats(WorldID, data){
         });
 
 
+        console.log('Awards', data.Awards)
         $('#highlight-awards').empty();
         if (Object.keys(data.Awards).length > 0){
           $('#highlight-awards-tab').removeClass('w3-hide');
-          $('<div class="w3-container"></div>').appendTo($('#highlight-awards'));
-          var Container = $('<ul class="w3-ul w3-small"></ul>').appendTo($('#highlight-awards .w3-container'));
+          $('<div class=""></div>').appendTo($('#highlight-awards'));
+          var Container = $('<ul class="w3-ul w3-small"></ul>').appendTo($('#highlight-awards > div'));
         }
         else {
           $('#highlight-awards-tab').addClass('w3-hide');
@@ -353,6 +308,7 @@ function GetPlayerStats(WorldID, data){
         }
 
         $.each(data.Awards, function(AwardName, AwardCount){
+          console.log('AwardName, AwardCount', AwardName, AwardCount, Container)
           $('<li>'+AwardCount+'x '+AwardName+' </li>').appendTo(Container);
 
         });
@@ -371,7 +327,7 @@ function GetPlayerStats(WorldID, data){
         }
 
         $.each(data.Stats, function(StatGroup, StatObj){
-          var Container = $('<div class="w3-container"></div>').appendTo($('#highlight-stats'));
+          var Container = $('<div class=""></div>').appendTo($('#highlight-stats'));
           $('<div class="w3-margin-top">'+StatGroup+'</div>').appendTo(Container);
           $('<div class="width100" style="width: 100%;"><table class="tiny" id="highlight-stat-statgroup-'+StatGroup+'" style="width: 100%;"></table> </div>').appendTo(Container);
 
@@ -386,7 +342,8 @@ function GetPlayerStats(WorldID, data){
             data: StatObj,
             columns: columns,
             responsive: true,
-            dom: 't'
+            dom: 't',
+            scrollX: true
 
           });
 

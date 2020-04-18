@@ -2,6 +2,7 @@
   {% include "HeadFootballCoach/ext_NavBar.html" %}
 </div>
 {% load static %}
+{% load CustomTags %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'common/searchPanes.dataTables.min.css' %}">
@@ -11,6 +12,8 @@
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" SecondaryJerseyColor="{{page.SecondaryJerseyColor}}" TeamID="{{team.TeamID}}" PlayerID="{{PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
+
+{% include "HeadFootballCoach/ext_TeamColoring.html" %}
 
 
 <body>
@@ -53,60 +56,79 @@
           <div>{{player.HometownAndState}}</div>
         </li>
       </ul>
-      <div class='playerHeaderStatsBox' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
-        {% for SeasonStat in SeasonStats %}
-        {% if SeasonStat.TeamSeasonID__LeagueSeasonID__IsCurrent == 1 %}
-        <div class="playerHeaderStatsHeader" style="background-color:{{playerTeam.TeamColor_Primary_HEX}}">{{SeasonStat.TeamSeasonID__LeagueSeasonID__SeasonStartYear}} Stats</div>
-        {%for Stat in SeasonStat.Stats%}
-        {% if Stat.SmallDisplay %}
-        <div class="w3-col w3-display-container s4">
-          <div class="w3-row playerOverviewRatingAbbreviation">
-            {{Stat.DisplayName}}
-          </div>
-          <div class="w3-row font-size-16">
-            {{Stat.Value}}
-          </div>
+      <div class="font32 inline-block bold w3-display-container" style="height: 80px; width:100px; border: 1px solid black; vertical-align: top; margin: 20px 20px 20px 40px;">
+        <div class="team-primary-background font12 center-text" style=" color: white;">
+          Overall
         </div>
-        {% endif %}
-        {%endfor%}
-        {% endif %}
-        {% endfor %}
+        <div class=" center-text">
+          {{OverallRating}}
+        </div>
+        <div class="w3-grey w3-display-bottommiddle statBar" style='width: 100%;'>
+          <div class="w3-container  {{OverallRating|NumberToGradeClass}}-Fill" style="width:{{OverallRating}}%; height: 8px;"></div>
+        </div>
       </div>
       <div class="team-header-color-right" style='background-color: #{{playerTeam.TeamColor_Primary_HEX}}; border-left-color: #{{page.SecondaryColor}};'></div>
 
     </div>
     <nav>
-      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: {{page.PrimaryColor|TeamBackgroundFontColor}}; ">
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
         {% if player.IsRecruit %}
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-recruiting-tab">Recruiting</button>
         {% else %}
+        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-ratings-tab">Ratings</button>
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-stats-tab">Stats</button>
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-game-log-tab">Game Log</button>
         {% endif %}
         {% if Awards %}
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-awards-tab">Awards</button>
         {%endif%}
+        {% include "HeadFootballCoach/ext_PlayerList.html" %}
       </div>
     </nav>
     <div  id="nav-tabContent">
       <div class="tab-content" style='display:block;' id="nav-overview" >
         <div class='w3-container'>
-          <div class='w3-row'>
+          <div class='w3-row-padding'>
             <div class='w3-col s6 playerOverviewRatingBox'>
-              {% for Skill in Skills%}
-              <div class='playerOverviewRatingBoxGrouping'>
-                <span class='playerOverviewRatingAbbreviation'>{{Skill.SkillName}}</span>
-                <div class="w3-light-grey w3-round-xlarge statBar">
-                  <div class="w3-container w3-blue w3-round-xlarge" style="background-color:#{{playerTeam.TeamColor_Primary_HEX}} !important; width:{{Skill.Value}}%">{{Skill.Value}}</div>
-                </div>
+              <div class="w3-card margin-bottom-24">
+                <table class='width100 w3-table-all'>
+                    {% for SkillGroup in Skills%}
+                    {% if SkillGroup.TopShow%}
+                    <thead>
+                    <tr  class='team-primary-background'>
+                      <th colspan="3">{{SkillGroup.SkillGroup}}</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for Skill in SkillGroup.Skills%}
+                    <tr>
+                      <td style='width:15%' class='bold'>{{Skill.SkillName}}</td>
+                      <td style='width:70%'>
+                        <div class="w3-grey w3-round-xlarge statBar" style='width: 60%; margin-left: 20%;'>
+                          <div class="w3-container w3-round-xlarge {{Skill.SkillValue|NumberToGradeClass}}-Fill" style="width:{{Skill.SkillValue}}%; height: 8px;"></div>
+                        </div>
+                      </td>
+                      <td style='width:15%' class='font20'>{{Skill.SkillValue}}</td>
+                    </tr>
+
+                    {% endfor %}
+                  </tbody>
+                    {% endif %}
+                    {% endfor %}
+                </table>
+
               </div>
-              {% endfor %}
             </div>
             <div class='w3-col s6'>
+              {% if playerTeam.IsUserTeam%}
+              <div class="w3-card">
+                <h2>Actions</h2>
+              </div>
+              {% endif %}
               <div class="w3-card">
 
-              <span class='table_title'>Recent Games</span>
               <table class="w3-table table-striped width100" id='RecentGameStats' style='width: 100%;'>
                 <thead>
                   <tr>
@@ -425,6 +447,51 @@
                 </tr>
                 {%endfor%}
               </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-ratings" >
+        <div class='w3-container'>
+          <div class='w3-row-padding'>
+            <div class='w3-col s8'>
+              <div class="w3-card margin-bottom-24">
+                <table class='width100 w3-table-all'>
+                    {% for SkillGroup in Skills%}
+                    <thead>
+                    <tr class='team-primary-background'>
+                      <th colspan="3">{{SkillGroup.SkillGroup}}</th>
+                      <th class=" text-center">Avg {{player.Position}}</th>
+                      <th class=" text-center">Avg {{playerTeam.ConferenceID.ConferenceAbbreviation}} {{player.Position}}</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for Skill in SkillGroup.Skills%}
+                    <tr>
+                      <td class='bold'>{{Skill.SkillName}}</td>
+                      <td style='width:55%'>
+                        <div class="w3-grey w3-round-xlarge statBar" style='width: 100%;'>
+                          <div class="w3-container w3-round-xlarge {{Skill.SkillValue|NumberToGradeClass}}-Fill" style="width:{{Skill.SkillValue}}%; height: 8px;"></div>
+                        </div>
+                      </td>
+                      <td class='font20 text-center'>{{Skill.SkillValue}}</td>
+                      <td class="text-center">
+                        {{Skill.PositionAverage}}
+                      </td>
+                      <td class="text-center">
+                        {{Skill.PositionConferenceAverage}}
+                      </td>
+                    </tr>
+
+                    {% endfor %}
+                  </tbody>
+                    {% endfor %}
+                </table>
+
+              </div>
+
+
             </div>
           </div>
         </div>

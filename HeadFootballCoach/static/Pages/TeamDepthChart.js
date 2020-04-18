@@ -53,15 +53,15 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
 
     var ColCategories = {
       'Base': 3,
-      'Physical Skills': 6,
-      'Pass Skills': 7,
-      'Rush Skills': 5,
-      'Rec Skills': 6,
-      'Block Skills': 6,
-      'DL Skills': 6,
-      'LB Skills': 8,
-      'DB Skills': 6,
-      'Kick Skills': 4,
+      'Physical <i class="fas fa-chart-line"></i>': 6,
+      'Pass <i class="fas fa-chart-line"></i>': 7,
+      'Rush <i class="fas fa-chart-line"></i>': 5,
+      'Rec <i class="fas fa-chart-line"></i>': 6,
+      'Block <i class="fas fa-chart-line"></i>': 6,
+      'DL <i class="fas fa-chart-line"></i>': 6,
+      'LB <i class="fas fa-chart-line"></i>': 8,
+      'DB <i class="fas fa-chart-line"></i>': 6,
+      'Kick <i class="fas fa-chart-line"></i>': 4,
 
     }
 

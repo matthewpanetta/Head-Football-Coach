@@ -972,8 +972,14 @@ def EndRegularSeason(WorldID):
             HomeTSWR = TeamSeasonWeekRank.objects.filter(TeamSeasonID = HomeTS).filter(IsCurrent=1).first()
             AwayTSWR = TeamSeasonWeekRank.objects.filter(TeamSeasonID = AwayTS).filter(IsCurrent=1).first()
 
-            HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G, TeamSeasonWeekRankID = HomeTSWR)
-            AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G, TeamSeasonWeekRankID = AwayTSWR)
+            HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS,OpposingTeamSeasonID=AwayTS, IsHomeTeam = True,  GameID = G, TeamSeasonWeekRankID = HomeTSWR)
+            AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS,OpposingTeamSeasonID=HomeTS, IsHomeTeam = False, GameID = G, TeamSeasonWeekRankID = AwayTSWR)
+
+            HomeTeamGame.save()
+            AwayTeamGame.save()
+
+            HomeTeamGame.OpposingTeamGameID = AwayTeamGame
+            AwayTeamGame.OpposingTeamGameID = HomeTeamGame
 
             HomeTeamGame.save()
             AwayTeamGame.save()
@@ -1025,8 +1031,14 @@ def CreateBowls(WorldID):
             G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = GameTime, WeekID = NextWeek, BowlID = B)
             G.save()
 
-            HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, IsHomeTeam = True,  GameID = G, TeamSeasonWeekRankID=HomeTSWR)
-            AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, IsHomeTeam = False, GameID = G, TeamSeasonWeekRankID=AwayTSWR)
+            HomeTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = HomeTS, OpposingTeamSeasonID=AwayTS, IsHomeTeam = True,  GameID = G, TeamSeasonWeekRankID=HomeTSWR)
+            AwayTeamGame = TeamGame(WorldID=CurrentWorld,TeamSeasonID = AwayTS, OpposingTeamSeasonID=HomeTS,IsHomeTeam = False, GameID = G, TeamSeasonWeekRankID=AwayTSWR)
+
+            HomeTeamGame.save()
+            AwayTeamGame.save()
+
+            HomeTeamGame.OpposingTeamGameID = AwayTeamGame
+            AwayTeamGame.OpposingTeamGameID = HomeTeamGame
 
             HomeTeamGame.save()
             AwayTeamGame.save()

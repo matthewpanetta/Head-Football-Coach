@@ -1,0 +1,37 @@
+{% load static %}
+{% load CustomTags%}
+<head>
+  <style id="addedTeamStyle">
+
+    .dt-buttons button.dt-button:hover, .dt-buttons button.dt-button.active:hover:not(.disabled) {
+      color: #{{page.PrimaryColor|TeamBackgroundFontColorBlack}} !important;
+      border-bottom: 5px solid #{{page.SecondaryColor}} !important;
+      background-color: white !important;
+    }
+    .dt-buttons button.dt-button:focus {
+      outline: none;
+      background-color: transparent;
+      background-image: none;
+      border-bottom: 5px solid #{{page.PrimaryColor}} !important;
+      box-shadow: none;
+    }
+    .dt-buttons button.dt-button.active {
+      color: #{{page.PrimaryColor|TeamBackgroundFontColorBlack}} !important;
+      background-color: white;
+      border-bottom: 5px solid #{{page.PrimaryColor}} !important;
+      background-image: none;
+      box-shadow: none;
+    }
+
+    button.w3-bar-item.w3-button:hover {
+      background-color: white !important;
+      color: #{{page.PrimaryColor|TeamBackgroundFontColorBlack}} !important;
+    }
+
+    .team-primary-background {
+      background-color: #{{page.PrimaryColor}} !important;
+      color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
+    }
+  </style>
+
+</head>

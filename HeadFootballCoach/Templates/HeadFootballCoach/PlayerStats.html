@@ -36,41 +36,56 @@
             <div class='w3-col s9'>
               <div class="w3-card " id='PlayerStatsParent'>
 
-                <table class="w3-table w3-table-all w3-hoverable" id='PlayerStats'  style="width:100%">
+                <table class="w3-table w3-table-all w3-hoverable center-aligned-table" id='PlayerStats'  style="width:100%">
                   <thead>
+                    <tr>
+                      <th colspan="6" class="col-group">PLAYER</th>
+                      <th colspan="5" class="col-group">PASSING STATS</th>
+                      <th colspan="7" class="col-group">RUSHING STATS</th>
+                      <th colspan="7" class="col-group">RECEIVING STATS</th>
+                      <th colspan="7" class="col-group">DEFENSE STATS</th>
+                      <th colspan="7" class="col-group">PHYSICAL SKILLS</th>
+                      <th colspan="7" class="col-group">PASSING SKILLS</th>
+                      <th colspan="4" class="col-group">RUSHING SKILLS</th>
+                      <th colspan="4" class="col-group">RECEIVING SKILLS</th>
+                      <th colspan="3" class="col-group">BLOCKING SKILLS</th>
+                      <th colspan="7" class="col-group">DEFENSE SKILLS</th>
+                      <th colspan="2" class="col-group">KICKING SKILLS</th>
+                    </tr>
                     <tr>
                       <th data-data="PlayerTeam" data-tooltip-title="Player Current Team">Team</th>
                       <th data-data="PlayerName">Player</th>
                       <th data-data="ClassID__ClassAbbreviation">Class</th>
                       <th data-data="Position">Position</th>
                       <th data-data="playerseasonskill__OverallRating">OVR</th>
-                      <th data-data="GameScore">Game Score</th>
-                      <th data-data="PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Pass Yards</th>
-                      <th data-data="PAS_CompletionPercentage" class='WorldPlayerStats-Stat-Passing'>Pass %</th>
-                      <th data-data="PAS_YPG" class='WorldPlayerStats-Stat-Passing'>Pass YPG</th>
-                      <th data-data="PAS_TD" class='WorldPlayerStats-Stat-Passing'>Pass TDs</th>
-                      <th data-data="PAS_INT" class='WorldPlayerStats-Stat-Passing'>Pass INT</th>
-                      <th data-data="RUS_Yards" class='WorldPlayerStats-Stat-Rushing'>Rush Yards</th>
-                      <th data-data="RUS_YPC" class='WorldPlayerStats-Stat-Rushing'>Rush YPC</th>
-                      <th data-data="RUS_YPG" class='WorldPlayerStats-Stat-Rushing'>Rush YPG</th>
-                      <th data-data="RUS_TD" class='WorldPlayerStats-Stat-Rushing'>Rush TDs</th>
-                      <th data-data="RUS_LNG" class='WorldPlayerStats-Stat-Rushing'>Rush LNG</th>
-                      <th data-data="RUS_20" class='WorldPlayerStats-Stat-Rushing'>Rush 20+</th>
-                      <th data-data="FUM_Fumbles" class='WorldPlayerStats-Stat-Rushing'>Rush Fum</th>
-                      <th data-data="REC_Yards" class='WorldPlayerStats-Stat-Receiving'>Rec Yards</th>
-                      <th data-data="REC_Receptions" class='WorldPlayerStats-Stat-Receiving'>Rec Catches</th>
-                      <th data-data="REC_YPC" class='WorldPlayerStats-Stat-Receiving'>Rec YPC</th>
-                      <th data-data="REC_YPG" class='WorldPlayerStats-Stat-Receiving'>Rec YPG</th>
-                      <th data-data="REC_TD" class='WorldPlayerStats-Stat-Receiving'>Rec TDs</th>
-                      <th data-data="REC_Targets" class='WorldPlayerStats-Stat-Receiving'>Rec Targets</th>
-                      <th data-data="REC_LNG" class='WorldPlayerStats-Stat-Receiving'>Rec LNG</th>
+                      <th data-data="GameScore" class="col-group">Game Score</th>
+                      <th data-data="PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Yards</th>
+                      <th data-data="PAS_CompletionPercentage" class='WorldPlayerStats-Stat-Passing'>CMP %</th>
+                      <th data-data="PAS_YPG" class='WorldPlayerStats-Stat-Passing'>YPG</th>
+                      <th data-data="PAS_TD" class='WorldPlayerStats-Stat-Passing'>TDs</th>
+                      <th data-data="PAS_INT" class='WorldPlayerStats-Stat-Passing col-group'>INT</th>
+                      <th data-data="RUS_Yards" class='WorldPlayerStats-Stat-Rushing'>Yards</th>
+                      <th data-data="RUS_YPC" class='WorldPlayerStats-Stat-Rushing'>YPC</th>
+                      <th data-data="RUS_YPG" class='WorldPlayerStats-Stat-Rushing'>YPG</th>
+                      <th data-data="RUS_TD" class='WorldPlayerStats-Stat-Rushing'>TDs</th>
+                      <th data-data="RUS_LNG" class='WorldPlayerStats-Stat-Rushing'>LNG</th>
+                      <th data-data="RUS_20" class='WorldPlayerStats-Stat-Rushing'>20+</th>
+                      <th data-data="FUM_Fumbles" class='WorldPlayerStats-Stat-Rushing col-group'>Fum</th>
+                      <th data-data="REC_Yards" class='WorldPlayerStats-Stat-Receiving'>Yards</th>
+                      <th data-data="REC_Receptions" class='WorldPlayerStats-Stat-Receiving'>Catches</th>
+                      <th data-data="REC_YPC" class='WorldPlayerStats-Stat-Receiving'>YPC</th>
+                      <th data-data="REC_YPG" class='WorldPlayerStats-Stat-Receiving'>YPG</th>
+                      <th data-data="REC_TD" class='WorldPlayerStats-Stat-Receiving'>TDs</th>
+                      <th data-data="REC_Targets" class='WorldPlayerStats-Stat-Receiving'>Targets</th>
+                      <th data-data="REC_LNG" class='WorldPlayerStats-Stat-Receiving col-group'>LNG</th>
 
                       <th data-data="DEF_Tackles" class='WorldPlayerStats-Stat-Defense'>Tackles</th>
                       <th data-data="DEF_TacklesForLoss" class='WorldPlayerStats-Stat-Defense'>TFL</th>
                       <th data-data="DEF_Sacks" class='WorldPlayerStats-Stat-Defense'>Sacks</th>
                       <th data-data="DEF_INT" class='WorldPlayerStats-Stat-Defense'>INTs</th>
+                      <th data-data="DEF_Deflections" class='WorldPlayerStats-Stat-Defense'>DEFL</th>
                       <th data-data="FUM_Forced" class='WorldPlayerStats-Stat-Defense'>FF</th>
-                      <th data-data="FUM_Recovered" class='WorldPlayerStats-Stat-Defense'>FR</th>
+                      <th data-data="FUM_Recovered" class='WorldPlayerStats-Stat-Defense col-group'>FR</th>
 
                       <th>STR</th>
                       <th>AGI</th>
@@ -78,7 +93,7 @@
                       <th>ACC</th>
                       <th>STA</th>
                       <th>JMP</th>
-                      <th>AWR</th>
+                      <th class="col-group">AWR</th>
 
                       <th>THP</th>
                       <th>TA(S)</th>
@@ -86,7 +101,21 @@
                       <th>TA(D)</th>
                       <th>ToR</th>
                       <th>TUP</th>
-                      <th>PA</th>
+                      <th class="col-group">PA</th>
+
+                      <th>CAR</th>
+                      <th>ELU</th>
+                      <th>BC</th>
+                      <th class="col-group">BRK</th>
+
+                      <th>CTH</th>
+                      <th>CIT</th>
+                      <th>ROU</th>
+                      <th class="col-group">REL</th>
+
+                      <th>PassBlk</th>
+                      <th>RunBlk</th>
+                      <th class="col-group">ImpBlk</th>
 
                       <th>PR</th>
                       <th>SHD</th>
@@ -94,24 +123,10 @@
                       <th>HP</th>
                       <th>MCov</th>
                       <th>ZCov</th>
-                      <th>PRS</th>
-
-                      <th>CAR</th>
-                      <th>ELU</th>
-                      <th>BC</th>
-                      <th>BRK</th>
-
-                      <th>CTH</th>
-                      <th>CIT</th>
-                      <th>ROU</th>
-                      <th>REL</th>
-
-                      <th>PassBlk</th>
-                      <th>RunBlk</th>
-                      <th>ImpBlk</th>
+                      <th class="col-group">PRS</th>
 
                       <th>KckPow</th>
-                      <th>KckAcc</th>
+                      <th class="col-group">KckAcc</th>
                     </tr>
                   </thead>
                 </table>
@@ -164,9 +179,9 @@
                   </ul>
                 </div>
                 <div class="w3-row-padding w3-hide">
-                  <div id='player-highlight-info-selection-bar' class="w3-bar">
-                    <button class='w3-button w3-bar-item highlight-tab selected-highlight-tab' type="button" name="button" id="highlight-ratings-tab">Player Ratings</button>
-                    <button class='w3-button w3-bar-item w3-hide highlight-tab ' type="button" name="button" id="highlight-stats-tab">Player Stats</button>
+                  <div id='player-highlight-info-selection-bar' class="w3-bar w3-row-padding">
+                    <button class='w3-button w3-bar-item highlight-tab selected-highlight-tab' type="button" name="button" id="highlight-ratings-tab">Ratings</button>
+                    <button class='w3-button w3-bar-item w3-hide highlight-tab ' type="button" name="button" id="highlight-stats-tab">Stats</button>
                     <button class='w3-button w3-bar-item highlight-tab ' type="button" name="button" id="highlight-awards-tab">Awards</button>
                     <button class='w3-button w3-bar-item highlight-tab ' type="button" name="button" id="highlight-recruiting-tab">Recruiting</button>
                   </div>
@@ -196,7 +211,7 @@
         <div class='w3-display-container'>
           <div class='w3-row-padding' id='worldLeagueLeaderRow'>
             <div id='worldLeagueLeadersClone' class='w3-col s3 w3-hide'>
-              <table id='' class='display table sortable w3-table-all'>
+              <table id='' class='display table sortable w3-table-all center-aligned-table'>
                 <thead>
                   <th>Rank</th>
                   <th>Player</th>

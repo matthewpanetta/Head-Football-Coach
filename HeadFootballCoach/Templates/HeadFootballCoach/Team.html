@@ -1,5 +1,7 @@
 {% include "HeadFootballCoach/ext_NavBar.html" %}
 {% load static %}
+{% load CustomTags %}
+{% load humanize %}
 
 <div WorldID="{{page.WorldID}}" TeamJerseyInvert="{{page.TeamJerseyInvert}}" TeamJerseyStyle="{{page.TeamJerseyStyle}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}"  SecondaryJerseyColor="{{page.SecondaryJerseyColor}}" TeamID="{{team.TeamID}}" style='display:none;'
   id='PageDataPassthru'></div>
@@ -11,15 +13,12 @@
       border-right-width: 35px;
       border-width: 15px 35px 0;}
 
+  </style>
 
-  </style>
-  <style >
-    button.w3-bar-item.w3-button:hover {
-      background-color: white !important;
-      color: #{{team.TeamColor_Primary_HEX}} !important;
-    }
-  </style>
 </head>
+
+{% include "HeadFootballCoach/ext_TeamColoring.html" %}
+
 
 <link href="https://fonts.googleapis.com/css?family=Volkhov&display=swap" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
@@ -31,9 +30,7 @@
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-analytics-tab">Analytics</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-coaches-tab">Coaches</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-history-tab">Team History</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-info-tab">Team Info</button>
         {% include "HeadFootballCoach/ext_TeamList.html" %}
       </div>
     </nav>
@@ -44,9 +41,9 @@
             <div class="w3-col s8 w3-display-container">
               <div class="w3-row">
                 <div class="w3-card w3-light-grey w3-col s12">
-                  <div class="w3-row teamScheduleBar w3-white">
+                  <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
                     {% for game in games%}
-                    <div BoxScoreGameID="{{game.GameID}}" class="w3-col s1 teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
+                    <div BoxScoreGameID="{{game.GameID}}" class="equal-sized-item w3-col s1 teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
                       <div class="teamScheduleGameBoxShortDate w3-display-topleft ellipsis" style='background-color: #{{game.Opponent.TeamColor_Primary_HEX}}'>{{game.Week}}</div>
                       <img class='teamScheduleOpponentLogo' src='{{game.OpponentLogoURL}}' />
 
@@ -320,71 +317,68 @@
         </div>
       </div>
       </div>
-
-      <div class="tab-content" style='display:none;' id="nav-analytics">
-        Analytics Window
-        <div id="map" style="width: 930px; height: 630px; border: solid 3px red;"></div>
-        <div id="TeamRankTrend" style="width: 930px; height: 630px; border: solid 3px black;"></div>
-      </div>
-      <div class="tab-content" style='display:none;' id="nav-coaches">
-        <div class='container'>
-          <div class='row'>
-            <div class='w3-col s1'></div>
-            <div class='w3-col s10' id='CoachChart'>
-            </div>
-            <div class='w3-col s1'></div>
-          </div>
-        </div>
-      </div>
-      <div class="tab-content" style='display:none;' id="nav-history">
+      <div class="tab-content" style='display:none;' id="nav-info">
         <div class='w3-display-container'>
-          <div class='w3-row-padding'>
-            <div class='w3-col s8'>
+          <div class="w3-row-padding">
+            <div class="w3-col s6">
               <div class="w3-card">
-              <table id='teamSeasonHistoryResultsTable' class='display table sortable'>
-                <thead id='TeamSeasonHistoryTable'>
-                  <th class=' teamColorBorder'>Season</th>
-                  <th class=' teamColorBorder'>Final Rank</th>
-                  <th class=' teamColorBorder'>Record</th>
-                  <th class=' teamColorBorder'>Conf Record</th>
-                  <th class=' teamColorBorder'>Conf Rank</th>
-                  <th class=' teamColorBorder'>Bowl</th>
-                  <th class=' teamColorBorder'>Recruit Class Rank</th>
-                </thead>
-                <tr id='TeamSeasonHistoryRowClone' class='hidden'>
-                  <td class='TeamSeasonHistoryRowCell' data-value=""><a href-field="SeasonRecapLink" data-field='SeasonYear'></a></td>
-                  <td class='TeamSeasonHistoryRowCell' data-field='FinalRank' data-value=""></td>
-                  <td class='TeamSeasonHistoryRowCell' data-field='TeamRecord' data-value=""></td>
-                  <td class='TeamSeasonHistoryRowCell' data-field='TeamConferenceRecord' data-value=""></td>
-                  <td class='TeamSeasonHistoryRowCell' data-field='ConferenceRank' data-value=""></td>
-                  <td class='TeamSeasonHistoryRowCell' data-field='' data-value="">
-                      <span data-field='BowlResult'></span>
-                      <a href-field='BowlHref'><span data-field='BowlScore'></span></a>
-                      <span data-field='String_BowlVs'></span>
-                      <a href-field='BowlOpponentHref'><span data-field='BowlOpponent'></span></a>
-                      <span data-field='String_BowlIn'></span>
-                      <span data-field='BowlName'></span>
-                  </td>
-                  <td class='TeamSeasonHistoryRowCell' data-field='RecruitingClassRank' data-value=""></td>
-                </tr>
-              </table>
+                <table class='w3-table-all' id='TeamInfo'>
+                  <tbody>
+                    <tr>
+                      <th>Team Prestige</th>
+                      <td class='{{TeamInfoRatings.TeamPrestige|NumberToGradeClass}}'>{{TeamInfoRatings.TeamPrestige|NumberToGrade}}</td>
+                      <td>{{TeamInfoRatings.TeamPrestige_Rank|ordinal}}</td>
+                    </tr>
+                    <tr>
+                      <th>Facilities</th>
+                      <td class='{{TeamInfoRatings.FacilitiesRating|NumberToGradeClass}}'>{{TeamInfoRatings.FacilitiesRating|NumberToGrade}}</td>
+                      <td>{{TeamInfoRatings.FacilitiesRating_Rank|ordinal}}</td>
+                    </tr>
+                    <tr>
+                      <th>Pro Potential</th>
+                      <td class='{{TeamInfoRatings.ProPotentialRating|NumberToGradeClass}}'>{{TeamInfoRatings.ProPotentialRating|NumberToGrade}}</td>
+                      <td>{{TeamInfoRatings.ProPotentialRating_Rank|ordinal}}</td>
+                    </tr>
+                    <tr>
+                      <th>Campus Lifestyle</th>
+                      <td class='{{TeamInfoRatings.CampusLifestyleRating|NumberToGradeClass}}'>{{TeamInfoRatings.CampusLifestyleRating|NumberToGrade}}</td>
+                      <td>{{TeamInfoRatings.CampusLifestyleRating_Rank|ordinal}}</td>
+                    </tr>
+                    <tr>
+                      <th>Academic Prestige</th>
+                      <td class='{{TeamInfoRatings.AcademicPrestigeRating|NumberToGradeClass}}'>{{TeamInfoRatings.AcademicPrestigeRating|NumberToGrade}}</td>
+                      <td>{{TeamInfoRatings.AcademicPrestigeRating_Rank|ordinal}}</td>
+                    </tr>
+                    <tr>
+                      <th>Television Exposure</th>
+                      <td class='{{TeamInfoRatings.TelevisionExposureRating|NumberToGradeClass}}'>{{TeamInfoRatings.TelevisionExposureRating|NumberToGrade}}</td>
+                      <td>{{TeamInfoRatings.TelevisionExposureRating_Rank|ordinal}}</td>
+                    </tr>
+                    <tr>
+                      <th>Coach Stability</th>
+                      <td class='{{TeamInfoRatings.CoachStabilityRating|NumberToGradeClass}}'>{{TeamInfoRatings.CoachStabilityRating|NumberToGrade}}</td>
+                      <td>{{TeamInfoRatings.CoachStabilityRating_Rank|ordinal}}</td>
+                    </tr>
+                    <tr>
+                      <th>Championship Contender</th>
+                      <td class='{{TeamInfoRatings.ChampionshipContenderRating|NumberToGradeClass}}'>{{TeamInfoRatings.ChampionshipContenderRating|NumberToGrade}}</td>
+                      <td>{{TeamInfoRatings.ChampionshipContenderRating_Rank|ordinal}}</td>
+                    </tr>
+                    <tr>
+                      <th>School Location</th>
+                      <td class='{{TeamInfoRatings.LocationRating|NumberToGradeClass}}'>{{TeamInfoRatings.LocationRating|NumberToGrade}}</td>
+                      <td>{{TeamInfoRatings.LocationRating_Rank|ordinal}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="w3-card margin-top-24">
+                <div id="map" style='height: 500px;'></div>
               </div>
             </div>
-          </div>
-          <div class='w3-row-padding'>
-            <div class='w3-col s10'>
-              {% for Banner in TeamHistory %}
-                <div class="teamAchievementFlag" style='background: #{{page.PrimaryColor}}; border-color: #{{page.SecondaryColor}};'>
-                  <div class='teamAchievementFlagYear'>{{Banner.Season}}</div>
-                  <div class="teamAchievementFlagTitle">{{team.TeamName}}</div>
-                  <div class="teamAchievementFlagTitle BannerLine1">{{Banner.BannerLine1}}</div>
-                  <div class="teamAchievementFlagTitle BannerLine2">{{Banner.BannerLine2}}</div>
-                </div>
-              {% endfor %}
-            </div>
+
           </div>
         </div>
-      </div>
     </div>
   </div>
 </body>
@@ -394,6 +388,10 @@
 <script src="{% static 'common/jquery.min.js' %}"></script>
 <script src="{% static 'common/popper.min.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+
+<!--
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDX46TscW2zlg1TXf-Qx6PWs2nyR1rRgWs"></script>  -->
+<script type="text/javascript" src="{% static 'common/jquery.googlemap.js' %}"></script>
 <script src="{% static 'Highcharts/code/highcharts.js' %}"></script>
 <script src="{% static 'Highcharts/code/modules/sankey.js' %}"></script>
 <script src="{% static 'Highcharts/code/modules/organization.js' %}"></script>
@@ -411,3 +409,5 @@
     border-bottom-color: #{{page.PrimaryColor}} !important;
   }
 </style>
+
+{{ TeamMapData|json_script:"map-data" }}

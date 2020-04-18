@@ -375,6 +375,32 @@ def GameSim(game):
         'S': .1,
     }
 
+    InterceptionsByPosition = {
+        'DE': .01,
+        'DT': .01,
+        'OLB': .5,
+        'MLB': .5,
+        'CB': 1,
+        'S': .8,
+    }
+
+    CompletionTacklerByPosition = {
+        'DE': .2,
+        'DT': .1,
+        'OLB': .75,
+        'MLB': .75,
+        'CB': 1,
+        'S': 1,
+    }
+
+    DeflectionsByPosition = {
+        'DE': .2,
+        'DT': .1,
+        'OLB': .75,
+        'MLB': .75,
+        'CB': 1,
+        'S': 1,
+    }
 
     Periods = [1,2,3,4]
     MinutesInPeriod = 15
@@ -814,7 +840,7 @@ def GameSim(game):
                     YardsThisPlay = 0
                     InterceptionReturnYards = 0
 
-                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 4) for u in DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
+                    DefensivePlayers = [(u, int(InterceptionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
                     DefensiveIntercepter = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     AllPlayers[DefensiveIntercepter]['PlayerGameStat'].DEF_INT += 1
@@ -835,7 +861,7 @@ def GameSim(game):
                     #AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Carries += 1
                     #GameDict[OffensiveTeam]['TeamGame'].RUS_Carries += 1
 
-                    DefensivePlayers = [(u, int(PassRushByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
+                    DefensivePlayers = [(u, int(PassRushByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB'] + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     LinemanSackAllowedPlayerID = WeightedProbabilityChoice(OffensiveLinemen, OffensiveLinemen[0])
@@ -868,7 +894,7 @@ def GameSim(game):
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_Receptions += 1
                     GameDict[OffensiveTeam]['TeamGame'].REC_Receptions += 1
 
-                    DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S'] + DefensiveTeamPlayers['OLB']  + OffensiveTeamPlayers['MLB']  ]
+                    DefensivePlayers = [(u, int(CompletionTacklerByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     AllPlayers[DefensiveTackler]['PlayerGameStat'].DEF_Tackles += 1
@@ -889,6 +915,13 @@ def GameSim(game):
                 elif PassOutcome == 'Incompletion':
                     YardsThisPlay = 0
                     IncompletePass = True
+
+                    #Deflected pass
+                    if (random.uniform(0,1) < (.2 )):
+                        DefensivePlayers = [(u, int(DeflectionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
+                        Deflector = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
+                        GameDict[DefensiveTeam]['TeamGame'].DEF_Deflections += 1
+                        AllPlayers[Deflector]['PlayerGameStat'].DEF_Deflections += 1
 
 
                 for OLPlayerID in [P for P in OffensiveLinemen if P != LinemanSackAllowedPlayerID]:

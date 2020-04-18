@@ -19,6 +19,9 @@
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-weekly-tab" style="background-color: #{{page.SecondaryColor}};">Weekly Award</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-preseason-tab">Preseason</button>
+        {% if CurrentWeek.PhaseID.PhaseName == 'Offseason' %}
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-season-tab">Regular Season</button>
+        {% endif %}
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-heisman-tab">Heisman Race</button>
       </div>
     </nav>
@@ -28,6 +31,48 @@
           <div class="w3-row-padding">
             <div class="w3-col w3-display-container">
               {% for Conference in AwardDict.PreseasonAllAmericans%}
+              <h4 class="font32 margin-top-24">{{Conference.Conference.ConferenceName}}</h4>
+              <div class="w3-row-padding w3-margin-top">
+              {% for Team in Conference.Teams%}
+                <div class="w3-card w3-col s5">
+                  <span class='table-title'>{{Team.TeamName}}</span>
+                  <table id='teamOverviewConferenceStandings'>
+                    <thead>
+                      <th>Position</th>
+                      <th>Team</th>
+                      <th>Player</th>
+                    </thead>
+                    {% for Player in Team.Team %}
+                    <tr class='{{Conf.ShowConference}}'>
+                      <td>
+                          {{Player.PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation}}
+                      </td>
+                      <td>
+                        <a href="{{Player.TeamHref}}">
+                          <img class='awardConferenceWeeklyAwardTeamLogo' src="{{Player.PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamLogoURL }}" />
+                           {{Player.PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamName }}
+                        </a>
+                      </td>
+                      <td>
+                        <a href="{{Player.PlayerHref}}/">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}}</a>, {{Player.PlayerTeamSeasonID__PlayerID__ClassID__ClassAbbreviation}}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </div>
+
+              {% endfor %}
+            </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-season">
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col w3-display-container">
+              {% for Conference in AwardDict.PostseasonAllAmericans%}
               <h4 class="font32 margin-top-24">{{Conference.Conference.ConferenceName}}</h4>
               <div class="w3-row-padding w3-margin-top">
               {% for Team in Conference.Teams%}
@@ -99,8 +144,8 @@
                       <td>
                         <ul class='no-list-style light-padding-top'>
                           <li><span class='{{Week.GameWin}}'>{{Week.GameWin}}</span><span> {{Week.ScoreDisplay}}</span><span> vs.</span><span><a href="{{Week.OpponentTeamHref}}"> {{Week.OpponentTeamName}}</a></span></li>
-                          <li>{{Week.WeekID__game__teamgame__playergamestat__TopStatStringDisplay1}}</li>
-                          <li>{{Week.WeekID__game__teamgame__playergamestat__TopStatStringDisplay2}}</li>
+                          <li class='margin-left-12'>{{Week.WeekID__game__teamgame__playergamestat__TopStatStringDisplay1}}</li>
+                          <li class='margin-left-12'>{{Week.WeekID__game__teamgame__playergamestat__TopStatStringDisplay2}}</li>
                         </ul>
                       </td>
                     </tr>
