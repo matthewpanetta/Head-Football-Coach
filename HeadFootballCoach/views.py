@@ -1301,6 +1301,41 @@ def Page_PlayerRecords(request, WorldID, TeamID=None, ConferenceID = None):
     return render(request, 'HeadFootballCoach/PlayerRecords.html', context)
 
 
+def Page_Coaches(request, WorldID):
+    DoAudit = True
+    page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    CurrentWorld  = World.objects.get(WorldID = WorldID)
+    CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
+    CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
+    UserTeam = GetUserTeam(WorldID)
+
+    CoachList = list(Coach.objects.filter(WorldID_id = WorldID).values(
+        'CharismaRating', 'ReputationRating', 'GameplanRating', 'ScoutingRating', 'SituationalAggressivenessTendency', 'PlaycallPassTendency', 'OffensivePlaybook', 'DefensivePlaybook'
+    ).annotate(
+        CoachPosition = Subquery(CoachTeamSeason.objects.filter(CoachID=OuterRef('CoachID')).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).values('CoachPositionID__CoachPositionAbbreviation')),
+        CoachPositionSortOrder = Subquery(CoachTeamSeason.objects.filter(CoachID=OuterRef('CoachID')).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).values('CoachPositionID__CoachPositionSortOrder')),
+        CoachName = Concat(F('CoachFirstName'), Value(' '), F('CoachLastName'), output_field=CharField()),
+        CoachTeamName = F('coachteamseason__TeamSeasonID__TeamID__TeamName'),
+        CoachTeamLogoURL = F('coachteamseason__TeamSeasonID__TeamID__TeamLogoURL'),
+        CoachTeamColor = F('coachteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'),
+        CoachTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('coachteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
+        CoachTeamConference = F('coachteamseason__TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation'),
+        CoachTeamConferenceHref = Concat(Value('/World/'), Value(WorldID), Value('/Conferences/'), F('coachteamseason__TeamSeasonID__TeamID__ConferenceID'), output_field=CharField()),
+        Wins = Sum('coachteamseason__TeamSeasonID__Wins'),
+        Losses = Sum('coachteamseason__TeamSeasonID__Losses'),
+
+        Top25_Wins = Coalesce(Subquery(TeamGame.objects.filter(WorldID=OuterRef('WorldID')).filter(TeamSeasonID__coachteamseason__CoachID = OuterRef('CoachID')).filter(OpposingTeamGameID__TeamSeasonWeekRankID__NationalRank__lte = 25).filter(IsWinningTeam = True).annotate(Count = Count('TeamGameID')).values('Count')),0),
+        Top25_Losses = Coalesce(Subquery(TeamGame.objects.filter(WorldID=OuterRef('WorldID')).filter(TeamSeasonID__coachteamseason__CoachID = OuterRef('CoachID')).filter(OpposingTeamGameID__TeamSeasonWeekRankID__NationalRank__lte = 25).filter(IsWinningTeam = False).filter(GameID__WasPlayed = True).annotate(Count = Count('TeamGameID')).values('Count')),0),
+        AllAmericans_Count = Coalesce(Subquery(PlayerTeamSeasonAward.objects.filter(WorldID=OuterRef('WorldID')).filter(PlayerTeamSeasonID__TeamSeasonID__coachteamseason__CoachID = OuterRef('CoachID')).filter(IsNationalAward = True).filter(Q(IsPreseasonAward = True) | Q(IsSeasonAward = True)).annotate(Count = Count('PlayerTeamSeasonAwardID')).values('Count')),0),
+        POTW_Count = Coalesce(Subquery(PlayerTeamSeasonAward.objects.filter(WorldID=OuterRef('WorldID')).filter(PlayerTeamSeasonID__TeamSeasonID__coachteamseason__CoachID = OuterRef('CoachID')).filter(IsNationalAward = True).filter(IsWeekAward = True).annotate(Count = Count('PlayerTeamSeasonAwardID')).values('Count')),0),
+    ).order_by('-Wins'))
+
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek}
+    context['CoachList']=CoachList
+
+    return render(request, 'HeadFootballCoach/CoachStats.html', context)
+
+
 
 def Page_TeamRecords(request, WorldID, TeamID=None, ConferenceID = None):
     DoAudit = True
