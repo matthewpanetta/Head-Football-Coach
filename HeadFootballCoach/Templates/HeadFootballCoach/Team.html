@@ -43,11 +43,13 @@
                 <div class="w3-card w3-light-grey w3-col s12">
                   <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
                     {% for game in games%}
-                    <div BoxScoreGameID="{{game.GameID}}" class="equal-sized-item w3-col s1 teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
-                      <div class="teamScheduleGameBoxShortDate w3-display-topleft ellipsis" style='background-color: #{{game.Opponent.TeamColor_Primary_HEX}}'>{{game.Week}}</div>
-                      <img class='teamScheduleOpponentLogo' src='{{game.OpponentLogoURL}}' />
+                    <div BoxScoreGameID="{{game.GameID}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
+                      <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.Opponent.TeamColor_Primary_HEX}}'>{{game.Week}}</div>
+                      <div class="equal-sized-item-container">
+                        <img class='teamScheduleOpponentLogo centered-item' src='{{game.OpponentLogoURL}}' />
+                      </div>
 
-                      <div class="width100 w3-display-bottommiddle">
+                      <div class="width100">
                         <a href="/World/{{page.WorldID}}/Team/{{game.Opponent.TeamID}}">
                           <div class='teamScheduleGameBoxVsString'>{{game.VsString}}</div>
                         </a>

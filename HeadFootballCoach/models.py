@@ -558,6 +558,12 @@ class Conference(models.Model):
     ConferenceAbbreviation = models.CharField(max_length = 10, default='')
     ConferencePrestige = models.PositiveSmallIntegerField(default = 0)
     ConferenceLogoURL = models.CharField(max_length = 99, default=None, null=True, blank=True)
+
+    IsIndependent = models.BooleanField(default = False)
+    NumberConferenceGames = models.PositiveSmallIntegerField(default = 8)
+    HoldConferenceChampionshipGame = models.BooleanField(default = True)
+
+
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'

@@ -128,75 +128,77 @@
               </div>
               {% endif %}
               <div class="w3-card">
+                <div class="w3-bar team-primary-background-bar">
+                  Recent Game Stats
+                </div>
+                <table class="w3-table table-striped width100" id='RecentGameStats' style='width: 100%;'>
+                  <thead>
+                    <tr>
+                      <th colspan="3" class='center-text col-group'>GAME</th>
+                      <th colspan="8" class='center-text col-group'>PASSING STATS</th>
+                      <th colspan="7" class='center-text col-group'>RUSHING STATS</th>
+                      <th colspan="6" class='center-text col-group'>RECEIVING STATS</th>
+                      <th colspan="2" class='center-text col-group'>BLOCKING STATS</th>
+                      <th colspan="7" class='center-text col-group'>DEFENSE STATS</th>
+                      <th colspan="4" class='center-text col-group'>KICKING STATS</th>
+                    </tr>
+                    <tr>
+                      <!-- Game -->
+                      <th class='teamColorBorder' scope="col">OPP</th>
+                      <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
+                      <th>Game Outcome</th>
 
-              <table class="w3-table table-striped width100" id='RecentGameStats' style='width: 100%;'>
-                <thead>
-                  <tr>
-                    <th colspan="3" class='center-text col-group'>GAME</th>
-                    <th colspan="8" class='center-text col-group'>PASSING STATS</th>
-                    <th colspan="7" class='center-text col-group'>RUSHING STATS</th>
-                    <th colspan="6" class='center-text col-group'>RECEIVING STATS</th>
-                    <th colspan="2" class='center-text col-group'>BLOCKING STATS</th>
-                    <th colspan="7" class='center-text col-group'>DEFENSE STATS</th>
-                    <th colspan="4" class='center-text col-group'>KICKING STATS</th>
-                  </tr>
-                  <tr>
-                    <!-- Game -->
-                    <th class='teamColorBorder' scope="col">OPP</th>
-                    <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
-                    <th>Game Outcome</th>
+                      <!-- Passing Stats -->
+                      <th>CMP</th>
+                      <th>ATT</th>
+                      <th>CMP %</th>
+                      <th>YRDs</th>
+                      <th>YPA</th>
+                      <th>TDs</th>
+                      <th>INTs</th>
+                      <th>Sacks</th>
 
-                    <!-- Passing Stats -->
-                    <th>CMP</th>
-                    <th>ATT</th>
-                    <th>CMP %</th>
-                    <th>YRDs</th>
-                    <th>YPA</th>
-                    <th>TDs</th>
-                    <th>INTs</th>
-                    <th>Sacks</th>
+                      <!-- Rushing Stats -->
+                      <th>CAR</th>
+                      <th>YRDs</th>
+                      <th>YPC</th>
+                      <th>TDs</th>
+                      <th>FUM</th>
+                      <th>20+</th>
+                      <th>LNG</th>
 
-                    <!-- Rushing Stats -->
-                    <th>CAR</th>
-                    <th>YRDs</th>
-                    <th>YPC</th>
-                    <th>TDs</th>
-                    <th>FUM</th>
-                    <th>20+</th>
-                    <th>LNG</th>
+                      <!-- Receiving Stats -->
+                      <th>TGT</th>
+                      <th>REC</th>
+                      <th>YRDs</th>
+                      <th>YPC</th>
+                      <th>TD</th>
+                      <th>LNG</th>
 
-                    <!-- Receiving Stats -->
-                    <th>TGT</th>
-                    <th>REC</th>
-                    <th>YRDs</th>
-                    <th>YPC</th>
-                    <th>TD</th>
-                    <th>LNG</th>
+                      <!-- Blocking Stats -->
+                      <th>PNC</th>
+                      <th>SCK</th>
 
-                    <!-- Blocking Stats -->
-                    <th>PNC</th>
-                    <th>SCK</th>
+                      <!-- Defense Stats -->
+                      <th>TCK</th>
+                      <th>TFL</th>
+                      <th>SACK</th>
+                      <th>INT</th>
+                      <th>DEF</th>
+                      <th>FF</th>
+                      <th>FR</th>
 
-                    <!-- Defense Stats -->
-                    <th>TCK</th>
-                    <th>TFL</th>
-                    <th>SACK</th>
-                    <th>INT</th>
-                    <th>DEF</th>
-                    <th>FF</th>
-                    <th>FR</th>
+                      <!-- Kicking Stats -->
+                      <th>FGM</th>
+                      <th>FGA</th>
+                      <th>XPM</th>
+                      <th>XPA</th>
 
-                    <!-- Kicking Stats -->
-                    <th>FGM</th>
-                    <th>FGA</th>
-                    <th>XPM</th>
-                    <th>XPA</th>
-
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
             </div>
             </div>
           </div>
@@ -278,7 +280,8 @@
       <div class="tab-content" style='display:none;' id="nav-stats" >
         <div class='w3-container'>
             <div class='w3-row-padding'>
-              <div class='w3-col s10 gamePlayerBoxStats'>
+              <div class='w3-col s10'>
+
                 <table id="PlayerSeasonStatTableClone" class='w3-hide width100 w3-padding' style=''>
 
                   <tfoot>
@@ -305,7 +308,7 @@
               <div class="w3-col s10">
                 <div class="w3-card">
 
-                <span class='table_title'>Games</span>
+                  <div class="w3-bar team-primary-background-bar">Game Stats</div>
                 <table class="w3-table table-striped width100" id='FullGameStats' style='width: 100%;'>
                   <thead>
                     <tr>

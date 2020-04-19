@@ -3919,6 +3919,7 @@ GeoLevel,RegionName,RegionAbbreviation,NationName,NationAbbreviation,CityName,St
 1,North America,NA,United States,USA,Willards,MD,Maryland,38.3922,-75.3494,1002,E,50
 1,North America,NA,United States,USA,Williamsport,MD,Maryland,39.5974,-77.818,2113,E,50
 1,North America,NA,United States,USA,Woodsboro,MD,Maryland,39.5329,-77.3097,1225,E,50
+1,North America,NA,United States,USA,Amherst,MA,Massachusetts,42.3732,-72.5199,33015,E,50
 1,North America,NA,United States,USA,Attleboro,MA,Massachusetts,41.9311,-71.295,44590,E,50
 1,North America,NA,United States,USA,Beverly,MA,Massachusetts,42.5681,-70.8627,41816,E,50
 1,North America,NA,United States,USA,Boston,MA,Massachusetts,42.3188,-71.0846,4637537,E,50
@@ -5713,6 +5714,7 @@ GeoLevel,RegionName,RegionAbbreviation,NationName,NationAbbreviation,CityName,St
 1,North America,NA,United States,USA,Alden,NY,New York,42.8988,-78.4946,2582,E,50
 1,North America,NA,United States,USA,Alexandria Bay,NY,New York,44.34,-75.9161,1057,E,50
 1,North America,NA,United States,USA,Alfred,NY,New York,42.2543,-77.7897,4183,E,50
+1,North America,NA,United States,USA,West Point,NY,New York,41.3915,-73.956,6700,E,50
 1,North America,NA,United States,USA,Allegany,NY,New York,42.0917,-78.4927,1714,E,50
 1,North America,NA,United States,USA,Altamont,NY,New York,42.7049,-74.034,1708,E,50
 1,North America,NA,United States,USA,Amityville,NY,New York,40.6696,-73.4156,9524,E,50

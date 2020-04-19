@@ -636,22 +636,47 @@ def import_League( File, WorldID):
         if KeepRow:
             L.save()
 
+def import_Conference(File, WorldID, LeagueID):
+
+    ConferenceList = LeagueID.ConferenceList
+    ConferenceList = ConferenceList.split(',')
+
+    f = open(File, 'r', encoding='utf-8-sig')
+    FieldExclusions = []
+
+    linecount = 0
+    for line in f:
+        KeepRow = False
+        linecount +=1
+        if linecount == 1:
+            Headers = line.strip().split(',')
+            continue
+
+        Row = line.strip().split(',')
+        print(line, Row)
+
+        LineDict = {}
+        FieldCount = 0
+
+        for f in Row:
+            V = Row[FieldCount]
+            if V == '':
+                V = None
+            LineDict[Headers[FieldCount]] = V
+            FieldCount +=1
+
+        if LineDict['ConferenceName'] in ConferenceList:
+            LineDict['WorldID'] = WorldID
+            LineDict['LeagueID'] = LeagueID
+
+            for FE in FieldExclusions:
+                del LineDict[FE]
+
+            Conference.objects.create(**LineDict)
+
 
 def import_Team( File, WorldID, LeagueID):
 
-    ConferenceShorthandMap = {
-            'Southeastern Conference': 'SEC',
-            'Big 12 Conference': 'Big 12',
-            'Atlantic Coast Conference': 'ACC',
-            'Ivy League': 'Ivy League',
-            'Big Ten Conference': 'Big 10',
-            'Pac-12 Conference': 'Pac-12',
-            'American Athletic Conference': 'AAC',
-            'Mountain West Conference': 'MWC',
-            'Sample Conference 1': 'SC1',
-            'Sample Conference 2': 'SC2',
-            'Big East Conference': 'Big East'
-        }
 
     JerseyOptions = ["football"]
 
@@ -682,13 +707,11 @@ def import_Team( File, WorldID, LeagueID):
             LineDict[Headers[FieldCount]] = V
             FieldCount +=1
 
-        FieldExclusions = ['City', 'State', 'TeamID', 'LeagueName', 'Country', 'ConferenceName']
+        FieldExclusions = ['City', 'State', 'LeagueName', 'Country', 'ConferenceName']
 
         if LineDict['ConferenceName'] in ConferenceList:
             KeepRow = True
-            ConferenceID, created = Conference.objects.get_or_create(WorldID=WorldID, LeagueID = LeagueID, ConferenceName = LineDict['ConferenceName'], ConferenceAbbreviation = ConferenceShorthandMap[LineDict['ConferenceName']])
-            ConferenceID.ConferenceLogoURL = '/static/img/ConferenceLogos/' + ConferenceID.ConferenceName.replace(' ', '_') + '.png'
-            ConferenceID.save()
+            LineDict['ConferenceID'] = Conference.objects.get(WorldID=WorldID, LeagueID = LeagueID, ConferenceName = LineDict['ConferenceName'])
 
         if LineDict['TeamColor_Primary_HEX'] is None:
             LineDict['TeamColor_Primary_HEX'] = '000000'
@@ -711,7 +734,6 @@ def import_Team( File, WorldID, LeagueID):
                 CityToPopulate = CityList[0]
             LineDict['CityID'] = CityToPopulate
             LineDict['WorldID'] = WorldID
-            LineDict['ConferenceID'] = ConferenceID
             LineDict['TeamJerseyStyle'] = JerseyOptions[0]
             #LineDict['TeamJerseyInvert'] = random.choice([True, False,False,False,False])
 
@@ -857,6 +879,7 @@ def LoadData(WorldID, LeagueID):
         start = time.time()
 
     if CreateTeams:
+        import_Conference('HeadFootballCoach/scripts/data_import/Conference.csv', WorldID, LeagueID)
         import_Team('HeadFootballCoach/scripts/data_import/Team.csv', WorldID, LeagueID)
         import_TeamRivalries('HeadFootballCoach/scripts/data_import/TeamRivals.csv', WorldID, LeagueID)
 

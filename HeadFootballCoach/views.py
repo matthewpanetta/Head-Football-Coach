@@ -812,7 +812,7 @@ def Page_Audit_ShootingPercentages(request, WorldID):
 def Page_Index(request):
 
 
-    InTesting = False
+    InTesting = True
     InDeepTesting = False
 
     if InTesting or InDeepTesting:
@@ -837,12 +837,13 @@ def Page_Index(request):
         Worlds.append(W)
 
     if InTesting:
-        NumConferencesToInclude = 6
+        NumConferencesToInclude = 7
     elif InDeepTesting:
         NumConferencesToInclude = 2
     else:
-        NumConferencesToInclude = 4
+        NumConferencesToInclude = 7
     PossibleConferences = [
+         {'ConferenceDisplayName': 'Independents', 'ConferenceFormValue': 'FBS Independents'},
          {'ConferenceDisplayName': 'Big 12', 'ConferenceFormValue': 'Big 12 Conference'},
          {'ConferenceDisplayName': 'ACC', 'ConferenceFormValue': 'Atlantic Coast Conference'},
          {'ConferenceDisplayName': 'SEC', 'ConferenceFormValue': 'Southeastern Conference'},
@@ -904,6 +905,7 @@ def Page_World(request, WorldID):
 
     #Fields = ['(OuterRef("playerseasonskill__'+field.name+'") * F("'+field.name+'_Weight"))' for field in PlayerSeasonSkill._meta.get_fields() if '_Rating' in field.name]
     #print(' + '.join(Fields))
+
 
     if DoAudit:
         start = time.time()
@@ -3833,7 +3835,6 @@ def GET_PlayerStats_Player(request, WorldID, PlayerID):
 
 
     return JsonResponse(SeasonStatGroupings, safe=False)
-    #154036
 
 def GET_PlayerStats(request, WorldID):
 
@@ -4930,7 +4931,7 @@ def Page_Team(request,WorldID, TeamID):
     TeamWeeklyRanks = ThisTeam.CurrentTeamSeason.teamseasonweekrank_set.order_by('WeekID')
     MaxWeeklyRank = TeamWeeklyRanks.aggregate(Max('NationalRank'))['NationalRank__max']
     page = {'PageTitle':ThisTeam.Name, 'WorldID': WorldID, 'PrimaryColor': ThisTeam.TeamColor_Primary_HEX, 'SecondaryColor': ThisTeam.SecondaryColor_Display, 'SecondaryJerseyColor': ThisTeam.TeamColor_Secondary_HEX, 'TeamJerseyStyle': ThisTeam.TeamJerseyStyle, 'TeamJerseyInvert':ThisTeam.TeamJerseyInvert, 'TabIcon':ThisTeam.LogoURL }
-    TeamMapData = {'Latitude': ThisTeam.CityID.Latitude, 'Longitude': ThisTeam.CityID.Longitude, 'TeamLogoURL': ThisTeam.TeamLogoURL}
+    #TeamMapData = {'Latitude': ThisTeam.CityID.Latitude, 'Longitude': ThisTeam.CityID.Longitude, 'TeamLogoURL': ThisTeam.TeamLogoURL}
 
     context = {'conferenceTeams': conferenceTeams, 'page': page, 'userTeam': UserTeam, 'team': ThisTeam, 'games':Games, 'allGames': teamgames, 'CurrentWeek': CurrentWeek, 'allTeams': allTeams}
     context['SignedRecruits'] = SignedRecruits
@@ -4939,7 +4940,7 @@ def Page_Team(request,WorldID, TeamID):
     context['teamLeaders'] = TopPlayers
     context['TeamHistory'] = TeamHistory
     context['TeamInfoRatings'] = TeamInfoRatings
-    context['TeamMapData'] = TeamMapData
+    #context['TeamMapData'] = TeamMapData
 
     context['HeaderLink'] = TeamHeaderLinks('Overview')
     context['TeamList'] = Team.objects.filter(WorldID=WorldID).values('TeamName', 'TeamNickname', 'TeamLogoURL').annotate(

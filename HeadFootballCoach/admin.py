@@ -152,13 +152,19 @@ class TeamSeasonPositionAdmin(admin.ModelAdmin):
     list_display = [field.name for field in TeamSeasonPosition._meta.get_fields() if field.name not in ('phase', 'playoff', 'teamseason', 'game', 'playerseasonskill', 'headline', 'driver')] #('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
     list_filter = [ 'TeamSeasonID__TeamID__TeamName', 'PositionID__PositionAbbreviation']
 
+class ConferenceAdmin(admin.ModelAdmin):
+    list_display = ['WorldID', 'ConferenceName']
+    list_filter = ['WorldID']
+
+
+
 admin.site.register(User)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(World)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(PlayerTeamSeason, PlayerTeamSeasonAdmin)
-admin.site.register(Conference)
+admin.site.register(Conference, ConferenceAdmin)
 admin.site.register(TeamConference)
 admin.site.register(LeagueSeason, LeagueSeasonAdmin)
 admin.site.register(Headline,HeadlineAdmin)

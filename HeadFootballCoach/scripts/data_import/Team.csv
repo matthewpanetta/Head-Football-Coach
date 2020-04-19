@@ -1,130 +1,135 @@
-﻿TeamID,TeamName,TeamNickname,LeagueName,Abbreviation,City,State,Country,ConferenceName,DefaultOffensiveScheme,DefaultDefensiveScheme,TeamTalent,TeamColor_Primary_HEX,TeamColor_Secondary_HEX,TeamJerseyInvert,TeamPrestige,FacilitiesRating,ProPotentialRating,CampusLifestyleRating,AcademicPrestigeRating,TelevisionExposureRating,CoachStabilityRating,LocationRating
-,Alabama,Crimson Tide,NCAA,BAMA,Tuscaloosa,Alabama,USA,Southeastern Conference,Pro Style,4-Mar,50,A80532,FFFFFF,0,100,100,100,55,40,100,50,40
-,Clemson,Tigers,NCAA,CLEM,Clemson,South Carolina,USA,Atlantic Coast Conference,Spread,3-Apr,71,F06014,441F6F,0,100,100,90,80,30,100,50,40
-,Georgia,Bulldogs,NCAA,UGA,Athens,Georgia,USA,Southeastern Conference,Pro Style,3-Apr,50,A0000B,0,0,90,80,100,55,40,100,50,55
-,Notre Dame,Fighting Irish,NCAA,ND,South Bend,Indiana,USA,Atlantic Coast Conference,Spread,4-Mar,80,0C2340,C99700,0,90,80,80,10,70,100,50,40
-,Ohio State,Buckeyes,NCAA,OSU,Columbus,Ohio,USA,Big Ten Conference,Spread,3-Apr,50,CA0321,A6ADA1,0,90,100,100,30,70,100,60,55
-,Oklahoma,Sooners,NCAA,OU,Norman,Oklahoma,USA,Big 12 Conference,Air Raid,4/2/05,77,950026,FDF9D8,0,90,90,90,40,20,100,50,30
-,LSU,Tigers,NCAA,LSU,Baton Rouge,Louisiana,USA,Southeastern Conference,Spread,4/2/05,50,33297B,FDB827,1,80,90,100,55,40,90,50,65
-,Michigan,Wolverines,NCAA,MICH,Ann Arbor,Michigan,USA,Big Ten Conference,Pro Style,3-Apr,50,00274C,FFCB05,0,80,80,80,30,70,90,60,55
-,Penn State,Nittany Lions,NCAA,PSU,State College,Pennsylvania,USA,Big Ten Conference,Spread,3-Apr,50,151F49,FFFFFF,0,80,70,70,30,70,80,60,50
-,Sample Team South,Eels,NCAA,ST1,Jackson,Mississippi,USA,Sample Conference 1,Air Raid,3-Apr,90,BB0000,FFFFFF,0,8,50,50,80,30,50,50,40
-,Texas,Longhorns,NCAA,UT,Austin,Texas,USA,Big 12 Conference,Pro Style,3-Apr,78,D65918,FFFFFF,0,80,90,80,80,90,90,50,85
-,USC,Trojans,NCAA,USC,Los Angeles,California,USA,Pac-12 Conference,Pro Style,3-Apr,50,990000,FFC72C,0,80,70,100,80,80,90,60,99
-,Wisconsin,Badgers,NCAA,WIS,Madison,Wisconsin,USA,Big Ten Conference,Heavy Run,3-Apr,50,B70021,FFFFFF,0,80,60,60,30,70,70,60,45
-,Florida,Gators,NCAA,UF,Gainesville,Florida,USA,Southeastern Conference,Spread,3-Apr,50,2139CE,FF4208,0,70,70,90,55,40,70,50,50
-,Florida State,Seminoles,NCAA,FSU,Tallahassee,Florida,USA,Atlantic Coast Conference,Spread,4/2/05,91,642132,A8936B,0,70,70,100,80,40,70,50,60
-,Michigan State,Spartans,NCAA,MSU,East Lansing,Michigan,USA,Big Ten Conference,Pro Style,3-Apr,50,1C453A,FFFFFF,0,70,70,60,30,70,60,60,50
-,Oregon,Ducks,NCAA,ORE,Eugene,Oregon,USA,Pac-12 Conference,Spread Option,3/3/05,50,0C643F,FEE123,0,70,100,70,80,50,70,60,60
-,Texas A&M,Aggies,NCAA,TAMU,College Station,Texas,USA,Southeastern Conference,Spread,4/2/05,50,500000,FFFFFF,0,70,100,70,55,40,70,50,50
-,Washington,Huskies,NCAA,UW,Seattle,Washington,USA,Pac-12 Conference,Spread,3/3/05,50,3A3D5E,B7A57A,0,70,60,70,60,60,60,60,75
-,Auburn,Tigers,NCAA,AUB,Auburn,Alabama,USA,Southeastern Conference,Spread Option,3-Apr,50,172240,FE3300,0,60,80,90,55,40,70,50,40
-,Iowa,Hawkeyes,NCAA,IOWA,Iowa City,Iowa,USA,Big Ten Conference,Heavy Run,3-Apr,50,FFD700,0,0,60,60,50,30,70,50,60,40
-,Miami,Hurricanes,NCAA,MIA,Coral Gables,Florida,USA,Atlantic Coast Conference,Spread,4/2/05,75,F47321,5030,0,60,70,90,90,50,80,50,90
-,Sample Team East,Hedgehogs,NCAA,ST2,Baltimore,Maryland,USA,Sample Conference 1,Triple Option,3-Apr,90,A0000B,FEE123,0,6,50,50,80,30,50,50,40
-,Stanford,Cardinal,NCAA,STAN,Palo Alto,California,USA,Pac-12 Conference,Pro Style,4-Mar,50,950026,FFFFFF,0,60,60,60,30,90,50,60,75
-,TCU,Horned Frogs,NCAA,TCU,Fort Worth,Texas,USA,Big 12 Conference,Spread,4/2/05,75,3D156F,A3A9AC,0,60,70,60,50,60,50,50,60
-,Tennessee,Volunteers,NCAA,TENN,Knoxville,Tennessee,USA,Southeastern Conference,Pro Style,3-Apr,50,FF8200,FFFFFF,0,60,90,60,55,40,50,50,40
-,UCF,Knights,NCAA,UCF,Orlando,Florida,USA,American Athletic Conference,Spread,3/3/05,82,B4985A,231F20,0,60,50,40,60,20,40,50,70
-,UCLA,Bruins,NCAA,UCLA,Los Angeles,California,USA,Pac-12 Conference,Spread Option,4/2/05,50,2D68C4,F2A900,0,60,50,50,60,70,50,60,99
-,Utah,Utes,NCAA,UTAH,Salt Lake City,Utah,USA,Pac-12 Conference,Spread,3/3/05,50,CC0000,808080,0,60,50,40,20,30,40,60,45
-,Arizona,Wildcats,NCAA,ZONA,Tucson,Arizona,USA,Pac-12 Conference,Spread,4/2/05,50,243361,BB003A,0,50,50,40,90,20,40,60,70
-,Arizona State,Sun Devils,NCAA,ASU,Tempe,Arizona,USA,Pac-12 Conference,Spread,4/2/05,50,96203D,FEC927,0,50,60,40,90,20,40,60,65
-,Baylor,Bears,NCAA,BAY,Waco,Texas,USA,Big 12 Conference,Air Raid,4/2/05,76,118353,FCB212,0,50,70,50,30,60,50,50,30
-,Boise State,Broncos,NCAA,BSU,Boise,Idaho,USA,Mountain West Conference,Spread,3-Apr,50,2D4492,F27E34,0,50,60,40,30,30,40,50,35
-,Cincinnati,Bearcats,NCAA,CIN,Cincinnati,Ohio,USA,American Athletic Conference,Air Raid,4-Mar,81,FD0026,0,0,50,50,40,30,40,40,50,40
-,Duke,Blue Devils,NCAA,DUKE,Durham,North Carolina,USA,Atlantic Coast Conference,Pro Style,4-Mar,99,80089,FFFFFF,0,50,50,30,40,90,40,99,60
-,Georgia Tech,Yellow Jackets,NCAA,GT,Atlanta,Georgia,USA,Atlantic Coast Conference,Triple Option,3-Apr,76,B3A369,091D3A,0,50,40,30,10,90,40,50,70
-,Houston,Cougars,NCAA,HOU,Houston,Texas,USA,American Athletic Conference,Spread,4/2/05,84,C90822,FFFFFF,0,50,50,40,40,40,40,50,60
-,Iowa State,Cyclones,NCAA,ISU,Ames,Iowa,USA,Big 12 Conference,Spread,3-Apr,83,840A2C,FEC938,0,50,50,30,30,20,40,50,30
-,Kentucky,Wildcats,NCAA,UK,Lexington,Kentucky,USA,Southeastern Conference,Spread,4-Mar,50,3399,FFFFFF,0,50,80,40,55,40,50,50,40
-,Louisville,Cardinals,NCAA,U of L,Louisville,Kentucky,USA,Atlantic Coast Conference,Spread,3-Apr,80,FD0B20,70707,0,50,60,50,50,30,40,50,45
-,Memphis,Tigers,NCAA,MEM,Memphis,Tennessee,USA,American Athletic Conference,Spread,3-Apr,75,2A2A9B,FFFFFF,0,50,50,40,40,20,40,50,60
-,Minnesota,Golden Gophers,NCAA,MINN,Minneapolis,Minnesota,USA,Big Ten Conference,Pro Style,3-Apr,50,7A0019,FBB246,0,50,60,40,30,70,40,60,45
-,Mississippi State,Bulldogs,NCAA,MSST,Starkville,Mississippi,USA,Southeastern Conference,Heavy Run,4-Mar,50,660000,FFFFFF,0,50,60,60,55,40,40,50,45
-,Missouri,Tigers,NCAA,MIZZOU,Columbia,Missouri,USA,Southeastern Conference,Spread Option,3-Apr,50,0,F1B82D,0,50,60,50,55,40,40,50,50
-,Nebraska,Cornhuskers,NCAA,NEB,Lincoln,Nebraska,USA,Big Ten Conference,Spread,3-Apr,50,DC0029,FFFFFF,0,50,70,60,30,70,50,60,30
-,North Carolina,Tar Heels,NCAA,UNC,Chapel Hill,North Carolina,USA,Atlantic Coast Conference,Spread,3-Apr,96,7BAFD4,FFFFFF,0,50,70,60,70,80,40,99,60
-,Ole Miss,Rebels,NCAA,MISS,Oxford,Mississippi,USA,Southeastern Conference,Spread,3-Apr,50,F4002F,0D1A5F,0,50,60,70,55,40,50,50,40
-,SMU,Mustangs,NCAA,SMU,University Park,Texas,USA,American Athletic Conference,Air Raid,3/3/05,75,C2032C,27388F,0,50,40,50,60,70,40,50,70
-,South Carolina,Gamecocks,NCAA,SCAR,Columbia,South Carolina,USA,Southeastern Conference,Spread,3-Apr,50,73000A,0,0,50,90,70,55,40,40,50,40
-,Texas Tech,Red Raiders,NCAA,TTU,Lubbock,Texas,USA,Big 12 Conference,Air Raid,3-Apr,83,CC0000,0,0,50,70,60,20,20,40,50,30
-,Virginia Tech,Hokies,NCAA,VT,Blacksburg,Virginia,USA,Atlantic Coast Conference,Pro Style,3-Apr,87,630031,CF4420,0,50,50,60,70,80,40,50,40
-,Washington State,Cougars,NCAA,WSU,Pullman,Washington,USA,Pac-12 Conference,Air Raid,3-Apr,50,951A30,5E6A71,0,50,40,40,20,20,30,60,35
-,West Virginia,Mountaineers,NCAA,WVU,Morgantown,West Virginia,USA,Big 12 Conference,Air Raid,3-Apr,86,134B9B,EAAA00,0,50,60,40,30,20,40,50,30
-,Appalachian State,Mountaineers,NCAA,APP,Boone,North Carolina,USA,Sun Belt Conference,Spread Option,2-May,50,FFC520,0,0,40,30,20,30,30,20,30,20
-,Arkansas,Razorbacks,NCAA,ARK,Fayetteville,Arkansas,USA,Southeastern Conference,Pro Style,3-Apr,50,8B0D26,0,0,40,60,40,55,40,40,50,35
-,Boston College,Eagles,NCAA,BC,Chestnut Hill,Massachusetts,USA,Atlantic Coast Conference,Heavy Run,3-Apr,74,821E1E,DBCCA4,0,40,50,30,30,70,30,50,70
-,California,Golden Bears,NCAA,CAL,Berkeley,California,USA,Pac-12 Conference,Spread,3-Apr,50,1D2161,E29819,0,40,50,40,60,80,30,60,65
-,Colorado,Buffaloes,NCAA,CU,Boulder,Colorado,USA,Pac-12 Conference,Spread,3-Apr,50,0,C4AB68,0,40,40,40,80,60,30,60,70
-,Illinois,Fighting Illini,NCAA,ILL,Urbana,Illinois,USA,Big Ten Conference,Pro Style,3-Apr,50,F5873C,1B4178,0,40,40,30,30,70,40,60,45
-,Kansas State,Wildcats,NCAA,KSU,Manhattan,Kansas,USA,Big 12 Conference,Heavy Run,3-Apr,83,633194,FFFFFF,0,40,40,30,30,20,40,50,30
-,Maryland,Terrapins,NCAA,UM,College Park,Maryland,USA,Big Ten Conference,Air Raid,3-Apr,50,D5002B,FEC619,0,40,50,50,30,70,40,60,55
-,Navy,Midshipmen,NCAA,NAVY,Annapolis,Maryland,USA,American Athletic Conference,Triple Option,3/3/05,50,00205B,C5B783,0,40,20,10,5,90,50,40,30
-,NC State,Wolfpack,NCAA,NCST,Raleigh,North Carolina,USA,Atlantic Coast Conference,Spread,3-Apr,77,CC0000,0,0,40,30,40,60,60,40,50,55
-,Northwestern,Wildcats,NCAA,NU,Evanston,Illinois,USA,Big Ten Conference,Spread,3-Apr,50,4E2A84,FFFFFF,0,40,70,40,30,70,30,60,65
-,Oklahoma State,Cowboys,NCAA,OKST,Stillwater,Oklahoma,USA,Big 12 Conference,Air Raid,3-Apr,73,EF641A,0,0,40,60,40,40,20,40,50,40
-,Oregon State,Beavers,NCAA,OSU,Corvallis,Oregon,USA,Pac-12 Conference,Pro Style,3-Apr,50,DC4405,0,0,40,50,30,30,40,30,60,45
-,Pittsburgh,Panthers,NCAA,PITT,Pittsburgh,Pennsylvania,USA,Atlantic Coast Conference,Pro Style,3-Apr,60,2083,FEB01D,0,40,50,40,30,70,40,50,45
-,Purdue,Boilermakers,NCAA,PUR,West Lafayette,Indiana,USA,Big Ten Conference,Pro Style,3-Apr,50,CEB888,0,0,40,60,30,30,70,40,60,45
-,Sample Team North,Yetis,NCAA,ST3,Minneapolis,Minnesota,USA,Sample Conference 2,Air Raid,3-Apr,70,D65918,B7A57A,0,4,50,50,80,30,50,50,40
-,South Florida,Bulls,NCAA,USF,Tampa,Florida,USA,American Athletic Conference,Spread,3-Apr,68,004A36,A08B4D,0,40,40,30,60,30,30,50,70
-,Syracuse,Orange,NCAA,SYR,Syracuse,New York,USA,Atlantic Coast Conference,Spread,3-Apr,73,C82F04,06162E,0,40,50,30,30,40,40,50,30
-,Temple,Owls,NCAA,TEM,Philadelphia,Pennsylvania,USA,American Athletic Conference,Pro Style,3-Apr,73,A80532,FFFFFF,0,40,30,20,40,50,20,50,60
-,Vanderbilt,Commodores,NCAA,VANDY,Nashville,Tennessee,USA,Southeastern Conference,Pro Style,3-Apr,50,866D4B,0,0,40,40,30,45,99,40,50,70
-,Air Force,Falcons,NCAA,AFA,Colorado Springs,Colorado,USA,Mountain West Conference,Triple Option,3/3/05,50,0061AA,FFFFFF,0,30,20,10,30,30,30,50,40
-,Colorado State,Rams,NCAA,CSU,Fort Collins,Colorado,USA,Mountain West Conference,Spread,3-Apr,50,008C75,F8E793,0,30,20,20,30,30,20,50,55
-,Fresno State,Bulldogs,NCAA,FRES,Fresno,California,USA,Mountain West Conference,Spread,3-Apr,50,E5003F,94183,0,30,30,20,30,30,20,50,35
-,Indiana,Hoosiers,NCAA,IU,Bloomington,Indiana,USA,Big Ten Conference,Air Raid,3-Apr,50,A82B3D,FFFFFF,0,30,40,20,30,70,30,60,45
-,Kansas,Jayhawks,NCAA,KU,Lawrence,Kansas,USA,Big 12 Conference,Spread,3-Apr,88,0051BA,E8000D,0,30,30,30,40,20,30,50,40
-,Nevada,Wolf Pack,NCAA,NEV,Reno,Nevada,USA,Mountain West Conference,Triple Option,3-Apr,50,16234D,0,0,30,30,20,30,30,20,50,40
-,North Texas,Mean Green,NCAA,UNT,Denton,Texas,USA,Conference USA,Spread,3-Apr,50,,,0,30,20,20,30,30,20,30,20
-,Rutgers,Scarlet Knights,NCAA,RUT,New Brunswick,New Jersey,USA,Big Ten Conference,Spread,3-Apr,50,CC0033,5F6A72,0,30,30,30,30,70,30,60,45
-,San Diego State,Aztecs,NCAA,SDST,San Diego,California,USA,Mountain West Conference,Heavy Run,3-Apr,50,AF182A,0,0,30,40,30,30,30,30,50,85
-,Tulane,Green Wave,NCAA,TUL,New Orleans,Louisiana,USA,American Athletic Conference,Pro Style,3-Apr,30,11472A,1890CC,0,30,20,20,70,70,20,20,70
-,Tulsa,Golden Hurricane,NCAA,TUL,Tulsa,Oklahoma,USA,American Athletic Conference,Spread,3-Apr,30,0E387C,C8102E,0,30,20,20,20,30,20,20,10
-,UNLV,Rebels,NCAA,UNLV,Las Vegas,Nevada,USA,Mountain West Conference,Spread,3-Apr,50,C20035,C6C8C9,0,30,30,10,30,30,20,50,75
-,Virginia,Cavaliers,NCAA,UVA,Charlottesville,Virginia,USA,Atlantic Coast Conference,Pro Style,3-Apr,95,232D4B,F84C1E,0,30,40,20,60,90,30,99,75
-,Wake Forest,Demon Deacons,NCAA,WAKE,Winston-Salem,North Carolina,USA,Atlantic Coast Conference,Spread,3-Apr,70,A67F31,0,0,30,20,20,20,85,30,50,55
-,Wyoming,Cowboys,NCAA,WYO,Laramie,Wyoming,USA,Mountain West Conference,Spread,3-Apr,50,6F4220,FFC425,0,30,10,20,30,30,10,50,30
-,Akron,Zips,NCAA,AKR,Akron,Ohio,USA,Mid-American Conference,Pro Style,3-Apr,50,0,C29C41,0,20,20,10,20,20,10,60,10
-,Arkansas State,Red Wolves,NCAA,ARST,Jonesboro,Arkansas,USA,Sun Belt Conference,Pro Style,3-Apr,50,ED1B2E,0,0,20,20,10,30,30,10,30,20
-,Arkansas-Little Rock,Trojans,NCAA,UALR,Little Rock,Arkansas,USA,Sun Belt Conference,Spread,3-Apr,50,AD0000,FFFFFF,0,20,20,10,30,30,10,30,20
-,Ball State,Cardinals,NCAA,BALL,Muncie,Indiana,USA,Mid-American Conference,Pro Style,3-Apr,50,DA0000,FFFFFF,0,20,20,10,20,20,10,60,10
-,Bowling Green,Falcons,NCAA,BG,Bowling Green,Ohio,USA,Mid-American Conference,Spread,3-Apr,50,4E2400,F5793F,0,20,20,10,20,20,10,60,10
-,Buffalo,Bulls,NCAA,BUF,Buffalo,New York,USA,Mid-American Conference,Pro Style,3-Apr,50,,,0,20,20,10,20,20,10,60,10
-,Central Michigan,Chippewas,NCAA,CMU,Mount Pleasant,Michigan,USA,Mid-American Conference,Air Raid,3-Apr,50,780006,E2A253,0,20,10,10,20,20,10,60,10
-,Coastal Carolina,Chanticleers,NCAA,CCU,Conway,South Carolina,USA,Sun Belt Conference,Air Raid,3-Apr,50,9297,D59C3A,0,20,10,10,30,30,10,30,20
-,Connecticut,Huskies,NCAA,UCONN,Storrs,Connecticut,USA,American Athletic Conference,Spread,3-Apr,75,0A1D5A,FFFFFF,0,20,20,10,60,40,10,50,45
-,East Carolina,Pirates,NCAA,ECU,Greenville,North Carolina,USA,American Athletic Conference,Heavy Run,3-Apr,61,4A1F68,FFCE28,0,20,20,10,60,10,10,50,45
-,Eastern Michigan,Eagles,NCAA,EMU,Ypsilanti,Michigan,USA,Mid-American Conference,Spread,3-Apr,50,0B5F24,FFFFFF,0,20,20,10,20,20,10,60,10
-,Florida Atlantic,Owls,NCAA,FAU,Boca Raton,Florida,USA,Conference USA,Air Raid,3-Apr,50,004B85,CD1041,0,20,30,10,30,30,10,30,20
-,Florida International,Panthers,NCAA,FIU,Miami,Florida,USA,Conference USA,Pro Style,3-Apr,50,002D62,C5960B,0,20,20,10,30,30,10,30,20
-,Georgia Southern,Eagles,NCAA,GSU,Statesboro,Georgia,USA,Sun Belt Conference,Triple Option,3-Apr,50,,,0,20,30,10,30,30,10,30,20
-,Georgia State,Panthers,NCAA,GSU,Atlanta,Georgia,USA,Sun Belt Conference,Triple Option,3-Apr,50,,,0,20,30,10,30,30,10,30,20
-,Kent State,Golden Flashes,NCAA,KENT,Kent,Ohio,USA,Mid-American Conference,Spread,3-Apr,50,,,0,20,20,10,20,20,10,60,10
-,Louisiana Lafayette,Ragin' Cajuns,NCAA,UL,Lafayette,Louisiana,USA,Sun Belt Conference,Air Raid,3-Apr,50,,,0,20,10,10,30,30,10,30,20
-,Louisiana Monroe,Warhawks,NCAA,ULM,Monroe,Louisiana,USA,Sun Belt Conference,Spread,3-Apr,50,,,0,20,20,10,30,30,10,30,20
-,Louisiana Tech,Bulldogs,NCAA,LTU,Ruston,Louisiana,USA,Conference USA,Air Raid,3-Apr,50,,,0,20,30,10,30,30,20,30,20
-,Miami (OH),Redhawks,NCAA,MIA,Oxford,Ohio,USA,Mid-American Conference,Pro Style,3-Apr,50,,,0,20,10,10,20,20,10,60,10
-,New Mexico,Lobos,NCAA,NM,Albuquerque,New Mexico,USA,Mountain West Conference,Pro Style,3-Apr,50,,,0,20,10,10,30,30,10,50,35
-,Northern Illinois,Huskies,NCAA,NIU,DeKalb,Illinois,USA,Mid-American Conference,Pro Style,3-Apr,50,,,0,20,20,10,20,20,10,60,10
-,Ohio,Bobcats,NCAA,OHIO,Athens,Ohio,USA,Mid-American Conference,Pro Style,3-Apr,50,,,0,20,20,10,20,20,10,60,10
-,Sample Team West,Gunners,NCAA,ST4,Oakland,California,USA,Sample Conference 2,Air Raid,3-Apr,60,00274C,FF4208,0,2,50,50,80,30,50,50,40
-,San Jose State,Spartans,NCAA,SJSU,San Jose,California,USA,Mountain West Conference,Pro Style,3-Apr,50,134B9B,FBD016,0,20,10,10,30,30,10,50,45
-,South Alabama,Jaguars,NCAA,USA,Mobile,Alabama,USA,Sun Belt Conference,Air Raid,3-Apr,50,,,0,20,10,10,30,30,10,30,20
-,Southern Miss,Golden Eagles,NCAA,USM,Hattiesburg,Mississippi,USA,Conference USA,Spread,3-Apr,50,,,0,20,30,10,30,30,10,30,20
-,Texas State,Bobcats,NCAA,TEXST,San Marcos,Texas,USA,Sun Belt Conference,Spread,3-Apr,50,,,0,20,10,10,30,30,10,30,20
-,Toledo,Rockets,NCAA,TOL,Toledo,Ohio,USA,Mid-American Conference,Air Raid,3-Apr,50,,,0,20,10,10,20,20,10,60,10
-,Troy,Trojans,NCAA,TROY,Troy,Alabama,USA,Sun Belt Conference,Spread,3-Apr,50,,,0,20,20,10,30,30,10,30,20
-,UAB,Blazers,NCAA,UAB,Birmingham,Alabama,USA,Conference USA,Air Raid,3-Apr,50,,,0,20,20,10,30,30,10,30,20
-,UNC Charlotte,49ers,NCAA,UNCC,Charlotte,North Carolina,USA,Conference USA,Air Raid,3-Apr,50,,,0,20,10,10,30,30,10,30,20
-,Utah State,Aggies,NCAA,USU,Logan,Utah,USA,Mountain West Conference,Spread,3-Apr,50,,,0,20,10,10,30,30,10,50,45
-,UTEP,Miners,NCAA,UTEP,El Paso,Texas,USA,Conference USA,Pro Style,3-Apr,50,,,0,20,10,10,30,30,10,30,20
-,UTSA,Roadrunners,NCAA,UTSA,San Antonio,Texas,USA,Conference USA,Triple Option,3-Apr,50,,,0,20,5,10,30,30,10,30,20
-,Western Michigan,Broncos,NCAA,WMU,Kalamazoo,Michigan,USA,Mid-American Conference,Triple Option,3-Apr,50,,,0,20,10,10,20,20,10,60,10
-,Marshall,Thundering Herd,NCAA,MARSH,Huntington,West Virginia,USA,Conference USA,Spread,3-Apr,50,,,0,10,10,10,30,30,10,30,20
-,Middle Tennessee State,Blue Raiders,NCAA,MTSU,Murfreesboro,Tennessee,USA,Conference USA,Pro Style,3-Apr,50,,,0,10,10,10,30,30,10,30,20
-,Old Dominion,Monarchs,NCAA,ODU,Norfolk,Virginia,USA,Conference USA,Air Raid,3-Apr,50,,,0,10,10,10,30,30,10,30,20
-,Rice,Owls,NCAA,RICE,Houston,Texas,USA,Conference USA,Pro Style,3-Apr,50,,,0,10,20,10,30,90,10,30,20
-,Western Kentucky,Hilltoppers,NCAA,WKU,Bowling Green,Kentucky,USA,Conference USA,Spread,3-Apr,50,,,0,10,10,10,30,30,10,30,20
+﻿TeamName,TeamNickname,LeagueName,Abbreviation,City,State,Country,ConferenceName,DefaultOffensiveScheme,DefaultDefensiveScheme,TeamTalent,TeamColor_Primary_HEX,TeamColor_Secondary_HEX,TeamJerseyInvert,TeamPrestige,FacilitiesRating,ProPotentialRating,CampusLifestyleRating,AcademicPrestigeRating,TelevisionExposureRating,CoachStabilityRating,LocationRating
+Air Force,Falcons,NCAA,AFA,Colorado Springs,Colorado,USA,Mountain West Conference,Triple Option,3/3/05,50,0061AA,FFFFFF,0,30,20,10,30,30,30,50,40
+Akron,Zips,NCAA,AKR,Akron,Ohio,USA,Mid-American Conference,Pro Style,3-Apr,50,0,C29C41,0,20,20,10,20,20,10,60,10
+Alabama,Crimson Tide,NCAA,BAMA,Tuscaloosa,Alabama,USA,Southeastern Conference,Pro Style,4-Mar,50,A80532,FFFFFF,0,100,100,100,55,40,100,50,40
+Appalachian State,Mountaineers,NCAA,APP,Boone,North Carolina,USA,Sun Belt Conference,Spread Option,2-May,50,FFC520,0,0,40,30,20,30,30,20,30,20
+Arizona,Wildcats,NCAA,ZONA,Tucson,Arizona,USA,Pac-12 Conference,Spread,4/2/05,50,243361,BB003A,0,50,50,40,90,20,40,60,70
+Arizona State,Sun Devils,NCAA,ASU,Tempe,Arizona,USA,Pac-12 Conference,Spread,4/2/05,50,96203D,FEC927,0,50,60,40,90,20,40,60,65
+Arkansas,Razorbacks,NCAA,ARK,Fayetteville,Arkansas,USA,Southeastern Conference,Pro Style,3-Apr,50,8B0D26,0,0,40,60,40,55,40,40,50,35
+Arkansas State,Red Wolves,NCAA,ARST,Jonesboro,Arkansas,USA,Sun Belt Conference,Pro Style,3-Apr,50,ED1B2E,0,0,20,20,10,30,30,10,30,20
+Arkansas-Little Rock,Trojans,NCAA,UALR,Little Rock,Arkansas,USA,Sun Belt Conference,Spread,3-Apr,50,AD0000,FFFFFF,0,20,20,10,30,30,10,30,20
+Army,Black Knights,NCAA,ARMY,West Point,New York,USA,FBS Independents,Triple Option,4-Mar,20,0,C9A06C,0,20,30,0,0,95,40,60,10
+Auburn,Tigers,NCAA,AUB,Auburn,Alabama,USA,Southeastern Conference,Spread Option,3-Apr,50,172240,FE3300,0,60,80,90,55,40,70,50,40
+Ball State,Cardinals,NCAA,BALL,Muncie,Indiana,USA,Mid-American Conference,Pro Style,3-Apr,50,DA0000,FFFFFF,0,20,20,10,20,20,10,60,10
+Baylor,Bears,NCAA,BAY,Waco,Texas,USA,Big 12 Conference,Air Raid,4/2/05,76,118353,FCB212,0,50,70,50,30,60,50,50,30
+Boise State,Broncos,NCAA,BSU,Boise,Idaho,USA,Mountain West Conference,Spread,3-Apr,50,2D4492,F27E34,0,50,60,40,30,30,40,50,35
+Boston College,Eagles,NCAA,BC,Chestnut Hill,Massachusetts,USA,Atlantic Coast Conference,Heavy Run,3-Apr,74,821E1E,DBCCA4,0,40,50,30,30,70,30,50,70
+Bowling Green,Falcons,NCAA,BG,Bowling Green,Ohio,USA,Mid-American Conference,Spread,3-Apr,50,4E2400,F5793F,0,20,20,10,20,20,10,60,10
+Buffalo,Bulls,NCAA,BUF,Buffalo,New York,USA,Mid-American Conference,Pro Style,3-Apr,50,,,0,20,20,10,20,20,10,60,10
+BYU,Cougars,NCAA,BYU,Provo,Utah,USA,FBS Independents,Spread,2-Apr,30,1843,FFFFFF,0,30,40,40,5,30,40,60,30
+California,Golden Bears,NCAA,CAL,Berkeley,California,USA,Pac-12 Conference,Spread,3-Apr,50,1D2161,E29819,0,40,50,40,60,80,30,60,65
+Central Michigan,Chippewas,NCAA,CMU,Mount Pleasant,Michigan,USA,Mid-American Conference,Air Raid,3-Apr,50,780006,E2A253,0,20,10,10,20,20,10,60,10
+Cincinnati,Bearcats,NCAA,CIN,Cincinnati,Ohio,USA,American Athletic Conference,Air Raid,4-Mar,81,FD0026,0,0,50,50,40,30,40,40,50,40
+Clemson,Tigers,NCAA,CLEM,Clemson,South Carolina,USA,Atlantic Coast Conference,Spread,3-Apr,71,F06014,441F6F,0,100,100,90,80,30,100,50,40
+Coastal Carolina,Chanticleers,NCAA,CCU,Conway,South Carolina,USA,Sun Belt Conference,Air Raid,3-Apr,50,9297,D59C3A,0,20,10,10,30,30,10,30,20
+Colorado,Buffaloes,NCAA,CU,Boulder,Colorado,USA,Pac-12 Conference,Spread,3-Apr,50,0,C4AB68,0,40,40,40,80,60,30,60,70
+Colorado State,Rams,NCAA,CSU,Fort Collins,Colorado,USA,Mountain West Conference,Spread,3-Apr,50,008C75,F8E793,0,30,20,20,30,30,20,50,55
+Connecticut,Huskies,NCAA,UCONN,Storrs,Connecticut,USA,American Athletic Conference,Spread,3-Apr,75,0A1D5A,FFFFFF,0,20,20,10,60,40,10,50,45
+Duke,Blue Devils,NCAA,DUKE,Durham,North Carolina,USA,Atlantic Coast Conference,Pro Style,4-Mar,99,80089,FFFFFF,0,50,50,30,40,90,40,99,60
+East Carolina,Pirates,NCAA,ECU,Greenville,North Carolina,USA,American Athletic Conference,Heavy Run,3-Apr,61,4A1F68,FFCE28,0,20,20,10,60,10,10,50,45
+Eastern Michigan,Eagles,NCAA,EMU,Ypsilanti,Michigan,USA,Mid-American Conference,Spread,3-Apr,50,0B5F24,FFFFFF,0,20,20,10,20,20,10,60,10
+Florida,Gators,NCAA,UF,Gainesville,Florida,USA,Southeastern Conference,Spread,3-Apr,50,2139CE,FF4208,0,70,70,90,55,40,70,50,50
+Florida Atlantic,Owls,NCAA,FAU,Boca Raton,Florida,USA,Conference USA,Air Raid,3-Apr,50,004B85,CD1041,0,20,30,10,30,30,10,30,20
+Florida International,Panthers,NCAA,FIU,Miami,Florida,USA,Conference USA,Pro Style,3-Apr,50,002D62,C5960B,0,20,20,10,30,30,10,30,20
+Florida State,Seminoles,NCAA,FSU,Tallahassee,Florida,USA,Atlantic Coast Conference,Spread,4/2/05,91,642132,A8936B,0,70,70,100,80,40,70,50,60
+Fresno State,Bulldogs,NCAA,FRES,Fresno,California,USA,Mountain West Conference,Spread,3-Apr,50,E5003F,94183,0,30,30,20,30,30,20,50,35
+Georgia,Bulldogs,NCAA,UGA,Athens,Georgia,USA,Southeastern Conference,Pro Style,3-Apr,50,A0000B,0,0,90,80,100,55,40,100,50,55
+Georgia Southern,Eagles,NCAA,GSU,Statesboro,Georgia,USA,Sun Belt Conference,Triple Option,3-Apr,50,,,0,20,30,10,30,30,10,30,20
+Georgia State,Panthers,NCAA,GSU,Atlanta,Georgia,USA,Sun Belt Conference,Triple Option,3-Apr,50,,,0,20,30,10,30,30,10,30,20
+Georgia Tech,Yellow Jackets,NCAA,GT,Atlanta,Georgia,USA,Atlantic Coast Conference,Triple Option,3-Apr,76,B3A369,091D3A,0,50,40,30,10,90,40,50,70
+Houston,Cougars,NCAA,HOU,Houston,Texas,USA,American Athletic Conference,Spread,4/2/05,84,C90822,FFFFFF,0,50,50,40,40,40,40,50,60
+Illinois,Fighting Illini,NCAA,ILL,Urbana,Illinois,USA,Big Ten Conference,Pro Style,3-Apr,50,F5873C,1B4178,0,40,40,30,30,70,40,60,45
+Indiana,Hoosiers,NCAA,IU,Bloomington,Indiana,USA,Big Ten Conference,Air Raid,3-Apr,50,A82B3D,FFFFFF,0,30,40,20,30,70,30,60,45
+Iowa,Hawkeyes,NCAA,IOWA,Iowa City,Iowa,USA,Big Ten Conference,Heavy Run,3-Apr,50,FFD700,0,0,60,60,50,30,70,50,60,40
+Iowa State,Cyclones,NCAA,ISU,Ames,Iowa,USA,Big 12 Conference,Spread,3-Apr,83,840A2C,FEC938,0,50,50,30,30,20,40,50,30
+Kansas,Jayhawks,NCAA,KU,Lawrence,Kansas,USA,Big 12 Conference,Spread,3-Apr,88,0051BA,E8000D,0,30,30,30,40,20,30,50,40
+Kansas State,Wildcats,NCAA,KSU,Manhattan,Kansas,USA,Big 12 Conference,Heavy Run,3-Apr,83,633194,FFFFFF,0,40,40,30,30,20,40,50,30
+Kent State,Golden Flashes,NCAA,KENT,Kent,Ohio,USA,Mid-American Conference,Spread,3-Apr,50,,,0,20,20,10,20,20,10,60,10
+Kentucky,Wildcats,NCAA,UK,Lexington,Kentucky,USA,Southeastern Conference,Spread,4-Mar,50,3399,FFFFFF,0,50,80,40,55,40,50,50,40
+Liberty,Flames,NCAA,LIB,Lynchburg,Virginia,USA,FBS Independents,Spread,3-Apr,10,0A1B3D,850003,1,10,10,5,5,20,5,5,15
+Louisiana Lafayette,Ragin' Cajuns,NCAA,UL,Lafayette,Louisiana,USA,Sun Belt Conference,Air Raid,3-Apr,50,,,0,20,10,10,30,30,10,30,20
+Louisiana Monroe,Warhawks,NCAA,ULM,Monroe,Louisiana,USA,Sun Belt Conference,Spread,3-Apr,50,,,0,20,20,10,30,30,10,30,20
+Louisiana Tech,Bulldogs,NCAA,LTU,Ruston,Louisiana,USA,Conference USA,Air Raid,3-Apr,50,,,0,20,30,10,30,30,20,30,20
+Louisville,Cardinals,NCAA,U of L,Louisville,Kentucky,USA,Atlantic Coast Conference,Spread,3-Apr,80,FD0B20,70707,0,50,60,50,50,30,40,50,45
+LSU,Tigers,NCAA,LSU,Baton Rouge,Louisiana,USA,Southeastern Conference,Spread,4/2/05,50,33297B,FDB827,1,80,90,100,55,40,90,50,65
+Marshall,Thundering Herd,NCAA,MARSH,Huntington,West Virginia,USA,Conference USA,Spread,3-Apr,50,,,0,10,10,10,30,30,10,30,20
+Maryland,Terrapins,NCAA,UM,College Park,Maryland,USA,Big Ten Conference,Air Raid,3-Apr,50,D5002B,FEC619,0,40,50,50,30,70,40,60,55
+Memphis,Tigers,NCAA,MEM,Memphis,Tennessee,USA,American Athletic Conference,Spread,3-Apr,75,2A2A9B,FFFFFF,0,50,50,40,40,20,40,50,60
+Miami,Hurricanes,NCAA,MIA,Coral Gables,Florida,USA,Atlantic Coast Conference,Spread,4/2/05,75,F47321,5030,0,60,70,90,90,50,80,50,90
+Miami (OH),Redhawks,NCAA,MIA,Oxford,Ohio,USA,Mid-American Conference,Pro Style,3-Apr,50,,,0,20,10,10,20,20,10,60,10
+Michigan,Wolverines,NCAA,MICH,Ann Arbor,Michigan,USA,Big Ten Conference,Pro Style,3-Apr,50,00274C,FFCB05,0,80,80,80,30,70,90,60,55
+Michigan State,Spartans,NCAA,MSU,East Lansing,Michigan,USA,Big Ten Conference,Pro Style,3-Apr,50,1C453A,FFFFFF,0,70,70,60,30,70,60,60,50
+Middle Tennessee State,Blue Raiders,NCAA,MTSU,Murfreesboro,Tennessee,USA,Conference USA,Pro Style,3-Apr,50,,,0,10,10,10,30,30,10,30,20
+Minnesota,Golden Gophers,NCAA,MINN,Minneapolis,Minnesota,USA,Big Ten Conference,Pro Style,3-Apr,50,7A0019,FBB246,0,50,60,40,30,70,40,60,45
+Mississippi State,Bulldogs,NCAA,MSST,Starkville,Mississippi,USA,Southeastern Conference,Heavy Run,4-Mar,50,660000,FFFFFF,0,50,60,60,55,40,40,50,45
+Missouri,Tigers,NCAA,MIZZOU,Columbia,Missouri,USA,Southeastern Conference,Spread Option,3-Apr,50,0,F1B82D,0,50,60,50,55,40,40,50,50
+Navy,Midshipmen,NCAA,NAVY,Annapolis,Maryland,USA,American Athletic Conference,Triple Option,3/3/05,50,00205B,C5B783,0,40,20,10,5,90,50,40,30
+NC State,Wolfpack,NCAA,NCST,Raleigh,North Carolina,USA,Atlantic Coast Conference,Spread,3-Apr,77,CC0000,0,0,40,30,40,60,60,40,50,55
+Nebraska,Cornhuskers,NCAA,NEB,Lincoln,Nebraska,USA,Big Ten Conference,Spread,3-Apr,50,DC0029,FFFFFF,0,50,70,60,30,70,50,60,30
+Nevada,Wolf Pack,NCAA,NEV,Reno,Nevada,USA,Mountain West Conference,Triple Option,3-Apr,50,16234D,0,0,30,30,20,30,30,20,50,40
+New Mexico,Lobos,NCAA,NM,Albuquerque,New Mexico,USA,Mountain West Conference,Pro Style,3-Apr,50,,,0,20,10,10,30,30,10,50,35
+New Mexico State,Aggies,NCAA,NMSU,Las Cruces,New Mexico,USA,FBS Independents,Heavy Run,2-Apr,10,750312,777777,0,10,10,5,20,20,5,40,15
+North Carolina,Tar Heels,NCAA,UNC,Chapel Hill,North Carolina,USA,Atlantic Coast Conference,Spread,3-Apr,96,7BAFD4,FFFFFF,0,50,70,60,70,80,40,99,60
+North Texas,Mean Green,NCAA,UNT,Denton,Texas,USA,Conference USA,Spread,3-Apr,50,,,0,30,20,20,30,30,20,30,20
+Northern Illinois,Huskies,NCAA,NIU,DeKalb,Illinois,USA,Mid-American Conference,Pro Style,3-Apr,50,,,0,20,20,10,20,20,10,60,10
+Northwestern,Wildcats,NCAA,NU,Evanston,Illinois,USA,Big Ten Conference,Spread,3-Apr,50,4E2A84,FFFFFF,0,40,70,40,30,70,30,60,65
+Notre Dame,Fighting Irish,NCAA,ND,South Bend,Indiana,USA,FBS Independents,Spread,4-Mar,80,0C2340,C99700,0,90,80,80,10,70,100,50,40
+Ohio,Bobcats,NCAA,OHIO,Athens,Ohio,USA,Mid-American Conference,Pro Style,3-Apr,50,,,0,20,20,10,20,20,10,60,10
+Ohio State,Buckeyes,NCAA,OSU,Columbus,Ohio,USA,Big Ten Conference,Spread,3-Apr,50,CA0321,A6ADA1,0,90,100,100,30,70,100,60,55
+Oklahoma,Sooners,NCAA,OU,Norman,Oklahoma,USA,Big 12 Conference,Air Raid,4/2/05,77,950026,FDF9D8,0,90,90,90,40,20,100,50,30
+Oklahoma State,Cowboys,NCAA,OKST,Stillwater,Oklahoma,USA,Big 12 Conference,Air Raid,3-Apr,73,EF641A,0,0,40,60,40,40,20,40,50,40
+Old Dominion,Monarchs,NCAA,ODU,Norfolk,Virginia,USA,Conference USA,Air Raid,3-Apr,50,,,0,10,10,10,30,30,10,30,20
+Ole Miss,Rebels,NCAA,MISS,Oxford,Mississippi,USA,Southeastern Conference,Spread,3-Apr,50,F4002F,0D1A5F,0,50,60,70,55,40,50,50,40
+Oregon,Ducks,NCAA,ORE,Eugene,Oregon,USA,Pac-12 Conference,Spread Option,3/3/05,50,0C643F,FEE123,0,70,100,70,80,50,70,60,60
+Oregon State,Beavers,NCAA,OSU,Corvallis,Oregon,USA,Pac-12 Conference,Pro Style,3-Apr,50,DC4405,0,0,40,50,30,30,40,30,60,45
+Penn State,Nittany Lions,NCAA,PSU,State College,Pennsylvania,USA,Big Ten Conference,Spread,3-Apr,50,151F49,FFFFFF,0,80,70,70,30,70,80,60,50
+Pittsburgh,Panthers,NCAA,PITT,Pittsburgh,Pennsylvania,USA,Atlantic Coast Conference,Pro Style,3-Apr,60,2083,FEB01D,0,40,50,40,30,70,40,50,45
+Purdue,Boilermakers,NCAA,PUR,West Lafayette,Indiana,USA,Big Ten Conference,Pro Style,3-Apr,50,CEB888,0,0,40,60,30,30,70,40,60,45
+Rice,Owls,NCAA,RICE,Houston,Texas,USA,Conference USA,Pro Style,3-Apr,50,,,0,10,20,10,30,90,10,30,20
+Rutgers,Scarlet Knights,NCAA,RUT,New Brunswick,New Jersey,USA,Big Ten Conference,Spread,3-Apr,50,CC0033,5F6A72,0,30,30,30,30,70,30,60,45
+Sample Team East,Hedgehogs,NCAA,ST2,Baltimore,Maryland,USA,Sample Conference 1,Triple Option,3-Apr,90,A0000B,FEE123,0,6,50,50,80,30,50,50,40
+Sample Team North,Yetis,NCAA,ST3,Minneapolis,Minnesota,USA,Sample Conference 2,Air Raid,3-Apr,70,D65918,B7A57A,0,4,50,50,80,30,50,50,40
+Sample Team South,Eels,NCAA,ST1,Jackson,Mississippi,USA,Sample Conference 1,Air Raid,3-Apr,90,BB0000,FFFFFF,0,8,50,50,80,30,50,50,40
+Sample Team West,Gunners,NCAA,ST4,Oakland,California,USA,Sample Conference 2,Air Raid,3-Apr,60,00274C,FF4208,0,2,50,50,80,30,50,50,40
+San Diego State,Aztecs,NCAA,SDST,San Diego,California,USA,Mountain West Conference,Heavy Run,3-Apr,50,AF182A,0,0,30,40,30,30,30,30,50,85
+San Jose State,Spartans,NCAA,SJSU,San Jose,California,USA,Mountain West Conference,Pro Style,3-Apr,50,134B9B,FBD016,0,20,10,10,30,30,10,50,45
+SMU,Mustangs,NCAA,SMU,University Park,Texas,USA,American Athletic Conference,Air Raid,3/3/05,75,C2032C,27388F,0,50,40,50,60,70,40,50,70
+South Alabama,Jaguars,NCAA,USA,Mobile,Alabama,USA,Sun Belt Conference,Air Raid,3-Apr,50,,,0,20,10,10,30,30,10,30,20
+South Carolina,Gamecocks,NCAA,SCAR,Columbia,South Carolina,USA,Southeastern Conference,Spread,3-Apr,50,73000A,0,0,50,90,70,55,40,40,50,40
+South Florida,Bulls,NCAA,USF,Tampa,Florida,USA,American Athletic Conference,Spread,3-Apr,68,004A36,A08B4D,0,40,40,30,60,30,30,50,70
+Southern Miss,Golden Eagles,NCAA,USM,Hattiesburg,Mississippi,USA,Conference USA,Spread,3-Apr,50,,,0,20,30,10,30,30,10,30,20
+Stanford,Cardinal,NCAA,STAN,Palo Alto,California,USA,Pac-12 Conference,Pro Style,4-Mar,50,950026,FFFFFF,0,60,60,60,30,90,50,60,75
+Syracuse,Orange,NCAA,SYR,Syracuse,New York,USA,Atlantic Coast Conference,Spread,3-Apr,73,C82F04,06162E,0,40,50,30,30,40,40,50,30
+TCU,Horned Frogs,NCAA,TCU,Fort Worth,Texas,USA,Big 12 Conference,Spread,4/2/05,75,3D156F,A3A9AC,0,60,70,60,50,60,50,50,60
+Temple,Owls,NCAA,TEM,Philadelphia,Pennsylvania,USA,American Athletic Conference,Pro Style,3-Apr,73,A80532,FFFFFF,0,40,30,20,40,50,20,50,60
+Tennessee,Volunteers,NCAA,TENN,Knoxville,Tennessee,USA,Southeastern Conference,Pro Style,3-Apr,50,FF8200,FFFFFF,0,60,90,60,55,40,50,50,40
+Texas,Longhorns,NCAA,UT,Austin,Texas,USA,Big 12 Conference,Pro Style,3-Apr,78,D65918,FFFFFF,0,80,90,80,80,90,90,50,85
+Texas A&M,Aggies,NCAA,TAMU,College Station,Texas,USA,Southeastern Conference,Spread,4/2/05,50,500000,FFFFFF,0,70,100,70,55,40,70,50,50
+Texas State,Bobcats,NCAA,TEXST,San Marcos,Texas,USA,Sun Belt Conference,Spread,3-Apr,50,,,0,20,10,10,30,30,10,30,20
+Texas Tech,Red Raiders,NCAA,TTU,Lubbock,Texas,USA,Big 12 Conference,Air Raid,3-Apr,83,CC0000,0,0,50,70,60,20,20,40,50,30
+Toledo,Rockets,NCAA,TOL,Toledo,Ohio,USA,Mid-American Conference,Air Raid,3-Apr,50,,,0,20,10,10,20,20,10,60,10
+Troy,Trojans,NCAA,TROY,Troy,Alabama,USA,Sun Belt Conference,Spread,3-Apr,50,,,0,20,20,10,30,30,10,30,20
+Tulane,Green Wave,NCAA,TUL,New Orleans,Louisiana,USA,American Athletic Conference,Pro Style,3-Apr,30,11472A,1890CC,0,30,20,20,70,70,20,20,70
+Tulsa,Golden Hurricane,NCAA,TUL,Tulsa,Oklahoma,USA,American Athletic Conference,Spread,3-Apr,30,0E387C,C8102E,0,30,20,20,20,30,20,20,10
+UAB,Blazers,NCAA,UAB,Birmingham,Alabama,USA,Conference USA,Air Raid,3-Apr,50,,,0,20,20,10,30,30,10,30,20
+UCF,Knights,NCAA,UCF,Orlando,Florida,USA,American Athletic Conference,Spread,3/3/05,82,B4985A,231F20,0,60,50,40,60,20,40,50,70
+UCLA,Bruins,NCAA,UCLA,Los Angeles,California,USA,Pac-12 Conference,Spread Option,4/2/05,50,2D68C4,F2A900,0,60,50,50,60,70,50,60,99
+Umass,Minutemen,NCAA,UMASS,Amhert,Massachusetts,USA,FBS Independents,Spread Option,3-Apr,20,830D24,7E8081,0,15,20,10,40,30,10,20,40
+UNC Charlotte,49ers,NCAA,UNCC,Charlotte,North Carolina,USA,Conference USA,Air Raid,3-Apr,50,,,0,20,10,10,30,30,10,30,20
+UNLV,Rebels,NCAA,UNLV,Las Vegas,Nevada,USA,Mountain West Conference,Spread,3-Apr,50,C20035,C6C8C9,0,30,30,10,30,30,20,50,75
+USC,Trojans,NCAA,USC,Los Angeles,California,USA,Pac-12 Conference,Pro Style,3-Apr,50,990000,FFC72C,0,80,70,100,80,80,90,60,99
+Utah,Utes,NCAA,UTAH,Salt Lake City,Utah,USA,Pac-12 Conference,Spread,3/3/05,50,CC0000,808080,0,60,50,40,20,30,40,60,45
+Utah State,Aggies,NCAA,USU,Logan,Utah,USA,Mountain West Conference,Spread,3-Apr,50,,,0,20,10,10,30,30,10,50,45
+UTEP,Miners,NCAA,UTEP,El Paso,Texas,USA,Conference USA,Pro Style,3-Apr,50,,,0,20,10,10,30,30,10,30,20
+UTSA,Roadrunners,NCAA,UTSA,San Antonio,Texas,USA,Conference USA,Triple Option,3-Apr,50,,,0,20,5,10,30,30,10,30,20
+Vanderbilt,Commodores,NCAA,VANDY,Nashville,Tennessee,USA,Southeastern Conference,Pro Style,3-Apr,50,866D4B,0,0,40,40,30,45,99,40,50,70
+Virginia,Cavaliers,NCAA,UVA,Charlottesville,Virginia,USA,Atlantic Coast Conference,Pro Style,3-Apr,95,232D4B,F84C1E,0,30,40,20,60,90,30,99,75
+Virginia Tech,Hokies,NCAA,VT,Blacksburg,Virginia,USA,Atlantic Coast Conference,Pro Style,3-Apr,87,630031,CF4420,0,50,50,60,70,80,40,50,40
+Wake Forest,Demon Deacons,NCAA,WAKE,Winston-Salem,North Carolina,USA,Atlantic Coast Conference,Spread,3-Apr,70,A67F31,0,0,30,20,20,20,85,30,50,55
+Washington,Huskies,NCAA,UW,Seattle,Washington,USA,Pac-12 Conference,Spread,3/3/05,50,3A3D5E,B7A57A,0,70,60,70,60,60,60,60,75
+Washington State,Cougars,NCAA,WSU,Pullman,Washington,USA,Pac-12 Conference,Air Raid,3-Apr,50,951A30,5E6A71,0,50,40,40,20,20,30,60,35
+West Virginia,Mountaineers,NCAA,WVU,Morgantown,West Virginia,USA,Big 12 Conference,Air Raid,3-Apr,86,134B9B,EAAA00,0,50,60,40,30,20,40,50,30
+Western Kentucky,Hilltoppers,NCAA,WKU,Bowling Green,Kentucky,USA,Conference USA,Spread,3-Apr,50,,,0,10,10,10,30,30,10,30,20
+Western Michigan,Broncos,NCAA,WMU,Kalamazoo,Michigan,USA,Mid-American Conference,Triple Option,3-Apr,50,,,0,20,10,10,20,20,10,60,10
+Wisconsin,Badgers,NCAA,WIS,Madison,Wisconsin,USA,Big Ten Conference,Heavy Run,3-Apr,50,B70021,FFFFFF,0,80,60,60,30,70,70,60,45
+Wyoming,Cowboys,NCAA,WYO,Laramie,Wyoming,USA,Mountain West Conference,Spread,3-Apr,50,6F4220,FFC425,0,30,10,20,30,30,10,50,30

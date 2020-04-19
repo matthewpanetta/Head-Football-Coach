@@ -78,9 +78,9 @@ function DrawPlayerStats(data){
   $(CareerHighParentCard).appendTo(CareerHighParentCol);
 
 
-  var CareerHighTable = $('#PlayerCareerHighTableClone').clone().removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerCareerHighTable-'+data.StatGroupName)
+  var CareerHighTable = $('#PlayerCareerHighTableClone').clone().addClass('w3-table-all').removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerCareerHighTable-'+data.StatGroupName).css('width', '100%');
 
-  var Table = $('#PlayerSeasonStatTableClone').clone().removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerSeasonStatTable-'+data.StatGroupName)
+  var Table = $('#PlayerSeasonStatTableClone').clone().addClass('w3-table-all').removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerSeasonStatTable-'+data.StatGroupName).css('width', '100%');
 
   if (data.CareerStats.length > 0){
     $.each(columns, function(){
@@ -88,7 +88,7 @@ function DrawPlayerStats(data){
     });
   }
 
-  $('<span>'+data.StatGroupName+' Career Highs</span>').addClass('table_title').addClass('margin-left-12').appendTo(CareerHighParentCard);
+  $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Career Highs</div>').appendTo(CareerHighParentCard);
   CareerHighTable.appendTo(CareerHighParentCard);
   var CareerHighDataTable = $(CareerHighTable).DataTable({
     "data": data.CareerHighs,
@@ -109,7 +109,7 @@ function DrawPlayerStats(data){
   });
 
 
-  $('<span>'+data.StatGroupName+' Season Stats</span>').addClass('table_title').addClass('margin-left-12').appendTo(ParentCard);
+  $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Season Stats</div>').appendTo(ParentCard);
   Table.appendTo(ParentCard);
   var DataTable = $(Table).DataTable( {
     data: data.SeasonStats,
@@ -387,9 +387,6 @@ $(document).ready(function(){
   PlayerStatsShow = JSON.parse(PlayerStatsShow.textContent);
 
   PopulatePlayerStats(WorldID, GameStatData, RecentGameStatData, PlayerStatsShow, PrimaryStatShow);
-
-
-
   PopulatePlayerSeasonStats(WorldID, PlayerID);
 
 });

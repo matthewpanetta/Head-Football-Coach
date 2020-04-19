@@ -348,12 +348,9 @@
 }
 
 .teamScheduleOpponentLogo {
-  /*width: 35px;*/
   width: 50%;
-  left: 25%;
-  top: 15px;
-  position: relative;
-  max-height: 40px;
+      margin-top: 4px;
+      margin-left: 25%;
 }
 
 .arc>path {
@@ -537,9 +534,7 @@ input[type=text], input[type=password] {
 
 .teamScheduleGameBox {
   border: 1px solid #dcdcdc;
-  height: 86px;
   cursor: pointer;
-  width: 70px;
 }
 
 .weekScheduleBox {
@@ -1409,6 +1404,11 @@ tfoot td {
   flex-shrink: 1;
   flex-basis: 0;
   margin: 0px 0px;
+}
+.centered-item {
+  justify-content: center;
+   align-items: center;
+   text-align: center;
 }
 
 .team-header-color-left {

@@ -124,14 +124,15 @@ def CreateSchedule(LS, WorldID):
     TeamList = Team.objects.filter(WorldID=WorldID)
     WeekMap = {w.WeekNumber: w for w in Week.objects.filter(WorldID=WorldID).filter(PhaseID__PhaseName = 'Regular Season').filter(PhaseID__LeagueSeasonID__IsCurrent = True)}
 
-    ScheduleDict = {}
-    for t in TeamList:
-        ScheduleDict[t] = {'CurrentTeamSeason': t.CurrentTeamSeason, 'NonConferenceGames': 0, 'ConferenceGames': 0, 'HomeGames': 0, 'AwayGames': 0, 'WeeksScheduled': [], 'AvailableWeeks':[w for w in WeekMap], 'OpposingTeams': [], 'UnschedulableTeams': [], 'Conference': t.ConferenceID, 'ConferenceRivals': [], 'NonConferenceRivals': [], }
-
     WeeksInSeason = len(WeekMap)
     GamePerTeam = 12
     NonConferenceGames = 4
     ConferenceGames = GamePerTeam - NonConferenceGames
+
+    ScheduleDict = {}
+    for t in TeamList:
+        ScheduleDict[t] = {'CurrentTeamSeason': t.CurrentTeamSeason, 'NonConferenceGames': 0, 'ConferenceGames': 0, 'TotalConferenceGames': t.ConferenceID.NumberConferenceGames, 'TotalNonConferenceGames': GamePerTeam - t.ConferenceID.NumberConferenceGames, 'HomeGames': 0, 'AwayGames': 0, 'WeeksScheduled': [], 'AvailableWeeks':[w for w in WeekMap], 'OpposingTeams': [], 'UnschedulableTeams': [], 'Conference': t.ConferenceID, 'ConferenceRivals': [], 'NonConferenceRivals': [], }
+
 
     GameTimeHourChoices = [12, 12, 2, 3, 3, 7, 7, 8]
     GameTimeMinuteChoices = ['00', '00', '00', '00', '30', '30', '30', '05']
@@ -173,7 +174,7 @@ def CreateSchedule(LS, WorldID):
             for T in UnscheduledTeams:
                 if ScheduleDict[T]['Conference'] not in UnscheduledConferences:
                     UnscheduledConferences[ScheduleDict[T]['Conference']] = []
-                if ScheduleDict[T]['ConferenceGames'] < ConferenceGames:
+                if ScheduleDict[T]['ConferenceGames'] < ScheduleDict[T]['TotalConferenceGames']:
                     UnscheduledConferences[ScheduleDict[T]['Conference']].append(T)
 
             for Conf in UnscheduledConferences:
@@ -196,15 +197,16 @@ def CreateSchedule(LS, WorldID):
                 HomeTeam, AwayTeam = AwayTeam, HomeTeam
             KeepGame = True
 
-            IsConferenceGame = ScheduleDict[HomeTeam]['Conference'] == ScheduleDict[AwayTeam]['Conference']
+            IsConferenceGame = ((ScheduleDict[HomeTeam]['Conference'] == ScheduleDict[AwayTeam]['Conference']) and (not ScheduleDict[HomeTeam]['Conference'].IsIndependent))
             if AwayTeam in ScheduleDict[HomeTeam]['OpposingTeams'] or AwayTeam in ScheduleDict[HomeTeam]['UnschedulableTeams'] :
                 KeepGame = False
             else:
                 if IsConferenceGame:
-                    KeepGame = ScheduleDict[HomeTeam]['ConferenceGames'] < ConferenceGames and ScheduleDict[AwayTeam]['ConferenceGames'] < ConferenceGames
+                    KeepGame = ScheduleDict[HomeTeam]['ConferenceGames'] < ScheduleDict[HomeTeam]['TotalConferenceGames'] and ScheduleDict[AwayTeam]['ConferenceGames'] < ScheduleDict[AwayTeam]['TotalConferenceGames']
                 else:
-                    KeepGame = ScheduleDict[HomeTeam]['NonConferenceGames'] < NonConferenceGames and ScheduleDict[AwayTeam]['NonConferenceGames'] < NonConferenceGames
+                    KeepGame = ScheduleDict[HomeTeam]['NonConferenceGames'] < ScheduleDict[HomeTeam]['TotalNonConferenceGames'] and ScheduleDict[AwayTeam]['NonConferenceGames'] < ScheduleDict[AwayTeam]['TotalNonConferenceGames']
 
+                KeepGame = KeepGame and len(ScheduleDict[HomeTeam]['WeeksScheduled']) < GamePerTeam and len(ScheduleDict[AwayTeam]['WeeksScheduled']) < GamePerTeam
 
             if KeepGame:
                 if (ScheduleDict[HomeTeam]['HomeGames'] - ScheduleDict[HomeTeam]['AwayGames']) > (ScheduleDict[AwayTeam]['HomeGames'] - ScheduleDict[AwayTeam]['AwayGames']):
@@ -216,7 +218,7 @@ def CreateSchedule(LS, WorldID):
                 GameTime = str(random.choice(GameTimeHourChoices)) + ':' + random.choice(GameTimeMinuteChoices)
 
 
-                if IsConferenceGame:
+                if IsConferenceGame or ScheduleDict[HomeTeam]['Conference'].IsIndependent:
                     WeekSet = [(w, w**4) for w in WeekMap if w not in ScheduleDict[HomeTeam]['WeeksScheduled'] and w not in ScheduleDict[AwayTeam]['WeeksScheduled']]
                     if len(WeekSet) == 0:
                         ScheduleDict[HomeTeam]['UnschedulableTeams'].append(AwayTeam)
@@ -258,6 +260,14 @@ def CreateSchedule(LS, WorldID):
         GamesToSchedule = []
         ScheduleLoopCount +=1
         UnscheduledTeams = [t for t in ScheduleDict if len(ScheduleDict[t]['WeeksScheduled']) < GamePerTeam]
+        if ScheduleLoopCount > 125:
+            for T in UnscheduledTeams:
+                if ScheduleDict[T]['ConferenceGames'] < ScheduleDict[T]['TotalConferenceGames']:
+                    ScheduleDict[T]['TotalConferenceGames'] -= 1
+                    ScheduleDict[T]['TotalNonConferenceGames'] += 1
+                elif ScheduleDict[T]['NonConferenceGames'] < ScheduleDict[T]['TotalNonConferenceGames']:
+                    ScheduleDict[T]['TotalNonConferenceGames'] -= 1
+                    ScheduleDict[T]['TotalConferenceGames'] += 1
 
     while len(UnscheduledTeams) >= 2 and ScheduleLoopCount > 400:
 
@@ -295,12 +305,12 @@ def CreateSchedule(LS, WorldID):
                 HomeTeam, AwayTeam = AwayTeam, HomeTeam
             KeepGame = True
 
-            IsConferenceGame = ScheduleDict[HomeTeam]['Conference'] == ScheduleDict[AwayTeam]['Conference']
+            IsConferenceGame = ((ScheduleDict[HomeTeam]['Conference'] == ScheduleDict[AwayTeam]['Conference']) and (not ScheduleDict[HomeTeam]['Conference'].IsIndependent))
             if AwayTeam in ScheduleDict[HomeTeam]['OpposingTeams'] or AwayTeam in ScheduleDict[HomeTeam]['UnschedulableTeams'] :
                 KeepGame = False
             else:
                 if IsConferenceGame:
-                    if  ScheduleDict[HomeTeam]['ConferenceGames'] < ConferenceGames and ScheduleDict[AwayTeam]['ConferenceGames'] < ConferenceGames:
+                    if  (ScheduleDict[HomeTeam]['ConferenceGames'] < ConferenceGames) and (ScheduleDict[AwayTeam]['ConferenceGames'] < ConferenceGames):
                         KeepGame = True
                     else:
                         KeepGame = False
@@ -322,7 +332,7 @@ def CreateSchedule(LS, WorldID):
 
 
 
-                if IsConferenceGame:
+                if IsConferenceGame or ScheduleDict[HomeTeam]['Conference'].IsIndependent:
                     WeekSet = [(w, w**4) for w in WeekMap if w not in ScheduleDict[HomeTeam]['WeeksScheduled'] and w not in ScheduleDict[AwayTeam]['WeeksScheduled']]
                     if len(WeekSet) == 0:
                         ScheduleDict[HomeTeam]['UnschedulableTeams'].append(AwayTeam)
@@ -549,10 +559,10 @@ def CreatePlayers(LS, WorldID):
     NumberOfPlayersNeeded = PlayersPerTeam *  NumberOfTeams
     NumberOfPlayersNeeded -= PTS.count()
 
-    DraftTeamList = list(Team.objects.filter(WorldID_id = WorldID).annotate(AdjustedTeamPrestige=(F('TeamPrestige')/10)**3.5))
+    DraftTeamList = list(Team.objects.filter(WorldID_id = WorldID).annotate(AdjustedTeamPrestige=(F('TeamPrestige') * 1.0 /10)**3.5))
     TeamDict = {}
     for T in DraftTeamList:
-        TeamDict[T] = {'TeamPrestige': T.AdjustedTeamPrestige, 'PlayerCount': 0, 'StopNumber': None, 'Top100':0, 'Top250': 0, 'Top500': 0, 'Top1000': 0, 'PositionPreference': {}}
+        TeamDict[T] = {'TeamPrestige': int(T.AdjustedTeamPrestige), 'PlayerCount': 0, 'StopNumber': None, 'Top100':0, 'Top250': 0, 'Top500': 0, 'Top1000': 0, 'PositionPreference': {}}
         TeamDict[T]['PositionPreference']['Offense'] = NormalTrunc(1.05, 0.1, .5, 1.5)
         TeamDict[T]['PositionPreference']['Defense'] = 2 - TeamDict[T]['PositionPreference']['Offense']
         TeamDict[T]['PositionPreference']['Special Teams'] = .75
@@ -562,6 +572,7 @@ def CreatePlayers(LS, WorldID):
         T = [(T, TeamDict[T]['TeamPrestige']) for T in TeamDict if TeamDict[T]['PlayerCount'] < PlayersPerTeam]
         if len(T) == 0:
             break
+        print('SelectedTeam = WeightedProbabilityChoice(T, T[0])', T, T[0])
         SelectedTeam = WeightedProbabilityChoice(T, T[0])
         TeamDict[SelectedTeam]['PlayerCount'] +=1
         if TeamDict[SelectedTeam]['PlayerCount'] >= PlayersPerTeam:
@@ -1396,7 +1407,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
         if DoAudit:
             end = time.time()
             TimeElapsed = end - start
-            A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 2, AuditDescription='Create Players')
+            A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 0, AuditDescription='Create Players')
 
 
     if DoAudit:

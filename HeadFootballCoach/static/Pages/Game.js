@@ -35,13 +35,20 @@ function AddScoringSummaryListeners(){
 
 
 $(document).ready(function(){
+
+  $.extend(true, $.fn.dataTable.defaults, {
+    column: {
+        orderSequence: ['desc','asc']
+    }
+  });
   console.log('In Game.js');
   $('.gamePlayerBoxStats').find('table').DataTable( {
     "searching": false,
     "info": false,
     "paging":   false,
     "ordering": true,
-    'order': [[1, 'desc']]
+    'order': [[1, 'desc']],
+
   });
 
   AddScoringSummaryListeners();
