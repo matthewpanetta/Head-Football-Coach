@@ -272,8 +272,8 @@ def GameSim(game):
         CoachDict[CT]['Tendencies'] = {}
         CoachDict[CT]['Tendencies']['FourthDownAggressiveness'] = ( C['SituationalAggressivenessTendency'] / 10.0)
         CoachDict[CT]['Tendencies']['TwoPointAggressiveness'] = (C['SituationalAggressivenessTendency'] / 10.0)
-        CoachDict[CT]['Tendencies']['Playcall_PassRatio'] = (C['PlaycallPassTendency'] / 55.0) ** .5
-        CoachDict[CT]['Tendencies']['Playcall_RunRatio'] = ((100 - C['PlaycallPassTendency']) / 45.0) ** .5
+        CoachDict[CT]['Tendencies']['Playcall_PassRatio'] = (C['PlaycallPassTendency'] / 55.0) ** 1.1
+        CoachDict[CT]['Tendencies']['Playcall_RunRatio'] = ((100 - C['PlaycallPassTendency']) / 45.0) ** 1.1
         CoachDict[CT]['Tendencies']['PlayClockAggressiveness'] = (C['PlayClockAggressivenessTendency'] / 10.0)
 
         #print(CT, 'Run:', CoachDict[CT]['Tendencies']['Playcall_RunRatio'], 'Pass:', CoachDict[CT]['Tendencies']['Playcall_PassRatio'] )

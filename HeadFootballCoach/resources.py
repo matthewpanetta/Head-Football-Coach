@@ -1,4 +1,4 @@
-from .models import Audit,TeamGame,Bowl,Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
+from .models import Audit,TeamGame,Bowl,TeamSeasonStrategy, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
 import random
 from datetime import timedelta, date
 import pandas as pd
@@ -485,6 +485,144 @@ def GenerateCoach(WorldID):
     PlayerNameTuple  = RandomName()
     C = Coach(WorldID=WorldID, CoachFirstName = PlayerNameTuple[0], CoachLastName = PlayerNameTuple[1])
 
+
+    OffensivePlaybook_List = {'Air Raid': 8
+                            , 'Heavy Run': 7
+                            , 'Spread Option': 20
+                            , 'Spread': 40
+                            , 'Pro Style': 20
+                            , 'Triple Option': 5}
+
+    OffensivePlaybook_Options = {'Air Raid': {'PassingStrategy': {'Deep Pass': 30, 'Moderate Deep': 30, 'Balanced': 20, 'Moderate Short': 10, 'Short': 10},
+                                              'RunningBackStrategy': {'Committee': 20, 'Starter Focused': 50, 'Bellcow': 30},
+                                              'QB_Preference': {'West-Coast': 10, 'Dual Threat': 10, 'Option': 0, 'Game Manager': 30, 'Pocket Passer': 30, 'Balanced': 20},
+                                              'RB_Preference': {'Bruiser': 0, 'Receiving': 60, 'Elusive': 20, 'Balanced': 20},
+                                              'WR_Preference': {'Slot': 20, 'Deep Threat': 50, 'Possession': 10, 'Balanced': 20},
+                                              'TE_Preference': {'Possession': 20, 'Blocking': 0, 'Vertical Threat': 50, 'Balanced': 30},
+                                              'OL_Preference': {'Pass Block': 80, 'Run Block': 0, 'Balanced': 20},
+                                              'SituationalAggressivenessTendency': [1.1],
+                                              'PlaycallPassTendency': [65, 5, 60, 90],
+                                              'PlayClockAggressivenessTendency': [1.2]}
+
+                            , 'Heavy Run':   {'PassingStrategy': {'Deep Pass': 0, 'Moderate Deep': 10, 'Balanced': 30, 'Moderate Short': 30, 'Short': 30},
+                                              'RunningBackStrategy': {'Committee': 0, 'Starter Focused': 50, 'Bellcow': 50},
+                                              'QB_Preference': {'West-Coast': 10, 'Dual Threat': 0, 'Option': 0, 'Game Manager': 30, 'Pocket Passer': 30, 'Balanced': 20},
+                                              'RB_Preference': {'Bruiser': 80, 'Receiving': 0, 'Elusive': 20, 'Balanced': 20},
+                                              'WR_Preference': {'Slot': 10, 'Deep Threat': 0, 'Possession': 80, 'Balanced': 20},
+                                              'TE_Preference': {'Possession': 10, 'Blocking': 80, 'Vertical Threat': 0, 'Balanced': 30},
+                                              'OL_Preference': {'Pass Block': 0, 'Run Block': 100, 'Balanced': 20},
+                                              'SituationalAggressivenessTendency': [.8],
+                                              'PlaycallPassTendency': [40, 5, 20, 50],
+                                              'PlayClockAggressivenessTendency': [.8]}
+
+                            , 'Spread Option':{'PassingStrategy': {'Deep Pass': 0, 'Moderate Deep': 10, 'Balanced': 30, 'Moderate Short': 30, 'Short': 30},
+                                              'RunningBackStrategy': {'Committee': 50, 'Starter Focused': 50, 'Bellcow': 0},
+                                              'QB_Preference': {'West-Coast': 10, 'Dual Threat': 80, 'Option': 10, 'Game Manager': 0, 'Pocket Passer': 0, 'Balanced': 0},
+                                              'RB_Preference': {'Bruiser': 10, 'Receiving': 10, 'Elusive': 80, 'Balanced': 20},
+                                              'WR_Preference': {'Slot': 30, 'Deep Threat': 0, 'Possession': 80, 'Balanced': 20},
+                                              'TE_Preference': {'Possession': 40, 'Blocking': 40, 'Vertical Threat': 0, 'Balanced': 10},
+                                              'OL_Preference': {'Pass Block': 50, 'Run Block': 50, 'Balanced': 50},
+                                              'SituationalAggressivenessTendency': [1.2],
+                                              'PlaycallPassTendency': [50, 10, 30, 90],
+                                              'PlayClockAggressivenessTendency': [1.2]}
+
+                            , 'Spread':      {'PassingStrategy': {'Deep Pass': 30, 'Moderate Deep': 30, 'Balanced': 30, 'Moderate Short': 10, 'Short': 10},
+                                              'RunningBackStrategy': {'Committee': 30, 'Starter Focused': 30, 'Bellcow': 30},
+                                              'QB_Preference': {'West-Coast': 30, 'Dual Threat': 40, 'Option': 0, 'Game Manager': 0, 'Pocket Passer': 30, 'Balanced': 30},
+                                              'RB_Preference': {'Bruiser': 0, 'Receiving': 50, 'Elusive': 50, 'Balanced': 20},
+                                              'WR_Preference': {'Slot': 40, 'Deep Threat': 80, 'Possession': 10, 'Balanced': 20},
+                                              'TE_Preference': {'Possession': 40, 'Blocking': 0, 'Vertical Threat': 50, 'Balanced': 10},
+                                              'OL_Preference': {'Pass Block': 50, 'Run Block': 20, 'Balanced': 50},
+                                              'SituationalAggressivenessTendency': [1.1],
+                                              'PlaycallPassTendency': [60, 5, 50, 90],
+                                              'PlayClockAggressivenessTendency': [1.1]}
+
+                            , 'Pro Style':   {'PassingStrategy': {'Deep Pass': 0, 'Moderate Deep': 20, 'Balanced': 100, 'Moderate Short': 20, 'Short': 0},
+                                              'RunningBackStrategy': {'Committee': 0, 'Starter Focused': 30, 'Bellcow': 0},
+                                              'QB_Preference': {'West-Coast': 30, 'Dual Threat': 0, 'Option': 0, 'Game Manager': 0, 'Pocket Passer': 30, 'Balanced': 30},
+                                              'RB_Preference': {'Bruiser': 40, 'Receiving': 0, 'Elusive': 0, 'Balanced': 20},
+                                              'WR_Preference': {'Slot': 0, 'Deep Threat': 0, 'Possession': 10, 'Balanced': 20},
+                                              'TE_Preference': {'Possession': 40, 'Blocking': 30, 'Vertical Threat': 0, 'Balanced': 10},
+                                              'OL_Preference': {'Pass Block': 0, 'Run Block': 0, 'Balanced': 50},
+                                              'SituationalAggressivenessTendency': [.8],
+                                              'PlaycallPassTendency': [50, 5, 20, 90],
+                                              'PlayClockAggressivenessTendency': [.9]}
+                            , 'Triple Option':{'PassingStrategy': {'Deep Pass': 0, 'Moderate Deep': 0, 'Balanced': 10, 'Moderate Short': 20, 'Short': 40},
+                                              'RunningBackStrategy': {'Committee': 100, 'Starter Focused': 1, 'Bellcow': 0},
+                                              'QB_Preference': {'West-Coast': 0, 'Dual Threat': 10, 'Option': 90, 'Game Manager': 0, 'Pocket Passer': 0, 'Balanced': 0},
+                                              'RB_Preference': {'Bruiser': 40, 'Receiving': 0, 'Elusive': 40, 'Balanced': 10},
+                                              'WR_Preference': {'Slot': 0, 'Deep Threat': 0, 'Possession': 100, 'Balanced': 20},
+                                              'TE_Preference': {'Possession': 0, 'Blocking': 50, 'Vertical Threat': 0, 'Balanced': 10},
+                                              'OL_Preference': {'Pass Block': 0, 'Run Block': 100, 'Balanced': 1},
+                                              'SituationalAggressivenessTendency': [.8],
+                                              'PlaycallPassTendency': [25, 2, 20, 35],
+                                              'PlayClockAggressivenessTendency': [.7]}}
+
+    DefensivePlaybook_List = {'4-3': 40
+                            , '3-4': 40
+                            , '3-3-5': 10
+                            , '4-2-5': 10}
+
+    DefensivePlaybook_Options = {'4-3': {'CoverageStyleStrategy': {'All-Man': 20, 'Man Focused': 20, 'Mixed': 20, 'Zone Focused': 20, 'All-Zone': 20},
+                                         'BlitzStrategy': {'Heavy Blitz': 10, 'Blitz': 20, 'Balanced': 30, 'Some Blitz': 20, 'No Blitz': 10},
+                                         'DE_Preference': {'Pass Rush': 50, 'Run Stuff': 10, 'Balanced': 30},
+                                         'DT_Preference': {'Pass Rush': 50, 'Run Stuff': 10, 'Balanced': 30},
+                                         'OLB_Preference': {'Pass Rush': 0, 'Pass Coverage': 30, 'Run Stuff': 10, 'Balanced': 30},
+                                         'MLB_Preference': {'Field General': 30, 'Pass Coverage': 30, 'Run Stuff': 0, 'Balanced': 30},
+                                         'CB_Preference': {'Man-to-Man': 40, 'Zone': 30, 'Balanced': 30},
+                                         'S_Preference': {'Hybrid': 30, 'Run Support': 30, 'Zone Coverage': 30, 'Balanced': 30},}
+
+                            , '3-4': {   'CoverageStyleStrategy': {'All-Man': 5, 'Man Focused': 5, 'Mixed': 20, 'Zone Focused': 20, 'All-Zone': 20},
+                                         'BlitzStrategy': {'Heavy Blitz': 30, 'Blitz': 30, 'Balanced': 30, 'Some Blitz': 10, 'No Blitz': 0},
+                                         'DE_Preference': {'Pass Rush': 10, 'Run Stuff': 50, 'Balanced': 30},
+                                         'DT_Preference': {'Pass Rush': 0, 'Run Stuff': 100, 'Balanced': 10},
+                                         'OLB_Preference': {'Pass Rush': 50, 'Pass Coverage': 0, 'Run Stuff': 40, 'Balanced': 10},
+                                         'MLB_Preference': {'Field General': 0, 'Pass Coverage': 30, 'Run Stuff': 40, 'Balanced': 10},
+                                         'CB_Preference': {'Man-to-Man': 10, 'Zone': 50, 'Balanced': 30},
+                                         'S_Preference': {'Hybrid': 30, 'Run Support': 30, 'Zone Coverage': 30, 'Balanced': 30},}
+
+                            , '3-3-5': { 'CoverageStyleStrategy': {'All-Man': 5, 'Man Focused': 25, 'Mixed': 20, 'Zone Focused': 20, 'All-Zone': 10},
+                                         'BlitzStrategy': {'Heavy Blitz': 0, 'Blitz': 10, 'Balanced': 30, 'Some Blitz': 40, 'No Blitz': 40},
+                                         'DE_Preference': {'Pass Rush': 10, 'Run Stuff': 50, 'Balanced': 30},
+                                         'DT_Preference': {'Pass Rush': 0, 'Run Stuff': 100, 'Balanced': 10},
+                                         'OLB_Preference': {'Pass Rush': 50, 'Pass Coverage': 0, 'Run Stuff': 40, 'Balanced': 10},
+                                         'MLB_Preference': {'Field General': 0, 'Pass Coverage': 30, 'Run Stuff': 40, 'Balanced': 10},
+                                         'CB_Preference': {'Man-to-Man': 10, 'Zone': 50, 'Balanced': 30},
+                                         'S_Preference': {'Hybrid': 30, 'Run Support': 30, 'Zone Coverage': 30, 'Balanced': 30},}
+
+                            , '4-2-5': { 'CoverageStyleStrategy': {'All-Man': 45, 'Man Focused': 25, 'Mixed': 20, 'Zone Focused': 0, 'All-Zone': 0},
+                                         'BlitzStrategy': {'Heavy Blitz': 30, 'Blitz': 30, 'Balanced': 30, 'Some Blitz': 10, 'No Blitz': 0},
+                                         'DE_Preference': {'Pass Rush': 90, 'Run Stuff': 0, 'Balanced': 10},
+                                         'DT_Preference': {'Pass Rush': 90, 'Run Stuff': 10, 'Balanced': 10},
+                                         'OLB_Preference': {'Pass Rush': 10, 'Pass Coverage': 0, 'Run Stuff': 40, 'Balanced': 10},
+                                         'MLB_Preference': {'Field General': 0, 'Pass Coverage': 30, 'Run Stuff': 40, 'Balanced': 10},
+                                         'CB_Preference': {'Man-to-Man': 50, 'Zone': 50, 'Balanced': 30},
+                                         'S_Preference': {'Hybrid': 30, 'Run Support': 30, 'Zone Coverage': 30, 'Balanced': 30},}}
+
+    ChosenOffense = WeightedProbabilityChoice(OffensivePlaybook_List, 'Spread')
+    C.OffensivePlaybook = ChosenOffense
+    for GameplanKey in OffensivePlaybook_Options[ChosenOffense]:
+        if GameplanKey in ['SituationalAggressivenessTendency', 'PlayClockAggressivenessTendency']:
+            Modifier = OffensivePlaybook_Options[ChosenOffense][GameplanKey][0]
+            setattr(C, GameplanKey, NormalVariance(Modifier))
+
+        elif GameplanKey in ['PlaycallPassTendency']:
+            Mean = OffensivePlaybook_Options[ChosenOffense][GameplanKey][0]
+            Sigma = OffensivePlaybook_Options[ChosenOffense][GameplanKey][1]
+            Min = OffensivePlaybook_Options[ChosenOffense][GameplanKey][2]
+            Max = OffensivePlaybook_Options[ChosenOffense][GameplanKey][3]
+
+            setattr(C, GameplanKey, NormalTrunc(Mean, Sigma, Min, Max))
+        else:
+            setattr(C, GameplanKey, WeightedProbabilityChoice(OffensivePlaybook_Options[ChosenOffense][GameplanKey]))
+
+    ChosenDefense = WeightedProbabilityChoice(DefensivePlaybook_List, '4-3')
+    C.DefensivePlaybook = ChosenDefense
+
+    for GameplanKey in DefensivePlaybook_Options[ChosenDefense]:
+        setattr(C, GameplanKey, WeightedProbabilityChoice(DefensivePlaybook_Options[ChosenDefense][GameplanKey]))
+
+
     C.CoachAge = random.randint(35,70)
 
     C.ReputationRating       =  NormalBounds(50, 10, 30,99)
@@ -500,10 +638,6 @@ def GenerateCoach(WorldID):
 
     C.PatienceTendency = NormalBounds(50, 10, 30,99)
     C.VeteranTendency  = NormalBounds(50, 10, 30,99)
-
-    C.SituationalAggressivenessTendency = NormalVariance(1.0)
-    C.PlayClockAggressivenessTendency = NormalVariance(1.0)
-    C.PlaycallPassTendency = int(NormalTrunc(55,10,30,85))
 
     return C
 
@@ -980,6 +1114,19 @@ def CreateCoaches(LS, WorldID):
 
             CTSToSave.append(CTS)
     CoachTeamSeason.objects.bulk_create(CTSToSave, ignore_conflicts=False)
+
+    TSSToSave = []
+    for TS in TeamSeason.objects.filter(WorldID_id = WorldID):
+        HC = Coach.objects.filter(coachteamseason__TeamSeasonID = TS).values().first()
+        TSS = TeamSeasonStrategy(TeamSeasonID = TS, WorldID = WorldID)
+
+        FieldExclusions = ['TeamSeasonID', 'TeamSeasonStrategyID', 'WorldID']
+        for HC_Key in [field.name for field in TeamSeasonStrategy._meta.get_fields()]:
+            if HC_Key not in FieldExclusions:
+                setattr(TSS, HC_Key, HC[HC_Key])
+
+        TSSToSave.append(TSS)
+    TeamSeasonStrategy.objects.bulk_create(TSSToSave)
 
     CurrentSeason.CoachesCreated = True
     CurrentSeason.save()

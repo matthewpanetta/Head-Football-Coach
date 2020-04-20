@@ -27,6 +27,7 @@ urlpatterns = [
     path('World/<int:WorldID>/Team/<int:TeamID>/', views.Page_Team, name='Team'),
     path('World/<int:WorldID>/Team/<int:TeamID>/History/', views.Page_TeamHistory, name='TeamHistory'),
     path('World/<int:WorldID>/Team/<int:TeamID>/Roster/', views.Page_TeamRoster, name='TeamRoster'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/Gameplan/', views.Page_TeamGameplan, name='Gameplan'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/', views.Page_Player, name='Player'),
     path('World/<int:WorldID>/Game/<int:GameID>/', views.Page_Game, name='Game'),
     path('World/<int:WorldID>/Bracket/', views.Page_Bracket, name='Bracket'),
@@ -67,6 +68,7 @@ urlpatterns = [
     path('CreateLeague/', views.POST_CreateLeague, name='CreateLeague'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/SetPlayerFaceJSON', views.POST_SetPlayerFaceJson, name='SetPlayerFaceJSON'),
     path('World/<int:WorldID>/Team/<int:TeamID>/SetTeamDepthChart', views.POST_SetTeamDepthChart, name='SetTeamDepthChart'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/SetTeamGameplan', views.POST_SetTeamGameplan, name='SetTeamGameplan'),
 
     #GETS BELOW
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamHistory', views.GET_TeamHistory, name='TeamHistory'),

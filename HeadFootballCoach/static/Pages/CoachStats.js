@@ -118,9 +118,7 @@ function GetCoachStats(WorldID, data){
             $(td).html("<a href='"+DataObject['CoachTeamConferenceHref']+"'>"+StringValue+"</a>");
         }},
         {"data": "CoachName", "sortable": true, 'visible': true, 'orderSequence': AscFirst},
-        {"data": "CoachPositionSortOrder", "sortable": true, 'visible': true, 'className': 'col-group center-text', 'orderSequence':AscFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-            $(td).html(DataObject.CoachPosition);
-        }},
+        {"data": "CoachPosition", "sortable": true, 'visible': true, 'className': 'col-group center-text', 'orderSequence':AscFirst},
         {"data": "Wins", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':DescFirst},
         {"data": "Losses", "sortable": true, 'visible': true, 'className': 'col-group center-text', 'orderSequence':DescFirst},
         {"data": "Top25_Wins", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':DescFirst},

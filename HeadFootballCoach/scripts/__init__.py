@@ -220,7 +220,7 @@ for u in range(0,TotalRuns):
 for u in sorted(ResultDict):
     print(u, ResultDict[u] / TotalRuns)
 
-# 
+#
 # from ..models import Team
 # import pandas as pd
 # from django.db.models import Max, Min, Avg, Count, Func, F

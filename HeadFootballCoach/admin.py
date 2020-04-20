@@ -1,7 +1,11 @@
 from django.contrib import admin
 
-from .models import SubPosition, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, Nation, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
+from .models import SubPosition, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, Nation, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
 
+
+class TeamSeasonStrategyAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in TeamSeasonStrategy._meta.get_fields() if field.name not in ('game', 'nation','playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason') ]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_filter = ['TeamSeasonID__TeamID__IsUserTeam']
 
 class BowlAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Bowl._meta.get_fields() if field.name not in ('game', 'nation','playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason') ]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -157,7 +161,7 @@ class ConferenceAdmin(admin.ModelAdmin):
     list_filter = ['WorldID']
 
 
-
+admin.site.register(TeamSeasonStrategy, TeamSeasonStrategyAdmin)
 admin.site.register(User)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(World)

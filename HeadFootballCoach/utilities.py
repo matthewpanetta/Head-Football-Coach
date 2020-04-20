@@ -156,7 +156,7 @@ def IntMin(a,b):
     return int(b)
 
 
-def WeightedProbabilityChoice(Arr, Default):
+def WeightedProbabilityChoice(Arr, Default=None):
 
     ValueList = []
     if not isinstance(Arr, list):

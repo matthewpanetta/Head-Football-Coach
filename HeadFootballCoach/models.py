@@ -1546,6 +1546,42 @@ class TeamSeason(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
+
+class TeamSeasonStrategy(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    TeamSeasonStrategyID = models.AutoField(primary_key = True, db_index=True)
+    TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
+
+    #GameStrategy
+    SituationalAggressivenessTendency = models.SmallIntegerField(default = 0)
+    PlaycallPassTendency = models.PositiveSmallIntegerField(default = 55)
+    PlayClockAggressivenessTendency = models.SmallIntegerField(default = 0)
+
+    #Playbooks
+    OffensivePlaybook = models.CharField(max_length=100, default = None, null=True, blank=True)
+    DefensivePlaybook = models.CharField(max_length=100, default = None, null=True, blank=True)
+
+    PassingStrategy = models.CharField(max_length=30, default = None, null=True, blank=True)
+    RunningBackStrategy = models.CharField(max_length=30, default = None, null=True, blank=True)
+
+    CoverageStyleStrategy = models.CharField(max_length=30, default = None, null=True, blank=True)
+    BlitzStrategy = models.CharField(max_length=30, default = None, null=True, blank=True)
+
+    QB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    RB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    WR_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    TE_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    OL_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+
+    DE_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    DT_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    OLB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    MLB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    CB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    S_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+
+
+
 class PlayerTeamSeason(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     PlayerTeamSeasonID = models.AutoField(primary_key = True, db_index=True)
@@ -2469,6 +2505,25 @@ class Coach(models.Model):
     #Playbooks
     OffensivePlaybook = models.CharField(max_length=100, default = None, null=True, blank=True)
     DefensivePlaybook = models.CharField(max_length=100, default = None, null=True, blank=True)
+
+    PassingStrategy = models.CharField(max_length=30, default = None, null=True, blank=True)
+    RunningBackStrategy = models.CharField(max_length=30, default = None, null=True, blank=True)
+
+    CoverageStyleStrategy = models.CharField(max_length=30, default = None, null=True, blank=True)
+    BlitzStrategy = models.CharField(max_length=30, default = None, null=True, blank=True)
+
+    QB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    RB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    WR_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    TE_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    OL_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+
+    DE_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    DT_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    OLB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    MLB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    CB_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
+    S_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
 
     def __str__(self):
         return self.CoachFirstName + ' ' + self.CoachLastName + ' is the ' + str(self.CurrentCoachTeamSeason.CoachPositionID) + ' for ' + str(self.CurrentCoachTeamSeason.TeamSeasonID)

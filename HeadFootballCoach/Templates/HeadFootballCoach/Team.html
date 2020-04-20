@@ -41,6 +41,7 @@
             <div class="w3-col s8 w3-display-container">
               <div class="w3-row">
                 <div class="w3-card w3-light-grey w3-col s12">
+                  
                   <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
                     {% for game in games%}
                     <div BoxScoreGameID="{{game.GameID}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
@@ -173,78 +174,84 @@
                 </div>
               </div>
               <div class="w3-row w3-margin-top">
-                <div class="w3-card w3-col s12 w3-padding-small">
-                  <div class="w3-card-header">
-                    Team Leaders
-                  </div>
-                  <div class="w3-row">
-                    {% for teamLeader in teamLeaders %}
-                    <div class="w3-col s6 teamTeamLeaderBox">
-                      <h2 class='teamTeamLeaderBoxStat'>{{teamLeader.DisplayName}}</h2>
-                      <div class="" style='display:inline-block; margin-top: -10px;'>
-                        <div class="teamTeamLeaderBoxPlayerFace inline-block" id="teamTeamLeaderBoxPlayerFace{{forloop.counter}}" PlayerFaceJson="{{teamLeader.PTS.PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if teamLeader.PTS.PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
-                            <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
-
-                            </div>
-                        </div>
-                        <div class="inline-block w3-cell-bottom">
-                          <div class="">
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{teamLeader.PTS.PlayerID}}">{{teamLeader.PTS.PlayerName}}</a></span>
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{teamLeader.PTS.PlayerPosition}}</span>
-                          </div>
-                          <div class="">
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{teamLeader.Value}} total{% if teamLeader.ValuePerGame%}, {{teamLeader.ValuePerGame}} per game{%endif%}</span>
-                          </div>
-                        </div>
-
-                      </div>
+                <div class="w3-col s12">
+                  <div class="w3-card">
+                    <div class="w3-bar team-primary-background-bar">
+                      Team Leaders
                     </div>
-                    {% if forloop.counter|divisibleby:2%}
-                  </div>
-                  <div class="w3-row">
-                    {% endif %}
-                    {% endfor %}
+                    <div class="w3-row">
+                      {% for teamLeader in teamLeaders %}
+                      <div class="w3-col s6 teamTeamLeaderBox">
+                        <h2 class='teamTeamLeaderBoxStat'>{{teamLeader.DisplayName}}</h2>
+                        <div class="" style='display:inline-block; margin-top: -10px;'>
+                          <div class="teamTeamLeaderBoxPlayerFace inline-block" id="teamTeamLeaderBoxPlayerFace{{forloop.counter}}" PlayerFaceJson="{{teamLeader.PTS.PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if teamLeader.PTS.PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
+                              <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
+
+                              </div>
+                          </div>
+                          <div class="inline-block w3-cell-bottom">
+                            <div class="">
+                              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{teamLeader.PTS.PlayerID}}">{{teamLeader.PTS.PlayerName}}</a></span>
+                              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{teamLeader.PTS.PlayerPosition}}</span>
+                            </div>
+                            <div class="">
+                              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{teamLeader.Value}} total{% if teamLeader.ValuePerGame%}, {{teamLeader.ValuePerGame}} per game{%endif%}</span>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                      {% if forloop.counter|divisibleby:2%}
+                    </div>
+                    <div class="w3-row">
+                      {% endif %}
+                      {% endfor %}
+                    </div>
+
+                    </div>
                   </div>
 
-                </div>
               </div>
               <div class="w3-row w3-margin-top">
-                <div class="w3-card w3-col s12 w3-padding-small">
-                  <div class="w3-card-header">
-                    Team Stats
-                  </div>
-                  <div class="w3-row">
-                    <div class="w3-col s6">
-                      <div class="teamTeamLeaderBox">
-                        <div class="">
-                          <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{game.HomeTeamPlayer1.PlayerID}}">{{game.HomeTeamPlayer1.PlayerName}}</a></span>
-                          <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{game.HomeTeamPlayer1.PlayerPosition}}</span>
-                        </div>
-                        <div class="">
-                          <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{game.HomeTeamPlayer1.PlayerStats}}</span>
+                <div class="w3-col s12">
+                  <div class="w3-card ">
+                    <div class="w3-bar team-primary-background-bar">
+                      Team Stats
+                    </div>
+                    <div class="w3-row">
+                      <div class="w3-col s6">
+                        <div class="teamTeamLeaderBox">
+                          <div class="">
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{game.HomeTeamPlayer1.PlayerID}}">{{game.HomeTeamPlayer1.PlayerName}}</a></span>
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{game.HomeTeamPlayer1.PlayerPosition}}</span>
+                          </div>
+                          <div class="">
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{game.HomeTeamPlayer1.PlayerStats}}</span>
+                          </div>
                         </div>
                       </div>
+                      <div class="w3-col s6">
+                        PER Leader
+                      </div>
                     </div>
-                    <div class="w3-col s6">
-                      PER Leader
+                    <div class="w3-row">
+                      <div class="w3-col s6">
+                        APG Leader
+                      </div>
+                      <div class="w3-col s6">
+                        RPG Leader
+                      </div>
+                    </div>
+                    <div class="w3-row">
+                      <div class="w3-col s6">
+                        SPG Leader
+                      </div>
+                      <div class="w3-col s6">
+                        BPG Leader
+                      </div>
                     </div>
                   </div>
-                  <div class="w3-row">
-                    <div class="w3-col s6">
-                      APG Leader
-                    </div>
-                    <div class="w3-col s6">
-                      RPG Leader
-                    </div>
-                  </div>
-                  <div class="w3-row">
-                    <div class="w3-col s6">
-                      SPG Leader
-                    </div>
-                    <div class="w3-col s6">
-                      BPG Leader
-                    </div>
-                  </div>
+
                 </div>
               </div>
             </div>
@@ -253,8 +260,7 @@
 
 
                 <div class="w3-card">
-
-                  <div class="w3-card-header table_title">
+                  <div class="w3-bar team-primary-background-bar">
                     {{team.ConferenceName}} Standings
                   </div>
                   <table id='teamOverviewConferenceStandings'>
@@ -284,8 +290,7 @@
 
 
                 <div class="w3-card">
-
-                  <div class="w3-card-header">
+                  <div class="w3-bar team-primary-background-bar">
                     {{team.TeamName}} Signed Recruits
                   </div>
                   <table id='teamOverviewConferenceStandings'>

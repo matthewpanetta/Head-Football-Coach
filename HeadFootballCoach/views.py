@@ -5,13 +5,13 @@ import pandas as pd
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, DecimalField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery, ExpressionWrapper
 from django.db.models.functions.window import Rank, RowNumber, Lag, Ntile
 from django.db.models.functions import Length, Concat, Coalesce
-from .models import Audit, League, TeamGame,Week,Phase,Position, PositionGroup, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
+from .models import Audit, League, TeamSeasonStrategy, TeamGame,Week,Phase,Position, PositionGroup, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
 from datetime import timedelta, date
 import random
 import numpy
 from .resources import CreateBowls, EndSeason, PlayerDeparture,NewSeasonCutover, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, CreateTeamSeasons, EndRegularSeason
 from .scripts.rankings import     CalculateConferenceRankings,CalculateRankings, SelectBroadcast
-from .utilities import FindRange, NormalVariance, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
+from .utilities import FindRange, NormalVariance, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
 from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting
 from .scripts.SeasonAwards import ChoosePlayersOfTheWeek
@@ -49,7 +49,7 @@ def GetUserTeam(WorldID):
     return Team.objects.get(WorldID = WorldID, IsUserTeam = True)
 
 def TeamHeaderLinks(Path = 'Overview'):
-    AllPaths = [{'HrefExtension': '', 'Display': 'Overview'},  {'HrefExtension': 'Roster', 'Display': 'Roster'}, {'HrefExtension': 'DepthChart', 'Display': 'Depth Chart'}, {'HrefExtension': 'Schedule', 'Display': 'Schedule'}, {'HrefExtension': 'History', 'Display': 'History'}]
+    AllPaths = [{'HrefExtension': '', 'Display': 'Overview'},  {'HrefExtension': 'Roster', 'Display': 'Roster'}, {'HrefExtension': 'DepthChart', 'Display': 'Depth Chart'},{'HrefExtension': 'Gameplan', 'Display': 'Gameplan'}, {'HrefExtension': 'Schedule', 'Display': 'Schedule'}, {'HrefExtension': 'History', 'Display': 'History'}]
     LinkPaths = [P for P in AllPaths if P['Display'] != Path]
     for PathObject in AllPaths:
         if PathObject['Display'] == Path:
@@ -216,6 +216,37 @@ def POST_SetTeamDepthChart(request, WorldID, TeamID):
             DC.PlayerTeamSeasonID_id = PTSDC['PlayerTeamSeasonID']
             PTSDCToUpdate.append(DC)
     PlayerTeamSeasonDepthChart.objects.bulk_update(PTSDCToUpdate, ['PlayerTeamSeasonID'])
+
+    return JsonResponse({'success':'value'})
+
+
+
+def POST_SetTeamGameplan(request, WorldID, TeamID):
+    CurrentWorld = World.objects.get(WorldID = WorldID)
+    TeamGameplan = request.POST.getlist('TeamGameplan[]')
+
+    TeamGameplanDict = {}
+
+    for key,value in request.POST.items():
+        print('key, value', key, value)
+        if 'TeamGameplan' in key:
+           key2list = key.replace('[', ']').split(']')
+           key2 = key2list[-2]
+           if key2 in ['PlayerTeamSeasonID', 'DepthPosition']:
+               value = int(value)
+
+           TeamGameplanDict[key2] = value
+
+    if TeamGameplanDict is None or len(TeamGameplanDict) == 0:
+        return JsonResponse({'failure':'No TeamGameplan'}, status=422)
+
+
+    TeamSeasonStrategyID = TeamSeasonStrategy.objects.filter(WorldID_id = WorldID).filter(TeamSeasonID__TeamID_id = TeamID).first()
+
+    for Key in TeamGameplanDict:
+        print('Saving', Key, ' as value', TeamGameplanDict[Key], ' to', TeamSeasonStrategyID)
+        setattr(TeamSeasonStrategyID, Key, TeamGameplanDict[Key])
+    TeamSeasonStrategyID.save()
 
     return JsonResponse({'success':'value'})
 
@@ -837,7 +868,7 @@ def Page_Index(request):
         Worlds.append(W)
 
     if InTesting:
-        NumConferencesToInclude = 7
+        NumConferencesToInclude = 2
     elif InDeepTesting:
         NumConferencesToInclude = 2
     else:
@@ -905,7 +936,6 @@ def Page_World(request, WorldID):
 
     #Fields = ['(OuterRef("playerseasonskill__'+field.name+'") * F("'+field.name+'_Weight"))' for field in PlayerSeasonSkill._meta.get_fields() if '_Rating' in field.name]
     #print(' + '.join(Fields))
-
 
     if DoAudit:
         start = time.time()
@@ -1561,6 +1591,61 @@ def Page_TeamDepthChart(request, WorldID, TeamID):
     ).order_by('TeamName')
 
     return render(request, 'HeadFootballCoach/TeamDepthChart.html', context)
+
+
+
+def Page_TeamGameplan(request, WorldID, TeamID):
+    DoAudit = True
+    ThisTeam = Team.objects.get(WorldID = WorldID, TeamID = TeamID)#.values('ConferenceName')
+
+    page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
+    page['PageTitle'] = ThisTeam.TeamName + ' Gameplan'
+    page['PrimaryColor'] = ThisTeam.TeamColor_Primary_HEX
+    page['SecondaryColor'] = ThisTeam.SecondaryColor_Display
+    page['TabIcon'] = ThisTeam.LogoURL
+
+    CurrentWorld  = World.objects.get(WorldID = WorldID)
+    CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
+    CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
+    UserTeam = GetUserTeam(WorldID)
+    TeamSeasonID = ThisTeam.teamseason_set.filter(LeagueSeasonID = CurrentSeason).first()
+
+
+    ThisTeamSeasonStrategy = TeamSeasonID.teamseasonstrategy_set.all().values().first()
+
+    print('ThisTeamSeasonStrategy', ThisTeamSeasonStrategy)
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'team': ThisTeam, 'CurrentWeek': CurrentWeek, 'ThisTeamSeasonStrategy': ThisTeamSeasonStrategy}
+
+    context['OffensivePlaybook_Options'] = ['Air Raid', 'Heavy Run', 'Spread Option','Spread', 'Pro Style', 'Triple Option']
+    context['DefensivePlaybook_Options'] = ['4-3', '3-4', '3-3-5', '4-2-5']
+    context['CoverageStyleStrategy_Options'] = ['All-Man','Man Focused','Mixed','Zone Focused','All-Zone',]
+    context['BlitzStrategy_Options'] = ['Heavy Blitz','Blitz','Balanced','Some Blitz','No Blitz',]
+    context['DE_Preference_Options'] = ['Pass Rush','Run Stuff','Balanced',]
+    context['DT_Preference_Options'] = ['Pass Rush','Run Stuff','Balanced',]
+    context['OLB_Preference_Options'] = ['Pass Rush','Pass Coverage','Run Stuff','Balanced',]
+    context['MLB_Preference_Options'] = ['Field General','Pass Coverage','Run Stuff','Balanced',]
+    context['CB_Preference_Options'] = ['Man-to-Man','Zone','Balanced',]
+    context['S_Preference_Options'] = ['Hybrid','Run Support','Zone Coverage','Balanced',]
+    context['PassingStrategy_Options'] = ['Deep Pass','Moderate Deep','Balanced','Moderate Short','Short',]
+    context['RunningBackStrategy_Options'] = ['Committee','Starter Focused','Bellcow',]
+    context['QB_Preference_Options'] = ['West-Coast','Dual Threat','Option','Game Manager','Pocket Passer','Balanced',]
+    context['RB_Preference_Options'] = ['Bruiser','Receiving','Elusive','Balanced',]
+    context['WR_Preference_Options'] = ['Slot','Deep Threat','Possession','Balanced',]
+    context['TE_Preference_Options'] = ['Possession','Blocking','Vertical Threat','Balanced',]
+    context['OL_Preference_Options'] = ['Pass Block','Run Block','Balanced',]
+
+
+    if ThisTeam == UserTeam:
+        context['Disabled'] = ''
+    else:
+        context['Disabled'] = 'disabled'
+    context['HeaderLink'] = TeamHeaderLinks('Gameplan')
+    print("context['HeaderLink'] ", context['HeaderLink'] )
+    context['TeamList'] = Team.objects.filter(WorldID=WorldID).values('TeamName', 'TeamNickname', 'TeamLogoURL').annotate(
+        TeamHref=Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), Value('/'), Value(context['HeaderLink']['ExternalPaths']['HrefExtension']), output_field=CharField())
+    ).order_by('TeamName')
+
+    return render(request, 'HeadFootballCoach/TeamGameplan.html', context)
 
 
 
