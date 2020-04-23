@@ -49,13 +49,15 @@ function BuildGameplan(WorldID, TeamID) {
     var Max = parseInt($(this).attr('max'));
     var Def = parseInt($(this).attr('default'));
     var Step = parseInt($(this).attr('step'));
-    var Disabled = $(this).attr('disabled');
+    var Disabled = $(this).attr('disable');
+    console.log('Disabled', Disabled)
     if (Disabled == 'disabled'){
       Disabled = true;
     }
     else{
       Disabled = false;
     }
+    console.log('Disabled', Disabled)
     $( this ).slider({
       value:Def,
       min: Min,

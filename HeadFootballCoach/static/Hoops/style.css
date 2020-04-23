@@ -1072,10 +1072,13 @@ input[type=text], input[type=password] {
   font-style: italic;
 }
 
-.ScoringSummary * {
-  font-size: 14px;
+.ScoringSummary {
   margin-left: 6px;
   margin-right: 0px;
+}
+
+.ScoringSummary * {
+  font-size: 14px;
   margin-top: 2px;
   margin-bottom: 2px;
 }
@@ -1239,6 +1242,14 @@ td.WorldLeagueLeaderRowCell.NameCell {
   margin-right: 4px;
 }
 
+.margin-right-8 {
+  margin-right: 8px;
+}
+
+.margin-right-12 {
+  margin-right: 12px;
+}
+
 .margin-top-24 {
   margin-top: 24px;
 }
@@ -1399,12 +1410,23 @@ tfoot td {
 .equal-sized-item-container {
   display: flex;
 }
+.equal-sized-item-container.wrap
+{
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.equal-sized-item-container.wrap .equal-sized-item {
+  flex-basis: auto !important;
+}
+
 .equal-sized-item {
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 0;
   margin: 0px 0px;
 }
+
 .centered-item {
   justify-content: center;
    align-items: center;
@@ -1628,12 +1650,15 @@ button.dt-button.active:not(.disabled) {
 }
 
 div.dt-buttons {
-  justify-content: space-around;
+  justify-content: flex-start;
   display: flex;
     background: white;
     overflow: visible;
     width: 100%;
+     flex-wrap: wrap;
 }
+
+
 
 .dt-buttons button.dt-button {
   font-size: 12px;
@@ -1646,6 +1671,7 @@ div.dt-buttons {
   box-shadow: none;
   color: black;
   flex-grow: 1;
+
 }
 
 .dt-buttons button.dt-button:hover, .dt-buttons button.dt-button.active:hover:not(.disabled) {
@@ -1697,4 +1723,8 @@ div.dt-buttons {
 
 .font-black {
   color: black;
+}
+
+.s6 {
+  width: 49.5%;
 }

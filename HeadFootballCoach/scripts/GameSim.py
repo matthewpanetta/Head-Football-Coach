@@ -10,6 +10,16 @@ import math
 def RoundUp(Val):
     return int(math.ceil(Val / 10.0)) * 10
 
+def AdjustBiggestLead(HomeTeam, AwayTeam):
+
+    HomeLead = Max(HomeTeam.Points - AwayTeam.Points, 0)
+    AwayLead = Max(AwayTeam.Points - HomeTeam.Points, 0)
+
+    HomeTeam.BiggestLead = Max(HomeTeam.BiggestLead, HomeLead)
+    AwayTeam.BiggestLead = Max(AwayTeam.BiggestLead, AwayLead)
+
+    return None
+
 
 def CalculateGameScore(PlayerGameStats):
 
@@ -263,18 +273,128 @@ def GameSim(game):
     AwayHeadCoach = AwayCoaches.get(CoachPositionID__CoachPositionAbbreviation = 'HC')
 
     CoachDict = {
-        HomeTeam: {'Coach': HomeHeadCoach.CoachID.__dict__, 'CoachTeamSeason': HomeHeadCoach.__dict__},
-        AwayTeam: {'Coach': AwayHeadCoach.CoachID.__dict__, 'CoachTeamSeason': AwayHeadCoach.__dict__}
+        HomeTeam: {'Coach': HomeHeadCoach.CoachID.__dict__, 'CoachTeamSeason': HomeHeadCoach.__dict__, 'TeamSeasonStrategy': HomeTeamSeason.teamseasonstrategy_set.all().first().__dict__},
+        AwayTeam: {'Coach': AwayHeadCoach.CoachID.__dict__, 'CoachTeamSeason': AwayHeadCoach.__dict__, 'TeamSeasonStrategy': HomeTeamSeason.teamseasonstrategy_set.all().first().__dict__}
+    }
+
+    HomePlayerTeamSeasonDepthChartDict = {}
+    for P in HomePlayerTeamSeasonDepthChart:
+        HomePlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']] = P
+
+    AwayPlayerTeamSeasonDepthChartDict = {}
+    for P in AwayPlayerTeamSeasonDepthChart:
+        AwayPlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']] = P
+
+    PassingStrategy_PassRushModifier = {
+        'Deep Pass': 1.3,
+        'Moderate Deep': 1.2,
+        'Balanced': 1.15,
+        'Moderate Short': 1.05,
+        'Short': .95
+    }
+
+    PassingStrategy_YardsSigma = {
+        'Deep Pass': 11,
+        'Moderate Deep': 9,
+        'Balanced': 7,
+        'Moderate Short': 5,
+        'Short': 3
+    }
+
+    PassingStrategy_CompletionModifier = {
+        'Deep Pass': .85,
+        'Moderate Deep': .925,
+        'Balanced': 1,
+        'Moderate Short': 1.075,
+        'Short': 1.15
+    }
+
+    RunningBackStrategy = {
+        'Deep Pass': .85,
+        'Moderate Deep': .925,
+        'Balanced': 1,
+        'Moderate Short': 1.075,
+        'Short': 1.15
+    }
+
+    PositionEnergyMap = {
+        'QB': {'OnFieldEnergyDrain': .0125, 'SubOutThreshold': .5, 'SubInThreshold': .55, 'EnergyImpactOnOverall': (1/5.0)},
+        'RB': {'OnFieldEnergyDrain': .0175 , 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/3.0)},
+        'FB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/3.0)},
+        'WR': {'OnFieldEnergyDrain': .013, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/4.0)},
+        'TE': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/4.0)},
+        'OT': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/5.0)},
+        'OG': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/5.0)},
+        'OC': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/5.0)},
+        'DE': {'OnFieldEnergyDrain': .02, 'SubOutThreshold': .8, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/3.0)},
+        'DT': {'OnFieldEnergyDrain': .02, 'SubOutThreshold': .75, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/3.0)},
+        'OLB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/4.0)},
+        'MLB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/4.0)},
+        'CB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/4.0)},
+        'S': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/4.0)},
+        'K': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .3, 'SubInThreshold': .35, 'EnergyImpactOnOverall': (1/10.0)},
+        'P': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .3, 'SubInThreshold': .35, 'EnergyImpactOnOverall': (1/10.0)},
+    }
+
+
+    PassRushByPosition = {
+        'DE': 1,
+        'DT': .8,
+        'OLB': .8,
+        'MLB': .6,
+        'CB': .1,
+        'S': .1,
+    }
+
+    InterceptionsByPosition = {
+        'DE': .01,
+        'DT': .01,
+        'OLB': .5,
+        'MLB': .5,
+        'CB': 1,
+        'S': .8,
+    }
+
+    CompletionTacklerByPosition = {
+        'DE': .2,
+        'DT': .1,
+        'OLB': .75,
+        'MLB': .75,
+        'CB': 1,
+        'S': 1,
+    }
+
+    DeflectionsByPosition = {
+        'DE': .2,
+        'DT': .1,
+        'OLB': .75,
+        'MLB': .75,
+        'CB': 1,
+        'S': 1,
     }
 
     for CT in CoachDict:
         C = CoachDict[CT]['Coach']
+        TSS = CoachDict[CT]['TeamSeasonStrategy']
         CoachDict[CT]['Tendencies'] = {}
-        CoachDict[CT]['Tendencies']['FourthDownAggressiveness'] = ( C['SituationalAggressivenessTendency'] / 10.0)
-        CoachDict[CT]['Tendencies']['TwoPointAggressiveness'] = (C['SituationalAggressivenessTendency'] / 10.0)
-        CoachDict[CT]['Tendencies']['Playcall_PassRatio'] = (C['PlaycallPassTendency'] / 55.0) ** 1.1
-        CoachDict[CT]['Tendencies']['Playcall_RunRatio'] = ((100 - C['PlaycallPassTendency']) / 45.0) ** 1.1
-        CoachDict[CT]['Tendencies']['PlayClockAggressiveness'] = (C['PlayClockAggressivenessTendency'] / 10.0)
+        CoachDict[CT]['Tendencies']['FourthDownAggressiveness'] = ( TSS['SituationalAggressivenessTendency'] / 10.0)
+        CoachDict[CT]['Tendencies']['TwoPointAggressiveness'] = (TSS['SituationalAggressivenessTendency'] / 10.0)
+        CoachDict[CT]['Tendencies']['Playcall_PassRatio'] = (TSS['PlaycallPassTendency'] / 55.0) ** 1.1
+        CoachDict[CT]['Tendencies']['Playcall_RunRatio'] = ((100 - TSS['PlaycallPassTendency']) / 45.0) ** 1.1
+        CoachDict[CT]['Tendencies']['PlayClockAggressiveness'] = (TSS['PlayClockAggressivenessTendency'] / 10.0)
+        CoachDict[CT]['Tendencies']['PassingStrategy'] = (TSS['PassingStrategy'])
+        CoachDict[CT]['Tendencies']['RunningBackStrategy'] = (TSS['RunningBackStrategy'])
+        CoachDict[CT]['PositionEnergyMap'] = PositionEnergyMap.copy()
+
+        if CoachDict[CT]['Tendencies']['RunningBackStrategy'] == 'Bellcow':
+            CoachDict[CT]['PositionEnergyMap']['RB']['SubOutThreshold'] = .54
+            CoachDict[CT]['PositionEnergyMap']['RB']['SubInThreshold'] = .55
+        elif CoachDict[CT]['Tendencies']['RunningBackStrategy'] == 'Starter Focused':
+            CoachDict[CT]['PositionEnergyMap']['RB']['SubOutThreshold'] = .65
+            CoachDict[CT]['PositionEnergyMap']['RB']['SubInThreshold'] = .75
+        elif CoachDict[CT]['Tendencies']['RunningBackStrategy'] == 'Committee':
+            CoachDict[CT]['PositionEnergyMap']['RB']['SubOutThreshold'] = .85
+            CoachDict[CT]['PositionEnergyMap']['RB']['SubInThreshold'] = .98
 
         #print(CT, 'Run:', CoachDict[CT]['Tendencies']['Playcall_RunRatio'], 'Pass:', CoachDict[CT]['Tendencies']['Playcall_PassRatio'] )
 
@@ -322,24 +442,7 @@ def GameSim(game):
         'P': 1
     }
 
-    PositionEnergyMap = {
-        'QB': {'OnFieldEnergyDrain': .0125, 'SubOutThreshold': .5, 'SubInThreshold': .55},
-        'RB': {'OnFieldEnergyDrain': .0175 , 'SubOutThreshold': .75, 'SubInThreshold': .8},
-        'FB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .8},
-        'WR': {'OnFieldEnergyDrain': .013, 'SubOutThreshold': .75, 'SubInThreshold': .8},
-        'TE': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .8},
-        'OT': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7},
-        'OG': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7},
-        'OC': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7},
-        'DE': {'OnFieldEnergyDrain': .02, 'SubOutThreshold': .8, 'SubInThreshold': .85},
-        'DT': {'OnFieldEnergyDrain': .02, 'SubOutThreshold': .75, 'SubInThreshold': .85},
-        'OLB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .85},
-        'MLB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .85},
-        'CB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .6, 'SubInThreshold': .7},
-        'S': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .6, 'SubInThreshold': .7},
-        'K': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .3, 'SubInThreshold': .35},
-        'P': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .3, 'SubInThreshold': .35},
-    }
+
 
     SideOfBallPositions = {
         'Offense': ['QB', 'RB', 'FB', 'WR', 'TE', 'OT', 'OG', 'OC', 'K'],
@@ -428,7 +531,11 @@ def GameSim(game):
         NationalBroadcast = 1
 
 
-
+    TeamPlayers = {HomeTeam:{'PlayersOnField':{},'AllPlayers':{}}, AwayTeam:{'PlayersOnField':{},'AllPlayers':{}}}
+    for T in TeamPlayers:
+        for Pos in PlayerStartersByPosition:
+            for Group in TeamPlayers[T]:
+                TeamPlayers[T][Group][Pos] = []
     AllPlayers = {}
 
     KeysToSave = []#['PlusMinus', 'GamesStarted', 'Points', 'KCK_FGA', 'ThreePA', 'KCK_FGM', 'ThreePM', 'InsideShotA', 'InsideShotM', 'MidRangeShotA', 'MidRangeShotM', 'Minutes', 'Rebounds', 'OffensiveRebounds','ReboundChances','Assists','Possessions']
@@ -448,13 +555,23 @@ def GameSim(game):
         TalentRandomnessMultiplier = round(random.uniform(1.0 - TalentRandomness, 1.0 + TalentRandomness), 3)
         SkillMultiplier *= TalentRandomnessMultiplier
 
+
+        AllPlayers[PlayerID]['PlayerSkills'] = PlayerSkillDict
+        for Skill in PlayerSkillDict:
+            if Skill not in SkillMultiplierExclusions:
+                AllPlayers[PlayerID]['PlayerSkills'][Skill] = int(  AllPlayers[PlayerID]['PlayerSkills'][Skill] * SkillMultiplier  )
+
+        AllPlayers[PlayerID]['PlayerGameStat'] = PlayerGameStat(PlayerTeamSeasonID = PTS, WorldID = CurrentWorld, TeamGamesPlayed = 1)
+
         if P in HomeTeamPlayers:
             AllPlayers[PlayerID]['TeamObj'] = HomeTeam
             AllPlayers[PlayerID]['TeamSeasonObj'] = HomeTeamSeason
             SkillMultiplier *= HomeFieldAdvantage
             SkillMultiplier *= HomeCoachFactor
             ThisTeamGame = HomeTeamGame
-            DC = HomePlayerTeamSeasonDepthChart.filter(PlayerTeamSeasonID = PTS).first()
+            ThisTeam = HomeTeam
+            if PlayerID in HomePlayerTeamSeasonDepthChartDict:
+                DC = HomePlayerTeamSeasonDepthChartDict[PlayerID]
 
         else:
             AllPlayers[PlayerID]['TeamObj'] = AwayTeam
@@ -462,22 +579,25 @@ def GameSim(game):
             SkillMultiplier /= HomeFieldAdvantage
             SkillMultiplier /= HomeCoachFactor
             ThisTeamGame = AwayTeamGame
-            DC = AwayPlayerTeamSeasonDepthChart.filter(PlayerTeamSeasonID = PTS).first()
+            ThisTeam = AwayTeam
+            if PlayerID in AwayPlayerTeamSeasonDepthChartDict:
+                DC = AwayPlayerTeamSeasonDepthChartDict[PlayerID]
+
 
         if DC is not None:
-            AllPlayers[PlayerID]['Position'] = DC['PositionID__PositionAbbreviation']
+            PlayerPosition = DC['PositionID__PositionAbbreviation']
+            AllPlayers[PlayerID]['Position'] = PlayerPosition
             AllPlayers[PlayerID]['PositionDepthChart'] = DC['DepthPosition']
 
+            if DC['IsStarter'] == True:
+                TeamPlayers[ThisTeam]['PlayersOnField'][PlayerPosition].append(PlayerID)
+                AllPlayers[PlayerID]['PlayerGameStat'].GamesStarted = 1
+                AllPlayers[PlayerID]['PlayerGameStat'].GamesPlayed = 1
+
+            TeamPlayers[ThisTeam]['AllPlayers'][PlayerPosition].append(PlayerID)
 
 
-        AllPlayers[PlayerID]['PlayerSkills'] = PlayerSkillDict
-        for Skill in PlayerSkillDict:
-            if Skill not in SkillMultiplierExclusions:
-                AllPlayers[PlayerID]['PlayerSkills'][Skill] = int(  AllPlayers[PlayerID]['PlayerSkills'][Skill] * SkillMultiplier  )
-
-        AllPlayers[PlayerID]['PlayerGameStat'] = PlayerGameStat(TeamGameID = ThisTeamGame, PlayerTeamSeasonID = PTS, WorldID = CurrentWorld, TeamGamesPlayed = 1)
-        #AllPlayers[PlayerID]['PlayerGameStat'] = { 'GamesStarted':0, 'RUS_Yards':0, 'RUS_Carries':0, 'RUS_TD':0, 'PAS_Attempts':0, 'PAS_Completions':0, 'PAS_Yards':0, 'PAS_TD':0, 'REC_Yards':0,'REC_Receptions':0, 'REC_TD':0, 'PNT_Punts': 0,'GamesPlayed':0,'TeamGamesPlayed':1, 'GameScore': 0,'KCK_FGA': 0, 'KCK_FGM': 0, 'KCK_XPA':0, 'KCK_XPM':0, 'DEF_Tackles':0, 'DEF_TacklesForLoss': 0, 'DEF_Sacks':0, 'DEF_INT':0,'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0,'FUM_Lost': 0, 'FUM_Forced': 0, 'FUM_Fumbles': 0, 'FUM_Recovered': 0,'FUM_ReturnTD': 0,'FUM_ReturnYards': 0, 'KCK_FGA29':0, 'KCK_FGM29':0,'KCK_FGA39':0, 'KCK_FGM39':0,'KCK_FGA49':0, 'KCK_FGM49':0,'KCK_FGA50':0, 'KCK_FGM50':0, 'PlaysOnField':0 }
-
+        AllPlayers[PlayerID]['PlayerGameStat'].TeamGameID = ThisTeamGame
         AllPlayers[PlayerID]['Energy'] = 1
         AllPlayers[PlayerID]['AdjustedOverallRating'] = 100
 
@@ -489,22 +609,6 @@ def GameSim(game):
 
         #{'Wins':0, 'Losses': 0,'Possessions':0,'Turnovers':0,'PNT_Punts':0,'FirstDowns':0,'ThirdDownConversion': 0, 'ThirdDownAttempt': 0,'FourthDownConversion': 0, 'FourthDownAttempt': 0, 'TimeOfPossession':0.0,'GamesPlayed': 1,'Points':0, 'PAS_Yards':0, 'PAS_Attempts':0,'PAS_TD':0, 'REC_Yards':0, 'REC_Receptions':0,'REC_TD':0, 'PAS_Completions':0, 'RUS_Yards':0,'RUS_TD':0,'RUS_Carries':0, 'KCK_FGA': 0, 'KCK_FGM': 0, 'KCK_FGA29':0,'KCK_FGM29':0,'KCK_FGA39':0, 'KCK_FGM39':0,'KCK_FGA49':0, 'KCK_FGM49':0,'KCK_FGA50':0, 'KCK_FGM50':0,'KCK_XPA':0, 'KCK_XPM':0, 'PAS_INT': 0, 'PAS_Sacks': 0, 'PAS_SackYards': 0, 'DEF_Tackles':0, 'DEF_Sacks':0,'DEF_INT':0, 'DEF_TacklesForLoss': 0, 'FUM_Lost': 0, 'FUM_Forced': 0, 'FUM_Fumbles': 0, 'FUM_Recovered': 0,'FUM_ReturnTD': 0,'FUM_ReturnYards': 0, 'RegionalBroadcast': RegionalBroadcast, 'NationalBroadcast': NationalBroadcast, 'TwoPointAttempt': 0, 'TwoPointConversion': 0}
 
-
-    TeamPlayers = {HomeTeam:{'PlayersOnField':{},'AllPlayers':{}}, AwayTeam:{'PlayersOnField':{},'AllPlayers':{}}}
-
-    for Team in GameDict:
-        if Team == HomeTeam:
-            TeamDepthChart = HomePlayerTeamSeasonDepthChart
-        else:
-            TeamDepthChart = AwayPlayerTeamSeasonDepthChart
-
-        for Position in PlayerStartersByPosition:
-            TeamPlayers[Team]['PlayersOnField'][Position] = [u['PlayerTeamSeasonID__PlayerID_id'] for u in TeamDepthChart.filter(PositionID__PositionAbbreviation = Position).filter(IsStarter = True)]
-            TeamPlayers[Team]['AllPlayers'][Position] = [u['PlayerTeamSeasonID__PlayerID_id'] for u in TeamDepthChart.filter(PositionID__PositionAbbreviation = Position)]
-
-            for PlayerID in TeamPlayers[Team]['PlayersOnField'][Position]:
-                AllPlayers[PlayerID]['PlayerGameStat'].GamesPlayed = 1
-                AllPlayers[PlayerID]['PlayerGameStat'].GamesStarted = 1
 
 
     OffensiveTeam = AwayTeam
@@ -660,27 +764,34 @@ def GameSim(game):
 
 
                 for Team in GameDict:
+                    EnergyMap = CoachDict[Team]['PositionEnergyMap']
                     for Position in PlayerStartersByPosition:
-                        StartersOnBenchReadyToGoIn = [P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] and AllPlayers[P]['Energy'] > PositionEnergyMap[Position]['SubInThreshold'] * SubInMultiplier and AllPlayers[P]['PositionDepthChart'] <= PlayerStartersByPosition[Position]]
-                        TeamPlayers[Team]['PlayersOnField'][Position] = sorted([P for P in TeamPlayers[Team]['PlayersOnField'][Position] if AllPlayers[P]['Energy'] > PositionEnergyMap[Position]['SubOutThreshold'] * SubOutMultiplier], key=lambda P: AllPlayers[P]['PositionDepthChart'])
+                        StartersOnBenchReadyToGoIn = [P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] and AllPlayers[P]['Energy'] > EnergyMap[Position]['SubInThreshold'] * SubInMultiplier and AllPlayers[P]['PositionDepthChart'] <= PlayerStartersByPosition[Position]]
+                        TeamPlayers[Team]['PlayersOnField'][Position] = sorted([P for P in TeamPlayers[Team]['PlayersOnField'][Position] if AllPlayers[P]['Energy'] >  EnergyMap[Position]['SubOutThreshold'] * SubOutMultiplier], key=lambda P: AllPlayers[P]['PositionDepthChart'])
 
                         for P in StartersOnBenchReadyToGoIn:
                             if len(TeamPlayers[Team]['PlayersOnField'][Position]) > 0:
                                 TeamPlayers[Team]['PlayersOnField'][Position].pop()
 
+
                         if SecondStringers:
+                            #print('Fielding second stringers')
                             TeamPlayers[Team]['PlayersOnField'][Position] = []
-                            EligiblePlayers = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if  AllPlayers[P]['Energy'] > PositionEnergyMap[Position]['SubInThreshold'] * SubInMultiplier and AllPlayers[P]['PositionDepthChart'] > PlayerStartersByPosition[Position]], key=lambda P: AllPlayers[P]['PositionDepthChart'])
+                            EligiblePlayers    = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if  AllPlayers[P]['Energy'] >  EnergyMap[Position]['SubInThreshold'] * SubInMultiplier and AllPlayers[P]['PositionDepthChart'] > PlayerStartersByPosition[Position]], key=lambda P: AllPlayers[P]['PositionDepthChart'])
                             EligiblePlayersAll = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in EligiblePlayers], key=lambda P: AllPlayers[P]['PositionDepthChart'])
                         else:
-                            EligiblePlayers = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] and AllPlayers[P]['Energy'] > PositionEnergyMap[Position]['SubInThreshold'] * SubInMultiplier], key=lambda P: AllPlayers[P]['PositionDepthChart'])
+                            EligiblePlayers    = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] and AllPlayers[P]['Energy'] >  EnergyMap[Position]['SubInThreshold'] * SubInMultiplier], key=lambda P: AllPlayers[P]['PositionDepthChart'])
                             EligiblePlayersAll = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] + EligiblePlayers], key=lambda P: AllPlayers[P]['PositionDepthChart'])
 
 
                         NumberOfPlayersNeeded = PlayerStartersByPosition[Position] - len(TeamPlayers[Team]['PlayersOnField'][Position])
 
+                        #print('Filling field', Period, Team, Position, 'OnField:', len(TeamPlayers[Team]['PlayersOnField'][Position]), 'Needed:', NumberOfPlayersNeeded, 'Eligible:', len(EligiblePlayers))
                         if NumberOfPlayersNeeded > len(EligiblePlayers):
+                            #print('Filling EligiblePlayers with All')
                             EligiblePlayers += EligiblePlayersAll
+                            #print('Filling field', Period, Team, Position, NumberOfPlayersNeeded, len(EligiblePlayers))
+
 
                         for PI in range(0,NumberOfPlayersNeeded):
                             TeamPlayers[Team]['PlayersOnField'][Position].append(EligiblePlayers[PI])
@@ -688,18 +799,21 @@ def GameSim(game):
 
 
             if ConfigureTeams:
+                OffensiveTendencies = CoachDict[OffensiveTeam]['Tendencies']
+                DefensiveTendencies = CoachDict[DefensiveTeam]['Tendencies']
+
                 ConfigureTeams = False
                 OffensiveTeamPlayers = TeamPlayers[OffensiveTeam]['PlayersOnField']
                 DefensiveTeamPlayers = TeamPlayers[DefensiveTeam]['PlayersOnField']
 
-                QuarterbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in OffensiveTeamPlayers['QB']], IntCastFlag=True)
-                RunningbackTalent   = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in OffensiveTeamPlayers['RB']], IntCastFlag=True)
-                ReceiverTalent      = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in OffensiveTeamPlayers['WR']], IntCastFlag=True)
-                OffensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OG'] + OffensiveTeamPlayers['OC']], IntCastFlag=True)
+                QuarterbackTalent   = Average([AllPlayers[u]['AdjustedOverallRating'] for u in OffensiveTeamPlayers['QB']], IntCastFlag=True)
+                RunningbackTalent   = Average([AllPlayers[u]['AdjustedOverallRating'] for u in OffensiveTeamPlayers['RB']], IntCastFlag=True)
+                ReceiverTalent      = Average([AllPlayers[u]['AdjustedOverallRating'] for u in OffensiveTeamPlayers['WR']], IntCastFlag=True)
+                OffensiveLineTalent = Average([AllPlayers[u]['AdjustedOverallRating'] for u in OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OG'] + OffensiveTeamPlayers['OC']], IntCastFlag=True)
 
-                DefensiveLineTalent = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in DefensiveTeamPlayers['DE']  + OffensiveTeamPlayers['DT'] ], IntCastFlag=True)
-                LinebackerTalent    = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in DefensiveTeamPlayers['OLB'] + OffensiveTeamPlayers['MLB']], IntCastFlag=True)
-                SecondaryTalent     = Average([AllPlayers[u]['PlayerSkills']['OverallRating'] * (AllPlayers[u]['Energy'] ** (1/4.0)) for u in DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S']  ], IntCastFlag=True)
+                DefensiveLineTalent = Average([AllPlayers[u]['AdjustedOverallRating'] for u in DefensiveTeamPlayers['DE']  + OffensiveTeamPlayers['DT'] ], IntCastFlag=True)
+                LinebackerTalent    = Average([AllPlayers[u]['AdjustedOverallRating'] for u in DefensiveTeamPlayers['OLB'] + OffensiveTeamPlayers['MLB']], IntCastFlag=True)
+                SecondaryTalent     = Average([AllPlayers[u]['AdjustedOverallRating'] for u in DefensiveTeamPlayers['CB']  + OffensiveTeamPlayers['S']  ], IntCastFlag=True)
                 KickerPlayerID      = OffensiveTeamPlayers['K'][0]
                 PunterPlayerID      = OffensiveTeamPlayers['P'][0]
 
@@ -786,7 +900,7 @@ def GameSim(game):
                     GameDict[OffensiveTeam]['TeamGame'].RUS_20 += 1
                     AllPlayers[RunningBackPlayerID]['PlayerGameStat'].RUS_20 += 1
 
-                DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
+                DefensivePlayers = [(u, AllPlayers[u]['AdjustedOverallRating'] ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  ]
                 DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                 AllPlayers[DefensiveTackler]['PlayerGameStat'].DEF_Tackles += 1
@@ -797,6 +911,7 @@ def GameSim(game):
                         GameDict[DefensiveTeam]['TeamGame'].DEF_TacklesForLoss += 1
 
             elif PlayChoice == 'Pass':
+                PassingStrategy = OffensiveTendencies['PassingStrategy']
                 DrivePlayObject.IsPass = True
                 PassOutcome = ''
                 QuarterbackPlayerID = OffensiveTeamPlayers['QB'][0]
@@ -804,11 +919,11 @@ def GameSim(game):
                 GameDict[OffensiveTeam]['TeamGame'].PAS_Attempts += 1
                 PassGameModifier = ((3.0 * QuarterbackTalent) + ReceiverTalent + OffensiveLineTalent) / (DefensiveLineTalent + SecondaryTalent) / 2.5
                 PassRushModifier = OffensiveLineTalent * 1.0 / DefensiveLineTalent
-                PassRushModifier = PassRushModifier ** 1.2
+                PassRushModifier = PassRushModifier ** PassingStrategy_PassRushModifier[PassingStrategy]
                 LinemanSackAllowedPlayerID = None
-                OffensiveLinemen = [(u, (100 - AllPlayers[u]['PlayerSkills']['OverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
+                OffensiveLinemen = [(u, (110 - AllPlayers[u]['AdjustedOverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
 
-                WideReceivers = [(u, AllPlayers[u]['PlayerSkills']['OverallRating'] ** 4) for u in OffensiveTeamPlayers['WR'] ] + [(u, AllPlayers[u]['PlayerSkills']['OverallRating']) for u in OffensiveTeamPlayers['RB'] ]
+                WideReceivers = [(u, AllPlayers[u]['AdjustedOverallRating'] ** 4) for u in OffensiveTeamPlayers['WR'] ] + [(u, int(AllPlayers[u]['AdjustedOverallRating'] ** 3.5)) for u in OffensiveTeamPlayers['RB'] ]
                 WideReceiverPlayer = WeightedProbabilityChoice(WideReceivers, WideReceivers[0])
 
                 if Down == 3 and YardsToGo > 4:
@@ -820,7 +935,7 @@ def GameSim(game):
                         PassOutcome = 'Incompletion'
                 elif (random.uniform(0,1) < (.10 / (PassRushModifier ** 4))):
                     PassOutcome = 'Sack'
-                elif (random.uniform(0,1) < (.7024 * (PassGameModifier ** .9))) :
+                elif (random.uniform(0,1) < ((.7024 * PassingStrategy_CompletionModifier[PassingStrategy]) * (PassGameModifier ** .9))) :
                     PassOutcome = 'Completion'
                 else:
                     PassOutcome = 'Incompletion'
@@ -840,7 +955,7 @@ def GameSim(game):
                     YardsThisPlay = 0
                     InterceptionReturnYards = 0
 
-                    DefensivePlayers = [(u, int(InterceptionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
+                    DefensivePlayers = [(u, int(InterceptionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
                     DefensiveIntercepter = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     AllPlayers[DefensiveIntercepter]['PlayerGameStat'].DEF_INT += 1
@@ -861,9 +976,8 @@ def GameSim(game):
                     #AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Carries += 1
                     #GameDict[OffensiveTeam]['TeamGame'].RUS_Carries += 1
 
-                    DefensivePlayers = [(u, int(PassRushByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB'] + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
+                    DefensivePlayers = [(u, int(PassRushByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB'] + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
-
                     LinemanSackAllowedPlayerID = WeightedProbabilityChoice(OffensiveLinemen, OffensiveLinemen[0])
 
                     AllPlayers[DefensiveTackler]['PlayerGameStat'].DEF_Sacks += 1
@@ -881,12 +995,12 @@ def GameSim(game):
                 #PASS COMPLETE
                 elif PassOutcome == 'Completion' :
                     PassGameModifier = PassGameModifier ** 1.1
-                    YardsThisPlay = round(NormalTrunc(10.1 * PassGameModifier, 7, -3, 100),0)
+                    YardsThisPlay = round(NormalTrunc(10.1 * PassGameModifier, PassingStrategy_YardsSigma[PassingStrategy], -3, 110),0)
 
                     AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_Completions += 1
                     GameDict[OffensiveTeam]['TeamGame'].PAS_Completions += 1
 
-                    WideReceiverTalent = AllPlayers[WideReceiverPlayer]['PlayerSkills']['OverallRating']
+                    WideReceiverTalent = AllPlayers[WideReceiverPlayer]['AdjustedOverallRating']
 
                     if YardsThisPlay >= 20 and (random.uniform(0,1) < (.05 * ((WideReceiverTalent / 85) ** 6))):
                         YardsThisPlay = round(NormalTrunc(30, 50, 28, 100),0)
@@ -894,7 +1008,7 @@ def GameSim(game):
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_Receptions += 1
                     GameDict[OffensiveTeam]['TeamGame'].REC_Receptions += 1
 
-                    DefensivePlayers = [(u, int(CompletionTacklerByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
+                    DefensivePlayers = [(u, int(CompletionTacklerByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     AllPlayers[DefensiveTackler]['PlayerGameStat'].DEF_Tackles += 1
@@ -918,7 +1032,7 @@ def GameSim(game):
 
                     #Deflected pass
                     if (random.uniform(0,1) < (.2 )):
-                        DefensivePlayers = [(u, int(DeflectionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['PlayerSkills']['OverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
+                        DefensivePlayers = [(u, int(DeflectionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
                         Deflector = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
                         GameDict[DefensiveTeam]['TeamGame'].DEF_Deflections += 1
                         AllPlayers[Deflector]['PlayerGameStat'].DEF_Deflections += 1
@@ -990,6 +1104,9 @@ def GameSim(game):
                     AllPlayers[KickerPlayerID]['PlayerGameStat'].KCK_FGM += 1
                     GameDict[OffensiveTeam]['TeamGame'].KCK_FGM += 1
 
+                    AllPlayers[KickerPlayerID]['PlayerGameStat'].KCK_LNG = Max(AllPlayers[KickerPlayerID]['PlayerGameStat'].KCK_LNG, FieldGoalDistance)
+                    GameDict[OffensiveTeam]['TeamGame'].KCK_LNG = Max(GameDict[OffensiveTeam]['TeamGame'].KCK_LNG, FieldGoalDistance)
+
                     setattr(GameDict[OffensiveTeam]['TeamGame'], FGMField, getattr(GameDict[OffensiveTeam]['TeamGame'], FGMField) + 1)
                     setattr(AllPlayers[KickerPlayerID]['PlayerGameStat'], FGMField, getattr(AllPlayers[KickerPlayerID]['PlayerGameStat'], FGMField) + 1)
 
@@ -1040,7 +1157,14 @@ def GameSim(game):
 
                 Down = 1
                 YardsToGo = 10
+                if BallSpot > 90:
+                    YardsToGo = 100 - BallSpot
                 GameDict[OffensiveTeam]['TeamGame'].FirstDowns +=1
+
+                if PlayChoice == 'Pass':
+                    GameDict[OffensiveTeam]['TeamGame'].FirstDowns_Pass +=1
+                elif PlayChoice == 'Run':
+                    GameDict[OffensiveTeam]['TeamGame'].FirstDowns_Rush +=1
 
 
             #check for touchdown
@@ -1048,6 +1172,7 @@ def GameSim(game):
                 OffensiveTouchdown = True
                 GameDict[OffensiveTeam]['TeamGame'].Points += 6
                 OffensivePointDifferential = GameDict[OffensiveTeam]['TeamGame'].Points - GameDict[DefensiveTeam]['TeamGame'].Points
+
                 #Todo GO FOR 2
                 if DetermineGoForTwo(OffensivePointDifferential, Period, SecondsLeftInPeriod, CoachDict[OffensiveTeam]['Tendencies']):
                     TwoPointConversionAttempt = True
@@ -1076,6 +1201,7 @@ def GameSim(game):
                     AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_TD += 1
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_TD += 1
 
+                AdjustBiggestLead(GameDict[OffensiveTeam]['TeamGame'], GameDict[DefensiveTeam]['TeamGame'])
 
                 Kickoff = True
             elif BallSpot < 0:
@@ -1083,11 +1209,13 @@ def GameSim(game):
                 print('WOULD BE A SAFETY!!!!')
                 print()
                 GameDict[DefensiveTeam]['TeamGame'].Points += 2
+                AdjustBiggestLead(GameDict[OffensiveTeam]['TeamGame'], GameDict[DefensiveTeam]['TeamGame'])
                 Kickoff = True
                 Safety = True
 
             elif FieldGoalMake:
                 GameDict[OffensiveTeam]['TeamGame'].Points += 3
+                AdjustBiggestLead(GameDict[OffensiveTeam]['TeamGame'], GameDict[DefensiveTeam]['TeamGame'])
 
             #check for turnover
             elif Turnover and DefensiveTouchdown:
@@ -1114,6 +1242,8 @@ def GameSim(game):
                         GameDict[DefensiveTeam]['TeamGame'].KCK_XPM += 1
                         AllPlayers[KickerPlayerID]['PlayerGameStat'].KCK_XPM += 1
 
+
+                AdjustBiggestLead(GameDict[OffensiveTeam]['TeamGame'], GameDict[DefensiveTeam]['TeamGame'])
                 GameDict[OffensiveTeam]['TeamGame'].Turnovers += 1
                 Kickoff = True
 
@@ -1268,9 +1398,10 @@ def GameSim(game):
                         continue
                     for P in T['Players'][Pos]:
                         PlayersCurrentlyOnField.append(P)
-                        AllPlayers[P]['Energy'] -= PositionEnergyMap[Pos]['OnFieldEnergyDrain']
+                        AllPlayers[P]['Energy'] -=  CoachDict[Team]['PositionEnergyMap'][Pos]['OnFieldEnergyDrain']
                         AllPlayers[P]['PlayerGameStat'].PlaysOnField +=1
-                        if AllPlayers[P]['Energy'] <=0 :
+                        AllPlayers[P]['AdjustedOverallRating'] = int(math.ceil(AllPlayers[P]['PlayerSkills']['OverallRating'] * math.pow(AllPlayers[P]['Energy'] , CoachDict[Team]['PositionEnergyMap'][Pos]['EnergyImpactOnOverall'])))
+                        if AllPlayers[P]['Energy'] <=0:
                             AllPlayers[P]['Energy'] = 0.01
 
             for P in AllPlayers:

@@ -42,6 +42,7 @@ urlpatterns = [
     path('World/<int:WorldID>/PlayerStats/', views.Page_PlayerStats, name='PlayerStats'),
     path('World/<int:WorldID>/PlayerStats/Team/<int:TeamID>/', views.Page_PlayerStats, name='PlayerStats'),
     path('World/<int:WorldID>/TeamStats/', views.Page_TeamStats, name='TeamStats'),
+    path('World/<int:WorldID>/TeamStats/Season/<int:SeasonStartYear>/', views.Page_TeamStats, name='TeamStats'),
     path('World/<int:WorldID>/CoachCarousel/', views.Page_CoachCarousel, name='CoachCarousel'),
     path('World/<int:WorldID>/PlayerDepartures/', views.Page_Rankings, name='Rankings'),
 

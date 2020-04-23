@@ -70,6 +70,18 @@ def TeamBackgroundFontColor(BackgroundColor):
 
 
 @register.filter
+def TeamSecondaryColor(SecondaryColor):
+    R = int(SecondaryColor[:2], 16)
+    G = int(SecondaryColor[2:4], 16)
+    B = int(SecondaryColor[4:6], 16)
+
+    Luma = (0.299 * (R**2) + 0.587 * (G**2) + 0.114 * (B**2)) ** .5
+    if Luma > 230:
+        return "000"
+
+    return SecondaryColor
+
+@register.filter
 def TeamBackgroundFontColorBlack(BackgroundColor):
     R = int(BackgroundColor[:2], 16)
     G = int(BackgroundColor[2:4], 16)

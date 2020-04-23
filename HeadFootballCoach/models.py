@@ -2083,7 +2083,7 @@ class Game(models.Model):
         else:
             GameDisplay = self.WeekID.WeekName
 
-        TeamGames = self.teamgame_set.all().values('Points', 'IsHomeTeam' ,'RUS_Yards', 'PAS_Yards', 'REC_Yards', 'REC_TD', 'REC_Receptions', 'Turnovers', 'TimeOfPossession', 'FirstDowns', 'PNT_Punts', 'DEF_Sacks', 'DEF_Tackles', 'ThirdDownConversion', 'ThirdDownAttempt', 'FourthDownConversion', 'FourthDownAttempt').annotate(  # call `annotate`
+        TeamGames = self.teamgame_set.all().values('Points', 'IsHomeTeam' ,'RUS_Yards', 'PAS_Yards', 'REC_Yards', 'REC_TD', 'REC_Receptions', 'Turnovers', 'TimeOfPossession', 'FirstDowns', 'PNT_Punts', 'DEF_Sacks', 'DEF_Tackles', 'ThirdDownConversion', 'ThirdDownAttempt', 'FourthDownConversion', 'FourthDownAttempt', 'BiggestLead').annotate(  # call `annotate`
                 TotalYards=F('PAS_Yards') + F('RUS_Yards'),
                 ThirdDownPercentage=Case(
                     When(ThirdDownAttempt=0, then=0),
@@ -2247,6 +2247,7 @@ class TeamGame(models.Model):
     KR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     KR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
+    KR_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_Returns = models.SmallIntegerField(default=0, null=True, blank=True)
     PR_TD = models.SmallIntegerField(default=0, null=True, blank=True)
@@ -2271,11 +2272,15 @@ class TeamGame(models.Model):
     PNT_Within20 = models.SmallIntegerField(default=0, null=True, blank=True)
     BLK_Sacks = models.SmallIntegerField(default=0, null=True, blank=True)
     BLK_Pancakes = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
 
     Possessions = models.SmallIntegerField(default=0, null=True, blank=True)
     Turnovers = models.SmallIntegerField(default=0, null=True, blank=True)
     TimeOfPossession = models.PositiveSmallIntegerField(default = 0)
     FirstDowns = models.PositiveSmallIntegerField(default=0)
+    FirstDowns_Pass = models.PositiveSmallIntegerField(default=0)
+    FirstDowns_Rush = models.PositiveSmallIntegerField(default=0)
+
 
     ThirdDownAttempt = models.PositiveSmallIntegerField(default=0)
     ThirdDownConversion = models.PositiveSmallIntegerField(default=0)
@@ -2439,6 +2444,7 @@ class PlayerGameStat(models.Model):
     KCK_XPM = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_Kickoffs = models.SmallIntegerField(default=0, null=True, blank=True)
     KCK_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)
+    KCK_LNG = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Punts = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Yards = models.SmallIntegerField(default=0, null=True, blank=True)
     PNT_Touchbacks = models.SmallIntegerField(default=0, null=True, blank=True)

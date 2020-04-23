@@ -154,7 +154,8 @@ def ChoosePlayersOfTheWeek(LS, WorldID):
 
         Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsNationalAward = True, IsWeekAward = True, IsPositionGroupAward = True, PositionGroupID = PositionGroupID, PlayerTeamSeasonID = NationalPlayerOfTheWeek, WeekID = CurrentWeek)
         Award.save()
-        for Conf in CurrentWorld.conference_set.all():
+        ConfList = CurrentWorld.conference_set.all().filter(team__teamseason__teamgame__GameID__WeekID = CurrentWeek).annotate(GamesPlayed = Count('team__teamseason__teamgame')).filter(GamesPlayed__gt = 0)
+        for Conf in ConfList:
             ConfPTG = PTG.filter(TeamGameID__TeamSeasonID__TeamID__ConferenceID = Conf).order_by('-GameScore')
             ConferencePlayerOfTheWeek = ConfPTG[0].PlayerTeamSeasonID
             Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsConferenceAward = True, IsWeekAward = True, ConferenceID = Conf, PlayerTeamSeasonID = ConferencePlayerOfTheWeek, IsPositionGroupAward = True, PositionGroupID = PositionGroupID, WeekID = CurrentWeek)

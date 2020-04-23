@@ -17,6 +17,13 @@
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 
+<head>
+  <style media="screen">
+    .dt-buttons button.dt-button {
+      width: 9%
+    }
+  </style>
+</head>
 
 <body>
   <div class="PageContent">
@@ -36,7 +43,7 @@
             <div class='w3-col s9'>
               <div class="w3-card ">
 
-                <table class="w3-table w3-table-all w3-hoverable center-text" id='TeamStats'  style="width:100%">
+                <table class="w3-table w3-table-all w3-hoverable center-text" id='TeamStats'  style="width:100%;">
                   <colgroup colspan="2" class='col-group'>
                       <col>
                       <col>
@@ -230,6 +237,10 @@
                       <!-- RETURNING -->
                       <th colspan="5" class='center-text col-group'>KICKOFFS</th>
                       <th colspan="5" class='center-text col-group'>PUNTS</th>
+
+                      <th colspan="4" class='center-text col-group'>VS TOP 25</th>
+                      <th colspan="7" class='center-text col-group'>AWARDS</th>
+                      <th colspan="6" class='center-text col-group'>BOWLS</th>
                     </tr>
                     <tr>
                       <th colspan="1" data-data="PlayerTeam" data-tooltip-title="Player Current Team">Team</th>
@@ -359,6 +370,26 @@
                       <th  colspan="1">AVG</th>
                       <th  colspan="1">LNG</th>
                       <th  colspan="1">TD</th>
+
+                      <th  colspan="1">GP</th>
+                      <th  colspan="1">Wins</th>
+                      <th  colspan="1">Losses</th>
+                      <th  colspan="1">Win %</th>
+
+                      <th  colspan="1">Heisman</th>
+                      <th  colspan="1">AA</th>
+                      <th  colspan="1">PreSeason AA</th>
+                      <th  colspan="1">POTW</th>
+                      <th  colspan="1">All-Conf</th>
+                      <th  colspan="1">PreSeason All-Conf</th>
+                      <th  colspan="1">Conf POTW</th>
+
+                      <th  colspan="1">Natl Champs</th>
+                      <th  colspan="1">Conf Champs</th>
+                      <th  colspan="1">Bowl GP</th>
+                      <th  colspan="1">Bowl Wins</th>
+                      <th  colspan="1">Bowl Losses</th>
+                      <th  colspan="1">Bowl Win %</th>
 
                     </tr>
                   </thead>

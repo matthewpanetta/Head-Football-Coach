@@ -51,7 +51,14 @@ function GetPlayerStats(WorldID, data){
     'Rushing - DEF': 6,
     'Kicking': 11,
     'Punting': 5,
-    'Returning': 9,
+    'Returning': 10,
+    'Top 25': 4,
+    'Awards': 7,
+    'Bowls': 6,
+    /*'Rank': 1,
+    'Top 25': 1,
+    'Rivals': 1,
+    'Champ': 1,*/
   }
 
   var ShowColumnMap = {}
@@ -236,10 +243,18 @@ function GetPlayerStats(WorldID, data){
           {"data": "FGA", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "FGPercent", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':DescFirst},
           {"data": "FG_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
-          {"data": "FG29", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
-          {"data": "FG39", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
-          {"data": "FG49", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
-          {"data": "FG50", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':DescFirst},
+          {"data": "FGM_29", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+              $(td).html("<span>"+DataObject.FG29+"</span>");
+          }},
+          {"data": "FGM_39", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+              $(td).html("<span>"+DataObject.FG39+"</span>");
+          }},
+          {"data": "FGM_49", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+              $(td).html("<span>"+DataObject.FG49+"</span>");
+          }},
+          {"data": "FGM_50", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+              $(td).html("<span>"+DataObject.FG50+"</span>");
+          }},
           {"data": "XPM", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "XPA", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "XPPercent", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
@@ -258,6 +273,27 @@ function GetPlayerStats(WorldID, data){
           {"data": "RET_KCK_AVG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "RET_KCK_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "RET_KCK_TD", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+
+          {"data": "Top25_GamesPlayed", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Top25_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Top25_Losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':AscFirst},
+          {"data": "Top25_WinPercentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+
+          {"data": "Heisman_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Natl_AllAmericans_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Natl_PreSeasonAllAmericans_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Natl_POTW_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Conf_AllAmericans_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Conf_PreSeasonAllAmericans_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Conf_POTW_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+
+          {"data": "NationalChampionshipWins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "ConferenceChampionshipWins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Bowl_GamesPlayed", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Bowl_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Bowl_Losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "Bowl_WinPercentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+
       ],
       'order': [[ 2, "asc" ]],
   });
