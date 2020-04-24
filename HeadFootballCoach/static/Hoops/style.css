@@ -869,6 +869,7 @@ input[type=text], input[type=password] {
 .w3-row-padding {
   justify-content: space-around;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .align-middle {

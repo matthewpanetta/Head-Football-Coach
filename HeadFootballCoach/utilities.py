@@ -158,7 +158,6 @@ def IntMin(a,b):
 
 def WeightedProbabilityChoice(Arr, Default=None):
 
-    print('WeightedProbabilityChoice', Arr, Default)
     ValueList = []
     if not isinstance(Arr, list):
         for K in Arr:

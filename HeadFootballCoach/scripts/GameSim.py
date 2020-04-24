@@ -317,6 +317,15 @@ def GameSim(game):
         'Short': 1.15
     }
 
+
+    BlitzStrategy = {
+        'Heavy Blitz': 1.2,
+        'Blitz': 1.1,
+        'Balanced': 1,
+        'Some Blitz': .9,
+        'No Blitz': .8
+    }
+
     PositionEnergyMap = {
         'QB': {'OnFieldEnergyDrain': .0125, 'SubOutThreshold': .5, 'SubInThreshold': .55, 'EnergyImpactOnOverall': (1/5.0)},
         'RB': {'OnFieldEnergyDrain': .0175 , 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/3.0)},
@@ -384,6 +393,7 @@ def GameSim(game):
         CoachDict[CT]['Tendencies']['PlayClockAggressiveness'] = (TSS['PlayClockAggressivenessTendency'] / 10.0)
         CoachDict[CT]['Tendencies']['PassingStrategy'] = (TSS['PassingStrategy'])
         CoachDict[CT]['Tendencies']['RunningBackStrategy'] = (TSS['RunningBackStrategy'])
+        CoachDict[CT]['Tendencies']['BlitzStrategy'] = (TSS['BlitzStrategy'])
         CoachDict[CT]['PositionEnergyMap'] = PositionEnergyMap.copy()
 
         if CoachDict[CT]['Tendencies']['RunningBackStrategy'] == 'Bellcow':
@@ -912,14 +922,15 @@ def GameSim(game):
 
             elif PlayChoice == 'Pass':
                 PassingStrategy = OffensiveTendencies['PassingStrategy']
+                BlitzingStrategy = OffensiveTendencies['BlitzStrategy']
                 DrivePlayObject.IsPass = True
                 PassOutcome = ''
                 QuarterbackPlayerID = OffensiveTeamPlayers['QB'][0]
                 AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_Attempts += 1
                 GameDict[OffensiveTeam]['TeamGame'].PAS_Attempts += 1
-                PassGameModifier = ((3.0 * QuarterbackTalent) + ReceiverTalent + OffensiveLineTalent) / (DefensiveLineTalent + SecondaryTalent) / 2.5
+                PassGameModifier = ((3.0 * QuarterbackTalent) + ReceiverTalent + OffensiveLineTalent) / ((DefensiveLineTalent ** BlitzStrategy[BlitzingStrategy]) + (SecondaryTalent ** (1/ BlitzStrategy[BlitzingStrategy]))) / 2.5
                 PassRushModifier = OffensiveLineTalent * 1.0 / DefensiveLineTalent
-                PassRushModifier = PassRushModifier ** PassingStrategy_PassRushModifier[PassingStrategy]
+                PassRushModifier = PassRushModifier ** (PassingStrategy_PassRushModifier[PassingStrategy] * BlitzStrategy[BlitzingStrategy])
                 LinemanSackAllowedPlayerID = None
                 OffensiveLinemen = [(u, (110 - AllPlayers[u]['AdjustedOverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
 
@@ -933,9 +944,9 @@ def GameSim(game):
                     PassOutcome = 'Interception'
                     if GameDict[DefensiveTeam]['TeamGame'].DEF_INT >= 4 and random.uniform(0,1) < .95 :
                         PassOutcome = 'Incompletion'
-                elif (random.uniform(0,1) < (.10 / (PassRushModifier ** 4))):
+                elif (random.uniform(0,1) < (.10 / (PassRushModifier ** 4)) * BlitzStrategy[BlitzingStrategy]):
                     PassOutcome = 'Sack'
-                elif (random.uniform(0,1) < ((.7024 * PassingStrategy_CompletionModifier[PassingStrategy]) * (PassGameModifier ** .9))) :
+                elif (random.uniform(0,1) < ((.7024 * PassingStrategy_CompletionModifier[PassingStrategy]) * (PassGameModifier ** .9)) / BlitzStrategy[BlitzingStrategy]) :
                     PassOutcome = 'Completion'
                 else:
                     PassOutcome = 'Incompletion'
