@@ -424,13 +424,13 @@ def GameSim(game):
         HomeCoachFactor = 1.0
 
     PlayClockUrgencyTimeParameters = {
-        -3: {'Mean': 36, 'Sigma': 4, 'Min': 30, 'Max': 40},
-        -2: {'Mean': 32, 'Sigma': 6, 'Min': 26, 'Max': 40},
-        -1: {'Mean': 29, 'Sigma': 6, 'Min': 24, 'Max': 40},
-         0: {'Mean': 26, 'Sigma': 8, 'Min': 12, 'Max': 40},
-         1: {'Mean': 22, 'Sigma': 6, 'Min': 12, 'Max': 28},
-         2: {'Mean': 18, 'Sigma': 6, 'Min': 12, 'Max': 26},
-         3: {'Mean': 12, 'Sigma': 4, 'Min':  8, 'Max': 16},
+        -3: {'Mean': 36, 'Sigma': 4, 'Min': 31, 'Max': 40},
+        -2: {'Mean': 33, 'Sigma': 6, 'Min': 28, 'Max': 40},
+        -1: {'Mean': 30, 'Sigma': 6, 'Min': 24, 'Max': 40},
+         0: {'Mean': 28, 'Sigma': 8, 'Min': 12, 'Max': 40},
+         1: {'Mean': 24, 'Sigma': 6, 'Min': 20, 'Max': 34},
+         2: {'Mean': 20, 'Sigma': 6, 'Min': 15, 'Max': 29},
+         3: {'Mean': 14, 'Sigma': 4, 'Min': 12, 'Max': 24},
     }
 
     PlayerStartersByPosition = {
@@ -1139,9 +1139,9 @@ def GameSim(game):
                 print('!!!! SecondsThisPlay out of range!', SecondsThisPlay, ' at ', SecondsLeftInPeriod)
 
             if IncompletePass:
-                SecondsThisPlay = 8
+                SecondsThisPlay = 9
             if random.uniform(0,1) < .08: #run out of bounds
-                SecondsThisPlay = 8
+                SecondsThisPlay = 9
             GameDict[OffensiveTeam]['TeamGame'].TimeOfPossession += SecondsThisPlay
             SecondsLeftInPeriod -= SecondsThisPlay
 

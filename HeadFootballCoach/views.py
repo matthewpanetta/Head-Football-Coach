@@ -682,6 +682,7 @@ def Page_Rankings(request, WorldID):
         TeamFullName = Concat( F('TeamSeasonID__TeamID__TeamName'), Value(' '), F('TeamSeasonID__TeamID__TeamNickname'), output_field=CharField()),
         NationalRankDeltaAbs = Func(F('NationalRankDelta'), function='ABS'),
         NationalRankDeltaShow = Case(
+            When(NationalRankDelta__isnull = True, then=Value('')),
             When(NationalRankDelta = 0, then=Value('')),
             default=F('NationalRankDeltaAbs'),
             output_field=CharField()
@@ -4773,9 +4774,9 @@ def Common_TeamStats( Filters = {}):
                         ),
 
         FirstDowns = Sum('teamseason__teamgame__FirstDowns'),
-        FirstDowns_Pass = Sum('teamseason__teamgame__FirstDowns'), #TODO
-        FirstDowns_Rush = Sum('teamseason__teamgame__FirstDowns'),#TODO
-        FirstDowns_Penalties = Sum('teamseason__teamgame__FirstDowns'),#TODO
+        FirstDowns_Pass = Sum('teamseason__teamgame__FirstDowns_Pass'), #TODO
+        FirstDowns_Rush = Sum('teamseason__teamgame__FirstDowns_Rush'),#TODO
+        FirstDowns_Penalties = Value(0, output_field=IntegerField()),#TODO
 
         ThirdDownConversion=Sum('teamseason__teamgame__ThirdDownConversion'),
         ThirdDownAttempt=Sum('teamseason__teamgame__ThirdDownAttempt'),

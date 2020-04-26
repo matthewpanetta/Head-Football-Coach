@@ -35,6 +35,125 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined,
   display(DOMID, face, overrides);
 }
 
+
+function DrawTeamInfo(data, WorldID, SelectedTeamID){
+  var div = $(`
+    <div class="w3-row-padding">
+      <div class='w3-col s3'>
+        <img src="" src-field='TeamLogoURL' alt="" class='width100'>
+      </div>
+      <div class="w3-col s9 column-flex" >
+        <div class="w3-row-padding" >
+
+            <div class='w3-col s7 vertical-align-middle'>
+              <div>
+                <span class='thin-font font32 margin-right-4' data-field="NationalRankDisplay"></span>
+                <span class='minor-bold font32 margin-right-4' data-field='TeamName'></span>
+                <span class=' font32' data-field='TeamNickname' ></span>
+              </div>
+              <div>
+                <span class='font12' data-field='CityAndState'></span> | <span class='font12' data-field='ConferenceID__ConferenceName'></span>
+              </div>
+            </div>
+            <div class='w3-col s5 hide-medium vertical-align-middle'>
+              <div class="w3-row-padding center-text">
+                <div class='w3-col s4'>
+                  <div class=' font32' data-field="TeamOverallRating_Grade">
+                  </div>
+                  <div class=' font16'>
+                    Overall
+                  </div>
+                </div>
+                <div class='w3-col s4'>
+                  <div class=' font32' data-field="TeamOffenseRating_Grade">
+                  </div>
+                  <div class=' font16'>
+                    Offense
+                  </div>
+                </div>
+                <div class='w3-col s4'>
+                  <div class=' font32' data-field="TeamDefenseRating_Grade">
+                  </div>
+                  <div class=' font16'>
+                    Defense
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+        </div>
+        <div class="w3-row-padding hide-medium">
+          <div class="w3-col s6 w3-row-padding  ">
+            <table class='width80'>
+              <tbody>
+                <tr>
+                  <th colspan="3" class='center-text font24'>Offense</th>
+                </tr>
+                <tr>
+                  <td rowspan="3" class='font32 center-text team-highlight-stat-padding bold font-black'  ordinal-field="PPG_Rank">12th</td>
+                  <td data-field="PPG" class='right-text team-highlight-stat-padding'>42</td>
+                  <td>PPG</td>
+                </tr>
+                <tr>
+                  <td data-field="PassYPG" class='right-text team-highlight-stat-padding'>120</td>
+                  <td>Pass YPG</td>
+                </tr>
+                <tr>
+                  <td data-field="RushYPG" class='right-text team-highlight-stat-padding'>110</td>
+                  <td>Rush YPG</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="w3-col s6 w3-row-padding ">
+            <table class='width80 '>
+              <tbody>
+                <tr>
+                  <th colspan="3" class='center-text font24'>Defense</th>
+                </tr>
+                <tr>
+                  <td rowspan="3" class='font32 center-text team-highlight-stat-padding bold font-black'  ordinal-field="PAPG_Rank">12th</td>
+                  <td data-field="PAPG" class='right-text team-highlight-stat-padding'>42</td>
+                  <td>PPG</td>
+                </tr>
+                <tr>
+                  <td data-field="OpponentPassYPG" class='right-text team-highlight-stat-padding'>120</td>
+                  <td>Pass YPG</td>
+                </tr>
+                <tr>
+                  <td data-field="OpponentRushYPG" class='right-text team-highlight-stat-padding'>110</td>
+                  <td>Rush YPG</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    `);
+
+  $.ajax({
+    url: '/World/'+WorldID+'/Team/'+SelectedTeamID+'/TeamCardInfo',
+    success: function (data) {
+      console.log('Ajax return', data);
+
+      $(div).find('div.w3-hide').removeClass('w3-hide');
+
+      $.each(data, function(key, val){
+
+        $(div).find('[data-field="'+key+'"]').text(val);
+        $(div).find('[ordinal-field="'+key+'"]').text(ordinal_suffix_of(val));
+        $(div).find('[src-field="'+key+'"]').attr('src', val);
+
+      });
+    }
+  });
+
+  return div;
+}
+
 function PopulateTop25(WorldID, data){
 
   console.log('In PopulateTopTeams!', data)
@@ -62,7 +181,7 @@ function PopulateTop25(WorldID, data){
             $(td).html(`<a href='`+DataObject['TeamHref']+`'><img class='worldTeamStatLogo padding-right' src='`+DataObject['TeamSeasonID__TeamID__TeamLogoURL']+`'/>`+StringValue+`</a>`);
             $(td).parent().attr('TeamID', DataObject['TeamSeasonID__TeamID']);
           }},
-          {"data": "WinsLosses", "sortable": true, 'orderSequence':["desc"]},
+          {"data": "WinsLosses", "sortable": true, 'className': 'hide-small', 'orderSequence':["desc"]},
           {"data": "LastWeekGame", "sortable": true, 'searchable': true, "fnCreatedCell": function (td, LastWeekObject, DataObject, iRow, iCol) {
             if (LastWeekObject == 'BYE'){
               $(td).html('BYE')
@@ -70,10 +189,10 @@ function PopulateTop25(WorldID, data){
             else{
               $(td).html('<a href="'+LastWeekObject.GameHref+'">'+LastWeekObject.Points +'-'+ LastWeekObject.OpponentPoints+' </a>')
               $(td).append('<span class="'+LastWeekObject.WinLossLetter+'">'+LastWeekObject.WinLossLetter+'</span>');
-              $(td).append('<span> '+LastWeekObject.VsAtLetter+' </span><a href="'+LastWeekObject.OpponentTeamHref+'">'+LastWeekObject.OpponentNationalRankDisplay+' ' + LastWeekObject.OpponentTeamName+'</a>');
+              $(td).append('<span class="hide-small"> '+LastWeekObject.VsAtLetter+' </span><a class="hide-small" href="'+LastWeekObject.OpponentTeamHref+'">'+LastWeekObject.OpponentNationalRankDisplay+' ' + LastWeekObject.OpponentTeamName+'</a>');
             }
           }},
-          {"data": "ThisWeekGame", "sortable": true, 'searchable': true, "fnCreatedCell": function (td, ThisWeekObject, DataObject, iRow, iCol) {
+          {"data": "ThisWeekGame", "sortable": true, 'searchable': true, 'className': 'hide-small', "fnCreatedCell": function (td, ThisWeekObject, DataObject, iRow, iCol) {
             console.log('LastWeekObject', ThisWeekObject)
             if (ThisWeekObject == 'BYE'){
               $(td).html('BYE')
@@ -82,40 +201,41 @@ function PopulateTop25(WorldID, data){
               $(td).html('<span> '+ThisWeekObject.VsAtLetter+' </span><a href="'+ThisWeekObject.OpponentTeamHref+'">'+ThisWeekObject.OpponentNationalRankDisplay+' ' + ThisWeekObject.OpponentTeamName+'</a>');
             }
           }},
+          {"data": null, "sortable": false, 'searchable': false, 'className': 'details-control',   "defaultContent": ''},
 
       ],
       'order': [[ 0, "asc" ]],
   });
 
 
-  $('#Top25Table tbody').on('click', 'tr', function () {
-    var SelectedTeamID = $(this).attr('TeamID');
-    console.log('clicked', this, SelectedTeamID);
+  $('#Top25Table tbody').on('click', '.details-control', function () {
+    //console.log('clicked', this, SelectedTeamID);
 
-    $.ajax({
-      url: '/World/'+WorldID+'/Team/'+SelectedTeamID+'/TeamCardInfo',
-      success: function (data) {
-        console.log('Ajax return', data);
+    var tr = $(this).parent();
+    $(tr).addClass('shown');
+    var SelectedTeamID = $(tr).attr('TeamID');
+    var row = table.row( tr );
 
-        $('#teamHighlight div.w3-hide.w3-row-padding').removeClass('w3-hide');
+    if ( row.child.isShown() ) {
+        // This row is already open - close it
+        row.child.hide();
+        tr.removeClass('shown');
+    }
+    else {
+        // Open this row
+        var data = row.data()
+        var formattedContent = DrawTeamInfo(data, WorldID, SelectedTeamID);
+        console.log(formattedContent,'formattedContent');
+        row.child( formattedContent, 'teamTableBorder' ).show();
+        var childrow = row.child();
+        console.log(childrow, 'childrow');
 
-        $('#team-highlight-top-color-box').css('background-color', data['TeamColor_Primary_HEX']);
-        $('#teamHighlight').css('border-width', '4px 4px 4px 4px').css('border-style', 'solid').css('border-color', data['TeamColor_Secondary_HEX']);
-        $('#teamHighlight').css('box-shadow', '0px 2px 12px 0px #'+data['TeamColor_Primary_HEX']);
-        var overrides = {"teamColors":["#"+data['TeamColor_Primary_HEX'],"#"+data['TeamColor_Secondary_HEX'],"#000000"]}
+        var teamcolor = data.TeamSeasonID__TeamID__TeamColor_Primary_HEX;
+        childrow.find('td').css('border-left-color', teamcolor)
 
-        $('[css-field="OverallCss"].team-highlight-pills').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
+        tr.addClass('shown');
+    }
 
-        $.each(data, function(key, val){
-
-          $('#teamHighlight').find('[data-field="'+key+'"]').text(val);
-          $('#teamHighlight').find('[ordinal-field="'+key+'"]').text(ordinal_suffix_of(val));
-          $('#teamHighlight').find('[src-field="'+key+'"]').attr('src', val);
-
-
-        });
-      }
-    })
 
   })
 

@@ -1,8 +1,9 @@
-from .models import Audit,TeamGame,Bowl,TeamSeasonStrategy, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
+from .models import Audit,TeamGame,Bowl,TeamSeasonStrategy, TeamSeasonPosition, System_PlayerArchetypeRatingModifier, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
 import random
 from datetime import timedelta, date
 import pandas as pd
 import numpy
+from decimal import Decimal
 from .scripts.PickName import RandomName, RandomPositionAndMeasurements, RandomCity
 import math
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, DecimalField, CharField, BooleanField, Value, Window, OuterRef, Subquery
@@ -16,6 +17,77 @@ from .scripts.import_csv import createCalendar
 from .utilities import NormalVariance, DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc, NormalVariance
 from math import sin, cos, sqrt, atan2, radians, log
 import time
+
+
+
+def CalculateTeamPlayerOverall(TSP, PlayerID):
+
+    TotalRating = 1
+    for key in TSP:
+        RatingName = key.replace('_Weight', '')
+        RatingName2 = 'playerseasonskill__' + key.replace('_Weight', '')
+        if RatingName in PlayerID:
+            TotalRating += TSP[key] * PlayerID[RatingName]
+        elif RatingName2 in PlayerID:
+            TotalRating += TSP[key] * PlayerID[RatingName2]
+
+    return int(TotalRating / TSP['Total_Rating_Weight'])
+
+def CreateTeamPositions(LS, WorldID):
+
+    TSPToSave = []
+    PositionArchetypes =System_PlayerArchetypeRatingModifier.objects.all()
+    ArchetypeFields = [field.name for field in System_PlayerArchetypeRatingModifier._meta.get_fields() if '_Rating' in field.name ]
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).order_by('TeamID__TeamName'):
+        TSS = TeamSeasonID.teamseasonstrategy_set.all().first()
+        for Pos in Position.objects.exclude(PositionAbbreviation = 'ATH'):
+            PosAbbr = Pos.PositionAbbreviation
+            TSP = {'WorldID': WorldID, 'TeamSeasonID': TeamSeasonID, 'PositionID': Pos, 'StarterPlayerCount': Pos.PositionTypicalStarterCountPerTeam, 'MinimumPlayerCount': Pos.PositionCountPerAwardTeam, 'NeededPlayerCount': Pos.PositionCountPerAwardTeam, 'PositionPreference': '' }
+            TSP['PositionPriority'] = NormalVariance(1.0, 7)
+
+            if PosAbbr == 'QB':
+                TSP['PositionPreference'] = TSS.QB_Preference
+            elif  PosAbbr == 'RB':
+                TSP['PositionPreference'] = TSS.RB_Preference
+            elif  PosAbbr == 'WR':
+                TSP['PositionPreference'] = TSS.WR_Preference
+            elif  PosAbbr == 'TE':
+                TSP['PositionPreference'] = TSS.TE_Preference
+            elif  PosAbbr in ('OT', 'OG', 'OC'):
+                TSP['PositionPreference'] = TSS.OL_Preference
+            elif  PosAbbr == 'DE':
+                TSP['PositionPreference'] = TSS.DE_Preference
+            elif  PosAbbr == 'DT':
+                TSP['PositionPreference'] = TSS.DT_Preference
+            elif  PosAbbr == 'OLB':
+                TSP['PositionPreference'] = TSS.OLB_Preference
+            elif  PosAbbr == 'MLB':
+                TSP['PositionPreference'] = TSS.MLB_Preference
+            elif  PosAbbr == 'CB':
+                TSP['PositionPreference'] = TSS.CB_Preference
+            elif  PosAbbr == 'S':
+                TSP['PositionPreference'] = TSS.S_Preference
+
+            Archetype = PositionArchetypes.filter(Position = PosAbbr).annotate(
+                ArchetypeMatch = Case(
+                    When(Archetype = TSP['PositionPreference'], then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField()
+                )
+                ).order_by('-ArchetypeMatch').first()
+
+
+            TotalWeight = Decimal(0)
+            for field in ArchetypeFields:
+                TSP[field+'_Weight'] = Decimal(getattr(Archetype, field) * 1.0)
+                TotalWeight += Decimal(getattr(Archetype, field)* 1.0)
+            TSP['Total_Rating_Weight'] = TotalWeight
+
+            TeamSeasonPositionID = TeamSeasonPosition(**TSP)
+            TSPToSave.append(TeamSeasonPositionID)
+
+
+    TeamSeasonPosition.objects.bulk_create(TSPToSave, ignore_conflicts = True)
 
 
 def PopulateTeamDepthCharts(LS, WorldID):
@@ -700,13 +772,13 @@ def CreatePlayers(LS, WorldID):
         TeamDict[T]['PositionPreference']['Offense'] = NormalTrunc(1.05, 0.1, .5, 1.5)
         TeamDict[T]['PositionPreference']['Defense'] = 2 - TeamDict[T]['PositionPreference']['Offense']
         TeamDict[T]['PositionPreference']['Special Teams'] = .75
+        TeamDict[T]['TSP'] = T.CurrentTeamSeason.CurrentTeamSeasonPosition
 
     DraftOrder = []
     for u in range(int(NumberOfPlayersNeeded * 1.2)):
         T = [(T, TeamDict[T]['TeamPrestige']) for T in TeamDict if TeamDict[T]['PlayerCount'] < PlayersPerTeam]
         if len(T) == 0:
             break
-        print('SelectedTeam = WeightedProbabilityChoice(T, T[0])', T, T[0])
         SelectedTeam = WeightedProbabilityChoice(T, T[0])
         TeamDict[SelectedTeam]['PlayerCount'] +=1
         if TeamDict[SelectedTeam]['PlayerCount'] >= PlayersPerTeam:
@@ -742,11 +814,15 @@ def CreatePlayers(LS, WorldID):
     for P in PlayerList:
         PlayerSkillPool.append(PopulatePlayerSkills(P, CurrentSeason, WorldID))
     PlayerSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=True)
-    PlayerPool = [u for u in PlayerList.values('PlayerID', 'ClassID', 'PositionID__PositionAbbreviation','PositionID__PositionGroupID__PositionGroupName', 'playerseasonskill__OverallRating').annotate(Position = F('PositionID__PositionAbbreviation'), PositionGroup = F('PositionID__PositionGroupID__PositionGroupName')).order_by('-playerseasonskill__OverallRating')]#sorted(PlayerPool, key = lambda k: k.CurrentSkills.OverallRating, reverse = True)
+    PlayerPool = [u for u in PlayerList.values('PlayerID', 'ClassID', 'PositionID__PositionAbbreviation','PositionID__PositionGroupID__PositionGroupName' , 'playerseasonskill__OverallRating','playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating').annotate(
+        Position = F('PositionID__PositionAbbreviation'),
+        PositionGroup = F('PositionID__PositionGroupID__PositionGroupName')
+    ).order_by('-playerseasonskill__OverallRating')]
 
     PlayersTeamSeasonToSave = []
     for T in DraftOrder:
         TS = T.CurrentTeamSeason
+        TSP = TeamDict[T]['TSP']
         if T not in TeamRosterCompositionNeeds:
             TeamRosterCompositionNeeds[T] = {'ClassID': MinimumRosterComposition['ClassID'], 'PositionMaximums': {Pos['Position']: Pos['PositionMaximumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}, 'StarterPosition': {Pos['Position']: Pos['PositionTypicalStarterCountPerTeam'] for Pos in MinimumRosterComposition['Position']},'FullPosition': {Pos['Position']: Pos['PositionMinimumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}}
         ClassesNeeded =   [u for u in TeamRosterCompositionNeeds[T]['ClassID']    if TeamRosterCompositionNeeds[T]['ClassID'][u]    > 0 ]
@@ -804,7 +880,8 @@ def CreatePlayers(LS, WorldID):
                 AvailablePlayers = [u for u in PlayerPool]
             AP_count += 1
 
-        AvailablePlayers = sorted(AvailablePlayers, key=lambda P:  P['playerseasonskill__OverallRating'] * ClassOverallNormalizer[P['ClassID']] * ClassNeedModifier[P['ClassID']] * PositionNeedModifier[P['Position']] * TeamDict[T]['PositionPreference'][P['PositionID__PositionGroupID__PositionGroupName']], reverse=True)
+        #AvailablePlayers = sorted(AvailablePlayers, key=lambda P: CalculateTeamPlayerOverall(TSP[P['Position']], P) * ClassOverallNormalizer[P['ClassID']] * ClassNeedModifier[P['ClassID']] * PositionNeedModifier[P['Position']] * TeamDict[T]['PositionPreference'][P['PositionID__PositionGroupID__PositionGroupName']], reverse=True)
+        AvailablePlayers = sorted(AvailablePlayers, key=lambda P: P['playerseasonskill__OverallRating'] * ClassOverallNormalizer[P['ClassID']] * ClassNeedModifier[P['ClassID']] * PositionNeedModifier[P['Position']] * TeamDict[T]['PositionPreference'][P['PositionID__PositionGroupID__PositionGroupName']], reverse=True)
 
 
         if len(AvailablePlayers) < 5:
@@ -832,10 +909,8 @@ def CreatePlayers(LS, WorldID):
                 for u in range(TeamRosterCompositionNeeds[T]['StarterPosition'][Pos]):
                     if TS is None:
                         TS = T.CurrentTeamSeason
-                    print(T, 'needs', Pos)
                     NewPlayer = GeneratePlayer(None, CurrentSeason, None, WorldID, Pos)
                     NewPlayer.save()
-                    print('New player-', NewPlayer, NewPlayer.PositionID.PositionAbbreviation)
 
                     PTS = PlayerTeamSeason(WorldID=WorldID, TeamSeasonID = TS, PlayerID = NewPlayer, ClassID =NewPlayer.ClassID)
                     PlayersTeamSeasonToSave.append(PTS)
@@ -1508,6 +1583,8 @@ def NewSeasonCutover(WorldID):
 
 def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
 
+    AuditTeamCount = Team.objects.filter(WorldID = WorldID).count()
+
 
     if  IsFirstLeagueSeason:
         StartYear = 2019
@@ -1542,19 +1619,20 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Create Team Seasons')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1,ScalesWithTeams=True, NumberTeam=AuditTeamCount, AuditDescription='Create Team Seasons')
 
 
     if IsFirstLeagueSeason:
 
         CreateCoaches(LS, WorldID)
+        CreateTeamPositions(LS, WorldID)
         if DoAudit:
             start = time.time()
         CreatePlayers(LS, WorldID)
         if DoAudit:
             end = time.time()
             TimeElapsed = end - start
-            A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 0, AuditDescription='Create Players')
+            A = Audit.objects.create(TimeElapsed = TimeElapsed,ScalesWithTeams=True, NumberTeam=AuditTeamCount, AuditVersion = 3, AuditDescription='Create Players')
 
 
     if DoAudit:
@@ -1565,7 +1643,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 4, AuditDescription='Create Recruiting Class')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed,ScalesWithTeams=True, NumberTeam=AuditTeamCount, AuditVersion = 4, AuditDescription='Create Recruiting Class')
     if DoAudit:
         start = time.time()
 
@@ -1574,7 +1652,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 3, AuditDescription='CreateSchedule')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed,ScalesWithTeams=True, NumberTeam=AuditTeamCount, AuditVersion = 3, AuditDescription='CreateSchedule')
     if DoAudit:
         start = time.time()
 
@@ -1588,4 +1666,4 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='CalculateRankings, CalculateConferenceRankings, SelectBroadcast')
+        A = Audit.objects.create(TimeElapsed = TimeElapsed,ScalesWithTeams=True, NumberTeam=AuditTeamCount, AuditVersion = 1, AuditDescription='CalculateRankings, CalculateConferenceRankings, SelectBroadcast')

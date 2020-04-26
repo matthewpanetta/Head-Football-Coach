@@ -1,3 +1,17 @@
+function ordinal_suffix_of(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
 
 function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined, DOMID=undefined){
   var DataPassthruHolder = $('#PageDataPassthru')[0];
@@ -19,6 +33,126 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined,
     DOMID = 'PlayerFace';
   }
   display(DOMID, face, overrides);
+}
+
+
+
+function DrawTeamInfo(data, WorldID, SelectedTeamID){
+  var div = $(`
+    <div class="w3-row-padding">
+      <div class='w3-col s3'>
+        <img src="" src-field='TeamLogoURL' alt="" class='width100'>
+      </div>
+      <div class="w3-col s9 column-flex" >
+        <div class="w3-row-padding" >
+
+            <div class='w3-col s7 vertical-align-middle'>
+              <div>
+                <span class='thin-font font32 margin-right-4' data-field="NationalRankDisplay"></span>
+                <span class='minor-bold font32 margin-right-4' data-field='TeamName'></span>
+                <span class=' font32' data-field='TeamNickname' ></span>
+              </div>
+              <div>
+                <span class='font12' data-field='CityAndState'></span> | <span class='font12' data-field='ConferenceID__ConferenceName'></span>
+              </div>
+            </div>
+            <div class='w3-col s5 hide-medium vertical-align-middle'>
+              <div class="w3-row-padding center-text">
+                <div class='w3-col s4'>
+                  <div class=' font32' data-field="TeamOverallRating_Grade">
+                  </div>
+                  <div class=' font16'>
+                    Overall
+                  </div>
+                </div>
+                <div class='w3-col s4'>
+                  <div class=' font32' data-field="TeamOffenseRating_Grade">
+                  </div>
+                  <div class=' font16'>
+                    Offense
+                  </div>
+                </div>
+                <div class='w3-col s4'>
+                  <div class=' font32' data-field="TeamDefenseRating_Grade">
+                  </div>
+                  <div class=' font16'>
+                    Defense
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+        </div>
+        <div class="w3-row-padding hide-medium">
+          <div class="w3-col s6 w3-row-padding  ">
+            <table class='width80'>
+              <tbody>
+                <tr>
+                  <th colspan="3" class='center-text font24'>Offense</th>
+                </tr>
+                <tr>
+                  <td rowspan="3" class='font32 center-text team-highlight-stat-padding bold font-black'  ordinal-field="PPG_Rank">12th</td>
+                  <td data-field="PPG" class='right-text team-highlight-stat-padding'>42</td>
+                  <td>PPG</td>
+                </tr>
+                <tr>
+                  <td data-field="PassYPG" class='right-text team-highlight-stat-padding'>120</td>
+                  <td>Pass YPG</td>
+                </tr>
+                <tr>
+                  <td data-field="RushYPG" class='right-text team-highlight-stat-padding'>110</td>
+                  <td>Rush YPG</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="w3-col s6 w3-row-padding ">
+            <table class='width80 '>
+              <tbody>
+                <tr>
+                  <th colspan="3" class='center-text font24'>Defense</th>
+                </tr>
+                <tr>
+                  <td rowspan="3" class='font32 center-text team-highlight-stat-padding bold font-black'  ordinal-field="PAPG_Rank">12th</td>
+                  <td data-field="PAPG" class='right-text team-highlight-stat-padding'>42</td>
+                  <td>PPG</td>
+                </tr>
+                <tr>
+                  <td data-field="OpponentPassYPG" class='right-text team-highlight-stat-padding'>120</td>
+                  <td>Pass YPG</td>
+                </tr>
+                <tr>
+                  <td data-field="OpponentRushYPG" class='right-text team-highlight-stat-padding'>110</td>
+                  <td>Rush YPG</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    `);
+
+  $.ajax({
+    url: '/World/'+WorldID+'/Team/'+SelectedTeamID+'/TeamCardInfo',
+    success: function (data) {
+      console.log('Ajax return', data);
+
+      $(div).find('div.w3-hide').removeClass('w3-hide');
+
+      $.each(data, function(key, val){
+
+        $(div).find('[data-field="'+key+'"]').text(val);
+        $(div).find('[ordinal-field="'+key+'"]').text(ordinal_suffix_of(val));
+        $(div).find('[src-field="'+key+'"]').attr('src', val);
+
+      });
+    }
+  });
+
+  return div;
 }
 
 function GetPlayerStats(WorldID, data){
@@ -55,6 +189,7 @@ function GetPlayerStats(WorldID, data){
     'Top 25': 4,
     'Awards': 7,
     'Bowls': 6,
+    'Expand': 1
     /*'Rank': 1,
     'Top 25': 1,
     'Rivals': 1,
@@ -87,7 +222,7 @@ function GetPlayerStats(WorldID, data){
   var HideColumnMap = {}
   $.each(ShowColumnMap, function(key, ColList){
     $.each(ColList, function(ind, ColNum){
-      if ((($.inArray( ColNum,  ShowColumnMap['Base'])) == -1)){
+      if ((($.inArray( ColNum,  ShowColumnMap['Base'])) == -1) && ($.inArray( ColNum,  ShowColumnMap['Expand']) == -1)){
         FullColumnList.push(ColNum);
       }
     })
@@ -112,7 +247,7 @@ function GetPlayerStats(WorldID, data){
   }]
 
   $.each(ColCategories, function(key, val){
-    if (key == 'Base'){
+    if (key == 'Base' || key == 'Expand' ){
       return true;
     }
     var ButtonObj = {extend: 'colvisGroup',
@@ -293,90 +428,46 @@ function GetPlayerStats(WorldID, data){
           {"data": "Bowl_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "Bowl_Losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "Bowl_WinPercentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": null, "sortable": false, 'searchable': false, 'className': 'details-control',   "defaultContent": ''},
 
       ],
       'order': [[ 2, "asc" ]],
   });
 
 
-    $('#TeamStats tbody').on('click', 'tr', function () {
-      var SelectedTeamID = $(this).attr('TeamID');
-      console.log('clicked', this, SelectedTeamID);
 
-      $.ajax({
-        url: '/World/'+WorldID+'/Team/'+SelectedTeamID+'/TeamCardInfo',
-        success: function (data) {
-          console.log('Ajax return', data);
+    $('#TeamStats tbody').on('click', '.details-control', function () {
+      //console.log('clicked', this, SelectedTeamID);
 
-          $('#teamHighlight div.w3-hide.w3-row-padding').removeClass('w3-hide');
+      var tr = $(this).parent();
+      $(tr).addClass('shown');
+      var SelectedTeamID = $(tr).attr('TeamID');
+      var row = table.row( tr );
 
-          $('#team-highlight-top-color-box').css('background-color', data['TeamColor_Primary_HEX']);
-          $('#teamHighlight').css('border-width', '4px 4px 4px 4px').css('border-style', 'solid').css('border-color', data['TeamColor_Secondary_HEX']);
-          $('#teamHighlight').css('box-shadow', '0px 2px 12px 0px #'+data['TeamColor_Primary_HEX']);
-          var overrides = {"teamColors":["#"+data['TeamColor_Primary_HEX'],"#"+data['TeamColor_Secondary_HEX'],"#000000"]}
+      if ( row.child.isShown() ) {
+          // This row is already open - close it
+          row.child.hide();
+          tr.removeClass('shown');
+      }
+      else {
+          // Open this row
+          var data = row.data()
+          var formattedContent = DrawTeamInfo(data, WorldID, SelectedTeamID);
+          console.log(formattedContent,'formattedContent');
+          row.child( formattedContent, 'teamTableBorder' ).show();
+          var childrow = row.child();
+          console.log(childrow, 'childrow');
 
-          $('[css-field="OverallCss"].team-highlight-pills').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
+          var teamcolor = data.TeamColor_Primary_HEX;
+          childrow.find('td').css('border-left-color', teamcolor)
 
-          $.each(data, function(key, val){
+          tr.addClass('shown');
+      }
 
-            $('#teamHighlight').find('[data-field="'+key+'"]').text(val);
-            $('#teamHighlight').find('[src-field="'+key+'"]').attr('src', val);
 
-          });
-        }
-      })
-    });
-
-/*
-     table.button( 4 ).action( function () {
-       console.log('Action for ', this);
-         this.active( true );
-         table.button( 1 ).active( false );
-         table.button( 2 ).active( false );
-         table.button( 3 ).active( false );
-
-         // ... set button index 1's mode of operation
-     } );
-  */
-    $(function() {
-      var $sidebar   = $("#teamHighlight"),
-          $window    = $(window),
-          offset     = $sidebar.offset(),
-          topPadding = 15;
-
-      $window.scroll(function() {
-          if ($window.scrollTop() > offset.top) {
-              $sidebar.stop().animate({
-                  marginTop: $window.scrollTop() - offset.top + topPadding
-              });
-          } else {
-              $sidebar.stop().animate({
-                  marginTop: 0
-              });
-          }
-      });
     });
 
 
-    $('.highlight-tab').on('click', function(event, target) {
-
-      var ClickedTab = $(event.target)
-      var ClickedTabContent = ClickedTab.attr('id').replace('-tab', '');
-      var ClickedTabParent = ClickedTab.closest('#team-highlight-info-selection-bar').attr('id');
-
-      $.each($('#'+ClickedTabParent+' > .selected-highlight-tab'), function(index, tab){
-        var TargetTab = $(tab);
-        $(TargetTab).removeClass('selected-highlight-tab');
-        var TargetTabContent = TargetTab.attr('id').replace('-tab', '');
-        $('#'+TargetTabContent).addClass('w3-hide');
-        var TargetTabParent = TargetTab.closest('#team-highlight-info-selection-bar').attr('id');
-
-      });
-
-      $(ClickedTab).addClass('selected-highlight-tab');
-      $('#'+ClickedTabContent).removeClass('w3-hide')
-
-    });
 }
 
 

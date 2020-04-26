@@ -28,110 +28,25 @@
       <div class="tab-content" style="display:block;"  id="nav-player-stats">
         <div class='w3-display-container' >
           <div class='w3-row-padding'>
-            <div class='w3-col l9 m12'>
+            <div class='w3-col l10 m12'>
               <div class="w3-card ">
 
-                <table class="w3-table w3-table-all w3-hoverable" id='Top25Table'  style="width:100%">
+                <table class="w3-table w3-table-all " id='Top25Table'  style="width:100%">
                   <thead>
                     <tr>
                       <th class=''>Rank</th>
                       <th>Team</th>
                       <th>Record</th>
                       <th>Last Week</th>
-                      <th>This Week</th>
+                      <th class='hide-small'>This Week</th>
+                      <th></th>
                     </tr>
                   </thead>
                 </table>
               </div>
 
             </div>
-            <div class="w3-col l3 m0">
-              <div class="w3-card" id='teamHighlight'>
-                <div class='w3-row-padding w3-hide' id='team-highlight-top-color-box' style='height: 100px;'>
-                  <div class="w3-col s4">
 
-                  </div>
-                  <div class="w3-col s8">
-                  </div>
-                </div>
-                <div class="w3-row-padding w3-hide">
-                  <img src="" src-field='TeamLogoURL' alt="" style='width:140px;height: 140px;margin-top: -70px;margin-bottom: 0px; background-color: white; border-radius: 200px; padding: 5px;'>
-                </div>
-
-
-                <div class="w3-row-padding font24">
-                  <div class="">
-                    <span class='thin-font margin-right-4' data-field="NationalRankDisplay"></span><span class='minor-bold margin-right-4' data-field='TeamName'>Click on a team for more info</span> <span data-field='TeamNickname' ></span>
-                  </div>
-                </div>
-                <div  class="w3-row-padding w3-hide">
-                  <ul class='no-list-style '>
-                    <li class='font12' data-field='CityAndState'></li>
-                    <li class='font12' data-field='ConferenceID__ConferenceName'></li>
-                  </ul>
-                </div>
-                <div class="w3-row-padding w3-hide margin-top-24">
-                  <table class=''  style='width: 80%;'>
-                    <tbody>
-                      <tr>
-                        <th colspan="1" class='center-text font16'>Overall</th>
-                        <th colspan="1" class='center-text font16'>Offense</th>
-                        <th colspan="1" class='center-text font16'>Defense</th>
-                      </tr>
-                      <tr>
-                        <td class='font32 team-highlight-stat-padding bold font-black center-text' style='width: 33%;'  data-field="TeamOverallRating_Grade">12th</td>
-                        <td class='font32 team-highlight-stat-padding bold font-black center-text' style='width: 33%;'  data-field="TeamOffenseRating_Grade">12th</td>
-                        <td class='font32 team-highlight-stat-padding bold font-black center-text' style='width: 33%;'  data-field="TeamDefenseRating_Grade">12th</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div class="w3-row-padding w3-hide margin-top-24">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <th colspan="3" class='center-text font24'>Offense</th>
-                      </tr>
-                      <tr>
-                        <td rowspan="3" class='font32 team-highlight-stat-padding bold font-black'  ordinal-field="PPG_Rank">12th</td>
-                        <td data-field="PPG" class='right-text team-highlight-stat-padding'>42</td>
-                        <td>PPG</td>
-                      </tr>
-                      <tr>
-                        <td data-field="PassYPG" class='right-text team-highlight-stat-padding'>120</td>
-                        <td>Pass YPG</td>
-                      </tr>
-                      <tr>
-                        <td data-field="RushYPG" class='right-text team-highlight-stat-padding'>110</td>
-                        <td>Rush YPG</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div class="w3-row-padding w3-hide margin-top-24">
-                  <table>
-                    <tbody>
-                      <tr>
-                        <th colspan="3" class='center-text font24'>Defense</th>
-                      </tr>
-                      <tr>
-                        <td rowspan="3" class='font32 team-highlight-stat-padding bold font-black'  ordinal-field="PAPG_Rank">36th</td>
-                        <td data-field="PAPG" class='right-text team-highlight-stat-padding'>31</td>
-                        <td>PPG</td>
-                      </tr>
-                      <tr>
-                        <td data-field="OpponentPassYPG" class='right-text team-highlight-stat-padding'>120</td>
-                        <td>Pass YPG</td>
-                      </tr>
-                      <tr>
-                        <td data-field="OpponentRushYPG" class='right-text team-highlight-stat-padding'>110</td>
-                        <td>Rush YPG</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                </div>
-              </div>
           </div>
         </div>
       </div>
