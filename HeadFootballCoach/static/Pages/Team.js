@@ -1,3 +1,140 @@
+function NumberToGrade_True(NumberValue){
+
+    var GradeValueMap = [
+        {'LetterGrade': 'A+', 'GradeClass': 'A-Plus',  'LowerBound': 91, 'UpperBound': 1000},
+        {'LetterGrade': 'A',  'GradeClass': 'A',       'LowerBound': 86, 'UpperBound': 90},
+        {'LetterGrade': 'A-', 'GradeClass': 'A-Minus', 'LowerBound': 81, 'UpperBound': 85},
+        {'LetterGrade': 'B+', 'GradeClass': 'B-Plus',  'LowerBound': 76, 'UpperBound': 80},
+        {'LetterGrade': 'B',  'GradeClass': 'B',       'LowerBound': 71, 'UpperBound': 75},
+        {'LetterGrade': 'B-', 'GradeClass': 'B-Minus', 'LowerBound': 66, 'UpperBound': 70},
+        {'LetterGrade': 'C+', 'GradeClass': 'C-Plus',  'LowerBound': 61, 'UpperBound': 65},
+        {'LetterGrade': 'C',  'GradeClass': 'C',       'LowerBound': 56, 'UpperBound': 60},
+        {'LetterGrade': 'C-', 'GradeClass': 'D-Minus', 'LowerBound': 51, 'UpperBound': 55},
+        {'LetterGrade': 'D+', 'GradeClass': 'D-Plus',  'LowerBound': 46, 'UpperBound': 50},
+        {'LetterGrade': 'D',  'GradeClass': 'D',       'LowerBound': 41, 'UpperBound': 45},
+        {'LetterGrade': 'D-', 'GradeClass': 'D-Minus', 'LowerBound': 36, 'UpperBound': 40},
+        {'LetterGrade': 'F',  'GradeClass': 'F',       'LowerBound': 31, 'UpperBound': 35},
+        {'LetterGrade': 'F-', 'GradeClass': 'F-Minus', 'LowerBound': -1000, 'UpperBound': 30},
+    ]
+
+    var GradeReturn = $.grep(GradeValueMap, function(d){
+      return NumberValue >= d.LowerBound && NumberValue <= d.UpperBound;
+    });
+
+    if (GradeReturn.length > 0){
+      return GradeReturn[0];
+    }
+
+    return {'LetterGrade': 'F-', 'GradeClass': 'F-Minus'}
+}
+
+function NumberToGrade(NumberValue){
+
+    var GradeValueMap = [
+        {'LetterGrade': 'A+', 'GradeClass': 'A-Plus',  'LowerBound': 96, 'UpperBound': 1000},
+        {'LetterGrade': 'A',  'GradeClass': 'A',       'LowerBound': 90, 'UpperBound': 95},
+        {'LetterGrade': 'A-', 'GradeClass': 'A-Minus', 'LowerBound': 85, 'UpperBound': 89},
+        {'LetterGrade': 'B+', 'GradeClass': 'B-Plus',  'LowerBound': 80, 'UpperBound': 84},
+        {'LetterGrade': 'B',  'GradeClass': 'B',       'LowerBound': 75, 'UpperBound': 79},
+        {'LetterGrade': 'B-', 'GradeClass': 'B-Minus', 'LowerBound': 70, 'UpperBound': 74},
+        {'LetterGrade': 'C+', 'GradeClass': 'C-Plus',  'LowerBound': 65, 'UpperBound': 69},
+        {'LetterGrade': 'C',  'GradeClass': 'C',       'LowerBound': 60, 'UpperBound': 64},
+        {'LetterGrade': 'C-', 'GradeClass': 'D-Minus', 'LowerBound': 55, 'UpperBound': 59},
+        {'LetterGrade': 'D+', 'GradeClass': 'D-Plus',  'LowerBound': 50, 'UpperBound': 54},
+        {'LetterGrade': 'D',  'GradeClass': 'D',       'LowerBound': 45, 'UpperBound': 49},
+        {'LetterGrade': 'D-', 'GradeClass': 'D-Minus', 'LowerBound': 40, 'UpperBound': 44},
+        {'LetterGrade': 'F',  'GradeClass': 'F',       'LowerBound': 30, 'UpperBound': 39},
+        {'LetterGrade': 'F-', 'GradeClass': 'F-Minus', 'LowerBound': -1000, 'UpperBound': 29},
+    ]
+
+
+
+    var GradeReturn = $.grep(GradeValueMap, function(d){
+      return NumberValue >= d.LowerBound && NumberValue <= d.UpperBound;
+    });
+
+    if (GradeReturn.length > 0){
+      return GradeReturn[0];
+    }
+
+    return {'LetterGrade': 'F-', 'GradeClass': 'F-Minus'}
+}
+
+function ordinal_suffix_of(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
+
+
+function DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName){
+  var div = $(`
+      <div class='w3-row-padding'>
+        <div class='w3-col s6 top-teams'>
+          <table class='width100'>
+            <thead>
+              <th>Rank</th>
+              <th>Team</th>
+              <th>`+CategoryDisplayName+`</th>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+        <div class='w3-col s6 bottom-teams'>
+          <table class='width100'>
+            <thead>
+              <th>Rank</th>
+              <th>Team</th>
+              <th>`+CategoryDisplayName+`</th>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `);
+
+  $.ajax({
+    url: '/World/'+WorldID+'/Team/'+TeamID+'/TeamInfoRating/'+Category,
+    success: function (data) {
+      console.log('Ajax return', data);
+
+      $.each(data.TopTeams, function(ind, obj){
+        var tr = $('<tr></tr>');
+        tr.append('<td>'+obj[Category+'_Rank']+'</td>');
+        tr.append('<td><a href="'+obj.TeamHref+'"><img src="'+obj.TeamLogoURL+'"  class="small-logo" >'+obj.TeamName+'</a></td>');
+        tr.append('<td>'+NumberToGrade(obj[Category]).LetterGrade +'</td>');
+
+        $(div).find('.top-teams tbody').append(tr);
+      });
+
+
+      $.each(data.BottomTeams, function(ind, obj){
+        var tr = $('<tr></tr>');
+        tr.append('<td>'+obj[Category+'_Rank']+'</td>');
+        tr.append('<td><a href="'+obj.TeamHref+'"><img src="'+obj.TeamLogoURL+'"  class="small-logo" >'+obj.TeamName+'</a></td>');
+        tr.append('<td>'+NumberToGrade(obj[Category]).LetterGrade +'</td>');
+
+        $(div).find('.bottom-teams tbody').append(tr);
+      });
+
+    }
+  });
+
+  return div;
+}
+
+
 function csrfSafeMethod(method) {
   // these HTTP methods do not require CSRF protection
   return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -47,6 +184,83 @@ function PopulateTeamSeasonHistoryTable(TeamSeasonHistory, WorldID){
           "paging":   false,
           "order": [[ 0, "asc" ]]
       } );
+}
+
+
+function DrawTeamInfoChildRows(WorldID, TeamID, data) {
+
+  var DescFirst = ['desc', 'asc'];
+  var AscFirst = ['asc', 'desc', ];
+
+  console.log('DrawTeamInfoChildRows', data);
+  $.extend( true, $.fn.dataTable.defaults, {
+    "orderSequence": DescFirst,
+} );
+
+
+  var TableData = [
+    {'Field Name': 'Academic Prestige', 'Category': 'AcademicPrestigeRating', 'Rating': data.AcademicPrestigeRating,'Rank': data.AcademicPrestigeRating_Rank},
+    {'Field Name': 'Campus Lifestyle', 'Category': 'CampusLifestyleRating','Rating': data.CampusLifestyleRating,'Rank': data.CampusLifestyleRating_Rank},
+    {'Field Name': 'Championship Contender', 'Category': 'ChampionshipContenderRating','Rating': data.ChampionshipContenderRating,'Rank': data.ChampionshipContenderRating_Rank},
+    {'Field Name': 'Coach Stability', 'Category': 'CoachStabilityRating','Rating': data.CoachStabilityRating,'Rank': data.CoachStabilityRating_Rank},
+    {'Field Name': 'Facilities', 'Category': 'FacilitiesRating','Rating': data.FacilitiesRating,'Rank': data.FacilitiesRating_Rank},
+    {'Field Name': 'Location', 'Category': 'LocationRating','Rating': data.LocationRating,'Rank': data.LocationRating_Rank},
+    {'Field Name': 'Pro Potential', 'Category': 'ProPotentialRating','Rating': data.ProPotentialRating,'Rank': data.ProPotentialRating_Rank},
+    {'Field Name': 'Team Prestige', 'Category': 'TeamPrestige','Rating': data.TeamPrestige,'Rank': data.TeamPrestige_Rank},
+    {'Field Name': 'Television Exposure', 'Category': 'TelevisionExposureRating','Rating': data.TelevisionExposureRating,'Rank': data.TelevisionExposureRating_Rank},
+  ];
+
+  var table = $('#TeamInfo').DataTable({
+    dom: 't',
+    data: TableData,
+    columns: [
+      {'data': 'Field Name', "sortable": true, 'orderSequence': AscFirst},
+      {'data': 'Rating', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+        var Rating = StringValue;
+        var GradeObject = NumberToGrade(StringValue);
+          $(td).html("<span class='"+GradeObject.GradeClass+"'>"+GradeObject.LetterGrade+"</span>");
+
+
+          $(td).parent().attr('Category', DataObject.Category)
+          $(td).parent().attr('CategoryDisplayName', DataObject['Field Name'])
+      }},
+      {'data': 'Rank', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+          $(td).html("<span>"+ordinal_suffix_of(StringValue)+"</span>");
+      }},
+      {'data': null, "sortable": false, 'className': 'details-control',   "defaultContent": ''},
+    ],
+    order: [[1, 'desc']]
+  });
+
+
+    $('#TeamInfo tbody').on('click', '.details-control', function () {
+      //console.log('clicked', this, SelectedTeamID);
+
+      var tr = $(this).parent();
+      $(tr).addClass('shown');
+      var Category = $(tr).attr('Category');
+      var CategoryDisplayName = $(tr).attr('CategoryDisplayName');
+      var row = table.row( tr );
+
+      if ( row.child.isShown() ) {
+          // This row is already open - close it
+          row.child.hide();
+          tr.removeClass('shown');
+      }
+      else {
+          // Open this row
+          var data = row.data()
+          var formattedContent = DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName);
+          console.log(formattedContent,'formattedContent');
+          row.child( formattedContent ).show();
+          var childrow = row.child();
+          console.log(childrow, 'childrow');
+
+          tr.addClass('shown');
+      }
+
+
+    });
 }
 
 
@@ -299,13 +513,10 @@ $(document).ready(function(){
   DrawFaces(TeamJerseyStyle, TeamJerseyInvert);
   DrawSchedule();
 
-  var MapData = $('#map-data')[0];
-  MapData = JSON.parse(MapData.textContent);
-  //DrawMap(MapData);
+  var TeamInfoData = $('#team-info-data')[0];
+  TeamInfoData = JSON.parse(TeamInfoData.textContent);
+  DrawTeamInfoChildRows(WorldID, TeamID, TeamInfoData)
 
-
-  //DrawCoachOrgChart(TeamName, CoachOrg);
-  //GET_HistoricalTeamLeaders
 
 });
 

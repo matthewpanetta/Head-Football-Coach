@@ -3121,6 +3121,60 @@ def GET_PlayerCardInfo(request, WorldID, PlayerID):
 
 
 
+def GET_TeamInfoRating(request, WorldID, TeamID, Category):
+
+    TeamInfoRatings = Team.objects.filter(WorldID = WorldID).values('TeamID', 'TeamPrestige', 'TeamName', 'TeamNickname', 'TeamLogoURL',  'FacilitiesRating', 'ProPotentialRating', 'CampusLifestyleRating', 'AcademicPrestigeRating', 'TelevisionExposureRating', 'CoachStabilityRating', 'ChampionshipContenderRating', 'LocationRating').annotate(
+        TeamHref= Concat( Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID') , output_field=CharField()),
+        TeamPrestige_Rank=Window(
+            expression=Rank(),
+            order_by=F("TeamPrestige").desc(),
+            ),
+        FacilitiesRating_Rank=Window(
+            expression=Rank(),
+            order_by=F("FacilitiesRating").desc(),
+            ),
+        ProPotentialRating_Rank=Window(
+            expression=Rank(),
+            order_by=F("ProPotentialRating").desc(),
+            ),
+         CampusLifestyleRating_Rank=Window(
+             expression=Rank(),
+             order_by=F("CampusLifestyleRating").desc(),
+        ),
+        AcademicPrestigeRating_Rank=Window(
+             expression=Rank(),
+             order_by=F("AcademicPrestigeRating").desc(),
+             ),
+        TelevisionExposureRating_Rank=Window(
+             expression=Rank(),
+             order_by=F("TelevisionExposureRating").desc(),
+             ),
+        CoachStabilityRating_Rank=Window(
+             expression=Rank(),
+             order_by=F("CoachStabilityRating").desc(),
+             ),
+        ChampionshipContenderRating_Rank=Window(
+             expression=Rank(),
+             order_by=F("ChampionshipContenderRating").desc(),
+             ),
+        LocationRating_Rank=Window(
+             expression=Rank(),
+             order_by=F("LocationRating").desc(),
+         ),
+    )
+
+
+    TopTeams = list(TeamInfoRatings.order_by('-'+Category)[:5])
+    BottomTeams = list(TeamInfoRatings.order_by(Category)[:5])
+
+    TeamInfo = {'TopTeams': TopTeams, 'BottomTeams': BottomTeams}
+
+    context = TeamInfo
+    return JsonResponse(context, safe=False)
+
+
+
+
 def GET_TeamCardInfo(request, WorldID, TeamID):
 
     TeamInfo = Team.objects.filter(WorldID = WorldID).filter(TeamID = TeamID).values('TeamName', 'TeamNickname', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamLogoURL', 'ConferenceID__ConferenceName').annotate(
