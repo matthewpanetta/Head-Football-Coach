@@ -6,7 +6,8 @@ import numpy
 from decimal import Decimal
 from .scripts.PickName import RandomName, RandomPositionAndMeasurements, RandomCity
 import math
-from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, IntegerField, DecimalField, CharField, BooleanField, Value, Window, OuterRef, Subquery
+from django.db.models.functions import Coalesce
+from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case,  ExpressionWrapper, When, FloatField, IntegerField, DecimalField, CharField, BooleanField, Value, Window, OuterRef, Subquery
 #from django.db.models import Max, Avg, Count, Func,  Sum, Case, When, FloatField, CharField, Value
 from django.db.models.functions.window import Rank, RowNumber, Ntile
 from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, SelectBroadcast
@@ -14,7 +15,7 @@ from .scripts.DepthChart import CreateDepthChart
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
 from .scripts.import_csv import createCalendar
-from .utilities import NormalVariance, DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, Min, Max, NormalTrunc, NormalVariance
+from .utilities import NormalVariance, DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance
 from math import sin, cos, sqrt, atan2, radians, log
 import time
 
@@ -32,6 +33,8 @@ def CalculateTeamPlayerOverall(TSP, PlayerID):
             TotalRating += TSP[key] * PlayerID[RatingName2]
 
     return int(TotalRating / TSP['Total_Rating_Weight'])
+
+
 
 def CreateTeamPositions(LS, WorldID):
 
@@ -88,6 +91,51 @@ def CreateTeamPositions(LS, WorldID):
 
 
     TeamSeasonPosition.objects.bulk_create(TSPToSave, ignore_conflicts = True)
+
+
+
+def UpdateTeamPositions(LS, WorldID):
+
+
+    TSPs = TeamSeasonPosition.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).annotate(
+        CurrentPlayerCount_calc = Count('TeamSeasonID__playerteamseason', filter=Q(TeamSeasonID__playerteamseason__PlayerID__PositionID = F('PositionID'))),
+        NeededPlayerCount_calc = Case(
+            When(CurrentPlayerCount__lt = F('MinimumPlayerCount'), then=F('MinimumPlayerCount') - F('CurrentPlayerCount')),
+            default=Value(0),
+            output_field=IntegerField()
+        ),
+
+        FreshmanPlayerCount_calc = Count('TeamSeasonID__playerteamseason', filter=Q(TeamSeasonID__playerteamseason__PlayerID__PositionID = F('PositionID')) & Q(TeamSeasonID__playerteamseason__PlayerID__ClassID__ClassAbbreviation = 'FR')),
+        SophomorePlayerCount_calc = Count('TeamSeasonID__playerteamseason', filter=Q(TeamSeasonID__playerteamseason__PlayerID__PositionID = F('PositionID')) & Q(TeamSeasonID__playerteamseason__PlayerID__ClassID__ClassAbbreviation = 'SO')),
+        JuniorPlayerCount_calc = Count('TeamSeasonID__playerteamseason', filter=Q(TeamSeasonID__playerteamseason__PlayerID__PositionID = F('PositionID')) & Q(TeamSeasonID__playerteamseason__PlayerID__ClassID__ClassAbbreviation = 'JR')),
+        SeniorPlayerCount_calc = Count('TeamSeasonID__playerteamseason', filter=Q(TeamSeasonID__playerteamseason__PlayerID__PositionID = F('PositionID')) & Q(TeamSeasonID__playerteamseason__PlayerID__ClassID__ClassAbbreviation = 'SR')),
+
+        Year1PositionOverall_calc = Coalesce(Subquery(PlayerSeasonSkill.objects.filter(WorldID = OuterRef('WorldID')).filter(PlayerID__playerteamseason__TeamSeasonID = OuterRef('TeamSeasonID')).filter(LeagueSeasonID = OuterRef('TeamSeasonID__LeagueSeasonID')).filter(PlayerID__PositionID = OuterRef('PositionID')).filter(PlayerID__ClassID__ClassSortOrder__lte = 7).values('LeagueSeasonID').annotate(
+                                            Max=Max('OverallRating'), Count=Count('PlayerSeasonSkillID')).values('Max')  ),0),
+        Year2PositionOverall_calc = Coalesce(Subquery(PlayerSeasonSkill.objects.filter(WorldID = OuterRef('WorldID')).filter(PlayerID__playerteamseason__TeamSeasonID = OuterRef('TeamSeasonID')).filter(LeagueSeasonID = OuterRef('TeamSeasonID__LeagueSeasonID')).filter(PlayerID__PositionID = OuterRef('PositionID')).filter(PlayerID__ClassID__ClassSortOrder__lte = 6).values('LeagueSeasonID').annotate(
+                                            Max=Max('OverallRating'), Count=Count('PlayerSeasonSkillID')).values('Max')  ),0),
+        Year3PositionOverall_calc = Coalesce(Subquery(PlayerSeasonSkill.objects.filter(WorldID = OuterRef('WorldID')).filter(PlayerID__playerteamseason__TeamSeasonID = OuterRef('TeamSeasonID')).filter(LeagueSeasonID = OuterRef('TeamSeasonID__LeagueSeasonID')).filter(PlayerID__PositionID = OuterRef('PositionID')).filter(PlayerID__ClassID__ClassSortOrder__lte = 5).values('LeagueSeasonID').annotate(
+                                            Max=Max('OverallRating'), Count=Count('PlayerSeasonSkillID')).values('Max')  ),0),
+    )
+
+    TSPsToUpdate = []
+    for TSP in TSPs:
+        TSP.CurrentPlayerCount = TSP.CurrentPlayerCount_calc
+        TSP.NeededPlayerCount  = TSP.NeededPlayerCount_calc
+        TSP.FreshmanPlayerCount = TSP.FreshmanPlayerCount_calc
+        TSP.SophomorePlayerCount = TSP.SophomorePlayerCount_calc
+        TSP.JuniorPlayerCount = TSP.JuniorPlayerCount_calc
+        TSP.SeniorPlayerCount = TSP.SeniorPlayerCount_calc
+        TSP.Year1PositionOverall = TSP.Year1PositionOverall_calc
+        TSP.Year2PositionOverall = TSP.Year2PositionOverall_calc
+        TSP.Year3PositionOverall = TSP.Year3PositionOverall_calc
+
+        TSPsToUpdate.append(TSP)
+
+    TeamSeasonPosition.objects.bulk_update(TSPsToUpdate, ['CurrentPlayerCount', 'NeededPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount','JuniorPlayerCount', 'SeniorPlayerCount', 'Year1PositionOverall', 'Year2PositionOverall', 'Year3PositionOverall'])
+
+
+    return None
 
 
 def PopulateTeamDepthCharts(LS, WorldID):
@@ -1634,6 +1682,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
             TimeElapsed = end - start
             A = Audit.objects.create(TimeElapsed = TimeElapsed,ScalesWithTeams=True, NumberTeam=AuditTeamCount, AuditVersion = 3, AuditDescription='Create Players')
 
+        UpdateTeamPositions(LS, WorldID)
 
     if DoAudit:
         start = time.time()

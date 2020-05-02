@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'HeadFootballCoach.apps.HeadfootballcoachConfig',
     'rest_framework_datatables',
     'django.contrib.humanize',
-    'debug_toolbar'
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [

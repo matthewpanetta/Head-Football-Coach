@@ -2,10 +2,15 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'w3/w3.css' %}">
 
-<head>
-  <title>{{page.PageTitle}}</title>
-  <link rel="icon" href="{{page.TabIcon}}">
-</head>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title>{{page.PageTitle}}</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="{{page.TabIcon}}">
+  </head>
+</html>
+
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" style='display:none;' id='DataPassthru'></div>
 

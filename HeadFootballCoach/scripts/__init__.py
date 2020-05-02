@@ -260,3 +260,17 @@ for u in sorted(ResultDict):
 # df = pd.DataFrame(TeamDict)
 # df = df.transpose()
 # print(df)
+
+
+#
+# from PIL import Image
+#
+# import glob
+# image_list = []
+# for filename in glob.glob('/Users/tom.kennedy/Documents/TK/GitFolders/HeadFootballCoachProject/HeadFootballCoach/static/img/TeamLogos/*.png'): #assuming gif
+#     print(filename)
+#     image = Image.open(filename)
+#
+#     for image_size in [50,100]:
+#         new_image = image.resize((image_size, image_size))
+#         new_image.save(filename.replace('.png', '_'+str(image_size)+'.png'))

@@ -619,6 +619,8 @@ class Team(models.Model):
     Abbreviation = models.CharField(max_length=10, default = '')
     TeamTalent = models.PositiveSmallIntegerField(default = 0)
     TeamLogoURL = models.CharField(max_length = 99, default=None, null=True, blank=True)
+    TeamLogoURL_100 = models.CharField(max_length = 99, default=None, null=True, blank=True)
+    TeamLogoURL_50 = models.CharField(max_length = 99, default=None, null=True, blank=True)
     TeamColor_Primary_HEX = models.CharField(max_length=6)
     TeamColor_Secondary_HEX = models.CharField(max_length=6)
     TeamJerseyStyle = models.CharField(max_length = 20, default='football')
