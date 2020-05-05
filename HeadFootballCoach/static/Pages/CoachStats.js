@@ -140,6 +140,10 @@ function GetCoachStats(WorldID, data){
         {"data": "ReputationRating", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':DescFirst},
         {"data": "GameplanRating", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
         {"data": "ScoutingRating", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':DescFirst},
+        {"data": "VeteranTendency", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            console.log('LikertScale(StringValue)',StringValue, LikertScale(StringValue))
+            $(td).html(LikertScale(StringValue));
+        }},
         {"data": "RedshirtTendency", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             console.log('LikertScale(StringValue)',StringValue, LikertScale(StringValue))
             $(td).html(LikertScale(StringValue));

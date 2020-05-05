@@ -321,7 +321,7 @@ def POST_CreateLeague(request):
     NCAAGameStructureID = GameStructure.objects.filter(GameStructureName = 'Standard College').first()
 
 
-    NCAALeague = League(WorldID = w, LeagueName = 'NCAA', LeagueAbbreviation = 'NCAA', LeaguePrestige = 100, GameStructureID = NCAAGameStructureID,ConferenceList=ConferenceList, LeagueType = '3', LeagueLogoURL = 'TODO')
+    NCAALeague = League(WorldID = w, LeagueName = 'NCAA', LeagueAbbreviation = 'NCAA', LeaguePrestige = 100, GameStructureID = NCAAGameStructureID,ConferenceList=ConferenceList, LeagueType = '3', LeagueLogoURL = 'TODO', PlayersPerTeam = 75)
     NCAALeague.save()
 
     LoadData(w, NCAALeague)
@@ -893,7 +893,7 @@ def Page_Index(request):
 
 
     InTesting = True
-    InDeepTesting = False
+    InDeepTesting = True
 
     if InTesting or InDeepTesting:
         World.objects.all().delete()
@@ -916,9 +916,9 @@ def Page_Index(request):
 
         Worlds.append(W)
 
-    if InTesting:
-        NumConferencesToInclude = 2
-    elif InDeepTesting:
+    if InDeepTesting:
+        NumConferencesToInclude = 1
+    elif InTesting:
         NumConferencesToInclude = 2
     else:
         NumConferencesToInclude = 7
@@ -940,12 +940,6 @@ def Page_Index(request):
         ConfList.append(random.choice([k for k in PossibleConferences if k not in ConfList]))
     ConfList = sorted(ConfList, key=lambda k: k['ConferenceDisplayName'])
 
-
-    if InDeepTesting:
-        ConfList = [
-            {'ConferenceDisplayName': 'SC1', 'ConferenceFormValue': 'Sample Conference 1'},
-            {'ConferenceDisplayName': 'SC2', 'ConferenceFormValue': 'Sample Conference 2'},
-        ]
 
     context = {'Worlds': Worlds}
     context['PossibleConferences'] = ConfList
@@ -1394,7 +1388,7 @@ def Page_Coaches(request, WorldID):
     UserTeam = GetUserTeam(WorldID)
 
     CoachList = list(Coach.objects.filter(WorldID_id = WorldID).values(
-        'CharismaRating', 'ReputationRating', 'GameplanRating', 'ScoutingRating', 'RedshirtTendency', 'SituationalAggressivenessTendency', 'PlaycallPassTendency', 'OffensivePlaybook', 'DefensivePlaybook'
+        'CharismaRating', 'ReputationRating', 'VeteranTendency', 'GameplanRating', 'ScoutingRating', 'RedshirtTendency', 'SituationalAggressivenessTendency', 'PlaycallPassTendency', 'OffensivePlaybook', 'DefensivePlaybook'
     ).annotate(
         CoachPosition = Subquery(CoachTeamSeason.objects.filter(CoachID=OuterRef('CoachID')).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).values('CoachPositionID__CoachPositionAbbreviation')),
         CoachPositionSortOrder = Subquery(CoachTeamSeason.objects.filter(CoachID=OuterRef('CoachID')).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).values('CoachPositionID__CoachPositionSortOrder')),

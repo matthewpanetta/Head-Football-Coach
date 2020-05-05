@@ -383,6 +383,8 @@ class League(models.Model):
     LeaguePrestige = models.PositiveSmallIntegerField(validators=[HundredRange], default=50)
     GameStructureID = models.ForeignKey(GameStructure, on_delete=models.CASCADE)
 
+    PlayersPerTeam = models.PositiveSmallIntegerField(default = 64)
+
 
     NumberOfPlayoffTeams = models.PositiveSmallIntegerField(default = 64)
     HomeFieldAdvantage      = models.DecimalField(default=1.02, max_digits=8, decimal_places=5 )
@@ -2502,8 +2504,8 @@ class Coach(models.Model):
     TeachSkills    = models.PositiveSmallIntegerField(default = 0)
 
     ##Tendencies
-    PatienceTendency = models.PositiveSmallIntegerField(default = 0)
-    VeteranTendency  = models.PositiveSmallIntegerField(default = 0)
+    PatienceTendency = models.SmallIntegerField(default = 0)
+    VeteranTendency  = models.SmallIntegerField(default = 0)
 
     RedshirtTendency  = models.SmallIntegerField(default = 0)
 

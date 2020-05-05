@@ -37,7 +37,7 @@ def CalculateTeamPlayerOverall(TSP, PlayerID):
 
 def TeamRedshirts(TS, WorldID):
 
-    PlayersToRedshirt = TS.playerteamseason_set.filter(PlayerID__WasPreviouslyRedshirted = False).filter(Q(PlayerID__ClassID__ClassAbbreviation = 'SO') | Q(PlayerID__ClassID__ClassAbbreviation = 'FR')).exclude(playerteamseasondepthchart__IsStarter = True).annotate(DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 7))
+    PlayersToRedshirt = TS.playerteamseason_set.filter(PlayerID__WasPreviouslyRedshirted = False).filter(Q(PlayerID__ClassID__ClassAbbreviation = 'SO') | Q(PlayerID__ClassID__ClassAbbreviation = 'FR')).exclude(playerteamseasondepthchart__IsStarter = True).annotate(DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 6))
     HeadCount = TS.coachteamseason_set.filter(CoachPositionID__CoachPositionAbbreviation = 'HC').values('CoachID__RedshirtTendency').first()
     PTRToSave = []
     Num = 4
@@ -48,6 +48,19 @@ def TeamRedshirts(TS, WorldID):
             PTRToSave.append(PTR)
 
     PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'])
+
+    return None
+
+
+
+def TeamCuts(TS, WorldID, NumPlayersToCut):
+
+    PlayersToCut = TS.playerteamseason_set.exclude(playerteamseasondepthchart__IsStarter = True).filter(PlayerID__playerseasonskill__LeagueSeasonID__IsCurrent = True).annotate(DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 10), OverallRating = F('PlayerID__playerseasonskill__OverallRating')).order_by('-DepthChartPositionMin', 'OverallRating')[:NumPlayersToCut]
+    HeadCount = TS.coachteamseason_set.filter(CoachPositionID__CoachPositionAbbreviation = 'HC').values('CoachID__RedshirtTendency').first()
+
+    for PTR in PlayersToCut:
+        print('Cutting {PlayerName} from {Team}, Pos: {PlayerPosition}, Overall: {Overall}, DepthChart: {DepthChartPositionMin}'.format(PlayerName=PTR.PlayerID.PlayerLastName, Team=TS.TeamID.TeamName,PlayerPosition=PTR.PlayerID.PositionID.PositionAbbreviation, Overall=PTR.OverallRating, DepthChartPositionMin=PTR.DepthChartPositionMin))
+        PTR.delete()
 
     return None
 
@@ -154,18 +167,25 @@ def UpdateTeamPositions(LS, WorldID):
     return None
 
 
-def PopulateTeamDepthCharts(LS, WorldID):
+def PopulateTeamDepthCharts(LS, WorldID, FullDepthChart = False):
     print('Populating depth charts')
 
     for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS):
         PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = TeamSeasonID).delete()
-        CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID)
+        CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID, FullDepthChart = False)
 
 def AssignRedshirts(LS, WorldID):
     print('Assigning Redshirts')
 
     for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).exclude(TeamID__IsUserTeam = True):
         TeamRedshirts(TS=TeamSeasonID , WorldID=WorldID )
+
+def CutPlayers(LS, WorldID):
+    print('Cutting Players')
+
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).exclude(TeamID__IsUserTeam = True).annotate(NumbersOfPlayers = Count('playerteamseason__PlayerTeamSeasonID'), PlayersToCut = ExpressionWrapper(F('NumbersOfPlayers') -  F('LeagueSeasonID__LeagueID__PlayersPerTeam'), output_field=IntegerField())).filter(PlayersToCut__gt = 0):
+        TeamCuts(TS=TeamSeasonID , WorldID=WorldID,  NumPlayersToCut=TeamSeasonID.PlayersToCut)
+
 
 def CalculateTeamOverall(LS, WorldID):
 
@@ -779,9 +799,11 @@ def GenerateCoach(WorldID):
     TeachingBaseline = int(NormalBounds(50, 10, 30,89))
     C.TeachSkills   =  random.randint(TeachingBaseline-10, TeachingBaseline+10)
 
-    C.PatienceTendency = NormalBounds(50, 10, 30,99)
-    C.VeteranTendency  = NormalBounds(50, 10, 30,99)
-    C.RedshirtTendency  = NormalVariance(1.02, 7)
+    Patience = NormalVariance(1, 7)
+    C.PatienceTendency = Patience
+    PatienceModifier = 1.0 + (Patience / 10.0)
+    C.VeteranTendency  = NormalVariance(PatienceModifier, 7)
+    C.RedshirtTendency  = NormalVariance(PatienceModifier, 7)
 
     return C
 
@@ -1729,9 +1751,10 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         start = time.time()
 
-    PopulateTeamDepthCharts(LS, WorldID)
+    PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=True)
     AssignRedshirts(LS, WorldID)
-    PopulateTeamDepthCharts(LS, WorldID)
+    CutPlayers(LS, WorldID)
+    PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=False)
     CalculateTeamOverall(LS, WorldID)
     CalculateRankings(LS, WorldID)
     CalculateConferenceRankings(LS, WorldID)
