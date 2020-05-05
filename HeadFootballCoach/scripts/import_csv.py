@@ -740,7 +740,11 @@ def import_Team( File, WorldID, LeagueID):
             Name = LineDict['TeamName'] + ' ' + LineDict['TeamNickname']
             NameAdjusted = Name.lower().replace(' ', '_').replace('\'', '').replace('.','').replace('&','_')
             URL = '/static/img/TeamLogos/' + NameAdjusted + '.png'
+            URL_50 = '/static/img/TeamLogos/' + NameAdjusted + '_50.png'
+            URL_100 = '/static/img/TeamLogos/' + NameAdjusted + '_100.png'
             LineDict['TeamLogoURL'] = URL
+            LineDict['TeamLogoURL_50'] = URL_50
+            LineDict['TeamLogoURL_100'] = URL_100
             LineDict['LeagueID'] = LeagueID
 
             for FE in FieldExclusions:

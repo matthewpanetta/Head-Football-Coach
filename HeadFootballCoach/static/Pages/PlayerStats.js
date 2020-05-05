@@ -1,39 +1,51 @@
-function roughSizeOfObject( object ) {
-
-    var objectList = [];
-
-    var recurse = function( value )
-    {
-        var bytes = 0;
-
-        if ( typeof value === 'boolean' ) {
-            bytes = 4;
-        }
-        else if ( typeof value === 'string' ) {
-            bytes = value.length * 2;
-        }
-        else if ( typeof value === 'number' ) {
-            bytes = 8;
-        }
-        else if
-        (
-            typeof value === 'object'
-            && objectList.indexOf( value ) === -1
-        )
-        {
-            objectList[ objectList.length ] = value;
-
-            $.each(value, function(i){
-              bytes+= 8; // an assumed existence overhead
-              bytes+= recurse( value[i] )
-            });
-
-        }
-
-        return bytes;
+function ordinal_suffix_of(i) {
+    var j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
     }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+}
 
-    return recurse( object );
+function NumberToGrade(NumberValue) {
+
+    var returnVal = 'NA'
+
+    var GradeValueMap = [
+        {'LetterGrade': 'A+', 'LowerBound': 91, 'UpperBound': 1000},
+        {'LetterGrade': 'A',  'LowerBound': 86, 'UpperBound': 90},
+        {'LetterGrade': 'A-', 'LowerBound': 81, 'UpperBound': 85},
+        {'LetterGrade': 'B+', 'LowerBound': 76, 'UpperBound': 80},
+        {'LetterGrade': 'B',  'LowerBound': 71, 'UpperBound': 75},
+        {'LetterGrade': 'B-', 'LowerBound': 66, 'UpperBound': 70},
+        {'LetterGrade': 'C+', 'LowerBound': 61, 'UpperBound': 65},
+        {'LetterGrade': 'C',  'LowerBound': 56, 'UpperBound': 60},
+        {'LetterGrade': 'C-', 'LowerBound': 51, 'UpperBound': 55},
+        {'LetterGrade': 'D+', 'LowerBound': 46, 'UpperBound': 50},
+        {'LetterGrade': 'D',  'LowerBound': 41, 'UpperBound': 45},
+        {'LetterGrade': 'D-', 'LowerBound': 36, 'UpperBound': 40},
+        {'LetterGrade': 'F',  'LowerBound': 31, 'UpperBound': 35},
+        {'LetterGrade': 'F-', 'LowerBound': -1000, 'UpperBound': 30},
+    ]
+
+    $.each(GradeValueMap, function(ind, GradeObj){
+      if ((NumberValue >= GradeObj['LowerBound']) && (NumberValue <= GradeObj['UpperBound'])){
+          returnVal = GradeObj['LetterGrade']
+      }
+    });
+
+    return returnVal
+}
+
+function NumberToGradeClass(NumberValue){
+    return NumberToGrade(NumberValue).replace('-', '-Minus').replace('+', '-Plus');
+
 }
 
 function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined, DOMID=undefined){
@@ -58,8 +70,268 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined,
   display(DOMID, face, overrides);
 }
 
+
+
+function DrawPlayerInfo(data, WorldID, PlayerID){
+  var div = $(`
+    <div class='w3-row-padding' style='text-align: initial;' id='playerinfo-`+PlayerID+`'>
+      <div class='w3-col s3'>
+        <img class='playerTeamLogo' src-field='playerteamseason__TeamSeasonID__TeamID__TeamLogoURL'  style='width: 80%; height: inherit; margin-left: 0%;'>
+        <div class="PlayerFace" style='width: 150px; height: 250px; margin-left: -50%;'>
+
+        </div>
+      </div>
+      <div class='w3-col s4 vertical-align-middle'>
+        <div class=''>
+          <div class='playerHeaderInfo'>
+            <span data-field="PlayerFirstName" class='playerFirstName'>
+            </span>
+            <span data-field="PlayerLastName" class='playerLastName' style='margin-top: 0px; margin-bottom: 0px;'>
+
+            </span>
+            <div class='playerOverviewInfo'>
+              <a href-field="PlayerTeamHref"><span data-field="playerteamseason__TeamSeasonID__TeamID__TeamName"></span> <span data-field="playerteamseason__TeamSeasonID__TeamID__TeamNickname"></span></a>
+              | #<span data-field="JerseyNumber"></span> | <span data-field="Position"></span>
+            </div>
+          </div>
+          <ul class='playerHeaderBio' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
+            <li class='playerHeaderClass'>
+              <div class='playerHeaderBioDescription'>CLASS</div>
+              <div data-field="ClassID__ClassName"></div>
+            </li>
+            <li class='playerHeaderHtWt'>
+              <div class='playerHeaderBioDescription'>HT/WT</div>
+              <div><span data-field="HeightFormatted"></span>, <span data-field="WeightFormatted"></span></div>
+            </li>
+            <li class='playerHeaderHometown'>
+              <div class='playerHeaderBioDescription'>HOMETOWN</div>
+              <div><span data-field="HometownAndState"></span></div>
+            </li>
+            <li class='playerHeaderHometown'>
+              <div class='playerHeaderBioDescription'>OVR</div>
+              <div><span data-field="playerseasonskill__OverallRating"></span></div>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+      <div class='w3-col s5'>
+      <div class="w3-row-padding">
+                <div id='' class="w3-bar w3-row-padding player-highlight-info-selection-bar">
+                  <button class='w3-button w3-bar-item highlight-tab selected-highlight-tab highlight-ratings-tab' type="button" name="button" id="highlight-ratings-tab">Ratings</button>
+                  <button class='w3-button w3-bar-item w3-hide highlight-tab highlight-stats-tab' type="button" name="button" id="highlight-stats-tab">Stats</button>
+                  <button class='w3-button w3-bar-item highlight-tab highlight-awards-tab' type="button" name="button" id="highlight-awards-tab">Awards</button>
+                  <button class='w3-button w3-bar-item highlight-tab highlight-recruiting-tab' type="button" name="button" id="highlight-recruiting-tab">Recruiting</button>
+                  <button class='w3-button w3-bar-item highlight-tab highlight-actions-tab' type="button" name="button" id="highlight-actions-tab">Actions</button>
+                </div>
+              </div>
+              <div class='w3-row-padding'>
+                <div style="width: 100%;" class='player-highlight-info-content'>
+                  <div  class="w3-row-padding highlight-ratings">
+
+                  </div>
+                  <div class="w3-container w3-hide highlight-stats">
+                    stats here
+                  </div>
+                  <div class="w3-container w3-hide highlight-awards">
+                  </div>
+                  <div class="w3-container w3-hide highlight-recruiting">
+                    recruting here
+                  </div>
+                  <div class="w3-container w3-hide highlight-actions w3-row-padding">
+                    <ul class='no-list-style'>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+      </div>
+
+    </div>
+    `);
+
+  $.ajax({
+    url: '/World/'+WorldID+'/Player/'+PlayerID+'/PlayerCardInfo',
+    success: function (data) {
+      console.log('Ajax return', data);
+
+      $(div,' div.w3-hide.w3-row-padding').removeClass('w3-hide');
+
+      var overrides = {"teamColors":["#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'],"#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'],"#000000"]}
+
+      $('[css-field="OverallCss"].player-highlight-pills').removeClass('elite').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
+
+
+      $.each(data.Skills, function(SkillGroup, SkillObj){
+        var Container = $('<div class=" w3-col s4"></div>').appendTo($(div).find('.highlight-ratings'));
+        $('<div class="w3-margin-top bold">'+SkillGroup+'</div>').appendTo(Container);
+        $.each(SkillObj, function(key, val){
+          //$('<div class="inline-block min-width-75" style="margin: 2px 2px; "><div class="font10 width100">'+key+'  </div>  <div class="font20 width100">'+val+'</div></div>').appendTo(Container);
+          $(`<div>`+key+`</div>
+            <div class="w3-grey w3-round-xlarge statBar inline-block" style='width: 80%;'>
+              <div class="w3-container  w3-round-xlarge   `+NumberToGradeClass(val)+`-Fill" style="width:`+val+`%; height: 8px;"></div>
+            </div>
+            <span>`+val+`</span>`).appendTo(Container);
+        });
+      });
+
+
+      console.log('Awards', data.Awards)
+
+      if (Object.keys(data.Awards).length > 0){
+        $('#highlight-awards-tab').removeClass('w3-hide');
+        $('<div class=""></div>').appendTo($(div).find( '.highlight-awards'));
+        var Container = $('<ul class="w3-ul w3-small"></ul>').appendTo($(div).find('.highlight-awards > div'));
+      }
+      else {
+        console.log('hiding awards tab', $(div).find('.highlight-awards-tab'));
+        $(div).find('.highlight-awards-tab').addClass('w3-hide');
+        if ($(div).find( '.highlight-awards-tab').hasClass('selected-highlight-tab')){
+          $(div).find('.highlight-ratings-tab').click()
+        }
+      }
+
+      $.each(data.Awards, function(AwardName, AwardCount){
+        console.log('AwardName, AwardCount', AwardName, AwardCount, Container)
+        $('<li>'+AwardCount+'x '+AwardName+' </li>').appendTo(Container);
+
+      });
+
+      if (Object.keys(data.Stats).length > 0){
+        $(div).find('.highlight-stats-tab').removeClass('w3-hide');
+      }
+      else {
+        $(div).find('.highlight-stats-tab').addClass('w3-hide');
+        if ($(div).find('.highlight-stats-tab').hasClass('selected-highlight-tab')){
+          $(div).find('.highlight-ratings-tab').click()
+        }
+      }
+
+
+      if (Object.keys(data.Actions).length > 0){
+        $(div).find('.highlight-actions-tab').removeClass('w3-hide');
+        var Container = $(div).find('.highlight-actions ul')
+      }
+      else {
+        $(div).find('.highlight-actions-tab').addClass('w3-hide');
+        if ($(div).find('.highlight-actions-tab').hasClass('selected-highlight-tab')){
+          $(div).find('.highlight-ratings-tab').click()
+        }
+      }
+
+      $.each(data.Actions, function(ActionCount, Action){
+        console.log('ActionName, Action', ActionCount, Action, Container)
+        $('<li><button class="w3-button">'+Action.Icon + ' ' + Action.Display+' </button></li>').appendTo(Container);
+
+      });
+
+
+      $.each(data.Stats, function(StatGroup, StatObj){
+        var Container = $('<div class=""></div>').appendTo($(div).find('.highlight-stats'));
+        $('<div class="w3-margin-top">'+StatGroup+'</div>').appendTo(Container);
+        $('<div class="width100" style="width: 100%;"><table class="tiny highlight-stat-statgroup-'+StatGroup+'" style="width: 100%;"></table> </div>').appendTo(Container);
+
+        var columnNames = Object.keys(StatObj[0]);
+        var columns = [];
+        for (var i in columnNames) {
+          columns.push({data: columnNames[i],
+                        title: columnNames[i]});
+        }
+
+        console.log("$(div).find('.highlight-stat-statgroup-'+StatGroup)", $(div).find('.highlight-stat-statgroup-'+StatGroup))
+        var table = $(div).find('.highlight-stat-statgroup-'+StatGroup).DataTable({
+          data: StatObj,
+          columns: columns,
+          dom: 't',
+
+        });
+
+        $('.highlight-tab').on('click', function(){
+          table.columns.adjust().draw();
+        })
+      });
+
+      $.each(data, function(key, val){
+
+        if (key == 'PlayerFaceJson'){
+          var elem = $(div).find('[data-field="'+key+'"]');
+          elem = elem[0];
+          $(elem).empty();
+
+          if (typeof val === 'string') {
+            val = $.parseJSON(val);
+          }
+          BuildFace(val, undefined, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides, $(div).find('.PlayerFace'));//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
+        }
+        else {
+          $(div).find('[data-field="'+key+'"]').text(val);
+          $(div).find('[src-field="'+key+'"]').attr('src', val);
+          $(div).find('[href-field="'+key+'"]').attr('href',val);
+          $(div).find('[width-field="'+key+'"]').css('width', val + '%');
+          $(div).find('[class-grade-field="'+key+'"]').addClass( NumberToGradeClass(val) + '-Fill');
+
+        }
+      });
+
+      $(div).find('.highlight-tab').on('click', function(event, target) {
+
+        console.log("var ClickedTab = $(event.target)", $(event.target));
+
+        var ClickedTab = $(event.target)
+        var ClickedTabContent = ClickedTab.attr('id').replace('-tab', '');
+        var ClickedTabParent = ClickedTab.closest('.player-highlight-info-selection-bar');
+
+        console.log('ClickedTabParent', ClickedTabParent);
+
+        $.each($(ClickedTabParent).find(' .selected-highlight-tab'), function(index, tab){
+          var TargetTab = $(tab);
+          console.log('tab',tab, TargetTab);
+          $(TargetTab).removeClass('selected-highlight-tab');
+          var TargetTabContent = TargetTab.attr('id').replace('-tab', '');
+          $(div).find('.'+TargetTabContent).addClass('w3-hide');
+
+        });
+
+        $(ClickedTab).addClass('selected-highlight-tab');
+        $(div).find( '.'+ClickedTabContent).removeClass('w3-hide')
+
+      });
+    }
+  });
+
+
+
+  return div;
+}
+
+
+
 function GetPlayerStats(WorldID, data){
 
+  var PositionSortOrderMap = {
+      'QB': '01',
+      'RB': '02',
+      'FB': '03',
+      'WR': '04',
+      'TE': '05',
+      'OT': '06',
+      'OG': '07',
+      'OC': '08',
+      'DE': '09',
+      'DT': '10',
+      'OLB': '11',
+      'MLB': '12',
+      'CB': '13',
+      'S': '14',
+      'K': '15',
+      'P': '16',
+  };
+
+  var ClassSortOrderMap = {
+      'FR': 1,
+      'SO': 2,
+      'JR': 3,
+      'SR': 4,
+  };
   console.log('In PlayerStats!', data);
 
       var ColCategories = {
@@ -75,6 +347,7 @@ function GetPlayerStats(WorldID, data){
         'BLK <i class="fas fa-chart-line"></i>': 3,
         'DEF <i class="fas fa-chart-line"></i>': 7,
         'KCK <i class="fas fa-chart-line"></i>': 2,
+        'Expand': 1
       }
 
       var ShowColumnMap = {}
@@ -91,7 +364,7 @@ function GetPlayerStats(WorldID, data){
       var HideColumnMap = {}
       $.each(ShowColumnMap, function(key, ColList){
         $.each(ColList, function(ind, ColNum){
-          if ((($.inArray( ColNum,  ShowColumnMap['Base'])) == -1)){
+          if ((($.inArray( ColNum,  ShowColumnMap['Base'])) == -1) && ($.inArray( ColNum,  ShowColumnMap['Expand']) == -1)){
             FullColumnList.push(ColNum);
           }
         })
@@ -117,7 +390,7 @@ function GetPlayerStats(WorldID, data){
       }]
 
       $.each(ColCategories, function(key, val){
-        if (key == 'Base'){
+        if (key == 'Base' || key == 'Expand' ){
           return true;
         }
         var ButtonObj = {extend: 'colvisGroup',
@@ -160,8 +433,26 @@ function GetPlayerStats(WorldID, data){
           {"data": "PlayerName", "searchable": true, 'className': 'left-text', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
               $(td).html("<a href='"+DataObject['PlayerHref']+"'>"+StringValue+"</a>");
           }},
-          {"data": "ClassID__ClassAbbreviation", "sortable": true, 'searchable': true},
-          {"data": "PositionID__PositionAbbreviation", "sortable": true, 'searchable': true},
+          {"data": "ClassID__ClassAbbreviation", render: function ( data, type, row ) {
+                                var returnVal = data;
+                                if ( type === 'sort' ) {
+                                    returnVal = ClassSortOrderMap[data];
+                                }
+                                return returnVal;
+                            },"sortable": true, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+                                $(td).html(StringValue);
+                                console.log('DataObject.playerteamseason__RedshirtedThisSeason', DataObject.playerteamseason__RedshirtedThisSeason)
+                                if (DataObject.playerteamseason__RedshirtedThisSeason) {
+                                  $(td).append('<i class="fas fa-tshirt" style="color: red; margin-left: 4px;"></i>')
+                                }
+                            }},
+          {"data": "PositionID__PositionAbbreviation", render: function ( data, type, row ) {
+                                var returnVal = data;
+                                if ( type === 'sort' ) {
+                                    returnVal = PositionSortOrderMap[data];
+                                }
+                                return returnVal;
+                            },"sortable": true, 'searchable': true},
           {"data": "playerseasonskill__OverallRating", "sortable": true, 'orderSequence':["desc"]},
           {"data": "GameScore", "sortable": true, 'orderSequence':["desc"], 'className': 'col-group', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
 
@@ -238,164 +529,46 @@ function GetPlayerStats(WorldID, data){
 
           {"data": "playerseasonskill__KickPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__KickAccuracy_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
-
+          {"data": null, "sortable": false, 'searchable': false, 'className': 'details-control',   "defaultContent": ''},
       ],
       'order': [[ 4, "desc" ]],
   });
 
 
-  console.log('This number of rows:', $('#PlayerStats tr').length);
-  $('#PlayerStats tbody').on('click', 'tr', function () {
-    var SelectedPlayerID = $(this).attr('PlayerID');
-    console.log('clicked', this, SelectedPlayerID);
 
-    $.ajax({
-      url: '/World/'+WorldID+'/Player/'+SelectedPlayerID+'/PlayerCardInfo',
-      success: function (data) {
-        console.log('Ajax return', data);
+    $('#PlayerStats tbody').on('click', '.details-control', function () {
+      //console.log('clicked', this, SelectedTeamID);
 
-        $('#teamRosterPlayerHighlight div.w3-hide.w3-row-padding').removeClass('w3-hide');
+      var tr = $(this).parent();
+      $(tr).addClass('shown');
+      var PlayerID = $(tr).attr('PlayerID');
+      var row = table.row( tr );
 
-        $('#player-highlight-top-color-box').css('background-color', data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
-        $('#teamRosterPlayerHighlight').css('border-width', '4px 4px 4px 4px').css('border-style', 'solid').css('border-color', data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX']);
-        $('#teamRosterPlayerHighlight').css('box-shadow', '0px 2px 12px 0px #'+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
-        var overrides = {"teamColors":["#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'],"#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'],"#000000"]}
-
-        $('[css-field="OverallCss"].player-highlight-pills').removeClass('elite').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
-
-        $.each(data, function(key, val){
-
-          if (key == 'PlayerFaceJson'){
-            var elem = $('#teamRosterPlayerHighlight').find('[data-field="'+key+'"]');
-            elem = elem[0];
-            $(elem).empty();
-
-            if (typeof val === 'string') {
-              val = $.parseJSON(val);
-            }
-            BuildFace(val, undefined, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides, $(elem).attr('id'));//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
-          }
-          else {
-            $('#teamRosterPlayerHighlight').find('[data-field="'+key+'"]').text(val);
-            $('#teamRosterPlayerHighlight').find('[src-field="'+key+'"]').attr('src', val);
-          }
-        });
-
-        $('#highlight-ratings').empty();
-
-
-        $.each(data.Skills, function(SkillGroup, SkillObj){
-          var Container = $('<div class=""></div>').appendTo($('#highlight-ratings'));
-          $('<div class="w3-margin-top">'+SkillGroup+'</div>').appendTo(Container);
-          $.each(SkillObj, function(key, val){
-            $('<div class="inline-block min-width-75" style="margin: 2px 2px; "><div class="font10 width100">'+key+'  </div>  <div class="font20 width100">'+val+'</div></div>').appendTo(Container);
-          });
-        });
-
-
-        console.log('Awards', data.Awards)
-        $('#highlight-awards').empty();
-        if (Object.keys(data.Awards).length > 0){
-          $('#highlight-awards-tab').removeClass('w3-hide');
-          $('<div class=""></div>').appendTo($('#highlight-awards'));
-          var Container = $('<ul class="w3-ul w3-small"></ul>').appendTo($('#highlight-awards > div'));
-        }
-        else {
-          $('#highlight-awards-tab').addClass('w3-hide');
-          if ($('#highlight-awards-tab').hasClass('selected-highlight-tab')){
-            $('#highlight-ratings-tab').click()
-          }
-        }
-
-        $.each(data.Awards, function(AwardName, AwardCount){
-          console.log('AwardName, AwardCount', AwardName, AwardCount, Container)
-          $('<li>'+AwardCount+'x '+AwardName+' </li>').appendTo(Container);
-
-        });
-
-
-
-        $('#highlight-stats').empty();
-        if (Object.keys(data.Stats).length > 0){
-          $('#highlight-stats-tab').removeClass('w3-hide');
-        }
-        else {
-          $('#highlight-stats-tab').addClass('w3-hide');
-          if ($('#highlight-stats-tab').hasClass('selected-highlight-tab')){
-            $('#highlight-ratings-tab').click()
-          }
-        }
-
-        $.each(data.Stats, function(StatGroup, StatObj){
-          var Container = $('<div class=""></div>').appendTo($('#highlight-stats'));
-          $('<div class="w3-margin-top">'+StatGroup+'</div>').appendTo(Container);
-          $('<div class="width100" style="width: 100%;"><table class="tiny" id="highlight-stat-statgroup-'+StatGroup+'" style="width: 100%;"></table> </div>').appendTo(Container);
-
-          var columnNames = Object.keys(StatObj[0]);
-          var columns = [];
-          for (var i in columnNames) {
-            columns.push({data: columnNames[i],
-                          title: columnNames[i]});
-          }
-
-          var table = $('#highlight-stat-statgroup-'+StatGroup).DataTable({
-            data: StatObj,
-            columns: columns,
-            responsive: true,
-            dom: 't',
-            scrollX: true
-
-          });
-
-          $('#highlight-stats-tab').on('click', function(){
-            table.columns.adjust().draw();
-          })
-        });
+      if ( row.child.isShown() ) {
+          // This row is already open - close it
+          row.child.hide();
+          tr.removeClass('shown');
       }
-    })
+      else {
+          // Open this row
+          var data = row.data()
+          var formattedContent = DrawPlayerInfo(data, WorldID, PlayerID);
+          console.log(formattedContent,'formattedContent');
+          row.child( formattedContent, 'teamTableBorder' ).show();
+          var childrow = row.child();
+          console.log(childrow, 'childrow');
 
-  })
+          var teamcolor = data.playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX;
+          childrow.find('td').css('border-left-color', teamcolor)
 
-  $(function() {
-    var $sidebar   = $("#teamRosterPlayerHighlight"),
-        $window    = $(window),
-        offset     = $sidebar.offset(),
-        topPadding = 15;
+          tr.addClass('shown');
+      }
 
-    $window.scroll(function() {
-        if ($window.scrollTop() > offset.top) {
-            $sidebar.stop().animate({
-                marginTop: $window.scrollTop() - offset.top + topPadding
-            });
-        } else {
-            $sidebar.stop().animate({
-                marginTop: 0
-            });
-        }
+
     });
 
-});
 
 
-    $('.highlight-tab').on('click', function(event, target) {
-
-      var ClickedTab = $(event.target)
-      var ClickedTabContent = ClickedTab.attr('id').replace('-tab', '');
-      var ClickedTabParent = ClickedTab.closest('#player-highlight-info-selection-bar').attr('id');
-
-      $.each($('#'+ClickedTabParent+' > .selected-highlight-tab'), function(index, tab){
-        var TargetTab = $(tab);
-        $(TargetTab).removeClass('selected-highlight-tab');
-        var TargetTabContent = TargetTab.attr('id').replace('-tab', '');
-        $('#'+TargetTabContent).addClass('w3-hide');
-        var TargetTabParent = TargetTab.closest('#player-highlight-info-selection-bar').attr('id');
-
-      });
-
-      $(ClickedTab).addClass('selected-highlight-tab');
-      $('#'+ClickedTabContent).removeClass('w3-hide')
-
-    });
 }
 
 

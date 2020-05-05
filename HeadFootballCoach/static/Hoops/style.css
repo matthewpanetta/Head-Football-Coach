@@ -872,7 +872,7 @@ input[type=text], input[type=password] {
 }
 
 .w3-row-padding {
-  justify-content: space-around;
+  justify-content: space-evenly;
   display: flex;
   flex-wrap: wrap;
 }
@@ -1768,7 +1768,7 @@ flex-direction: column;
 }
 
 
-@media screen and (max-width: 1200px) and (min-width: 1000px) {
+@media screen and (max-width: 1200px) and (min-width: 1050px) {
     .hide-medium{
         display: none !important;
     }
@@ -1777,7 +1777,7 @@ flex-direction: column;
     }
 }
 
-@media screen and (max-width: 999px) and (min-width: 500px) {
+@media screen and (max-width: 1049px) and (min-width: 500px) {
     .hide-medium, .hide-small {
         display: none !important;
     }

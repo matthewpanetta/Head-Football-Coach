@@ -124,6 +124,9 @@ class Class(models.Model):
 
     ClassSortOrder = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
 
+    def __str__(self):
+
+        return self.ClassAbbreviation
 
 class CoachPosition(models.Model):
     CoachPositionID = models.AutoField(primary_key = True)
@@ -762,7 +765,6 @@ class Player(models.Model):
     PlayerFirstName         = models.CharField(max_length=50)
     PlayerLastName          = models.CharField(max_length=50)
     ClassID                 = models.ForeignKey(Class, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    IsCurrentlyRedshirted   = models.BooleanField(default=False)
     WasPreviouslyRedshirted = models.BooleanField(default=False)
     JerseyNumber            = models.PositiveSmallIntegerField(default = 0)
     Height                  = models.PositiveSmallIntegerField(default = 60) #inches
@@ -1146,7 +1148,6 @@ class Player(models.Model):
             'PlayerFaceJson': self.PlayerFaceJson,
             'FullName': self.FullName,
             'Class':self.Class,
-            'IsCurrentlyRedshirted':self.IsCurrentlyRedshirted,
             'WasPreviouslyRedshirted':self.WasPreviouslyRedshirted,
             'JerseyNumber':self.JerseyNumber,
             'Height':self.Height,
@@ -1593,6 +1594,7 @@ class PlayerTeamSeason(models.Model):
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
     ClassID = models.ForeignKey(Class, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
+    RedshirtedThisSeason   = models.BooleanField(default=False)
     LeavingTeamAfterSeason = models.BooleanField(default=True)
 
     QuitFootballAfterSeason = models.BooleanField(default = False)
@@ -2502,6 +2504,8 @@ class Coach(models.Model):
     ##Tendencies
     PatienceTendency = models.PositiveSmallIntegerField(default = 0)
     VeteranTendency  = models.PositiveSmallIntegerField(default = 0)
+
+    RedshirtTendency  = models.SmallIntegerField(default = 0)
 
     ValueSkillsTendency      = models.PositiveSmallIntegerField(default = 0)
     ValueAthleticismTendency = models.PositiveSmallIntegerField(default = 0)

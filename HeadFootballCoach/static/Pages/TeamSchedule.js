@@ -22,12 +22,12 @@ function PopulateTeamSchedule(data){
            $(td).append(' <span class="font10">'+DataObject['Opposing_TeamRecord_Show']+'</span>')
        }},
        {"data": "GameDisplay", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-           $(td).html("<span class='"+DataObject.GameOutcomeLetter+"'>"+DataObject.GameOutcomeLetter+"</span> <span><a href='"+DataObject['GameHref']+"'>"+StringValue+"</a></span>");
+           $(td).html("<span class='"+DataObject.GameOutcomeLetter+"'>"+DataObject.GameOutcomeLetter+"</span> <span><a href='"+DataObject['GameHref']+"'>"+StringValue+"</a> " + DataObject.OvertimeDisplay+"</span>");
        }},
        {"data": "TeamRecord_Show", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
            $(td).html("<span>"+StringValue+"</span> <span></span>");
        }},
-       {"data": "TopPlayerStats", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, TopPlayerStats, DataObject, iRow, iCol) {
+       {"data": "TopPlayerStats", "sortable": true, 'className': 'hide-small','visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, TopPlayerStats, DataObject, iRow, iCol) {
          if (TopPlayerStats.length > 0){
            $(td).html(`
               <span>`+TopPlayerStats[0].PlayerPosition+`</span>
@@ -40,7 +40,7 @@ function PopulateTeamSchedule(data){
             `);
           }
        }},
-       {"data": "TopPlayerStats", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, TopPlayerStats, DataObject, iRow, iCol) {
+       {"data": "TopPlayerStats", "sortable": true, 'className': 'hide-medium','visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, TopPlayerStats, DataObject, iRow, iCol) {
          if (TopPlayerStats.length > 0 ){
            $(td).html(`
               <span>`+TopPlayerStats[1].PlayerPosition+`</span>

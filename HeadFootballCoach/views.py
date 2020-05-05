@@ -48,6 +48,54 @@ def GetUserTeam(WorldID):
 
     return Team.objects.get(WorldID = WorldID, IsUserTeam = True)
 
+
+def NavBarLinks(Path = 'Overview'):
+    LinkGroups = [
+        {'GroupDisplay': '<div>Week Name</div>', 'GroupLinks':[
+            {'LinkDisplay': 'Sim This Week', 'id': 'SimThisWeek', 'Href': '', 'ClassName': ''}
+        ]},
+        {'GroupDisplay': '<img src="/static/img/TeamLogos/ncaa-text.png" class="" alt="">', 'GroupLinks':[
+            {'LinkDisplay': 'Overview', 'id': '', 'Href': '/World/{{page.WorldID}}', 'ClassName': ''},
+            {'LinkDisplay': 'Standings', 'id': '', 'Href': '/World/{{page.WorldID}}/Conferences', 'ClassName': ''},
+            {'LinkDisplay': 'Rankings', 'id': '', 'Href': '/World/{{page.WorldID}}/Rankings', 'ClassName': ''},
+            {'LinkDisplay': 'Schedule', 'id': '', 'Href': '/World/{{page.WorldID}}/Schedule', 'ClassName': ''},
+            {'LinkDisplay': 'Headline', 'id': '', 'Href': '/World/{{page.WorldID}}/Headlines', 'ClassName': ''},
+            {'LinkDisplay': 'Awards & Races', 'id': '', 'Href': '/World/{{page.WorldID}}/Awards', 'ClassName': ''}
+        ]},
+        {'GroupDisplay': '<img src="{{userTeam.TeamLogoURL}}" class="" alt="">', 'GroupLinks':[
+            {'LinkDisplay': 'Overview', 'id': '', 'Href': '/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}', 'ClassName': ''},
+            {'LinkDisplay': 'Schedule', 'id': '', 'Href': '/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}/Schedule', 'ClassName': ''},
+            {'LinkDisplay': 'Roster', 'id': '', 'Href': '/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}/Roster', 'ClassName': ''},
+            {'LinkDisplay': 'Depth Chart', 'id': '', 'Href': '/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}/DepthChart', 'ClassName': ''},
+            {'LinkDisplay': 'Gameplan', 'id': '', 'Href': '/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}/Gameplan', 'ClassName': ''},
+            {'LinkDisplay': 'Coaches', 'id': '', 'Href': '/World/{{page.WorldID}}/Coaches/Team/{{userTeam.TeamID}}', 'ClassName': ''},
+            {'LinkDisplay': 'Recruiting', 'id': '', 'Href': '/World/{{page.WorldID}}/Recruiting', 'ClassName': ''},
+            {'LinkDisplay': 'Player Development', 'id': '', 'Href': '/World/{{page.WorldID}}/PlayerDevelopment/Team/{{userTeam.TeamID}}', 'ClassName': ''},
+            {'LinkDisplay': 'History', 'id': '', 'Href': '/World/{{page.WorldID}}/Team/{{userTeam.TeamID}}/History', 'ClassName': ''}
+        ]},
+        {'GroupDisplay': 'Almanac', 'GroupLinks':[
+            {'LinkDisplay': 'Player Stats', 'id': '', 'Href': '/World/{{page.WorldID}}/PlayerStats', 'ClassName': ''},
+            {'LinkDisplay': 'Player Records', 'id': '', 'Href': '/World/{{page.WorldID}}/PlayerRecords', 'ClassName': ''},
+            {'LinkDisplay': 'Team Stats', 'id': '', 'Href': '/World/{{page.WorldID}}/TeamStats', 'ClassName': ''},
+            {'LinkDisplay': 'Team Records', 'id': '', 'Href': '/World/{{page.WorldID}}/TeamRecords', 'ClassName': ''},
+            {'LinkDisplay': 'Hall of Fame', 'id': '', 'Href': '/World/{{page.WorldID}}/HallOfFame', 'ClassName': ''},
+            {'LinkDisplay': 'History', 'id': '', 'Href': '/World/{{page.WorldID}}/History', 'ClassName': ''},
+            {'LinkDisplay': 'Coach Stats', 'id': '', 'Href': '/World/{{page.WorldID}}/Coaches', 'ClassName': ''}
+        ]},
+        {'GroupDisplay': 'Game', 'GroupLinks':[
+            {'LinkDisplay': 'Home Page', 'id': '', 'Href': '/', 'ClassName': ''},
+            {'LinkDisplay': 'Admin', 'id': '', 'Href': '/admin', 'ClassName': ''},
+            {'LinkDisplay': 'Audit', 'id': '', 'Href': '/audit', 'ClassName': ''},
+            {'LinkDisplay': 'Credits', 'id': '', 'Href': '/Credits', 'ClassName': ''},
+            {'LinkDisplay': 'Acheivements', 'id': '', 'Href': '/Acheivements', 'ClassName': ''}
+        ]},
+    ]
+
+
+    return LinkGroups
+
+
+
 def TeamHeaderLinks(Path = 'Overview'):
     AllPaths = [{'HrefExtension': '', 'Display': 'Overview'},  {'HrefExtension': 'Roster', 'Display': 'Roster'}, {'HrefExtension': 'DepthChart', 'Display': 'Depth Chart'},{'HrefExtension': 'Gameplan', 'Display': 'Gameplan'}, {'HrefExtension': 'Schedule', 'Display': 'Schedule'}, {'HrefExtension': 'History', 'Display': 'History'}]
     LinkPaths = [P for P in AllPaths if P['Display'] != Path]
@@ -953,7 +1001,7 @@ def Page_World(request, WorldID):
 
 
 
-    AllTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).select_related('TeamSeasonID__TeamID').select_related('TeamSeasonID__teamgame').select_related('TeamSeasonID__teamseason_opposingteamgame').values('TeamSeasonID', 'TeamSeasonID__ConferenceChampion', 'TeamSeasonID__ConferenceRank', 'TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation', 'teamgame__GameID', 'teamgame__IsHomeTeam', 'TeamSeasonID__TeamID','TeamSeasonID__NationalChampion','TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID__TeamLogoURL_50', 'TeamSeasonID__Wins', 'TeamSeasonID__Losses', 'NationalRank', 'NationalRankDelta', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
+    AllTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = 1).select_related('TeamSeasonID__TeamID').select_related('TeamSeasonID__teamgame').select_related('TeamSeasonID__teamseason_opposingteamgame').values('TeamSeasonID', 'TeamSeasonID__ConferenceChampion', 'TeamSeasonID__ConferenceRank', 'TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation', 'teamgame__GameID', 'teamgame__IsHomeTeam', 'TeamSeasonID__TeamID','TeamSeasonID__NationalChampion','TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID__TeamLogoURL_50', 'TeamSeasonID__TeamID__TeamLogoURL_100', 'TeamSeasonID__Wins', 'TeamSeasonID__Losses', 'NationalRank', 'NationalRankDelta', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
         NationalRankDeltaAbs=Func(F('NationalRankDelta'), function='ABS'),
         AdditionalDisplayLogo= Case(
             When(TeamSeasonID__NationalChampion=True, then=Value('/static/img/TournamentIcons/NationalChampionTrophy.png')),
@@ -1192,7 +1240,7 @@ def Page_Awards(request, WorldID):
 
     PreseasonAllAmericans = []
     AllAwards = PlayerTeamSeasonAward.objects.filter(IsPreseasonAward = True).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('PositionID__PositionSortOrder').values(
-        'IsConferenceAward', 'IsNationalAward', 'ConferenceID__ConferenceName', 'PositionGroupID__PositionGroupName', 'WeekID__WeekName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__ClassID__ClassAbbreviation'
+        'IsConferenceAward', 'IsNationalAward', 'ConferenceID__ConferenceName', 'PositionGroupID__PositionGroupName', 'WeekID__WeekName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamLogoURL_50', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__ClassID__ClassAbbreviation'
     ).annotate(
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field=CharField()),
         TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('PlayerTeamSeasonID__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -1221,7 +1269,7 @@ def Page_Awards(request, WorldID):
 
     PostseasonAllAmericans = []
     AllAwards = PlayerTeamSeasonAward.objects.filter(IsSeasonAward = True).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('PositionID__PositionSortOrder').values(
-        'IsConferenceAward', 'IsNationalAward', 'ConferenceID__ConferenceName', 'PositionGroupID__PositionGroupName', 'WeekID__WeekName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__ClassID__ClassAbbreviation'
+        'IsConferenceAward', 'IsNationalAward', 'ConferenceID__ConferenceName', 'PositionGroupID__PositionGroupName', 'WeekID__WeekName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamName', 'PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamLogoURL_50', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__ClassID__ClassAbbreviation'
     ).annotate(
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field=CharField()),
         TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('PlayerTeamSeasonID__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -1247,7 +1295,7 @@ def Page_Awards(request, WorldID):
     AwardDict['PostseasonAllAmericans'] = PostseasonAllAmericans
 
 
-    HeismanRace = Player.objects.filter(WorldID = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL').annotate(
+    HeismanRace = Player.objects.filter(WorldID = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_50').annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
         PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -1346,7 +1394,7 @@ def Page_Coaches(request, WorldID):
     UserTeam = GetUserTeam(WorldID)
 
     CoachList = list(Coach.objects.filter(WorldID_id = WorldID).values(
-        'CharismaRating', 'ReputationRating', 'GameplanRating', 'ScoutingRating', 'SituationalAggressivenessTendency', 'PlaycallPassTendency', 'OffensivePlaybook', 'DefensivePlaybook'
+        'CharismaRating', 'ReputationRating', 'GameplanRating', 'ScoutingRating', 'RedshirtTendency', 'SituationalAggressivenessTendency', 'PlaycallPassTendency', 'OffensivePlaybook', 'DefensivePlaybook'
     ).annotate(
         CoachPosition = Subquery(CoachTeamSeason.objects.filter(CoachID=OuterRef('CoachID')).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).values('CoachPositionID__CoachPositionAbbreviation')),
         CoachPositionSortOrder = Subquery(CoachTeamSeason.objects.filter(CoachID=OuterRef('CoachID')).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).values('CoachPositionID__CoachPositionSortOrder')),
@@ -1710,6 +1758,14 @@ def Page_TeamSchedule(request, WorldID, TeamID):
     context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'team': ThisTeam, 'CurrentWeek': CurrentWeek}
 
     TeamGames = list(Team.objects.filter(WorldID = CurrentWorld).filter(TeamID=TeamID).filter(teamseason__LeagueSeasonID__IsCurrent = True).filter(teamseason__teamgame__OpposingTeamGameID__TeamSeasonID__teamseasonweekrank__IsCurrent = True).values('teamseason__teamgame__GameID', 'teamseason__teamgame__GameID__WeekID', 'teamseason__teamgame__GameID__WeekID__WeekName').annotate(
+        MaxPeriod = Subquery(GameEvent.objects.filter(GameID=OuterRef('teamseason__teamgame__GameID')).values('GameID').annotate(MaxPeriod=Max('EventPeriod')).values('MaxPeriod')),
+        OvertimeDisplay = Case(
+            When(MaxPeriod__isnull = True, then=Value('')),
+            When(MaxPeriod = 4, then=Value('')),
+            When(MaxPeriod = 5, then=Value('(OT)')),
+            default=Concat(Value('('), F('MaxPeriod') - 4, Value('OT)'), output_field=CharField()),
+            output_field=CharField()
+        ),
         GameHref =Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('teamseason__teamgame__GameID'), output_field=CharField()),
         Opposing_TeamColor_Primary_HEX = F('teamseason__teamgame__OpposingTeamGameID__TeamSeasonID__TeamID__TeamColor_Primary_HEX'),
         Opposing_TeamHref=Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('teamseason__teamgame__OpposingTeamGameID__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -1886,7 +1942,7 @@ def Page_Player(request, WorldID, PlayerID):
     PlayerObject = Player.objects.filter(WorldID = CurrentWorld).filter(PlayerID = PlayerID)
     if len(PlayerObject.first().PlayerFaceJson) == 0:
         PlayerObject.first().GeneratePlayerFaceJSon()
-    PlayerDict = PlayerObject.values('PlayerID', 'PlayerLastName', 'PlayerFirstName', 'PlayerFaceJson', 'ClassID__ClassName', 'IsCurrentlyRedshirted','WasPreviouslyRedshirted','JerseyNumber','Height', 'Weight', 'CityID', 'PositionID__PositionAbbreviation', 'CityID__CityName', 'CityID__StateID__StateName', 'RecruitingStars', 'IsRecruit', 'RecruitingPointsNeeded').annotate(
+    PlayerDict = PlayerObject.values('PlayerID', 'PlayerLastName', 'PlayerFirstName', 'PlayerFaceJson', 'ClassID__ClassName','WasPreviouslyRedshirted','JerseyNumber','Height', 'Weight', 'CityID', 'PositionID__PositionAbbreviation', 'CityID__CityName', 'CityID__StateID__StateName', 'RecruitingStars', 'IsRecruit', 'RecruitingPointsNeeded').annotate(
         HometownAndState=Concat(F('CityID__CityName'), Value(', '), F('CityID__StateID__StateName')),
         FullName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName')),
         HeightFeet = (F('Height') / 12),
@@ -1917,6 +1973,7 @@ def Page_Player(request, WorldID, PlayerID):
     RatingNameMap = {}
 
     SkillSetRatingMap = {
+        'Overall': {'Overall': 'OverallRating'},
          'Physical': {'Agility': 'Agility_Rating', 'Speed': 'Speed_Rating', 'Acceleration': 'Acceleration_Rating', 'Strength': 'Strength_Rating', 'Jumping': 'Jumping_Rating'},
          'Passing': {'Throw Power': 'ThrowPower_Rating', 'Throw Accuracy (S)': 'ShortThrowAccuracy_Rating', 'Throw Accuracy (M)': 'MediumThrowAccuracy_Rating', 'Throw Accuracy (D)': 'DeepThrowAccuracy_Rating', 'Throw on Run': 'ThrowOnRun_Rating', 'Throw Under Pressure': 'ThrowUnderPressure_Rating', 'Play Action': 'PlayAction_Rating'},
          'Running': {'Carrying': 'Carrying_Rating', 'Elusiveness': 'Elusiveness_Rating', 'Ball Carrier Vision': 'BallCarrierVision_Rating', 'Break Tackle': 'BreakTackle_Rating'},
@@ -1926,22 +1983,22 @@ def Page_Player(request, WorldID, PlayerID):
          'Kicking': {'Kick Power': 'KickPower_Rating','Kick Accuracy':  'KickAccuracy_Rating'},
     }
 
-    PositionSkillSetMap={'QB': ['Physical', 'Passing', 'Running'],
-                         'RB': ['Physical', 'Running'],
-                         'FB': ['Physical', 'Running', 'Blocking'],
-                         'WR': ['Physical', 'Receiving'],
-                         'TE': ['Physical', 'Receiving', 'Blocking'],
-                         'OT': ['Physical', 'Blocking'],
-                         'OG': ['Physical', 'Blocking'],
-                         'OC': ['Physical', 'Blocking'],
-                         'DE': ['Physical', 'Defense'],
-                         'DT': ['Physical', 'Defense'],
-                         'MLB': ['Physical', 'Defense'],
-                         'OLB': ['Physical', 'Defense'],
-                         'CB': ['Physical', 'Defense'],
-                         'S': ['Physical', 'Defense'],
-                         'K': ['Kicking'],
-                         'P': ['Kicking'],
+    PositionSkillSetMap={'QB': ['Overall','Physical', 'Passing', 'Running'],
+                         'RB': ['Overall','Physical', 'Running'],
+                         'FB': ['Overall','Physical', 'Running', 'Blocking'],
+                         'WR': ['Overall','Physical', 'Receiving'],
+                         'TE': ['Overall','Physical', 'Receiving', 'Blocking'],
+                         'OT': ['Overall','Physical', 'Blocking'],
+                         'OG': ['Overall','Physical', 'Blocking'],
+                         'OC': ['Overall','Physical', 'Blocking'],
+                         'DE': ['Overall','Physical', 'Defense'],
+                         'DT': ['Overall','Physical', 'Defense'],
+                         'MLB': ['Overall','Physical', 'Defense'],
+                         'OLB': ['Overall','Physical', 'Defense'],
+                         'CB': ['Overall','Physical', 'Defense'],
+                         'S': ['Overall','Physical', 'Defense'],
+                         'K': ['Overall','Kicking'],
+                         'P': ['Overall','Kicking'],
     }
 
     SeasonStatGroupings = [
@@ -2061,6 +2118,8 @@ def Page_Player(request, WorldID, PlayerID):
         PT = PTS.TeamSeasonID.TeamID
         PlayerTeam = PT
 
+        context['RedshirtedThisSeason'] = PTS.RedshirtedThisSeason
+
         page = {'PageTitle': PlayerDict['FullName'] + ' - ' + PlayerTeam.TeamName, 'PlayerID': PlayerID, 'WorldID': WorldID, 'PrimaryColor': PlayerTeam.TeamColor_Primary_HEX, 'SecondaryColor': PlayerTeam.SecondaryColor_Display, 'SecondaryJerseyColor': PlayerTeam.TeamColor_Secondary_HEX}
 
         PlayerSkills = CurrentPlayerSeasonSkill.__dict__
@@ -2101,8 +2160,6 @@ def Page_Player(request, WorldID, PlayerID):
             KickPower_Rating = Round(Avg('KickPower_Rating'),1),
             KickAccuracy_Rating = Round(Avg('KickAccuracy_Rating'),1),
         )[0]
-
-        print('\nPositionAverageSkills', PositionAverageSkills)
 
         PositionConferenceAverageSkills = PlayerSeasonSkill.objects.filter(WorldID_id = WorldID).filter(LeagueSeasonID__IsCurrent = True).filter(PlayerID__playerteamseason__TeamSeasonID__TeamID__ConferenceID = PT.ConferenceID).filter(PlayerID__playerteamseason__playerteamseasondepthchart__IsStarter = True).filter(PlayerID__PositionID = PlayerObject.PositionID).values('PlayerID__playerteamseason__TeamSeasonID__TeamID__ConferenceID').annotate(
             OverallRating = Round(Avg('OverallRating'),1),
@@ -2971,8 +3028,9 @@ def GET_PlayerCardInfo(request, WorldID, PlayerID):
     }
 
     P = Player.objects.filter(WorldID=WorldID).filter(PlayerID=PlayerID).filter(playerseasonskill__LeagueSeasonID__IsCurrent=True).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True)\
-        .values('ClassID__ClassAbbreviation','ClassID__ClassName', 'PlayerFirstName','PlayerLastName', 'PositionID__PositionAbbreviation', 'PositionID__PositionName' , 'JerseyNumber', 'PlayerFaceJson', 'playerteamseason__TeamSeasonID__TeamID__TeamName', 'playerteamseason__TeamSeasonID__TeamID_id', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX', 'playerseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert','playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating' )\
+        .values('ClassID__ClassAbbreviation','ClassID__ClassName', 'PlayerFirstName','PlayerLastName', 'PositionID__PositionAbbreviation', 'PositionID__PositionName' , 'JerseyNumber', 'PlayerFaceJson', 'playerteamseason__TeamSeasonID__TeamID__TeamName', 'playerteamseason__TeamSeasonID__TeamID_id', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX', 'playerseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert','playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating', 'playerteamseason__TeamSeasonID__TeamID__IsUserTeam' )\
         .annotate(
+            PlayerTeamHref = Concat(Value('/World/'),Value(WorldID),Value('/Team/'),F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
             PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
             Position = F('PositionID__PositionAbbreviation'),
             HometownAndState = Concat(F('CityID__CityName'), Value(', '), F('CityID__StateID__StateAbbreviation'), output_field=CharField()),
@@ -3119,6 +3177,13 @@ def GET_PlayerCardInfo(request, WorldID, PlayerID):
         P['PlayerFaceJson'] = json.loads(P['PlayerFaceJson'].replace("'", '"'))
 
     P['OverallCss'] = FindRange(OverallRange, P['playerseasonskill__OverallRating'])['Css-Class']
+
+
+    if P['playerteamseason__TeamSeasonID__TeamID__IsUserTeam']:
+        P['Actions'] = [
+            {'Display': 'Redshirt', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/Redshirt', 'Icon': '<i class="fas fa-tshirt"></i>'},
+            {'Display': 'Cut from team', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/CutFromTeam', 'Icon': '<i class="fas fa-cut"></i>'},
+        ]
 
     context = P
 
@@ -4284,7 +4349,7 @@ def Common_PlayerStats( Filters = {}):
 
     WorldID = Filters['WorldID']
 
-    Players = Player.objects.filter(**Filters).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating').annotate(
+    Players = Player.objects.filter(**Filters).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating', 'playerteamseason__RedshirtedThisSeason','playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating').annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
         PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -5417,7 +5482,7 @@ def POST_SimDay(request, WorldID):
             if DoAudit:
                 end = time.time()
                 TimeElapsed = end - start
-                A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 14, AuditDescription='GameSim')
+                A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 15, AuditDescription='GameSim')
 
 
         if ThisWeek.PhaseID.PhaseName in ['Regular Season', 'Conference Championships', 'Bowls']:

@@ -232,6 +232,7 @@ function PopulateTop25(WorldID, data){
 
         var teamcolor = data.TeamSeasonID__TeamID__TeamColor_Primary_HEX;
         childrow.find('td').css('border-left-color', teamcolor)
+        //childrow.css('background-color', '#'+teamcolor+'33');
 
         tr.addClass('shown');
     }

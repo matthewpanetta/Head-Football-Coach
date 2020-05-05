@@ -11,6 +11,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'common/fixedHeader.dataTables.min.css' %}">
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" SecondaryJerseyColor="{{page.SecondaryJerseyColor}}" TeamID="{{team.TeamID}}" PlayerID="{{PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
 
 {% include "HeadFootballCoach/ext_TeamColoring.html" %}
@@ -45,7 +46,11 @@
       <ul class='playerHeaderBio' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
         <li class='playerHeaderClass'>
           <div class='playerHeaderBioDescription'>CLASS</div>
-          <div>{{player.ClassID__ClassName}}</div>
+          <div>{{player.ClassID__ClassName}}
+            {% if RedshirtedThisSeason == True %}
+              <i class="fas fa-tshirt" style="color: red; margin-left: 4px;"></i>
+            {% endif %}
+          </div>
         </li>
         <li class='playerHeaderHtWt'>
           <div class='playerHeaderBioDescription'>HT/WT</div>
@@ -90,7 +95,7 @@
       <div class="tab-content" style='display:block;' id="nav-overview" >
         <div class='w3-container'>
           <div class='w3-row-padding'>
-            <div class='w3-col s6 playerOverviewRatingBox'>
+            <div class='w3-col l6 m12 playerOverviewRatingBox'>
               <div class="w3-card margin-bottom-24">
                 <table class='width100 w3-table w3-striped'>
                     {% for SkillGroup in Skills%}
@@ -121,7 +126,7 @@
 
               </div>
             </div>
-            <div class='w3-col s6'>
+            <div class='w3-col l6 m12'>
               {% if playerTeam.IsUserTeam%}
               <div class="w3-card">
                 <h2>Actions</h2>
@@ -208,7 +213,7 @@
       <div class="tab-content"  style='display:none;' id="nav-recruiting" >
         <div class='w3-container'>
           <div class='w3-row'>
-            <div class='w3-col s12'>
+            <div class='w3-col l12'>
               <table class="table table-striped sortable" id='playerRecruitingTeamTable'>
                 <thead>
                   <tr>
@@ -280,7 +285,7 @@
       <div class="tab-content" style='display:none;' id="nav-stats" >
         <div class='w3-container'>
             <div class='w3-row-padding'>
-              <div class='w3-col s10'>
+              <div class='w3-col l10 m12'>
 
                 <table id="PlayerSeasonStatTableClone" class='w3-hide width100 w3-padding' style=''>
 
@@ -305,7 +310,7 @@
       <div class="tab-content" style='display:none;' id="nav-game-log" >
         <div class='w3-container'>
           <div class='w3-row-padding'>
-              <div class="w3-col s10">
+              <div class="w3-col l10 m12">
                 <div class="w3-card">
 
                   <div class="w3-bar team-primary-background-bar">Game Stats</div>
@@ -389,12 +394,12 @@
       <div class="tab-content" style='display:none;' id="nav-analytics" >
         <div class='w3-container'>
           <div class='w3-row'>
-            <div class='w3-col s6'>
+            <div class='w3-col l6 m12'>
               <div id='StatChart'>
               </div>
             </div>
 
-            <div id='playerShotChart' class='w3-col s6'>
+            <div id='playerShotChart' class='w3-col l6 m12'>
               <pb-shot-chart yclamp="300" export-filename="_" export-title=" 2014-15" filters="shotChartFilters" active-games="activeGames" shot-data="shots" distance-highlight="distanceHighlight" bin-highlight="binHighlight"
                 class="ng-isolate-scope chart-action-hoverable shot-chart">
                 <div><svg preserveAspectRatio="xMinYMin meet" viewBox="0 0 900 600">
@@ -441,7 +446,7 @@
       <div class="tab-content" style='display:none;' id="nav-awards" >
         <div class='w3-container'>
           <div class='w3-row-padding'>
-            <div class='w3-col s6'>
+            <div class='w3-col l6 m12'>
               Awards
               <table>
                 {% for Award in Awards%}
@@ -457,15 +462,15 @@
       <div class="tab-content" style='display:none;' id="nav-ratings" >
         <div class='w3-container'>
           <div class='w3-row-padding'>
-            <div class='w3-col s8'>
+            <div class='w3-col l9 m12'>
               <div class="w3-card margin-bottom-24">
                 <table class='width100 w3-table w3-striped'>
                     {% for SkillGroup in Skills%}
                     <thead>
                     <tr class='team-primary-background'>
                       <th colspan="3">{{SkillGroup.SkillGroup}}</th>
-                      <th class=" text-center">Avg {{player.Position}}</th>
-                      <th class=" text-center">Avg {{playerTeam.ConferenceID.ConferenceAbbreviation}} {{player.Position}}</th>
+                      <th class=" text-center">Avg {{player.Position}} Starter</th>
+                      <th class=" text-center">Avg {{playerTeam.ConferenceID.ConferenceAbbreviation}} {{player.Position}} Starter</th>
                     </tr>
                     </thead>
 

@@ -1,4 +1,16 @@
+function LikertScale( Value){
+  var ScaleOptions = {
+    '-3': 'Very Low',
+    '-2': 'Low',
+    '-1': 'Somewhat Low',
+     '0': 'Balanced',
+     '1': 'Somewhat High',
+     '2': 'High',
+     '3': 'Very High',
+  };
 
+  return ScaleOptions[Value]
+}
 
 function GetCoachStats(WorldID, data){
 
@@ -11,7 +23,7 @@ function GetCoachStats(WorldID, data){
     'Base': 4,
     'Games': 4,
     'Skills': 4,
-    'Philosophy': 4,
+    'Philosophy': 5,
 
   }
 
@@ -128,7 +140,14 @@ function GetCoachStats(WorldID, data){
         {"data": "ReputationRating", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':DescFirst},
         {"data": "GameplanRating", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
         {"data": "ScoutingRating", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':DescFirst},
-        {"data": "SituationalAggressivenessTendency", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+        {"data": "RedshirtTendency", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            console.log('LikertScale(StringValue)',StringValue, LikertScale(StringValue))
+            $(td).html(LikertScale(StringValue));
+        }},
+        {"data": "SituationalAggressivenessTendency", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            console.log('LikertScale(StringValue)',StringValue, LikertScale(StringValue))
+            $(td).html(LikertScale(StringValue));
+        }},
         {"data": "PlaycallPassTendency", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':DescFirst},
         {"data": "OffensivePlaybook", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
         {"data": "DefensivePlaybook", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':DescFirst},

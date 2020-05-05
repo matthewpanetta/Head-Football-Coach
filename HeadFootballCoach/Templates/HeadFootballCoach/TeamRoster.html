@@ -33,10 +33,10 @@
       <div class="tab-content" style="display:block;"  id="nav-player-stats">
         <div class='w3-display-container' >
           <div class='w3-row-padding'>
-            <div class='w3-col l9 m12'>
+            <div class='w3-col l10 m12 s12'>
               <div class="w3-card ">
 
-                <table class="w3-table w3-table-all w3-hoverable center-aligned-table" id='PlayerStats'  style="width:100%">
+                <table class="w3-table w3-table-all center-aligned-table" id='PlayerStats'  style="width:100%">
                   <thead>
                     <tr>
                       <th colspan="6" class="col-group">PLAYER</th>
@@ -51,6 +51,7 @@
                       <th colspan="3" class="col-group">BLOCKING SKILLS</th>
                       <th colspan="7" class="col-group">DEFENSE SKILLS</th>
                       <th colspan="2" class="col-group">KICKING SKILLS</th>
+                      <th></th>
                     </tr>
                     <tr>
                       <th data-data="PlayerTeam" data-tooltip-title="Player Current Team">Team</th>
@@ -127,6 +128,8 @@
 
                       <th>KckPow</th>
                       <th class="col-group">KckAcc</th>
+
+                      <th></th>
                     </tr>
                   </thead>
                   <tfoot>
@@ -168,77 +171,7 @@
               </div>
 
             </div>
-            <div class="w3-col l3 m12">
-              <div class="w3-card" id='teamRosterPlayerHighlight'>
-                <div class='w3-row-padding w3-hide' id='player-highlight-top-color-box' style='height: 100px;'>
-                  <div class="w3-col s4">
-                    <img src="" src-field='playerteamseason__TeamSeasonID__TeamID__TeamLogoURL' alt="" class='height90'>
-                  </div>
-                  <div class="w3-col s8">
-                  </div>
-                </div>
-                <div class="w3-row-padding w3-hide">
-                  <div data-field='PlayerFaceJson' id='teamRosterPlayerHighlightPlayerFace' class="" style='width:80px;height: 120px;margin-top: -80px;margin-bottom: 0px; background-color: white; border-radius: 200px;'>
 
-                  </div>
-                </div>
-
-
-                <div class="w3-row-padding">
-                  <div class='font16' data-field='PlayerName'>Click on a player for more info</div>
-                </div>
-                <div class="w3-row-padding w3-hide">
-                  <div class='font12 bar1' data-field='PositionID__PositionName'></div>
-                </div>
-                <div class="w3-row-padding w3-hide">
-                  <div class="player-highlight-pills" css-field='OverallCss' style=''>
-                    <i class="fas fa-chart-line"></i>
-                    <span data-field='playerseasonskill__OverallRating'></span>
-                  </div>
-                  <div class="player-highlight-pills bad" style=''>
-                    <i class="fas fa-hard-hat"></i>
-                    <span data-field=''>Lazy</span>
-                  </div>
-                  <div class="player-highlight-pills good" style=''>
-                    <i class="far fa-star"></i>
-                    <span data-field=''>Captain</span>
-                  </div>
-                </div>
-                <div  class="w3-row-padding w3-hide">
-                  <ul class='no-list-style '>
-                    <li class='font12'>
-                      <span  data-field='HeightFormatted'></span> / <span  data-field='WeightFormatted'></span>
-                    </li>
-                    <li class='font12' data-field='ClassID__ClassName'></li>
-                    <li class='font12' data-field='HometownAndState'></li>
-                  </ul>
-                </div>
-                <div class="w3-row-padding w3-hide">
-                  <div id='player-highlight-info-selection-bar' class="w3-bar w3-row-padding">
-                    <button class='w3-button w3-bar-item highlight-tab selected-highlight-tab' type="button" name="button" id="highlight-ratings-tab">Ratings</button>
-                    <button class='w3-button w3-bar-item w3-hide highlight-tab ' type="button" name="button" id="highlight-stats-tab">Stats</button>
-                    <button class='w3-button w3-bar-item highlight-tab ' type="button" name="button" id="highlight-awards-tab">Awards</button>
-                    <button class='w3-button w3-bar-item highlight-tab ' type="button" name="button" id="highlight-recruiting-tab">Recruiting</button>
-                  </div>
-                </div>
-                <div class='w3-row-padding w3-hide'>
-                  <div style="width: 100%;" id='player-highlight-info-content'>
-                    <div  class="w3-container" id="highlight-ratings">
-
-                    </div>
-                    <div class="w3-container w3-hide" id="highlight-stats">
-                      stats here
-                    </div>
-                    <div class="w3-container w3-hide" id="highlight-awards">
-                      highlights here
-                    </div>
-                    <div class="w3-container w3-hide" id="highlight-recruiting">
-                      recruting here
-                    </div>
-                  </div>
-                </div>
-                </div>
-              </div>
           </div>
         </div>
       </div>

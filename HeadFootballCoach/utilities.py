@@ -109,6 +109,12 @@ def Max(a,b):
     else:
         return b
 
+def Max_Int(a,b):
+    if a > b:
+        return a
+    else:
+        return b
+
 def Average(Arr, IntCastFlag = False):
     ArrLen = len(Arr)
     ArrSum = sum(Arr)

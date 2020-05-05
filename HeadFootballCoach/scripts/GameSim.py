@@ -277,6 +277,8 @@ def GameSim(game):
         AwayTeam: {'Coach': AwayHeadCoach.CoachID.__dict__, 'CoachTeamSeason': AwayHeadCoach.__dict__, 'TeamSeasonStrategy': HomeTeamSeason.teamseasonstrategy_set.all().first().__dict__}
     }
 
+    AdjustedOverallPowerFactor = 2
+
     HomePlayerTeamSeasonDepthChartDict = {}
     for P in HomePlayerTeamSeasonDepthChart:
         HomePlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']] = P
@@ -327,22 +329,22 @@ def GameSim(game):
     }
 
     PositionEnergyMap = {
-        'QB': {'OnFieldEnergyDrain': .0125, 'SubOutThreshold': .5, 'SubInThreshold': .55, 'EnergyImpactOnOverall': (1/5.0)},
-        'RB': {'OnFieldEnergyDrain': .0175 , 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/3.0)},
-        'FB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/3.0)},
-        'WR': {'OnFieldEnergyDrain': .013, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/4.0)},
-        'TE': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/4.0)},
-        'OT': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/5.0)},
-        'OG': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/5.0)},
-        'OC': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/5.0)},
-        'DE': {'OnFieldEnergyDrain': .02, 'SubOutThreshold': .8, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/3.0)},
-        'DT': {'OnFieldEnergyDrain': .02, 'SubOutThreshold': .75, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/3.0)},
-        'OLB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/4.0)},
-        'MLB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/4.0)},
-        'CB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/4.0)},
-        'S': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/4.0)},
-        'K': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .3, 'SubInThreshold': .35, 'EnergyImpactOnOverall': (1/10.0)},
-        'P': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .3, 'SubInThreshold': .35, 'EnergyImpactOnOverall': (1/10.0)},
+        'QB': {'OnFieldEnergyDrain': .0125, 'SubOutThreshold': .5, 'SubInThreshold': .55, 'EnergyImpactOnOverall': (1/7.0)},
+        'RB': {'OnFieldEnergyDrain': .0175 , 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/5.0)},
+        'FB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/5.0)},
+        'WR': {'OnFieldEnergyDrain': .013, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/6.0)},
+        'TE': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/6.0)},
+        'OT': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/7.0)},
+        'OG': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/7.0)},
+        'OC': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/7.0)},
+        'DE': {'OnFieldEnergyDrain': .02, 'SubOutThreshold': .8, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/5.0)},
+        'DT': {'OnFieldEnergyDrain': .02, 'SubOutThreshold': .75, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/5.0)},
+        'OLB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/6.0)},
+        'MLB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .85, 'EnergyImpactOnOverall': (1/6.0)},
+        'CB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/6.0)},
+        'S': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .6, 'SubInThreshold': .7, 'EnergyImpactOnOverall': (1/6.0)},
+        'K': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .3, 'SubInThreshold': .35, 'EnergyImpactOnOverall': (1/12.0)},
+        'P': {'OnFieldEnergyDrain': .01, 'SubOutThreshold': .3, 'SubInThreshold': .35, 'EnergyImpactOnOverall': (1/12.0)},
     }
 
 
@@ -552,6 +554,7 @@ def GameSim(game):
 
     SkillMultiplierExclusions = ['PlayerSeasonSkillID', 'PlayerID', 'LeagueSeasonID', 'WorldID', '_state', 'WorldID_id', 'PlayerID_id']
     for P in HomeTeamPlayers+AwayTeamPlayers:
+        DC = None
         PSD = PlayerSeasonSkill.objects.get(WorldID = CurrentWorld, LeagueSeasonID = CurrentSeason, PlayerID = P)
         PlayerSkillDict = PSD.__dict__
         PlayerDict = P.__dict__
@@ -796,7 +799,6 @@ def GameSim(game):
 
                         NumberOfPlayersNeeded = PlayerStartersByPosition[Position] - len(TeamPlayers[Team]['PlayersOnField'][Position])
 
-                        #print('Filling field', Period, Team, Position, 'OnField:', len(TeamPlayers[Team]['PlayersOnField'][Position]), 'Needed:', NumberOfPlayersNeeded, 'Eligible:', len(EligiblePlayers))
                         if NumberOfPlayersNeeded > len(EligiblePlayers):
                             #print('Filling EligiblePlayers with All')
                             EligiblePlayers += EligiblePlayersAll
@@ -845,7 +847,7 @@ def GameSim(game):
                 YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 5, -2, 12),0)
 
                 #Run is a fumble
-                if random.uniform(0,1) < (.0125 / ((RunningbackTalent / 85) ** 6)):
+                if random.uniform(0,1) < (.011 / ((RunningbackTalent / (77.5 ** AdjustedOverallPowerFactor)))):
                     DefensivePlayers = [(u, AllPlayers[u]['PlayerSkills']['HitPower_Rating'] ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DE']+DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']+DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
                     DefensiveFumbleForcerID = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
@@ -892,7 +894,7 @@ def GameSim(game):
 
                         Turnover = True
 
-                elif YardsThisPlay > 8 and (random.uniform(0,1) < (.05 * ((RunningbackTalent / 85) ** 6))):
+                elif YardsThisPlay > 8 and (random.uniform(0,1) < (.05 * ((RunningbackTalent / (85 ** AdjustedOverallPowerFactor)) ** 8))):
                     YardsThisPlay = round(NormalTrunc(30, 50, 28, 100),0)
 
 
@@ -932,9 +934,9 @@ def GameSim(game):
                 PassRushModifier = OffensiveLineTalent * 1.0 / DefensiveLineTalent
                 PassRushModifier = PassRushModifier ** (PassingStrategy_PassRushModifier[PassingStrategy] * BlitzStrategy[BlitzingStrategy])
                 LinemanSackAllowedPlayerID = None
-                OffensiveLinemen = [(u, (110 - AllPlayers[u]['AdjustedOverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
+                OffensiveLinemen = [(u, ((110 ** AdjustedOverallPowerFactor) - AllPlayers[u]['AdjustedOverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
 
-                WideReceivers = [(u, AllPlayers[u]['AdjustedOverallRating'] ** 4) for u in OffensiveTeamPlayers['WR'] ] + [(u, int(AllPlayers[u]['AdjustedOverallRating'] ** 3.5)) for u in OffensiveTeamPlayers['RB'] ]
+                WideReceivers = [(u, AllPlayers[u]['AdjustedOverallRating'] ** 3) for u in OffensiveTeamPlayers['WR'] ] + [(u, int(AllPlayers[u]['AdjustedOverallRating'] ** 2.25)) for u in OffensiveTeamPlayers['RB'] ]
                 WideReceiverPlayer = WeightedProbabilityChoice(WideReceivers, WideReceivers[0])
 
                 if Down == 3 and YardsToGo > 4:
@@ -987,7 +989,7 @@ def GameSim(game):
                     #AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Carries += 1
                     #GameDict[OffensiveTeam]['TeamGame'].RUS_Carries += 1
 
-                    DefensivePlayers = [(u, int(PassRushByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB'] + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
+                    DefensivePlayers = [(u, int(PassRushByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 3) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB'] + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
                     LinemanSackAllowedPlayerID = WeightedProbabilityChoice(OffensiveLinemen, OffensiveLinemen[0])
 
@@ -1013,7 +1015,7 @@ def GameSim(game):
 
                     WideReceiverTalent = AllPlayers[WideReceiverPlayer]['AdjustedOverallRating']
 
-                    if YardsThisPlay >= 20 and (random.uniform(0,1) < (.05 * ((WideReceiverTalent / 85) ** 6))):
+                    if YardsThisPlay >= 20 and (random.uniform(0,1) < (.05 * ((WideReceiverTalent / (85 ** AdjustedOverallPowerFactor)) ** 6))):
                         YardsThisPlay = round(NormalTrunc(30, 50, 28, 100),0)
 
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_Receptions += 1
@@ -1043,7 +1045,7 @@ def GameSim(game):
 
                     #Deflected pass
                     if (random.uniform(0,1) < (.2 )):
-                        DefensivePlayers = [(u, int(DeflectionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
+                        DefensivePlayers = [(u, int(DeflectionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 3) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
                         Deflector = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
                         GameDict[DefensiveTeam]['TeamGame'].DEF_Deflections += 1
                         AllPlayers[Deflector]['PlayerGameStat'].DEF_Deflections += 1
@@ -1411,9 +1413,10 @@ def GameSim(game):
                         PlayersCurrentlyOnField.append(P)
                         AllPlayers[P]['Energy'] -=  CoachDict[Team]['PositionEnergyMap'][Pos]['OnFieldEnergyDrain']
                         AllPlayers[P]['PlayerGameStat'].PlaysOnField +=1
-                        AllPlayers[P]['AdjustedOverallRating'] = int(math.ceil(AllPlayers[P]['PlayerSkills']['OverallRating'] * math.pow(AllPlayers[P]['Energy'] , CoachDict[Team]['PositionEnergyMap'][Pos]['EnergyImpactOnOverall'])))
                         if AllPlayers[P]['Energy'] <=0:
                             AllPlayers[P]['Energy'] = 0.01
+
+                        AllPlayers[P]['AdjustedOverallRating'] = int(math.ceil((AllPlayers[P]['PlayerSkills']['OverallRating'] ** AdjustedOverallPowerFactor) * math.pow(AllPlayers[P]['Energy'] , CoachDict[Team]['PositionEnergyMap'][Pos]['EnergyImpactOnOverall'])))
 
             for P in AllPlayers:
                 if P in PlayersCurrentlyOnField:

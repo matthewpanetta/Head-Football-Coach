@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
+<link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 
 <div>
   {% include "HeadFootballCoach/ext_NavBar.html" %}
@@ -28,17 +29,17 @@
       <div class="tab-content show active" style="display:block;"  id="nav-overview">
         <div class="w3-display-container">
           <div class="w3-row-padding">
-            <div class="w3-col s3">
+            <div class="w3-col l4 m6 s12">
               <div class="w3-card">
                 <span class='table_title'>Top 25</span>
-                <table class='display table sortable w3-table'>
+                <table class='w3-table'>
                   <colgroup>
                       <col span="1">
                       <col span="1">
                       <col span="1">
                   </colgroup>
                   {% for team in allTeams %}
-                  <tr class='teamTableBorder'  style='border-left-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}}'>
+                  <tr class='teamTableBorder'  style='border-left-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}};'>
                     <td class="worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle">
                       <div class='Top25RankNumberw3-display-middle '>{{ team.NationalRank }}</div>
                       {% if team.NationalRankDelta < 0 %}
@@ -49,14 +50,14 @@
                     </td>
                     <td>
                       <a  class='' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
-                        <img class='worldTeamLogo' src='{{team.TeamSeasonID__TeamID__TeamLogoURL_50}}' alt="">
+                        <img class='worldTeamLogo' src='{{team.TeamSeasonID__TeamID__TeamLogoURL_100}}' alt="">
                       </a>
                     </td>
                     <td class='worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
                       <ul class='no-list-style'>
                         <li>
                           <a  class='font14' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
-                            <span>{{ team.TeamSeasonID__TeamID__TeamName }} {{ team.TeamSeasonID__TeamID__TeamNickname }}</span>
+                            <span>{{ team.TeamSeasonID__TeamID__TeamName }} <span class='hide-small'>{{ team.TeamSeasonID__TeamID__TeamNickname }}</span></span>
                           </a>
                         </li>
                         {% if team.TeamSeasonID__ConferenceChampion %}
@@ -78,7 +79,7 @@
                 </table>
               </div>
             </div>
-            <div class="w3-col  s4">
+            <div class="w3-col  l4 m6 s12">
               {% if   CurrentWeek.PhaseID.PhaseName == 'Regular Season' or CurrentWeek.PhaseID.PhaseName == 'Conference Championships' or CurrentWeek.PhaseID.PhaseName == 'Bowls' %}
               <div class="w3-card background-eee">
                 <div class="w3-bar boxscore-bar background-white" id="nav-tab-{{game.GameID}}">
@@ -98,19 +99,19 @@
                         <col span="2">
                     </colgroup>
                     <thead>
-                      <th class="bottom-border left-text" colspan="2">
-                        <span class='font10 padBottom20 margin-8'>{{game.GameTime}} PM</span>
+                      <th class="bottom-border left-text hide-small" colspan="2">
+                        <span class='font10 padBottom20 margin-8'><a href="{{game.GameHref}}">Preview</a></span>
                       </th>
-                      <th class="bottom-border" colspan="7">
+                      <th class="bottom-border" colspan="4">
                         <span class='font10'>{{game.GameHeadlineDisplay}}</span>
                       </th>
-                      <th class="bottom-border" colspan="2">
-                        <span class='font10 padBottom20'><a href="{{game.GameHref}}">Preview</a></span>
+                      <th class="bottom-border hide-medium" colspan="4">
+                        <span class='font10 padBottom20'>{{game.GameTime}} PM</span>
                       </th>
                     </thead>
                     {% for TeamGame in game.TeamGames %}
                     <tr class=" w3-margin">
-                      <td  colspan='2'>
+                      <td class=' hide-small' colspan='2'>
                           <img class="overviewRecentGameDisplayTeamLogo"   src="{{TeamGame.TeamSeasonID__TeamID__TeamLogoURL_50}}" alt="">
                       </td>
                       <td class='worldUpcomingGameCell' colspan='4'>
@@ -119,13 +120,13 @@
                           <span class='font10'>({{TeamGame.TeamRecordDisplay}})</span>
                         </div>
                       </td>
-                      <td class='center-text' colspan='2'>
+                      <td class='center-text hide-medium' colspan='2'>
                         <h2 class='font16'>{{TeamGame.PPP_Rank}}</h2>
                         <div class="">
                           <span class='font8 margin-right-4 '>Off Rank</span>
                         </div>
                       </td>
-                      <td class='center-text' colspan='2'>
+                      <td class='center-text hide-medium' colspan='2'>
                         <h2 class='font16'>{{TeamGame.PAPP_Rank}}</h2>
                         <div class="">
                           <span class='font8 margin-right-4 '>Def Rank</span>
@@ -217,7 +218,7 @@
 
               {% endif %}
             </div>
-            <div class='w3-col s3'>
+            <div class='w3-col l3 m6 s12'>
               <div class="w3-card">
                 <span class='table_title'>Headlines</span>
                 <ul class='margin-right-4'>
@@ -233,128 +234,6 @@
         </div>
       </div>
 
-      <div class="tab-content" style="display:none;"  id="nav-team-stats">
-        <div class='w3-display-container' >
-          <div class="w3-row-padding">
-            <div class='w3-col s8'>
-              <div class='w3-display-container w3-row-padding' id='worldteamstat-statgroup-div'>
-                <div class="WorldTeamStats-Stat" id='WorldTeamStats-Stat-Offense'>
-                  Offense
-                </div>
-                <div class="WorldTeamStats-Stat" id='WorldTeamStats-Stat-Offense-Adv'>
-                  Offense-Adv
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class='w3-row-padding'>
-            <div class='w3-col s11'>
-              <table class="w3-table w3-table-all" id='WorldTeamStats'  style="width:100%">
-                <thead>
-                  <tr>
-                    <th data-data='TeamName' class=''>Team</th>
-                    <th data-data='teamseason__teamseasonweekrank__NationalRank' class=''>National Rank</th>
-                    <th data-data='ConferenceID__ConferenceAbbreviation' class=''>Conference</th>
-                    <th data-data='ConferenceWinsLosses' class=''>Conf. W-L</th>
-                    <th data-data='WinsLosses' class=''>W-L</th>
-                    <th data-data='PPG' class=''>PPG</th>
-                    <th data-data='PAPG' class=''>PAPG</th>
-                    <th data-data='MOV' class=''>MOV</th>
-                    <th data-data='RUS_YardsPG' class='WorldPlayerStats-Stat-Offense'>Rush PG</th>
-                    <th data-data='PAS_YardsPG' class='WorldPlayerStats-Stat-Offense'>Pass PG</th>
-                    <th data-data='PercentPassPlays' class='WorldPlayerStats-Stat-Offense-Adv'>% Pass Plays</th>
-                    <th data-data='SacksAllowed' class='WorldPlayerStats-Stat-Offense'>Sacks Allowed</th>
-                    <th data-data='PercentOfScoringDrives' class='WorldPlayerStats-Stat-Offense-Adv'>% Scoring Drives</th>
-                    <th data-data='PercentOfTurnoverDrives' class='WorldPlayerStats-Stat-Offense-Adv'>% Turnover Drives</th>
-                    <th data-data='PointsPerDrive' class='WorldPlayerStats-Stat-Offense-Adv'>Points / Drive</th>
-                    <th data-data='TimeOfPossessionPerDriveSeconds' class='WorldPlayerStats-Stat-Offense-Adv'>TOP / Drive</th>
-                    <th data-data='YardsPerDrive' class='WorldPlayerStats-Stat-Offense-Adv'>Yards / Drive</th>
-                    <th data-data='PlaysPerDrive' class='WorldPlayerStats-Stat-Offense-Adv'>Plays / Drive</th>
-                    <th data-data='SecondsPerPlay' class='WorldPlayerStats-Stat-Offense-Adv'>Seconds / Play</th>
-                  </tr>
-                </thead>
-                <tfoot>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="tab-content" style='display:none;' id="nav-history">
-        <div class='w3-container'>
-          <div class='w3-row-padding'>
-
-            <div class='w3-col s8'>
-              <table id='LeagueSeasonHistoryResultsTable' class='w3-table w3-table-all'>
-                <thead id='LeagueSeasonHistoryTable'>
-                  <th>Season</th>
-                  <th>Champions</th>
-                  <th>Runner Up</th>
-                  <th>Final Four</th>
-                  <th>Final Four</th>
-                  <th>POTY</th>
-                </thead>
-                <tr id='LeagueSeasonHistoryRowClone' class='hidden'>
-                  <td class='LeagueSeasonHistoryRowCell' data-field='Season' data-value=""></td>
-                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='ChampionTeam'></a><span span-field='ChampionTeam'></span></td>
-                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='RunnerUpTeam'></a><span span-field='RunnerUpTeam'></span></td>
-                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='FinalFourTeam1'></a><span span-field='FinalFourTeam1'></span></td>
-                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='FinalFourTeam2'></a><span span-field='FinalFourTeam2'></span></td>
-                  <td class='LeagueSeasonHistoryRowCell' data-value=""><a href="" data-field='POTY'></a></td>
-                </tr>
-              </table>
-            </div>
-          </div>
-
-          <div class='row'>
-            <div class='w3-col s1'></div>
-            <div class='w3-col s10'>
-              {% for Banner in WorldHistory %}
-                <div class='teamHeaderRankBox' style='border-color:{{team.TeamColor_Primary_HEX}}'>
-                  <div class="teamHeaderRankHeader" style="background-color:{{team.TeamColor_Primary_HEX}}">{{Banner.Banner}}</div>
-                  <ul class='teamHeaderRank'>
-                    <li>
-                      <div class='container'>
-                        <div class='row teamHeaderRankHeaderRowLine'>
-                          <div class='w3-col s12 teamHeaderRankHeaderRow'>{{Banner.Season}}</div>
-                        </div>
-                      </div>
-                    </li>
-                    <li>
-                      <div class='container'>
-                        <div class='row'>
-                          <div class='w3-col s12 teamHeaderRankValueRow'>{{Banner.Season}}</div>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-                {% endfor %}
-            </div>
-            <div class='w3-col s1'></div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </body>

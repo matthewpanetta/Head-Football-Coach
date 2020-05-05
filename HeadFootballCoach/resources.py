@@ -1,4 +1,4 @@
-from .models import Audit,TeamGame,Bowl,TeamSeasonStrategy, TeamSeasonPosition, System_PlayerArchetypeRatingModifier, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
+from .models import Audit,TeamGame,Bowl,PlayerTeamSeasonDepthChart,TeamSeasonStrategy, TeamSeasonPosition, System_PlayerArchetypeRatingModifier, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill, CoachTeamSeason
 import random
 from datetime import timedelta, date
 import pandas as pd
@@ -15,7 +15,7 @@ from .scripts.DepthChart import CreateDepthChart
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
 from .scripts.import_csv import createCalendar
-from .utilities import NormalVariance, DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance
+from .utilities import NormalVariance, DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance, Max_Int
 from math import sin, cos, sqrt, atan2, radians, log
 import time
 
@@ -34,6 +34,22 @@ def CalculateTeamPlayerOverall(TSP, PlayerID):
 
     return int(TotalRating / TSP['Total_Rating_Weight'])
 
+
+def TeamRedshirts(TS, WorldID):
+
+    PlayersToRedshirt = TS.playerteamseason_set.filter(PlayerID__WasPreviouslyRedshirted = False).filter(Q(PlayerID__ClassID__ClassAbbreviation = 'SO') | Q(PlayerID__ClassID__ClassAbbreviation = 'FR')).exclude(playerteamseasondepthchart__IsStarter = True).annotate(DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 7))
+    HeadCount = TS.coachteamseason_set.filter(CoachPositionID__CoachPositionAbbreviation = 'HC').values('CoachID__RedshirtTendency').first()
+    PTRToSave = []
+    Num = 4
+    Pow = .25
+    for PTR in PlayersToRedshirt:
+        if random.uniform(0,1) < ((Max_Int(PTR.DepthChartPositionMin + HeadCount['CoachID__RedshirtTendency'] - Num,0) / 10.0) ** Pow):
+            PTR.RedshirtedThisSeason = True
+            PTRToSave.append(PTR)
+
+    PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'])
+
+    return None
 
 
 def CreateTeamPositions(LS, WorldID):
@@ -139,10 +155,17 @@ def UpdateTeamPositions(LS, WorldID):
 
 
 def PopulateTeamDepthCharts(LS, WorldID):
+    print('Populating depth charts')
 
     for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS):
+        PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = TeamSeasonID).delete()
         CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID)
 
+def AssignRedshirts(LS, WorldID):
+    print('Assigning Redshirts')
+
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).exclude(TeamID__IsUserTeam = True):
+        TeamRedshirts(TS=TeamSeasonID , WorldID=WorldID )
 
 def CalculateTeamOverall(LS, WorldID):
 
@@ -758,6 +781,7 @@ def GenerateCoach(WorldID):
 
     C.PatienceTendency = NormalBounds(50, 10, 30,99)
     C.VeteranTendency  = NormalBounds(50, 10, 30,99)
+    C.RedshirtTendency  = NormalVariance(1.02, 7)
 
     return C
 
@@ -1705,6 +1729,8 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         start = time.time()
 
+    PopulateTeamDepthCharts(LS, WorldID)
+    AssignRedshirts(LS, WorldID)
     PopulateTeamDepthCharts(LS, WorldID)
     CalculateTeamOverall(LS, WorldID)
     CalculateRankings(LS, WorldID)

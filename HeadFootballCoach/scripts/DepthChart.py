@@ -41,7 +41,7 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None):
         PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
 
 
-    Players = TS.playerteamseason_set.all().order_by('-PlayerID__playerseasonskill__OverallRating')
+    Players = TS.playerteamseason_set.exclude(RedshirtedThisSeason = True).order_by('-PlayerID__playerseasonskill__OverallRating')
     DCToSave = []
 
     for PTS in Players:
