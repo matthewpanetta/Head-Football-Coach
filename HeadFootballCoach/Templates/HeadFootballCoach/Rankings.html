@@ -76,11 +76,8 @@
   </div>
 </body>
 
-<script src="{% static 'common/jquery-3.3.1.slim.min.js' %}"></script>
-<script src="{% static 'common/jquery.min.js' %}"></script>
-<script src="{% static 'action.js' %}"></script>
+{% include "HeadFootballCoach/ext_CommonScripts.html" %}
 <script src="{% static 'Pages/Rankings.js' %}" type="module"></script>
-<script src="{% static 'common/popper.min.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
 
 {{ TopTeams|json_script:"top-teams-data" }}

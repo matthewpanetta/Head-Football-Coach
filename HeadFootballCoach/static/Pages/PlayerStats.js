@@ -1,86 +1,3 @@
-function ordinal_suffix_of(i) {
-    var j = i % 10,
-        k = i % 100;
-    if (j == 1 && k != 11) {
-        return i + "st";
-    }
-    if (j == 2 && k != 12) {
-        return i + "nd";
-    }
-    if (j == 3 && k != 13) {
-        return i + "rd";
-    }
-    return i + "th";
-}
-
-function NumberToGrade(NumberValue) {
-
-    var returnVal = 'NA'
-
-    var GradeValueMap = [
-        {'LetterGrade': 'A+', 'LowerBound': 91, 'UpperBound': 1000},
-        {'LetterGrade': 'A',  'LowerBound': 86, 'UpperBound': 90},
-        {'LetterGrade': 'A-', 'LowerBound': 81, 'UpperBound': 85},
-        {'LetterGrade': 'B+', 'LowerBound': 76, 'UpperBound': 80},
-        {'LetterGrade': 'B',  'LowerBound': 71, 'UpperBound': 75},
-        {'LetterGrade': 'B-', 'LowerBound': 66, 'UpperBound': 70},
-        {'LetterGrade': 'C+', 'LowerBound': 61, 'UpperBound': 65},
-        {'LetterGrade': 'C',  'LowerBound': 56, 'UpperBound': 60},
-        {'LetterGrade': 'C-', 'LowerBound': 51, 'UpperBound': 55},
-        {'LetterGrade': 'D+', 'LowerBound': 46, 'UpperBound': 50},
-        {'LetterGrade': 'D',  'LowerBound': 41, 'UpperBound': 45},
-        {'LetterGrade': 'D-', 'LowerBound': 36, 'UpperBound': 40},
-        {'LetterGrade': 'F',  'LowerBound': 31, 'UpperBound': 35},
-        {'LetterGrade': 'F-', 'LowerBound': -1000, 'UpperBound': 30},
-    ]
-
-    $.each(GradeValueMap, function(ind, GradeObj){
-      if ((NumberValue >= GradeObj['LowerBound']) && (NumberValue <= GradeObj['UpperBound'])){
-          returnVal = GradeObj['LetterGrade']
-      }
-    });
-
-    return returnVal
-}
-
-function NumberToGradeClass(NumberValue){
-    return NumberToGrade(NumberValue).replace('-', '-Minus').replace('+', '-Plus');
-
-}
-
-function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined, DOMID=undefined){
-  var DataPassthruHolder = $('#PageDataPassthru')[0];
-  var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
-  var PlayerID   = parseInt($(DataPassthruHolder).attr('PlayerID'));
-
-  if (face == '' || face == undefined){
-    return 0;
-  }
-  if (TeamJerseyInvert == true) {
-    console.log('overrides', overrides);
-    overrides.teamColors.pop();
-    overrides.teamColors.unshift('#FFFFFF');
-  }
-
-  console.log('overrides', overrides);
-  if (TeamJerseyStyle == undefined) {
-    overrides['jersey'] = {'id': 'football'};
-  }
-  else {
-    overrides['jersey'] = {'id': TeamJerseyStyle}
-  }
-  console.log('overrides', overrides);
-
-  //overrides['jersey'] = {'id': TeamJerseyStyle}
-
-  if (DOMID == undefined){
-    DOMID = 'PlayerFace';
-  }
-  display(DOMID, face, overrides);
-}
-
-
-
 function DrawPlayerInfo(data, WorldID, PlayerID){
   var div = $(`
     <div class='w3-row-padding' style='text-align: initial;' id='playerinfo-`+PlayerID+`'>
@@ -165,7 +82,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
       $(div,' div.w3-hide.w3-row-padding').removeClass('w3-hide');
 
-      var overrides = {"teamColors":["#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'],"#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'],"#000000"]}
+      var overrides = {"teamColors":["#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'],"#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'],"#FFF"]}
 
       $('[css-field="OverallCss"].player-highlight-pills').removeClass('elite').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
 
@@ -266,10 +183,14 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
           elem = elem[0];
           $(elem).empty();
 
+          $(div).find('.PlayerFace').attr('id', 'PlayerFace-'+data.PlayerID)
+
+          var DOMID ='PlayerFace-'+data.PlayerID;
+
           if (typeof val === 'string') {
             val = $.parseJSON(val);
           }
-          BuildFace(val, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle'], data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides, $(div).find('.PlayerFace'));//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
+          BuildFace(val, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle'], data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides=overrides, DOMID = DOMID);//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
         }
         else {
           $(div).find('[data-field="'+key+'"]').text(val);
@@ -283,17 +204,12 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
       $(div).find('.highlight-tab').on('click', function(event, target) {
 
-        console.log("var ClickedTab = $(event.target)", $(event.target));
-
         var ClickedTab = $(event.target)
         var ClickedTabContent = ClickedTab.attr('id').replace('-tab', '');
         var ClickedTabParent = ClickedTab.closest('.player-highlight-info-selection-bar');
 
-        console.log('ClickedTabParent', ClickedTabParent);
-
         $.each($(ClickedTabParent).find(' .selected-highlight-tab'), function(index, tab){
           var TargetTab = $(tab);
-          console.log('tab',tab, TargetTab);
           $(TargetTab).removeClass('selected-highlight-tab');
           var TargetTabContent = TargetTab.attr('id').replace('-tab', '');
           $(div).find('.'+TargetTabContent).addClass('w3-hide');
@@ -360,7 +276,6 @@ function GetPlayerStats(WorldID, data){
       'JR': 3,
       'SR': 4,
   };
-  console.log('In PlayerStats!', data);
 
       var ColCategories = {
         'Base': 6,
@@ -408,7 +323,6 @@ function GetPlayerStats(WorldID, data){
 
       var SearchPaneColumns = [0,2,3].concat(ShowColumnMap['Custom']);
 
-      console.log('SearchPaneColumns', SearchPaneColumns)
 
       var ButtonList = [{
           extend: 'searchPanes',
@@ -469,7 +383,6 @@ function GetPlayerStats(WorldID, data){
                   {
                       label: 'Rushing Qualifiers',
                       value: function(rowData, rowIdx){
-                        console.log('rowData, rowIdx', rowData, rowIdx);
                         return rowData['TeamGamesPlayed'] > 0 && rowData['RUS_Carries'] > 10*rowData['TeamGamesPlayed'];
                       }
                   }
@@ -517,7 +430,6 @@ function GetPlayerStats(WorldID, data){
                                 return returnVal;
                             },"sortable": true, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
                                 $(td).html(StringValue);
-                                console.log('DataObject.playerteamseason__RedshirtedThisSeason', DataObject.playerteamseason__RedshirtedThisSeason)
                                 if (DataObject.playerteamseason__RedshirtedThisSeason) {
                                   $(td).append('<i class="fas fa-tshirt" style="color: red; margin-left: 4px;"></i>')
                                 }
@@ -633,10 +545,8 @@ function GetPlayerStats(WorldID, data){
           // Open this row
           var data = row.data()
           var formattedContent = DrawPlayerInfo(data, WorldID, PlayerID);
-          console.log(formattedContent,'formattedContent');
           row.child( formattedContent, 'teamTableBorder' ).show();
           var childrow = row.child();
-          console.log(childrow, 'childrow');
 
           var teamcolor = data.playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX;
           childrow.find('td').css('border-left-color', teamcolor)

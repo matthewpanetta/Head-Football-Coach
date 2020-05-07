@@ -127,7 +127,6 @@ function InitializeDepartureTable(WorldID, ConferenceList, TeamList, PositionLis
 }
 
 
-
 $(document).ready(function(){
 
   var DataPassthruHolder = $('#PageDataPassthru')[0];
@@ -136,28 +135,3 @@ $(document).ready(function(){
 
 
 });
-
-function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, DOMID=undefined){
-  var DataPassthruHolder = $('#PageDataPassthru')[0];
-  var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
-  var PlayerID   = parseInt($(DataPassthruHolder).attr('PlayerID'));
-  var PrimaryColor    = $(DataPassthruHolder).attr('PrimaryColor');
-  var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryJerseyColor');
-
-  if (face == '' || face == undefined){
-    return 0;
-  }
-  if (TeamJerseyInvert == 'True') {
-    var overrides = {"teamColors":["#FFFFFF", "#"+PrimaryColor,"#"+SecondaryColor]}
-  }
-  else {
-    var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#000000"]}
-
-  }
-  //overrides['jersey'] = {'id': TeamJerseyStyle}
-
-  if (DOMID == undefined){
-    DOMID = 'PlayerFace';
-  }
-  display(DOMID, face, overrides);
-}

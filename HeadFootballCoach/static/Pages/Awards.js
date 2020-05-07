@@ -1,25 +1,4 @@
 
-function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined, DOMID=undefined){
-  var DataPassthruHolder = $('#PageDataPassthru')[0];
-  var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
-  var PlayerID   = parseInt($(DataPassthruHolder).attr('PlayerID'));
-
-  if (face == '' || face == undefined){
-    return 0;
-  }
-  if (TeamJerseyInvert == true) {
-    console.log('overrides', overrides);
-    overrides.teamColors.pop();
-    overrides.teamColors.unshift('#FFFFFF');
-  }
-
-  //overrides['jersey'] = {'id': TeamJerseyStyle}
-
-  if (DOMID == undefined){
-    DOMID = 'PlayerFace';
-  }
-  display(DOMID, face, overrides);
-}
 function HeismanRaceContent(WorldID){
 
     $('#HeismanRaceTable tbody').on('click', 'tr', function () {
@@ -36,7 +15,7 @@ function HeismanRaceContent(WorldID){
           $('#player-highlight-top-color-box').css('background-color', data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
           $('#teamRosterPlayerHighlight').css('border-width', '4px 4px 4px 4px').css('border-style', 'solid').css('border-color', data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX']);
           $('#teamRosterPlayerHighlight').css('box-shadow', '0px 2px 12px 0px #'+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX']);
-          var overrides = {"teamColors":["#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'],"#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'],"#000000"]}
+          var overrides = {"teamColors":["#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'],"#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'],"#FFF"]}
 
           $('[css-field="OverallCss"].player-highlight-pills').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
 
@@ -50,7 +29,7 @@ function HeismanRaceContent(WorldID){
               if (typeof val === 'string') {
                 val = $.parseJSON(val);
               }
-              BuildFace(val, undefined, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides, $(elem).attr('id'));//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
+              BuildFace(val, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle'], data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides, $(elem).attr('id'));//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
             }
             else {
               $('#teamRosterPlayerHighlight').find('[data-field="'+key+'"]').text(val);

@@ -1,6 +1,5 @@
 
 function DrawFaces(){
-//  BuildFace({{player.PlayerFaceJson|safe}}, '{{playerTeam.TeamJerseyStyle}}', '{{playerTeam.TeamJerseyInvert}}');
 
   var FacesToBuild =  $('[hasplayerfacejson="1"]');
 
@@ -8,39 +7,12 @@ function DrawFaces(){
     var FaceElement = $(FaceDiv).find('.PlayerFaceDisplay')[0];
     var FaceJson = $(FaceDiv).attr('PlayerFaceJson').replace(/'/g, '"');
     var PlayerFaceJson = JSON.parse(FaceJson);
-    BuildFace(PlayerFaceJson, $(FaceElement).attr('id'));
+    BuildFace(PlayerFaceJson, undefined, undefined, overrides = [], DOMID = $(FaceElement).attr('id'));
   });
-}
-
-function IntToHeight(Val){
-  var Feet = parseInt(Val / 12);
-  var Inches = Val % 12;
-  return Feet + '\' ' + Inches + '"';
-}
-
-
-function BuildFace(face, DOMID=undefined){
-  var DataPassthruHolder = $('#PageDataPassthru')[0];
-  //console.log('DataPassthruHolder',DataPassthruHolder);
-
-
-  var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
-  var PrimaryColor    = $(DataPassthruHolder).attr('PrimaryColor');
-  var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryColor');
-  var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#000000"]}
-  overrides['jersey'] = {'id': 'football'}
-
-  if (DOMID == undefined){
-    DOMID = 'PlayerFace';
-  }
-
-  display(DOMID, face, overrides);
-
 }
 
 
 function DrawRecruitingTable(WorldID){
-
 
   var RecruitTable = $('#recruitingMainTable').DataTable({
     'searching': true,
@@ -173,7 +145,7 @@ function DrawRecruitingTable(WorldID){
 
           var FaceJson = api.cell(i,1).data().replace(/'/g, '"');
           var PlayerFaceJson = JSON.parse(FaceJson);
-          BuildFace(PlayerFaceJson, $(d).attr('id'));
+          BuildFace(PlayerFaceJson, undefined, undefined, overrides = {},DOMID = $(d).attr('id'));
           });
     }
   });

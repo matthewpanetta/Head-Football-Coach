@@ -132,33 +132,6 @@ function DrawPlayerStats(data){
 
 }
 
-function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert){
-  var DataPassthruHolder = $('#PageDataPassthru')[0];
-  var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
-  var PlayerID   = parseInt($(DataPassthruHolder).attr('PlayerID'));
-  var PrimaryColor    = $(DataPassthruHolder).attr('PrimaryColor');
-  var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryJerseyColor');
-
-  var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#FFF"]}
-
-  console.log('overrides', overrides);
-  if (TeamJerseyStyle == undefined) {
-    overrides['jersey'] = {'id': 'football'};
-  }
-  else {
-    overrides['jersey'] = {'id': TeamJerseyStyle}
-  }
-  console.log('overrides', overrides);
-
-  if (TeamJerseyInvert == true) {
-    console.log('overrides', overrides);
-    overrides.teamColors.pop();
-    overrides.teamColors.unshift('#FFFFFF');
-  }
-
-  display('PlayerFace', face, overrides);
-}
-
 
 function PopulatePlayerStats(WorldID, GameStatData, RecentGameStatData, PlayerStatsShow, PrimaryStatShow) {
 
@@ -376,11 +349,6 @@ function PopulatePlayerStats(WorldID, GameStatData, RecentGameStatData, PlayerSt
         $('.stats-button-'+PrimaryStatShow).click();
       }
   });
-
-
-
-
-
 }
 
 

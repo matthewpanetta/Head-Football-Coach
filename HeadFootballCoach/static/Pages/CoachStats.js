@@ -1,16 +1,3 @@
-function LikertScale( Value){
-  var ScaleOptions = {
-    '-3': 'Very Low',
-    '-2': 'Low',
-    '-1': 'Somewhat Low',
-     '0': 'Balanced',
-     '1': 'Somewhat High',
-     '2': 'High',
-     '3': 'Very High',
-  };
-
-  return ScaleOptions[Value]
-}
 
 function GetCoachStats(WorldID, data){
 

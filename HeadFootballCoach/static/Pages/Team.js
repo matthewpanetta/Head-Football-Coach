@@ -1,80 +1,3 @@
-function NumberToGrade_True(NumberValue){
-
-    var GradeValueMap = [
-        {'LetterGrade': 'A+', 'GradeClass': 'A-Plus',  'LowerBound': 91, 'UpperBound': 1000},
-        {'LetterGrade': 'A',  'GradeClass': 'A',       'LowerBound': 86, 'UpperBound': 90},
-        {'LetterGrade': 'A-', 'GradeClass': 'A-Minus', 'LowerBound': 81, 'UpperBound': 85},
-        {'LetterGrade': 'B+', 'GradeClass': 'B-Plus',  'LowerBound': 76, 'UpperBound': 80},
-        {'LetterGrade': 'B',  'GradeClass': 'B',       'LowerBound': 71, 'UpperBound': 75},
-        {'LetterGrade': 'B-', 'GradeClass': 'B-Minus', 'LowerBound': 66, 'UpperBound': 70},
-        {'LetterGrade': 'C+', 'GradeClass': 'C-Plus',  'LowerBound': 61, 'UpperBound': 65},
-        {'LetterGrade': 'C',  'GradeClass': 'C',       'LowerBound': 56, 'UpperBound': 60},
-        {'LetterGrade': 'C-', 'GradeClass': 'D-Minus', 'LowerBound': 51, 'UpperBound': 55},
-        {'LetterGrade': 'D+', 'GradeClass': 'D-Plus',  'LowerBound': 46, 'UpperBound': 50},
-        {'LetterGrade': 'D',  'GradeClass': 'D',       'LowerBound': 41, 'UpperBound': 45},
-        {'LetterGrade': 'D-', 'GradeClass': 'D-Minus', 'LowerBound': 36, 'UpperBound': 40},
-        {'LetterGrade': 'F',  'GradeClass': 'F',       'LowerBound': 31, 'UpperBound': 35},
-        {'LetterGrade': 'F-', 'GradeClass': 'F-Minus', 'LowerBound': -1000, 'UpperBound': 30},
-    ]
-
-    var GradeReturn = $.grep(GradeValueMap, function(d){
-      return NumberValue >= d.LowerBound && NumberValue <= d.UpperBound;
-    });
-
-    if (GradeReturn.length > 0){
-      return GradeReturn[0];
-    }
-
-    return {'LetterGrade': 'F-', 'GradeClass': 'F-Minus'}
-}
-
-function NumberToGrade(NumberValue){
-
-    var GradeValueMap = [
-        {'LetterGrade': 'A+', 'GradeClass': 'A-Plus',  'LowerBound': 96, 'UpperBound': 1000},
-        {'LetterGrade': 'A',  'GradeClass': 'A',       'LowerBound': 90, 'UpperBound': 95},
-        {'LetterGrade': 'A-', 'GradeClass': 'A-Minus', 'LowerBound': 85, 'UpperBound': 89},
-        {'LetterGrade': 'B+', 'GradeClass': 'B-Plus',  'LowerBound': 80, 'UpperBound': 84},
-        {'LetterGrade': 'B',  'GradeClass': 'B',       'LowerBound': 75, 'UpperBound': 79},
-        {'LetterGrade': 'B-', 'GradeClass': 'B-Minus', 'LowerBound': 70, 'UpperBound': 74},
-        {'LetterGrade': 'C+', 'GradeClass': 'C-Plus',  'LowerBound': 65, 'UpperBound': 69},
-        {'LetterGrade': 'C',  'GradeClass': 'C',       'LowerBound': 60, 'UpperBound': 64},
-        {'LetterGrade': 'C-', 'GradeClass': 'D-Minus', 'LowerBound': 55, 'UpperBound': 59},
-        {'LetterGrade': 'D+', 'GradeClass': 'D-Plus',  'LowerBound': 50, 'UpperBound': 54},
-        {'LetterGrade': 'D',  'GradeClass': 'D',       'LowerBound': 45, 'UpperBound': 49},
-        {'LetterGrade': 'D-', 'GradeClass': 'D-Minus', 'LowerBound': 40, 'UpperBound': 44},
-        {'LetterGrade': 'F',  'GradeClass': 'F',       'LowerBound': 30, 'UpperBound': 39},
-        {'LetterGrade': 'F-', 'GradeClass': 'F-Minus', 'LowerBound': -1000, 'UpperBound': 29},
-    ]
-
-
-
-    var GradeReturn = $.grep(GradeValueMap, function(d){
-      return NumberValue >= d.LowerBound && NumberValue <= d.UpperBound;
-    });
-
-    if (GradeReturn.length > 0){
-      return GradeReturn[0];
-    }
-
-    return {'LetterGrade': 'F-', 'GradeClass': 'F-Minus'}
-}
-
-function ordinal_suffix_of(i) {
-    var j = i % 10,
-        k = i % 100;
-    if (j == 1 && k != 11) {
-        return i + "st";
-    }
-    if (j == 2 && k != 12) {
-        return i + "nd";
-    }
-    if (j == 3 && k != 13) {
-        return i + "rd";
-    }
-    return i + "th";
-}
-
 
 function DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName){
   var div = $(`
@@ -345,13 +268,13 @@ function AddBoxScoreListeners(){
 }
 
 
-function DrawFaces(TeamJerseyStyle, TeamJerseyInvert){
+function DrawFaces(TeamJerseyStyle, TeamJerseyInvert, overrides = undefined){
 
   $.each($('[hasplayerfacejson="1"]'), function(index,FaceDiv){
     var FaceElement = $(FaceDiv).find('.PlayerFaceDisplay')[0];
     var FaceJson = $(FaceDiv).attr('PlayerFaceJson').replace(/'/g, '"');
     var PlayerFaceJson = JSON.parse(FaceJson);
-    BuildFace(PlayerFaceJson, undefined, undefined, $(FaceElement).attr('id'));
+    BuildFace(PlayerFaceJson, TeamJerseyStyle, TeamJerseyInvert, overrides, $(FaceElement).attr('id'));
   });
 }
 
@@ -501,8 +424,12 @@ $(document).ready(function(){
   var TeamID  = parseInt($(DataPassthruHolder).attr('TeamID'));
   var TeamJerseyStyle  = $(DataPassthruHolder).attr('TeamJerseyStyle');
   var TeamJerseyInvert  = $(DataPassthruHolder).attr('TeamJerseyInvert');
+  var TeamColor_Primary_HEX  = $(DataPassthruHolder).attr('PrimaryColor');
+  var TeamColor_Secondary_HEX  = $(DataPassthruHolder).attr('SecondaryJerseyColor');
   var TeamName = '';
   var CoachOrg = '';
+
+  var overrides = {'teamColors': ['#'+TeamColor_Primary_HEX, '#'+TeamColor_Secondary_HEX , '#FFF']};
 
   AddScheduleListeners();
   AddBoxScoreListeners();
@@ -510,7 +437,7 @@ $(document).ready(function(){
   console.log('in Team.js file')
   GetTeamHistory(WorldID, TeamID);
   GetTeamCoaches(WorldID, TeamID);
-  DrawFaces(TeamJerseyStyle, TeamJerseyInvert);
+  DrawFaces(TeamJerseyStyle, TeamJerseyInvert, overrides=overrides);
   DrawSchedule();
 
   var TeamInfoData = $('#team-info-data')[0];
@@ -586,32 +513,4 @@ function DrawSchedule(){
       $('<style id="addedStyle">.SelectedGameBox::after{'+styleAdd+'}</style>').appendTo('head');
 
   }
-}
-
-
-
-
-function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, DOMID=undefined){
-  var DataPassthruHolder = $('#PageDataPassthru')[0];
-  var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));
-  var PlayerID   = parseInt($(DataPassthruHolder).attr('PlayerID'));
-  var PrimaryColor    = $(DataPassthruHolder).attr('PrimaryColor');
-  var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryJerseyColor');
-
-  if (face == '' || face == undefined){
-    return 0;
-  }
-  if (TeamJerseyInvert == 'True') {
-    var overrides = {"teamColors":["#FFFFFF", "#"+PrimaryColor,"#"+SecondaryColor]}
-  }
-  else {
-    var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#000000"]}
-
-  }
-  //overrides['jersey'] = {'id': TeamJerseyStyle}
-
-  if (DOMID == undefined){
-    DOMID = 'PlayerFace';
-  }
-  display(DOMID, face, overrides);
 }

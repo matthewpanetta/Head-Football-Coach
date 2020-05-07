@@ -515,14 +515,7 @@
 
 
 
-<script src="{% static 'common/jquery-3.3.1.slim.min.js' %}"></script>
-<script src="{% static 'common/jquery.min.js' %}"></script>
-<script src="{% static 'common/popper.min.js' %}"></script>
-<script src="{% static 'action.js' %}"></script>
-<script src="{% static 'bootstrap-sortable.js' %}"></script>
-<script src="{% static 'facesjs-master/src/generate.js' %}"></script>
-
-
+{% include "HeadFootballCoach/ext_CommonScripts.html" %}
 <!-- Load c3.css -->
 <link href="{% static 'c3/c3.css' %}" rel="stylesheet">
 <!-- Load d3.js and c3.js -->
@@ -575,8 +568,10 @@
 $(document).ready(function(){
   console.log("player.PlayerFaceJson", {{player.PlayerFaceJson|safe}});
 
+  var overrides = {'teamColors': ["#{{playerTeam.TeamColor_Primary_HEX}}","#{{playerTeam.TeamColor_Secondary_HEX}}","#FFF",]}
+
   {% if player.PlayerFaceJson|length > 0 %}
-    BuildFace({{player.PlayerFaceJson|safe}}, "{{playerTeam.TeamJerseyStyle}}", "{{player.TeamJerseyInvert}}");
+    BuildFace({{player.PlayerFaceJson|safe}}, "{{playerTeam.TeamJerseyStyle}}", "{{player.TeamJerseyInvert}}", overrides=overrides, DOMID = 'PlayerFace');
   {% else %}
     BuildFace(undefined, "{{playerTeam.TeamJerseyStyle}}", "{{player.TeamJerseyInvert}}");
   {% endif %}
@@ -594,10 +589,6 @@ $(document).ready(function(){
     title: {
         text: 'Combination chart'
     },
-    /*
-    xAxis: {
-        categories: ['Apples', 'Oranges', 'Pears', 'Bananas', 'Plums']
-    },*/
     labels: {
         items: [{
             html: 'Recruiting',
