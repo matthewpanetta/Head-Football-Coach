@@ -139,8 +139,22 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert){
   var PrimaryColor    = $(DataPassthruHolder).attr('PrimaryColor');
   var SecondaryColor  = $(DataPassthruHolder).attr('SecondaryJerseyColor');
 
-  var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#000000"]}
-  overrides['jersey'] = {'id': 'football'}
+  var overrides = {"teamColors":["#"+PrimaryColor,"#"+SecondaryColor,"#FFF"]}
+
+  console.log('overrides', overrides);
+  if (TeamJerseyStyle == undefined) {
+    overrides['jersey'] = {'id': 'football'};
+  }
+  else {
+    overrides['jersey'] = {'id': TeamJerseyStyle}
+  }
+  console.log('overrides', overrides);
+
+  if (TeamJerseyInvert == true) {
+    console.log('overrides', overrides);
+    overrides.teamColors.pop();
+    overrides.teamColors.unshift('#FFFFFF');
+  }
 
   display('PlayerFace', face, overrides);
 }

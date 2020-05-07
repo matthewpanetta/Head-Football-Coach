@@ -273,8 +273,13 @@
 .SideNavItem {
   padding-top: 2px;
   padding-bottom: 2px;
-  color: #666;
+  color: #666 !important;
   font-size: 14px;
+}
+
+.SideNavItem.Selected {
+  color: #111 !important;
+   background-color: #ddd;
 }
 
 .SideNavGroup img {
@@ -1738,6 +1743,26 @@ div.dt-buttons {
 
 .s4 {
   width: 33.25%;
+}
+
+.l12 {
+  max-width: 1100px;
+}
+
+.mw600 {
+  max-width: 600px;
+}
+
+.mw800 {
+  max-width: 800px;
+}
+
+.mw1000 {
+  max-width: 1000px;
+}
+
+.mw1200 {
+  max-width: 1200px;
 }
 
 td.details-control {

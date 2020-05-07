@@ -571,7 +571,7 @@ class Conference(models.Model):
         if WorldID is None:
             WorldID = self.WorldID.WorldID
         Standings = self.team_set.all().filter(teamseason__teamseasonweekrank__IsCurrent = True).values(
-            'TeamLogoURL', 'TeamName', 'teamseason__teamseasonweekrank__NationalRank', 'teamseason__ConferenceWins', 'teamseason__ConferenceLosses', 'teamseason__ConferenceGB', 'teamseason__ConferenceRank', 'teamseason__Wins', 'teamseason__Losses', 'TeamLogoURL', 'TeamID'
+            'TeamLogoURL_50', 'TeamName', 'teamseason__teamseasonweekrank__NationalRank', 'teamseason__ConferenceWins', 'teamseason__ConferenceLosses', 'teamseason__ConferenceGB', 'teamseason__ConferenceRank', 'teamseason__Wins', 'teamseason__Losses', 'TeamLogoURL', 'TeamID'
         ).annotate(
             TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), output_field=CharField()),
             NationalRankDisplay = Case(
@@ -839,9 +839,9 @@ class Player(models.Model):
     @property
     def TeamJerseyStyle(self):
 
-        # TS = self.CurrentTeamSeason
-        # if TS is not None:
-        #     return str(TS.TeamID.TeamJerseyStyle)
+        TS = self.CurrentTeamSeason
+        if TS is not None:
+            return str(TS.TeamID.TeamJerseyStyle)
 
         return 'football'
 

@@ -62,6 +62,15 @@ function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined,
     overrides.teamColors.unshift('#FFFFFF');
   }
 
+  console.log('overrides', overrides);
+  if (TeamJerseyStyle == undefined) {
+    overrides['jersey'] = {'id': 'football'};
+  }
+  else {
+    overrides['jersey'] = {'id': TeamJerseyStyle}
+  }
+  console.log('overrides', overrides);
+
   //overrides['jersey'] = {'id': TeamJerseyStyle}
 
   if (DOMID == undefined){
@@ -260,7 +269,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
           if (typeof val === 'string') {
             val = $.parseJSON(val);
           }
-          BuildFace(val, undefined, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides, $(div).find('.PlayerFace'));//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
+          BuildFace(val, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle'], data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides, $(div).find('.PlayerFace'));//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
         }
         else {
           $(div).find('[data-field="'+key+'"]').text(val);
@@ -326,6 +335,25 @@ function GetPlayerStats(WorldID, data){
       'P': '16',
   };
 
+
+    var PositionGroupMap = {
+        'QB': 'Offense',
+        'RB': 'Offense',
+        'FB': 'Offense',
+        'WR': 'Offense',
+        'TE': 'Offense',
+        'OT': 'Offense',
+        'OG': 'Offense',
+        'OC': 'Offense',
+        'DE': 'Defense',
+        'DT': 'Defense',
+        'OLB': 'Defense',
+        'MLB': 'Defense',
+        'CB': 'Defense',
+        'S': 'Defense',
+        'K': 'Special Teams',
+        'P': 'Special Teams',
+    };
   var ClassSortOrderMap = {
       'FR': 1,
       'SO': 2,
@@ -347,7 +375,8 @@ function GetPlayerStats(WorldID, data){
         'BLK <i class="fas fa-chart-line"></i>': 3,
         'DEF <i class="fas fa-chart-line"></i>': 7,
         'KCK <i class="fas fa-chart-line"></i>': 2,
-        'Expand': 1
+        'Expand': 1,
+        'Custom': 2
       }
 
       var ShowColumnMap = {}
@@ -364,7 +393,7 @@ function GetPlayerStats(WorldID, data){
       var HideColumnMap = {}
       $.each(ShowColumnMap, function(key, ColList){
         $.each(ColList, function(ind, ColNum){
-          if ((($.inArray( ColNum,  ShowColumnMap['Base'])) == -1) && ($.inArray( ColNum,  ShowColumnMap['Expand']) == -1)){
+          if ((($.inArray( ColNum,  ShowColumnMap['Base'])) == -1) && ($.inArray( ColNum,  ShowColumnMap['Expand']) == -1) && ($.inArray( ColNum,  ShowColumnMap['Custom']) == -1)){
             FullColumnList.push(ColNum);
           }
         })
@@ -377,20 +406,23 @@ function GetPlayerStats(WorldID, data){
           HideColumnMap[key] = cols;
       });
 
+      var SearchPaneColumns = [0,2,3].concat(ShowColumnMap['Custom']);
+
+      console.log('SearchPaneColumns', SearchPaneColumns)
 
       var ButtonList = [{
           extend: 'searchPanes',
           config: {
             cascadePanes: true,
             viewTotal: false, //maybe true later - TODO
-            columns:[0,2,3],
+            columns:SearchPaneColumns,
             collapse: 'Filter Players',
           },
 
       }]
 
       $.each(ColCategories, function(key, val){
-        if (key == 'Base' || key == 'Expand' ){
+        if (key == 'Base' || key == 'Expand'  || key == 'Custom' ){
           return true;
         }
         var ButtonObj = {extend: 'colvisGroup',
@@ -423,6 +455,50 @@ function GetPlayerStats(WorldID, data){
       "paging": true,
       "data": data,
        'buttons':ButtonList,
+       'columnDefs': [
+         {
+          searchPanes: {
+            show: true,
+              options:[
+                  {
+                      label: 'Passing Qualifiers',
+                      value: function(rowData, rowIdx){
+                          return rowData['TeamGamesPlayed'] > 0 && rowData['PAS_Attempts'] > 10*rowData['TeamGamesPlayed'];
+                      }
+                  },
+                  {
+                      label: 'Rushing Qualifiers',
+                      value: function(rowData, rowIdx){
+                        console.log('rowData, rowIdx', rowData, rowIdx);
+                        return rowData['TeamGamesPlayed'] > 0 && rowData['RUS_Carries'] > 10*rowData['TeamGamesPlayed'];
+                      }
+                  }
+              ],
+              combiner: 'and'
+          },
+          targets: [67]
+        },
+        {
+         searchPanes: {
+           show: true,
+             options:[
+                 {
+                     label: 'Eligible for Draft',
+                     value: function(rowData, rowIdx){
+                         return rowData['ClassID__ClassAbbreviation'] == 'SR' || rowData['ClassID__ClassAbbreviation'] == 'JR';
+                     }
+                 },
+                 {
+                     label: 'Not Eligible for Draft',
+                     value: function(rowData, rowIdx){
+                         return !(rowData['ClassID__ClassAbbreviation'] == 'SR' || rowData['ClassID__ClassAbbreviation'] == 'JR');
+                     }
+                 },
+             ],
+         },
+         targets: [68]
+       }
+      ],
       "columns": [
         {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, 'className': 'left-text', 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).html("<a href='"+DataObject['PlayerTeamHref']+"'><img class='worldTeamStatLogo padding-right' src='"+DataObject['playerteamseason__TeamSeasonID__TeamID__TeamLogoURL']+"'/>"+StringValue+"</a>");
@@ -530,6 +606,10 @@ function GetPlayerStats(WorldID, data){
           {"data": "playerseasonskill__KickPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "playerseasonskill__KickAccuracy_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
           {"data": null, "sortable": false, 'searchable': false, 'className': 'details-control',   "defaultContent": ''},
+          {"data": null, 'visible': false,"sortable": false, 'searchable': false,   "defaultContent": ''},
+          {"data": null, 'visible': false,"sortable": false, 'searchable': false,  'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
+            $(td).html(PositionGroupMap[DataObject['PositionID__PositionAbbreviation']]);
+          }},
       ],
       'order': [[ 4, "desc" ]],
   });

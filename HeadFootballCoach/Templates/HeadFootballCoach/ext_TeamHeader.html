@@ -12,7 +12,7 @@
     <span class='teamTeamName'>
       {{team.TeamNickname}}
     </span>
-    <span class='teamRecord'>
+    <span class='teamRecord hide-small'>
       {{team.CurrentTeamSeason.Wins}} - {{team.CurrentTeamSeason.Losses}}
     </span>
     <div class='teamOverviewInfo'>
@@ -27,7 +27,7 @@
       {% endfor %}
     </div>
   </div>
-  <div class="team-header-color-right align-middle" style='background-color: #{{team.TeamColor_Primary_HEX}}; border-left-color: #{{page.SecondaryColor}};'>
+  <div class="team-header-color-right align-middle hide-small" style='background-color: #{{team.TeamColor_Primary_HEX}}; border-left-color: #{{page.SecondaryColor}};'>
   </div>
 
 </div>

@@ -23,7 +23,6 @@ from . import views
 urlpatterns = [
     path('', views.Page_Index, name='index'),
     path('World/<int:WorldID>', views.Page_World, name='World'),
-    path('World/<int:WorldID>/Teams/', views.Page_Teams, name='Teams'),
     path('World/<int:WorldID>/Team/<int:TeamID>/', views.Page_Team, name='Team'),
     path('World/<int:WorldID>/Team/<int:TeamID>/History/', views.Page_TeamHistory, name='TeamHistory'),
     path('World/<int:WorldID>/Team/<int:TeamID>/Roster/', views.Page_TeamRoster, name='TeamRoster'),
@@ -37,7 +36,6 @@ urlpatterns = [
     path('World/<int:WorldID>/Season/<int:SeasonStartYear>/', views.Page_Season, name='Season'),
     path('World/<int:WorldID>/Conferences/<int:ConferenceID>/', views.Page_Conferences, name='Conferences'),
     path('World/<int:WorldID>/Conferences/', views.Page_Conferences, name='Conferences'),
-    path('World/<int:WorldID>/Top25/', views.Page_Top25, name='Top25'),
     path('World/<int:WorldID>/Awards/', views.Page_Awards, name='Awards'),
     path('World/<int:WorldID>/PlayerStats/', views.Page_PlayerStats, name='PlayerStats'),
     path('World/<int:WorldID>/PlayerStats/Team/<int:TeamID>/', views.Page_PlayerStats, name='PlayerStats'),
@@ -100,8 +98,6 @@ urlpatterns = [
 
     path('audit/', views.Page_Audit, name='Audit'),
     path('admin/', admin.site.urls),
-    path('XFLScores/', views.XFLScores),
-    path('TestStreaming/', views.TestStreaming),
 
 ]
 

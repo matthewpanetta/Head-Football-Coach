@@ -2,7 +2,7 @@
 
 from ..models import SubPosition, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerSeasonSkill
 import os
-from ..utilities import Max
+from ..utilities import Max, WeightedProbabilityChoice
 from datetime import timedelta, date
 import random
 import time
@@ -678,7 +678,7 @@ def import_Conference(File, WorldID, LeagueID):
 def import_Team( File, WorldID, LeagueID):
 
 
-    JerseyOptions = ["football"]
+    JerseyOptions = {"football": 7, 'football3': 1, 'football4': 1, 'football5': 1}
 
     f = open(File, 'r', encoding='utf-8-sig')
 
@@ -734,7 +734,7 @@ def import_Team( File, WorldID, LeagueID):
                 CityToPopulate = CityList[0]
             LineDict['CityID'] = CityToPopulate
             LineDict['WorldID'] = WorldID
-            LineDict['TeamJerseyStyle'] = JerseyOptions[0]
+            LineDict['TeamJerseyStyle'] = WeightedProbabilityChoice(JerseyOptions, 'football')
             #LineDict['TeamJerseyInvert'] = random.choice([True, False,False,False,False])
 
             Name = LineDict['TeamName'] + ' ' + LineDict['TeamNickname']

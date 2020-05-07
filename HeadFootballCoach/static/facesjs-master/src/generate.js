@@ -144,6 +144,77 @@ var svgs = {
   "jersey": {
     "football": "<path class=\"football\" d=\"M100 500s70 90 100 90 100-90 100-90 30 10 60 10c0 0 30 10 30 40s10 60 10 60H0s10-30 10-60 30-40 30-40c30 0 60-10 60-10\" fill=\"$[primary]\" stroke=\"#000\" stroke-width=\"6\"/><path class=\"shoulderpads\" d=\"M370 560s-61 7.89-70-10M30 560s61 7.89 70-10\" fill=\"none\" stroke=\"#000\" stroke-width=\"3\"/><path class=\"collar-outline\" d=\"M100 500s70 90 100 90 100-90 100-90\" fill=\"none\" stroke=\"#000\" stroke-width=\"16\"/><path class=\"collar-accent\" d=\"M100 500s70 90 100 90 100-90 100-90\" fill=\"none\" stroke=\"$[accent]\" stroke-width=\"12\"/><path class=\"collar-secondary\" d=\"M100 500s70 90 100 90 100-90 100-90\" fill=\"none\" stroke=\"$[secondary]\" stroke-width=\"6\"/>",
     "football2": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 600' width='400' height='600'><g id='football'><path id='football' class='football' d='M100 500C100 500 170 590 200 590C230 590 300 500 300 500C300 500 330 510 360 510C360 510 390 520 390 550C390 580 400 610 400 610L0 610C0 610 10 580 10 550C10 520 40 510 40 510C70 510 100 500 100 500' fill='$[primary]' stroke='#000000' stroke-width='6'/>    		<path id='shoulder-stripe-1' fill='$[secondary]' stroke='$[accent]' stroke-width='.75' d='M 324.00,505.75               C 324.00,505.75 353.75,510.62 353.75,510.62                 353.75,510.62 354.38,573.88 354.38,573.88                 354.38,573.88 324.00,573.75 324.00,573.75                 324.00,573.75 324.00,505.75 324.00,505.75 Z'></path>    		 <path id='shoulder-stripe-2' fill='$[secondary]' stroke='$[accent]' stroke-width='.75' d='M 77.00,506.00                C 77.00,506.00 46.25,510.50 46.25,510.50                  46.25,510.50 46.00,573.50 46.00,573.50                  46.00,573.50 77.75,573.50 77.75,573.50                  77.75,573.50 77.00,506.00 77.00,506.00 Z'></path>    		<path id='football-outline' class='football' d='M100 500C100 500 170 590 200 590C230 590 300 500 300 500C300 500 330 510 360 510C360 510 390 520 390 550C390 580 400 610 400 610L0 610C0 610 10 580 10 550C10 520 40 510 40 510C70 510 100 500 100 500' fill-opacity='0' stroke='#000000' stroke-width='6'/>   		<path id='collar-outline' class='collar-outline' d='M100 500C100 500 170 590 200 590C230 590 300 500 300 500' fill='none' stroke='#000000' stroke-width='16'/>    		<path id='collar-accent' class='collar-accent' d='M100 500C100 500 170 590 200 590C230 590 300 500 300 500' fill='none' stroke='$[accent]' stroke-width='12'/>    		<path id='collar-secondary' class='collar-secondary' d='M100 500C100 500 170 590 200 590C230 590 300 500 300 500' fill='none' stroke='$[secondary]' stroke-width='6'/>    	</g>    </svg>",
+    "football3": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+    	<g id="football">
+    		<path id="football" class="football" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500C300 500 330 510 360 510C360 510 390 520 390 550C390 580 400 610 400 610L0 610C0 610 10 580 10 550C10 520 40 510 40 510C70 510 100 500 100 500" fill="$[primary]" stroke="#000000" stroke-width="6"/>
+    		<path id="shoulder-stripes" d="M66.529,600L14.405,531.622C19.12,522.645 26.691,516.905 32.378,513.613L66.529,600ZM368.86,514.352C374.632,517.898 381.869,523.815 386.203,532.831L335,600L368.86,514.352Z" style="fill:$[secondary];"/>
+    		<path id="football-outline" class="football" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500C300 500 330 510 360 510C360 510 390 520 390 550C390 580 400 610 400 610L0 610C0 610 10 580 10 550C10 520 40 510 40 510C70 510 100 500 100 500" fill-opacity="0" stroke="#000000" stroke-width="6"/>
+    		<path id="shoulderpads" class="shoulderpads" d="M370 560C370 560 309 567.89 300 550M30 560C30 560 91 567.89 100 550" fill="none" stroke="#000000" stroke-width="3"/>
+    		<path id="collar-outline" class="collar-outline" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500" fill="none" stroke="#000000" stroke-width="16"/>
+    		<path id="collar-accent" class="collar-accent" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500" fill="none" stroke="$[accent]" stroke-width="12"/>
+    		<path id="collar-secondary" class="collar-secondary" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500" fill="none" stroke="$[secondary]" stroke-width="6"/>
+    	</g>
+    </svg>`,
+    "football4": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+    	<g id="football">
+    		<path id="football" class="football" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500C300 500 330 510 360 510C360 510 390 520 390 550C390 580 400 610 400 610L0 610C0 610 10 580 10 550C10 520 40 510 40 510C70 510 100 500 100 500" fill="$[primary]" stroke="#000000" stroke-width="6"/>
+        <g id="Shoulder-Strip" transform="matrix(1.2,0,0,1.575,-6.72614,-293.25)">
+            <g id="Accent" style='fill:$[accent];'>
+                <g id="Jersey1" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <rect x="58" y="42.985" width="12" height="63" style="fill-rule:nonzero;"/>
+                </g>
+                <g id="Jersey2" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <rect x="356" y="42.985" width="12" height="63" style="fill-rule:nonzero;"/>
+                </g>
+            </g>
+            <g id="Secondary" style='fill:$[secondary];'>
+                <g id="Jersey3" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <rect x="70" y="42.985" width="12" height="63" style="fill-rule:nonzero;"/>
+                </g>
+                <g id="Jersey4" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <path d="M52.369,42.985L58,42.985L58,105.985L46,105.985L46,45.895C49.721,43.868 52.369,42.985 52.369,42.985Z" style="fill-rule:nonzero;"/>
+                </g>
+                <g id="Jersey5" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <rect x="344" y="42.985" width="12" height="63" style="fill-rule:nonzero;"/>
+                </g>
+                <g id="Jersey6" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <path d="M372.369,42.985C372.369,42.985 375.628,44.071 380,46.603L380,105.985L368,105.985L368,42.985L372.369,42.985Z" style="fill-rule:nonzero;"/>
+                </g>
+            </g>
+        </g>
+    		<path id="football-outline" class="football" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500C300 500 330 510 360 510C360 510 390 520 390 550C390 580 400 610 400 610L0 610C0 610 10 580 10 550C10 520 40 510 40 510C70 510 100 500 100 500" fill-opacity="0" stroke="#000000" stroke-width="6"/>
+    		<path id="shoulderpads" class="shoulderpads" d="M370 560C370 560 309 567.89 300 550M30 560C30 560 91 567.89 100 550" fill="none" stroke="#000000" stroke-width="3"/>
+    		<path id="collar-outline" class="collar-outline" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500" fill="none" stroke="#000000" stroke-width="16"/>
+    		<path id="collar-accent" class="collar-accent" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500" fill="none" stroke="$[accent]" stroke-width="12"/>
+    		<path id="collar-secondary" class="collar-secondary" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500" fill="none" stroke="$[secondary]" stroke-width="6"/>
+    	</g>
+    </svg>`,
+    "football5": `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+    	<g id="football">
+    		<path id="football" class="football" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500C300 500 330 510 360 510C360 510 390 520 390 550C390 580 400 610 400 610L0 610C0 610 10 580 10 550C10 520 40 510 40 510C70 510 100 500 100 500" fill="$[primary]" stroke="#000000" stroke-width="6"/>
+        <g id="Shoulder-Strip" serif:id="Shoulder Strip" transform="matrix(1.2,0,0,1.575,-6.72614,-293.25)">
+            <g id="Secondary" style='fill:$[secondary];'>
+                <g id="Jersey3" serif:id="Jersey" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <rect x="70" y="42.985" width="12" height="63" style="fill-rule:nonzero;"/>
+                </g>
+                <g id="Jersey4" serif:id="Jersey" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <path d="M52.369,42.985L58,42.985L58,105.985L46,105.985L46,45.895C49.721,43.868 52.369,42.985 52.369,42.985Z" style="fill-rule:nonzero;"/>
+                </g>
+                <g id="Jersey5" serif:id="Jersey" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <rect x="344" y="42.985" width="12" height="63" style="fill-rule:nonzero;"/>
+                </g>
+                <g id="Jersey6" serif:id="Jersey" transform="matrix(0.833333,0,0,0.634921,-4.70263,482.708)">
+                    <path d="M372.369,42.985C372.369,42.985 375.628,44.071 380,46.603L380,105.985L368,105.985L368,42.985L372.369,42.985Z" style="fill-rule:nonzero;"/>
+                </g>
+            </g>
+        </g>
+    		<path id="football-outline" class="football" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500C300 500 330 510 360 510C360 510 390 520 390 550C390 580 400 610 400 610L0 610C0 610 10 580 10 550C10 520 40 510 40 510C70 510 100 500 100 500" fill-opacity="0" stroke="#000000" stroke-width="6"/>
+    		<path id="shoulderpads" class="shoulderpads" d="M370 560C370 560 309 567.89 300 550M30 560C30 560 91 567.89 100 550" fill="none" stroke="#000000" stroke-width="3"/>
+    		<path id="collar-outline" class="collar-outline" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500" fill="none" stroke="#000000" stroke-width="16"/>
+    		<path id="collar-accent" class="collar-accent" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500" fill="none" stroke="$[accent]" stroke-width="12"/>
+    		<path id="collar-secondary" class="collar-secondary" d="M100 500C100 500 170 590 200 590C230 590 300 500 300 500" fill="none" stroke="$[secondary]" stroke-width="6"/>
+    	</g>
+    </svg>`,
     "jersey": "<path d=\"M80 610s10-30 10-90l20-10s10 80 90 80 90-80 90-80l20 10c0 60 10 90 10 90H80z\" fill=\"$[primary]\" stroke=\"#000\" stroke-width=\"6\"/>",
     "jersey2": "<path class=\"jersey\" d=\"M80 610s10-30 10-90l20-10s10 80 90 80 90-80 90-80l20 10c0 60 10 90 10 90H80z\" fill=\"$[primary]\" stroke=\"#000\" stroke-width=\"6\"/><path class=\"outline\" d=\"M90 520c0 60-10 90-10 90m230-90c0 60 10 90 10 90M110 510s10 80 90 80 90-80 90-80\" fill=\"none\" stroke=\"#000\" stroke-width=\"16\"/><path class=\"accent\" d=\"M90 520c0 60-10 90-10 90m230-90c0 60 10 90 10 90M110 510s10 80 90 80 90-80 90-80\" fill=\"none\" stroke=\"$[accent]\" stroke-width=\"12\"/><path class=\"secondary\" d=\"M90 520c0 60-10 90-10 90m230-90c0 60 10 90 10 90M110 510s10 80 90 80 90-80 90-80\" fill=\"none\" stroke=\"$[secondary]\" stroke-width=\"6\"/>",
     "jersey3": "<path class=\"primary\" d=\"M80 610s10-30 10-90l20-10s10 80 90 80 90-80 90-80l20 10c0 60 10 90 10 90H80z\" fill=\"$[primary]\" stroke=\"#000\" stroke-width=\"6\"/><path class=\"secondary\" d=\"M85 575v25h230v-25h-65s-20 15-50 15-50-15-50-15H85z\" fill=\"$[secondary]\"/><path class=\"outline\" d=\"M90 520c0 60-10 90-10 90m230-90c0 60 10 90 10 90M110 510s10 80 90 80 90-80 90-80\" fill=\"none\" stroke=\"#000\" stroke-width=\"16\"/><path class=\"stripe-primary\" d=\"M90 520c0 60-10 90-10 90m230-90c0 60 10 90 10 90M110 510s10 80 90 80 90-80 90-80\" fill=\"none\" stroke=\"$[primary]\" stroke-width=\"12\"/><path class=\"stripe-accent\" d=\"M90 520c0 60-10 90-10 90m230-90c0 60 10 90 10 90M110 510s10 80 90 80 90-80 90-80\" fill=\"none\" stroke=\"$[accent]\" stroke-width=\"6\"/>",

@@ -38,7 +38,7 @@
       <div class="tab-content" style='display:block;' id="nav-overview">
         <div class="w3-display-container">
           <div class="w3-row-padding">
-            <div class="w3-col s8 w3-display-container">
+            <div class="w3-col l8 m12 w3-display-container">
               <div class="w3-row">
                 <div class="w3-card w3-light-grey w3-col s12">
 
@@ -64,8 +64,8 @@
                   </div>
                   <div class="w3-row teamScheduleGameDashboard w3-display-container w3-light-grey">
                     {% for game in games%}
-                    <div BoxScoreGameID="{{game.GameID}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col s8 w3-display-container w3-white w3-border w3-border-grey w3-hide">
-                      <div class="w3-col s7 height100 w3-display-container">
+                    <div BoxScoreGameID="{{game.GameID}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col l12 mw600 w3-display-container w3-white w3-border w3-border-grey w3-hide">
+                      <div class="w3-col l7 m7 s12 height100 w3-display-container">
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.AwayTeam.TeamColor_Primary_HEX}}'></div>
                           <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
@@ -100,7 +100,7 @@
                           </a>
                         </div>
                       </div>
-                      <div class="w3-col w3-display-container s5 height100">
+                      <div class="w3-col w3-display-container l5 m5 height100 hide-small">
                         <div class="w3-bar boxscore-bar" id="nav-tab-{{game.GameID}}">
                           <button TeamID="{{game.HomeTeam.TeamID}}" GameID="{{game.GameID}}" class="w3-bar-item boxscore-tab w3-button tab selected-boxscore-tab" id="boxscore-hometeam-tab">{{game.HomeTeam.Abbreviation}}</button>
                           <button TeamID="{{game.AwayTeam.TeamID}}" GameID="{{game.GameID}}" class="w3-bar-item boxscore-tab w3-button tab" id="boxscore-awayteam-tab">{{game.AwayTeam.Abbreviation}}</button>
@@ -255,7 +255,7 @@
                 </div>
               </div>
             </div>
-            <div class="w3-col  s4">
+            <div class="w3-col l4 m6">
               <div class="w3-row">
 
 
@@ -274,7 +274,7 @@
                     <tr class='{{standingTeam.BoldTeam}}'>
                       <td>
                         <a href="{{standingTeam.TeamHref}}">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamLogoURL}}" />
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamLogoURL_50}}" />
                           {{standingTeam.NationalRankDisplay}} {{standingTeam.TeamName }}
                         </a>
                       </td>
@@ -327,7 +327,7 @@
       <div class="tab-content" style='display:none;' id="nav-info">
         <div class='w3-display-container'>
           <div class="w3-row-padding">
-            <div class="w3-col s6">
+            <div class="w3-col l12 mw800">
               <div class="w3-card">
                 <div class="team-primary-background-bar">
                   Team Info

@@ -21,11 +21,6 @@ function getCookie(name) {
 var csrftoken = getCookie('csrftoken');
 
 
-function Channel(){
-
-}
-
-
 $(document).ready(function() {
 
   var DataPassthruHolder = $('#DataPassthru')[0];
@@ -33,8 +28,7 @@ $(document).ready(function() {
   var PrimaryColor = $(DataPassthruHolder).attr('PrimaryColor');
   var SecondaryColor = $(DataPassthruHolder).attr('SecondaryColor');
 
-
-  Channel();
+  console.log('In Action')
 
   $('#SimDayModalCloseButton').on('click', function(){
     console.log('Clicked on indexCreateWorldModalCloseButton!!', this);

@@ -29,8 +29,9 @@ def CalculateGameScore(PlayerGameStats):
         {'Stat': 'PAS_Yards', 'PointToStatRatio': 1.0 / 25, 'Display': ' pass yards'},
         {'Stat': 'PAS_TD',    'PointToStatRatio': 4.0 / 1, 'Display': ' pass TDs'},
         {'Stat': 'PAS_Completions', 'PointToStatRatio': 1.0 / 10, 'Display': ' comp'},
+        {'Stat': 'REC_Receptions', 'PointToStatRatio': 1.0 / 2, 'Display': ' rec.'},
         {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 10, 'Display': ' rec. yards'},
-        {'Stat': 'REC_TD',    'PointToStatRatio': 6.0 / 1, 'Display': ' rec. TDs'},
+        {'Stat': 'REC_TD',    'PointToStatRatio': 5.0 / 1, 'Display': ' rec. TDs'},
         {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1, 'Display': ' picks'},
         {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 4, 'Display': ' sacked'},
         {'Stat': 'DEF_Sacks',  'PointToStatRatio': 2.5 / 1, 'Display': ' sacks'},
@@ -78,7 +79,7 @@ def YardsBound(BallSpot, YardsThisPlay):
 def DeterminePlayChoice(Down=4, YardsToGo=10, BallSpot=1, Period=1, OffensivePointDifferential = 0, SecondsLeftInPeriod = 60, IsCloseGame=False, IsLateGame=False, HalfEndPeriod = True, FinalPeriod = True):
     DrivePlayObject = DrivePlay(Down=Down, YardsToGo=YardsToGo, BallSpot=BallSpot,Period=Period, OffensivePointDifferential=OffensivePointDifferential, SecondsLeftInPeriod=SecondsLeftInPeriod)
     PlayClockUrgency = 0
-    PlayChoices = {'Run': 45,'Pass': 55,'Punt': 0,'Field Goal': 0}
+    PlayChoices = {'Run': 50,'Pass': 50,'Punt': 0,'Field Goal': 0}
 
     if (Period not in [1,3] and SecondsLeftInPeriod <= (3 * 60)) or (Period >= 4 and SecondsLeftInPeriod <= (5 * 60)):
         #run out clock end of first half
@@ -191,7 +192,7 @@ def DeterminePlayChoice(Down=4, YardsToGo=10, BallSpot=1, Period=1, OffensivePoi
                 PlayChoices = {'Run': 5,'Pass': 15,'Punt': 80,'Field Goal': 0}
     else:
         PlayClockUrgency = 0
-        PlayChoices = {'Run': 45,'Pass': 55,'Punt': 0,'Field Goal': 0}
+        PlayChoices = {'Run': 50,'Pass': 50,'Punt': 0,'Field Goal': 0}
 
 
     DrivePlayObject.Run_Prob = PlayChoices['Run']
@@ -274,10 +275,10 @@ def GameSim(game):
 
     CoachDict = {
         HomeTeam: {'Coach': HomeHeadCoach.CoachID.__dict__, 'CoachTeamSeason': HomeHeadCoach.__dict__, 'TeamSeasonStrategy': HomeTeamSeason.teamseasonstrategy_set.all().first().__dict__},
-        AwayTeam: {'Coach': AwayHeadCoach.CoachID.__dict__, 'CoachTeamSeason': AwayHeadCoach.__dict__, 'TeamSeasonStrategy': HomeTeamSeason.teamseasonstrategy_set.all().first().__dict__}
+        AwayTeam: {'Coach': AwayHeadCoach.CoachID.__dict__, 'CoachTeamSeason': AwayHeadCoach.__dict__, 'TeamSeasonStrategy': AwayTeamSeason.teamseasonstrategy_set.all().first().__dict__}
     }
 
-    AdjustedOverallPowerFactor = 2
+    AdjustedOverallPowerFactor = 1.5
 
     HomePlayerTeamSeasonDepthChartDict = {}
     for P in HomePlayerTeamSeasonDepthChart:
@@ -288,10 +289,10 @@ def GameSim(game):
         AwayPlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']] = P
 
     PassingStrategy_PassRushModifier = {
-        'Deep Pass': 1.3,
-        'Moderate Deep': 1.2,
-        'Balanced': 1.15,
-        'Moderate Short': 1.05,
+        'Deep Pass': 1.1,
+        'Moderate Deep': 1.05,
+        'Balanced': 1,
+        'Moderate Short': .975,
         'Short': .95
     }
 
@@ -304,32 +305,32 @@ def GameSim(game):
     }
 
     PassingStrategy_CompletionModifier = {
-        'Deep Pass': .85,
-        'Moderate Deep': .925,
+        'Deep Pass': .9,
+        'Moderate Deep': .95,
         'Balanced': 1,
-        'Moderate Short': 1.075,
-        'Short': 1.15
+        'Moderate Short': 1.05,
+        'Short': 1.1
     }
 
     RunningBackStrategy = {
-        'Deep Pass': .85,
-        'Moderate Deep': .925,
+        'Deep Pass': .9,
+        'Moderate Deep': .95,
         'Balanced': 1,
-        'Moderate Short': 1.075,
-        'Short': 1.15
+        'Moderate Short': 1.05,
+        'Short': 1.1
     }
 
 
     BlitzStrategy = {
-        'Heavy Blitz': 1.2,
-        'Blitz': 1.1,
+        'Heavy Blitz': 1.1,
+        'Blitz': 1.05,
         'Balanced': 1,
-        'Some Blitz': .9,
-        'No Blitz': .8
+        'Some Blitz': .95,
+        'No Blitz': .9
     }
 
     PositionEnergyMap = {
-        'QB': {'OnFieldEnergyDrain': .0125, 'SubOutThreshold': .5, 'SubInThreshold': .55, 'EnergyImpactOnOverall': (1/7.0)},
+        'QB': {'OnFieldEnergyDrain': .0075, 'SubOutThreshold': .5, 'SubInThreshold': .55, 'EnergyImpactOnOverall': (1/12.0)},
         'RB': {'OnFieldEnergyDrain': .0175 , 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/5.0)},
         'FB': {'OnFieldEnergyDrain': .015, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/5.0)},
         'WR': {'OnFieldEnergyDrain': .013, 'SubOutThreshold': .75, 'SubInThreshold': .8, 'EnergyImpactOnOverall': (1/6.0)},
@@ -390,8 +391,8 @@ def GameSim(game):
         CoachDict[CT]['Tendencies'] = {}
         CoachDict[CT]['Tendencies']['FourthDownAggressiveness'] = ( TSS['SituationalAggressivenessTendency'] / 10.0)
         CoachDict[CT]['Tendencies']['TwoPointAggressiveness'] = (TSS['SituationalAggressivenessTendency'] / 10.0)
-        CoachDict[CT]['Tendencies']['Playcall_PassRatio'] = (TSS['PlaycallPassTendency'] / 55.0) ** 1.1
-        CoachDict[CT]['Tendencies']['Playcall_RunRatio'] = ((100 - TSS['PlaycallPassTendency']) / 45.0) ** 1.1
+        CoachDict[CT]['Tendencies']['Playcall_PassRatio'] = (TSS['PlaycallPassTendency'] / 50.0) ** 1.1
+        CoachDict[CT]['Tendencies']['Playcall_RunRatio'] = ((100 - TSS['PlaycallPassTendency']) / 50.0) ** 1.1
         CoachDict[CT]['Tendencies']['PlayClockAggressiveness'] = (TSS['PlayClockAggressivenessTendency'] / 10.0)
         CoachDict[CT]['Tendencies']['PassingStrategy'] = (TSS['PassingStrategy'])
         CoachDict[CT]['Tendencies']['RunningBackStrategy'] = (TSS['RunningBackStrategy'])
@@ -612,7 +613,7 @@ def GameSim(game):
 
         AllPlayers[PlayerID]['PlayerGameStat'].TeamGameID = ThisTeamGame
         AllPlayers[PlayerID]['Energy'] = 1
-        AllPlayers[PlayerID]['AdjustedOverallRating'] = 100
+        AllPlayers[PlayerID]['AdjustedOverallRating'] = int(AllPlayers[PlayerID]['PlayerSkills']['OverallRating'] ** AdjustedOverallPowerFactor)
 
     GameDict = {}
     for T in [{'Team': HomeTeam, 'TeamGame': HomeTeamGame, 'TeamSeason': HomeTeamSeason}, {'Team':AwayTeam, 'TeamGame': AwayTeamGame, 'TeamSeason': AwayTeamSeason}]:
@@ -736,9 +737,9 @@ def GameSim(game):
             DrivePlayObject = PlayDetermination['DrivePlayObject']
             DrivePlayObject.GameID = game
             DrivePlayObject.WorldID = CurrentWorld
+
             PlayChoices['Run'] = int(PlayChoices['Run'] * CoachDict[OffensiveTeam]['Tendencies']['Playcall_RunRatio'])
             PlayChoices['Pass'] = int(PlayChoices['Pass'] * CoachDict[OffensiveTeam]['Tendencies']['Playcall_PassRatio'])
-
 
             if PlayChoices is None:
                 print('Could not find play. Period:', Period, 'BallSpot:', BallSpot, 'Down:', Down, 'YardsToGo:', YardsToGo, 'SecondsLeftInPeriod:', SecondsLeftInPeriod)
@@ -930,11 +931,15 @@ def GameSim(game):
                 QuarterbackPlayerID = OffensiveTeamPlayers['QB'][0]
                 AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_Attempts += 1
                 GameDict[OffensiveTeam]['TeamGame'].PAS_Attempts += 1
-                PassGameModifier = ((3.0 * QuarterbackTalent) + ReceiverTalent + OffensiveLineTalent) / ((DefensiveLineTalent ** BlitzStrategy[BlitzingStrategy]) + (SecondaryTalent ** (1/ BlitzStrategy[BlitzingStrategy]))) / 2.5
+                PassGameModifier = (((3.0 * QuarterbackTalent) + ReceiverTalent + OffensiveLineTalent) / ((DefensiveLineTalent ** BlitzStrategy[BlitzingStrategy]) + (SecondaryTalent ** (1/ BlitzStrategy[BlitzingStrategy]))) / 2.5) ** .8
+
+                if (PassGameModifier > 1.2) or (PassGameModifier < .8):
+                    print('PassGameModifier', PassGameModifier, 'QuarterbackTalent',QuarterbackTalent, 'ReceiverTalent',ReceiverTalent, 'OffensiveLineTalent',OffensiveLineTalent, 'DefensiveLineTalent',DefensiveLineTalent, 'SecondaryTalent',SecondaryTalent, 'PostModRate', ((.7024 * PassingStrategy_CompletionModifier[PassingStrategy]) * (PassGameModifier ** .9)) / BlitzStrategy[BlitzingStrategy])
+
                 PassRushModifier = OffensiveLineTalent * 1.0 / DefensiveLineTalent
                 PassRushModifier = PassRushModifier ** (PassingStrategy_PassRushModifier[PassingStrategy] * BlitzStrategy[BlitzingStrategy])
                 LinemanSackAllowedPlayerID = None
-                OffensiveLinemen = [(u, ((110 ** AdjustedOverallPowerFactor) - AllPlayers[u]['AdjustedOverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
+                OffensiveLinemen = [(u, int((110 ** AdjustedOverallPowerFactor) - AllPlayers[u]['AdjustedOverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
 
                 WideReceivers = [(u, AllPlayers[u]['AdjustedOverallRating'] ** 3) for u in OffensiveTeamPlayers['WR'] ] + [(u, int(AllPlayers[u]['AdjustedOverallRating'] ** 2.25)) for u in OffensiveTeamPlayers['RB'] ]
                 WideReceiverPlayer = WeightedProbabilityChoice(WideReceivers, WideReceivers[0])
