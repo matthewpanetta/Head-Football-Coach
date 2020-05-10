@@ -19,11 +19,17 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
               <a href-field="PlayerTeamHref"><span data-field="playerteamseason__TeamSeasonID__TeamID__TeamName"></span> <span data-field="playerteamseason__TeamSeasonID__TeamID__TeamNickname"></span></a>
               | #<span data-field="JerseyNumber"></span> | <span data-field="Position"></span>
             </div>
+            <div class='playerOverviewInfo italic player-captain'>
+              <span html-field="TeamCaptainIcon"></span><span data-field="TeamCaptain"></span>
+            </div>
+
           </div>
           <ul class='playerHeaderBio' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
             <li class='playerHeaderClass'>
               <div class='playerHeaderBioDescription'>CLASS</div>
-              <div data-field="ClassID__ClassName"></div>
+              <div class="player-class">
+                <span data-field="ClassID__ClassName"></span><span  html-field="RedshirtIcon"></span>
+              </div>
             </li>
             <li class='playerHeaderHtWt'>
               <div class='playerHeaderBioDescription'>HT/WT</div>
@@ -65,8 +71,8 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
                     recruting here
                   </div>
                   <div class="w3-container w3-hide highlight-actions w3-row-padding">
-                    <ul class='no-list-style'>
-                    </ul>
+                    <table class=' w3-table' style='width: 50%;'>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -135,7 +141,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
       if (Object.keys(data.Actions).length > 0){
         $(div).find('.highlight-actions-tab').removeClass('w3-hide');
-        var Container = $(div).find('.highlight-actions ul')
+        var Container = $(div).find('.highlight-actions table')
       }
       else {
         $(div).find('.highlight-actions-tab').addClass('w3-hide');
@@ -146,8 +152,11 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
       $.each(data.Actions, function(ActionCount, Action){
         console.log('ActionName, Action', ActionCount, Action, Container)
-        $('<li><button class="w3-button">'+Action.Icon + ' ' + Action.Display+' </button></li>').appendTo(Container);
 
+        $(`<tr>
+            <td style='width:10%;'>`+Action.Icon+`</td>
+            <td confirm-info='`+Action.ConfirmInfo+`' response-type='refresh' background-ajax='`+Action.AjaxLink+`' class="w3-button `+Action.Class+` text-left"> `+Action.Display+` </td>
+          </tr>`).appendTo(Container);
       });
 
 
@@ -193,6 +202,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
           BuildFace(val, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle'], data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides=overrides, DOMID = DOMID);//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
         }
         else {
+          $(div).find('[html-field="'+key+'"]').html(val);
           $(div).find('[data-field="'+key+'"]').text(val);
           $(div).find('[src-field="'+key+'"]').attr('src', val);
           $(div).find('[href-field="'+key+'"]').attr('href',val);
@@ -430,8 +440,9 @@ function GetPlayerStats(WorldID, data){
                                 return returnVal;
                             },"sortable": true, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
                                 $(td).html(StringValue);
+                                $(td).append('<span class="player-class"></span>')
                                 if (DataObject.playerteamseason__RedshirtedThisSeason) {
-                                  $(td).append('<i class="fas fa-tshirt" style="color: red; margin-left: 4px;"></i>')
+                                  $(td).find('.player-class').append('<i class="fas fa-tshirt w3-tooltip player-class-icon" style="color: red; margin-left: 4px;"><span style="position:absolute;left:0;bottom:18px" class="w3-text">Player Redshirted</span></i>')
                                 }
                             }},
           {"data": "PositionID__PositionAbbreviation", render: function ( data, type, row ) {

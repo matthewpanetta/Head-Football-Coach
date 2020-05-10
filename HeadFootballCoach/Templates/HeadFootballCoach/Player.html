@@ -42,13 +42,18 @@
           {% endif %}
           | #{{player.JerseyNumber}} | {{player.Position}}
         </div>
+        <div  class='playerOverviewInfo player-captain'>
+          {% if TeamCaptain%}
+          <i class="fas fa-crown w3-text-green"></i><span class='italic'>Team Captain</span>
+          {% endif %}
+        </div>
       </div>
       <ul class='playerHeaderBio' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
         <li class='playerHeaderClass'>
           <div class='playerHeaderBioDescription'>CLASS</div>
-          <div>{{player.ClassID__ClassName}}
+          <div class='player-class'>{{player.ClassID__ClassName}}
             {% if RedshirtedThisSeason == True %}
-              <i class="fas fa-tshirt" style="color: red; margin-left: 4px;"></i>
+              <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>
             {% endif %}
           </div>
         </li>
@@ -128,9 +133,22 @@
             </div>
             <div class='w3-col l6 m12'>
               {% if playerTeam.IsUserTeam%}
-              <div class="w3-card">
-                <h2>Actions</h2>
-              </div>
+              {% if Actions%}
+              <div class="w3-card w3-margin-bottom">
+                <div class="w3-bar team-primary-background-bar">
+                  Actions
+                </div>
+                <table class=' w3-table' style='width: 50%;'>
+                  {% for Action in Actions%}
+                  <tr>
+                    <td style='width:10%;'>{{Action.Icon|safe}}</td>
+                    <td confirm-info='{{Action.ConfirmInfo}}' response-type='refresh' background-ajax='{{Action.AjaxLink}}' class="w3-button {{Action.Class}} text-left"> {{Action.Display}} </td>
+                  </tr>
+                  {% endfor %}
+                </table>
+
+            </div>
+              {% endif %}
               {% endif %}
               <div class="w3-card">
                 <div class="w3-bar team-primary-background-bar">

@@ -96,10 +96,10 @@ def DeterminePlayChoice(Down=4, YardsToGo=10, BallSpot=1, Period=1, OffensivePoi
                     if BallSpot > 70 and OffensivePointDifferential in [-3, -2, -1, 0, 1, 4,5,6,11,12,13,14]:
                         PlayChoices = {'Run': 0,'Pass': 0,'Punt': 0,'Field Goal': 100}
                     elif OffensivePointDifferential < -3:
-                        if YardsToGo <= 1:
+                        if YardsToGo <= 2:
                             PlayChoices = {'Run': 90,'Pass': 10,'Punt': 0,'Field Goal': 0}
                         elif YardsToGo >1 and YardsToGo <= 4:
-                            PlayChoices = {'Run': 50,'Pass': 50,'Punt': 0,'Field Goal': 0}
+                            PlayChoices = {'Run': 60,'Pass': 40,'Punt': 0,'Field Goal': 0}
                         else:
                             PlayChoices = {'Run': 0,'Pass': 100,'Punt': 0,'Field Goal': 0}
                     elif YardsToGo <= 2:

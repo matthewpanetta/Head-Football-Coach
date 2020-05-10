@@ -20,6 +20,154 @@ function getCookie(name) {
 }
 var csrftoken = getCookie('csrftoken');
 
+function PlayerAction(WorldID){
+
+  $(document).on('click', '.player-action', function(event){
+    var ActionTarget = $(event.target)[0];
+    ActionTarget = $(ActionTarget)
+
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        // if not safe, set csrftoken
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+
+    var Source = '';
+    var Action = '';
+    var ConfirmText = '';
+
+    var Path = $(ActionTarget).attr('background-ajax');
+    console.log('clicked on this ', ActionTarget.baseURI, ActionTarget[0].baseURI, ActionTarget.baseURL, ActionTarget[0].baseURL)
+    var SourcePath = String(ActionTarget[0].baseURI);
+
+    console.log('SourcePath', SourcePath, 'Path', Path)
+
+    if (SourcePath.indexOf('Player') != -1){
+      Source = 'PlayerPage'
+    }
+    else {
+      Source = 'PlayerCard'
+    }
+
+    if (Path.indexOf('Cut') != -1){
+      ConfirmText = 'Are you sure you want to cut '+$(ActionTarget).attr('confirm-info')+'? This cannot be undone.';
+      Action = 'Cut';
+    }
+    else if (Path.indexOf('Redshirt') != -1){
+      if (Path.indexOf('Remove') != -1){
+        ConfirmText = 'Are you sure you want to remove the redshirt of '+$(ActionTarget).attr('confirm-info')+'?';
+        Action = 'Remove Redshirt';
+      }
+      else if (Path.indexOf('Add') != -1){
+        ConfirmText = 'Are you sure you want to redshirt '+$(ActionTarget).attr('confirm-info')+'?';
+        Action = 'Add Redshirt';
+      }
+
+    }
+    else if (Path.indexOf('Captain') != -1){
+      if (Path.indexOf('Remove') != -1){
+        ConfirmText = 'Are you sure you want to remove '+$(ActionTarget).attr('confirm-info')+' as a captain?';
+        Action = 'Remove Captain';
+      }
+      else if (Path.indexOf('Add') != -1){
+        ConfirmText = 'Are you sure you make '+$(ActionTarget).attr('confirm-info')+' a captain?';
+        Action = 'Add Captain';
+      }
+    }
+
+    var UserConfirm = confirm(ConfirmText);
+    if (UserConfirm == true) {
+
+
+      $.ajax({
+        method: "POST",
+        url: Path,
+        data: {
+          csrfmiddlewaretoken: csrftoken
+        },
+        dataType: 'json',
+        success: function(res, status) {
+          console.log(res, status);
+          alert(res.message)
+
+          if (Source == 'PlayerPage') {
+            if (Action == 'Cut') {
+              window.location = '/World/'+WorldID;
+            }
+            else if (Action == 'Add Redshirt') {
+              $('.player-class').append('<i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>')
+              $(ActionTarget).text('Remove Redshirt');
+              $(ActionTarget).attr('background-ajax', Path.replace('Add', 'Remove'));
+            }
+            else if (Action == 'Remove Redshirt') {
+              $('.player-class-icon').remove();
+              $(ActionTarget).text('Redshirt player');
+              $(ActionTarget).attr('background-ajax', Path.replace('Remove', 'Add'));
+              //CHANGE BUTTON
+            }
+            else if (Action == 'Add Captain') {
+              $('.player-captain').html('<i class="fas fa-crown w3-text-green"></i><span class="italic">Team Captain</span>');
+              $(ActionTarget).text('Remove as Captain');
+              $(ActionTarget).attr('background-ajax', Path.replace('Add', 'Remove'));
+              //CHANGE BUTTON
+            }
+            else if (Action == 'Remove Captain') {
+              $('.player-captain').empty();
+              $(ActionTarget).text('Add as Captain');
+              $(ActionTarget).attr('background-ajax', Path.replace('Remove', 'Add'));
+              //CHANGE BUTTON
+            }
+          }
+          else {
+            var ParentRow = $(ActionTarget).closest('tr.teamTableBorder');
+            var ParentSourceRow = $(ActionTarget).closest('tr.teamTableBorder').prev();
+            if (Action == 'Cut') {
+              $(ParentSourceRow).remove();
+              $(ParentRow).remove();
+            }
+            else if (Action == 'Add Redshirt') {
+              $(ParentRow).find('.player-class').append('<i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>')
+              $(ParentSourceRow).find('.player-class').append('<i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>')
+              $(ActionTarget).text('Remove Redshirt');
+              $(ActionTarget).attr('background-ajax', Path.replace('Add', 'Remove'));
+              //CHANGE BUTTON
+            }
+            else if (Action == 'Remove Redshirt') {
+              $(ParentRow).find('.player-class-icon').remove();
+              $(ParentSourceRow).find('.player-class-icon').remove();
+              $(ActionTarget).text('Redshirt player');
+              $(ActionTarget).attr('background-ajax', Path.replace('Remove', 'Add'));
+              //CHANGE BUTTON
+            }
+            else if (Action == 'Add Captain') {
+              $(ParentRow).find('.player-captain').html('<i class="fas fa-crown w3-text-green"></i><span class="italic">Team Captain</span>');
+              $(ActionTarget).text('Remove as Captain');
+              $(ActionTarget).attr('background-ajax', Path.replace('Add', 'Remove'));
+              //CHANGE BUTTON
+            }
+            else if (Action == 'Remove Captain') {
+              $(ParentRow).find('.player-captain').empty();
+              $(ActionTarget).text('Add as Captain');
+              $(ActionTarget).attr('background-ajax', Path.replace('Remove', 'Add'));
+              //CHANGE BUTTON
+            }
+          }
+
+        },
+        error: function(res) {
+          alert(res.status);
+        }
+      });
+
+    }
+    });
+
+}
+
 
 $(document).ready(function() {
 
@@ -28,7 +176,8 @@ $(document).ready(function() {
   var PrimaryColor = $(DataPassthruHolder).attr('PrimaryColor');
   var SecondaryColor = $(DataPassthruHolder).attr('SecondaryColor');
 
-  console.log('In Action')
+  console.log('In Action');
+  PlayerAction(WorldID);
 
   $('#SimDayModalCloseButton').on('click', function(){
     console.log('Clicked on indexCreateWorldModalCloseButton!!', this);
@@ -36,7 +185,7 @@ $(document).ready(function() {
     $(window).unbind();
   });
 
-  $('#SimThisWeek, #SimNextMonth, #SimRegularSeason').click(function(e) {
+  $('#SimThisWeek:not(.w3-disabled)').click(function(e) {
 
     $('#SimDayModal').css({'display': 'block'});
 

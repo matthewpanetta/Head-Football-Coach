@@ -235,6 +235,29 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
 
 
 
+    $('button.auto-depth-chart').click(function(){
+
+
+      var DoPost = confirm('Are you sure you want CPU to determine depth chart? This will clear the existing depth chart.');
+      if (DoPost) {
+        $.ajax({
+          method: "POST",
+          url: "/World/"+WorldID+"/Team/"+TeamID+"/AutoTeamDepthChart",
+          data: {
+            csrfmiddlewaretoken: csrftoken
+          },
+          dataType: 'json',
+          success: function(res, status) {
+            console.log(res, status);
+            location.reload();
+          },
+          error: function(res) {
+            alert(res.status);
+          }
+        });
+      }
+    });
+
 
   $('button.save-depth-chart').click(function(){
     var TeamDepthChart = [];
@@ -294,6 +317,8 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
         }
       })
     })
+
+    console.log('TeamDepthChart', TeamDepthChart)
 
     if (DoPost) {
       $.ajax({

@@ -121,6 +121,7 @@ class Class(models.Model):
     ClassName = models.CharField(max_length=20, blank=True, null=True, default=None)
 
     IsRecruit = models.BooleanField(default=False)
+    IsUpperClassman = models.BooleanField(default=False)
 
     ClassSortOrder = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
 
@@ -421,6 +422,11 @@ class LeagueSeason(models.Model):
     PlayoffCreated = models.BooleanField(default=False)
     AwardsCreated    = models.BooleanField(default=False)
     OffseasonStarted = models.BooleanField(default=False)
+
+    Preseason_UserSetDepthChart  = models.BooleanField(default=False)
+    Preseason_UserSetGameplan  = models.BooleanField(default=False)
+    Preseason_UserCutPlayers  = models.BooleanField(default=False)
+    Preseason_UserSetCaptains  = models.BooleanField(default=False)
 
     @property
     def LeagueSeasonDisplay(self):
@@ -1596,6 +1602,7 @@ class PlayerTeamSeason(models.Model):
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
     ClassID = models.ForeignKey(Class, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
+    TeamCaptain = models.BooleanField(default=False)
     RedshirtedThisSeason   = models.BooleanField(default=False)
     LeavingTeamAfterSeason = models.BooleanField(default=True)
 
@@ -2644,6 +2651,7 @@ class RecruitTeamSeason(models.Model):
     RecruitingTeamRank = models.IntegerField(default = 1)
 
     ScoutedOverall = models.PositiveSmallIntegerField(default=0)
+    ScoutingFuzz = models.PositiveSmallIntegerField(default=0)
 
     DistanceMatchRating = models.IntegerField(default = 0)
     TeamPrestigeRating = models.IntegerField(default = 0)

@@ -53,10 +53,56 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
 
     TeamID = UserTeam.TeamID
     UserTeamLogo = UserTeam.TeamLogoURL
+
+    UserActions = []
+
+    SimAction = {'LinkDisplay': 'Sim This Week', 'id': 'SimThisWeek', 'Href': '#', 'ClassName': ''}
+    if WeekID is not None:
+        if WeekID.PhaseID.PhaseName == 'Preseason':
+            CanSim = True
+            SaveLS = False
+
+            CurrentLeagueSeason = LeagueSeason.objects.filter(WorldID_id = WorldID).filter(IsCurrent = True).first()
+
+            if not CurrentLeagueSeason.Preseason_UserCutPlayers:
+                if PlayerTeamSeason.objects.filter(TeamSeasonID__TeamID = UserTeam).filter(TeamSeasonID__LeagueSeasonID = CurrentLeagueSeason).count() > CurrentLeagueSeason.LeagueID.PlayersPerTeam:
+
+                    UserActions.append({'LinkDisplay': 'Cut Players', 'Href': '/World/{WorldID}/Team/{TeamID}/Roster'.format(WorldID=WorldID, TeamID = TeamID), 'ClassName': ''})
+                    CanSim = False
+                else:
+                    CurrentLeagueSeason.Preseason_UserCutPlayers = True
+                    SaveLS = True
+
+            if not CurrentLeagueSeason.Preseason_UserSetCaptains:
+                if PlayerTeamSeason.objects.filter(TeamSeasonID__TeamID = UserTeam).filter(TeamSeasonID__LeagueSeasonID = CurrentLeagueSeason).filter(TeamCaptain = True).count() < 3:
+
+                    UserActions.append({'LinkDisplay': 'Set Captains', 'Href': '/World/{WorldID}/Team/{TeamID}/Roster'.format(WorldID=WorldID, TeamID = TeamID), 'ClassName': ''})
+                    CanSim = False
+                else:
+                    CurrentLeagueSeason.Preseason_UserSetCaptains = True
+                    SaveLS = True
+
+            if not CurrentLeagueSeason.Preseason_UserSetGameplan:
+                UserActions.append({'LinkDisplay': 'Set Gameplan', 'Href': '/World/{WorldID}/Team/{TeamID}/Gameplan'.format(WorldID=WorldID, TeamID = TeamID), 'ClassName': ''})
+                CanSim = False
+
+            if not CurrentLeagueSeason.Preseason_UserSetDepthChart:
+                UserActions.append({'LinkDisplay': 'Set Depth Chart', 'Href': '/World/{WorldID}/Team/{TeamID}/DepthChart'.format(WorldID=WorldID, TeamID = TeamID), 'ClassName': ''})
+                CanSim = False
+
+
+
+            if not CanSim:
+                SimAction['ClassName'] += ' w3-disabled'
+
+            if SaveLS:
+                CurrentLeagueSeason.save()
+
+            UserActions.insert(0,SimAction)
+
+
     LinkGroups = [
-        {'GroupName': 'Action', 'GroupDisplay': '{WeekName}, {SeasonStartYear} TASKS'.format(WeekName = WeekID.WeekName, SeasonStartYear=WeekID.PhaseID.LeagueSeasonID.SeasonStartYear), 'GroupLinks':[
-            {'LinkDisplay': 'Sim This Week', 'id': 'SimThisWeek', 'Href': '#', 'ClassName': ''}
-        ]},
+        {'GroupName': 'Action', 'GroupDisplay': '{WeekName}, {SeasonStartYear} TASKS'.format(WeekName = WeekID.WeekName, SeasonStartYear=WeekID.PhaseID.LeagueSeasonID.SeasonStartYear), 'GroupLinks': UserActions},
         {'GroupName': 'World', 'GroupDisplay': '<img src="/static/img/TeamLogos/ncaa-text.png" class="" alt="">', 'GroupLinks':[
             {'LinkDisplay': 'Overview', 'id': '', 'Href': '/World/{WorldID}'.format(WorldID=WorldID), 'ClassName': ''},
             {'LinkDisplay': 'Standings', 'id': '', 'Href': '/World/{WorldID}/Conferences'.format(WorldID=WorldID), 'ClassName': ''},
@@ -98,6 +144,8 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
         for Link in Group['GroupLinks']:
             if Link['LinkDisplay'] == Path and Group['GroupName'] == GroupName:
                 Link['ClassName'] = 'Selected'
+
+
 
     return LinkGroups
 
@@ -236,6 +284,122 @@ def POST_SetPlayerFaceJson(request, WorldID, PlayerID):
     return JsonResponse({'success':'value'})
 
 
+def RemovePlayerFromDepthChart(WorldID, PlayerID, ):
+    CurrentWorld = World.objects.get(WorldID = WorldID)
+    PlayerTeamSeasonToCut = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(PlayerID_id=PlayerID).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+
+    for PlayerTeamSeasonToCutDepthChart in PlayerTeamSeasonToCut.playerteamseasondepthchart_set.all():
+        NumberOfStarters = PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = PlayerTeamSeasonToCut.TeamSeasonID).filter(PositionID = PlayerTeamSeasonToCutDepthChart.PositionID).filter(IsStarter = True).count()
+
+        PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = PlayerTeamSeasonToCut.TeamSeasonID).filter(PositionID = PlayerTeamSeasonToCutDepthChart.PositionID).filter(DepthPosition__gt = PlayerTeamSeasonToCutDepthChart.DepthPosition).update(
+            DepthPosition = F('DepthPosition') - 1
+        )
+
+        if PlayerTeamSeasonToCutDepthChart.IsStarter:
+
+            PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = PlayerTeamSeasonToCut.TeamSeasonID).filter(PositionID = PlayerTeamSeasonToCutDepthChart.PositionID).filter(DepthPosition__lte = NumberOfStarters).filter(IsStarter = False).update(
+                IsStarter = True
+            )
+
+        PlayerTeamSeasonToCutDepthChart.delete()
+
+
+def POST_PlayerCut(request, WorldID, PlayerID):
+
+    print('Cutting player from team', WorldID, PlayerID)
+    CurrentWorld = World.objects.get(WorldID = WorldID)
+    CurrentWeek = Week.objects.filter(WorldID_id = WorldID).filter(IsCurrent = True).first()
+    CurrentPhase = CurrentWeek.PhaseID
+    PlayerTeamSeasonToCut = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(PlayerID_id=PlayerID).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+    PlayerName = PlayerTeamSeasonToCut.PlayerID.FullName
+
+    if CurrentPhase.PhaseName == 'Preseason':
+        if PlayerTeamSeasonToCut.TeamSeasonID.TeamID.IsUserTeam:
+            RemovePlayerFromDepthChart(WorldID, PlayerID )
+
+            PlayerTeamSeasonToCut.delete()
+            return JsonResponse({'message':'{PlayerName} cut from team'.format(PlayerName = PlayerName)}, status=200)
+        else:
+            return JsonResponse({'message':'Can only cut players from user team'}, status=422)
+    else:
+        return JsonResponse({'message':'Can only cut players during preseason'}, status=422)
+
+
+
+def POST_PlayerCaptain(request, WorldID, PlayerID, Action):
+
+    CurrentWorld = World.objects.get(WorldID = WorldID)
+    CurrentWeek = Week.objects.filter(WorldID_id = WorldID).filter(IsCurrent = True).first()
+    CurrentPhase = CurrentWeek.PhaseID
+    PlayerTeamSeasonToCaptain = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(PlayerID_id=PlayerID).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+    PlayerName = PlayerTeamSeasonToCaptain.PlayerID.FullName
+
+    if CurrentPhase.PhaseName == 'Preseason':
+        if PlayerTeamSeasonToCaptain.TeamSeasonID.TeamID.IsUserTeam:
+            if Action == 'Add':
+                if PlayerTeamSeason.objects.filter(TeamSeasonID = PlayerTeamSeasonToCaptain.TeamSeasonID).filter(TeamCaptain = True).count() < 3:
+                    PlayerTeamSeasonToCaptain.TeamCaptain = True
+                    PlayerTeamSeasonToCaptain.save()
+                    return JsonResponse({'message':'Added {PlayerName} as captain'.format(PlayerName = PlayerName)}, status = 200)
+                else:
+                    return JsonResponse({'message':'Cannot add player as captain. Team has too many captains'}, status=422)
+            if Action == 'Remove':
+                PlayerTeamSeasonToCaptain.TeamCaptain = False
+                PlayerTeamSeasonToCaptain.save()
+                return JsonResponse({'message':'Removed {PlayerName} as captain'.format(PlayerName = PlayerName)}, status = 200)
+            else:
+                return JsonResponse({'message':'Unrecognized Action'}, status=422)
+        else:
+            return JsonResponse({'message':'Can only change captains from user team'}, status=422)
+    else:
+        return JsonResponse({'message':'Can only change captains during preseason'}, status=422)
+
+
+def POST_PlayerRedshirt(request, WorldID, PlayerID, Action):
+
+    CurrentWorld = World.objects.get(WorldID = WorldID)
+    CurrentWeek = Week.objects.filter(WorldID_id = WorldID).filter(IsCurrent = True).first()
+    CurrentPhase = CurrentWeek.PhaseID
+    PlayerTeamSeasonToRedshirt = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(PlayerID_id=PlayerID).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+    PlayerName = PlayerTeamSeasonToRedshirt.PlayerID.FullName
+
+    if CurrentPhase.PhaseName == 'Preseason':
+        if PlayerTeamSeasonToRedshirt.TeamSeasonID.TeamID.IsUserTeam:
+            if Action == 'Add':
+                if not PlayerTeamSeasonToRedshirt.PlayerID.WasPreviouslyRedshirted:
+                    print('Giving player redshirt')
+                    RemovePlayerFromDepthChart(WorldID, PlayerID )
+                    PlayerTeamSeasonToRedshirt.RedshirtedThisSeason = True
+                    PlayerTeamSeasonToRedshirt.save()
+                    return JsonResponse({'message':'Added {PlayerName} redshirt'.format(PlayerName = PlayerName)}, status = 200)
+                else:
+                    return JsonResponse({'message':'{PlayerName} has redshirted in the past'.format(PlayerName = PlayerName)}, status=422)
+            if Action == 'Remove':
+                PlayerTeamSeasonToRedshirt.RedshirtedThisSeason = False
+                PlayerTeamSeasonToRedshirt.save()
+                return JsonResponse({'message':'Removed {PlayerName} redshirt'.format(PlayerName = PlayerName)}, status = 200)
+            else:
+                return JsonResponse({'message':'Unrecognized Action'}, status=422)
+        else:
+            return JsonResponse({'message':'Can only change redshirts from user team'}, status=422)
+    else:
+        return JsonResponse({'message':'Can only change redshirts during preseason'}, status=422)
+
+
+
+def POST_AutoTeamDepthChart(request, WorldID, TeamID):
+    CurrentWorld = World.objects.get(WorldID = WorldID)
+
+    TeamSeasonID = TeamSeason.objects.filter(TeamID_id = TeamID).filter(LeagueSeasonID__IsCurrent = True).first()
+
+    if TeamSeasonID.TeamID.IsUserTeam:
+        PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = TeamSeasonID).delete()
+        CreateDepthChart(CurrentWorld=CurrentWorld, TS=TeamSeasonID)
+    else:
+        return JsonResponse({'message':'Can only change redshirts from user team'}, status=422)
+    return JsonResponse({'message':'Depth Chart Reset.'}, status=200)
+
+
 def POST_SetTeamDepthChart(request, WorldID, TeamID):
     CurrentWorld = World.objects.get(WorldID = WorldID)
     TeamDepthChart = request.POST.getlist('TeamDepthChart[]')
@@ -266,10 +430,15 @@ def POST_SetTeamDepthChart(request, WorldID, TeamID):
 
     PTSDCToUpdate = []
     for PTSDC in TeamDepthChart:
-        DC = DepthChartObjects.filter(PositionID__PositionAbbreviation = PTSDC['PositionAbbreviation']).filter(DepthPosition=PTSDC['DepthPosition']).exclude(PlayerTeamSeasonID_id = PTSDC['PlayerTeamSeasonID']).first()
+        DC = DepthChartObjects.filter(PositionID__PositionAbbreviation = PTSDC['PositionAbbreviation']).filter(DepthPosition=PTSDC['DepthPosition']).first()
         if DC is not None:
-            DC.PlayerTeamSeasonID_id = PTSDC['PlayerTeamSeasonID']
-            PTSDCToUpdate.append(DC)
+            if DC.PlayerTeamSeasonID_id != PTSDC['PlayerTeamSeasonID']:
+                DC.PlayerTeamSeasonID_id = PTSDC['PlayerTeamSeasonID']
+                PTSDCToUpdate.append(DC)
+        else:
+            PositionID = Position.objects.filter(PositionAbbreviation = PTSDC['PositionAbbreviation']).first()
+            PTSDToCreate = PlayerTeamSeasonDepthChart(WorldID_id = WorldID, PlayerTeamSeasonID_id = PTSDC['PlayerTeamSeasonID'], DepthPosition=PTSDC['DepthPosition'], PositionID = PositionID, IsStarter = False)
+            PTSDToCreate.save()
     PlayerTeamSeasonDepthChart.objects.bulk_update(PTSDCToUpdate, ['PlayerTeamSeasonID'])
 
     return JsonResponse({'success':'value'})
@@ -1487,18 +1656,22 @@ def Page_TeamDepthChart(request, WorldID, TeamID):
     CurrentWorld  = World.objects.get(WorldID = WorldID)
     CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
+
+    if CurrentWeek.PhaseID.PhaseName == 'Preseason' and not CurrentSeason.Preseason_UserSetDepthChart :
+        CurrentSeason.Preseason_UserSetDepthChart = True
+        CurrentSeason.save()
     UserTeam = GetUserTeam(WorldID)
     Filters = {'WorldID': WorldID}
     TeamSeasonID = ThisTeam.teamseason_set.filter(LeagueSeasonID = CurrentSeason).first()
-
     page['NavBarLinks'] = NavBarLinks(Path = 'Depth Chart', GroupName='Team', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
 
-    PTSDC = PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = TeamSeasonID).count()
+    PTSDC = PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = TeamSeasonID).filter(IsStarter = True).count()
     if PTSDC < 22:
+        PlayerTeamSeasonDepthChart.objects.filter(WorldID_id = WorldID).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).filter(PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamID = TeamID).delete()
         CreateDepthChart(CurrentWorld=CurrentWorld, TS=TeamSeasonID)
 
 
-    PlayerList = Player.objects.filter(WorldID_id = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).filter(playerteamseason__TeamSeasonID__TeamID__TeamID = TeamID).values( 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL',
+    PlayerList = Player.objects.filter(WorldID_id = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).filter(playerteamseason__TeamSeasonID__TeamID__TeamID = TeamID).filter(playerteamseason__RedshirtedThisSeason = False).values( 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL',
         'playerteamseason__TeamSeasonID__TeamID__TeamName', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'PlayerID', 'playerseasonskill__OverallRating','playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating'
     ).annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
@@ -1597,6 +1770,13 @@ def Page_TeamDepthChart(request, WorldID, TeamID):
             ).order_by('DepthPosition')
             Pos['InDepthChart'] = list(PTSDC)
 
+    print('\n\nPositionGroups')
+    for u in PositionGroups:
+        for P in u['Positions']:
+            Taken = len(P['InDepthChart'])
+            Needs = 6 - Taken
+            for NewPlayer in range(0,Needs):
+                P['InDepthChart'].append({'PlayerName': None})
     context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'team': ThisTeam, 'CurrentWeek': CurrentWeek, 'PositionGroups': PositionGroups}
 
     context['AvailablePlayers'] = list(PlayerList.order_by('PositionID__PositionSortOrder', '-playerseasonskill__OverallRating'))
@@ -1630,6 +1810,11 @@ def Page_TeamGameplan(request, WorldID, TeamID):
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
     UserTeam = GetUserTeam(WorldID)
     TeamSeasonID = ThisTeam.teamseason_set.filter(LeagueSeasonID = CurrentSeason).first()
+
+
+    if CurrentWeek.PhaseID.PhaseName == 'Preseason' and not CurrentSeason.Preseason_UserSetGameplan :
+        CurrentSeason.Preseason_UserSetGameplan = True
+        CurrentSeason.save()
 
     page['NavBarLinks'] = NavBarLinks(Path = 'Gameplan', GroupName='Team', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
 
@@ -1939,7 +2124,7 @@ def Page_Player(request, WorldID, PlayerID):
 
     SeasonStats = None
 
-    context = {'userTeam': UserTeam, 'player':PlayerDict,  'allTeams': allTeams, 'CurrentWeek': GetCurrentWeek(CurrentWorld)}
+    context = {'userTeam': UserTeam, 'player':PlayerDict,  'allTeams': allTeams, 'CurrentWeek': GetCurrentWeek(CurrentWorld), 'Actions': []}
 
     RatingNameMap = {}
 
@@ -2089,7 +2274,31 @@ def Page_Player(request, WorldID, PlayerID):
         PT = PTS.TeamSeasonID.TeamID
         PlayerTeam = PT
 
+        PlayerDict['PlayerName'] = PlayerDict['PlayerFirstName'] + ' ' + PlayerDict['PlayerLastName']
+
+        if CurrentWeek.PhaseID.PhaseName == 'Preseason' and PlayerTeam.IsUserTeam:
+            if not PlayerDict['WasPreviouslyRedshirted']:
+                if not PTS.RedshirtedThisSeason:
+                    context['Actions'].append({'Display': 'Redshirt player', 'ConfirmInfo': PlayerDict['PlayerName'],'ResponseType': 'refresh','Class': 'player-action','AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerRedshirt/Add', 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-tshirt w3-text-red"></i></span>'})
+                else:
+                    context['Actions'].append({'Display': 'Remove Redshirt'
+                                             , 'ConfirmInfo': PlayerDict['PlayerName']
+                                             , 'ResponseType': 'refresh'
+                                             , 'Class': 'player-action'
+                                             , 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerRedshirt/Remove'
+                                             , 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-stack-2x fa-inverse fa-tshirt w3-text-red"></i></span>'})
+
+
+            if not PTS.TeamCaptain:
+                context['Actions'].append({'Display': 'Add as captain', 'ConfirmInfo': PlayerDict['PlayerName'],'ResponseType': 'refresh', 'Class': 'player-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerCaptain/Add', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-crown w3-text-green"></i></span>'})
+            else:
+                context['Actions'].append({'Display': 'Remove as Captain', 'ConfirmInfo': PlayerDict['PlayerName'],'ResponseType': 'refresh', 'Class': 'player-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerCaptain/Remove', 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-crown fa-stack-2x w3-text-green"></i></span>'})
+
+            context['Actions'].append({'Display': 'Cut from team', 'ConfirmInfo': PlayerDict['PlayerName'], 'ResponseType': 'refresh','Class': 'player-action','AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerCut', 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-cut"></i></span>'})
+
+
         context['RedshirtedThisSeason'] = PTS.RedshirtedThisSeason
+        context['TeamCaptain'] = PTS.TeamCaptain
 
         page = {'PageTitle': PlayerDict['FullName'] + ' - ' + PlayerTeam.TeamName, 'PlayerID': PlayerID, 'WorldID': WorldID, 'PrimaryColor': PlayerTeam.TeamColor_Primary_HEX, 'SecondaryColor': PlayerTeam.SecondaryColor_Display, 'SecondaryJerseyColor': PlayerTeam.TeamColor_Secondary_HEX}
         page['NavBarLinks'] = NavBarLinks(Path = 'Player', GroupName='Player', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
@@ -2969,6 +3178,7 @@ def GET_RecruitingPlayers(request, WorldID):
 
 def GET_PlayerCardInfo(request, WorldID, PlayerID):
 
+    CurrentWorld = World.objects.filter(WorldID = WorldID).first()
     OverallRange = [
         {'Floor': 93, 'Ceiling': 100, 'Css-Class': 'elite'},
         {'Floor': 82, 'Ceiling': 92, 'Css-Class': 'good'},
@@ -3005,7 +3215,7 @@ def GET_PlayerCardInfo(request, WorldID, PlayerID):
     }
 
     P = Player.objects.filter(WorldID=WorldID).filter(PlayerID=PlayerID).filter(playerseasonskill__LeagueSeasonID__IsCurrent=True).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True)\
-        .values('PlayerID', 'ClassID__ClassAbbreviation','ClassID__ClassName', 'PlayerFirstName','PlayerLastName', 'PositionID__PositionAbbreviation', 'PositionID__PositionName' , 'JerseyNumber', 'PlayerFaceJson', 'playerteamseason__TeamSeasonID__TeamID__TeamName', 'playerteamseason__TeamSeasonID__TeamID_id', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert','playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX', 'playerseasonskill__OverallRating', 'playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating', 'playerteamseason__TeamSeasonID__TeamID__IsUserTeam' )\
+        .values('PlayerID', 'ClassID__ClassAbbreviation','ClassID__ClassName', 'PlayerFirstName','PlayerLastName', 'PositionID__PositionAbbreviation', 'PositionID__PositionName' , 'WasPreviouslyRedshirted', 'playerteamseason__RedshirtedThisSeason', 'playerteamseason__TeamCaptain', 'JerseyNumber', 'PlayerFaceJson', 'playerteamseason__TeamSeasonID__TeamID__TeamName', 'playerteamseason__TeamSeasonID__TeamID_id', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert','playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX', 'playerseasonskill__OverallRating', 'playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating', 'playerteamseason__TeamSeasonID__TeamID__IsUserTeam' )\
         .annotate(
             PlayerTeamHref = Concat(Value('/World/'),Value(WorldID),Value('/Team/'),F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
             PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
@@ -3014,7 +3224,22 @@ def GET_PlayerCardInfo(request, WorldID, PlayerID):
             HeightFeet = (F('Height') / 12),
             HeightInches = (F('Height') % 12),
             HeightFormatted = Concat(F('HeightFeet'), Value('\''), F('HeightInches'), Value('"'), output_field=CharField()),
-            WeightFormatted = Concat(F('Weight'), Value(' lbs'), output_field=CharField())
+            WeightFormatted = Concat(F('Weight'), Value(' lbs'), output_field=CharField()),
+            TeamCaptain = Case(
+                When(playerteamseason__TeamCaptain = True, then=Value('Team Captain')),
+                default = Value(''),
+                output_field=CharField()
+            ),
+            TeamCaptainIcon = Case(
+                When(playerteamseason__TeamCaptain = True, then=Value('<i class="fas fa-crown w3-text-green"></i>')),
+                default = Value(''),
+                output_field=CharField()
+            ),
+            RedshirtIcon = Case(
+                When(playerteamseason__RedshirtedThisSeason = True, then=Value('<i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>')),
+                default = Value(''),
+                output_field=CharField()
+            )
 
         ).first()
 
@@ -3157,10 +3382,21 @@ def GET_PlayerCardInfo(request, WorldID, PlayerID):
 
     P['Actions'] = []
     if P['playerteamseason__TeamSeasonID__TeamID__IsUserTeam']:
-        P['Actions'] = [
-            {'Display': 'Redshirt', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/Redshirt', 'Icon': '<i class="fas fa-tshirt"></i>'},
-            {'Display': 'Cut from team', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/CutFromTeam', 'Icon': '<i class="fas fa-cut"></i>'},
-        ]
+        CurrentWeek = CurrentWorld.week_set.filter(IsCurrent = True).first()
+        if CurrentWeek.PhaseID.PhaseName == 'Preseason':
+            if not P['WasPreviouslyRedshirted']:
+                if not P['playerteamseason__RedshirtedThisSeason']:
+                    P['Actions'].append({'Display': 'Redshirt player', 'ConfirmInfo': P['PlayerName'],'ResponseType': 'refresh','Class': 'player-action','AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerRedshirt/Add', 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-tshirt w3-text-red"></i></span>'})
+                else:
+                    P['Actions'].append({'Display': 'Remove Redshirt', 'ConfirmInfo': P['PlayerName'],'ResponseType': 'refresh','Class': 'player-action','AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerRedshirt/Remove', 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-stack-2x fa-inverse fa-tshirt w3-text-red"></i></span>'})
+
+            if not P['playerteamseason__TeamCaptain']:
+                P['Actions'].append({'Display': 'Add as captain', 'ConfirmInfo': P['PlayerName'],'ResponseType': 'refresh', 'Class': 'player-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerCaptain/Add', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-crown w3-text-green"></i></span>'})
+            else:
+                P['Actions'].append({'Display': 'Remove as captain', 'ConfirmInfo': P['PlayerName'],'ResponseType': 'refresh', 'Class': 'player-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerCaptain/Remove', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-crown w3-text-green"></i></span>'})
+
+            P['Actions'].append({'Display': 'Cut from team', 'ConfirmInfo': P['PlayerName'], 'ResponseType': 'refresh','Class': 'player-action','AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerCut', 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-cut"></i></span>'})
+
 
     context = P
 
@@ -4326,7 +4562,7 @@ def Common_PlayerStats( Filters = {}):
 
     WorldID = Filters['WorldID']
 
-    Players = Player.objects.filter(**Filters).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating', 'playerteamseason__RedshirtedThisSeason','playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating').annotate(
+    Players = Player.objects.filter(**Filters).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating', 'playerteamseason__RedshirtedThisSeason','playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamCaptain','playerseasonskill__Strength_Rating','playerseasonskill__Agility_Rating','playerseasonskill__Speed_Rating','playerseasonskill__Acceleration_Rating','playerseasonskill__Stamina_Rating','playerseasonskill__Awareness_Rating','playerseasonskill__Jumping_Rating','playerseasonskill__ThrowPower_Rating'    ,'playerseasonskill__ShortThrowAccuracy_Rating'    ,'playerseasonskill__MediumThrowAccuracy_Rating'    ,'playerseasonskill__DeepThrowAccuracy_Rating'    ,'playerseasonskill__ThrowOnRun_Rating'    ,'playerseasonskill__ThrowUnderPressure_Rating'    ,'playerseasonskill__PlayAction_Rating', 'playerseasonskill__PassRush_Rating', 'playerseasonskill__BlockShedding_Rating', 'playerseasonskill__Tackle_Rating', 'playerseasonskill__HitPower_Rating', 'playerseasonskill__ManCoverage_Rating', 'playerseasonskill__ZoneCoverage_Rating', 'playerseasonskill__Press_Rating', 'playerseasonskill__Carrying_Rating', 'playerseasonskill__Elusiveness_Rating', 'playerseasonskill__BallCarrierVision_Rating', 'playerseasonskill__BreakTackle_Rating', 'playerseasonskill__Catching_Rating', 'playerseasonskill__CatchInTraffic_Rating', 'playerseasonskill__RouteRunning_Rating', 'playerseasonskill__Release_Rating', 'playerseasonskill__PassBlock_Rating', 'playerseasonskill__RunBlock_Rating', 'playerseasonskill__ImpactBlock_Rating', 'playerseasonskill__KickPower_Rating', 'playerseasonskill__KickAccuracy_Rating').annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
         PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),

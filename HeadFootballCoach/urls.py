@@ -65,7 +65,13 @@ urlpatterns = [
     path('World/<int:WorldID>/SimDay/', views.POST_SimDay, name='SimDay'),
     path('World/<int:WorldID>/PickTeam/', views.POST_PickTeam, name='PickTeam'),
     path('CreateLeague/', views.POST_CreateLeague, name='CreateLeague'),
+
     path('World/<int:WorldID>/Player/<int:PlayerID>/SetPlayerFaceJSON', views.POST_SetPlayerFaceJson, name='SetPlayerFaceJSON'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerCaptain/<str:Action>', views.POST_PlayerCaptain, name='PlayerCaptain'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerRedshirt/<str:Action>', views.POST_PlayerRedshirt, name='PlayerRedshirt'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerCut', views.POST_PlayerCut, name='PlayerCut'),
+
+    path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamDepthChart', views.POST_AutoTeamDepthChart, name='AutoTeamDepthChart'),
     path('World/<int:WorldID>/Team/<int:TeamID>/SetTeamDepthChart', views.POST_SetTeamDepthChart, name='SetTeamDepthChart'),
     path('World/<int:WorldID>/Team/<int:TeamID>/SetTeamGameplan', views.POST_SetTeamGameplan, name='SetTeamGameplan'),
 

@@ -65,6 +65,38 @@ def TeamCuts(TS, WorldID, NumPlayersToCut):
     return None
 
 
+def ChooseCaptains(TS, WorldID):
+    CaptainCount = 3
+    PlayerList = TS.playerteamseason_set.filter(playerteamseasondepthchart__IsStarter = True).filter(PlayerID__ClassID__IsUpperClassman = True).filter(PlayerID__playerseasonskill__LeagueSeasonID__IsCurrent = True).annotate(
+        OverallRating = F('PlayerID__playerseasonskill__OverallRating'),
+        LeadershipRating = ExpressionWrapper((F('PlayerID__Personality_LeadershipRating') / 20) ** 2, output_field=IntegerField()),
+        CaptainRating = ExpressionWrapper(F('LeadershipRating') + F('OverallRating'), output_field=IntegerField()),
+        PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName')
+    ).order_by('-CaptainRating')[:CaptainCount]
+
+    PositionGroups = []
+    PlayersTeamSeasonToSave = []
+    for P in PlayerList:
+        P.TeamCaptain = True
+        PlayersTeamSeasonToSave.append(P)
+
+        if P.PositionGroup not in PositionGroups:
+            PositionGroups.append(P.PositionGroup)
+
+    PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToSave, ['TeamCaptain'])
+
+    if len(PositionGroups) == 1:
+        TakenPositionGroup = PositionGroups[0]
+        PTS = TS.playerteamseason_set.exclude(PlayerID__PositionID__PositionGroupID__PositionGroupName = TakenPositionGroup).filter(playerteamseasondepthchart__IsStarter = True).filter(PlayerID__playerseasonskill__LeagueSeasonID__IsCurrent = True).annotate(
+            OverallRating = F('PlayerID__playerseasonskill__OverallRating'),
+            LeadershipRating = ExpressionWrapper((F('PlayerID__Personality_LeadershipRating') / 20) ** 2, output_field=IntegerField()),
+            CaptainRating = ExpressionWrapper(F('LeadershipRating') + F('OverallRating'), output_field=IntegerField()),
+        ).order_by('-CaptainRating').first()
+
+        PTS.TeamCaptain = True
+        PTS.save()
+
+
 def CreateTeamPositions(LS, WorldID):
 
     TSPToSave = []
@@ -185,6 +217,12 @@ def CutPlayers(LS, WorldID):
 
     for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).exclude(TeamID__IsUserTeam = True).annotate(NumbersOfPlayers = Count('playerteamseason__PlayerTeamSeasonID'), PlayersToCut = ExpressionWrapper(F('NumbersOfPlayers') -  F('LeagueSeasonID__LeagueID__PlayersPerTeam'), output_field=IntegerField())).filter(PlayersToCut__gt = 0):
         TeamCuts(TS=TeamSeasonID , WorldID=WorldID,  NumPlayersToCut=TeamSeasonID.PlayersToCut)
+
+def ChooseTeamCaptains(LS, WorldID):
+    print('Choosing Captains')
+
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).exclude(TeamID__IsUserTeam = True):
+        ChooseCaptains(TS=TeamSeasonID , WorldID=WorldID)
 
 
 def CalculateTeamOverall(LS, WorldID):
@@ -1236,7 +1274,7 @@ def CreateRecruitingClass(LS, WorldID):
             TS['CloseToHomeValue'] = RecruitDistanceInterestValue
 
 
-            RTS = RecruitTeamSeason(WorldID = WorldID, PlayerID_id = Recruit['PlayerID'], TeamSeasonID_id = TS['TeamSeasonID'], ScoutedOverall = ScoutedOverall, IsActivelyRecruiting = False, Preference1Name = RecruitTopPreferences[1],Preference1MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[1]]], Preference2Name = RecruitTopPreferences[2],Preference2MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[2]]], Preference3Name = RecruitTopPreferences[3],Preference3MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[3]]], TeamPrestigeRating=TS['TeamPrestige'], DistanceMatchRating = RecruitDistanceInterestValue)
+            RTS = RecruitTeamSeason(WorldID = WorldID, PlayerID_id = Recruit['PlayerID'], TeamSeasonID_id = TS['TeamSeasonID'], ScoutedOverall = ScoutedOverall, ScoutingFuzz = TS['CoachScoutVariance'], IsActivelyRecruiting = False, Preference1Name = RecruitTopPreferences[1],Preference1MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[1]]], Preference2Name = RecruitTopPreferences[2],Preference2MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[2]]], Preference3Name = RecruitTopPreferences[3],Preference3MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[3]]], TeamPrestigeRating=TS['TeamPrestige'], DistanceMatchRating = RecruitDistanceInterestValue)
             RTS.InterestLevel = int((1.5*RTS.Preference1MatchRating) + (1.25*RTS.Preference2MatchRating) + (1*RTS.Preference3MatchRating) + RTS.DistanceMatchRating + (.5 * RTS.TeamPrestigeRating))
             RTSToSave.append(RTS)
 
@@ -1375,6 +1413,8 @@ def CreateBowls(WorldID):
     CurrentWeek = Week.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
     NextWeek = CurrentWeek.NextWeek
 
+    NumberOfBowls = int((CurrentWorld.conference_set.all().count() * 4) / 2) * 2
+
     GameTimeHourChoices = [12, 12, 2, 3, 3, 7, 7, 8]
     GameTimeMinuteChoices = ['00', '00', '00', '00', '30', '30', '30', '05']
 
@@ -1387,7 +1427,7 @@ def CreateBowls(WorldID):
         for u in TeamSeasonWeekRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).values('NationalRank'):
             TeamRanksAvailable.append(u['NationalRank'])
 
-        for B in Bowl.objects.filter(WorldID = CurrentWorld).filter(BowlPrestige__gte = 7).order_by('Team1Rank'):
+        for B in Bowl.objects.filter(WorldID = CurrentWorld).order_by('Team1Rank')[:NumberOfBowls]:
 
             HomeTSWR = TeamSeasonWeekRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).filter(NationalRank = TeamRanksAvailable.pop(0)).first()
             HomeTS   = HomeTSWR.TeamSeasonID
@@ -1755,6 +1795,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     AssignRedshirts(LS, WorldID)
     CutPlayers(LS, WorldID)
     PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=False)
+    ChooseTeamCaptains(LS, WorldID)
     CalculateTeamOverall(LS, WorldID)
     CalculateRankings(LS, WorldID)
     CalculateConferenceRankings(LS, WorldID)
