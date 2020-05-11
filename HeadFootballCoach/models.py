@@ -2291,6 +2291,7 @@ class Game(models.Model):
         GameDict = {
             'GameID': self.GameID,
             'LeagueSeasonID': self.LeagueSeasonID,
+            'WeekID': self.WeekID,
             'GameDate': self.WeekID.WeekName,
             'Date': self.WeekID.WeekName,
             'GameTime': self.GameTime,

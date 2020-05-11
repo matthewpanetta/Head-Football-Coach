@@ -263,6 +263,10 @@
     /*margin-top: 38px;*/
 }
 
+.nav-tab-button {
+  height: 38px;
+}
+
 .PageContent {
   margin-left: 200px;
 }

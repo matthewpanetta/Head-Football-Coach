@@ -77,7 +77,7 @@
           {% if game.WasPlayed == 1 %}
           <table class='gameBoxScoreTable w3-table-all'>
             <thead>
-              <th>{{CurrentWeek.WeekName}}</th>
+              <th>{{game.WeekID.WeekName}}</th>
               {% for EventPeriod in boxScore %}
               <th class='w3-center'>{{EventPeriod.PeriodTitle}}</th>
               {% endfor %}
@@ -103,7 +103,7 @@
             <table class="width100">
               <tbody>
                 <tr>
-                  <td class='font16'>{{CurrentWeek.WeekName}}</td>
+                  <td class='font16'>{{game.WeekID.WeekName}}</td>
                 </tr>
                 <tr>
                   <td class='font16'>{{homeTeam.CityID.CityName}}, {{homeTeam.CityID.StateID.StateAbbreviation}}</td>
@@ -157,7 +157,7 @@
               {% if ShowStatBox %}
 
               <div class='w3-col l3 m4'>
-                <div class='w3-card'>
+                <div class='w3-card w3-margin-bottom'>
                   <div class="w3-bar team-primary-background-bar">
                     <span>Team Stats {{TeamStatHeaderSuffix}}</span>
                   </div>
@@ -179,6 +179,44 @@
                     {% endfor %}
                   </div>
                 </div>
+
+                {% if game.WasPlayed == 0 %}
+                {% if LastTeamMeetings|length > 0 %}
+
+                <div class="w3-card">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span>Past Meetings</span>
+                  </div>
+                  <table class='w3-table-all'>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Week</th>
+                        <th>Winner</th>
+                        <th>Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for GamePlayed in LastTeamMeetings%}
+                      <tr>
+                        <td>{{GamePlayed.GameOrderRank}}</td>
+                        <td>{{GamePlayed.WeekName}}, {{GamePlayed.Year}}</td>
+
+                        <td class='bold' style='background-color: #{{GamePlayed.WinningTeamPrimaryColor}}; color: #{{GamePlayed.WinningTeamSecondaryColor}};'>
+                          {{GamePlayed.WinningTeamName}}
+                        </td>
+                        <td>
+                          <a href="{{GamePlayed.GameHref}}">
+                            {{GamePlayed.ScoreDisplay}}
+                          </a>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                {% endif %}
+                {% endif %}
 
               </div>
               {%endif%}

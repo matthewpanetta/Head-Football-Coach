@@ -724,7 +724,7 @@ def Page_Schedule(request, WorldID, TeamID = None):
         ),
         SelectedWeekBox = Case(
             When(IsCurrentWeek=True, then=Value('SelectedWeekBox')),
-            When(~Q(PhaseID = CurrentPhaseID) & Q(WeekName = 'Week 1'), then=Value('SelectedWeekBox')),
+            When(Q(PhaseID__gt = CurrentPhaseID) & Q(WeekName = 'Week 1'), then=Value('SelectedWeekBox')),
             default=Value(''),
             output_field=CharField()
         ),
@@ -3033,6 +3033,53 @@ def Page_Game(request, WorldID, GameID):
         context['TeamStatHeaderSuffix'] = ' - This Season'
         context['TeamStatNameSuffix'] = ' Per Game'
 
+        LastTeamMeetings = TeamGame.objects.filter(GameID__WasPlayed = True).filter(TeamSeasonID__TeamID = HomeTeam).filter(OpposingTeamGameID__TeamSeasonID__TeamID = AwayTeam).values('TeamSeasonID__TeamID__TeamName', 'OpposingTeamGameID__TeamSeasonID__TeamID__TeamName', 'GameID__WeekID__WeekName').annotate(
+            GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'),F('GameID'), output_field=CharField()),
+            WeekName = F('GameID__WeekID__WeekName'),
+            Year = F('GameID__WeekID__PhaseID__LeagueSeasonID__SeasonStartYear'),
+            WinningTeamName = Case(
+                When(IsWinningTeam = True, then=F('TeamSeasonID__TeamID__TeamName')),
+                default=F('OpposingTeamGameID__TeamSeasonID__TeamID__TeamName'),
+                output_field=CharField()
+            ),
+            WinningTeamID = Case(
+                When(IsWinningTeam = True, then=F('TeamSeasonID__TeamID')),
+                default=F('OpposingTeamGameID__TeamSeasonID__TeamID'),
+                output_field=CharField()
+            ),
+            WinningTeamPrimaryColor = Case(
+                When(IsWinningTeam = True, then=F('TeamSeasonID__TeamID__TeamColor_Primary_HEX')),
+                default=F('OpposingTeamGameID__TeamSeasonID__TeamID__TeamColor_Primary_HEX'),
+                output_field=CharField()
+            ),
+            WinningTeamSecondaryColor = Case(
+                When(IsWinningTeam = True, then=F('TeamSeasonID__TeamID__TeamColor_Secondary_HEX')),
+                default=F('OpposingTeamGameID__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'),
+                output_field=CharField()
+            ),
+            WinningTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'),F('WinningTeamID'), output_field=CharField()),
+            GameOrderRank = Window(
+                expression=Rank(),
+                order_by=F("GameID__WeekID").asc(),
+            ),
+            WinningTeamScore = Case(
+                When(IsWinningTeam = True, then=F('Points')),
+                default=F('OpposingTeamGameID__Points'),
+                output_field=CharField()
+            ),
+            LosingTeamScore = Case(
+                When(IsWinningTeam = False, then=F('Points')),
+                default=F('OpposingTeamGameID__Points'),
+                output_field=CharField()
+            ),
+            ScoreDisplay = Concat(F('WinningTeamScore'), Value('-'), F('LosingTeamScore'), output_field=CharField()),
+
+        ).order_by('-GameID__WeekID')
+
+        print('LastTeamMeetings', LastTeamMeetings)
+
+        context['LastTeamMeetings'] = LastTeamMeetings
+
         TeamStatBox = []
         StatBoxStats  = [{'FieldName': 'TotalYards', 'DisplayName': 'Yards Per Game'}, {'FieldName': 'Opponent_TotalYards', 'DisplayName': 'Yards Allowed Per Game'},]
         StatBoxStats  += [{'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards Per Game'}, {'FieldName': 'Opponent_PAS_Yards', 'DisplayName': 'Pass Yards Allowed Per Game'}]
@@ -3106,7 +3153,6 @@ def Page_Game(request, WorldID, GameID):
                 ComparisonObj['HomePlayer']['AdvantageIcon'] = '<i class="fas fa-equals"></i>'
                 ComparisonObj['AwayPlayer']['AdvantageIcon'] = '<i class="fas fa-equals"></i>'
 
-            print(ComparisonObj)
             context['PlayerTalentComparison'].append(ComparisonObj)
 
             counter +=1
