@@ -730,23 +730,23 @@ input[type=text], input[type=password] {
 }
 
 .font12 {
-  font-size: 12px;
+  font-size: 12px !important;
 }
 
 .font14 {
-  font-size: 14px;
+  font-size: 14px !important;
 }
 
 .font16 {
-  font-size: 16px;
+  font-size: 16px !important;
 }
 
 .font24 {
-  font-size: 24px;
+  font-size: 24px !important;
 }
 
 .font20 {
-  font-size: 20px;
+  font-size: 20px !important;
   font-weight: bold;
 }
 
@@ -1290,11 +1290,11 @@ td.WorldLeagueLeaderRowCell.NameCell {
 }
 
 .left-text  {
-  text-align: left;
+  text-align: left !important;;
 }
 
 .right-text {
-  text-align: right;
+  text-align: right !important;;
 }
 
 .worldUpcomingTable {

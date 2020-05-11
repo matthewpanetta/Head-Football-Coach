@@ -106,7 +106,7 @@
                           <button TeamID="{{game.AwayTeam.TeamID}}" GameID="{{game.GameID}}" class="w3-bar-item boxscore-tab w3-button tab" id="boxscore-awayteam-tab">{{game.AwayTeam.Abbreviation}}</button>
                         </div>
                         <div class="w3-display-container">
-
+                          {% if game.WasPlayed == 1%}
                           <div TeamID="{{game.HomeTeam.TeamID}}" GameID="{{game.GameID}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
                             <div class="">
                               <div class="">
@@ -165,6 +165,36 @@
                               </div>
                             </div>
                           </div>
+                          {% else %}
+                          <div  TeamID="{{game.HomeTeam.TeamID}}" GameID="{{game.GameID}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
+                            {% for Stat in game.HomeTeamStats%}
+                              <div class="">
+
+                              <div class="">
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'>{{Stat.Header}}</span>
+                              </div>
+                              <div class="">
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Stat.Value}} {{Stat.Label}}</span>
+                              </div>
+                            </div>
+
+                            {% endfor %}
+                          </div>
+                          <div  TeamID="{{game.AwayTeam.TeamID}}" GameID="{{game.GameID}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
+                            {% for Stat in game.AwayTeamStats%}
+                              <div class="">
+
+                              <div class="">
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'>{{Stat.Header}}</span>
+                              </div>
+                              <div class="">
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Stat.Value}} {{Stat.Label}}</span>
+                              </div>
+                            </div>
+
+                            {% endfor %}
+                          </div>
+                          {% endif %}
                         </div>
                       </div>
                     </div>

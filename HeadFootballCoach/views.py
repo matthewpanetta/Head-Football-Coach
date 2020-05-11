@@ -90,15 +90,13 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
                 UserActions.append({'LinkDisplay': 'Set Depth Chart', 'Href': '/World/{WorldID}/Team/{TeamID}/DepthChart'.format(WorldID=WorldID, TeamID = TeamID), 'ClassName': ''})
                 CanSim = False
 
-
-
             if not CanSim:
                 SimAction['ClassName'] += ' w3-disabled'
 
             if SaveLS:
                 CurrentLeagueSeason.save()
 
-            UserActions.insert(0,SimAction)
+        UserActions.insert(0,SimAction)
 
 
     LinkGroups = [
@@ -2715,6 +2713,8 @@ def Page_Game(request, WorldID, GameID):
     if DoAudit:
         start = time.time()
     GameQuerySet = get_object_or_404(Game, pk=GameID)
+    HomeTeamGameID = GameQuerySet.HomeTeamGameID
+    AwayTeamGameID = GameQuerySet.AwayTeamGameID
 
     GameDict = GameQuerySet.ReturnAsDict()
 
@@ -2736,7 +2736,7 @@ def Page_Game(request, WorldID, GameID):
     AwayPlayers = []
 
     context = {}
-
+    context['ShowStatBox'] = GameDict['HomeGamesPlayed'] + GameDict['AwayGamesPlayed']  > 0
     BoxScoreStatGroupings = [
         {
             'StatGroupName': 'Passing',
@@ -3031,12 +3031,84 @@ def Page_Game(request, WorldID, GameID):
         HomeTS = HomeTeam.CurrentTeamSeason
         AwayTS = AwayTeam.CurrentTeamSeason
         context['TeamStatHeaderSuffix'] = ' - This Season'
+        context['TeamStatNameSuffix'] = ' Per Game'
 
+        TeamStatBox = []
+        StatBoxStats  = [{'FieldName': 'TotalYards', 'DisplayName': 'Total Yards Per Game'}, {'FieldName': 'FirstDowns', 'DisplayName': 'First Downs Per Game'}]
+        StatBoxStats += [{'FieldName': 'TimeOfPossession', 'DisplayName': 'Time Of Possession Per Game', 'Formatting': 'Seconds'}, {'FieldName': 'Turnovers', 'DisplayName': 'Turnovers Per Game'}]
+        StatBoxStats += [{'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks Per Game'} , {'FieldName': 'PNT_Punts', 'DisplayName': 'Punts Per Game'}]
+        StatBoxStats += [{'FieldName': 'ThirdDownPercentage', 'DisplayName': '3rd Down %', 'Formatting': 'Percentagexxx'}, {'FieldName': 'FourthDownPercentage', 'DisplayName': '4th Down %', 'Formatting': 'Percentagexxx'}]
+        for Stat in StatBoxStats:
+            StatName = Stat['FieldName']
+            Stat['HomeValue'] = GameDict['Home'+StatName]
+            Stat['AwayValue'] = GameDict['Away'+StatName]
+            MaxValue  = Stat['HomeValue'] if Stat['HomeValue'] > Stat['AwayValue'] else Stat['AwayValue']
+            if 'Formatting' in Stat:
+                 if Stat['Formatting'] in ['Seconds', 'Percentage']:
+                     MaxValue = Stat['HomeValue'] + Stat['AwayValue']
+            Stat['HomeRatio'] = round(float(Stat['HomeValue']) * 100.0 / float(MaxValue),1) if MaxValue != 0 else 0
+            Stat['AwayRatio'] = round(float(Stat['AwayValue']) * 100.0 / float(MaxValue),1) if MaxValue != 0 else 0
 
-        TeamStatBox = {
-            'HomeReboundBarPercent': 20,
-            'AwayReboundBarPercent': 40
-        }
+            Stat['HomeRatio'] = 5 if Stat['HomeRatio'] == 0 else Stat['HomeRatio']
+            Stat['AwayRatio'] = 5 if Stat['AwayRatio'] == 0 else Stat['AwayRatio']
+
+            if 'Formatting' in Stat:
+                if Stat['Formatting'] == 'Seconds':
+                    Stat['HomeValue'] = SecondsToMinutes(Stat['HomeValue'])
+                    Stat['AwayValue'] = SecondsToMinutes(Stat['AwayValue'])
+                elif Stat['Formatting'] == 'Percentagexxx':
+                    Stat['HomeRatio'] = str(Stat['HomeValue']) if Stat['HomeValue'] > 5 else str(5)
+                    Stat['AwayRatio'] = str(Stat['AwayValue']) if Stat['AwayValue'] > 5 else str(5)
+                    Stat['HomeValue'] = str(Stat['HomeValue']) + '%'
+                    Stat['AwayValue'] = str(Stat['AwayValue']) + '%'
+            #StatDict = {'StatName': Stat, 'HomeValue': HomeValue, 'AwayValue': AwayValue, 'HomeRatio': HomeRatio, 'AwayRatio': AwayRatio}
+            TeamStatBox.append(Stat)
+
+        context['HomeTeamPlayers'] = list(PlayerTeamSeasonDepthChart.objects.filter(IsStarter = True).filter(PlayerTeamSeasonID__TeamSeasonID__teamgame = HomeTeamGameID).filter(PlayerTeamSeasonID__PlayerID__playerseasonskill__LeagueSeasonID__IsCurrent = True).values(
+            'DepthPosition', 'PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating', 'PlayerTeamSeasonID__PlayerID__PlayerFaceJson'
+        ).annotate(
+            PlayerName = Concat(F('PlayerTeamSeasonID__PlayerID__PlayerFirstName'), Value(' '), F('PlayerTeamSeasonID__PlayerID__PlayerLastName'), output_field=CharField()),
+            PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID__PlayerID'), output_field=CharField()),
+            PlayerTeamColor = F('PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamColor_Primary_HEX')
+        ).order_by('PositionID__PositionSortOrder', 'DepthPosition'))
+
+        context['AwayTeamPlayers'] = list(PlayerTeamSeasonDepthChart.objects.filter(IsStarter = True).filter(PlayerTeamSeasonID__TeamSeasonID__teamgame = AwayTeamGameID).filter(PlayerTeamSeasonID__PlayerID__playerseasonskill__LeagueSeasonID__IsCurrent = True).values(
+            'DepthPosition', 'PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating', 'PlayerTeamSeasonID__PlayerID__PlayerFaceJson'
+        ).annotate(
+            PlayerName = Concat(F('PlayerTeamSeasonID__PlayerID__PlayerFirstName'), Value(' '), F('PlayerTeamSeasonID__PlayerID__PlayerLastName'), output_field=CharField()),
+            PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID__PlayerID'), output_field=CharField()),
+            PlayerTeamColor = F('PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamColor_Primary_HEX')
+        ).order_by('PositionID__PositionSortOrder', 'DepthPosition'))
+
+        context['PlayerTalentComparison'] = []
+        counter = 0
+        for u in context['HomeTeamPlayers']:
+            HomePlayer = u
+            AwayPlayer = context['AwayTeamPlayers'][counter]
+
+            ComparisonObj = {'Position': HomePlayer['PositionID__PositionAbbreviation'],'HomePlayer': HomePlayer, 'AwayPlayer': AwayPlayer}
+
+            if HomePlayer['PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating'] > AwayPlayer['PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating'] * 1.08:
+                ComparisonObj['AdvantageColor'] = HomePlayer['PlayerTeamColor']
+                ComparisonObj['HomePlayer']['AdvantageIcon'] = '<i class="fas fa-angle-double-right"></i>'
+            elif HomePlayer['PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating'] > AwayPlayer['PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating'] :
+                ComparisonObj['AdvantageColor'] = HomePlayer['PlayerTeamColor']
+                ComparisonObj['HomePlayer']['AdvantageIcon'] = '<i class="fas fa-angle-right"></i>'
+            elif AwayPlayer['PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating'] > HomePlayer['PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating'] * 1.08:
+                ComparisonObj['AdvantageColor'] = AwayPlayer['PlayerTeamColor']
+                ComparisonObj['AwayPlayer']['AdvantageIcon'] = '<i class="fas fa-angle-double-left"></i>'
+            elif AwayPlayer['PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating'] > HomePlayer['PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating'] :
+                ComparisonObj['AdvantageColor'] = AwayPlayer['PlayerTeamColor']
+                ComparisonObj['AwayPlayer']['AdvantageIcon'] = '<i class="fas fa-angle-left"></i>'
+            else:
+                ComparisonObj['AdvantageColor'] = '777';
+                ComparisonObj['HomePlayer']['AdvantageIcon'] = '<i class="fas fa-equals"></i>'
+                ComparisonObj['AwayPlayer']['AdvantageIcon'] = '<i class="fas fa-equals"></i>'
+
+            print(ComparisonObj)
+            context['PlayerTalentComparison'].append(ComparisonObj)
+
+            counter +=1
 
         GameDict['HomeTeamWinChance'] = 1.03 #* (((HomeTS.Points - HomeTS.PointsAllowed) * 100.0 / (HomeTS.Possessions + 1)) ** 5 + HomeTS.TeamOverallRating ** 3 )
         GameDict['AwayTeamWinChance'] = 1.00 #* (((AwayTS.Points - AwayTS.PointsAllowed) * 100.0 / (AwayTS.Possessions + 1)) ** 5 + AwayTS.TeamOverallRating ** 3 )
@@ -5399,6 +5471,16 @@ def Page_Team(request,WorldID, TeamID):
             ThisGame['OverviewText'] = ThisGame['DateShortDisplay']
             ThisGame['HomePoints'] = ''
             ThisGame['AwayPoints'] = ''
+
+            ThisGame['HomeTeamStats'] = [
+                {'Header': 'Offense', 'Value': HomeTeamSeason.PPG, 'Label': 'PPG'},
+                {'Header': 'Defense', 'Value': HomeTeamSeason.PAPG, 'Label': 'PAPG'},
+            ]
+
+            ThisGame['AwayTeamStats'] = [
+                {'Header': 'Offense', 'Value': AwayTeamSeason.PPG, 'Label': 'PPG'},
+                {'Header': 'Defense', 'Value': AwayTeamSeason.PAPG, 'Label': 'PAPG'},
+            ]
 
         Games.append(ThisGame)
 

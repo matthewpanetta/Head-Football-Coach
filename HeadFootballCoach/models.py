@@ -1,6 +1,6 @@
 from django.db import models
-from django.db.models import F, Case, When, Sum, FloatField, Func, Value, CharField, Avg, Count
-from django.db.models.functions import  Concat
+from django.db.models import F, Case, When, Sum, FloatField, Func, Value, CharField, Avg, Count, ExpressionWrapper
+from django.db.models.functions import  Concat, Round
 from django.utils.timezone import now
 import random
 import time
@@ -1427,21 +1427,39 @@ class TeamSeason(models.Model):
     @property
     def NationalRankDeltaAbs(self):
         return abs(self.NationalRankObject.NationalRankDelta)
+
     @property
-    def ReboundPercentage(self):
-        if self.ReboundChances > 0:
-            return round(1.0 * self.Rebounds / self.ReboundChances,2)
-        return 0.0
+    def TeamGamesPlayed(self):
+        TeamGamesPlayedQuery = self.teamgame_set.filter(GameID__WasPlayed = True).aggregate(Count('GameID'))
+        print('TeamGamesPlayedQuery', TeamGamesPlayedQuery)
+        return TeamGamesPlayedQuery['GameID__count']
+
+    @property
+    def Points(self):
+        PointQuery = self.teamgame_set.filter(GameID__WasPlayed = True).aggregate(Sum('Points'))
+        #print('PointQuery', PointQuery.query)
+        print('PointQuery', PointQuery)
+        return PointQuery['Points__sum']
+
+    @property
+    def PointsAllowed(self):
+        PointsAllowedQuery = self.teamgame_set.filter(GameID__WasPlayed = True).aggregate(Sum('OpposingTeamGameID__Points'))
+        #print('PointsAllowedQuery', PointsAllowedQuery.query)
+
+
+        return PointsAllowedQuery['OpposingTeamGameID__Points__sum']
+
     @property
     def PPG(self):
-        if self.GamesPlayed > 0:
-            return round(self.Points * 1.0 / self.GamesPlayed,1)
+        print('Getting PPG', self, self.Points, self.TeamGamesPlayed)
+        if self.TeamGamesPlayed > 0:
+            return round(self.Points * 1.0 / self.TeamGamesPlayed,1)
         else:
             return 0.0
     @property
     def PAPG(self):
-        if self.GamesPlayed > 0:
-            return round(self.PointsAllowed * 1.0 / self.GamesPlayed,1)
+        if self.TeamGamesPlayed > 0:
+            return round(self.PointsAllowed * 1.0 / self.TeamGamesPlayed,1)
         else:
             return 0.0
     @property
@@ -2095,44 +2113,157 @@ class Game(models.Model):
         TeamsInGame = self.teamgame_set.all().order_by('IsHomeTeam')
         if self.WasPlayed == 1:
             GameDisplay = str(TeamsInGame[0].Points) +'-'+str(TeamsInGame[1].Points)
+            TeamGames = self.teamgame_set.all().values('Points', 'IsHomeTeam' ,'RUS_Yards', 'PAS_Yards', 'REC_Yards', 'REC_TD', 'REC_Receptions', 'Turnovers', 'TimeOfPossession', 'FirstDowns', 'PNT_Punts', 'DEF_Sacks', 'DEF_Tackles', 'ThirdDownConversion', 'ThirdDownAttempt', 'FourthDownConversion', 'FourthDownAttempt', 'BiggestLead').annotate(  # call `annotate`
+                    GamesPlayed = F('GamesPlayed'),
+                    TotalYards=F('PAS_Yards') + F('RUS_Yards'),
+                    ThirdDownPercentage=Case(
+                        When(ThirdDownAttempt=0, then=0),
+                        default=(Round(Sum(F('ThirdDownConversion'))* 100.0 / Sum(F('ThirdDownAttempt')),1)),
+                        output_field=FloatField()
+                    ),
+                    FourthDownPercentage=Case(
+                        When(FourthDownAttempt=0, then=0),
+                        default=(Round(Sum(F('FourthDownConversion'))* 100.0 / Sum(F('FourthDownAttempt')),1)),
+                        output_field=FloatField()
+                    ),
+                    PAS_CompletionPercentage=Case(
+                        When(PAS_Attempts=0, then=0.0),
+                        default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1) ),
+                        output_field=FloatField()
+                    ),
+                    PAS_YardsPerAttempt=Case(
+                        When(PAS_Attempts=0, then=0.0),
+                        default=(Round(Sum(F('PAS_Yards')) * 1.0 / Sum(F('PAS_Attempts')),1)),
+                        output_field=FloatField()
+                    ),
+                    PAS_YardsPerCompletion=Case(
+                        When(PAS_Attempts=0, then=0.0),
+                        default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('PAS_Completions')),1)),
+                        output_field=FloatField()
+                    ),
+                    RUS_YardsPerCarry=Case(
+                        When(RUS_Carries=0, then=0.0),
+                        default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('RUS_Carries')),1)),
+                        output_field=FloatField()
+                    )
+                )
+
         else:
             GameDisplay = self.WeekID.WeekName
-
-        TeamGames = self.teamgame_set.all().values('Points', 'IsHomeTeam' ,'RUS_Yards', 'PAS_Yards', 'REC_Yards', 'REC_TD', 'REC_Receptions', 'Turnovers', 'TimeOfPossession', 'FirstDowns', 'PNT_Punts', 'DEF_Sacks', 'DEF_Tackles', 'ThirdDownConversion', 'ThirdDownAttempt', 'FourthDownConversion', 'FourthDownAttempt', 'BiggestLead').annotate(  # call `annotate`
-                TotalYards=F('PAS_Yards') + F('RUS_Yards'),
-                ThirdDownPercentage=Case(
-                    When(ThirdDownAttempt=0, then=0),
-                    default=(Round(Sum(F('ThirdDownConversion'))* 100.0 / Sum(F('ThirdDownAttempt')),1)),
-                    output_field=FloatField()
-                ),
-                FourthDownPercentage=Case(
-                    When(FourthDownAttempt=0, then=0),
-                    default=(Round(Sum(F('FourthDownConversion'))* 100.0 / Sum(F('FourthDownAttempt')),1)),
-                    output_field=FloatField()
-                ),
-                PAS_CompletionPercentage=Case(
-                    When(PAS_Attempts=0, then=0.0),
-                    default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1) ),
-                    output_field=FloatField()
-                ),
-                PAS_YardsPerAttempt=Case(
-                    When(PAS_Attempts=0, then=0.0),
-                    default=(Round(Sum(F('PAS_Yards')) * 1.0 / Sum(F('PAS_Attempts')),1)),
-                    output_field=FloatField()
-                ),
-                PAS_YardsPerCompletion=Case(
-                    When(PAS_Attempts=0, then=0.0),
-                    default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('PAS_Completions')),1)),
-                    output_field=FloatField()
-                ),
-                RUS_YardsPerCarry=Case(
-                    When(RUS_Carries=0, then=0.0),
-                    default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('RUS_Carries')),1)),
-                    output_field=FloatField()
+            TeamGames = self.teamgame_set.all().values('IsHomeTeam' ).annotate(  # call `annotate`
+                    GamesPlayed = Sum('TeamSeasonID__teamgame__GamesPlayed'),
+                    Points = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__Points') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    RUS_Yards = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__RUS_Yards') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    PAS_Yards = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__PAS_Yards') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    REC_Yards = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__REC_Yards') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    REC_Receptions = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__REC_Receptions') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    Turnovers = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__Turnovers') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    TimeOfPossession = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__TimeOfPossession') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    FirstDowns = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__FirstDowns') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    PNT_Punts = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__PNT_Punts') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    DEF_Sacks = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__DEF_Sacks') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    DEF_Tackles = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__DEF_Tackles') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    ThirdDownConversion = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__ThirdDownConversion') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    ThirdDownAttempt = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__ThirdDownAttempt') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    FourthDownConversion = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__FourthDownConversion') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    FourthDownAttempt = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__FourthDownAttempt') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    BiggestLead = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__BiggestLead') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    TotalYards=F('PAS_Yards') + F('RUS_Yards'),
+                    ThirdDownPercentage=Case(
+                        When(ThirdDownAttempt=0, then=0),
+                        default=(Round(F('ThirdDownConversion')* 100.0 / F('ThirdDownAttempt'),1)),
+                        output_field=FloatField()
+                    ),
+                    FourthDownPercentage=Case(
+                        When(FourthDownAttempt=0, then=0),
+                        default=(Round(F('FourthDownConversion')* 100.0 / F('FourthDownAttempt'),1)),
+                        output_field=FloatField()
+                    ),
+                    PAS_CompletionPercentage=Case(
+                        When(PAS_Attempts=0, then=0.0),
+                        default=(Round(F('PAS_Completions')* 100.0 / F('PAS_Attempts'),1) ),
+                        output_field=FloatField()
+                    ),
+                    PAS_YardsPerAttempt=Case(
+                        When(PAS_Attempts=0, then=0.0),
+                        default=(Round(F('PAS_Yards') * 1.0 / F('PAS_Attempts'),1)),
+                        output_field=FloatField()
+                    ),
+                    PAS_YardsPerCompletion=Case(
+                        When(PAS_Attempts=0, then=0.0),
+                        default=(Round(F('PAS_Yards')* 1.0 / F('PAS_Completions'),1)),
+                        output_field=FloatField()
+                    ),
+                    RUS_YardsPerCarry=Case(
+                        When(RUS_Carries=0, then=0.0),
+                        default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
+                        output_field=FloatField()
+                    )
                 )
-            )
-
-
         HomeTeamGame = TeamGames.filter(IsHomeTeam = True).first()
         AwayTeamGame = TeamGames.filter(IsHomeTeam = False).first()
 
@@ -2146,7 +2277,7 @@ class Game(models.Model):
             'AwayTeamID': self.AwayTeamID,
             'HomeTeamID': self.HomeTeamID,
             'GameDisplay':GameDisplay,
-            'GameHeadlineDisplay': self.GameHeadlineDisplay
+            'GameHeadlineDisplay': self.GameHeadlineDisplay,
         }
 
         for Stat in HomeTeamGame:
