@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/bootstrap-sortable.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
 
 <head>
   <style media="screen">
@@ -59,7 +60,7 @@
           <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
             <div class="gameHeaderTeamContainerInfo">
               <div class="gameHeaderTeamContainerName">
-                {{game.AwayTeamRankDisplayString}} {{awayTeam.TeamName}} {{awayTeam.TeamNickname}}
+                {{game.AwayTeamRankDisplayString}} <span class='bold'>{{awayTeam.TeamName}}</span> {{awayTeam.TeamNickname}}
               </div>
               <div class="gameHeaderTeamContainerRecord">
                 {{game.AwayTeamRecord}}
@@ -67,14 +68,16 @@
             </div>
           </div>
           <div class="gameHeaderScoreContainer gameOutcome{{game.AwayOutcomeLetter}}">
+            {% if game.WasPlayed == 1 %}
               {{game.AwayPoints}}
+            {%endif%}
           </div>
         </div>
         <div class='w3-col s4 text-center'>
           {% if game.WasPlayed == 1 %}
           <table class='gameBoxScoreTable w3-table-all'>
             <thead>
-              <th></th>
+              <th>{{CurrentWeek.WeekName}}</th>
               {% for EventPeriod in boxScore %}
               <th class='w3-center'>{{EventPeriod.PeriodTitle}}</th>
               {% endfor %}
@@ -95,19 +98,32 @@
               <td class='w3-center colgroup-border-left gameOutcome{{game.HomeOutcomeLetter}}'>{{game.HomePoints}}</td>
             </tr>
           </table>
-          {%else%}
-          {{game.DateShortDisplay}}
+          {% else %}
+          <div class="width100 height100">
+            <table class="width100">
+              <tbody>
+                <tr>
+                  <td class='font16'>{{CurrentWeek.WeekName}}</td>
+                </tr>
+                <tr>
+                  <td class='font16'>{{homeTeam.CityID.CityName}}, {{homeTeam.CityID.StateID.StateAbbreviation}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           {% endif %}
 
         </div>
         <div class="w3-col s2 gameHeaderTeamContent home">
           <div class="gameHeaderScoreContainer gameOutcome{{game.HomeOutcomeLetter}}">
+            {% if game.WasPlayed == 1 %}
               {{game.HomePoints}}
+            {% endif %}
           </div>
           <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
             <div class="gameHeaderTeamContainerInfo">
               <div class="gameHeaderTeamContainerName">
-                {{game.HomeTeamRankDisplayString}} {{homeTeam.TeamName}} {{homeTeam.TeamNickname}}
+                {{game.HomeTeamRankDisplayString}} <span class='bold'>{{homeTeam.TeamName}}</span> {{homeTeam.TeamNickname}}
               </div>
               <div class="gameHeaderTeamContainerRecord">
                 {{game.HomeTeamRecord}}
@@ -126,14 +142,18 @@
       <nav>
         <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
           <button class="w3-bar-item w3-button tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+          {% if game.WasPlayed == 1 %}
           <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-boxscore-tab">Box Score</button>
+          {% endif %}
         </div>
       </nav>
       <div class="" id="nav-tabContent">
         <div class="tab-pane show active tab-content" id="nav-overview">
           <div class="w3-display-container">
             <div class="w3-row-padding">
-              <div class='w3-col s3'>
+              {% if ShowStatBox %}
+
+              <div class='w3-col l3 m4'>
                 <div class='w3-card'>
                   <div class="w3-bar team-primary-background-bar">
                     <span>Team Stats {{TeamStatHeaderSuffix}}</span>
@@ -158,7 +178,10 @@
                 </div>
 
               </div>
-              <div class='w3-col s6'>
+              {%endif%}
+              <div class='w3-col l6 m8'>
+                {% if game.WasPlayed %}
+
                 <div class="w3-card w3-margin-bottom">
                   <div class="">
                     <div class="w3-bar team-primary-background-bar drive-event-bar">
@@ -203,8 +226,57 @@
                   </div>
                 </div>
                 <div  class='w3-card w3-margin-bottom' id="GameFlowChart"></div>
+                {% else %}
+                <div class="w3-card w3-margin-bottom">
+                  <table class='w3-table w3-striped'>
+                    <thead>
+                      <tr class=' team-primary-background-bar'>
+                        <th class='right-text '>OVR</th>
+                        <th class='right-text '>{{awayTeam.TeamName}}</th>
+                        <th class='center-text '></th>
+                        <th class='center-text '>Pos</th>
+                        <th class='center-text '></th>
+                        <th class=' '>{{homeTeam.TeamName}}</th>
+                        <th class=' '>OVR</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for Players in PlayerTalentComparison%}
+                      <tr>
+
+                        <td class='right-text font16'>{{Players.AwayPlayer.PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating}}</td>
+                        <td class='right-text font16'>
+                          <a href="{{Players.AwayPlayer.PlayerHref}}">
+                          {{Players.AwayPlayer.PlayerName}}
+                          </a>
+                          <div class="teamStarterPlayerFace inline-block" id="teamStarterPlayerFace{{forloop.counter}}" PlayerFaceJson="{{Players.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if Players.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
+                              <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
+
+                              </div>
+                          </div>
+                        </td>
+                        <td style='font-size: 24px; color:#{{Players.AdvantageColor}}' class='center-text font24'><span>{{Players.AwayPlayer.AdvantageIcon|safe}}</span></td>
+                        <td style='' class='center-text font16'><span>{{Players.Position}}</span></td>
+                        <td style='font-size: 24px; color:#{{Players.AdvantageColor}}' class='center-text font24'><span>{{Players.HomePlayer.AdvantageIcon|safe}}</span></td>
+                        <td class='left-text font16'>
+                          <div class="teamStarterPlayerFace inline-block" id="teamStarterPlayerFace-{{forloop.counter}}" PlayerFaceJson="{{Players.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if Players.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
+                              <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
+
+                              </div>
+                          </div>
+                          <a href="{{Players.HomePlayer.PlayerHref}}">
+                          {{Players.HomePlayer.PlayerName}}
+                          </a>
+                        </td>
+                        <td class='left-text font16'>{{Players.HomePlayer.PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                {% endif %}
               </div>
-              <div class='w3-col s3'>
+              <div class='w3-col l3 m6'>
                 {% for Conference in ConferenceStandings%}
                 <div class="w3-card margin-bottom-12">
                   <div class="w3-bar team-primary-background-bar">
