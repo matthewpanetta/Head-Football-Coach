@@ -3034,10 +3034,11 @@ def Page_Game(request, WorldID, GameID):
         context['TeamStatNameSuffix'] = ' Per Game'
 
         TeamStatBox = []
-        StatBoxStats  = [{'FieldName': 'TotalYards', 'DisplayName': 'Total Yards Per Game'}, {'FieldName': 'FirstDowns', 'DisplayName': 'First Downs Per Game'}]
-        StatBoxStats += [{'FieldName': 'TimeOfPossession', 'DisplayName': 'Time Of Possession Per Game', 'Formatting': 'Seconds'}, {'FieldName': 'Turnovers', 'DisplayName': 'Turnovers Per Game'}]
-        StatBoxStats += [{'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks Per Game'} , {'FieldName': 'PNT_Punts', 'DisplayName': 'Punts Per Game'}]
-        StatBoxStats += [{'FieldName': 'ThirdDownPercentage', 'DisplayName': '3rd Down %', 'Formatting': 'Percentagexxx'}, {'FieldName': 'FourthDownPercentage', 'DisplayName': '4th Down %', 'Formatting': 'Percentagexxx'}]
+        StatBoxStats  = [{'FieldName': 'TotalYards', 'DisplayName': 'Yards Per Game'}, {'FieldName': 'Opponent_TotalYards', 'DisplayName': 'Yards Allowed Per Game'},]
+        StatBoxStats  += [{'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards Per Game'}, {'FieldName': 'Opponent_PAS_Yards', 'DisplayName': 'Pass Yards Allowed Per Game'}]
+        StatBoxStats  += [{'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards Per Game'}, {'FieldName': 'Opponent_RUS_Yards', 'DisplayName': 'Rush Yards Allowed Per Game'}]
+        StatBoxStats += [ {'FieldName': 'Turnovers', 'DisplayName': 'Turnovers Per Game'}, {'FieldName': 'Opponent_Turnovers', 'DisplayName': 'Takeaways Per Game'}]
+        StatBoxStats += [{'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks Per Game'} ,{'FieldName': 'ThirdDownPercentage', 'DisplayName': '3rd Down %', 'Formatting': 'Percentagexxx'},]
         for Stat in StatBoxStats:
             StatName = Stat['FieldName']
             Stat['HomeValue'] = GameDict['Home'+StatName]

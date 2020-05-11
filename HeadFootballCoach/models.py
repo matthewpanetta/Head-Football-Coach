@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import F, Case, When, Sum, FloatField, Func, Value, CharField, Avg, Count, ExpressionWrapper
+from django.db.models import F, Case, When, Sum, FloatField, Func, Value, CharField, IntegerField, Avg, Count, ExpressionWrapper
 from django.db.models.functions import  Concat, Round
 from django.utils.timezone import now
 import random
@@ -2157,14 +2157,29 @@ class Game(models.Model):
                         default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__Points') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
                         output_field=FloatField()
                     ),
+                    Opponent_Point = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__OpposingTeamGameID__Points') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
                     RUS_Yards = Case(
                         When(GamesPlayed = 0, then=Value(0.0)),
-                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__RUS_Yards') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__RUS_Yards') * 1.0 / F('GamesPlayed'),output_field=IntegerField()),0),
                         output_field=FloatField()
                     ),
                     PAS_Yards = Case(
                         When(GamesPlayed = 0, then=Value(0.0)),
-                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__PAS_Yards') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__PAS_Yards') * 1.0 / F('GamesPlayed'),output_field=IntegerField()),0),
+                        output_field=FloatField()
+                    ),
+                    Opponent_RUS_Yards = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__OpposingTeamGameID__RUS_Yards') * 1.0 / F('GamesPlayed'),output_field=IntegerField()),0),
+                        output_field=FloatField()
+                    ),
+                    Opponent_PAS_Yards = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__OpposingTeamGameID__PAS_Yards') * 1.0 / F('GamesPlayed'),output_field=IntegerField()),0),
                         output_field=FloatField()
                     ),
                     REC_Yards = Case(
@@ -2180,6 +2195,11 @@ class Game(models.Model):
                     Turnovers = Case(
                         When(GamesPlayed = 0, then=Value(0.0)),
                         default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__Turnovers') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
+                        output_field=FloatField()
+                    ),
+                    Opponent_Turnovers = Case(
+                        When(GamesPlayed = 0, then=Value(0.0)),
+                        default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__OpposingTeamGameID__Turnovers') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
                         output_field=FloatField()
                     ),
                     TimeOfPossession = Case(
@@ -2232,7 +2252,8 @@ class Game(models.Model):
                         default= Round(ExpressionWrapper(Sum('TeamSeasonID__teamgame__BiggestLead') * 1.0 / F('GamesPlayed'),output_field=FloatField()),1),
                         output_field=FloatField()
                     ),
-                    TotalYards=F('PAS_Yards') + F('RUS_Yards'),
+                    TotalYards= Round(F('PAS_Yards') + F('RUS_Yards'),0),
+                    Opponent_TotalYards=Round(F('Opponent_PAS_Yards') + F('Opponent_RUS_Yards'),0),
                     ThirdDownPercentage=Case(
                         When(ThirdDownAttempt=0, then=0),
                         default=(Round(F('ThirdDownConversion')* 100.0 / F('ThirdDownAttempt'),1)),
