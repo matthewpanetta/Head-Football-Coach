@@ -10,8 +10,8 @@
 
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" style='display:none;' id='DataPassthru'></div>
-
-<div class="w3-sidebar w3-bar-block" style="border-left: 4px solid #{{page.PrimaryColor}};">
+<div class="sidebar-fade"></div>
+<div class="w3-sidebar w3-bar-block hide-small" id='sidebar' style="border-left: 4px solid #{{page.PrimaryColor}};">
 
   {% for Group in page.NavBarLinks%}
   <h3 class='SideNavGroup w3-margin-left'>

@@ -238,7 +238,20 @@ $(document).ready(function() {
 
   });
 
+
   $('.nav-tab-button').on('click', function(event, target) {
+
+    if ($(this).attr('id') == 'nav-sidebar-tab'){
+      $('#sidebar').addClass('sidebar-open');
+      $('.sidebar-fade').addClass('sidebar-fade-open');
+
+
+        $('.sidebar-fade-open').on('click', function(){
+          $(this).removeClass('sidebar-fade-open');
+          $('#sidebar').removeClass('sidebar-open');
+        });
+      return false;
+    }
 
     var ClickedTab = $(event.target)[0];
     console.log(event, target);
