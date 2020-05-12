@@ -96,6 +96,9 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
             if SaveLS:
                 CurrentLeagueSeason.save()
 
+        elif WeekID.PhaseID.PhaseName == 'Season Recap':
+            UserActions.append({'LinkDisplay': 'View Season Awards', 'Href': '/World/{WorldID}/Awards'.format(WorldID=WorldID), 'ClassName': ''})
+
         UserActions.insert(0,SimAction)
 
 
@@ -1357,6 +1360,11 @@ def Page_Awards(request, WorldID):
             default=Value('L'),
             output_field=CharField()
         ),
+        ShortWeekName = Case(
+            When(WeekID__WeekName = 'Conference Championship Week', then=Value('Conf Champ')),
+            default=F('WeekID__WeekName'),
+            output_field=CharField()
+        ),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field=CharField()),
         TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('PlayerTeamSeasonID__TeamSeasonID__TeamID'), output_field=CharField()),
         GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('WeekID__game__GameID'), output_field=CharField()),
@@ -1430,6 +1438,15 @@ def Page_Awards(request, WorldID):
     AwardDict['PostseasonAllAmericans'] = PostseasonAllAmericans
 
 
+    HeismanWinner = PlayerTeamSeasonAward.objects.filter(IsSeasonAward = True).filter(IsTopPlayer = True).filter(IsNationalAward = True).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).values(
+        'PlayerTeamSeasonID__PlayerID',
+    ).first()
+
+    if HeismanWinner is not None:
+        HeismanWinner = GET_PlayerCardInfo(None, WorldID,HeismanWinner['PlayerTeamSeasonID__PlayerID'] )
+        HeismanWinner = json.loads(HeismanWinner.content.strip().decode())
+    print('HeismanWinner', type(HeismanWinner), HeismanWinner)
+
     HeismanRace = Player.objects.filter(WorldID = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True).filter(playerseasonskill__LeagueSeasonID__IsCurrent = 1).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_50').annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
@@ -1467,8 +1484,12 @@ def Page_Awards(request, WorldID):
 
 
     context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'AwardDict': AwardDict}
+
+    if HeismanWinner is not None:
+        context['HeismanWinner'] = HeismanWinner
+    else:
+        context['HeismanRace'] = HeismanRace
     context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
-    context['HeismanRace'] = HeismanRace
     return render(request, 'HeadFootballCoach/Awards.html', context)
 
 def Page_PlayerRecords(request, WorldID, TeamID=None, ConferenceID = None):
@@ -1995,6 +2016,7 @@ def Page_TeamHistory(request, WorldID, TeamID):
         TeamConferenceRecord = Concat(F('ConferenceWins'), Value('-'), F('ConferenceLosses'), output_field=CharField()),
         SeasonYear = F('LeagueSeasonID__SeasonStartYear'),
         SeasonRecapLink = Concat(Value('/World/'), Value(WorldID), Value('/Season/'), F('LeagueSeasonID__SeasonStartYear'), output_field=CharField()),
+
     )
 
     TeamSeasonHistory = list(TeamSeasonHistory)
@@ -2030,9 +2052,17 @@ def Page_TeamHistory(request, WorldID, TeamID):
         else:
             TSH['String_BowlIn'] = 'Did not make bowl'
 
+    TeamHistory = []
+    for TS in TeamSeason.objects.filter(WorldID = WorldID).filter(TeamID = TeamID).values('NationalChampion','ConferenceChampion', 'TeamID__ConferenceID__ConferenceAbbreviation', 'LeagueSeasonID__SeasonEndYear'):
+
+        if TS['NationalChampion']:
+            TeamHistory.append({'BannerLine1': 'National', 'BannerLine2': 'Champions', 'Season': str(TS['LeagueSeasonID__SeasonEndYear'])})
+        if TS['ConferenceChampion']:
+            TeamHistory.append({'BannerLine1': TS['TeamID__ConferenceID__ConferenceAbbreviation'], 'BannerLine2': 'Champions', 'Season': str(TS['LeagueSeasonID__SeasonEndYear'])})
 
     TeamSeasonHistory = list(TeamSeasonHistory)
     context['TeamSeasonHistory'] = TeamSeasonHistory
+    context['TeamHistory'] = TeamHistory
 
     SeasonFilters = {'TeamSeasonID__TeamID': TeamID}
     CareerFilters = {'playerteamseason__TeamSeasonID__TeamID': TeamID}
@@ -2690,7 +2720,6 @@ def Page_Player(request, WorldID, PlayerID):
         context['Awards'] = Awards
 
 
-    #if player IS a recruit
     else:
 
         page['PrimaryColor'] =  '1763B2'
@@ -5542,14 +5571,6 @@ def Page_Team(request,WorldID, TeamID):
 
     UserTeam = GetUserTeam(WorldID)
 
-    TeamHistory = []
-    for TS in TeamSeason.objects.filter(WorldID = WorldID).filter(TeamID = TeamID).values('NationalChampion','ConferenceChampion', 'TeamID__ConferenceID__ConferenceAbbreviation', 'LeagueSeasonID__SeasonEndYear'):
-
-        if TS['NationalChampion']:
-            TeamHistory.append({'BannerLine1': 'National', 'BannerLine2': 'Champions', 'Season': str(TS['LeagueSeasonID__SeasonEndYear'])})
-        if TS['ConferenceChampion']:
-            TeamHistory.append({'BannerLine1': TS['TeamID__ConferenceID__ConferenceAbbreviation'], 'BannerLine2': 'Champions', 'Season': str(TS['LeagueSeasonID__SeasonEndYear'])})
-
 
     TeamWeeklyRanks = ThisTeam.CurrentTeamSeason.teamseasonweekrank_set.order_by('WeekID')
     MaxWeeklyRank = TeamWeeklyRanks.aggregate(Max('NationalRank'))['NationalRank__max']
@@ -5562,7 +5583,6 @@ def Page_Team(request,WorldID, TeamID):
     context['TeamWeeklyRanks'] = TeamWeeklyRanks
     context['MaxWeeklyRank'] = MaxWeeklyRank
     context['teamLeaders'] = TopPlayers
-    context['TeamHistory'] = TeamHistory
     context['TeamInfoRatings'] = TeamInfoRatings
     #context['TeamMapData'] = TeamMapData
 

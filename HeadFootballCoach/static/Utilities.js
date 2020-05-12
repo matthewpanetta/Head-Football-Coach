@@ -45,6 +45,7 @@ function NumberToGrade(NumberValue) {
 
     $.each(GradeValueMap, function(ind, GradeObj){
       if ((NumberValue >= GradeObj['LowerBound']) && (NumberValue <= GradeObj['UpperBound'])){
+        GradeObj['GradeClass'] =
           returnVal = GradeObj['LetterGrade']
       }
     });

@@ -36,7 +36,7 @@ function DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName){
         var tr = $('<tr></tr>');
         tr.append('<td>'+obj[Category+'_Rank']+'</td>');
         tr.append('<td><a href="'+obj.TeamHref+'"><img src="'+obj.TeamLogoURL+'"  class="small-logo" >'+obj.TeamName+'</a></td>');
-        tr.append('<td>'+NumberToGrade(obj[Category]).LetterGrade +'</td>');
+        tr.append('<td>'+NumberToGrade_True(obj[Category]).LetterGrade +'</td>');
 
         $(div).find('.top-teams tbody').append(tr);
       });
@@ -46,7 +46,7 @@ function DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName){
         var tr = $('<tr></tr>');
         tr.append('<td>'+obj[Category+'_Rank']+'</td>');
         tr.append('<td><a href="'+obj.TeamHref+'"><img src="'+obj.TeamLogoURL+'"  class="small-logo" >'+obj.TeamName+'</a></td>');
-        tr.append('<td>'+NumberToGrade(obj[Category]).LetterGrade +'</td>');
+        tr.append('<td>'+NumberToGrade_True(obj[Category]).LetterGrade +'</td>');
 
         $(div).find('.bottom-teams tbody').append(tr);
       });
@@ -133,6 +133,7 @@ function DrawTeamInfoChildRows(WorldID, TeamID, data) {
     {'Field Name': 'Television Exposure', 'Category': 'TelevisionExposureRating','Rating': data.TelevisionExposureRating,'Rank': data.TelevisionExposureRating_Rank},
   ];
 
+
   var table = $('#TeamInfo').DataTable({
     dom: 't',
     data: TableData,
@@ -140,7 +141,8 @@ function DrawTeamInfoChildRows(WorldID, TeamID, data) {
       {'data': 'Field Name', "sortable": true, 'orderSequence': AscFirst},
       {'data': 'Rating', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
         var Rating = StringValue;
-        var GradeObject = NumberToGrade(StringValue);
+        var GradeObject = NumberToGrade_True(StringValue);
+        console.log('GradeObject', GradeObject)
           $(td).html("<span class='"+GradeObject.GradeClass+"'>"+GradeObject.LetterGrade+"</span>");
 
 

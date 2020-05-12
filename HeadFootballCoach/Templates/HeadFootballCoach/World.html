@@ -63,6 +63,9 @@
                             <span>{{ team.TeamSeasonID__TeamID__TeamName }} <span class='hide-small'>{{ team.TeamSeasonID__TeamID__TeamNickname }}</span></span>
                           </a>
                         </li>
+                        {% if team.TeamSeasonID__NationalChampion %}
+                        <li class='font10 bold'>National Champions</li>
+                        {% endif %}
                         {% if team.TeamSeasonID__ConferenceChampion %}
                         <li class='font10 bold'>{{team.TeamSeasonID__TeamID__ConferenceID__ConferenceAbbreviation}} Champions</li>
                         {% else %}

@@ -42,43 +42,31 @@
     <div id="nav-tabContent">
       <div class="tab-content" style="display:block;"  id="nav-team-history">
           <div class='w3-display-container'>
-            <div class='w3-row-padding'>
-              <div class='w3-col s8'>
+            <div class='w3-row-padding w3-margin-bottom'>
+              <div class='w3-col l12 mw1000'>
                 <div class="w3-card">
-                <table id='teamSeasonHistoryResultsTable' class='display table sortable'>
-                  <thead id='TeamSeasonHistoryTable'>
-                    <th class=' teamColorBorder'>Season</th>
-                    <th class=' teamColorBorder'>Final Rank</th>
-                    <th class=' teamColorBorder'>Record</th>
-                    <th class=' teamColorBorder'>Conf Record</th>
-                    <th class=' teamColorBorder'>Conf Rank</th>
-                    <th class=' teamColorBorder'>Bowl</th>
-                    <th class=' teamColorBorder'>Recruit Class Rank</th>
-                  </thead>
-                  {% for TeamSeason in TeamSeasonHistory%}
-                  <tr id='' class=''>
-                    <td class='' data-value=""><a href-field="SeasonRecapLink" data-field='SeasonYear'>{{TeamSeason.SeasonYear}}</a></td>
-                    <td class='' data-field='FinalRank' data-value="">{{TeamSeason.FinalRank}}</td>
-                    <td class='' data-field='TeamRecord' data-value="">{{TeamSeason.TeamRecord}}</td>
-                    <td class='' data-field='TeamConferenceRecord' data-value="">{{TeamSeason.TeamConferenceRecord}}</td>
-                    <td class='' data-field='ConferenceRank' data-value="">{{TeamSeason.ConferenceRank}}</td>
-                    <td class='' data-field='' data-value="">
-                        <span data-field='BowlResult'>{{TeamSeason.BowlResult}}</span>
-                        <a href-field='BowlHref' href="{{TeamSeason.BowlHref}}"><span data-field='BowlScore'>{{TeamSeason.BowlScore}}</span></a>
-                        <span data-field='String_BowlVs'>{{TeamSeason.String_BowlVs}}</span>
-                        <a href-field='BowlOpponentHref'><span data-field='BowlOpponent'>{{TeamSeason.BowlOpponentHref}}</span></a>
-                        <span data-field='String_BowlIn'>{{TeamSeason.String_BowlIn}}</span>
-                        <span data-field='BowlName'>{{TeamSeason.BowlName}}</span>
-                    </td>
-                    <td class='TeamSeasonHistoryRowCell' data-field='RecruitingClassRank' data-value="">{{TeamSeason.RecruitingClassRank}}</td>
-                  </tr>
-                  {% endfor %}
-                </table>
+                  <div class="w3-bar team-primary-background-bar">
+                    Team History
+                  </div>
+                  <table id='teamSeasonHistoryResultsTable' class='width100 w3-table ' style='width: 100%;'>
+                    <thead id='TeamSeasonHistoryTable'>
+                      <th class=' teamColorBorder'>Season</th>
+                      <th class=' teamColorBorder'>Final Rank</th>
+                      <th class=' teamColorBorder'>Record</th>
+                      <th class=' teamColorBorder'>Conf Record</th>
+                      <th class=' teamColorBorder'>Conf Rank</th>
+                      <th class=' teamColorBorder'>Bowl</th>
+                      <th class=' teamColorBorder'>Recruit Class Rank</th>
+                    </thead>
+
+                  </table>
                 </div>
               </div>
             </div>
             <div class='w3-row-padding'>
-              <div class='w3-col s10'>
+              <div class='w3-col l12 mw1000'>
+                <div class="">
+
                 {% for Banner in TeamHistory %}
                   <div class="teamAchievementFlag" style='background: #{{page.PrimaryColor}}; border-color: #{{page.SecondaryColor}};'>
                     <div class='teamAchievementFlagYear'>{{Banner.Season}}</div>
@@ -87,6 +75,7 @@
                     <div class="teamAchievementFlagTitle BannerLine2">{{Banner.BannerLine2}}</div>
                   </div>
                 {% endfor %}
+              </div>
               </div>
             </div>
           </div>
@@ -293,5 +282,5 @@
 <script type="text/javascript" charset="utf8" src="{% static 'common/buttons.colVis.min.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedColumns.min.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedHeader.min.js' %}"></script>
-
-{{ Players|json_script:"player-stat-data" }}
+<script src="{% static 'Pages/TeamHistory.js' %}"></script>
+{{ TeamSeasonHistory|json_script:"team-history-data" }}
