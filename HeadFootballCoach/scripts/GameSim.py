@@ -1,4 +1,4 @@
-from ..models import World, GameDrive, DrivePlay, CoachTeamSeason, PlayerTeamSeasonDepthChart, Coach, Week, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerSeasonSkill, PlayerGameStat
+from ..models import World, GameDrive, DrivePlay, CoachTeamSeason, PlayerTeamSeasonDepthChart, Coach, Week, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerTeamSeasonSkill, PlayerGameStat
 import random
 import django.db.models as models
 from .rankings import CalculateRankings
@@ -30,7 +30,7 @@ def CalculateGameScore(PlayerGameStats):
         {'Stat': 'PAS_TD',    'PointToStatRatio': 4.0 / 1, 'Display': ' pass TDs'},
         {'Stat': 'PAS_Completions', 'PointToStatRatio': 1.0 / 10, 'Display': ' comp'},
         {'Stat': 'REC_Receptions', 'PointToStatRatio': 1.0 / 2, 'Display': ' rec.'},
-        {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 10, 'Display': ' rec. yards'},
+        {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 15, 'Display': ' rec. yards'},
         {'Stat': 'REC_TD',    'PointToStatRatio': 5.0 / 1, 'Display': ' rec. TDs'},
         {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1, 'Display': ' picks'},
         {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 4, 'Display': ' sacked'},
@@ -553,13 +553,13 @@ def GameSim(game):
 
     KeysToSave = []#['PlusMinus', 'GamesStarted', 'Points', 'KCK_FGA', 'ThreePA', 'KCK_FGM', 'ThreePM', 'InsideShotA', 'InsideShotM', 'MidRangeShotA', 'MidRangeShotM', 'Minutes', 'Rebounds', 'OffensiveRebounds','ReboundChances','Assists','Possessions']
 
-    SkillMultiplierExclusions = ['PlayerSeasonSkillID', 'PlayerID', 'LeagueSeasonID', 'WorldID', '_state', 'WorldID_id', 'PlayerID_id']
+    SkillMultiplierExclusions = ['PlayerTeamSeasonSkillID', 'PlayerID', 'LeagueSeasonID', 'WorldID', '_state', 'WorldID_id', 'PlayerID_id']
     for P in HomeTeamPlayers+AwayTeamPlayers:
         DC = None
-        PSD = PlayerSeasonSkill.objects.get(WorldID = CurrentWorld, LeagueSeasonID = CurrentSeason, PlayerID = P)
-        PlayerSkillDict = PSD.__dict__
         PlayerDict = P.__dict__
         PTS = PlayerTeamSeason.objects.get(TeamSeasonID__LeagueSeasonID = CurrentSeason, PlayerID = P)
+        PSD = PlayerTeamSeasonSkill.objects.get(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS)
+        PlayerSkillDict = PSD.__dict__
         PlayerID = PlayerDict['PlayerID']
         PlayerDict['PlayerTeam'] = P.CurrentPlayerTeamSeason.TeamSeasonID.TeamID
         AllPlayers[PlayerID] = PlayerDict

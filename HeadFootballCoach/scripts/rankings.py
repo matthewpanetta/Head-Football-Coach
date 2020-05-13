@@ -1,7 +1,7 @@
 from django.db.models import Max, Min, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value, Window
 from django.db.models.functions import Coalesce
 from django.db.models.functions.window import Rank
-from ..models import World, Week,TeamSeasonWeekRank, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, Driver, PlayerGameStat
+from ..models import World, Week,TeamSeasonWeekRank, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat
 import itertools
 from .SRS.SRS   import CalculateSRS
 
@@ -191,7 +191,7 @@ def CalculateRankings(LS, WorldID):
     NextWeek = CurrentWeek.NextWeek
     CurrentWorld = WorldID
     Games = WorldID.game_set.filter(WasPlayed = True)
-    TeamList = list(CurrentSeason.teamseason_set.all())
+    TeamList = list(CurrentSeason.teamseason_set.filter(TeamID__isnull = False))
 
     CurrentWeekNumber = CurrentWeek.WeekNumber
 

@@ -1,4 +1,4 @@
-from ..models import PlayerTeamSeasonAward, Team, Position, Class, Conference, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, TeamSeason, CoachTeamSeason, Driver, Coach, PlayerGameStat, World
+from ..models import PlayerTeamSeasonAward, Team, Position, Class, Conference, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, TeamSeason, CoachTeamSeason, Driver, Coach, PlayerGameStat, World
 from django.db.models import Max, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value
 import random
 
@@ -15,43 +15,55 @@ def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
     NextLeagueSeason = LeagueSeason.objects.get(WorldID = CurrentWorld, IsCurrent = 0, LeagueID=CurrentSeason.LeagueID, SeasonStartYear = CurrentSeason.SeasonEndYear)
 
     OldCoaches = Coach.objects.filter(CoachAge__gte = 60)
-    for C in []:#OldCoaches:
-        RetireProb = 1 - ((80 - C.CoachAge) / 20.0)
+    CoachesToSave = []
+    CoachTeamSeasonsToSave = []
+    for C in OldCoaches:#OldCoaches:
+        RetireProb = ((C.CoachAge - 60) / 20.0)
         if random.uniform(0,1) < RetireProb:
             print('Retiring', C)
             C.IsActiveCoach = False
-            C.save()
+            CoachesToSave.append(C)
 
             CTS = C.CurrentCoachTeamSeason
             CTS.RetiredAfterSeason = True
-            CTS.save()
+            CoachTeamSeasonsToSave.append(CTS)
+
+    Coach.objects.bulk_update(CoachesToSave, ['IsActiveCoach'])
+    CoachTeamSeason.objects.bulk_update(CoachTeamSeasonsToSave, ['RetiredAfterSeason'])
 
     ActiveCoaches = Coach.objects.filter(coachteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).annotate(
         TeamPrestige = F('coachteamseason__TeamSeasonID__TeamID__TeamPrestige'),
         TeamWins = F('coachteamseason__TeamSeasonID__Wins'),
     ).filter(IsActiveCoach = True)
 
-    GoodPerformingCoaches = ActiveCoaches.filter(TeamPrestige__lt = F('TeamWins') + 1)
-    PoorPerformingCoaches = ActiveCoaches.exclude(TeamPrestige__lt = F('TeamWins') + 1)
+    GoodPerformingCoaches = ActiveCoaches.filter(TeamPrestige__lt = (F('TeamWins') + 1) * 10)
+    PoorPerformingCoaches = ActiveCoaches.exclude(TeamPrestige__lt = (F('TeamWins') + 1) * 10)
 
     CTSToSave = []
-    for C in ActiveCoaches:
+    for C in GoodPerformingCoaches:
         TS = C.CurrentCoachTeamSeason.TeamSeasonID.NextTeamSeasonID
         CurrentCTS = C.coachteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
         CTS = CoachTeamSeason(WorldID=CurrentWorld, TeamSeasonID = TS, CoachID = C, CoachPositionID = CurrentCTS.CoachPositionID)
         CTSToSave.append(CTS)
 
-    for C in []:#PoorPerformingCoaches:
+
+    CoachTeamSeasonsToSave = []
+
+    for C in PoorPerformingCoaches:#PoorPerformingCoaches:
+        print('Firing ', C)
         CTS = C.CurrentCoachTeamSeason
         CTS.FiredAfterSeason = True
-        CTS.save()
+        CoachTeamSeasonsToSave.append(CTS)
 
+    CoachTeamSeason.objects.bulk_update(CoachTeamSeasonsToSave, ['RetiredAfterSeason'])
     CoachTeamSeason.objects.bulk_create(CTSToSave)
 
-    for C in []:#OldCoaches:
+    CoachesToSave = []
+    for C in OldCoaches:#OldCoaches:
         C.IsActiveCoach = False
-        C.save()
+        CoachesToSave.append(C)
 
+    Coach.objects.bulk_update(CoachesToSave, ['IsActiveCoach'])
 
     return None
 
@@ -61,7 +73,7 @@ def GraduateSeniors(CurrentSeason = None, WorldID = None):
 
     NextLeagueSeason = LeagueSeason.objects.get(WorldID = CurrentWorld, IsCurrent = 0, LeagueID=CurrentSeason.LeagueID, SeasonStartYear = CurrentSeason.SeasonEndYear)
 
-    PlayerList = list(Player.objects.filter(WorldID = CurrentWorld).filter(ClassID__IsRecruit = False).exclude(ClassID__ClassName = 'Graduate'))
+    PlayerList = list(Player.objects.filter(WorldID = CurrentWorld).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).filter(playerteamseason__ClassID__IsRecruit = False).exclude(playerteamseason__ClassID__ClassName = 'Graduate'))
     Classes = Class.objects.filter(IsRecruit = False).order_by('-ClassSortOrder')
 
     ClassDict = {}
@@ -76,26 +88,27 @@ def GraduateSeniors(CurrentSeason = None, WorldID = None):
 
     for P in PlayerList:
 
-        OldClassID = P.ClassID
-        NewClassID = ClassDict[OldClassID]
-        P.ClassID = NewClassID
-        PToSave.append(P)
+        PTS = P.CurrentPlayerTeamSeason
+        OldClassID = PTS.ClassID
 
-        if OldClassID.ClassName not in  ['Senior', 'Graduate']:
-            TS = P.CurrentPlayerTeamSeason.TeamSeasonID.NextTeamSeasonID
+        if not PTS.RedshirtedThisSeason:
+            NewClassID = ClassDict[OldClassID]
+        else:
+            NewClassID = OldClassID
+
+        if NewClassID.ClassName !=  'Graduate':
+            if PTS is not None:
+                TS = PTS.TeamSeasonID.NextTeamSeasonID
+                CurrentPTS = P.playerteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+                PTS = PlayerTeamSeason(WorldID=CurrentWorld, TeamSeasonID = TS, PlayerID = P, ClassID = NewClassID)
+                PTSToSave.append(PTS)
+        else:
             CurrentPTS = P.playerteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
-            PTS = PlayerTeamSeason(WorldID=CurrentWorld, TeamSeasonID = TS, PlayerID = P, ClassID = NewClassID)
-            PTSToSave.append(PTS)
-        elif OldClassID.ClassName == 'Senior':
-            CurrentPTS = P.playerteamseason_set.filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
-            CurrentPTS.LeavingTeamAfterSeason = True
-            CurrentPTS.GraduatedAfterSeason = True
-            PTSToUpdate.append(CurrentPTS)
+            if CurrentPTS is not None:
+                CurrentPTS.LeavingTeamAfterSeason = True
+                CurrentPTS.GraduatedAfterSeason = True
+                PTSToUpdate.append(CurrentPTS)
 
-
-        print()
-
-    Player.objects.bulk_update(PToSave, ['ClassID'])
     PlayerTeamSeason.objects.bulk_update(PTSToUpdate, ['GraduatedAfterSeason', 'LeavingTeamAfterSeason'])
     PlayerTeamSeason.objects.bulk_create(PTSToSave)
 

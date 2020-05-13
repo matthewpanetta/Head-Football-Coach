@@ -1,6 +1,6 @@
 from django.db.models import Max, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value, Window, ExpressionWrapper, IntegerField
 from django.db.models.functions import Length, Concat
-from ..models import Audit, League, TeamGame,Week,Phase,PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, Position, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
+from ..models import Audit, League, TeamGame,Week,Phase,PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, Position, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
 import time
 
 
@@ -45,12 +45,12 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False)
 
 #VeteranTendency
     Players = TS.playerteamseason_set.exclude(RedshirtedThisSeason = True).annotate(
-        OverallRating = F('PlayerID__playerseasonskill__OverallRating'),
+        OverallRating = F('playerteamseasonskill__OverallRating'),
         PlayerClassOverallModifier = Case(
-            When(PlayerID__ClassID__ClassAbbreviation = 'FR', then=Value(-1)),
-            When(PlayerID__ClassID__ClassAbbreviation = 'SO', then=Value(-.5)),
-            When(PlayerID__ClassID__ClassAbbreviation = 'JR', then=Value(.5)),
-            When(PlayerID__ClassID__ClassAbbreviation = 'SR', then=Value(1)),
+            When(ClassID__ClassAbbreviation = 'FR', then=Value(-1)),
+            When(ClassID__ClassAbbreviation = 'SO', then=Value(-.5)),
+            When(ClassID__ClassAbbreviation = 'JR', then=Value(.5)),
+            When(ClassID__ClassAbbreviation = 'SR', then=Value(1)),
             default=Value(0),
             output_field=FloatField()
         ),

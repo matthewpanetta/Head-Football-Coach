@@ -148,6 +148,7 @@ function GetPlayerStats(WorldID, data){
     'Kicking': 11,
     'Punting': 5,
     'Returning': 10,
+    'Rank': 3,
     'Top 25': 4,
     'Awards': 7,
     'Bowls': 6,
@@ -371,6 +372,10 @@ function GetPlayerStats(WorldID, data){
           {"data": "RET_KCK_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "RET_KCK_TD", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
 
+          {"data": "WeeksAt1", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "WeeksTop10", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          {"data": "WeeksTop25", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':AscFirst},
+
           {"data": "Top25_GamesPlayed", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "Top25_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "Top25_Losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':AscFirst},
@@ -390,6 +395,7 @@ function GetPlayerStats(WorldID, data){
           {"data": "Bowl_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "Bowl_Losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "Bowl_WinPercentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
+          
           {"data": null, "sortable": false, 'searchable': false, 'className': 'details-control',   "defaultContent": ''},
 
       ],

@@ -2,7 +2,7 @@
 
 import random
 import numpy
-from ..models import NameList, Region, Nation, Position, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, Calendar, GameEvent, PlayerSeasonSkill ,LeagueSeason
+from ..models import NameList, Region, Nation, Position, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, Calendar, GameEvent, PlayerTeamSeasonSkill ,LeagueSeason
 from django.db.models import  Count,  Sum, Max
 from ..utilities import DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance
 

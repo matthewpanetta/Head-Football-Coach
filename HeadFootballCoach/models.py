@@ -772,7 +772,6 @@ class Player(models.Model):
     PlayerID                = models.AutoField(primary_key = True, db_index=True)
     PlayerFirstName         = models.CharField(max_length=50)
     PlayerLastName          = models.CharField(max_length=50)
-    ClassID                 = models.ForeignKey(Class, on_delete=models.CASCADE, blank=True, null=True, default=None)
     WasPreviouslyRedshirted = models.BooleanField(default=False)
     JerseyNumber            = models.PositiveSmallIntegerField(default = 0)
     Height                  = models.PositiveSmallIntegerField(default = 60) #inches
@@ -1110,7 +1109,7 @@ class Player(models.Model):
 
     @property
     def CurrentSkills(self):
-        PSS = self.playerseasonskill_set.filter(LeagueSeasonID__IsCurrent = True).first()
+        PSS = self.playerteamseasonskill_set.filter(LeagueSeasonID__IsCurrent = True).first()
         return PSS
 
     @property
@@ -1248,8 +1247,11 @@ class PlayoffRegion(models.Model):
 class TeamSeason(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     TeamSeasonID = models.AutoField(primary_key=True, db_index=True)
-    TeamID       = models.ForeignKey(Team,  on_delete=models.CASCADE, db_index=True)
-    LeagueSeasonID     = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None, db_index=True)
+    TeamID       = models.ForeignKey(Team,  on_delete=models.CASCADE, db_index=True, null=True, blank=True)
+    LeagueSeasonID     = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, db_index=True)
+
+    IsRecruitTeam = models.BooleanField(default=False)
+    IsFreeAgentTeam = models.BooleanField(default=False)
 
     ScholarshipsToOffer = models.PositiveSmallIntegerField(default = 0)
 
@@ -1287,15 +1289,19 @@ class TeamSeason(models.Model):
     TeamOffenseRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
     TeamDefenseRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
     def __str__(self):
-        return self.TeamID.Name  +' in ' + str(self.LeagueSeasonID)
+        TeamName = 'None'
+        if self.TeamID is not None:
+            TeamName = self.TeamID.Name
+
+        return TeamName  +' in ' + str(self.LeagueSeasonID)
 
 
     def PopulateTeamOverallRating(self):
-        AllPlayers = PlayerTeamSeason.objects.filter(WorldID=self.WorldID).filter(TeamSeasonID = self).filter(PlayerID__playerseasonskill__LeagueSeasonID__IsCurrent = True).order_by('-PlayerID__playerseasonskill__OverallRating')[0:22].values('TeamSeasonID').aggregate(
-            Avg(F('PlayerID__playerseasonskill__OverallRating'))
+        AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID = self).order_by('-playerteamseasonskill__OverallRating')[0:22].values('TeamSeasonID').aggregate(
+            Avg(F('playerteamseasonskill__OverallRating'))
         )
 
-        self.TeamOverallRating = int(AllPlayers['PlayerID__playerseasonskill__OverallRating__avg'] )#TODO
+        self.TeamOverallRating = int(AllPlayers['playerteamseasonskill__OverallRating__avg'] )#TODO
         self.save()
 
 
@@ -1617,12 +1623,12 @@ class PlayerTeamSeason(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     PlayerTeamSeasonID = models.AutoField(primary_key = True, db_index=True)
     PlayerID = models.ForeignKey(Player, on_delete=models.CASCADE, db_index=True)
-    TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
+    TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True, blank=True, null=True, default=None)
     ClassID = models.ForeignKey(Class, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
     TeamCaptain = models.BooleanField(default=False)
     RedshirtedThisSeason   = models.BooleanField(default=False)
-    LeavingTeamAfterSeason = models.BooleanField(default=True)
+    LeavingTeamAfterSeason = models.BooleanField(default=False)
 
     QuitFootballAfterSeason = models.BooleanField(default = False)
     GraduatedAfterSeason = models.BooleanField(default = False)
@@ -1630,9 +1636,12 @@ class PlayerTeamSeason(models.Model):
     TransferredAfterSeason = models.BooleanField(default = False)
 
     def __str__(self):
-        T = self.TeamSeasonID.TeamID
+        if self.TeamSeasonID.TeamID is not None:
+            TeamName = self.TeamSeasonID.TeamID.TeamName
+        else:
+            TeamName = 'None'
         S = self.TeamSeasonID.LeagueSeasonID
-        return str(self.PlayerID.FullName) + ' (' + str(self.PlayerID.PositionID.PositionAbbreviation) + ') played for ' + str(T.TeamName) + ' in ' + str(S.SeasonStartYear)
+        return str(self.PlayerID.FullName) + ' (' + str(self.PlayerID.PositionID.PositionAbbreviation) + ') played for ' + TeamName + ' in ' + str(S.SeasonStartYear)
 
     def TeamRosterDict(self):
 
@@ -1661,7 +1670,7 @@ class PlayerTeamSeason(models.Model):
 
     @property
     def ThisPlayerSeasonSkill(self):
-        return PlayerSeasonSkill.objects.filter(LeagueSeasonID = self.TeamSeasonID.LeagueSeasonID).filter(PlayerID = self.PlayerID).first()
+        return PlayerTeamSeasonSkill.objects.filter(LeagueSeasonID = self.TeamSeasonID.LeagueSeasonID).filter(PlayerID = self.PlayerID).first()
 
     def ShotChartColor(self, v):
 
@@ -2476,11 +2485,10 @@ class TeamGame(models.Model):
             return str(self.TeamSeasonID.ConferenceWins) + '-'+str(self.TeamSeasonID.ConferenceLosses)
         return self.TeamConferenceRecord
 
-class PlayerSeasonSkill(models.Model):
+class PlayerTeamSeasonSkill(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
-    PlayerSeasonSkillID = models.AutoField(primary_key = True, db_index=True)
-    PlayerID = models.ForeignKey(Player, on_delete=models.CASCADE, db_index=True)
-    LeagueSeasonID = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None, db_index=True)
+    PlayerTeamSeasonSkillID = models.AutoField(primary_key = True, db_index=True)
+    PlayerTeamSeasonID = models.ForeignKey(PlayerTeamSeason, on_delete=models.CASCADE, db_index=True)
 
 
     Strength_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
@@ -2538,8 +2546,8 @@ class PlayerSeasonSkill(models.Model):
 
 
     def __str__(self):
-        PlayerName = self.PlayerID.PlayerFirstName + ' ' + self.PlayerID.PlayerLastName
-        return PlayerName + ' was rated ' + str(self.OverallRating) + ' in ' + str(self.LeagueSeasonID)
+        PlayerName = self.PlayerTeamSeasonID.PlayerID.PlayerFirstName + ' ' + self.PlayerTeamSeasonID.PlayerID.PlayerLastName
+        return PlayerName + ' was rated ' + str(self.OverallRating) + ' in ' + str(self.PlayerTeamSeasonID.TeamSeasonID.LeagueSeasonID)
 
     class Meta:
               # specify this model as an Abstract Model

@@ -20,8 +20,8 @@
         <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        {% if AwardDict.PostseasonAllAmericans|length > 0 %}
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-heisman-winner-tab"  style="background-color: #{{page.SecondaryColor}};">Heisman Winner</button>
+        {% if HeismanWinner is not None %}
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-heisman-winner-tab"  style="background-color: #{{page.SecondaryColor}};">Overview</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-season-tab">Season AAs</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-preseason-tab">Preseason AAs</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-weekly-tab">Weekly Award</button>
@@ -30,6 +30,14 @@
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-preseason-tab">Preseason AAs</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-heisman-tab">Heisman Race</button>
         {% endif %}
+        <div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
+          <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Seasons</button>
+          <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
+            {% for Season in Seasons %}
+            <a href="{{Season.SeasonStatsHref}}" class="w3-bar-item w3-button">{{Season.SeasonStartYear}}</a>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </nav>
     <div id="nav-tabContent">
@@ -40,7 +48,7 @@
               {% for Conference in AwardDict.PreseasonAllAmericans%}
               <div class="w3-row-padding w3-margin-top">
               {% for Team in Conference.Teams%}
-                <div class="w3-col s5">
+                <div class="w3-col s6">
                   <div class="w3-card ">
 
                   <div class="w3-bar team-primary-background-bar">
@@ -59,7 +67,7 @@
                         </a>
                       </td>
                       <td>
-                        <a href="{{Player.PlayerHref}}/">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}}</a>, {{Player.PlayerTeamSeasonID__PlayerID__ClassID__ClassAbbreviation}}
+                        <a href="{{Player.PlayerHref}}/">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}}</a>, {{Player.PlayerTeamSeasonID__ClassID__ClassAbbreviation}}
                       </td>
                     </tr>
                     {% endfor %}
@@ -80,7 +88,7 @@
               {% for Conference in AwardDict.PostseasonAllAmericans%}
               <div class="w3-row-padding w3-margin-top">
               {% for Team in Conference.Teams%}
-                <div class="w3-col s5">
+                <div class="w3-col s4">
                   <div class="w3-card ">
 
                   <div class="w3-bar team-primary-background-bar">
@@ -99,7 +107,7 @@
                         </a>
                       </td>
                       <td>
-                        <a href="{{Player.PlayerHref}}/">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}}</a>, {{Player.PlayerTeamSeasonID__PlayerID__ClassID__ClassAbbreviation}}
+                        <a href="{{Player.PlayerHref}}/">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}}</a>, {{Player.PlayerTeamSeasonID__ClassID__ClassAbbreviation}}
                       </td>
                     </tr>
                     {% endfor %}
@@ -113,15 +121,68 @@
           </div>
         </div>
       </div>
-      {% if AwardDict.PostseasonAllAmericans|length > 0 %}
+      {% if HeismanWinner %}
       <div class="tab-content" style='display:block;' id="nav-heisman-winner">
         <div class="w3-row-padding">
           <div class="w3-col l12 mw1200">
-            <div class="w3-card">
+
+            <div class="w3-card w3-margin-bottom">
+              <div class="w3-bar team-primary-background-bar-generic" style='background-color: #{{NationalChampion.TeamID.TeamColor_Primary_HEX}}; color: white; border-top: 4px solid #{{NationalChampion.TeamID.TeamColor_Secondary_HEX}};'>
+                National Champion
+              </div>
+              <table class='width100' style='border-left-color: #{{NationalChampion.TeamID.TeamColor_Primary_HEX}}'>
+                <tr>
+                  <td>
+                    <div class='w3-row-padding ' style='text-align: initial;'>
+                      <div class='w3-col l3 m6 s12' style='width: 250px;'>
+                        <img class='playerTeamLogo' src='{{NationalChampion.TeamID.TeamLogoURL}}'  style='width: 150px; height: inherit; margin-left: 0%;'>
+                      </div>
+                      <div class='w3-col l4 m6 s12 vertical-align-middle' style='width: 370px;'>
+                        <div class="">
+                          <span class='minor-bold font32 margin-right-4'>{{NationalChampion.TeamID.TeamName}}</span>
+                          <span class=' font32' >{{NationalChampion.TeamID.TeamNickname}}</span>
+                        </div>
+                        <div>
+                          <span class='font16'>{{NationalChampion.TeamRecord}}</span>
+                        </div>
+                      </div>
+                      </div>
+                  </td>
+                </tr>
+              </table>
+
+            </div>
+            <div class="w3-card w3-margin-bottom">
+              <div class="w3-bar team-primary-background-bar-generic" style='background-color: #{{NationalRunnerUp.TeamID.TeamColor_Primary_HEX}}; color: white; border-top: 4px solid #{{NationalRunnerUp.TeamID.TeamColor_Secondary_HEX}};'>
+                National Runner Up
+              </div>
+              <table class='width100' style='border-left-color: #{{NationalRunnerUp.TeamID.TeamColor_Primary_HEX}}'>
+                <tr>
+                  <td>
+                    <div class='w3-row-padding ' style='text-align: initial;'>
+                      <div class='w3-col l3 m6 s12' style='width: 250px;'>
+                        <img class='playerTeamLogo' src='{{NationalRunnerUp.TeamID.TeamLogoURL}}'  style='width: 150px; height: inherit; margin-left: 0%;'>
+                      </div>
+                      <div class='w3-col l4 m6 s12 vertical-align-middle' style='width: 370px;'>
+                        <div class="">
+                          <span class='minor-bold font32 margin-right-4'>{{NationalRunnerUp.TeamID.TeamName}}</span>
+                          <span class=' font32' >{{NationalRunnerUp.TeamID.TeamNickname}}</span>
+                        </div>
+                        <div>
+                          <span class='font16'>{{NationalRunnerUp.TeamRecord}}</span>
+                        </div>
+                      </div>
+                      </div>
+                  </td>
+                </tr>
+              </table>
+
+            </div>
+            <div class="w3-card w3-margin-bottom">
               <div class="w3-bar team-primary-background-bar-heisman">
                 Heisman Winner
               </div>
-              <table class='width100 teamTableBorder'>
+              <table class='width100'>
                 <tr>
                   <td id='heisman-highlight'>
                     <div class='w3-row-padding ' style='text-align: initial;'>
@@ -152,7 +213,7 @@
                             <li class='playerHeaderClass'>
                               <div class='playerHeaderBioDescription'>CLASS</div>
                               <div class="player-class">
-                                <span data-field="ClassID__ClassName"></span><span  html-field="RedshirtIcon"></span>
+                                <span data-field="playerteamseason__ClassID__ClassName"></span><span  html-field="RedshirtIcon"></span>
                               </div>
                             </li>
                             <li class='playerHeaderHtWt'>
@@ -165,7 +226,7 @@
                             </li>
                             <li class='playerHeaderHometown'>
                               <div class='playerHeaderBioDescription'>OVR</div>
-                              <div><span data-field="playerseasonskill__OverallRating"></span></div>
+                              <div><span data-field="playerteamseason__playerteamseasonskill__OverallRating"></span></div>
                             </li>
                           </ul>
 
@@ -210,13 +271,12 @@
               </table>
 
             </div>
-
           </div>
         </div>
       </div>
       {% endif %}
 
-      {% if AwardDict.PostseasonAllAmericans|length > 0 %}
+      {% if  HeismanWinner %}
       <div class="tab-content" style='display:none;' id="nav-weekly">
       {% else %}
       <div class="tab-content" style='display:block;' id="nav-weekly">
@@ -228,7 +288,7 @@
 
               <div class="w3-row-padding w3-margin-top">
               {% for PositionGroup, WeeklyAwards in Conference.Awards.items%}
-                <div class="w3-col s5">
+                <div class="w3-col s6">
                   <div class="w3-card ">
                   <div class="w3-bar team-primary-background-bar">
                     {{Conference.Group}} {{PositionGroup}}
@@ -296,7 +356,7 @@
                       <a href="{{Player.PlayerHref}}">{{Player.PlayerName}}</a>
                     </td>
                     <td>{{Player.PositionID__PositionAbbreviation}}</td>
-                    <td>{{Player.ClassID__ClassAbbreviation}}</td>
+                    <td>{{Player.playerteamseason__ClassID__ClassAbbreviation}}</td>
                   </tr>
                   {% endfor %}
                 </tbody>
