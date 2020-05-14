@@ -242,6 +242,8 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
 function GetPlayerStats(WorldID, data){
 
+
+  console.log('GetPlayerStats', data)
   var PositionSortOrderMap = {
       'QB': '01',
       'RB': '02',

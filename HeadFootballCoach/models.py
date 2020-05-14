@@ -2795,7 +2795,7 @@ class CoachTeamSeason(models.Model):
 class RecruitTeamSeason(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     RecruitTeamSeasonID = models.AutoField(primary_key = True, db_index=True)
-    PlayerID = models.ForeignKey(Player, on_delete=models.CASCADE, db_index=True)
+    PlayerTeamSeasonID = models.ForeignKey(PlayerTeamSeason, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
 
     Signed = models.BooleanField(default=False)
@@ -2823,7 +2823,7 @@ class RecruitTeamSeason(models.Model):
     Preference3MatchRating = models.IntegerField(default = 0)
 
     def __str__(self):
-        return str(self.PlayerID) + ' ' + str(self.TeamSeasonID)
+        return str(self.PlayerTeamSeasonID.PlayerID) + ' ' + str(self.TeamSeasonID)
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'

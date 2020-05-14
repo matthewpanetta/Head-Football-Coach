@@ -1293,13 +1293,13 @@ def Page_World(request, WorldID):
         #print('Preseason Awards', PreseasonAllAmericans)
 
 
-        Recruits = Player.objects.filter(IsRecruit = True).filter(Recruiting_NationalRank__lte = 10).values('PlayerID', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'CityID__CityName', 'CityID__StateID__StateName', 'Recruiting_NationalRank').order_by('Recruiting_NationalRank').annotate(
-            PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
-            PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
+        Recruits = PlayerTeamSeason.objects.filter(PlayerID__IsRecruit = True).filter(PlayerID__Recruiting_NationalRank__lte = 10).values('PlayerID', 'PlayerTeamSeasonID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__CityID__CityName', 'PlayerID__CityID__StateID__StateName', 'PlayerID__Recruiting_NationalRank').order_by('PlayerID__Recruiting_NationalRank').annotate(
+            PlayerName = Concat(F('PlayerID__PlayerFirstName'), Value(' '), F('PlayerID__PlayerLastName'), output_field=CharField()),
+            PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID__PlayerID'), output_field=CharField()),
         )
         for P in Recruits:
             P['RecruitingTeams'] = []
-            RecruitTeamSeasons = RecruitTeamSeason.objects.filter(PlayerID = P['PlayerID']).values( 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL_50', 'InterestLevel', 'MatchRating', 'OfferMade', 'Signed').order_by('-InterestLevel').annotate(
+            RecruitTeamSeasons = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID = P['PlayerTeamSeasonID']).values( 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL_50', 'InterestLevel', 'MatchRating', 'OfferMade', 'Signed').order_by('-InterestLevel').annotate(
                 TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID_id'), output_field=CharField()),
             )
             for RTS in RecruitTeamSeasons[0:3]:
@@ -2369,7 +2369,9 @@ def Page_Player(request, WorldID, PlayerID):
     #for S in SkillNameMap:
     #    print(S, "= Avg('"+S+"'),")
 
-
+    PlayerSkills = CurrentPlayerTeamSeasonSkill.__dict__
+    PlayerDict['OverallRating'] = PlayerSkills['OverallRating']
+    context['OverallRating'] = PlayerSkills['OverallRating']
     if PlayerDict['IsRecruit'] == False:
         PTS = CurrentPlayerTeamSeason
         TS = PTS.TeamSeasonID
@@ -2405,7 +2407,6 @@ def Page_Player(request, WorldID, PlayerID):
         page = {'PageTitle': PlayerDict['FullName'] + ' - ' + PlayerTeam.TeamName, 'PlayerID': PlayerID, 'WorldID': WorldID, 'PrimaryColor': PlayerTeam.TeamColor_Primary_HEX, 'SecondaryColor': PlayerTeam.SecondaryColor_Display, 'SecondaryJerseyColor': PlayerTeam.TeamColor_Secondary_HEX}
         page['NavBarLinks'] = NavBarLinks(Path = 'Player', GroupName='Player', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
 
-        PlayerSkills = CurrentPlayerTeamSeasonSkill.__dict__
         PositionAverageSkills = PlayerTeamSeasonSkill.objects.filter(WorldID_id = WorldID).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).filter(PlayerTeamSeasonID__playerteamseasondepthchart__IsStarter = True).filter(PlayerTeamSeasonID__PlayerID__PositionID = PlayerObject.PositionID).values('PlayerTeamSeasonID__PlayerID__PositionID').annotate(
             OverallRating = Round(Avg('OverallRating'),1),
             Awareness_Rating = Round(Avg('Awareness_Rating'),1),
@@ -2482,7 +2483,6 @@ def Page_Player(request, WorldID, PlayerID):
             KickAccuracy_Rating = Round(Avg('KickAccuracy_Rating'),1),
         )[0]
 
-        PlayerDict['OverallRating'] = PlayerSkills['OverallRating']
         PlayerDict['Skills'] = []
 
         PlayerDict['TeamJerseyInvert'] = PlayerTeam.TeamJerseyInvert
@@ -2770,7 +2770,6 @@ def Page_Player(request, WorldID, PlayerID):
         context['PlayerStatsShow'] = PlayerStatsShow
         context['PrimaryStatShow'] = PrimaryStatShow
         context['PlayerList'] = PlayerList
-        context['OverallRating'] = PlayerSkills['OverallRating']
 
         Awards = []
         AwardQS = PlayerTeamSeasonAward.objects.filter(PlayerTeamSeasonID__PlayerID = PlayerDict['Player'])
@@ -2800,7 +2799,7 @@ def Page_Player(request, WorldID, PlayerID):
         page['PrimaryColor'] =  '1763B2'
         page['SecondaryColor'] = '000000'
 
-        RTS = RecruitTeamSeason.objects.filter(WorldID=WorldID).filter(PlayerID = PlayerID).filter(Q(IsActivelyRecruiting=True) | Q(Signed=True)).order_by('-InterestLevel')
+        RTS = RecruitTeamSeason.objects.filter(WorldID=WorldID).filter(PlayerTeamSeasonID__PlayerID = PlayerID).filter(Q(IsActivelyRecruiting=True) | Q(Signed=True)).order_by('-InterestLevel')
 
         context['RecruitTeamSeasons'] = RTS
 
@@ -3350,7 +3349,9 @@ def GET_RecruitingPlayers(request, WorldID):
     Length = int(request.GET['length'])
     Draw = int(request.GET['draw'])
 
-    Players = Player.objects.filter(WorldID = WorldID).filter(**AdjustedFilterList).filter(IsRecruit = True).filter(playerteamseasonskill__LeagueSeasonID__IsCurrent = 1).filter(recruitteamseason__TeamSeasonID__TeamID__IsUserTeam = True).values('PlayerID','ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'recruitteamseason__ScoutedOverall', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'RecruitingPointsNeeded', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerFaceJson', 'RecruitingStars', 'RecruitSigned', 'Recruiting_NationalRank', 'Recruiting_NationalPositionalRank', 'Recruiting_StateRank', 'CityID__CityName', 'CityID__StateID__StateAbbreviation', 'Height').annotate(
+    print('AdjustedFilterList', AdjustedFilterList)
+
+    Players = Player.objects.filter(WorldID = WorldID).filter(**AdjustedFilterList).filter(IsRecruit = True).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerteamseason__recruitteamseason__TeamSeasonID__TeamID__IsUserTeam = True).values('PlayerID','playerteamseason__ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__recruitteamseason__ScoutedOverall', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'RecruitingPointsNeeded', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerFaceJson', 'RecruitingStars', 'RecruitSigned', 'Recruiting_NationalRank', 'Recruiting_NationalPositionalRank', 'Recruiting_StateRank', 'CityID__CityName', 'CityID__StateID__StateAbbreviation', 'Height').annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
         PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -3361,7 +3362,7 @@ def GET_RecruitingPlayers(request, WorldID):
         Intelligence = Value('A', output_field=CharField()),
         Athleticism = Value('A', output_field=CharField()),
         Passing = Value('A', output_field=CharField()),
-        MaxInterestLevel = Subquery(RecruitTeamSeason.objects.filter(PlayerID =OuterRef('pk')).values('PlayerID').annotate(MaxInterestLevel=Max('InterestLevel')).values('MaxInterestLevel')),#Max('recruitteamseason__InterestLevel'),
+        MaxInterestLevel = Subquery(RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID =OuterRef('pk')).values('PlayerTeamSeasonID__PlayerID').annotate(MaxInterestLevel=Max('InterestLevel')).values('MaxInterestLevel')),#Max('recruitteamseason__InterestLevel'),
         RecruitingPointsPercent = (Round(F('MaxInterestLevel')* 100.0 / F('RecruitingPointsNeeded'),1))
 
     ).order_by(*OrderList)
@@ -3374,11 +3375,9 @@ def GET_RecruitingPlayers(request, WorldID):
     Players = Players[Start:Start+Length]
 
     for P in Players:
-        SignedTeam = RecruitTeamSeason.objects.filter(PlayerID_id = P['PlayerID']).values('TeamSeasonID__TeamID__TeamLogoURL', 'InterestLevel', 'Signed').annotate(
+        SignedTeam = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID_id = P['PlayerID']).values('TeamSeasonID__TeamID__TeamLogoURL', 'InterestLevel', 'Signed', 'PlayerTeamSeasonID__PlayerID').annotate(
             TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID'), output_field=CharField()),
         ).order_by('-Signed', '-InterestLevel')[0:3]
-
-        print('Player output!!!-', P['PlayerID'], SignedTeam)
 
         P['RecruitingTeams'] = []
         for T in SignedTeam:
@@ -4795,7 +4794,9 @@ def Common_PlayerStats( Filters = {}):
 
     WorldID = Filters['WorldID']
 
-    Players = Player.objects.filter(**Filters).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).values('PlayerID','playerteamseason__ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__playerteamseasonskill__OverallRating', 'playerteamseason__RedshirtedThisSeason','playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamCaptain','playerteamseason__playerteamseasonskill__Strength_Rating','playerteamseason__playerteamseasonskill__Agility_Rating','playerteamseason__playerteamseasonskill__Speed_Rating','playerteamseason__playerteamseasonskill__Acceleration_Rating','playerteamseason__playerteamseasonskill__Stamina_Rating','playerteamseason__playerteamseasonskill__Awareness_Rating','playerteamseason__playerteamseasonskill__Jumping_Rating','playerteamseason__playerteamseasonskill__ThrowPower_Rating'    ,'playerteamseason__playerteamseasonskill__ShortThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__MediumThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__DeepThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__ThrowOnRun_Rating'    ,'playerteamseason__playerteamseasonskill__ThrowUnderPressure_Rating'    ,'playerteamseason__playerteamseasonskill__PlayAction_Rating', 'playerteamseason__playerteamseasonskill__PassRush_Rating', 'playerteamseason__playerteamseasonskill__BlockShedding_Rating', 'playerteamseason__playerteamseasonskill__Tackle_Rating', 'playerteamseason__playerteamseasonskill__HitPower_Rating', 'playerteamseason__playerteamseasonskill__ManCoverage_Rating', 'playerteamseason__playerteamseasonskill__ZoneCoverage_Rating', 'playerteamseason__playerteamseasonskill__Press_Rating', 'playerteamseason__playerteamseasonskill__Carrying_Rating', 'playerteamseason__playerteamseasonskill__Elusiveness_Rating', 'playerteamseason__playerteamseasonskill__BallCarrierVision_Rating', 'playerteamseason__playerteamseasonskill__BreakTackle_Rating', 'playerteamseason__playerteamseasonskill__Catching_Rating', 'playerteamseason__playerteamseasonskill__CatchInTraffic_Rating', 'playerteamseason__playerteamseasonskill__RouteRunning_Rating', 'playerteamseason__playerteamseasonskill__Release_Rating', 'playerteamseason__playerteamseasonskill__PassBlock_Rating', 'playerteamseason__playerteamseasonskill__RunBlock_Rating', 'playerteamseason__playerteamseasonskill__ImpactBlock_Rating', 'playerteamseason__playerteamseasonskill__KickPower_Rating', 'playerteamseason__playerteamseasonskill__KickAccuracy_Rating').annotate(
+    print('player stats filters', Filters)
+
+    Players = Player.objects.filter(**Filters).values('PlayerID', 'playerteamseason__PlayerTeamSeasonID', 'playerteamseason__ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__playerteamseasonskill__OverallRating', 'playerteamseason__RedshirtedThisSeason','playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamCaptain','playerteamseason__playerteamseasonskill__Strength_Rating','playerteamseason__playerteamseasonskill__Agility_Rating','playerteamseason__playerteamseasonskill__Speed_Rating','playerteamseason__playerteamseasonskill__Acceleration_Rating','playerteamseason__playerteamseasonskill__Stamina_Rating','playerteamseason__playerteamseasonskill__Awareness_Rating','playerteamseason__playerteamseasonskill__Jumping_Rating','playerteamseason__playerteamseasonskill__ThrowPower_Rating'    ,'playerteamseason__playerteamseasonskill__ShortThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__MediumThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__DeepThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__ThrowOnRun_Rating'    ,'playerteamseason__playerteamseasonskill__ThrowUnderPressure_Rating'    ,'playerteamseason__playerteamseasonskill__PlayAction_Rating', 'playerteamseason__playerteamseasonskill__PassRush_Rating', 'playerteamseason__playerteamseasonskill__BlockShedding_Rating', 'playerteamseason__playerteamseasonskill__Tackle_Rating', 'playerteamseason__playerteamseasonskill__HitPower_Rating', 'playerteamseason__playerteamseasonskill__ManCoverage_Rating', 'playerteamseason__playerteamseasonskill__ZoneCoverage_Rating', 'playerteamseason__playerteamseasonskill__Press_Rating', 'playerteamseason__playerteamseasonskill__Carrying_Rating', 'playerteamseason__playerteamseasonskill__Elusiveness_Rating', 'playerteamseason__playerteamseasonskill__BallCarrierVision_Rating', 'playerteamseason__playerteamseasonskill__BreakTackle_Rating', 'playerteamseason__playerteamseasonskill__Catching_Rating', 'playerteamseason__playerteamseasonskill__CatchInTraffic_Rating', 'playerteamseason__playerteamseasonskill__RouteRunning_Rating', 'playerteamseason__playerteamseasonskill__Release_Rating', 'playerteamseason__playerteamseasonskill__PassBlock_Rating', 'playerteamseason__playerteamseasonskill__RunBlock_Rating', 'playerteamseason__playerteamseasonskill__ImpactBlock_Rating', 'playerteamseason__playerteamseasonskill__KickPower_Rating', 'playerteamseason__playerteamseasonskill__KickAccuracy_Rating').annotate(
         ReasonForLeaving = Case(
             When(playerteamseason__QuitFootballAfterSeason = True, then=Value('Quit football')),
             When(playerteamseason__GraduatedAfterSeason = False, then=Value('Graduated')),
@@ -4865,6 +4866,9 @@ def Common_PlayerStats( Filters = {}):
         REC_LNG = Max('playerteamseason__playergamestat__REC_LNG'),
     ).order_by('PlayerID')
 
+
+
+    print('Common_playerstats', len(Players), Players.query)
     return list(Players)
 
 def Common_TeamRecords(WorldID, Timeframe = 'Alltime', Filters={}, ListLength = 5):
@@ -5708,8 +5712,17 @@ def Page_Team(request,WorldID, TeamID):
 
         Games.append(ThisGame)
 
-    SignedRecruits = RecruitTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__TeamID = ThisTeam).filter(Signed = True).order_by('PlayerID__Recruiting_NationalRank')
+    SignedRecruits = RecruitTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__TeamID = ThisTeam).filter(Signed = True).values(
+        'PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID__PlayerID__Recruiting_NationalRank',  'PlayerTeamSeasonID__PlayerID__RecruitingStars',
+    ).annotate(
+        Hometown = Concat(F('PlayerTeamSeasonID__PlayerID__CityID__CityName'), Value(', '), F('PlayerTeamSeasonID__PlayerID__CityID__StateID__StateAbbreviation'), output_field = CharField()),
+        PlayerName = Concat(F('PlayerTeamSeasonID__PlayerID__PlayerFirstName'), Value(' '), F('PlayerTeamSeasonID__PlayerID__PlayerLastName'), output_field = CharField()),
+        OverallRating = F('PlayerTeamSeasonID__playerteamseasonskill__OverallRating'),
+        Position = F('PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation'),
+        PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field = CharField()),
+    ).order_by('PlayerTeamSeasonID__PlayerID__Recruiting_NationalRank')
 
+    print('SignedRecruits', SignedRecruits)
     ThisTeamConference = ThisTeam.CurrentTeamSeason.ConferenceID.ConferenceName
 
     allTeams = GetAllTeams(WorldID, 'National', None)
@@ -6304,12 +6317,12 @@ def Page_Recruiting(request, WorldID):
     #print(context)
 
     AllTeamSeasons = CurrentSeason.teamseason_set.filter(TeamID__isnull = False).values('TeamID', 'TeamID__TeamName', 'TeamID__TeamLogoURL', 'RecruitingClassRank').order_by('RecruitingClassRank').annotate(
-        RecruitsSigned5 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=5))),
-        RecruitsSigned4 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=4))),
-        RecruitsSigned3 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=3))),
-        RecruitsSigned2 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=2))),
-        RecruitsSigned1 = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerID__RecruitingStars=1))),
-        RecruitsSigned = Count('recruitteamseason__PlayerID', filter=(Q(recruitteamseason__Signed=True) )),
+        RecruitsSigned5 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=5))),
+        RecruitsSigned4 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=4))),
+        RecruitsSigned3 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=3))),
+        RecruitsSigned2 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=2))),
+        RecruitsSigned1 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=1))),
+        RecruitsSigned = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True) )),
 
         RecruitsSigned5Style = Case(
             When(RecruitsSigned5__gte = 3, then=Value('font-weight:800;')),

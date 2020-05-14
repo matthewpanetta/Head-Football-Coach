@@ -53,6 +53,7 @@ def NumberToGrade(NumberValue):
 
 @register.filter
 def NumberToGradeClass(NumberValue):
+
     return NumberToGrade(NumberValue).replace('-', '-Minus').replace('+', '-Plus')
 
 

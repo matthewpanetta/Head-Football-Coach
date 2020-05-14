@@ -371,15 +371,15 @@
                     {% for Recruit in SignedRecruits %}
                     <tr >
                       <td  class='w3-margin-top'>
-                        <a href="/World/{{page.WorldID}}/Player/{{ Recruit.PlayerID.PlayerID }}/">
-                          {{Recruit.PlayerID.FullName}}
+                        <a href="/World/{{page.WorldID}}/Player/{{ Recruit.PlayerTeamSeasonID.PlayerID.PlayerID }}/">
+                          {{Recruit.PlayerName}}
                         </a>
                       </td>
-                      <td>{{Recruit.PlayerID.PositionID.PositionAbbreviation}}</td>
-                      <td>{{Recruit.PlayerID.HometownAndState}}</td>
-                      <td>{{Recruit.PlayerID.RecruitingStars}}</td>
-                      <td>{{Recruit.PlayerID.Recruiting_NationalRank}}</td>
-                      <td>{{Recruit.PlayerID.OverallRating}}</td>
+                      <td>{{Recruit.Position}}</td>
+                      <td>{{Recruit.Hometown}}</td>
+                      <td>{{Recruit.PlayerTeamSeasonID__PlayerID__RecruitingStars}}</td>
+                      <td>{{Recruit.PlayerTeamSeasonID__PlayerID__Recruiting_NationalRank}}</td>
+                      <td>{{Recruit.OverallRating}}</td>
                     </tr>
                     {% endfor %}
                   </table>

@@ -3,6 +3,8 @@ function DrawFaces(){
 
   var FacesToBuild =  $('[hasplayerfacejson="1"]');
 
+  var overrides = {"teamColors":["blue","black","#FFF"]}
+
   $.each(FacesToBuild, function(index,FaceDiv){
     var FaceElement = $(FaceDiv).find('.PlayerFaceDisplay')[0];
     var FaceJson = $(FaceDiv).attr('PlayerFaceJson').replace(/'/g, '"');
@@ -78,7 +80,7 @@ function DrawRecruitingTable(WorldID){
          {"data": "Intelligence", "sortable": true, 'orderSequence':["desc", "asc"]},
          {"data": "Athleticism", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
          {"data": "Passing", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"]},
-         {"data": "recruitteamseason__ScoutedOverall", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"],  'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
+         {"data": "playerteamseason__recruitteamseason__ScoutedOverall", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"],  'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
            $(td).html(`<div class="section font16">
                          <span>`+StringValue+` Ovr</span>
                        </div>
@@ -139,13 +141,18 @@ function DrawRecruitingTable(WorldID){
             var data = this.data();
         });
 
+        var overrides = {"teamColors":["#1763B2","black","#FFF"]};
+        var DOMID = '';
+
         api.column(1).nodes().each(function (cell, i) {
           var n = api.cell(i,1).nodes();
           var d = $(n[0]).find('div').first();
 
+          console.log('DOMID', $(d).attr('id'));
+
           var FaceJson = api.cell(i,1).data().replace(/'/g, '"');
           var PlayerFaceJson = JSON.parse(FaceJson);
-          BuildFace(PlayerFaceJson, undefined, undefined, overrides = {},DOMID = $(d).attr('id'));
+          BuildFace(PlayerFaceJson, 'football3', false, overrides=overrides, DOMID=$(d).attr('id'));
           });
     }
   });

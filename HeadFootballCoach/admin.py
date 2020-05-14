@@ -61,10 +61,11 @@ class CoachTeamSeasonAdmin(admin.ModelAdmin):
 
 class PlayerTeamSeasonSkillAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeasonSkill._meta.get_fields()]
+    list_filter = ['PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PositionID']
 
 class RecruitTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
-    list_filter = ['PlayerID__PositionID__PositionAbbreviation', 'PlayerID__RecruitingStars', 'Signed', 'TeamSeasonID__TeamID__TeamName',  'OfferMade', 'PlayerID__CityID__StateID__StateAbbreviation', 'Preference1Name', 'Preference2Name', 'Preference3Name']
+    list_filter = ['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__RecruitingStars', 'Signed', 'TeamSeasonID__TeamID__TeamName',  'OfferMade', 'PlayerTeamSeasonID__PlayerID__CityID__StateID__StateAbbreviation', 'Preference1Name', 'Preference2Name', 'Preference3Name']
 
 
 class TeamSeasonAdmin(admin.ModelAdmin):
@@ -88,7 +89,7 @@ class GameEventAdmin(admin.ModelAdmin):
 
 class PlayerTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeason._meta.get_fields() if field.name not in ('playerteamseasonskill', 'playerteamseasondepthchart','Player1PlayerTeamSeasonID','Player2PlayerTeamSeasonID','playergamestat', 'playerteamseasonaward','Playoff', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
-    list_filter = ['ClassID__ClassName', 'TeamSeasonID__TeamID__TeamName', 'RedshirtedThisSeason']
+    list_filter = ['ClassID__ClassName', 'PlayerID__PositionID','TeamSeasonID__TeamID__TeamName', 'RedshirtedThisSeason']
 
 class PlayerTeamSeasonAwardAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeasonAward._meta.get_fields() if field.name not in ('Player1PlayerTeamSeasonID','Player2PlayerTeamSeasonID','playergamestat', 'playerteamseasonaward','Playoff', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -172,7 +173,7 @@ admin.site.register(LeagueSeason, LeagueSeasonAdmin)
 admin.site.register(Headline,HeadlineAdmin)
 admin.site.register(Calendar,CalendarAdmin)
 admin.site.register(GameEvent, GameEventAdmin)
-admin.site.register(PlayerTeamSeasonSkill)
+admin.site.register(PlayerTeamSeasonSkill, PlayerTeamSeasonSkillAdmin)
 admin.site.register(Driver)
 admin.site.register(PlayerGameStat, PlayerGameStatAdmin)
 admin.site.register(Coach, CoachAdmin)
