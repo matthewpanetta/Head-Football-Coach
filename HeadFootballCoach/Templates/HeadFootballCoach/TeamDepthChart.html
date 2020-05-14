@@ -97,12 +97,12 @@
                             <li>
                               <select class="w3-select" name="option" PositionAbbreviation="{{Position.PositionAbbreviation}}" DepthPosition="{{forloop.counter}}" {{Disabled}}>
                                 {% if Player.PlayerName is not None%}
-                                <option value="{{Player.PlayerTeamSeasonID}}" playerteamseasonid="{{Player.PlayerTeamSeasonID}}">{{Player.PositionID__PositionAbbreviation}} {{Player.PlayerName}} ({{Player.playerseasonskill__OverallRating}})</option>
+                                <option value="{{Player.PlayerTeamSeasonID}}" playerteamseasonid="{{Player.PlayerTeamSeasonID}}">{{Player.PositionID__PositionAbbreviation}} {{Player.PlayerName}} ({{Player.playerteamseasonskill__OverallRating}})</option>
                                 {% else%}
                                 <option value="" playerteamseasonid="">-</option>
                                 {% endif %}
                                 {% for AvailPlayer in AvailablePlayers%}
-                                <option value="{{AvailPlayer.PlayerTeamSeasonID}}" playerteamseasonid="{{AvailPlayer.PlayerTeamSeasonID}}">{{AvailPlayer.PositionID__PositionAbbreviation}} {{AvailPlayer.PlayerName}} ({{AvailPlayer.playerseasonskill__OverallRating}})</option>
+                                <option value="{{AvailPlayer.PlayerTeamSeasonID}}" playerteamseasonid="{{AvailPlayer.PlayerTeamSeasonID}}">{{AvailPlayer.PositionID__PositionAbbreviation}} {{AvailPlayer.PlayerName}} ({{AvailPlayer.playerteamseason__playerteamseasonskill__OverallRating}})</option>
                                 {% endfor %}
                               </select>
                               </li>

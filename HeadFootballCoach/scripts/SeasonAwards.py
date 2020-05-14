@@ -1,5 +1,5 @@
 from ..models import PlayerTeamSeasonAward, Team, Position, Conference, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat, World
-from django.db.models import Max, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value, Q, ExpressionWrapper
+from django.db.models import Max, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value, Q, ExpressionWrapper, IntegerField
 
 class Round(Func):
   function = 'ROUND'
@@ -34,7 +34,7 @@ def NationalAwards(WorldID, CurrentSeason):
                 PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PlayerOfTheYearPTS['PlayerTeamSeasonID'])
                 PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=True, IsNationalAward=True, IsSeasonAward=True)
             else:
-                PlayerOfTheYearPTS = AllPlayers.filter(TeamSeasonID__TeamID__ConferenceID = Conf).first()
+                PlayerOfTheYearPTS = AllPlayers.filter(TeamSeasonID__ConferenceID = Conf).first()
                 PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PlayerOfTheYearPTS['PlayerTeamSeasonID'])
                 PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=True, IsConferenceAward=True, IsSeasonAward=True, ConferenceID = Conf)
 
@@ -43,7 +43,7 @@ def NationalAwards(WorldID, CurrentSeason):
             for Pos in Position.objects.filter(Occurance__gt = 0):
                 PositionPlayers = AllPlayers.filter(PlayerID__PositionID = Pos)
                 if Conf is not None:
-                    PositionPlayers = PositionPlayers.filter(TeamSeasonID__TeamID__ConferenceID = Conf)
+                    PositionPlayers = PositionPlayers.filter(TeamSeasonID__ConferenceID = Conf)
 
                 for PlayerCount in range(0,Pos.PositionCountPerAwardTeam * 2):
                     IsFirstTeam = False
@@ -53,7 +53,7 @@ def NationalAwards(WorldID, CurrentSeason):
                     else:
                         IsSecondTeam = True
 
-                    if PlayerCount <= len(PositionPlayers):
+                    if PlayerCount < len(PositionPlayers):
                         if Conf is None:
                             PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PositionPlayers[PlayerCount]['PlayerTeamSeasonID'])
                             PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=False, PositionID = Pos, IsFirstTeam=IsFirstTeam, IsSecondTeam=IsSecondTeam, IsNationalAward=True, IsSeasonAward=True)
@@ -103,7 +103,13 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
         OverallRating=Max(
             'playerteamseasonskill__OverallRating'
         ),
-    ).order_by('-GameScorePerGame', '-OverallRating')
+        MaxStarterValue = Max('playerteamseasondepthchart__IsStarter'),
+        IsStarter = Case(
+            When(MaxStarterValue = True, then=Value(1)),
+            default=Value(0),
+            output_field = IntegerField()
+        )
+    ).order_by('-IsStarter', '-GameScorePerGame', '-OverallRating')
 
     if AllPlayers.count() == 0:
         return None
@@ -114,7 +120,7 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
         for Pos in Position.objects.filter(Occurance__gt = 0):
             PositionPlayers = AllPlayers.filter(PlayerID__PositionID = Pos)
             if Conf is not None:
-                PositionPlayers = PositionPlayers.filter(TeamSeasonID__TeamID__ConferenceID = Conf)
+                PositionPlayers = PositionPlayers.filter(TeamSeasonID__ConferenceID = Conf)
 
             for PlayerCount in range(0,Pos.PositionCountPerAwardTeam * 2):
                 IsFirstTeam = False
@@ -124,8 +130,7 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
                 else:
                     IsSecondTeam = True
 
-
-                if PlayerCount <= len(PositionPlayers):
+                if PlayerCount < len(PositionPlayers):
                     if Conf is None:
                         PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PositionPlayers[PlayerCount]['PlayerTeamSeasonID'])
                         PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=False, PositionID = Pos, IsFirstTeam=IsFirstTeam, IsSecondTeam=IsSecondTeam, IsNationalAward=True, IsPreseasonAward=True)
@@ -172,9 +177,9 @@ def ChoosePlayersOfTheWeek(LS, WorldID):
 
         Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsNationalAward = True, IsWeekAward = True, IsPositionGroupAward = True, PositionGroupID = PositionGroupID, PlayerTeamSeasonID = NationalPlayerOfTheWeek, WeekID = CurrentWeek)
         Award.save()
-        ConfList = CurrentWorld.conference_set.all().filter(team__teamseason__teamgame__GameID__WeekID = CurrentWeek).annotate(GamesPlayed = Count('team__teamseason__teamgame')).filter(GamesPlayed__gt = 0)
+        ConfList = CurrentWorld.conference_set.all().filter(teamseason__teamgame__GameID__WeekID = CurrentWeek).annotate(GamesPlayed = Count('teamseason__teamgame')).filter(GamesPlayed__gt = 0)
         for Conf in ConfList:
-            ConfPTG = PTG.filter(TeamGameID__TeamSeasonID__TeamID__ConferenceID = Conf).order_by('-GameScore')
+            ConfPTG = PTG.filter(TeamGameID__TeamSeasonID__ConferenceID = Conf).order_by('-GameScore')
             ConferencePlayerOfTheWeek = ConfPTG[0].PlayerTeamSeasonID
             Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsConferenceAward = True, IsWeekAward = True, ConferenceID = Conf, PlayerTeamSeasonID = ConferencePlayerOfTheWeek, IsPositionGroupAward = True, PositionGroupID = PositionGroupID, WeekID = CurrentWeek)
             Award.save()

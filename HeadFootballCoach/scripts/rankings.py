@@ -17,7 +17,7 @@ def CalculateConferenceRankings(LS, WorldID):
 
     for Conf in Conference.objects.filter(WorldID = CurrentWorld):
         ConfName = Conf.ConferenceName
-        ConfTeams = TeamSeason.objects.filter(WorldID=CurrentWorld).filter(TeamID__ConferenceID = Conf).filter(teamseasonweekrank__IsCurrent = True).values(
+        ConfTeams = TeamSeason.objects.filter(WorldID=CurrentWorld).filter(ConferenceID = Conf).filter(teamseasonweekrank__IsCurrent = True).values(
                 'TeamID__TeamName', 'TeamSeasonID', 'TeamID', 'ConferenceWins', 'ConferenceLosses', 'ConferenceChampion', 'teamseasonweekrank__NationalRank'
         ).annotate(
             NetWins = Coalesce(F('ConferenceWins') - F('ConferenceLosses'), 0),
@@ -244,7 +244,7 @@ def CalculateRankings(LS, WorldID):
     for TSObj in RankedTeamSeasons:
         TS = TSObj['TeamSeason']
         RankValue += 1
-        TSDict[TS] = {'Rating': TSObj['Rating'] * SRSRatingValue, 'OverallRating': (TS.TeamOverallRating + RatingFloorModifier) * RatingNormalizationModifier, 'TeamPrestige': TS.TeamID.TeamPrestige}
+        TSDict[TS] = {'Rating': TSObj['Rating'] * SRSRatingValue, 'OverallRating': (TS.TeamOverallRating + RatingFloorModifier) * RatingNormalizationModifier, 'TeamPrestige': TS.TeamPrestige}
         if TSDict[TS]['OverallRating'] is None:
             TSDict[TS]['OverallRating'] = 0
 
@@ -295,7 +295,7 @@ def SelectBroadcast(LS, WorldID):
     GamesThisWeek = Game.objects.filter(WorldID=WorldID, WeekID = NextWeek).values('GameID').annotate(
         MinTeamRank=Min('teamgame__TeamSeasonWeekRankID__NationalRank'),
         MaxTeamRank=Max('teamgame__TeamSeasonWeekRankID__NationalRank'),
-        TeamPrestige = Sum('teamgame__TeamSeasonID__TeamID__TeamPrestige'),
+        TeamPrestige = Sum('teamgame__TeamSeasonID__TeamPrestige'),
         GameValue = F('MaxTeamRank') + F('MinTeamRank') + F('MinTeamRank') - F('TeamPrestige')
     ).order_by('GameValue')
 

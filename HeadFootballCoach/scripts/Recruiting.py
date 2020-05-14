@@ -182,11 +182,11 @@ def FakeWeeklyRecruiting(WorldID):
 
     RecruitList = Player.objects.filter(WorldID= CurrentWorld).filter(IsRecruit=True).filter(RecruitSigned=False)
 
-    TeamSeasonList = CurrentSeason.teamseason_set.filter(ScholarshipsToOffer__gt = 0).filter(teamseasonweekrank__IsCurrent = True).values('TeamSeasonID', 'TeamID', 'ScholarshipsToOffer', 'TeamID__TeamName', 'TeamID__TeamPrestige').annotate(
+    TeamSeasonList = CurrentSeason.teamseason_set.filter(ScholarshipsToOffer__gt = 0).filter(teamseasonweekrank__IsCurrent = True).values('TeamSeasonID', 'TeamID', 'ScholarshipsToOffer', 'TeamID__TeamName', 'TeamPrestige').annotate(
         NumberOfRecruits_FullSell = Value(6, output_field=IntegerField()),
         NumberOfRecruits_HalfSell = Value(4, output_field=IntegerField()),
         NumberOfRecruits_LightSell = Value(2, output_field=IntegerField()),
-        NumberOfRecruits_OnBoard = ExpressionWrapper(Value(6, output_field=IntegerField()) + F('TeamID__TeamPrestige'), output_field=IntegerField()),
+        NumberOfRecruits_OnBoard = ExpressionWrapper(Value(6, output_field=IntegerField()) + F('TeamPrestige'), output_field=IntegerField()),
         ActiveRecruitCount = Value(30, output_field=IntegerField()),#ExpressionWrapper(F('NumberOfRecruits_FullSell') + F('NumberOfRecruits_HalfSell') + F('NumberOfRecruits_LightSell') + F('NumberOfRecruits_OnBoard'), output_field=IntegerField()),
         RecruitsActivelyRecruiting = Sum(Case(
             When((Q(recruitteamseason__IsActivelyRecruiting = True) & Q(recruitteamseason__PlayerID__RecruitSigned = False)), then=1),
@@ -199,7 +199,7 @@ def FakeWeeklyRecruiting(WorldID):
             default=(Value(0)),
             output_field=IntegerField()
         )),
-    ).order_by('-TeamID__TeamPrestige', 'teamseasonweekrank__NationalRank')
+    ).order_by('-TeamPrestige', 'teamseasonweekrank__NationalRank')
 
 
     TeamPrestigeModified = .5

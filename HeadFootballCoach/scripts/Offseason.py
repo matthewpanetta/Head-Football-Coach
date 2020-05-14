@@ -32,7 +32,7 @@ def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
     CoachTeamSeason.objects.bulk_update(CoachTeamSeasonsToSave, ['RetiredAfterSeason'])
 
     ActiveCoaches = Coach.objects.filter(coachteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).annotate(
-        TeamPrestige = F('coachteamseason__TeamSeasonID__TeamID__TeamPrestige'),
+        TeamPrestige = F('coachteamseason__TeamSeasonID__TeamPrestige'),
         TeamWins = F('coachteamseason__TeamSeasonID__Wins'),
     ).filter(IsActiveCoach = True)
 

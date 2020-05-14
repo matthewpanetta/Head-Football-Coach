@@ -41,7 +41,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
             </li>
             <li class='playerHeaderHometown'>
               <div class='playerHeaderBioDescription'>OVR</div>
-              <div><span data-field="playerseasonskill__OverallRating"></span></div>
+              <div><span data-field="playerteamseason__playerteamseasonskill__OverallRating"></span></div>
             </li>
           </ul>
 
@@ -435,7 +435,7 @@ function GetPlayerStats(WorldID, data){
                                 }
                                 return returnVal;
                             },"sortable": true, 'searchable': true},
-          {"data": "playerseasonskill__OverallRating", "sortable": true, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__OverallRating", "sortable": true, 'orderSequence':["desc"]},
           {"data": 'ReasonForLeaving', "sortable": true, 'orderSequence':["desc"], 'className': 'col-group', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
           }},
 
@@ -469,46 +469,46 @@ function GetPlayerStats(WorldID, data){
           {"data": "FUM_Forced", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
           {"data": "FUM_Recovered", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
-          {"data": "playerseasonskill__Strength_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Agility_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Speed_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Acceleration_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Stamina_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Jumping_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Awareness_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Strength_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Agility_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Speed_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Acceleration_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Stamina_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Jumping_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Awareness_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
-          {"data": "playerseasonskill__ThrowPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__ShortThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__MediumThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__DeepThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__ThrowOnRun_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__ThrowUnderPressure_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__PlayAction_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__ThrowPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__ShortThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__MediumThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__DeepThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__ThrowOnRun_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__ThrowUnderPressure_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__PlayAction_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
-          {"data": "playerseasonskill__Carrying_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Elusiveness_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__BallCarrierVision_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__BreakTackle_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Carrying_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Elusiveness_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__BallCarrierVision_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__BreakTackle_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
-          {"data": "playerseasonskill__Catching_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__CatchInTraffic_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__RouteRunning_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Release_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Catching_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__CatchInTraffic_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__RouteRunning_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Release_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
-          {"data": "playerseasonskill__PassBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__RunBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__ImpactBlock_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__PassBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__RunBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__ImpactBlock_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
-          {"data": "playerseasonskill__PassRush_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__BlockShedding_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Tackle_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__HitPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__ManCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__ZoneCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__Press_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__PassRush_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__BlockShedding_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Tackle_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__HitPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__ManCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__ZoneCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__Press_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
-          {"data": "playerseasonskill__KickPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-          {"data": "playerseasonskill__KickAccuracy_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__KickPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__KickAccuracy_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
           {"data": null, "sortable": false, 'searchable': false, 'className': 'details-control',   "defaultContent": ''},
           {"data": null, 'visible': false,"sortable": false, 'searchable': false,   "defaultContent": ''},
           {"data": null, 'visible': false,"sortable": false, 'searchable': false,  'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){

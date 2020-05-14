@@ -159,7 +159,8 @@ function PlayerAction(WorldID){
 
         },
         error: function(res) {
-          alert(res.status);
+          console.log(res)
+          alert(res.responseJSON.message);
         }
       });
 

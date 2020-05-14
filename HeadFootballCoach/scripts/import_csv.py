@@ -1,6 +1,6 @@
 
 
-from ..models import SubPosition, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill
+from ..models import SubPosition,TeamSeason, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill
 import os
 from ..utilities import Max, WeightedProbabilityChoice
 from datetime import timedelta, date
@@ -675,7 +675,7 @@ def import_Conference(File, WorldID, LeagueID):
             Conference.objects.create(**LineDict)
 
 
-def import_Team( File, WorldID, LeagueID):
+def import_Team( File, WorldID, LeagueID, CurrentSeason):
 
 
     JerseyOptions = {"football": 7, 'football3': 1, 'football4': 1, 'football5': 1}
@@ -685,7 +685,8 @@ def import_Team( File, WorldID, LeagueID):
     ConferenceList = LeagueID.ConferenceList
     ConferenceList = ConferenceList.split(',')
 
-
+    TeamDict = {}
+    TeamsToCreate = []
     linecount = 0
     for line in f:
         KeepRow = False
@@ -707,7 +708,7 @@ def import_Team( File, WorldID, LeagueID):
             LineDict[Headers[FieldCount]] = V
             FieldCount +=1
 
-        FieldExclusions = ['City', 'State', 'LeagueName', 'Country', 'ConferenceName']
+        FieldExclusions = ['City', 'State', 'LeagueName', 'Country', 'ConferenceName','LocationRating', 'ChampionshipContenderRating', 'CoachStabilityRating', 'TelevisionExposureRating', 'AcademicPrestigeRating', 'CampusLifestyleRating', 'TeamPrestige', 'ConferenceID', 'FacilitiesRating', 'ProPotentialRating']
 
         if LineDict['ConferenceName'] in ConferenceList:
             KeepRow = True
@@ -747,17 +748,45 @@ def import_Team( File, WorldID, LeagueID):
             LineDict['TeamLogoURL_100'] = URL_100
             LineDict['LeagueID'] = LeagueID
 
+            TeamDict[LineDict['TeamName']] = LineDict.copy()
+
             for FE in FieldExclusions:
                 del LineDict[FE]
 
 
-            #for K in LineDict:
-                #print(K, LineDict[K])
+            TeamsToCreate.append(Team(**LineDict))
 
-                #setattr(T, K, LineDict[K])
-            Team.objects.create(**LineDict)
+    Team.objects.bulk_create(TeamsToCreate)
 
-            #T.save()
+    CurrentWorld = WorldID
+    ListOfTeams = Team.objects.filter(WorldID = CurrentWorld).values('TeamName', 'TeamID')
+    CurrentSeason = LeagueSeason.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
+
+    FieldExclusions = ['Country','LeagueID', 'CityID','TeamJerseyStyle',  'TeamLogoURL','TeamLogoURL_50', 'TeamLogoURL_100', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamJerseyInvert', 'ConferenceName', 'DefaultOffensiveScheme', 'DefaultDefensiveScheme','TeamTalent',   'TeamName', 'TeamNickname', 'LeagueName', 'Abbreviation', 'City', 'State']
+
+    TS_ToSave = []
+    for u in ListOfTeams:
+        LineDict = TeamDict[u['TeamName']]
+        LineDict['LeagueSeasonID'] = CurrentSeason
+        LineDict['TeamID_id'] = u['TeamID']
+
+        print('LineDict', LineDict)
+
+        for FE in FieldExclusions:
+            del LineDict[FE]
+
+        obj = TeamSeason(**LineDict)
+        TS_ToSave.append(obj)
+
+    obj = TeamSeason(WorldID=WorldID, LeagueSeasonID = CurrentSeason, IsFreeAgentTeam = True)
+    TS_ToSave.append(obj)
+    obj = TeamSeason(WorldID=WorldID, LeagueSeasonID = CurrentSeason, IsRecruitTeam = True)
+    TS_ToSave.append(obj)
+
+    TeamSeason.objects.bulk_create(TS_ToSave, ignore_conflicts=False)
+
+    CurrentSeason.TeamSeasonsCreated = True
+    CurrentSeason.save()
 
     WorldID.HasTeams = True
     WorldID.save()
@@ -805,7 +834,7 @@ def reset_Date(d):
     Headline.objects.all().delete()
 
 
-def LoadData(WorldID, LeagueID):
+def LoadData(WorldID, LeagueID, LeagueSeasonID):
 
     print('RUNNING IMPORT CSV')
     #
@@ -884,7 +913,7 @@ def LoadData(WorldID, LeagueID):
 
     if CreateTeams:
         import_Conference('HeadFootballCoach/scripts/data_import/Conference.csv', WorldID, LeagueID)
-        import_Team('HeadFootballCoach/scripts/data_import/Team.csv', WorldID, LeagueID)
+        import_Team('HeadFootballCoach/scripts/data_import/Team.csv', WorldID, LeagueID, LeagueSeasonID)
         import_TeamRivalries('HeadFootballCoach/scripts/data_import/TeamRivals.csv', WorldID, LeagueID)
 
     if DoAudit:

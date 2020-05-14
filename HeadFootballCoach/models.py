@@ -576,16 +576,17 @@ class Conference(models.Model):
 
         if WorldID is None:
             WorldID = self.WorldID.WorldID
-        Standings = self.team_set.all().filter(teamseason__teamseasonweekrank__IsCurrent = True).values(
-            'TeamLogoURL_50', 'TeamName', 'teamseason__teamseasonweekrank__NationalRank', 'teamseason__ConferenceWins', 'teamseason__ConferenceLosses', 'teamseason__ConferenceGB', 'teamseason__ConferenceRank', 'teamseason__Wins', 'teamseason__Losses', 'TeamLogoURL', 'TeamID'
+
+        Standings = Team.objects.filter(teamseason__LeagueSeasonID__IsCurrent = True).filter(teamseason__ConferenceID = self).filter(teamseason__teamseasonweekrank__IsCurrent = True).values(
+            'TeamLogoURL_50', 'TeamName', 'teamseason__ConferenceWins', 'teamseason__ConferenceLosses', 'teamseason__ConferenceGB', 'teamseason__ConferenceRank', 'teamseason__Wins', 'teamseason__Losses', 'TeamLogoURL', 'TeamID'
         ).annotate(
             TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), output_field=CharField()),
+            NationalRank = F('teamseason__teamseasonweekrank__NationalRank'),
             NationalRankDisplay = Case(
-                When(teamseason__teamseasonweekrank__NationalRank__gt = 25, then=Value('')),
-                default=Concat(Value('('), F('teamseason__teamseasonweekrank__NationalRank'), Value(')'), output_field=CharField()),
+                When(NationalRank__gt = 25, then=Value('')),
+                default=Concat(Value('('), F('NationalRank'), Value(')'), output_field=CharField()),
                 output_field=CharField()
             ),
-            NationalRank = F('teamseason__teamseasonweekrank__NationalRank'),
             ConferenceWins = F('teamseason__ConferenceWins'),
             ConferenceLosses = F('teamseason__ConferenceLosses'),
             Wins = F('teamseason__Wins'),
@@ -599,6 +600,8 @@ class Conference(models.Model):
             ),
         ).order_by('ConferenceRank')
 
+
+        print('Standings', Standings.query)
         return Standings
 
     def __str__(self):
@@ -636,16 +639,6 @@ class Team(models.Model):
     TeamColor_Secondary_HEX = models.CharField(max_length=6)
     TeamJerseyStyle = models.CharField(max_length = 20, default='football')
     TeamJerseyInvert = models.BooleanField( default=False)
-    ConferenceID   = models.ForeignKey(Conference, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    TeamPrestige = models.PositiveSmallIntegerField(default = 0)
-    FacilitiesRating = models.PositiveSmallIntegerField(default=0)
-    ProPotentialRating = models.PositiveSmallIntegerField(default=0)
-    CampusLifestyleRating = models.PositiveSmallIntegerField(default=0)
-    AcademicPrestigeRating      = models.PositiveSmallIntegerField(default=0)
-    TelevisionExposureRating = models.PositiveSmallIntegerField(default=0)
-    CoachStabilityRating     = models.PositiveSmallIntegerField(default=0)
-    ChampionshipContenderRating =models.PositiveSmallIntegerField(default=0)
-    LocationRating =models.PositiveSmallIntegerField(default=0)
 
     DefaultOffensiveScheme = models.CharField(max_length = 15, blank=True, null=True, default=None)
     DefaultDefensiveScheme = models.CharField(max_length = 15, blank=True, null=True, default=None)
@@ -680,7 +673,7 @@ class Team(models.Model):
         return self.TeamName + ' ' + self.TeamNickname
     @property
     def ConferenceName(self):
-        return self.ConferenceID.ConferenceName
+        return self.CurrentTeamSeason.ConferenceID.ConferenceName
 
     @property
     def TeamRecord(self):
@@ -743,15 +736,6 @@ class TeamRivalry(models.Model):
     def __str__(self):
         return str(self.Team1TeamID) + ' vs. ' + str(self.Team2TeamID) + ' in the ' + str(self.RivalryName)
 
-
-class TeamConference(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    TeamConferenceID = models.AutoField(primary_key=True)
-    TeamID = models.ForeignKey(Team, on_delete=models.CASCADE)
-    ConferenceID = models.ForeignKey(Conference, on_delete=models.CASCADE)
-    class Meta:
-              # specify this model as an Abstract Model
-            app_label = 'HeadFootballCoach'
 
 class Bowl(models.Model):
     WorldID  = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
@@ -1249,6 +1233,7 @@ class TeamSeason(models.Model):
     TeamSeasonID = models.AutoField(primary_key=True, db_index=True)
     TeamID       = models.ForeignKey(Team,  on_delete=models.CASCADE, db_index=True, null=True, blank=True)
     LeagueSeasonID     = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, db_index=True)
+    ConferenceID   = models.ForeignKey(Conference,on_delete=models.CASCADE, db_index=True, blank=True, null=True, default=None)
 
     IsRecruitTeam = models.BooleanField(default=False)
     IsFreeAgentTeam = models.BooleanField(default=False)
@@ -1288,6 +1273,17 @@ class TeamSeason(models.Model):
     TeamOverallRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
     TeamOffenseRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
     TeamDefenseRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
+
+    TeamPrestige = models.PositiveSmallIntegerField(default = 0)
+    FacilitiesRating = models.PositiveSmallIntegerField(default=0)
+    ProPotentialRating = models.PositiveSmallIntegerField(default=0)
+    CampusLifestyleRating = models.PositiveSmallIntegerField(default=0)
+    AcademicPrestigeRating      = models.PositiveSmallIntegerField(default=0)
+    TelevisionExposureRating = models.PositiveSmallIntegerField(default=0)
+    CoachStabilityRating     = models.PositiveSmallIntegerField(default=0)
+    ChampionshipContenderRating =models.PositiveSmallIntegerField(default=0)
+    LocationRating =models.PositiveSmallIntegerField(default=0)
+
     def __str__(self):
         TeamName = 'None'
         if self.TeamID is not None:
@@ -1370,7 +1366,7 @@ class TeamSeason(models.Model):
         WP = 0
         if self.GamesPlayed > 0:
             WP = (self.Wins ) * 1.0 / self.GamesPlayed
-        return (self.NationalChampion, WP, self.Wins, self.TeamID.TeamPrestige)
+        return (self.NationalChampion, WP, self.Wins, self.TeamPrestige)
 
     @property
     def ConferenceRankingTuple(self):
@@ -2085,7 +2081,7 @@ class Game(models.Model):
             else:
                 return self.BowlID.BowlName
         elif self.IsConferenceChampionship:
-            return self.HomeTeamID.ConferenceID.ConferenceName + ' Championship'
+            return self.HomeTeamSeasonID.ConferenceID.ConferenceName + ' Championship'
         elif self.TeamRivalryID is not None:
             if self.TeamRivalryID.RivalryName is not None:
                 return self.TeamRivalryID.RivalryName

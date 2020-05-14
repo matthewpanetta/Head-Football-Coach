@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import SubPosition, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, Nation, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, TeamConference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
+from .models import SubPosition, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, Nation, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
 
 
 class TeamSeasonStrategyAdmin(admin.ModelAdmin):
@@ -95,8 +95,8 @@ class PlayerTeamSeasonAwardAdmin(admin.ModelAdmin):
     list_filter = ['ConferenceID__ConferenceName', 'PositionID__PositionAbbreviation', 'IsSeasonAward', 'IsWeekAward', 'IsPreseasonAward', 'IsFirstTeam', 'IsSecondTeam', 'IsNationalAward', 'WeekID']
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['TeamName', 'TeamNickname', 'WorldID', 'Abbreviation',  'IsUserTeam', 'TeamPrestige', 'TeamJerseyStyle', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamJerseyInvert', 'CityID', 'TeamLogoURL', 'ConferenceID', 'FacilitiesRating', 'ProPotentialRating', 'CampusLifestyleRating', 'AcademicPrestigeRating', 'TelevisionExposureRating', 'CoachStabilityRating', 'ChampionshipContenderRating', 'LocationRating', 'DefaultOffensiveScheme', 'DefaultDefensiveScheme']
-    list_filter = ['ConferenceID', 'WorldID', 'IsUserTeam', 'TeamPrestige']
+    list_display = ['TeamName', 'TeamNickname', 'WorldID', 'Abbreviation',  'IsUserTeam', 'TeamJerseyStyle', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamJerseyInvert', 'CityID', 'TeamLogoURL',]
+    list_filter = ['WorldID', 'IsUserTeam']
 
 class TeamSeasonDateRankAdmin(admin.ModelAdmin):
     list_display = [field.name for field in TeamSeasonDateRank._meta.get_fields() if field.name not in ('teamgame','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -168,7 +168,6 @@ admin.site.register(Player, PlayerAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(PlayerTeamSeason, PlayerTeamSeasonAdmin)
 admin.site.register(Conference, ConferenceAdmin)
-admin.site.register(TeamConference)
 admin.site.register(LeagueSeason, LeagueSeasonAdmin)
 admin.site.register(Headline,HeadlineAdmin)
 admin.site.register(Calendar,CalendarAdmin)

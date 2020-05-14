@@ -1517,7 +1517,7 @@ def GameSim(game):
     AwayTeamGame.TeamRecord = str(GameDict[AwayTeam]['TeamSeason'].Wins) + '-' + str(GameDict[AwayTeam]['TeamSeason'].Losses)
 
 
-    if HomeTeam.ConferenceID == AwayTeam.ConferenceID:
+    if GameDict[HomeTeam]['TeamSeason'].ConferenceID == GameDict[AwayTeam]['TeamSeason'].ConferenceID:
         GameDict[WinningTeam]['TeamSeason'].ConferenceWins +=1
         GameDict[LosingTeam]['TeamSeason'].ConferenceLosses +=1
 

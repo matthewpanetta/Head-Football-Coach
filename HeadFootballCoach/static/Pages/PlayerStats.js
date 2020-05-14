@@ -301,7 +301,7 @@ function GetPlayerStats(WorldID, data){
         'DEF <i class="fas fa-chart-line"></i>': 7,
         'KCK <i class="fas fa-chart-line"></i>': 2,
         'Expand': 1,
-        'Custom': 2
+        'Custom': 3
       }
 
       var ShowColumnMap = {}
@@ -420,7 +420,51 @@ function GetPlayerStats(WorldID, data){
              ],
          },
          targets: [68]
-       }
+       },
+       {
+        searchPanes: {
+          show: true,
+            options:[
+              {
+                  label: 'Offense',
+                  value: function(rowData, rowIdx){
+                      return PositionGroupMap[rowData['PositionID__PositionAbbreviation']] == 'Offense' ;
+                  }
+              },
+              {
+                  label: 'Defense',
+                  value: function(rowData, rowIdx){
+                      return PositionGroupMap[rowData['PositionID__PositionAbbreviation']] == 'Defense' ;
+                  }
+              },
+              {
+                  label: 'Special Teams',
+                  value: function(rowData, rowIdx){
+                      return PositionGroupMap[rowData['PositionID__PositionAbbreviation']] == 'Special Teams' ;
+                  }
+              },
+                {
+                    label: 'Offensive Line',
+                    value: function(rowData, rowIdx){
+                        return rowData['PositionID__PositionAbbreviation'] == 'OT' || rowData['PositionID__PositionAbbreviation'] == 'OG' || rowData['PositionID__PositionAbbreviation'] == 'OC';
+                    }
+                },
+                  {
+                      label: 'Skill Position',
+                      value: function(rowData, rowIdx){
+                          return rowData['PositionID__PositionAbbreviation'] == 'QB' || rowData['PositionID__PositionAbbreviation'] == 'RB' || rowData['PositionID__PositionAbbreviation'] == 'WR' || rowData['PositionID__PositionAbbreviation'] == 'TE';
+                      }
+                  },
+                  {
+                      label: 'Defensive Line',
+                      value: function(rowData, rowIdx){
+                          return rowData['PositionID__PositionAbbreviation'] == 'DE' || rowData['PositionID__PositionAbbreviation'] == 'DT';
+                      }
+                  },
+            ],
+        },
+        targets: [69]
+      },
       ],
       "columns": [
         {"data": "playerteamseason__TeamSeasonID__TeamID__TeamName", "sortable": true, 'className': 'left-text', 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
@@ -533,10 +577,15 @@ function GetPlayerStats(WorldID, data){
           {"data": null, 'visible': false,"sortable": false, 'searchable': false,  'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
             $(td).html(PositionGroupMap[DataObject['PositionID__PositionAbbreviation']]);
           }},
+          {"data": null, 'visible': false,"sortable": false, 'searchable': false,  'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
+            $(td).html(PositionGroupMap[DataObject['PositionID__PositionAbbreviation']]);
+          }},
       ],
       'order': [[ 4, "desc" ]],
   });
 
+
+  console.log('table', table.column(69));
 
 
     $('#PlayerStats tbody').on('click', '.details-control', function () {

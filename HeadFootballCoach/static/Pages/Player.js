@@ -57,7 +57,7 @@ function DrawPlayerStats(data){
     return n.DisplayColumn
   });
 
-
+  console.log('DrawPlayerStats(data)', data);
 
   var Parent = $('#PlayerSeasonStatTableClone').parent();
 
