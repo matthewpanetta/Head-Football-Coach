@@ -454,6 +454,13 @@ class Phase(models.Model):
     def __str__(self):
         return self.PhaseName
 
+    @property
+    def NextPhaseName(self):
+        NextPhase = Phase.objects.filter(PhaseID__gt = self.PhaseID).order_by('PhaseID').first()
+        if NextPhase is not None:
+            return NextPhase.PhaseName
+        return ''
+
 class Week(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     WeekID = models.AutoField(primary_key=True, db_index=True)
@@ -466,6 +473,8 @@ class Week(models.Model):
     BroadcastSelected = models.BooleanField(default=False)
 
     LastWeekInPhase = models.BooleanField(default = False)
+
+    RecruitingWeekModifier = models.FloatField(default = 1.0)
 
     def __str__(self):
         return 'Week ' + str(self.WeekNumber)

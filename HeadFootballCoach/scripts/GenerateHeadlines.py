@@ -3,14 +3,12 @@ from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, 
 from django.db.models.functions.window import Rank
 from django.db.models.functions import Length, Concat, Coalesce
 
-def GenerateHeadlines(LeagueSeasonID, WorldID):
+def GenerateHeadlines(LeagueSeasonID, WorldID, CurrentWeek=None):
 
 
     CurrentWorld  = World.objects.get(WorldID = WorldID)
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
 
-
-    CurrentWeek     = CurrentWorld.week_set.filter(IsCurrent=1).first()
     LastWeek        = Week.objects.filter(WorldID = WorldID).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
     print('Generate Headlines for World', WorldID)
 

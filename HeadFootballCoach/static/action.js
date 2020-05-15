@@ -180,13 +180,19 @@ $(document).ready(function() {
   console.log('In Action');
   PlayerAction(WorldID);
 
+
+  var SimMap = {
+    'SimThisWeek': 'SimWeek',
+    'SimThisPhase': 'SimPhase'
+  }
+
   $('#SimDayModalCloseButton').on('click', function(){
     console.log('Clicked on indexCreateWorldModalCloseButton!!', this);
     $('#SimDayModal').css({'display': 'none'});
     $(window).unbind();
   });
 
-  $('#SimThisWeek:not(.w3-disabled)').click(function(e) {
+  $('.sim-action:not(.w3-disabled)').click(function(e) {
 
     $('#SimDayModal').css({'display': 'block'});
 
@@ -206,18 +212,18 @@ $(document).ready(function() {
       }
     });
 
-    var days = $(this).attr('id');
+    var SimDuration = $(this).attr('id');
+    var AjaxDuration = SimMap[SimDuration]
     console.log($(this));
     console.log($(this).attr('id'));
 
-
     $.ajax({
       method: "POST",
-      url: "/World/"+WorldID+"/SimDay/",
+      url: "/World/"+WorldID+"/SimAction/",
       data: {
         // here getdata should be a string so that
         // in your views.py you can fetch the value using get('getdata')
-        'Days': days,
+        'Duration': AjaxDuration,
         //csrfmiddlewaretoken:'{{ csrf_token }}'
         csrfmiddlewaretoken: csrftoken
       },

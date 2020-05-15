@@ -28,8 +28,16 @@
         <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Player Stats</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">{{page.YearDisplay}} Player Stats</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">League Leaders</button>
+        <div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
+          <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Seasons</button>
+          <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
+            {% for Season in Seasons %}
+            <a href="{{Season.SeasonStatsHref}}" class="w3-bar-item w3-button">{{Season.SeasonStartYear}}</a>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </nav>
     <div id="nav-tabContent">

@@ -528,54 +528,56 @@ def createCalendar(StartYear=2019, StartAfterMonthDay=(8,25), WorldID=None, Leag
     SD = date(StartYear, StartAfterMonthDay[0], StartAfterMonthDay[1])
 
     WeeksInRegularSeason = 15
+    BowlWeeks = 2
+    OffseasonRecruitingWeeks = 4
     AnnualScheduleOfEvents = [
-        {'Phase': 'Preseason', 'WeekNumber': 0, 'WeekName': 'Preseason', 'LastWeekInPhase': True},
+        {'Phase': 'Preseason', 'WeekName': 'Preseason', 'LastWeekInPhase': True},
     ]
     for WeekCount in range(1, WeeksInRegularSeason+1):
-        WeekDict = {'Phase': 'Regular Season', 'WeekNumber': WeekCount, 'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False}
+        WeekDict = {'Phase': 'Regular Season',  'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': round(1.0 + (WeekCount / 60.0), 2)}
         if WeekCount == WeeksInRegularSeason:
             WeekDict['LastWeekInPhase'] = True
         AnnualScheduleOfEvents.append(WeekDict)
 
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Conference Championships', 'WeekNumber': WeekCount, 'WeekName': 'Conference Championship Week', 'LastWeekInPhase': True})
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Bowls', 'WeekNumber': WeekCount, 'WeekName': 'Bowl Season', 'LastWeekInPhase': True})
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Season Recap', 'WeekNumber': WeekCount, 'WeekName': 'Season Recap', 'LastWeekInPhase': True})
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Coach Carousel', 'LastWeekInPhase': False})
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Draft Departures', 'LastWeekInPhase': False})
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Transfer Announcements', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Conference Championships',  'WeekName': 'Conference Championship Week', 'LastWeekInPhase': True})
 
-    for u in range(0,4):
-        WeekCount += 1
-        AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False})
+    for WeekCount in range(1, BowlWeeks+1):
+        WeekDict = {'Phase': 'Bowl Season',  'WeekName': 'Bowl Week ' + str(WeekCount), 'LastWeekInPhase': False}
+        if WeekCount == BowlWeeks:
+            WeekDict['LastWeekInPhase'] = True
+        AnnualScheduleOfEvents.append(WeekDict)
 
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'National Signing Day', 'LastWeekInPhase': False})
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Prepare for Summer Camps', 'LastWeekInPhase': False})
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Training Results', 'LastWeekInPhase': False})
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Cut Players', 'LastWeekInPhase': False})
-    WeekCount += 1
-    AnnualScheduleOfEvents.append({'Phase': 'Offseason', 'WeekNumber': WeekCount, 'WeekName': 'Advance to Next Season', 'LastWeekInPhase': True})
+    AnnualScheduleOfEvents.append({'Phase': 'Season Recap',  'WeekName': 'Season Recap', 'LastWeekInPhase': True})
+    AnnualScheduleOfEvents.append({'Phase': 'Departures',  'WeekName': 'Coach Carousel', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Departures',  'WeekName': 'Draft Departures', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Departures',  'WeekName': 'Transfer Announcements', 'LastWeekInPhase': True})
+
+
+    for WeekCount in range(1, OffseasonRecruitingWeeks+1):
+        WeekDict = {'Phase': 'Offseason Recruiting',  'WeekName': 'Offseason Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': 1.0 + (WeekCount / 10.0)}
+        if WeekCount == OffseasonRecruitingWeeks:
+            WeekDict['LastWeekInPhase'] = True
+        AnnualScheduleOfEvents.append(WeekDict)
+
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason',  'WeekName': 'National Signing Day', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason',  'WeekName': 'Prepare for Summer Camps', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason',  'WeekName': 'Training Results', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason',  'WeekName': 'Cut Players', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason',  'WeekName': 'Advance to Next Season', 'LastWeekInPhase': True})
 
 
     WeeksToSave = []
     PhaseList = []
     FieldExclusions = ['Phase']
-    WeekCount = 1
+    WeekCount = 0
     W = None
     for W in AnnualScheduleOfEvents:
 
         P,st = Phase.objects.get_or_create(WorldID = WorldID, PhaseName = W['Phase'], LeagueSeasonID=LeagueSeasonID)
 
         W['PhaseID'] = P
+        W['WeekNumber'] = WeekCount
+        WeekCount +=1
         for FE in FieldExclusions:
             del W[FE]
 

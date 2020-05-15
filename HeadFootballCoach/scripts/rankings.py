@@ -5,15 +5,12 @@ from ..models import World, Week,TeamSeasonWeekRank, TeamSeasonDateRank, PlayerT
 import itertools
 from .SRS.SRS   import CalculateSRS
 
-def CalculateConferenceRankings(LS, WorldID):
-    TeamDictStarter = Team.objects.filter(WorldID=WorldID)
-    CurrentSeason = LS
-    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
-    CurrentWorld = WorldID
+def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
+
+    TeamDictStarter = Team.objects.filter(WorldID=CurrentWorld)
 
     RankCount = 0
     ConfRankTracker = {}
-
 
     for Conf in Conference.objects.filter(WorldID = CurrentWorld):
         ConfName = Conf.ConferenceName
@@ -103,7 +100,7 @@ def CalculateConferenceRankings(LS, WorldID):
 
 
 
-def CalculateRankings_old(LS, WorldID):
+def CalculateRankings_old(LS, WorldID, CurrentWeek = None):
 
     TeamList = Team.objects.filter(WorldID=WorldID).filter(teamseason__LeagueSeasonID__IsCurrent = True).values('TeamName', 'teamseason__NationalChampion', 'teamseason__ConferenceChampion', 'TeamPrestige', 'teamseason__TeamOverallRating', 'teamseason__Wins', 'teamseason__Losses', 'teamseason__TeamSeasonID', 'teamseason__NationalBroadcast', 'teamseason__RegionalBroadcast').annotate(
         Points = Sum('teamseason__teamgame__Points'),
@@ -155,7 +152,6 @@ def CalculateRankings_old(LS, WorldID):
         T['RankingValue'] = ( (1000 * T['NationalChampionRank']) + (.1 * T['MediaSharesRank']) + (10 * T['WinSharesRank']) + (1 * T['MarginOfVictoryRank']) + (.25 * T['TeamOverallRatingRank']) + (1 * T['ConferenceChampionRank']) )
 
     CurrentSeason = LS
-    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
     NextWeek = CurrentWeek.NextWeek
     CurrentWorld = WorldID
 
@@ -184,10 +180,9 @@ def CalculateRankings_old(LS, WorldID):
 
     return None
 
-def CalculateRankings(LS, WorldID):
+def CalculateRankings(LS, WorldID, CurrentWeek = None):
         #Custom game output
     CurrentSeason = LS
-    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
     NextWeek = CurrentWeek.NextWeek
     CurrentWorld = WorldID
     Games = WorldID.game_set.filter(WasPlayed = True)
@@ -284,9 +279,8 @@ def CalculateRankings(LS, WorldID):
     return None
 
 
-def SelectBroadcast(LS, WorldID):
+def SelectBroadcast(LS, WorldID, CurrentWeek=None):
 
-    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
     NextWeek = CurrentWeek.NextWeek
 
     if CurrentWeek.BroadcastSelected == True:

@@ -17,7 +17,7 @@ def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
     OldCoaches = Coach.objects.filter(CoachAge__gte = 60)
     CoachesToSave = []
     CoachTeamSeasonsToSave = []
-    for C in OldCoaches:#OldCoaches:
+    for C in []:#OldCoaches:
         RetireProb = ((C.CoachAge - 60) / 20.0)
         if random.uniform(0,1) < RetireProb:
             print('Retiring', C)
@@ -36,8 +36,8 @@ def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
         TeamWins = F('coachteamseason__TeamSeasonID__Wins'),
     ).filter(IsActiveCoach = True)
 
-    GoodPerformingCoaches = ActiveCoaches.filter(TeamPrestige__lt = (F('TeamWins') + 1) * 10)
-    PoorPerformingCoaches = ActiveCoaches.exclude(TeamPrestige__lt = (F('TeamWins') + 1) * 10)
+    GoodPerformingCoaches = ActiveCoaches#.filter(TeamPrestige__lt = (F('TeamWins') + 1) * 10)
+    #PoorPerformingCoaches = ActiveCoaches.exclude(TeamPrestige__lt = (F('TeamWins') + 1) * 10)
 
     CTSToSave = []
     for C in GoodPerformingCoaches:
@@ -49,7 +49,7 @@ def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
 
     CoachTeamSeasonsToSave = []
 
-    for C in PoorPerformingCoaches:#PoorPerformingCoaches:
+    for C in []:#PoorPerformingCoaches:
         print('Firing ', C)
         CTS = C.CurrentCoachTeamSeason
         CTS.FiredAfterSeason = True

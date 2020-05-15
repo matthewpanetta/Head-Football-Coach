@@ -40,6 +40,7 @@ urlpatterns = [
     path('World/<int:WorldID>/Awards/Season/<int:SeasonStartYear>/', views.Page_Awards, name='Awards'),
     path('World/<int:WorldID>/History/', views.Page_History, name='History'),
     path('World/<int:WorldID>/PlayerStats/', views.Page_PlayerStats, name='PlayerStats'),
+    path('World/<int:WorldID>/PlayerStats/Season/<int:SeasonStartYear>/', views.Page_PlayerStats, name='PlayerStats'),
     path('World/<int:WorldID>/PlayerStats/Team/<int:TeamID>/', views.Page_PlayerStats, name='PlayerStats'),
     path('World/<int:WorldID>/TeamStats/', views.Page_TeamStats, name='TeamStats'),
     path('World/<int:WorldID>/TeamStats/Season/<int:SeasonStartYear>/', views.Page_TeamStats, name='TeamStats'),
@@ -64,7 +65,7 @@ urlpatterns = [
     path('World/<int:WorldID>/Search/<str:SearchInput>/', views.Page_Search, name='Search'),
 
     #POSTS BELOW
-    path('World/<int:WorldID>/SimDay/', views.POST_SimDay, name='SimDay'),
+    path('World/<int:WorldID>/SimAction/', views.POST_SimAction, name='SimAction'),
     path('World/<int:WorldID>/PickTeam/', views.POST_PickTeam, name='PickTeam'),
     path('CreateLeague/', views.POST_CreateLeague, name='CreateLeague'),
 

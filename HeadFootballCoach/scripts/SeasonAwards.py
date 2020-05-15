@@ -144,11 +144,7 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
     return None
 
 
-def ChoosePlayersOfTheWeek(LS, WorldID):
-    CurrentSeason = LS
-    CurrentWeek = Week.objects.get(WorldID=WorldID, IsCurrent = 1)
-    CurrentWorld = WorldID
-
+def ChoosePlayersOfTheWeek(CurrentSeason, CurrentWorld, CurrentWeek=None):
 
     for PositionGroupID in PositionGroup.objects.exclude(PositionGroupName = 'Special Teams'):
 

@@ -371,7 +371,7 @@
                     {% for Recruit in SignedRecruits %}
                     <tr >
                       <td  class='w3-margin-top'>
-                        <a href="/World/{{page.WorldID}}/Player/{{ Recruit.PlayerTeamSeasonID.PlayerID.PlayerID }}/">
+                        <a href="{{Recruit.PlayerHref}}">
                           {{Recruit.PlayerName}}
                         </a>
                       </td>

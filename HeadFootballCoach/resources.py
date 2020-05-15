@@ -264,7 +264,6 @@ def CalculateTeamOverall(LS, WorldID):
         TSDict[TS['TeamSeasonID']]['TeamOverallRating_Grade'] = NtileToGradeMap[TS['AverageOverall_Ntile'] - 1]
 
     for TS in TeamSeason.objects.filter(WorldID = WorldID).filter(TeamID__isnull = False).filter(LeagueSeasonID = LS).values_list('TeamSeasonID', flat=True):
-        print(TSDict[TS])
         TeamSeason.objects.filter(WorldID_id = WorldID).filter(TeamID__isnull = False).filter(TeamSeasonID = TS).update(TeamOverallRating = TSDict[TS]['TeamOverallRating'], TeamOffenseRating = TSDict[TS]['TeamOffenseRating'], TeamDefenseRating = TSDict[TS]['TeamDefenseRating'], TeamOverallRating_Grade = TSDict[TS]['TeamOverallRating_Grade'], TeamOffenseRating_Grade = TSDict[TS]['TeamOffenseRating_Grade'], TeamDefenseRating_Grade = TSDict[TS]['TeamDefenseRating_Grade'])
 
 
@@ -605,7 +604,6 @@ def AssignTemporaryTeamSeasonID(CurrentWorld, LS,PlayerList , ClassID , IsFreeAg
             PlayerClasses = list(Class.objects.filter(IsRecruit = False).exclude(ClassName = 'Graduate'))
         PlayerClassID = random.choice(PlayerClasses)
 
-        print('Creating PTS', P, TS)
         PTS = PlayerTeamSeason(PlayerID = P, TeamSeasonID = TS, WorldID = CurrentWorld, ClassID = PlayerClassID)
         PTS_ToSave.append(PTS)
 
@@ -1054,7 +1052,6 @@ def CreatePlayers(LS, WorldID):
         TeamRosterCompositionNeeds[TS]['StarterPosition'][PlayerForTeam['Position']] -=1
         TeamRosterCompositionNeeds[TS]['PositionMaximums'][PlayerForTeam['Position']] -=1
 
-        print('Updating PTS Team', PlayerForTeam, TS)
         PlayerTeamSeason.objects.filter(PlayerTeamSeasonID = PlayerForTeam['PlayerTeamSeasonID']).update(TeamSeasonID = TS)
 
 
@@ -1075,8 +1072,6 @@ def CreatePlayers(LS, WorldID):
                     PTS.save()
 
                     PlayerSkillPool.append(PopulatePlayerSkills(PTS, WorldID))
-
-                    print('New PTS', PTS)
 
     PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=True)
     PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToUpdate, ['TeamSeasonID'])
@@ -1248,8 +1243,6 @@ def CreateRecruitingClass(LS, WorldID):
         State = F('PlayerID__CityID__StateID'),
         OverallRating = F('playerteamseasonskill__OverallRating')
     )
-    print('RecruitPool', RecruitPool.query)
-    print('\nexample',RecruitPool[0])
 
     RecruitPool = sorted(RecruitPool, key = lambda k: NormalBounds(k['OverallRating'],2,10,99), reverse = True)
     NumberOfRecruits = len(RecruitPool)
@@ -1311,10 +1304,6 @@ def CreateRecruitingClass(LS, WorldID):
 
             TS['CloseToHomeValue'] = RecruitDistanceInterestValue
 
-
-            print(RecruitTopPreferences[1],RecruitTopPreferences[2],RecruitTopPreferences[3])
-            print(PreferenceRatingMap)
-            print(TS)
             RTS = RecruitTeamSeason(WorldID = WorldID, PlayerTeamSeasonID_id = Recruit['PlayerTeamSeasonID'], TeamSeasonID_id = TS['TeamSeasonID'], ScoutedOverall = ScoutedOverall, ScoutingFuzz = TS['CoachScoutVariance'], IsActivelyRecruiting = False, Preference1Name = RecruitTopPreferences[1],Preference1MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[1]]], Preference2Name = RecruitTopPreferences[2],Preference2MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[2]]], Preference3Name = RecruitTopPreferences[3],Preference3MatchRating = TS[PreferenceRatingMap[RecruitTopPreferences[3]]], TeamPrestigeRating=TS['TeamPrestige'], DistanceMatchRating = RecruitDistanceInterestValue)
             RTS.InterestLevel = int((1.5*RTS.Preference1MatchRating) + (1.25*RTS.Preference2MatchRating) + (1*RTS.Preference3MatchRating) + RTS.DistanceMatchRating + (.5 * RTS.TeamPrestigeRating))
             RTSToSave.append(RTS)
@@ -1388,7 +1377,7 @@ def ConfigureLineups():
     return None
 
 
-def EndRegularSeason(WorldID):
+def EndRegularSeason(WorldID, CurrentWeek = None):
     CurrentSeason = LeagueSeason.objects.filter(WorldID=WorldID).filter(IsCurrent = 1).first()
     CurrentLeague = CurrentSeason.LeagueID
     CurrentWorld = World.objects.get(WorldID=WorldID)
@@ -1397,7 +1386,6 @@ def EndRegularSeason(WorldID):
     GameTimeHourChoices = [12, 12, 2, 3, 3, 7, 7, 8]
     GameTimeMinuteChoices = ['00', '00', '00', '00', '30', '30', '30', '05']
 
-    CurrentWeek = Week.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
     NextWeek = CurrentWeek.NextWeek
 
     if CurrentSeason.ConferenceChampionshipsCreated == False:
@@ -1778,6 +1766,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
 
 
 def InitializeLeaguePlayers(WorldID, LS, IsFirstLeagueSeason ):
+    CurrentWeek = Week.objects.filter(PhaseID__LeagueSeasonID = LS).filter(IsCurrent = 1).first()
     AuditTeamCount = Team.objects.filter(WorldID = WorldID).count()
     DoAudit = True
     if IsFirstLeagueSeason:
@@ -1821,9 +1810,9 @@ def InitializeLeaguePlayers(WorldID, LS, IsFirstLeagueSeason ):
     PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=False)
     ChooseTeamCaptains(LS, WorldID)
     CalculateTeamOverall(LS, WorldID)
-    CalculateRankings(LS, WorldID)
-    CalculateConferenceRankings(LS, WorldID)
-    SelectBroadcast(LS, WorldID)
+    CalculateRankings(LS, WorldID, CurrentWeek)
+    CalculateConferenceRankings(LS, WorldID, CurrentWeek)
+    SelectBroadcast(LS, WorldID, CurrentWeek)
     SelectPreseasonAllAmericans(WorldID, LS)
 
     if DoAudit:

@@ -13,7 +13,7 @@ from .resources import CreateBowls,UpdateTeamPositions, EndSeason, PlayerDepartu
 from .scripts.rankings import     CalculateConferenceRankings,CalculateRankings, SelectBroadcast
 from .utilities import FindRange, NormalVariance, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
-from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting
+from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting, PrepareForSigningDay
 from .scripts.SeasonAwards import ChoosePlayersOfTheWeek
 from .scripts.DepthChart import CreateDepthChart
 from .scripts.Offseason import StartCoachingCarousel, CreateNextLeagueSeason, GraduateSeniors
@@ -56,7 +56,8 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
 
     UserActions = []
 
-    SimAction = {'LinkDisplay': 'Sim This Week', 'id': 'SimThisWeek', 'Href': '#', 'ClassName': ''}
+    SimAction_Week = {'LinkDisplay': 'Sim This Week', 'id': 'SimThisWeek', 'Href': '#', 'ClassName': 'sim-action'}
+    SimAction_Phase = {'LinkDisplay': 'Sim This Phase', 'id': 'SimThisPhase', 'Href': '#', 'ClassName': 'sim-action'}
     if WeekID is not None:
         if WeekID.PhaseID.PhaseName == 'Preseason':
             CanSim = True
@@ -91,7 +92,8 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
                 CanSim = False
 
             if not CanSim:
-                SimAction['ClassName'] += ' w3-disabled'
+                SimAction_Week['ClassName'] += ' w3-disabled'
+                SimAction_Phase['ClassName'] += ' w3-disabled'
 
             if SaveLS:
                 CurrentLeagueSeason.save()
@@ -104,7 +106,13 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
             UserActions.append({'LinkDisplay': 'View Player Departures', 'Href': '/World/{WorldID}/PlayerDepartures'.format(WorldID=WorldID), 'ClassName': ''})
 
 #GraduatedAfterSeason
-        UserActions.insert(0,SimAction)
+
+
+        SimAction_Phase['LinkDisplay'] = 'Sim to ' + WeekID.PhaseID.NextPhaseName
+        UserActions.insert(0,SimAction_Phase)
+
+        if not WeekID.LastWeekInPhase:
+            UserActions.insert(0,SimAction_Week)
 
         SeasonStartYear = WeekID.PhaseID.LeagueSeasonID.SeasonStartYear
 
@@ -131,7 +139,7 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
             {'LinkDisplay': 'History', 'id': '', 'Href': '/World/{WorldID}/Team/{TeamID}/History'.format(WorldID=WorldID, TeamID = TeamID), 'ClassName': ''}
         ]},
         {'GroupName': 'Almanac', 'GroupDisplay': 'Almanac', 'GroupLinks':[
-            {'LinkDisplay': 'Player Stats', 'id': '', 'Href': '/World/{WorldID}/PlayerStats'.format(WorldID=WorldID), 'ClassName': ''},
+            {'LinkDisplay': 'Player Stats', 'id': '', 'Href': '/World/{WorldID}/PlayerStats/Season/{SeasonStartYear}'.format(WorldID=WorldID, SeasonStartYear=SeasonStartYear), 'ClassName': ''},
             {'LinkDisplay': 'Player Records', 'id': '', 'Href': '/World/{WorldID}/PlayerRecords'.format(WorldID=WorldID), 'ClassName': ''},
             {'LinkDisplay': 'Team Stats', 'id': '', 'Href': '/World/{WorldID}/TeamStats/Season/{SeasonStartYear}'.format(WorldID=WorldID, SeasonStartYear=SeasonStartYear), 'ClassName': ''},
             {'LinkDisplay': 'Team Records', 'id': '', 'Href': '/World/{WorldID}/TeamRecords'.format(WorldID=WorldID), 'ClassName': ''},
@@ -563,12 +571,11 @@ def NextDay(WorldID):
     date.save()
 
 
-def NextWeek(WorldID):
+def NextWeek(WorldID, CurrentWeek = None):
 
-    ThisWeek = Week.objects.get(WorldID=WorldID, IsCurrent=1)
-    ThisWeek.IsCurrent = 0
-    ThisWeek.save()
-    NextWeek = Week.objects.get(WorldID=WorldID, WeekNumber = ThisWeek.WeekNumber + 1)
+    CurrentWeek.IsCurrent = 0
+    CurrentWeek.save()
+    NextWeek = Week.objects.get(WorldID=WorldID, WeekNumber = CurrentWeek.WeekNumber + 1)
     NextWeek.IsCurrent = 1
     NextWeek.save()
 
@@ -1668,16 +1675,24 @@ def Page_TeamRecords(request, WorldID, TeamID=None, ConferenceID = None):
 
 
 
-def Page_PlayerStats(request, WorldID, TeamID = None):
+def Page_PlayerStats(request, WorldID, TeamID = None, SeasonStartYear = None):
     DoAudit = True
     page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     CurrentWorld  = World.objects.get(WorldID = WorldID)
     CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
     CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
     UserTeam = GetUserTeam(WorldID)
-    Filters = {'WorldID': WorldID}
+    Filters = {'WorldID': WorldID, 'playerteamseason__TeamSeasonID__TeamID__isnull': False}
+    Filters['playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent'] = True
 
     page['NavBarLinks'] = NavBarLinks(Path = 'Player Stats', GroupName='Almanac', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
+
+    if SeasonStartYear is None:
+        page['YearDisplay'] = 'All-Time'
+
+    else:
+        page['YearDisplay'] = SeasonStartYear
+        Filters['playerteamseason__TeamSeasonID__LeagueSeasonID__SeasonStartYear'] = SeasonStartYear
 
     if TeamID is not None:
         Filters['TeamID'] = TeamID
@@ -1689,9 +1704,11 @@ def Page_PlayerStats(request, WorldID, TeamID = None):
 
     Players = Common_PlayerStats(Filters)
 
+    Seasons = [{'SeasonStartYear': 'All-Time', 'SeasonStatsHref': '/World/{WorldID}/TeamStats/'.format(WorldID=WorldID)}] + list(LeagueSeason.objects.filter(WorldID_id = WorldID).values('SeasonStartYear').annotate(
+        SeasonStatsHref=Concat(Value('/World/'), Value(WorldID), Value('/PlayerStats/Season/'), F('SeasonStartYear')  ,output_field=CharField())
+    ).order_by('-SeasonStartYear'))
 
-
-    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'Players': Players}
+    context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'Players': Players, 'Seasons': Seasons}
     context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
     return render(request, 'HeadFootballCoach/PlayerStats.html', context)
 
@@ -2131,10 +2148,10 @@ def Page_TeamStats(request, WorldID, TeamID = None, SeasonStartYear = None):
 
     if SeasonStartYear is None:
         page['YearDisplay'] = 'All-Time'
-        Filters = {'WorldID': WorldID, 'teamseason__LeagueSeasonID__IsCurrent': 1, 'teamseason__teamseasonweekrank__IsCurrent': True}
+        Filters = {'WorldID': WorldID,  'teamseason__teamseasonweekrank__IsCurrent': True}
     else:
         page['YearDisplay'] = SeasonStartYear
-        Filters = {'WorldID': WorldID, 'teamseason__teamseasonweekrank__IsCurrent': True}
+        Filters = {'WorldID': WorldID, 'teamseason__LeagueSeasonID__SeasonStartYear': SeasonStartYear, 'teamseason__teamseasonweekrank__IsCurrent': True}
 
     if TeamID is not None:
         Filters['TeamID'] = TeamID
@@ -3349,8 +3366,6 @@ def GET_RecruitingPlayers(request, WorldID):
     Length = int(request.GET['length'])
     Draw = int(request.GET['draw'])
 
-    print('AdjustedFilterList', AdjustedFilterList)
-
     Players = Player.objects.filter(WorldID = WorldID).filter(**AdjustedFilterList).filter(IsRecruit = True).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerteamseason__recruitteamseason__TeamSeasonID__TeamID__IsUserTeam = True).values('PlayerID','playerteamseason__ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__recruitteamseason__ScoutedOverall', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'RecruitingPointsNeeded', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'PlayerFaceJson', 'RecruitingStars', 'RecruitSigned', 'Recruiting_NationalRank', 'Recruiting_NationalPositionalRank', 'Recruiting_StateRank', 'CityID__CityName', 'CityID__StateID__StateAbbreviation', 'Height').annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
@@ -3366,8 +3381,6 @@ def GET_RecruitingPlayers(request, WorldID):
         RecruitingPointsPercent = (Round(F('MaxInterestLevel')* 100.0 / F('RecruitingPointsNeeded'),1))
 
     ).order_by(*OrderList)
-
-    print('Players query', Players.query)
 
     recordsTotal = Players.count()
     recordsFiltered = recordsTotal
@@ -4794,8 +4807,6 @@ def Common_PlayerStats( Filters = {}):
 
     WorldID = Filters['WorldID']
 
-    print('player stats filters', Filters)
-
     Players = Player.objects.filter(**Filters).values('PlayerID', 'playerteamseason__PlayerTeamSeasonID', 'playerteamseason__ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__playerteamseasonskill__OverallRating', 'playerteamseason__RedshirtedThisSeason','playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamCaptain','playerteamseason__playerteamseasonskill__Strength_Rating','playerteamseason__playerteamseasonskill__Agility_Rating','playerteamseason__playerteamseasonskill__Speed_Rating','playerteamseason__playerteamseasonskill__Acceleration_Rating','playerteamseason__playerteamseasonskill__Stamina_Rating','playerteamseason__playerteamseasonskill__Awareness_Rating','playerteamseason__playerteamseasonskill__Jumping_Rating','playerteamseason__playerteamseasonskill__ThrowPower_Rating'    ,'playerteamseason__playerteamseasonskill__ShortThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__MediumThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__DeepThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__ThrowOnRun_Rating'    ,'playerteamseason__playerteamseasonskill__ThrowUnderPressure_Rating'    ,'playerteamseason__playerteamseasonskill__PlayAction_Rating', 'playerteamseason__playerteamseasonskill__PassRush_Rating', 'playerteamseason__playerteamseasonskill__BlockShedding_Rating', 'playerteamseason__playerteamseasonskill__Tackle_Rating', 'playerteamseason__playerteamseasonskill__HitPower_Rating', 'playerteamseason__playerteamseasonskill__ManCoverage_Rating', 'playerteamseason__playerteamseasonskill__ZoneCoverage_Rating', 'playerteamseason__playerteamseasonskill__Press_Rating', 'playerteamseason__playerteamseasonskill__Carrying_Rating', 'playerteamseason__playerteamseasonskill__Elusiveness_Rating', 'playerteamseason__playerteamseasonskill__BallCarrierVision_Rating', 'playerteamseason__playerteamseasonskill__BreakTackle_Rating', 'playerteamseason__playerteamseasonskill__Catching_Rating', 'playerteamseason__playerteamseasonskill__CatchInTraffic_Rating', 'playerteamseason__playerteamseasonskill__RouteRunning_Rating', 'playerteamseason__playerteamseasonskill__Release_Rating', 'playerteamseason__playerteamseasonskill__PassBlock_Rating', 'playerteamseason__playerteamseasonskill__RunBlock_Rating', 'playerteamseason__playerteamseasonskill__ImpactBlock_Rating', 'playerteamseason__playerteamseasonskill__KickPower_Rating', 'playerteamseason__playerteamseasonskill__KickAccuracy_Rating').annotate(
         ReasonForLeaving = Case(
             When(playerteamseason__QuitFootballAfterSeason = True, then=Value('Quit football')),
@@ -4866,9 +4877,6 @@ def Common_PlayerStats( Filters = {}):
         REC_LNG = Max('playerteamseason__playergamestat__REC_LNG'),
     ).order_by('PlayerID')
 
-
-
-    print('Common_playerstats', len(Players), Players.query)
     return list(Players)
 
 def Common_TeamRecords(WorldID, Timeframe = 'Alltime', Filters={}, ListLength = 5):
@@ -4876,7 +4884,7 @@ def Common_TeamRecords(WorldID, Timeframe = 'Alltime', Filters={}, ListLength = 
     print('Getting Player Records. ListLength:', ListLength, 'Timeframe:',Timeframe,' Filters:', Filters)
 
     if Timeframe == 'Season':
-        HistoricalStats = TeamSeason.objects.filter(WorldID = WorldID).filter(**Filters ).values( 'LeagueSeasonID__SeasonStartYear', 'TeamID__TeamName', 'TeamID__TeamLogoURL', 'TeamID__TeamColor_Primary_HEX').annotate(
+        HistoricalStats = TeamSeason.objects.filter(WorldID = WorldID).filter(TeamID__isnull = False).filter(**Filters ).values( 'LeagueSeasonID__SeasonStartYear', 'TeamID__TeamName', 'TeamID__TeamLogoURL', 'TeamID__TeamColor_Primary_HEX').annotate(
             GamesPlayed=Count('teamgame', filter=Q(teamgame__GameID__WasPlayed = True)),
             Wins=Count('teamgame', filter=Q(teamgame__IsWinningTeam = True)),
             Losses=F('GamesPlayed') - F('Wins'),
@@ -5633,7 +5641,7 @@ def Page_Team(request,WorldID, TeamID):
             ThisGame['Week'] = 'Week ' + str(u.WeekID.WeekNumber)
         elif u.WeekID.PhaseID.PhaseName in ['Conference Championships']:
             ThisGame['Week'] = HomeTeamSeason.ConferenceID.ConferenceAbbreviation + ' Championship'
-        elif u.WeekID.PhaseID.PhaseName in ['Bowls']:
+        elif u.WeekID.PhaseID.PhaseName in ['Bowl Season']:
             ThisGame['Week'] = u.BowlID.BowlName
 
         ThisGame['HomePoints'] = HomeTeamGame.Points
@@ -5872,7 +5880,7 @@ def Page_Team2(request,WorldID, TeamID):
             ThisGame['Week'] = 'Week ' + str(u.WeekID.WeekNumber)
         elif u.WeekID.PhaseID.PhaseName in ['Conference Championships']:
             ThisGame['Week'] = HomeTeam.CurrentTeamSeason.ConferenceID.ConferenceAbbreviation + ' Championship'
-        elif u.WeekID.PhaseID.PhaseName in ['Bowls']:
+        elif u.WeekID.PhaseID.PhaseName in ['Bowl Season']:
             ThisGame['Week'] = u.BowlID.BowlName
 
         if u == SelectedGame:
@@ -5971,26 +5979,32 @@ def Page_Team2(request,WorldID, TeamID):
     return render(request, 'HeadFootballCoach/Team.html', context)
 
 
-def POST_SimDay(request, WorldID):
+def POST_SimAction(request, WorldID):
 
-    DayString = request.POST['Days']
+    Duration = request.POST['Duration']
 
     days = 0
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
     CurrentWorld = World.objects.get(WorldID=WorldID)
 
+    CurrentWeek = Week.objects.filter(PhaseID__LeagueSeasonID = CurrentSeason).filter(IsCurrent = True).first()
+    CurrentPhase = CurrentWeek.PhaseID
+
     AllowInterruptions = CurrentWorld.AllowInterruptions
     BreakAfterNextDay = False
     RedirectHref = ''
 
-    Weeks=1
-
-
     DoAudit = True
 
-    for u in range(0,Weeks):
+    if Duration == 'SimWeek':
+        WeekList = [CurrentWeek]
+    elif Duration == 'SimPhase':
+        WeekList = Week.objects.filter(WeekNumber__gte = CurrentWeek.WeekNumber).filter(PhaseID = CurrentPhase).order_by('WeekNumber')
+    else:
+        return JsonResponse({'message': 'Could not identify duration.'}, status=422)
+
+    for ThisWeek in WeekList:
         print('Simming Week')
-        ThisWeek = Week.objects.get(WorldID = WorldID, IsCurrent=1)
 
         GameSet = ThisWeek.game_set.filter(WasPlayed = 0).annotate(MinRank = Min('teamgame__TeamSeasonWeekRankID__NationalRank')).order_by('MinRank')
         for game in GameSet:
@@ -6013,28 +6027,28 @@ def POST_SimDay(request, WorldID):
                 A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 15, AuditDescription='GameSim')
 
 
-        if ThisWeek.PhaseID.PhaseName in ['Regular Season', 'Conference Championships', 'Bowls']:
-            CalculateRankings(CurrentSeason, CurrentWorld)
-            ChoosePlayersOfTheWeek(CurrentSeason, CurrentWorld)
+        if ThisWeek.PhaseID.PhaseName in ['Regular Season', 'Conference Championships', 'Bowl Season']:
+            CalculateRankings(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+            ChoosePlayersOfTheWeek(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
 
 
         if ThisWeek.PhaseID.PhaseName == 'Regular Season':
             #DO TOURNEY STUFF HERE
-            CalculateConferenceRankings(CurrentSeason, CurrentWorld)
-            SelectBroadcast(CurrentSeason, CurrentWorld)
-            FakeWeeklyRecruiting(WorldID)
+            CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+            SelectBroadcast(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+            FakeWeeklyRecruiting(WorldID, CurrentWeek = ThisWeek)
 
             if ThisWeek.LastWeekInPhase:
                 print('End regular season!!!')
-                EndRegularSeason(WorldID)
+                EndRegularSeason(WorldID, CurrentWeek = ThisWeek)
 
         elif ThisWeek.PhaseID.PhaseName == 'Conference Championships':
             #DO TOURNEY STUFF HERE
-            CalculateConferenceRankings(CurrentSeason, CurrentWorld)
+            CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
             print('Creating bowls!!!')
             CreateBowls(WorldID)
 
-        elif ThisWeek.PhaseID.PhaseName == 'Bowls':
+        elif ThisWeek.PhaseID.PhaseName == 'Bowl Season':
             #DO TOURNEY STUFF HERE
             print('End Season')
             EndSeason(WorldID)
@@ -6050,11 +6064,16 @@ def POST_SimDay(request, WorldID):
         elif ThisWeek.WeekName == 'Coach Carousel':
             GraduateSeniors(CurrentSeason, WorldID)
 
-        elif ThisWeek.PhaseID.PhaseName == 'Preseason':
-            SelectBroadcast(CurrentSeason, CurrentWorld)
+        elif ThisWeek.PhaseID.PhaseName == 'Offseason Recruiting':
+            FakeWeeklyRecruiting(WorldID, CurrentWeek = ThisWeek)
+            if ThisWeek.LastWeekInPhase:
+                PrepareForSigningDay(CurrentSeason,WorldID)
 
-        NextWeek(WorldID)
-        GenerateHeadlines(CurrentSeason, WorldID)
+        elif ThisWeek.PhaseID.PhaseName == 'Preseason':
+            SelectBroadcast(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+
+        NextWeek(WorldID, CurrentWeek = ThisWeek)
+        GenerateHeadlines(CurrentSeason, WorldID, CurrentWeek = ThisWeek)
 
     return JsonResponse({'success':'value', 'redirect': RedirectHref})
 
@@ -6521,7 +6540,7 @@ def Page_Season(request, WorldID, SeasonStartYear):
     context = {}
 
     AllAmericans = []
-    if CurrentWeek.PhaseID.PhaseName == 'Bowls':
+    if CurrentWeek.PhaseID.PhaseName == 'Bowl Season':
         print('It is the preseason!')
         AllAmericans = []
         AllAwards = PlayerTeamSeasonAward.objects.filter(IsSeasonAward = True).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = True).order_by('PositionID__PositionSortOrder')
