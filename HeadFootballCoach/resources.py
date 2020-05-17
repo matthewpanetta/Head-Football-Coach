@@ -1,4 +1,4 @@
-from .models import Audit,TeamGame,Bowl,PlayerTeamSeasonDepthChart,TeamSeasonStrategy, TeamSeasonPosition, System_PlayerArchetypeRatingModifier, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill, CoachTeamSeason
+from .models import Audit,TeamGame,Bowl,PlayerTeamSeasonDepthChart,TeamSeasonStrategy, Phase, TeamSeasonPosition, System_PlayerArchetypeRatingModifier, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill, CoachTeamSeason
 import random
 from datetime import timedelta, date
 import pandas as pd
@@ -14,12 +14,75 @@ from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, Se
 from .scripts.DepthChart import CreateDepthChart
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
-from .scripts.import_csv import createCalendar
 from .utilities import NormalVariance, DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance, Max_Int
 from math import sin, cos, sqrt, atan2, radians, log
 import time
 
 
+
+
+def createCalendar(WorldID=None, LeagueSeasonID=None, SetFirstWeekCurrent = False):
+
+    WeeksInRegularSeason = 15
+    BowlWeeks = 2
+    OffseasonRecruitingWeeks = 4
+    AnnualScheduleOfEvents = []
+
+    AnnualScheduleOfEvents.append({'Phase': 'Preseason',  'WeekName': 'Prepare for Summer Camps', 'LastWeekInPhase': False, 'FirstWeekOfCalendar': True})
+    AnnualScheduleOfEvents.append({'Phase': 'Preseason',  'WeekName': 'Training Results', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Preseason', 'WeekName': 'Preseason', 'LastWeekInPhase': True})
+
+    for WeekCount in range(1, WeeksInRegularSeason+1):
+        WeekDict = {'Phase': 'Regular Season',  'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': round(1.0 + (WeekCount / 60.0), 2), 'RecruitingAllowed': True}
+        if WeekCount == WeeksInRegularSeason:
+            WeekDict['LastWeekInPhase'] = True
+        AnnualScheduleOfEvents.append(WeekDict)
+
+    AnnualScheduleOfEvents.append({'Phase': 'Conference Championships',  'WeekName': 'Conference Championship Week', 'LastWeekInPhase': True})
+
+    for WeekCount in range(1, BowlWeeks+1):
+        WeekDict = {'Phase': 'Bowl Season',  'WeekName': 'Bowl Week ' + str(WeekCount), 'LastWeekInPhase': False}
+        if WeekCount == BowlWeeks:
+            WeekDict['LastWeekInPhase'] = True
+        AnnualScheduleOfEvents.append(WeekDict)
+
+    AnnualScheduleOfEvents.append({'Phase': 'Season Recap',  'WeekName': 'Season Recap', 'LastWeekInPhase': True})
+    AnnualScheduleOfEvents.append({'Phase': 'Departures',  'WeekName': 'Coach Carousel', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Departures',  'WeekName': 'Draft Departures', 'LastWeekInPhase': False})
+    AnnualScheduleOfEvents.append({'Phase': 'Departures',  'WeekName': 'Transfer Announcements', 'LastWeekInPhase': True})
+
+
+    for WeekCount in range(1, OffseasonRecruitingWeeks+1):
+        WeekDict = {'Phase': 'Offseason Recruiting',  'WeekName': 'Offseason Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': 1.0 + (WeekCount / 10.0), 'RecruitingAllowed': True}
+        AnnualScheduleOfEvents.append(WeekDict)
+
+    AnnualScheduleOfEvents.append({'Phase': 'Offseason Recruiting',  'WeekName': 'National Signing Day', 'LastWeekInPhase': True})
+
+    WeeksToSave = []
+    PhaseList = []
+    FieldExclusions = ['Phase']
+    WeekCount = -2
+    W = None
+    for W in AnnualScheduleOfEvents:
+
+        P,st = Phase.objects.get_or_create(WorldID = WorldID, PhaseName = W['Phase'], LeagueSeasonID=LeagueSeasonID)
+
+        W['PhaseID'] = P
+        W['WeekNumber'] = WeekCount
+        WeekCount +=1
+        for FE in FieldExclusions:
+            del W[FE]
+
+        if W['WeekName'] == 'Preseason' and SetFirstWeekCurrent:
+            W['IsCurrent'] = True
+        W['WorldID'] = WorldID
+        NewWeek = Week(**W)
+        WeeksToSave.append(NewWeek)
+
+    Week.objects.bulk_create(WeeksToSave)
+
+    WorldID.HasCalendar = True
+    WorldID.save()
 
 def CalculateTeamPlayerOverall(TSP, PlayerID):
 
@@ -637,6 +700,7 @@ def GeneratePlayer(t, s, c, WorldID, PositionAbbreviation = None):
     PlayerFirstName = PlayerNameTuple[0]
     PlayerLastName = PlayerNameTuple[1]
 
+
     PlayerCityID = RandomCity()
 
     PlayerRatings = {}
@@ -645,6 +709,8 @@ def GeneratePlayer(t, s, c, WorldID, PositionAbbreviation = None):
         IsRecruit = c.IsRecruit
 
     PlayerDict = {'WorldID':WorldID, 'PlayerFirstName': PlayerFirstName, 'PlayerLastName':PlayerLastName, 'JerseyNumber':PlayerNumber, 'Height':PlayerHeight, 'Weight': PlayerWeight, 'CityID': PlayerCityID, 'PositionID_id': PlayerPositionID, 'IsRecruit':IsRecruit}
+
+    PlayerDict['DevelopmentRating'] = round(NormalTrunc(0, 1, -3, 3),0)
 
     PlayerDict['Personality_LeadershipRating'] = NormalBounds(55,15,2,98)
     PlayerDict['Personality_ClutchRating'] = NormalBounds(55,15,2,98)
@@ -1237,7 +1303,7 @@ def CreateRecruitingClass(LS, WorldID):
 
     RecruitTeamDict = {'TeamList': []}
 
-    RecruitPool = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__IsRecruitTeam = True).values('PlayerTeamSeasonID', 'PlayerID', 'PlayerID__CityID__Longitude', 'PlayerID__CityID__Latitude').annotate(
+    RecruitPool = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).values('PlayerTeamSeasonID', 'PlayerID', 'PlayerID__CityID__Longitude', 'PlayerID__CityID__Latitude').annotate(
         Position = F('PlayerID__PositionID__PositionAbbreviation'),
         PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName'),
         State = F('PlayerID__CityID__StateID'),
@@ -1311,7 +1377,7 @@ def CreateRecruitingClass(LS, WorldID):
     Player.objects.bulk_update(PlayersToSave, ['Recruiting_StateRank', 'Recruiting_NationalPositionalRank', 'Recruiting_NationalRank', 'RecruitingStars', 'ChampionshipContenderValue', 'TeamPrestigeValue', 'CloseToHomeValue', 'PlayingTimeValue', 'CoachStabilityValue', 'CoachStyleValue', 'FacilitiesValue', 'ProPotentialValue', 'CampusLifestyleValue', 'AcademicPrestigeValue', 'TelevisionExposureValue'])
     RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False)
 
-    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).annotate(RecruitingTeamRank_new = Window(
+    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).annotate(RecruitingTeamRank_new = Window(
         expression=RowNumber(),
         partition_by=F("PlayerTeamSeasonID"),
         order_by=F("InterestLevel").desc(),
@@ -1755,7 +1821,7 @@ def InitializeLeagueSeason(WorldID, LeagueID, IsFirstLeagueSeason ):
     if DoAudit:
         start = time.time()
 
-    createCalendar(StartYear=StartYear, StartAfterMonthDay=(8,25), WorldID=WorldID, LeagueSeasonID=LS)
+    createCalendar(WorldID=WorldID, LeagueSeasonID=LS, SetFirstWeekCurrent = True)
 
     if DoAudit:
         end = time.time()

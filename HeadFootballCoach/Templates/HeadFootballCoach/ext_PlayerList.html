@@ -5,7 +5,7 @@
     {% for Position, Players in PlayerList.items %}
     <div class="w3-bar-item w3-light-gray">{{Position}}</div>
       {% for Player in Players %}
-      <a href="{{Player.PlayerHref}}" class="w3-bar-item w3-button"><img src="{{Player.PlayerTeamLogoURL}}" class="small-logo" alt="">{{Player.PlayerName}} ({{Player.playerseasonskill__OverallRating}})</a>
+      <a href="{{Player.PlayerHref}}" class="w3-bar-item w3-button"><img src="{{Player.PlayerTeamLogoURL}}" class="small-logo" alt="">{{Player.PlayerName}} ({{Player.playerteamseason__playerteamseasonskill__OverallRating}})</a>
 
       {% endfor %}
     {% endfor %}

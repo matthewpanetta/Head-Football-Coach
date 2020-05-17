@@ -39,6 +39,7 @@
     </nav>
     <div id="nav-tabContent">
       <div class="tab-content" style='display:block;' id="nav-overview">
+        {% if games|length > 0%}
         <div class="w3-display-container">
           <div class="w3-row-padding">
             <div class="w3-col l8 m12 w3-display-container">
@@ -340,8 +341,8 @@
                     <tr class='{{standingTeam.BoldTeam}}'>
                       <td>
                         <a href="{{standingTeam.TeamHref}}">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamLogoURL_50}}" />
-                          <span  class='hide-small'>{{standingTeam.NationalRankDisplay}} {{standingTeam.TeamName }}</span>
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamID__TeamLogoURL_50}}" />
+                          <span  class='hide-small'>{{standingTeam.NationalRankDisplay}} {{standingTeam.TeamID__TeamName }}</span>
                         </a>
                       </td>
                       <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
@@ -388,6 +389,79 @@
             </div>
           </div>
         </div>
+        {% else %}
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col l6 m12 w3-display-container">
+              <div class="w3-row">
+                <div class="w3-card w3-col s12">
+                  <div class="w3-bar team-primary-background-bar">
+                    Recruits Here
+                  </div>
+                  <table id='teamOverviewConferenceStandings' class='w3-table'>
+                    <thead>
+                      <th class='teamColorBorder'>Player</th>
+                      <th class='teamColorBorder'>Pos</th>
+                      <th class='teamColorBorder'>Hometown</th>
+                      <th class='teamColorBorder'>*</th>
+                      <th class='teamColorBorder'>Rank</th>
+                      <th class='teamColorBorder'>Overall</th>
+                    </thead>
+                    {% for Recruit in SignedRecruits %}
+                    <tr >
+                      <td  class='w3-margin-top'>
+                        <a href="{{Recruit.PlayerHref}}">
+                          {{Recruit.PlayerName}}
+                        </a>
+                      </td>
+                      <td>{{Recruit.Position}}</td>
+                      <td>{{Recruit.Hometown}}</td>
+                      <td>{{Recruit.PlayerTeamSeasonID__PlayerID__RecruitingStars}}</td>
+                      <td>{{Recruit.PlayerTeamSeasonID__PlayerID__Recruiting_NationalRank}}</td>
+                      <td>{{Recruit.OverallRating}}</td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+
+
+            </div>
+            <div class="w3-col l6 m12">
+              <div class="w3-row">
+
+
+                <div class="w3-card">
+                  <div class="w3-bar team-primary-background-bar">
+                    Top Players Returning
+                  </div>
+                  <table id='teamOverviewConferenceStandings'>
+                    <thead>
+                      <th>Team</th>
+                      <th>Conf</th>
+                      <th class='hide-small'>GB</th>
+                      <th>Record</th>
+                    </thead>
+                    {% for standingTeam in conferenceTeams %}
+                    <tr class='{{standingTeam.BoldTeam}}'>
+                      <td>
+                        <a href="{{standingTeam.TeamHref}}">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamID__TeamLogoURL_50}}" />
+                          <span  class='hide-small'>{{standingTeam.NationalRankDisplay}} {{standingTeam.TeamIDTeamName }}</span>
+                        </a>
+                      </td>
+                      <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
+                      <td class='hide-small'> {{standingTeam.ConferenceGB}}</td>
+                      <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
       </div>
       </div>
       <div class="tab-content" style='display:none;' id="nav-info">

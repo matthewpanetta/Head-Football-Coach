@@ -43,21 +43,15 @@ class GameStructureAdmin(admin.ModelAdmin):
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Player._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'playerseasonskill', 'recruitteamseason')]#('PlayerFirstName', 'PlayerLastName', 'Position', 'Class', 'IsRecruit','PlayerID', 'OverallRating', 'CurrentTeam', 'PassingRating', 'DribblingRating', 'CityID')
-    list_filter = ['PositionID', 'RecruitSigned']
+    list_filter = ['PositionID', 'RecruitSigned', 'IsRecruit']
 
 class CoachAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Coach._meta.get_fields() if field.name not in ['coachteamseason']]
 
 class CoachTeamSeasonAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in CoachTeamSeason._meta.get_fields() if field.name not in ('position', 'player', 'week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')] + ['SituationalAggressivenessTendency','PlayClockAggressivenessTendency','PlaycallPassTendency']
+    list_display = [field.name for field in CoachTeamSeason._meta.get_fields() if field.name not in ('position', 'player', 'week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]
     list_filter = [ 'TeamSeasonID__TeamID__TeamName', 'CoachPositionID']
 
-    def SituationalAggressivenessTendency(self, obj):
-        return obj.CoachID.SituationalAggressivenessTendency
-    def PlayClockAggressivenessTendency(self, obj):
-        return obj.CoachID.PlayClockAggressivenessTendency
-    def PlaycallPassTendency(self, obj):
-        return obj.CoachID.PlaycallPassTendency
 
 class PlayerTeamSeasonSkillAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeasonSkill._meta.get_fields()]
@@ -69,7 +63,7 @@ class RecruitTeamSeasonAdmin(admin.ModelAdmin):
 
 
 class TeamSeasonAdmin(admin.ModelAdmin):
-    list_display = ['TeamSeasonID', 'WorldID','TeamID', 'LeagueSeasonID','TeamOverallRating','TeamOffenseRating','TeamDefenseRating','TeamOverallRating_Grade','TeamOffenseRating_Grade','TeamDefenseRating_Grade', 'GamesPlayed','Wins','Losses', 'ConferenceWins',  'ConferenceLosses','ConferenceRank', 'ConferenceGB' , 'WinStreak', 'ScholarshipsToOffer']
+    list_display = ['TeamSeasonID', 'WorldID','TeamID', 'LeagueSeasonID','TeamOverallRating','TeamOffenseRating','TeamDefenseRating','TeamOverallRating_Grade','TeamOffenseRating_Grade','TeamDefenseRating_Grade', 'GamesPlayed','Wins','Losses', 'ConferenceWins',  'ConferenceLosses','ConferenceRank', 'ConferenceGB' , 'WinStreak', 'ScholarshipsToOffer', 'RecruitingClassRank']
     list_filter = ['WorldID']
 
 class PlayerGameStatAdmin(admin.ModelAdmin):
@@ -89,7 +83,7 @@ class GameEventAdmin(admin.ModelAdmin):
 
 class PlayerTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeason._meta.get_fields() if field.name not in ('playerteamseasonskill', 'playerteamseasondepthchart','Player1PlayerTeamSeasonID','Player2PlayerTeamSeasonID','playergamestat', 'playerteamseasonaward','Playoff', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
-    list_filter = ['ClassID__ClassName', 'PlayerID__PositionID','TeamSeasonID__TeamID__TeamName', 'RedshirtedThisSeason']
+    list_filter = ['ClassID__ClassName', 'PlayerID__PositionID','TeamSeasonID__TeamID__TeamName', 'RedshirtedThisSeason', 'TeamSeasonID__IsRecruitTeam']
 
 class PlayerTeamSeasonAwardAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeasonAward._meta.get_fields() if field.name not in ('Player1PlayerTeamSeasonID','Player2PlayerTeamSeasonID','playergamestat', 'playerteamseasonaward','Playoff', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')

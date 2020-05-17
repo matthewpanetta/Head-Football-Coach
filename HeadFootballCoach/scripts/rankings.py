@@ -185,9 +185,10 @@ def CalculateRankings(LS, WorldID, CurrentWeek = None):
     CurrentSeason = LS
     NextWeek = CurrentWeek.NextWeek
     CurrentWorld = WorldID
-    Games = WorldID.game_set.filter(WasPlayed = True)
+    Games = CurrentSeason.game_set.filter(WasPlayed = True)
     TeamList = list(CurrentSeason.teamseason_set.filter(TeamID__isnull = False))
 
+    print('TeamList', TeamList)
     CurrentWeekNumber = CurrentWeek.WeekNumber
 
     GameList = []
@@ -255,15 +256,15 @@ def CalculateRankings(LS, WorldID, CurrentWeek = None):
 
 
     RankValue  = 0
+    TeamSeasonWeekRank.objects.filter(IsCurrent = True).filter(WorldID = CurrentWorld).update(IsCurrent = False)
     for TS in sorted(TSDict.keys(), key=lambda TS: (TSDict[TS]['TotalRating'], TSDict[TS]['Rating'], TSDict[TS]['OverallRating'],  TSDict[TS]['TeamPrestige']), reverse=True):
         RankValue += 1
 
         TSDR = TeamSeasonWeekRank(TeamSeasonID = TS, WorldID = CurrentWorld, WeekID = CurrentWeek, NationalRank = RankValue, IsCurrent = False)
         if TS.NationalRank is not None:
             OldTSDR = TS.NationalRankObject
-            TSDR.NationalRankDelta = OldTSDR.NationalRank - RankValue
-            OldTSDR.IsCurrent = False
-            OldTSDR.save()
+            if OldTSDR is not None:
+                TSDR.NationalRankDelta = OldTSDR.NationalRank - RankValue
 
         TSDR.IsCurrent = True
         TSDR.save()

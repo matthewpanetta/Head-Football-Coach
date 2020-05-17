@@ -66,16 +66,16 @@
                     </thead>
                     {% for standingTeam in Conference.ConferenceTeams %}
                     <tr class='{{standingTeam.BoldTeam}} ' style=''>
-                      <td style='border-left-color: #{{standingTeam.TeamColor_Primary_HEX}}' class='teamTableBorder'>
-                        <a href="/World/{{page.WorldID}}/Team/{{ standingTeam.TeamID }}/">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamLogoURL}}" />
-                          {{standingTeam.NationalRankDisplay}} {{standingTeam.TeamName }}
+                      <td style='border-left-color: #{{standingTeam.TeamID__TeamColor_Primary_HEX}}' class='teamTableBorder'>
+                        <a href="{{ standingTeam.TeamHref }}">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamID__TeamLogoURL}}" />
+                          {{standingTeam.NationalRankDisplay}} {{standingTeam.TeamID__TeamName }}
                         </a>
                       </td>
-                      <td>{{standingTeam.teamseason__ConferenceRank}}</td>
-                      <td>{{standingTeam.teamseason__ConferenceWins}}-{{standingTeam.teamseason__ConferenceLosses}}</td>
-                      <td>{{standingTeam.teamseason__ConferenceGB}}</td>
-                      <td>{{standingTeam.teamseason__Wins}}-{{standingTeam.teamseason__Losses}}</td>
+                      <td>{{standingTeam.ConferenceRank}}</td>
+                      <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
+                      <td>{{standingTeam.ConferenceGB}}</td>
+                      <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
                       <td>{{standingTeam.PPG}}</td>
                       <td>{{standingTeam.PAPG}}</td>
                       <td>{{standingTeam.MOV}}</td>

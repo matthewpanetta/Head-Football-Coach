@@ -1,33 +1,33 @@
 {% load static %}
 <div class='TeamHeader' style='height: 150px;'>
-  <div class="team-header-color-left" style='background-color: #{{team.TeamColor_Primary_HEX}}; border-right-color: #{{page.SecondaryColor}};'></div>
-  <img class='teamTeamLogo' src='{{team.LogoURL}}' alt="My image">
+  <div class="team-header-color-left" style='background-color: #{{ThisTeamSeason.TeamID.TeamColor_Primary_HEX}}; border-right-color: #{{page.SecondaryColor}};'></div>
+  <img class='teamTeamLogo' src='{{ThisTeamSeason.TeamID.LogoURL}}' alt="My image">
   <div class='teamHeaderInfo'>
     <span class='thin-font font20'>
-        {{team.CurrentTeamSeason.NationalRankDisplay}}
+        {{ThisTeamSeason.NationalRankDisplay}}
     </span>
     <span class='teamSchoolName'>
-      {{ team.TeamName }}
+      {{ ThisTeamSeason.TeamID.TeamName }}
     </span>
     <span class='teamTeamName'>
-      {{team.TeamNickname}}
+      {{ThisTeamSeason.TeamID.TeamNickname}}
     </span>
     <span class='teamRecord hide-small'>
-      {{team.CurrentTeamSeason.Wins}} - {{team.CurrentTeamSeason.Losses}}
+      {{ThisTeamSeason.Wins}} - {{ThisTeamSeason.Losses}}
     </span>
     <div class='teamOverviewInfo'>
-      {{team.CityID.CityName}}, {{team.CityID.StateID.StateName}} | <a href="/World/{{page.WorldID}}/Conferences/{{team.CurrentTeamSeason.ConferenceID_id}}">{{team.CurrentTeamSeason.ConferenceID.ConferenceName}}</a>
+      {{ThisTeamSeason.TeamID.CityID.CityName}}, {{ThisTeamSeason.TeamID.CityID.StateID.StateName}} | <a href="/World/{{page.WorldID}}/Conferences/{{ThisTeamSeason.ConferenceID_id}}">{{ThisTeamSeason.ConferenceID.ConferenceName}}</a>
     </div>
     <div class='teamOverviewInfo'>
       {% for Link in HeaderLink.LinkPaths%}
       {% if forloop.counter0 > 0%}
       |
       {% endif %}
-      <a href="/World/{{page.WorldID}}/Team/{{team.TeamID}}/{{Link.HrefExtension}}">{{Link.Display}}</a>
+      <a href="/World/{{page.WorldID}}/Team/{{ThisTeamSeason.TeamID.TeamID}}/{{Link.HrefExtension}}">{{Link.Display}}</a>
       {% endfor %}
     </div>
   </div>
-  <div class="team-header-color-right align-middle hide-small" style='background-color: #{{team.TeamColor_Primary_HEX}}; border-left-color: #{{page.SecondaryColor}};'>
+  <div class="team-header-color-right align-middle hide-small" style='background-color: #{{ThisTeamSeason.TeamID.TeamColor_Primary_HEX}}; border-left-color: #{{page.SecondaryColor}};'>
   </div>
 
 </div>

@@ -436,6 +436,10 @@ class LeagueSeason(models.Model):
     def NextLeagueSeason(self):
         return LeagueSeason.objects.filter(WorldID = self.WorldID).filter(SeasonStartYear = self.SeasonEndYear).first()
 
+    @property
+    def PreviousLeagueSeason(self):
+        return LeagueSeason.objects.filter(WorldID = self.WorldID).filter(SeasonEndYear = self.SeasonStartYear).first()
+
     def __str__(self):
 
         return str(self.SeasonStartYear) + '-' + str(self.SeasonEndYear) + ' Season in World ' + str(self.WorldID)
@@ -455,6 +459,11 @@ class Phase(models.Model):
         return self.PhaseName
 
     @property
+    def NextPhase(self):
+        NextPhase = Phase.objects.filter(PhaseID__gt = self.PhaseID).filter(WorldID = self.WorldID).order_by('PhaseID').first()
+        return NextPhase
+
+    @property
     def NextPhaseName(self):
         NextPhase = Phase.objects.filter(PhaseID__gt = self.PhaseID).order_by('PhaseID').first()
         if NextPhase is not None:
@@ -466,22 +475,30 @@ class Week(models.Model):
     WeekID = models.AutoField(primary_key=True, db_index=True)
     PhaseID = models.ForeignKey(Phase, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
 
-    WeekNumber = models.PositiveSmallIntegerField(default = 0, db_index=True)
+    WeekNumber = models.SmallIntegerField(default = 0, db_index=True)
     WeekName = models.CharField(max_length=50, blank=True, null=True, default=None)
 
     IsCurrent = models.BooleanField(default=False)
     BroadcastSelected = models.BooleanField(default=False)
 
+    FirstWeekOfCalendar = models.BooleanField(default = False)
     LastWeekInPhase = models.BooleanField(default = False)
 
     RecruitingWeekModifier = models.FloatField(default = 1.0)
+    RecruitingAllowed = models.BooleanField(default = False)
 
     def __str__(self):
-        return 'Week ' + str(self.WeekNumber)
+        return self.WeekName
 
     @property
     def NextWeek(self):
-        return Week.objects.filter(WeekNumber = self.WeekNumber + 1).first()
+        NextWeek = Week.objects.filter(WeekNumber = self.WeekNumber + 1).filter(PhaseID__LeagueSeasonID = self.PhaseID.LeagueSeasonID).first()
+        if NextWeek is None:
+            NextLS = self.PhaseID.LeagueSeasonID.NextLeagueSeason
+            NextWeek = Week.objects.filter(PhaseID__LeagueSeasonID = NextLS).order_by('WeekID').first()
+
+
+        return NextWeek
 
     @property
     def PreviousWeek(self):
@@ -581,36 +598,30 @@ class Conference(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
-    def ConferenceStandings(self, Small=True, HighlightedTeams=[], WorldID = None):
+    def ConferenceStandings(self, Small=True, HighlightedTeams=[], WorldID = None, LeagueSeasonID = None, WeekID = None):
 
         if WorldID is None:
             WorldID = self.WorldID.WorldID
 
-        Standings = Team.objects.filter(teamseason__LeagueSeasonID__IsCurrent = True).filter(teamseason__ConferenceID = self).filter(teamseason__teamseasonweekrank__IsCurrent = True).values(
-            'TeamLogoURL_50', 'TeamName', 'teamseason__ConferenceWins', 'teamseason__ConferenceLosses', 'teamseason__ConferenceGB', 'teamseason__ConferenceRank', 'teamseason__Wins', 'teamseason__Losses', 'TeamLogoURL', 'TeamID'
+        RankWeek = WeekID.PreviousWeek
+
+        Standings = TeamSeason.objects.filter(ConferenceID = self).filter(teamseasonweekrank__WeekID = RankWeek).filter(LeagueSeasonID = LeagueSeasonID).values(
+            'TeamID__TeamLogoURL_50', 'TeamID__TeamName', 'ConferenceWins', 'ConferenceLosses', 'ConferenceGB', 'ConferenceRank', 'Wins', 'Losses', 'TeamID__TeamLogoURL', 'TeamID', 'TeamID__TeamColor_Primary_HEX'
         ).annotate(
             TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), output_field=CharField()),
-            NationalRank = F('teamseason__teamseasonweekrank__NationalRank'),
+            NationalRank = F('teamseasonweekrank__NationalRank'),
             NationalRankDisplay = Case(
                 When(NationalRank__gt = 25, then=Value('')),
                 default=Concat(Value('('), F('NationalRank'), Value(')'), output_field=CharField()),
                 output_field=CharField()
             ),
-            ConferenceWins = F('teamseason__ConferenceWins'),
-            ConferenceLosses = F('teamseason__ConferenceLosses'),
-            Wins = F('teamseason__Wins'),
-            Losses = F('teamseason__Losses'),
-            ConferenceGB = F('teamseason__ConferenceGB'),
-            ConferenceRank = F('teamseason__ConferenceRank'),
             BoldTeam = Case(
-                When(TeamName__in = HighlightedTeams, then=Value('bold')),
+                When(TeamID__TeamName__in = HighlightedTeams, then=Value('bold')),
                 default=Value(''),
                 output_field=CharField()
             ),
         ).order_by('ConferenceRank')
 
-
-        print('Standings', Standings.query)
         return Standings
 
     def __str__(self):
@@ -804,8 +815,8 @@ class Player(models.Model):
 
     ####IN GAME TENDENCIES###
 
-    #mean: 50 -  sigma:10
-    DevelopmentRating          = models.PositiveSmallIntegerField(default=None, blank=True, null=True)
+    #-3 to 3
+    DevelopmentRating          = models.SmallIntegerField(default=None, blank=True, null=True)
     DevelopmentGroupID         = models.PositiveSmallIntegerField(default=0)
     DevelopmentDayOfMonth      = models.PositiveSmallIntegerField(default=1)
 
@@ -1087,7 +1098,7 @@ class Player(models.Model):
             2: 'Superstar',    #6  Annual Dev Cycles  1,3,5,7,9,11
             3: 'Generational'  #12 Annual Dev Cycles  1,2,3,4,5,6,7,8,9,10,11,12
         }
-        GroupID = int((self.DevelopmentRating - 50) / 10.0)
+        GroupID = DevelopmentRating
         if GroupID not in GroupMap:
             return GroupMap[-2]
 
@@ -1102,7 +1113,7 @@ class Player(models.Model):
 
     @property
     def CurrentSkills(self):
-        PSS = self.playerteamseasonskill_set.filter(LeagueSeasonID__IsCurrent = True).first()
+        PSS = self.playerteamseasonskill
         return PSS
 
     @property
@@ -1395,7 +1406,7 @@ class TeamSeason(models.Model):
 
     @property
     def NationalRankObject(self):
-        return TeamSeasonWeekRank.objects.get(TeamSeasonID = self, IsCurrent = True)
+        return TeamSeasonWeekRank.objects.filter(TeamSeasonID = self, IsCurrent = True).first()
 
     @property
     def LeagueSeasonDisplay(self):
@@ -1419,14 +1430,21 @@ class TeamSeason(models.Model):
     def NationalRank(self):
         R = self.teamseasonweekrank_set.filter(IsCurrent = True).first()
 
+
         if R is None:
+            RecentRanking = TeamSeasonWeekRank.objects.filter(TeamSeasonID__TeamID = self.TeamID).filter(IsCurrent = True).first()
+            if RecentRanking is not None:
+                return RecentRanking.NationalRank
             return None
         return R.NationalRank
 
     @property
     def NationalRankDisplay(self):
 
-        if self.NationalRank > 25:
+        NationalRank = self.NationalRank
+        if NationalRank is None:
+            return ''
+        elif self.NationalRank > 25:
             return ''
 
         return '(' + str(self.NationalRank) + ')'
@@ -2493,7 +2511,7 @@ class TeamGame(models.Model):
 class PlayerTeamSeasonSkill(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
     PlayerTeamSeasonSkillID = models.AutoField(primary_key = True, db_index=True)
-    PlayerTeamSeasonID = models.ForeignKey(PlayerTeamSeason, on_delete=models.CASCADE, db_index=True)
+    PlayerTeamSeasonID = models.OneToOneField(PlayerTeamSeason, on_delete=models.CASCADE, db_index=True)
 
 
     Strength_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
@@ -2715,7 +2733,7 @@ class Coach(models.Model):
     S_Preference = models.CharField(max_length=30, default = None, null=True, blank=True)
 
     def __str__(self):
-        return self.CoachFirstName + ' ' + self.CoachLastName + ' is the ' + str(self.CurrentCoachTeamSeason.CoachPositionID) + ' for ' + str(self.CurrentCoachTeamSeason.TeamSeasonID)
+        return self.CoachFirstName + ' ' + self.CoachLastName + ' is the '
 
     @property
     def CurrentCoachTeamSeason(self):
@@ -2790,7 +2808,7 @@ class CoachTeamSeason(models.Model):
 
     def __str__(self):
 
-        return self.Name + ' is the ' + str(self.CoachPositionID) + ' for ' + str(self.TeamSeasonID.TeamID) + ' in ' + str(self.TeamSeasonID.LeagueSeasonID)
+        return self.Name + ' is the ' + str(self.CoachPositionID) + ' for ' + ' in ' + str(self.TeamSeasonID.LeagueSeasonID)
 
     @property
     def Name(self):

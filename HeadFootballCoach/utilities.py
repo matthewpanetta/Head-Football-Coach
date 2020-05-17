@@ -154,6 +154,9 @@ def NormalTrunc(Mean, Sigma, Min, Max):
         r = numpy.random.normal(Mean, Sigma)
         LoopCount +=1
 
+    if LoopCount >= 100:
+        r = Min
+
     return r
 
 def IntMin(a,b):

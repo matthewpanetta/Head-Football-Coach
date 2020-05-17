@@ -226,7 +226,26 @@ def PrepareForSigningDay(CurrentSeason,WorldID):
     RecruitTeamSeason.objects.bulk_update(RecruitTeamSeasons_ToSave, ['Signed'])
     Player.objects.bulk_update(PlayersToSave, ['RecruitSigned'])
 
+    TeamSeasonList = TeamSeason.objects.filter(LeagueSeasonID=CurrentSeason).filter(TeamID__isnull = False).annotate(
+        RecruitsSigned5 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=5))),
+        RecruitsSigned4 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=4))),
+        RecruitsSigned3 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=3))),
+        RecruitsSigned2 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=2))),
+        RecruitsSigned1 = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True)  & Q(recruitteamseason__PlayerTeamSeasonID__PlayerID__RecruitingStars=1))),
+        RecruitsSigned = Count('recruitteamseason__PlayerTeamSeasonID__PlayerID', filter=(Q(recruitteamseason__Signed=True) )),
 
+        RecruitingValue = (5 * F('RecruitsSigned5')) + (4 * F('RecruitsSigned4')) + (3 * F('RecruitsSigned3')) + (2 * F('RecruitsSigned2')) + (1 * F('RecruitsSigned1')) ,
+        RecruitingRank = Window(
+            expression=RowNumber(),
+            order_by=F("RecruitingValue").desc(),
+        )
+    )
+
+    TeamSeasons_ToSave = []
+    for TS in TeamSeasonList:
+        TS.RecruitingClassRank = TS.RecruitingRank
+        TeamSeasons_ToSave.append(TS)
+    TeamSeason.objects.bulk_update(TeamSeasons_ToSave, ['RecruitingClassRank'])
 
 
 
@@ -315,13 +334,14 @@ def FakeWeeklyRecruiting(WorldID, CurrentWeek):
 
 
         for u in range(0, TS['ActiveRecruitCount'] - len(RecruitsActivelyRecruiting)):
-            RTS = RecruitsNotActivelyRecruiting[u]
-            RTS.IsActivelyRecruiting = True
+            if u < len(RecruitsNotActivelyRecruiting):
+                RTS = RecruitsNotActivelyRecruiting[u]
+                RTS.IsActivelyRecruiting = True
 
-            RecruitsActivelyRecruiting.append(RTS)
+                RecruitsActivelyRecruiting.append(RTS)
 
         counter = 0
-        for counter in range(0, TS['ActiveRecruitCount']):
+        for counter in range(0, len(RecruitsActivelyRecruiting)):
             RTS = RecruitsActivelyRecruiting[counter]
             ThisWeekInterestIncrease = 0
             if counter < TS['NumberOfRecruits_FullSell']:

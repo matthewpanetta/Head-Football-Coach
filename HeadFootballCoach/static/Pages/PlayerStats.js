@@ -498,7 +498,7 @@ function GetPlayerStats(WorldID, data){
                                 }
                                 return returnVal;
                             },"sortable": true, 'searchable': true},
-          {"data": "playerteamseason__playerteamseasonskill__OverallRating", "sortable": true, 'orderSequence':["desc"]},
+          {"data": "playerteamseason__playerteamseasonskill__OverallRating", "sortable": true, 'orderSequence':["desc", 'asc']},
           {"data": "GameScore", "sortable": true, 'orderSequence':["desc"], 'className': 'col-group', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
 
               $(td).html(parseInt(StringValue));

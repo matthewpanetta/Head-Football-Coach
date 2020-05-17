@@ -36,7 +36,7 @@
   </style>
 </head>
 
-<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{ThisTeamSeason.TeamID.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 
 
 <body>
@@ -66,7 +66,7 @@
       {% endif %}
           <div class='w3-display-container'>
             <div class='w3-row-padding'>
-              <div class="w3-col l10 m12"   style='overflow-y: scroll;'>
+              <div class="w3-col l12 mw1100"   style='overflow-y: scroll;'>
                 <div class="w3-card">
                   <div class="w3-bar team-primary-background-bar">
                     {{team.TeamName}} {{PositionGroup.PositionGroupName}} Depth Chart
@@ -120,7 +120,7 @@
               </div>
             </div>
             <div class="w3-row-padding">
-                <div class="w3-col s10" style='overflow-y: scroll; height: 500px;'>
+                <div class="w3-col l12 mw1100" style='overflow-y: scroll; height: 500px;'>
                   <div class="w3-card">
                     <div class="w3-bar team-primary-background-bar">
                       Available Players

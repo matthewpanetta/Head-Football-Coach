@@ -27,6 +27,16 @@ urlpatterns = [
     path('World/<int:WorldID>/Team/<int:TeamID>/History/', views.Page_TeamHistory, name='TeamHistory'),
     path('World/<int:WorldID>/Team/<int:TeamID>/Roster/', views.Page_TeamRoster, name='TeamRoster'),
     path('World/<int:WorldID>/Team/<int:TeamID>/Gameplan/', views.Page_TeamGameplan, name='Gameplan'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/Schedule', views.Page_TeamSchedule, name='Schedule'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/History', views.Page_TeamHistory, name='History'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/DepthChart', views.Page_TeamDepthChart, name='DepthChart'),
+
+    path('World/<int:WorldID>/Team/<int:TeamID>/Season/<int:SeasonStartYear>/', views.Page_Team, name='Team'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/Roster/Season/<int:SeasonStartYear>/', views.Page_TeamRoster, name='TeamRoster'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/Gameplan/Season/<int:SeasonStartYear>/', views.Page_TeamGameplan, name='Gameplan'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/Schedule/Season/<int:SeasonStartYear>/', views.Page_TeamSchedule, name='Schedule'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/DepthChart/Season/<int:SeasonStartYear>/', views.Page_TeamDepthChart, name='DepthChart'),
+
     path('World/<int:WorldID>/Player/<int:PlayerID>/', views.Page_Player, name='Player'),
     path('World/<int:WorldID>/Game/<int:GameID>/', views.Page_Game, name='Game'),
     path('World/<int:WorldID>/Bracket/', views.Page_Bracket, name='Bracket'),
@@ -48,8 +58,11 @@ urlpatterns = [
     path('World/<int:WorldID>/PlayerDepartures/', views.Page_PlayerDepartures, name='PlayerDepartures'),
 
     path('World/<int:WorldID>/Awards', views.Page_Awards, name='Awards'),
+    path('World/<int:WorldID>/Awards/Season/<int:SeasonStartYear>/', views.Page_Awards, name='Awards'),
     path('World/<int:WorldID>/Rankings/', views.Page_Rankings, name='Rankings'),
+    path('World/<int:WorldID>/Rankings/Season/<int:SeasonStartYear>/', views.Page_Rankings, name='Rankings'),
     path('World/<int:WorldID>/Schedule', views.Page_Schedule, name='Schedule'),
+    path('World/<int:WorldID>/Schedule/Season/<int:SeasonStartYear>/', views.Page_Schedule, name='Schedule'),
 
     path('World/<int:WorldID>/PlayerRecords', views.Page_PlayerRecords, name='PlayerRecords'),
     path('World/<int:WorldID>/PlayerRecords/Conference/<int:ConferenceID>', views.Page_PlayerRecords, name='PlayerRecords'),
@@ -57,9 +70,6 @@ urlpatterns = [
     path('World/<int:WorldID>/Coaches', views.Page_Coaches, name='Coaches'),
     path('World/<int:WorldID>/TeamRecords/Conference/<int:ConferenceID>', views.Page_TeamRecords, name='TeamRecords'),
     path('World/<int:WorldID>/Schedule/Team/<int:TeamID>', views.Page_Schedule, name='Schedule'),
-    path('World/<int:WorldID>/Team/<int:TeamID>/Schedule', views.Page_TeamSchedule, name='Schedule'),
-    path('World/<int:WorldID>/Team/<int:TeamID>/History', views.Page_TeamHistory, name='History'),
-    path('World/<int:WorldID>/Team/<int:TeamID>/DepthChart', views.Page_TeamDepthChart, name='DepthChart'),
 
 
     path('World/<int:WorldID>/Search/<str:SearchInput>/', views.Page_Search, name='Search'),
