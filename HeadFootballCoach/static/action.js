@@ -167,6 +167,69 @@ function PlayerAction(WorldID){
     }
     });
 
+    $(document).on('click', '.team-action', function(event){
+      var ActionTarget = $(event.target)[0];
+      ActionTarget = $(ActionTarget)
+
+      $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+          // if not safe, set csrftoken
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      });
+
+
+      var Source = 'TeamRoster';
+      var Action = '';
+      var ConfirmText = '';
+
+      var Path = $(ActionTarget).attr('background-ajax');
+      console.log('clicked on this ', ActionTarget.baseURI, ActionTarget[0].baseURI, ActionTarget.baseURL, ActionTarget[0].baseURL)
+      var SourcePath = String(ActionTarget[0].baseURI);
+
+      console.log('SourcePath', SourcePath, 'Path', Path)
+
+      ConfirmText = $(ActionTarget).attr('confirm-info');
+
+      if (Path.indexOf('AutoTeamCuts') != -1){
+        Action = 'AutoTeamCuts';
+      }
+      else if (Path.indexOf('AutoTeamCaptains') != -1){
+        Action = 'AutoTeamCaptains';
+      }
+      else if (Path.indexOf('AutoTeamRedshirts') != -1){
+        Action = 'AutoTeamRedshirts';
+      }
+
+
+      var UserConfirm = confirm(ConfirmText);
+      if (UserConfirm == true) {
+
+
+        $.ajax({
+          method: "POST",
+          url: Path,
+          data: {
+            csrfmiddlewaretoken: csrftoken
+          },
+          dataType: 'json',
+          success: function(res, status) {
+            console.log(res, status);
+
+            window.location = '';
+
+          },
+          error: function(res) {
+            console.log(res)
+            alert(res.responseJSON.message);
+          }
+        });
+
+      }
+      });
+
 }
 
 

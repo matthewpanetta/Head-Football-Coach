@@ -1,4 +1,4 @@
-from ..models import Headline,World, Playoff,Week, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
+from ..models import Headline,World, Playoff,Week, TeamSeasonPosition, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
 from random import uniform, randint
 import numpy
 from ..utilities import WeightedProbabilityChoice, Min, DistanceBetweenCities, GetValuesOfSingleObject, NormalBounds
@@ -7,7 +7,7 @@ from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, 
 from django.db.models.functions.window import Rank, RowNumber
 from django.db.models.functions import Length, Concat, Coalesce
 from django_cte import CTEManager, With
-
+from django.db import connection, reset_queries
 
 def RandomRecruitPreference(RecruitPreferenceBase):
 
@@ -140,7 +140,7 @@ def CreateRecruitTeamSeason(WorldID, T, Recruit):
     for T in sorted(RecruitTeamDict['TeamList'], key = lambda k: k['MatchValue'] , reverse=True)[:25]:
         RTS =  RecruitTeamSeason(WorldID=CurrentWorld, TeamSeasonID = T['TeamObject'].CurrentTeamSeason, PlayerID = Recruit)
         RTS.MatchRating = T['MatchValue'] #
-        RTS.ScoutedOverall = NormalBounds(Recruit.OverallRating, 1.5, 0,99)
+        RTS.Scouted_Overall = NormalBounds(Recruit.OverallRating, 1.5, 0,99)
         RTS.save()
 
 
@@ -175,11 +175,7 @@ def PrepareForSigningDay(CurrentSeason,WorldID):
     TeamSeasonList = CurrentSeason.teamseason_set.filter(TeamID__isnull = False).values(
         'TeamSeasonID', 'ScholarshipsToOffer'
     ).annotate(
-        ScholarshipsAvailable = F('ScholarshipsToOffer') - Sum(Case(
-            When((Q(recruitteamseason__Signed = True)), then=1),
-            default=(Value(0)),
-            output_field=IntegerField()
-        )),
+        ScholarshipsAvailable = F('ScholarshipsToOffer'),
     )
     TeamSeasonDict = {}
     for TS in TeamSeasonList:
@@ -263,7 +259,7 @@ def FakeWeeklyRecruiting(WorldID, CurrentWeek):
 
     RecruitList = Player.objects.filter(WorldID= CurrentWorld).filter(IsRecruit=True).filter(RecruitSigned=False)
 
-    TeamSeasonList = CurrentSeason.teamseason_set.filter(ScholarshipsToOffer__gt = 0).filter(teamseasonweekrank__IsCurrent = True).values('TeamSeasonID', 'TeamID', 'ScholarshipsToOffer', 'TeamID__TeamName', 'TeamPrestige').annotate(
+    TeamSeasonList = CurrentSeason.teamseason_set.filter(teamseasonweekrank__IsCurrent = True).values('TeamSeasonID', 'TeamID', 'ScholarshipsToOffer', 'TeamID__TeamName', 'TeamPrestige').annotate(
         NumberOfRecruits_FullSell = Value(6, output_field=IntegerField()),
         NumberOfRecruits_HalfSell = Value(4, output_field=IntegerField()),
         NumberOfRecruits_LightSell = Value(2, output_field=IntegerField()),
@@ -275,11 +271,7 @@ def FakeWeeklyRecruiting(WorldID, CurrentWeek):
             output_field=IntegerField()
         )),
         RecruitsToAddToBoard = ExpressionWrapper(F('ActiveRecruitCount') - F('RecruitsActivelyRecruiting'), output_field=IntegerField()),
-        ScholarshipsAvailable = Value(25) - Sum(Case(
-            When((Q(recruitteamseason__Signed = True)), then=1),
-            default=(Value(0)),
-            output_field=IntegerField()
-        )),
+        ScholarshipsAvailable = F('ScholarshipsToOffer'),
     ).order_by('-TeamPrestige', 'teamseasonweekrank__NationalRank')
 
 
@@ -290,6 +282,9 @@ def FakeWeeklyRecruiting(WorldID, CurrentWeek):
     print('Teams doing recruiting!')
 
     AllRecruitsAvailable = RecruitTeamSeason.objects.filter(WorldID_id=WorldID).filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).annotate(
+        CommitsNeeded = Subquery(TeamSeasonPosition.objects.filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PositionID = OuterRef('PlayerTeamSeasonID__PlayerID__PositionID')).annotate(
+            PlayersNeeded = F('MinimumPlayerCount') - F('FreshmanPlayerCount') - F('SophomorePlayerCount') - F('JuniorPlayerCount') - F('CommitPlayerCount'),
+        ).values('PlayersNeeded')),
         InterestLevelAndActive = Case(
             When(IsActivelyRecruiting = True, then =F('InterestLevel')),
             default = ExpressionWrapper(F('InterestLevel') / 10.0, output_field=DecimalField()),
@@ -307,7 +302,17 @@ def FakeWeeklyRecruiting(WorldID, CurrentWeek):
             default=Value(1.0),
             output_field=DecimalField()
         ),
-        RecruitingPriority = ExpressionWrapper(F('ScoutedOverall') * F('InterestRankPriorityModifier'), output_field=DecimalField())
+        CommitsNeededModifier = Case(
+            When(CommitsNeeded__gte = 2, then=Value(1.4)),
+            When(CommitsNeeded = 1, then=Value(1.2)),
+            When(CommitsNeeded = 0, then=Value(1.0)),
+            When(CommitsNeeded = -1, then=Value(.9)),
+            When(CommitsNeeded = -2, then=Value(.7)),
+            When(CommitsNeeded__lt = -2, then=Value(.4)),
+            default=Value(1.0),
+            output_field=FloatField()
+        ),
+        RecruitingPriority = ExpressionWrapper(F('Scouted_Overall') * F('InterestRankPriorityModifier') * F('CommitsNeededModifier'), output_field=DecimalField())
     ).order_by('-RecruitingPriority')
 
 
@@ -379,7 +384,7 @@ def FakeWeeklyRecruiting(WorldID, CurrentWeek):
 
     US = Player.objects.filter(RecruitSigned = False).update(RecruitingPointsNeeded=F('RecruitingPointsNeeded') - Value(100) + Coalesce( Subquery(Player.objects.filter(PlayerID = OuterRef('PlayerID')).filter(playerteamseason__recruitteamseason__IsActivelyRecruiting = True).annotate(count=10*Count('playerteamseason__recruitteamseason__RecruitTeamSeasonID')).values('count')),0))
 
-    PlayersReadyToSign = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).filter(InterestLevel__gte = F('PlayerTeamSeasonID__PlayerID__RecruitingPointsNeeded')).annotate(
+    PlayersReadyToSign = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).filter(InterestLevel__gte = F('PlayerTeamSeasonID__PlayerID__RecruitingPointsNeeded')).prefetch_related('TeamSeasonID__teamseasonposition_set').annotate(
         TeamRank = Window(
             expression=RowNumber(),
             partition_by=F("PlayerTeamSeasonID__PlayerID"),
@@ -391,6 +396,7 @@ def FakeWeeklyRecruiting(WorldID, CurrentWeek):
     if PlayersReadyToSign.count() > 0:
 
         RTSToSave = []
+        TSPToSave = []
         PlayersToSave = []
         for RTS in [u for u in PlayersReadyToSign if u.TeamRank == 1]:
             RTS.Signed = True
@@ -403,5 +409,22 @@ def FakeWeeklyRecruiting(WorldID, CurrentWeek):
                 RTSToSave.append(RTS)
                 PlayersToSave.append(RTS.PlayerTeamSeasonID.PlayerID)
 
+                TSP = RTS.TeamSeasonID.teamseasonposition_set.filter(PositionID = RTS.PlayerTeamSeasonID.PlayerID.PositionID).update(
+                    CommitPlayerCount = F('CommitPlayerCount') + 1
+                )
+
+
         RecruitTeamSeason.objects.bulk_update(RTSToSave, ['Signed'])
         Player.objects.bulk_update(PlayersToSave, ['RecruitSigned'])
+
+        reset_queries()
+        ScholarshipsRemainingList = TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason).filter(TeamID__isnull = False).select_related('LeagueSeasonID__LeagueID').prefetch_related('playerteamseason_set__ClassID').prefetch_related('recruitteamseason_set')
+
+        for TS in ScholarshipsRemainingList:
+            PlayersSigned = TS.recruitteamseason_set.filter(Signed = True).count()
+            PlayersPerTeam = TS.LeagueSeasonID.LeagueID.MaxSignablePlayersPerTeam
+            TotalPlayers = TS.playerteamseason_set.all().count()
+            SeniorCount = TS.playerteamseason_set.filter(ClassID__ClassAbbreviation = 'SR').count()
+            TS.ScholarshipsToOffer = PlayersPerTeam - TotalPlayers +SeniorCount - PlayersSigned
+
+        TeamSeason.objects.bulk_update(ScholarshipsRemainingList, ['ScholarshipsToOffer'])

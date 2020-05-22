@@ -154,9 +154,10 @@
         <div class="tab-pane show active tab-content" id="nav-overview">
           <div class="w3-display-container">
             <div class="w3-row-padding">
-              {% if ShowStatBox %}
+              {% if ShowStatBox or LastTeamMeetings|length > 0%}
 
               <div class='w3-col l3 m4'>
+                {% if ShowStatBox %}
                 <div class='w3-card w3-margin-bottom'>
                   <div class="w3-bar team-primary-background-bar">
                     <span>Team Stats {{TeamStatHeaderSuffix}}</span>
@@ -179,6 +180,7 @@
                     {% endfor %}
                   </div>
                 </div>
+                {% endif %}
 
                 {% if game.WasPlayed == 0 %}
                 {% if LastTeamMeetings|length > 0 %}

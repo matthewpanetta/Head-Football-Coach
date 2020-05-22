@@ -37,6 +37,26 @@
         <div class='w3-display-container' >
           <div class='w3-row-padding'>
             <div class='w3-col mw1200 l12'>
+              {% if RosterActions|length > 0%}
+              <div class="w3-card">
+                <div class="w3-bar team-primary-background-bar">
+                  Roster Actions
+                </div>
+                <div class="w3-row-padding w3-margin-bottom" style=''>
+                  {% for Action in RosterActions%}
+                  <div class="w3-col l12 mw300">
+                    <span class="">
+                      {{Action.Icon|safe}}
+                    </span>
+                    <span  confirm-info='{{Action.ConfirmInfo}}' response-type='refresh' background-ajax='{{Action.AjaxLink}}' class="w3-button {{Action.Class}} text-left">
+                      {{Action.Display}}
+                    </span>
+                  </div>
+                  {% endfor %}
+
+                </div>
+              </div>
+              {% endif %}
               <div class="w3-card ">
 
                 <table class="w3-table w3-table-all center-aligned-table" id='PlayerStats'  style="width:100%">

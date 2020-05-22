@@ -1,7 +1,7 @@
 from ..models import PlayerTeamSeasonAward, Team, Position,Phase,TeamSeasonStrategy, Class, RecruitTeamSeason, Conference, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, TeamSeason, CoachTeamSeason, Driver, Coach, PlayerGameStat, World
 from django.db.models import Max, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value
 import random
-from ..resources import createCalendar, UpdateTeamPositions, CreateSchedule, CreateRecruitingClass, PopulateTeamDepthCharts, AssignRedshirts, CutPlayers, ChooseTeamCaptains, CalculateTeamOverall, CalculateRankings, CalculateConferenceRankings, SelectBroadcast, SelectPreseasonAllAmericans
+from ..resources import createCalendar, CreateTeamPositions, UpdateTeamPositions, CreateSchedule, CreateRecruitingClass, PopulateTeamDepthCharts, AssignRedshirts, CutPlayers, ChooseTeamCaptains, CalculateTeamOverall, CalculateRankings, CalculateConferenceRankings, SelectBroadcast, SelectPreseasonAllAmericans
 from ..utilities import Max_Int, NormalTrunc, IfNull
 
 
@@ -144,6 +144,8 @@ def GraduateSeniors(CurrentSeason = None, WorldID = None):
             NewClassID = ClassDict[OldClassID]
         else:
             NewClassID = OldClassID
+            P.WasPreviouslyRedshirted = True
+            PToSave.append(P)
 
         if NewClassID.ClassName !=  'Graduate':
             if PTS is not None:
@@ -165,24 +167,27 @@ def GraduateSeniors(CurrentSeason = None, WorldID = None):
                 CurrentPTS.GraduatedAfterSeason = True
                 PTSToUpdate.append(CurrentPTS)
 
+    Player.objects.bulk_update(PToSave, ['WasPreviouslyRedshirted'])
     PlayerTeamSeason.objects.bulk_update(PTSToUpdate, ['GraduatedAfterSeason', 'LeavingTeamAfterSeason'])
     PlayerTeamSeason.objects.bulk_create(PTSToSave)
     PlayerTeamSeasonSkill.objects.bulk_create(PTSSkill_ToSave)
 
 
-def PrepForSeason(CurrentSeason,WorldID, CurrentWeek):
+def PrepForSeason(CurrentSeason,WorldID, CurrentWeek, PrepForUserTeam=False):
     LS = CurrentSeason
 
     print('PrepForSeason(CurrentSeason,WorldID, CurrentWeek)', CurrentSeason,WorldID, CurrentWeek)
 
-    UpdateTeamPositions(LS, WorldID)
+
+    CreateTeamPositions(LS, WorldID)
     CreateSchedule(LS, WorldID)
     CreateRecruitingClass(LS, WorldID)
     PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=True)
-    AssignRedshirts(LS, WorldID)
-    CutPlayers(LS, WorldID)
+    AssignRedshirts(LS, WorldID, PrepForUserTeam=PrepForUserTeam)
+    CutPlayers(LS, WorldID, PrepForUserTeam=PrepForUserTeam)
+    UpdateTeamPositions(LS, WorldID)
     PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=False)
-    ChooseTeamCaptains(LS, WorldID)
+    ChooseTeamCaptains(LS, WorldID, PrepForUserTeam=PrepForUserTeam)
     CalculateTeamOverall(LS, WorldID)
     CalculateRankings(LS, WorldID, CurrentWeek)
     CalculateConferenceRankings(LS, WorldID, CurrentWeek)

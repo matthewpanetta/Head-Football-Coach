@@ -1,11 +1,22 @@
 {% include "HeadFootballCoach/ext_NavBar.html" %}
 {% load static %}
 
+<link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/searchPanes.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/select.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/buttons.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/fixedHeader.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/bootstrap-sortable.css' %}">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+
+
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" PlayerID="{{player.PlayerID}}" style='display:none;' id='PageDataPassthru'></div>
 <body>
   <div class="PageContent">
     <h2>
-      <img class='teamTeamLogo' src='/static/img/TeamLogos/{{team.LogoURL}}.png' alt="My image">
       <span class='teamSchoolName'>Recruiting</span>
 
     </h2>
@@ -19,7 +30,7 @@
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-saved-tab">Saved Players</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-ranking-tab">National Ranking</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-boxscore-tab">Box Score</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-needs-tab">Team Needs</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-boxscore-tab">Box Score</button>
       </div>
     </nav>
@@ -27,123 +38,97 @@
       <div class="tab-content" style='display:block;' id="nav-overview">
         <div class="w3-display-container">
           <div class="w3-row-padding">
-            <div class="w3-col s8">
+            <div class="w3-col l12 mw1200">
               <div class="w3-card">
                 <div id="">
-                  <table id='recruitingMainTable' class='width100'>
+                  <table id='recruitingMainTable' class='width100 w3-table w3-striped center-aligned-table' style='width: 100%;'>
                     <thead>
-                      <th>Rank</th>
-                      <th></th>
-                      <th>Name</th>
-                      <th>Pos</th>
-                      <th>Ht.</th>
-                      <th>Wt.</th>
-                      <th>Int</th>
-                      <th>Ath</th>
-                      <th>Skill</th>
-                      <th>OVR</th>
-                      <th>Signed</th>
+                      <tr>
+                        <th colspan="9" class="col-group">PLAYER</th>
+                        <th colspan="5">MEASURABLES</th>
+                        <th colspan="7" class="col-group">PHYSICAL SKILLS</th>
+                        <th colspan="7" class="col-group">PASSING SKILLS</th>
+                        <th colspan="4" class="col-group">RUSHING SKILLS</th>
+                        <th colspan="4" class="col-group">RECEIVING SKILLS</th>
+                        <th colspan="3" class="col-group">BLOCKING SKILLS</th>
+                        <th colspan="7" class="col-group">DEFENSE SKILLS</th>
+                        <th colspan="2" class="col-group">KICKING SKILLS</th>
+                        <th colspan="4"></th>
+                      </tr>
+                      <tr>
+                        <th>Rank</th>
+                        <th>Stars</th>
+                        <th>Name</th>
+                        <th>Pos</th>
+                        <th>OVR</th>
+                        <th>% Scouted</th>
+                        <th>% Lock</th>
+                        <th>Interest in Team</th>
+                        <th>Signed</th>
+
+                        <th>Ht.</th>
+                        <th>Wt.</th>
+                        <th>40 Time</th>
+                        <th>Bench Press</th>
+                        <th>Vert.</th>
+
+                        <th>STR</th>
+                        <th>AGI</th>
+                        <th>SPD</th>
+                        <th>ACC</th>
+                        <th>STA</th>
+                        <th>JMP</th>
+                        <th>AWR</th>
+
+                        <th>THP</th>
+                        <th>TA(S)</th>
+                        <th>TA(M)</th>
+                        <th>TA(D)</th>
+                        <th>ToR</th>
+                        <th>TUP</th>
+                        <th>PA</th>
+
+                        <th>CAR</th>
+                        <th>ELU</th>
+                        <th>BC</th>
+                        <th>BRK</th>
+
+                        <th>CTH</th>
+                        <th>CIT</th>
+                        <th>ROU</th>
+                        <th>REL</th>
+
+                        <th>PassBlk</th>
+                        <th>RunBlk</th>
+                        <th>ImpBlk</th>
+
+                        <th>PR</th>
+                        <th>SHD</th>
+                        <th>TCK</th>
+                        <th>HP</th>
+                        <th>MCov</th>
+                        <th>ZCov</th>
+                        <th>PRS</th>
+
+                        <th>KckPow</th>
+                        <th>KckAcc</th>
+
+
+                        <th>Show</th>
+                        <th>State</th>
+                        <th>State</th>
+                        <th>State</th>
+                      </tr>
                     </thead>
                     <tbody>
 
-                    {% for player in Players %}
-
-                    <tr class="">
-                      <td class="recruiting-player-rank">
-                        {{player.Recruiting_NationalRank}}
-                      </td>
-                      <td class="" PlayerFaceJson="{{player.PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if player.PlayerFaceJson|length > 0%}1{%else%}0{%endif%}">
-
-                        <div class="PlayerFaceDisplay" id="PlayerFaceDisplay{{player.PlayerID}}" style='height: 70px;width: 40px;'></div>
-                      </td>
-                      <td class="text-left">
-                        <div class="recruiting-player-name font16">
-                          <a  href="/World/{{page.WorldID}}/Player/{{player.PlayerID}}">
-                            {{player.FullName}}
-                          </a>
-                        </div>
-                        <div class="recruiting-player-city font10">{{player.CityID.CityName}}, {{player.CityID.StateID.StateAbbreviation}} </div>
-                      </td>
-                      <td class=>
-                        <div class="section font16">
-                          <span>{{player.PositionID.PositionAbbreviation}}</span>
-                        </div>
-                        <div class="font10">
-                          <span>Balanced</span>
-                        </div>
-                      </td>
-                      <td class='font16'>
-                          <span>{{player.HeightFormatted}}</span>
-                      </td>
-                      <td class='font16'>
-                          <span>{{player.WeightFormatted}}</span>
-                      </td>
-                      <td class=>
-                        <div class="section font16">
-                          <span>B+</span>
-                        </div>
-                        <div class="font10">
-                          <span>Intelligence</span>
-                        </div>
-                      </td>
-                      <td class=>
-                        <div class="section font16">
-                          <span>A-</span>
-                        </div>
-                        <div class="font10">
-                          <span>Athleticism</span>
-                        </div>
-                      </td>
-                      <td class=>
-                        <div class="section font16">
-                          <span>B</span>
-                        </div>
-                        <div class="font10">
-                          <span>Passing</span>
-                        </div>
-                      </td>
-                      <td class=>
-                        <div class="section font16">
-                          <span>{{player.RecruitingStars}} *</span>
-                          <span>{{player.OverallRating}} OVR</span>
-                        </div>
-                        <div class="font10">
-                          <span class='dot'>Natl {{player.Recruiting_NationalRank}}</span>
-                          <span class='dot'>State {{player.Recruiting_StateRank}}</span>
-                          <span>Pos {{player.Recruiting_NationalPositionalRank}}</span>
-                        </div>
-                      </td>
-                      <td class="ratings">
-
-                      </td>
-                    </tr>
-                    {% endfor %}
                   </tbody>
                   </table>
                 </div>
               </div>
 
             </div>
-            <div class="w3-col s3">
-              <div class="w3-card">
-                <div class="">
-                  <div class="">
-                    <label for="PlayerHeightSliderValue">Player Height:</label>
-                    <input type="text" id="PlayerHeightSliderValue" readonly style="border:0; color:charcoal; font-weight:bold; width:inherit;">
-                  </div>
-                  <div class="w3-margin" id='PlayerHeightSlider'>
-                  </div>
-                </div>
-                <div class="">
-                  <div class="">
-                    <label for="PlayerOverallSliderValue">Player Overall:</label>
-                    <input type="text" id="PlayerOverallSliderValue" readonly style="border:0; color:charcoal; font-weight:bold; width:inherit;">
-                  </div>
-                  <div class="w3-margin" id='PlayerOverallSlider'>
-                  </div>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
@@ -279,44 +264,67 @@
           </div>
         </div>
       </div>
-      <div class="tab-pane fade" id="nav-analytics" role="tabpanel" aria-labelledby="nav-profile-tab">
-        Analytics Window
-        <div id="map" style="width: 930px; height: 630px; border: solid 3px red;"></div>
-      </div>
-      <div class="tab-pane fade" id="nav-coaches" role="tabpanel" aria-labelledby="nav-profile-tab">
-        <div class='container'>
-          <div class='row'>
-            <div class='col-1'></div>
-            <div class='col-10'>
-              <article>
-                <header>
-                  Head Coach
-                </header>
-                {{HC.CoachFirstName}} {{HC.CoachLastName}}
-              </article>
+      <div class="tab-content" style='display:none;' id="nav-team-needs">
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col l12 mw800">
+              <div class="w3-card">
+
+                <table id='recruitingTeamNeedsTable' class='w3-table-all'>
+                  <thead>
+                    <tr class='center-text-row'>
+                      <th colspan="6" class=' col-group'>THIS YEAR</th>
+                      <th colspan="5">NEXT YEAR</th>
+                    </tr>
+                    <tr class='center-text-row'>
+                      <th class=' left-text'>Pos</th>
+                      <th>FR</th>
+                      <th>SO</th>
+                      <th>JR</th>
+                      <th>SR</th>
+                      <th class=' col-group'>TOT</th>
+                      <th class=' left-text'>Pos</th>
+                      <th>Returning</th>
+                      <th>Targets</th>
+                      <th>Commits</th>
+                      <th>Need</th>
+                    </tr>
+
+                  </thead>
+                  {% for TSP in TeamNeeds %}
+                  <tr class='center-text-row'>
+                    <td class='bold left-text'>{{TSP.PositionID.PositionAbbreviation}}</td>
+                    <td class='{%if TSP.FreshmanPlayerCount == 0%}opacity-0{%endif%}'>{{TSP.FreshmanPlayerCount}}</td>
+                    <td class='{%if TSP.SophomorePlayerCount == 0%}opacity-0{%endif%}'>{{TSP.SophomorePlayerCount}}</td>
+                    <td class='{%if TSP.JuniorPlayerCount == 0%}opacity-0{%endif%}'>{{TSP.JuniorPlayerCount}}</td>
+                    <td class='{%if TSP.SeniorPlayerCount == 0%}opacity-0{%endif%}'>{{TSP.SeniorPlayerCount}}</td>
+                    <td class='{%if TSP.CurrentPlayerCount == 0%}opacity-0{%endif%} col-group'>{{TSP.CurrentPlayerCount}}</td>
+                    <td class='bold left-text {% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>{{TSP.PositionID.PositionAbbreviation}}</td>
+                    <td class='{% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>{{TSP.Year1PlayersOnRoster}}</td>
+                    <td class='{%if TSP.CurrentPlayerCount == 0%}opacity-0{%endif%} {% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>0</td>
+                    <td class='{%if TSP.CurrentPlayerCount == 0%}opacity-0{%endif%} {% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>{{TSP.CommitCount}}</td>
+                    <td class='{%if TSP.Year1PlayersNeeded == 0%}opacity-0 {%else%} bold {%endif%}  {% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>{{TSP.Year1PlayersNeeded}}</td>
+                  </tr>
+                  {% endfor %}
+                  <tfoot class='bold center-text-row'>
+                    <tr>
+                      <td class=' left-text'>Totals</td>
+                      <td class='{%if TeamNeedsTotals.FreshmanPlayerCount__sum == 0%}opacity-0{%endif%}'>{{TeamNeedsTotals.FreshmanPlayerCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.SophomorePlayerCount__sum == 0%}opacity-0{%endif%}'>{{TeamNeedsTotals.SophomorePlayerCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.JuniorPlayerCount__sum == 0%}opacity-0{%endif%}'>{{TeamNeedsTotals.JuniorPlayerCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.SeniorPlayerCount__sum == 0%}opacity-0{%endif%}'>{{TeamNeedsTotals.SeniorPlayerCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.CurrentPlayerCount__sum == 0%}opacity-0{%endif%} col-group'>{{TeamNeedsTotals.CurrentPlayerCount__sum}}</td>
+                      <td class='bold left-text'>Needs</td>
+                      <td>{{TeamNeedsTotals.Year1PlayersOnRoster__sum}}</td>
+                      <td class=' '>0</td>
+                      <td class=' '>{{TeamNeedsTotals.CommitCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.Year1PlayersNeeded__sum == 0%}opacity-0 {%else%} bold {%endif%}'>{{TeamNeedsTotals.Year1PlayersNeeded__sum}}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
             </div>
-            <div class='col-1'></div>
-          </div>
-          <div class='row'>
-            <div class='col-1'></div>
-            <div class='col-5'>{{AHC.CoachFirstName}} {{AHC.CoachLastName}}</div>
-            <div class='col-5'>{{AC.CoachFirstName}} {{AC.CoachLastName}}</div>
-            <div class='col-1'></div>
-          </div>
-        </div>
-      </div>
-      <div class="tab-pane fade" id="nav-history" role="tabpanel" aria-labelledby="nav-profile-tab">
-        <div class='container'>
-          <div class='row'>
-            <div class='col-1'></div>
-            <div class='col-10'>History</div>
-            <div class='col-1'></div>
-          </div>
-          <div class='row'>
-            <div class='col-1'></div>
-            <div class='col-5'>History #1</div>
-            <div class='col-5'>History #2</div>
-            <div class='col-1'></div>
           </div>
         </div>
       </div>
@@ -328,12 +336,15 @@
 
 
 {% include "HeadFootballCoach/ext_CommonScripts.html" %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'Hoops/bootstrap-sortable.css' %}">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.select.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.searchPanes.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.buttons.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/buttons.colVis.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedColumns.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedHeader.min.js' %}"></script>
 <script src="{% static 'Pages/Recruiting.js' %}" type="module"></script>
+
+{{ Players|json_script:"recruiting-player-data" }}

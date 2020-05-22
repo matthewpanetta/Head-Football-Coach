@@ -14,7 +14,7 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
 
     for Conf in Conference.objects.filter(WorldID = CurrentWorld):
         ConfName = Conf.ConferenceName
-        ConfTeams = TeamSeason.objects.filter(WorldID=CurrentWorld).filter(ConferenceID = Conf).filter(teamseasonweekrank__IsCurrent = True).values(
+        ConfTeams = TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason).filter(WorldID=CurrentWorld).filter(ConferenceID = Conf).filter(teamseasonweekrank__IsCurrent = True).values(
                 'TeamID__TeamName', 'TeamSeasonID', 'TeamID', 'ConferenceWins', 'ConferenceLosses', 'ConferenceChampion', 'teamseasonweekrank__NationalRank'
         ).annotate(
             NetWins = Coalesce(F('ConferenceWins') - F('ConferenceLosses'), 0),

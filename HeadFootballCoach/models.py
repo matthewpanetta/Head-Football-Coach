@@ -29,54 +29,6 @@ def HundredRange(value):
         )
 
 
-class System_PlayerArchetypeRatingModifier(models.Model):
-    System_PlayerArchetypeRatingModifierID = models.AutoField(primary_key=True)
-    Position  = models.CharField(max_length=10, default=None, blank=True, null=True)
-    Archetype = models.CharField(max_length=30, default=None, blank=True, null=True)
-
-    Strength_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Agility_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Speed_Rating                = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Acceleration_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Stamina_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Awareness_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Jumping_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    ThrowPower_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    ShortThrowAccuracy_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    MediumThrowAccuracy_Rating  = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    DeepThrowAccuracy_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    ThrowOnRun_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    ThrowUnderPressure_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    PlayAction_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Elusiveness_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    BallCarrierVision_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    JukeMove_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    BreakTackle_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Carrying_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Catching_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    CatchInTraffic_Rating       = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #ShortRouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #MediumRouteRunning_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    #DeepRouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    RouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Release_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    HitPower_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Tackle_Rating               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    PassRush_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    BlockShedding_Rating        = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Pursuit_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    PlayRecognition_Rating      = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    ManCoverage_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    ZoneCoverage_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    Press_Rating                = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    PassBlock_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    RunBlock_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    ImpactBlock_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    KickPower_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    KickAccuracy_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-    KickReturn_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
-
-
 class System_PlayoffRound(models.Model):
     PlayoffRoundID = models.AutoField(primary_key = True)
     PlayoffRoundNumber = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
@@ -178,6 +130,47 @@ class Position(models.Model):
     RandomStart = models.IntegerField(blank=True, null=True)
     RandomStop   = models.IntegerField(blank=True, null=True)
 
+
+    Strength_Rating_Base             = models.FloatField(default=0, blank=True, null=True)
+    Agility_Rating_Base              = models.FloatField(default=0, blank=True, null=True)
+    Speed_Rating_Base                = models.FloatField(default=0, blank=True, null=True)
+    Acceleration_Rating_Base         = models.FloatField(default=0, blank=True, null=True)
+    Stamina_Rating_Base              = models.FloatField(default=0, blank=True, null=True)
+    Awareness_Rating_Base            = models.FloatField(default=0, blank=True, null=True)
+    Jumping_Rating_Base              = models.FloatField(default=0, blank=True, null=True)
+    Injury_Rating_Base               = models.FloatField(default=0, blank=True, null=True)
+    ThrowPower_Rating_Base           = models.FloatField(default=0, blank=True, null=True)
+    ShortThrowAccuracy_Rating_Base   = models.FloatField(default=0, blank=True, null=True)
+    MediumThrowAccuracy_Rating_Base  = models.FloatField(default=0, blank=True, null=True)
+    DeepThrowAccuracy_Rating_Base    = models.FloatField(default=0, blank=True, null=True)
+    ThrowOnRun_Rating_Base           = models.FloatField(default=0, blank=True, null=True)
+    ThrowUnderPressure_Rating_Base   = models.FloatField(default=0, blank=True, null=True)
+    PlayAction_Rating_Base           = models.FloatField(default=0, blank=True, null=True)
+    Elusiveness_Rating_Base          = models.FloatField(default=0, blank=True, null=True)
+    BallCarrierVision_Rating_Base    = models.FloatField(default=0, blank=True, null=True)
+    JukeMove_Rating_Base             = models.FloatField(default=0, blank=True, null=True)
+    BreakTackle_Rating_Base          = models.FloatField(default=0, blank=True, null=True)
+    Carrying_Rating_Base             = models.FloatField(default=0, blank=True, null=True)
+    Catching_Rating_Base             = models.FloatField(default=0, blank=True, null=True)
+    CatchInTraffic_Rating_Base       = models.FloatField(default=0, blank=True, null=True)
+    RouteRunning_Rating_Base     = models.FloatField(default=0, blank=True, null=True)
+    Release_Rating_Base              = models.FloatField(default=0, blank=True, null=True)
+    HitPower_Rating_Base             = models.FloatField(default=0, blank=True, null=True)
+    Tackle_Rating_Base               = models.FloatField(default=0, blank=True, null=True)
+    PassRush_Rating_Base           = models.FloatField(default=0, blank=True, null=True)
+    BlockShedding_Rating_Base        = models.FloatField(default=0, blank=True, null=True)
+    Pursuit_Rating_Base              = models.FloatField(default=0, blank=True, null=True)
+    PlayRecognition_Rating_Base      = models.FloatField(default=0, blank=True, null=True)
+    ManCoverage_Rating_Base          = models.FloatField(default=0, blank=True, null=True)
+    ZoneCoverage_Rating_Base         = models.FloatField(default=0, blank=True, null=True)
+    Press_Rating_Base                = models.FloatField(default=0, blank=True, null=True)
+    PassBlock_Rating_Base            = models.FloatField(default=0, blank=True, null=True)
+    RunBlock_Rating_Base             = models.FloatField(default=0, blank=True, null=True)
+    ImpactBlock_Rating_Base          = models.FloatField(default=0, blank=True, null=True)
+    KickPower_Rating_Base            = models.FloatField(default=0, blank=True, null=True)
+    KickAccuracy_Rating_Base         = models.FloatField(default=0, blank=True, null=True)
+    KickReturn_Rating_Base           = models.FloatField(default=0, blank=True, null=True)
+
     def __str__(self):
         return self.PositionName
     #############################
@@ -186,6 +179,57 @@ class Position(models.Model):
     def OccurancePercent(self):
         OC = Position.objects.all().aggregate(OccuranceSum=Sum(F('Occurance')))
         return (self.Occurance / OC['OccuranceSum']) * 70
+
+
+
+class System_PlayerArchetypeRatingModifier(models.Model):
+    System_PlayerArchetypeRatingModifierID = models.AutoField(primary_key=True)
+    PositionID  = models.ForeignKey(Position, on_delete=models.CASCADE, null=True, blank=True, default=None )
+    Position  = models.CharField(max_length=10, default=None, blank=True, null=True)
+    Archetype = models.CharField(max_length=30, default=None, blank=True, null=True)
+
+    Strength_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Agility_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Speed_Rating                = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Acceleration_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Stamina_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Awareness_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Jumping_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    ThrowPower_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    ShortThrowAccuracy_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    MediumThrowAccuracy_Rating  = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    DeepThrowAccuracy_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    ThrowOnRun_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    ThrowUnderPressure_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    PlayAction_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Elusiveness_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    BallCarrierVision_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    JukeMove_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    BreakTackle_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Carrying_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Catching_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    CatchInTraffic_Rating       = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #ShortRouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #MediumRouteRunning_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    #DeepRouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    RouteRunning_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Release_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    HitPower_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Tackle_Rating               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    PassRush_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    BlockShedding_Rating        = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Pursuit_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    PlayRecognition_Rating      = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    ManCoverage_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    ZoneCoverage_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Press_Rating                = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    PassBlock_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    RunBlock_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    ImpactBlock_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    KickPower_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    KickAccuracy_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    KickReturn_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+
 
 
 class SubPosition(models.Model):
@@ -384,7 +428,8 @@ class League(models.Model):
     LeaguePrestige = models.PositiveSmallIntegerField(validators=[HundredRange], default=50)
     GameStructureID = models.ForeignKey(GameStructure, on_delete=models.CASCADE)
 
-    PlayersPerTeam = models.PositiveSmallIntegerField(default = 64)
+    PlayersPerTeam = models.PositiveSmallIntegerField(default = 75)
+    MaxSignablePlayersPerTeam = models.PositiveSmallIntegerField(default = 85)
 
 
     NumberOfPlayoffTeams = models.PositiveSmallIntegerField(default = 64)
@@ -870,6 +915,7 @@ class Player(models.Model):
             'hair': [
               "#272421",
               "#3D2314",
+              "#3D2314",
               "#5A3825",
               "#CC9966",
               "#2C1608",
@@ -893,7 +939,7 @@ class Player(models.Model):
           },
           {
             'skin': "#ce967d",
-            'hair': ["#272421", "#423125"]
+            'hair': ["#272421", "#423125", "#423125"]
           },
           {
             'skin': "#bb876f",
@@ -957,7 +1003,7 @@ class Player(models.Model):
           "eyebrow": ["eyebrow1", "eyebrow10", "eyebrow11", "eyebrow12", "eyebrow2", "eyebrow3", "eyebrow4", "eyebrow5", "eyebrow6", "eyebrow7", "eyebrow8", "eyebrow9"],
           "facialHair": ["beard1", "beard2", "fullgoatee", "goatee-thin", "goatee1-stache", "goatee1", "goatee2", "goatee3", "goatee4", "goatee5", "goatee6", "goatee7", "goatee8", "handlebar", "honest-abe-stache", "honest-abe", "mustache-thin", "mustache1", "none", "soul-stache", "soul"],
           "glasses": ["facemask", "glasses1-primary", "glasses1-secondary", "glasses2-black", "glasses2-primary", "glasses2-secondary", "none"],
-          "hair": ["afro", "bald", "cornrows", "crop", "high", "juice", "messy-short", "middle-part", "parted", "short-fade", "short", "short2", "spike", "spike2"],
+          "hair": [("afro-big", 1), ("afro-med", 1), ("bald", 2), ("buzz-01",3), ("buzz-02",3), ('curly-01',1), ('curly-02',1), ('curly-03',1), ('dreads',1), ('faux-hawk-01',1), ('faux-hawk-02',1), ('hair-01',2), ('hair-02',2), ("cornrows",1), ("crop",2), ("high-01",2), ('high-02',2), ("juice",3), ('messy-01',1), ('messy-02',1), ('messy-03',1),  ('messy-spikes-01',1),( 'messy-spikes-02',1), ('messy-spikes-03',1), ("middle-part",1),( "parted",1), ("short-fade",3), ("short-01",2), ("short-02",2), ("spike-round-01",1),("spike-round-02",1),("spike-round-03",1), ("spike-straight-01",1),("spike-straight-02",1),("spike-straight-03",1),],
           "head": ["head1", "head2", "head3", "head4", "head5", "head6", "head7", "head8"],
           "jersey": [ "football"],
           "miscLine": ["chin1", "chin2",  "none"],#"forehead1", "forehead2", "forehead3", "forehead4", "forehead5",
@@ -982,7 +1028,9 @@ class Player(models.Model):
 
         skinColor = palette['skin']
         hairColor = random.choice(palette['hair'])
-        isFlipped = 'false' if random.uniform(0,1) < 0.5 else 'true'
+        hairIsFlipped = 'false' if random.uniform(0,1) < 0.5 else 'true'
+        mouthIsFlipped = 'false' if random.uniform(0,1) < 0.5 else 'true'
+        noseIsFlipped = 'false' if random.uniform(0,1) < 0.5 else 'true'
 
         face = {
         'fatness': round(NormalTrunc(PlayerFatnessMean,.2, 0, 1), 2),
@@ -1023,16 +1071,17 @@ class Player(models.Model):
           'angle': round(random.uniform(0,35) - 15,2)
         },
         'hair': {
-          'id': random.choice(svgsIndex['hair']),
-          'color': hairColor
+          'id': WeightedProbabilityChoice(svgsIndex['hair'], 'hair-01'),
+          'color': hairColor,
+          'flip': hairIsFlipped
         },
         'mouth': {
           'id': random.choice(svgsIndex['mouth']),
-          'flip': isFlipped
+          'flip': mouthIsFlipped
         },
         'nose': {
           'id': random.choice(svgsIndex['nose']),
-          'flip': isFlipped,
+          'flip': noseIsFlipped,
           'size': round(random.uniform(0,.75) + .5,2)
         },
         'glasses': {
@@ -1258,7 +1307,7 @@ class TeamSeason(models.Model):
     IsRecruitTeam = models.BooleanField(default=False)
     IsFreeAgentTeam = models.BooleanField(default=False)
 
-    ScholarshipsToOffer = models.PositiveSmallIntegerField(default = 0)
+    ScholarshipsToOffer = models.SmallIntegerField(default = 0)
 
     GamesPlayed = models.PositiveSmallIntegerField(default=0)
     Wins = models.PositiveSmallIntegerField(default=0)
@@ -2834,8 +2883,49 @@ class RecruitTeamSeason(models.Model):
 
     RecruitingTeamRank = models.IntegerField(default = 1)
 
-    ScoutedOverall = models.PositiveSmallIntegerField(default=0)
+    Scouted_Overall = models.PositiveSmallIntegerField(default=0)
     ScoutingFuzz = models.PositiveSmallIntegerField(default=0)
+
+
+    Scouted_Strength_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Agility_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Speed_Rating                = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Acceleration_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Stamina_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Awareness_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Jumping_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Injury_Rating               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ThrowPower_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ShortThrowAccuracy_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_MediumThrowAccuracy_Rating  = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_DeepThrowAccuracy_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ThrowOnRun_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ThrowUnderPressure_Rating   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_PlayAction_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Elusiveness_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_BallCarrierVision_Rating    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_JukeMove_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_BreakTackle_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Carrying_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Catching_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_CatchInTraffic_Rating       = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_RouteRunning_Rating     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Release_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_HitPower_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Tackle_Rating               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_PassRush_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_BlockShedding_Rating        = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Pursuit_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_PlayRecognition_Rating      = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ManCoverage_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ZoneCoverage_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Press_Rating                = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_PassBlock_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_RunBlock_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ImpactBlock_Rating          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_KickPower_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_KickAccuracy_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_KickReturn_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
 
     DistanceMatchRating = models.IntegerField(default = 0)
     TeamPrestigeRating = models.IntegerField(default = 0)
@@ -2887,6 +2977,7 @@ class Audit(models.Model):
     AuditVersion     = models.PositiveSmallIntegerField(blank=True, null=True, default=None)
 
     NumberTeam = models.PositiveSmallIntegerField( default=1)
+    QueryCount = models.PositiveSmallIntegerField( default=0)
     ScalesWithTeams = models.BooleanField(default = False)
     class Meta:
               # specify this model as an Abstract Model

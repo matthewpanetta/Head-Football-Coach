@@ -13,7 +13,7 @@
 <div class="sidebar-fade"></div>
 <div class="w3-sidebar w3-bar-block hide-small" id='sidebar' style="border-left: 4px solid #{{page.PrimaryColor}};">
 
-  {% for Group in page.NavBarLinks%}
+  {% for Group in page.NavBarLinks.LinkGroups%}
   <h3 class='SideNavGroup w3-margin-left'>
     <div class="">
       {{Group.GroupDisplay|safe}}

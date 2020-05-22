@@ -57,8 +57,6 @@ urlpatterns = [
     path('World/<int:WorldID>/CoachCarousel/', views.Page_CoachCarousel, name='CoachCarousel'),
     path('World/<int:WorldID>/PlayerDepartures/', views.Page_PlayerDepartures, name='PlayerDepartures'),
 
-    path('World/<int:WorldID>/Awards', views.Page_Awards, name='Awards'),
-    path('World/<int:WorldID>/Awards/Season/<int:SeasonStartYear>/', views.Page_Awards, name='Awards'),
     path('World/<int:WorldID>/Rankings/', views.Page_Rankings, name='Rankings'),
     path('World/<int:WorldID>/Rankings/Season/<int:SeasonStartYear>/', views.Page_Rankings, name='Rankings'),
     path('World/<int:WorldID>/Schedule', views.Page_Schedule, name='Schedule'),
@@ -84,6 +82,9 @@ urlpatterns = [
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerRedshirt/<str:Action>', views.POST_PlayerRedshirt, name='PlayerRedshirt'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerCut', views.POST_PlayerCut, name='PlayerCut'),
 
+    path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamCuts', views.POST_AutoTeamCuts, name='AutoTeamCuts'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamCaptains', views.POST_AutoTeamCaptains, name='AutoTeamCaptains'),
+    path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamRedshirts', views.POST_AutoTeamRedshirts, name='AutoTeamRedshirts'),
     path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamDepthChart', views.POST_AutoTeamDepthChart, name='AutoTeamDepthChart'),
     path('World/<int:WorldID>/Team/<int:TeamID>/SetTeamDepthChart', views.POST_SetTeamDepthChart, name='SetTeamDepthChart'),
     path('World/<int:WorldID>/Team/<int:TeamID>/SetTeamGameplan', views.POST_SetTeamGameplan, name='SetTeamGameplan'),

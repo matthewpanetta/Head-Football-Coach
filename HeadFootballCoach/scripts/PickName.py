@@ -6,6 +6,74 @@ from ..models import NameList, Region, Nation, Position, State, City, League, He
 from django.db.models import  Count,  Sum, Max
 from ..utilities import DistanceBetweenCities, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance
 
+
+def PlayerBioDataList(NumberOfPlayers, PositionID = None, PositionAbbreviation = None):
+    Players = []
+    DoubleLastNameOccurance = 20
+    SuffixList = [(' Jr', 8), (' II', 8), (' III', 2)]
+
+
+    FirstNames = NameList.objects.filter(IsFirstName=True)
+    LastNames  = NameList.objects.filter(IsLastName=True)
+    Cities  = City.objects.filter(Occurance__gt = 0)
+
+    if PositionID is None and PositionAbbreviation is None:
+        Positions = Position.objects.filter(Occurance__gt = 0)
+    elif PositionID is not None:
+        Positions = Position.objects.filter(Occurance__gt = 0).filter(PositionID = PositionID)
+    elif PositionAbbreviation is not None:
+        Positions = Position.objects.filter(Occurance__gt = 0).filter(PositionAbbreviation = PositionAbbreviation)
+
+    FirstNameList = []
+    LastNameList = []
+    PositionList = []
+    CityList = []
+
+
+    for FirstName in FirstNames:
+        FirstNameList.append((FirstName.Name, FirstName.Occurance))
+    for LastName in LastNames:
+        LastNameList.append((LastName.Name, LastName.Occurance))
+    for Pos in Positions:
+        PositionList.append((Pos, Pos.Occurance))
+    for C in Cities:
+        CityList.append((C, C.Occurance))
+
+    for P in range(0, NumberOfPlayers):
+        PlayerDict = {'PlayerFirstName': None, 'PlayerLastName': None, 'LastNameList': [], 'PositionID': None, 'Height': None, 'Weight': None, 'CityID': None}
+
+        PlayerDict['PositionID'] = WeightedProbabilityChoice(PositionList, PositionList[0])
+        PlayerDict['Height'] = int(NormalTrunc(PlayerDict['PositionID'].HeightAverage, PlayerDict['PositionID'].HeightStd, 65, 82 ))
+        HeightVariance = PlayerDict['Height'] / PlayerDict['PositionID'].HeightAverage
+        PlayerDict['Weight'] = int(NormalTrunc(PlayerDict['PositionID'].WeightAverage * HeightVariance, PlayerDict['PositionID'].WeightStd, 150, 400 ))
+
+        PlayerDict['CityID'] = WeightedProbabilityChoice(CityList, CityList[0])
+
+        while PlayerDict['PlayerFirstName'] is None:
+            PlayerDict['PlayerFirstName'] = WeightedProbabilityChoice(FirstNameList, 'Tom')
+
+        NumLastNames = 1
+        Suffix = ''
+        if DoubleLastNameOccurance >= random.randint(0,1000):
+            NumLastNames = 2
+        else:
+            for s in SuffixList:
+                if s[1] >=  random.randint(0,1000):
+                    Suffix=s[0]
+        for u in range(0,NumLastNames):
+            CurrentLastName = None
+            while CurrentLastName is None:
+                CurrentLastName = WeightedProbabilityChoice(LastNameList, 'Kennedy')
+            PlayerDict['LastNameList'].append(CurrentLastName)
+
+        PlayerDict['PlayerLastName'] = '-'.join(PlayerDict['LastNameList']) + Suffix
+
+        del PlayerDict['LastNameList']
+        Players.append(PlayerDict)
+
+
+    return Players
+
 def RandomName():
     DoubleLastNameOccurance = 20
     SuffixList = [(' Jr', 8), (' II', 8), (' III', 2)]

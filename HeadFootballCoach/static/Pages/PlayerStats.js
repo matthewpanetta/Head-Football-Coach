@@ -242,8 +242,6 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
 function GetPlayerStats(WorldID, data){
 
-
-  console.log('GetPlayerStats', data)
   var PositionSortOrderMap = {
       'QB': '01',
       'RB': '02',
@@ -284,9 +282,13 @@ function GetPlayerStats(WorldID, data){
     };
   var ClassSortOrderMap = {
       'FR': 1,
+      'FR (RS)': 1.5,
       'SO': 2,
+      'SO (RS)': 2.5,
       'JR': 3,
+      'JR (RS)': 3.5,
       'SR': 4,
+      'SR (RS)': 4.5,
   };
 
       var ColCategories = {
@@ -410,13 +412,13 @@ function GetPlayerStats(WorldID, data){
                  {
                      label: 'Eligible for Draft',
                      value: function(rowData, rowIdx){
-                         return rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'SR' || rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'JR';
+                         return rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'SR' || rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'JR' || rowData['ClassDisplay'] == 'SO (RS)';
                      }
                  },
                  {
                      label: 'Not Eligible for Draft',
                      value: function(rowData, rowIdx){
-                         return !(rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'SR' || rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'JR');
+                         return !(rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'SR' || rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'JR' || rowData['ClassDisplay'] == 'SO (RS)');
                      }
                  },
              ],
@@ -478,14 +480,14 @@ function GetPlayerStats(WorldID, data){
           {"data": "PlayerName", "searchable": true, 'className': 'left-text', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
               $(td).html("<a href='"+DataObject['PlayerHref']+"'>"+StringValue+"</a>");
           }},
-          {"data": "playerteamseason__ClassID__ClassAbbreviation", render: function ( data, type, row ) {
+          {"data": "ClassDisplay", render: function ( data, type, row ) {
                                 var returnVal = data;
                                 if ( type === 'sort' ) {
                                     returnVal = ClassSortOrderMap[data];
                                 }
                                 return returnVal;
                             },"sortable": true, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-                                $(td).html(StringValue);
+                                $(td).html(DataObject.ClassDisplay);
                                 $(td).append('<span class="player-class"></span>')
                                 if (DataObject.playerteamseason__RedshirtedThisSeason) {
                                   $(td).find('.player-class').append('<i class="fas fa-tshirt w3-tooltip player-class-icon" style="color: red; margin-left: 4px;"><span style="position:absolute;left:0;bottom:18px" class="w3-text">Player Redshirted</span></i>')
@@ -585,9 +587,6 @@ function GetPlayerStats(WorldID, data){
       ],
       'order': [[ 4, "desc" ]],
   });
-
-
-  console.log('table', table.column(69));
 
 
     $('#PlayerStats tbody').on('click', '.details-control', function () {

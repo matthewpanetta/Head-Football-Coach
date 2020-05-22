@@ -51,7 +51,8 @@ def LoadPlayerSkillModifiers(FilePath):
             for FE in FieldExclusions:
                 del LineDict[FE]
 
-            print(LineDict)
+            LineDict['PositionID'] = Position.objects.filter(PositionAbbreviation = LineDict['Position']).first()
+
             System_PlayerArchetypeRatingModifier.objects.create(**LineDict)
 
 def LoadGameStructures():

@@ -207,18 +207,16 @@ print('------------------------------------------------')
 #     f.write(LN+',0,1,'+str(LastNameList[LN])+'\n')
 # f.close()
 
-from ..utilities import NormalVariance, WeightedProbabilityChoice
+# from .PickName import FullNameList
+# from django.db import connection, reset_queries
+#
+# reset_queries()
+#
+# TotalRuns = 10
+# print(FullNameList(TotalRuns))
+# print('Total queries:', len(connection.queries))
 
-ResultDict = {}
-TotalRuns = 0
-for u in range(0,TotalRuns):
-    r = NormalVariance(1.0,7)
-    if r not in ResultDict:
-        ResultDict[r] = 0
-    ResultDict[r] +=1
-
-for u in sorted(ResultDict):
-    print(u, ResultDict[u] / TotalRuns)
+print()
 
 #
 # from ..models import Team
