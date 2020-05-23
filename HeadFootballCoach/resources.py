@@ -1392,6 +1392,7 @@ def CreateRecruitingClass(LS, WorldID):
     RecruitCount = 0
     RTSToSave = []
     PlayersToSave = []
+    PlayerRecruitingInterestToSave = []
     PlayerList = {}
     RTS_Rating_Fields = [field.name for field in RecruitTeamSeason._meta.get_fields() if 'Scouted_' in field.name and '_Rating' in field.name and 'Base' not in field.name]
     for Recruit in RecruitPool:
@@ -1424,11 +1425,10 @@ def CreateRecruitingClass(LS, WorldID):
         RecruitTopPreferences = {}
 
         for Pref in RecruitPreferences:
-            setattr(P, Pref, RecruitPreferences[Pref])
+            RecruitTopPreferences[Pref['InterestName']] = Pref['InterestRank']
+            PRI = PlayerRecruitingInterest(**Pref)
+            PlayerRecruitingInterestToSave.append(PRI)
 
-            if RecruitPreferences[Pref] in [1,2,3]:
-                RecruitTopPreferences[RecruitPreferences[Pref]] = Pref
-            #print()
 
         PlayersToSave.append(P)
         PlayerList[Recruit.PlayerID] = Recruit
@@ -1469,6 +1469,7 @@ def CreateRecruitingClass(LS, WorldID):
     print('RTS created', len(connection.queries))
     Player.objects.bulk_update(PlayersToSave, ['Recruiting_StateRank', 'Recruiting_NationalPositionalRank', 'Recruiting_NationalRank', 'RecruitingStars', 'ChampionshipContenderValue', 'TeamPrestigeValue', 'CloseToHomeValue', 'PlayingTimeValue', 'CoachStabilityValue', 'CoachStyleValue', 'FacilitiesValue', 'ProPotentialValue', 'CampusLifestyleValue', 'AcademicPrestigeValue', 'TelevisionExposureValue'])
     RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False)
+    PlayerRecruitingInterest.objects.bulk_create(PlayerRecruitingInterestToSave, ignore_conflicts=False)
 
     RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).annotate(RecruitingTeamRank_new = Window(
         expression=RowNumber(),

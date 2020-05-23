@@ -41,10 +41,7 @@ function PlayerAction(WorldID){
     var ConfirmText = '';
 
     var Path = $(ActionTarget).attr('background-ajax');
-    console.log('clicked on this ', ActionTarget.baseURI, ActionTarget[0].baseURI, ActionTarget.baseURL, ActionTarget[0].baseURL)
     var SourcePath = String(ActionTarget[0].baseURI);
-
-    console.log('SourcePath', SourcePath, 'Path', Path)
 
     if (SourcePath.indexOf('Player') != -1){
       Source = 'PlayerPage'
@@ -92,7 +89,11 @@ function PlayerAction(WorldID){
         dataType: 'json',
         success: function(res, status) {
           console.log(res, status);
-          alert(res.message)
+
+          $.notify(
+            res.message,
+            { globalPosition:"right bottom", className: 'success' }
+          );
 
           if (Source == 'PlayerPage') {
             if (Action == 'Cut') {
@@ -160,7 +161,11 @@ function PlayerAction(WorldID){
         },
         error: function(res) {
           console.log(res)
-          alert(res.responseJSON.message);
+
+          $.notify(
+            res.responseJSON.message,
+            { globalPosition:"right bottom", className: 'error' }
+          );
         }
       });
 
@@ -223,7 +228,10 @@ function PlayerAction(WorldID){
           },
           error: function(res) {
             console.log(res)
-            alert(res.responseJSON.message);
+            $.notify(
+              res.responseJSON.message,
+              { globalPosition:"right bottom", className: 'error' }
+            );
           }
         });
 
@@ -242,6 +250,7 @@ $(document).ready(function() {
 
   console.log('In Action');
   PlayerAction(WorldID);
+
 
 
   var SimMap = {
@@ -302,7 +311,10 @@ $(document).ready(function() {
         //
       },
       error: function(res) {
-        alert(res.status);
+        $.notify(
+          res.status,
+          { globalPosition:"right bottom", className: 'error' }
+        );
       }
     });
 

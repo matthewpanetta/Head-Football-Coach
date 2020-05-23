@@ -1115,7 +1115,8 @@ def Page_Index(request):
 
     if InTesting or InDeepTesting:
         World.objects.all().delete()
-        #Region.objects.all().delete()
+        Conference.objects.all().delete()
+        State.objects.all().delete()
         #System_PlayoffRound.objects.all().delete()
         #NameList.objects.all().delete()
 

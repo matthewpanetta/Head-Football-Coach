@@ -60,7 +60,10 @@ function ChooseTeam(AllTeams, WorldID){
               window.location.replace("/World/"+WorldID);
           },
           error: function (res) {
-              alert(res.status);
+            $.notify(
+              res.message,
+              { globalPosition:"right bottom", className: 'error' }
+            );
           }
       });
 

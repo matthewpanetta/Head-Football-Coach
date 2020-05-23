@@ -1,6 +1,6 @@
 
 
-from ..models import SubPosition,TeamSeason, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, Nation, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill
+from ..models import SubPosition,TeamSeason, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill
 import os
 from ..utilities import Max, WeightedProbabilityChoice
 from datetime import timedelta, date
@@ -429,10 +429,42 @@ def PopulateSystemPlayoffRounds():
         return None
 
 
-def createGeography(inputFile, CountData):
+def createGeography(StateFile, inputFile, CountData):
 
     #Region.objects.all().delete()
 
+    StateDict = {}
+
+    f2 = open(StateFile, 'r')
+
+    linecount = 0
+    for l2 in f2:
+        linecount +=1
+        FieldCount = 0
+        if linecount == 1:
+            #print('header row')
+            headers = l2.strip().split(',')
+
+        else:
+            LineDict2 = {}
+            data2 = l2.strip().split(',')
+            for field in data2:
+                LineDict2[headers[FieldCount]] = data2[FieldCount]
+                FieldCount +=1
+
+            print(LineDict2)
+            StateName = LineDict2['StateName']
+            StateAbbreviation = LineDict2['StateAbbreviation']
+            RegionName = LineDict2['RegionName']
+
+            RegionID, cr = Region.objects.get_or_create(RegionName=RegionName)
+            print('RegionID', RegionID)
+            StateID, cr = State.objects.get_or_create(StateName = StateName, RegionID = RegionID, StateAbbreviation=StateAbbreviation)
+
+            StateDict[StateName] = StateID
+
+    f2.close()
+    print('StateDict', StateDict)
     CityCountData = {}
 
     f2 = open(CountData, 'r')
@@ -462,14 +494,13 @@ def createGeography(inputFile, CountData):
                 CityCountData[St][Ci] = 0
             CityCountData[St][Ci] = C
 
-    for u in sorted(CityCountData):
-        print(u, CityCountData[u])
 
     f2.close()
 
     f = open(inputFile, 'r')
 
     linecount = 0
+    CitiesToSave = []
     for l in f:
         #print(linecount, l)
         linecount +=1
@@ -485,39 +516,24 @@ def createGeography(inputFile, CountData):
                 LineDict[headers[FieldCount]] = data[FieldCount]
                 FieldCount +=1
 
-            if int(LineDict['GeoLevel']) == 4:
-                #print('Region!')
 
-                R = Region( RegionName = LineDict['RegionName'], RegionAbbreviation=LineDict['RegionAbbreviation'], YouthEngagement=0)
-                R.save()
-            elif int(LineDict['GeoLevel']) == 3:
-                #print('Nation!')
+            S = StateDict[LineDict['StateName']]
+            StateAbbreviation = S.StateAbbreviation
 
-                R = Region.objects.get(RegionName = LineDict['RegionName'])
+            LineDict['YouthEngagement'] = 1
+            if StateAbbreviation in CityCountData:
+                if LineDict['CityName'] in CityCountData[StateAbbreviation]:
+                    LineDict['YouthEngagement'] += (100 * int(CityCountData[StateAbbreviation][LineDict['CityName']]))
 
-                N = Nation( NationName = LineDict['NationName'], NationAbbreviation=LineDict['NationAbbreviation'], RegionID = R, YouthEngagement=0)
-                N.save()
-            elif int(LineDict['GeoLevel']) == 2:
-                #print('State!')
+            C = City(CityName = LineDict['CityName'], StateID = S, Population=LineDict['Population'], Latitude=LineDict['Latitude'], Longitude=LineDict['Longitude'], YouthEngagement=LineDict['YouthEngagement'])
+            CitiesToSave.append(C)
 
-                N = Nation.objects.get(NationName = LineDict['NationName'])
 
-                S = State( StateName = LineDict['StateName'], StateAbbreviation=LineDict['StateAbbreviation'], NationID = N, YouthEngagement=0)
-                S.save()
-                print('Creating State-', LineDict['StateName'])
-            elif int(LineDict['GeoLevel']) == 1:
+    City.objects.bulk_create(CitiesToSave, ignore_conflicts=False)
 
-                S = State.objects.get(StateName = LineDict['StateName'])
-
-                LineDict['YouthEngagement'] = 1
-                if LineDict['StateAbbreviation'] in CityCountData:
-                    if LineDict['CityName'] in CityCountData[LineDict['StateAbbreviation']]:
-                        LineDict['YouthEngagement'] += (100 * int(CityCountData[LineDict['StateAbbreviation']][LineDict['CityName']]))
-
-                C = City(CityName = LineDict['CityName'], StateID = S, Population=LineDict['Population'], Latitude=LineDict['Latitude'], Longitude=LineDict['Longitude'], YouthEngagement=LineDict['YouthEngagement'])
-                C.save()
-                C.Set_Occurance()
-
+    CityList = City.objects.all()
+    for C in CityList:
+        C.Set_Occurance()
 
 def import_League( File, WorldID):
     #print( File)
@@ -829,7 +845,7 @@ def LoadData(WorldID, LeagueID, LeagueSeasonID):
 
 
     if CreateGeography:
-        createGeography('HeadFootballCoach/scripts/data_import/uscitiesv1.5.csv', 'HeadFootballCoach/scripts/data_import/RecruitingData/Cities.csv')
+        createGeography('HeadFootballCoach/scripts/data_import/State.csv','HeadFootballCoach/scripts/data_import/uscitiesv1.5.csv', 'HeadFootballCoach/scripts/data_import/RecruitingData/Cities.csv')
     #import_League('FullCourtHeadFootballCoach/scripts/data_import/League.csv')
 
     if DoAudit:

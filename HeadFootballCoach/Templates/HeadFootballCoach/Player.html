@@ -153,6 +153,8 @@
             </div>
               {% endif %}
               {% endif %}
+
+              {%if RecentGameStats|length > 0%}
               <div class="w3-card">
                 <div class="w3-bar team-primary-background-bar">
                   Recent Game Stats
@@ -226,6 +228,7 @@
                   </tbody>
                 </table>
             </div>
+            {% endif %}
             </div>
           </div>
         </div>
@@ -491,7 +494,9 @@
                     <tr class='team-primary-background'>
                       <th colspan="3">{{SkillGroup.SkillGroup}}</th>
                       <th class=" text-center">Avg {{player.Position}} Starter</th>
+                      {%if player.Player.CurrentPlayerTeamSeason.TeamSeasonID.ConferenceID is not None %}
                       <th class=" text-center">Avg {{player.Player.CurrentPlayerTeamSeason.TeamSeasonID.ConferenceID.ConferenceAbbreviation}} {{player.Position}} Starter</th>
+                      {% endif %}
                     </tr>
                     </thead>
 
@@ -508,9 +513,11 @@
                       <td class="text-center">
                         {{Skill.PositionAverage}}
                       </td>
+                      {%if Skill.PositionConferenceAverage %}
                       <td class="text-center">
                         {{Skill.PositionConferenceAverage}}
                       </td>
+                      {% endif %}
                     </tr>
 
                     {% endfor %}

@@ -1877,3 +1877,19 @@ flex-direction: column;
   background-color: #BF0D00;
   color: white;
 }
+
+
+.notifyjs-list_sample-base {
+  opacity: 0.85;
+  width: 200px;
+  background: ;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.notifyjs-list_sample-base .title {
+  width: 100px;
+  float: left;
+  margin: 10px 0 0 10px;
+  text-align: right;
+}

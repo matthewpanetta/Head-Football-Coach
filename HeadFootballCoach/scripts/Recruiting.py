@@ -9,11 +9,13 @@ from django.db.models.functions import Length, Concat, Coalesce
 from django_cte import CTEManager, With
 from django.db import connection, reset_queries
 
+
 def RandomRecruitPreference(RecruitPreferenceBase):
 
     d = len(RecruitPreferenceBase)
-    OrderedPreferences  ={}
+    OrderedPreferences  =[]
     PickedPreferences = []
+    print('RecruitPreferenceBase', RecruitPreferenceBase)
     for P in RecruitPreferenceBase:
         OrderedPreferences[P[0]] = 10
 
@@ -21,7 +23,7 @@ def RandomRecruitPreference(RecruitPreferenceBase):
     while len([u for u in RecruitPreferenceBase if u[0] not in PickedPreferences]) > 0:
         Base = [u for u in RecruitPreferenceBase if u[0] not in PickedPreferences]
         c = WeightedProbabilityChoice(Base, Base[0][0])
-        OrderedPreferences[c] = PreferenceCount
+        OrderedPreferences.append({'InterestName': c, 'InterestRank': PreferenceCount})
         PickedPreferences.append(c)
         #print(c, PreferenceCount)
         PreferenceCount +=1

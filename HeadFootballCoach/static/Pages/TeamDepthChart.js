@@ -299,7 +299,10 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
         }
         else {
           DoPost = false;
-          alert('Cannot save depth chart. '+ obj.Name + ' is starting twice.');
+          $.notify(
+            'Cannot save depth chart. '+ obj.Name + ' is starting twice.',
+            { globalPosition:"right bottom", className: 'error' }
+          );
         }
       })
 
@@ -313,7 +316,10 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
         }
         else {
           DoPost = false;
-          alert('Cannot save depth chart. '+ obj.Name + ' is listed twice for position ' + Pos);
+          $.notify(
+            'Cannot save depth chart. '+ obj.Name + ' is listed twice for position ' + Pos,
+            { globalPosition:"right bottom", className: 'error' }
+          );
         }
       })
     })
@@ -331,10 +337,16 @@ function BuildDepthCharts(WorldID, TeamID, AvailablePlayerData) {
         dataType: 'json',
         success: function(res, status) {
           console.log(res, status);
-          alert('Depth chart saved successfully');
+          $.notify(
+            'Depth chart saved successfully',
+            { globalPosition:"right bottom", className: 'success' }
+          );
         },
         error: function(res) {
-          alert(res.status);
+          $.notify(
+            res.status,
+            { globalPosition:"right bottom", className: 'error' }
+          );
         }
       });
     }

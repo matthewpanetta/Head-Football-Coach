@@ -294,6 +294,7 @@ class NameList(models.Model):
     def __str__(self):
         return self.Name
 
+
 class Region(models.Model):
     RegionID = models.AutoField(primary_key=True)
     RegionName = models.CharField(max_length=30, default = 'Region Name')
@@ -311,32 +312,6 @@ class Region(models.Model):
         YouthEngagementIntValue = int(self.YouthEngagement)
         return YouthEngagementIntValue
 
-class Nation(models.Model):
-    NationID = models.AutoField(primary_key = True)
-    NationName = models.CharField(max_length = 30, default='Nation Name')
-    NationAbbreviation = models.CharField(max_length = 4, default='NN')
-
-    RegionID = models.ForeignKey(Region, on_delete=models.CASCADE, null=True, blank=True)
-
-    YouthEngagement = models.IntegerField(default = 0)
-
-    #Ethnicities
-    PercentWhite = models.PositiveSmallIntegerField(default = 20,validators=[HundredRange])
-    PercentBlack = models.PositiveSmallIntegerField(default = 20,validators=[HundredRange])
-    PercentAsian = models.PositiveSmallIntegerField(default = 20,validators=[HundredRange])
-    PercentIndian = models.PositiveSmallIntegerField(default = 20,validators=[HundredRange])
-    PercentLatin = models.PositiveSmallIntegerField(default = 20,validators=[HundredRange])
-
-    def __str__(self):
-        return 'Nation: ' + self.NationName
-
-    @property
-    def TotalYouthEngagement(self):
-        YouthEngagementIntValue = int(self.YouthEngagement) + int(self.RegionID.TotalYouthEngagement)
-        return YouthEngagementIntValue
-    class Meta:
-              # specify this model as an Abstract Model
-            app_label = 'HeadFootballCoach'
 
 class State(models.Model):
     StateID = models.AutoField(primary_key = True)
@@ -345,14 +320,14 @@ class State(models.Model):
 
     YouthEngagement = models.IntegerField(default = 0)
 
-    NationID = models.ForeignKey(Nation, on_delete=models.CASCADE)
+    RegionID = models.ForeignKey(Region, on_delete=models.CASCADE)
 
     def __str__(self):
         return 'State: ' + self.StateName
 
     @property
     def TotalYouthEngagement(self):
-        YouthEngagementIntValue = int(self.YouthEngagement) + int(self.NationID.TotalYouthEngagement)
+        YouthEngagementIntValue = int(self.YouthEngagement)
         return YouthEngagementIntValue
     class Meta:
               # specify this model as an Abstract Model
@@ -376,7 +351,7 @@ class City(models.Model):
     RandomStop   = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return self.CityName + ', ' + self.StateID.StateName + ', ' + self.StateID.NationID.NationAbbreviation
+        return self.CityName + ', ' + self.StateID.StateName
 
     @property
     def TotalYouthEngagement(self):
@@ -420,7 +395,7 @@ class GameStructure(models.Model):
 
 
 class League(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     LeagueID = models.AutoField(primary_key=True, db_index=True)
     LeagueName = models.CharField(max_length = 50, default='New League')
     LeagueAbbreviation = models.CharField(max_length = 10, default='NL')
@@ -452,7 +427,7 @@ class League(models.Model):
 
 
 class LeagueSeason(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     LeagueID = models.ForeignKey(League, on_delete=models.CASCADE, blank=True, null=True, default=None)
     LeagueSeasonID = models.AutoField(primary_key = True, db_index=True)
     SeasonStartYear = models.PositiveSmallIntegerField(default = 0)
@@ -492,7 +467,7 @@ class LeagueSeason(models.Model):
             app_label = 'HeadFootballCoach'
 
 class Phase(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     PhaseID = models.AutoField(primary_key=True, db_index=True)
 
     LeagueSeasonID = models.ForeignKey(LeagueSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
@@ -515,7 +490,7 @@ class Phase(models.Model):
         return ''
 
 class Week(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     WeekID = models.AutoField(primary_key=True, db_index=True)
     PhaseID = models.ForeignKey(Phase, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
 
@@ -554,7 +529,7 @@ class Week(models.Model):
 
 
 class Calendar(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     DateID = models.AutoField(primary_key=True, db_index=True)
     Date = models.DateField( db_index=True)
     IsCurrent = models.BooleanField(default = False, db_index=True)
@@ -625,7 +600,7 @@ class Calendar(models.Model):
             app_label = 'HeadFootballCoach'
 
 class Conference(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     LeagueID = models.ForeignKey(League, on_delete=models.CASCADE, blank=True, null=True, default=None)
     ConferenceID = models.AutoField(primary_key=True, db_index=True)
     ConferenceName = models.CharField(max_length = 40, default='')
@@ -672,7 +647,7 @@ class Conference(models.Model):
         return self.ConferenceName
 
 class Stadium(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     StadiumID = models.AutoField(primary_key = True, db_index=True)
 
     CityID = models.ForeignKey(City, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
@@ -684,7 +659,7 @@ class Stadium(models.Model):
 
 
 class Team(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     LeagueID = models.ForeignKey(League, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
     TeamID = models.AutoField(primary_key = True, db_index=True)
@@ -787,7 +762,7 @@ class Team(models.Model):
 
 
 class TeamRivalry(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     TeamRivalryID = models.AutoField(primary_key = True, db_index=True)
 
     Team1TeamID = models.ForeignKey(Team, on_delete=models.CASCADE,related_name="Team1", db_index=True  )
@@ -815,7 +790,7 @@ class Bowl(models.Model):
         return self.BowlName
 
 class Player(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
 
     PlayerID                = models.AutoField(primary_key = True, db_index=True)
     PlayerFirstName         = models.CharField(max_length=50)
@@ -856,27 +831,10 @@ class Player(models.Model):
     #100 is normal : (0-200)
     RecruitingSpeed = models.PositiveSmallIntegerField(default = 100)
 
-
-    ####IN GAME TENDENCIES###
-
     #-3 to 3
     DevelopmentRating          = models.SmallIntegerField(default=None, blank=True, null=True)
     DevelopmentGroupID         = models.PositiveSmallIntegerField(default=0)
     DevelopmentDayOfMonth      = models.PositiveSmallIntegerField(default=1)
-
-
-    #####RECRUITING VALUES BELOW#######
-    ChampionshipContenderValue = models.PositiveSmallIntegerField(default=10)
-    TeamPrestigeValue          = models.PositiveSmallIntegerField(default=10)
-    CloseToHomeValue           = models.PositiveSmallIntegerField(default=10)
-    PlayingTimeValue           = models.PositiveSmallIntegerField(default=10)
-    CoachStabilityValue        = models.PositiveSmallIntegerField(default=10)
-    CoachStyleValue            = models.PositiveSmallIntegerField(default=10)
-    FacilitiesValue            = models.PositiveSmallIntegerField(default=10)
-    ProPotentialValue          = models.PositiveSmallIntegerField(default=10)
-    CampusLifestyleValue       = models.PositiveSmallIntegerField(default=10)
-    AcademicPrestigeValue      = models.PositiveSmallIntegerField(default=10)
-    TelevisionExposureValue    = models.PositiveSmallIntegerField(default=10)
 
     def __str__(self):
         return self.PlayerFirstName + ' ' + self.PlayerLastName + ' #' + str(self.JerseyNumber)
@@ -1228,6 +1186,14 @@ class Player(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
+class PlayerRecruitingInterest(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
+    PlayerRecruitingInterestID = models.AutoField(primary_key=True, db_index=True)
+    PlayerID       = models.ForeignKey(Player,  on_delete=models.CASCADE, db_index=True, null=True, blank=True)
+
+    PitchName = models.CharField(max_length=50)
+    PitchRecruitInterestRank = models.IntegerField(default = 0)
+
 class Playoff(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
     PlayoffID = models.AutoField(primary_key = True)
@@ -1297,7 +1263,7 @@ class PlayoffRegion(models.Model):
             app_label = 'HeadFootballCoach'
 
 class TeamSeason(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.AutoField(primary_key=True, db_index=True)
     TeamID       = models.ForeignKey(Team,  on_delete=models.CASCADE, db_index=True, null=True, blank=True)
     LeagueSeasonID     = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, db_index=True)
@@ -1655,8 +1621,13 @@ class TeamSeason(models.Model):
             app_label = 'HeadFootballCoach'
 
 
+class TeamSeasonInfoRating:
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE,  db_index=True)
+    TeamSeasonInfoRatingID = models.AutoField(primary_key = True, db_index=True)
+    TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
+
 class TeamSeasonStrategy(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE,  db_index=True)
     TeamSeasonStrategyID = models.AutoField(primary_key = True, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
 
@@ -1691,7 +1662,7 @@ class TeamSeasonStrategy(models.Model):
 
 
 class PlayerTeamSeason(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     PlayerTeamSeasonID = models.AutoField(primary_key = True, db_index=True)
     PlayerID = models.ForeignKey(Player, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True, blank=True, null=True, default=None)
@@ -1790,7 +1761,7 @@ class PlayerTeamSeason(models.Model):
 
 
 class PlayerTeamSeasonDepthChart(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     PlayerTeamSeasonDepthChartID = models.AutoField(primary_key = True, db_index=True)
     PlayerTeamSeasonID = models.ForeignKey(PlayerTeamSeason, on_delete=models.CASCADE, db_index=True)
 
@@ -1925,7 +1896,7 @@ class TeamSeasonDateRank(models.Model):
 
 
 class Game(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     GameID = models.AutoField(primary_key = True, db_index=True)
     LeagueSeasonID = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None, db_index=True)
     WeekID = models.ForeignKey(Week, on_delete=models.CASCADE, db_index=True, null=True, blank=True, default=None)
@@ -2184,8 +2155,11 @@ class Game(models.Model):
     def __str__(self):
         #return 'Game ID: ' +  str(self.GameID)
         #return teamgame_set.objects.all()
+
         HomeTeam = self.teamgame_set.filter(IsHomeTeam = True).first()
         AwayTeam = self.teamgame_set.filter(IsHomeTeam = False).first()
+        if HomeTeam is None:
+            return 'Null game'
         return HomeTeam.TeamSeasonID.TeamID.__str__() + ' vs ' + AwayTeam.TeamSeasonID.TeamID.__str__() + ' in ' + str(self.WeekID.WeekName)
 
 
@@ -2396,7 +2370,7 @@ class Game(models.Model):
 
 
 class GameEvent(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
 
     GameID = models.ForeignKey(Game, on_delete=models.CASCADE, db_index=True)
     GameEventID = models.AutoField(primary_key = True, db_index=True)
@@ -2435,7 +2409,7 @@ class GameEvent(models.Model):
             app_label = 'HeadFootballCoach'
 
 class TeamGame(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
 
     GameID = models.ForeignKey(Game, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
@@ -2557,7 +2531,7 @@ class TeamGame(models.Model):
         return self.TeamConferenceRecord
 
 class PlayerTeamSeasonSkill(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     PlayerTeamSeasonSkillID = models.AutoField(primary_key = True, db_index=True)
     PlayerTeamSeasonID = models.OneToOneField(PlayerTeamSeason, on_delete=models.CASCADE, db_index=True)
 
@@ -2625,7 +2599,7 @@ class PlayerTeamSeasonSkill(models.Model):
             app_label = 'HeadFootballCoach'
 
 class PlayerGameStat(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     PlayerGameStatID = models.AutoField(primary_key = True, db_index=True)
     PlayerTeamSeasonID = models.ForeignKey(PlayerTeamSeason, on_delete=models.CASCADE, blank=True, null=True, db_index=True)
     TeamGameID = models.ForeignKey(TeamGame, on_delete=models.CASCADE,default=None, null=True, blank=True, db_index=True)
@@ -2868,16 +2842,18 @@ class CoachTeamSeason(models.Model):
 
 
 class RecruitTeamSeason(models.Model):
-    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     RecruitTeamSeasonID = models.AutoField(primary_key = True, db_index=True)
     PlayerTeamSeasonID = models.ForeignKey(PlayerTeamSeason, on_delete=models.CASCADE, db_index=True)
     TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, db_index=True)
+    VisitWeekID = models.ForeignKey(Week, on_delete=models.CASCADE, null=True, default=None, db_index=True, related_name='visitweek_recruitteamseason')
+    CommitWeekID = models.ForeignKey(Week, on_delete=models.CASCADE, null=True, default=None, db_index=True, related_name='commitweek_recruitteamseason')
 
     Signed = models.BooleanField(default=False)
 
     OfferMade = models.BooleanField(default=False)
     InterestLevel = models.PositiveSmallIntegerField(default=0)
-    MatchRating = models.PositiveSmallIntegerField(default=0)
+
     IsActivelyRecruiting = models.BooleanField(default=False)
 
     RecruitingTeamRank = models.IntegerField(default = 1)
@@ -2926,18 +2902,6 @@ class RecruitTeamSeason(models.Model):
     Scouted_KickAccuracy_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Scouted_KickReturn_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
 
-    DistanceMatchRating = models.IntegerField(default = 0)
-    TeamPrestigeRating = models.IntegerField(default = 0)
-
-    Preference1Name = models.CharField(max_length = 32, default='')
-    Preference1MatchRating = models.IntegerField(default = 0)
-
-    Preference2Name = models.CharField(max_length = 32, default='')
-    Preference2MatchRating = models.IntegerField(default = 0)
-
-    Preference3Name = models.CharField(max_length = 32, default='')
-    Preference3MatchRating = models.IntegerField(default = 0)
-
     def __str__(self):
         return str(self.PlayerTeamSeasonID.PlayerID) + ' ' + str(self.TeamSeasonID)
     class Meta:
@@ -2945,6 +2909,15 @@ class RecruitTeamSeason(models.Model):
             app_label = 'HeadFootballCoach'
 
 
+class RecruitTeamSeasonInterest(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
+    RecruitTeamSeasonInterestID = models.AutoField(primary_key=True, db_index=True)
+    PlayerID       = models.ForeignKey(Player,  on_delete=models.CASCADE, db_index=True, null=True, blank=True)
+
+    DefaultInclude = models.BooleanField(default=False)
+    PitchName = models.CharField(max_length=50)
+    PitchRecruitInterestRank = models.IntegerField(default = None, null=True, blank=True)
+    TeamRating = models.IntegerField(default = 0)
 
 class Headline(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
