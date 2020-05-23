@@ -12,7 +12,7 @@ def TrainingCamps(CurrentSeason, WorldID):
 
 
     print('Players to update skills: ', PlayersToUpgrade.count())
-    SkillsToUpdate = [field.name for field in PlayerTeamSeasonSkill._meta.get_fields() if '_Rating' in field.name ]
+    SkillsToUpdate = [field.name for field in PlayerTeamSeasonSkill._meta.get_fields() if '_Rating' in field.name  and 'Base' not in field.name]
     print('Updating these skills:', SkillsToUpdate)
     PlayerTeamSeasonSkills_ToSave = []
     for PTS in PlayersToUpgrade:

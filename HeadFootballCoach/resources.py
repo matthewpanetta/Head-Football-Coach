@@ -14,7 +14,7 @@ from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, Se
 from .scripts.DepthChart import CreateDepthChart
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
-from .utilities import NormalVariance, DistanceBetweenCities, MergeDicts, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance, Max_Int
+from .utilities import NormalVariance, DistanceBetweenCities,WeightedAverage, MergeDicts, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance, Max_Int
 from math import sin, cos, sqrt, atan2, radians, log
 import time
 from django.db import connection, reset_queries
@@ -167,7 +167,7 @@ def CreateTeamPositions(LS, WorldID):
 
     TSPToSave = []
     PositionArchetypes =System_PlayerArchetypeRatingModifier.objects.all()
-    ArchetypeFields = [field.name for field in System_PlayerArchetypeRatingModifier._meta.get_fields() if '_Rating' in field.name ]
+    ArchetypeFields = [field.name for field in System_PlayerArchetypeRatingModifier._meta.get_fields() if '_Rating' in field.name and 'Base' not in field.name]
     for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).order_by('TeamID__TeamName'):
         TSS = TeamSeasonID.teamseasonstrategy_set.all().first()
         for Pos in Position.objects.exclude(PositionAbbreviation = 'ATH'):
@@ -727,59 +727,78 @@ def PopulatePlayerSkills(PTS, WorldID):
     PlayerPosition = PTS.PlayerID.PositionID.PositionAbbreviation
 
     PlayerArchetypes = PTS.PlayerID.PositionID.system_playerarchetyperatingmodifier_set.all()
+    PlayerArchetype = random.choice(PlayerArchetypes)
     PA_Dict = {}
 
     for PA in PlayerArchetypes:
         PA_Dict[PA] = {'OverallSum': 0, 'WeightSum': 0}
 
     ClassPhysicalModifierMap = {
-        'HS Senior': .95,
-        'Freshman': .97,
-        'Sophomore': .98,
-        'Junior': .99,
+        'HS Senior': .96,
+        'Freshman': .98,
+        'Sophomore': .99,
+        'Junior': 1,
         'Senior': 1,
     }
 
     ClassSkillModifierMap = {
-        'HS Senior': .92,
-        'Freshman': .90,
+        'HS Senior': .87,
+        'Freshman': .91,
         'Sophomore': .95,
-        'Junior': .99,
+        'Junior': 1,
         'Senior': 1,
     }
 
-    PhysicalSkills = ['Strength_Rating', 'Agility_Rating', 'Speed_Rating', 'Acceleration_Rating', 'Stamina_Rating']
+    ClassAwarenessModifierMap = {
+        'HS Senior': .7,
+        'Freshman': .8,
+        'Sophomore': .90,
+        'Junior': 1,
+        'Senior': 1,
+    }
+
+    CorrelatedSkills = {
+        'Agility_Rating': [('Speed_Rating', 2), ('Acceleration_Rating', 1), ],
+        'ThrowUnderPressure_Rating': [('ThrowUnderPressure_Rating', 1), ('Awareness_Rating', 2),],
+        'ThrowOnRun_Rating': [('ThrowOnRun_Rating', 2), ('Awareness_Rating', 3),('Speed_Rating', 1),],
+        'PlayAction_Rating': [('PlayAction_Rating', 2), ('Awareness_Rating', 3),],
+        'DeepThrowAccuracy_Rating': [('ShortThrowAccuracy_Rating', 1), ('ThrowPower_Rating', 3),],
+        'MediumThrowAccuracy_Rating': [('ShortThrowAccuracy_Rating', 1), ('ThrowPower_Rating', 1),],
+        'KickReturn_Rating': [('Speed_Rating', 5), ('Agility_Rating', 2.5),('Acceleration_Rating', 2.5),('BallCarrierVision_Rating', 1),],
+        'Release_Rating': [('RouteRunning_Rating', 1), ('Awareness_Rating', 2),('Strength_Rating', 1.5),('Acceleration_Rating', 1),],
+        'RouteRunning_Rating': [('RouteRunning_Rating', 3), ('Awareness_Rating', 1)],
+    }
+
+    PhysicalSkills = ['Strength_Rating', 'Agility_Rating', 'Speed_Rating', 'Acceleration_Rating', 'Jumping_Rating', 'Stamina_Rating']
 
 
-    ClassPhysicalModifier = NormalTrunc(ClassPhysicalModifierMap[PlayerClass], .02, .85, 1.1)
-    ClassSkillModifier = NormalTrunc(ClassSkillModifierMap[PlayerClass], .02, .85, 1.1)
-    BaseSkill =  NormalTrunc(80 * ClassSkillModifier,6,60,99)
-    BasePhysical =  NormalTrunc(80 * ClassPhysicalModifier,6,60,99)
+    ClassPhysicalModifier = NormalTrunc(ClassPhysicalModifierMap[PlayerClass], .03, .85, 1.1)
+    ClassSkillModifier = NormalTrunc(ClassSkillModifierMap[PlayerClass], .03, .85, 1.1)
+    BaseSkill =  NormalTrunc(85 * ClassSkillModifier,10,60,99)
+    BasePhysical =  NormalTrunc(85 * ClassPhysicalModifier,10,60,99)
 
     PlayerSkillDict = {'WorldID':WorldID, 'PlayerTeamSeasonID' : PTS}
 
     OverallSum = 0
     WeightSum = 0
-    for Skill in [field.name for field in System_PlayerArchetypeRatingModifier._meta.get_fields() if '_Rating' in field.name ]:
-        WeightRatingField = Skill
-        PositionBase = getattr(PTS.PlayerID.PositionID, Skill+'_Base')
+    for Skill in [field.name for field in System_PlayerArchetypeRatingModifier._meta.get_fields() if '_Rating' in field.name and 'Base' not in field.name ]:
+        PositionBase = getattr(PlayerArchetype, Skill+'_Base')
         if Skill in PhysicalSkills:
-            PlayerSkillDict[Skill] = int(NormalTrunc(BaseSkill,3,10,99) *  PositionBase)
+            PlayerSkillDict[Skill] = int(NormalTrunc(BaseSkill *  PositionBase,4,10,99))
+        elif Skill == 'Awareness_Rating':
+            PlayerSkillDict[Skill] = int(NormalTrunc(75 * ClassAwarenessModifierMap[PlayerClass],10,10,99))
         else:
-            PlayerSkillDict[Skill] = int(NormalTrunc(BasePhysical,3,10,99) *  PositionBase)
-
-        for PA in PA_Dict:
-            WeightVal = getattr(PA, WeightRatingField)
-            PA_Dict[PA]['OverallSum']+= float(PlayerSkillDict[Skill]) * float(WeightVal)
-            PA_Dict[PA]['WeightSum'] += float(WeightVal)
+            PlayerSkillDict[Skill] = int(NormalTrunc(BasePhysical *  PositionBase,4,10,99))
 
 
-    BestOverall = 0
-    for PA in PA_Dict:
-        PA_Dict[PA]['OverallSum'] = int(PA_Dict[PA]['OverallSum'] * 1.0 / PA_Dict[PA]['WeightSum'])
-        BestOverall = PA_Dict[PA]['OverallSum'] if PA_Dict[PA]['OverallSum'] > BestOverall else BestOverall
+        WeightVal = getattr(PlayerArchetype, Skill)
+        OverallSum+= float(PlayerSkillDict[Skill]) * float(WeightVal)
+        WeightSum += float(WeightVal)
 
-    PlayerSkillDict['OverallRating'] = BestOverall
+
+
+
+    PlayerSkillDict['OverallRating'] = OverallSum / WeightSum
     PlayerSkill = PlayerTeamSeasonSkill(**PlayerSkillDict )
     return PlayerSkill
 
@@ -1374,7 +1393,7 @@ def CreateRecruitingClass(LS, WorldID):
     RTSToSave = []
     PlayersToSave = []
     PlayerList = {}
-    RTS_Rating_Fields = [field.name for field in RecruitTeamSeason._meta.get_fields() if 'Scouted_' in field.name and '_Rating' in field.name]
+    RTS_Rating_Fields = [field.name for field in RecruitTeamSeason._meta.get_fields() if 'Scouted_' in field.name and '_Rating' in field.name and 'Base' not in field.name]
     for Recruit in RecruitPool:
         RecruitCount +=1
         Pos = Recruit.Position

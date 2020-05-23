@@ -39,7 +39,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
             </li>
             <li class='playerHeaderHometown'>
               <div class='playerHeaderBioDescription'>OVR</div>
-              <div><span data-field="playerteamseason__playerteamseasonskill__OverallRating"></span></div>
+              <div><span data-field="playerteamseason__playerteamseasonskill__Scouted_Overall"></span></div>
             </li>
           </ul>
 
@@ -80,7 +80,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
     `);
 
   $.ajax({
-    url: '/World/'+WorldID+'/Player/'+PlayerID+'/PlayerCardInfo',
+    url: '/World/'+WorldID+'/Player/'+PlayerID+'/RecruitCardInfo',
     success: function (data) {
       console.log('Ajax return', data);
 
@@ -105,38 +105,6 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
       });
 
 
-      console.log('Awards', data.Awards)
-
-      if (Object.keys(data.Awards).length > 0){
-        $('#highlight-awards-tab').removeClass('w3-hide');
-        $('<div class=""></div>').appendTo($(div).find( '.highlight-awards'));
-        var Container = $('<ul class="w3-ul w3-small"></ul>').appendTo($(div).find('.highlight-awards > div'));
-      }
-      else {
-        console.log('hiding awards tab', $(div).find('.highlight-awards-tab'));
-        $(div).find('.highlight-awards-tab').addClass('w3-hide');
-        if ($(div).find( '.highlight-awards-tab').hasClass('selected-highlight-tab')){
-          $(div).find('.highlight-ratings-tab').click()
-        }
-      }
-
-      $.each(data.Awards, function(AwardName, AwardCount){
-        console.log('AwardName, AwardCount', AwardName, AwardCount, Container)
-        $('<li>'+AwardCount+'x '+AwardName+' </li>').appendTo(Container);
-
-      });
-
-      if (Object.keys(data.Stats).length > 0){
-        $(div).find('.highlight-stats-tab').removeClass('w3-hide');
-      }
-      else {
-        $(div).find('.highlight-stats-tab').addClass('w3-hide');
-        if ($(div).find('.highlight-stats-tab').hasClass('selected-highlight-tab')){
-          $(div).find('.highlight-ratings-tab').click()
-        }
-      }
-
-
       if (Object.keys(data.Actions).length > 0){
         $(div).find('.highlight-actions-tab').removeClass('w3-hide');
         var Container = $(div).find('.highlight-actions table')
@@ -157,31 +125,6 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
           </tr>`).appendTo(Container);
       });
 
-
-      $.each(data.Stats, function(StatGroup, StatObj){
-        var Container = $('<div class=""></div>').appendTo($(div).find('.highlight-stats'));
-        $('<div class="w3-margin-top">'+StatGroup+'</div>').appendTo(Container);
-        $('<div class="width100" style="width: 100%;"><table class="tiny highlight-stat-statgroup-'+StatGroup+'" style="width: 100%;"></table> </div>').appendTo(Container);
-
-        var columnNames = Object.keys(StatObj[0]);
-        var columns = [];
-        for (var i in columnNames) {
-          columns.push({data: columnNames[i],
-                        title: columnNames[i]});
-        }
-
-        console.log("$(div).find('.highlight-stat-statgroup-'+StatGroup)", $(div).find('.highlight-stat-statgroup-'+StatGroup))
-        var table = $(div).find('.highlight-stat-statgroup-'+StatGroup).DataTable({
-          data: StatObj,
-          columns: columns,
-          dom: 't',
-
-        });
-
-        $('.highlight-tab').on('click', function(){
-          table.columns.adjust().draw();
-        })
-      });
 
       $.each(data, function(key, val){
 

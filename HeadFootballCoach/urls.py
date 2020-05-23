@@ -97,6 +97,7 @@ urlpatterns = [
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamCoaches', views.GET_TeamCoaches, name='TeamCoaches'),
 
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerCardInfo', views.GET_PlayerCardInfo, name='PlayerCardInfo'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/RecruitCardInfo', views.GET_RecruitCardInfo, name='RecruitCardInfo'),
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamCardInfo', views.GET_TeamCardInfo, name='TeamCardInfo'),
 
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamInfoRating/<str:Category>', views.GET_TeamInfoRating, name='TeamInfoRating'),

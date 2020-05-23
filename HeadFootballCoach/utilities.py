@@ -127,6 +127,22 @@ def Average(Arr, IntCastFlag = False):
 
     return None
 
+def WeightedAverage(Arr, IntCastFlag = False):
+    ArrWeight = 0
+    ArrSum = 0
+
+    for Tup in Arr:
+        ArrSum += Tup[0] * Tup[1]
+        ArrWeight += Tup[1]
+
+    if ArrWeight > 0:
+        Avg = ArrSum / ArrWeight
+        if IntCastFlag:
+            return int(Avg)
+        return Avg
+
+    return None
+
 
 def InUniformRange(Prob, Modifier):
     r = random.uniform()
