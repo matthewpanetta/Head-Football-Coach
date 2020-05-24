@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import SubPosition, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
+from .models import SubPosition, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
 
 
 class TeamSeasonStrategyAdmin(admin.ModelAdmin):
@@ -152,6 +152,9 @@ class ConferenceAdmin(admin.ModelAdmin):
     list_display = ['WorldID', 'ConferenceName']
     list_filter = ['WorldID']
 
+class TeamInfoTopicAdmin(admin.ModelAdmin):
+    list_display = ['TeamInfoTopicID', 'AttributeName', 'RecruitMatchIsComputed', 'RecruitInterestWeight']
+
 
 admin.site.register(TeamSeasonStrategy, TeamSeasonStrategyAdmin)
 admin.site.register(User)
@@ -202,3 +205,4 @@ admin.site.register(GameDrive, GameDriveAdmin)
 admin.site.register(DrivePlay, DrivePlayAdmin)
 admin.site.register(SubPosition, SubPositionAdmin)
 admin.site.register(TeamSeasonPosition, TeamSeasonPositionAdmin)
+admin.site.register(TeamInfoTopic, TeamInfoTopicAdmin)

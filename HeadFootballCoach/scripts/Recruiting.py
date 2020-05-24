@@ -15,18 +15,13 @@ def RandomRecruitPreference(RecruitPreferenceBase):
     d = len(RecruitPreferenceBase)
     OrderedPreferences  =[]
     PickedPreferences = []
-    print('RecruitPreferenceBase', RecruitPreferenceBase)
-    for P in RecruitPreferenceBase:
-        OrderedPreferences[P[0]] = 10
 
     PreferenceCount = 1
-    while len([u for u in RecruitPreferenceBase if u[0] not in PickedPreferences]) > 0:
-        Base = [u for u in RecruitPreferenceBase if u[0] not in PickedPreferences]
-        c = WeightedProbabilityChoice(Base, Base[0][0])
-        OrderedPreferences.append({'InterestName': c, 'InterestRank': PreferenceCount})
-        PickedPreferences.append(c)
-        #print(c, PreferenceCount)
-        PreferenceCount +=1
+    while len([u for u in RecruitPreferenceBase if RecruitPreferenceBase[u]['AttributeName'] not in PickedPreferences]) > 0:
+        Base = [(RecruitPreferenceBase[u],  RecruitPreferenceBase[u]['RecruitInterestWeight']) for u in RecruitPreferenceBase if RecruitPreferenceBase[u]['AttributeName'] not in PickedPreferences]
+        c = WeightedProbabilityChoice(Base, None)
+        PickedPreferences.append(c['AttributeName'])
+        OrderedPreferences.append(c)
 
     return OrderedPreferences
 
@@ -261,7 +256,8 @@ def FakeWeeklyRecruiting(WorldID, CurrentWeek):
 
     RecruitList = Player.objects.filter(WorldID= CurrentWorld).filter(IsRecruit=True).filter(RecruitSigned=False)
 
-    TeamSeasonList = CurrentSeason.teamseason_set.filter(teamseasonweekrank__IsCurrent = True).values('TeamSeasonID', 'TeamID', 'ScholarshipsToOffer', 'TeamID__TeamName', 'TeamPrestige').annotate(
+    TeamSeasonList = CurrentSeason.teamseason_set.filter(teamseasonweekrank__IsCurrent = True).values('TeamSeasonID', 'TeamID', 'ScholarshipsToOffer', 'TeamID__TeamName').annotate(
+        TeamPrestige = Max('teamseasoninforating__TeamRating', filter=Q(teamseasoninforating__TeamInfoTopicID__AttributeName = 'Team Prestige')),
         NumberOfRecruits_FullSell = Value(6, output_field=IntegerField()),
         NumberOfRecruits_HalfSell = Value(4, output_field=IntegerField()),
         NumberOfRecruits_LightSell = Value(2, output_field=IntegerField()),

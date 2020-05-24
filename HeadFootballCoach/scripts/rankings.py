@@ -1,4 +1,4 @@
-from django.db.models import Max, Min, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value, Window
+from django.db.models import Max, Min, Avg, Count, Func, Q,F, Sum, Case, When, FloatField, CharField, Value, Window
 from django.db.models.functions import Coalesce
 from django.db.models.functions.window import Rank
 from ..models import World, Week,TeamSeasonWeekRank, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat
@@ -102,7 +102,8 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
 
 def CalculateRankings_old(LS, WorldID, CurrentWeek = None):
 
-    TeamList = Team.objects.filter(WorldID=WorldID).filter(teamseason__LeagueSeasonID__IsCurrent = True).values('TeamName', 'teamseason__NationalChampion', 'teamseason__ConferenceChampion', 'TeamPrestige', 'teamseason__TeamOverallRating', 'teamseason__Wins', 'teamseason__Losses', 'teamseason__TeamSeasonID', 'teamseason__NationalBroadcast', 'teamseason__RegionalBroadcast').annotate(
+    TeamList = Team.objects.filter(WorldID=WorldID).filter(teamseason__LeagueSeasonID__IsCurrent = True).values('TeamName', 'teamseason__NationalChampion', 'teamseason__ConferenceChampion', 'teamseason__TeamOverallRating', 'teamseason__Wins', 'teamseason__Losses', 'teamseason__TeamSeasonID', 'teamseason__NationalBroadcast', 'teamseason__RegionalBroadcast').annotate(
+        TeamPrestige = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Team Prestige')),
         Points = Sum('teamseason__teamgame__Points'),
         PointsAllowed = Sum('teamseason__teamseason_opposingteamgame__Points'),
         GamesPlayed = Sum('teamseason__teamgame__GamesPlayed'),
@@ -186,7 +187,9 @@ def CalculateRankings(LS, WorldID, CurrentWeek = None):
     NextWeek = CurrentWeek.NextWeek
     CurrentWorld = WorldID
     Games = CurrentSeason.game_set.filter(WasPlayed = True)
-    TeamList = list(CurrentSeason.teamseason_set.filter(TeamID__isnull = False))
+    TeamList = list(CurrentSeason.teamseason_set.filter(TeamID__isnull = False).annotate(
+        TeamPrestige = Max('teamseasoninforating__TeamRating', filter=Q(teamseasoninforating__TeamInfoTopicID__AttributeName = 'Team Prestige')),
+    ))
 
     print('TeamList', TeamList)
     CurrentWeekNumber = CurrentWeek.WeekNumber
@@ -290,8 +293,7 @@ def SelectBroadcast(LS, WorldID, CurrentWeek=None):
     GamesThisWeek = Game.objects.filter(WorldID=WorldID, WeekID = NextWeek).values('GameID').annotate(
         MinTeamRank=Min('teamgame__TeamSeasonWeekRankID__NationalRank'),
         MaxTeamRank=Max('teamgame__TeamSeasonWeekRankID__NationalRank'),
-        TeamPrestige = Sum('teamgame__TeamSeasonID__TeamPrestige'),
-        GameValue = F('MaxTeamRank') + F('MinTeamRank') + F('MinTeamRank') - F('TeamPrestige')
+        GameValue = F('MaxTeamRank') + F('MinTeamRank') + F('MinTeamRank')
     ).order_by('GameValue')
 
 

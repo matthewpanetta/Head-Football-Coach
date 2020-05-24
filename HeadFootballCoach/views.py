@@ -1116,7 +1116,6 @@ def Page_Index(request):
     if InTesting or InDeepTesting:
         World.objects.all().delete()
         Conference.objects.all().delete()
-        State.objects.all().delete()
         #System_PlayoffRound.objects.all().delete()
         #NameList.objects.all().delete()
 
@@ -1357,7 +1356,7 @@ def Page_World(request, WorldID):
         )
         for P in Recruits:
             P['RecruitingTeams'] = []
-            RecruitTeamSeasons = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID = P['PlayerTeamSeasonID']).values( 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL_50', 'InterestLevel', 'MatchRating', 'OfferMade', 'Signed').order_by('-InterestLevel').annotate(
+            RecruitTeamSeasons = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID = P['PlayerTeamSeasonID']).values( 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID_id', 'TeamSeasonID__TeamID__TeamLogoURL_50', 'InterestLevel', 'OfferMade', 'Signed').order_by('-InterestLevel').annotate(
                 TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID_id'), output_field=CharField()),
             )
             for RTS in RecruitTeamSeasons[0:3]:
@@ -5790,41 +5789,51 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
     HistoricalWeek = GetHistoricalWeek(CurrentWorld, CurrentSeason)
 
     TeamInfoRatings = Team.objects.filter(WorldID = WorldID).filter(teamseason__LeagueSeasonID = CurrentSeason).values('TeamID', 'teamseason__TeamPrestige', 'teamseason__FacilitiesRating', 'teamseason__ProPotentialRating', 'teamseason__CampusLifestyleRating', 'teamseason__AcademicPrestigeRating', 'teamseason__TelevisionExposureRating', 'teamseason__CoachStabilityRating', 'teamseason__ChampionshipContenderRating', 'teamseason__LocationRating').annotate(
+        TeamPrestige = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Team Prestige')),
+        Facilities = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Facilities')),
+        ProPotential = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Pro Potential')),
+        CampusLifestyle = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Campus Lifestyle')),
+        AcademicPrestige = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Academic Prestige')),
+        TelevisionExposure = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Television Exposure')),
+        CoachLoyalty = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Coach Loyalty')),
+        ChampionshipContender = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Championship Contender')),
+        Location = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Location')),
+
         TeamPrestige_Rank=Window(
             expression=Rank(),
-            order_by=F("teamseason__TeamPrestige").desc(),
+            order_by=F("TeamPrestige").desc(),
             ),
         FacilitiesRating_Rank=Window(
             expression=Rank(),
-            order_by=F("teamseason__FacilitiesRating").desc(),
+            order_by=F("Facilities").desc(),
             ),
         ProPotentialRating_Rank=Window(
             expression=Rank(),
-            order_by=F("teamseason__ProPotentialRating").desc(),
+            order_by=F("ProPotential").desc(),
             ),
          CampusLifestyleRating_Rank=Window(
              expression=Rank(),
-             order_by=F("teamseason__CampusLifestyleRating").desc(),
+             order_by=F("CampusLifestyle").desc(),
         ),
         AcademicPrestigeRating_Rank=Window(
              expression=Rank(),
-             order_by=F("teamseason__AcademicPrestigeRating").desc(),
+             order_by=F("AcademicPrestige").desc(),
              ),
         TelevisionExposureRating_Rank=Window(
              expression=Rank(),
-             order_by=F("teamseason__TelevisionExposureRating").desc(),
+             order_by=F("TelevisionExposure").desc(),
              ),
         CoachStabilityRating_Rank=Window(
              expression=Rank(),
-             order_by=F("teamseason__CoachStabilityRating").desc(),
+             order_by=F("CoachLoyalty").desc(),
              ),
         ChampionshipContenderRating_Rank=Window(
              expression=Rank(),
-             order_by=F("teamseason__ChampionshipContenderRating").desc(),
+             order_by=F("ChampionshipContender").desc(),
              ),
         LocationRating_Rank=Window(
              expression=Rank(),
-             order_by=F("teamseason__LocationRating").desc(),
+             order_by=F("Location").desc(),
          ),
     )
 
