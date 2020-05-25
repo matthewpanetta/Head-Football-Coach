@@ -3099,6 +3099,9 @@ class TeamInfoTopic(models.Model):
     RecruitMatchIsComputed = models.BooleanField(default=True)
     RecruitInterestWeight = models.IntegerField(default = 1)
 
+    def __str__(self):
+        return 'TeamInfoTopic: {AttributeName}'.format(AttributeName = self.AttributeName)
+
 
 class TeamSeasonInfoRating(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE,  db_index=True)
@@ -3115,6 +3118,9 @@ class PlayerRecruitingInterest(models.Model):
     TeamInfoTopicID = models.ForeignKey(TeamInfoTopic, on_delete=models.CASCADE, db_index=True,  default=None, null=True, blank=True)
 
     PitchRecruitInterestRank = models.IntegerField(default = 0)
+
+    def __str__(self):
+        return 'PlayerRecruitingInterest: {PlayerName}: {AttributeName} - Interest #{PitchRecruitInterestRank}'.format(PitchRecruitInterestRank=self.PitchRecruitInterestRank, PlayerName=self.PlayerID.PlayerFirstName + ' ' + self.PlayerID.PlayerLastName, AttributeName = self.TeamInfoTopicID.AttributeName)
 
 
 class RecruitTeamSeasonInterest(models.Model):

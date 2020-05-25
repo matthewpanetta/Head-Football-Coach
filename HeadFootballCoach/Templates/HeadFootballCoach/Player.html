@@ -23,7 +23,11 @@
   <div class='PageContent'>
     <div class='PlayerHeader'>
       <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
-      <a href='/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}'><img class='playerTeamLogo' src='{{playerTeam.LogoURL}}' alt="My image"></a>
+      <a href='/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}' {% if not playerTeam.LogoURL %} style='margin-left: 180px;' {% endif %}>
+        {% if playerTeam.LogoURL %}
+        <img class='playerTeamLogo' src='{{playerTeam.LogoURL}}' alt="My image">
+        {% endif %}
+      </a>
       <div class="PlayerFace" id='PlayerFace'>
 
       </div>

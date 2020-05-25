@@ -1,22 +1,23 @@
 from ..models import World, GameDrive, DrivePlay, CoachTeamSeason, PlayerTeamSeasonDepthChart, Coach, Week, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerTeamSeasonSkill, PlayerGameStat
 import random
-import django.db.models as models
+from django.db.models import  Max, Q, F, Value, CharField
+from django.db.models.functions import Length, Concat
 from .rankings import CalculateRankings
 from django.db import transaction
-from ..utilities import WeightedProbabilityChoice, IfNull, SecondsToMinutes, Average, NormalTrunc
+from ..utilities import WeightedProbabilityChoice, IfNull, SecondsToMinutes, Average, NormalTrunc, Max_Int
 import math
-
+from django.db import connection, reset_queries
 
 def RoundUp(Val):
     return int(math.ceil(Val / 10.0)) * 10
 
 def AdjustBiggestLead(HomeTeam, AwayTeam):
 
-    HomeLead = Max(HomeTeam.Points - AwayTeam.Points, 0)
-    AwayLead = Max(AwayTeam.Points - HomeTeam.Points, 0)
+    HomeLead = Max_Int(HomeTeam.Points - AwayTeam.Points, 0)
+    AwayLead = Max_Int(AwayTeam.Points - HomeTeam.Points, 0)
 
-    HomeTeam.BiggestLead = Max(HomeTeam.BiggestLead, HomeLead)
-    AwayTeam.BiggestLead = Max(AwayTeam.BiggestLead, AwayLead)
+    HomeTeam.BiggestLead = Max_Int(HomeTeam.BiggestLead, HomeLead)
+    AwayTeam.BiggestLead = Max_Int(AwayTeam.BiggestLead, AwayLead)
 
     return None
 
@@ -58,12 +59,6 @@ def CalculateGameScore(PlayerGameStats):
     GameSummary['TopStatStringDisplay2'] = Displays[1]
 
     return GameSummary
-
-def Max(a,b):
-    if a > b:
-        return a
-    else:
-        return b
 
 def Min(a,b):
     if a > b:
@@ -244,34 +239,45 @@ def GameSim(game):
 
     CurrentWorld  = game.WorldID
 
-    CurrentSeason = LeagueSeason.objects.get(WorldID = CurrentWorld, IsCurrent=1)
+    CurrentSeason = game.LeagueSeasonID
     CurrentLeague = game.LeagueSeasonID.LeagueID
 
-    CurrentWeek = Week.objects.get(WorldID = CurrentWorld, IsCurrent=1)
+    CurrentWeek = game.WeekID
 
-    HomeTeamGame = game.HomeTeamGameID
-    AwayTeamGame = game.AwayTeamGameID
+    TeamGames = game.teamgame_set.all()
 
-    HomeTeam = game.HomeTeamID
-    AwayTeam = game.AwayTeamID
+    HomeTeamGame = TeamGames.filter(IsHomeTeam = True).first()
+    AwayTeamGame = TeamGames.filter(IsHomeTeam = False).first()
+
+    HomeTeamSeason = HomeTeamGame.TeamSeasonID
+    AwayTeamSeason = AwayTeamGame.TeamSeasonID
+
+    HomeTeam = HomeTeamSeason.TeamID
+    AwayTeam = AwayTeamSeason.TeamID
 
     print()
     print('Simming ', HomeTeam, 'vs', AwayTeam)
-    HomeTeamSeason = game.HomeTeamSeasonID
-    AwayTeamSeason = game.AwayTeamSeasonID
 
     HomePlayerTeamSeasonDepthChart = PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = HomeTeamSeason).values('PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID_id', 'IsStarter', 'DepthPosition').order_by('PositionID__PositionAbbreviation', 'DepthPosition')
     AwayPlayerTeamSeasonDepthChart = PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = AwayTeamSeason).values('PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID_id', 'IsStarter', 'DepthPosition').order_by('PositionID__PositionAbbreviation', 'DepthPosition')
 
-    HomeTeamPlayers = [u.PlayerID for u in PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID = HomeTeamSeason).select_related('PlayerID')]
-    AwayTeamPlayers = [u.PlayerID for u in PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID = AwayTeamSeason).select_related('PlayerID')]
+    HomeTeamPlayers = Player.objects.filter(WorldID = CurrentWorld).filter(playerteamseason__TeamSeasonID = HomeTeamSeason).prefetch_related('playerteamseason_set__playerteamseasonskill').prefetch_related('playerteamseason_set__TeamSeasonID__TeamID', 'playerteamseason_set__TeamSeasonID').annotate(
+        PlayerTeamSeasonID = Max('playerteamseason__PlayerTeamSeasonID'),
+        PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField())
+    )
+    AwayTeamPlayers = Player.objects.filter(WorldID = CurrentWorld).filter(playerteamseason__TeamSeasonID = AwayTeamSeason).prefetch_related('playerteamseason_set__playerteamseasonskill').prefetch_related('playerteamseason_set__TeamSeasonID__TeamID', 'playerteamseason_set__TeamSeasonID').annotate(
+        PlayerTeamSeasonID = Max('playerteamseason__PlayerTeamSeasonID'),
+        PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField())
+    )
 
     #print(HomeTeam.SchoolName +' hosts '+AwayTeam.SchoolName)
-    HomeCoaches = CoachTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID = HomeTeamSeason)
-    AwayCoaches = CoachTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID = AwayTeamSeason)
+    HomeCoaches = CoachTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID = HomeTeamSeason).select_related('CoachID')
+    AwayCoaches = CoachTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID = AwayTeamSeason).select_related('CoachID')
 
     HomeHeadCoach = HomeCoaches.get(CoachPositionID__CoachPositionAbbreviation = 'HC')
     AwayHeadCoach = AwayCoaches.get(CoachPositionID__CoachPositionAbbreviation = 'HC')
+
+    PlayerSkills = {P.PlayerTeamSeasonID.PlayerID_id: P for P in PlayerTeamSeasonSkill.objects.filter(Q(PlayerTeamSeasonID__TeamSeasonID = HomeTeamSeason) | Q(PlayerTeamSeasonID__TeamSeasonID = AwayTeamSeason)).select_related('PlayerTeamSeasonID__PlayerID')}
 
     CoachDict = {
         HomeTeam: {'Coach': HomeHeadCoach.CoachID.__dict__, 'CoachTeamSeason': HomeHeadCoach.__dict__, 'TeamSeasonStrategy': HomeTeamSeason.teamseasonstrategy_set.all().first().__dict__},
@@ -554,16 +560,24 @@ def GameSim(game):
     KeysToSave = []#['PlusMinus', 'GamesStarted', 'Points', 'KCK_FGA', 'ThreePA', 'KCK_FGM', 'ThreePM', 'InsideShotA', 'InsideShotM', 'MidRangeShotA', 'MidRangeShotM', 'Minutes', 'Rebounds', 'OffensiveRebounds','ReboundChances','Assists','Possessions']
 
     SkillMultiplierExclusions = ['PlayerTeamSeasonSkillID', 'PlayerID', 'LeagueSeasonID', 'WorldID', '_state', 'WorldID_id', 'PlayerID_id']
-    for P in HomeTeamPlayers+AwayTeamPlayers:
+
+    count = 0
+    for P in HomeTeamPlayers | AwayTeamPlayers:
+        # count +=1
+        # if count == 2:
+        #     reset_queries()
+        # elif count == 3:
+        #     print('\n\nconnection.queries', connection.queries)
+
         DC = None
-        PlayerDict = P.__dict__
-        PTS = PlayerTeamSeason.objects.get(TeamSeasonID__LeagueSeasonID = CurrentSeason, PlayerID = P)
-        PSD = PlayerTeamSeasonSkill.objects.get(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS)
+        PlayerDict = P
+        PTS = P.PlayerTeamSeasonID
+        PSD = PlayerSkills[P.PlayerID]
         PlayerSkillDict = PSD.__dict__
-        PlayerID = PlayerDict['PlayerID']
-        PlayerDict['PlayerTeam'] = P.CurrentPlayerTeamSeason.TeamSeasonID.TeamID
-        AllPlayers[PlayerID] = PlayerDict
-        AllPlayers[PlayerID]['PlayerName'] = PlayerDict['PlayerFirstName'] +' '+PlayerDict['PlayerLastName']
+        PlayerID = P.PlayerID
+        #PlayerDict['PlayerTeam'] = PTS.TeamSeasonID.TeamID_id
+        AllPlayers[PlayerID] = {'PlayerObj': P}
+
 
         SkillMultiplier = 1.0
         TalentRandomnessMultiplier = round(random.uniform(1.0 - TalentRandomness, 1.0 + TalentRandomness), 3)
@@ -575,7 +589,7 @@ def GameSim(game):
             if Skill not in SkillMultiplierExclusions:
                 AllPlayers[PlayerID]['PlayerSkills'][Skill] = int(  AllPlayers[PlayerID]['PlayerSkills'][Skill] * SkillMultiplier  )
 
-        AllPlayers[PlayerID]['PlayerGameStat'] = PlayerGameStat(PlayerTeamSeasonID = PTS, WorldID = CurrentWorld, TeamGamesPlayed = 1)
+        AllPlayers[PlayerID]['PlayerGameStat'] = PlayerGameStat(PlayerTeamSeasonID_id = PTS, WorldID = CurrentWorld, TeamGamesPlayed = 1)
 
         if P in HomeTeamPlayers:
             AllPlayers[PlayerID]['TeamObj'] = HomeTeam
@@ -903,11 +917,11 @@ def GameSim(game):
                     YardsThisPlay = 100 - BallSpot
                 GameDict[OffensiveTeam]['TeamGame'].RUS_Yards += YardsThisPlay
                 GameDict[OffensiveTeam]['TeamGame'].RUS_Carries += 1
-                GameDict[OffensiveTeam]['TeamGame'].RUS_LNG = Max(GameDict[OffensiveTeam]['TeamGame'].RUS_LNG, YardsThisPlay)
+                GameDict[OffensiveTeam]['TeamGame'].RUS_LNG = Max_Int(GameDict[OffensiveTeam]['TeamGame'].RUS_LNG, YardsThisPlay)
 
                 AllPlayers[RunningBackPlayerID]['PlayerGameStat'].RUS_Yards += YardsThisPlay
                 AllPlayers[RunningBackPlayerID]['PlayerGameStat'].RUS_Carries += 1
-                AllPlayers[RunningBackPlayerID]['PlayerGameStat'].RUS_LNG = Max(AllPlayers[RunningBackPlayerID]['PlayerGameStat'].RUS_LNG, YardsThisPlay)
+                AllPlayers[RunningBackPlayerID]['PlayerGameStat'].RUS_LNG = Max_Int(AllPlayers[RunningBackPlayerID]['PlayerGameStat'].RUS_LNG, YardsThisPlay)
 
                 if YardsThisPlay >= 20:
                     GameDict[OffensiveTeam]['TeamGame'].RUS_20 += 1
@@ -1037,11 +1051,11 @@ def GameSim(game):
 
                     GameDict[OffensiveTeam]['TeamGame'].PAS_Yards += YardsThisPlay
                     GameDict[OffensiveTeam]['TeamGame'].REC_Yards += YardsThisPlay
-                    GameDict[OffensiveTeam]['TeamGame'].REC_LNG = Max(GameDict[OffensiveTeam]['TeamGame'].REC_LNG, YardsThisPlay)
+                    GameDict[OffensiveTeam]['TeamGame'].REC_LNG = Max_Int(GameDict[OffensiveTeam]['TeamGame'].REC_LNG, YardsThisPlay)
 
                     AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].PAS_Yards += YardsThisPlay
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_Yards += YardsThisPlay
-                    AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_LNG = Max(AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_LNG, YardsThisPlay)
+                    AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_LNG = Max_Int(AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_LNG, YardsThisPlay)
 
                 #Incomplete pass
                 elif PassOutcome == 'Incompletion':
@@ -1122,8 +1136,8 @@ def GameSim(game):
                     AllPlayers[KickerPlayerID]['PlayerGameStat'].KCK_FGM += 1
                     GameDict[OffensiveTeam]['TeamGame'].KCK_FGM += 1
 
-                    AllPlayers[KickerPlayerID]['PlayerGameStat'].KCK_LNG = Max(AllPlayers[KickerPlayerID]['PlayerGameStat'].KCK_LNG, FieldGoalDistance)
-                    GameDict[OffensiveTeam]['TeamGame'].KCK_LNG = Max(GameDict[OffensiveTeam]['TeamGame'].KCK_LNG, FieldGoalDistance)
+                    AllPlayers[KickerPlayerID]['PlayerGameStat'].KCK_LNG = Max_Int(AllPlayers[KickerPlayerID]['PlayerGameStat'].KCK_LNG, FieldGoalDistance)
+                    GameDict[OffensiveTeam]['TeamGame'].KCK_LNG = Max_Int(GameDict[OffensiveTeam]['TeamGame'].KCK_LNG, FieldGoalDistance)
 
                     setattr(GameDict[OffensiveTeam]['TeamGame'], FGMField, getattr(GameDict[OffensiveTeam]['TeamGame'], FGMField) + 1)
                     setattr(AllPlayers[KickerPlayerID]['PlayerGameStat'], FGMField, getattr(AllPlayers[KickerPlayerID]['PlayerGameStat'], FGMField) + 1)
@@ -1276,9 +1290,9 @@ def GameSim(game):
 
             if OffensiveTouchdown:
                 if PlayChoice == 'Run':
-                    PlayDescription = AllPlayers[RunningBackPlayerID]['PlayerName'] + ' ' + str(int(100 - (BallSpot - YardsThisPlay))) + ' Yd ' + PlayChoice
+                    PlayDescription = AllPlayers[RunningBackPlayerID]['PlayerObj'].PlayerName + ' ' + str(int(100 - (BallSpot - YardsThisPlay))) + ' Yd ' + PlayChoice
                 elif PlayChoice == 'Pass':
-                    PlayDescription = AllPlayers[QuarterbackPlayerID]['PlayerName'] + ' ' + str(int(100 - (BallSpot - YardsThisPlay))) + ' Yd ' + PlayChoice + ' to ' + AllPlayers[WideReceiverPlayer]['PlayerName']
+                    PlayDescription = AllPlayers[QuarterbackPlayerID]['PlayerObj'].PlayerName + ' ' + str(int(100 - (BallSpot - YardsThisPlay))) + ' Yd ' + PlayChoice + ' to ' + AllPlayers[WideReceiverPlayer]['PlayerObj'].PlayerName
 
                 DriveDescription = str(DrivePlayCount) + ' plays, ' + str(int(100 - DriveStartBallSpot)) + ' yards, ' + SecondsToMinutes(DriveDuration)
 
@@ -1305,9 +1319,9 @@ def GameSim(game):
             elif DefensiveTouchdown:
 
                 if FumbleOnPlay:
-                    PlayDescription = AllPlayers[FumbleRecovererID]['PlayerName'] + ' ' + str(int(100 - (FumbleRecoveryYards))) + ' Yd fumble recovery for TD'
+                    PlayDescription = AllPlayers[FumbleRecovererID]['PlayerObj'].PlayerName + ' ' + str(int(100 - (FumbleRecoveryYards))) + ' Yd fumble recovery for TD'
                 elif InterceptionOnPlay:
-                    PlayDescription = AllPlayers[DefensiveIntercepter]['PlayerName'] + ' ' + str(int(100 - (InterceptionReturnYards))) + ' Yd interception for TD'
+                    PlayDescription = AllPlayers[DefensiveIntercepter]['PlayerObj'].PlayerName + ' ' + str(int(100 - (InterceptionReturnYards))) + ' Yd interception for TD'
 
                 DriveDescription = 'Fumble returned ' + str(int(100 - (FumbleRecoveryYards))) + ' yards for TD'
                 GE = GameEvent(GameID = game, WorldID = CurrentWorld, DriveDescription=DriveDescription, PlayDescription = PlayDescription, PlayType='DEF-TD', IsScoringPlay = True,DisplayTeamID=DefensiveTeam, HomePoints = GameDict[HomeTeam]['TeamGame'].Points, AwayPoints = GameDict[AwayTeam]['TeamGame'].Points, EventPeriod = Period, EventTime = SecondsLeftInPeriod)
@@ -1329,17 +1343,17 @@ def GameSim(game):
                 SwitchPossession = True
             elif  Turnover or Safety:
                 if InterceptionOnPlay:
-                    PlayDescription = AllPlayers[QuarterbackPlayerID]['PlayerName'] + ' intercepted by ' + AllPlayers[DefensiveIntercepter]['PlayerName']
+                    PlayDescription = AllPlayers[QuarterbackPlayerID]['PlayerObj'].PlayerName + ' intercepted by ' + AllPlayers[DefensiveIntercepter]['PlayerObj'].PlayerName
                     PlayTypeString = 'INT'
                     DisplayTeam = OffensiveTeam
                     IsScoringPlay = False
                 elif Safety:
-                    PlayDescription = AllPlayers[DefensiveTackler]['PlayerName'] + ' tackle for a Safety!'
+                    PlayDescription = AllPlayers[DefensiveTackler]['PlayerObj'].PlayerName + ' tackle for a Safety!'
                     PlayTypeString = 'SAF'
                     DisplayTeam = DefensiveTeam
                     IsScoringPlay = True
                 else:
-                    PlayDescription = AllPlayers[RunningBackPlayerID]['PlayerName'] +  ' fumble recovered by ' + AllPlayers[FumbleRecovererID]['PlayerName'] + ', returned ' + str(FumbleRecoveryYards) + ' yards'
+                    PlayDescription = AllPlayers[RunningBackPlayerID]['PlayerObj'].PlayerName +  ' fumble recovered by ' + AllPlayers[FumbleRecovererID]['PlayerObj'].PlayerName + ', returned ' + str(FumbleRecoveryYards) + ' yards'
                     PlayTypeString = 'FUMB'
                     DisplayTeam = OffensiveTeam
                     IsScoringPlay = False
@@ -1356,7 +1370,7 @@ def GameSim(game):
                 SwitchPossession = True
 
             elif FieldGoalMake:
-                PlayDescription = AllPlayers[KickerPlayerID]['PlayerName'] + ' ' + str(FieldGoalDistance) + ' Yd ' + PlayChoice
+                PlayDescription = AllPlayers[KickerPlayerID]['PlayerObj'].PlayerName + ' ' + str(FieldGoalDistance) + ' Yd ' + PlayChoice
                 DriveDescription = str(DrivePlayCount) + ' plays, ' + str(int(BallSpot - DriveStartBallSpot)) + ' yards, ' + SecondsToMinutes(DriveDuration)
                 GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='FG', IsScoringPlay = True, DisplayTeamID=OffensiveTeam,HomePoints = GameDict[HomeTeam]['TeamGame'].Points, AwayPoints = GameDict[AwayTeam]['TeamGame'].Points, EventPeriod = Period, EventTime = SecondsLeftInPeriod, PlayDescription=PlayDescription, DriveDescription=DriveDescription)
                 GameEventsToSave.append(GE)
@@ -1364,7 +1378,7 @@ def GameSim(game):
                 Kickoff = True
 
             elif FieldGoalMiss:
-                PlayDescription = AllPlayers[KickerPlayerID]['PlayerName'] + ' MISSED ' + str(FieldGoalDistance) + ' Yd ' + PlayChoice
+                PlayDescription = AllPlayers[KickerPlayerID]['PlayerObj'].PlayerName + ' MISSED ' + str(FieldGoalDistance) + ' Yd ' + PlayChoice
                 DriveDescription = str(DrivePlayCount) + ' plays, ' + str(int(BallSpot - DriveStartBallSpot)) + ' yards, ' + SecondsToMinutes(DriveDuration)
                 GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='FG-MISS', IsScoringPlay = False, DisplayTeamID=OffensiveTeam,HomePoints = GameDict[HomeTeam]['TeamGame'].Points, AwayPoints = GameDict[AwayTeam]['TeamGame'].Points, EventPeriod = Period, EventTime = SecondsLeftInPeriod, PlayDescription=PlayDescription, DriveDescription=DriveDescription)
                 GameEventsToSave.append(GE)
@@ -1431,12 +1445,6 @@ def GameSim(game):
                     AllPlayers[P]['Energy'] = 1
 
             DrivePlaysToSave.append(DrivePlayObject)
-            if LogDrive:
-                GD.save()
-                for DrivePlayObject in DrivePlaysToSave:
-                    DrivePlayObject.GameDriveID = GD
-                DrivePlay.objects.bulk_create(DrivePlaysToSave, ignore_conflicts=True)
-                DrivePlaysToSave = []
 
         if Period == max(Periods) and GameDict[HomeTeam]['TeamGame'].Points == GameDict[AwayTeam]['TeamGame'].Points:
             Periods.append(Period+1)
@@ -1451,13 +1459,6 @@ def GameSim(game):
             GE = GameEvent(GameID = game, WorldID = CurrentWorld,PlayType='HALF', IsScoringPlay = False, DisplayTeamID=OffensiveTeam, HomePoints = GameDict[HomeTeam]['TeamGame'].Points, AwayPoints = GameDict[AwayTeam]['TeamGame'].Points, EventPeriod = Period, EventTime = 0, PlayDescription='End of 1st half')
             GameEventsToSave.append(GE)
             LogDrive = not LogDrive
-
-        if LogDrive:
-            GD.save()
-            for DrivePlayObject in DrivePlaysToSave:
-                DrivePlayObject.GameDriveID = GD
-            DrivePlay.objects.bulk_create(DrivePlaysToSave, ignore_conflicts=True)
-            DrivePlaysToSave = []
 
     game.WasPlayed = 1
     print('FINAL -- ', OffensiveTeam, ': ', GameDict[OffensiveTeam]['TeamGame'].Points,' , ', DefensiveTeam, ': ', GameDict[DefensiveTeam]['TeamGame'].Points)
@@ -1499,7 +1500,7 @@ def GameSim(game):
         AllPlayers[P]['PlayerGameStat'].GameScore = PlayerGameSummary['GameScore']
         AllPlayers[P]['PlayerGameStat'].TopStatStringDisplay1 = PlayerGameSummary['TopStatStringDisplay1']
         AllPlayers[P]['PlayerGameStat'].TopStatStringDisplay2 = PlayerGameSummary['TopStatStringDisplay2']
-        ElementsToSave.append(AllPlayers[P]['PlayerGameStat'])
+        PlayerGameStatToSave.append(AllPlayers[P]['PlayerGameStat'])
 
     for T in GameDict:
         ElementsToSave.append(GameDict[T]['TeamGame'])

@@ -82,6 +82,9 @@ urlpatterns = [
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerRedshirt/<str:Action>', views.POST_PlayerRedshirt, name='PlayerRedshirt'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerCut', views.POST_PlayerCut, name='PlayerCut'),
 
+    path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerRecruitingBoard/<str:AddOrRemove>', views.POST_PlayerRecruitingBoard, name='PlayerRecruitingBoard'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/ScoutRecruit/', views.POST_ScoutRecruit, name='ScoutRecruit'),
+
     path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamCuts', views.POST_AutoTeamCuts, name='AutoTeamCuts'),
     path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamCaptains', views.POST_AutoTeamCaptains, name='AutoTeamCaptains'),
     path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamRedshirts', views.POST_AutoTeamRedshirts, name='AutoTeamRedshirts'),

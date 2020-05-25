@@ -507,7 +507,12 @@ $(document).ready(function(){
   var RecruitingPlayersData = $('#recruiting-player-data')[0];
   RecruitingPlayersData = JSON.parse(RecruitingPlayersData.textContent);
 
+  var SavedRecruitingPlayersData = $('#recruiting-saved-players-data')[0];
+  SavedRecruitingPlayersData = JSON.parse(SavedRecruitingPlayersData.textContent);
+
+
   DrawRecruitingTable(WorldID, RecruitingPlayersData);
+  DrawSavedRecruitingTable(WorldID, SavedRecruitingPlayersData);
   DrawNationalRankTable(WorldID);
 
 });

@@ -8,7 +8,7 @@ from .scripts.PickName import RandomName, RandomPositionAndMeasurements, RandomC
 import math
 from django.db.models.functions import Coalesce
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case,  ExpressionWrapper, When, FloatField, IntegerField, DecimalField, CharField, BooleanField, Value, Window, OuterRef, Subquery
-#from django.db.models import Max, Avg, Count, Func,  Sum, Case, When, FloatField, CharField, Value
+
 from django.db.models.functions.window import Rank, RowNumber, Ntile
 from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, SelectBroadcast
 from .scripts.DepthChart import CreateDepthChart
@@ -1073,7 +1073,7 @@ def CreatePlayers(LS, WorldID):
     PlayerList = Player.objects.filter(WorldID = WorldID)
 
     AssignTemporaryTeamSeasonID(WorldID, LS,PlayerList, ClassID = None, IsFreeAgentTeam = True, IsRecruitTeam = False)
-    PlayerTeamSeasonList = PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS)
+    PlayerTeamSeasonList = PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerID__PositionID').select_related('ClassID').prefetch_related('PlayerID__PositionID__system_playerarchetyperatingmodifier_set')
 
     PlayerSkillPool = []
     for PTS in PlayerTeamSeasonList:
@@ -1271,14 +1271,14 @@ def CreateRecruitingClass(LS, WorldID):
     PlayerList = Player.objects.filter(WorldID = WorldID).filter(IsRecruit = True)
 
     AssignTemporaryTeamSeasonID(WorldID, LS,PlayerList, ClassID = SeniorClassID, IsFreeAgentTeam = False, IsRecruitTeam = True)
-    PlayerTeamSeasonList = PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).filter(PlayerID__IsRecruit = True)
     print('Recruits assigned Temp TS', len(connection.queries))
+    PlayerTeamSeasonList = PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).filter(PlayerID__IsRecruit = True).select_related('PlayerID__PositionID').select_related('ClassID').prefetch_related('PlayerID__PositionID__system_playerarchetyperatingmodifier_set')
     PlayerSkillPool = []
     for PTS in PlayerTeamSeasonList:
         PlayerSkillPool.append(PopulatePlayerSkills(PTS, WorldID))
     PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=False)
 
-
+    print('Recruit skills populated', len(connection.queries))
     PlayerTeamSeasons_ForMeasurables = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).select_related('PlayerID').select_related('playerteamseasonskill').annotate(
         Position = F('PlayerID__PositionID__PositionAbbreviation'),
         PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName'),
@@ -1296,6 +1296,7 @@ def CreateRecruitingClass(LS, WorldID):
         Players_ToSave.append(PTS.PlayerID)
 
     Player.objects.bulk_update(Players_ToSave, ['Recruiting_40Time', 'Recruiting_BenchPressReps', 'Recruiting_VerticalJump'])
+
     print('Recruit measurables updated', len(connection.queries))
     StarDistribution = {5:.0166,
                         4:.1,
@@ -1322,7 +1323,8 @@ def CreateRecruitingClass(LS, WorldID):
         'International': {'LowerBound': 1201, 'UpperBound': 10000, 'PointValue': 5},
     }
 
-    TeamSeasonList = TeamSeason.objects.filter(TeamID__isnull = False).filter(WorldID = CurrentWorld).filter(LeagueSeasonID = LS).filter(ScholarshipsToOffer__gte = 0).filter(coachteamseason__CoachPositionID__CoachPositionAbbreviation = 'HC').values('TeamSeasonID', 'TeamID', 'TeamID__CityID__Latitude', 'TeamID__CityID__Longitude', 'coachteamseason__CoachID__ScoutingRating' ).annotate(
+    TeamSeasonList = TeamSeason.objects.filter(TeamID__isnull = False).filter(WorldID = CurrentWorld).filter(LeagueSeasonID = LS).filter(ScholarshipsToOffer__gte = 0).filter(coachteamseason__CoachPositionID__CoachPositionAbbreviation = 'HC').prefetch_related('teamseasonposition_set').prefetch_related('teamseasoninforating_set__TeamInfoTopicID').select_related('TeamID__CityID').annotate(
+        coachteamseason__CoachID__ScoutingRating = F('coachteamseason__CoachID__ScoutingRating'),
         CoachScoutVariance = Case(
             When(coachteamseason__CoachID__ScoutingRating__gte = 90, then=1),
             When(coachteamseason__CoachID__ScoutingRating__gte = 70, coachteamseason__CoachID__ScoutingRating__lt = 90, then=2),
@@ -1335,31 +1337,32 @@ def CreateRecruitingClass(LS, WorldID):
         TeamPrestigeValue = ExpressionWrapper(ExpressionWrapper(F('TeamPrestige') * 1.0 / 10, output_field=IntegerField()) ** 2, output_field=IntegerField()),
         ChampionshipContenderValue = F('TeamPrestigeValue'),
         PlayingTimeValue  =Value(50, output_field=IntegerField()),
-        CoachStyleValue = Value(50, output_field=IntegerField())
+        CoachStyleValue = Value(50, output_field=IntegerField()),
+        TSID = F('TeamSeasonID')
     ).order_by('-TeamPrestige')
 
-    TSDict = {}
-    for T in TeamSeasonList:
-        AddKey = {}
-        for k in T:
-            NewKey = k.replace('TeamID__', '')
-            AddKey[NewKey] = T[k]
-        for k in AddKey:
-            T[k] = AddKey[k]
-        T['TeamCity'] = {'Longitude': T['CityID__Longitude'], 'Latitude': T['CityID__Latitude']}
-        T['TeamSeasonInfoRatingDict'] = {I['TeamInfoTopicID__AttributeName']: I['TeamRating'] for I in TeamSeasonInfoRating.objects.filter(TeamSeasonID_id = T['TeamSeasonID']).values('TeamInfoTopicID','TeamInfoTopicID__AttributeName', 'TeamSeasonInfoRatingID', 'TeamRating')}
-        TSPList = TeamSeasonPosition.objects.filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID_id = T['TeamSeasonID']).select_related('PositionID')
-        T['TSPDict'] = {}
-        for TSP in TSPList:
-            T['TSPDict'][TSP.PositionID.PositionAbbreviation] = TSP
+    Full_TSPList = [{'TS': TSP.TeamSeasonID, 'PositionAbbreviation': TSP.PositionID.PositionAbbreviation, 'TSP': TSP}  for TSP in TeamSeasonPosition.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PositionID').select_related('TeamSeasonID')]
 
-        TSDict[T['TeamSeasonID']] = T
+    TSDict = {}
+
+    for T in TeamSeasonList:
+
+        TeamCity = {'Longitude': T.TeamID.CityID.Longitude, 'Latitude': T.TeamID.CityID.Latitude}
+        TeamSeasonInfoRatingDict = {I.TeamInfoTopicID.AttributeName: I.TeamRating for I in T.teamseasoninforating_set.all()}
+
+        TSPDict = {}
+        for TSP in Full_TSPList:
+            if TSP['TS'] == T:
+                TSPDict[TSP['PositionAbbreviation']] = TSP['TSP']
+
+        TSDict[T.TSID] = {'TSObject': T, 'TeamCity': TeamCity, 'TeamSeasonInfoRatingDict': TeamSeasonInfoRatingDict, 'TSPDict': TSPDict}
 
     print('TS Dict created', len(connection.queries))
 
+
     RecruitTeamDict = {'TeamList': []}
 
-    RecruitPool = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).select_related('PlayerID').annotate(
+    RecruitPool = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).select_related('PlayerID').select_related('PlayerID__CityID').select_related('playerteamseasonskill').annotate(
         Position = F('PlayerID__PositionID__PositionAbbreviation'),
         PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName'),
         State = F('PlayerID__CityID__StateID'),
@@ -1421,9 +1424,9 @@ def CreateRecruitingClass(LS, WorldID):
 
         for TS in TeamSeasonList:
 
-            TSP = TS['TSPDict'][Pos]
+            TSP = TSDict[TS.TeamSeasonID]['TSPDict'][Pos]
 
-            RTS = RecruitTeamSeason(WorldID = WorldID, PlayerTeamSeasonID_id = Recruit.PlayerTeamSeasonID, TeamSeasonID_id = TS['TeamSeasonID'], ScoutingFuzz = TS['CoachScoutVariance'], IsActivelyRecruiting = False)
+            RTS = RecruitTeamSeason(WorldID = WorldID, PlayerTeamSeasonID_id = Recruit.PlayerTeamSeasonID, TeamSeasonID_id = TS.TeamSeasonID, ScoutingFuzz = TS.CoachScoutVariance, IsActivelyRecruiting = False)
 
             OverallSum = 0
             WeightSum = 0
@@ -1431,7 +1434,7 @@ def CreateRecruitingClass(LS, WorldID):
                 RawRatingField = RatingField.replace('Scouted_', '')
                 WeightRatingField = RawRatingField +'_Weight'
                 BaseVal = getattr(Recruit.playerteamseasonskill, RawRatingField)
-                NewVal = NormalTrunc(BaseVal, TS['CoachScoutVariance'], 0,99)
+                NewVal = NormalTrunc(BaseVal, TS.CoachScoutVariance, 0,99)
                 setattr(RTS, RatingField, NewVal)
 
                 OverallSum+= float(NewVal) * float(getattr(TSP, WeightRatingField))
@@ -1447,7 +1450,7 @@ def CreateRecruitingClass(LS, WorldID):
     RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False)
     PlayerRecruitingInterest.objects.bulk_create(PlayerRecruitingInterestToSave, ignore_conflicts=False)
 
-    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID').select_related('TeamSeasonID__TeamID__CityID__StateID__RegionID').annotate(RecruitingTeamRank_new = Window(
+    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID').select_related('TeamSeasonID__TeamID__CityID__StateID__RegionID').prefetch_related('PlayerTeamSeasonID__PlayerID__playerrecruitinginterest_set').annotate(RecruitingTeamRank_new = Window(
         expression=RowNumber(),
         partition_by=F("PlayerTeamSeasonID"),
         order_by=F("InterestLevel").desc(),
@@ -1462,7 +1465,7 @@ def CreateRecruitingClass(LS, WorldID):
         RecruitCity = RecruitCityDict[R.PlayerTeamSeasonID.PlayerID_id]
         TS =TSDict[R.TeamSeasonID_id]
 
-        PlayerRecruitingInfoRatingDict = {I['TeamInfoTopicID__AttributeName']: I['PlayerRecruitingInterestID'] for I in R.PlayerTeamSeasonID.PlayerID.playerrecruitinginterest_set.all().values('TeamInfoTopicID', 'TeamInfoTopicID__AttributeName','PlayerRecruitingInterestID')}
+        PlayerRecruitingInfoRatingDict = {I['TeamInfoTopicID__AttributeName']: {'PlayerRecruitingInterestID': I['PlayerRecruitingInterestID'], 'PitchRecruitInterestRank': I['PitchRecruitInterestRank'], } for I in R.PlayerTeamSeasonID.PlayerID.playerrecruitinginterest_set.all().values('TeamInfoTopicID', 'TeamInfoTopicID__AttributeName','PlayerRecruitingInterestID', 'PitchRecruitInterestRank')}
 
         RecruitDistance = DistanceBetweenCities_Dict(RecruitCity, TS['TeamCity'])
         RecruitDistanceInterestValue = 0
@@ -1484,12 +1487,21 @@ def CreateRecruitingClass(LS, WorldID):
             else:
                 TeamRating = TS['TeamSeasonInfoRatingDict'][TITDict[TIT]['AttributeName']]
 
-            RTSI = RecruitTeamSeasonInterest(WorldID = CurrentWorld, RecruitTeamSeasonID = R, TeamRating = TeamRating, PlayerRecruitingInterestID_id = PlayerRecruitingInfoRatingDict[TITDict[TIT]['AttributeName']])
+
+            RTSI = RecruitTeamSeasonInterest(WorldID = CurrentWorld, RecruitTeamSeasonID = R, TeamRating = TeamRating, PlayerRecruitingInterestID_id = PlayerRecruitingInfoRatingDict[TITDict[TIT]['AttributeName']]['PlayerRecruitingInterestID'])
             RecruitTeamSeasonInterest_ToSave.append(RTSI)
 
+            if TITDict[TIT]['AttributeName'] in ['Close to Home', 'Team Prestige' ]:
+                R.InterestLevel += TeamRating * .5
+
+            if PlayerRecruitingInfoRatingDict[TITDict[TIT]['AttributeName']]['PitchRecruitInterestRank'] <= 3:
+                 InterestIncrease = int(int(((1 / PlayerRecruitingInfoRatingDict[TITDict[TIT]['AttributeName']]['PitchRecruitInterestRank']) ** (.4)) * TeamRating) / 5.0) * 5
+                 R.InterestLevel += InterestIncrease
+
     RecruitTeamSeasonInterest.objects.bulk_create(RecruitTeamSeasonInterest_ToSave)
-    RecruitTeamSeason.objects.bulk_update(RTS,['RecruitingTeamRank'])
+    RecruitTeamSeason.objects.bulk_update(RTS,['RecruitingTeamRank', 'InterestLevel'])
     print('Ranks updated, info ratings created', len(connection.queries))
+
 
 def CreateCoaches(LS, WorldID):
 
