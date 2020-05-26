@@ -287,7 +287,7 @@
                       {% for Players in PlayerTalentComparison%}
                       <tr>
 
-                        <td class='right-text font16'>{{Players.AwayPlayer.PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating}}</td>
+                        <td class='right-text font16'>{{Players.AwayPlayer.PlayerTeamSeasonID__playerteamseasonskill__OverallRating}}</td>
                         <td class='right-text font16'>
                           <a href="{{Players.AwayPlayer.PlayerHref}}">
                           {{Players.AwayPlayer.PlayerName}}
@@ -311,7 +311,7 @@
                           {{Players.HomePlayer.PlayerName}}
                           </a>
                         </td>
-                        <td class='left-text font16'>{{Players.HomePlayer.PlayerTeamSeasonID__PlayerID__playerseasonskill__OverallRating}}</td>
+                        <td class='left-text font16'>{{Players.HomePlayer.PlayerTeamSeasonID__playerteamseasonskill__OverallRating}}</td>
                       </tr>
                       {% endfor %}
                     </tbody>

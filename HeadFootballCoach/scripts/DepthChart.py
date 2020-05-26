@@ -4,15 +4,12 @@ from ..models import Audit, League, TeamGame,Week,Phase,PlayerTeamSeasonDepthCha
 import time
 
 
-def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False):
+def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False, PositionDepthChart = {}):
 
+    print('In Create DC, PositionDepthChart', PositionDepthChart)
     if TS is None:
         TS = T.CurrentTeamSeason
-    DoAudit = True
-
-    PositionDepthChart = {
-
-    }
+    DoAudit = False
 
     PositionFillIn = {
         'QB': [],
@@ -36,15 +33,12 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False)
     if DoAudit:
         start = time.time()
 
-    Positions = Position.objects.all().values('PositionAbbreviation', 'PositionCountPerAwardTeam', 'PositionID')
-    for Pos in Positions:
-        PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
 
     HeadCoach = TS.coachteamseason_set.filter(CoachPositionID__CoachPositionAbbreviation = 'HC').values('CoachID__VeteranTendency').first()
 
 
 #VeteranTendency
-    Players = TS.playerteamseason_set.exclude(RedshirtedThisSeason = True).annotate(
+    Players = TS.playerteamseason_set.exclude(RedshirtedThisSeason = True).select_related('PlayerID', 'PlayerID__PositionID').annotate(
         OverallRating = F('playerteamseasonskill__OverallRating'),
         PlayerClassOverallModifier = Case(
             When(ClassID__ClassAbbreviation = 'FR', then=Value(-1)),

@@ -2093,27 +2093,27 @@ class Game(models.Model):
     @property
     def DateShortDisplayDayOfWeek(self):
         return self.WeekID.WeekName
-    @property
-    def GameHeadlineDisplay(self):
-
-
-        if self.BowlID is not None:
-            if self.BowlID.IsNationalChampionship == True:
-                return 'National Championship'
-            else:
-                return self.BowlID.BowlName
-        elif self.IsConferenceChampionship:
-            return self.HomeTeamSeasonID.ConferenceID.ConferenceName + ' Championship'
-        elif self.TeamRivalryID is not None:
-            if self.TeamRivalryID.RivalryName is not None:
-                return self.TeamRivalryID.RivalryName
-            return 'Rivalry game!'
-        elif self.NationalBroadcast:
-            return 'National Broadcast'
-        elif self.RegionalBroadcast:
-            return 'Regional Broadcast'
-
-        return ''
+    # @property
+    # def GameHeadlineDisplay(self):
+    #
+    #
+    #     if self.BowlID is not None:
+    #         if self.BowlID.IsNationalChampionship == True:
+    #             return 'National Championship'
+    #         else:
+    #             return self.BowlID.BowlName
+    #     elif self.IsConferenceChampionship:
+    #         return self.HomeTeamSeasonID.ConferenceID.ConferenceName + ' Championship'
+    #     elif self.TeamRivalryID is not None:
+    #         if self.TeamRivalryID.RivalryName is not None:
+    #             return self.TeamRivalryID.RivalryName
+    #         return 'Rivalry game!'
+    #     elif self.NationalBroadcast:
+    #         return 'National Broadcast'
+    #     elif self.RegionalBroadcast:
+    #         return 'Regional Broadcast'
+    #
+    #     return ''
 
     @property
     def GameDisplay(self):

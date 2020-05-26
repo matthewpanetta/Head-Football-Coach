@@ -247,6 +247,8 @@ def CalculateRankings(LS, WorldID, CurrentWeek = None):
         if TSDict[TS]['OverallRating'] is None:
             TSDict[TS]['OverallRating'] = 0
 
+        TSDict[TS]['NationalRankObject'] = TS.NationalRankObject
+
         TSDict[TS]['OverallRating'] *= OverallRatingValue
 
         TSDict[TS]['ConferenceChampModifier'] = 1.1 if TS.ConferenceChampion else 1.0
@@ -258,14 +260,15 @@ def CalculateRankings(LS, WorldID, CurrentWeek = None):
         TSDict[TS]['TotalRating'] *= TSDict[TS]['NationalChampModifier']
 
 
-    RankValue  = 0
+    RankValue = 0
     TeamSeasonWeekRank.objects.filter(IsCurrent = True).filter(WorldID = CurrentWorld).update(IsCurrent = False)
     for TS in sorted(TSDict.keys(), key=lambda TS: (TSDict[TS]['TotalRating'], TSDict[TS]['Rating'], TSDict[TS]['OverallRating'],  TSDict[TS]['TeamPrestige']), reverse=True):
         RankValue += 1
 
         TSDR = TeamSeasonWeekRank(TeamSeasonID = TS, WorldID = CurrentWorld, WeekID = CurrentWeek, NationalRank = RankValue, IsCurrent = False)
-        if TS.NationalRank is not None:
-            OldTSDR = TS.NationalRankObject
+        if TSDict[TS]['NationalRankObject'] is not None:
+            OldTSDR = TSDict[TS]['NationalRankObject']
+
             if OldTSDR is not None:
                 TSDR.NationalRankDelta = OldTSDR.NationalRank - RankValue
 

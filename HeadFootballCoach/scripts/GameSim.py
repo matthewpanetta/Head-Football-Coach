@@ -563,12 +563,6 @@ def GameSim(game):
 
     count = 0
     for P in HomeTeamPlayers | AwayTeamPlayers:
-        # count +=1
-        # if count == 2:
-        #     reset_queries()
-        # elif count == 3:
-        #     print('\n\nconnection.queries', connection.queries)
-
         DC = None
         PlayerDict = P
         PTS = P.PlayerTeamSeasonID

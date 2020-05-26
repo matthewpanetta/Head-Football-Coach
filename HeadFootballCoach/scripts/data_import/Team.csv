@@ -87,10 +87,12 @@ Pittsburgh,Panthers,NCAA,PITT,Pittsburgh,Pennsylvania,USA,Atlantic Coast Confere
 Purdue,Boilermakers,NCAA,PUR,West Lafayette,Indiana,USA,Big Ten Conference,Pro Style,3-Apr,50,CEB888,0,0,40,60,30,30,70,40,60,45,40
 Rice,Owls,NCAA,RICE,Houston,Texas,USA,Conference USA,Pro Style,3-Apr,50,,,0,10,20,10,30,90,10,30,20,10
 Rutgers,Scarlet Knights,NCAA,RUT,New Brunswick,New Jersey,USA,Big Ten Conference,Spread,3-Apr,50,CC0033,5F6A72,0,30,30,30,30,70,30,60,45,30
-Sample Team East,Hedgehogs,NCAA,ST2,Baltimore,Maryland,USA,Sample Conference 1,Triple Option,3-Apr,90,A0000B,FEE123,0,40,50,50,80,30,50,50,40,60
-Sample Team North,Yetis,NCAA,ST3,Minneapolis,Minnesota,USA,Sample Conference 2,Air Raid,3-Apr,70,D65918,B7A57A,0,20,50,50,80,30,50,50,40,40
-Sample Team South,Eels,NCAA,ST1,Jackson,Mississippi,USA,Sample Conference 1,Air Raid,3-Apr,90,5700,ECDF28,0,80,50,50,80,30,50,50,40,80
-Sample Team West,Gunners,NCAA,ST4,Oakland,California,USA,Sample Conference 2,Air Raid,3-Apr,60,00274C,FF4208,0,70,50,50,80,30,50,50,40,20
+Sample Team East,Hedgehogs,NCAA,ST2,Baltimore,Maryland,USA,Sample Conference 1,Triple Option,3-Apr,90,A0000B,FEE123,0,40,30,40,80,40,50,60,50,60
+Sample Team North,Yetis,NCAA,ST3,Minneapolis,Minnesota,USA,Sample Conference 2,Air Raid,3-Apr,70,D65918,B7A57A,0,20,40,30,50,90,35,95,30,40
+Texas Poly,Colonels,NCAA,TP,San Antonio,Texas,USA,Sample Conference 1,Air Raid,3-Apr,40,5A2D81,63727A,1,45,50,60,40,40,70,80,45,35
+Northern California,Gunners,NCAA,NC,Oakland,California,USA,Sample Conference 2,Heavy Run,3-Apr,60,C5A566,0,0,60,90,80,70,60,70,10,60,70
+Sample Team South,Eels,NCAA,ST1,Jackson,Mississippi,USA,Sample Conference 1,Air Raid,3-Apr,90,5700,ECDF28,0,80,70,80,30,55,90,60,30,80
+Sample Team West,Miners,NCAA,ST4,Las Vegas,Nevada,USA,Sample Conference 2,Air Raid,3-Apr,60,00274C,FF4208,0,70,80,60,75,60,75,40,85,20
 San Diego State,Aztecs,NCAA,SDST,San Diego,California,USA,Mountain West Conference,Heavy Run,3-Apr,50,AF182A,0,0,30,40,30,30,30,30,50,85,30
 San Jose State,Spartans,NCAA,SJSU,San Jose,California,USA,Mountain West Conference,Pro Style,3-Apr,50,134B9B,FBD016,0,20,10,10,30,30,10,50,45,20
 SMU,Mustangs,NCAA,SMU,University Park,Texas,USA,American Athletic Conference,Air Raid,3/3/05,75,C2032C,27388F,0,50,40,50,60,70,40,50,70,50

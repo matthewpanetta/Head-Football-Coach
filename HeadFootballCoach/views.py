@@ -5,7 +5,7 @@ import pandas as pd
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, DecimalField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery, ExpressionWrapper
 from django.db.models.functions.window import Rank, RowNumber, Lag, Ntile
 from django.db.models.functions import Length, Concat, Coalesce
-from .models import Audit, League, TeamSeasonStrategy, TeamGame,Week,Phase,Position, PositionGroup, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
+from .models import Audit, League, TeamSeasonStrategy, TeamSeasonInfoRating,TeamGame,Week,Phase,Position, PositionGroup, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
 from datetime import timedelta, date
 import random
 import numpy
@@ -14,7 +14,7 @@ from .scripts.rankings import     CalculateConferenceRankings,CalculateRankings,
 from .utilities import FindRange, NormalVariance, NormalTrunc, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
 from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting, PrepareForSigningDay
-from .scripts.SeasonAwards import ChoosePlayersOfTheWeek
+from .scripts.SeasonAwards import ChoosePlayersOfTheWeek, SelectPreseasonAllAmericans
 from .scripts.DepthChart import CreateDepthChart
 from .scripts.Offseason import StartCoachingCarousel, CreateNextLeagueSeason, GraduateSeniors, RolloverNewLeagueSeason, PrepForSeason, TrainingCamps
 from .scripts.SRS.SRS   import CalculateSRS
@@ -48,7 +48,7 @@ def Min_Int(a,b):
 
 def GetUserTeam(WorldID):
 
-    return Team.objects.get(WorldID = WorldID, IsUserTeam = True)
+    return Team.objects.filter(WorldID = WorldID, IsUserTeam = True).first()
 
 
 def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = None, UserTeam = None):
@@ -226,10 +226,8 @@ def GetRecentGamesForScoreboard(CurrentWorld):
     print('LastWeek', LastWeek)
     WorldID = CurrentWorld.WorldID
 
-    GameList = Game.objects.filter(WorldID = CurrentWorld).values(
-        'GameID', 'GameTime'
-    ).annotate(
-        GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('GameID'), output_field=CharField()),
+    GameList_QS = Game.objects.filter(WorldID_id = WorldID).filter(WeekID = LastWeek).filter(WasPlayed = 1).prefetch_related('teamgame_set').annotate(
+        #GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('GameID'), output_field=CharField()),
         GameHeadlineDisplay = Case(
             When(BowlID__IsNationalChampionship = True, then=Value('National Championship!')),
             When(BowlID__BowlName__isnull = False, then=F('BowlID__BowlName')),
@@ -244,10 +242,11 @@ def GetRecentGamesForScoreboard(CurrentWorld):
         MinNationalRank = Min('teamgame__TeamSeasonWeekRankID__NationalRank'),
         UserTeamGame = Max('teamgame__TeamSeasonID__TeamID__IsUserTeam')
     ).order_by('-UserTeamGame'  , 'MinNationalRank')
-    RecentGames   = list(GameList.filter(WeekID = LastWeek).filter(WasPlayed = 1))
 
-    for G in RecentGames:
-        TGs = TeamGame.objects.filter(GameID=G['GameID']).values('TeamSeasonID__TeamID', 'TeamSeasonID', 'Points', 'TeamRecord', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation', 'TeamSeasonID__TeamID__TeamLogoURL').annotate(
+    GameList = []
+
+    for G in GameList_QS:
+        TGs = G.teamgame_set.values('TeamSeasonID__TeamID', 'TeamSeasonID', 'Points', 'TeamRecord', 'TeamSeasonID__TeamID__TeamName', 'TeamSeasonID__TeamID__Abbreviation', 'TeamSeasonID__TeamID__TeamLogoURL').annotate(
             TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID'), output_field=CharField()),
             TeamWinningGameBold = Case(
                 #When(IsWinningTeam = True, then=Value('TeamWinningGameBold')),
@@ -268,8 +267,8 @@ def GetRecentGamesForScoreboard(CurrentWorld):
         ).order_by('IsHomeTeam')
 
 
-        G['TeamGames'] = TGs
-    return RecentGames
+        GameList.append({'Game': G, 'TeamGames': TGs})
+    return GameList
 
 
 def CurrentDate(WorldID):
@@ -287,7 +286,7 @@ def GetCurrentWeek(WorldID):
     if isinstance(WorldID, int):
         WorldID = World.objects.filter(WorldID = WorldID).first()
 
-    CurrentWeek = WorldID.week_set.filter(IsCurrent = 1).first()
+    CurrentWeek = WorldID.week_set.filter(IsCurrent = 1).select_related('PhaseID').first()
 
     return CurrentWeek
 
@@ -412,16 +411,19 @@ def POST_PlayerCut(request, WorldID, PlayerID):
     CurrentWorld = World.objects.get(WorldID = WorldID)
     CurrentWeek = Week.objects.filter(WorldID_id = WorldID).filter(IsCurrent = True).first()
     CurrentPhase = CurrentWeek.PhaseID
-    PlayerTeamSeasonToCut = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(PlayerID_id=PlayerID).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+    PlayerTeamSeasonToCut = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(PlayerID_id=PlayerID).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).select_related('TeamSeasonID').first()
     PlayerName = PlayerTeamSeasonToCut.PlayerID.FullName
+
+    TeamSeasonID = PlayerTeamSeasonToCut.TeamSeasonID
 
     if CurrentPhase.PhaseName == 'Preseason':
         if PlayerTeamSeasonToCut.TeamSeasonID.TeamID.IsUserTeam:
-            RemovePlayerFromDepthChart(WorldID, PlayerID )
+            #RemovePlayerFromDepthChart(WorldID, PlayerID )
 
             PlayerTeamSeasonToCut.delete()
 
-            UpdateTeamPositions(PlayerTeamSeasonToCut.TeamSeasonID.LeagueSeasonID, CurrentWorld, TeamSeasonID = PlayerTeamSeasonToCut.TeamSeasonID)
+            PopulateTeamDepthCharts(TeamSeasonID.LeagueSeasonID, CurrentWorld, FullDepthChart = False, TeamSeasonID = TeamSeasonID)
+            UpdateTeamPositions(TeamSeasonID.LeagueSeasonID, CurrentWorld, TeamSeasonID = TeamSeasonID)
             return JsonResponse({'message':'{PlayerName} cut from team'.format(PlayerName = PlayerName)}, status=200)
         else:
             return JsonResponse({'message':'Can only cut players from user team'}, status=422)
@@ -496,9 +498,14 @@ def POST_AutoTeamDepthChart(request, WorldID, TeamID):
 
     TeamSeasonID = TeamSeason.objects.filter(TeamID_id = TeamID).filter(LeagueSeasonID__IsCurrent = True).first()
 
+
     if TeamSeasonID.TeamID.IsUserTeam:
         PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = TeamSeasonID).delete()
-        CreateDepthChart(CurrentWorld=CurrentWorld, TS=TeamSeasonID)
+        Positions = Position.objects.all().values('PositionAbbreviation', 'PositionCountPerAwardTeam', 'PositionID')
+        PositionDepthChart = {}
+        for Pos in Positions:
+            PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
+        CreateDepthChart(CurrentWorld=CurrentWorld, TS=TeamSeasonID, FullDepthChart = False, PositionDepthChart=PositionDepthChart.copy())
     else:
         return JsonResponse({'message':'Can only change redshirts from user team'}, status=422)
     return JsonResponse({'message':'Depth Chart Reset.'}, status=200)
@@ -524,7 +531,8 @@ def POST_AutoTeamRedshirts(request, WorldID, TeamID):
     TeamSeasonID = TeamSeason.objects.filter(TeamID_id = TeamID).filter(LeagueSeasonID__IsCurrent = True).select_related('LeagueSeasonID__LeagueID').select_related('TeamID').first()
 
     if TeamSeasonID.TeamID.IsUserTeam:
-        TeamRedshirts(TeamSeasonID, CurrentWorld)
+        print('TeamRedshirts(TeamSeasonID, CurrentWorld)')
+        TeamRedshirts(TeamSeasonID, CurrentWorld, SaveInFunc=True)
     else:
         return JsonResponse({'message':'Can only change redshirts from user team'}, status=422)
     return JsonResponse({'message':'Players redshirted.', 'redirect': ''}, status=200)
@@ -792,6 +800,8 @@ def Page_Conferences(request, WorldID, ConferenceID = None):
         #ThisConference['OpposingConferences'] = OpposingConferences
 
         ConferenceStandings.append(ThisConference)
+
+    print('ConferenceList', ConferenceStandings)
     context['ConferenceStandings'] = ConferenceStandings
     if DoAudit:
         end = time.time()
@@ -1243,6 +1253,7 @@ def Page_World(request, WorldID):
     AuditTeamCount = CurrentWorld.team_set.all().count()
     UserTeam = GetUserTeam(WorldID)
 
+    SelectPreseasonAllAmericans(CurrentWorld, CurrentSeason)
     page['NavBarLinks'] = NavBarLinks(Path = 'Overview', GroupName='World', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
 
     if DoAudit:
@@ -1769,10 +1780,13 @@ def Page_TeamRecords(request, WorldID, TeamID=None, ConferenceID = None):
 
 def Page_PlayerStats(request, WorldID, TeamID = None, SeasonStartYear = None):
     DoAudit = True
+    if DoAudit:
+        start = time.time()
+        reset_queries()
     page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
-    CurrentWorld  = World.objects.get(WorldID = WorldID)
-    CurrentWeek     = Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
-    CurrentSeason = LeagueSeason.objects.get(IsCurrent = 1, WorldID = CurrentWorld )
+    CurrentWorld  = World.objects.filter(WorldID = WorldID).prefetch_related('week_set', 'leagueseason_set').first()
+    CurrentWeek     = CurrentWorld.week_set.filter(IsCurrent = 1).select_related('PhaseID', 'PhaseID__LeagueSeasonID').first()#Week.objects.get(IsCurrent = 1, WorldID = CurrentWorld)
+    CurrentSeason = CurrentWorld.leagueseason_set.filter(IsCurrent = 1).first()
     UserTeam = GetUserTeam(WorldID)
     Filters = {'WorldID': WorldID, 'playerteamseason__TeamSeasonID__TeamID__isnull': False}
     Filters['playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent'] = True
@@ -1802,6 +1816,10 @@ def Page_PlayerStats(request, WorldID, TeamID = None, SeasonStartYear = None):
 
     context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'CurrentWeek': CurrentWeek, 'Players': Players, 'Seasons': Seasons}
     context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld)
+    if DoAudit:
+        end = time.time()
+        TimeElapsed = end - start
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription = 'Page_PlayerStats', QueryCount = len(connection.queries))
     return render(request, 'HeadFootballCoach/PlayerStats.html', context)
 
 
@@ -1841,7 +1859,11 @@ def Page_TeamDepthChart(request, WorldID, TeamID, SeasonStartYear = None):
     PTSDC = PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = TeamSeasonID).filter(IsStarter = True).count()
     if PTSDC < 22:
         PlayerTeamSeasonDepthChart.objects.filter(WorldID_id = WorldID).filter(PlayerTeamSeasonID__TeamSeasonID = TeamSeasonID).filter(PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamID = TeamID).delete()
-        CreateDepthChart(CurrentWorld=CurrentWorld, TS=TeamSeasonID)
+        Positions = Position.objects.all().values('PositionAbbreviation', 'PositionCountPerAwardTeam', 'PositionID')
+        PositionDepthChart = {}
+        for Pos in Positions:
+            PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
+        CreateDepthChart(CurrentWorld=CurrentWorld, TS=TeamSeasonID, FullDepthChart = False, PositionDepthChart=PositionDepthChart.copy())
 
 
     PlayerList = Player.objects.filter(WorldID_id = WorldID).filter(playerteamseason__TeamSeasonID = TeamSeasonID, playerteamseason__RedshirtedThisSeason = False).values( 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL',
@@ -5799,9 +5821,10 @@ def GET_PlayerStats_Departures(request, WorldID):
 def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
 
 
-    DoAudit = False
+    DoAudit = True
     if DoAudit:
         start = time.time()
+        reset_queries()
 #Get Schedule
     AllTeams = Team.objects.filter(WorldID = WorldID)
     CurrentWorld = World.objects.get(WorldID = WorldID)
@@ -5819,59 +5842,18 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
     CurrentWeekNumber = CurrentWeek.WeekNumber
     HistoricalWeek = GetHistoricalWeek(CurrentWorld, CurrentSeason)
 
-    TeamInfoRatings = Team.objects.filter(WorldID = WorldID).filter(teamseason__LeagueSeasonID = CurrentSeason).values('TeamID', 'teamseason__TeamPrestige', 'teamseason__FacilitiesRating', 'teamseason__ProPotentialRating', 'teamseason__CampusLifestyleRating', 'teamseason__AcademicPrestigeRating', 'teamseason__TelevisionExposureRating', 'teamseason__CoachStabilityRating', 'teamseason__ChampionshipContenderRating', 'teamseason__LocationRating').annotate(
-        TeamPrestige = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Team Prestige')),
-        Facilities = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Facilities')),
-        ProPotential = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Pro Potential')),
-        CampusLifestyle = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Campus Lifestyle')),
-        AcademicPrestige = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Academic Prestige')),
-        TelevisionExposure = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Television Exposure')),
-        CoachLoyalty = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Coach Loyalty')),
-        ChampionshipContender = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Championship Contender')),
-        Location = Max('teamseason__teamseasoninforating__TeamRating', filter=Q(teamseason__teamseasoninforating__TeamInfoTopicID__AttributeName = 'Location')),
+    TeamInfoRatings = TeamSeasonInfoRating.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).values('TeamSeasonID__TeamID', 'TeamInfoTopicID__AttributeName', 'TeamRating').annotate(
 
-        TeamPrestige_Rank=Window(
-            expression=Rank(),
-            order_by=F("TeamPrestige").desc(),
-            ),
-        FacilitiesRating_Rank=Window(
-            expression=Rank(),
-            order_by=F("Facilities").desc(),
-            ),
-        ProPotentialRating_Rank=Window(
-            expression=Rank(),
-            order_by=F("ProPotential").desc(),
-            ),
-         CampusLifestyleRating_Rank=Window(
-             expression=Rank(),
-             order_by=F("CampusLifestyle").desc(),
-        ),
-        AcademicPrestigeRating_Rank=Window(
-             expression=Rank(),
-             order_by=F("AcademicPrestige").desc(),
-             ),
-        TelevisionExposureRating_Rank=Window(
-             expression=Rank(),
-             order_by=F("TelevisionExposure").desc(),
-             ),
-        CoachStabilityRating_Rank=Window(
-             expression=Rank(),
-             order_by=F("CoachLoyalty").desc(),
-             ),
-        ChampionshipContenderRating_Rank=Window(
-             expression=Rank(),
-             order_by=F("ChampionshipContender").desc(),
-             ),
-        LocationRating_Rank=Window(
-             expression=Rank(),
-             order_by=F("Location").desc(),
+        TeamInfoTopic_Rank=Window(
+            partition_by=F('TeamInfoTopicID'),
+             expression=RowNumber(),
+             order_by=F("TeamRating").desc(),
          ),
     )
 
-    TeamInfoRatings = [T for T in TeamInfoRatings if T['TeamID'] == TeamID][0]
+    TeamInfoRatings = [T for T in TeamInfoRatings if T['TeamSeasonID__TeamID'] == TeamID]
 
-
-    teamgames = TeamGame.objects.filter(WorldID = WorldID).filter(TeamSeasonID__TeamID = ThisTeam).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).select_related('GameID').select_related('GameID__WeekID').order_by('GameID__WeekID')
+    teamgames = TeamGame.objects.filter(WorldID = WorldID).filter(TeamSeasonID__TeamID = ThisTeam).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).select_related('GameID').select_related('GameID__WeekID').select_related('GameID__BowlID').order_by('GameID__WeekID')
 
     PlayedGames = teamgames.filter(GameID__WasPlayed = 1).order_by('-GameID__WeekID')
     UnplayedGames = teamgames.filter(GameID__WasPlayed = 0).order_by('GameID__WeekID')
@@ -6068,7 +6050,7 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
-        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 9, AuditDescription='Page_team' )
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 9, AuditDescription='Page_team', QueryCount = len(connection.queries) )
     return render(request, 'HeadFootballCoach/Team.html', context)
 
 
@@ -6104,10 +6086,14 @@ def POST_SimAction(request, WorldID):
         GameSet = ThisWeek.game_set.filter(WasPlayed = 0).annotate(MinRank = Min('teamgame__TeamSeasonWeekRankID__NationalRank')).select_related('WorldID').select_related('LeagueSeasonID__LeagueID').select_related('BowlID').prefetch_related('teamgame_set').order_by('MinRank')
         for game in GameSet:
 
-            for TG in game.teamgame_set.all():
+            for TG in game.teamgame_set.all().select_related('TeamSeasonID'):
                 PTSDC = PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = TG.TeamSeasonID).count()
                 if PTSDC < 22:
-                    CreateDepthChart(CurrentWorld=CurrentWorld, TS=TG.TeamSeasonID)
+                    Positions = Position.objects.all().values('PositionAbbreviation', 'PositionCountPerAwardTeam', 'PositionID')
+                    PositionDepthChart = {}
+                    for Pos in Positions:
+                        PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
+                    CreateDepthChart(CurrentWorld=CurrentWorld, TS=TG.TeamSeasonID, FullDepthChart = False, PositionDepthChart=PositionDepthChart.copy())
 
             if DoAudit:
                 start = time.time()

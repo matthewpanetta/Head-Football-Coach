@@ -99,7 +99,7 @@ def CalculateTeamPlayerOverall(TSP, PlayerID):
     return int(TotalRating / TSP['Total_Rating_Weight'])
 
 
-def TeamRedshirts(TS, WorldID):
+def TeamRedshirts(TS, WorldID, SaveInFunc = False):
 
     PlayersToRedshirt = TS.playerteamseason_set.filter(PlayerID__WasPreviouslyRedshirted = False).filter(Q(ClassID__ClassAbbreviation = 'SO') | Q(ClassID__ClassAbbreviation = 'FR')).exclude(playerteamseasondepthchart__IsStarter = True).annotate(DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 6))
     HeadCount = TS.coachteamseason_set.filter(CoachPositionID__CoachPositionAbbreviation = 'HC').values('CoachID__RedshirtTendency').first()
@@ -111,20 +111,15 @@ def TeamRedshirts(TS, WorldID):
             PTR.RedshirtedThisSeason = True
             PTRToSave.append(PTR)
 
-    PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'])
-
-    return None
-
+    if SaveInFunc:
+        PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'])
+        return None
+    return PTRToSave
 
 
 def TeamCuts(TS, WorldID, NumPlayersToCut):
 
-    PlayersToCut = TS.playerteamseason_set.exclude(playerteamseasondepthchart__IsStarter = True).annotate(DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 10), OverallRating = F('playerteamseasonskill__OverallRating')).order_by('-DepthChartPositionMin', 'OverallRating')[:NumPlayersToCut]
-    HeadCount = TS.coachteamseason_set.filter(CoachPositionID__CoachPositionAbbreviation = 'HC').values('CoachID__RedshirtTendency').first()
-
-    for PTR in PlayersToCut:
-        print('Cutting {PlayerName} from {Team}, Pos: {PlayerPosition}, Overall: {Overall}, DepthChart: {DepthChartPositionMin}'.format(PlayerName=PTR.PlayerID.PlayerLastName, Team=TS.TeamID.TeamName,PlayerPosition=PTR.PlayerID.PositionID.PositionAbbreviation, Overall=PTR.OverallRating, DepthChartPositionMin=PTR.DepthChartPositionMin))
-        PTR.delete()
+    PlayersToCut = PlayerTeamSeason.objects.filter(PlayerTeamSeasonID__in = TS.playerteamseason_set.exclude(playerteamseasondepthchart__IsStarter = True).annotate(DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 10), OverallRating = F('playerteamseasonskill__OverallRating')).order_by('-DepthChartPositionMin', 'OverallRating')[:NumPlayersToCut]).delete()
 
     return None
 
@@ -269,12 +264,22 @@ def UpdateTeamPositions(LS, WorldID, TeamSeasonID = None):
     return None
 
 
-def PopulateTeamDepthCharts(LS, WorldID, FullDepthChart = False):
+def PopulateTeamDepthCharts(LS, WorldID, FullDepthChart = False, TeamSeasonID = None):
     print('Populating depth charts')
 
-    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False):
-        PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = TeamSeasonID).delete()
-        CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID, FullDepthChart = False)
+    PlayerTeamSeasonDepthChart.objects.filter(WorldID = WorldID).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID = LS).filter(PlayerTeamSeasonID__TeamSeasonID__TeamID__isnull = False).delete()
+    Positions = list(Position.objects.all().values('PositionAbbreviation', 'PositionCountPerAwardTeam', 'PositionID'))
+
+    Filters = {}
+    if TeamSeasonID is not None:
+        Filters = {'TeamSeasonID': TeamSeasonID}
+
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**Filters).prefetch_related('coachteamseason_set', 'playerteamseason_set'):
+        print('Populating depth charts for', TeamSeasonID)
+        PositionDepthChart = {}
+        for Pos in Positions:
+            PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
+        CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID, FullDepthChart = FullDepthChart, PositionDepthChart=PositionDepthChart)
 
 def AssignRedshirts(LS, WorldID, PrepForUserTeam=False):
     print('Assigning Redshirts')
@@ -284,8 +289,11 @@ def AssignRedshirts(LS, WorldID, PrepForUserTeam=False):
     else:
         UserTeamFilter = {'TeamID__IsUserTeam': False}
 
+    PTRToSave = []
     for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**UserTeamFilter):
-        TeamRedshirts(TS=TeamSeasonID , WorldID=WorldID )
+        PTRToSave += TeamRedshirts(TS=TeamSeasonID , WorldID=WorldID )
+
+    PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'])
 
 def CutPlayers(LS, WorldID, PrepForUserTeam=False):
     print('Cutting Players')
@@ -1450,22 +1458,41 @@ def CreateRecruitingClass(LS, WorldID):
     RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False)
     PlayerRecruitingInterest.objects.bulk_create(PlayerRecruitingInterestToSave, ignore_conflicts=False)
 
-    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID').select_related('TeamSeasonID__TeamID__CityID__StateID__RegionID').prefetch_related('PlayerTeamSeasonID__PlayerID__playerrecruitinginterest_set').annotate(RecruitingTeamRank_new = Window(
-        expression=RowNumber(),
-        partition_by=F("PlayerTeamSeasonID"),
-        order_by=F("InterestLevel").desc(),
-    ))
+    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID', 'TeamSeasonID__TeamID__CityID__StateID__RegionID').annotate(
+        RecruitingTeamRank_new = Window(
+            expression=RowNumber(),
+            partition_by=F("PlayerTeamSeasonID"),
+            order_by=F("InterestLevel").desc(),
+        ))
+
+
+    PlayerRecruitingInfoRatingDictList_Full = [{'PlayerID': I['PlayerID'], I['TeamInfoTopicID__AttributeName']: {'PlayerRecruitingInterestID': I['PlayerRecruitingInterestID'], 'PitchRecruitInterestRank': I['PitchRecruitInterestRank'], }} for I in PlayerRecruitingInterest.objects.filter(WorldID = WorldID).filter(PlayerID__playerteamseason__TeamSeasonID__LeagueSeasonID = LS).values('TeamInfoTopicID', 'TeamInfoTopicID__AttributeName','PlayerRecruitingInterestID', 'PitchRecruitInterestRank', 'PlayerID')]
+
+    PlayerRecruitingInfoRatingDict_Full = {}
+
+    for PTIRD in PlayerRecruitingInfoRatingDictList_Full:
+        PlayerID = PTIRD['PlayerID']
+        if PlayerID not in PlayerRecruitingInfoRatingDict_Full:
+            PlayerRecruitingInfoRatingDict_Full[PlayerID] = {}
+
+        for k in PTIRD:
+            if k != 'PlayerID':
+                PlayerRecruitingInfoRatingDict_Full[PlayerID][k] = PTIRD[k]
+
 
     CalculatedTITs = ['Close to Home', 'Playing Time', 'Play Style']
 
     RecruitTeamSeasonInterest_ToSave = []
+    count = 0
     for R in RTS:
+        count +=1
         R.RecruitingTeamRank = R.RecruitingTeamRank_new
 
         RecruitCity = RecruitCityDict[R.PlayerTeamSeasonID.PlayerID_id]
-        TS =TSDict[R.TeamSeasonID_id]
 
-        PlayerRecruitingInfoRatingDict = {I['TeamInfoTopicID__AttributeName']: {'PlayerRecruitingInterestID': I['PlayerRecruitingInterestID'], 'PitchRecruitInterestRank': I['PitchRecruitInterestRank'], } for I in R.PlayerTeamSeasonID.PlayerID.playerrecruitinginterest_set.all().values('TeamInfoTopicID', 'TeamInfoTopicID__AttributeName','PlayerRecruitingInterestID', 'PitchRecruitInterestRank')}
+        TS = TSDict[R.TeamSeasonID_id]
+
+        PlayerRecruitingInfoRatingDict = PlayerRecruitingInfoRatingDict_Full[R.PlayerTeamSeasonID.PlayerID_id]
 
         RecruitDistance = DistanceBetweenCities_Dict(RecruitCity, TS['TeamCity'])
         RecruitDistanceInterestValue = 0
@@ -1995,16 +2022,27 @@ def InitializeLeaguePlayers(WorldID, LS, IsFirstLeagueSeason ):
         reset_queries()
 
     PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=True)
+    print( 'PopulateTeamDepthCharts',len(connection.queries))
     AssignRedshirts(LS, WorldID)
+    print( 'AssignRedshirts',len(connection.queries))
     CutPlayers(LS, WorldID)
+    print( 'CutPlayers',len(connection.queries))
     UpdateTeamPositions(LS, WorldID)
+    print( 'UpdateTeamPositions',len(connection.queries))
     PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=False)
+    print( 'PopulateTeamDepthCharts',len(connection.queries))
     ChooseTeamCaptains(LS, WorldID)
+    print( 'ChooseTeamCaptains',len(connection.queries))
     CalculateTeamOverall(LS, WorldID)
+    print( 'CalculateTeamOverall',len(connection.queries))
     CalculateRankings(LS, WorldID, CurrentWeek)
+    print( 'CalculateRankings',len(connection.queries))
     CalculateConferenceRankings(LS, WorldID, CurrentWeek)
+    print( 'CalculateConferenceRankings',len(connection.queries))
     SelectBroadcast(LS, WorldID, CurrentWeek)
+    print( 'SelectBroadcast',len(connection.queries))
     SelectPreseasonAllAmericans(WorldID, LS)
+    print( 'SelectPreseasonAllAmericans',len(connection.queries))
 
     if DoAudit:
         end = time.time()

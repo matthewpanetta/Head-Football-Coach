@@ -92,24 +92,13 @@ function DrawTeamInfoChildRows(WorldID, TeamID, data) {
 } );
 
 
-  var TableData = [
-    {'Field Name': 'Academic Prestige', 'Category': 'AcademicPrestigeRating', 'Rating': data.teamseason__AcademicPrestigeRating,'Rank': data.AcademicPrestigeRating_Rank},
-    {'Field Name': 'Campus Lifestyle', 'Category': 'CampusLifestyleRating','Rating': data.teamseason__CampusLifestyleRating,'Rank': data.CampusLifestyleRating_Rank},
-    {'Field Name': 'Championship Contender', 'Category': 'ChampionshipContenderRating','Rating': data.teamseason__ChampionshipContenderRating,'Rank': data.ChampionshipContenderRating_Rank},
-    {'Field Name': 'Coach Stability', 'Category': 'CoachStabilityRating','Rating': data.teamseason__CoachStabilityRating,'Rank': data.CoachStabilityRating_Rank},
-    {'Field Name': 'Facilities', 'Category': 'FacilitiesRating','Rating': data.teamseason__FacilitiesRating,'Rank': data.FacilitiesRating_Rank},
-    {'Field Name': 'Location', 'Category': 'LocationRating','Rating': data.teamseason__LocationRating,'Rank': data.LocationRating_Rank},
-    {'Field Name': 'Pro Potential', 'Category': 'ProPotentialRating','Rating': data.teamseason__ProPotentialRating,'Rank': data.ProPotentialRating_Rank},
-    {'Field Name': 'Team Prestige', 'Category': 'TeamPrestige','Rating': data.teamseason__TeamPrestige,'Rank': data.TeamPrestige_Rank},
-    {'Field Name': 'Television Exposure', 'Category': 'TelevisionExposureRating','Rating': data.teamseason__TelevisionExposureRating,'Rank': data.TelevisionExposureRating_Rank},
-  ];
 
   var table = $('#TeamInfo').DataTable({
     dom: 't',
-    data: TableData,
+    data: data,
     columns: [
-      {'data': 'Field Name', "sortable": true, 'orderSequence': AscFirst},
-      {'data': 'Rating', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+      {'data': 'TeamInfoTopicID__AttributeName', "sortable": true, 'orderSequence': AscFirst},
+      {'data': 'TeamRating', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
         var Rating = StringValue;
         var GradeObject = NumberToGrade_True(StringValue);
         console.log('GradeObject', GradeObject)
@@ -119,7 +108,7 @@ function DrawTeamInfoChildRows(WorldID, TeamID, data) {
           $(td).parent().attr('Category', DataObject.Category)
           $(td).parent().attr('CategoryDisplayName', DataObject['Field Name'])
       }},
-      {'data': 'Rank', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+      {'data': 'TeamInfoTopic_Rank', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
           $(td).html("<span>"+ordinal_suffix_of(StringValue)+"</span>");
       }},
       {'data': null, "sortable": false, 'className': 'details-control',   "defaultContent": ''},

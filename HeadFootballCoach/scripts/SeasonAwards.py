@@ -92,6 +92,8 @@ def NationalAwards(WorldID, CurrentSeason):
 def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
     CurrentWorld = WorldID
 
+    PlayerTeamSeasonAward.objects.filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID = LeagueSeasonID).delete()
+
     AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).exclude(ClassID__ClassName = 'Freshman').values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
         TeamGamesPlayed=Sum('playergamestat__TeamGamesPlayed'),
         GameScore=Sum('playergamestat__GameScore'),
@@ -109,7 +111,7 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
             default=Value(0),
             output_field = IntegerField()
         )
-    ).order_by('-IsStarter', '-GameScorePerGame', '-OverallRating')
+    ).order_by('-OverallRating')
 
     if AllPlayers.count() == 0:
         return None
