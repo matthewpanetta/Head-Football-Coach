@@ -2093,27 +2093,27 @@ class Game(models.Model):
     @property
     def DateShortDisplayDayOfWeek(self):
         return self.WeekID.WeekName
-    # @property
-    # def GameHeadlineDisplay(self):
-    #
-    #
-    #     if self.BowlID is not None:
-    #         if self.BowlID.IsNationalChampionship == True:
-    #             return 'National Championship'
-    #         else:
-    #             return self.BowlID.BowlName
-    #     elif self.IsConferenceChampionship:
-    #         return self.HomeTeamSeasonID.ConferenceID.ConferenceName + ' Championship'
-    #     elif self.TeamRivalryID is not None:
-    #         if self.TeamRivalryID.RivalryName is not None:
-    #             return self.TeamRivalryID.RivalryName
-    #         return 'Rivalry game!'
-    #     elif self.NationalBroadcast:
-    #         return 'National Broadcast'
-    #     elif self.RegionalBroadcast:
-    #         return 'Regional Broadcast'
-    #
-    #     return ''
+    @property
+    def GameHeadlineDisplay(self):
+
+
+        if self.BowlID is not None:
+            if self.BowlID.IsNationalChampionship == True:
+                return 'National Championship'
+            else:
+                return self.BowlID.BowlName
+        elif self.IsConferenceChampionship:
+            return self.HomeTeamSeasonID.ConferenceID.ConferenceName + ' Championship'
+        elif self.TeamRivalryID is not None:
+            if self.TeamRivalryID.RivalryName is not None:
+                return self.TeamRivalryID.RivalryName
+            return 'Rivalry game!'
+        elif self.NationalBroadcast:
+            return 'National Broadcast'
+        elif self.RegionalBroadcast:
+            return 'Regional Broadcast'
+
+        return ''
 
     @property
     def GameDisplay(self):
@@ -2837,7 +2837,6 @@ class RecruitTeamSeason(models.Model):
     Scouted_Overall = models.PositiveSmallIntegerField(default=0)
     ScoutingFuzz = models.PositiveSmallIntegerField(default=0)
 
-
     Scouted_Strength_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Scouted_Agility_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Scouted_Speed_Rating                = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
@@ -2879,7 +2878,8 @@ class RecruitTeamSeason(models.Model):
     Scouted_KickReturn_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
 
     def __str__(self):
-        return str(self.PlayerTeamSeasonID.PlayerID) + ' ' + str(self.TeamSeasonID)
+
+        return "{: >30} {: >50}".format(str(self.PlayerTeamSeasonID.PlayerID), str(self.TeamSeasonID))
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
@@ -3099,6 +3099,7 @@ class TeamInfoTopic(models.Model):
     RecruitMatchIsComputed = models.BooleanField(default=True)
     RecruitInterestWeight = models.IntegerField(default = 1)
 
+    IsPrestigeOrLocation = models.BooleanField(default = False)
     def __str__(self):
         return 'TeamInfoTopic: {AttributeName}'.format(AttributeName = self.AttributeName)
 

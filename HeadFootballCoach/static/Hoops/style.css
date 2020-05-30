@@ -633,7 +633,6 @@ input[type=text], input[type=password] {
 .teamScheduleGameDashboard {
   height: 260px;
   margin-top: 20px;
-  margin-bottom: 20px;
 }
 
 .worldScheduleGameDashboard {
@@ -1774,6 +1773,10 @@ div.dt-buttons {
   max-width: 400px;
 }
 
+.mw500 {
+  max-width: 500px;
+}
+
 .mw300 {
   max-width: 300px;
 }
@@ -1892,4 +1895,12 @@ flex-direction: column;
   float: left;
   margin: 10px 0 0 10px;
   text-align: right;
+}
+
+select {
+  background-color: inherit;
+}
+
+thead tr {
+  background-color: white;
 }

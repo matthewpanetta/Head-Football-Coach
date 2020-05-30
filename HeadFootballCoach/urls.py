@@ -70,6 +70,11 @@ urlpatterns = [
     path('World/<int:WorldID>/Schedule/Team/<int:TeamID>', views.Page_Schedule, name='Schedule'),
 
 
+
+    path('GET/World/<int:WorldID>/PlayerStats/', views.GET_PlayerStats, name='PlayerStats'),
+    path('GET/World/<int:WorldID>/PlayerStats/Season/<int:SeasonStartYear>/', views.GET_PlayerStats, name='PlayerStats'),
+    path('GET/World/<int:WorldID>/PlayerStats/Team/<int:TeamID>/', views.GET_PlayerStats, name='PlayerStats'),
+
     path('World/<int:WorldID>/Search/<str:SearchInput>/', views.Page_Search, name='Search'),
 
     #POSTS BELOW

@@ -1,7 +1,8 @@
-from ..models import Headline,World, Playoff,Week, TeamSeasonPosition, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
+from ..models import Headline,World, Playoff,Week,Audit, RecruitTeamSeasonInterest, TeamSeasonPosition, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
 from random import uniform, randint
 import numpy
-from ..utilities import WeightedProbabilityChoice, Min, DistanceBetweenCities, GetValuesOfSingleObject, NormalBounds
+import time
+from ..utilities import WeightedProbabilityChoice, Min, DistanceBetweenCities, GetValuesOfSingleObject, NormalBounds, NormalTrunc
 from math import sin, cos, sqrt, atan2, radians, log
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When,  ExpressionWrapper, FloatField, IntegerField, DecimalField, PositiveSmallIntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery
 from django.db.models.functions.window import Rank, RowNumber
@@ -9,6 +10,9 @@ from django.db.models.functions import Length, Concat, Coalesce
 from django_cte import CTEManager, With
 from django.db import connection, reset_queries
 
+class Round(Func):
+  function = 'ROUND'
+  arity = 2
 
 def RandomRecruitPreference(RecruitPreferenceBase):
 
@@ -24,6 +28,34 @@ def RandomRecruitPreference(RecruitPreferenceBase):
         OrderedPreferences.append(c)
 
     return OrderedPreferences
+
+
+def ScoutPlayer(RTS):
+    if RTS.ScoutingFuzz >= 2:
+        RTS.ScoutingFuzz = RTS.ScoutingFuzz - 2
+    else:
+        RTS.ScoutingFuzz = 0
+
+    TSP = RTS.TeamSeasonID.teamseasonposition_set.filter(PositionID = RTS.PlayerTeamSeasonID.PlayerID.PositionID).first()
+    RTS_Rating_Fields = [field.name for field in RecruitTeamSeason._meta.get_fields() if 'Scouted_' in field.name and '_Rating' in field.name and 'Base' not in field.name]
+
+    OverallSum = 0
+    WeightSum = 0
+    for RatingField in RTS_Rating_Fields:
+        RawRatingField = RatingField.replace('Scouted_', '')
+        WeightRatingField = RawRatingField +'_Weight'
+        BaseVal = getattr(RTS.PlayerTeamSeasonID.playerteamseasonskill, RawRatingField)
+        NewVal = NormalTrunc(BaseVal, RTS.ScoutingFuzz, 0,99)
+        setattr(RTS, RatingField, NewVal)
+
+        OverallSum+= float(NewVal) * float(getattr(TSP, WeightRatingField))
+        WeightSum += float(getattr(TSP, WeightRatingField))
+
+    OverallSum = int(OverallSum * 1.0 / WeightSum)
+    RTS.Scouted_Overall = OverallSum
+
+
+    return RTS
 
 
 def WeeklyRecruiting(WorldID):
@@ -240,7 +272,14 @@ def PrepareForSigningDay(CurrentSeason,WorldID):
         TeamSeasons_ToSave.append(TS)
     TeamSeason.objects.bulk_update(TeamSeasons_ToSave, ['RecruitingClassRank'])
 
+
+
 def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
+    DoAudit = True
+    if DoAudit:
+        start = time.time()
+        reset_queries()
+
     print('Doing fake recruiting!!')
     CurrentWorld = World.objects.get(WorldID = WorldID)
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
@@ -251,8 +290,6 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
 
     PlayersThatNeedMoreTeams = []
-
-    RecruitList = Player.objects.filter(WorldID= CurrentWorld).filter(IsRecruit=True).filter(RecruitSigned=False)
 
     TeamSeasonList = CurrentSeason.teamseason_set.filter(teamseasonweekrank__IsCurrent = True).select_related('TeamID').annotate(
         TeamPrestige = Max('teamseasoninforating__TeamRating', filter=Q(teamseasoninforating__TeamInfoTopicID__AttributeName = 'Team Prestige')),
@@ -274,10 +311,11 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
     TeamPrestigeModified = .5
     TeamInterestRankModifier = 1
     RTSToSave = []
+    RTS_InterestToSave = []
     TSDict = {}
     print('Teams doing recruiting!')
 
-    AllRecruitsAvailable = RecruitTeamSeason.objects.filter(WorldID_id=WorldID).filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).annotate(
+    AllRecruitsAvailable = RecruitTeamSeason.objects.filter(WorldID_id=WorldID).filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).select_related('PlayerTeamSeasonID', 'PlayerTeamSeasonID__playerteamseasonskill', 'PlayerTeamSeasonID__PlayerID').prefetch_related('recruitteamseasoninterest_set').annotate(
         CommitsNeeded = Subquery(TeamSeasonPosition.objects.filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PositionID = OuterRef('PlayerTeamSeasonID__PlayerID__PositionID')).annotate(
             PlayersNeeded = F('MinimumPlayerCount') - F('FreshmanPlayerCount') - F('SophomorePlayerCount') - F('JuniorPlayerCount') - F('CommitPlayerCount'),
         ).values('PlayersNeeded')),
@@ -298,6 +336,11 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             default=Value(1.0),
             output_field=DecimalField()
         ),
+        ActivelyRecruitingModifier = Case(
+            When(IsActivelyRecruiting = True, then=1.15),
+            default=Value(1.0),
+            output_field=DecimalField()
+        ),
         CommitsNeededModifier = Case(
             When(CommitsNeeded__gte = 2, then=Value(1.4)),
             When(CommitsNeeded = 1, then=Value(1.2)),
@@ -308,61 +351,75 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             default=Value(1.0),
             output_field=FloatField()
         ),
-        RecruitingPriority = ExpressionWrapper(F('Scouted_Overall') * F('InterestRankPriorityModifier') * F('CommitsNeededModifier'), output_field=DecimalField())
+        RecruitingPriority = ExpressionWrapper(F('Scouted_Overall') * F('InterestRankPriorityModifier') * F('CommitsNeededModifier') * F('ActivelyRecruitingModifier'), output_field=DecimalField())
     ).order_by('-RecruitingPriority')
 
 
-    for TS in TeamSeasonList:
-        print(TS)
-        TSDict[TS['TeamSeasonID']] = TS
-        TSDict[TS['TeamSeasonID']]['RecruitsActivelyRecruiting'] = []
-        TSDict[TS['TeamSeasonID']]['RecruitsNotActivelyRecruiting'] = []
-
-        TSDict[TS['TeamSeasonID']]['AllRecruitsAvailable'] = AllRecruitsAvailable.filter(TeamSeasonID_id = TS['TeamSeasonID'])[:35]
-
-        count = 1
-        for RTS in TSDict[TS['TeamSeasonID']]['AllRecruitsAvailable']:
-            count +=1
-            if RTS.IsActivelyRecruiting:
-                TSDict[TS['TeamSeasonID']]['RecruitsActivelyRecruiting'].append(RTS)
-            else:
-                TSDict[TS['TeamSeasonID']]['RecruitsNotActivelyRecruiting'].append(RTS)
-
 
     for TS in TeamSeasonList:
-        RecruitsActivelyRecruiting = TSDict[TS['TeamSeasonID']]['RecruitsActivelyRecruiting']
-        RecruitsNotActivelyRecruiting = TSDict[TS['TeamSeasonID']]['RecruitsNotActivelyRecruiting']
+        RecruitsActivelyRecruiting_QS = AllRecruitsAvailable.filter(TeamSeasonID = TS)
+        RecruitsActivelyRecruiting = []
+        TSPosCounter = {}
+        RecruitsActivelyRecruitingCounter = 0
+        for RTS in RecruitsActivelyRecruiting_QS:
+            if RTS.PlayerTeamSeasonID.PlayerID.PositionID not in TSPosCounter:
+                TSPosCounter[RTS.PlayerTeamSeasonID.PlayerID.PositionID] = 0
 
-
-        for u in range(0, TS['ActiveRecruitCount'] - len(RecruitsActivelyRecruiting)):
-            if u < len(RecruitsNotActivelyRecruiting):
-                RTS = RecruitsNotActivelyRecruiting[u]
-                RTS.IsActivelyRecruiting = True
-
+            if TSPosCounter[RTS.PlayerTeamSeasonID.PlayerID.PositionID] < 2 and RecruitsActivelyRecruitingCounter < 12:
+                RecruitsActivelyRecruitingCounter +=1
+                TSPosCounter[RTS.PlayerTeamSeasonID.PlayerID.PositionID] +=1
                 RecruitsActivelyRecruiting.append(RTS)
 
         counter = 0
         for counter in range(0, len(RecruitsActivelyRecruiting)):
             RTS = RecruitsActivelyRecruiting[counter]
-            ThisWeekInterestIncrease = 0
-            if counter < TS['NumberOfRecruits_FullSell']:
-                ThisWeekInterestIncrease =  RTS.Preference1MatchRating + RTS.Preference2MatchRating + RTS.Preference3MatchRating + (TeamPrestigeModified * RTS.TeamPrestigeRating) + RTS.DistanceMatchRating
-            elif counter < TS['NumberOfRecruits_FullSell'] + TS['NumberOfRecruits_HalfSell']:
-                ThisWeekInterestIncrease =  RTS.Preference1MatchRating + RTS.Preference2MatchRating + (TeamPrestigeModified * RTS.TeamPrestigeRating) + RTS.DistanceMatchRating
-            elif counter < TS['NumberOfRecruits_FullSell'] + TS['NumberOfRecruits_HalfSell'] + TS['NumberOfRecruits_LightSell']:
-                ThisWeekInterestIncrease =  RTS.Preference1MatchRating + (TeamPrestigeModified * RTS.TeamPrestigeRating) + RTS.DistanceMatchRating
-            elif counter < TS['NumberOfRecruits_FullSell'] + TS['NumberOfRecruits_HalfSell'] + TS['NumberOfRecruits_LightSell'] + TS['NumberOfRecruits_OnBoard']:
-                ThisWeekInterestIncrease =  (TeamPrestigeModified * RTS.TeamPrestigeRating) + RTS.DistanceMatchRating
+            RTS_Interests = RTS.recruitteamseasoninterest_set.all().annotate(
+                PitchValue =  Round(((12 - F('PlayerRecruitingInterestID__PitchRecruitInterestRank')) ** .5) * ((F('TeamRating') / 10.0) ** 2), -1),
+                KnownPitchValue =  Case(
+                    When(PitchRecruitInterestRank_IsKnown = True, then=F('PitchValue')),
+                    default = Value(0),
+                    output_field=FloatField()
+                )
+            ).order_by('-KnownPitchValue', '-TeamRating')[:6]
+            UnknownInterests = [RTS for RTS in RTS_Interests if RTS.PitchRecruitInterestRank_IsKnown == False]
 
-            else:
-                RTS.IsActivelyRecruiting = False
+            ThisWeekInterestIncrease = 0
+            MinutesToTalk = 60
+            PitchCount = 0
+            ThisWeekInterestIncrease = 0
+            while MinutesToTalk > 0:
+                ActionTaken = False
+
+                if RTS.ScoutingFuzz > 0:
+
+                    RTS = ScoutPlayer(RTS)
+
+                elif not RTS.OfferMade:
+                    RTS.OfferMade = True
+                    ActionTaken = True
+
+                elif len(UnknownInterests) > 0:
+                    InterestToGaugeInterest = UnknownInterests.pop(0)
+                    InterestToGaugeInterest.PitchRecruitInterestRank_IsKnown = True
+                    RTS_InterestToSave.append(InterestToGaugeInterest)
+
+                else:
+                    ThisWeekInterestIncrease += RTS_Interests[PitchCount].PitchValue
+                    PitchCount+=1
+
+                RTS.IsActivelyRecruiting = True
+                MinutesToTalk -= 10
+
 
             ThisWeekInterestIncrease *= InterestModifier
             ThisWeekInterestIncrease = int(ThisWeekInterestIncrease / 5.0) * 5
+            print('RTS', RTS, 'Adding InterestLevel', ThisWeekInterestIncrease)
             RTS.InterestLevel += ThisWeekInterestIncrease
             RTSToSave.append(RTS)
 
-    RecruitTeamSeason.objects.bulk_update(RTSToSave, ['InterestLevel', 'IsActivelyRecruiting'])
+    FieldsToSave = ['VisitWeekID', 'CommitWeekID','Signed','OfferMade','InterestLevel', 'IsActivelyRecruiting','RecruitingTeamRank','Scouted_Overall','ScoutingFuzz','Scouted_Strength_Rating', 'Scouted_Agility_Rating','Scouted_Speed_Rating','Scouted_Acceleration_Rating','Scouted_Stamina_Rating','Scouted_Awareness_Rating','Scouted_Jumping_Rating','Scouted_Injury_Rating','Scouted_ThrowPower_Rating','Scouted_ShortThrowAccuracy_Rating','Scouted_MediumThrowAccuracy_Rating','Scouted_DeepThrowAccuracy_Rating','Scouted_ThrowOnRun_Rating', 'Scouted_ThrowUnderPressure_Rating','Scouted_PlayAction_Rating','Scouted_Elusiveness_Rating','Scouted_BallCarrierVision_Rating', 'Scouted_JukeMove_Rating','Scouted_BreakTackle_Rating','Scouted_Carrying_Rating','Scouted_Catching_Rating','Scouted_CatchInTraffic_Rating','Scouted_RouteRunning_Rating','Scouted_Release_Rating','Scouted_HitPower_Rating','Scouted_Tackle_Rating', 'Scouted_PassRush_Rating','Scouted_BlockShedding_Rating','Scouted_Pursuit_Rating', 'Scouted_PlayRecognition_Rating','Scouted_ManCoverage_Rating','Scouted_ZoneCoverage_Rating','Scouted_Press_Rating','Scouted_PassBlock_Rating','Scouted_RunBlock_Rating','Scouted_ImpactBlock_Rating','Scouted_KickPower_Rating','Scouted_KickAccuracy_Rating','Scouted_KickReturn_Rating']
+    RecruitTeamSeason.objects.bulk_update(RTSToSave, FieldsToSave)
+    RecruitTeamSeasonInterest.objects.bulk_update(RTS_InterestToSave, ['PitchRecruitInterestRank_IsKnown'])
     RTS = RecruitTeamSeason.objects.all().annotate(
     InterestLevelAdjusted = Case(
         When(IsActivelyRecruiting=False, then=F('InterestLevel') / 10.0),
@@ -386,10 +443,13 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             partition_by=F("PlayerTeamSeasonID__PlayerID"),
             order_by=F("InterestLevel").desc(),
         )
-    ).order_by('PlayerTeamSeasonID__PlayerID__Recruiting_NationalRank')
+    ).select_related('PlayerTeamSeasonID__PlayerID', 'TeamSeasonID__TeamID').order_by('PlayerTeamSeasonID__PlayerID__Recruiting_NationalRank')
 
 
     if PlayersReadyToSign.count() > 0:
+
+        for TS in TeamSeasonList:
+            TSDict[TS.TeamSeasonID] = TS
 
         RTSToSave = []
         TSPToSave = []
@@ -398,10 +458,10 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             RTS.Signed = True
             RTS.PlayerTeamSeasonID.PlayerID.RecruitSigned = True
 
-            TSDict[RTS.TeamSeasonID.TeamSeasonID]['ScholarshipsAvailable'] -= 1
+            TSDict[RTS.TeamSeasonID.TeamSeasonID].ScholarshipsAvailable -= 1
 
 
-            if TSDict[RTS.TeamSeasonID.TeamSeasonID]['ScholarshipsAvailable'] >= 0:
+            if TSDict[RTS.TeamSeasonID.TeamSeasonID].ScholarshipsAvailable >= 0:
                 RTSToSave.append(RTS)
                 PlayersToSave.append(RTS.PlayerTeamSeasonID.PlayerID)
 
@@ -424,6 +484,14 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             TS.ScholarshipsToOffer = PlayersPerTeam - TotalPlayers +SeniorCount - PlayersSigned
 
         TeamSeason.objects.bulk_update(ScholarshipsRemainingList, ['ScholarshipsToOffer'])
+
+
+    if DoAudit:
+        end = time.time()
+        TimeElapsed = end - start
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Weekly Recruiting', QueryCount = len(connection.queries))
+
+
 
 def FakeWeeklyRecruiting(WorldID, CurrentWeek):
     print('Doing fake recruiting!!')

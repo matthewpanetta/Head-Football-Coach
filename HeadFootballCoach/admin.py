@@ -56,7 +56,7 @@ class PlayerTeamSeasonSkillAdmin(admin.ModelAdmin):
     list_filter = ['PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PositionID']
 
 class RecruitTeamSeasonAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('VisitWeekID','VisitWeekID_id', 'visitweekid', 'visitweek_recruitteamseason','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('VisitWeekID','VisitWeekID_id', 'recruitteamseasoninterest','visitweekid', 'visitweek_recruitteamseason','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
     list_filter = ['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__RecruitingStars', 'Signed', 'TeamSeasonID__TeamID__TeamName',  'OfferMade', 'PlayerTeamSeasonID__PlayerID__CityID__StateID__StateAbbreviation']
 
 
@@ -153,7 +153,7 @@ class ConferenceAdmin(admin.ModelAdmin):
     list_filter = ['WorldID']
 
 class TeamInfoTopicAdmin(admin.ModelAdmin):
-    list_display = ['TeamInfoTopicID', 'AttributeName', 'RecruitMatchIsComputed', 'RecruitInterestWeight']
+    list_display = ['TeamInfoTopicID', 'AttributeName', 'RecruitMatchIsComputed', 'RecruitInterestWeight', 'IsPrestigeOrLocation']
 
 class PlayerRecruitingInterestAdmin(admin.ModelAdmin):
     list_display = ['PlayerRecruitingInterestID', 'PlayerID', 'PitchRecruitInterestRank', 'TeamInfoTopicID']

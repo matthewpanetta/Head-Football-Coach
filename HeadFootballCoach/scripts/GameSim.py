@@ -851,6 +851,8 @@ def GameSim(game):
                 else:
                     RunningBackPlayerID = random.choice(OffensiveTeamPlayers['WR'])
 
+                AllPlayers[RunningBackPlayerID]['Energy'] -=  .0125
+
                 RunGameModifier = (2 * RunningbackTalent + OffensiveLineTalent) * 1.0 / DefensiveLineTalent / 3.0
                 RunGameModifier = RunGameModifier ** 1.5
                 YardsThisPlay = round(NormalTrunc(4.25 * RunGameModifier, 5, -2, 12),0)
@@ -949,7 +951,7 @@ def GameSim(game):
                 LinemanSackAllowedPlayerID = None
                 OffensiveLinemen = [(u, int((110 ** AdjustedOverallPowerFactor) - AllPlayers[u]['AdjustedOverallRating']) ** 2) for u in OffensiveTeamPlayers['OG']  + OffensiveTeamPlayers['OT'] + OffensiveTeamPlayers['OC'] ]
 
-                WideReceivers = [(u, AllPlayers[u]['AdjustedOverallRating'] ** 3) for u in OffensiveTeamPlayers['WR'] ] + [(u, int(AllPlayers[u]['AdjustedOverallRating'] ** 2.25)) for u in OffensiveTeamPlayers['RB'] ]
+                WideReceivers = [(u, AllPlayers[u]['AdjustedOverallRating'] ** 3) for u in OffensiveTeamPlayers['WR'] ] + [(u, int(AllPlayers[u]['AdjustedOverallRating'] ** 2.925)) for u in OffensiveTeamPlayers['TE'] ] + [(u, int(AllPlayers[u]['AdjustedOverallRating'] ** 2.25)) for u in OffensiveTeamPlayers['RB'] ]
                 WideReceiverPlayer = WeightedProbabilityChoice(WideReceivers, WideReceivers[0])
 
                 if Down == 3 and YardsToGo > 4:

@@ -61,7 +61,7 @@
                         </a>
                         <div class="teamScheduleGameBoxResult">
                           <div class="teamGameResultLetter{{game.GameResultLetter}}">{{game.GameResultLetter}}</div>
-                          <a href="/World/{{page.WorldID}}/Game/{{game.Game.GameID}}" class='hide-small'>{{game.GameDisplay}}</a>
+                          <a href="{{game.GameHref}}" class='hide-small'>{{game.GameDisplay}}</a>
                         </div>
                       </div>
                     </div>
@@ -86,13 +86,13 @@
                             <span class='w3-display-right font10 padBottom20'>{{game.Week}}</span>
                           </div>
                           <div class=" w3-display-container">
-                            <span class='font10'>{{game.AwayTeamRank}}</span>
+                            <span class='font10'>{{game.AwayTeamRankDisplay}}</span>
                             <span class='font17 {{game.AwayTeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.AwayTeam.TeamID}}">{{game.AwayTeam.TeamName}}</a></span>
                             <span class='font10'>{{game.AwayTeamRecord}}</span>
                             <span class='w3-display-right {{game.AwayTeamWinningGameBold}}'>{{game.AwayPoints}}</span>
                           </div>
                           <div class=" w3-display-container">
-                            <span class='font10'>{{game.HomeTeamRank}}</span>
+                            <span class='font10'>{{game.HomeTeamRankDisplay}}</span>
                             <span class='font17 {{game.HomeTeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.HomeTeam.TeamID}}">{{game.HomeTeam.TeamName}}</a></span>
                             <span class='font10'>{{game.HomeTeamRecord}}</span>
                             <span class='w3-display-right {{game.HomeTeamWinningGameBold}}'>{{game.HomePoints}}</span>
@@ -107,7 +107,7 @@
                                 <td colspan="3" class='font10'>{{game.Week}}</td>
                               </tr>
                               <tr>
-                                <td class='font10'>{{game.AwayTeamRank}}</td>
+                                <td class='font10'>{{game.AwayTeamRankDisplay}}</td>
                                 <td class='font17 {{game.AwayTeamWinningGameBold}}'>
                                   <a href="/World/{{page.WorldID}}/Team/{{game.AwayTeam.TeamID}}">
                                     {{game.AwayTeam.TeamName}}
@@ -117,7 +117,7 @@
                                 <td class='{{game.AwayTeamWinningGameBold}} font16'>{{game.AwayPoints}}</td>
                               </tr>
                               <tr>
-                                <td class='font10'>{{game.HomeTeamRank}}</td>
+                                <td class='font10'>{{game.HomeTeamRankDisplay}}</td>
                                 <td class=''>
                                   <a href="/World/{{page.WorldID}}/Team/{{game.HomeTeam.TeamID}}" class='font17 {{game.HomeTeamWinningGameBold}}'>
                                     {{game.HomeTeam.TeamName}}

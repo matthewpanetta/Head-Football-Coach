@@ -1,3 +1,25 @@
+function csrfSafeMethod(method) {
+  // these HTTP methods do not require CSRF protection
+  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = jQuery.trim(cookies[i]);
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
 function DrawPlayerInfo(data, WorldID, PlayerID){
   var div = $(`
     <div class='w3-row-padding' style='text-align: initial;' id='playerinfo-`+PlayerID+`'>
@@ -241,7 +263,14 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
 
 function GetPlayerStats(WorldID, data){
+  var DataPassthruHolder = $('#PageDataPassthru')[0];
+  var TeamID    = parseInt($(DataPassthruHolder).attr('TeamID'));
 
+  var DataPath = '/GET/World/'+WorldID+'/PlayerStats/'
+  if (TeamID > 0){
+    //console.log('TEAMID', TeamID)
+    DataPath += 'Team/'+TeamID;
+  }
   var PositionSortOrderMap = {
       'QB': '01',
       'RB': '02',
@@ -336,6 +365,7 @@ function GetPlayerStats(WorldID, data){
       });
 
       var SearchPaneColumns = [0,2,3].concat(ShowColumnMap['Custom']);
+    //  var SearchPaneColumns = [0,2,3].concat(ShowColumnMap['Custom']);
 
 
       var ButtonList = [{
@@ -373,7 +403,22 @@ function GetPlayerStats(WorldID, data){
       "dom": 'Brtp',
       "scrollX": true,
     //fixedHeader: true,
-      //"serverSide": true,
+    /*
+      "serverSide": true,
+      'ajax': {
+        type: "GET",
+        url: DataPath,
+        "data": function ( d ) {
+
+          console.log('Going to post... ', d);
+          return d;
+        },
+        "dataSrc": function ( json ) {
+             console.log('json', json);
+             return json['data'];
+        }
+      },*/
+        "deferRender": true,
       "filter": true,
       "ordering": true,
       "lengthChange" : false,

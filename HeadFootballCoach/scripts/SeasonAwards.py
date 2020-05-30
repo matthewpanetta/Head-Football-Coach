@@ -14,7 +14,7 @@ def NationalAwards(WorldID, CurrentSeason):
     if CurrentSeason.AwardsCreated or PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).count() == 0:
         return None
     else:
-        AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
+        AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).filter(TeamSeasonID__TeamID__isnull = False).values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
             TeamGamesPlayed=Sum('playergamestat__TeamGamesPlayed'),
             GameScore=Sum('playergamestat__GameScore'),
             GameScorePerGame=Case(
@@ -94,7 +94,7 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
 
     PlayerTeamSeasonAward.objects.filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID = LeagueSeasonID).delete()
 
-    AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).exclude(ClassID__ClassName = 'Freshman').values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
+    AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).filter(TeamSeasonID__TeamID__isnull = False).exclude(ClassID__ClassName = 'Freshman').values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
         TeamGamesPlayed=Sum('playergamestat__TeamGamesPlayed'),
         GameScore=Sum('playergamestat__GameScore'),
         GameScorePerGame=Case(
@@ -150,7 +150,7 @@ def ChoosePlayersOfTheWeek(CurrentSeason, CurrentWorld, CurrentWeek=None):
 
     for PositionGroupID in PositionGroup.objects.exclude(PositionGroupName = 'Special Teams'):
 
-        PTG = PlayerGameStat.objects.filter(WorldID = CurrentWorld).filter(TeamGameID__GameID__WeekID = CurrentWeek).filter(PlayerTeamSeasonID__PlayerID__PositionID__PositionGroupID = PositionGroupID).filter(TeamGameID__GameID__WasPlayed = True).annotate(
+        PTG = PlayerGameStat.objects.filter(WorldID = CurrentWorld).filter(TeamGameID__GameID__WeekID = CurrentWeek).filter(PlayerTeamSeasonID__TeamSeasonID__TeamID__isnull = False).filter(PlayerTeamSeasonID__PlayerID__PositionID__PositionGroupID = PositionGroupID).filter(TeamGameID__GameID__WasPlayed = True).annotate(
             GameWinModifier = Case(
                 When(Q(TeamGameID__IsWinningTeam = True) & Q(TeamGameID__OpposingTeamGameID__TeamSeasonWeekRankID__NationalRank__lte = 5), then=Value(1.25)),
                 When(Q(TeamGameID__IsWinningTeam = True) & Q(TeamGameID__OpposingTeamGameID__TeamSeasonWeekRankID__NationalRank__lte = 15), then=Value(1.15)),
