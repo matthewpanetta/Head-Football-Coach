@@ -1,6 +1,6 @@
-function DrawPlayerInfo(data, WorldID, PlayerID){
+function DrawPlayerInfo(data, WorldID, PlayerID, SourceTable){
   var div = $(`
-    <div class='w3-row-padding' style='text-align: initial;' id='playerinfo-`+PlayerID+`'>
+    <div class='w3-row-padding' style='text-align: initial;' id='playerinfo-`+SourceTable+`-`+PlayerID+`'>
       <div class='w3-col s2'>
         <div class="PlayerFace" style='width: 150px; height: 250px; margin-left: 20%;'>
 
@@ -92,7 +92,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
 
       $.each(data.Skills, function(SkillGroup, SkillObj){
-        var Container = $('<div class=" w3-col s4"></div>').appendTo($(div).find('.highlight-ratings'));
+        var Container = $('<div class=" w3-col s4 no-padding"></div>').appendTo($(div).find('.highlight-ratings'));
         $('<div class="w3-margin-top bold">'+SkillGroup+'</div>').appendTo(Container);
         $.each(SkillObj, function(key, val){
           //$('<div class="inline-block min-width-75" style="margin: 2px 2px; "><div class="font10 width100">'+key+'  </div>  <div class="font20 width100">'+val+'</div></div>').appendTo(Container);
@@ -133,9 +133,9 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
           elem = elem[0];
           $(elem).empty();
 
-          $(div).find('.PlayerFace').attr('id', 'PlayerFace-'+data.PlayerID)
+          $(div).find('.PlayerFace').attr('id', 'PlayerFace-'+SourceTable+'-'+data.PlayerID)
 
-          var DOMID ='PlayerFace-'+data.PlayerID;
+          var DOMID ='PlayerFace-'+SourceTable+'-'+data.PlayerID;
 
           if (typeof val === 'string') {
             val = $.parseJSON(val);
@@ -181,9 +181,9 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
 
 
-function DrawRecruitingTable(WorldID, data){
+function DrawRecruitingTable(WorldID, data, SavedPlayers){
 
-  console.log('DrawRecruitingTable', data);
+  console.log('DrawRecruitingTable', data, SavedPlayers);
 
   var DescFirst = ["desc", "asc"];
   var AscFirst = [ "asc", "desc"];
@@ -288,6 +288,47 @@ function DrawRecruitingTable(WorldID, data){
        "pagingType": "full_numbers",
        "paginationType": "full_numbers",
        "paging": true,
+       'columnDefs': [
+         {
+          searchPanes: {
+            show: true,
+              options:[
+                  {
+                      label: 'Signed',
+                      value: function(rowData, rowIdx){
+                          return rowData['RecruitingPointsPercent'] >= 100;
+                      }
+                  },
+                  {
+                      label: 'Closing Stage',
+                      value: function(rowData, rowIdx){
+                        return rowData['RecruitingPointsPercent'] > 75 && rowData['RecruitingPointsPercent'] < 100;
+                      }
+                  },
+                  {
+                      label: 'Narrowing Down Teams',
+                      value: function(rowData, rowIdx){
+                        return rowData['RecruitingPointsPercent'] > 50 && rowData['RecruitingPointsPercent'] <= 75;
+                      }
+                  },
+                  {
+                      label: 'Progressing',
+                      value: function(rowData, rowIdx){
+                        return rowData['RecruitingPointsPercent'] > 25 && rowData['RecruitingPointsPercent'] <= 50;
+                      }
+                  },
+                  {
+                      label: 'Available',
+                      value: function(rowData, rowIdx){
+                        return rowData['RecruitingPointsPercent'] <= 25;
+                      }
+                  }
+              ],
+              combiner: 'or'
+          },
+          targets: [51]
+        },
+      ],
      "columns": [
 
        {"data": "Recruiting_NationalRank", "sortable": true, 'searchable': true, 'className': 'recruiting-player-rank', 'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
@@ -444,16 +485,235 @@ function DrawRecruitingTable(WorldID, data){
      ],
   });
 
-  console.log('RecruitTable', RecruitTable);
 
 
-      $('#recruitingMainTable tbody').on('click', '.details-control', function () {
+    var BoardTable = $('#recruitingBoardTable').DataTable({
+      "dom": 'Brtp',
+      'searching': true,
+      'info': false,
+      "filter": true,
+      "pageLength": 25,
+        'data': SavedPlayers,
+         'buttons':ButtonList,
+         "ordering": true,
+         "lengthChange" : false,
+         "pagingType": "full_numbers",
+         "paginationType": "full_numbers",
+         "paging": true,
+         'columnDefs': [
+           {
+            searchPanes: {
+              show: true,
+                options:[
+                    {
+                        label: 'Signed',
+                        value: function(rowData, rowIdx){
+                            return rowData['RecruitingPointsPercent'] >= 100;
+                        }
+                    },
+                    {
+                        label: 'Closing Stage',
+                        value: function(rowData, rowIdx){
+                          return rowData['RecruitingPointsPercent'] > 75 && rowData['RecruitingPointsPercent'] < 100;
+                        }
+                    },
+                    {
+                        label: 'Narrowing Down Teams',
+                        value: function(rowData, rowIdx){
+                          return rowData['RecruitingPointsPercent'] > 50 && rowData['RecruitingPointsPercent'] <= 75;
+                        }
+                    },
+                    {
+                        label: 'Progressing',
+                        value: function(rowData, rowIdx){
+                          return rowData['RecruitingPointsPercent'] > 25 && rowData['RecruitingPointsPercent'] <= 50;
+                        }
+                    },
+                    {
+                        label: 'Available',
+                        value: function(rowData, rowIdx){
+                          return rowData['RecruitingPointsPercent'] <= 25;
+                        }
+                    }
+                ],
+                combiner: 'or'
+            },
+            targets: [51]
+          },
+        ],
+       "columns": [
+
+         {"data": "Recruiting_NationalRank", "sortable": true, 'searchable': true, 'className': 'recruiting-player-rank', 'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
+           $(td).html(`<div class="">
+                          <span>`+StringValue+`</span>
+                      </div>
+                      <div class="recruiting-player-city font10">
+                        <span>State `+DataObject.Recruiting_StateRank+`</span>
+                      </div>
+                      <div class="recruiting-player-city font10">
+                        <span>Pos `+DataObject.Recruiting_NationalPositionalRank+`</span>
+                      </div>`);
+
+            $(td).closest('tr').attr('PlayerID', DataObject.PlayerID)
+         }},
+         {"data": "RecruitingStars", "sortable": true, 'searchable': true, 'className': 'recruiting-player-rank font14', 'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
+           $(td).empty();
+            var StarGroups = StarGroupsMap[StringValue];
+            $.each(StarGroups, function(ind, obj){
+              var StarGroup = $('<div></div>');
+
+              for (var i = 1; i <= obj; i++){
+                $(StarGroup).append('<i class="fas fa-star  w3-text-amber"></i>');
+              }
+
+              $(td).append(StarGroup)
+            })
+
+         }},
+           {"data": "PlayerName", "visible": true, "sortable": true, 'searchable': true, 'className': 'text-left', 'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
+             $(td).html(`<div class="recruiting-player-name font14">
+                            <a  href="/World/`+WorldID+`/Player/`+DataObject.PlayerID+`"> `+
+                              StringValue
+                            +`</a>
+                        </div>
+                        <div class="recruiting-player-city font10">`+
+                            DataObject.CityID__CityName+', '+DataObject.CityID__StateID__StateAbbreviation
+                        +`</div>`)
+           }},
+           {"data": "PositionID__PositionAbbreviation", "sortable": true, 'searchable': true,'orderSequence':["desc", "asc"], render: function ( data, type, row ) {
+                                 var returnVal = data;
+                                 if ( type === 'sort' ) {
+                                     returnVal = row.PositionID__PositionSortOrder;
+                                 }
+                                 return returnVal;
+                             }/* 'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
+
+             $(td).html(`<div class="section font16">
+                           <span>`+StringValue+`</span>
+                         </div>
+                         <div class="font10">
+                           <span>`+'Style'+`</span>
+                         </div>`)
+           }*/},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Overall", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"],  'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
+             $(td).html(StringValue)
+           }},
+           {"data": 'playerteamseason__recruitteamseason__ScoutingFuzz', "sortable": true, 'visible': true,'className': '',  'orderSequence':DescFirst,  "defaultContent": ''}, //% Scouted
+           {"data": 'RecruitingPointsPercent', "sortable": true, 'visible': true,'className': '', 'orderSequence':DescFirst,   "defaultContent": ''}, // % Lock
+           {"data": 'playerteamseason__recruitteamseason__InterestLevel', "sortable": true, 'visible': true,'className': '',  'orderSequence':DescFirst,  "defaultContent": ''}, // Interest in Team
+           {"data": "RecruitSigned", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"], 'className': 'col-group',  'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol){
+             var container = $('<div class="equal-sized-item-container"></div>');
+             var MaxInterestLevel = 0;
+             var Opacity = 100;
+             var IsLeader = false;
+             var Trailing = 0;
+             $.each(DataObject.RecruitingTeams, function(i,o){
+               IsLeader = false;
+               if (o.InterestLevel >= MaxInterestLevel){
+                 MaxInterestLevel = o.InterestLevel;
+                 IsLeader = true;
+               }
+               else {
+                 Trailing = MaxInterestLevel - o.InterestLevel;
+               }
+
+               Opacity = 100 * ((o.InterestLevel / MaxInterestLevel) ** 3);
+
+               if (o.Signed == true) {
+                 var subtext = 'Signed';
+               }
+               else if (IsLeader == true){
+                 var subtext = '1st';
+               }
+               else {
+                 var subtext = '-' + Trailing;
+               }
+               container.append($(`<div class="equal-sized-item"><div class="section font16">
+                             <a href=`+o.TeamHref+`><img class='recruitingLeadingTeamLogo' style='opacity: `+Opacity+`%;' src=`+o.TeamSeasonID__TeamID__TeamLogoURL+`  /></a>
+                           </div>
+                           <div class="font10">
+                             <span>`+subtext+`</span>
+                           </div></div>`));
+
+               if (o.Signed == true){
+                 return false;
+               }
+             })
+             $(td).html('');
+             $(td).append(container)
+           }},
+           {"data": "Height", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"], 'className': 'font16','render':function ( data, type, row ) {  return row.HeightFormatted;}},
+           {"data": "WeightFormatted", "sortable": true, 'visible': false, 'orderSequence':["desc", "asc"], 'className': 'font16'},
+           {"data": 'Recruiting_40Time', "sortable": true, 'visible': false, 'orderSequence':AscFirst, 'className': ''},
+           {"data": 'Recruiting_BenchPressReps', "sortable": true, 'visible': false, 'orderSequence':DescFirst, 'className': ''},
+           {"data": 'Recruiting_VerticalJump', "sortable": true, 'visible': false, 'orderSequence':DescFirst, 'className': ' col-group'},
+
+           {"data": "playerteamseason__recruitteamseason__Scouted_Strength_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Agility_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Speed_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Acceleration_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Stamina_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Jumping_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Awareness_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+           {"data": "playerteamseason__recruitteamseason__Scouted_ThrowPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_ShortThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_MediumThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_DeepThrowAccuracy_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_ThrowOnRun_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_ThrowUnderPressure_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_PlayAction_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+           {"data": "playerteamseason__recruitteamseason__Scouted_Carrying_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Elusiveness_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_BallCarrierVision_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_BreakTackle_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+           {"data": "playerteamseason__recruitteamseason__Scouted_Catching_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_CatchInTraffic_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_RouteRunning_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Release_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+           {"data": "playerteamseason__recruitteamseason__Scouted_PassBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_RunBlock_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_ImpactBlock_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+           {"data": "playerteamseason__recruitteamseason__Scouted_PassRush_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_BlockShedding_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Tackle_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_HitPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_ManCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_ZoneCoverage_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_Press_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+           {"data": "playerteamseason__recruitteamseason__Scouted_KickPower_Rating", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+           {"data": "playerteamseason__recruitteamseason__Scouted_KickAccuracy_Rating", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+           {"data": null, "sortable": false, 'visible': true,'className': 'details-control',    "defaultContent": ''},
+           {"data": 'CityID__StateID__StateAbbreviation', "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+           {"data": 'CityID__StateID__StateAbbreviation', "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+           {"data": 'CityID__StateID__StateAbbreviation', "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+
+       ],
+    });
+
+
+
+      $('#recruitingMainTable tbody, #recruitingBoardTable tbody').on('click', '.details-control', function () {
         //console.log('clicked', this, SelectedTeamID);
 
         var tr = $(this).parent();
         $(tr).addClass('shown');
         var PlayerID = $(tr).attr('PlayerID');
         var row = RecruitTable.row( tr );
+
+        var SourceTable = 'Main';
+
+        console.log('row', row)
+        if (!(row.any())){
+          SourceTable = 'Board'
+          var row = BoardTable.row( tr );
+        }
 
         if ( row.child.isShown() ) {
             // This row is already open - close it
@@ -463,7 +723,8 @@ function DrawRecruitingTable(WorldID, data){
         else {
             // Open this row
             var data = row.data()
-            var formattedContent = DrawPlayerInfo(data, WorldID, PlayerID);
+            console.log('DrawPlayerInfo(data, WorldID, PlayerID);', data, WorldID, PlayerID, SourceTable)
+            var formattedContent = DrawPlayerInfo(data, WorldID, PlayerID, SourceTable);
             row.child( formattedContent, 'teamTableBorder' ).show();
             var childrow = row.child();
 
@@ -475,6 +736,9 @@ function DrawRecruitingTable(WorldID, data){
 
 
       });
+
+
+    RecruitingAction(WorldID, BoardTable, RecruitTable);
 }
 
 
@@ -499,6 +763,127 @@ function DrawNationalRankTable(WorldID){
 }
 
 
+function RecruitingAction(WorldID, BoardTable, MainTable){
+
+  $(document).on('click', '.recruiting-action', function(event){
+    var ActionTarget = $(event.target)[0];
+    ActionTarget = $(ActionTarget)
+
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        // if not safe, set csrftoken
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+
+    var Source = '';
+    var Action = '';
+    var ConfirmText = '';
+
+    var Path = $(ActionTarget).attr('background-ajax');
+    var SourcePath = String(ActionTarget[0].baseURI);
+
+    if (SourcePath.indexOf('Player') != -1){
+      Source = 'PlayerPage'
+    }
+    else {
+      Source = 'PlayerCard'
+    }
+
+    if (Path.indexOf('Scout') != -1){
+      Action = 'Scout';
+    }
+    else if (Path.indexOf('Board') != -1){
+      if (Path.indexOf('Remove') != -1){
+        Action = 'Remove from Board';
+      }
+      else if (Path.indexOf('Add') != -1){
+        Action = 'Add to Board';
+      }
+    }
+
+
+    var UserConfirm = true;
+    if (UserConfirm == true) {
+
+
+      $.ajax({
+        method: "POST",
+        url: Path,
+        data: {
+          csrfmiddlewaretoken: csrftoken
+        },
+        dataType: 'json',
+        success: function(res, status) {
+          console.log(res, status);
+
+          $.notify(
+            res.message,
+            { globalPosition:"right bottom", className: 'success' }
+          );
+
+          if (Source == 'PlayerPage') {
+            if (Action == 'Scout') {
+              window.location = '';
+            }
+          }
+          else {
+            var ParentRow = $(ActionTarget).closest('tr.teamTableBorder');
+            var ParentSourceRow = $(ActionTarget).closest('tr.teamTableBorder').prev();
+            var PlayerID = ParentSourceRow.attr('playerid');
+
+            if (Action == 'Scout') {
+              $(ParentSourceRow).remove();
+              $(ParentRow).remove();
+            }
+            else if (Action == 'Scout') {
+              $(ParentSourceRow).remove();
+              $(ParentRow).remove();
+              $(ActionTarget).text('Add as Captain');
+              $(ActionTarget).attr('background-ajax', Path.replace('Remove', 'Add'));
+            }
+            else if (Action == 'Add to Board') {
+              var RowToMove = MainTable.row(ParentSourceRow)
+              BoardTable.row.add(RowToMove.data()).draw ();
+              $(ActionTarget).text('Remove from Board');
+              $(ActionTarget).attr('background-ajax', Path.replace('Remove', 'Add'));
+            }
+            else if (Action == 'Remove from Board') {
+              //datatable here
+              //BoardTable.row.add(ParentSourceRow.data()).draw ();
+              console.log('BoardTable', $('#recruitingBoardTable'));
+              console.log('PlayerID', PlayerID)
+              console.log('removing ', $('#recruitingBoardTable').find('tr[playerid="'+PlayerID+'"]'))
+              console.log('removing ', $('#recruitingBoardTable').find('#playerinfo-Board-'+PlayerID).closest('tr.teamTableBorder'))
+              $('#recruitingBoardTable').find('tr[playerid="'+PlayerID+'"]').remove();
+              $('#recruitingBoardTable').find('#playerinfo-Board-'+PlayerID).closest('tr.teamTableBorder').remove();
+
+              $(ActionTarget).text('Add to Board');
+              $(ActionTarget).attr('background-ajax', Path.replace('Remove', 'Add'));
+              //CHANGE BUTTON
+            }
+          }
+
+        },
+        error: function(res) {
+          console.log(res)
+
+          $.notify(
+            res.responseJSON.message,
+            { globalPosition:"right bottom", className: 'error' }
+          );
+        }
+      });
+
+    }
+    });
+
+}
+
+
 
 $(document).ready(function(){
   var DataPassthruHolder = $('#PageDataPassthru')[0];
@@ -511,8 +896,7 @@ $(document).ready(function(){
   SavedRecruitingPlayersData = JSON.parse(SavedRecruitingPlayersData.textContent);
 
 
-  DrawRecruitingTable(WorldID, RecruitingPlayersData);
-  DrawSavedRecruitingTable(WorldID, SavedRecruitingPlayersData);
+  DrawRecruitingTable(WorldID, RecruitingPlayersData, SavedRecruitingPlayersData);
   DrawNationalRankTable(WorldID);
 
 });

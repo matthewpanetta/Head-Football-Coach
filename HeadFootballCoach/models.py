@@ -119,6 +119,7 @@ class Position(models.Model):
     CoachPositionID = models.ForeignKey(CoachPosition, on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     PositionSortOrder = models.PositiveSmallIntegerField(blank=True, null=True, default=0)
+    RecruitingOverallAdjustment = models.SmallIntegerField(default = 0)
 
     HeightAverage = models.DecimalField(default = 72, max_digits = 6, decimal_places=2)
     HeightStd = models.DecimalField(default = 1, max_digits = 6, decimal_places=2)
@@ -505,6 +506,8 @@ class Week(models.Model):
 
     RecruitingWeekModifier = models.FloatField(default = 1.0)
     RecruitingAllowed = models.BooleanField(default = False)
+
+    UserRecruitingPointsLeft = models.IntegerField(default = 0)
 
     def __str__(self):
         return self.WeekName
@@ -2697,6 +2700,7 @@ class Coach(models.Model):
     VeteranTendency  = models.SmallIntegerField(default = 0)
 
     RedshirtTendency  = models.SmallIntegerField(default = 0)
+    RecruitingConcentration  = models.SmallIntegerField(default = 0)
 
     ValueSkillsTendency      = models.PositiveSmallIntegerField(default = 0)
     ValueAthleticismTendency = models.PositiveSmallIntegerField(default = 0)
@@ -2833,6 +2837,7 @@ class RecruitTeamSeason(models.Model):
     IsActivelyRecruiting = models.BooleanField(default=False)
 
     RecruitingTeamRank = models.IntegerField(default = 1)
+    UserRecruitingPointsThisWeek = models.IntegerField(default = 0)
 
     Scouted_Overall = models.PositiveSmallIntegerField(default=0)
     ScoutingFuzz = models.PositiveSmallIntegerField(default=0)

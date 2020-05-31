@@ -205,12 +205,16 @@ function AddBoxScoreListeners(){
 
   $('.boxscore-tab').on('click', function(event, target) {
 
+
     var ClickedTab = $(event.target)
     var ClickedTabParent = ClickedTab.closest('.boxscore-bar').attr('id');
     var SelectedTeamID = ClickedTab.attr('TeamID');
     var SelectedGameID = ClickedTab.attr('GameID');
 
+    console.log('Clicked ', $(this), 'ClickedTabParent', ClickedTabParent);
+
     $.each($('#'+ClickedTabParent+' > .selected-boxscore-tab'), function(index, tab){
+      console.log('Unclicking this', $(this));
       var TargetTab = $(tab);
       $(TargetTab).removeClass('selected-boxscore-tab');
       var TargetTabParent = TargetTab.closest('.boxscore-bar').attr('id');

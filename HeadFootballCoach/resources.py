@@ -34,7 +34,7 @@ def createCalendar(WorldID=None, LeagueSeasonID=None, SetFirstWeekCurrent = Fals
     AnnualScheduleOfEvents.append({'Phase': 'Preseason', 'WeekName': 'Preseason', 'LastWeekInPhase': True})
 
     for WeekCount in range(1, WeeksInRegularSeason+1):
-        WeekDict = {'Phase': 'Regular Season',  'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': round(1.0 + (WeekCount / 60.0), 2), 'RecruitingAllowed': True}
+        WeekDict = {'Phase': 'Regular Season',  'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': round(1.0 + (WeekCount / 60.0), 2), 'RecruitingAllowed': True, 'UserRecruitingPointsLeft': 90}
         if WeekCount == WeeksInRegularSeason:
             WeekDict['LastWeekInPhase'] = True
         AnnualScheduleOfEvents.append(WeekDict)
@@ -54,7 +54,7 @@ def createCalendar(WorldID=None, LeagueSeasonID=None, SetFirstWeekCurrent = Fals
 
 
     for WeekCount in range(1, OffseasonRecruitingWeeks+1):
-        WeekDict = {'Phase': 'Offseason Recruiting',  'WeekName': 'Offseason Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': 1.0 + (WeekCount / 10.0), 'RecruitingAllowed': True}
+        WeekDict = {'Phase': 'Offseason Recruiting',  'WeekName': 'Offseason Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': 1.0 + (WeekCount / 10.0), 'RecruitingAllowed': True, 'UserRecruitingPointsLeft': 90}
         AnnualScheduleOfEvents.append(WeekDict)
 
     AnnualScheduleOfEvents.append({'Phase': 'Offseason Recruiting',  'WeekName': 'National Signing Day', 'LastWeekInPhase': True})
@@ -972,6 +972,7 @@ def GenerateCoach(WorldID):
     PatienceModifier = 1.0 + (Patience / 10.0)
     C.VeteranTendency  = NormalVariance(PatienceModifier, 7)
     C.RedshirtTendency  = NormalVariance(PatienceModifier, 7)
+    C.RecruitingConcentration  = NormalVariance(PatienceModifier, 7)
 
     return C
 
@@ -1371,13 +1372,14 @@ def CreateRecruitingClass(LS, WorldID):
     RecruitTeamDict = {'TeamList': []}
 
     RecruitPool = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).select_related('PlayerID').select_related('PlayerID__CityID').select_related('playerteamseasonskill').annotate(
+        RecruitingOverallAdjustment = F('PlayerID__PositionID__RecruitingOverallAdjustment'),
         Position = F('PlayerID__PositionID__PositionAbbreviation'),
         PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName'),
         State = F('PlayerID__CityID__StateID'),
         OverallRating = F('playerteamseasonskill__OverallRating')
     )
 
-    RecruitPool = sorted(RecruitPool, key = lambda k: NormalBounds(k.OverallRating,2,10,99), reverse = True)
+    RecruitPool = sorted(RecruitPool, key = lambda k: NormalBounds(k.OverallRating,2,10,99) + k.RecruitingOverallAdjustment, reverse = True)
     NumberOfRecruits = len(RecruitPool)
 
     RecruitCount = 0

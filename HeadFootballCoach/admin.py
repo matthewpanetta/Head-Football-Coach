@@ -40,7 +40,7 @@ class GameStructureAdmin(admin.ModelAdmin):
     list_display = [field.name for field in GameStructure._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'league', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('PlayerFirstName', 'PlayerLastName', 'Position', 'Class', 'IsRecruit','PlayerID', 'OverallRating', 'CurrentTeam', 'PassingRating', 'DribblingRating', 'CityID')
 
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Player._meta.get_fields() if field.name not in ('playoff', 'playerteamseason', 'playerseasonskill', 'recruitteamseason')]#('PlayerFirstName', 'PlayerLastName', 'Position', 'Class', 'IsRecruit','PlayerID', 'OverallRating', 'CurrentTeam', 'PassingRating', 'DribblingRating', 'CityID')
+    list_display = [field.name for field in Player._meta.get_fields() if field.name not in ('playoff', 'playerrecruitinginterest', 'playerteamseason', 'playerseasonskill', 'recruitteamseason')]#('PlayerFirstName', 'PlayerLastName', 'Position', 'Class', 'IsRecruit','PlayerID', 'OverallRating', 'CurrentTeam', 'PassingRating', 'DribblingRating', 'CityID')
     list_filter = ['PositionID', 'RecruitSigned', 'IsRecruit']
 
 class CoachAdmin(admin.ModelAdmin):
@@ -122,6 +122,7 @@ class PositionAdmin(admin.ModelAdmin):
 
 class PositionGroupAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PositionGroup._meta.get_fields() if field.name not in ('coachposition', 'position', 'player', 'week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+
 
 class PlayerTeamSeasonDepthChartAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeasonDepthChart._meta.get_fields() if field.name not in ('position', 'player', 'week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
