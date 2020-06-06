@@ -2,11 +2,10 @@ from django.db.models import Max, Avg, Count, Func, F, Sum, Case, When, FloatFie
 from django.db.models.functions import Length, Concat
 from ..models import Audit, League, TeamGame,Week,Phase,PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, Position, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason
 import time
-
+from django.db import connection, reset_queries
 
 def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False, PositionDepthChart = {}):
 
-    print('In Create DC, PositionDepthChart', PositionDepthChart)
     if TS is None:
         TS = T.CurrentTeamSeason
     DoAudit = False
@@ -96,12 +95,10 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False,
                 DCToSave.append(DC)
                 PlayerHasPosition = True
 
-    PlayerTeamSeasonDepthChart.objects.bulk_create(DCToSave, ignore_conflicts=True)
 
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
         A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Set Depth Charts')
 
-
-    return None
+    return DCToSave

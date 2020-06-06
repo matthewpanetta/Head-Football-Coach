@@ -1,6 +1,6 @@
 
 
-from ..models import TeamSeasonInfoRating, TeamInfoTopic, SubPosition,TeamSeason, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill
+from ..models import TeamSeasonInfoRating, ConferenceSeason, DivisionSeason, TeamInfoTopic, SubPosition,TeamSeason, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill
 import os
 from ..utilities import Max, WeightedProbabilityChoice
 from datetime import timedelta, date
@@ -619,14 +619,14 @@ def import_League( File, WorldID):
         if KeepRow:
             L.save()
 
-def import_Conference(File, WorldID, LeagueID):
+def import_Conference(File, WorldID, LeagueID, LeagueSeasonID):
 
     ConferenceList = LeagueID.ConferenceList
     ConferenceList = ConferenceList.split(',')
 
     f = open(File, 'r', encoding='utf-8-sig')
     FieldExclusions = []
-
+    ConferencesToCreate = []
     linecount = 0
     for line in f:
         KeepRow = False
@@ -655,7 +655,63 @@ def import_Conference(File, WorldID, LeagueID):
             for FE in FieldExclusions:
                 del LineDict[FE]
 
-            Conference.objects.create(**LineDict)
+            C = Conference(**LineDict)
+
+            ConferencesToCreate.append(C)
+
+    Conference.objects.bulk_create(ConferencesToCreate)
+    ConferenceSeasonsToCreate = []
+    for C in WorldID.conference_set.all():
+        CS = ConferenceSeason(ConferenceID = C, LeagueSeasonID = LeagueSeasonID, WorldID = WorldID)
+        ConferenceSeasonsToCreate.append(CS)
+    ConferenceSeason.objects.bulk_create(ConferenceSeasonsToCreate)
+
+
+def import_Division(File, WorldID, LeagueID, LeagueSeasonID):
+
+    ConferenceList = ConferenceSeason.objects.filter(WorldID = WorldID).select_related('ConferenceID')
+    ConferenceDict = {}
+
+    for CS in ConferenceList:
+        ConferenceDict[CS.ConferenceID.ConferenceName]  = CS
+
+    f = open(File, 'r', encoding='utf-8-sig')
+    FieldExclusions = ['ConferenceName']
+    DivisionSeasonsToCreate = []
+
+    linecount = 0
+    for line in f:
+        KeepRow = False
+        linecount +=1
+        if linecount == 1:
+            Headers = line.strip().split(',')
+            continue
+
+        Row = line.strip().split(',')
+
+        LineDict = {}
+        FieldCount = 0
+
+        for f in Row:
+            V = Row[FieldCount]
+            if V == '':
+                V = None
+            LineDict[Headers[FieldCount]] = V
+            FieldCount +=1
+
+        if LineDict['ConferenceName'] in ConferenceDict:
+            LineDict['WorldID'] = WorldID
+            LineDict['LeagueSeasonID'] = LeagueSeasonID
+            LineDict['ConferenceSeasonID'] = ConferenceDict[LineDict['ConferenceName']]
+
+            for FE in FieldExclusions:
+                del LineDict[FE]
+
+            DS = DivisionSeason(**LineDict)
+            DivisionSeasonsToCreate.append(DS)
+
+    DivisionSeason.objects.bulk_create(DivisionSeasonsToCreate)
+
 
 
 def import_Team( File, WorldID, LeagueID, CurrentSeason):
@@ -667,8 +723,14 @@ def import_Team( File, WorldID, LeagueID, CurrentSeason):
 
     f = open(File, 'r', encoding='utf-8-sig')
 
-    ConferenceList = LeagueID.ConferenceList
-    ConferenceList = ConferenceList.split(',')
+    DivisionSeasonList = DivisionSeason.objects.filter(WorldID = WorldID).select_related('ConferenceSeasonID', 'ConferenceSeasonID__ConferenceID', )
+
+    ConferenceDict = {}
+    for DS in DivisionSeasonList:
+        if DS.ConferenceSeasonID.ConferenceID.ConferenceName not in ConferenceDict:
+            ConferenceDict[DS.ConferenceSeasonID.ConferenceID.ConferenceName] = {}
+
+        ConferenceDict[DS.ConferenceSeasonID.ConferenceID.ConferenceName][DS.DivisionName] = DS
 
     TeamDict = {}
     TeamInfoDict = {}
@@ -694,11 +756,11 @@ def import_Team( File, WorldID, LeagueID, CurrentSeason):
             LineDict[Headers[FieldCount]] = V
             FieldCount +=1
 
-        FieldExclusions = ['City', 'State', 'LeagueName', 'Country', 'ConferenceName','Team Prestige', 'Facilities', 'Campus Lifestyle', 'Academic Prestige', 'Television Exposure', 'Coach Loyalty', 'Location', 'Championship Contender', 'ConferenceID', 'Pro Potential']
+        FieldExclusions = ['City', 'State', 'LeagueName', 'Country', 'DivisionName', 'ConferenceName', 'DivisionSeasonID','Team Prestige', 'Facilities', 'Campus Lifestyle', 'Academic Prestige', 'Television Exposure', 'Coach Loyalty', 'Location', 'Championship Contender', 'ConferenceID', 'Pro Potential']
 
-        if LineDict['ConferenceName'] in ConferenceList:
+        if LineDict['ConferenceName'] in ConferenceDict:
             KeepRow = True
-            LineDict['ConferenceID'] = Conference.objects.get(WorldID=WorldID, LeagueID = LeagueID, ConferenceName = LineDict['ConferenceName'])
+            LineDict['DivisionSeasonID'] = ConferenceDict[LineDict['ConferenceName']][LineDict['DivisionName']]
 
         if LineDict['TeamColor_Primary_HEX'] is None:
             LineDict['TeamColor_Primary_HEX'] = '000000'
@@ -755,7 +817,7 @@ def import_Team( File, WorldID, LeagueID, CurrentSeason):
     ListOfTeams = Team.objects.filter(WorldID = CurrentWorld).values('TeamName', 'TeamID')
     CurrentSeason = LeagueSeason.objects.get(WorldID = CurrentWorld, IsCurrent = 1)
 
-    FieldExclusions = ['Country','LeagueID', 'CityID','TeamJerseyStyle',  'TeamLogoURL','TeamLogoURL_50', 'TeamLogoURL_100', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamJerseyInvert', 'ConferenceName', 'DefaultOffensiveScheme', 'DefaultDefensiveScheme','TeamTalent',   'TeamName', 'TeamNickname', 'LeagueName', 'Abbreviation', 'City', 'State'] + TeamInfoFields
+    FieldExclusions = ['Country','LeagueID', 'CityID','TeamJerseyStyle',  'TeamLogoURL','TeamLogoURL_50', 'TeamLogoURL_100', 'TeamColor_Primary_HEX', 'TeamColor_Secondary_HEX', 'TeamJerseyInvert', 'ConferenceName','ConferenceID', 'DivisionName', 'DefaultOffensiveScheme', 'DefaultDefensiveScheme','TeamTalent',   'TeamName', 'TeamNickname', 'LeagueName', 'Abbreviation', 'City', 'State'] + TeamInfoFields
 
     TS_ToSave = []
     for u in ListOfTeams:
@@ -766,7 +828,8 @@ def import_Team( File, WorldID, LeagueID, CurrentSeason):
         print('LineDict', LineDict)
 
         for FE in FieldExclusions:
-            del LineDict[FE]
+            if FE in LineDict:
+                del LineDict[FE]
 
         obj = TeamSeason(**LineDict)
         TS_ToSave.append(obj)
@@ -925,7 +988,8 @@ def LoadData(WorldID, LeagueID, LeagueSeasonID):
         start = time.time()
 
     if CreateTeams:
-        import_Conference('HeadFootballCoach/scripts/data_import/Conference.csv', WorldID, LeagueID)
+        import_Conference('HeadFootballCoach/scripts/data_import/Conference.csv', WorldID, LeagueID, LeagueSeasonID)
+        import_Division('HeadFootballCoach/scripts/data_import/Division.csv', WorldID, LeagueID, LeagueSeasonID)
         import_Team('HeadFootballCoach/scripts/data_import/Team.csv', WorldID, LeagueID, LeagueSeasonID)
         import_TeamRivalries('HeadFootballCoach/scripts/data_import/TeamRivals.csv', WorldID, LeagueID)
 

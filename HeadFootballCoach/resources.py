@@ -14,7 +14,7 @@ from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, Se
 from .scripts.DepthChart import CreateDepthChart
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
 from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
-from .utilities import NormalVariance, DistanceBetweenCities,WeightedAverage, MergeDicts, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance, Max_Int
+from .utilities import NormalVariance, DistanceBetweenCities,CalculateGameScore,WeightedAverage, MergeDicts, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance, Max_Int
 from math import sin, cos, sqrt, atan2, radians, log
 import time
 from django.db import connection, reset_queries
@@ -80,7 +80,7 @@ def createCalendar(WorldID=None, LeagueSeasonID=None, SetFirstWeekCurrent = Fals
         NewWeek = Week(**W)
         WeeksToSave.append(NewWeek)
 
-    Week.objects.bulk_create(WeeksToSave)
+    Week.objects.bulk_create(WeeksToSave, batch_size=500)
 
     WorldID.HasCalendar = True
     WorldID.save()
@@ -112,7 +112,7 @@ def TeamRedshirts(TS, WorldID, SaveInFunc = False):
             PTRToSave.append(PTR)
 
     if SaveInFunc:
-        PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'])
+        PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'], batch_size=500)
         return None
     return PTRToSave
 
@@ -144,7 +144,7 @@ def ChooseCaptains(TS, WorldID):
             if P.PositionGroup not in PositionGroups:
                 PositionGroups.append(P.PositionGroup)
 
-        PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToSave, ['TeamCaptain'])
+        PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToSave, ['TeamCaptain'], batch_size=500)
 
         if len(PositionGroups) == 1:
             TakenPositionGroup = PositionGroups[0]
@@ -212,7 +212,7 @@ def CreateTeamPositions(LS, WorldID):
             TSPToSave.append(TeamSeasonPositionID)
 
 
-    TeamSeasonPosition.objects.bulk_create(TSPToSave, ignore_conflicts = True)
+    TeamSeasonPosition.objects.bulk_create(TSPToSave, ignore_conflicts = True, batch_size=500)
 
 
 
@@ -258,31 +258,33 @@ def UpdateTeamPositions(LS, WorldID, TeamSeasonID = None):
 
         TSPsToUpdate.append(TSP)
 
-    TeamSeasonPosition.objects.bulk_update(TSPsToUpdate, ['CurrentPlayerCount', 'NeededPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount','JuniorPlayerCount', 'SeniorPlayerCount', 'Year1PositionOverall', 'Year2PositionOverall', 'Year3PositionOverall'])
+    TeamSeasonPosition.objects.bulk_update(TSPsToUpdate, ['CurrentPlayerCount', 'NeededPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount','JuniorPlayerCount', 'SeniorPlayerCount', 'Year1PositionOverall', 'Year2PositionOverall', 'Year3PositionOverall'], batch_size=500)
 
 
     return None
 
 
 def PopulateTeamDepthCharts(LS, WorldID, FullDepthChart = False, TeamSeasonID = None):
-    print('Populating depth charts')
 
     PlayerTeamSeasonDepthChart.objects.filter(WorldID = WorldID).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID = LS).filter(PlayerTeamSeasonID__TeamSeasonID__TeamID__isnull = False).delete()
     Positions = list(Position.objects.all().values('PositionAbbreviation', 'PositionCountPerAwardTeam', 'PositionID'))
 
+    DCToSave = []
     Filters = {}
     if TeamSeasonID is not None:
         Filters = {'TeamSeasonID': TeamSeasonID}
 
     for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**Filters).prefetch_related('coachteamseason_set', 'playerteamseason_set'):
-        print('Populating depth charts for', TeamSeasonID)
+
         PositionDepthChart = {}
         for Pos in Positions:
             PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
-        CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID, FullDepthChart = FullDepthChart, PositionDepthChart=PositionDepthChart)
+        DCToSave += CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID, FullDepthChart = FullDepthChart, PositionDepthChart=PositionDepthChart)
+
+    PlayerTeamSeasonDepthChart.objects.bulk_create(DCToSave, ignore_conflicts=False)
+
 
 def AssignRedshirts(LS, WorldID, PrepForUserTeam=False):
-    print('Assigning Redshirts')
 
     if PrepForUserTeam:
         UserTeamFilter = {}
@@ -293,10 +295,9 @@ def AssignRedshirts(LS, WorldID, PrepForUserTeam=False):
     for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**UserTeamFilter):
         PTRToSave += TeamRedshirts(TS=TeamSeasonID , WorldID=WorldID )
 
-    PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'])
+    PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'], batch_size=500)
 
 def CutPlayers(LS, WorldID, PrepForUserTeam=False):
-    print('Cutting Players')
 
     if PrepForUserTeam:
         UserTeamFilter = {}
@@ -307,7 +308,6 @@ def CutPlayers(LS, WorldID, PrepForUserTeam=False):
         TeamCuts(TS=TeamSeasonID , WorldID=WorldID,  NumPlayersToCut=TeamSeasonID.PlayersToCut)
 
 def ChooseTeamCaptains(LS, WorldID, PrepForUserTeam = False):
-    print('Choosing Captains')
 
     if PrepForUserTeam:
         UserTeamFilter = {}
@@ -415,20 +415,21 @@ def CreateSchedule(LS, WorldID):
     #print('Creating schedule!')
 
     TeamList = Team.objects.filter(WorldID=WorldID).filter(teamseason__LeagueSeasonID__IsCurrent = True).annotate(
-        ConferenceID = F('teamseason__ConferenceID'),
-        NumberConferenceGames = F('teamseason__ConferenceID__NumberConferenceGames'),
-        ConferenceIsIndependent = F('teamseason__ConferenceID__IsIndependent')
+        ConferenceID = F('teamseason__DivisionSeasonID__ConferenceSeasonID__ConferenceID'),
+        NumberConferenceGames = F('teamseason__DivisionSeasonID__ConferenceSeasonID__ConferenceID__NumberConferenceGames'),
+        ConferenceIsIndependent = F('teamseason__DivisionSeasonID__ConferenceSeasonID__ConferenceID__IsIndependent')
     )
     WeekMap = {w.WeekNumber: w for w in Week.objects.filter(WorldID=WorldID).filter(PhaseID__PhaseName = 'Regular Season').filter(PhaseID__LeagueSeasonID__IsCurrent = True)}
 
     WeeksInSeason = len(WeekMap)
     GamePerTeam = 12
     NonConferenceGames = 4
+    MaxGamesBetweenTeams = 2
     ConferenceGames = GamePerTeam - NonConferenceGames
 
     ScheduleDict = {}
     for t in TeamList:
-        ScheduleDict[t] = {'CurrentTeamSeason': t.CurrentTeamSeason, 'NonConferenceGames': 0, 'ConferenceGames': 0, 'TotalConferenceGames': t.NumberConferenceGames, 'TotalNonConferenceGames': GamePerTeam - t.NumberConferenceGames, 'HomeGames': 0, 'AwayGames': 0, 'WeeksScheduled': [], 'AvailableWeeks':[w for w in WeekMap], 'OpposingTeams': [], 'UnschedulableTeams': [], 'Conference': t.ConferenceID, 'ConferenceIsIndependent': t.ConferenceIsIndependent, 'ConferenceRivals': [], 'NonConferenceRivals': [], }
+        ScheduleDict[t] = {'CurrentTeamSeason': t.CurrentTeamSeason, 'NonConferenceGames': 0, 'ConferenceGames': 0, 'TotalConferenceGames': t.NumberConferenceGames, 'TotalNonConferenceGames': GamePerTeam - t.NumberConferenceGames, 'HomeGames': 0, 'AwayGames': 0, 'WeeksScheduled': [], 'AvailableWeeks':[w for w in WeekMap], 'OpposingTeams': {}, 'UnschedulableTeams': [], 'Conference': t.ConferenceID, 'ConferenceIsIndependent': t.ConferenceIsIndependent, 'ConferenceRivals': [], 'NonConferenceRivals': [], }
 
 
     GameTimeHourChoices = [12, 12, 2, 3, 3, 7, 7, 8]
@@ -496,7 +497,8 @@ def CreateSchedule(LS, WorldID):
 
             IsConferenceGame = ((ScheduleDict[HomeTeam]['Conference'] == ScheduleDict[AwayTeam]['Conference']) and (not ScheduleDict[HomeTeam]['ConferenceIsIndependent']))
             if AwayTeam in ScheduleDict[HomeTeam]['OpposingTeams'] or AwayTeam in ScheduleDict[HomeTeam]['UnschedulableTeams'] :
-                KeepGame = False
+                if ScheduleDict[HomeTeam]['OpposingTeams'][AwayTeam] >= MaxGamesBetweenTeams:
+                    KeepGame = False
             else:
                 if IsConferenceGame:
                     KeepGame = ScheduleDict[HomeTeam]['ConferenceGames'] < ScheduleDict[HomeTeam]['TotalConferenceGames'] and ScheduleDict[AwayTeam]['ConferenceGames'] < ScheduleDict[AwayTeam]['TotalConferenceGames']
@@ -550,8 +552,12 @@ def CreateSchedule(LS, WorldID):
                 ScheduleDict[HomeTeam]['WeeksScheduled'].append(WeekNumber)
                 ScheduleDict[AwayTeam]['WeeksScheduled'].append(WeekNumber)
 
-                ScheduleDict[HomeTeam]['OpposingTeams'].append(AwayTeam)
-                ScheduleDict[AwayTeam]['OpposingTeams'].append(HomeTeam)
+                if AwayTeam not in ScheduleDict[HomeTeam]['OpposingTeams']:
+                    ScheduleDict[HomeTeam]['OpposingTeams'][AwayTeam] = 0
+                    ScheduleDict[AwayTeam]['OpposingTeams'][HomeTeam] = 0
+
+                ScheduleDict[HomeTeam]['OpposingTeams'][AwayTeam] +=1
+                ScheduleDict[AwayTeam]['OpposingTeams'][HomeTeam] +=1
 
 
         GamesToSchedule = []
@@ -604,7 +610,8 @@ def CreateSchedule(LS, WorldID):
 
             IsConferenceGame = ((ScheduleDict[HomeTeam]['Conference'] == ScheduleDict[AwayTeam]['Conference']) and (not ScheduleDict[HomeTeam]['ConferenceIsIndependent']))
             if AwayTeam in ScheduleDict[HomeTeam]['OpposingTeams'] or AwayTeam in ScheduleDict[HomeTeam]['UnschedulableTeams'] :
-                KeepGame = False
+                if ScheduleDict[HomeTeam]['OpposingTeams'][AwayTeam] >= MaxGamesBetweenTeams:
+                    KeepGame = False
             else:
                 if IsConferenceGame:
                     if  (ScheduleDict[HomeTeam]['ConferenceGames'] < ConferenceGames) and (ScheduleDict[AwayTeam]['ConferenceGames'] < ConferenceGames):
@@ -664,16 +671,20 @@ def CreateSchedule(LS, WorldID):
                 ScheduleDict[HomeTeam]['WeeksScheduled'].append(WeekNumber)
                 ScheduleDict[AwayTeam]['WeeksScheduled'].append(WeekNumber)
 
-                ScheduleDict[HomeTeam]['OpposingTeams'].append(AwayTeam)
-                ScheduleDict[AwayTeam]['OpposingTeams'].append(HomeTeam)
+                if AwayTeam not in ScheduleDict[HomeTeam]['OpposingTeams']:
+                    ScheduleDict[HomeTeam]['OpposingTeams'][AwayTeam] = 0
+                    ScheduleDict[AwayTeam]['OpposingTeams'][HomeTeam] = 0
+
+                ScheduleDict[HomeTeam]['OpposingTeams'][AwayTeam] +=1
+                ScheduleDict[AwayTeam]['OpposingTeams'][HomeTeam] +=1
 
 
         GamesToSchedule = []
         ScheduleLoopCount +=1
         UnscheduledTeams = [t for t in ScheduleDict if len(ScheduleDict[t]['WeeksScheduled']) < GamePerTeam]
 
-    Game.objects.bulk_create(GamesToSave, ignore_conflicts=True)
-    TeamGame.objects.bulk_create(TeamGamesToSave, ignore_conflicts=True)
+    Game.objects.bulk_create(GamesToSave, ignore_conflicts=False, batch_size=500)
+    TeamGame.objects.bulk_create(TeamGamesToSave, ignore_conflicts=False, batch_size=500)
 
     TeamGamesToSave = []
     for TG in TeamGame.objects.filter(OpposingTeamGameID = None):
@@ -701,7 +712,7 @@ def AssignTemporaryTeamSeasonID(CurrentWorld, LS,PlayerList , ClassID , IsFreeAg
         PTS = PlayerTeamSeason(PlayerID = P, TeamSeasonID = TS, WorldID = CurrentWorld, ClassID = PlayerClassID)
         PTS_ToSave.append(PTS)
 
-    PlayerTeamSeason.objects.bulk_create(PTS_ToSave, ignore_conflicts=False)
+    PlayerTeamSeason.objects.bulk_create(PTS_ToSave, ignore_conflicts=False, batch_size=500)
 
 
 def GeneratePlayer(t, s, c, WorldID, PositionAbbreviation = None, PlayerBioData = {}):
@@ -1077,7 +1088,7 @@ def CreatePlayers(LS, WorldID):
     for PlayerCount in range(0,NumberOfPlayersNeeded):
         #print(PlayerCount)
         PlayerPool.append(GeneratePlayer(None, CurrentSeason, None, WorldID, PlayerBioData = PlayerBioData[PlayerCount]))
-    Player.objects.bulk_create(PlayerPool, ignore_conflicts=False)
+    Player.objects.bulk_create(PlayerPool, ignore_conflicts=False, batch_size=500)
 
     PlayerList = Player.objects.filter(WorldID = WorldID)
 
@@ -1087,7 +1098,7 @@ def CreatePlayers(LS, WorldID):
     PlayerSkillPool = []
     for PTS in PlayerTeamSeasonList:
         PlayerSkillPool.append(PopulatePlayerSkills(PTS, WorldID))
-    PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=False)
+    PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=False, batch_size=500)
 
     PlayerPool = [u for u in PlayerTeamSeasonList.values('PlayerTeamSeasonID', 'PlayerID', 'ClassID', 'playerteamseasonskill__OverallRating','playerteamseasonskill__Strength_Rating','playerteamseasonskill__Agility_Rating','playerteamseasonskill__Speed_Rating','playerteamseasonskill__Acceleration_Rating','playerteamseasonskill__Stamina_Rating','playerteamseasonskill__Awareness_Rating','playerteamseasonskill__Jumping_Rating','playerteamseasonskill__ThrowPower_Rating'    ,'playerteamseasonskill__ShortThrowAccuracy_Rating'    ,'playerteamseasonskill__MediumThrowAccuracy_Rating'    ,'playerteamseasonskill__DeepThrowAccuracy_Rating'    ,'playerteamseasonskill__ThrowOnRun_Rating'    ,'playerteamseasonskill__ThrowUnderPressure_Rating'    ,'playerteamseasonskill__PlayAction_Rating', 'playerteamseasonskill__PassRush_Rating', 'playerteamseasonskill__BlockShedding_Rating', 'playerteamseasonskill__Tackle_Rating', 'playerteamseasonskill__HitPower_Rating', 'playerteamseasonskill__ManCoverage_Rating', 'playerteamseasonskill__ZoneCoverage_Rating', 'playerteamseasonskill__Press_Rating', 'playerteamseasonskill__Carrying_Rating', 'playerteamseasonskill__Elusiveness_Rating', 'playerteamseasonskill__BallCarrierVision_Rating', 'playerteamseasonskill__BreakTackle_Rating', 'playerteamseasonskill__Catching_Rating', 'playerteamseasonskill__CatchInTraffic_Rating', 'playerteamseasonskill__RouteRunning_Rating', 'playerteamseasonskill__Release_Rating', 'playerteamseasonskill__PassBlock_Rating', 'playerteamseasonskill__RunBlock_Rating', 'playerteamseasonskill__ImpactBlock_Rating', 'playerteamseasonskill__KickPower_Rating', 'playerteamseasonskill__KickAccuracy_Rating').annotate(
         Position = F('PlayerID__PositionID__PositionAbbreviation'),
@@ -1200,8 +1211,8 @@ def CreatePlayers(LS, WorldID):
 
                     PlayerSkillPool.append(PopulatePlayerSkills(PTS, WorldID))
 
-    PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=True)
-    PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToUpdate, ['TeamSeasonID'])
+    PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=False, batch_size=500)
+    PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToUpdate, ['TeamSeasonID'], batch_size=500)
 
     PlayersToSave = []
     for TS in DraftTeamList:
@@ -1223,7 +1234,7 @@ def CreatePlayers(LS, WorldID):
                 TakenNumbers.append(N)
                 PlayersToSave.append(P)
 
-    Player.objects.bulk_update(PlayersToSave, ['JerseyNumber'])
+    Player.objects.bulk_update(PlayersToSave, ['JerseyNumber'], batch_size=500)
 
     CurrentSeason.PlayersCreated = True
     CurrentSeason.save()
@@ -1264,7 +1275,7 @@ def CreateRecruitingClass(LS, WorldID):
         TS.ScholarshipsToOffer = int(TeamSeniors * 1.2)
         TeamSeason_ToSave.append(TS)
 
-    TeamSeason.objects.bulk_update(TeamSeason_ToSave, ['ScholarshipsToOffer'])
+    TeamSeason.objects.bulk_update(TeamSeason_ToSave, ['ScholarshipsToOffer'], batch_size=500)
 
     PlayerPool = []
     SeniorClassID = Class.objects.filter(ClassName = 'HS Senior').first()
@@ -1273,7 +1284,7 @@ def CreateRecruitingClass(LS, WorldID):
     for PlayerCount in range(0,NumberOfPlayersNeeded):
         PlayerPool.append(GeneratePlayer(None, CurrentSeason, SeniorClassID, WorldID, PlayerBioData=PlayerBioData[PlayerCount]))
 
-    Player.objects.bulk_create(PlayerPool, ignore_conflicts=False)
+    Player.objects.bulk_create(PlayerPool, ignore_conflicts=False, batch_size=500)
 
     print('Recruits created', len(connection.queries))
 
@@ -1285,7 +1296,7 @@ def CreateRecruitingClass(LS, WorldID):
     PlayerSkillPool = []
     for PTS in PlayerTeamSeasonList:
         PlayerSkillPool.append(PopulatePlayerSkills(PTS, WorldID))
-    PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=False)
+    PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=False, batch_size=500)
 
     print('Recruit skills populated', len(connection.queries))
     PlayerTeamSeasons_ForMeasurables = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).select_related('PlayerID').select_related('playerteamseasonskill').annotate(
@@ -1304,7 +1315,7 @@ def CreateRecruitingClass(LS, WorldID):
         PTS.PlayerID.Recruiting_VerticalJump = round(NormalTrunc((PTS.playerteamseasonskill.Jumping_Rating - 23.61) / 1.74, 2, 0,45  ), 2)
         Players_ToSave.append(PTS.PlayerID)
 
-    Player.objects.bulk_update(Players_ToSave, ['Recruiting_40Time', 'Recruiting_BenchPressReps', 'Recruiting_VerticalJump'])
+    Player.objects.bulk_update(Players_ToSave, ['Recruiting_40Time', 'Recruiting_BenchPressReps', 'Recruiting_VerticalJump'], batch_size=500)
 
     print('Recruit measurables updated', len(connection.queries))
     StarDistribution = {5:.0166,
@@ -1456,11 +1467,11 @@ def CreateRecruitingClass(LS, WorldID):
             RTSToSave.append(RTS)
 
     print('RTS created', len(connection.queries))
-    Player.objects.bulk_update(PlayersToSave, ['Recruiting_StateRank', 'Recruiting_NationalPositionalRank', 'Recruiting_NationalRank', 'RecruitingStars'])
-    RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False)
-    PlayerRecruitingInterest.objects.bulk_create(PlayerRecruitingInterestToSave, ignore_conflicts=False)
+    Player.objects.bulk_update(PlayersToSave, ['Recruiting_StateRank', 'Recruiting_NationalPositionalRank', 'Recruiting_NationalRank', 'RecruitingStars'], batch_size=500)
+    RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False, batch_size=500)
+    PlayerRecruitingInterest.objects.bulk_create(PlayerRecruitingInterestToSave, ignore_conflicts=False, batch_size=500)
 
-    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID', 'TeamSeasonID__TeamID__CityID__StateID__RegionID').annotate(
+    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID', 'TeamSeasonID', 'TeamSeasonID__TeamID__CityID__StateID__RegionID').annotate(
         RecruitingTeamRank_new = Window(
             expression=RowNumber(),
             partition_by=F("PlayerTeamSeasonID"),
@@ -1483,11 +1494,16 @@ def CreateRecruitingClass(LS, WorldID):
 
 
     CalculatedTITs = ['Close to Home', 'Playing Time', 'Play Style']
-
+    print('Pre-loop chceck', len(connection.queries))
     RecruitTeamSeasonInterest_ToSave = []
     count = 0
     for R in RTS:
+
         count +=1
+        if count == 3:
+            a = len(connection.queries)
+        elif count == 14:
+            print('Ranks updated, info ratings created count', len(connection.queries) - a)
         R.RecruitingTeamRank = R.RecruitingTeamRank_new
 
         RecruitCity = RecruitCityDict[R.PlayerTeamSeasonID.PlayerID_id]
@@ -1527,8 +1543,9 @@ def CreateRecruitingClass(LS, WorldID):
                  InterestIncrease = int(int(((1 / PlayerRecruitingInfoRatingDict[TITDict[TIT]['AttributeName']]['PitchRecruitInterestRank']) ** (.4)) * TeamRating) / 5.0) * 5
                  R.InterestLevel += InterestIncrease
 
-    RecruitTeamSeasonInterest.objects.bulk_create(RecruitTeamSeasonInterest_ToSave)
-    RecruitTeamSeason.objects.bulk_update(RTS,['RecruitingTeamRank', 'InterestLevel'])
+    RecruitTeamSeasonInterest.objects.bulk_create(RecruitTeamSeasonInterest_ToSave, batch_size=500)
+    RecruitTeamSeason.objects.bulk_update(RTS,['RecruitingTeamRank', 'InterestLevel'], batch_size=500)
+
     print('Ranks updated, info ratings created', len(connection.queries))
 
 
@@ -1550,7 +1567,7 @@ def CreateCoaches(LS, WorldID):
     for CoachCount in range(0,NumberOfCoachesNeeded):
         #print(CoachCount)
         CoachPool.append(GenerateCoach(WorldID))
-    Coach.objects.bulk_create(CoachPool, ignore_conflicts=True)
+    Coach.objects.bulk_create(CoachPool, ignore_conflicts=False, batch_size=500)
 
     CoachList = list(Coach.objects.filter(WorldID = WorldID).order_by('-GameplanRating', '-ReputationRating'))
 
@@ -1563,7 +1580,7 @@ def CreateCoaches(LS, WorldID):
             CTS = CoachTeamSeason(WorldID=WorldID, TeamSeasonID = TS, CoachID = CoachForTeam, CoachPositionID = Position)
 
             CTSToSave.append(CTS)
-    CoachTeamSeason.objects.bulk_create(CTSToSave, ignore_conflicts=False)
+    CoachTeamSeason.objects.bulk_create(CTSToSave, ignore_conflicts=False, batch_size=500)
 
     TSSToSave = []
     for TS in TeamSeason.objects.filter(TeamID__isnull = False).filter(WorldID_id = WorldID):
@@ -1576,7 +1593,7 @@ def CreateCoaches(LS, WorldID):
                 setattr(TSS, HC_Key, HC[HC_Key])
 
         TSSToSave.append(TSS)
-    TeamSeasonStrategy.objects.bulk_create(TSSToSave)
+    TeamSeasonStrategy.objects.bulk_create(TSSToSave, batch_size=500)
 
     CurrentSeason.CoachesCreated = True
     CurrentSeason.save()
@@ -1602,11 +1619,18 @@ def EndRegularSeason(WorldID, CurrentWeek = None):
 
     if CurrentSeason.ConferenceChampionshipsCreated == False:
         print('time to do Conf Champ stuff!')
-        for Conf in CurrentWorld.conference_set.all():
-            TeamSeasonList = TeamSeason.objects.filter(WorldID = CurrentWorld).filter(ConferenceID = Conf).filter(ConferenceRank__lte = 2).filter(TeamID__isnull = False)
+        for ConferenceSeasonID in CurrentSeason.conferenceseason_set.all():
+            if ConferenceSeasonID.divisionseason_set.all().count() > 1:
+                TeamSeasonList = []
+                for DS in ConferenceSeasonID.divisionseason_set.all():
+                    TeamSeasonList.append(DS.teamseason_set.filter(DivisionRank = 1).first())
 
-            HomeTS = TeamSeasonList.filter(ConferenceRank = 1).first()
-            AwayTS = TeamSeasonList.filter(ConferenceRank = 2).first()
+                HomeTS = TeamSeasonList[0]
+                AwayTS = TeamSeasonList[1]
+            else:
+                TeamSeasonList = TeamSeason.objects.filter(WorldID = CurrentWorld).filter(DivisionSeasonID__ConferenceSeasonID = ConferenceSeasonID).filter(DivisionRank__lte = 2).filter(TeamID__isnull = False)
+                HomeTS = TeamSeasonList.filter(DivisionRank = 1).first()
+                AwayTS = TeamSeasonList.filter(DivisionRank = 2).first()
 
             GameTime = str(random.choice(GameTimeHourChoices)) + ':' + random.choice(GameTimeMinuteChoices)
             G = Game(WorldID=CurrentWorld, LeagueSeasonID = CurrentSeason, WasPlayed = 0, GameTime = GameTime, WeekID = NextWeek, IsConferenceChampionship=True)
@@ -1666,7 +1690,7 @@ def CreateBowls(WorldID):
             TeamRankCount = 0
             while AwayTSWR is None:
                 AttemptedRank = TeamRanksAvailable[TeamRankCount]
-                AwayTSWR = TeamSeasonWeekRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).exclude(TeamSeasonID__ConferenceID = HomeTS.ConferenceID).filter(NationalRank = AttemptedRank).first()
+                AwayTSWR = TeamSeasonWeekRank.objects.filter(WorldID=CurrentWorld).filter(IsCurrent = 1).exclude(TeamSeasonID__DivisionSeasonID__ConferenceSeasonID = HomeTS.DivisionSeasonID.ConferenceSeasonID).filter(NationalRank = AttemptedRank).first()
                 TeamRankCount +=1
 
             if AttemptedRank in TeamRanksAvailable:
@@ -1698,6 +1722,51 @@ def CreateBowls(WorldID):
 
 
 
+def SetPlayerTeamSeasonTotals(WorldID, CurrentSeason):
+
+    PTS_ToSave = []
+    for PTS in PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).only('PlayerTeamSeasonID').annotate(
+        RUS_Yards=Sum('playergamestat__RUS_Yards'),
+        RUS_TD=Sum('playergamestat__RUS_TD'),
+        RUS_Carries=Sum('playergamestat__RUS_Carries'),
+        REC_Receptions=Sum('playergamestat__REC_Receptions'),
+        REC_TD=Sum('playergamestat__REC_TD'),
+        REC_Targets=Sum('playergamestat__REC_Targets'),
+        PAS_Yards=Sum('playergamestat__PAS_Yards'),
+        PAS_TD=Sum('playergamestat__PAS_TD'),
+        PAS_Sacks=Sum('playergamestat__PAS_Sacks'),
+        PAS_SackYards=Sum('playergamestat__PAS_SackYards'),
+        PAS_Attempts=Sum('playergamestat__PAS_Attempts'),
+        PAS_Completions=Sum('playergamestat__PAS_Completions'),
+        PAS_INT=Sum('playergamestat__PAS_INT'),
+        REC_Yards=Sum('playergamestat__REC_Yards'),
+        DEF_Sacks=Sum('playergamestat__DEF_Sacks'),
+        DEF_INT=Sum('playergamestat__DEF_INT'),
+        DEF_Tackles=Sum('playergamestat__DEF_Tackles'),
+        DEF_Deflections=Sum('playergamestat__DEF_Deflections'),
+        DEF_TD=Sum('playergamestat__DEF_TD'),
+        DEF_TacklesForLoss=Sum('playergamestat__DEF_TacklesForLoss'),
+        FUM_Forced=Sum('playergamestat__FUM_Forced'),
+        FUM_Fumbles=Sum('playergamestat__FUM_Fumbles'),
+        FUM_Recovered=Sum('playergamestat__FUM_Recovered'),
+        BLK_Sacks=Sum('playergamestat__BLK_Sacks'),
+        BLK_Blocks=Sum('playergamestat__BLK_Blocks'),
+    ):
+
+        PlayerGameSummary = CalculateGameScore(PTS)
+
+        PTS.TopStatStringDisplay1 = PlayerGameSummary['TopStatStringDisplay1']
+        PTS.TopStatStringDisplay2 = PlayerGameSummary['TopStatStringDisplay2']
+        PTS.TopStatStringDisplay3 = PlayerGameSummary['TopStatStringDisplay3']
+        PTS.TopStatStringDisplay4 = PlayerGameSummary['TopStatStringDisplay4']
+
+        PTS_ToSave.append(PTS)
+
+    PlayerTeamSeason.objects.bulk_update(PTS_ToSave, ['TopStatStringDisplay1', 'TopStatStringDisplay2', 'TopStatStringDisplay3', 'TopStatStringDisplay4'])
+
+
+    return None
+
 def EndSeason(WorldID):
     CurrentSeason = LeagueSeason.objects.filter(WorldID=WorldID).filter(IsCurrent = 1).first()
     CurrentLeague = CurrentSeason.LeagueID
@@ -1709,6 +1778,7 @@ def EndSeason(WorldID):
 
     if CurrentSeason.AwardsCreated == False:
         print('Assigning awards!')
+        SetPlayerTeamSeasonTotals(WorldID, CurrentSeason)
         NationalAwards(WorldID, CurrentSeason)
 
     CurrentSeason.AwardsCreated = True
@@ -1908,7 +1978,7 @@ def PopulateTeamSeasonPositions(WorldID, CurrentSeason):
                 TSP = TeamSeasonPosition(**PMap)
                 TSPToCreate.append(TSP)
 
-        TeamSeasonPosition.objects.bulk_create(TSPToCreate)
+        TeamSeasonPosition.objects.bulk_create(TSPToCreate, batch_size=500)
 
 
 def AddRecruitsToTeams(WorldID, CurrentSeason):

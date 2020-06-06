@@ -620,34 +620,61 @@ class Conference(models.Model):
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
 
+    def __str__(self):
+        return self.ConferenceName
+
+class ConferenceSeason(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
+    ConferenceSeasonID = models.AutoField(primary_key = True, db_index=True)
+    LeagueSeasonID = models.ForeignKey(LeagueSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+
+    ConferenceID = models.ForeignKey(Conference, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+
+
     def ConferenceStandings(self, Small=True, HighlightedTeams=[], WorldID = None, LeagueSeasonID = None, WeekID = None):
 
         if WorldID is None:
-            WorldID = self.WorldID.WorldID
+            WorldID = self.WorldID_id
 
         RankWeek = WeekID.PreviousWeek
 
-        Standings = TeamSeason.objects.filter(ConferenceID = self).filter(teamseasonweekrank__WeekID = RankWeek).filter(LeagueSeasonID = LeagueSeasonID).values(
-            'TeamID__TeamLogoURL_50', 'TeamID__TeamName', 'ConferenceWins', 'ConferenceLosses', 'ConferenceGB', 'ConferenceRank', 'Wins', 'Losses', 'TeamID__TeamLogoURL', 'TeamID', 'TeamID__TeamColor_Primary_HEX'
-        ).annotate(
-            TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), output_field=CharField()),
-            NationalRank = F('teamseasonweekrank__NationalRank'),
-            NationalRankDisplay = Case(
-                When(NationalRank__gt = 25, then=Value('')),
-                default=Concat(Value('('), F('NationalRank'), Value(')'), output_field=CharField()),
-                output_field=CharField()
-            ),
-            BoldTeam = Case(
-                When(TeamID__TeamName__in = HighlightedTeams, then=Value('bold')),
-                default=Value(''),
-                output_field=CharField()
-            ),
-        ).order_by('ConferenceRank')
+        ConferenceStandings = []
 
-        return Standings
+        for DS in self.divisionseason_set.all().prefetch_related('teamseason_set'):
+            Standings = DS.teamseason_set.filter(teamseasonweekrank__WeekID = RankWeek).values(
+                'TeamID__TeamLogoURL_50', 'TeamID__TeamName', 'ConferenceWins', 'ConferenceLosses', 'ConferenceGB', 'DivisionRank', 'Wins', 'Losses', 'TeamID__TeamLogoURL', 'TeamID', 'TeamID__TeamColor_Primary_HEX'
+            ).annotate(
+                TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), output_field=CharField()),
+                NationalRank = F('teamseasonweekrank__NationalRank'),
+                NationalRankDisplay = Case(
+                    When(NationalRank__gt = 25, then=Value('')),
+                    default=Concat(Value('('), F('NationalRank'), Value(')'), output_field=CharField()),
+                    output_field=CharField()
+                ),
+                BoldTeam = Case(
+                    When(TeamID__TeamName__in = HighlightedTeams, then=Value('bold')),
+                    default=Value(''),
+                    output_field=CharField()
+                ),
+            ).order_by('DivisionRank')
 
-    def __str__(self):
-        return self.ConferenceName
+            StandingObj = {'DivisionName': DS.DivisionName, 'Standings': Standings}
+
+            ConferenceStandings.append(StandingObj)
+
+        return ConferenceStandings
+
+
+class DivisionSeason(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
+    DivisionSeasonID = models.AutoField(primary_key = True, db_index=True)
+    LeagueSeasonID = models.ForeignKey(LeagueSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+
+    ConferenceSeasonID = models.ForeignKey(ConferenceSeason, on_delete=models.CASCADE, blank=True, null=True, default=None, db_index=True)
+
+    SoleDivision = models.BooleanField(default = True)
+    DivisionName = models.CharField(max_length = 100, blank=True, null=True, default=None)
+
 
 class Stadium(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
@@ -715,7 +742,7 @@ class Team(models.Model):
         return self.TeamName + ' ' + self.TeamNickname
     @property
     def ConferenceName(self):
-        return self.CurrentTeamSeason.ConferenceID.ConferenceName
+        return self.CurrentTeamSeason.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceName
 
     @property
     def TeamRecord(self):
@@ -1262,7 +1289,7 @@ class TeamSeason(models.Model):
     TeamSeasonID = models.AutoField(primary_key=True, db_index=True)
     TeamID       = models.ForeignKey(Team,  on_delete=models.CASCADE, db_index=True, null=True, blank=True)
     LeagueSeasonID     = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, db_index=True)
-    ConferenceID   = models.ForeignKey(Conference,on_delete=models.CASCADE, db_index=True, blank=True, null=True, default=None)
+    DivisionSeasonID   = models.ForeignKey(DivisionSeason,on_delete=models.CASCADE, db_index=True, blank=True, null=True, default=None)
 
     IsRecruitTeam = models.BooleanField(default=False)
     IsFreeAgentTeam = models.BooleanField(default=False)
@@ -1277,7 +1304,7 @@ class TeamSeason(models.Model):
 
     ExpectedWins = models.PositiveSmallIntegerField(default=0)
 
-    ConferenceRank = models.PositiveSmallIntegerField(default=0)
+    DivisionRank = models.PositiveSmallIntegerField(default=0)
     ConferenceGB   = models.DecimalField(default = 0, max_digits = 5, decimal_places=1)
     WinStreak = models.PositiveSmallIntegerField(default=0)
 
@@ -1656,6 +1683,11 @@ class PlayerTeamSeason(models.Model):
     LeftEarlyForDraftAfterSeason = models.BooleanField(default = False)
     TransferredAfterSeason = models.BooleanField(default = False)
 
+    TopStatStringDisplay1 = models.CharField(default=None, null=True, blank=True, max_length=30)
+    TopStatStringDisplay2 = models.CharField(default=None, null=True, blank=True, max_length=30)
+    TopStatStringDisplay3 = models.CharField(default=None, null=True, blank=True, max_length=30)
+    TopStatStringDisplay4 = models.CharField(default=None, null=True, blank=True, max_length=30)
+
     def __str__(self):
         if self.TeamSeasonID.TeamID is not None:
             TeamName = self.TeamSeasonID.TeamID.TeamName
@@ -1899,10 +1931,10 @@ class Game(models.Model):
         URL = '/World/' + str(self.WorldID_id) + '/Game/' + str(self.GameID)
         return str(URL)
 
-    @property
-    def GameHref(self):
-        URL = '/World/' + str(self.WorldID_id) + '/Game/' + str(self.GameID)
-        return str(URL)
+    # @property
+    # def GameHref(self):
+    #     URL = '/World/' + str(self.WorldID_id) + '/Game/' + str(self.GameID)
+    #     return str(URL)
 
     @property
     def TopPlayerStats(self):
@@ -1918,81 +1950,21 @@ class Game(models.Model):
 
 
     def CalculateTopPlayers(self):
+        HomeTeamGameID = self.teamgame_set.filter(IsHomeTeam = False).first()
+        AwayTeamGameID = self.teamgame_set.filter(IsHomeTeam = False).first()
+        
+        AwayPlayers = AwayTeamGameID.playergamestat_set.all().select_related('PlayerTeamSeasonID__PlayerID__PositionID', 'TeamGameID__TeamSeasonID__TeamID').order_by('-GameScore')[:3]
+        HomePlayers = HomeTeamGameID.playergamestat_set.all().select_related('PlayerTeamSeasonID__PlayerID__PositionID', 'TeamGameID__TeamSeasonID__TeamID').order_by('-GameScore')[:3]
 
-        Results = {}
-
-        AwayPGS = self.AwayTeamGameID.playergamestat_set.values('FUM_Recovered','FUM_Forced','FUM_Fumbles','DEF_TD','PAS_INT','PAS_Sacks','DEF_Sacks','DEF_Tackles','DEF_Deflections','DEF_INT','RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
-        HomePGS = self.HomeTeamGameID.playergamestat_set.values('FUM_Recovered','FUM_Forced','FUM_Fumbles','DEF_TD','PAS_INT','PAS_Sacks','DEF_Sacks','DEF_Tackles','DEF_Deflections','DEF_INT','RUS_Yards','RUS_Carries', 'REC_TD','REC_Yards','RUS_TD','PAS_Yards','PAS_Completions', 'PAS_Attempts', 'PAS_TD', 'PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID_id').order_by('-GameScore')
-        HomePlayers = []
-        AwayPlayers = []
-
-        GameScoreMap = [
-            {'Stat': 'RUS_Yards', 'PointToStatRatio': 1.0 / 10, 'DisplayName': 'rush yards'},
-            {'Stat': 'RUS_TD'   , 'PointToStatRatio': 6.0 / 1,  'DisplayName': 'rush TDs'},
-            {'Stat': 'PAS_Yards', 'PointToStatRatio': 1.0 / 25, 'DisplayName': 'pass yards'},
-            {'Stat': 'PAS_TD',    'PointToStatRatio': 5.0 / 1,  'DisplayName': 'pass TDs'},
-            {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 10, 'DisplayName': 'rec. yards'},
-            {'Stat': 'REC_TD',    'PointToStatRatio': 6.0 / 1,  'DisplayName': 'rec. TDs'},
-            {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1,  'DisplayName': 'rec. TDs'},
-            {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 1,  'DisplayName': 'sacked'},
-            {'Stat': 'DEF_Sacks',  'PointToStatRatio': 4.0 / 1,  'DisplayName': 'sacks'},
-            {'Stat': 'DEF_Tackles',  'PointToStatRatio': 1.0 / 1,  'DisplayName': 'tackles'},
-            {'Stat': 'DEF_Deflections',  'PointToStatRatio': 1.0 / 1,  'DisplayName': 'deflections'},
-            {'Stat': 'DEF_INT',  'PointToStatRatio': 4.0 / 1,  'DisplayName': 'interceptions'},
-            {'Stat': 'DEF_TD',  'PointToStatRatio': 6.0 / 1,  'DisplayName': 'D TDs'},
-            {'Stat': 'FUM_Fumbles',  'PointToStatRatio': -3.0 / 1,  'DisplayName': 'fumbles'},
-            {'Stat': 'FUM_Forced',  'PointToStatRatio': 2.0 / 1,  'DisplayName': 'fumbles forced'},
-            {'Stat': 'FUM_Recovered',  'PointToStatRatio': 2.0 / 1,  'DisplayName': 'fumbles recovered'},
-        ]
+        return {'HomePlayers': HomePlayers, 'AwayPlayers': AwayPlayers}
 
 
-        HomePlayers = HomePGS[0:3]
-        AwayPlayers = AwayPGS[0:3]
-
-        counter = 1
-        for P in HomePlayers:
-            PlayerName = P['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + P['PlayerTeamSeasonID__PlayerID__PlayerLastName']
-            PlayerPosition = P['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation']
-            PlayerID = P['PlayerTeamSeasonID__PlayerID_id']
-
-            PlayerStats = ''
-            for Stat in sorted(GameScoreMap, key=lambda k: P[k['Stat']] * k['PointToStatRatio'], reverse=True)[:2]:
-                if P[Stat['Stat']] > 0:
-                    PlayerStats += str(P[Stat['Stat']]) + ' ' + Stat['DisplayName'] + ', '
-
-            if len(PlayerStats) >= 2:
-                PlayerStats = PlayerStats[:-2]
-
-            Results['HomeTeamPlayer'+str(counter)] = {'PlayerName': PlayerName, 'PlayerPosition': PlayerPosition, 'PlayerStats': PlayerStats, 'PlayerID': PlayerID}
-            counter +=1
-
-        counter = 1
-        for P in AwayPlayers:
-            PlayerName = P['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + P['PlayerTeamSeasonID__PlayerID__PlayerLastName']
-            PlayerPosition = P['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation']
-            PlayerID = P['PlayerTeamSeasonID__PlayerID_id']
-
-            PlayerStats = ''
-            for Stat in sorted(GameScoreMap, key=lambda k: P[k['Stat']] * k['PointToStatRatio'], reverse=True)[:2]:
-                if P[Stat['Stat']] > 0:
-                    PlayerStats += str(P[Stat['Stat']]) + ' ' + Stat['DisplayName'] + ', '
-
-            if len(PlayerStats) >= 2:
-                PlayerStats = PlayerStats[:-2]
-
-            Results['AwayTeamPlayer'+str(counter)] = {'PlayerName': PlayerName, 'PlayerPosition': PlayerPosition, 'PlayerStats': PlayerStats, 'PlayerID': PlayerID}
-            counter +=1
-
-
-        return Results
-
-
-    @property
-    def HomeTeamGameID(self):
-        return self.teamgame_set.filter(IsHomeTeam=True).first()
-    @property
-    def AwayTeamGameID(self):
-        return self.teamgame_set.filter(IsHomeTeam=False).first()
+    # @property
+    # def HomeTeamGameID(self):
+    #     return self.teamgame_set.filter(IsHomeTeam=True).first()
+    # @property
+    # def AwayTeamGameID(self):
+    #     return self.teamgame_set.filter(IsHomeTeam=False).first()
     @property
     def HomeTeamSeasonID(self):
         return self.HomeTeamGameID.TeamSeasonID
@@ -2016,43 +1988,44 @@ class Game(models.Model):
         if self.AwayTeamRecord is None:
             return str(self.AwayTeamID.CurrentTeamSeason.Wins) + '-'+str(self.AwayTeam.CurrentTeamSeason.Losses)
         return self.AwayTeamRecord
-    @property
-    def HomeTeamRank(self):
-        if self.HomeTeamGameID.TeamSeasonWeekRankID is None:
-            R = self.HomeTeamSeasonID.NationalRank
-        else:
-            R = self.HomeTeamGameID.TeamSeasonWeekRankID.NationalRank
-        if R > 25:
-            return ''
 
-        return '(' + str(R) + ')'
-
-    @property
-    def AwayTeamRank(self):
-        TSDR = self.AwayTeamGameID.TeamSeasonWeekRankID
-        if TSDR is None:
-            R = self.AwayTeamSeasonID.NationalRank
-        else:
-            R = TSDR.NationalRank
-        if R > 25:
-            return ''
-
-        return '(' + str(R) + ')'
-
-    @property
-    def HomeTeamRankValue(self):
-        if self.HomeTeamGameID.TeamSeasonWeekRankID is None:
-            return self.HomeTeamSeasonID.NationalRank
-        else:
-            return self.HomeTeamGameID.TeamSeasonWeekRankID.NationalRank
-
-    @property
-    def AwayTeamRankValue(self):
-        TSDR = self.AwayTeamGameID.TeamSeasonWeekRankID
-        if TSDR is None:
-            return self.AwayTeamSeasonID.NationalRank
-        else:
-            return TSDR.NationalRank
+    # @property
+    # def HomeTeamRank(self):
+    #     if self.HomeTeamGameID.TeamSeasonWeekRankID is None:
+    #         R = self.HomeTeamSeasonID.NationalRank
+    #     else:
+    #         R = self.HomeTeamGameID.TeamSeasonWeekRankID.NationalRank
+    #     if R > 25:
+    #         return ''
+    #
+    #     return '(' + str(R) + ')'
+    #
+    # @property
+    # def AwayTeamRank(self):
+    #     TSDR = self.AwayTeamGameID.TeamSeasonWeekRankID
+    #     if TSDR is None:
+    #         R = self.AwayTeamSeasonID.NationalRank
+    #     else:
+    #         R = TSDR.NationalRank
+    #     if R > 25:
+    #         return ''
+    #
+    #     return '(' + str(R) + ')'
+    #
+    # @property
+    # def HomeTeamRankValue(self):
+    #     if self.HomeTeamGameID.TeamSeasonWeekRankID is None:
+    #         return self.HomeTeamSeasonID.NationalRank
+    #     else:
+    #         return self.HomeTeamGameID.TeamSeasonWeekRankID.NationalRank
+    #
+    # @property
+    # def AwayTeamRankValue(self):
+    #     TSDR = self.AwayTeamGameID.TeamSeasonWeekRankID
+    #     if TSDR is None:
+    #         return self.AwayTeamSeasonID.NationalRank
+    #     else:
+    #         return TSDR.NationalRank
     @property
     def WorldPageFilterAttributes(self):
         Attr = 'AllGame=1 '
@@ -2075,21 +2048,21 @@ class Game(models.Model):
     @property
     def LosingTeam(self):
         return self.LosingTeamID
-
-    @property
-    def HomeTeamWinningGameBold(self):
-        if self.HomeTeamID == self.WinningTeamID:
-            return 'TeamWinningGameBold'
-        elif self.HomeTeamID == self.LosingTeamID:
-            return 'TeamLosingGame'
-        return ''
-    @property
-    def AwayTeamWinningGameBold(self):
-        if self.AwayTeamID == self.WinningTeamID:
-            return 'TeamWinningGameBold'
-        elif self.AwayTeamID == self.LosingTeamID:
-            return 'TeamLosingGame'
-        return ''
+    #
+    # @property
+    # def HomeTeamWinningGameBold(self):
+    #     if self.HomeTeamID == self.WinningTeamID:
+    #         return 'TeamWinningGameBold'
+    #     elif self.HomeTeamID == self.LosingTeamID:
+    #         return 'TeamLosingGame'
+    #     return ''
+    # @property
+    # def AwayTeamWinningGameBold(self):
+    #     if self.AwayTeamID == self.WinningTeamID:
+    #         return 'TeamWinningGameBold'
+    #     elif self.AwayTeamID == self.LosingTeamID:
+    #         return 'TeamLosingGame'
+    #     return ''
     @property
     def DateShortDisplay(self):
         return self.WeekID.WeekName
@@ -2106,7 +2079,7 @@ class Game(models.Model):
             else:
                 return self.BowlID.BowlName
         elif self.IsConferenceChampionship:
-            return self.HomeTeamSeasonID.ConferenceID.ConferenceName + ' Championship'
+            return self.HomeTeamSeasonID.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceName + ' Championship'
         elif self.TeamRivalryID is not None:
             if self.TeamRivalryID.RivalryName is not None:
                 return self.TeamRivalryID.RivalryName
@@ -2662,6 +2635,8 @@ class PlayerGameStat(models.Model):
 
     TopStatStringDisplay1 = models.CharField(default=None, null=True, blank=True, max_length=30)
     TopStatStringDisplay2 = models.CharField(default=None, null=True, blank=True, max_length=30)
+    TopStatStringDisplay3 = models.CharField(default=None, null=True, blank=True, max_length=30)
+    TopStatStringDisplay4 = models.CharField(default=None, null=True, blank=True, max_length=30)
 
     def ReturnAsDict(self):
         ThisPlayer = self.PlayerTeamSeasonID.PlayerID

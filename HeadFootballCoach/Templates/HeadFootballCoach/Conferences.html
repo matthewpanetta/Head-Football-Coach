@@ -64,7 +64,8 @@
                         <th scope="col" data-defaultsort="asc">MOV</th>
                       </tr>
                     </thead>
-                    {% for standingTeam in Conference.ConferenceTeams %}
+                    {% for Division in Conference.ConferenceTeams %}
+                    {% for standingTeam in Division.Standings%}
                     <tr class='{{standingTeam.BoldTeam}} ' style=''>
                       <td style='border-left-color: #{{standingTeam.TeamID__TeamColor_Primary_HEX}}' class='teamTableBorder'>
                         <a href="{{ standingTeam.TeamHref }}">
@@ -72,7 +73,7 @@
                           {{standingTeam.NationalRankDisplay}} {{standingTeam.TeamID__TeamName }}
                         </a>
                       </td>
-                      <td>{{standingTeam.ConferenceRank}}</td>
+                      <td>{{standingTeam.DivisionRank}}</td>
                       <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
                       <td>{{standingTeam.ConferenceGB}}</td>
                       <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
@@ -80,6 +81,7 @@
                       <td>{{standingTeam.PAPG}}</td>
                       <td>{{standingTeam.MOV}}</td>
                     </tr>
+                    {% endfor %}
                     {% endfor %}
                   </table>
                 </div>

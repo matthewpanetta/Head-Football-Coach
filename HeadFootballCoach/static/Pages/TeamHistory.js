@@ -17,7 +17,7 @@ function PopulateTeamHistory(TeamHistoryData){
       {"data": "ConferenceWins", "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
           $(td).text(DataObject.TeamConferenceRecord)
       }},
-      {"data": "ConferenceRank", "sortable": true, 'visible': true, 'orderSequence':[ "asc", 'desc']},
+      {"data": "DivisionRank", "sortable": true, 'visible': true, 'orderSequence':[ "asc", 'desc']},
       {"data": null, "sortable": true, 'visible': true, 'orderSequence':["desc", "asc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
           $(td).empty();
 

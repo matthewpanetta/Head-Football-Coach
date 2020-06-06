@@ -429,7 +429,6 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
             ThisWeekInterestIncrease *= InterestModifier
             ThisWeekInterestIncrease = int(ThisWeekInterestIncrease / 5.0) * 5
-            print('RTS', RTS, 'Adding InterestLevel', ThisWeekInterestIncrease)
             RTS.InterestLevel += ThisWeekInterestIncrease
             RTSToSave.append(RTS)
 

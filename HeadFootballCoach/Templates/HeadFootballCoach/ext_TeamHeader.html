@@ -16,7 +16,7 @@
       {{ThisTeamSeason.Wins}} - {{ThisTeamSeason.Losses}}
     </span>
     <div class='teamOverviewInfo'>
-      {{ThisTeamSeason.TeamID.CityID.CityName}}, {{ThisTeamSeason.TeamID.CityID.StateID.StateName}} | <a href="/World/{{page.WorldID}}/Conferences/{{ThisTeamSeason.ConferenceID_id}}">{{ThisTeamSeason.ConferenceID.ConferenceName}}</a>
+      {{ThisTeamSeason.TeamID.CityID.CityName}}, {{ThisTeamSeason.TeamID.CityID.StateID.StateName}} | <a href="/World/{{page.WorldID}}/Conferences/{{ThisTeamSeason.DivisonSeasonID.ConferenceSeasonID.ConferenceID.ConferenceID}}">{{ThisTeamSeason.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceName}}</a>
     </div>
     <div class='teamOverviewInfo'>
       {% for Link in HeaderLink.LinkPaths%}

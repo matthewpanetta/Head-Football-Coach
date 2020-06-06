@@ -662,9 +662,6 @@ function GetPlayerStats(WorldID, data){
 
 
     });
-
-
-
 }
 
 

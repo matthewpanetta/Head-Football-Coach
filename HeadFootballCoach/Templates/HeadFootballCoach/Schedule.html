@@ -37,21 +37,11 @@
         <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        {%if TeamID %}
-        <button id="nav-weekly-schedule-tab" class="w3-bar-item w3-button tab nav-tab-button">Weekly Schedule</button>
-        <button id="nav-team-schedules-tab"  class="w3-bar-item w3-button tab nav-tab-button selected-tab"  style="background-color: #{{page.SecondaryColor}};">Team Schedules</button>
-        {%else%}
         <button id="nav-weekly-schedule-tab" class="w3-bar-item w3-button tab nav-tab-button selected-tab" style="background-color: #{{page.SecondaryColor}};">Weekly Schedule</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-schedules-tab">Team Schedules</button>
-        {%endif%}
       </div>
     </nav>
     <div id="nav-tabContent">
-      {%if TeamID %}
-      <div class="tab-content" style="display:none;"  id="nav-weekly-schedule">
-      {%else%}
       <div class="tab-content" style="display:block;"  id="nav-weekly-schedule">
-      {%endif%}
       {%  if AllWeeks|length > 0%}
         <div class='w3-display-container' >
 
@@ -61,12 +51,12 @@
                 <div class="w3-card w3-light-grey w3-col s12">
                   <div class="w3-row-padding w3-white">
                     {% for Week in AllWeeks%}
-                    <div WeekID="{{Week.WeekID}}" class=" w3-display-container {{Week.SelectedWeekBox}} weekScheduleBox" style='flex-grow: 1;'>
+                    <div WeekID="{{Week.Week.WeekID}}" class=" w3-display-container {{Week.Week.SelectedWeekBox}} weekScheduleBox" style='flex-grow: 1;'>
                       <div class="ellipsis width100 font10-plain" style='background-color: black; text-align: center; color: white;'>Week</div>
 
                       <div class="width100 height100">
                         <div class="font20">
-                          <div >{{Week.WeekNumber}}</div>
+                          <div >{{Week.Week.WeekNumber}}</div>
                         </div>
                       </div>
                     </div>
@@ -74,7 +64,7 @@
                   </div>
                   <div class="w3-row w3-display-container w3-light-grey">
                     {% for Week in AllWeeks%}
-                    <div class="w3-display-container {{Week.ShowWeekClass}} weekScheduleDisplayContainer"  WeekID="{{Week.WeekID}}">
+                    <div class="w3-display-container {{Week.Week.ShowWeekClass}} weekScheduleDisplayContainer"  WeekID="{{Week.Week.WeekID}}">
                       {% for Game in Week.Games%}
                       {% if forloop.counter0|modulo:2 == 0 %}
                         <div class="w3-row-padding">
@@ -82,14 +72,14 @@
                         <div  class='w3-card w3-col l5 m12 hidden-overflow w3-margin-bottom w3-margin-top' style='background-color: white; padding: 0px; min-width: 400px;'>
                           <div class="w3-container">
                             <div class="scheduleGameDashboardGameTeamDisplayContainer w3-display-container">
-                              <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{Game.AwayTeamPrimaryColor}}'></div>
+                              <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{Game.Game.AwayTeamPrimaryColor}}'></div>
                               <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
-                              <img class='teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{Game.AwayTeamLogo}}' />
+                              <img class='teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{Game.Game.AwayTeamLogo}}' />
                             </div>
                             <div class="scheduleGameDashboardGameTeamDisplayContainer w3-display-container">
-                              <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{Game.HomeTeamPrimaryColor}}'></div>
+                              <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{Game.Game.HomeTeamPrimaryColor}}'></div>
                               <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
-                              <img class='teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{Game.HomeTeamLogo}}' />
+                              <img class='teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{Game.Game.HomeTeamLogo}}' />
                             </div>
                           <table class='width100 scheduleGameTable' style='table-layout: fixed;'>
                             <colgroup>
@@ -104,55 +94,55 @@
                             </colgroup>
                             <thead>
                               {% if Game.WasPlayed %}
-                              <th><a href="{{Game.GameHref}}" class='font10 left-text'>Box Score</a></th>
-                              {% for Period in Game.PeriodScores%}
+                              <th><a href="{{Game.Game.GameHref}}" class='font10 left-text'>Box Score</a></th>
+                              {% for Period in Game.Game.PeriodScores%}
                               <th>{{Period.EventPeriod|PeriodMap}}</th>
                               {% endfor %}
                               <th>F</th>
                               {% else%}
-                              <th><a href="{{Game.GameHref}}" class='font10 left-text'>Preview</a></th>
+                              <th><a href="{{Game.Game.GameHref}}" class='font10 left-text'>Preview</a></th>
                               {% endif %}
                             </thead>
                             <tbody>
                               <tr>
                                 <td class='left-text'>
-                                  <span class='font10'>{{Game.AwayTeamRank}}</span>
-                                  <a href="{{Game.AwayTeamHref}}" class='{{Game.AwayTeamWinningGameBold}}'>{{Game.AwayTeamName}}</a>
-                                  <span class='font10'>{{Game.AwayTeamRecord}}</span>
+                                  <span class='font10'>{{Game.Game.AwayTeamRank}}</span>
+                                  <a href="{{Game.Game.AwayTeamHref}}" class='{{Game.Game.AwayTeamWinningGameBold}}'>{{Game.Game.AwayTeamName}}</a>
+                                  <span class='font10'>{{Game.Game.AwayTeamRecord}}</span>
                                 </td>
-                                {% if Game.WasPlayed %}
+                                {% if Game.Game.WasPlayed %}
                                 {% for Period in Game.PeriodScores%}
                                 <td>{{ Period.AwayPointsScoredThisPeriod|default_if_none:Period.PeriodAwayPoints   }}</td>
                                 {% endfor %}
-                                <td class='{{Game.AwayTeamWinningGameBold}}'>{{Game.AwayPoints}}</td>
+                                <td class='{{Game.Game.AwayTeamWinningGameBold}}'>{{Game.Game.AwayPoints}}</td>
                                 {% endif %}
                               </tr>
                               <tr>
                                 <td class='left-text '>
-                                  <span class='font10'>{{Game.HomeTeamRank}}</span>
-                                  <a href="{{Game.HomeTeamHref}}" class='{{Game.HomeTeamWinningGameBold}}'>{{Game.HomeTeamName}}</a>
-                                  <span class='font10'>{{Game.HomeTeamRecord}}</span>
+                                  <span class='font10'>{{Game.Game.HomeTeamRank}}</span>
+                                  <a href="{{Game.Game.HomeTeamHref}}" class='{{Game.Game.HomeTeamWinningGameBold}}'>{{Game.Game.HomeTeamName}}</a>
+                                  <span class='font10'>{{Game.Game.HomeTeamRecord}}</span>
                                 </td>
-                                {% if Game.WasPlayed %}
+                                {% if Game.Game.WasPlayed %}
                                 {% for Period in Game.PeriodScores%}
                                 <td>{{ Period.HomePointsScoredThisPeriod|default_if_none:Period.PeriodHomePoints   }}</td>
                                 {% endfor %}
-                                <td class='{{Game.HomeTeamWinningGameBold}}'>{{Game.HomePoints}}</td>
+                                <td class='{{Game.Game.HomeTeamWinningGameBold}}'>{{Game.Game.HomePoints}}</td>
                                 {% endif %}
                               </tr>
                             </tbody>
                           </table>
                           </div>
-                          {% if Game.WasPlayed %}
+                          {% if Game.Game.WasPlayed %}
                           <div class="w3-row-padding w3-margin-top">
                             <div class="w3-col s6">
                               <h6 class='font12'>Top Players</h6>
                             <ul class='no-list-style'>
                               {% for Player in Game.HomeTopPlayers%}
                               <li class='font12'>
-                                  {{Player.PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation}}
-                                  <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}} </a>
-                                    ({{Player.PlayerTeamSeasonID__TeamSeasonID__TeamID__Abbreviation}})
+                                  {{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}
+                                  <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID.PlayerID.PlayerFirstName}} {{Player.PlayerTeamSeasonID.PlayerID.PlayerLastName}} </a>
+                                    ({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})
                                   <ul class='no-list-style font10'>
                                     <li>{{Player.TopStatStringDisplay1}}</li>
                                     <li>{{Player.TopStatStringDisplay2}}</li>
@@ -166,9 +156,9 @@
                             <ul class='no-list-style'>
                               {% for Player in Game.AwayTopPlayers%}
                               <li class='font12'>
-                                  {{Player.PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation}}
-                                  <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}}</a>
-                                  ({{Player.PlayerTeamSeasonID__TeamSeasonID__TeamID__Abbreviation}})
+                                  {{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}
+                                  <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID.PlayerID.PlayerFirstName}} {{Player.PlayerTeamSeasonID.PlayerID.PlayerLastName}} </a>
+                                    ({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})
                                   <ul class='no-list-style font10'>
                                     <li>{{Player.TopStatStringDisplay1}}</li>
                                     <li>{{Player.TopStatStringDisplay2}}</li>
@@ -199,37 +189,6 @@
 
           </div>
           {% else %}
-          <div class="w3-display-middle">
-            <span>No games to display</span>
-          </div>
-          {% endif %}
-        </div>
-      </div>
-      {%if TeamID %}
-      <div class="tab-content" style="display:block;"  id="nav-team-schedules">
-      {%else%}
-      <div class="tab-content" style="display:none;"  id="nav-team-schedules">
-      {%endif%}
-
-        <div class='w3-display-container'>
-          {% if AllWeeks|length > 0 %}
-          <div class='w3-row-padding' id='worldLeagueLeaderRow'>
-              <div class="w3-col s8 w3-card no-padding">
-                <table class='w3-table-all width100' id='scheduleTeamScheduleTable'>
-                  <thead>
-                    <th>Week</th>
-                    <th>Opponent</th>
-                    <th>Outcome</th>
-                    <th>W-L (Conf)</th>
-                    <th>Top Player 1</th>
-                    <th>Top Player 2</th>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
-              </div>
-          </div>
-          {% else%}
           <div class="w3-display-middle">
             <span>No games to display</span>
           </div>

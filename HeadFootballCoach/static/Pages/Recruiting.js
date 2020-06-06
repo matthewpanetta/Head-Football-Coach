@@ -39,7 +39,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID, SourceTable){
             </li>
             <li class='playerHeaderHometown'>
               <div class='playerHeaderBioDescription'>OVR</div>
-              <div><span data-field="playerteamseason__playerteamseasonskill__Scouted_Overall"></span></div>
+              <div><span data-field="playerteamseason__recruitteamseason__Scouted_Overall"></span></div>
             </li>
           </ul>
 
@@ -709,7 +709,6 @@ function DrawRecruitingTable(WorldID, data, SavedPlayers){
 
         var SourceTable = 'Main';
 
-        console.log('row', row)
         if (!(row.any())){
           SourceTable = 'Board'
           var row = BoardTable.row( tr );
@@ -723,7 +722,6 @@ function DrawRecruitingTable(WorldID, data, SavedPlayers){
         else {
             // Open this row
             var data = row.data()
-            console.log('DrawPlayerInfo(data, WorldID, PlayerID);', data, WorldID, PlayerID, SourceTable)
             var formattedContent = DrawPlayerInfo(data, WorldID, PlayerID, SourceTable);
             row.child( formattedContent, 'teamTableBorder' ).show();
             var childrow = row.child();
@@ -852,12 +850,6 @@ function RecruitingAction(WorldID, BoardTable, MainTable){
               $(ActionTarget).attr('background-ajax', Path.replace('Remove', 'Add'));
             }
             else if (Action == 'Remove from Board') {
-              //datatable here
-              //BoardTable.row.add(ParentSourceRow.data()).draw ();
-              console.log('BoardTable', $('#recruitingBoardTable'));
-              console.log('PlayerID', PlayerID)
-              console.log('removing ', $('#recruitingBoardTable').find('tr[playerid="'+PlayerID+'"]'))
-              console.log('removing ', $('#recruitingBoardTable').find('#playerinfo-Board-'+PlayerID).closest('tr.teamTableBorder'))
               $('#recruitingBoardTable').find('tr[playerid="'+PlayerID+'"]').remove();
               $('#recruitingBoardTable').find('#playerinfo-Board-'+PlayerID).closest('tr.teamTableBorder').remove();
 

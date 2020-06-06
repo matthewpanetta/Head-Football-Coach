@@ -326,13 +326,14 @@
                     <span>{{Conference.ConferenceName}} Standings</span>
                   </div>
                   <table id='teamOverviewConferenceStandings'>
+                    {% for Division in Conference.Divisions%}
                     <thead>
                       <th>Team</th>
                       <th>Conf</th>
                       <th>GB</th>
                       <th>Record</th>
                     </thead>
-                    {% for standingTeam in Conference.conferenceTeams %}
+                    {% for standingTeam in Division.Standings %}
                     <tr class='{{standingTeam.BoldTeam}}'>
                       <td>
                         <a href="{{standingTeam.TeamHref}}/">
@@ -344,6 +345,7 @@
                       <td>{{standingTeam.ConferenceGB}}</td>
                       <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
                     </tr>
+                    {% endfor %}
                     {% endfor %}
                   </table>
                 </div>

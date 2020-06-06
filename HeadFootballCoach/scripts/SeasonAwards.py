@@ -34,7 +34,7 @@ def NationalAwards(WorldID, CurrentSeason):
                 PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PlayerOfTheYearPTS['PlayerTeamSeasonID'])
                 PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=True, IsNationalAward=True, IsSeasonAward=True)
             else:
-                PlayerOfTheYearPTS = AllPlayers.filter(TeamSeasonID__ConferenceID = Conf).first()
+                PlayerOfTheYearPTS = AllPlayers.filter(TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID = Conf).first()
                 PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PlayerOfTheYearPTS['PlayerTeamSeasonID'])
                 PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=True, IsConferenceAward=True, IsSeasonAward=True, ConferenceID = Conf)
 
@@ -43,7 +43,7 @@ def NationalAwards(WorldID, CurrentSeason):
             for Pos in Position.objects.filter(Occurance__gt = 0):
                 PositionPlayers = AllPlayers.filter(PlayerID__PositionID = Pos)
                 if Conf is not None:
-                    PositionPlayers = PositionPlayers.filter(TeamSeasonID__ConferenceID = Conf)
+                    PositionPlayers = PositionPlayers.filter(TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID = Conf)
 
                 for PlayerCount in range(0,Pos.PositionCountPerAwardTeam * 2):
                     IsFirstTeam = False
@@ -122,7 +122,7 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
         for Pos in Position.objects.filter(Occurance__gt = 0):
             PositionPlayers = AllPlayers.filter(PlayerID__PositionID = Pos)
             if Conf is not None:
-                PositionPlayers = PositionPlayers.filter(TeamSeasonID__ConferenceID = Conf)
+                PositionPlayers = PositionPlayers.filter(TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID = Conf)
 
             for PlayerCount in range(0,Pos.PositionCountPerAwardTeam * 2):
                 IsFirstTeam = False
@@ -148,6 +148,7 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
 
 def ChoosePlayersOfTheWeek(CurrentSeason, CurrentWorld, CurrentWeek=None):
 
+    AwardsToSave = []
     for PositionGroupID in PositionGroup.objects.exclude(PositionGroupName = 'Special Teams'):
 
         PTG = PlayerGameStat.objects.filter(WorldID = CurrentWorld).filter(TeamGameID__GameID__WeekID = CurrentWeek).filter(PlayerTeamSeasonID__TeamSeasonID__TeamID__isnull = False).filter(PlayerTeamSeasonID__PlayerID__PositionID__PositionGroupID = PositionGroupID).filter(TeamGameID__GameID__WasPlayed = True).annotate(
@@ -174,10 +175,12 @@ def ChoosePlayersOfTheWeek(CurrentSeason, CurrentWorld, CurrentWeek=None):
         NationalPlayerOfTheWeek = PTG[0].PlayerTeamSeasonID
 
         Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsNationalAward = True, IsWeekAward = True, IsPositionGroupAward = True, PositionGroupID = PositionGroupID, PlayerTeamSeasonID = NationalPlayerOfTheWeek, WeekID = CurrentWeek)
-        Award.save()
-        ConfList = CurrentWorld.conference_set.all().filter(teamseason__teamgame__GameID__WeekID = CurrentWeek).annotate(GamesPlayed = Count('teamseason__teamgame')).filter(GamesPlayed__gt = 0)
+        AwardsToSave.append(Award)
+        ConfList = CurrentWorld.conference_set.filter(conferenceseason__divisionseason__teamseason__teamgame__GameID__WeekID = CurrentWeek).annotate(GamesPlayed = Count('conferenceseason__divisionseason__teamseason__teamgame')).filter(GamesPlayed__gt = 0)
         for Conf in ConfList:
-            ConfPTG = PTG.filter(TeamGameID__TeamSeasonID__ConferenceID = Conf).order_by('-GameScore')
+            ConfPTG = PTG.filter(TeamGameID__TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID = Conf).order_by('-GameScore')
             ConferencePlayerOfTheWeek = ConfPTG[0].PlayerTeamSeasonID
             Award = PlayerTeamSeasonAward(WorldID = CurrentWorld, IsTopPlayer = True, IsConferenceAward = True, IsWeekAward = True, ConferenceID = Conf, PlayerTeamSeasonID = ConferencePlayerOfTheWeek, IsPositionGroupAward = True, PositionGroupID = PositionGroupID, WeekID = CurrentWeek)
-            Award.save()
+            AwardsToSave.append(Award)
+
+    PlayerTeamSeasonAward.objects.bulk_create(AwardsToSave)

@@ -270,3 +270,66 @@ def DistanceBetweenCities_Dict(CityA, CityB):
     distance = R * c
 
     return distance
+
+
+def intWithCommas(x):
+
+    if x < 0:
+        return '-' + intWithCommas(-x)
+    result = ''
+    while x >= 1000:
+        x, r = divmod(x, 1000)
+        result = ",%03d%s" % (r, result)
+    return "%d%s" % (x, result)
+
+def CalculateGameScore(PlayerTeamSeason):
+
+    GameScoreMap = [
+        {'Stat': 'RUS_Yards', 'PointToStatRatio': 1.0 / 10, 'Display': ' rush yards'},
+        {'Stat': 'RUS_TD'   , 'PointToStatRatio': 6.0 / 1, 'Display': ' rush TDs'},
+        {'Stat': 'PAS_Yards', 'PointToStatRatio': 1.0 / 25, 'Display': ' pass yards'},
+        {'Stat': 'PAS_TD',    'PointToStatRatio': 4.0 / 1, 'Display': ' pass TDs'},
+        {'Stat': 'PAS_Completions', 'PointToStatRatio': 1.0 / 10, 'Display': ' comp'},
+        {'Stat': 'REC_Receptions', 'PointToStatRatio': 1.0 / 2, 'Display': ' rec.'},
+        {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 15, 'Display': ' rec. yards'},
+        {'Stat': 'REC_TD',    'PointToStatRatio': 5.0 / 1, 'Display': ' rec. TDs'},
+        {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1, 'Display': ' picks'},
+        {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 4, 'Display': ' sacked'},
+        {'Stat': 'DEF_Sacks',  'PointToStatRatio': 2.5 / 1, 'Display': ' sacks'},
+        {'Stat': 'DEF_Tackles',  'PointToStatRatio': 1.0 / 2, 'Display': ' tackles'},
+        {'Stat': 'DEF_TacklesForLoss',  'PointToStatRatio': 2.0 / 1, 'Display': ' TFLs'},
+        {'Stat': 'DEF_Deflections',  'PointToStatRatio': 2.0 / 1, 'Display': ' defl'},
+        {'Stat': 'DEF_INT',  'PointToStatRatio': 6.0 / 1, 'Display': ' INTS'},
+        {'Stat': 'DEF_TD',  'PointToStatRatio': 6.0 / 1, 'Display': ' def TDs'},
+        {'Stat': 'FUM_Fumbles',  'PointToStatRatio': -3.0 / 1, 'Display': ' fumbles'},
+        {'Stat': 'FUM_Forced',  'PointToStatRatio': 4.0 / 1, 'Display': ' fumb frcd'},
+        {'Stat': 'FUM_Recovered',  'PointToStatRatio': 1.0 / 1, 'Display': ' fumb rec.'},
+        {'Stat': 'BLK_Sacks',  'PointToStatRatio': -3.0 / 1, 'Display': ' sacks alwd.'},
+        {'Stat': 'BLK_Blocks',  'PointToStatRatio': 1.0 / 10, 'Display': ' blocks'},
+    ]
+
+    GameSummary = {'GameScore': 0}
+    for StatObj in GameScoreMap:
+        StatObj['DisplayValue'] = getattr(PlayerTeamSeason, StatObj['Stat'])
+        if StatObj['DisplayValue'] is None:
+            StatObj['DisplayValue'] = 0
+        StatObj['GameScoreValue'] = StatObj['DisplayValue'] * StatObj['PointToStatRatio']
+        GameSummary['GameScore'] += StatObj['GameScoreValue']
+
+    StatCount = 0
+    Displays = []
+    for Stat in sorted(GameScoreMap, key=lambda k: k['GameScoreValue'],reverse=True):
+        StatKey = 'TopStatStringDisplay' + str(StatCount + 1)
+        GameSummary[StatKey] = None
+        if Stat['DisplayValue'] > 0:
+            GameSummary[StatKey] = intWithCommas(Stat['DisplayValue']) + Stat['Display']
+
+        Displays.append(GameSummary[StatKey])
+        StatCount +=1
+
+    GameSummary['TopStatStringDisplay1'] = Displays[0]
+    GameSummary['TopStatStringDisplay2'] = Displays[1]
+    GameSummary['TopStatStringDisplay3'] = Displays[2]
+    GameSummary['TopStatStringDisplay4'] = Displays[3]
+
+    return GameSummary

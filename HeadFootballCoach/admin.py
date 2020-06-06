@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
+from .models import DivisionSeason, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
 
 
 class TeamSeasonStrategyAdmin(admin.ModelAdmin):
@@ -61,8 +61,8 @@ class RecruitTeamSeasonAdmin(admin.ModelAdmin):
 
 
 class TeamSeasonAdmin(admin.ModelAdmin):
-    list_display = ['TeamSeasonID', 'WorldID','TeamID','ConferenceID', 'LeagueSeasonID','TeamOverallRating','TeamOffenseRating','TeamDefenseRating','TeamOverallRating_Grade','TeamOffenseRating_Grade','TeamDefenseRating_Grade', 'GamesPlayed','Wins','Losses', 'ConferenceWins',  'ConferenceLosses','ConferenceRank', 'ConferenceGB' , 'WinStreak', 'ScholarshipsToOffer', 'RecruitingClassRank']
-    list_filter = ['WorldID','ConferenceID',]
+    list_display = ['TeamSeasonID', 'WorldID','TeamID', 'DivisionSeasonID', 'LeagueSeasonID','TeamOverallRating','TeamOffenseRating','TeamDefenseRating','TeamOverallRating_Grade','TeamOffenseRating_Grade','TeamDefenseRating_Grade', 'GamesPlayed','Wins','Losses', 'ConferenceWins',  'ConferenceLosses','DivisionRank', 'ConferenceGB' , 'WinStreak', 'ScholarshipsToOffer', 'RecruitingClassRank']
+    list_filter = ['WorldID',]
 
 class PlayerGameStatAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerGameStat._meta.get_fields() if field.name not in ('playerteamseason', 'teamseasondaterank', 'coachteamseason', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -153,6 +153,16 @@ class ConferenceAdmin(admin.ModelAdmin):
     list_display = ['WorldID', 'ConferenceName']
     list_filter = ['WorldID']
 
+
+class ConferenceSeasonAdmin(admin.ModelAdmin):
+    list_display = ['WorldID', 'ConferenceID', 'LeagueSeasonID']
+    list_filter = ['WorldID']
+
+
+class DivisionSeasonAdmin(admin.ModelAdmin):
+    list_display = ['WorldID', 'DivisionName', 'ConferenceSeasonID']
+    list_filter = ['WorldID']
+
 class TeamInfoTopicAdmin(admin.ModelAdmin):
     list_display = ['TeamInfoTopicID', 'AttributeName', 'RecruitMatchIsComputed', 'RecruitInterestWeight', 'IsPrestigeOrLocation']
 
@@ -173,6 +183,8 @@ admin.site.register(Player, PlayerAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(PlayerTeamSeason, PlayerTeamSeasonAdmin)
 admin.site.register(Conference, ConferenceAdmin)
+admin.site.register(ConferenceSeason, ConferenceSeasonAdmin)
+admin.site.register(DivisionSeason, DivisionSeasonAdmin)
 admin.site.register(LeagueSeason, LeagueSeasonAdmin)
 admin.site.register(Headline,HeadlineAdmin)
 admin.site.register(Calendar,CalendarAdmin)

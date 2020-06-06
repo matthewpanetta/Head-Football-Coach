@@ -14,7 +14,7 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
 
     for Conf in Conference.objects.filter(WorldID = CurrentWorld):
         ConfName = Conf.ConferenceName
-        ConfTeams = TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason).filter(WorldID=CurrentWorld).filter(ConferenceID = Conf).filter(teamseasonweekrank__IsCurrent = True).values(
+        ConfTeams = TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason).filter(WorldID=CurrentWorld).filter(DivisionSeasonID__ConferenceSeasonID__ConferenceID = Conf).filter(teamseasonweekrank__IsCurrent = True).values(
                 'TeamID__TeamName', 'TeamSeasonID', 'TeamID', 'ConferenceWins', 'ConferenceLosses', 'ConferenceChampion', 'teamseasonweekrank__NationalRank'
         ).annotate(
             NetWins = Coalesce(F('ConferenceWins') - F('ConferenceLosses'), 0),
@@ -57,7 +57,7 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
                 ConfTeamDict['NetWins'][NetWins] = []
 
             TS['ConferenceGB']   = round((ConfRankTracker[ConfName]['TopTeamRecord']['Wins'] - TS['ConferenceWins'] + TS['ConferenceLosses'] - ConfRankTracker[ConfName]['TopTeamRecord']['Losses']) / 2.0, 1)
-            TS['ConferenceRank'] = ConfRankTracker[ConfName]['Counter']
+            TS['DivisionRank'] = ConfRankTracker[ConfName]['Counter']
             TS['DefeatedTeams'] = TS['TeamSeason'].DefeatedTeams
             TS['TiebreakerCount'] = 0
             TS['ConferenceChampion'] = TS['ConferenceChampion']
@@ -91,7 +91,7 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
         for TS in sorted(ConfRankTracker[ConfName]['Teams'], key=lambda TS: (ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'], -1*ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], -1*ConfRankTracker[ConfName]['Teams'][TS]['MOV']),reverse=False):
 
             if CurrentSeason.PlayoffCreated == False:
-                TS.ConferenceRank = RankCount
+                TS.DivisionRank = RankCount
                 TS.ConferenceGB   = ConfRankTracker[ConfName]['Teams'][TS]['ConferenceGB']
 
                 TS.save()

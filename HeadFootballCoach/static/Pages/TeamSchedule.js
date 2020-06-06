@@ -9,7 +9,7 @@ function PopulateTeamSchedule(data){
     "pageLength": 25,
     "data": data,
      "columns": [
-       {"data": "teamseason__teamgame__GameID__WeekID__WeekName", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+       {"data": "GameID__WeekID__WeekName", "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
            $(td).attr('style', 'border-left-color: #' + DataObject['Opposing_TeamColor_Primary_HEX']);
            $(td).addClass('teamTableBorder');
        }},

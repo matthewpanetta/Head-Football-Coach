@@ -67,9 +67,9 @@
                         <li class='font10 bold'>National Champions</li>
                         {% endif %}
                         {% if team.TeamSeasonID__ConferenceChampion %}
-                        <li class='font10 bold'>{{team.TeamSeasonID__ConferenceID__ConferenceAbbreviation}} Champions</li>
+                        <li class='font10 bold'>{{team.TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation}} Champions</li>
                         {% else %}
-                        <li class='font10'>{{team.TeamSeasonID__ConferenceRank|ordinal}} in {{team.TeamSeasonID__ConferenceID__ConferenceAbbreviation}}</li>
+                        <li class='font10'>{{team.TeamSeasonID__DivisionRank|ordinal}} in {{team.TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation}}</li>
                         {% endif %}
                       </ul>
                     </td>

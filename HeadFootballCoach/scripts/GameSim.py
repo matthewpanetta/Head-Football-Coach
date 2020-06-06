@@ -4,7 +4,7 @@ from django.db.models import  Max, Q, F, Value, CharField
 from django.db.models.functions import Length, Concat
 from .rankings import CalculateRankings
 from django.db import transaction
-from ..utilities import WeightedProbabilityChoice, IfNull, SecondsToMinutes, Average, NormalTrunc, Max_Int
+from ..utilities import WeightedProbabilityChoice, IfNull, SecondsToMinutes, Average, NormalTrunc, Max_Int, CalculateGameScore
 import math
 from django.db import connection, reset_queries
 
@@ -21,44 +21,6 @@ def AdjustBiggestLead(HomeTeam, AwayTeam):
 
     return None
 
-
-def CalculateGameScore(PlayerGameStats):
-
-    GameScoreMap = [
-        {'Stat': 'RUS_Yards', 'PointToStatRatio': 1.0 / 10, 'Display': ' rush yards'},
-        {'Stat': 'RUS_TD'   , 'PointToStatRatio': 6.0 / 1, 'Display': ' rush TDs'},
-        {'Stat': 'PAS_Yards', 'PointToStatRatio': 1.0 / 25, 'Display': ' pass yards'},
-        {'Stat': 'PAS_TD',    'PointToStatRatio': 4.0 / 1, 'Display': ' pass TDs'},
-        {'Stat': 'PAS_Completions', 'PointToStatRatio': 1.0 / 10, 'Display': ' comp'},
-        {'Stat': 'REC_Receptions', 'PointToStatRatio': 1.0 / 2, 'Display': ' rec.'},
-        {'Stat': 'REC_Yards', 'PointToStatRatio': 1.0 / 15, 'Display': ' rec. yards'},
-        {'Stat': 'REC_TD',    'PointToStatRatio': 5.0 / 1, 'Display': ' rec. TDs'},
-        {'Stat': 'PAS_INT',    'PointToStatRatio': -4.0 / 1, 'Display': ' picks'},
-        {'Stat': 'PAS_Sacks',  'PointToStatRatio': -1.0 / 4, 'Display': ' sacked'},
-        {'Stat': 'DEF_Sacks',  'PointToStatRatio': 2.5 / 1, 'Display': ' sacks'},
-        {'Stat': 'DEF_Tackles',  'PointToStatRatio': 1.0 / 2, 'Display': ' tackles'},
-        {'Stat': 'DEF_TacklesForLoss',  'PointToStatRatio': 2.0 / 1, 'Display': ' TFLs'},
-        {'Stat': 'DEF_Deflections',  'PointToStatRatio': 2.0 / 1, 'Display': ' defl'},
-        {'Stat': 'DEF_INT',  'PointToStatRatio': 6.0 / 1, 'Display': ' INTS'},
-        {'Stat': 'DEF_TD',  'PointToStatRatio': 6.0 / 1, 'Display': ' def TDs'},
-        {'Stat': 'FUM_Fumbles',  'PointToStatRatio': -3.0 / 1, 'Display': ' fumbles'},
-        {'Stat': 'FUM_Forced',  'PointToStatRatio': 4.0 / 1, 'Display': ' fumb frcd'},
-        {'Stat': 'FUM_Recovered',  'PointToStatRatio': 1.0 / 1, 'Display': ' fumb rec.'},
-        {'Stat': 'BLK_Sacks',  'PointToStatRatio': -3.0 / 1, 'Display': ' sacks alwd.'},
-        {'Stat': 'BLK_Blocks',  'PointToStatRatio': 1.0 / 10, 'Display': ' blocks'},
-    ]
-
-    GameSummary = {'GameScore': 0}
-    for StatObj in GameScoreMap:
-        StatObj['DisplayValue'] = getattr(PlayerGameStats, StatObj['Stat'])
-        StatObj['GameScoreValue'] = StatObj['DisplayValue'] * StatObj['PointToStatRatio']
-        GameSummary['GameScore'] += StatObj['GameScoreValue']
-
-    Displays = [str(int(u['DisplayValue'])) + u['Display'] for u in sorted(GameScoreMap, key=lambda k: k['GameScoreValue'],reverse=True)[:2]]
-    GameSummary['TopStatStringDisplay1'] = Displays[0]
-    GameSummary['TopStatStringDisplay2'] = Displays[1]
-
-    return GameSummary
 
 def Min(a,b):
     if a > b:
@@ -1496,6 +1458,8 @@ def GameSim(game):
         AllPlayers[P]['PlayerGameStat'].GameScore = PlayerGameSummary['GameScore']
         AllPlayers[P]['PlayerGameStat'].TopStatStringDisplay1 = PlayerGameSummary['TopStatStringDisplay1']
         AllPlayers[P]['PlayerGameStat'].TopStatStringDisplay2 = PlayerGameSummary['TopStatStringDisplay2']
+        AllPlayers[P]['PlayerGameStat'].TopStatStringDisplay3 = PlayerGameSummary['TopStatStringDisplay3']
+        AllPlayers[P]['PlayerGameStat'].TopStatStringDisplay4 = PlayerGameSummary['TopStatStringDisplay4']
         PlayerGameStatToSave.append(AllPlayers[P]['PlayerGameStat'])
 
     for T in GameDict:
@@ -1514,7 +1478,7 @@ def GameSim(game):
     AwayTeamGame.TeamRecord = str(GameDict[AwayTeam]['TeamSeason'].Wins) + '-' + str(GameDict[AwayTeam]['TeamSeason'].Losses)
 
 
-    if GameDict[HomeTeam]['TeamSeason'].ConferenceID == GameDict[AwayTeam]['TeamSeason'].ConferenceID:
+    if GameDict[HomeTeam]['TeamSeason'].DivisionSeasonID.ConferenceSeasonID == GameDict[AwayTeam]['TeamSeason'].DivisionSeasonID.ConferenceSeasonID:
         GameDict[WinningTeam]['TeamSeason'].ConferenceWins +=1
         GameDict[LosingTeam]['TeamSeason'].ConferenceLosses +=1
 

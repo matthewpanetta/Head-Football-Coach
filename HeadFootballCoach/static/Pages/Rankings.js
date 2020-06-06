@@ -15,7 +15,7 @@ function DrawTeamInfo(data, WorldID, SelectedTeamID){
                 <span class=' font32' data-field='TeamNickname' ></span>
               </div>
               <div>
-                <span class='font12' data-field='CityAndState'></span> | <span class='font12' data-field='ConferenceID__ConferenceName'></span>
+                <span class='font12' data-field='CityAndState'></span> | <span class='font12' data-field='DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceName'></span>
               </div>
             </div>
             <div class='w3-col s5 hide-medium vertical-align-middle'>

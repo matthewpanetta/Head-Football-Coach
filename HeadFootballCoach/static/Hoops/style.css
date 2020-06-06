@@ -477,6 +477,10 @@ article>header {
   font-size: 10px;
 }
 
+a {
+  color: #1763B2;
+}
+
 .worldOverviewTop25TeamLineRankDeltaGreen {
   color: green;
 }

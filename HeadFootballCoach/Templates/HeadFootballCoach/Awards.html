@@ -103,11 +103,18 @@
                       <td>
                         <a href="{{Player.TeamHref}}">
                           <img class='awardConferenceWeeklyAwardTeamLogo' src="{{Player.PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamLogoURL_50 }}" />
-                           {{Player.PlayerTeamSeasonID__TeamSeasonID__TeamID__TeamName }}
+                           {{Player.PlayerTeamSeasonID__TeamSeasonID__TeamID__Abbreviation }}
                         </a>
                       </td>
                       <td>
                         <a href="{{Player.PlayerHref}}/">{{Player.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{Player.PlayerTeamSeasonID__PlayerID__PlayerLastName}}</a>, {{Player.PlayerTeamSeasonID__ClassID__ClassAbbreviation}}
+                      </td>
+                      <td>
+                        <ul class='no-list-style'>
+                          {% if Player.PlayerTeamSeasonID__TopStatStringDisplay1%}<li>{{Player.PlayerTeamSeasonID__TopStatStringDisplay1}}</li>{% endif %}
+                          {% if Player.PlayerTeamSeasonID__TopStatStringDisplay2%}<li>{{Player.PlayerTeamSeasonID__TopStatStringDisplay2}}</li>{% endif %}
+                          {% if Player.PlayerTeamSeasonID__TopStatStringDisplay3%}<li>{{Player.PlayerTeamSeasonID__TopStatStringDisplay3}}</li>{% endif %}
+                        </ul>
                       </td>
                     </tr>
                     {% endfor %}
@@ -341,6 +348,7 @@
                   <th>Player</th>
                   <th>Pos</th>
                   <th>Class</th>
+                  <th>Player Stats</th>
                 </thead>
                 <tbody>
                   {% for Player in HeismanRace%}
@@ -357,6 +365,17 @@
                     </td>
                     <td>{{Player.PositionID__PositionAbbreviation}}</td>
                     <td>{{Player.playerteamseason__ClassID__ClassAbbreviation}}</td>
+                    <td>
+                        <ul class='no-list-style'>
+                          <li>{{Player.TopStatStringDisplay1}}</li>
+                          {% if Player.TopStatStringDisplay2%}
+                          <li>{{Player.TopStatStringDisplay2}}</li>
+                          {% endif %}
+                          {% if Player.TopStatStringDisplay3%}
+                          <li>{{Player.TopStatStringDisplay3}}</li>
+                          {% endif %}
+                        </ul>
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>
