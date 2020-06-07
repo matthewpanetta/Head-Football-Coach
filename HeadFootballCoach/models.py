@@ -1952,7 +1952,7 @@ class Game(models.Model):
     def CalculateTopPlayers(self):
         HomeTeamGameID = self.teamgame_set.filter(IsHomeTeam = False).first()
         AwayTeamGameID = self.teamgame_set.filter(IsHomeTeam = False).first()
-        
+
         AwayPlayers = AwayTeamGameID.playergamestat_set.all().select_related('PlayerTeamSeasonID__PlayerID__PositionID', 'TeamGameID__TeamSeasonID__TeamID').order_by('-GameScore')[:3]
         HomePlayers = HomeTeamGameID.playergamestat_set.all().select_related('PlayerTeamSeasonID__PlayerID__PositionID', 'TeamGameID__TeamSeasonID__TeamID').order_by('-GameScore')[:3]
 
@@ -1967,10 +1967,12 @@ class Game(models.Model):
     #     return self.teamgame_set.filter(IsHomeTeam=False).first()
     @property
     def HomeTeamSeasonID(self):
-        return self.HomeTeamGameID.TeamSeasonID
+        TS = self.teamgame_set.filter(IsHomeTeam = True).first().TeamSeasonID
+        return TS
     @property
     def AwayTeamSeasonID(self):
-        return self.AwayTeamGameID.TeamSeasonID
+        TS = self.teamgame_set.filter(IsHomeTeam = False).first().TeamSeasonID
+        return TS
     @property
     def HomeTeamID(self):
         return self.HomeTeamSeasonID.TeamID
@@ -2156,7 +2158,7 @@ class Game(models.Model):
 
         else:
             GameDisplay = self.WeekID.WeekName
-            TeamGames = self.teamgame_set.all().values('IsHomeTeam' ).annotate(  # call `annotate`
+            TeamGames = self.teamgame_set.all().values('IsHomeTeam', 'TeamSeasonID__TeamID' ).annotate(  # call `annotate`
                     GamesPlayed = Sum('TeamSeasonID__teamgame__GamesPlayed'),
                     Points = Case(
                         When(GamesPlayed = 0, then=Value(0.0)),
