@@ -1,4 +1,4 @@
-from ..models import PlayerTeamSeasonAward, Team, Position,Phase,TeamSeasonStrategy, Class, RecruitTeamSeason, Conference, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, TeamSeason, CoachTeamSeason, Driver, Coach, PlayerGameStat, World
+from ..models import PlayerTeamSeasonAward,TeamSeasonInfoRating, Team, DivisionSeason, ConferenceSeason, Position,Phase,TeamSeasonStrategy, Class, RecruitTeamSeason, Conference, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, TeamSeason, CoachTeamSeason, Driver, Coach, PlayerGameStat, World
 from django.db.models import Max, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value
 import random
 from ..resources import createCalendar, CreateTeamPositions, UpdateTeamPositions, CreateSchedule, CreateRecruitingClass, PopulateTeamDepthCharts, AssignRedshirts, CutPlayers, ChooseTeamCaptains, CalculateTeamOverall, CalculateRankings, CalculateConferenceRankings, SelectBroadcast, SelectPreseasonAllAmericans
@@ -241,14 +241,35 @@ def CreateNextLeagueSeason(CurrentSeason = None, WorldID = None):
     LS = LeagueSeason(WorldID = CurrentWorld, LeagueID=CurrentLeagueSeason.LeagueID, IsCurrent = False, SeasonStartYear = CurrentLeagueSeason.SeasonEndYear, SeasonEndYear = CurrentLeagueSeason.SeasonEndYear + 1)
     LS.save()
 
+    DS_ToSave = []
+    DSDict = {None:None}
+    for CS in CurrentLeagueSeason.conferenceseason_set.all():
+        DSList = CS.divisionseason_set.all()
+        NewCS = CS
+        NewCS.pk = None
+        NewCS.LeagueSeasonID = LS
+        NewCS.save()
+
+        print('CS', CS)
+
+        for DS in DSList:
+            print('\tDS', DS)
+            NewDS = DivisionSeason(DivisionName = DS.DivisionName, ConferenceSeasonID = NewCS, LeagueSeasonID = LS, SoleDivision=DS.SoleDivision, WorldID = DS.WorldID)
+            NewDS.save()
+            DSDict[DS] = NewDS
+
+    print(DSDict)
+
     TSToSave = []
     for TS in CurrentLeagueSeason.teamseason_set.all():
-        NewTS = TeamSeason(WorldID=CurrentWorld, TeamID = TS.TeamID, LeagueSeasonID = LS, ConferenceID=TS.ConferenceID, IsRecruitTeam=TS.IsRecruitTeam, IsFreeAgentTeam=TS.IsFreeAgentTeam, TeamPrestige=TS.TeamPrestige, FacilitiesRating=TS.FacilitiesRating, ProPotentialRating=TS.ProPotentialRating, CampusLifestyleRating=TS.CampusLifestyleRating, AcademicPrestigeRating=TS.AcademicPrestigeRating, TelevisionExposureRating=TS.TelevisionExposureRating, CoachStabilityRating=TS.CoachStabilityRating, ChampionshipContenderRating=TS.ChampionshipContenderRating, LocationRating=TS.LocationRating)
+        NewTS = TeamSeason(WorldID=CurrentWorld, TeamID = TS.TeamID, LeagueSeasonID = LS, DivisionSeasonID=DSDict[TS.DivisionSeasonID], IsRecruitTeam=TS.IsRecruitTeam, IsFreeAgentTeam=TS.IsFreeAgentTeam)
 
-        TSToSave.append(NewTS)
+        NewTS.save()
+
+        for TSIR in TS.teamseasoninforating_set.all():
+            NewTSIR = TeamSeasonInfoRating(TeamInfoTopicID = TSIR.TeamInfoTopicID, TeamRating=TSIR.TeamRating, TeamSeasonID = NewTS)
         print('Creating new Team Season!', LS, NewTS)
 
-    TeamSeason.objects.bulk_create(TSToSave, ignore_conflicts = True)
 
     createCalendar(WorldID=CurrentWorld, LeagueSeasonID=LS, SetFirstWeekCurrent = False)
 

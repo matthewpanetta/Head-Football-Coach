@@ -52,7 +52,6 @@ def GetUserTeam(WorldID):
 
 
 def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = None, UserTeam = None):
-
     TeamID = UserTeam.TeamID
     UserTeamLogo = UserTeam.TeamLogoURL
 
@@ -536,7 +535,8 @@ def POST_AutoTeamCuts(request, WorldID, TeamID):
     if TeamSeasonID.TeamID.IsUserTeam:
         NumPlayersToCut = TeamSeasonID.playerteamseason_set.all().count() - TeamSeasonID.LeagueSeasonID.LeagueID.PlayersPerTeam
         if NumPlayersToCut > 0:
-            TeamCuts(TeamSeasonID, CurrentWorld, NumPlayersToCut)
+            PlayersToCut = TeamCuts(TeamSeasonID, CurrentWorld, NumPlayersToCut)
+            PlayerTeamSeason.objects.filter(PlayerTeamSeasonID__in = PlayersToCut).delete()
     else:
         return JsonResponse({'message':'Can only cut players from user team'}, status=422)
     return JsonResponse({'message':'Player team cuts.', 'redirect': ''}, status=200)
@@ -1272,7 +1272,7 @@ def Page_Index(request):
     if InDeepTesting:
         NumConferencesToInclude = 1
     elif InTesting:
-        NumConferencesToInclude = 2
+        NumConferencesToInclude = 3
     else:
         NumConferencesToInclude = 7
     PossibleConferences = [
@@ -1418,7 +1418,7 @@ def Page_World(request, WorldID):
 
     AllTeamsList = list(AllTeams)
 
-    TGs = TeamGame.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason, GameID__WeekID = CurrentWeek).values('TeamSeasonID', 'TeamSeasonID__TeamID', 'Points', 'TeamRecord', 'TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamLogoURL_50', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
+    TGs = TeamGame.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason, GameID__WeekID = CurrentWeek).values('TeamSeasonID', 'GameID', 'TeamSeasonID__TeamID', 'Points', 'TeamRecord', 'TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamLogoURL_50', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX').annotate(
         TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID'), output_field=CharField()),
         TeamRecordDisplay = Case(
             When(GameID__WasPlayed = True, then=F('TeamRecord')),

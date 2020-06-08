@@ -1344,7 +1344,7 @@ class TeamSeason(models.Model):
         )
 
         self.TeamOverallRating = int(AllPlayers['playerteamseasonskill__OverallRating__avg'] )#TODO
-        self.save()
+        #self.save()
 
 
     @property

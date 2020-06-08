@@ -119,9 +119,18 @@ def TeamRedshirts(TS, WorldID, SaveInFunc = False):
 
 def TeamCuts(TS, WorldID, NumPlayersToCut):
 
-    PlayersToCut = PlayerTeamSeason.objects.filter(PlayerTeamSeasonID__in = TS.playerteamseason_set.exclude(playerteamseasondepthchart__IsStarter = True).annotate(DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 10), OverallRating = F('playerteamseasonskill__OverallRating')).order_by('-DepthChartPositionMin', 'OverallRating')[:NumPlayersToCut]).delete()
+    # PlayersToCut = PlayerTeamSeason.objects.filter(
+    #     PlayerTeamSeasonID__in = TS.playerteamseason_set.exclude(playerteamseasondepthchart__IsStarter = True).annotate(
+    #         DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 10), OverallRating = F('playerteamseasonskill__OverallRating')
+    #     ).order_by('-DepthChartPositionMin', 'OverallRating')[:NumPlayersToCut]).delete()
 
-    return None
+    PlayersToCut = PlayerTeamSeason.objects.filter(TeamSeasonID = TS).annotate(
+            DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 10),
+            OverallRating = F('playerteamseasonskill__OverallRating')
+        ).order_by('-DepthChartPositionMin', 'OverallRating')[:NumPlayersToCut]
+
+
+    return [PTS.PlayerTeamSeasonID for PTS in PlayersToCut]
 
 
 def ChooseCaptains(TS, WorldID):
@@ -269,17 +278,40 @@ def PopulateTeamDepthCharts(LS, WorldID, FullDepthChart = False, TeamSeasonID = 
     PlayerTeamSeasonDepthChart.objects.filter(WorldID = WorldID).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID = LS).filter(PlayerTeamSeasonID__TeamSeasonID__TeamID__isnull = False).delete()
     Positions = list(Position.objects.all().values('PositionAbbreviation', 'PositionCountPerAwardTeam', 'PositionID'))
 
+    PlayerList = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LS).exclude(RedshirtedThisSeason = True).select_related('PlayerID', 'PlayerID__PositionID', 'TeamSeasonID__TeamID').annotate(
+        OverallRating = F('playerteamseasonskill__OverallRating'),
+        CoachVeteranTendency = Max('TeamSeasonID__coachteamseason__CoachID__VeteranTendency', filter = Q(TeamSeasonID__coachteamseason__CoachPositionID__CoachPositionAbbreviation = 'HC')),
+        PlayerClassOverallModifier = Case(
+            When(ClassID__ClassAbbreviation = 'FR', then=Value(-1)),
+            When(ClassID__ClassAbbreviation = 'SO', then=Value(-.5)),
+            When(ClassID__ClassAbbreviation = 'JR', then=Value(.5)),
+            When(ClassID__ClassAbbreviation = 'SR', then=Value(1)),
+            default=Value(0),
+            output_field=FloatField()
+        ),
+        CoachPatienceModifier = ExpressionWrapper(F('PlayerClassOverallModifier') * F('CoachVeteranTendency'), output_field=IntegerField()),
+        AdjustedOverallRating =  F('OverallRating') + F('CoachPatienceModifier')
+    ).order_by('-AdjustedOverallRating')
+
+    Player_TS_Dict = {}
+    for PTS in PlayerList:
+        if PTS.TeamSeasonID not in Player_TS_Dict:
+            Player_TS_Dict[PTS.TeamSeasonID] = []
+        Player_TS_Dict[PTS.TeamSeasonID].append(PTS)
+
     DCToSave = []
     Filters = {}
     if TeamSeasonID is not None:
         Filters = {'TeamSeasonID': TeamSeasonID}
 
-    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**Filters).prefetch_related('coachteamseason_set', 'playerteamseason_set'):
+    TeamSeasonList = TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**Filters)
+
+    for TeamSeasonID in TeamSeasonList:
 
         PositionDepthChart = {}
         for Pos in Positions:
             PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
-        DCToSave += CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID, FullDepthChart = FullDepthChart, PositionDepthChart=PositionDepthChart)
+        DCToSave += CreateDepthChart(CurrentWorld=WorldID, TS=TeamSeasonID, FullDepthChart = FullDepthChart, PositionDepthChart=PositionDepthChart, PlayerList=Player_TS_Dict[TeamSeasonID])
 
     PlayerTeamSeasonDepthChart.objects.bulk_create(DCToSave, ignore_conflicts=False)
 
@@ -304,8 +336,11 @@ def CutPlayers(LS, WorldID, PrepForUserTeam=False):
     else:
         UserTeamFilter = {'TeamID__IsUserTeam': False}
 
+    PlayersToDelete = []
     for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**UserTeamFilter).annotate(NumbersOfPlayers = Count('playerteamseason__PlayerTeamSeasonID'), PlayersToCut = ExpressionWrapper(F('NumbersOfPlayers') -  F('LeagueSeasonID__LeagueID__PlayersPerTeam'), output_field=IntegerField())).filter(PlayersToCut__gt = 0):
-        TeamCuts(TS=TeamSeasonID , WorldID=WorldID,  NumPlayersToCut=TeamSeasonID.PlayersToCut)
+        PlayersToDelete += TeamCuts(TS=TeamSeasonID , WorldID=WorldID,  NumPlayersToCut=TeamSeasonID.PlayersToCut)
+
+    PlayerTeamSeason.objects.filter(PlayerTeamSeasonID__in = PlayersToDelete).delete()
 
 def ChooseTeamCaptains(LS, WorldID, PrepForUserTeam = False):
 
@@ -424,7 +459,7 @@ def CreateSchedule(LS, WorldID):
     WeeksInSeason = len(WeekMap)
     GamePerTeam = 12
     NonConferenceGames = 4
-    MaxGamesBetweenTeams = 2
+    MaxGamesBetweenTeams = 1
     ConferenceGames = GamePerTeam - NonConferenceGames
 
     ScheduleDict = {}
@@ -991,6 +1026,8 @@ def GenerateCoach(WorldID):
 
 def CreatePlayers(LS, WorldID):
 
+    print('Starting generate players', len(connection.queries))
+
     PlayersPerTeam = 75
 
     MinimumRosterComposition = {
@@ -1036,22 +1073,24 @@ def CreatePlayers(LS, WorldID):
     CurrentWorld = WorldID
     TeamsThatNeedPlayers = []
     PlayerTeamSeasonList = PlayerTeamSeason.objects.filter(WorldID=WorldID).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True)
-    NumberOfPlayersNeeded = (PlayersPerTeam +  4) *  NumberOfTeams
+    NumberOfPlayersNeeded = (PlayersPerTeam) *  NumberOfTeams
     NumberOfPlayersNeeded -= PlayerTeamSeasonList.count()
 
     DraftTeamList = list(TeamSeason.objects.filter(WorldID_id = WorldID).filter(TeamID__isnull = False).annotate(
         TeamPrestige = Max('teamseasoninforating__TeamRating', filter=Q(teamseasoninforating__TeamInfoTopicID__AttributeName = 'Team Prestige')),
         AdjustedTeamPrestige=(F('TeamPrestige') * 1.0 /10)**3.5))
     TeamDict = {}
+
+
     for TS in DraftTeamList:
         TeamDict[TS] = {'TeamPrestige': int(TS.AdjustedTeamPrestige), 'PlayerCount': 0, 'StopNumber': None, 'Top100':0, 'Top250': 0, 'Top500': 0, 'Top1000': 0, 'PositionPreference': {}}
         TeamDict[TS]['PositionPreference']['Offense'] = NormalTrunc(1.05, 0.1, .5, 1.5)
         TeamDict[TS]['PositionPreference']['Defense'] = 2 - TeamDict[TS]['PositionPreference']['Offense']
         TeamDict[TS]['PositionPreference']['Special Teams'] = .75
-        TeamDict[TS]['TSP'] = TS.CurrentTeamSeasonPosition
+        #TeamDict[TS]['TSP'] = TS.CurrentTeamSeasonPosition
 
     DraftOrder = []
-    for u in range(int(NumberOfPlayersNeeded * 1.2)):
+    for u in range(NumberOfPlayersNeeded):
         T = [(T, TeamDict[T]['TeamPrestige']) for T in TeamDict if TeamDict[T]['PlayerCount'] < PlayersPerTeam]
         if len(T) == 0:
             break
@@ -1072,7 +1111,7 @@ def CreatePlayers(LS, WorldID):
             TeamDict[SelectedTeam]['Top1000'] +=1
 
     for T in sorted(TeamDict, key=lambda T: TeamDict[T]['TeamPrestige']):
-        for pick in range(0,4):
+        for pick in range(0,10):
             DraftOrder.append(T)
 
 
@@ -1080,9 +1119,11 @@ def CreatePlayers(LS, WorldID):
 
     df = pd.DataFrame(TeamDict)
     df = df.transpose()
-    print(df)
+    #print(df)
 
     PlayerPool = []
+
+    NumberOfPlayersNeeded = int(NumberOfPlayersNeeded * 1.2)
 
     PlayerBioData = PlayerBioDataList(NumberOfPlayersNeeded, PositionID = None)
     for PlayerCount in range(0,NumberOfPlayersNeeded):
@@ -1100,21 +1141,20 @@ def CreatePlayers(LS, WorldID):
         PlayerSkillPool.append(PopulatePlayerSkills(PTS, WorldID))
     PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=False, batch_size=500)
 
-    PlayerPool = [u for u in PlayerTeamSeasonList.values('PlayerTeamSeasonID', 'PlayerID', 'ClassID', 'playerteamseasonskill__OverallRating','playerteamseasonskill__Strength_Rating','playerteamseasonskill__Agility_Rating','playerteamseasonskill__Speed_Rating','playerteamseasonskill__Acceleration_Rating','playerteamseasonskill__Stamina_Rating','playerteamseasonskill__Awareness_Rating','playerteamseasonskill__Jumping_Rating','playerteamseasonskill__ThrowPower_Rating'    ,'playerteamseasonskill__ShortThrowAccuracy_Rating'    ,'playerteamseasonskill__MediumThrowAccuracy_Rating'    ,'playerteamseasonskill__DeepThrowAccuracy_Rating'    ,'playerteamseasonskill__ThrowOnRun_Rating'    ,'playerteamseasonskill__ThrowUnderPressure_Rating'    ,'playerteamseasonskill__PlayAction_Rating', 'playerteamseasonskill__PassRush_Rating', 'playerteamseasonskill__BlockShedding_Rating', 'playerteamseasonskill__Tackle_Rating', 'playerteamseasonskill__HitPower_Rating', 'playerteamseasonskill__ManCoverage_Rating', 'playerteamseasonskill__ZoneCoverage_Rating', 'playerteamseasonskill__Press_Rating', 'playerteamseasonskill__Carrying_Rating', 'playerteamseasonskill__Elusiveness_Rating', 'playerteamseasonskill__BallCarrierVision_Rating', 'playerteamseasonskill__BreakTackle_Rating', 'playerteamseasonskill__Catching_Rating', 'playerteamseasonskill__CatchInTraffic_Rating', 'playerteamseasonskill__RouteRunning_Rating', 'playerteamseasonskill__Release_Rating', 'playerteamseasonskill__PassBlock_Rating', 'playerteamseasonskill__RunBlock_Rating', 'playerteamseasonskill__ImpactBlock_Rating', 'playerteamseasonskill__KickPower_Rating', 'playerteamseasonskill__KickAccuracy_Rating').annotate(
-        Position = F('PlayerID__PositionID__PositionAbbreviation'),
-        PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName')
-    ).order_by('-playerteamseasonskill__OverallRating')]
+    PlayerPool = list(PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerID__PositionID__PositionGroupID', 'ClassID', 'playerteamseasonskill').order_by('-playerteamseasonskill__OverallRating'))
 
     PlayersTeamSeasonToUpdate = []
 
     count = 0
-    print('Drafting players!')
+    print('Drafting players!', len(connection.queries))
+
+
     for TS in DraftOrder:
 
         count +=1
         if count % 100 == 0:
             print('Drafting player', count)
-        TSP = TeamDict[TS]['TSP']
+        #TSP = TeamDict[TS]['TSP']
         if TS not in TeamRosterCompositionNeeds:
             TeamRosterCompositionNeeds[TS] = {'ClassID': MinimumRosterComposition['ClassID'], 'PositionMaximums': {Pos['Position']: Pos['PositionMaximumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}, 'StarterPosition': {Pos['Position']: Pos['PositionTypicalStarterCountPerTeam'] for Pos in MinimumRosterComposition['Position']},'FullPosition': {Pos['Position']: Pos['PositionMinimumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}}
         ClassesNeeded =   [u for u in TeamRosterCompositionNeeds[TS]['ClassID']    if TeamRosterCompositionNeeds[TS]['ClassID'][u]    > 0 ]
@@ -1159,22 +1199,22 @@ def CreatePlayers(LS, WorldID):
         AvailablePlayers = []
         AP_count = 0
         while len(AvailablePlayers) == 0:
-            AvailablePlayers = [u for u in PlayerPool  if ( TeamRosterCompositionNeeds[TS]['PositionMaximums'][u['Position']] > 0)]
+            AvailablePlayers = [u for u in PlayerPool  if ( TeamRosterCompositionNeeds[TS]['PositionMaximums'][u.PlayerID.PositionID.PositionAbbreviation] > 0)]
             if AP_count == 0:
-                AvailablePlayers = [u for u in AvailablePlayers  if (StarterNeedsMet or u['Position'] in StartersNeeded) and (ClassNeedsMet or u['ClassID'] in ClassesNeeded)]
+                AvailablePlayers = [u for u in AvailablePlayers  if (StarterNeedsMet or u.PlayerID.PositionID.PositionAbbreviation in StartersNeeded) and (ClassNeedsMet or u.ClassID.ClassID in ClassesNeeded)]
             elif AP_count == 1:
-                AvailablePlayers = [u for u in AvailablePlayers  if (StarterNeedsMet or u['Position'] in StartersNeeded)]
+                AvailablePlayers = [u for u in AvailablePlayers  if (StarterNeedsMet or u.PlayerID.PositionID.PositionAbbreviation in StartersNeeded)]
             elif AP_count == 2:
-                AvailablePlayers = [u for u in AvailablePlayers  if (ClassNeedsMet or u['ClassID'] in ClassesNeeded) and (PositionNeedsMet or u['Position'] in PositionsNeeded)]
+                AvailablePlayers = [u for u in AvailablePlayers  if (ClassNeedsMet or u.ClassID.ClassID in ClassesNeeded) and (PositionNeedsMet or u.PlayerID.PositionID.PositionAbbreviation in PositionsNeeded)]
             elif AP_count == 3:
-                AvailablePlayers = [u for u in AvailablePlayers  if (PositionNeedsMet or u['Position'] in PositionsNeeded)]
+                AvailablePlayers = [u for u in AvailablePlayers  if (PositionNeedsMet or u.PlayerID.PositionID.PositionAbbreviation in PositionsNeeded)]
             else :
                 AvailablePlayers = [u for u in PlayerPool]
             AP_count += 1
 
 
         #AvailablePlayers = sorted(AvailablePlayers, key=lambda P: CalculateTeamPlayerOverall(TSP[P['Position']], P) * ClassOverallNormalizer[P['ClassID']] * ClassNeedModifier[P['ClassID']] * PositionNeedModifier[P['Position']] * TeamDict[T]['PositionPreference'][P['PositionID__PositionGroupID__PositionGroupName']], reverse=True)
-        AvailablePlayers = sorted(AvailablePlayers, key=lambda P: P['playerteamseasonskill__OverallRating'] * ClassOverallNormalizer[P['ClassID']] * ClassNeedModifier[P['ClassID']] * PositionNeedModifier[P['Position']] * TeamDict[TS]['PositionPreference'][P['PositionGroup']], reverse=True)
+        AvailablePlayers = sorted(AvailablePlayers, key=lambda P: P.playerteamseasonskill.OverallRating * ClassOverallNormalizer[P.ClassID.ClassID] * ClassNeedModifier[P.ClassID.ClassID] * PositionNeedModifier[P.PlayerID.PositionID.PositionAbbreviation] * TeamDict[TS]['PositionPreference'][P.PlayerID.PositionID.PositionGroupID.PositionGroupName], reverse=True)
 
 
         if len(AvailablePlayers) < 5:
@@ -1184,18 +1224,21 @@ def CreatePlayers(LS, WorldID):
             PlayerForTeam = random.choice(AvailablePlayers)
         PlayerPool.remove(PlayerForTeam)
 
-        TeamRosterCompositionNeeds[TS]['ClassID'][PlayerForTeam['ClassID']] -=1
-        TeamRosterCompositionNeeds[TS]['FullPosition'][PlayerForTeam['Position']] -=1
-        TeamRosterCompositionNeeds[TS]['StarterPosition'][PlayerForTeam['Position']] -=1
-        TeamRosterCompositionNeeds[TS]['PositionMaximums'][PlayerForTeam['Position']] -=1
+        TeamRosterCompositionNeeds[TS]['ClassID'][PlayerForTeam.ClassID.ClassID] -=1
+        TeamRosterCompositionNeeds[TS]['FullPosition'][PlayerForTeam.PlayerID.PositionID.PositionAbbreviation] -=1
+        TeamRosterCompositionNeeds[TS]['StarterPosition'][PlayerForTeam.PlayerID.PositionID.PositionAbbreviation] -=1
+        TeamRosterCompositionNeeds[TS]['PositionMaximums'][PlayerForTeam.PlayerID.PositionID.PositionAbbreviation] -=1
 
-        PlayerTeamSeason.objects.filter(PlayerTeamSeasonID = PlayerForTeam['PlayerTeamSeasonID']).update(TeamSeasonID = TS)
+        PlayerForTeam.TeamSeasonID = TS
+        PlayersTeamSeasonToUpdate.append(PlayerForTeam)
 
-
+    print('Done drafting players', len(connection.queries))
     PlayerClasses = list(Class.objects.filter(IsUpperClassman = True))
     PlayerSkillPool = []
+    TotalPlayerCreatedCount = 0
+    PlayersNeededByPosition = {}
     for TS in TeamRosterCompositionNeeds:
-        print('Creating players to fill holes for', TS)
+        PlayerCreatedCount = 0
         for Pos in TeamRosterCompositionNeeds[TS]['FullPosition']:
             if TeamRosterCompositionNeeds[TS]['FullPosition'][Pos] > 0:
                 for u in range(TeamRosterCompositionNeeds[TS]['FullPosition'][Pos]):
@@ -1210,18 +1253,30 @@ def CreatePlayers(LS, WorldID):
                     PTS.save()
 
                     PlayerSkillPool.append(PopulatePlayerSkills(PTS, WorldID))
+                    PlayerCreatedCount +=1
+        print('Creating {NUM} players to fill holes for'.format(NUM = PlayerCreatedCount), TS)
+
+
 
     PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=False, batch_size=500)
     PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToUpdate, ['TeamSeasonID'], batch_size=500)
+    PlayerTeamSeason.objects.bulk_create(PlayersTeamSeasonToUpdate, ['TeamSeasonID'], batch_size=500)
+    print('Done adding additional players!', len(connection.queries))
+
+    PlayerTeamSeasonDict = {}
+    PlayerTeamSeasonList = PlayerTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerID__PositionID__PositionGroupID', 'ClassID', 'playerteamseasonskill', 'TeamSeasonID__TeamID').order_by('-playerteamseasonskill__OverallRating')
+    for PTS in PlayerTeamSeasonList:
+        if PTS.TeamSeasonID not in PlayerTeamSeasonDict:
+            PlayerTeamSeasonDict[PTS.TeamSeasonID] = []
+        PlayerTeamSeasonDict[PTS.TeamSeasonID].append(PTS)
 
     PlayersToSave = []
+    TS_ToSave = []
+
     for TS in DraftTeamList:
 
-        TS.PopulateTeamOverallRating()
-        TS.save()
-
         TakenNumbers = []
-        for PTS in TS.playerteamseason_set.filter(PlayerID__JerseyNumber = 0):
+        for PTS in PlayerTeamSeasonDict[TS]:
             P = PTS.PlayerID
             Pos = P.PositionID.PositionAbbreviation
             NumberRanges = PositionNumbers[Pos]
@@ -1235,12 +1290,16 @@ def CreatePlayers(LS, WorldID):
                 PlayersToSave.append(P)
 
     Player.objects.bulk_update(PlayersToSave, ['JerseyNumber'], batch_size=500)
+    TeamSeason.objects.bulk_update(TS_ToSave, ['TeamOverallRating'], batch_size=500)
+
 
     CurrentSeason.PlayersCreated = True
     CurrentSeason.save()
 
     CurrentWorld.HasPlayers = True
     CurrentWorld.save()
+
+    print('Done generating players!', len(connection.queries))
 
 
 def CreateRecruitingClass(LS, WorldID):

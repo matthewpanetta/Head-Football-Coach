@@ -4,7 +4,7 @@ from ..models import Audit, League, TeamGame,Week,Phase,PlayerTeamSeasonDepthCha
 import time
 from django.db import connection, reset_queries
 
-def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False, PositionDepthChart = {}):
+def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False, PositionDepthChart = {}, PlayerList = []):
 
     if TS is None:
         TS = T.CurrentTeamSeason
@@ -32,24 +32,7 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False,
     if DoAudit:
         start = time.time()
 
-
-    HeadCoach = TS.coachteamseason_set.filter(CoachPositionID__CoachPositionAbbreviation = 'HC').values('CoachID__VeteranTendency').first()
-
-
-#VeteranTendency
-    Players = TS.playerteamseason_set.exclude(RedshirtedThisSeason = True).select_related('PlayerID', 'PlayerID__PositionID').annotate(
-        OverallRating = F('playerteamseasonskill__OverallRating'),
-        PlayerClassOverallModifier = Case(
-            When(ClassID__ClassAbbreviation = 'FR', then=Value(-1)),
-            When(ClassID__ClassAbbreviation = 'SO', then=Value(-.5)),
-            When(ClassID__ClassAbbreviation = 'JR', then=Value(.5)),
-            When(ClassID__ClassAbbreviation = 'SR', then=Value(1)),
-            default=Value(0),
-            output_field=FloatField()
-        ),
-        CoachPatienceModifier = ExpressionWrapper(F('PlayerClassOverallModifier') * Value(HeadCoach['CoachID__VeteranTendency']), output_field=IntegerField()),
-        AdjustedOverallRating =  F('OverallRating') + F('CoachPatienceModifier')
-    ).order_by('-AdjustedOverallRating')
+    Players = PlayerList
     DCToSave = []
 
     for PTS in Players:
