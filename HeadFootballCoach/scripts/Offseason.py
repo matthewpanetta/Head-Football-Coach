@@ -1,5 +1,5 @@
 from ..models import PlayerTeamSeasonAward,TeamSeasonInfoRating, Team, DivisionSeason, ConferenceSeason, Position,Phase,TeamSeasonStrategy, Class, RecruitTeamSeason, Conference, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, TeamSeason, CoachTeamSeason, Driver, Coach, PlayerGameStat, World
-from django.db.models import Max, Avg, Count, Func, F, Sum, Case, When, FloatField, CharField, Value
+from django.db.models import Max, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, CharField, Value
 import random
 from ..resources import createCalendar, CreateTeamPositions, UpdateTeamPositions, CreateSchedule, CreateRecruitingClass, PopulateTeamDepthCharts, AssignRedshirts, CutPlayers, ChooseTeamCaptains, CalculateTeamOverall, CalculateRankings, CalculateConferenceRankings, SelectBroadcast, SelectPreseasonAllAmericans
 from ..utilities import Max_Int, NormalTrunc, IfNull
@@ -16,6 +16,7 @@ def TrainingCamps(CurrentSeason, WorldID):
     print('Updating these skills:', SkillsToUpdate)
     PlayerTeamSeasonSkills_ToSave = []
     for PTS in PlayersToUpgrade:
+        print('PTS', PTS)
         PTSS = PTS.playerteamseasonskill
 
         PlayerDev = PTS.PlayerID.DevelopmentRating
@@ -62,7 +63,7 @@ def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
     CoachTeamSeason.objects.bulk_update(CoachTeamSeasonsToSave, ['RetiredAfterSeason'])
 
     ActiveCoaches = Coach.objects.filter(coachteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).annotate(
-        TeamPrestige = F('coachteamseason__TeamSeasonID__TeamPrestige'),
+        TeamPrestige = Max('coachteamseason__TeamSeasonID__teamseasoninforating__TeamRating', filter=Q(coachteamseason__TeamSeasonID__teamseasoninforating__TeamInfoTopicID__AttributeName = 'TeamPrestige')),
         TeamWins = F('coachteamseason__TeamSeasonID__Wins'),
     ).filter(IsActiveCoach = True)
 
@@ -261,16 +262,19 @@ def CreateNextLeagueSeason(CurrentSeason = None, WorldID = None):
     print(DSDict)
 
     TSToSave = []
+    TSIRToSave = []
     for TS in CurrentLeagueSeason.teamseason_set.all():
         NewTS = TeamSeason(WorldID=CurrentWorld, TeamID = TS.TeamID, LeagueSeasonID = LS, DivisionSeasonID=DSDict[TS.DivisionSeasonID], IsRecruitTeam=TS.IsRecruitTeam, IsFreeAgentTeam=TS.IsFreeAgentTeam)
 
         NewTS.save()
 
         for TSIR in TS.teamseasoninforating_set.all():
-            NewTSIR = TeamSeasonInfoRating(TeamInfoTopicID = TSIR.TeamInfoTopicID, TeamRating=TSIR.TeamRating, TeamSeasonID = NewTS)
+            NewTSIR = TeamSeasonInfoRating(WorldID=CurrentWorld, TeamInfoTopicID = TSIR.TeamInfoTopicID, TeamRating=TSIR.TeamRating, TeamSeasonID = NewTS)
+            TSIRToSave.append(NewTSIR)
         print('Creating new Team Season!', LS, NewTS)
 
 
+    TeamSeasonInfoRating.objects.bulk_create(TSIRToSave)
     createCalendar(WorldID=CurrentWorld, LeagueSeasonID=LS, SetFirstWeekCurrent = False)
 
     LS.TeamSeasonsCreated = True

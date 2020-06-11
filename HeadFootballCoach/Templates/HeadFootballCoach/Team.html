@@ -337,7 +337,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     {{team.TeamName}} Signed Recruits
                   </div>
-                  <table id='teamOverviewConferenceStandings'>
+                  <table  class='w3-table' id='teamOverviewConferenceStandings'>
                     <thead>
                       <th class='teamColorBorder'>Player</th>
                       <th class='teamColorBorder'>Pos</th>
@@ -412,24 +412,25 @@
                   <div class="w3-bar team-primary-background-bar">
                     Top Players Returning
                   </div>
-                  <table id='teamOverviewConferenceStandings'>
+                  <table class='w3-table' id='teamOverviewConferenceStandings'>
                     <thead>
-                      <th>Team</th>
-                      <th>Conf</th>
-                      <th class='hide-small'>GB</th>
-                      <th>Record</th>
+                      <th>Pos</th>
+                      <th>Player</th>
+                      <th class='hide-small'>Class</th>
+                      <th>OVR</th>
                     </thead>
-                    {% for standingTeam in conferenceTeams %}
+                    {% for Player in TopPlayersReturning %}
                     <tr class='{{standingTeam.BoldTeam}}'>
                       <td>
-                        <a href="{{standingTeam.TeamHref}}">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamID__TeamLogoURL_50}}" />
-                          <span  class='hide-small'>{{standingTeam.NationalRankDisplay}} {{standingTeam.TeamIDTeamName }}</span>
+                        {{Player.PlayerID.PositionID.PositionAbbreviation}}
+                      </td>
+                      <td>
+                        <a href="{{Player.PlayerHref}}">
+                          {{Player.PlayerID.PlayerFirstName}} {{Player.PlayerID.PlayerLastName}}
                         </a>
                       </td>
-                      <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
-                      <td class='hide-small'> {{standingTeam.ConferenceGB}}</td>
-                      <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
+                      <td class='hide-small'> {{Player.ClassID.ClassAbbreviation}}</td>
+                      <td>{{Player.playerteamseasonskill.OverallRating}}</td>
                     </tr>
                     {% endfor %}
                   </table>

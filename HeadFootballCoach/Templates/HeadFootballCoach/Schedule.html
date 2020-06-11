@@ -93,9 +93,9 @@
                                 <col span="1" style='width: 7%'>
                             </colgroup>
                             <thead>
-                              {% if Game.WasPlayed %}
+                              {% if Game.Game.WasPlayed %}
                               <th><a href="{{Game.Game.GameHref}}" class='font10 left-text'>Box Score</a></th>
-                              {% for Period in Game.Game.PeriodScores%}
+                              {% for Period in Game.PeriodScores%}
                               <th>{{Period.EventPeriod|PeriodMap}}</th>
                               {% endfor %}
                               <th>F</th>

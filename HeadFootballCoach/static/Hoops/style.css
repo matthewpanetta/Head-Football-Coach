@@ -978,43 +978,28 @@ input[type=text], input[type=password] {
 
 .teamAchievementFlag {
   width: 180px;
-  height: 150px;
   box-sizing: content-box;
-  padding-top: 15px;
-  position: relative;
-  color: white;
   font-size: 11px;
   letter-spacing: 0.2em;
   text-align: center;
-  border-top: 30px solid black;
   border-left: 4px solid black;
   border-right: 4px solid black;
+  border-top: 4px solid black;
+  border-bottom: 4px solid black;
   display: inline-block;
   margin-right: 12px;
 }
 
 
-.teamAchievementFlag:after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 0;
-  border-bottom: 30px solid #fff;
-  border-left: 90px solid transparent;
-  border-right: 90px solid transparent;
-}
 
 .teamAchievementFlagYear {
-  margin-top: -52px;
-  font-size: 30px;
+  font-size: 40px;
 }
 
 .teamAchievementFlagTitle {
   font-size: 20px;
-  margin-top: 12px;
-  margin-bottom: 12px;
+
+    margin-top: 4px;
 }
 
 .uppercase {

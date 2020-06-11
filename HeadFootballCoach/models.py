@@ -510,7 +510,7 @@ class Week(models.Model):
     UserRecruitingPointsLeft = models.IntegerField(default = 0)
 
     def __str__(self):
-        return self.WeekName
+        return self.WeekName + ' in ' + str(self.PhaseID.LeagueSeasonID.SeasonStartYear)
 
     @property
     def NextWeek(self):
@@ -524,7 +524,7 @@ class Week(models.Model):
 
     @property
     def PreviousWeek(self):
-        return Week.objects.filter(WeekNumber = self.WeekNumber - 1).first()
+        return Week.objects.filter(WeekNumber = self.WeekNumber - 1).order_by('-WeekID').first()
 
     @property
     def WeeksUntilEndOfSeason(self):
@@ -637,6 +637,7 @@ class ConferenceSeason(models.Model):
             WorldID = self.WorldID_id
 
         RankWeek = WeekID.PreviousWeek
+
 
         ConferenceStandings = []
 
@@ -836,7 +837,7 @@ class Player(models.Model):
 
     IsRecruit                 = models.BooleanField(default=False, db_index=True)
     RecruitingStars           = models.PositiveSmallIntegerField(default=0)
-    RecruitingPointsNeeded    = models.PositiveSmallIntegerField(default=2500)
+    RecruitingPointsNeeded    = models.IntegerField(default=2500)
     RecruitSigned             = models.BooleanField(default=False)
     RecruitingStage           = models.CharField(max_length = 40, default='Not Recruiting')
 
@@ -1349,7 +1350,10 @@ class TeamSeason(models.Model):
 
     @property
     def NextTeamSeasonID(self):
-        return self.TeamID.teamseason_set.order_by('-LeagueSeasonID__SeasonStartYear').first()
+        if self.TeamID is not None:
+            return self.TeamID.teamseason_set.all().order_by('-LeagueSeasonID__SeasonStartYear').first()
+
+        return None
 
     @property
     def CurrentTeamSeasonPosition(self):
@@ -1689,12 +1693,14 @@ class PlayerTeamSeason(models.Model):
     TopStatStringDisplay4 = models.CharField(default=None, null=True, blank=True, max_length=30)
 
     def __str__(self):
-        if self.TeamSeasonID.TeamID is not None:
+        S = ''
+        if self.TeamSeasonID is not None and self.TeamSeasonID.TeamID is not None:
             TeamName = self.TeamSeasonID.TeamID.TeamName
+            S = self.TeamSeasonID.LeagueSeasonID.SeasonStartYear
         else:
             TeamName = 'None'
-        S = self.TeamSeasonID.LeagueSeasonID
-        return str(self.PlayerID.FullName) + ' (' + str(self.PlayerID.PositionID.PositionAbbreviation) + ') played for ' + TeamName + ' in ' + str(S.SeasonStartYear)
+
+        return str(self.PlayerID.FullName) + ' (' + str(self.PlayerID.PositionID.PositionAbbreviation) + ') played for ' + TeamName + ' in ' + str(S)
 
     def TeamRosterDict(self):
 

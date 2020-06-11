@@ -449,8 +449,8 @@
                     <tr class='team-primary-background'>
                       <th colspan="3">{{SkillGroup.SkillGroup}}</th>
                       <th class=" text-center">Avg {{player.Position}} Starter</th>
-                      {%if CurrentPlayerTeamSeason.TeamSeasonID.ConferenceID is not None %}
-                      <th class=" text-center">Avg {{CurrentPlayerTeamSeason.TeamSeasonID.ConferenceID.ConferenceAbbreviation}} {{player.Position}} Starter</th>
+                      {%if CurrentPlayerTeamSeason.TeamSeasonID.DivisionSeasonID.ConferenceSeasonID.ConferenceID is not None %}
+                      <th class=" text-center">Avg {{CurrentPlayerTeamSeason.TeamSeasonID.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceAbbreviation}} {{player.Position}} Starter</th>
                       {% endif %}
                     </tr>
                     </thead>

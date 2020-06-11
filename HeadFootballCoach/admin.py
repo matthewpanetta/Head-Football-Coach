@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DivisionSeason, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
+from .models import DivisionSeason, TeamSeasonInfoRating, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
 
 
 class TeamSeasonStrategyAdmin(admin.ModelAdmin):
@@ -50,10 +50,12 @@ class CoachTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in CoachTeamSeason._meta.get_fields() if field.name not in ('position', 'player', 'week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]
     list_filter = [ 'TeamSeasonID__TeamID__TeamName', 'CoachPositionID']
 
+class TeamSeasonInfoRatingAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in TeamSeasonInfoRating._meta.get_fields() if field.name not in ('position', 'player', 'week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]
 
 class PlayerTeamSeasonSkillAdmin(admin.ModelAdmin):
     list_display = [field.name for field in PlayerTeamSeasonSkill._meta.get_fields()]
-    list_filter = ['PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PositionID']
+    list_filter = ['PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID','PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PositionID']
 
 class RecruitTeamSeasonAdmin(admin.ModelAdmin):
     list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('VisitWeekID','VisitWeekID_id', 'recruitteamseasoninterest','visitweekid', 'visitweek_recruitteamseason','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -134,7 +136,7 @@ class CoachPositionAdmin(admin.ModelAdmin):
     list_filter = [ 'CoachPositionParentID', ]
 
 class LeagueSeasonAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in LeagueSeason._meta.get_fields() if field.name not in ('phase', 'playoff', 'teamseason', 'game', 'playerseasonskill', 'headline', 'driver')] #('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in LeagueSeason._meta.get_fields() if field.name not in ('phase', 'conferenceseason' ,'divisionseason' ,'playoff', 'teamseason', 'game', 'playerseasonskill', 'headline', 'driver')] #('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
     #list_filter = [ 'CoachPositionParentID', ]
 
 class GameDriveAdmin(admin.ModelAdmin):
@@ -229,3 +231,4 @@ admin.site.register(TeamSeasonPosition, TeamSeasonPositionAdmin)
 admin.site.register(TeamInfoTopic, TeamInfoTopicAdmin)
 admin.site.register(PlayerRecruitingInterest, PlayerRecruitingInterestAdmin)
 admin.site.register(RecruitTeamSeasonInterest, RecruitTeamSeasonInterestAdmin)
+admin.site.register(TeamSeasonInfoRating, TeamSeasonInfoRatingAdmin)

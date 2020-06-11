@@ -63,16 +63,20 @@
                 </div>
               </div>
             </div>
-            <div class='w3-row-padding'>
+            <div class='w3-row-padding w3-margin-bottom'>
               <div class='w3-col l12 mw1000'>
                 <div class="">
 
                 {% for Banner in TeamHistory %}
                   <div class="teamAchievementFlag" style='background: #{{page.PrimaryColor}}; border-color: #{{page.SecondaryColor}};'>
-                    <div class='teamAchievementFlagYear'>{{Banner.Season}}</div>
-                    <div class="teamAchievementFlagTitle">{{team.TeamName}}</div>
-                    <div class="teamAchievementFlagTitle BannerLine1">{{Banner.BannerLine1}}</div>
-                    <div class="teamAchievementFlagTitle BannerLine2">{{Banner.BannerLine2}}</div>
+                    <div class="teamAchievementFlagTitle">
+                      <img src="{{team.TeamLogoURL}}" alt="" style='width: 80px; filter: drop-shadow(0 0 10px #{{page.SecondaryColor}});'>
+                    </div>
+                    <div class="bold" style='color: #{{team.TeamColor_Secondary_HEX}}'>
+                      <div class="teamAchievementFlagTitle BannerLine1">{{Banner.BannerLine1}}</div>
+                      <div class="teamAchievementFlagTitle BannerLine2">{{Banner.BannerLine2}}</div>
+                    </div>
+                    <div class='teamAchievementFlagYear' style='color: white'>{{Banner.Season}}</div>
                   </div>
                 {% endfor %}
               </div>

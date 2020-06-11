@@ -1,40 +1,61 @@
 from django.db.models import Max, Min, Avg, Count, Func, Q,F, Sum, Case, When, FloatField, CharField, Value, Window
 from django.db.models.functions import Coalesce
 from django.db.models.functions.window import Rank
-from ..models import World, Week,TeamSeasonWeekRank, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat
+from ..models import World, Week,TeamSeasonWeekRank, TeamGame, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat
 import itertools
 from .SRS.SRS   import CalculateSRS
 
 def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
 
-    TeamDictStarter = Team.objects.filter(WorldID=CurrentWorld)
-
     RankCount = 0
     ConfRankTracker = {}
+    TS_ToSave = []
+
+    TeamSeasonDefeatedTeamsDict = {}
+    TeamSeasonDefeatedTeamsList = TeamGame.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).filter(IsWinningTeam = True).values('TeamSeasonID', 'OpposingTeamGameID__TeamSeasonID')
+
+    for TG in TeamSeasonDefeatedTeamsList:
+        if TG['TeamSeasonID'] not in TeamSeasonDefeatedTeamsDict:
+            TeamSeasonDefeatedTeamsDict[TG['TeamSeasonID']] = []
+        TeamSeasonDefeatedTeamsDict[TG['TeamSeasonID']].append(TG['OpposingTeamGameID__TeamSeasonID'])
+
+    TeamSeasonDict = {}
+    TeamSeasonList = TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason).filter(TeamID__isnull = False)
+    for TS in TeamSeasonList:
+        TeamSeasonDict[TS.TeamSeasonID] = TS
+
+    TeamSeasonConferenceDict = {}
+    TeamSeasonList = TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason).filter(WorldID=CurrentWorld).filter(teamseasonweekrank__IsCurrent = True).values(
+                'TeamID__TeamName', 'TeamSeasonID', 'TeamID', 'ConferenceWins', 'ConferenceLosses', 'ConferenceChampion', 'teamseasonweekrank__NationalRank', 'DivisionSeasonID__ConferenceSeasonID__ConferenceID'
+        ).annotate(
+        NetWins = Coalesce(F('ConferenceWins') - F('ConferenceLosses'), 0),
+        GamesPlayed = Coalesce(Sum('teamgame__GamesPlayed'), 0),
+        PPG = Coalesce(Case(
+            When(GamesPlayed = 0, then=0),
+            default= ( Sum('teamgame__Points') * 1.0 / F('GamesPlayed') ),
+            output_field=FloatField()
+        ) ,0),
+        PAPG = Coalesce(Case(
+            When(GamesPlayed = 0, then=0),
+            default= ( Sum('teamseason_opposingteamgame__Points') * 1.0 / F('GamesPlayed') ),
+            output_field=FloatField()
+        ) ,0),
+        MOV = Case(
+            When(GamesPlayed = 0, then=0),
+            default= ( (Sum('teamgame__Points') - Sum('teamseason_opposingteamgame__Points') * 1.0) / F('GamesPlayed') ),
+            output_field=FloatField()
+        )
+    ).order_by('-ConferenceChampion', '-NetWins', '-ConferenceWins', 'teamseasonweekrank__NationalRank')
+
+
+    for TS in TeamSeasonList:
+        if TS['DivisionSeasonID__ConferenceSeasonID__ConferenceID'] not in TeamSeasonConferenceDict:
+            TeamSeasonConferenceDict[TS['DivisionSeasonID__ConferenceSeasonID__ConferenceID']] = []
+        TeamSeasonConferenceDict[TS['DivisionSeasonID__ConferenceSeasonID__ConferenceID']].append(TS)
 
     for Conf in Conference.objects.filter(WorldID = CurrentWorld):
         ConfName = Conf.ConferenceName
-        ConfTeams = TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason).filter(WorldID=CurrentWorld).filter(DivisionSeasonID__ConferenceSeasonID__ConferenceID = Conf).filter(teamseasonweekrank__IsCurrent = True).values(
-                'TeamID__TeamName', 'TeamSeasonID', 'TeamID', 'ConferenceWins', 'ConferenceLosses', 'ConferenceChampion', 'teamseasonweekrank__NationalRank'
-        ).annotate(
-            NetWins = Coalesce(F('ConferenceWins') - F('ConferenceLosses'), 0),
-            GamesPlayed = Coalesce(Sum('teamgame__GamesPlayed'), 0),
-            PPG = Coalesce(Case(
-                When(GamesPlayed = 0, then=0),
-                default= ( Sum('teamgame__Points') * 1.0 / F('GamesPlayed') ),
-                output_field=FloatField()
-            ) ,0),
-            PAPG = Coalesce(Case(
-                When(GamesPlayed = 0, then=0),
-                default= ( Sum('teamseason_opposingteamgame__Points') * 1.0 / F('GamesPlayed') ),
-                output_field=FloatField()
-            ) ,0),
-            MOV = Case(
-                When(GamesPlayed = 0, then=0),
-                default= ( (Sum('teamgame__Points') - Sum('teamseason_opposingteamgame__Points') * 1.0) / F('GamesPlayed') ),
-                output_field=FloatField()
-            )
-        ).order_by('-ConferenceChampion', '-NetWins', '-ConferenceWins', 'teamseasonweekrank__NationalRank')
+        ConfTeams =TeamSeasonConferenceDict[Conf.ConferenceID]
 
         ConfRankTracker[ConfName] = {'Counter': 0, 'TopTeam': None, 'Teams':{}, 'TopTeamRecord': {'Wins': None, 'Losses': None}}
 
@@ -43,7 +64,7 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
         RankCount = 1
         RankCountWithTies = 1
         for TS in ConfTeams:
-            TS['TeamSeason'] = TeamSeason.objects.get(TeamSeasonID = TS['TeamSeasonID'])
+            TS['TeamSeason'] = TeamSeasonDict[TS['TeamSeasonID']]
             if ConfRankTracker[ConfName]['TopTeamRecord']['Wins'] is None or ConfRankTracker[ConfName]['TopTeamRecord']['Losses'] is None:
                 ConfRankTracker[ConfName]['TopTeamRecord']['Losses'] = TS['ConferenceLosses']
                 ConfRankTracker[ConfName]['TopTeamRecord']['Wins']   = TS['ConferenceWins']
@@ -58,7 +79,10 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
 
             TS['ConferenceGB']   = round((ConfRankTracker[ConfName]['TopTeamRecord']['Wins'] - TS['ConferenceWins'] + TS['ConferenceLosses'] - ConfRankTracker[ConfName]['TopTeamRecord']['Losses']) / 2.0, 1)
             TS['DivisionRank'] = ConfRankTracker[ConfName]['Counter']
-            TS['DefeatedTeams'] = TS['TeamSeason'].DefeatedTeams
+
+            TS['DefeatedTeams'] = []
+            if TS['TeamSeasonID'] in TeamSeasonDefeatedTeamsDict:
+                TS['DefeatedTeams'] = TeamSeasonDefeatedTeamsDict[TS['TeamSeasonID']]
             TS['TiebreakerCount'] = 0
             TS['ConferenceChampion'] = TS['ConferenceChampion']
 
@@ -94,8 +118,10 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
                 TS.DivisionRank = RankCount
                 TS.ConferenceGB   = ConfRankTracker[ConfName]['Teams'][TS]['ConferenceGB']
 
-                TS.save()
+                TS_ToSave.append(TS)
             RankCount +=1
+
+    TeamSeason.objects.bulk_update(TS_ToSave, ['DivisionRank', 'ConferenceGB'])
 
 
 

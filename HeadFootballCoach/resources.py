@@ -454,6 +454,10 @@ def CreateSchedule(LS, WorldID):
         NumberConferenceGames = F('teamseason__DivisionSeasonID__ConferenceSeasonID__ConferenceID__NumberConferenceGames'),
         ConferenceIsIndependent = F('teamseason__DivisionSeasonID__ConferenceSeasonID__ConferenceID__IsIndependent')
     )
+    TeamSeasonDict = {}
+    TeamSeasonList = TeamSeason.objects.filter(WorldID=WorldID).filter(LeagueSeasonID__IsCurrent = True)
+    for TS in TeamSeasonList:
+        TeamSeasonDict[TS.TeamID] = TS
     WeekMap = {w.WeekNumber: w for w in Week.objects.filter(WorldID=WorldID).filter(PhaseID__PhaseName = 'Regular Season').filter(PhaseID__LeagueSeasonID__IsCurrent = True)}
 
     WeeksInSeason = len(WeekMap)
@@ -464,7 +468,7 @@ def CreateSchedule(LS, WorldID):
 
     ScheduleDict = {}
     for t in TeamList:
-        ScheduleDict[t] = {'CurrentTeamSeason': t.CurrentTeamSeason, 'NonConferenceGames': 0, 'ConferenceGames': 0, 'TotalConferenceGames': t.NumberConferenceGames, 'TotalNonConferenceGames': GamePerTeam - t.NumberConferenceGames, 'HomeGames': 0, 'AwayGames': 0, 'WeeksScheduled': [], 'AvailableWeeks':[w for w in WeekMap], 'OpposingTeams': {}, 'UnschedulableTeams': [], 'Conference': t.ConferenceID, 'ConferenceIsIndependent': t.ConferenceIsIndependent, 'ConferenceRivals': [], 'NonConferenceRivals': [], }
+        ScheduleDict[t] = {'CurrentTeamSeason': TeamSeasonDict[t], 'NonConferenceGames': 0, 'ConferenceGames': 0, 'TotalConferenceGames': t.NumberConferenceGames, 'TotalNonConferenceGames': GamePerTeam - t.NumberConferenceGames, 'HomeGames': 0, 'AwayGames': 0, 'WeeksScheduled': [], 'AvailableWeeks':[w for w in WeekMap], 'OpposingTeams': {}, 'UnschedulableTeams': [], 'Conference': t.ConferenceID, 'ConferenceIsIndependent': t.ConferenceIsIndependent, 'ConferenceRivals': [], 'NonConferenceRivals': [], }
 
 
     GameTimeHourChoices = [12, 12, 2, 3, 3, 7, 7, 8]
@@ -1260,7 +1264,6 @@ def CreatePlayers(LS, WorldID):
 
     PlayerTeamSeasonSkill.objects.bulk_create(PlayerSkillPool, ignore_conflicts=False, batch_size=500)
     PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToUpdate, ['TeamSeasonID'], batch_size=500)
-    PlayerTeamSeason.objects.bulk_create(PlayersTeamSeasonToUpdate, ['TeamSeasonID'], batch_size=500)
     print('Done adding additional players!', len(connection.queries))
 
     PlayerTeamSeasonDict = {}

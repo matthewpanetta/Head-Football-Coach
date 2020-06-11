@@ -94,7 +94,7 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
 
     PlayerTeamSeasonAward.objects.filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID = LeagueSeasonID).delete()
 
-    AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).filter(TeamSeasonID__TeamID__isnull = False).exclude(ClassID__ClassName = 'Freshman').values('PlayerTeamSeasonID','PlayerID', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
+    AllPlayers = PlayerTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = LeagueSeasonID).filter(TeamSeasonID__TeamID__isnull = False).exclude(ClassID__ClassName = 'Freshman').annotate(
         TeamGamesPlayed=Sum('playergamestat__TeamGamesPlayed'),
         GameScore=Sum('playergamestat__GameScore'),
         GameScorePerGame=Case(
@@ -111,6 +111,8 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
             default=Value(0),
             output_field = IntegerField()
         )
+    ).select_related(
+        'TeamSeasonID__TeamID', 'TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID', 'PlayerID__PositionID', 'ClassID'
     ).order_by('-OverallRating')
 
     if AllPlayers.count() == 0:
@@ -120,9 +122,9 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
     for Conf in [u for u in Conference.objects.filter(WorldID = CurrentWorld).order_by('ConferenceName')] + [None]:
 
         for Pos in Position.objects.filter(Occurance__gt = 0):
-            PositionPlayers = AllPlayers.filter(PlayerID__PositionID = Pos)
+            PositionPlayers = [PTS for PTS in AllPlayers if PTS.PlayerID.PositionID == Pos]
             if Conf is not None:
-                PositionPlayers = PositionPlayers.filter(TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID = Conf)
+                PositionPlayers = [PTS for PTS in PositionPlayers if PTS.TeamSeasonID.DivisionSeasonID.ConferenceSeasonID.ConferenceID == Conf]
 
             for PlayerCount in range(0,Pos.PositionCountPerAwardTeam * 2):
                 IsFirstTeam = False
@@ -134,10 +136,10 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
 
                 if PlayerCount < len(PositionPlayers):
                     if Conf is None:
-                        PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PositionPlayers[PlayerCount]['PlayerTeamSeasonID'])
+                        PTS = PositionPlayers[PlayerCount]
                         PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=False, PositionID = Pos, IsFirstTeam=IsFirstTeam, IsSecondTeam=IsSecondTeam, IsNationalAward=True, IsPreseasonAward=True)
                     else:
-                        PTS = PlayerTeamSeason.objects.get(PlayerTeamSeasonID = PositionPlayers[PlayerCount]['PlayerTeamSeasonID'])
+                        PTS = PositionPlayers[PlayerCount]
                         PlayerAward = PlayerTeamSeasonAward(WorldID = CurrentWorld, PlayerTeamSeasonID = PTS, IsTopPlayer=False, PositionID = Pos, IsFirstTeam=IsFirstTeam, IsSecondTeam=IsSecondTeam, IsConferenceAward=True, IsPreseasonAward=True, ConferenceID = Conf)
 
                     AwardsToCreate.append(PlayerAward)
