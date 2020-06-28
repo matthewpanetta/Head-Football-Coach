@@ -1,12 +1,18 @@
-from ..models import PlayerTeamSeasonAward,TeamSeasonInfoRating, Team, DivisionSeason, ConferenceSeason, Position,Phase,TeamSeasonStrategy, Class, RecruitTeamSeason, Conference, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, TeamSeason, CoachTeamSeason, Driver, Coach, PlayerGameStat, World
+from ..models import PlayerTeamSeasonAward,Audit,TeamSeasonInfoRating, Team, DivisionSeason, ConferenceSeason, Position,Phase,TeamSeasonStrategy, Class, RecruitTeamSeason, Conference, PositionGroup, Week, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, TeamSeason, CoachTeamSeason, Driver, Coach, PlayerGameStat, World
 from django.db.models import Max, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, CharField, Value
 import random
 from ..resources import createCalendar, CreateTeamPositions, UpdateTeamPositions, CreateSchedule, CreateRecruitingClass, PopulateTeamDepthCharts, AssignRedshirts, CutPlayers, ChooseTeamCaptains, CalculateTeamOverall, CalculateRankings, CalculateConferenceRankings, SelectBroadcast, SelectPreseasonAllAmericans
 from ..utilities import Max_Int, NormalTrunc, IfNull
-
+from django.db import connection, reset_queries
+import time
 
 
 def TrainingCamps(CurrentSeason, WorldID):
+
+    DoAudit = True
+    if DoAudit:
+        start = time.time()
+        reset_queries()
 
     PlayersToUpgrade = PlayerTeamSeason.objects.filter(TeamSeasonID__TeamID__isnull = False).filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).select_related('playerteamseasonskill').select_related('PlayerID')
 
@@ -16,7 +22,6 @@ def TrainingCamps(CurrentSeason, WorldID):
     print('Updating these skills:', SkillsToUpdate)
     PlayerTeamSeasonSkills_ToSave = []
     for PTS in PlayersToUpgrade:
-        print('PTS', PTS)
         PTSS = PTS.playerteamseasonskill
 
         PlayerDev = PTS.PlayerID.DevelopmentRating
@@ -29,9 +34,11 @@ def TrainingCamps(CurrentSeason, WorldID):
 
         PlayerTeamSeasonSkills_ToSave.append(PTSS)
 
-    print('Players to update skills: ', len(PlayerTeamSeasonSkills_ToSave))
     PlayerTeamSeasonSkill.objects.bulk_update(PlayerTeamSeasonSkills_ToSave, SkillsToUpdate)
-
+    if DoAudit:
+        end = time.time()
+        TimeElapsed = end - start
+        A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Training camps', QueryCount = len(connection.queries) )
 
 def StartCoachingCarousel(CurrentSeason = None, WorldID=None):
 
@@ -122,7 +129,7 @@ def GraduateSeniors(CurrentSeason = None, WorldID = None):
 
     NextLeagueSeason = LeagueSeason.objects.get(WorldID = CurrentWorld, IsCurrent = 0, LeagueID=CurrentSeason.LeagueID, SeasonStartYear = CurrentSeason.SeasonEndYear)
 
-    PlayerList = list(Player.objects.filter(WorldID = CurrentWorld).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True).filter(playerteamseason__ClassID__IsRecruit = False).exclude(playerteamseason__ClassID__ClassName = 'Graduate'))
+    PlayerList = Player.objects.filter(WorldID = CurrentWorld).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = True, playerteamseason__ClassID__IsRecruit = False).exclude(playerteamseason__ClassID__ClassName = 'Graduate')
     Classes = Class.objects.filter(IsRecruit = False).order_by('-ClassSortOrder')
 
     ClassDict = {}

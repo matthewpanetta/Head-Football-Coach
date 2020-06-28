@@ -43,8 +43,8 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False,
         'MLB': ['OLB', 'S'],
         'CB': ['S'],
         'S': ['CB'],
-        'K': ['P'],
-        'P': ['K'],
+        'K': ['P', 'FB', 'TE'],
+        'P': ['K', 'FB', 'TE'],
     }
 
     if DoAudit:
@@ -70,7 +70,8 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False,
 
                 DC = PlayerTeamSeasonDepthChart(WorldID = CurrentWorld, PlayerTeamSeasonID=PTS, PositionID_id=PositionID, IsStarter = True, DepthPosition=DepthPosition)
                 DCToSave.append(DC)
-                PlayerHasPosition = True
+                if DepthPos not in ['P', 'K']:
+                    PlayerHasPosition = True
 
         if not PlayerHasPosition:
             for DepthPos in [PlayerPos] + PositionFillIn[PlayerPos]:
@@ -82,7 +83,8 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False,
 
                     DC = PlayerTeamSeasonDepthChart(WorldID = CurrentWorld, PlayerTeamSeasonID=PTS, PositionID_id=PositionID, IsStarter = False, DepthPosition=DepthPosition)
                     DCToSave.append(DC)
-                    PlayerHasPosition = True
+                    if DepthPos not in ['P', 'K']:
+                        PlayerHasPosition = True
 
 
         if not PlayerHasPosition and FullDepthChart:
@@ -94,7 +96,8 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False,
 
                 DC = PlayerTeamSeasonDepthChart(WorldID = CurrentWorld, PlayerTeamSeasonID=PTS, PositionID_id=PositionID, IsStarter = False, DepthPosition=DepthPosition)
                 DCToSave.append(DC)
-                PlayerHasPosition = True
+                if DepthPos not in ['P', 'K']:
+                    PlayerHasPosition = True
 
 
     if DoAudit:

@@ -250,11 +250,15 @@ def GameSim(game):
 
     HomePlayerTeamSeasonDepthChartDict = {}
     for P in HomePlayerTeamSeasonDepthChart:
-        HomePlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']] = P
+        if P['PlayerTeamSeasonID__PlayerID_id'] not in HomePlayerTeamSeasonDepthChartDict:
+            HomePlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']] = []
+        HomePlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']].append(P)
 
     AwayPlayerTeamSeasonDepthChartDict = {}
     for P in AwayPlayerTeamSeasonDepthChart:
-        AwayPlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']] = P
+        if P['PlayerTeamSeasonID__PlayerID_id'] not in AwayPlayerTeamSeasonDepthChartDict:
+            AwayPlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']] = []
+        AwayPlayerTeamSeasonDepthChartDict[P['PlayerTeamSeasonID__PlayerID_id']].append(P)
 
     PassingStrategy_PassRushModifier = {
         'Deep Pass': 1.1,
@@ -555,7 +559,7 @@ def GameSim(game):
             ThisTeamGame = HomeTeamGame
             ThisTeam = HomeTeam
             if PlayerID in HomePlayerTeamSeasonDepthChartDict:
-                DC = HomePlayerTeamSeasonDepthChartDict[PlayerID]
+                DC_List = HomePlayerTeamSeasonDepthChartDict[PlayerID]
 
         else:
             AllPlayers[PlayerID]['TeamObj'] = AwayTeam
@@ -565,20 +569,21 @@ def GameSim(game):
             ThisTeamGame = AwayTeamGame
             ThisTeam = AwayTeam
             if PlayerID in AwayPlayerTeamSeasonDepthChartDict:
-                DC = AwayPlayerTeamSeasonDepthChartDict[PlayerID]
+                DC_List = AwayPlayerTeamSeasonDepthChartDict[PlayerID]
 
 
-        if DC is not None:
-            PlayerPosition = DC['PositionID__PositionAbbreviation']
-            AllPlayers[PlayerID]['Position'] = PlayerPosition
-            AllPlayers[PlayerID]['PositionDepthChart'] = DC['DepthPosition']
+        if DC_List is not None:
+            AllPlayers[PlayerID]['PositionDepthChart'] = {}
+            for DC in DC_List:
+                PlayerPosition =  DC['PositionID__PositionAbbreviation']
+                AllPlayers[PlayerID]['PositionDepthChart'][PlayerPosition] = DC['DepthPosition']
 
-            if DC['IsStarter'] == True:
-                TeamPlayers[ThisTeam]['PlayersOnField'][PlayerPosition].append(PlayerID)
-                AllPlayers[PlayerID]['PlayerGameStat'].GamesStarted = 1
-                AllPlayers[PlayerID]['PlayerGameStat'].GamesPlayed = 1
+                if DC['IsStarter'] == True:
+                    TeamPlayers[ThisTeam]['PlayersOnField'][PlayerPosition].append(PlayerID)
+                    AllPlayers[PlayerID]['PlayerGameStat'].GamesStarted = 1
+                    AllPlayers[PlayerID]['PlayerGameStat'].GamesPlayed = 1
 
-            TeamPlayers[ThisTeam]['AllPlayers'][PlayerPosition].append(PlayerID)
+                TeamPlayers[ThisTeam]['AllPlayers'][PlayerPosition].append(PlayerID)
 
 
         AllPlayers[PlayerID]['PlayerGameStat'].TeamGameID = ThisTeamGame
@@ -750,8 +755,8 @@ def GameSim(game):
                 for Team in GameDict:
                     EnergyMap = CoachDict[Team]['PositionEnergyMap']
                     for Position in PlayerStartersByPosition:
-                        StartersOnBenchReadyToGoIn = [P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] and AllPlayers[P]['Energy'] > EnergyMap[Position]['SubInThreshold'] * SubInMultiplier and AllPlayers[P]['PositionDepthChart'] <= PlayerStartersByPosition[Position]]
-                        TeamPlayers[Team]['PlayersOnField'][Position] = sorted([P for P in TeamPlayers[Team]['PlayersOnField'][Position] if AllPlayers[P]['Energy'] >  EnergyMap[Position]['SubOutThreshold'] * SubOutMultiplier], key=lambda P: AllPlayers[P]['PositionDepthChart'])
+                        StartersOnBenchReadyToGoIn = [P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] and AllPlayers[P]['Energy'] > EnergyMap[Position]['SubInThreshold'] * SubInMultiplier and AllPlayers[P]['PositionDepthChart'][Position] <= PlayerStartersByPosition[Position]]
+                        TeamPlayers[Team]['PlayersOnField'][Position] = sorted([P for P in TeamPlayers[Team]['PlayersOnField'][Position] if AllPlayers[P]['Energy'] >  EnergyMap[Position]['SubOutThreshold'] * SubOutMultiplier], key=lambda P: AllPlayers[P]['PositionDepthChart'][Position])
 
                         for P in StartersOnBenchReadyToGoIn:
                             if len(TeamPlayers[Team]['PlayersOnField'][Position]) > 0:
@@ -761,19 +766,17 @@ def GameSim(game):
                         if SecondStringers:
                             #print('Fielding second stringers')
                             TeamPlayers[Team]['PlayersOnField'][Position] = []
-                            EligiblePlayers    = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if  AllPlayers[P]['Energy'] >  EnergyMap[Position]['SubInThreshold'] * SubInMultiplier and AllPlayers[P]['PositionDepthChart'] > PlayerStartersByPosition[Position]], key=lambda P: AllPlayers[P]['PositionDepthChart'])
-                            EligiblePlayersAll = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in EligiblePlayers], key=lambda P: AllPlayers[P]['PositionDepthChart'])
+                            EligiblePlayers    = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if  AllPlayers[P]['Energy'] >  EnergyMap[Position]['SubInThreshold'] * SubInMultiplier and AllPlayers[P]['PositionDepthChart'][Position] > PlayerStartersByPosition[Position]], key=lambda P: AllPlayers[P]['PositionDepthChart'][Position])
+                            EligiblePlayersAll = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in EligiblePlayers], key=lambda P: AllPlayers[P]['PositionDepthChart'][Position])
                         else:
-                            EligiblePlayers    = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] and AllPlayers[P]['Energy'] >  EnergyMap[Position]['SubInThreshold'] * SubInMultiplier], key=lambda P: AllPlayers[P]['PositionDepthChart'])
-                            EligiblePlayersAll = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] + EligiblePlayers], key=lambda P: AllPlayers[P]['PositionDepthChart'])
+                            EligiblePlayers    = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] and AllPlayers[P]['Energy'] >  EnergyMap[Position]['SubInThreshold'] * SubInMultiplier], key=lambda P: AllPlayers[P]['PositionDepthChart'][Position])
+                            EligiblePlayersAll = sorted([P for P in TeamPlayers[Team]['AllPlayers'][Position] if P not in TeamPlayers[Team]['PlayersOnField'][Position] + EligiblePlayers], key=lambda P: AllPlayers[P]['PositionDepthChart'][Position])
 
 
                         NumberOfPlayersNeeded = PlayerStartersByPosition[Position] - len(TeamPlayers[Team]['PlayersOnField'][Position])
 
                         if NumberOfPlayersNeeded > len(EligiblePlayers):
-                            #print('Filling EligiblePlayers with All')
                             EligiblePlayers += EligiblePlayersAll
-                            #print('Filling field', Period, Team, Position, NumberOfPlayersNeeded, len(EligiblePlayers))
 
 
                         for PI in range(0,NumberOfPlayersNeeded):
@@ -945,7 +948,9 @@ def GameSim(game):
                     YardsThisPlay = 0
                     InterceptionReturnYards = 0
 
-                    DefensivePlayers = [(u, int(InterceptionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 4) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
+                    DefensivePlayers = []
+                    for Pos in ['DE', 'DT', 'OLB', 'MLB', 'CB', 'S']:
+                        DefensivePlayers += [(P, int(InterceptionsByPosition[Pos] * AllPlayers[P]['AdjustedOverallRating']) ** 4) for P in DefensiveTeamPlayers[Pos]]
                     DefensiveIntercepter = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     AllPlayers[DefensiveIntercepter]['PlayerGameStat'].DEF_INT += 1
@@ -966,7 +971,9 @@ def GameSim(game):
                     #AllPlayers[QuarterbackPlayerID]['PlayerGameStat'].RUS_Carries += 1
                     #GameDict[OffensiveTeam]['TeamGame'].RUS_Carries += 1
 
-                    DefensivePlayers = [(u, int(PassRushByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 3) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB'] + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S'] ]
+                    DefensivePlayers = []
+                    for Pos in ['DE', 'DT', 'OLB', 'MLB', 'CB', 'S']:
+                        DefensivePlayers += [(P, int(PassRushByPosition[Pos] * AllPlayers[P]['AdjustedOverallRating']) ** 3) for P in DefensiveTeamPlayers[Pos]]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
                     LinemanSackAllowedPlayerID = WeightedProbabilityChoice(OffensiveLinemen, OffensiveLinemen[0])
 
@@ -998,7 +1005,9 @@ def GameSim(game):
                     AllPlayers[WideReceiverPlayer]['PlayerGameStat'].REC_Receptions += 1
                     GameDict[OffensiveTeam]['TeamGame'].REC_Receptions += 1
 
-                    DefensivePlayers = [(u, int(CompletionTacklerByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 2) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
+                    DefensivePlayers = []
+                    for Pos in ['DE', 'DT', 'OLB', 'MLB', 'CB', 'S']:
+                        DefensivePlayers += [(P, int(CompletionTacklerByPosition[Pos] * AllPlayers[P]['AdjustedOverallRating']) ** 2) for P in DefensiveTeamPlayers[Pos]]
                     DefensiveTackler = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
 
                     AllPlayers[DefensiveTackler]['PlayerGameStat'].DEF_Tackles += 1
@@ -1022,7 +1031,9 @@ def GameSim(game):
 
                     #Deflected pass
                     if (random.uniform(0,1) < (.2 )):
-                        DefensivePlayers = [(u, int(DeflectionsByPosition[AllPlayers[u]['Position']] * AllPlayers[u]['AdjustedOverallRating']) ** 3) for u in DefensiveTeamPlayers['DE']  + DefensiveTeamPlayers['DT'] + DefensiveTeamPlayers['OLB']  + DefensiveTeamPlayers['MLB']  + DefensiveTeamPlayers['CB']  + DefensiveTeamPlayers['S']  ]
+                        DefensivePlayers = []
+                        for Pos in ['DE', 'DT', 'OLB', 'MLB', 'CB', 'S']:
+                            DefensivePlayers += [(P, int(CompletionTacklerByPosition[Pos] * AllPlayers[P]['AdjustedOverallRating']) ** 3) for P in DefensiveTeamPlayers[Pos]]
                         Deflector = WeightedProbabilityChoice(DefensivePlayers, DefensivePlayers[0])
                         GameDict[DefensiveTeam]['TeamGame'].DEF_Deflections += 1
                         AllPlayers[Deflector]['PlayerGameStat'].DEF_Deflections += 1
@@ -1195,9 +1206,6 @@ def GameSim(game):
 
                 Kickoff = True
             elif BallSpot < 0:
-                print()
-                print('WOULD BE A SAFETY!!!!')
-                print()
                 GameDict[DefensiveTeam]['TeamGame'].Points += 2
                 AdjustBiggestLead(GameDict[OffensiveTeam]['TeamGame'], GameDict[DefensiveTeam]['TeamGame'])
                 Kickoff = True

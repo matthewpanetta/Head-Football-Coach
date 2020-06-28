@@ -760,7 +760,7 @@ def Page_Conferences(request, WorldID, ConferenceID = None):
     CurrentWeek = Week.objects.filter(WorldID = CurrentWorld).filter(IsCurrent = True).first()
     context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld, CurrentSeason = CurrentSeason, CurrentWeek = CurrentWeek)
 
-    ConferenceList = CurrentWorld.conferenceseason_set.all().annotate(
+    ConferenceList = CurrentSeason.conferenceseason_set.all().annotate(
         IsChosenConference = Case(
             When(ConferenceID = ConferenceID, then=1),
             default=Value(0),
@@ -1955,8 +1955,8 @@ def Page_TeamDepthChart(request, WorldID, TeamID, SeasonStartYear = None):
         PositionDepthChart = {}
         for Pos in Positions:
             PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
-        CreateDepthChart(CurrentWorld=CurrentWorld, TS=TeamSeasonID, FullDepthChart = False, PositionDepthChart=PositionDepthChart.copy())
-
+        DCToSave = CreateDepthChart(CurrentWorld=CurrentWorld, TS=TeamSeasonID, FullDepthChart = False, PositionDepthChart=PositionDepthChart.copy())
+        PlayerTeamSeasonDepthChart.objects.bulk_create(DCToSave, ignore_conflicts=False)
 
     PlayerList = Player.objects.filter(WorldID_id = WorldID).filter(playerteamseason__TeamSeasonID = TeamSeasonID, playerteamseason__RedshirtedThisSeason = False).values( 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL',
         'playerteamseason__TeamSeasonID__TeamID__TeamName', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'PlayerID', 'playerteamseason__playerteamseasonskill__OverallRating','playerteamseason__playerteamseasonskill__Strength_Rating','playerteamseason__playerteamseasonskill__Agility_Rating','playerteamseason__playerteamseasonskill__Speed_Rating','playerteamseason__playerteamseasonskill__Acceleration_Rating','playerteamseason__playerteamseasonskill__Stamina_Rating','playerteamseason__playerteamseasonskill__Awareness_Rating','playerteamseason__playerteamseasonskill__Jumping_Rating','playerteamseason__playerteamseasonskill__ThrowPower_Rating'    ,'playerteamseason__playerteamseasonskill__ShortThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__MediumThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__DeepThrowAccuracy_Rating'    ,'playerteamseason__playerteamseasonskill__ThrowOnRun_Rating'    ,'playerteamseason__playerteamseasonskill__ThrowUnderPressure_Rating'    ,'playerteamseason__playerteamseasonskill__PlayAction_Rating', 'playerteamseason__playerteamseasonskill__PassRush_Rating', 'playerteamseason__playerteamseasonskill__BlockShedding_Rating', 'playerteamseason__playerteamseasonskill__Tackle_Rating', 'playerteamseason__playerteamseasonskill__HitPower_Rating', 'playerteamseason__playerteamseasonskill__ManCoverage_Rating', 'playerteamseason__playerteamseasonskill__ZoneCoverage_Rating', 'playerteamseason__playerteamseasonskill__Press_Rating', 'playerteamseason__playerteamseasonskill__Carrying_Rating', 'playerteamseason__playerteamseasonskill__Elusiveness_Rating', 'playerteamseason__playerteamseasonskill__BallCarrierVision_Rating', 'playerteamseason__playerteamseasonskill__BreakTackle_Rating', 'playerteamseason__playerteamseasonskill__Catching_Rating', 'playerteamseason__playerteamseasonskill__CatchInTraffic_Rating', 'playerteamseason__playerteamseasonskill__RouteRunning_Rating', 'playerteamseason__playerteamseasonskill__Release_Rating', 'playerteamseason__playerteamseasonskill__PassBlock_Rating', 'playerteamseason__playerteamseasonskill__RunBlock_Rating', 'playerteamseason__playerteamseasonskill__ImpactBlock_Rating', 'playerteamseason__playerteamseasonskill__KickPower_Rating', 'playerteamseason__playerteamseasonskill__KickAccuracy_Rating'
@@ -4892,16 +4892,18 @@ def GET_PlayerStats_Player(request, WorldID, PlayerID):
                             KeepGroup = True
                             StatGrouping['KeepGroup'] = True
 
-                    if Stat['ShowCareerHigh']:
-                        High = GameStats.order_by('-' + Stat['FieldName']).first()
-                        if   High[Stat['FieldName']] is not None:
-                            CareerHighInfo = {'Field': Stat['title'], 'Value': High[Stat['FieldName']], 'Week':High['GameWeek'], 'GameHref': High['GameHref'], 'OpposingTeamName': High['playergamestat__TeamGameID__OpposingTeamSeasonID__TeamID__TeamName'], 'OpposingTeamLogo': High['playergamestat__TeamGameID__OpposingTeamSeasonID__TeamID__TeamLogoURL'] }
-                            if CareerHighInfo['Value'] > 0:
-                                print(StatGrouping['CareerHighs'])
-                                StatGrouping['CareerHighs'].append(CareerHighInfo)
+
 
             CareerStatsVals = []
             for Stat in StatGrouping['Stats']:
+
+                if Stat['ShowCareerHigh']:
+                    High = GameStats.order_by('-' + Stat['FieldName']).first()
+                    if   High[Stat['FieldName']] is not None:
+                        CareerHighInfo = {'Field': Stat['title'], 'Value': High[Stat['FieldName']], 'Week':High['GameWeek'], 'GameHref': High['GameHref'], 'OpposingTeamName': High['playergamestat__TeamGameID__OpposingTeamSeasonID__TeamID__TeamName'], 'OpposingTeamLogo': High['playergamestat__TeamGameID__OpposingTeamSeasonID__TeamID__TeamLogoURL'] }
+                        if CareerHighInfo['Value'] > 0:
+                            print(StatGrouping['CareerHighs'])
+                            StatGrouping['CareerHighs'].append(CareerHighInfo)
 
                 if Stat not in ['SeasonYear'] and SeasonStats.count() > 1: #TODO change 0 to 1 after testing
                     val = CareerStats[Stat['FieldName']]
@@ -6245,8 +6247,8 @@ def POST_SimAction(request, WorldID):
                     PositionDepthChart = {}
                     for Pos in Positions:
                         PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
-                    CreateDepthChart(CurrentWorld=CurrentWorld, TS=TG.TeamSeasonID, FullDepthChart = False, PositionDepthChart=PositionDepthChart.copy())
-
+                    DCToSave = CreateDepthChart(CurrentWorld=CurrentWorld, TS=TG.TeamSeasonID, FullDepthChart = False, PositionDepthChart=PositionDepthChart.copy())
+                    PlayerTeamSeasonDepthChart.objects.bulk_create(DCToSave, ignore_conflicts=False)
             if DoAudit:
                 start = time.time()
                 reset_queries()
