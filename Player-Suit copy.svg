@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 405 272" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
+    <g transform="matrix(1,0,0,1,2.36932,-491.359)">
+        <g id="Apparel">
+            <path id="Shirt" d="M10,600C10,600 10,550 70,530C77.392,527.536 84.025,524.92 89.977,522.218C89.977,522.218 113.72,507.873 119.12,504.312C120.038,509.976 111.076,508.897 125.931,521.518C137.439,531.295 167.631,551 200,551C243.448,551 266.521,524.459 275.782,510.725C282.326,501.02 280.325,508.919 281,504.756C286.644,508.456 302.123,518.639 310.023,522.218L310.583,522.471C316.39,525.083 322.839,527.613 330,530C390,550 390,600 390,600L10,600Z" style="fill:white;stroke:black;stroke-width:6px;"/>
+            <g transform="matrix(1.53846,0,0,1.41245,-107.692,-235.987)">
+                <g transform="matrix(1.5,0,0,1.5,-100,-284.519)">
+                    <path d="M190,564.4L200.033,563.038L210,564.371L206.5,577L193.5,576.985L190,564.4Z" style="fill:rgb(190,8,48);stroke:black;stroke-width:1.35px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                </g>
+                <g transform="matrix(1.5,0,0,1.5,-100,-279.993)">
+                    <path d="M193.5,573.985L187,597.362L200,657.5L213,598.237L206.5,574L193.5,573.985Z" style="fill:rgb(190,8,48);stroke:black;stroke-width:1.35px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                </g>
+            </g>
+            <g id="Collar">
+                <g transform="matrix(1,0,0,1,0.457375,0)">
+                    <path d="M279.339,504.354C277.635,505.046 200,550 200,550L232.485,581.939C232.485,581.939 267.391,549.65 282.175,527.05C292.087,511.898 281.044,503.662 279.339,504.354Z" style="fill:white;stroke:black;stroke-width:4px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                </g>
+                <g transform="matrix(-1,0,0,1,400,0)">
+                    <path d="M279.339,504.354C277.635,505.046 200,550 200,550L232.485,581.939C232.485,581.939 267.391,549.65 282.175,527.05C292.087,511.898 281.044,503.662 279.339,504.354Z" style="fill:white;stroke:black;stroke-width:4px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                </g>
+            </g>
+            <g>
+                <path d="M10,600C10,600 10,550 70,530C77.392,527.536 84.025,524.92 89.977,522.218C89.977,522.218 98.137,518.738 105.915,513.971C111.965,510.263 117.638,505.286 120,503.728C121.629,513.781 126.44,651.317 200.592,651.317C274.744,651.317 278.371,514.269 280,504.216C282.739,506.011 288.028,510.108 293.651,513.592C299.616,517.288 305.956,520.375 310.023,522.218L310.583,522.471C316.39,525.083 322.839,527.613 330,530C390,550 390,600 390,600L10,600Z" style="fill:rgb(51,51,51);stroke:black;stroke-width:6px;"/>
+            </g>
+            <g transform="matrix(1.04986,0,0,1.04986,-9.97355,-23.9766)">
+                <path d="M306.649,520.978L314.327,553.707L293.092,570.684L311.588,579.277L284.725,634.469" style="fill:none;stroke:black;stroke-width:3.81px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                <g transform="matrix(-1,0,0,1,400.052,0)">
+                    <path d="M306.649,520.978L314.327,553.707L293.092,570.684L311.588,579.277L284.725,634.469" style="fill:none;stroke:black;stroke-width:3.81px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
