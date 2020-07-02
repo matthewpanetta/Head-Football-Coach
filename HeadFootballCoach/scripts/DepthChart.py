@@ -31,9 +31,9 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False,
     PositionFillIn = {
         'QB': [],
         'RB': ['FB'],
-        'FB': ['RB'],
+        'FB': ['RB', 'TE'],
         'WR': ['TE'],
-        'TE': ['WR'],
+        'TE': ['WR', 'FB'],
         'OT': ['OG', 'OC'],
         'OG': ['OT', 'OC'],
         'OC': ['OT', 'OG'],
@@ -43,8 +43,8 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False,
         'MLB': ['OLB', 'S'],
         'CB': ['S'],
         'S': ['CB'],
-        'K': ['P', 'FB', 'TE'],
-        'P': ['K', 'FB', 'TE'],
+        'K': ['P'],
+        'P': ['K'],
     }
 
     if DoAudit:

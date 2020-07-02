@@ -153,6 +153,7 @@
                               </div>
                               <div class="">
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Player.TopStatStringDisplay1}}</span>
+                                {%if Player.TopStatStringDisplay2%}and <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Player.TopStatStringDisplay2}}</span>{% endif %}
                               </div>
                             </div>
                             {% endfor %}
@@ -167,6 +168,7 @@
                               </div>
                               <div class="">
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Player.TopStatStringDisplay1}}</span>
+                                {%if Player.TopStatStringDisplay2%}and <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Player.TopStatStringDisplay2}}</span>{% endif %}
                               </div>
                             </div>
                             {% endfor %}
@@ -181,7 +183,7 @@
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'>{{Stat.Header}}</span>
                               </div>
                               <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Stat.Value}} {{Stat.Label}}</span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Stat.Display}}</span>
                               </div>
                             </div>
 
@@ -195,7 +197,7 @@
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'>{{Stat.Header}}</span>
                               </div>
                               <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Stat.Value}} {{Stat.Label}}</span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Stat.Display}}</span>
                               </div>
                             </div>
 
@@ -210,6 +212,7 @@
                   </div>
                 </div>
               </div>
+              {% if teamLeaders|length > 0%}
               <div class="w3-row w3-margin-top">
                 <div class="w3-col s12">
                   <div class="w3-card">
@@ -249,6 +252,8 @@
                   </div>
 
               </div>
+              {% endif %}
+              {% if teamStats|length > 0%}
               <div class="w3-row w3-margin-top">
                 <div class="w3-col s12">
                   <div class="w3-card ">
@@ -291,6 +296,7 @@
 
                 </div>
               </div>
+              {% endif %}
             </div>
             <div class="w3-col l4 m12 s12">
               <div class="w3-row">

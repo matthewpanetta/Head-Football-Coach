@@ -13,6 +13,21 @@ def FindRange(RangeDict, Value):
 
     return None
 
+def HumanizeInteger(Val):
+    j = Val % 10
+    k = Val % 100;
+
+    if j == 1 and k != 11:
+        return str(Val) + 'st'
+
+    if (j == 2 and k != 12):
+        return str(Val) + "nd"
+
+    if (j == 3 and k != 13):
+        return str(Val) + "rd";
+
+    return str(Val) + "th";
+
 
 def NormalVariance(Modifier, Segments = 5):
     Mean = 1

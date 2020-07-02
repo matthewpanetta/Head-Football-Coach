@@ -1956,7 +1956,7 @@ class Game(models.Model):
 
 
     def CalculateTopPlayers(self):
-        HomeTeamGameID = self.teamgame_set.filter(IsHomeTeam = False).first()
+        HomeTeamGameID = self.teamgame_set.filter(IsHomeTeam = True).first()
         AwayTeamGameID = self.teamgame_set.filter(IsHomeTeam = False).first()
 
         AwayPlayers = AwayTeamGameID.playergamestat_set.all().select_related('PlayerTeamSeasonID__PlayerID__PositionID', 'TeamGameID__TeamSeasonID__TeamID').order_by('-GameScore')[:3]

@@ -111,7 +111,7 @@ class System_PlayerArchetypeRatingModifierAdmin(admin.ModelAdmin):
     list_display = [field.name for field in System_PlayerArchetypeRatingModifier._meta.get_fields() if field.name not in ('hold')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class WeekAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Week._meta.get_fields() if field.name not in ('playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in Week._meta.get_fields() if field.name not in ('playerteamseasonaward', 'recruitteamseason', 'visitweek_recruitteamseason', 'commitweek_recruitteamseason', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class PhaseAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Phase._meta.get_fields() if field.name not in ('week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')

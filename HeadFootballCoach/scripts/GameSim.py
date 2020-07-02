@@ -1049,9 +1049,20 @@ def GameSim(game):
                 DrivePlayObject.IsPunt = True
                 Punt = True
 
-                PuntYards = round(NormalTrunc(40, 8, 15, 50),0)
+                PunterOverall = AllPlayers[PunterPlayerID]['PlayerSkills']['OverallRating']
+                PuntMean = int(2.5 + (PunterOverall  / 2.0))
+
+
+                PuntYards = round(NormalTrunc(PuntMean, 8, 15, 60),0)
+
+                ShankProbability = 0.0 if PunterOverall >= 90 else (100 - PunterOverall - 10) / 100.0
+                if random.uniform(0,1) < ShankProbability:
+                    print('Shanked punt!!!')
+                    PuntYards = round(NormalTrunc(20, 5, 5, 30),0)
 
                 OrigBallSpot = BallSpot
+
+                print('PunterOverall', PunterOverall, 'PuntMean',PuntMean, 'PuntYards', PuntYards, 'ShankProbability', ShankProbability, 'OrigBallSpot' , OrigBallSpot)
                 if BallSpot + PuntYards > 90:
                     PuntToYard = round(NormalTrunc(90, 3, 85, 99),0)
                     PuntYards = PuntToYard - BallSpot
@@ -1075,7 +1086,7 @@ def GameSim(game):
                 FGMField = ''
                 FGAField = ''
 
-                KickGameModifier = KickerTalent / 100.0
+                KickGameModifier = (KickerTalent / 100.0) ** 2
                 r = random.uniform(0,1)
                 FieldGoalDistance = 100 - BallSpot + 17
                 KickDifficultModifier = 0

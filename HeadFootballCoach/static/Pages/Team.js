@@ -118,7 +118,6 @@ function DrawTeamInfoChildRows(WorldID, TeamID, data) {
 
 
     $('#TeamInfo tbody').on('click', '.details-control', function () {
-      //console.log('clicked', this, SelectedTeamID);
 
       var tr = $(this).parent();
       $(tr).addClass('shown');
@@ -148,54 +147,6 @@ function DrawTeamInfoChildRows(WorldID, TeamID, data) {
 }
 
 
-function GetTeamHistory(WorldID, TeamID){
-
-
-  $.ajax({
-    method: "GET",
-    url: "/World/"+WorldID+"/Team/"+TeamID+"/TeamHistory",
-    data: {
-      csrfmiddlewaretoken: csrftoken
-    },
-    dataType: 'json',
-    success: function(res, status) {
-      console.log(res, status);
-      PopulateTeamSeasonHistoryTable(res.TeamSeasonHistory, WorldID);
-
-    },
-    error: function(res) {
-      alert(res.status);
-    }
-  });
-
-  return null;
-}
-
-
-
-function GetTeamCoaches(WorldID, TeamID){
-
-
-  $.ajax({
-    method: "GET",
-    url: "/World/"+WorldID+"/Team/"+TeamID+"/TeamCoaches",
-    data: {
-      csrfmiddlewaretoken: csrftoken
-    },
-    dataType: 'json',
-    success: function(res, status) {
-      console.log(res, status);
-      DrawCoachOrgChart(res.TeamInfo, res.CoachOrg);
-    },
-    error: function(res) {
-      alert(res.status);
-    }
-  });
-
-  return null;
-}
-
-
 
 function AddBoxScoreListeners(){
   var InitialBoxScore = $('.selected-boxscore-tab')[0];
@@ -211,10 +162,7 @@ function AddBoxScoreListeners(){
     var SelectedTeamID = ClickedTab.attr('TeamID');
     var SelectedGameID = ClickedTab.attr('GameID');
 
-    console.log('Clicked ', $(this), 'ClickedTabParent', ClickedTabParent);
-
     $.each($('#'+ClickedTabParent+' > .selected-boxscore-tab'), function(index, tab){
-      console.log('Unclicking this', $(this));
       var TargetTab = $(tab);
       $(TargetTab).removeClass('selected-boxscore-tab');
       var TargetTabParent = TargetTab.closest('.boxscore-bar').attr('id');
@@ -262,7 +210,6 @@ $(document).ready(function(){
   AddScheduleListeners();
   AddBoxScoreListeners();
 
-  console.log('in Team.js file')
   DrawFaces(TeamJerseyStyle, TeamJerseyInvert, overrides=overrides);
   DrawSchedule();
 
@@ -272,20 +219,6 @@ $(document).ready(function(){
 
 
 });
-
-function DrawMap(MapData){
-
-  console.log('Drawing map', MapData);
-
-   var Center = {lat: parseFloat(MapData.Latitude), lng: parseFloat(MapData.Longitude)};
-
-  var map = new google.maps.Map($('#map'), {
-          center: Center,
-          zoom: 6
-        });
-
-   var marker = new google.maps.Marker({position: Center, map: map});
-}
 
 
 function AddScheduleListeners(){

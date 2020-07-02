@@ -50,7 +50,6 @@ function DrawPlayerInfo(data, WorldID, PlayerID, SourceTable){
                 <div id='' class="w3-bar w3-row-padding player-highlight-info-selection-bar">
                   <button class='w3-button w3-bar-item highlight-tab selected-highlight-tab highlight-ratings-tab' type="button" name="button" id="highlight-ratings-tab">Ratings</button>
                   <button class='w3-button w3-bar-item w3-hide highlight-tab highlight-stats-tab' type="button" name="button" id="highlight-stats-tab">Stats</button>
-                  <button class='w3-button w3-bar-item highlight-tab highlight-awards-tab' type="button" name="button" id="highlight-awards-tab">Awards</button>
                   <button class='w3-button w3-bar-item highlight-tab highlight-recruiting-tab' type="button" name="button" id="highlight-recruiting-tab">Recruiting</button>
                   <button class='w3-button w3-bar-item highlight-tab highlight-actions-tab' type="button" name="button" id="highlight-actions-tab">Actions</button>
                 </div>
@@ -62,8 +61,6 @@ function DrawPlayerInfo(data, WorldID, PlayerID, SourceTable){
                   </div>
                   <div class="w3-container w3-hide highlight-stats">
                     stats here
-                  </div>
-                  <div class="w3-container w3-hide highlight-awards">
                   </div>
                   <div class="w3-container w3-hide highlight-recruiting">
                     recruting here
@@ -300,25 +297,25 @@ function DrawRecruitingTable(WorldID, data, SavedPlayers){
                       }
                   },
                   {
-                      label: 'Closing Stage',
+                      label: 'Closing Stage (< 100%)',
                       value: function(rowData, rowIdx){
                         return rowData['RecruitingPointsPercent'] > 75 && rowData['RecruitingPointsPercent'] < 100;
                       }
                   },
                   {
-                      label: 'Narrowing Down Teams',
+                      label: 'Narrowing Down Teams (< 75%)',
                       value: function(rowData, rowIdx){
                         return rowData['RecruitingPointsPercent'] > 50 && rowData['RecruitingPointsPercent'] <= 75;
                       }
                   },
                   {
-                      label: 'Progressing',
+                      label: 'Progressing (< 50%)',
                       value: function(rowData, rowIdx){
                         return rowData['RecruitingPointsPercent'] > 25 && rowData['RecruitingPointsPercent'] <= 50;
                       }
                   },
                   {
-                      label: 'Available',
+                      label: 'Available (< 25%)',
                       value: function(rowData, rowIdx){
                         return rowData['RecruitingPointsPercent'] <= 25;
                       }
@@ -833,15 +830,30 @@ function RecruitingAction(WorldID, BoardTable, MainTable){
             var ParentSourceRow = $(ActionTarget).closest('tr.teamTableBorder').prev();
             var PlayerID = ParentSourceRow.attr('playerid');
 
+            var row = MainTable.row(ParentSourceRow);
+
             if (Action == 'Scout') {
-              $(ParentSourceRow).remove();
-              $(ParentRow).remove();
-            }
-            else if (Action == 'Scout') {
-              $(ParentSourceRow).remove();
-              $(ParentRow).remove();
-              $(ActionTarget).text('Add as Captain');
-              $(ActionTarget).attr('background-ajax', Path.replace('Remove', 'Add'));
+              $.each(res.DataUpdates, function(ind, obj){
+                if (obj.ColumnNumber != null){
+                  MainTable.cell(row[0], obj.ColumnNumber).data(obj.Value)//.draw();
+                }
+                $(ParentRow).find('[data-field="'+obj.Selector+'"]').text(obj.Value);
+
+                if (obj.FieldName == 'ScoutingFuzz'){
+                  if (obj.Value == 0){
+                    $(ParentRow).find('td.recruiting-action').each(function(ind, obj){
+                      if ($(this).attr('background-ajax').indexOf('Scout') != -1) {
+                        $(this).closest('tr').remove();
+                      }
+                    })
+                  }
+                }
+                if (obj.FieldName == 'UserRecruitingPointsLeft'){
+                  $('#UserRecruitingPointsLeft').text(obj.Value);
+                }
+              });
+
+
             }
             else if (Action == 'Add to Board') {
               var RowToMove = MainTable.row(ParentSourceRow)
