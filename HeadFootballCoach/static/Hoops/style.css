@@ -1525,7 +1525,8 @@ img.teamTeamLogo {
   font-weight: 600;
 }
 
-.A-Plus{
+
+.A-Plus, .Rating-Most{
   color: #0B5001;
   font-weight: 600;
 }
@@ -1533,7 +1534,7 @@ img.teamTeamLogo {
   color: #386616;
   font-weight: 600;
 }
-.A-Minus{
+.A-Minus, .Rating-VeryHigh{
   color: #597827;
   font-weight: 600;
 }
@@ -1541,11 +1542,11 @@ img.teamTeamLogo {
   color: #748533;
   font-weight: 600;
 }
-.B{
+.B, .Rating-High{
   color: #8b8e3c;
   font-weight: 600;
 }
-.B-Minus{
+.B-Minus, .Rating-Medium{
   color: #9e9141;
   font-weight: 600;
 }
@@ -1553,7 +1554,7 @@ img.teamTeamLogo {
   color: #ab8f43;
   font-weight: 600;
 }
-.C{
+.C, .Rating-Low{
   color: #b48940;
   font-weight: 600;
 }
@@ -1565,7 +1566,7 @@ img.teamTeamLogo {
   color: #b66c31;
   font-weight: 600;
 }
-.D{
+.D, .Rating-VeryLow{
   color: #af5624;
   font-weight: 600;
 }
@@ -1573,7 +1574,7 @@ img.teamTeamLogo {
   color: #a23914;
   font-weight: 600;
 }
-.F, .F-Minus{
+.F, .F-Minus, .Rating-Least{
   color: #8f0600;
   font-weight: 600;
 }

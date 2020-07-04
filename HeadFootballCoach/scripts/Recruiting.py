@@ -542,6 +542,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
         TeamSeason.objects.bulk_update(ScholarshipsRemainingList, ['ScholarshipsToOffer'])
 
     RecruitTeamSeason.objects.filter(WorldID = WorldID, UserRecruitingPointsThisWeek__gt = 0).update(UserRecruitingPointsThisWeek = 0)
+    RecruitTeamSeasonInterest.objects.filter(WorldID = WorldID, UtilizedThisWeek = True).update(UtilizedThisWeek = False)
     print('Recruiting complete', len(connection.queries))
     if DoAudit:
         end = time.time()

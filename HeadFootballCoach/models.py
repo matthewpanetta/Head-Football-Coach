@@ -1331,6 +1331,8 @@ class TeamSeason(models.Model):
     TeamOffenseRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
     TeamDefenseRating_Grade = models.CharField(max_length=4, default=None, null=True, blank=True)
 
+    MaxRecruitingPointsPerPlayerPerWeek = models.IntegerField(default = 6)
+
     def __str__(self):
         TeamName = 'None'
         if self.TeamID is not None:
@@ -3121,3 +3123,5 @@ class RecruitTeamSeasonInterest(models.Model):
 
     TeamRating = models.IntegerField(default = 0)
     PitchRecruitInterestRank_IsKnown = models.BooleanField(default = False)
+
+    UtilizedThisWeek = models.BooleanField(default = False)

@@ -88,6 +88,10 @@ urlpatterns = [
 
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerRecruitingBoard/<str:AddOrRemove>', views.POST_PlayerRecruitingBoard, name='PlayerRecruitingBoard'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/ScoutRecruit/', views.POST_ScoutRecruit, name='ScoutRecruit'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/StartRecruitingCall/', views.POST_StartRecruitingCall, name='StartRecruitingCall'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/RecruitingCallPitch/<str:Pitch>', views.POST_RecruitingCallPitch, name='RecruitingCallPitch'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/DiscoverRecruitingPitch/<str:Pitch>', views.POST_DiscoverRecruitingPitch, name='DiscoverRecruitingPitch'),
+
 
     path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamCuts', views.POST_AutoTeamCuts, name='AutoTeamCuts'),
     path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamCaptains', views.POST_AutoTeamCaptains, name='AutoTeamCaptains'),

@@ -88,6 +88,7 @@ function NumberToGrade_True(NumberValue){
     return {'LetterGrade': 'F-', 'GradeClass': 'F-Minus'}
 }
 
+
 function BuildFace(face, TeamJerseyStyle, TeamJerseyInvert, overrides=undefined, DOMID=undefined){
   var DataPassthruHolder = $('#PageDataPassthru')[0];
   var WorldID    = parseInt($(DataPassthruHolder).attr('WorldID'));

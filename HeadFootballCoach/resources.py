@@ -106,11 +106,14 @@ def TeamRedshirts(TS, WorldID, SaveInFunc = False):
     PTRToSave = []
     Num = 4
     Pow = .25
+    print("HeadCount['CoachID__RedshirtTendency']", HeadCount['CoachID__RedshirtTendency'])
+    HeadCount['CoachID__RedshirtTendency'] += 4
     for PTR in PlayersToRedshirt:
         if random.uniform(0,1) < ((Max_Int(PTR.DepthChartPositionMin + HeadCount['CoachID__RedshirtTendency'] - Num,0) / 10.0) ** Pow):
             PTR.RedshirtedThisSeason = True
             PTRToSave.append(PTR)
 
+    print('PTRToSave', PTRToSave)
     if SaveInFunc:
         PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'], batch_size=500)
         return None

@@ -28,24 +28,34 @@
         <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        {% if SavedPlayers|length > 0%}
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-saved-tab" style="background-color: #{{page.SecondaryColor}};">Saved Players</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-overview-tab">All Players</button>
+        {% else %}
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">All Players</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-saved-tab">Saved Players</button>
+        {% endif %}
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-ranking-tab">National Ranking</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-needs-tab">Team Needs</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-boxscore-tab">Box Score</button>
       </div>
     </nav>
     <div id="nav-tabContent">
-      <div class="tab-content" style='display:block;' id="nav-overview">
+      {% if SavedPlayers|length > 0%}
+      <div class="tab-content" style='display:none;' id="nav-overview">
+        {% else %}
+        <div class="tab-content" style='display:block;' id="nav-overview">
+        {% endif %}
         <div class="w3-display-container">
           <div class="w3-row-padding">
             <div class="w3-col l12 mw1200">
               <div class="w3-card">
                 <div id="">
-                  <table id='recruitingMainTable' class='width100 w3-table w3-striped center-aligned-table' style='width: 100%;'>
+                  <table id='recruitingMainTable' class='width100 w3-table w3-striped center-aligned-table recruiting-player-table' style='width: 100%;'>
                     <thead>
                       <tr>
-                        <th colspan="9" class="col-group">PLAYER</th>
+                        <th colspan="7" class="col-group">PLAYER</th>
+                        <th colspan="4" class="col-group">STATUS</th>
                         <th colspan="5">MEASURABLES</th>
                         <th colspan="7" class="col-group">PHYSICAL SKILLS</th>
                         <th colspan="7" class="col-group">PASSING SKILLS</th>
@@ -63,9 +73,12 @@
                         <th>Pos</th>
                         <th>OVR</th>
                         <th>% Scouted</th>
+                        <th>Signed</th>
+
                         <th>% Lock</th>
                         <th>Interest in Team</th>
-                        <th>Signed</th>
+                        <th>Time Left</th>
+                        <th>Offer Made</th>
 
                         <th>Ht.</th>
                         <th>Wt.</th>
@@ -133,16 +146,22 @@
           </div>
         </div>
       </div>
-      <div class="tab-content" style='display:none;' id="nav-saved">
+
+      {% if SavedPlayers|length > 0%}
+      <div class="tab-content" style='display:block;' id="nav-saved">
+        {% else %}
+        <div class="tab-content" style='display:none;' id="nav-saved">
+        {% endif %}
         <div class="w3-display-container">
           <div class="w3-row-padding">
             <div class="w3-col l12 mw1200">
               <div class="w3-card">
                 <div id="">
-                  <table id='recruitingBoardTable' class='width100 w3-table w3-striped center-aligned-table' style='width: 100%;'>
+                  <table id='recruitingBoardTable' class='width100 w3-table w3-striped center-aligned-table recruiting-player-table' style='width: 100%;'>
                     <thead>
                       <tr>
-                        <th colspan="9" class="col-group">PLAYER</th>
+                        <th colspan="7" class="col-group">PLAYER</th>
+                        <th colspan="4" class="col-group">STATUS</th>
                         <th colspan="5">MEASURABLES</th>
                         <th colspan="7" class="col-group">PHYSICAL SKILLS</th>
                         <th colspan="7" class="col-group">PASSING SKILLS</th>
@@ -160,9 +179,12 @@
                         <th>Pos</th>
                         <th>OVR</th>
                         <th>% Scouted</th>
+                        <th>Signed</th>
+
                         <th>% Lock</th>
                         <th>Interest in Team</th>
-                        <th>Signed</th>
+                        <th>Time Left</th>
+                        <th>Offer Made</th>
 
                         <th>Ht.</th>
                         <th>Wt.</th>
@@ -378,10 +400,88 @@
         </div>
       </div>
     </div>
+    <div id="RecruitingModal" class="w3-modal" style='padding-top: 20px;'>
+      <div class="w3-modal-content" style='    box-shadow: 0px 0px 50px 1px rgba(0,0,0,.5);'>
+        <div class="w3-row-padding">
+          <div class="w3-col l4">
+            <div class="" data-field='player-name'>
+
+            </div>
+            <div class="">
+              Recruiting
+            </div>
+          </div>
+          <div class="w3-col l4">
+            <div class="" data-field='this-player-time-remaining'>
+
+            </div>
+            <div class="">
+              This Player
+            </div>
+          </div>
+          <div class="w3-col l4">
+            <div class="" data-field='all-players-time-remaining'>
+
+            </div>
+            <div class="">
+              All Players
+            </div>
+          </div>
+
+        </div>
+        <nav>
+          <div class="w3-bar recruiting-call-bar" id="recruiting-nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+            <button class="w3-bar-item w3-button tab recruiting-nav-tab-button selected-tab" id="recruiting-nav-pitch-tab" style="background-color: #{{page.SecondaryColor}};">Pitch Player</button>
+            <button class="w3-bar-item w3-button tab recruiting-nav-tab-button" id="recruiting-nav-promise-tab">Make a Promise</button>
+            <button class="w3-bar-item w3-button tab recruiting-nav-tab-button" id="recruiting-nav-offer-tab">Offer Scholarship</button>
+            <button class="w3-bar-item w3-button tab recruiting-nav-tab-button" id="recruiting-nav-visit-tab">Schedule Visit</button>
+            <div class="w3-right w3-button close-modal">
+              &times;
+            </div>
+          </div>
+        </nav>
+        <div id="recruiting-nav-tabContent">
+          <div class="recruiting-tab-content" style='display:block;' id="recruiting-nav-pitch">
+            <table class='w3-table-all player-pitch-table'>
+              <thead>
+                <tr>
+                  <th>Pitch</th>
+                  <th>Player Interest</th>
+                  <th>Team Rating</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+
+              </tbody>
+            </table>
+          </div>
+          <div class="recruiting-tab-content" style='display:none;' id="recruiting-nav-promise">
+            <span>Make Promise</span>
+            <span></span>
+          </div>
+          <div class="recruiting-tab-content" style='display:none;' id="recruiting-nav-offer">
+            <span>Offer Scholarship</span>
+            <span>
+              <button type="button" name="button">Offer</button>
+            </span>
+          </div>
+          <div class="recruiting-tab-content" style='display:none;' id="recruiting-nav-visit">
+            <select class="w3-select" name="">
+              <option value="" disabled selected>Choose a week for visit</option>
+              <option value="">Week 1</option>
+              <option value="">Week 2</option>
+              <option value="">Week 3</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+
+
 </body>
-
-
 
 
 {% include "HeadFootballCoach/ext_CommonScripts.html" %}

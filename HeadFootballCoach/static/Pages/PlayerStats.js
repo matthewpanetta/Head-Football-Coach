@@ -266,6 +266,8 @@ function GetPlayerStats(WorldID, data){
   var DataPassthruHolder = $('#PageDataPassthru')[0];
   var TeamID    = parseInt($(DataPassthruHolder).attr('TeamID'));
 
+  console.log('data', data)
+
   var DataPath = '/GET/World/'+WorldID+'/PlayerStats/'
   if (TeamID > 0){
     //console.log('TEAMID', TeamID)
@@ -535,6 +537,7 @@ function GetPlayerStats(WorldID, data){
                                 $(td).html(DataObject.ClassDisplay);
                                 $(td).append('<span class="player-class"></span>')
                                 if (DataObject.playerteamseason__RedshirtedThisSeason) {
+                                  console.log('Has redhsirt!', td)
                                   $(td).find('.player-class').append('<i class="fas fa-tshirt w3-tooltip player-class-icon" style="color: red; margin-left: 4px;"><span style="position:absolute;left:0;bottom:18px" class="w3-text">Player Redshirted</span></i>')
                                 }
                             }},
