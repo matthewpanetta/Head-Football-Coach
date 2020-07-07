@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DivisionSeason, TeamSeasonInfoRating, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
+from .models import DivisionSeason, RecruitingPromise, RecruitTeamSeasonPromise, TeamSeasonInfoRating, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
 
 
 class TeamSeasonStrategyAdmin(admin.ModelAdmin):
@@ -175,6 +175,13 @@ class PlayerRecruitingInterestAdmin(admin.ModelAdmin):
 class RecruitTeamSeasonInterestAdmin(admin.ModelAdmin):
     list_display = ['RecruitTeamSeasonInterestID', 'RecruitTeamSeasonID', 'PlayerRecruitingInterestID', 'TeamRating', 'PitchRecruitInterestRank_IsKnown']
 
+class RecruitTeamSeasonPromiseAdmin(admin.ModelAdmin):
+    list_display = ['WorldID', 'RecruitTeamSeasonPromiseID', 'RecruitTeamSeasonID', 'RecruitingPromiseID', 'PromiseMade', 'PromiseKept']
+
+
+class RecruitingPromiseAdmin(admin.ModelAdmin):
+    list_display = ['RecruitingPromiseID', 'TeamInfoTopicID', 'PromiseText', 'TextDescription', 'PitchValue', 'AllowInclusiveOption', 'ExtraYearExclusiveMultiplier', 'ExtraYearInclusiveMultiplier']
+
 
 
 admin.site.register(TeamSeasonStrategy, TeamSeasonStrategyAdmin)
@@ -232,3 +239,5 @@ admin.site.register(TeamInfoTopic, TeamInfoTopicAdmin)
 admin.site.register(PlayerRecruitingInterest, PlayerRecruitingInterestAdmin)
 admin.site.register(RecruitTeamSeasonInterest, RecruitTeamSeasonInterestAdmin)
 admin.site.register(TeamSeasonInfoRating, TeamSeasonInfoRatingAdmin)
+admin.site.register(RecruitTeamSeasonPromise, RecruitTeamSeasonPromiseAdmin)
+admin.site.register(RecruitingPromise, RecruitingPromiseAdmin)

@@ -113,7 +113,7 @@ def SelectPreseasonAllAmericans(WorldID, LeagueSeasonID):
         )
     ).select_related(
         'TeamSeasonID__TeamID', 'TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID', 'PlayerID__PositionID', 'ClassID'
-    ).order_by('-OverallRating')
+    ).order_by('-IsStarter', '-OverallRating')
 
     if AllPlayers.count() == 0:
         return None

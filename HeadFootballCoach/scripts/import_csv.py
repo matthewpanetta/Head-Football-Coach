@@ -1,6 +1,4 @@
-
-
-from ..models import TeamSeasonInfoRating, ConferenceSeason, DivisionSeason, TeamInfoTopic, SubPosition,TeamSeason, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill
+from ..models import TeamSeasonInfoRating, RecruitingPromise, ConferenceSeason, DivisionSeason, TeamInfoTopic, SubPosition,TeamSeason, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill
 import os
 from ..utilities import Max, WeightedProbabilityChoice
 from datetime import timedelta, date
@@ -266,6 +264,55 @@ def ImportSubPositions():
             SubPosition.objects.create(**LineDict)
 
 
+def ImportRecruitingPromise():
+
+    FilePath = 'HeadFootballCoach/scripts/data_import/RecruitingPromise.csv'
+
+    TeamInfoTopicDict = {}
+    for TIT in TeamInfoTopic.objects.all():
+        TeamInfoTopicDict[TIT.AttributeName] = TIT
+
+
+    RecruitingPromise_ToCreate = []
+
+    f = open(FilePath, 'r', encoding='utf-8-sig')
+    FieldExclusions = ['FK_TeamInfoTopic_AttributeName']
+    linecount = 0
+    for line in f:
+        KeepRow = False
+        #print()
+        linecount +=1
+        if linecount == 1:
+            Headers = line.strip().split(',')
+            #print('Headers:', Headers)
+            continue
+
+        #print(line)
+        Row = line.strip().split(',')
+        LineDict = {}
+        FieldCount = 0
+
+        for f in Row:
+            V = Row[FieldCount]
+            if V == '':
+                V = None
+            LineDict[Headers[FieldCount]] = V
+            FieldCount +=1
+
+        KeepRow = True
+
+        if KeepRow:
+            if LineDict['FK_TeamInfoTopic_AttributeName'] is not None:
+                LineDict['TeamInfoTopicID'] = TeamInfoTopicDict[LineDict['FK_TeamInfoTopic_AttributeName']]
+
+            for FE in FieldExclusions:
+                del LineDict[FE]
+
+            RecruitingPromiseObj = RecruitingPromise(**LineDict)
+            RecruitingPromise_ToCreate.append(RecruitingPromiseObj)
+
+    RecruitingPromise.objects.bulk_create(RecruitingPromise_ToCreate)
+
 def ImportCoachPositions():
 
     FilePath = 'HeadFootballCoach/scripts/data_import/CoachPosition.csv'
@@ -392,6 +439,7 @@ def LoadNames(FilePath):
 
     f = open(FilePath, 'r', encoding='utf-8-sig')
 
+    NameToSave = []
     linecount = 0
     NameStartStopTracker = {'1': 0, '0': 0}
     for line in f:
@@ -424,7 +472,9 @@ def LoadNames(FilePath):
         for FE in FieldExclusions:
             del LineDict[FE]
 
-        NameList.objects.create(**LineDict)
+        NameToSave.append(NameList(**LineDict))
+
+    NameList.objects.bulk_create(NameToSave)
 
 def PopulateSystemPlayoffRounds():
 
@@ -570,9 +620,18 @@ def createGeography(StateFile, inputFile, CountData):
 
     City.objects.bulk_create(CitiesToSave, ignore_conflicts=False)
 
-    CityList = City.objects.all()
+    CityList = City.objects.all().select_related('StateID__RegionID')
+    OccuranceCount = 0
+    City_ToUpdate = []
     for C in CityList:
-        C.Set_Occurance()
+        C.Occurance = C.YouthEngagement + C.StateID.YouthEngagement + C.StateID.RegionID.YouthEngagement
+        C.RandomStart = OccuranceCount + 1
+        C.RandomStop = C.RandomStart + C.Occurance + 1
+        City_ToUpdate.append(C)
+
+    City.objects.bulk_update(City_ToUpdate, ['Occurance', 'RandomStart', 'RandomStop'])
+
+
 
 def import_League( File, WorldID):
     #print( File)
@@ -925,6 +984,9 @@ def LoadData(WorldID, LeagueID, LeagueSeasonID):
 
     PopulateSystemPlayoffRounds()
     ImportBowls(WorldID)
+
+    if RecruitingPromise.objects.all().count() == 0:
+        ImportRecruitingPromise()
 
     if CoachPosition.objects.all().count() == 0:
         ImportCoachPositions()

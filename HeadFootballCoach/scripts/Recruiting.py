@@ -2,7 +2,7 @@ from ..models import Headline,World, Playoff,Week,Audit, RecruitTeamSeasonIntere
 from random import uniform, randint
 import numpy
 import time
-from ..utilities import WeightedProbabilityChoice, Min, DistanceBetweenCities, GetValuesOfSingleObject, NormalBounds, NormalTrunc
+from ..utilities import WeightedProbabilityChoice, Min, Min_Int, DistanceBetweenCities, GetValuesOfSingleObject, NormalBounds, NormalTrunc
 from math import sin, cos, sqrt, atan2, radians, log
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When,  ExpressionWrapper, FloatField, IntegerField, DecimalField, PositiveSmallIntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery
 from django.db.models.functions.window import Rank, RowNumber
@@ -404,6 +404,13 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
         RecruitsActivelyRecruitingCounter = 0
         RecruitingTimeAllocation = RecruitingConcentrationMap[TS.CoachRecruitingConcentration]
 
+        TotalMinutesToTalk = TS.MaxRecruitingPointsPerPlayerPerWeek
+        if TS.TeamID.IsUserTeam:
+            TotalMinutesToTalk = CurrentWeek.UserRecruitingPointsLeftThisWeek
+
+        if TS.ScholarshipsToOffer <= 0:
+            continue
+
         for RTS in RecruitsActivelyRecruiting_QS:
             if RTS.PlayerTeamSeasonID.PlayerID.PositionID not in TSPosCounter:
                 TSPosCounter[RTS.PlayerTeamSeasonID.PlayerID.PositionID] = 0
@@ -423,7 +430,12 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             MinutesToTalk = RecruitingTimeAllocation[counter]
             PitchCount = 0
             ThisWeekInterestIncrease = 0
-            while MinutesToTalk > 0:
+
+            if TS.TeamID.IsUserTeam:
+                MinutesToTalk = Min_Int(MinutesToTalk,RTS.UserRecruitingPointsLeftThisWeek)
+
+
+            while MinutesToTalk > 0 and TotalMinutesToTalk>0:
                 ActionTaken = False
 
                 if RTS.ScoutingFuzz > 0:
@@ -445,6 +457,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
                 RTS.IsActivelyRecruiting = True
                 MinutesToTalk -= 1
+                TotalMinutesToTalk -= 1
 
 
             ThisWeekInterestIncrease *= InterestModifier
@@ -478,7 +491,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
     print('Saved recruiting ranks', len(connection.queries))
 
-    PlayersReadyToSign = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).filter(InterestLevel__gte = F('PlayerTeamSeasonID__PlayerID__RecruitingPointsNeeded')).annotate(
+    PlayersReadyToSign = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False, OfferMade = True, InterestLevel__gte = F('PlayerTeamSeasonID__PlayerID__RecruitingPointsNeeded')).annotate(
         TeamRank = Window(
             expression=RowNumber(),
             partition_by=F("PlayerTeamSeasonID__PlayerID"),
@@ -499,7 +512,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
         RTSToSave = []
         TSPToSave = []
         PlayersToSave = []
-        for RTS in [u for u in PlayersReadyToSign if u.TeamRank == 1]:
+        for RTS in [u for u in PlayersReadyToSign if u.TeamRank == 1 and u.OfferMade]:
             print('\t', RTS)
             RTS.Signed = True
             RTS.CommitWeekID = CurrentWeek
@@ -541,7 +554,13 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
         TeamSeason.objects.bulk_update(ScholarshipsRemainingList, ['ScholarshipsToOffer'])
 
-    RecruitTeamSeason.objects.filter(WorldID = WorldID, UserRecruitingPointsThisWeek__gt = 0).update(UserRecruitingPointsThisWeek = 0)
+    RTS_ToUpdate = []
+    RTS_SetPoints = RecruitTeamSeason.objects.filter(WorldID = WorldID, TeamSeasonID__TeamID__IsUserTeam = True).exclude( UserRecruitingPointsLeftThisWeek = F('TeamSeasonID__MaxRecruitingPointsPerPlayerPerWeek')).select_related('TeamSeasonID')
+    for RTS in RTS_SetPoints:
+        RTS.UserRecruitingPointsLeftThisWeek = RTS.TeamSeasonID.MaxRecruitingPointsPerPlayerPerWeek
+        RTS_ToUpdate.append(RTS)
+    RecruitTeamSeason.objects.bulk_update(RTS_ToUpdate, ['UserRecruitingPointsLeftThisWeek'])
+
     RecruitTeamSeasonInterest.objects.filter(WorldID = WorldID, UtilizedThisWeek = True).update(UtilizedThisWeek = False)
     print('Recruiting complete', len(connection.queries))
     if DoAudit:

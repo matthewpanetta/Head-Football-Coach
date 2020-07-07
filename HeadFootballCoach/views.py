@@ -5,7 +5,7 @@ import pandas as pd
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, DecimalField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery, ExpressionWrapper
 from django.db.models.functions.window import Rank, RowNumber, Lag, Ntile
 from django.db.models.functions import Length, Concat, Coalesce
-from .models import Audit, League, TeamSeasonStrategy, TeamSeasonInfoRating,TeamGame,Week,Phase,Position, PositionGroup, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason, DivisionSeason, ConferenceSeason, RecruitTeamSeasonInterest
+from .models import Audit, League, TeamSeasonStrategy, TeamSeasonInfoRating,TeamGame,Week,Phase,Position, PositionGroup, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason, DivisionSeason, ConferenceSeason, RecruitTeamSeasonInterest, RecruitTeamSeasonPromise,RecruitingPromise
 from datetime import timedelta, date
 import random
 import sys
@@ -17,7 +17,7 @@ from .scripts.GameSim import GameSim
 from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting_New, PrepareForSigningDay, ScoutPlayer
 from .scripts.SeasonAwards import ChoosePlayersOfTheWeek, SelectPreseasonAllAmericans
 from .scripts.DepthChart import CreateDepthChart
-from .scripts.Offseason import StartCoachingCarousel, CreateNextLeagueSeason, GraduateSeniors, RolloverNewLeagueSeason, PrepForSeason, TrainingCamps
+from .scripts.Offseason import StartCoachingCarousel,SetWeek1RecruitingPoints, CreateNextLeagueSeason, GraduateSeniors, RolloverNewLeagueSeason, PrepForSeason, TrainingCamps
 from .scripts.SRS.SRS   import CalculateSRS
 import math
 import json
@@ -115,8 +115,8 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
         SimAction_Phase['LinkDisplay'] = 'Sim to ' + WeekID.PhaseID.NextPhaseName
         UserActions.insert(0,SimAction_Phase)
 
-        if WeekID.UserRecruitingPointsLeft > 0:
-            UserActions.append({'LinkDisplay': 'Weekly Recruiting ({Points})'.format(Points=WeekID.UserRecruitingPointsLeft), 'Href': '/World/{WorldID}/Recruiting'.format(WorldID = WorldID), 'ClassName': ''})
+        if WeekID.UserRecruitingPointsLeftThisWeek > 0:
+            UserActions.append({'LinkDisplay': 'Weekly Recruiting ({Points})'.format(Points=WeekID.UserRecruitingPointsLeftThisWeek), 'Href': '/World/{WorldID}/Recruiting'.format(WorldID = WorldID), 'ClassName': ''})
 
         if not WeekID.LastWeekInPhase:
             UserActions.insert(0,SimAction_Week)
@@ -334,8 +334,8 @@ def POST_StartRecruitingCall(request, WorldID, PlayerID):
     ThisPlayer = Player.objects.filter(WorldID = CurrentWorld, PlayerID = PlayerID).first()
     RTS = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID_id = PlayerID, TeamSeasonID__TeamID = UserTeam).select_related('TeamSeasonID').first()
 
-    if CurrentWeek.UserRecruitingPointsLeft > 0:
-        if RTS.UserRecruitingPointsThisWeek < RTS.TeamSeasonID.MaxRecruitingPointsPerPlayerPerWeek:
+    if CurrentWeek.UserRecruitingPointsLeftThisWeek > 0:
+        if RTS.UserRecruitingPointsLeftThisWeek > 0:
 
             RTSI = list(RecruitTeamSeasonInterest.objects.filter(RecruitTeamSeasonID = RTS).values(
                 'PitchRecruitInterestRank_IsKnown', 'TeamRating','UtilizedThisWeek',
@@ -367,11 +367,59 @@ def POST_StartRecruitingCall(request, WorldID, PlayerID):
                 'KnownPitchRecruitInterestRank', '-TeamRating'
             ))
 
-            return JsonResponse({'message':'Recruiting player', 'RecruitingCallInfo': {'PlayerInterest':RTSI, 'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeft, 'ThisPlayerTimeRemaining': RTS.TeamSeasonID.MaxRecruitingPointsPerPlayerPerWeek - RTS.UserRecruitingPointsThisWeek, 'PlayerName': f'{ThisPlayer.PlayerFirstName} {ThisPlayer.PlayerLastName}' }}, status=200)
+            AvailablePromises = list(RecruitingPromise.objects.all().values(
+                'PromiseText', 'TextDescription', 'AllowInclusiveOption'
+            ).annotate(
+                PromiseMade = Max('recruitteamseasonpromise__PromiseMade')
+            ).order_by('PromiseText'))
+
+
+            return JsonResponse({'message':'Recruiting player', 'RecruitingCallInfo': {'PlayerInterest':RTSI, 'OfferMade': RTS.OfferMade,'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeftThisWeek, 'ThisPlayerTimeRemaining': RTS.UserRecruitingPointsLeftThisWeek, 'PlayerName': f'{ThisPlayer.PlayerFirstName} {ThisPlayer.PlayerLastName}', 'AvailablePromises': AvailablePromises }}, status=200)
         else:
             return JsonResponse({'message':'Maxed out recruiting points for this player this week!'}, status=422)
     else:
         return JsonResponse({'message':'Team out of recruiting points this week!'}, status=422)
+
+    return JsonResponse({'message':'Invalid command.'}, status=422)
+
+
+def POST_RecruitingMakePromise(request, WorldID, PlayerID, Promise, TimespanYears, InclusiveOrExclusive):
+
+    CurrentWeek = Week.objects.filter(WorldID_id = WorldID, IsCurrent = True).first()
+
+    RTS = RecruitTeamSeason.objects.filter(WorldID_id = WorldID, TeamSeasonID__TeamID__IsUserTeam = True, PlayerTeamSeasonID__PlayerID = PlayerID).select_related('TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID').first()
+    PromiseObj = RecruitingPromise.objects.filter(PromiseText = Promise).first()
+    RTSI = RecruitTeamSeasonInterest.objects.filter(WorldID_id = WorldID, RecruitTeamSeasonID = RTS, PlayerRecruitingInterestID__TeamInfoTopicID = PromiseObj.TeamInfoTopicID).first()
+
+    if PromiseObj is not None:
+        if CurrentWeek.UserRecruitingPointsLeftThisWeek > 0:
+            if RTS.UserRecruitingPointsLeftThisWeek > 0:
+                if RecruitTeamSeasonPromise.objects.filter(WorldID_id = WorldID, RecruitTeamSeasonID = RTS, RecruitingPromiseID = PromiseObj).first() is not None:
+
+                    PitchValue = int(int(((12 - RTSI.PitchRecruitInterestRank) ** .5) * ((PromiseObj.PitchValue / 10.0) ** 2)) / 5.0) * 5
+
+                    RTS.InterestLevel += PitchValue
+                    RTS.UserRecruitingPointsLeftThisWeek -= 1
+                    CurrentWeek.UserRecruitingPointsLeftThisWeek -= 1
+
+                    TimespanInclusive = True if InclusiveOrExclusive == 'Inclusive' else False
+
+                    RTSP = RecruitTeamSeasonPromise(RecruitTeamSeasonID = RTS, WorldID_id = WorldID, RecruitingPromiseID=PromiseObj, PromiseMade = True, TimeSpanYears=TimespanYears, TimespanInclusive=TimespanInclusive )
+
+                    RTSP.save()
+                    RTS.save()
+                    CurrentWeek.save()
+
+                    return JsonResponse({'message':'Promised player '+Promise, 'PitchInfo': {'PitchValue':PitchValue, 'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeftThisWeek, 'ThisPlayerTimeRemaining': RTS.UserRecruitingPointsLeftThisWeek }}, status=200)
+                else:
+                    return JsonResponse({'message':'Already made this promise.'}, status=422)
+            else:
+                return JsonResponse({'message':'Maxed out recruiting points for this player this week!'}, status=422)
+        else:
+            return JsonResponse({'message':'Team out of recruiting points this week!'}, status=422)
+    else:
+        return JsonResponse({'message':'Promise not found'}, status=422)
+
 
     return JsonResponse({'message':'Invalid command.'}, status=422)
 
@@ -388,23 +436,23 @@ def POST_RecruitingCallPitch(request, WorldID, PlayerID, Pitch):
     RTS = RTSI.RecruitTeamSeasonID
 
     if not RTSI.UtilizedThisWeek:
-        if CurrentWeek.UserRecruitingPointsLeft > 0:
-            if RTS.UserRecruitingPointsThisWeek < RTS.TeamSeasonID.MaxRecruitingPointsPerPlayerPerWeek:
+        if CurrentWeek.UserRecruitingPointsLeftThisWeek > 0:
+            if RTS.UserRecruitingPointsLeftThisWeek > 0:
                 PitchValue = RTSI.PitchValue
 
                 RTS.InterestLevel += int( PitchValue / 5.0) * 5
-                RTS.UserRecruitingPointsThisWeek += 1
+                RTS.UserRecruitingPointsLeftThisWeek -= 1
 
                 RTS.save()
 
                 RTSI.UtilizedThisWeek = True
                 RTSI.save()
 
-                CurrentWeek.UserRecruitingPointsLeft -= 1
+                CurrentWeek.UserRecruitingPointsLeftThisWeek -= 1
                 CurrentWeek.save()
 
 
-                return JsonResponse({'message':'Pitched player on '+Pitch, 'PitchInfo': {'PitchValue':PitchValue, 'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeft, 'ThisPlayerTimeRemaining': RTS.TeamSeasonID.MaxRecruitingPointsPerPlayerPerWeek - RTS.UserRecruitingPointsThisWeek }}, status=200)
+                return JsonResponse({'message':'Pitched player on '+Pitch, 'PitchInfo': {'PitchValue':PitchValue, 'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeftThisWeek, 'ThisPlayerTimeRemaining': RTS.UserRecruitingPointsLeftThisWeek }}, status=200)
             else:
                 return JsonResponse({'message':'Maxed out recruiting points for this player this week!'}, status=422)
         else:
@@ -467,18 +515,18 @@ def POST_DiscoverRecruitingPitch(request, WorldID, PlayerID, Pitch):
 
     RTS = RTSI.RecruitTeamSeasonID
 
-    if CurrentWeek.UserRecruitingPointsLeft > 0:
-        if RTS.UserRecruitingPointsThisWeek < RTS.TeamSeasonID.MaxRecruitingPointsPerPlayerPerWeek:
-            RTS.UserRecruitingPointsThisWeek += 1
+    if CurrentWeek.UserRecruitingPointsLeftThisWeek > 0:
+        if RTS.UserRecruitingPointsLeftThisWeek > 0:
+            RTS.UserRecruitingPointsLeftThisWeek -= 1
             RTS.save()
 
             RTSI.PitchRecruitInterestRank_IsKnown = True
             RTSI.save()
 
-            CurrentWeek.UserRecruitingPointsLeft -= 1
+            CurrentWeek.UserRecruitingPointsLeftThisWeek -= 1
             CurrentWeek.save()
 
-            return JsonResponse({'message': f'Discovered player interest in {Pitch}', 'PitchInfo': {'Pitch':Pitch, 'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeft, 'PitchRecruitInterestRank': RTSI.PitchRecruitInterestRank_String,'ThisPlayerTimeRemaining': RTS.TeamSeasonID.MaxRecruitingPointsPerPlayerPerWeek - RTS.UserRecruitingPointsThisWeek }}, status=200)
+            return JsonResponse({'message': f'Discovered player interest in {Pitch}', 'PitchInfo': {'Pitch':Pitch, 'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeftThisWeek, 'PitchRecruitInterestRank': RTSI.PitchRecruitInterestRank_String,'ThisPlayerTimeRemaining': RTS.UserRecruitingPointsLeftThisWeek }}, status=200)
         else:
             return JsonResponse({'message':'Maxed out recruiting points for this player this week!'}, status=422)
     else:
@@ -523,10 +571,15 @@ def POST_SetPlayerFaceJson(request, WorldID, PlayerID):
     return JsonResponse({'success':'value'})
 
 
-def RemovePlayerFromDepthChart(WorldID, PlayerID, ):
+def RemovePlayerFromDepthChart(WorldID, PlayerID = None, PlayerTeamSeasonID = None ):
     CurrentWorld = World.objects.get(WorldID = WorldID)
-    PlayerTeamSeasonToCut = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(PlayerID_id=PlayerID).filter(TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
 
+    if PlayerID is not None:
+        PlayerTeamSeasonToCut = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld, PlayerID_id=PlayerID, TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+    else:
+        PlayerTeamSeasonToCut = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld, PlayerTeamSeasonID=PlayerTeamSeasonID, TeamSeasonID__LeagueSeasonID__IsCurrent = True).first()
+
+    print('PlayerTeamSeasonToCut', PlayerTeamSeasonToCut, CurrentWorld, WorldID, PlayerID)
     for PlayerTeamSeasonToCutDepthChart in PlayerTeamSeasonToCut.playerteamseasondepthchart_set.all():
         NumberOfStarters = PlayerTeamSeasonDepthChart.objects.filter(PlayerTeamSeasonID__TeamSeasonID = PlayerTeamSeasonToCut.TeamSeasonID).filter(PositionID = PlayerTeamSeasonToCutDepthChart.PositionID).filter(IsStarter = True).count()
 
@@ -562,6 +615,40 @@ def POST_PlayerRecruitingBoard(request, WorldID, PlayerID, AddOrRemove):
     return JsonResponse({'message':'Invalid command.'}, status=422)
 
 
+def POST_PlayerRecruitingScholarship(request, WorldID, PlayerID, OfferOrRescind):
+
+    print('WorldID, PlayerID, OfferOrRescind', WorldID, PlayerID, OfferOrRescind)
+    RTS = RecruitTeamSeason.objects.filter(WorldID_id = WorldID).filter(PlayerTeamSeasonID__PlayerID_id=PlayerID, TeamSeasonID__TeamID__IsUserTeam = True).select_related('PlayerTeamSeasonID__PlayerID').first()
+    CurrentWeek = Week.objects.filter(WorldID_id = WorldID, IsCurrent = True).first()
+
+    if RTS is not None:
+        PlayerName = RTS.PlayerTeamSeasonID.PlayerID.FullName
+        if RTS.UserRecruitingPointsLeftThisWeek > 0:
+            if CurrentWeek.UserRecruitingPointsLeftThisWeek > 0:
+                if OfferOrRescind == 'Offer':
+                    RTS.OfferMade = True
+                    RTS.save()
+
+                    RTS.UserRecruitingPointsLeftThisWeek -= 1
+                    CurrentWeek.UserRecruitingPointsLeftThisWeek -= 1
+
+                    CurrentWeek.save()
+                    RTS.save()
+
+                    return JsonResponse({'message':'{PlayerName} offered scholarship!'.format(PlayerName = PlayerName), 'RecruitingInfo': {'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeftThisWeek, 'ThisPlayerTimeRemaining': RTS.UserRecruitingPointsLeftThisWeek }}, status=200)
+
+                elif OfferOrRescind == 'Rescind':
+                    RTS.OfferMade = False
+                    RTS.save()
+                    return JsonResponse({'message':'{PlayerName} scholarship rescinded.'.format(PlayerName = PlayerName)}, status=200)
+            else:
+                return JsonResponse({'message':'Team has no more recruiting points this week'.format(PlayerName = PlayerName)}, status=422)
+        else:
+            return JsonResponse({'message':'{PlayerName} already maxed out this week.'.format(PlayerName = PlayerName)}, status=422)
+
+    return JsonResponse({'message':'Invalid command.'}, status=422)
+
+
 
 def POST_ScoutRecruit(request, WorldID, PlayerID):
 
@@ -571,24 +658,24 @@ def POST_ScoutRecruit(request, WorldID, PlayerID):
     RTS = RecruitTeamSeason.objects.filter(WorldID_id = WorldID, PlayerTeamSeasonID__PlayerID_id=PlayerID, TeamSeasonID__TeamID__IsUserTeam = True).select_related('PlayerTeamSeasonID__PlayerID__PositionID', 'TeamSeasonID').first()
     PlayerName = RTS.PlayerTeamSeasonID.PlayerID.FullName
 
-    print('CurrentWeek.UserRecruitingPointsLeft ', CurrentWeek.UserRecruitingPointsLeft, 'RTS.UserRecruitingPointsThisWeek ', RTS.UserRecruitingPointsThisWeek  )
+    print('CurrentWeek.UserRecruitingPointsLeftThisWeek ', CurrentWeek.UserRecruitingPointsLeftThisWeek, 'RTS.UserRecruitingPointsLeftThisWeek ', RTS.UserRecruitingPointsLeftThisWeek  )
 
     PlayerPosition = RTS.PlayerTeamSeasonID.PlayerID.PositionID
     TSP = RTS.TeamSeasonID.teamseasonposition_set.filter(PositionID = PlayerPosition).first()
 
     if RTS is not None:
-        if RTS.UserRecruitingPointsThisWeek < 6:
-            if CurrentWeek.UserRecruitingPointsLeft > 0:
+        if RTS.UserRecruitingPointsLeftThisWeek > 0:
+            if CurrentWeek.UserRecruitingPointsLeftThisWeek > 0:
                 RTS = ScoutPlayer(RTS, TSP=TSP)
-                RTS.UserRecruitingPointsThisWeek += 1
-                CurrentWeek.UserRecruitingPointsLeft -= 1
+                RTS.UserRecruitingPointsLeftThisWeek -= 1
+                CurrentWeek.UserRecruitingPointsLeftThisWeek -= 1
 
                 CurrentWeek.save()
                 RTS.save()
                 response = {'DataUpdates':[
                         {'FieldName': 'Scouted_Overall', 'ColumnNumber': 4, 'Value': RTS.Scouted_Overall, 'Selector': 'playerteamseason__recruitteamseason__Scouted_Overall'},
                         {'FieldName': 'ScoutingFuzz', 'ColumnNumber': 5, 'Value': RTS.ScoutingFuzz, 'Selector': None},
-                        {'FieldName': 'UserRecruitingPointsLeft', 'ColumnNumber': None, 'Value': CurrentWeek.UserRecruitingPointsLeft, 'Selector': None},],
+                        {'FieldName': 'UserRecruitingPointsLeft', 'ColumnNumber': None, 'Value': CurrentWeek.UserRecruitingPointsLeftThisWeek, 'Selector': None},],
                             'message':'{PlayerName} scouted'.format(PlayerName = PlayerName)}
                 return JsonResponse(response, status=200)
             else:
@@ -611,8 +698,10 @@ def POST_AutoTeamCuts(request, WorldID, TeamID):
         if NumPlayersToCut > 0:
             PlayersToCut = TeamCuts(TeamSeasonID, CurrentWorld, NumPlayersToCut)
 
-            for PlayerObj in PlayersToCut:
-                RemovePlayerFromDepthChart(WorldID, PlayerObj.PlayerID.PlayerID )
+            print('PlayersToCut', PlayersToCut)
+
+            for PlayerTeamSeasonID in PlayersToCut:
+                RemovePlayerFromDepthChart(WorldID, PlayerTeamSeasonID = PlayerTeamSeasonID )
             PlayerTeamSeason.objects.filter(PlayerTeamSeasonID__in = PlayersToCut).delete()
 
             UpdateTeamPositions(TeamSeasonID.LeagueSeasonID, CurrentWorld)
@@ -639,7 +728,7 @@ def POST_PlayerCut(request, WorldID, PlayerID):
 
 
             #PopulateTeamDepthCharts(TeamSeasonID.LeagueSeasonID, CurrentWorld, FullDepthChart = False, TeamSeasonID = TeamSeasonID)
-            RemovePlayerFromDepthChart(WorldID, PlayerID )
+            RemovePlayerFromDepthChart(WorldID, PlayerID=PlayerID )
             PlayerTeamSeasonToCut.delete()
             UpdateTeamPositions(TeamSeasonID.LeagueSeasonID, CurrentWorld, TeamSeasonID = TeamSeasonID)
             return JsonResponse({'message':'{PlayerName} cut from team'.format(PlayerName = PlayerName)}, status=200)
@@ -692,7 +781,7 @@ def POST_PlayerRedshirt(request, WorldID, PlayerID, Action):
             if Action == 'Add':
                 if not PlayerTeamSeasonToRedshirt.PlayerID.WasPreviouslyRedshirted:
                     print('Giving player redshirt')
-                    RemovePlayerFromDepthChart(WorldID, PlayerID )
+                    RemovePlayerFromDepthChart(WorldID, PlayerID=PlayerID )
                     PlayerTeamSeasonToRedshirt.RedshirtedThisSeason = True
                     PlayerTeamSeasonToRedshirt.save()
                     return JsonResponse({'message':'Added {PlayerName} redshirt'.format(PlayerName = PlayerName)}, status = 200)
@@ -4215,13 +4304,14 @@ def GET_RecruitCardInfo(request, WorldID, PlayerID):
     if P['playerteamseason__recruitteamseason__ScoutingFuzz'] > 0:
         P['Actions'].append({'Display': 'Scout Player', 'ConfirmInfo': P['PlayerName'], 'Class': 'recruiting-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(P['PlayerID'])+'/ScoutRecruit/', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-binoculars w3-text-purple"></i></span>'})
 
-    if P['playerteamseason__recruitteamseason__IsActivelyRecruiting']:
-        P['Actions'].append({'Display': 'Remove from Board', 'ConfirmInfo': P['PlayerName'], 'Class': 'recruiting-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(P['PlayerID'])+'/PlayerRecruitingBoard/Remove', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-plus-square w3-text-orange"></i></span>'})
-    else:
-        P['Actions'].append({'Display': 'Add to Board', 'ConfirmInfo': P['PlayerName'], 'Class': 'recruiting-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(P['PlayerID'])+'/PlayerRecruitingBoard/Add', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-plus-square w3-text-orange"></i></span>'})
+    if not  P['RecruitSigned']:
+        if P['playerteamseason__recruitteamseason__IsActivelyRecruiting']:
+            P['Actions'].append({'Display': 'Remove from Board', 'ConfirmInfo': P['PlayerName'], 'Class': 'recruiting-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(P['PlayerID'])+'/PlayerRecruitingBoard/Remove', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-plus-square w3-text-orange"></i></span>'})
+        else:
+            P['Actions'].append({'Display': 'Add to Board', 'ConfirmInfo': P['PlayerName'], 'Class': 'recruiting-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(P['PlayerID'])+'/PlayerRecruitingBoard/Add', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-plus-square w3-text-orange"></i></span>'})
 
-    if CurrentWeek.UserRecruitingPointsLeft > 0 and not P['RecruitSigned']:
-        P['Actions'].append({'Display': 'Recruit Player', 'Class': 'recruiting-action recruit-player', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(P['PlayerID'])+'/StartRecruitingCall/', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-phone-alt w3-text-indigo"></i></span>'})
+        if CurrentWeek.UserRecruitingPointsLeftThisWeek > 0:
+            P['Actions'].append({'Display': 'Recruit Player', 'Class': 'recruiting-action recruit-player', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(P['PlayerID'])+'/StartRecruitingCall/', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-phone-alt w3-text-indigo"></i></span>'})
     context = P
 
     return JsonResponse(context, safe=False)
@@ -6201,7 +6291,7 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
     ).annotate(
         Hometown = Concat(F('PlayerTeamSeasonID__PlayerID__CityID__CityName'), Value(', '), F('PlayerTeamSeasonID__PlayerID__CityID__StateID__StateAbbreviation'), output_field = CharField()),
         PlayerName = Concat(F('PlayerTeamSeasonID__PlayerID__PlayerFirstName'), Value(' '), F('PlayerTeamSeasonID__PlayerID__PlayerLastName'), output_field = CharField()),
-        OverallRating = F('PlayerTeamSeasonID__playerteamseasonskill__OverallRating'),
+        OverallRating = F('Scouted_Overall'),
         Position = F('PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation'),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID'), output_field = CharField()),
     ).order_by('PlayerTeamSeasonID__PlayerID__Recruiting_NationalRank')
@@ -6484,6 +6574,10 @@ def POST_SimAction(request, WorldID):
             PrepForSeason(CurrentSeason, CurrentWorld, ThisWeek, PrepForUserTeam=PrepForUserTeam)
             UpdateTeamPositions(CurrentSeason, CurrentWorld)
 
+        elif ThisWeek.WeekName == 'Preseason':
+            SetWeek1RecruitingPoints(CurrentSeason, CurrentWorld)
+
+
 
         SetPlayerTeamSeasonTotals(CurrentWorld, CurrentSeason)
         AdvanceToNextWeek(WorldID, LeagueSeasonID=CurrentSeason, CurrentWeek = ThisWeek)
@@ -6731,6 +6825,7 @@ def Page_Coach(request, CoachID):
 
 def Page_Recruiting(request, WorldID, SeasonStartYear = None):
 
+
     DoAudit = False
     CurrentWorld = World.objects.filter(WorldID = WorldID).first()
     if DoAudit:
@@ -6803,7 +6898,7 @@ def Page_Recruiting(request, WorldID, SeasonStartYear = None):
 
     RecruitingRankings = AllTeamSeasons
 
-    Players = list(Player.objects.filter(WorldID = WorldID).filter(IsRecruit = True).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerteamseason__recruitteamseason__TeamSeasonID__TeamID__IsUserTeam = True).values('PlayerID','playerteamseason__ClassID__ClassAbbreviation', 'playerteamseason__recruitteamseason__IsActivelyRecruiting', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'PositionID__PositionSortOrder', 'playerteamseason__recruitteamseason__OfferMade', 'playerteamseason__recruitteamseason__Scouted_Overall', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'RecruitingPointsNeeded', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'RecruitingStars', 'RecruitSigned', 'Recruiting_NationalRank', 'Recruiting_NationalPositionalRank', 'Recruiting_StateRank', 'CityID__CityName', 'CityID__StateID__StateAbbreviation', 'Height', 'playerteamseason__recruitteamseason__Scouted_Strength_Rating', 'playerteamseason__recruitteamseason__Scouted_Agility_Rating', 'playerteamseason__recruitteamseason__Scouted_Speed_Rating', 'playerteamseason__recruitteamseason__Scouted_Acceleration_Rating', 'playerteamseason__recruitteamseason__Scouted_Stamina_Rating', 'playerteamseason__recruitteamseason__Scouted_Awareness_Rating', 'playerteamseason__recruitteamseason__Scouted_Jumping_Rating', 'playerteamseason__recruitteamseason__Scouted_Injury_Rating', 'playerteamseason__recruitteamseason__Scouted_ThrowPower_Rating', 'playerteamseason__recruitteamseason__Scouted_ShortThrowAccuracy_Rating', 'playerteamseason__recruitteamseason__Scouted_MediumThrowAccuracy_Rating', 'playerteamseason__recruitteamseason__Scouted_DeepThrowAccuracy_Rating', 'playerteamseason__recruitteamseason__Scouted_ThrowOnRun_Rating', 'playerteamseason__recruitteamseason__Scouted_ThrowUnderPressure_Rating', 'playerteamseason__recruitteamseason__Scouted_PlayAction_Rating', 'playerteamseason__recruitteamseason__Scouted_Elusiveness_Rating', 'playerteamseason__recruitteamseason__Scouted_BallCarrierVision_Rating', 'playerteamseason__recruitteamseason__Scouted_JukeMove_Rating', 'playerteamseason__recruitteamseason__Scouted_BreakTackle_Rating', 'playerteamseason__recruitteamseason__Scouted_Carrying_Rating', 'playerteamseason__recruitteamseason__Scouted_Catching_Rating', 'playerteamseason__recruitteamseason__Scouted_CatchInTraffic_Rating', 'playerteamseason__recruitteamseason__Scouted_RouteRunning_Rating', 'playerteamseason__recruitteamseason__Scouted_Release_Rating', 'playerteamseason__recruitteamseason__Scouted_HitPower_Rating', 'playerteamseason__recruitteamseason__Scouted_Tackle_Rating', 'playerteamseason__recruitteamseason__Scouted_PassRush_Rating', 'playerteamseason__recruitteamseason__Scouted_BlockShedding_Rating', 'playerteamseason__recruitteamseason__Scouted_Pursuit_Rating', 'playerteamseason__recruitteamseason__Scouted_PlayRecognition_Rating', 'playerteamseason__recruitteamseason__Scouted_ManCoverage_Rating', 'playerteamseason__recruitteamseason__Scouted_ZoneCoverage_Rating', 'playerteamseason__recruitteamseason__Scouted_Press_Rating', 'playerteamseason__recruitteamseason__Scouted_PassBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_RunBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_ImpactBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_KickPower_Rating', 'playerteamseason__recruitteamseason__Scouted_KickAccuracy_Rating', 'playerteamseason__recruitteamseason__Scouted_KickReturn_Rating', 'playerteamseason__recruitteamseason__InterestLevel', 'playerteamseason__recruitteamseason__ScoutingFuzz', 'Recruiting_40Time', 'Recruiting_BenchPressReps', 'Recruiting_VerticalJump').annotate(
+    Players = list(Player.objects.filter(WorldID = WorldID).filter(IsRecruit = True).filter(playerteamseason__TeamSeasonID__LeagueSeasonID__IsCurrent = 1).filter(playerteamseason__recruitteamseason__TeamSeasonID__TeamID__IsUserTeam = True).values('PlayerID','playerteamseason__ClassID__ClassAbbreviation', 'playerteamseason__recruitteamseason__IsActivelyRecruiting', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'PositionID__PositionSortOrder', 'playerteamseason__recruitteamseason__OfferMade', 'playerteamseason__recruitteamseason__Signed', 'playerteamseason__recruitteamseason__Scouted_Overall', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'RecruitingPointsNeeded', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'RecruitingStars', 'RecruitSigned', 'Recruiting_NationalRank', 'Recruiting_NationalPositionalRank', 'Recruiting_StateRank', 'CityID__CityName', 'CityID__StateID__StateAbbreviation', 'Height', 'playerteamseason__recruitteamseason__Scouted_Strength_Rating', 'playerteamseason__recruitteamseason__Scouted_Agility_Rating', 'playerteamseason__recruitteamseason__Scouted_Speed_Rating', 'playerteamseason__recruitteamseason__Scouted_Acceleration_Rating', 'playerteamseason__recruitteamseason__Scouted_Stamina_Rating', 'playerteamseason__recruitteamseason__Scouted_Awareness_Rating', 'playerteamseason__recruitteamseason__Scouted_Jumping_Rating', 'playerteamseason__recruitteamseason__Scouted_Injury_Rating', 'playerteamseason__recruitteamseason__Scouted_ThrowPower_Rating', 'playerteamseason__recruitteamseason__Scouted_ShortThrowAccuracy_Rating', 'playerteamseason__recruitteamseason__Scouted_MediumThrowAccuracy_Rating', 'playerteamseason__recruitteamseason__Scouted_DeepThrowAccuracy_Rating', 'playerteamseason__recruitteamseason__Scouted_ThrowOnRun_Rating', 'playerteamseason__recruitteamseason__Scouted_ThrowUnderPressure_Rating', 'playerteamseason__recruitteamseason__Scouted_PlayAction_Rating', 'playerteamseason__recruitteamseason__Scouted_Elusiveness_Rating', 'playerteamseason__recruitteamseason__Scouted_BallCarrierVision_Rating', 'playerteamseason__recruitteamseason__Scouted_JukeMove_Rating', 'playerteamseason__recruitteamseason__Scouted_BreakTackle_Rating', 'playerteamseason__recruitteamseason__Scouted_Carrying_Rating', 'playerteamseason__recruitteamseason__Scouted_Catching_Rating', 'playerteamseason__recruitteamseason__Scouted_CatchInTraffic_Rating', 'playerteamseason__recruitteamseason__Scouted_RouteRunning_Rating', 'playerteamseason__recruitteamseason__Scouted_Release_Rating', 'playerteamseason__recruitteamseason__Scouted_HitPower_Rating', 'playerteamseason__recruitteamseason__Scouted_Tackle_Rating', 'playerteamseason__recruitteamseason__Scouted_PassRush_Rating', 'playerteamseason__recruitteamseason__Scouted_BlockShedding_Rating', 'playerteamseason__recruitteamseason__Scouted_Pursuit_Rating', 'playerteamseason__recruitteamseason__Scouted_PlayRecognition_Rating', 'playerteamseason__recruitteamseason__Scouted_ManCoverage_Rating', 'playerteamseason__recruitteamseason__Scouted_ZoneCoverage_Rating', 'playerteamseason__recruitteamseason__Scouted_Press_Rating', 'playerteamseason__recruitteamseason__Scouted_PassBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_RunBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_ImpactBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_KickPower_Rating', 'playerteamseason__recruitteamseason__Scouted_KickAccuracy_Rating', 'playerteamseason__recruitteamseason__Scouted_KickReturn_Rating', 'playerteamseason__recruitteamseason__InterestLevel', 'playerteamseason__recruitteamseason__ScoutingFuzz', 'Recruiting_40Time', 'Recruiting_BenchPressReps', 'Recruiting_VerticalJump').annotate(
         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
         PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -6816,7 +6911,7 @@ def Page_Recruiting(request, WorldID, SeasonStartYear = None):
         Passing = Value('A', output_field=CharField()),
         MaxInterestLevel = Subquery(RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID =OuterRef('pk')).values('PlayerTeamSeasonID__PlayerID').annotate(MaxInterestLevel=Max('InterestLevel')).values('MaxInterestLevel')),#Max('recruitteamseason__InterestLevel'),
         RecruitingPointsPercent = (Round(F('MaxInterestLevel')* 100.0 / F('RecruitingPointsNeeded'),1)),
-        TimeLeftThisWeek = F('playerteamseason__TeamSeasonID__MaxRecruitingPointsPerPlayerPerWeek') - F('playerteamseason__recruitteamseason__UserRecruitingPointsThisWeek')
+        TimeLeftThisWeek = F('playerteamseason__recruitteamseason__UserRecruitingPointsLeftThisWeek')
 
     ).order_by('Recruiting_NationalRank'))
 

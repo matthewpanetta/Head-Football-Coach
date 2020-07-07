@@ -34,7 +34,7 @@ def createCalendar(WorldID=None, LeagueSeasonID=None, SetFirstWeekCurrent = Fals
     AnnualScheduleOfEvents.append({'Phase': 'Preseason', 'WeekName': 'Preseason', 'LastWeekInPhase': True})
 
     for WeekCount in range(1, WeeksInRegularSeason+1):
-        WeekDict = {'Phase': 'Regular Season',  'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': round(1.0 + (WeekCount / 60.0), 2), 'RecruitingAllowed': True, 'UserRecruitingPointsLeft': 90}
+        WeekDict = {'Phase': 'Regular Season',  'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': round(1.0 + (WeekCount / 60.0), 2), 'RecruitingAllowed': True, 'UserRecruitingPointsLeftThisWeek': 90}
         if WeekCount == WeeksInRegularSeason:
             WeekDict['LastWeekInPhase'] = True
         AnnualScheduleOfEvents.append(WeekDict)
@@ -54,7 +54,7 @@ def createCalendar(WorldID=None, LeagueSeasonID=None, SetFirstWeekCurrent = Fals
 
 
     for WeekCount in range(1, OffseasonRecruitingWeeks+1):
-        WeekDict = {'Phase': 'Offseason Recruiting',  'WeekName': 'Offseason Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': 1.0 + (WeekCount / 10.0), 'RecruitingAllowed': True, 'UserRecruitingPointsLeft': 90}
+        WeekDict = {'Phase': 'Offseason Recruiting',  'WeekName': 'Offseason Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': 1.0 + (WeekCount / 10.0), 'RecruitingAllowed': True, 'UserRecruitingPointsLeftThisWeek': 90}
         AnnualScheduleOfEvents.append(WeekDict)
 
     AnnualScheduleOfEvents.append({'Phase': 'Offseason Recruiting',  'WeekName': 'National Signing Day', 'LastWeekInPhase': True})

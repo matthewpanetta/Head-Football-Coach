@@ -181,6 +181,14 @@ def GraduateSeniors(CurrentSeason = None, WorldID = None):
     PlayerTeamSeasonSkill.objects.bulk_create(PTSSkill_ToSave)
 
 
+def SetWeek1RecruitingPoints(CurrentSeason, CurrentWorld):
+    RTS_ToUpdate = []
+    RTS_SetPoints = RecruitTeamSeason.objects.filter(WorldID = CurrentWorld, TeamSeasonID__TeamID__IsUserTeam = True).exclude( UserRecruitingPointsLeftThisWeek = F('TeamSeasonID__MaxRecruitingPointsPerPlayerPerWeek')).select_related('TeamSeasonID')
+    for RTS in RTS_SetPoints:
+        RTS.UserRecruitingPointsLeftThisWeek = RTS.TeamSeasonID.MaxRecruitingPointsPerPlayerPerWeek
+        RTS_ToUpdate.append(RTS)
+    RecruitTeamSeason.objects.bulk_update(RTS_ToUpdate, ['UserRecruitingPointsLeftThisWeek'])
+
 def PrepForSeason(CurrentSeason,WorldID, CurrentWeek, PrepForUserTeam=False):
     LS = CurrentSeason
 

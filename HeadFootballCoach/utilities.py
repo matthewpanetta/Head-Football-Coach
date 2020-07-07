@@ -112,6 +112,12 @@ def MergeDicts(DictList):
 
     return ResultDict
 
+def Min_Int(a,b):
+    if a > b:
+        return b
+    else:
+        return a
+
 def Min(a,b):
     if a > b:
         return b

@@ -79,7 +79,7 @@ class Class(models.Model):
 
     def __str__(self):
 
-        return self.ClassAbbreviation
+        return f'<Class: {self.ClassAbbreviation}>'
 
 class CoachPosition(models.Model):
     CoachPositionID = models.AutoField(primary_key = True)
@@ -97,7 +97,7 @@ class CoachPosition(models.Model):
     IsPositionCoach = models.BooleanField(default = False)
 
     def __str__(self):
-        return self.CoachPositionName
+        return f'<CoachPosition: {self.CoachPositionName}>'
     #############################
 
 
@@ -133,7 +133,7 @@ class Position(models.Model):
 
 
     def __str__(self):
-        return self.PositionName
+        return f'<Position:{self.PositionName}, PositionID: {self.PositionID}>'
     #############################
 
     @property
@@ -359,18 +359,6 @@ class City(models.Model):
         YouthEngagementIntValue = int(self.YouthEngagement) + int(self.StateID.TotalYouthEngagement)
         return YouthEngagementIntValue
 
-    def Set_Occurance(self):
-
-        self.Occurance = int(self.TotalYouthEngagement)
-        MaxRandomStop = City.objects.aggregate(Max('RandomStop'))
-        if MaxRandomStop['RandomStop__max'] is None:
-            MaxRandomStop = 0
-        else:
-            MaxRandomStop = MaxRandomStop['RandomStop__max']
-
-        self.RandomStart = MaxRandomStop + 1
-        self.RandomStop = self.RandomStart + self.Occurance + 1
-        self.save()
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
@@ -507,7 +495,7 @@ class Week(models.Model):
     RecruitingWeekModifier = models.FloatField(default = 1.0)
     RecruitingAllowed = models.BooleanField(default = False)
 
-    UserRecruitingPointsLeft = models.IntegerField(default = 0)
+    UserRecruitingPointsLeftThisWeek = models.IntegerField(default = 0)
 
     def __str__(self):
         return self.WeekName + ' in ' + str(self.PhaseID.LeagueSeasonID.SeasonStartYear)
@@ -2822,7 +2810,7 @@ class RecruitTeamSeason(models.Model):
     IsActivelyRecruiting = models.BooleanField(default=False)
 
     RecruitingTeamRank = models.IntegerField(default = 1)
-    UserRecruitingPointsThisWeek = models.IntegerField(default = 0)
+    UserRecruitingPointsLeftThisWeek = models.IntegerField(default = 0)
 
     Scouted_Overall = models.PositiveSmallIntegerField(default=0)
     ScoutingFuzz = models.PositiveSmallIntegerField(default=0)
@@ -3091,8 +3079,22 @@ class TeamInfoTopic(models.Model):
 
     IsPrestigeOrLocation = models.BooleanField(default = False)
     def __str__(self):
-        return 'TeamInfoTopic: {AttributeName}'.format(AttributeName = self.AttributeName)
+        return f'<TeamInfoTopic: {self.AttributeName}>'
 
+
+
+class RecruitingPromise(models.Model):
+    RecruitingPromiseID = models.AutoField(primary_key=True, db_index=True)
+
+    TeamInfoTopicID = models.ForeignKey(TeamInfoTopic, on_delete=models.CASCADE, db_index=True,  default=None, null=True, blank=True)
+    PromiseText = models.CharField(default = 'Promise', max_length=50)
+    TextDescription =  models.CharField(default = 'Promise', max_length=250)
+
+    PitchValue  = models.IntegerField(default = 0)
+    AllowInclusiveOption = models.BooleanField(default = True)
+
+    ExtraYearExclusiveMultiplier = models.FloatField(default = 1.0)
+    ExtraYearInclusiveMultiplier = models.FloatField(default = 1.0)
 
 class TeamSeasonInfoRating(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE,  db_index=True)
@@ -3111,8 +3113,7 @@ class PlayerRecruitingInterest(models.Model):
     PitchRecruitInterestRank = models.IntegerField(default = 0)
 
     def __str__(self):
-        return 'PlayerRecruitingInterest: {PlayerName}: {AttributeName} - Interest #{PitchRecruitInterestRank}'.format(PitchRecruitInterestRank=self.PitchRecruitInterestRank, PlayerName=self.PlayerID.PlayerFirstName + ' ' + self.PlayerID.PlayerLastName, AttributeName = self.TeamInfoTopicID.AttributeName)
-
+        return f'<PlayerRecruitingInterest: {self.PlayerID.PlayerFirstName + " " + self.PlayerID.PlayerLastName}: {self.TeamInfoTopicID.AttributeName} - Interest #{self.PitchRecruitInterestRank} >'
 
 class RecruitTeamSeasonInterest(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
@@ -3125,3 +3126,18 @@ class RecruitTeamSeasonInterest(models.Model):
     PitchRecruitInterestRank_IsKnown = models.BooleanField(default = False)
 
     UtilizedThisWeek = models.BooleanField(default = False)
+
+
+class RecruitTeamSeasonPromise(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
+    RecruitTeamSeasonPromiseID = models.AutoField(primary_key=True, db_index=True)
+
+    RecruitTeamSeasonID = models.ForeignKey(RecruitTeamSeason, on_delete=models.CASCADE, db_index=True,  default=None, null=True, blank=True)
+    RecruitingPromiseID = models.ForeignKey(RecruitingPromise, on_delete=models.CASCADE, db_index=True,  default=None, null=True, blank=True)
+
+    PromiseMade = models.BooleanField(default = False)
+    PromiseOutcomeDetermined = models.BooleanField(default = False)
+    PromiseKept = models.BooleanField(default = False)
+
+    TimeSpanYears = models.IntegerField(default = 1)
+    TimespanInclusive = models.BooleanField(default=True)
