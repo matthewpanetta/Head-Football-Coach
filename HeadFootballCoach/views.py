@@ -5,12 +5,12 @@ import pandas as pd
 from django.db.models import Max, Min, Avg, Count, Func, F, Q, Sum, Case, When, FloatField, DecimalField, IntegerField, CharField, BooleanField, Value, Window, OuterRef, Subquery, ExpressionWrapper
 from django.db.models.functions.window import Rank, RowNumber, Lag, Ntile
 from django.db.models.functions import Length, Concat, Coalesce
-from .models import Audit, League, TeamSeasonStrategy, TeamSeasonInfoRating,TeamGame,Week,Phase,Position, PositionGroup, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason, DivisionSeason, ConferenceSeason, RecruitTeamSeasonInterest, RecruitTeamSeasonPromise,RecruitingPromise
+from .models import Audit, League, TeamSeasonStrategy, TeamSeasonInfoRating,TeamGame,Week,Phase,Position, PositionGroup, TeamSeasonPosition, Class, CoachPosition, PlayerTeamSeasonDepthChart, TeamSeasonWeekRank, TeamSeasonDateRank, GameStructure, Conference, PlayerTeamSeasonAward, System_PlayoffRound,PlayoffRound, NameList, User, Region, State, City,World, Headline, Playoff, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, PlayerGameStat, Coach, CoachTeamSeason, TeamSeasonState, DivisionSeason, ConferenceSeason, RecruitTeamSeasonInterest, RecruitTeamSeasonPromise,RecruitingPromise
 from datetime import timedelta, date
 import random
 import sys
 import numpy
-from .resources import ChooseCaptains, SetPlayerTeamSeasonTotals, TeamCuts, TeamRedshirts, CreateBowls,UpdateTeamPositions, EndSeason, PlayerDeparture,NewSeasonCutover,InitializeLeaguePlayers, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, EndRegularSeason
+from .resources import ChooseCaptains, SetPlayerTeamSeasonTotals, TeamCuts, TeamRedshirts, CreateBowls,UpdateTeamPositions, UpdateTeamStates, EndSeason, PlayerDeparture,NewSeasonCutover,InitializeLeaguePlayers, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, EndRegularSeason
 from .scripts.rankings import     CalculateConferenceRankings,CalculateRankings, SelectBroadcast
 from .utilities import FindRange,HumanizeInteger, NormalVariance, NormalTrunc, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
@@ -370,7 +370,7 @@ def POST_StartRecruitingCall(request, WorldID, PlayerID):
             AvailablePromises = list(RecruitingPromise.objects.all().values(
                 'PromiseText', 'TextDescription', 'AllowInclusiveOption'
             ).annotate(
-                PromiseMade = Max('recruitteamseasonpromise__PromiseMade')
+                PromiseMade = Max('recruitteamseasonpromise__PromiseMade', filter=Q(recruitteamseasonpromise__RecruitTeamSeasonID__PlayerTeamSeasonID__PlayerID = PlayerID))
             ).order_by('PromiseText'))
 
 
@@ -391,12 +391,13 @@ def POST_RecruitingMakePromise(request, WorldID, PlayerID, Promise, TimespanYear
     PromiseObj = RecruitingPromise.objects.filter(PromiseText = Promise).first()
     RTSI = RecruitTeamSeasonInterest.objects.filter(WorldID_id = WorldID, RecruitTeamSeasonID = RTS, PlayerRecruitingInterestID__TeamInfoTopicID = PromiseObj.TeamInfoTopicID).first()
 
+    print('WorldID, PlayerID, Promise, TimespanYears, InclusiveOrExclusive', WorldID, PlayerID, Promise, TimespanYears, InclusiveOrExclusive)
     if PromiseObj is not None:
         if CurrentWeek.UserRecruitingPointsLeftThisWeek > 0:
             if RTS.UserRecruitingPointsLeftThisWeek > 0:
-                if RecruitTeamSeasonPromise.objects.filter(WorldID_id = WorldID, RecruitTeamSeasonID = RTS, RecruitingPromiseID = PromiseObj).first() is not None:
+                if RecruitTeamSeasonPromise.objects.filter(WorldID_id = WorldID, RecruitTeamSeasonID = RTS, RecruitingPromiseID = PromiseObj).first() is  None:
 
-                    PitchValue = int(int(((12 - RTSI.PitchRecruitInterestRank) ** .5) * ((PromiseObj.PitchValue / 10.0) ** 2)) / 5.0) * 5
+                    PitchValue = int(int(((12 - RTSI.PlayerRecruitingInterestID.PitchRecruitInterestRank) ** .5) * ((PromiseObj.PitchValue / 10.0) ** 2)) / 5.0) * 5
 
                     RTS.InterestLevel += PitchValue
                     RTS.UserRecruitingPointsLeftThisWeek -= 1
@@ -705,6 +706,7 @@ def POST_AutoTeamCuts(request, WorldID, TeamID):
             PlayerTeamSeason.objects.filter(PlayerTeamSeasonID__in = PlayersToCut).delete()
 
             UpdateTeamPositions(TeamSeasonID.LeagueSeasonID, CurrentWorld)
+            UpdateTeamStates(TeamSeasonID.LeagueSeasonID, CurrentWorld)
 
 
     else:
@@ -731,6 +733,7 @@ def POST_PlayerCut(request, WorldID, PlayerID):
             RemovePlayerFromDepthChart(WorldID, PlayerID=PlayerID )
             PlayerTeamSeasonToCut.delete()
             UpdateTeamPositions(TeamSeasonID.LeagueSeasonID, CurrentWorld, TeamSeasonID = TeamSeasonID)
+            UpdateTeamStates(TeamSeasonID.LeagueSeasonID, CurrentWorld, TeamSeasonID = TeamSeasonID)
             return JsonResponse({'message':'{PlayerName} cut from team'.format(PlayerName = PlayerName)}, status=200)
         else:
             return JsonResponse({'message':'Can only cut players from user team'}, status=422)
@@ -1526,7 +1529,6 @@ def Page_Audit_ShootingPercentages(request, WorldID):
 
 def Page_Index(request):
 
-
     InTesting = True
     InDeepTesting = True
 
@@ -1609,6 +1611,8 @@ def Page_Search(request, WorldID, SearchInput):
     return render(request, 'HeadFootballCoach/Search.html', context)
 
 def Page_World(request, WorldID):
+
+    #Region.objects.all().delete()
 
     DoAudit = False
     page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
@@ -2473,7 +2477,13 @@ def Page_TeamRoster(request, WorldID, TeamID, SeasonStartYear = None):
 
 
     context = {'currentSeason': CurrentSeason, 'page': page, 'userTeam': UserTeam, 'ThisTeamSeason': ThisTeamSeason, 'CurrentWeek': CurrentWeek, 'Players': Players}
+    context['TeamSeasonStates'] = TeamSeasonState.objects.filter(TeamSeasonID = ThisTeamSeason).select_related('StateID').annotate(
+        MaxPlayers = Coalesce(Subquery(TeamSeasonState.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).values('TeamSeasonID').annotate(
+                                                    Max=Max('CurrentPlayerCount')).values('Max')  ),1),
+        Args = Concat(F('MaxPlayers'), Value(',D3D3D3,800000'), output_field=CharField())
+        #{{TSS.MaxPlayer}},D3D3D3,0000FF
 
+    )
     context['RosterActions'] = RosterActions
     context['HeaderLink'] = TeamHeaderLinks('Roster', SeasonStartYear, CurrentWorld)
     context['TeamList'] = Team.objects.filter(WorldID=WorldID).values('TeamName', 'TeamNickname', 'TeamLogoURL').annotate(
@@ -6573,6 +6583,7 @@ def POST_SimAction(request, WorldID):
             PrepForUserTeam = not NavBarLinksStatus['CanSim']
             PrepForSeason(CurrentSeason, CurrentWorld, ThisWeek, PrepForUserTeam=PrepForUserTeam)
             UpdateTeamPositions(CurrentSeason, CurrentWorld)
+            UpdateTeamStates(CurrentSeason, CurrentWorld)
 
         elif ThisWeek.WeekName == 'Preseason':
             SetWeek1RecruitingPoints(CurrentSeason, CurrentWorld)

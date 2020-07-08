@@ -545,10 +545,11 @@ def createGeography(StateFile, inputFile, CountData):
             StateName = LineDict2['StateName']
             StateAbbreviation = LineDict2['StateAbbreviation']
             RegionName = LineDict2['RegionName']
+            SVGPath = LineDict2['SVGPath']
 
             RegionID, cr = Region.objects.get_or_create(RegionName=RegionName)
             print('RegionID', RegionID)
-            StateID, cr = State.objects.get_or_create(StateName = StateName, RegionID = RegionID, StateAbbreviation=StateAbbreviation)
+            StateID, cr = State.objects.get_or_create(StateName = StateName, RegionID = RegionID, StateAbbreviation=StateAbbreviation, SVGPath = SVGPath)
 
             StateDict[StateName] = StateID
 

@@ -319,6 +319,8 @@ class State(models.Model):
     StateName = models.CharField(max_length = 30, default='State Name')
     StateAbbreviation = models.CharField(max_length = 4, default='SN')
 
+    SVGPath = models.CharField(max_length = 2600, default='')
+
     YouthEngagement = models.IntegerField(default = 0)
 
     RegionID = models.ForeignKey(Region, on_delete=models.CASCADE)
@@ -3015,6 +3017,28 @@ class TeamSeasonPosition(models.Model):
     KickReturn_Rating_Weight           = models.DecimalField(default = 0.0, max_digits = 6, decimal_places=2)
 
     Total_Rating_Weight           = models.DecimalField(default = 0.0, max_digits = 6, decimal_places=2)
+
+
+class TeamSeasonState(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    TeamSeasonStateID = models.AutoField(primary_key = True)
+
+    TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    StateID = models.ForeignKey(State, on_delete=models.CASCADE, blank=True, null=True, default=None)
+
+    CurrentPlayerCount = models.IntegerField(default=0)
+
+    CommitPlayerCount = models.IntegerField(default=0)
+    FreshmanPlayerCount = models.IntegerField(default=0)
+    SophomorePlayerCount = models.IntegerField(default=0)
+    JuniorPlayerCount = models.IntegerField(default=0)
+    SeniorPlayerCount = models.IntegerField(default=0)
+
+    GamesInState = models.IntegerField(default=0)
+
+    IsPipelineState = models.BooleanField(default=False)
+    IsConnectedState = models.BooleanField(default=False)
+
 
 
 class DrivePlay(models.Model):

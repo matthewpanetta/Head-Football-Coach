@@ -1,4 +1,4 @@
-from .models import TeamInfoTopic, TeamSeasonInfoRating, PlayerRecruitingInterest, RecruitTeamSeasonInterest, Audit,TeamGame,Bowl,PlayerTeamSeasonDepthChart,TeamSeasonStrategy, Phase, TeamSeasonPosition, System_PlayerArchetypeRatingModifier, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill, CoachTeamSeason
+from .models import TeamInfoTopic, TeamSeasonInfoRating, PlayerRecruitingInterest, RecruitTeamSeasonInterest, Audit,TeamGame,Bowl,PlayerTeamSeasonDepthChart,TeamSeasonStrategy, Phase, TeamSeasonPosition, System_PlayerArchetypeRatingModifier, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill, CoachTeamSeason, TeamSeasonState, State
 import random
 from datetime import timedelta, date
 import pandas as pd
@@ -106,14 +106,12 @@ def TeamRedshirts(TS, WorldID, SaveInFunc = False):
     PTRToSave = []
     Num = 4
     Pow = .25
-    print("HeadCount['CoachID__RedshirtTendency']", HeadCount['CoachID__RedshirtTendency'])
     HeadCount['CoachID__RedshirtTendency'] += 4
     for PTR in PlayersToRedshirt:
         if random.uniform(0,1) < ((Max_Int(PTR.DepthChartPositionMin + HeadCount['CoachID__RedshirtTendency'] - Num,0) / 10.0) ** Pow):
             PTR.RedshirtedThisSeason = True
             PTRToSave.append(PTR)
 
-    print('PTRToSave', PTRToSave)
     if SaveInFunc:
         PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'], batch_size=500)
         return None
@@ -228,6 +226,26 @@ def CreateTeamPositions(LS, WorldID):
 
 
 
+def CreateTeamStates(LS, WorldID):
+
+    TSSToSave = []
+    States =State.objects.all()
+
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).order_by('TeamID__TeamName'):
+
+        for StateObj in States:
+            TSS = {}
+            TSS['WorldID'] = WorldID
+            TSS['TeamSeasonID'] = TeamSeasonID
+            TSS['StateID'] = StateObj
+
+
+            TSSToSave.append(TeamSeasonState(**TSS))
+
+    TeamSeasonState.objects.bulk_create(TSSToSave, ignore_conflicts = True, batch_size=500)
+
+
+
 def UpdateTeamPositions(LS, WorldID, TeamSeasonID = None):
 
     Filter = {}
@@ -271,6 +289,52 @@ def UpdateTeamPositions(LS, WorldID, TeamSeasonID = None):
         TSPsToUpdate.append(TSP)
 
     TeamSeasonPosition.objects.bulk_update(TSPsToUpdate, ['CurrentPlayerCount', 'NeededPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount','JuniorPlayerCount', 'SeniorPlayerCount', 'Year1PositionOverall', 'Year2PositionOverall', 'Year3PositionOverall'], batch_size=500)
+
+
+    return None
+
+
+def UpdateTeamStates(LS, WorldID, TeamSeasonID = None):
+
+    Filter = {}
+    if TeamSeasonID is not None:
+        Filter['TeamSeasonID'] = TeamSeasonID
+
+
+    TSSs = TeamSeasonState.objects.filter(WorldID = WorldID).filter(**Filter).filter(TeamSeasonID__TeamID__isnull = False).filter(TeamSeasonID__LeagueSeasonID = LS).annotate(
+        CurrentPlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+        FreshmanPlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).filter(ClassID__ClassAbbreviation = 'FR').values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+        SophomorePlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).filter(ClassID__ClassAbbreviation = 'SO').values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+        JuniorPlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).filter(ClassID__ClassAbbreviation = 'JR').values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+        SeniorPlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).filter(ClassID__ClassAbbreviation = 'SR').values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+
+        HomeGamesInState_calc = Coalesce(Subquery(TeamGame.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(TeamSeasonID__TeamID__CityID__StateID = OuterRef('StateID')).filter(IsHomeTeam = True).values('TeamSeasonID').annotate(
+                                                    Count=Count('TeamGameID')).values('Count')  ),0),
+        AwayGamesInState_calc = Coalesce(Subquery(TeamGame.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(OpposingTeamGameID__TeamSeasonID__TeamID__CityID__StateID = OuterRef('StateID')).filter(IsHomeTeam = False).values('TeamSeasonID').annotate(
+                                                    Count=Count('TeamGameID')).values('Count')  ),0),
+        GamesInState_calc = F('HomeGamesInState_calc') + F('AwayGamesInState_calc')
+
+    )
+
+    print('TSSs query', TSSs.query)
+
+    TSSsToUpdate = []
+    for TSS in TSSs:
+        TSS.CurrentPlayerCount = TSS.CurrentPlayerCount_calc
+        TSS.FreshmanPlayerCount = TSS.FreshmanPlayerCount_calc
+        TSS.SophomorePlayerCount = TSS.SophomorePlayerCount_calc
+        TSS.JuniorPlayerCount = TSS.JuniorPlayerCount_calc
+        TSS.SeniorPlayerCount = TSS.SeniorPlayerCount_calc
+        TSS.GamesInState = TSS.GamesInState_calc
+
+        TSSsToUpdate.append(TSS)
+
+    TeamSeasonState.objects.bulk_update(TSSsToUpdate, ['CurrentPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount','JuniorPlayerCount', 'SeniorPlayerCount', 'GamesInState'], batch_size=500)
 
 
     return None
@@ -2121,6 +2185,7 @@ def InitializeLeaguePlayers(WorldID, LS, IsFirstLeagueSeason ):
 
         CreateCoaches(LS, WorldID)
         CreateTeamPositions(LS, WorldID)
+        CreateTeamStates(LS, WorldID)
         if DoAudit:
             start = time.time()
             reset_queries()
@@ -2131,6 +2196,7 @@ def InitializeLeaguePlayers(WorldID, LS, IsFirstLeagueSeason ):
             A = Audit.objects.create(TimeElapsed = TimeElapsed,ScalesWithTeams=True, NumberTeam=AuditTeamCount, AuditVersion = 3, AuditDescription='Create Players', QueryCount = len(connection.queries))
 
         UpdateTeamPositions(LS, WorldID)
+        UpdateTeamStates(LS, WorldID)
 
     if DoAudit:
         start = time.time()
@@ -2166,6 +2232,8 @@ def InitializeLeaguePlayers(WorldID, LS, IsFirstLeagueSeason ):
     print( 'CutPlayers',len(connection.queries))
     UpdateTeamPositions(LS, WorldID)
     print( 'UpdateTeamPositions',len(connection.queries))
+    UpdateTeamStates(LS, WorldID)
+    print( 'UpdateTeamStates',len(connection.queries))
     PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=False)
     print( 'PopulateTeamDepthCharts',len(connection.queries))
     ChooseTeamCaptains(LS, WorldID)

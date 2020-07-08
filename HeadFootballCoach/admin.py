@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DivisionSeason, RecruitingPromise, RecruitTeamSeasonPromise, TeamSeasonInfoRating, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
+from .models import DivisionSeason, RecruitingPromise, RecruitTeamSeasonPromise, TeamSeasonInfoRating, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, TeamSeasonState,State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
 
 
 class TeamSeasonStrategyAdmin(admin.ModelAdmin):
@@ -18,7 +18,7 @@ class RegionAdmin(admin.ModelAdmin):
 
 
 class StateAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in State._meta.get_fields() if field.name not in ('playoff', 'city', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in State._meta.get_fields() if field.name not in ('playoff', 'city','teamseasonstate', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class CityAdmin(admin.ModelAdmin):
     list_display = [field.name for field in City._meta.get_fields() if field.name not in ('playoff','player','stadium', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -182,6 +182,9 @@ class RecruitTeamSeasonPromiseAdmin(admin.ModelAdmin):
 class RecruitingPromiseAdmin(admin.ModelAdmin):
     list_display = ['RecruitingPromiseID', 'TeamInfoTopicID', 'PromiseText', 'TextDescription', 'PitchValue', 'AllowInclusiveOption', 'ExtraYearExclusiveMultiplier', 'ExtraYearInclusiveMultiplier']
 
+class TeamSeasonStateAdmin(admin.ModelAdmin):
+    list_display = ['TeamSeasonStateID', 'WorldID', 'TeamSeasonID', 'StateID' ,'CurrentPlayerCount', 'CommitPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount', 'JuniorPlayerCount', 'SeniorPlayerCount', 'GamesInState', 'IsPipelineState', 'IsConnectedState']
+
 
 
 admin.site.register(TeamSeasonStrategy, TeamSeasonStrategyAdmin)
@@ -241,3 +244,4 @@ admin.site.register(RecruitTeamSeasonInterest, RecruitTeamSeasonInterestAdmin)
 admin.site.register(TeamSeasonInfoRating, TeamSeasonInfoRatingAdmin)
 admin.site.register(RecruitTeamSeasonPromise, RecruitTeamSeasonPromiseAdmin)
 admin.site.register(RecruitingPromise, RecruitingPromiseAdmin)
+admin.site.register(TeamSeasonState, TeamSeasonStateAdmin)

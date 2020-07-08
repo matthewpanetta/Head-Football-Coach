@@ -1242,7 +1242,7 @@ function RecruitingAction(WorldID, MainTable) {
                     console.log(res, status);
 
                     var BonusSpan = $('<span class=" w3-text-green" style="font-size: 10px; font-weight: 600; margin-left: 10px;margin-right: -10px;">(+<span event-field="pitch-value">0</span>)</span>');
-                    $(PromiseRow).find('[data-field="PitchName"]').closest('td').append(BonusSpan);
+                    $(PromiseRow).find('[data-field="PromiseText"]').closest('td').append(BonusSpan);
 
                     $(PromiseRow).find('[event-field="pitch-value"]').each(function(){
                       var CountSpan = $(this)[0];
@@ -1268,7 +1268,7 @@ function RecruitingAction(WorldID, MainTable) {
 
                   },
                   error: function(res) {
-                    console.log(res)
+                    console.log('error in ajax', res)
 
                     $.notify(
                       res.responseJSON.message, {
