@@ -58,7 +58,7 @@ class PlayerTeamSeasonSkillAdmin(admin.ModelAdmin):
     list_filter = ['PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID','PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PositionID']
 
 class RecruitTeamSeasonAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('VisitWeekID','VisitWeekID_id', 'recruitteamseasoninterest','visitweekid', 'visitweek_recruitteamseason','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('VisitWeekID','VisitWeekID_id', 'recruitteamseasoninterest', 'recruitteamseasonpromise','visitweekid', 'visitweek_recruitteamseason','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
     list_filter = ['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__RecruitingStars', 'Signed', 'TeamSeasonID__TeamID__TeamName',  'OfferMade', 'PlayerTeamSeasonID__PlayerID__CityID__StateID__StateAbbreviation']
 
 
@@ -174,6 +174,8 @@ class PlayerRecruitingInterestAdmin(admin.ModelAdmin):
 
 class RecruitTeamSeasonInterestAdmin(admin.ModelAdmin):
     list_display = ['RecruitTeamSeasonInterestID', 'RecruitTeamSeasonID', 'PlayerRecruitingInterestID', 'TeamRating', 'PitchRecruitInterestRank_IsKnown']
+    list_filter = ['PlayerRecruitingInterestID__TeamInfoTopicID__AttributeName', 'PlayerRecruitingInterestID__TeamInfoTopicID__RecruitMatchIsComputed']
+
 
 class RecruitTeamSeasonPromiseAdmin(admin.ModelAdmin):
     list_display = ['WorldID', 'RecruitTeamSeasonPromiseID', 'RecruitTeamSeasonID', 'RecruitingPromiseID', 'PromiseMade', 'PromiseKept']
@@ -184,7 +186,7 @@ class RecruitingPromiseAdmin(admin.ModelAdmin):
 
 class TeamSeasonStateAdmin(admin.ModelAdmin):
     list_display = ['TeamSeasonStateID', 'WorldID', 'TeamSeasonID', 'StateID' ,'CurrentPlayerCount', 'CommitPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount', 'JuniorPlayerCount', 'SeniorPlayerCount', 'GamesInState', 'IsPipelineState', 'IsConnectedState']
-
+    list_filter = ['TeamSeasonID__TeamID', 'StateID']
 
 
 admin.site.register(TeamSeasonStrategy, TeamSeasonStrategyAdmin)

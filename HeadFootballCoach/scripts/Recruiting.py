@@ -1,5 +1,5 @@
 from ..models import Headline,World, Playoff,Week,Audit, RecruitTeamSeasonInterest, TeamSeasonPosition, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
-from random import uniform, randint
+from random import uniform, randint, choice
 import numpy
 import time
 from ..utilities import WeightedProbabilityChoice, Min, Min_Int, DistanceBetweenCities, GetValuesOfSingleObject, NormalBounds, NormalTrunc
@@ -30,7 +30,146 @@ def RandomRecruitPreference(RecruitPreferenceBase):
     return OrderedPreferences
 
 
+def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None):
+
+
+    ScoutingGroups = {
+        'Intagibles': {
+            'Skills': ['Awareness'],
+            'ScoutingPrecision': {'Default': 4, 'Floor': 2},
+            'ScoutingAccuracy': {'Default': 8, 'Floor': 4},
+        },
+        'Athleticism': {
+            'Skills': ['Strength', 'Speed', 'Agility', 'Acceleration', 'Jumping', 'Stamina', 'Injury', 'KickReturn'],
+            'ScoutingPrecision': {'Default': 4, 'Floor': 0},
+            'ScoutingAccuracy': {'Default': 4, 'Floor': 0},
+        },
+        'ThrowingArm': {
+            'Skills': ['ThrowPower', 'ShortThrowAccuracy','MediumThrowAccuracy','DeepThrowAccuracy',],
+            'ScoutingPrecision': {'Default': 10, 'Floor': 4},
+            'ScoutingAccuracy': {'Default': 4, 'Floor': 1},
+        },
+        'PassingIntangibles': {
+            'Skills': ['ThrowOnRun', 'ThrowUnderPressure', 'PlayAction'],
+            'ScoutingPrecision': {'Default': 12, 'Floor': 5},
+            'ScoutingAccuracy': {'Default': 12, 'Floor': 5},
+        },
+        'Rushing': {
+            'Skills': ['Elusiveness', 'BallCarrierVision', 'JukeMove', 'BreakTackle', 'Carrying'],
+            'ScoutingPrecision': {'Default': 4, 'Floor': 0},
+            'ScoutingAccuracy': {'Default': 4, 'Floor': 0},
+        },
+        'Receiving': {
+            'Skills': ['Catching', 'CatchInTraffic', 'RouteRunning', 'Release'],
+            'ScoutingPrecision': {'Default': 8, 'Floor': 2},
+            'ScoutingAccuracy': {'Default': 5, 'Floor': 0},
+        },
+        'Blocking': {
+            'Skills': ['PassBlock', 'RunBlock', 'ImpactBlock'],
+            'ScoutingPrecision': {'Default': 4, 'Floor': 1},
+            'ScoutingAccuracy': {'Default': 12, 'Floor': 1},
+        },
+        'DLine': {
+            'Skills': ['PassRush', 'BlockShedding'],
+            'ScoutingPrecision': {'Default': 6, 'Floor': 3},
+            'ScoutingAccuracy': {'Default': 12, 'Floor': 2},
+        },
+        'GeneralDefense': {
+            'Skills': ['HitPower', 'Tackle', 'Pursuit', 'PlayRecognition'],
+            'ScoutingPrecision': {'Default': 6, 'Floor': 1},
+            'ScoutingAccuracy': {'Default': 8, 'Floor': 4},
+        },
+        'Coverage': {
+            'Skills': ['ManCoverage', 'ZoneCoverage', 'Press'],
+            'ScoutingPrecision': {'Default': 12, 'Floor': 4},
+            'ScoutingAccuracy': {'Default': 8, 'Floor': 0},
+        },
+        'Kicking': {
+            'Skills': ['KickPower', 'KickAccuracy'],
+            'ScoutingPrecision': {'Default': 12, 'Floor': 5},
+            'ScoutingAccuracy': {'Default': 12, 'Floor': 5},
+        },
+    }
+
+    PlayerSkill = RTS.PlayerTeamSeasonID.playerteamseasonskill
+
+    OverallSum = 0
+    WeightSum = 0
+
+    CoachScoutingSkill = CoachObj.ScoutingRating
+    for SkillGroupKey in ScoutingGroups:
+        SkillGroup = ScoutingGroups[SkillGroupKey]
+
+        SkillGroupPrecision_Name = f'Scouting_{SkillGroupKey}_Precision'
+        SkillGroupAccuracy_Name = f'Scouting_{SkillGroupKey}_Accuracy'
+
+        SkillGroupPrecision = SkillGroup['ScoutingPrecision']['Default']
+        PrecisionRange = range(SkillGroup['ScoutingPrecision']['Floor'], SkillGroup['ScoutingPrecision']['Default'] + 1 )
+        for u in range(CoachScoutingSkill):
+            r = choice(PrecisionRange)
+            SkillGroupPrecision = r if r < SkillGroupPrecision else SkillGroupPrecision
+
+        SkillGroupAccuracy = SkillGroup['ScoutingAccuracy']['Default']
+        AccuracyRange = range(SkillGroup['ScoutingAccuracy']['Floor'], SkillGroup['ScoutingAccuracy']['Default'] + 1 )
+        for u in range(CoachScoutingSkill):
+            r = choice(AccuracyRange)
+            SkillGroupAccuracy = r if r < SkillGroupAccuracy else SkillGroupAccuracy
+
+        SkillGroupAccuracy = choice([SkillGroupAccuracy, -1 * SkillGroupAccuracy])
+
+        print('SkillGroupPrecision_Name', SkillGroupPrecision_Name, SkillGroupPrecision, SkillGroupAccuracy)
+        setattr(RTS, SkillGroupPrecision_Name, SkillGroupPrecision)
+        setattr(RTS, SkillGroupAccuracy_Name, SkillGroupAccuracy)
+
+        for Skill in SkillGroup['Skills']:
+            RatingName = Skill+'_Rating'
+            ScoutedRatingName = f'Scouted_{Skill}_Rating'
+            OriginalRatingName = ScoutedRatingName + '_Original'
+            WeightRatingField = RatingName +'_Weight'
+
+            BaseVal = getattr(PlayerSkill, RatingName)
+            NewVal = randint(BaseVal + SkillGroupAccuracy - SkillGroupPrecision, BaseVal + SkillGroupAccuracy + SkillGroupPrecision)
+
+            NewVal = 0 if NewVal < 0 else NewVal
+
+            print('ScoutedRatingName', ScoutedRatingName, NewVal)
+            setattr(RTS, ScoutedRatingName, NewVal)
+            setattr(RTS, OriginalRatingName, NewVal)
+
+            OverallSum+= float(NewVal) * float(getattr(TSP, WeightRatingField))
+            WeightSum += float(getattr(TSP, WeightRatingField))
+
+    OverallSum = int(OverallSum * 1.0 / WeightSum)
+    print('OverallSum', OverallSum)
+    RTS.Scouted_Overall = OverallSum
+    RTS.Scouted_Overall_Original = OverallSum
+
+
+    return RTS
+
+
 def ScoutPlayer(RTS, TSP = None):
+
+
+    PositionToScoutingGroups= {
+        'QB': [['Intangibles', 'ThrowingArm', 'PassingIntangibles'], ['Athletisicm', 'Rushing']],
+        'RB': [['Rushing', 'Athleticism'], ['Intangibles'], ['Receiving', 'Blocking']],
+        'FB': [['Rushing', 'Athleticism', 'Blocking'], ['Intangibles'], ['Receiving']],
+        'WR': [['Athleticism', 'Receiving'], ['Intangibles']],
+        'TE': [['Receiving', 'Athleticism', 'Blocking'], ['Intangibles']],
+        'OT': [[ 'Blocking'], ['Athleticism','Intangibles']],
+        'OG': [[ 'Blocking'], ['Athleticism','Intangibles']],
+        'OC': [[ 'Blocking'], ['Athleticism','Intangibles']],
+        'DE': [['Athleticism', 'DLine'], ['Intangibles', 'GeneralDefense']],
+        'DT': [['Athleticism', 'DLine'], ['Intangibles', 'GeneralDefense']],
+        'MLB': [['GeneralDefense', 'Intangibles', 'Athleticism'], ['Coverage', 'DLine']],
+        'OLB': [['GeneralDefense', 'Intangibles', 'Athleticism', 'DLine'], ['Coverage']],
+        'CB': [['Athleticism', 'Coverage'], ['Intangibles'], ['GeneralDefense']],
+        'S': [['Athleticism', 'Coverage', 'GeneralDefense'], ['Intangibles']],
+        'K': [['Kicking'], ['Intangibles']],
+        'P': [['Kicking'], ['Intangibles']],
+
+    }
     if RTS.ScoutingFuzz >= 2:
         RTS.ScoutingFuzz = RTS.ScoutingFuzz - 2
     else:
@@ -328,7 +467,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
     print('Starting recruiting', len(connection.queries))
 
-    AllRecruitsAvailable = RecruitTeamSeason.objects.filter(WorldID_id=WorldID).filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).select_related('PlayerTeamSeasonID', 'PlayerTeamSeasonID__playerteamseasonskill', 'PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID__PlayerID__PositionID', 'TeamSeasonID').annotate(
+    AllRecruitsAvailable = RecruitTeamSeason.objects.filter(WorldID_id=WorldID).filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).select_related('PlayerTeamSeasonID', 'PlayerTeamSeasonID__playerteamseasonskill', 'PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID__PlayerID__PositionID', 'TeamSeasonID', 'TeamSeasonStateID').annotate(
         CommitsNeeded = Subquery(TeamSeasonPosition.objects.filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PositionID = OuterRef('PlayerTeamSeasonID__PlayerID__PositionID')).annotate(
             PlayersNeeded = F('MinimumPlayerCount') - F('FreshmanPlayerCount') - F('SophomorePlayerCount') - F('JuniorPlayerCount') - F('CommitPlayerCount'),
         ).values('PlayersNeeded')),
@@ -462,7 +601,12 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
             ThisWeekInterestIncrease *= InterestModifier
             ThisWeekInterestIncrease = int(ThisWeekInterestIncrease / 5.0) * 5
-            RTS.InterestLevel += ThisWeekInterestIncrease
+            InterestIncreaseModifier = 1.0
+            if RTS.TeamSeasonStateID.IsPipelineState:
+                InterestIncreaseModifier = 1.2
+            elif RTS.TeamSeasonStateID.IsConnectedState:
+                InterestIncreaseModifier = 1.1
+            RTS.InterestLevel += int(ThisWeekInterestIncrease * InterestIncreaseModifier)
             RTSToSave.append(RTS)
 
     print('Starting to save RTS', len(connection.queries))
@@ -561,7 +705,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
         RTS_ToUpdate.append(RTS)
     RecruitTeamSeason.objects.bulk_update(RTS_ToUpdate, ['UserRecruitingPointsLeftThisWeek'])
 
-    RecruitTeamSeasonInterest.objects.filter(WorldID = WorldID, UtilizedThisWeek = True).update(UtilizedThisWeek = False)
+    RecruitTeamSeasonInterest.objects.filter(WorldID = WorldID, UtilizedThisWeek = True).update(UtilizedThisWeek = False, InterestEarnedThisWeek = 0)
     print('Recruiting complete', len(connection.queries))
     if DoAudit:
         end = time.time()

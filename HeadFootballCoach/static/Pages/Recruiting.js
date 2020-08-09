@@ -213,18 +213,20 @@ function DrawRecruitingTable(WorldID, data, SavedPlayers) {
 
   var ColCategories = {
     'Base': 7,
-    'STATUS <i class="fas fa-handshake"></i>': 5,
-    'MEAS <i class="fas fa-ruler"></i>': 5,
-    'PHY <i class="fas fa-chart-line"></i>': 7,
-    'PAS <i class="fas fa-chart-line"></i>': 7,
-    'RUS <i class="fas fa-chart-line"></i>': 4,
-    'REC <i class="fas fa-chart-line"></i>': 4,
-    'BLK <i class="fas fa-chart-line"></i>': 3,
-    'DEF <i class="fas fa-chart-line"></i>': 7,
-    'KCK <i class="fas fa-chart-line"></i>': 2,
+    'STATUS <i class="hide-small fas fa-handshake"></i>': 5,
+    'INT <i class="hide-small fas fa-ruler"></i>': 4,
+    'MEAS <i class="hide-small fas fa-ruler"></i>': 5,
+    'PHY <i class="hide-small fas fa-chart-line"></i>': 7,
+    'PAS <i class="hide-small fas fa-chart-line"></i>': 7,
+    'RUS <i class="hide-small fas fa-chart-line"></i>': 4,
+    'REC <i class="hide-small fas fa-chart-line"></i>': 4,
+    'BLK <i class="hide-small fas fa-chart-line"></i>': 3,
+    'DEF <i class="hide-small fas fa-chart-line"></i>': 7,
+    'KCK <i class="hide-small fas fa-chart-line"></i>': 2,
     'Expand': 1,
-    'Custom': 3
+    'Custom': 4
   }
+
 
 
   var ShowColumnMap = {}
@@ -376,6 +378,25 @@ function DrawRecruitingTable(WorldID, data, SavedPlayers) {
         combiner: 'or'
       },
       targets: [54]
+    },{
+      searchPanes: {
+        show: true,
+        options: [{
+            label: 'Pipeline State',
+            value: function(rowData, rowIdx) {
+              return rowData['playerteamseason__recruitteamseason__TeamSeasonStateID__IsPipelineState'] ;
+            }
+          },
+          {
+            label: 'Connected State',
+            value: function(rowData, rowIdx) {
+              return rowData['playerteamseason__recruitteamseason__TeamSeasonStateID__IsConnectedState'] ;
+            }
+          },
+        ],
+        combiner: 'or'
+      },
+      targets: [55]
     }, ],
     "columns": [
 
@@ -425,13 +446,22 @@ function DrawRecruitingTable(WorldID, data, SavedPlayers) {
         'searchable': true,
         'className': 'text-left',
         'fnCreatedCell': function(td, StringValue, DataObject, iRow, iCol) {
+          var PipelineSymbol = '';
+          if (DataObject.playerteamseason__recruitteamseason__TeamSeasonStateID__IsPipelineState) {
+            PipelineSymbol = ' (P)';
+          }
+
+          else if (DataObject.playerteamseason__recruitteamseason__TeamSeasonStateID__IsConnectedState) {
+            PipelineSymbol = ' (C)';
+          }
+
           $(td).html(`<div class="recruiting-player-name font14">
                           <a  href="/World/` + WorldID + `/Player/` + DataObject.PlayerID + `"> ` +
             StringValue +
             `</a>
                       </div>
                       <div class="recruiting-player-city font10">` +
-            DataObject.CityID__CityName + ', ' + DataObject.CityID__StateID__StateAbbreviation +
+            DataObject.CityID__CityName + ', ' + DataObject.CityID__StateID__StateAbbreviation + PipelineSymbol +
             `</div>`)
         }
       },
@@ -587,6 +617,31 @@ function DrawRecruitingTable(WorldID, data, SavedPlayers) {
           }
           return 'No';
         }
+      },
+
+      {
+        "data": null,
+        "sortable": true,
+        'visible': false,
+        'orderSequence': ["desc", "asc"]
+      },
+      {
+        "data": null,
+        "sortable": true,
+        'visible': false,
+        'orderSequence': ["desc", "asc"]
+      },
+      {
+        "data": null,
+        "sortable": true,
+        'visible': false,
+        'orderSequence': ["desc", "asc"]
+      },
+      {
+        "data": null,
+        "sortable": true,
+        'visible': false,
+        'orderSequence': ["desc", "asc"]
       },
 
       {
@@ -850,6 +905,13 @@ function DrawRecruitingTable(WorldID, data, SavedPlayers) {
         'visible': true,
         'className': 'details-control',
         "defaultContent": ''
+      },
+      {
+        "data": 'CityID__StateID__StateAbbreviation',
+        "sortable": true,
+        'visible': false,
+        'className': 'col-group',
+        'orderSequence': ["desc"]
       },
       {
         "data": 'CityID__StateID__StateAbbreviation',

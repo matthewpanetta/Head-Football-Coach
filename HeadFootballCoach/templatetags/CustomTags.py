@@ -31,19 +31,11 @@ def ColorScale(val, args):
     NewColor_Hex = NewColor.hex
 
 
-    # BaseColor = {'R': int(BaseColor_Hex[:2], 16), 'G': int(BaseColor_Hex[2:4], 16), 'B': int(BaseColor_Hex[4:6], 16)}
-    # MaxColor  = {'R': int(MaxColor_Hex[:2], 16), 'G': int(MaxColor_Hex[2:4], 16), 'B': int(MaxColor_Hex[4:6], 16)}
-    #
-    # Gap = {'R': ((MaxColor['R'] - BaseColor['R']) * 1.0 / MaxVal) , 'G': ((MaxColor['G'] - BaseColor['G']) * 1.0 / MaxVal), 'B': ((MaxColor['B'] - BaseColor['B']) * 1.0 / MaxVal)}
-    #
-    # NewColor = {'R': int(val*Gap['R']),  'G': int(val*Gap['G']),  'B': int(val*Gap['B'])}
-    # NewColor = {'R': hex(NewColor['R']).replace('0x', ''), 'G': hex(NewColor['G']).replace('0x', ''), 'B': hex(NewColor['B']).replace('0x', '')}
-    #
-    # for Color in NewColor:
-    #     if len(NewColor[Color]) < 2:
-    #         NewColor[Color] = '0' + NewColor[Color]
-    #
-    # NewColor_Hex = NewColor['R'] + NewColor['G'] + NewColor['B']
+    if val == MaxVal - 2:
+        count = 0
+        for u in ColorRange:
+            print(count, u)
+            count +=1
 
     return NewColor_Hex
 

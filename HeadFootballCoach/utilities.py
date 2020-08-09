@@ -29,25 +29,26 @@ def HumanizeInteger(Val):
     return str(Val) + "th";
 
 
-def NormalVariance(Modifier, Segments = 5):
+def NormalVariance(Modifier, Segments = 5, Floor = 0, Spread = 1):
     Mean = 1
     Sigma = .1
     SegmentsPerSide = int(Segments / 2)
     MinNumber = -1 * SegmentsPerSide
     MaxNumber = SegmentsPerSide
+    FloorAdd = Floor - MinNumber
     g = MinNumber - 1
     LoopCount = 0
     while (g < MinNumber or g > MaxNumber):
-        r = NormalTrunc(Mean * Modifier, Sigma, Mean - (SegmentsPerSide*Sigma), Mean + (SegmentsPerSide*Sigma))
-        v = (r - Mean) / Sigma * 2
+        r = NormalTrunc( Modifier, Sigma, 1 - (SegmentsPerSide*Sigma), 1 + (SegmentsPerSide*Sigma))
+        v = ((r - Mean) / (Sigma / Spread)) * 2
         if v == 0:
             v = -0.0000000001
         PositiveOrNegative = (v / abs(v))
         g = int(round(((abs(v) - Mean) * PositiveOrNegative), 0 ))
         LoopCount += 1
         if LoopCount > 10:
-            return 0
-    return g
+            return Floor
+    return g + FloorAdd
 
 def SecondsToMinutes(Sec):
     Sec = int(Sec)
