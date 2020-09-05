@@ -326,12 +326,33 @@ def GetHistoricalWeek(WorldID, LeagueSeasonID):
 
 def POST_StartRecruitingCall(request, WorldID, PlayerID):
 
+    PositionToScoutingGroups= {
+        'QB': [['Intangibles', 'ThrowingArm', 'PassingIntangibles'], ['Athletisicm', 'Rushing']],
+        'RB': [['Rushing', 'Athleticism'], ['Intangibles'], ['Receiving', 'Blocking']],
+        'FB': [['Rushing', 'Athleticism', 'Blocking'], ['Intangibles'], ['Receiving']],
+        'WR': [['Athleticism', 'Receiving'], ['Intangibles']],
+        'TE': [['Receiving', 'Athleticism', 'Blocking'], ['Intangibles']],
+        'OT': [[ 'Blocking'], ['Athleticism','Intangibles']],
+        'OG': [[ 'Blocking'], ['Athleticism','Intangibles']],
+        'OC': [[ 'Blocking'], ['Athleticism','Intangibles']],
+        'DE': [['Athleticism', 'DLine'], ['Intangibles', 'GeneralDefense']],
+        'DT': [['Athleticism', 'DLine'], ['Intangibles', 'GeneralDefense']],
+        'MLB': [['GeneralDefense', 'Intangibles', 'Athleticism'], ['Coverage', 'DLine']],
+        'OLB': [['GeneralDefense', 'Intangibles', 'Athleticism', 'DLine'], ['Coverage']],
+        'CB': [['Athleticism', 'Coverage'], ['Intangibles'], ['GeneralDefense']],
+        'S': [['Athleticism', 'Coverage', 'GeneralDefense'], ['Intangibles']],
+        'K': [['Kicking'], ['Intangibles']],
+        'P': [['Kicking'], ['Intangibles']],
+    }
+
     CurrentWorld = World.objects.get(WorldID = WorldID)
     CurrentWeek = CurrentWorld.week_set.filter(IsCurrent = True).first()
 
     UserTeam = Team.objects.filter(WorldID = CurrentWorld, IsUserTeam = True).first()
 
     ThisPlayer = Player.objects.filter(WorldID = CurrentWorld, PlayerID = PlayerID).first()
+    PlayerPositionAbbreviation = ThisPlayer.PositionID.PositionAbbreviation
+    PositionScoutingGroups = PositionToScoutingGroups[PlayerPositionAbbreviation]
     RTS = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID_id = PlayerID, TeamSeasonID__TeamID = UserTeam).select_related('TeamSeasonID').first()
 
     if CurrentWeek.UserRecruitingPointsLeftThisWeek > 0:
@@ -372,6 +393,9 @@ def POST_StartRecruitingCall(request, WorldID, PlayerID):
             ).annotate(
                 PromiseMade = Max('recruitteamseasonpromise__PromiseMade', filter=Q(recruitteamseasonpromise__RecruitTeamSeasonID__PlayerTeamSeasonID__PlayerID = PlayerID))
             ).order_by('PromiseText'))
+
+
+            ScoutingGroups = []
 
 
             RecruitVisit = {'AvailableWeeksForVisit': [], 'ScheduledVisitWeek': None}
@@ -1634,8 +1658,7 @@ def Page_World(request, WorldID):
         MaxOverall = Max('playerteamseasonskill__OverallRating'))
     .order_by('TeamSeasonID__TeamID__TeamName', 'ClassID__ClassAbbreviation', 'PlayerID__PositionID__PositionAbbreviation'))
 
-    for u in TeamSeasonPlayerClassSkill:
-        print(u)
+
     DoAudit = False
     page = {'PageTitle': 'College HeadFootballCoach', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     CurrentWorld  = World.objects.get(WorldID = WorldID)
@@ -4303,7 +4326,7 @@ def GET_RecruitCardInfo(request, WorldID, PlayerID):
     }
 
     P = Player.objects.filter(WorldID=WorldID).filter(PlayerID=PlayerID).filter(playerteamseason__recruitteamseason__TeamSeasonID__TeamID__IsUserTeam = True)\
-        .values('PlayerID', 'playerteamseason__ClassID__ClassAbbreviation','playerteamseason__ClassID__ClassName', 'PlayerFirstName','PlayerLastName', 'PositionID__PositionAbbreviation', 'PositionID__PositionName' , 'WasPreviouslyRedshirted', 'playerteamseason__recruitteamseason__IsActivelyRecruiting', 'playerteamseason__RedshirtedThisSeason', 'playerteamseason__TeamCaptain', 'JerseyNumber', 'PlayerFaceJson', 'playerteamseason__TeamSeasonID__TeamID__TeamName', 'playerteamseason__TeamSeasonID__TeamID_id', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert','playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX', 'playerteamseason__recruitteamseason__Scouted_Overall', 'playerteamseason__recruitteamseason__Scouted_Strength_Rating','playerteamseason__recruitteamseason__Scouted_Agility_Rating','playerteamseason__recruitteamseason__Scouted_Speed_Rating','playerteamseason__recruitteamseason__Scouted_Acceleration_Rating','playerteamseason__recruitteamseason__Scouted_Stamina_Rating','playerteamseason__recruitteamseason__Scouted_Awareness_Rating','playerteamseason__recruitteamseason__Scouted_Jumping_Rating','playerteamseason__recruitteamseason__Scouted_ThrowPower_Rating'    ,'playerteamseason__recruitteamseason__Scouted_ShortThrowAccuracy_Rating'    ,'playerteamseason__recruitteamseason__Scouted_MediumThrowAccuracy_Rating'    ,'playerteamseason__recruitteamseason__Scouted_DeepThrowAccuracy_Rating'    ,'playerteamseason__recruitteamseason__Scouted_ThrowOnRun_Rating'    ,'playerteamseason__recruitteamseason__Scouted_ThrowUnderPressure_Rating'    ,'playerteamseason__recruitteamseason__Scouted_PlayAction_Rating', 'playerteamseason__recruitteamseason__Scouted_PassRush_Rating', 'playerteamseason__recruitteamseason__Scouted_BlockShedding_Rating', 'playerteamseason__recruitteamseason__Scouted_Tackle_Rating', 'playerteamseason__recruitteamseason__Scouted_HitPower_Rating', 'playerteamseason__recruitteamseason__Scouted_ManCoverage_Rating', 'playerteamseason__recruitteamseason__Scouted_ZoneCoverage_Rating', 'playerteamseason__recruitteamseason__Scouted_Press_Rating', 'playerteamseason__recruitteamseason__Scouted_Carrying_Rating', 'playerteamseason__recruitteamseason__Scouted_Elusiveness_Rating', 'playerteamseason__recruitteamseason__Scouted_BallCarrierVision_Rating', 'playerteamseason__recruitteamseason__Scouted_BreakTackle_Rating', 'playerteamseason__recruitteamseason__Scouted_Catching_Rating', 'playerteamseason__recruitteamseason__Scouted_CatchInTraffic_Rating', 'playerteamseason__recruitteamseason__Scouted_RouteRunning_Rating', 'playerteamseason__recruitteamseason__Scouted_Release_Rating','playerteamseason__recruitteamseason__Scouted_PassBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_RunBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_ImpactBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_KickPower_Rating', 'playerteamseason__recruitteamseason__Scouted_KickAccuracy_Rating', 'playerteamseason__TeamSeasonID__TeamID__IsUserTeam', 'RecruitSigned' )\
+        .values('PlayerID', 'playerteamseason__ClassID__ClassAbbreviation','playerteamseason__ClassID__ClassName', 'PlayerFirstName','PlayerLastName', 'PositionID__PositionAbbreviation', 'PositionID__PositionName' , 'WasPreviouslyRedshirted', 'playerteamseason__recruitteamseason__IsActivelyRecruiting', 'playerteamseason__RedshirtedThisSeason', 'playerteamseason__TeamCaptain', 'JerseyNumber', 'PlayerFaceJson', 'playerteamseason__TeamSeasonID__TeamID__TeamName', 'playerteamseason__TeamSeasonID__TeamID_id', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert','playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX', 'playerteamseason__recruitteamseason__Scouted_Overall', 'playerteamseason__recruitteamseason__Scouted_Strength_Rating','playerteamseason__recruitteamseason__Scouted_Agility_Rating','playerteamseason__recruitteamseason__Scouted_Speed_Rating','playerteamseason__recruitteamseason__Scouted_Acceleration_Rating','playerteamseason__recruitteamseason__Scouted_Stamina_Rating','playerteamseason__recruitteamseason__Scouted_Awareness_Rating','playerteamseason__recruitteamseason__Scouted_Jumping_Rating','playerteamseason__recruitteamseason__Scouted_ThrowPower_Rating'    ,'playerteamseason__recruitteamseason__Scouted_ShortThrowAccuracy_Rating'    ,'playerteamseason__recruitteamseason__Scouted_MediumThrowAccuracy_Rating'    ,'playerteamseason__recruitteamseason__Scouted_DeepThrowAccuracy_Rating'    ,'playerteamseason__recruitteamseason__Scouted_ThrowOnRun_Rating'    ,'playerteamseason__recruitteamseason__Scouted_ThrowUnderPressure_Rating'    ,'playerteamseason__recruitteamseason__Scouted_PlayAction_Rating', 'playerteamseason__recruitteamseason__Scouted_PassRush_Rating', 'playerteamseason__recruitteamseason__Scouted_BlockShedding_Rating', 'playerteamseason__recruitteamseason__Scouted_Tackle_Rating', 'playerteamseason__recruitteamseason__Scouted_HitPower_Rating', 'playerteamseason__recruitteamseason__Scouted_ManCoverage_Rating', 'playerteamseason__recruitteamseason__Scouted_ZoneCoverage_Rating', 'playerteamseason__recruitteamseason__Scouted_Press_Rating', 'playerteamseason__recruitteamseason__Scouted_Carrying_Rating', 'playerteamseason__recruitteamseason__Scouted_Elusiveness_Rating', 'playerteamseason__recruitteamseason__Scouted_BallCarrierVision_Rating', 'playerteamseason__recruitteamseason__Scouted_BreakTackle_Rating', 'playerteamseason__recruitteamseason__Scouted_Catching_Rating', 'playerteamseason__recruitteamseason__Scouted_CatchInTraffic_Rating', 'playerteamseason__recruitteamseason__Scouted_RouteRunning_Rating', 'playerteamseason__recruitteamseason__Scouted_Release_Rating','playerteamseason__recruitteamseason__Scouted_PassBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_RunBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_ImpactBlock_Rating', 'playerteamseason__recruitteamseason__Scouted_KickPower_Rating', 'playerteamseason__recruitteamseason__Scouted_KickAccuracy_Rating', 'playerteamseason__TeamSeasonID__TeamID__IsUserTeam', 'RecruitSigned','playerteamseason__recruitteamseason__SkillGroupsLeftToScout' )\
         .annotate(
             PlayerTeamHref = Concat(Value('/World/'),Value(WorldID),Value('/Team/'),F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
             PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
@@ -4347,8 +4370,6 @@ def GET_RecruitCardInfo(request, WorldID, PlayerID):
     P['OverallCss'] = FindRange(OverallRange, P['playerteamseason__recruitteamseason__Scouted_Overall'])['Css-Class']
 
     P['Actions'] = []
-    if P['playerteamseason__recruitteamseason__Scouting_Receiving_ScoutingPercent'] < 100: #TODO FIXXX
-        P['Actions'].append({'Display': 'Scout Player', 'ConfirmInfo': P['PlayerName'], 'Class': 'recruiting-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(P['PlayerID'])+'/ScoutRecruit/', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-binoculars w3-text-purple"></i></span>'})
 
     if not  P['RecruitSigned']:
         if P['playerteamseason__recruitteamseason__IsActivelyRecruiting']:
@@ -6940,7 +6961,7 @@ def Page_Recruiting(request, WorldID, SeasonStartYear = None):
         )
     ).order_by('RecruitingRank')
     #.values('TeamID', 'RecruitingClassRank', )
-    print('AllTeamSeasons', AllTeamSeasons.query)
+    #print('AllTeamSeasons', AllTeamSeasons.query)
     RecruitingRankings = []
 
     RecruitingRankings = AllTeamSeasons

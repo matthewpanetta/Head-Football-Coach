@@ -530,6 +530,7 @@ def GameSim(game):
     count = 0
     for P in HomeTeamPlayers | AwayTeamPlayers:
         DC = None
+        DC_List = None
         PlayerDict = P
         PTS = P.PlayerTeamSeasonID
         PSD = PlayerSkills[P.PlayerID]

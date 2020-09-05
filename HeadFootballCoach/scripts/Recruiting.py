@@ -33,8 +33,27 @@ def RandomRecruitPreference(RecruitPreferenceBase):
 def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None):
 
 
+    PositionToScoutingGroups= {
+        'QB': [['Intangibles', 'ThrowingArm', 'PassingIntangibles'], ['Athletisicm', 'Rushing']],
+        'RB': [['Rushing', 'Athleticism'], ['Intangibles'], ['Receiving', 'Blocking']],
+        'FB': [['Rushing', 'Athleticism', 'Blocking'], ['Intangibles'], ['Receiving']],
+        'WR': [['Athleticism', 'Receiving'], ['Intangibles']],
+        'TE': [['Receiving', 'Athleticism', 'Blocking'], ['Intangibles']],
+        'OT': [[ 'Blocking'], ['Athleticism','Intangibles']],
+        'OG': [[ 'Blocking'], ['Athleticism','Intangibles']],
+        'OC': [[ 'Blocking'], ['Athleticism','Intangibles']],
+        'DE': [['Athleticism', 'DLine'], ['Intangibles', 'GeneralDefense']],
+        'DT': [['Athleticism', 'DLine'], ['Intangibles', 'GeneralDefense']],
+        'MLB': [['GeneralDefense', 'Intangibles', 'Athleticism'], ['Coverage', 'DLine']],
+        'OLB': [['GeneralDefense', 'Intangibles', 'Athleticism', 'DLine'], ['Coverage']],
+        'CB': [['Athleticism', 'Coverage'], ['Intangibles'], ['GeneralDefense']],
+        'S': [['Athleticism', 'Coverage', 'GeneralDefense'], ['Intangibles']],
+        'K': [['Kicking'], ['Intangibles']],
+        'P': [['Kicking'], ['Intangibles']],
+    }
+
     ScoutingGroups = {
-        'Intagibles': {
+        'Intangibles': {
             'Skills': ['Awareness'],
             'ScoutingPrecision': {'Default': 4, 'Floor': 2},
             'ScoutingAccuracy': {'Default': 8, 'Floor': 4},
@@ -117,7 +136,6 @@ def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None):
 
         SkillGroupAccuracy = choice([SkillGroupAccuracy, -1 * SkillGroupAccuracy])
 
-        print('SkillGroupPrecision_Name', SkillGroupPrecision_Name, SkillGroupPrecision, SkillGroupAccuracy)
         setattr(RTS, SkillGroupPrecision_Name, SkillGroupPrecision)
         setattr(RTS, SkillGroupAccuracy_Name, SkillGroupAccuracy)
 
@@ -132,15 +150,16 @@ def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None):
 
             NewVal = 0 if NewVal < 0 else NewVal
 
-            print('ScoutedRatingName', ScoutedRatingName, NewVal)
             setattr(RTS, ScoutedRatingName, NewVal)
             setattr(RTS, OriginalRatingName, NewVal)
 
             OverallSum+= float(NewVal) * float(getattr(TSP, WeightRatingField))
             WeightSum += float(getattr(TSP, WeightRatingField))
 
+    RTS.SkillGroupsLeftToScout =  sum([len(SkillLevel)  for SkillLevel in PositionToScoutingGroups[RTS.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation]])
+
+
     OverallSum = int(OverallSum * 1.0 / WeightSum)
-    print('OverallSum', OverallSum)
     RTS.Scouted_Overall = OverallSum
     RTS.Scouted_Overall_Original = OverallSum
 
@@ -148,7 +167,7 @@ def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None):
     return RTS
 
 
-def ScoutPlayer(RTS, TSP = None):
+def ScoutPlayer(RTS, TSP = None, CoachObj = None):
 
 
     PositionToScoutingGroups= {
@@ -168,26 +187,168 @@ def ScoutPlayer(RTS, TSP = None):
         'S': [['Athleticism', 'Coverage', 'GeneralDefense'], ['Intangibles']],
         'K': [['Kicking'], ['Intangibles']],
         'P': [['Kicking'], ['Intangibles']],
-
     }
-    if RTS.ScoutingFuzz >= 2:
-        RTS.ScoutingFuzz = RTS.ScoutingFuzz - 2
-    else:
-        RTS.ScoutingFuzz = 0
 
-    RTS_Rating_Fields = [field.name for field in RecruitTeamSeason._meta.get_fields() if 'Scouted_' in field.name and '_Rating' in field.name and 'Base' not in field.name]
+    ScoutingGroups = {
+        'Intangibles': {
+            'Skills': ['Awareness'],
+            'ScoutingPrecision': {'Default': 4, 'Floor': 2},
+            'ScoutingAccuracy': {'Default': 8, 'Floor': 4},
+        },
+        'Athleticism': {
+            'Skills': ['Strength', 'Speed', 'Agility', 'Acceleration', 'Jumping', 'Stamina', 'Injury', 'KickReturn'],
+            'ScoutingPrecision': {'Default': 4, 'Floor': 0},
+            'ScoutingAccuracy': {'Default': 4, 'Floor': 0},
+        },
+        'ThrowingArm': {
+            'Skills': ['ThrowPower', 'ShortThrowAccuracy','MediumThrowAccuracy','DeepThrowAccuracy',],
+            'ScoutingPrecision': {'Default': 10, 'Floor': 4},
+            'ScoutingAccuracy': {'Default': 4, 'Floor': 1},
+        },
+        'PassingIntangibles': {
+            'Skills': ['ThrowOnRun', 'ThrowUnderPressure', 'PlayAction'],
+            'ScoutingPrecision': {'Default': 12, 'Floor': 5},
+            'ScoutingAccuracy': {'Default': 12, 'Floor': 5},
+        },
+        'Rushing': {
+            'Skills': ['Elusiveness', 'BallCarrierVision', 'JukeMove', 'BreakTackle', 'Carrying'],
+            'ScoutingPrecision': {'Default': 4, 'Floor': 0},
+            'ScoutingAccuracy': {'Default': 4, 'Floor': 0},
+        },
+        'Receiving': {
+            'Skills': ['Catching', 'CatchInTraffic', 'RouteRunning', 'Release'],
+            'ScoutingPrecision': {'Default': 8, 'Floor': 2},
+            'ScoutingAccuracy': {'Default': 5, 'Floor': 0},
+        },
+        'Blocking': {
+            'Skills': ['PassBlock', 'RunBlock', 'ImpactBlock'],
+            'ScoutingPrecision': {'Default': 4, 'Floor': 1},
+            'ScoutingAccuracy': {'Default': 12, 'Floor': 1},
+        },
+        'DLine': {
+            'Skills': ['PassRush', 'BlockShedding'],
+            'ScoutingPrecision': {'Default': 6, 'Floor': 3},
+            'ScoutingAccuracy': {'Default': 12, 'Floor': 2},
+        },
+        'GeneralDefense': {
+            'Skills': ['HitPower', 'Tackle', 'Pursuit', 'PlayRecognition'],
+            'ScoutingPrecision': {'Default': 6, 'Floor': 1},
+            'ScoutingAccuracy': {'Default': 8, 'Floor': 4},
+        },
+        'Coverage': {
+            'Skills': ['ManCoverage', 'ZoneCoverage', 'Press'],
+            'ScoutingPrecision': {'Default': 12, 'Floor': 4},
+            'ScoutingAccuracy': {'Default': 8, 'Floor': 0},
+        },
+        'Kicking': {
+            'Skills': ['KickPower', 'KickAccuracy'],
+            'ScoutingPrecision': {'Default': 12, 'Floor': 5},
+            'ScoutingAccuracy': {'Default': 12, 'Floor': 5},
+        },
+    }
+
+    if RTS.SkillGroupsLeftToScout <= 0:
+        return RTS
+
+    SkillGroupToScout = None
+    PlayerPositionAbbreviation = RTS.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation
+    PositionScoutingGroups = PositionToScoutingGroups[PlayerPositionAbbreviation]
+
+    ValidScoutingGroups = []
+
+    for ScoutingLevel in PositionScoutingGroups:
+        ValidGroups = []
+        for ScoutingGroupKey in ScoutingLevel:
+            ScoutingGroup = ScoutingGroups[ScoutingGroupKey]
+            ScoutingGroupPercent_FieldName = f'Scouting_{ScoutingGroupKey}_ScoutingPercent'
+
+            if getattr(RTS, ScoutingGroupPercent_FieldName) < 100:
+                ValidGroups.append(ScoutingGroupKey)
+        if len(ValidGroups) > 0:
+            ValidScoutingGroups.append(ValidGroups)
+
+    if len(ValidScoutingGroups) > 0:
+        SkillGroupToScout = choice(ValidScoutingGroups[0])
+    else:
+        print('Something weird in scouting!!!', ValidScoutingGroups, SkillGroupToScout)
+        return None
+
+    PlayerSkill = RTS.PlayerTeamSeasonID.playerteamseasonskill
+
+    CoachScoutingRating = CoachObj.ScoutingRating
+    CoachScoutingLevel = 1
+    if CoachScoutingRating >= 12:
+        CoachScoutingLevel = 4
+    elif CoachScoutingRating >= 9:
+        CoachScoutingLevel = 3
+    elif CoachScoutingRating >= 6:
+        CoachScoutingLevel = 2
+    else:
+        CoachScoutingLevel = 1
+
 
     OverallSum = 0
     WeightSum = 0
-    for RatingField in RTS_Rating_Fields:
-        RawRatingField = RatingField.replace('Scouted_', '')
-        WeightRatingField = RawRatingField +'_Weight'
-        BaseVal = getattr(RTS.PlayerTeamSeasonID.playerteamseasonskill, RawRatingField)
-        NewVal = NormalTrunc(BaseVal, RTS.ScoutingFuzz, 0,99)
-        setattr(RTS, RatingField, NewVal)
 
-        OverallSum+= float(NewVal) * float(getattr(TSP, WeightRatingField))
-        WeightSum += float(getattr(TSP, WeightRatingField))
+
+    SkillGroupKey = SkillGroupToScout
+
+    SkillGroup = ScoutingGroups[SkillGroupKey]
+
+    SkillGroupPrecision_Name = f'Scouting_{SkillGroupKey}_Precision'
+    SkillGroupAccuracy_Name = f'Scouting_{SkillGroupKey}_Accuracy'
+    SkillGroupPercent_Name = f'Scouting_{SkillGroupKey}_ScoutingPercent'
+
+    SkillGroupPrecision = getattr(RTS, SkillGroupPrecision_Name)
+    PrecisionRange = range(0, SkillGroupPrecision + 1 )
+    for u in range(CoachScoutingLevel):
+        r = choice(PrecisionRange)
+        SkillGroupPrecision = r if r < SkillGroupPrecision else SkillGroupPrecision
+
+    SkillGroupAccuracy = getattr(RTS, SkillGroupAccuracy_Name)
+    if SkillGroupAccuracy > 0:
+        AccuracyRange = range(0, SkillGroupAccuracy + 1 )
+    else:
+        AccuracyRange = range(SkillGroupAccuracy, 1 )
+    for u in range(CoachScoutingLevel):
+        r = choice(AccuracyRange)
+        SkillGroupAccuracy = r if r < SkillGroupAccuracy else SkillGroupAccuracy
+
+    SkillGroupAccuracy = choice([SkillGroupAccuracy, -1 * SkillGroupAccuracy])
+
+    setattr(RTS, SkillGroupPrecision_Name, SkillGroupPrecision)
+    setattr(RTS, SkillGroupAccuracy_Name, SkillGroupAccuracy)
+
+    NewScoutingPercent = getattr(RTS, SkillGroupPercent_Name) + (25 * CoachScoutingLevel)
+    NewScoutingPercent = 100 if NewScoutingPercent > 100 else NewScoutingPercent
+    setattr(RTS, SkillGroupPercent_Name, NewScoutingPercent)
+
+
+
+    for ThisSkillGroupKey in ScoutingGroups:
+        ThisSkillGroup = ScoutingGroups[ThisSkillGroupKey]
+
+        for Skill in ThisSkillGroup['Skills']:
+            RatingName = Skill+'_Rating'
+            ScoutedRatingName = f'Scouted_{Skill}_Rating'
+            OriginalRatingName = ScoutedRatingName + '_Original'
+            WeightRatingField = RatingName +'_Weight'
+
+
+            BaseVal = getattr(PlayerSkill, RatingName)
+            NewVal = BaseVal
+            if ThisSkillGroupKey == SkillGroupKey:
+                NewVal = randint(BaseVal + SkillGroupAccuracy - SkillGroupPrecision, BaseVal + SkillGroupAccuracy + SkillGroupPrecision)
+
+                NewVal = 0 if NewVal < 0 else NewVal
+
+                setattr(RTS, ScoutedRatingName, NewVal)
+
+            OverallSum+= float(NewVal) * float(getattr(TSP, WeightRatingField))
+            WeightSum += float(getattr(TSP, WeightRatingField))
+
+    RTS.SkillGroupsLeftToScout =  sum([len([SkillGroup for SkillGroup in SkillLevel if getattr(RTS, f'Scouting_{SkillGroup}_ScoutingPercent') < 100])  for SkillLevel in PositionToScoutingGroups[RTS.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation]])
+
 
     OverallSum = int(OverallSum * 1.0 / WeightSum)
     RTS.Scouted_Overall = OverallSum
@@ -196,58 +357,6 @@ def ScoutPlayer(RTS, TSP = None):
     return RTS
 
 
-def WeeklyRecruiting(WorldID):
-
-    CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
-    RecruitsPerWeek = 6
-
-    for T in Team.objects.all():
-        #print('Recruiting for ', T)
-        for RTS in sorted([u for u in RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__TeamID = T) if u.PlayerID.RecruitSigned == False], key=lambda t: t.MatchRating * t.PlayerID.OverallRating, reverse=True)[:RecruitsPerWeek]:
-            TS = RTS.TeamSeasonID
-            #print(T, 'is recruiting', RTS)
-            r = uniform(.7,1.3)
-            RTS.InterestLevel += RTS.MatchRating * r * (RTS.PlayerID.RecruitingSpeed / 100.0)
-
-            if RTS.InterestLevel > 2000 and TS.ScholarshipsToOffer > 0:
-                RTS.OfferMade = True
-
-            if RTS.OfferMade and RTS.InterestLevel > 4000 and TS.ScholarshipsToOffer > 0:
-                T.ScholarshipsToOffer -= 1
-                T.save()
-                RTS.Signed = True
-                RTS.PlayerID.RecruitSigned = True
-
-            RTS.save()
-
-    return None
-
-
-def WeeklyRecruiting(WorldID):
-
-    CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
-    RecruitsPerWeek = 6
-
-    for T in Team.objects.all():
-        #print('Recruiting for ', T)
-        for RTS in sorted([u for u in RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__TeamID = T) if u.PlayerID.RecruitSigned == False], key=lambda t: t.MatchRating * t.PlayerID.OverallRating, reverse=True)[:RecruitsPerWeek]:
-            TS = RTS.TeamSeasonID
-            #print(T, 'is recruiting', RTS)
-            r = uniform(.7,1.3)
-            RTS.InterestLevel += RTS.MatchRating * r * (RTS.PlayerID.RecruitingSpeed / 100.0)
-
-            if RTS.InterestLevel > 2000 and TS.ScholarshipsToOffer > 0:
-                RTS.OfferMade = True
-
-            if RTS.OfferMade and RTS.InterestLevel > 4000 and TS.ScholarshipsToOffer > 0:
-                T.ScholarshipsToOffer -= 1
-                T.save()
-                RTS.Signed = True
-                RTS.PlayerID.RecruitSigned = True
-
-            RTS.save()
-
-    return None
 
 def CreateRecruitTeamSeason(WorldID, T, Recruit):
 
@@ -348,10 +457,6 @@ def PrepareForSigningDay(CurrentSeason,WorldID):
     for TS in TeamSeasonList:
         TeamSeasonDict[TS['TeamSeasonID']] = TS
 
-
-    print('TeamSeasonDict', TeamSeasonDict)
-
-
     AllRecruitsAvailable = RecruitTeamSeason.objects.filter(WorldID_id=WorldID).filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).annotate(
         InterestLevelAndActive = Case(
             When(IsActivelyRecruiting = True, then =F('InterestLevel')),
@@ -411,6 +516,9 @@ def PrepareForSigningDay(CurrentSeason,WorldID):
     TeamSeason.objects.bulk_update(TeamSeasons_ToSave, ['RecruitingClassRank'])
 
 
+def WeeklyRecruiting():
+    print('YOU SHOULDNT BE IN HERE')
+    return None
 
 def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
@@ -436,6 +544,11 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
     CurrentWeekNumber = CurrentWeek.WeekNumber
 
     InterestModifier = CurrentWeek.RecruitingWeekModifier
+
+
+    CoachDict = {}
+    for HC in CoachTeamSeason.objects.filter(CoachPositionID__CoachPositionAbbreviation = 'HC', TeamSeasonID__LeagueSeasonID = CurrentSeason).select_related('TeamSeasonID', 'CoachID'):
+        CoachDict[HC.TeamSeasonID_id] = HC.CoachID
 
 
     PlayersThatNeedMoreTeams = []
@@ -537,6 +650,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
     print('Starting Team recruiting', len(connection.queries))
     for TS in TeamSeasonList:
+        CoachObj = CoachDict[TS.TeamSeasonID]
         RecruitsActivelyRecruiting_QS = RTS_TeamSeasonDict[TS]
         RecruitsActivelyRecruiting = []
         TSPosCounter = {}
@@ -577,9 +691,9 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             while MinutesToTalk > 0 and TotalMinutesToTalk>0:
                 ActionTaken = False
 
-                if RTS.ScoutingFuzz > 0:
+                if RTS.SkillGroupsLeftToScout > 0:
 
-                    RTS = ScoutPlayer(RTS, TSP = TeamSeasonPositionDict[RTS.TeamSeasonID][RTS.PlayerTeamSeasonID.PlayerID.PositionID])
+                    RTS = ScoutPlayer(RTS, TSP = TeamSeasonPositionDict[RTS.TeamSeasonID][RTS.PlayerTeamSeasonID.PlayerID.PositionID], CoachObj = CoachObj)
 
                 elif not RTS.OfferMade:
                     RTS.OfferMade = True
@@ -611,7 +725,19 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
     print('Starting to save RTS', len(connection.queries))
 
-    FieldsToSave = ['VisitWeekID', 'CommitWeekID','Signed','OfferMade','InterestLevel', 'IsActivelyRecruiting','RecruitingTeamRank','Scouted_Overall','ScoutingFuzz','Scouted_Strength_Rating', 'Scouted_Agility_Rating','Scouted_Speed_Rating','Scouted_Acceleration_Rating','Scouted_Stamina_Rating','Scouted_Awareness_Rating','Scouted_Jumping_Rating','Scouted_Injury_Rating','Scouted_ThrowPower_Rating','Scouted_ShortThrowAccuracy_Rating','Scouted_MediumThrowAccuracy_Rating','Scouted_DeepThrowAccuracy_Rating','Scouted_ThrowOnRun_Rating', 'Scouted_ThrowUnderPressure_Rating','Scouted_PlayAction_Rating','Scouted_Elusiveness_Rating','Scouted_BallCarrierVision_Rating', 'Scouted_JukeMove_Rating','Scouted_BreakTackle_Rating','Scouted_Carrying_Rating','Scouted_Catching_Rating','Scouted_CatchInTraffic_Rating','Scouted_RouteRunning_Rating','Scouted_Release_Rating','Scouted_HitPower_Rating','Scouted_Tackle_Rating', 'Scouted_PassRush_Rating','Scouted_BlockShedding_Rating','Scouted_Pursuit_Rating', 'Scouted_PlayRecognition_Rating','Scouted_ManCoverage_Rating','Scouted_ZoneCoverage_Rating','Scouted_Press_Rating','Scouted_PassBlock_Rating','Scouted_RunBlock_Rating','Scouted_ImpactBlock_Rating','Scouted_KickPower_Rating','Scouted_KickAccuracy_Rating','Scouted_KickReturn_Rating']
+    FieldsToSave = ['VisitWeekID', 'CommitWeekID','Signed','OfferMade','InterestLevel', 'IsActivelyRecruiting','RecruitingTeamRank','Scouted_Overall','Scouted_Strength_Rating', 'Scouted_Agility_Rating','Scouted_Speed_Rating','Scouted_Acceleration_Rating','Scouted_Stamina_Rating','Scouted_Awareness_Rating','Scouted_Jumping_Rating','Scouted_Injury_Rating','Scouted_ThrowPower_Rating','Scouted_ShortThrowAccuracy_Rating','Scouted_MediumThrowAccuracy_Rating','Scouted_DeepThrowAccuracy_Rating','Scouted_ThrowOnRun_Rating', 'Scouted_ThrowUnderPressure_Rating','Scouted_PlayAction_Rating','Scouted_Elusiveness_Rating','Scouted_BallCarrierVision_Rating', 'Scouted_JukeMove_Rating','Scouted_BreakTackle_Rating','Scouted_Carrying_Rating','Scouted_Catching_Rating','Scouted_CatchInTraffic_Rating','Scouted_RouteRunning_Rating','Scouted_Release_Rating','Scouted_HitPower_Rating','Scouted_Tackle_Rating', 'Scouted_PassRush_Rating','Scouted_BlockShedding_Rating','Scouted_Pursuit_Rating', 'Scouted_PlayRecognition_Rating','Scouted_ManCoverage_Rating','Scouted_ZoneCoverage_Rating','Scouted_Press_Rating','Scouted_PassBlock_Rating','Scouted_RunBlock_Rating','Scouted_ImpactBlock_Rating','Scouted_KickPower_Rating','Scouted_KickAccuracy_Rating','Scouted_KickReturn_Rating','SkillGroupsLeftToScout'
+    , 'Scouting_Intangibles_ScoutingPercent', 'Scouting_Intangibles_Precision', 'Scouting_Intangibles_Accuracy'
+    , 'Scouting_Athleticism_ScoutingPercent', 'Scouting_Athleticism_Precision', 'Scouting_Athleticism_Accuracy'
+    , 'Scouting_ThrowingArm_ScoutingPercent', 'Scouting_ThrowingArm_Precision', 'Scouting_ThrowingArm_Accuracy'
+    , 'Scouting_PassingIntangibles_ScoutingPercent', 'Scouting_PassingIntangibles_Precision', 'Scouting_PassingIntangibles_Accuracy'
+    , 'Scouting_Rushing_ScoutingPercent', 'Scouting_Rushing_Precision', 'Scouting_Rushing_Accuracy'
+    , 'Scouting_Receiving_ScoutingPercent', 'Scouting_Receiving_Precision', 'Scouting_Receiving_Accuracy'
+    , 'Scouting_Blocking_ScoutingPercent', 'Scouting_Blocking_Precision', 'Scouting_Blocking_Accuracy'
+    , 'Scouting_DLine_ScoutingPercent', 'Scouting_DLine_Precision', 'Scouting_DLine_Accuracy'
+    , 'Scouting_GeneralDefense_ScoutingPercent', 'Scouting_GeneralDefense_Precision', 'Scouting_GeneralDefense_Accuracy'
+    , 'Scouting_Kicking_ScoutingPercent', 'Scouting_Kicking_Precision', 'Scouting_Kicking_Accuracy'
+    , 'Scouting_Coverage_ScoutingPercent', 'Scouting_Coverage_Precision', 'Scouting_Coverage_Accuracy']
+
     RecruitTeamSeason.objects.bulk_update(RTSToSave, FieldsToSave)
     RecruitTeamSeasonInterest.objects.bulk_update(RTS_InterestToSave, ['PitchRecruitInterestRank_IsKnown'])
     print('Saved RTS', len(connection.queries))
@@ -657,14 +783,13 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
         TSPToSave = []
         PlayersToSave = []
         for RTS in [u for u in PlayersReadyToSign if u.TeamRank == 1 and u.OfferMade]:
-            print('\t', RTS)
             RTS.Signed = True
             RTS.CommitWeekID = CurrentWeek
             RTS.PlayerTeamSeasonID.PlayerID.RecruitSigned = True
 
             TSDict[RTS.TeamSeasonID.TeamSeasonID].ScholarshipsAvailable -= 1
 
-            print('Scholarships available', TSDict[RTS.TeamSeasonID.TeamSeasonID].ScholarshipsAvailable)
+            #print('Scholarships available', TSDict[RTS.TeamSeasonID.TeamSeasonID].ScholarshipsAvailable)
             if TSDict[RTS.TeamSeasonID.TeamSeasonID].ScholarshipsAvailable >= 0:
                 RTSToSave.append(RTS)
                 PlayersToSave.append(RTS.PlayerTeamSeasonID.PlayerID)
@@ -686,7 +811,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             PlayersSigned = Coalesce(Subquery(RecruitTeamSeason.objects.filter(TeamSeasonID = OuterRef('TeamSeasonID'), Signed = True).values('TeamSeasonID').annotate(PlayerCount = Count('RecruitTeamSeasonID')).values('PlayerCount')[:1]), 0),
         )
 
-        print('ScholarshipsRemainingList', ScholarshipsRemainingList.query)
+        #print('ScholarshipsRemainingList', ScholarshipsRemainingList.query)
 
         for TS in ScholarshipsRemainingList:
             PlayersSigned = TS.PlayersSigned
@@ -694,7 +819,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             TotalPlayers = TS.TotalPlayerCount
             SeniorCount = TS.SeniorCount
             TS.ScholarshipsToOffer = PlayersPerTeam - TotalPlayers +SeniorCount - PlayersSigned
-            print('TS',TS, 'TS.ScholarshipsToOffer', TS.ScholarshipsToOffer, 'PlayersSigned', PlayersSigned, 'PlayersPerTeam',PlayersPerTeam, 'TotalPlayers',TotalPlayers, 'SeniorCount',SeniorCount)
+            #print('TS',TS, 'TS.ScholarshipsToOffer', TS.ScholarshipsToOffer, 'PlayersSigned', PlayersSigned, 'PlayersPerTeam',PlayersPerTeam, 'TotalPlayers',TotalPlayers, 'SeniorCount',SeniorCount)
 
         TeamSeason.objects.bulk_update(ScholarshipsRemainingList, ['ScholarshipsToOffer'])
 

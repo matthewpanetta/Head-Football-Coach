@@ -292,3 +292,19 @@ print()
 
 
 # print()
+
+
+PossibleRange = range(0,10)
+
+ResultDict = {
+    'Tie': 0,
+    'Joint': 0,
+    'Split': 0
+}
+
+for Sample in range(0,1000):
+    JointStart = 0
+
+
+
+    SplitStart = 0

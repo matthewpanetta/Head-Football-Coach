@@ -2838,6 +2838,8 @@ class RecruitTeamSeason(models.Model):
     RecruitingTeamRank = models.IntegerField(default = 1)
     UserRecruitingPointsLeftThisWeek = models.IntegerField(default = 0)
 
+    SkillGroupsLeftToScout = models.IntegerField(default = 0)
+
     Scouted_Overall = models.PositiveSmallIntegerField(default=0)
     Scouted_Overall_Original = models.PositiveSmallIntegerField(default=0)
 

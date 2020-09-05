@@ -29,12 +29,14 @@ def HumanizeInteger(Val):
     return str(Val) + "th";
 
 
-def NormalVariance(Modifier, Segments = 5, Floor = 0, Spread = 1):
+def NormalVariance(Modifier, Segments = 5, Floor = None, Spread = 1):
     Mean = 1
     Sigma = .1
     SegmentsPerSide = int(Segments / 2)
     MinNumber = -1 * SegmentsPerSide
     MaxNumber = SegmentsPerSide
+    if Floor is None:
+        Floor = MinNumber
     FloorAdd = Floor - MinNumber
     g = MinNumber - 1
     LoopCount = 0
