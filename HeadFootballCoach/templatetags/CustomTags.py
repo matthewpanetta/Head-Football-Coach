@@ -1,11 +1,43 @@
 from django import template
-
+from colour import Color
 register = template.Library()
 
 @register.filter
 def modulo(num, val):
     return num % val
 
+
+@register.filter
+def ColorScale(val, args):
+
+    if args is None:
+        return False
+    arg_list = [arg.strip() for arg in args.split(',')]
+
+    MaxVal = int(arg_list[0]) + 2
+
+    BaseColor_Hex = arg_list[1]
+    MaxColor_Hex = arg_list[2]
+
+    if val == 0:
+        return f'#{BaseColor_Hex}'
+
+    BaseColor = Color('#'+BaseColor_Hex)
+    MaxColor = Color('#'+MaxColor_Hex)
+
+    ColorRange = list(MaxColor.range_to(BaseColor, MaxVal))
+    ColorRange.reverse()
+    NewColor = ColorRange[val + 1]
+    NewColor_Hex = NewColor.hex
+
+
+    if val == MaxVal - 2:
+        count = 0
+        for u in ColorRange:
+            print(count, u)
+            count +=1
+
+    return NewColor_Hex
 
 @register.filter
 def PeriodMap(num):

@@ -1,4 +1,4 @@
-from .models import TeamInfoTopic, TeamSeasonInfoRating, PlayerRecruitingInterest, RecruitTeamSeasonInterest, Audit,TeamGame,Bowl,PlayerTeamSeasonDepthChart,TeamSeasonStrategy, Phase, TeamSeasonPosition, System_PlayerArchetypeRatingModifier, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill, CoachTeamSeason
+from .models import TeamInfoTopic, TeamSeasonInfoRating, PlayerRecruitingInterest, RecruitTeamSeasonInterest, Audit,TeamGame,Bowl,PlayerTeamSeasonDepthChart,TeamSeasonStrategy, Phase, TeamSeasonPosition, System_PlayerArchetypeRatingModifier, Position,Class, CoachPosition, NameList, Week, TeamSeasonWeekRank, TeamRivalry, League, PlayoffRegion, System_PlayoffRound, PlayoffRound, TeamSeasonDateRank, World, Headline, Playoff, CoachTeamSeason, TeamSeason, RecruitTeamSeason, Team, Player, Coach, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill, CoachTeamSeason, TeamSeasonState, State
 import random
 from datetime import timedelta, date
 import pandas as pd
@@ -13,7 +13,7 @@ from django.db.models.functions.window import Rank, RowNumber, Ntile
 from .scripts.rankings import CalculateRankings, CalculateConferenceRankings, SelectBroadcast
 from .scripts.DepthChart import CreateDepthChart
 from .scripts.SeasonAwards import NationalAwards, SelectPreseasonAllAmericans
-from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference
+from .scripts.Recruiting import FindNewTeamsForRecruit, RandomRecruitPreference, ScoutPlayer_Initial
 from .utilities import NormalVariance, DistanceBetweenCities,CalculateGameScore,WeightedAverage, MergeDicts, DistanceBetweenCities_Dict, WeightedProbabilityChoice, NormalBounds, NormalTrunc, NormalVariance, Max_Int
 from math import sin, cos, sqrt, atan2, radians, log
 import time
@@ -34,7 +34,7 @@ def createCalendar(WorldID=None, LeagueSeasonID=None, SetFirstWeekCurrent = Fals
     AnnualScheduleOfEvents.append({'Phase': 'Preseason', 'WeekName': 'Preseason', 'LastWeekInPhase': True})
 
     for WeekCount in range(1, WeeksInRegularSeason+1):
-        WeekDict = {'Phase': 'Regular Season',  'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': round(1.0 + (WeekCount / 60.0), 2), 'RecruitingAllowed': True, 'UserRecruitingPointsLeft': 90}
+        WeekDict = {'Phase': 'Regular Season',  'WeekName': 'Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': round(1.0 + (WeekCount / 60.0), 2), 'RecruitingAllowed': True, 'UserRecruitingPointsLeftThisWeek': 90}
         if WeekCount == WeeksInRegularSeason:
             WeekDict['LastWeekInPhase'] = True
         AnnualScheduleOfEvents.append(WeekDict)
@@ -54,7 +54,7 @@ def createCalendar(WorldID=None, LeagueSeasonID=None, SetFirstWeekCurrent = Fals
 
 
     for WeekCount in range(1, OffseasonRecruitingWeeks+1):
-        WeekDict = {'Phase': 'Offseason Recruiting',  'WeekName': 'Offseason Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': 1.0 + (WeekCount / 10.0), 'RecruitingAllowed': True, 'UserRecruitingPointsLeft': 90}
+        WeekDict = {'Phase': 'Offseason Recruiting',  'WeekName': 'Offseason Recruiting Week ' + str(WeekCount), 'LastWeekInPhase': False, 'RecruitingWeekModifier': 1.0 + (WeekCount / 10.0), 'RecruitingAllowed': True, 'UserRecruitingPointsLeftThisWeek': 90}
         AnnualScheduleOfEvents.append(WeekDict)
 
     AnnualScheduleOfEvents.append({'Phase': 'Offseason Recruiting',  'WeekName': 'National Signing Day', 'LastWeekInPhase': True})
@@ -106,14 +106,12 @@ def TeamRedshirts(TS, WorldID, SaveInFunc = False):
     PTRToSave = []
     Num = 4
     Pow = .25
-    print("HeadCount['CoachID__RedshirtTendency']", HeadCount['CoachID__RedshirtTendency'])
     HeadCount['CoachID__RedshirtTendency'] += 4
     for PTR in PlayersToRedshirt:
         if random.uniform(0,1) < ((Max_Int(PTR.DepthChartPositionMin + HeadCount['CoachID__RedshirtTendency'] - Num,0) / 10.0) ** Pow):
             PTR.RedshirtedThisSeason = True
             PTRToSave.append(PTR)
 
-    print('PTRToSave', PTRToSave)
     if SaveInFunc:
         PlayerTeamSeason.objects.bulk_update(PTRToSave, ['RedshirtedThisSeason'], batch_size=500)
         return None
@@ -228,6 +226,26 @@ def CreateTeamPositions(LS, WorldID):
 
 
 
+def CreateTeamStates(LS, WorldID):
+
+    TSSToSave = []
+    States =State.objects.all()
+
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).order_by('TeamID__TeamName'):
+
+        for StateObj in States:
+            TSS = {}
+            TSS['WorldID'] = WorldID
+            TSS['TeamSeasonID'] = TeamSeasonID
+            TSS['StateID'] = StateObj
+
+
+            TSSToSave.append(TeamSeasonState(**TSS))
+
+    TeamSeasonState.objects.bulk_create(TSSToSave, ignore_conflicts = True, batch_size=500)
+
+
+
 def UpdateTeamPositions(LS, WorldID, TeamSeasonID = None):
 
     Filter = {}
@@ -271,6 +289,114 @@ def UpdateTeamPositions(LS, WorldID, TeamSeasonID = None):
         TSPsToUpdate.append(TSP)
 
     TeamSeasonPosition.objects.bulk_update(TSPsToUpdate, ['CurrentPlayerCount', 'NeededPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount','JuniorPlayerCount', 'SeniorPlayerCount', 'Year1PositionOverall', 'Year2PositionOverall', 'Year3PositionOverall'], batch_size=500)
+
+
+    return None
+
+
+def UpdateTeamStates(LS, WorldID, TeamSeasonID = None):
+
+    ConnectedStates = {
+        'Alabama': ['Mississippi', 'Florida', 'Georgia', 'Tennessee'],
+        'Alaska': [],
+        'Arizona': ['California', 'New Mexico', 'Nevada', 'Utah', 'Colorado'],
+        'Arkansas': ['Texas', 'Louisiana', 'Tennessee', 'Oklahoma'],
+        'California': ['Arizona', 'Nevada', 'Oregon'],
+        'Colorado': ['New Mexico', 'Utah', 'Wyoming', 'Nebraska', 'Oklahoma', 'Kansas', 'Arizona'],
+        'Connecticut': ['New York', 'Rhode Island', 'Massachusetts'],
+        'Delaware': ['New Jerseys', 'Pennsylvania', 'Maryland'],
+        'District of Columbia': ['Virginia', "Maryland"],
+        'Florida': ['Alabama', 'Georgia'],
+        'Georgia': ['Florida', 'Alabama', 'South Carolina', 'Tennessee'],
+        'Hawaii': [],
+        'Idaho': ['Montana', 'Wyoming', 'Colorado', 'Oregon', 'Washington', 'Utah'],
+        'Illinois': ['Wisconsin', 'Indiana', 'Michigan', 'Kentucky', 'Missouri', 'Iowa'],
+        'Indiana': ['Illinois', 'Ohio', 'Michigan', 'Kentucky'],
+        'Iowa': ['Wisconsin', 'Minnesota', 'Illinois', 'Missouri', 'Nebraska', 'South Dakota'],
+        'Kansas': ['Missouri', 'Nebraska', 'Colorado', 'Oklahoma'],
+        'Kentucky': ['Missouri', 'Illinois', 'Indiana', 'Ohio', 'West Virginia', 'Virginia', 'Tennessee'],
+        'Louisiana': ['Texas', 'Arkansas', 'Mississippi'],
+        'Maine': ['New Hampshire'],
+        'Maryland': ['West Virginia', 'Virginia', 'Pennsylvania', 'Delaware'],
+        'Massachusetts': ['Vermont', 'New Hampshire', 'New York', 'Rhode Island', 'Connecticut'],
+        'Michigan': ['Ohio', 'Indiana', 'Wisconsin', 'Illinois'],
+        'Minnesota': ['North Dakota', 'South Dakota', 'Iowa', 'Wisconsin', 'Michigan'],
+        'Mississippi': ['Louisiana', 'Arkansas', 'Alabama', 'Tennessee'],
+        'Missouri': ['Arkansas', 'Tennessee', 'Kentucky', 'Illinois', 'Iowa', 'Kansas', 'Nebraska', 'Oklahoma'],
+        'Montana': ['North Dakota', 'South Dakota', 'Wyoming', 'Idaho'],
+        'Nebraska': ['Missouri', 'Iowa', 'South Dakota', 'Wyoming', 'Colorado', 'Kansas'],
+        'Nevada': ['California', 'Arizona', 'Utah', 'Idaho', 'Oregon'],
+        'New Hampshire': ['Vermont', 'Maine', 'Massachusetts'],
+        'New Jersey': ['Delaware', 'Pennsylvania', 'New York'],
+        'New Mexico': ['Arizona', 'Texas', 'Oklahoma', 'Colorado', 'Nevada', 'Utah'],
+        'New York': ['Vermont', 'Massachusetts', 'Connecticut', 'New Jersey', 'Pennsylvania'],
+        'North Carolina': ['Virginia', 'South Carolina', 'Georgia', 'Tennessee'],
+        'North Dakota': ['Minnesota', 'South Dakota', 'Montana'],
+        'Ohio': ['Pennsylvania', 'West Virginia', 'Kentucky', 'Indiana', 'Michigan'],
+        'Oklahoma': ['Missouri', 'Arkansas', 'Texas', 'New Mexico', 'Colorado', 'Kansas'],
+        'Ontario': [],
+        'Oregon': ['California', 'Nevada', 'Idaho', 'Washington'],
+        'Pennsylvania': ['New York', 'New Jersey', 'Maryland', 'West Virginia', 'Ohio'],
+        'Rhode Island': ['Connecticut', 'Massachusetts'],
+        'South Carolina': ['Georgia', 'North Carolina'],
+        'South Dakota': ['Minnesota', 'Iowa', 'Nebraska', 'Wyoming', 'Montana', 'North Dakota'],
+        'Tennessee': ['Virginia', 'North Carolina', 'Georgia', 'Alabama', 'Mississippi', 'Arkansas', 'Missouri', 'Kentucky'],
+        'Texas': ['Louisiana', 'Arkansas', 'Oklahoma', 'New Mexico'],
+        'Utah': ['Idaho', 'Wyoming', 'Colorado', 'New Mexico', 'Arizona', 'Nevada'],
+        'Vermont': ['Massachusetts', 'New Hampshire', 'New York'],
+        'Virginia': ['Maryland', 'North Carolina', 'West Virginia', 'Kentucky', 'Tennessee'],
+        'Washington': ['Idaho', 'Oregon'],
+        'West Virginia': ['Ohio', 'Kentucky', 'Virginia', 'Maryland', 'Pennsylvania'],
+        'Wisconsin': ['Minnesota', 'Iowa', 'Illinois', 'Michigan'],
+        'Wyoming': ['Idaho', 'Utah', 'Colorado', 'Nebraska', 'South Dakota', 'Montana']
+    }
+
+    Filter = {}
+    if TeamSeasonID is not None:
+        Filter['TeamSeasonID'] = TeamSeasonID
+
+
+    TSSs = TeamSeasonState.objects.filter(WorldID = WorldID).filter(**Filter).filter(TeamSeasonID__TeamID__isnull = False).filter(TeamSeasonID__LeagueSeasonID = LS).annotate(
+        CurrentPlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+        FreshmanPlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).filter(ClassID__ClassAbbreviation = 'FR').values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+        SophomorePlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).filter(ClassID__ClassAbbreviation = 'SO').values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+        JuniorPlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).filter(ClassID__ClassAbbreviation = 'JR').values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+        SeniorPlayerCount_calc = Coalesce(Subquery(PlayerTeamSeason.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PlayerID__CityID__StateID = OuterRef('StateID')).filter(ClassID__ClassAbbreviation = 'SR').values('TeamSeasonID').annotate(
+                                                    Count=Count('PlayerTeamSeasonID')).values('Count')  ),0),
+
+        HomeGamesInState_calc = Coalesce(Subquery(TeamGame.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(TeamSeasonID__TeamID__CityID__StateID = OuterRef('StateID')).filter(IsHomeTeam = True).values('TeamSeasonID').annotate(
+                                                    Count=Count('TeamGameID')).values('Count')  ),0),
+        AwayGamesInState_calc = Coalesce(Subquery(TeamGame.objects.filter(WorldID = OuterRef('WorldID')).filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(OpposingTeamGameID__TeamSeasonID__TeamID__CityID__StateID = OuterRef('StateID')).filter(IsHomeTeam = False).values('TeamSeasonID').annotate(
+                                                    Count=Count('TeamGameID')).values('Count')  ),0),
+        GamesInState_calc = F('HomeGamesInState_calc') + F('AwayGamesInState_calc')
+
+    ).select_related('TeamSeasonID__TeamID__CityID__StateID', 'StateID')
+
+    TSSsToUpdate = []
+    for TSS in TSSs:
+        TSS.CurrentPlayerCount = TSS.CurrentPlayerCount_calc
+        TSS.FreshmanPlayerCount = TSS.FreshmanPlayerCount_calc
+        TSS.SophomorePlayerCount = TSS.SophomorePlayerCount_calc
+        TSS.JuniorPlayerCount = TSS.JuniorPlayerCount_calc
+        TSS.SeniorPlayerCount = TSS.SeniorPlayerCount_calc
+        TSS.GamesInState = TSS.GamesInState_calc
+
+        TSS.IsPipelineState = True if TSS.CurrentPlayerCount_calc >= 8 else False
+        TSS.IsConnectedState = True if TSS.CurrentPlayerCount_calc >= 3 else False
+
+        if TSS.TeamSeasonID.TeamID.CityID.StateID == TSS.StateID:
+            TSS.IsPipelineState = True
+
+        if TSS.TeamSeasonID.TeamID.CityID.StateID.StateName in ConnectedStates[TSS.StateID.StateName]:
+            TSS.IsConnectedState = True
+
+        TSSsToUpdate.append(TSS)
+
+    TeamSeasonState.objects.bulk_update(TSSsToUpdate, ['IsPipelineState','IsConnectedState','CurrentPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount','JuniorPlayerCount', 'SeniorPlayerCount', 'GamesInState'], batch_size=500)
 
 
     return None
@@ -1009,23 +1135,28 @@ def GenerateCoach(WorldID):
 
     C.CoachAge = random.randint(35,70)
 
-    C.ReputationRating       =  NormalBounds(50, 10, 30,99)
-    C.CharismaRating         =  NormalBounds(50, 10, 30,99)
-    C.ScoutingRating         =  NormalBounds(50, 10, 30,99)
+    SkillSegments = 13
+    BaseCoachSkill = NormalVariance(1, Segments = SkillSegments, Floor = 1, Spread = 1.0)
+    BaseCoachSkillModifier = 1.0 + ((BaseCoachSkill - (SkillSegments/2)) / 10.0)
+    print('BaseCoachSkillModifier', 'BaseCoachSkill', BaseCoachSkill, BaseCoachSkillModifier)
+
+    C.ReputationRating       =  NormalVariance(BaseCoachSkillModifier, Segments = SkillSegments, Floor = 1, Spread = 2)
+    C.CharismaRating         =  NormalVariance(BaseCoachSkillModifier, Segments = SkillSegments, Floor = 1, Spread = 2)
+    C.ScoutingRating         =  NormalVariance(BaseCoachSkillModifier, Segments = SkillSegments, Floor = 1, Spread = 2)
+    C.ScoutingSpeedRating         =  NormalVariance(BaseCoachSkillModifier, Segments = SkillSegments, Floor = 1, Spread = 2)
 
 
-    C.GameplanRating         =  NormalBounds(50, 10, 30,89)
-    C.InGameAdjustmentRating =  NormalBounds(C.GameplanRating, 3, 30,99)
+    C.GameplanRating         =  NormalVariance(BaseCoachSkillModifier, Segments = SkillSegments, Floor = 1, Spread = 2)
+    C.InGameAdjustmentRating =  NormalVariance(C.GameplanRating, Segments = SkillSegments, Floor = 1, Spread = 2)
 
-    TeachingBaseline = int(NormalBounds(50, 10, 30,89))
-    C.TeachSkills   =  random.randint(TeachingBaseline-10, TeachingBaseline+10)
+    C.TeachSkills   =  NormalVariance(1, Segments = SkillSegments, Floor = 1, Spread = 2)
 
-    Patience = NormalVariance(1, 7)
+    Patience = NormalVariance(1, Segments = 7)
     C.PatienceTendency = Patience
     PatienceModifier = 1.0 + (Patience / 10.0)
-    C.VeteranTendency  = NormalVariance(PatienceModifier, 7)
-    C.RedshirtTendency  = NormalVariance(PatienceModifier, 7)
-    C.RecruitingConcentration  = NormalVariance(PatienceModifier, 7)
+    C.VeteranTendency  = NormalVariance(PatienceModifier, Segments = 7)
+    C.RedshirtTendency  = NormalVariance(PatienceModifier, Segments = 7)
+    C.RecruitingConcentration  = NormalVariance(PatienceModifier, Segments = 7)
 
     return C
 
@@ -1411,9 +1542,9 @@ def CreateRecruitingClass(LS, WorldID):
     TeamSeasonList = TeamSeason.objects.filter(TeamID__isnull = False).filter(WorldID = CurrentWorld).filter(LeagueSeasonID = LS).filter(ScholarshipsToOffer__gte = 0).filter(coachteamseason__CoachPositionID__CoachPositionAbbreviation = 'HC').prefetch_related('teamseasonposition_set').prefetch_related('teamseasoninforating_set__TeamInfoTopicID').select_related('TeamID__CityID').annotate(
         coachteamseason__CoachID__ScoutingRating = F('coachteamseason__CoachID__ScoutingRating'),
         CoachScoutVariance = Case(
-            When(coachteamseason__CoachID__ScoutingRating__gte = 90, then=1),
-            When(coachteamseason__CoachID__ScoutingRating__gte = 70, coachteamseason__CoachID__ScoutingRating__lt = 90, then=2),
-            When(coachteamseason__CoachID__ScoutingRating__gte = 45, coachteamseason__CoachID__ScoutingRating__lt = 70, then=3),
+            When(coachteamseason__CoachID__ScoutingRating__gte = 10, then=1),
+            When(coachteamseason__CoachID__ScoutingRating__gte = 6, coachteamseason__CoachID__ScoutingRating__lt = 10, then=2),
+            When(coachteamseason__CoachID__ScoutingRating__gte = 4, coachteamseason__CoachID__ScoutingRating__lt = 6, then=3),
             default=Value(4),
             output_field = IntegerField()
         ),
@@ -1425,6 +1556,8 @@ def CreateRecruitingClass(LS, WorldID):
         CoachStyleValue = Value(50, output_field=IntegerField()),
         TSID = F('TeamSeasonID')
     ).order_by('-TeamPrestige')
+
+
 
     Full_TSPList = [{'TS': TSP.TeamSeasonID, 'PositionAbbreviation': TSP.PositionID.PositionAbbreviation, 'TSP': TSP}  for TSP in TeamSeasonPosition.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PositionID').select_related('TeamSeasonID')]
 
@@ -1440,14 +1573,20 @@ def CreateRecruitingClass(LS, WorldID):
             if TSP['TS'] == T:
                 TSPDict[TSP['PositionAbbreviation']] = TSP['TSP']
 
-        TSDict[T.TSID] = {'TSObject': T, 'TeamCity': TeamCity, 'TeamSeasonInfoRatingDict': TeamSeasonInfoRatingDict, 'TSPDict': TSPDict}
+        TSDict[T.TSID] = {'TSObject': T, 'TeamCity': TeamCity, 'TeamSeasonInfoRatingDict': TeamSeasonInfoRatingDict, 'TSPDict': TSPDict, 'TSSDict': {}}
+
+    for HC in CoachTeamSeason.objects.filter(CoachPositionID__CoachPositionAbbreviation = 'HC', TeamSeasonID__LeagueSeasonID = LS).select_related('TeamSeasonID', 'CoachID'):
+        TSDict[HC.TeamSeasonID_id]['CoachObj'] = HC.CoachID
+
+    for TSS in TeamSeasonState.objects.filter(WorldID = CurrentWorld, TeamSeasonID__LeagueSeasonID = LS):
+        TSDict[TSS.TeamSeasonID_id]['TSSDict'][TSS.StateID] = TSS
 
     print('TS Dict created', len(connection.queries))
 
 
     RecruitTeamDict = {'TeamList': []}
 
-    RecruitPool = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).select_related('PlayerID').select_related('PlayerID__CityID').select_related('playerteamseasonskill').annotate(
+    RecruitPool = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).select_related('PlayerID').select_related('PlayerID__CityID__StateID').select_related('playerteamseasonskill').annotate(
         RecruitingOverallAdjustment = F('PlayerID__PositionID__RecruitingOverallAdjustment'),
         Position = F('PlayerID__PositionID__PositionAbbreviation'),
         PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName'),
@@ -1457,6 +1596,7 @@ def CreateRecruitingClass(LS, WorldID):
 
     RecruitPool = sorted(RecruitPool, key = lambda k: NormalBounds(k.OverallRating,2,10,99) + k.RecruitingOverallAdjustment, reverse = True)
     NumberOfRecruits = len(RecruitPool)
+
 
     RecruitCount = 0
     RTSToSave = []
@@ -1510,24 +1650,15 @@ def CreateRecruitingClass(LS, WorldID):
 
         for TS in TeamSeasonList:
 
+            print('TS.TeamSeasonID', TS, TS.TeamSeasonID)
             TSP = TSDict[TS.TeamSeasonID]['TSPDict'][Pos]
+            TSS = TSDict[TS.TeamSeasonID]['TSSDict'][Recruit.PlayerID.CityID.StateID]
 
-            RTS = RecruitTeamSeason(WorldID = WorldID, PlayerTeamSeasonID_id = Recruit.PlayerTeamSeasonID, TeamSeasonID_id = TS.TeamSeasonID, ScoutingFuzz = TS.CoachScoutVariance, IsActivelyRecruiting = False)
+            CoachObj = TSDict[TS.TeamSeasonID]['CoachObj']
 
-            OverallSum = 0
-            WeightSum = 0
-            for RatingField in RTS_Rating_Fields:
-                RawRatingField = RatingField.replace('Scouted_', '')
-                WeightRatingField = RawRatingField +'_Weight'
-                BaseVal = getattr(Recruit.playerteamseasonskill, RawRatingField)
-                NewVal = NormalTrunc(BaseVal, TS.CoachScoutVariance, 0,99)
-                setattr(RTS, RatingField, NewVal)
+            RTS = RecruitTeamSeason(WorldID = WorldID, PlayerTeamSeasonID_id = Recruit.PlayerTeamSeasonID, TeamSeasonID_id = TS.TeamSeasonID, IsActivelyRecruiting = False, TeamSeasonStateID = TSS)
 
-                OverallSum+= float(NewVal) * float(getattr(TSP, WeightRatingField))
-                WeightSum += float(getattr(TSP, WeightRatingField))
-
-            OverallSum = int(OverallSum * 1.0 / WeightSum)
-            RTS.Scouted_Overall = OverallSum
+            RTS = ScoutPlayer_Initial(RTS = RTS, CoachObj = CoachObj, TSP = TSP)
 
             RTSToSave.append(RTS)
 
@@ -1536,7 +1667,7 @@ def CreateRecruitingClass(LS, WorldID):
     RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False, batch_size=500)
     PlayerRecruitingInterest.objects.bulk_create(PlayerRecruitingInterestToSave, ignore_conflicts=False, batch_size=500)
 
-    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID', 'TeamSeasonID', 'TeamSeasonID__TeamID__CityID__StateID__RegionID').annotate(
+    RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID', 'TeamSeasonID', 'TeamSeasonID__TeamID__CityID__StateID__RegionID', 'TeamSeasonStateID').annotate(
         RecruitingTeamRank_new = Window(
             expression=RowNumber(),
             partition_by=F("PlayerTeamSeasonID"),
@@ -1607,6 +1738,11 @@ def CreateRecruitingClass(LS, WorldID):
             if PlayerRecruitingInfoRatingDict[TITDict[TIT]['AttributeName']]['PitchRecruitInterestRank'] <= 3:
                  InterestIncrease = int(int(((1 / PlayerRecruitingInfoRatingDict[TITDict[TIT]['AttributeName']]['PitchRecruitInterestRank']) ** (.4)) * TeamRating) / 5.0) * 5
                  R.InterestLevel += InterestIncrease
+
+        if R.TeamSeasonStateID.IsPipelineState:
+            R.InterestLevel += 250
+        elif R.TeamSeasonStateID.IsConnectedState:
+            R.InterestLevel += 100
 
     RecruitTeamSeasonInterest.objects.bulk_create(RecruitTeamSeasonInterest_ToSave, batch_size=500)
     RecruitTeamSeason.objects.bulk_update(RTS,['RecruitingTeamRank', 'InterestLevel'], batch_size=500)
@@ -2121,6 +2257,7 @@ def InitializeLeaguePlayers(WorldID, LS, IsFirstLeagueSeason ):
 
         CreateCoaches(LS, WorldID)
         CreateTeamPositions(LS, WorldID)
+        CreateTeamStates(LS, WorldID)
         if DoAudit:
             start = time.time()
             reset_queries()
@@ -2131,6 +2268,7 @@ def InitializeLeaguePlayers(WorldID, LS, IsFirstLeagueSeason ):
             A = Audit.objects.create(TimeElapsed = TimeElapsed,ScalesWithTeams=True, NumberTeam=AuditTeamCount, AuditVersion = 3, AuditDescription='Create Players', QueryCount = len(connection.queries))
 
         UpdateTeamPositions(LS, WorldID)
+        UpdateTeamStates(LS, WorldID)
 
     if DoAudit:
         start = time.time()
@@ -2166,6 +2304,8 @@ def InitializeLeaguePlayers(WorldID, LS, IsFirstLeagueSeason ):
     print( 'CutPlayers',len(connection.queries))
     UpdateTeamPositions(LS, WorldID)
     print( 'UpdateTeamPositions',len(connection.queries))
+    UpdateTeamStates(LS, WorldID)
+    print( 'UpdateTeamStates',len(connection.queries))
     PopulateTeamDepthCharts(LS, WorldID, FullDepthChart=False)
     print( 'PopulateTeamDepthCharts',len(connection.queries))
     ChooseTeamCaptains(LS, WorldID)

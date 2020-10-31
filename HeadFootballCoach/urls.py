@@ -91,6 +91,9 @@ urlpatterns = [
     path('World/<int:WorldID>/Player/<int:PlayerID>/StartRecruitingCall/', views.POST_StartRecruitingCall, name='StartRecruitingCall'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/RecruitingCallPitch/<str:Pitch>', views.POST_RecruitingCallPitch, name='RecruitingCallPitch'),
     path('World/<int:WorldID>/Player/<int:PlayerID>/DiscoverRecruitingPitch/<str:Pitch>', views.POST_DiscoverRecruitingPitch, name='DiscoverRecruitingPitch'),
+    path('World/<int:WorldID>/Player/<int:PlayerID>/RecruitingMakePromise/<str:Promise>/<int:TimespanYears>/<str:InclusiveOrExclusive>', views.POST_RecruitingMakePromise, name='RecruitingMakePromise'),
+
+    path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerRecruitingScholarship/<str:OfferOrRescind>', views.POST_PlayerRecruitingScholarship, name='PlayerRecruitingScholarship'),
 
 
     path('World/<int:WorldID>/Team/<int:TeamID>/AutoTeamCuts', views.POST_AutoTeamCuts, name='AutoTeamCuts'),

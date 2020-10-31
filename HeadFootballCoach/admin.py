@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DivisionSeason, TeamSeasonInfoRating, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
+from .models import DivisionSeason, RecruitingPromise, RecruitTeamSeasonPromise, TeamSeasonInfoRating, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, TeamSeasonState,State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
 
 
 class TeamSeasonStrategyAdmin(admin.ModelAdmin):
@@ -18,7 +18,7 @@ class RegionAdmin(admin.ModelAdmin):
 
 
 class StateAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in State._meta.get_fields() if field.name not in ('playoff', 'city', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in State._meta.get_fields() if field.name not in ('playoff', 'city','teamseasonstate', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class CityAdmin(admin.ModelAdmin):
     list_display = [field.name for field in City._meta.get_fields() if field.name not in ('playoff','player','stadium', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -58,7 +58,7 @@ class PlayerTeamSeasonSkillAdmin(admin.ModelAdmin):
     list_filter = ['PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID','PlayerTeamSeasonID__TeamSeasonID__TeamID', 'PlayerTeamSeasonID__PlayerID__PositionID']
 
 class RecruitTeamSeasonAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('VisitWeekID','VisitWeekID_id', 'recruitteamseasoninterest','visitweekid', 'visitweek_recruitteamseason','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in RecruitTeamSeason._meta.get_fields() if field.name not in ('VisitWeekID','VisitWeekID_id', 'recruitteamseasoninterest', 'recruitteamseasonpromise','visitweekid', 'visitweek_recruitteamseason','playoff', 'playerteamseason', 'conference', 'leagueseason', 'team', 'playerseasonskill', 'recruitteamseason')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
     list_filter = ['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation', 'PlayerTeamSeasonID__PlayerID__RecruitingStars', 'Signed', 'TeamSeasonID__TeamID__TeamName',  'OfferMade', 'PlayerTeamSeasonID__PlayerID__CityID__StateID__StateAbbreviation']
 
 
@@ -174,7 +174,19 @@ class PlayerRecruitingInterestAdmin(admin.ModelAdmin):
 
 class RecruitTeamSeasonInterestAdmin(admin.ModelAdmin):
     list_display = ['RecruitTeamSeasonInterestID', 'RecruitTeamSeasonID', 'PlayerRecruitingInterestID', 'TeamRating', 'PitchRecruitInterestRank_IsKnown']
+    list_filter = ['PlayerRecruitingInterestID__TeamInfoTopicID__AttributeName', 'PlayerRecruitingInterestID__TeamInfoTopicID__RecruitMatchIsComputed']
 
+
+class RecruitTeamSeasonPromiseAdmin(admin.ModelAdmin):
+    list_display = ['WorldID', 'RecruitTeamSeasonPromiseID', 'RecruitTeamSeasonID', 'RecruitingPromiseID', 'PromiseMade', 'PromiseKept']
+
+
+class RecruitingPromiseAdmin(admin.ModelAdmin):
+    list_display = ['RecruitingPromiseID', 'TeamInfoTopicID', 'PromiseText', 'TextDescription', 'PitchValue', 'AllowInclusiveOption', 'ExtraYearExclusiveMultiplier', 'ExtraYearInclusiveMultiplier']
+
+class TeamSeasonStateAdmin(admin.ModelAdmin):
+    list_display = ['TeamSeasonStateID', 'WorldID', 'TeamSeasonID', 'StateID' ,'CurrentPlayerCount', 'CommitPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount', 'JuniorPlayerCount', 'SeniorPlayerCount', 'GamesInState', 'IsPipelineState', 'IsConnectedState']
+    list_filter = ['TeamSeasonID__TeamID', 'StateID']
 
 
 admin.site.register(TeamSeasonStrategy, TeamSeasonStrategyAdmin)
@@ -232,3 +244,6 @@ admin.site.register(TeamInfoTopic, TeamInfoTopicAdmin)
 admin.site.register(PlayerRecruitingInterest, PlayerRecruitingInterestAdmin)
 admin.site.register(RecruitTeamSeasonInterest, RecruitTeamSeasonInterestAdmin)
 admin.site.register(TeamSeasonInfoRating, TeamSeasonInfoRatingAdmin)
+admin.site.register(RecruitTeamSeasonPromise, RecruitTeamSeasonPromiseAdmin)
+admin.site.register(RecruitingPromise, RecruitingPromiseAdmin)
+admin.site.register(TeamSeasonState, TeamSeasonStateAdmin)

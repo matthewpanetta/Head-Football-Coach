@@ -28,24 +28,14 @@
         <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        {% if SavedPlayers|length > 0%}
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-saved-tab" style="background-color: #{{page.SecondaryColor}};">Saved Players</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-overview-tab">All Players</button>
-        {% else %}
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">All Players</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-saved-tab">Saved Players</button>
-        {% endif %}
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-ranking-tab">National Ranking</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-needs-tab">Team Needs</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-boxscore-tab">Box Score</button>
       </div>
     </nav>
     <div id="nav-tabContent">
-      {% if SavedPlayers|length > 0%}
-      <div class="tab-content" style='display:none;' id="nav-overview">
-        {% else %}
         <div class="tab-content" style='display:block;' id="nav-overview">
-        {% endif %}
         <div class="w3-display-container">
           <div class="w3-row-padding">
             <div class="w3-col l12 mw1200">
@@ -55,7 +45,8 @@
                     <thead>
                       <tr>
                         <th colspan="7" class="col-group">PLAYER</th>
-                        <th colspan="4" class="col-group">STATUS</th>
+                        <th colspan="5" class="col-group">STATUS</th>
+                        <th colspan="4" class="col-group">INTANGIBLES</th>
                         <th colspan="5">MEASURABLES</th>
                         <th colspan="7" class="col-group">PHYSICAL SKILLS</th>
                         <th colspan="7" class="col-group">PASSING SKILLS</th>
@@ -64,7 +55,7 @@
                         <th colspan="3" class="col-group">BLOCKING SKILLS</th>
                         <th colspan="7" class="col-group">DEFENSE SKILLS</th>
                         <th colspan="2" class="col-group">KICKING SKILLS</th>
-                        <th colspan="4"></th>
+                        <th colspan="5"></th>
                       </tr>
                       <tr>
                         <th>Rank</th>
@@ -75,10 +66,16 @@
                         <th>% Scouted</th>
                         <th>Signed</th>
 
+                        <th>On Board</th>
                         <th>% Lock</th>
                         <th>Interest in Team</th>
                         <th>Time Left</th>
                         <th>Offer Made</th>
+
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                        <th>D</th>
 
                         <th>Ht.</th>
                         <th>Wt.</th>
@@ -132,6 +129,7 @@
                         <th>State</th>
                         <th>State</th>
                         <th>Stage</th>
+                        <th>Pipeline State</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -146,115 +144,10 @@
           </div>
         </div>
       </div>
-
-      {% if SavedPlayers|length > 0%}
-      <div class="tab-content" style='display:block;' id="nav-saved">
-        {% else %}
-        <div class="tab-content" style='display:none;' id="nav-saved">
-        {% endif %}
-        <div class="w3-display-container">
-          <div class="w3-row-padding">
-            <div class="w3-col l12 mw1200">
-              <div class="w3-card">
-                <div id="">
-                  <table id='recruitingBoardTable' class='width100 w3-table w3-striped center-aligned-table recruiting-player-table' style='width: 100%;'>
-                    <thead>
-                      <tr>
-                        <th colspan="7" class="col-group">PLAYER</th>
-                        <th colspan="4" class="col-group">STATUS</th>
-                        <th colspan="5">MEASURABLES</th>
-                        <th colspan="7" class="col-group">PHYSICAL SKILLS</th>
-                        <th colspan="7" class="col-group">PASSING SKILLS</th>
-                        <th colspan="4" class="col-group">RUSHING SKILLS</th>
-                        <th colspan="4" class="col-group">RECEIVING SKILLS</th>
-                        <th colspan="3" class="col-group">BLOCKING SKILLS</th>
-                        <th colspan="7" class="col-group">DEFENSE SKILLS</th>
-                        <th colspan="2" class="col-group">KICKING SKILLS</th>
-                        <th colspan="4"></th>
-                      </tr>
-                      <tr>
-                        <th>Rank</th>
-                        <th>Stars</th>
-                        <th>Name</th>
-                        <th>Pos</th>
-                        <th>OVR</th>
-                        <th>% Scouted</th>
-                        <th>Signed</th>
-
-                        <th>% Lock</th>
-                        <th>Interest in Team</th>
-                        <th>Time Left</th>
-                        <th>Offer Made</th>
-
-                        <th>Ht.</th>
-                        <th>Wt.</th>
-                        <th>40 Time</th>
-                        <th>Bench Press</th>
-                        <th>Vert.</th>
-
-                        <th>STR</th>
-                        <th>AGI</th>
-                        <th>SPD</th>
-                        <th>ACC</th>
-                        <th>STA</th>
-                        <th>JMP</th>
-                        <th>AWR</th>
-
-                        <th>THP</th>
-                        <th>TA(S)</th>
-                        <th>TA(M)</th>
-                        <th>TA(D)</th>
-                        <th>ToR</th>
-                        <th>TUP</th>
-                        <th>PA</th>
-
-                        <th>CAR</th>
-                        <th>ELU</th>
-                        <th>BC</th>
-                        <th>BRK</th>
-
-                        <th>CTH</th>
-                        <th>CIT</th>
-                        <th>ROU</th>
-                        <th>REL</th>
-
-                        <th>PassBlk</th>
-                        <th>RunBlk</th>
-                        <th>ImpBlk</th>
-
-                        <th>PR</th>
-                        <th>SHD</th>
-                        <th>TCK</th>
-                        <th>HP</th>
-                        <th>MCov</th>
-                        <th>ZCov</th>
-                        <th>PRS</th>
-
-                        <th>KckPow</th>
-                        <th>KckAcc</th>
-
-
-                        <th>Show</th>
-                        <th>State</th>
-                        <th>State</th>
-                        <th>Stage</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-
-                  </tbody>
-                  </table>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        </div>      </div>
       <div class="tab-content" style='display:none;' id="nav-ranking">
         <div class="w3-display-container">
           <div class="w3-row-padding">
-            <div class="w3-col s6">
+            <div class="w3-col mw1000 l11">
               <div class="w3-card">
 
                 <table id='recruitingNationalRankingTable' class='w3-table-all'>
@@ -401,7 +294,7 @@
       </div>
     </div>
     <div id="RecruitingModal" class="w3-modal" style='padding-top: 20px;'>
-      <div class="w3-modal-content" style='    box-shadow: 0px 0px 50px 1px rgba(0,0,0,.5);'>
+      <div class="w3-modal-content" style='  height: 90%;    box-shadow: 0px 0px 50px 1px rgba(0,0,0,.5);'>
         <div class="w3-row-padding">
           <div class="w3-col l4">
             <div class="" data-field='player-name'>
@@ -457,22 +350,30 @@
             </table>
           </div>
           <div class="recruiting-tab-content" style='display:none;' id="recruiting-nav-promise">
-            <span>Make Promise</span>
-            <span></span>
+            <table class='w3-table-all player-promise-table'>
+              <thead>
+                <tr>
+                  <th>Promise</th>
+                  <th>Make Promise</th>
+                </tr>
+              </thead>
+              <tbody>
+
+              </tbody>
+            </table>
           </div>
           <div class="recruiting-tab-content" style='display:none;' id="recruiting-nav-offer">
             <span>Offer Scholarship</span>
             <span>
-              <button type="button" name="button">Offer</button>
+              <button type="button" name="button" id='recruiting-offer-scholarship'>Offer</button>
             </span>
           </div>
           <div class="recruiting-tab-content" style='display:none;' id="recruiting-nav-visit">
-            <select class="w3-select" name="">
-              <option value="" disabled selected>Choose a week for visit</option>
-              <option value="">Week 1</option>
-              <option value="">Week 2</option>
-              <option value="">Week 3</option>
-            </select>
+          </div>
+          <div class="recruiting-tab-content" style='display:none;' id="recruiting-nav-scouting">
+            <div class="w3-row-padding" id='scouting-modal-container'>
+
+            </div>
           </div>
         </div>
       </div>

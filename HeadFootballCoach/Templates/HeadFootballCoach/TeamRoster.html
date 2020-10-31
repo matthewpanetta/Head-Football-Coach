@@ -3,6 +3,7 @@
 </div>
 {% load static %}
 {% load humanize %}
+{% load CustomTags %}
 
 
 <link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
@@ -28,7 +29,7 @@
             <i class="fas fa-bars"></i>
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Team Roster</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">League Leaders</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-home-states-tab">Home States</button>
         {% include "HeadFootballCoach/ext_TeamList.html" %}
       </div>
     </nav>
@@ -201,25 +202,29 @@
           </div>
         </div>
       </div>
-      <div class="tab-content" style="display:none;"  id="nav-league-leaders">
-        <div class='w3-display-container'>
-          <div class='w3-row-padding' id='worldLeagueLeaderRow'>
-            <div id='worldLeagueLeadersClone' class='w3-col s3 w3-hide'>
-              <table id='' class='display table sortable w3-table-all'>
-                <thead>
-                  <th>Rank</th>
-                  <th>Player</th>
-                  <th>Team</th>
-                  <th data-field='DisplayName'></th>
-                </thead>
-                <tr id='worldLeagueLeadersRowClone' class='w3-hide'>
-                  <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value=""></td>
-                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href="" href-field='PlayerHref' ><span data-field='PlayerName'></span>, </a><span data-field='PlayerPosition'></span></td>
-                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href-field='PlayerTeamHref'><img src="" src-field='PlayerTeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
-                  <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value=""></td>
-                </tr>
-              </table>
+      <div class="tab-content" style="display:none;"  id="nav-home-states">
+        <div class='w3-row-padding'>
+          <div class="w3-col mw1000" >
+            <div class="w3-card">
+              <svg xmlns="http://www.w3.org/2000/svg" style='width: 100%;' preserveAspectRatio="xMinYMin" viewBox="0 0 959 593">
+              <defs>
+                <style type="text/css">
+                  .state {fill:#D3D3D3;}
+                </style>
+              </defs>
+              <g class="state">
+                {% for TSS in TeamSeasonStates%}
+                <path id="{{TSS.StateID.StateAbbreviation}}" d="{{TSS.StateID.SVGPath}}" fill='{{TSS.CurrentPlayerCount|ColorScale:TSS.Args}}'>
+                  <title>
+                    {{TSS.StateID.StateName}}, {{TSS.CurrentPlayerCount}} players
+                  </title>
+                </path>
+                {% endfor %}
+              </g>
+              </svg>
             </div>
+
+
           </div>
         </div>
       </div>

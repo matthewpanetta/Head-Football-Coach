@@ -79,7 +79,7 @@ class Class(models.Model):
 
     def __str__(self):
 
-        return self.ClassAbbreviation
+        return f'<Class: {self.ClassAbbreviation}>'
 
 class CoachPosition(models.Model):
     CoachPositionID = models.AutoField(primary_key = True)
@@ -97,7 +97,7 @@ class CoachPosition(models.Model):
     IsPositionCoach = models.BooleanField(default = False)
 
     def __str__(self):
-        return self.CoachPositionName
+        return f'<CoachPosition: {self.CoachPositionName}>'
     #############################
 
 
@@ -133,7 +133,7 @@ class Position(models.Model):
 
 
     def __str__(self):
-        return self.PositionName
+        return f'<Position:{self.PositionName}, PositionID: {self.PositionID}>'
     #############################
 
     @property
@@ -319,6 +319,8 @@ class State(models.Model):
     StateName = models.CharField(max_length = 30, default='State Name')
     StateAbbreviation = models.CharField(max_length = 4, default='SN')
 
+    SVGPath = models.CharField(max_length = 2600, default='')
+
     YouthEngagement = models.IntegerField(default = 0)
 
     RegionID = models.ForeignKey(Region, on_delete=models.CASCADE)
@@ -359,18 +361,6 @@ class City(models.Model):
         YouthEngagementIntValue = int(self.YouthEngagement) + int(self.StateID.TotalYouthEngagement)
         return YouthEngagementIntValue
 
-    def Set_Occurance(self):
-
-        self.Occurance = int(self.TotalYouthEngagement)
-        MaxRandomStop = City.objects.aggregate(Max('RandomStop'))
-        if MaxRandomStop['RandomStop__max'] is None:
-            MaxRandomStop = 0
-        else:
-            MaxRandomStop = MaxRandomStop['RandomStop__max']
-
-        self.RandomStart = MaxRandomStop + 1
-        self.RandomStop = self.RandomStart + self.Occurance + 1
-        self.save()
     class Meta:
               # specify this model as an Abstract Model
             app_label = 'HeadFootballCoach'
@@ -507,7 +497,7 @@ class Week(models.Model):
     RecruitingWeekModifier = models.FloatField(default = 1.0)
     RecruitingAllowed = models.BooleanField(default = False)
 
-    UserRecruitingPointsLeft = models.IntegerField(default = 0)
+    UserRecruitingPointsLeftThisWeek = models.IntegerField(default = 0)
 
     def __str__(self):
         return self.WeekName + ' in ' + str(self.PhaseID.LeagueSeasonID.SeasonStartYear)
@@ -2674,6 +2664,7 @@ class Coach(models.Model):
     ReputationRating = models.PositiveSmallIntegerField(default = 0)
     CharismaRating = models.PositiveSmallIntegerField(default = 0)
     ScoutingRating = models.PositiveSmallIntegerField(default = 0)
+    ScoutSpeedRating = models.PositiveSmallIntegerField(default = 0)
     GameplanRating = models.PositiveSmallIntegerField(default = 0)
     InGameAdjustmentRating = models.PositiveSmallIntegerField(default = 0)
 
@@ -2806,6 +2797,28 @@ class CoachTeamSeason(models.Model):
             app_label = 'HeadFootballCoach'
 
 
+
+class TeamSeasonState(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    TeamSeasonStateID = models.AutoField(primary_key = True)
+
+    TeamSeasonID = models.ForeignKey(TeamSeason, on_delete=models.CASCADE, blank=True, null=True, default=None)
+    StateID = models.ForeignKey(State, on_delete=models.CASCADE, blank=True, null=True, default=None)
+
+    CurrentPlayerCount = models.IntegerField(default=0)
+
+    CommitPlayerCount = models.IntegerField(default=0)
+    FreshmanPlayerCount = models.IntegerField(default=0)
+    SophomorePlayerCount = models.IntegerField(default=0)
+    JuniorPlayerCount = models.IntegerField(default=0)
+    SeniorPlayerCount = models.IntegerField(default=0)
+
+    GamesInState = models.IntegerField(default=0)
+
+    IsPipelineState = models.BooleanField(default=False)
+    IsConnectedState = models.BooleanField(default=False)
+
+
 class RecruitTeamSeason(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
     RecruitTeamSeasonID = models.AutoField(primary_key = True, db_index=True)
@@ -2814,6 +2827,7 @@ class RecruitTeamSeason(models.Model):
     VisitWeekID = models.ForeignKey(Week, on_delete=models.CASCADE, null=True, default=None, db_index=True, related_name='visitweek_recruitteamseason')
     CommitWeekID = models.ForeignKey(Week, on_delete=models.CASCADE, null=True, default=None, db_index=True, related_name='commitweek_recruitteamseason')
 
+    TeamSeasonStateID = models.ForeignKey(TeamSeasonState, on_delete=models.CASCADE, db_index=True, blank=True, null=True, default=None)
     Signed = models.BooleanField(default=False)
 
     OfferMade = models.BooleanField(default=False)
@@ -2822,10 +2836,56 @@ class RecruitTeamSeason(models.Model):
     IsActivelyRecruiting = models.BooleanField(default=False)
 
     RecruitingTeamRank = models.IntegerField(default = 1)
-    UserRecruitingPointsThisWeek = models.IntegerField(default = 0)
+    UserRecruitingPointsLeftThisWeek = models.IntegerField(default = 0)
+
+    SkillGroupsLeftToScout = models.IntegerField(default = 0)
 
     Scouted_Overall = models.PositiveSmallIntegerField(default=0)
-    ScoutingFuzz = models.PositiveSmallIntegerField(default=0)
+    Scouted_Overall_Original = models.PositiveSmallIntegerField(default=0)
+
+    Scouting_Intangibles_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_Intangibles_Precision = models.IntegerField(default = 0)
+    Scouting_Intangibles_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_Athleticism_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_Athleticism_Precision = models.IntegerField(default = 0)
+    Scouting_Athleticism_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_ThrowingArm_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_ThrowingArm_Precision = models.IntegerField(default = 0)
+    Scouting_ThrowingArm_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_PassingIntangibles_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_PassingIntangibles_Precision = models.IntegerField(default = 0)
+    Scouting_PassingIntangibles_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_Rushing_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_Rushing_Precision = models.IntegerField(default = 0)
+    Scouting_Rushing_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_Receiving_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_Receiving_Precision = models.IntegerField(default = 0)
+    Scouting_Receiving_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_Blocking_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_Blocking_Precision = models.IntegerField(default = 0)
+    Scouting_Blocking_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_DLine_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_DLine_Precision = models.IntegerField(default = 0)
+    Scouting_DLine_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_GeneralDefense_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_GeneralDefense_Precision = models.IntegerField(default = 0)
+    Scouting_GeneralDefense_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_Coverage_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_Coverage_Precision = models.IntegerField(default = 0)
+    Scouting_Coverage_Accuracy = models.IntegerField(default = 0)
+
+    Scouting_Kicking_ScoutingPercent = models.IntegerField(default = 0)
+    Scouting_Kicking_Precision = models.IntegerField(default = 0)
+    Scouting_Kicking_Accuracy = models.IntegerField(default = 0)
 
     Scouted_Strength_Rating             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Scouted_Agility_Rating              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
@@ -2866,6 +2926,47 @@ class RecruitTeamSeason(models.Model):
     Scouted_KickPower_Rating            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Scouted_KickAccuracy_Rating         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
     Scouted_KickReturn_Rating           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+
+
+    Scouted_Strength_Rating_Original             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Agility_Rating_Original              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Speed_Rating_Original                = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Acceleration_Rating_Original         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Stamina_Rating_Original              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Awareness_Rating_Original            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Jumping_Rating_Original              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Injury_Rating_Original               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ThrowPower_Rating_Original           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ShortThrowAccuracy_Rating_Original   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_MediumThrowAccuracy_Rating_Original  = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_DeepThrowAccuracy_Rating_Original    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ThrowOnRun_Rating_Original           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ThrowUnderPressure_Rating_Original   = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_PlayAction_Rating_Original           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Elusiveness_Rating_Original          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_BallCarrierVision_Rating_Original    = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_JukeMove_Rating_Original             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_BreakTackle_Rating_Original          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Carrying_Rating_Original             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Catching_Rating_Original             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_CatchInTraffic_Rating_Original       = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_RouteRunning_Rating_Original     = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Release_Rating_Original              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_HitPower_Rating_Original             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Tackle_Rating_Original               = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_PassRush_Rating_Original           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_BlockShedding_Rating_Original        = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Pursuit_Rating_Original              = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_PlayRecognition_Rating_Original      = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ManCoverage_Rating_Original          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ZoneCoverage_Rating_Original         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_Press_Rating_Original                = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_PassBlock_Rating_Original            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_RunBlock_Rating_Original             = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_ImpactBlock_Rating_Original          = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_KickPower_Rating_Original            = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_KickAccuracy_Rating_Original         = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
+    Scouted_KickReturn_Rating_Original           = models.PositiveSmallIntegerField(default=0, blank=True, null=True)
 
     def __str__(self):
 
@@ -3029,6 +3130,7 @@ class TeamSeasonPosition(models.Model):
     Total_Rating_Weight           = models.DecimalField(default = 0.0, max_digits = 6, decimal_places=2)
 
 
+
 class DrivePlay(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, blank=True, null=True, default=None)
     DrivePlayID = models.AutoField(primary_key = True)
@@ -3091,8 +3193,22 @@ class TeamInfoTopic(models.Model):
 
     IsPrestigeOrLocation = models.BooleanField(default = False)
     def __str__(self):
-        return 'TeamInfoTopic: {AttributeName}'.format(AttributeName = self.AttributeName)
+        return f'<TeamInfoTopic: {self.AttributeName}>'
 
+
+
+class RecruitingPromise(models.Model):
+    RecruitingPromiseID = models.AutoField(primary_key=True, db_index=True)
+
+    TeamInfoTopicID = models.ForeignKey(TeamInfoTopic, on_delete=models.CASCADE, db_index=True,  default=None, null=True, blank=True)
+    PromiseText = models.CharField(default = 'Promise', max_length=50)
+    TextDescription =  models.CharField(default = 'Promise', max_length=250)
+
+    PitchValue  = models.IntegerField(default = 0)
+    AllowInclusiveOption = models.BooleanField(default = True)
+
+    ExtraYearExclusiveMultiplier = models.FloatField(default = 1.0)
+    ExtraYearInclusiveMultiplier = models.FloatField(default = 1.0)
 
 class TeamSeasonInfoRating(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE,  db_index=True)
@@ -3111,8 +3227,7 @@ class PlayerRecruitingInterest(models.Model):
     PitchRecruitInterestRank = models.IntegerField(default = 0)
 
     def __str__(self):
-        return 'PlayerRecruitingInterest: {PlayerName}: {AttributeName} - Interest #{PitchRecruitInterestRank}'.format(PitchRecruitInterestRank=self.PitchRecruitInterestRank, PlayerName=self.PlayerID.PlayerFirstName + ' ' + self.PlayerID.PlayerLastName, AttributeName = self.TeamInfoTopicID.AttributeName)
-
+        return f'<PlayerRecruitingInterest: {self.PlayerID.PlayerFirstName + " " + self.PlayerID.PlayerLastName}: {self.TeamInfoTopicID.AttributeName} - Interest #{self.PitchRecruitInterestRank} >'
 
 class RecruitTeamSeasonInterest(models.Model):
     WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
@@ -3125,3 +3240,19 @@ class RecruitTeamSeasonInterest(models.Model):
     PitchRecruitInterestRank_IsKnown = models.BooleanField(default = False)
 
     UtilizedThisWeek = models.BooleanField(default = False)
+    InterestEarnedThisWeek = models.IntegerField(default = 0)
+
+
+class RecruitTeamSeasonPromise(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
+    RecruitTeamSeasonPromiseID = models.AutoField(primary_key=True, db_index=True)
+
+    RecruitTeamSeasonID = models.ForeignKey(RecruitTeamSeason, on_delete=models.CASCADE, db_index=True,  default=None, null=True, blank=True)
+    RecruitingPromiseID = models.ForeignKey(RecruitingPromise, on_delete=models.CASCADE, db_index=True,  default=None, null=True, blank=True)
+
+    PromiseMade = models.BooleanField(default = False)
+    PromiseOutcomeDetermined = models.BooleanField(default = False)
+    PromiseKept = models.BooleanField(default = False)
+
+    TimeSpanYears = models.IntegerField(default = 1)
+    TimespanInclusive = models.BooleanField(default=True)

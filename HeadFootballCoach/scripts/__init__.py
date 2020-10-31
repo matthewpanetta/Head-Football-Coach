@@ -272,3 +272,39 @@ print()
 #     for image_size in [50,100]:
 #         new_image = image.resize((image_size, image_size))
 #         new_image.save(filename.replace('.png', '_'+str(image_size)+'.png'))
+
+
+# from ..utilities import NormalVariance
+# import json
+#
+# ResultDict = {}
+# for u in range(30):
+#     Result = NormalVariance(1.0, Segments = 13, Floor = 1, Spread = 5)
+#     if Result not in ResultDict:
+#         ResultDict[Result] = 0
+#     ResultDict[Result] += 1
+# print(json.dumps(ResultDict, indent = 2))
+#
+#
+#
+#
+#
+
+
+# print()
+
+
+PossibleRange = range(0,10)
+
+ResultDict = {
+    'Tie': 0,
+    'Joint': 0,
+    'Split': 0
+}
+
+for Sample in range(0,1000):
+    JointStart = 0
+
+
+
+    SplitStart = 0

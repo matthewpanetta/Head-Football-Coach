@@ -387,13 +387,13 @@ def GameSim(game):
     HeadCoachDiff = CoachDict[HomeTeam]['Coach']['GameplanRating'] - CoachDict[AwayTeam]['Coach']['GameplanRating']#HomeHeadCoach.CoachID.GameplanRating - AwayHeadCoach.CoachID.GameplanRating
     if HeadCoachDiff == 0:
         HomeCoachFactor = 1.0
-    elif HeadCoachDiff > 0 and HeadCoachDiff < 8 :
+    elif HeadCoachDiff > 0 and HeadCoachDiff < 3 :
         HomeCoachFactor = 1.02
-    elif HeadCoachDiff >= 8:
+    elif HeadCoachDiff >= 3:
         HomeCoachFactor = 1.04
-    elif HeadCoachDiff < 0 and HeadCoachDiff > -8 :
+    elif HeadCoachDiff < 0 and HeadCoachDiff > -3 :
         HomeCoachFactor = .98
-    elif HeadCoachDiff <= -8:
+    elif HeadCoachDiff <= -3:
         HomeCoachFactor = .96
     else:
         HomeCoachFactor = 1.0
@@ -530,6 +530,7 @@ def GameSim(game):
     count = 0
     for P in HomeTeamPlayers | AwayTeamPlayers:
         DC = None
+        DC_List = None
         PlayerDict = P
         PTS = P.PlayerTeamSeasonID
         PSD = PlayerSkills[P.PlayerID]
