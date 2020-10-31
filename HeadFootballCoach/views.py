@@ -400,15 +400,19 @@ def POST_StartRecruitingCall(request, WorldID, PlayerID):
 
             RecruitVisit = {'AvailableWeeksForVisit': [], 'ScheduledVisitWeek': None}
             if RTS.VisitWeekID is None:
+
                 RecruitVisit['AvailableWeeksForVisit'] = list(TeamGame.objects.filter(TeamSeasonID__TeamID__IsUserTeam = True, IsHomeTeam = True, TeamSeasonID__LeagueSeasonID__IsCurrent = True, GameID__WeekID__WeekID__gte = CurrentWeek.WeekID).values(
                     'GameID__WeekID__WeekName', 'OpposingTeamGameID__TeamSeasonID__TeamID__TeamName', 'OpposingTeamGameID__TeamSeasonID__TeamID__TeamLogoURL','OpposingTeamGameID__TeamSeasonID__TeamID__TeamColor_Primary_HEX',
                 ).annotate(
-                    ScheduledVisitsThisWeek = Subquery(RecruitTeamSeason.objects.filter(PlayerTeamSeasonID =RTS.PlayerTeamSeasonID, VisitWeekID = OuterRef('GameID__WeekID')).values('PlayerTeamSeasonID').annotate(Count=Max('PlayerTeamSeasonID')).values('Count'))
+                    ScheduledVisitsThisWeek = Coalesce(Subquery(RecruitTeamSeason.objects.filter(PlayerTeamSeasonID =RTS.PlayerTeamSeasonID, VisitWeekID = OuterRef('GameID__WeekID')).values('PlayerTeamSeasonID').annotate(Count=Max('PlayerTeamSeasonID')).values('Count')),0)
                 ).filter(ScheduledVisitsThisWeek = 0))
+
+                print("RecruitVisit['AvailableWeeksForVisit'] ", json.dumps(RecruitVisit['AvailableWeeksForVisit'], indent=2) )
+                #
             else:
                 RecruitVisit['ScheduledVisitWeek'] = RTS.VisitWeekID.WeekName
 
-            return JsonResponse({'message':'Recruiting player', 'RecruitingCallInfo': {'PlayerInterest':RTSI, 'OfferMade': RTS.OfferMade,'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeftThisWeek, 'ThisPlayerTimeRemaining': RTS.UserRecruitingPointsLeftThisWeek, 'PlayerName': f'{ThisPlayer.PlayerFirstName} {ThisPlayer.PlayerLastName}', 'AvailablePromises': AvailablePromises }}, status=200)
+            return JsonResponse({'message':'Recruiting player', 'RecruitingCallInfo': {'PlayerInterest':RTSI, 'OfferMade': RTS.OfferMade,'AllPlayersTimeRemaining': CurrentWeek.UserRecruitingPointsLeftThisWeek, 'ThisPlayerTimeRemaining': RTS.UserRecruitingPointsLeftThisWeek, 'PlayerName': f'{ThisPlayer.PlayerFirstName} {ThisPlayer.PlayerLastName}', 'AvailablePromises': AvailablePromises , 'RecruitVisit': RecruitVisit}}, status=200)
         else:
             return JsonResponse({'message':'Maxed out recruiting points for this player this week!'}, status=422)
     else:

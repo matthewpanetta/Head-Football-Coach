@@ -1271,6 +1271,37 @@ function RecruitingAction(WorldID, MainTable) {
               });
 
 
+              var VisitLineItemTemplate = `
+              <tr>
+                <td ><span data-field="GameID__WeekID__WeekName"></span></td>
+                <td ><img data-field="TeamLogo" class="small-logo" /><span data-field="TeamText"></span></td>
+                <td ><span data-field="RecordText"></span></td>
+                <td>
+                  <button class='schedule-visit'>Schedule Visit</button>
+                </td>
+              </tr>`;
+
+              var VisitInfo = res.RecruitingCallInfo.RecruitVisit;
+              if (VisitInfo.ScheduledVisitWeek == null){
+                $('#recruiting-nav-visit').append('<table class="w3-table-all width100"></table>');
+                if (VisitInfo.AvailableWeeksForVisit.length > 0){
+                  $.each(VisitInfo.AvailableWeeksForVisit, function(ind, obj){
+                    console.log(ind, obj);
+                    var Cloned_VisitLineItemTemplate = $(VisitLineItemTemplate);
+                    Cloned_VisitLineItemTemplate.find('[data-field="GameID__WeekID__WeekName"]').text(obj.GameID__WeekID__WeekName);
+                    Cloned_VisitLineItemTemplate.find('[data-field="TeamLogo"]').attr('src', obj.OpposingTeamGameID__TeamSeasonID__TeamID__TeamLogoURL);
+                    Cloned_VisitLineItemTemplate.find('[data-field="TeamText"]').text(obj.OpposingTeamGameID__TeamSeasonID__TeamID__TeamName);
+
+
+                    $('#recruiting-nav-visit table').append(Cloned_VisitLineItemTemplate)
+                  })
+                }
+                else {
+                  $('#recruiting-nav-visit').append('<tr>No available weeks for visit</tr>')
+                }
+              }
+
+
               var PromiseInfo = res.RecruitingCallInfo.AvailablePromises;
               $.each(PromiseInfo, function(ind, obj) {
                 var Cloned_PromiseLineItemTemplate = $(PromiseLineItemTemplate);
