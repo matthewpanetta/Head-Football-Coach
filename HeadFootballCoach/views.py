@@ -1389,7 +1389,7 @@ def Page_Rankings(request, WorldID):
     page = {'PageTitle': 'Top 25', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
     page['NavBarLinks'] = NavBarLinks(Path = 'Rankings', GroupName='World', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
 
-    TopTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=True).values(
+    TopTeams = list(TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=True).values(
         'TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID',
         'NationalRank', 'NationalRankDelta',
         'TeamSeasonID__ConferenceChampion', 'TeamSeasonID__DivisionRank', 'TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation','TeamSeasonID__NationalChampion', 'TeamSeasonID__TeamID__TeamLogoURL', 'TeamSeasonID__TeamID__TeamColor_Primary_HEX'
@@ -1442,7 +1442,13 @@ def Page_Rankings(request, WorldID):
             default=(Value('w3-hide')),
             output_field=CharField()
         ),
-    ).order_by('NationalRank')[:25]
+    ).order_by('NationalRank'))
+
+    BubbleTeams = []
+    if len(TopTeams) > 25:
+        BubbleTeams = TopTeams[25:30]
+
+    TopTeams = TopTeams[:25]
 
     LastWeekGameDict = {}
     LastWeekGameList = TeamGame.objects.filter(WorldID = WorldID).filter(GameID__WeekID = LastWeek).values('Points', 'TeamSeasonID__TeamID').annotate(
@@ -1522,10 +1528,47 @@ def Page_Rankings(request, WorldID):
             T['ThisWeekGame'] = TWG
 
 
+    DroppedOutTeams = TeamSeasonWeekRank.objects.filter(WorldID = CurrentWorld).filter(IsCurrent=True).filter(NationalRank__gt = 25).values(
+        'TeamSeasonID__TeamID__TeamName','TeamSeasonID__TeamID__TeamNickname', 'TeamSeasonID__TeamID',
+        'NationalRank', 'NationalRankDelta'
+    ).annotate(
+        TeamFullName = Concat( F('TeamSeasonID__TeamID__TeamName'), Value(' '), F('TeamSeasonID__TeamID__TeamNickname'), output_field=CharField()),
+        NationalRankDeltaAbs = Func(F('NationalRankDelta'), function='ABS'),
+        NationalRankDeltaShow = Case(
+            When(NationalRankDelta__isnull = True, then=Value('')),
+            When(NationalRankDelta = 0, then=Value('')),
+            default=F('NationalRankDeltaAbs'),
+            output_field=CharField()
+        ),
+        NationalRankDeltaSymbol = Case(
+            When(NationalRankDelta__lt = 0, then=Value('&#8595;')),
+            When(NationalRankDelta__gt = 0, then=Value('&#8593;')),
+            default=Value(''),
+            output_field=CharField()
+        ),
+        NationalRankDeltaClass = Case(
+            When(NationalRankDelta__lt = 0, then=Value('L')),
+            When(NationalRankDelta__gt = 0, then=Value('W')),
+            default=Value(''),
+            output_field=CharField()
+        ),
+        NationalRankDisplay =  Case(
+            When(NationalRank__gt = 25, then=Value('')),
+            default=(Concat(Value('(') , F('NationalRank'), Value(')'), output_field=CharField())),
+            output_field = CharField()
+        ),
+        PreviousRank = ExpressionWrapper(F('NationalRank') + F('NationalRankDelta'), output_field=IntegerField()),
+        TeamHref= Concat( Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID') , output_field=CharField()),
+    ).filter(PreviousRank__lte = 25).order_by('NationalRank')
+
+
+
     context['userTeam'] = UserTeam
     context['TopTeams'] = list(TopTeams)
     context['recentGames'] = GetRecentGamesForScoreboard(CurrentWorld, CurrentSeason = CurrentSeason, CurrentWeek = CurrentWeek)
     context['CurrentWeek'] = CurrentWeek
+    context['DroppedOutTeams'] = DroppedOutTeams
+    context['BubbleTeams'] = BubbleTeams
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start

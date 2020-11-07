@@ -46,6 +46,24 @@
                     </tr>
                   </thead>
                 </table>
+
+                <table class="w3-table "   style="width:100%">
+                  <tr>
+                    <td>Others receiving votes:
+                      {% for Team in BubbleTeams%}
+                      <span><a href="{{Team.TeamHref}}">{{Team.TeamSeasonID__TeamID__TeamName}}</a>{% include "HeadFootballCoach/ext_Comma.html" %}</span>
+                      {% endfor %}</td>
+                  </tr>
+                  {%if DroppedOutTeams%}
+                  <tr>
+                    <td>Teams dropped from rankings:
+                      {% for Team in DroppedOutTeams%}
+                      <span><a href="{{Team.TeamHref}}">{{Team.TeamSeasonID__TeamID__TeamName}}</a> ({{Team.PreviousRank}}) </span>
+                      {% endfor %}</td>
+                  </tr>
+                  {%endif%}
+                </table>
+
               </div>
 
             </div>
