@@ -1575,7 +1575,7 @@ def Page_Audit_ShootingPercentages(request, WorldID):
 def Page_Index(request):
 
     InTesting = True
-    InDeepTesting = True
+    InDeepTesting = False
 
     if InTesting or InDeepTesting:
         World.objects.all().delete()

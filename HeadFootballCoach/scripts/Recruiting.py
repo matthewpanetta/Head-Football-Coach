@@ -30,11 +30,11 @@ def RandomRecruitPreference(RecruitPreferenceBase):
     return OrderedPreferences
 
 
-def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None):
+def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None,  PTS = None):
 
 
     PositionToScoutingGroups= {
-        'QB': [['Intangibles', 'ThrowingArm', 'PassingIntangibles'], ['Athletisicm', 'Rushing']],
+        'QB': [['Intangibles', 'ThrowingArm', 'PassingIntangibles'], ['Athleticism', 'Rushing']],
         'RB': [['Rushing', 'Athleticism'], ['Intangibles'], ['Receiving', 'Blocking']],
         'FB': [['Rushing', 'Athleticism', 'Blocking'], ['Intangibles'], ['Receiving']],
         'WR': [['Athleticism', 'Receiving'], ['Intangibles']],
@@ -110,7 +110,9 @@ def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None):
         },
     }
 
-    PlayerSkill = RTS.PlayerTeamSeasonID.playerteamseasonskill
+    if PTS is None:
+        PTS = RTS.PlayerTeamSeasonID
+    PlayerSkill = PTS.playerteamseasonskill
 
     OverallSum = 0
     WeightSum = 0
@@ -156,7 +158,7 @@ def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None):
             OverallSum+= float(NewVal) * float(getattr(TSP, WeightRatingField))
             WeightSum += float(getattr(TSP, WeightRatingField))
 
-    RTS.SkillGroupsLeftToScout =  sum([len(SkillLevel)  for SkillLevel in PositionToScoutingGroups[RTS.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation]])
+    RTS.SkillGroupsLeftToScout =  sum([len(SkillLevel)  for SkillLevel in PositionToScoutingGroups[PTS.PlayerID.PositionID.PositionAbbreviation]])
 
 
     OverallSum = int(OverallSum * 1.0 / WeightSum)
@@ -169,9 +171,11 @@ def ScoutPlayer_Initial(*, RTS = None, CoachObj = None, TSP = None):
 
 def ScoutPlayer(RTS, TSP = None, CoachObj = None):
 
+    print('\tScouting player')
+
 
     PositionToScoutingGroups= {
-        'QB': [['Intangibles', 'ThrowingArm', 'PassingIntangibles'], ['Athletisicm', 'Rushing']],
+        'QB': [['Intangibles', 'ThrowingArm', 'PassingIntangibles'], ['Athleticism', 'Rushing']],
         'RB': [['Rushing', 'Athleticism'], ['Intangibles'], ['Receiving', 'Blocking']],
         'FB': [['Rushing', 'Athleticism', 'Blocking'], ['Intangibles'], ['Receiving']],
         'WR': [['Athleticism', 'Receiving'], ['Intangibles']],
@@ -553,7 +557,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
     PlayersThatNeedMoreTeams = []
 
-    TeamSeasonList = CurrentSeason.teamseason_set.filter(teamseasonweekrank__IsCurrent = True).select_related('TeamID').annotate(
+    TeamSeasonList = list(CurrentSeason.teamseason_set.filter(teamseasonweekrank__IsCurrent = True).select_related('TeamID').annotate(
         TeamPrestige = Max('teamseasoninforating__TeamRating', filter=Q(teamseasoninforating__TeamInfoTopicID__AttributeName = 'Team Prestige')),
         NumberOfRecruits_FullSell = Value(6, output_field=IntegerField()),
         NumberOfRecruits_HalfSell = Value(4, output_field=IntegerField()),
@@ -569,7 +573,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
         ScholarshipsAvailable = F('ScholarshipsToOffer'),
 
         CoachRecruitingConcentration = Max('coachteamseason__CoachID__RecruitingConcentration', filter=Q(coachteamseason__CoachPositionID__CoachPositionAbbreviation = 'HC'))
-    ).order_by('-TeamPrestige', 'teamseasonweekrank__NationalRank')
+    ).order_by('-TeamPrestige', 'teamseasonweekrank__NationalRank'))
 
 
     TeamPrestigeModified = .5
@@ -578,7 +582,6 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
     RTS_InterestToSave = []
     TSDict = {}
 
-    print('Starting recruiting', len(connection.queries))
 
     AllRecruitsAvailable = RecruitTeamSeason.objects.filter(WorldID_id=WorldID).filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False).select_related('PlayerTeamSeasonID', 'PlayerTeamSeasonID__playerteamseasonskill', 'PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID__PlayerID__PositionID', 'TeamSeasonID', 'TeamSeasonStateID').annotate(
         CommitsNeeded = Subquery(TeamSeasonPosition.objects.filter(TeamSeasonID = OuterRef('TeamSeasonID')).filter(PositionID = OuterRef('PlayerTeamSeasonID__PlayerID__PositionID')).annotate(
@@ -619,6 +622,8 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
         RecruitingPriority = ExpressionWrapper(F('Scouted_Overall') * F('InterestRankPriorityModifier') * F('CommitsNeededModifier') * F('ActivelyRecruitingModifier'), output_field=DecimalField())
     ).order_by('-RecruitingPriority')
 
+
+
     RTS_TeamSeasonDict = {}
     for RTS in AllRecruitsAvailable:
         if RTS.TeamSeasonID not in RTS_TeamSeasonDict:
@@ -626,10 +631,12 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
         RTS_TeamSeasonDict[RTS.TeamSeasonID].append(RTS)
 
+
     TeamSeasonPositionList = TeamSeasonPosition.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).select_related('PositionID', 'TeamSeasonID')
     TeamSeasonPositionDict = {}
     for TS in TeamSeasonList:
         TeamSeasonPositionDict[TS] = {}
+
     for TSP in TeamSeasonPositionList:
         TeamSeasonPositionDict[TSP.TeamSeasonID][TSP.PositionID] = TSP
 
@@ -648,7 +655,6 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             RTS_TeamInterestDict[RTSI.RecruitTeamSeasonID] = []
         RTS_TeamInterestDict[RTSI.RecruitTeamSeasonID].append(RTSI)
 
-    print('Starting Team recruiting', len(connection.queries))
     for TS in TeamSeasonList:
         CoachObj = CoachDict[TS.TeamSeasonID]
         RecruitsActivelyRecruiting_QS = RTS_TeamSeasonDict[TS]
@@ -686,6 +692,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
             if TS.TeamID.IsUserTeam:
                 MinutesToTalk = Min_Int(MinutesToTalk,RTS.UserRecruitingPointsLeftThisWeek)
+
 
 
             while MinutesToTalk > 0 and TotalMinutesToTalk>0:
