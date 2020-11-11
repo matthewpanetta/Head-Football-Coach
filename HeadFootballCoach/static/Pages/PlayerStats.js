@@ -465,6 +465,7 @@ function GetPlayerStats(WorldID, data){
                  {
                      label: 'Not Eligible for Draft',
                      value: function(rowData, rowIdx){
+                       console.log('rowData', rowData)
                          return !(rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'SR' || rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'JR' || rowData['ClassDisplay'] == 'SO (RS)');
                      }
                  },

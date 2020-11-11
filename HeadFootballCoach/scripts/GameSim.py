@@ -1,4 +1,4 @@
-from ..models import World, GameDrive, DrivePlay, CoachTeamSeason, PlayerTeamSeasonDepthChart, Coach, Week, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerTeamSeasonSkill, PlayerGameStat
+from ..models import World, GameDrive, DrivePlay, CoachTeamSeason, WeekUpdate, PlayerTeamSeasonDepthChart, Coach, Week, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerTeamSeasonSkill, PlayerGameStat
 import random
 from django.db.models import  Max, Q, F, Value, CharField
 from django.db.models.functions import Length, Concat
@@ -1513,6 +1513,20 @@ def GameSim(game):
         if game.BowlID.IsNationalChampionship:
             GameDict[WinningTeam]['TeamSeason'].NationalChampion = True
             GameDict[LosingTeam]['TeamSeason'].NationalRunnerUp = True
+
+
+    if WinningTeam.IsUserTeam or LosingTeam.IsUserTeam:
+        NextWeek = CurrentWeek.NextWeek
+        WU = WeekUpdate(WorldID = CurrentWorld, WeekID = NextWeek, LeagueSeasonID = CurrentSeason, MessageImportanceValue=3, LinkHref = f'/World/{CurrentWorld.WorldID}/Game/{game.GameID}', LinkText = 'Box Score', MessageText = '')
+
+        OutcomeDescriber = 'defeated' if WinningTeam.IsUserTeam else 'lost to'
+        OpponentTeamName = WinningTeam.TeamName if LosingTeam.IsUserTeam else LosingTeam.TeamName
+
+        WinningTeamPoints = GameDict[WinningTeam]['TeamGame'].Points
+        LosingTeamPoints = GameDict[LosingTeam]['TeamGame'].Points
+
+        WU.MessageText += f'Your team {OutcomeDescriber} {OpponentTeamName} by a score of {WinningTeamPoints}-{LosingTeamPoints}'
+        WU.save()
 
 
     for T in GameDict:

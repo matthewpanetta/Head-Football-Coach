@@ -48,7 +48,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     Team History
                   </div>
-                  <table id='teamSeasonHistoryResultsTable' class='width100 w3-table ' style='width: 100%;'>
+                  <table id='teamSeasonHistoryResultsTable' class='width100 w3-table-all center-aligned-table' style='width: 100%;'>
                     <thead id='TeamSeasonHistoryTable'>
                       <th class=' teamColorBorder'>Season</th>
                       <th class=' teamColorBorder'>Final Rank</th>
@@ -88,7 +88,7 @@
         <div class='w3-display-container'>
           {% for Stat in CareerLeaders%}
           {% if forloop.counter0|modulo:3 == 0%}
-          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+          <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card w3-col s3 margin-sides-12 equal-sized-item no-padding'>
               <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
@@ -125,7 +125,7 @@
         <div class='w3-display-container'>
           {% for Stat in SeasonLeaders%}
           {% if forloop.counter0|modulo:3 == 0%}
-          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+          <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
               <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
@@ -162,7 +162,7 @@
         <div class='w3-display-container'>
           {% for Stat in GameLeaders%}
           {% if forloop.counter0|modulo:3 == 0%}
-          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+          <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
               <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
@@ -199,7 +199,7 @@
         <div class='w3-display-container'>
           {% for Stat in TeamSeasonLeaders%}
           {% if forloop.counter0|modulo:3 == 0%}
-          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+          <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
               <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
@@ -238,7 +238,7 @@
         <div class='w3-display-container'>
           {% for Stat in TeamGameLeaders%}
           {% if forloop.counter0|modulo:3 == 0%}
-          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+          <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
               <table id='' class='display table sortable w3-table w3-striped w3-bordered'>

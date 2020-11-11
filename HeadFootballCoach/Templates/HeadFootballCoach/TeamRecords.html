@@ -43,9 +43,9 @@
         <div class='w3-display-container'>
           {% for Stat in AlltimeLeaders%}
           {% if forloop.counter0|modulo:3 == 0%}
-          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+          <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
-            <div class='w3-card w3-col s4 margin-sides-12 no-padding'>
+            <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
               <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
                 <thead>
                   <th>Rank</th>
@@ -61,11 +61,11 @@
                     <td class='WorldLeagueLeaderRowCell' data-value="">
                       <a href="{{Team.TeamHref}}" href-field='PlayerTeamHref'>
                         <img src="{{Team.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
-                        <span>{{Team.TeamName}}</span>
+                        <span class='hide-small'>{{Team.TeamName}}</span>
                       </a>
                     </td>
-                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
-                    <td>{{Team.Timeframe}} -</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
+                    <td class='center-text'>{{Team.Timeframe}} -</td>
                   </tr>
                   {% endfor %}
                   {% endwith %}
@@ -83,9 +83,9 @@
         <div class='w3-display-container'>
           {% for Stat in SeasonLeaders%}
           {% if forloop.counter0|modulo:3 == 0%}
-          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+          <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
-            <div class='w3-card w3-col s4 margin-sides-12 no-padding'>
+            <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
               <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
                 <thead>
                   <th>Rank</th>
@@ -101,11 +101,11 @@
                     <td class='WorldLeagueLeaderRowCell' data-value="">
                       <a href="{{Team.TeamHref}}" href-field='PlayerTeamHref'>
                         <img src="{{Team.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
-                        <span>{{Team.TeamName}}</span>
+                        <span class='hide-small'>{{Team.TeamName}}</span>
                       </a>
                     </td>
-                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
-                    <td>{{Team.Timeframe}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
+                    <td  class='center-text'>{{Team.Timeframe}}</td>
                   </tr>
                   {% endfor %}
                   {% endwith %}
@@ -122,15 +122,15 @@
         <div class='w3-display-container'>
           {% for Stat in GameLeaders%}
           {% if forloop.counter0|modulo:3 == 0%}
-          <div class='w3-row-padding margin-top-24' id='worldLeagueLeaderRow'>
+          <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
-            <div class='w3-card w3-col s4 margin-sides-12 no-padding'>
+            <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
               <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
                 <thead>
                   <th>Rank</th>
                   <th>Team</th>
-                  <th data-field='DisplayName'>{{Stat.DisplayName}}</th>
-                  <th>Week</th>
+                  <th   class='center-text' data-field='DisplayName'>{{Stat.DisplayName}}</th>
+                  <th  class='center-text'>Week</th>
                 </thead>
                 <tbody>
                   {% with StatName=Stat.FieldName %}
@@ -140,11 +140,11 @@
                     <td class='WorldLeagueLeaderRowCell' data-value="">
                       <a href="{{Team.TeamHref}}" href-field='PlayerTeamHref'>
                         <img src="{{Team.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
-                        <span>{{Team.TeamName}}</span>
+                        <span class='hide-small'>{{Team.TeamName}}</span>
                       </a>
                     </td>
-                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
-                    <td><a href="{{Team.TimeframeHref}}">{{Team.Timeframe}}</a></td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
+                    <td><a href="{{Team.TimeframeHref}}"   class='center-text'>{{Team.Timeframe}}</a></td>
                   </tr>
                   {% endfor %}
                   {% endwith %}

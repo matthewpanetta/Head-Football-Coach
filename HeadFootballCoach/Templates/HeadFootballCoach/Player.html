@@ -18,14 +18,14 @@
 
 
 <body>
-
-
   <div class='PageContent'>
     <div class='PlayerHeader'>
       <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
-      <a href='/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}' {% if not playerTeam.LogoURL %} style='margin-left: 180px;' {% endif %}>
+      <a href='/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}' {% if not playerTeam.LogoURL %}{% if not SignedTeam.LogoURL %} style='margin-left: 180px;' {% endif %}{% endif %}>
         {% if playerTeam.LogoURL %}
         <img class='playerTeamLogo' src='{{playerTeam.LogoURL}}' alt="My image">
+        {%elif SignedTeam.LogoURL%}
+        <img class='playerTeamLogo' src='{{SignedTeam.LogoURL}}' alt="My image">
         {% endif %}
       </a>
       <div class="PlayerFace" id='PlayerFace'>
@@ -40,7 +40,11 @@
         </span>
         <div class='playerOverviewInfo'>
           {% if player.IsRecruit %}
-          <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
+            {%if SignedTeam.LogoURL%}
+              <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit, Signed</a>
+            {% else %}
+              <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
+            {% endif %}
           {% else %}
           <a href="/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}">{{playerTeam.TeamName}} {{playerTeam.TeamNickname}}</a>
           {% endif %}
@@ -178,7 +182,7 @@
                       <!-- Game -->
                       <th class='teamColorBorder' scope="col">OPP</th>
                       <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
-                      <th>Game Outcome</th>
+                      <th>Score</th>
 
                       <!-- Passing Stats -->
                       <th>CMP</th>
@@ -315,14 +319,14 @@
             <div class='w3-row-padding'>
               <div class='w3-col l10 m12'>
 
-                <table id="PlayerSeasonStatTableClone" class='w3-hide width100 w3-padding' style=''>
+                <table id="PlayerSeasonStatTableClone" class='w3-hide width100 no-border' style=''>
 
                   <tfoot>
                     <tr>
                     </tr>
                   </tfoot>
                  </table>
-                 <table id="PlayerCareerHighTableClone" class='w3-hide width100 w3-padding' style=''>
+                 <table id="PlayerCareerHighTableClone" class='w3-hide width100 no-border' style=''>
                    <thead>
                      <th>Stat</th>
                      <th>Value</th>
@@ -357,7 +361,7 @@
                       <!-- Game -->
                       <th class='teamColorBorder' scope="col">OPP</th>
                       <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
-                      <th>Game Outcome</th>
+                      <th>Score</th>
 
                       <!-- Passing Stats -->
                       <th>CMP</th>

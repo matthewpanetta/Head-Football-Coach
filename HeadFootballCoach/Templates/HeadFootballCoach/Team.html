@@ -40,7 +40,7 @@
     <div id="nav-tabContent">
       <div class="tab-content" style='display:block;' id="nav-overview">
         {% if games|length > 0%}
-        <div class="w3-display-container">
+        <div class="w3-display-container w3-margin-bottom">
           <div class="w3-row-padding">
             <div class="w3-col l8 m12 w3-display-container">
               <div class="w3-row">
@@ -306,18 +306,20 @@
                   <div class="w3-bar team-primary-background-bar">
                     {{ThisTeamSeason.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceName}}<span class='hide-small'> Standings</span>
                   </div>
-                  <table id='teamOverviewConferenceStandings'>
+                  <table id='teamOverviewConferenceStandings' class='w3-table-all width100 no-border'>
 
-                    {% for Division in conferenceTeams%}
+                    {% for Division in ConferenceDivisions%}
                     <thead>
-                      {% if Division.DivisionName %}
-                      <th>{{Division.DivisionName}}</th>
-                      {% else %}
-                      <th>Team</th>
-                      {%endif%}
-                      <th>Conf</th>
-                      <th class='hide-small'>GB</th>
-                      <th>Record</th>
+                      <tr class='team-secondary-table-row'>
+                        {% if Division.DivisionName %}
+                        <th>{{Division.DivisionName}}</th>
+                        {% else %}
+                        <th>Team</th>
+                        {%endif%}
+                        <th>Conf</th>
+                        <th class='hide-small'>GB</th>
+                        <th>Record</th>
+                      </tr>
                     </thead>
                     {% for standingTeam in Division.Standings %}
                     <tr class='{{standingTeam.BoldTeam}}'>
@@ -343,7 +345,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     {{team.TeamName}} Signed Recruits
                   </div>
-                  <table  class='w3-table' id='teamOverviewConferenceStandings'>
+                  <table  class='w3-table-all' id='teamOverviewConferenceStandings'>
                     <thead>
                       <th class='teamColorBorder'>Player</th>
                       <th class='teamColorBorder'>Pos</th>
@@ -373,7 +375,7 @@
           </div>
         </div>
         {% else %}
-        <div class="w3-display-container">
+        <div class="w3-display-container w3-margin-bottom">
           <div class="w3-row-padding">
             <div class="w3-col l6 m12 w3-display-container">
               <div class="w3-row">
@@ -450,7 +452,7 @@
       </div>
       <div class="tab-content" style='display:none;' id="nav-info">
         <div class='w3-display-container'>
-          <div class="w3-row-padding">
+          <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-col l12 mw800">
               <div class="w3-card">
                 <div class="team-primary-background-bar">

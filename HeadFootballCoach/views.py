@@ -63,6 +63,7 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
     SimAction_Week = {'LinkDisplay': 'Sim This Week', 'id': 'SimThisWeek', 'Href': '#', 'ClassName': 'sim-action'}
     SimAction_Phase = {'LinkDisplay': 'Sim This Phase', 'id': 'SimThisPhase', 'Href': '#', 'ClassName': 'sim-action'}
     if WeekID is not None:
+
         if WeekID.WeekName == 'Preseason':
             CanSim = True
             SaveLS = False
@@ -116,10 +117,14 @@ def NavBarLinks(Path = 'Overview', GroupName='World', WeekID = None, WorldID = N
         UserActions.insert(0,SimAction_Phase)
 
         if WeekID.UserRecruitingPointsLeftThisWeek > 0:
-            UserActions.append({'LinkDisplay': 'Weekly Recruiting ({Points})'.format(Points=WeekID.UserRecruitingPointsLeftThisWeek), 'Href': '/World/{WorldID}/Recruiting'.format(WorldID = WorldID), 'ClassName': ''})
+            UserActions.append({'LinkDisplay': f'Weekly Recruiting ({WeekID.UserRecruitingPointsLeftThisWeek})', 'Href': f'/World/{WorldID}/Recruiting', 'ClassName': ''})
 
         if not WeekID.LastWeekInPhase:
             UserActions.insert(0,SimAction_Week)
+
+        WeekUpdates = list(WeekID.weekupdate_set.all())
+        if len(WeekUpdates) > 0:
+            UserActions.append({'LinkDisplay': f'Updates this week ({len(WeekUpdates)})', 'id': 'WeekUpdates', 'Href': '#', 'ClassName': 'week-updates'})
 
         SeasonStartYear = WeekID.PhaseID.LeagueSeasonID.SeasonStartYear
 
@@ -617,6 +622,16 @@ def POST_SetPlayerFaceJson(request, WorldID, PlayerID):
     return JsonResponse({'success':'value'})
 
 
+def GET_WeekUpdates(request, WorldID):
+
+    CurrentWorld = World.objects.get(WorldID = WorldID)
+    CurrentWeek = CurrentWorld.week_set.filter(IsCurrent = True).first()
+
+    WeekUpdates = list(CurrentWeek.weekupdate_set.all().values('MessageText', 'LinkText', 'LinkHref').order_by('-MessageImportanceValue'))
+
+    return JsonResponse({'message': 'This week\'s updates ', 'WeekUpdates': WeekUpdates}, status=200)
+
+
 def RemovePlayerFromDepthChart(WorldID, PlayerID = None, PlayerTeamSeasonID = None ):
     CurrentWorld = World.objects.get(WorldID = WorldID)
 
@@ -1096,11 +1111,12 @@ def Page_Conferences(request, WorldID, ConferenceID = None):
     ConferenceStandings = []
 
     for CS in ConferenceList:
-        ThisConference = {'ConferenceName': CS.ConferenceID.ConferenceName, 'ConferenceAbbreviation': CS.ConferenceID.ConferenceAbbreviation, 'ConferenceID': CS.ConferenceID.ConferenceID, 'ConferenceTeams': [], 'OpposingConferences': []}
-        TeamsInConference = CS.ConferenceStandings(Small=False,  LeagueSeasonID = CurrentSeason, WeekID = CurrentWeek)
+        ThisConference = {'ConferenceName': CS.ConferenceID.ConferenceName, 'ConferenceAbbreviation': CS.ConferenceID.ConferenceAbbreviation, 'ConferenceID': CS.ConferenceID.ConferenceID, 'ConferenceDivisions': [], 'OpposingConferences': []}
+        DivisionsInConference = CS.ConferenceStandings(Small=False,  LeagueSeasonID = CurrentSeason, WeekID = CurrentWeek)
 
-        for t in TeamsInConference:
-            ThisConference['ConferenceTeams'].append(t)
+        print('TeamsInConference', DivisionsInConference)
+        for d in DivisionsInConference:
+            ThisConference['ConferenceDivisions'].append(d)
 
         for OppConf in ConferenceList:#.exclude(ConferenceID = ConferenceID):
             OppConfDict = {}
@@ -3492,14 +3508,16 @@ def Page_Player(request, WorldID, PlayerID):
 
 
     else:
-
         page['PrimaryColor'] =  '1763B2'
         page['SecondaryColor'] = '000000'
 
-        RTS = RecruitTeamSeason.objects.filter(WorldID=WorldID).filter(PlayerTeamSeasonID__PlayerID = PlayerID).filter(Q(IsActivelyRecruiting=True) | Q(Signed=True)).order_by('-InterestLevel')
-
+        RTS = RecruitTeamSeason.objects.filter(WorldID=WorldID).filter(PlayerTeamSeasonID__PlayerID = PlayerID).filter(Q(IsActivelyRecruiting=True) | Q(Signed=True)).select_related('TeamSeasonID__TeamID').order_by('-InterestLevel')
         context['RecruitTeamSeasons'] = RTS
 
+        if PlayerObject.RecruitSigned:
+            SignedRTS = RTS.filter(Signed = True).first()
+            SignedTeam = SignedRTS.TeamSeasonID.TeamID
+            context['SignedTeam'] = SignedTeam
 
     context['Skills'] = PlayerDict['Skills']
     context['PlayerID'] = PlayerID
@@ -5539,7 +5557,7 @@ def Common_PlayerStats( Filters = {}, OrderList = []):
 
     Filters['playerteamseason__TeamSeasonID__TeamID__isnull'] = False
 
-    Players = Player.objects.filter(**Filters).values('PlayerID', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__RedshirtedThisSeason').annotate(
+    Players = Player.objects.filter(**Filters).values('PlayerID', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL', 'playerteamseason__RedshirtedThisSeason', 'playerteamseason__ClassID__ClassAbbreviation').annotate(
         ReasonForLeaving = Case(
             When(playerteamseason__QuitFootballAfterSeason = True, then=Value('Quit football')),
             When(playerteamseason__GraduatedAfterSeason = False, then=Value('Graduated')),
@@ -5911,6 +5929,7 @@ def Common_TeamStats( Filters = {}):
 
     Teams = Team.objects.filter(**Filters).values('TeamName','TeamColor_Primary_HEX', 'TeamID', 'TeamLogoURL').annotate(
         ConferenceID__ConferenceName = F('teamseason__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceName'),
+        ConferenceID__ConferenceAbbreviation = F('teamseason__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation'),
         NationalRank = Min('teamseason__teamseasonweekrank__NationalRank'),
         TeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), output_field=CharField()),
         GamesPlayed=Sum('teamseason__teamgame__GamesPlayed'),
@@ -6247,7 +6266,7 @@ def Common_TeamStats( Filters = {}):
         PNT_Yards = Sum('teamseason__teamgame__PNT_Yards'),
         PNT_AVG = Case(
                             When(PNT_Punts=0, then=0.0),
-                            default=(Round(F('PNT_Yards')* 100.0 / F('PNT_Punts'),1)),
+                            default=(Round(F('PNT_Yards')/ F('PNT_Punts'),1)),
                             output_field=FloatField()
                         ),
         RET_PNT_ATT = ExpressionWrapper(Value(0), output_field=IntegerField()),#TODO

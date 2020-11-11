@@ -499,6 +499,8 @@ class Week(models.Model):
 
     UserRecruitingPointsLeftThisWeek = models.IntegerField(default = 0)
 
+    MessagesToViewThisWeek = models.IntegerField(default = 0)
+
     def __str__(self):
         return self.WeekName + ' in ' + str(self.PhaseID.LeagueSeasonID.SeasonStartYear)
 
@@ -2110,7 +2112,7 @@ class Game(models.Model):
 
         HomeTeam = self.teamgame_set.filter(IsHomeTeam = True).first()
         AwayTeam = self.teamgame_set.filter(IsHomeTeam = False).first()
-        if HomeTeam is None:
+        if HomeTeam is None or AwayTeam is None or HomeTeam.TeamSeasonID is None or AwayTeam.TeamSeasonID is None:
             return 'Null game'
         return HomeTeam.TeamSeasonID.TeamID.__str__() + ' vs ' + AwayTeam.TeamSeasonID.TeamID.__str__() + ' in ' + str(self.WeekID.WeekName)
 
@@ -3256,3 +3258,16 @@ class RecruitTeamSeasonPromise(models.Model):
 
     TimeSpanYears = models.IntegerField(default = 1)
     TimespanInclusive = models.BooleanField(default=True)
+
+
+class WeekUpdate(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
+    WeekUpdateID = models.AutoField(primary_key=True, db_index=True)
+
+    WeekID = models.ForeignKey(Week, on_delete=models.CASCADE, db_index=True,  default=None, null=True, blank=True)
+    LeagueSeasonID = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None)
+    MessageImportanceValue = models.PositiveSmallIntegerField(default = 0)
+
+    MessageText = models.CharField(default='', max_length=400)
+    LinkText = models.CharField(default='', max_length=400)
+    LinkHref = models.CharField(default='', max_length=400)

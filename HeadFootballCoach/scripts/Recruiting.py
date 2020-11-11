@@ -1,4 +1,4 @@
-from ..models import Headline,World, Playoff,Week,Audit, RecruitTeamSeasonInterest, TeamSeasonPosition, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
+from ..models import Headline,World, Playoff,Week,Audit, WeekUpdate,RecruitTeamSeasonInterest, TeamSeasonPosition, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
 from random import uniform, randint, choice
 import numpy
 import time
@@ -547,6 +547,8 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
     CurrentWeekNumber = CurrentWeek.WeekNumber
 
+    NextWeek = None
+
     InterestModifier = CurrentWeek.RecruitingWeekModifier
 
 
@@ -803,6 +805,17 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
                 TeamSeasonPositionDict[RTS.TeamSeasonID][RTS.PlayerTeamSeasonID.PlayerID.PositionID].CommitPlayerCount +=1
                 TSPToSave.append(TeamSeasonPositionDict[RTS.TeamSeasonID][RTS.PlayerTeamSeasonID.PlayerID.PositionID])
+
+
+                if RTS.TeamSeasonID.TeamID.IsUserTeam:
+                    if NextWeek is None:
+                        NextWeek = CurrentWeek.NextWeek
+                    WU = WeekUpdate(WorldID_id = WorldID, WeekID = NextWeek, LeagueSeasonID = CurrentSeason, MessageImportanceValue=2, LinkHref = f'/World/{WorldID}/Player/{RTS.PlayerTeamSeasonID.PlayerID.PlayerID}', LinkText = 'Player profile', MessageText = '')
+
+                    PlayerName = f'{RTS.PlayerTeamSeasonID.PlayerID.PlayerFirstName} {RTS.PlayerTeamSeasonID.PlayerID.PlayerLastName}'
+
+                    WU.MessageText += f'{PlayerName} has signed with your team'
+                    WU.save()
 
 
         TeamSeasonPosition.objects.bulk_update(TSPToSave, ['CommitPlayerCount'])

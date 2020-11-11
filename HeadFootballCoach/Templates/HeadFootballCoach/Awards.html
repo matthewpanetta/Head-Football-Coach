@@ -44,7 +44,7 @@
       <div class="tab-content" style='display:none;' id="nav-preseason">
         <div class="w3-display-container">
           <div class="w3-row-padding">
-            <div class="w3-col w3-display-container">
+            <div class="w3-col w3-display-container w3-margin-bottom">
               {% for Conference in AwardDict.PreseasonAllAmericans%}
               <div class="w3-row-padding w3-margin-top">
               {% for Team in Conference.Teams%}
@@ -83,7 +83,7 @@
       </div>
       <div class="tab-content" style='display:none;' id="nav-season">
         <div class="w3-display-container">
-          <div class="w3-row-padding">
+          <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-col w3-display-container">
               {% for Conference in AwardDict.PostseasonAllAmericans%}
               <div class="w3-row-padding w3-margin-top">
@@ -130,7 +130,7 @@
       </div>
       {% if HeismanWinner %}
       <div class="tab-content" style='display:block;' id="nav-heisman-winner">
-        <div class="w3-row-padding">
+        <div class="w3-row-padding w3-margin-bottom">
           <div class="w3-col l12 mw1200">
 
             <div class="w3-card w3-margin-bottom">
@@ -289,7 +289,7 @@
       <div class="tab-content" style='display:block;' id="nav-weekly">
       {% endif %}
         <div class="w3-display-container">
-          <div class="w3-row-padding">
+          <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-col w3-display-container">
               {% for Conference in AwardDict.WeeklyAwards%}
 
@@ -337,7 +337,7 @@
       </div>
       <div class="tab-content" style='display:none;' id="nav-heisman">
         <div class="w3-display-container">
-          <div class="w3-row-padding">
+          <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-col l12 mw1100">
               <div class=" w3-card">
 
