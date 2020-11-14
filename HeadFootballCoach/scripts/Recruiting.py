@@ -551,6 +551,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
     InterestModifier = CurrentWeek.RecruitingWeekModifier
 
+    Logger = {"Time": time.time(), "Queries": len(connection.queries)}
 
     CoachDict = {}
     for HC in CoachTeamSeason.objects.filter(CoachPositionID__CoachPositionAbbreviation = 'HC', TeamSeasonID__LeagueSeasonID = CurrentSeason).select_related('TeamSeasonID', 'CoachID'):
@@ -700,7 +701,7 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             while MinutesToTalk > 0 and TotalMinutesToTalk>0:
                 ActionTaken = False
 
-                if RTS.SkillGroupsLeftToScout > 0:
+                if RTS.SkillGroupsLeftToScout > 0 and uniform(0,1) ** RTS.SkillGroupsLeftToScout < .33:
 
                     RTS = ScoutPlayer(RTS, TSP = TeamSeasonPositionDict[RTS.TeamSeasonID][RTS.PlayerTeamSeasonID.PlayerID.PositionID], CoachObj = CoachObj)
 
@@ -732,7 +733,8 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             RTS.InterestLevel += int(ThisWeekInterestIncrease * InterestIncreaseModifier)
             RTSToSave.append(RTS)
 
-    print('Starting to save RTS', len(connection.queries))
+    print(f'Starting to save RTS. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
+    Logger = {"Time": time.time(), "Queries": len(connection.queries)}
 
     FieldsToSave = ['VisitWeekID', 'CommitWeekID','Signed','OfferMade','InterestLevel', 'IsActivelyRecruiting','RecruitingTeamRank','Scouted_Overall','Scouted_Strength_Rating', 'Scouted_Agility_Rating','Scouted_Speed_Rating','Scouted_Acceleration_Rating','Scouted_Stamina_Rating','Scouted_Awareness_Rating','Scouted_Jumping_Rating','Scouted_Injury_Rating','Scouted_ThrowPower_Rating','Scouted_ShortThrowAccuracy_Rating','Scouted_MediumThrowAccuracy_Rating','Scouted_DeepThrowAccuracy_Rating','Scouted_ThrowOnRun_Rating', 'Scouted_ThrowUnderPressure_Rating','Scouted_PlayAction_Rating','Scouted_Elusiveness_Rating','Scouted_BallCarrierVision_Rating', 'Scouted_JukeMove_Rating','Scouted_BreakTackle_Rating','Scouted_Carrying_Rating','Scouted_Catching_Rating','Scouted_CatchInTraffic_Rating','Scouted_RouteRunning_Rating','Scouted_Release_Rating','Scouted_HitPower_Rating','Scouted_Tackle_Rating', 'Scouted_PassRush_Rating','Scouted_BlockShedding_Rating','Scouted_Pursuit_Rating', 'Scouted_PlayRecognition_Rating','Scouted_ManCoverage_Rating','Scouted_ZoneCoverage_Rating','Scouted_Press_Rating','Scouted_PassBlock_Rating','Scouted_RunBlock_Rating','Scouted_ImpactBlock_Rating','Scouted_KickPower_Rating','Scouted_KickAccuracy_Rating','Scouted_KickReturn_Rating','SkillGroupsLeftToScout'
     , 'Scouting_Intangibles_ScoutingPercent', 'Scouting_Intangibles_Precision', 'Scouting_Intangibles_Accuracy'
@@ -749,8 +751,10 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
 
     RecruitTeamSeason.objects.bulk_update(RTSToSave, FieldsToSave)
     RecruitTeamSeasonInterest.objects.bulk_update(RTS_InterestToSave, ['PitchRecruitInterestRank_IsKnown'])
-    print('Saved RTS', len(connection.queries))
+    print(f'Saved RTS. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
+    Logger = {"Time": time.time(), "Queries": len(connection.queries)}
 
+    RTSToSave = []
     RTS = RecruitTeamSeason.objects.filter(TeamSeasonID__LeagueSeasonID = CurrentSeason).annotate(
         InterestLevelAdjusted = Case(
             When(IsActivelyRecruiting=False, then=F('InterestLevel') / 10.0),
@@ -763,12 +767,18 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
             order_by=F("InterestLevelAdjusted").desc(),
         ))
     for R in RTS:
-        R.RecruitingTeamRank = R.RecruitingTeamRank_new
-    RecruitTeamSeason.objects.bulk_update(RTS,['RecruitingTeamRank'])
+        if R.RecruitingTeamRank != R.RecruitingTeamRank_new:
+            R.RecruitingTeamRank = R.RecruitingTeamRank_new
+            RTSToSave.append(R)
+    RecruitTeamSeason.objects.bulk_update(RTSToSave,['RecruitingTeamRank'])
+    print(f'Saved recruiting ranks. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
+    Logger = {"Time": time.time(), "Queries": len(connection.queries)}
+
     US = Player.objects.filter(RecruitSigned = False).update(
         RecruitingPointsNeeded = ExpressionWrapper( F('RecruitingPointsNeeded') - Value(100) + Coalesce( Subquery(Player.objects.filter(PlayerID = OuterRef('PlayerID')).filter(playerteamseason__recruitteamseason__IsActivelyRecruiting = True).annotate(count=10*Count('playerteamseason__recruitteamseason__RecruitTeamSeasonID')).values('count')),0), IntegerField()))
 
-    print('Saved recruiting ranks', len(connection.queries))
+    print(f'Saved RecruitingPointsNeeded. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
+    Logger = {"Time": time.time(), "Queries": len(connection.queries)}
 
     PlayersReadyToSign = RecruitTeamSeason.objects.filter(PlayerTeamSeasonID__PlayerID__RecruitSigned = False, OfferMade = True, InterestLevel__gte = F('PlayerTeamSeasonID__PlayerID__RecruitingPointsNeeded')).annotate(
         TeamRank = Window(
@@ -779,7 +789,8 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
     ).select_related('PlayerTeamSeasonID__PlayerID','PlayerTeamSeasonID__PlayerID__PositionID', 'TeamSeasonID__TeamID').order_by('PlayerTeamSeasonID__PlayerID__Recruiting_NationalRank')
 
 
-    print('Starting to sign players', len(connection.queries))
+    print(f'Starting to sign players. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
+    Logger = {"Time": time.time(), "Queries": len(connection.queries)}
     print('Number of players ready to sign', PlayersReadyToSign.count())
     if PlayersReadyToSign.count() > 0:
 
@@ -851,7 +862,8 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
     RecruitTeamSeason.objects.bulk_update(RTS_ToUpdate, ['UserRecruitingPointsLeftThisWeek'])
 
     RecruitTeamSeasonInterest.objects.filter(WorldID = WorldID, UtilizedThisWeek = True).update(UtilizedThisWeek = False, InterestEarnedThisWeek = 0)
-    print('Recruiting complete', len(connection.queries))
+    print(f'Recruiting complete. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
+    Logger = {"Time": time.time(), "Queries": len(connection.queries)}
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start

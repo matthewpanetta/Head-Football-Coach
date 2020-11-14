@@ -1,8 +1,32 @@
 from django.db.models.query import QuerySet
 import random
 import numpy
+import time
+import json
 from math import sin, cos, sqrt, atan2, radians, log
 
+
+class Logger:
+
+    EventList = []
+    StartTime = None
+    LogName = ''
+
+    def __init__(self, LogName='', start=True, FirstEventName=''):
+        LogName = LogName
+        LogEvent = {'LogName': FirstEventName, 'LogStart': time.time(), 'LogEnd': None, 'Duration': None, 'QueryCount': 0}
+        self.StartTime = time.time()
+        self.EventList.append(LogEvent)
+
+    def lap(self, do_print=True, EventName = ''):
+        self.EventList[-1]['LogEnd'] = time.time()
+        self.EventList[-1]['Duration'] = self.EventList[-1]['LogEnd'] - self.EventList[-1]['LogStart']
+
+        if do_print:
+            print(json.dumps(self.EventList[-1], indent=2))
+
+        LogEvent = {'LogName': EventName, 'LogStart': time.time(), 'LogEnd': None, 'Duration': None, 'QueryCount': 0}
+        self.EventList.append(LogEvent)
 
 
 def FindRange(RangeDict, Value):

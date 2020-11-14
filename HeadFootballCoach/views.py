@@ -12,7 +12,7 @@ import sys
 import numpy
 from .resources import ChooseCaptains, SetPlayerTeamSeasonTotals, TeamCuts, TeamRedshirts, CreateBowls,UpdateTeamPositions, UpdateTeamStates, EndSeason, PlayerDeparture,NewSeasonCutover,InitializeLeaguePlayers, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, EndRegularSeason
 from .scripts.rankings import     CalculateConferenceRankings,CalculateRankings, SelectBroadcast
-from .utilities import FindRange,HumanizeInteger, NormalVariance, NormalTrunc, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
+from .utilities import FindRange,HumanizeInteger, Logger, NormalVariance, NormalTrunc, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
 from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting_New, PrepareForSigningDay, ScoutPlayer
 from .scripts.SeasonAwards import ChoosePlayersOfTheWeek, SelectPreseasonAllAmericans
@@ -1660,7 +1660,7 @@ def Page_Index(request):
     if InDeepTesting:
         NumConferencesToInclude = 1
     elif InTesting:
-        NumConferencesToInclude = 3
+        NumConferencesToInclude = 4
     else:
         NumConferencesToInclude = 7
     PossibleConferences = [
@@ -6611,7 +6611,7 @@ def POST_SimAction(request, WorldID):
     CurrentSeason = LeagueSeason.objects.get(WorldID = WorldID, IsCurrent = 1)
     CurrentWorld = World.objects.get(WorldID=WorldID)
 
-    CurrentWeek = Week.objects.filter(PhaseID__LeagueSeasonID = CurrentSeason).filter(IsCurrent = True).first()
+    CurrentWeek = Week.objects.filter(PhaseID__LeagueSeasonID = CurrentSeason).filter(IsCurrent = True).select_related('PhaseID').first()
     CurrentPhase = CurrentWeek.PhaseID
 
     AllowInterruptions = CurrentWorld.AllowInterruptions
@@ -6619,6 +6619,7 @@ def POST_SimAction(request, WorldID):
     RedirectHref = ''
 
     DoAudit = False
+    log = Logger(LogName='SimAction', FirstEventName = 'Starting week sim')
 
     if Duration == 'SimWeek':
         WeekList = [CurrentWeek]
@@ -6627,7 +6628,10 @@ def POST_SimAction(request, WorldID):
     else:
         return JsonResponse({'message': 'Could not identify duration.'}, status=422)
 
+    log.lap(EventName='Starting week loop')
+
     for ThisWeek in WeekList:
+        log.lap(EventName='Simming games')
         print('Simming Week', ThisWeek.WeekName)
         NextWeek = ThisWeek.NextWeek
 
@@ -6655,22 +6659,35 @@ def POST_SimAction(request, WorldID):
                 A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 16, AuditDescription='GameSim', QueryCount = len(connection.queries))
 
 
+        log.lap(EventName='Check: is it regular season, conf champ, or bowl')
+
         if ThisWeek.PhaseID.PhaseName in ['Regular Season', 'Conference Championships', 'Bowl Season']:
+            log.lap(EventName='Calculate rankings')
             CalculateRankings(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+
+            log.lap(EventName='Choose players of thr week')
             ChoosePlayersOfTheWeek(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+
+        log.lap(EventName='Check: is recruiting allowed?')
 
         if ThisWeek.RecruitingAllowed:
             FakeWeeklyRecruiting_New(WorldID, CurrentWeek = ThisWeek)
             print('would be doing recruting')
 
+        log.lap(EventName='Check: is it regular season?')
+
         if ThisWeek.PhaseID.PhaseName == 'Regular Season':
+
             #DO TOURNEY STUFF HERE
             CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+            log.lap(EventName='SelectBroadcast')
             SelectBroadcast(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+            log.lap(EventName='LastWeekInPhase')
 
             if ThisWeek.LastWeekInPhase:
                 print('End regular season!!!')
                 EndRegularSeason(WorldID, CurrentWeek = ThisWeek)
+            log.lap(EventName='Done')
 
         elif ThisWeek.PhaseID.PhaseName == 'Conference Championships':
             #DO TOURNEY STUFF HERE
@@ -6701,15 +6718,27 @@ def POST_SimAction(request, WorldID):
             TrainingCamps(CurrentSeason, WorldID)
 
         elif NextWeek.WeekName == 'Preseason':
+            log = Logger(LogName='Preseason SimAction', FirstEventName = 'Get UserTeam')
             UserTeam = GetUserTeam(WorldID)
             NavBarLinksStatus = NavBarLinks(Path = 'Overview', GroupName='World', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
             PrepForUserTeam = not NavBarLinksStatus['CanSim']
+
+            log.lap(EventName='Prep for season')
             PrepForSeason(CurrentSeason, CurrentWorld, ThisWeek, PrepForUserTeam=PrepForUserTeam)
+
+            log.lap(EventName='UpdateTeamPositions')
             UpdateTeamPositions(CurrentSeason, CurrentWorld)
+
+            log.lap(EventName='UpdateTeamStates')
             UpdateTeamStates(CurrentSeason, CurrentWorld)
 
+            log.lap(EventName='Done')
+
         elif ThisWeek.WeekName == 'Preseason':
+            log = Logger(LogName='SetWeek1RecruitingPoints', FirstEventName = 'SetWeek1RecruitingPoints')
             SetWeek1RecruitingPoints(CurrentSeason, CurrentWorld)
+
+            log.lap(EventName='Done')
 
 
 

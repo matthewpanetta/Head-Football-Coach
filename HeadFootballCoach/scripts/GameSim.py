@@ -1058,12 +1058,10 @@ def GameSim(game):
 
                 ShankProbability = 0.0 if PunterOverall >= 90 else (100 - PunterOverall - 10) / 100.0
                 if random.uniform(0,1) < ShankProbability:
-                    print('Shanked punt!!!')
                     PuntYards = round(NormalTrunc(20, 5, 5, 30),0)
 
                 OrigBallSpot = BallSpot
 
-                print('PunterOverall', PunterOverall, 'PuntMean',PuntMean, 'PuntYards', PuntYards, 'ShankProbability', ShankProbability, 'OrigBallSpot' , OrigBallSpot)
                 if BallSpot + PuntYards > 90:
                     PuntToYard = round(NormalTrunc(90, 3, 85, 99),0)
                     PuntYards = PuntToYard - BallSpot

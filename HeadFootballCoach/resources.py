@@ -902,6 +902,8 @@ def GeneratePlayer(t, s, c, WorldID, PositionAbbreviation = None, PlayerBioData 
     PlayerDict['Personality_LoyaltyRating'] = NormalBounds(50,20,2,98)
     PlayerDict['Personality_DesireForPlayingTimeRating'] = NormalBounds(55,20,2,98)
 
+    PlayerDict['RecruitingPointsNeeded'] = round(NormalBounds(2500,200,1000,3000), -2)
+
     P = Player(**PlayerDict)
 
 

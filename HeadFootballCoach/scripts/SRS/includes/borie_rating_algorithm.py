@@ -3,23 +3,21 @@
 class RatingAlgorithm():
 
     def __init__(self, iterations = 5000):
-        self.ITERATION_CONSTANT = 50
+        self.ITERATION_CONSTANT = 30
 
     def improveScores(self,scoreDiff):
         if scoreDiff > 21:
-            scoreDiff = 3
+            scoreDiff = 6
         elif scoreDiff > 14:
-            scoreDiff = 2
+            scoreDiff = 5
         elif scoreDiff > 0:
-            scoreDiff = 1
+            scoreDiff = 4
         elif scoreDiff <= -28:
-            scoreDiff = -7
+            scoreDiff = -6
         elif scoreDiff <= -14:
             scoreDiff = -5
-        elif scoreDiff <= -7:
-            scoreDiff = -4
         elif scoreDiff < 0:
-            scoreDiff = -3
+            scoreDiff = -4
 
         return scoreDiff
 

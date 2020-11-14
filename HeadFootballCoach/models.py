@@ -506,7 +506,7 @@ class Week(models.Model):
 
     @property
     def NextWeek(self):
-        NextWeek = Week.objects.filter(WeekNumber = self.WeekNumber + 1).filter(PhaseID__LeagueSeasonID = self.PhaseID.LeagueSeasonID).first()
+        NextWeek = Week.objects.filter(WeekNumber = self.WeekNumber + 1).filter(PhaseID__LeagueSeasonID = self.PhaseID.LeagueSeasonID).select_related('PhaseID__LeagueSeasonID').first()
         if NextWeek is None:
             NextLS = self.PhaseID.LeagueSeasonID.NextLeagueSeason
             NextWeek = Week.objects.filter(PhaseID__LeagueSeasonID = NextLS).order_by('WeekID').first()
