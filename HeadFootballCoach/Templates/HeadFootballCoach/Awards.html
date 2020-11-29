@@ -345,6 +345,7 @@
                 <thead>
                   <th>Rank</th>
                   <th>Team</th>
+                  <th></th>
                   <th>Player</th>
                   <th>Pos</th>
                   <th>Class</th>
@@ -359,6 +360,11 @@
                         <img src="{{Player.playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_50}}" class='worldTeamStatLogo' alt="">
                         {{Player.playerteamseason__TeamSeasonID__TeamID__TeamName}}
                       </a>
+                    </td>
+                    <td>
+                      <div class='PlayerFace-90 PlayerFace-Headshot' style='border-color: {{Player.playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX}}'>
+                        {{Player.PlayerFaceSVG|safe}}
+                      </div>
                     </td>
                     <td>
                       <a href="{{Player.PlayerHref}}">{{Player.PlayerName}}</a>

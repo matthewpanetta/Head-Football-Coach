@@ -2,19 +2,8 @@
 function DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName){
   var div = $(`
       <div class='w3-row-padding'>
-        <div class='w3-col s6 top-teams'>
-          <table class='width100'>
-            <thead>
-              <th>Rank</th>
-              <th>Team</th>
-              <th>`+CategoryDisplayName+`</th>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-        <div class='w3-col s6 bottom-teams'>
-          <table class='width100'>
+        <div class='w3-col s10 top-teams'>
+          <table class='width100 w3-table-all'>
             <thead>
               <th>Rank</th>
               <th>Team</th>
@@ -27,30 +16,32 @@ function DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName){
       </div>
     `);
 
+
   $.ajax({
     url: '/World/'+WorldID+'/Team/'+TeamID+'/TeamInfoRating/'+Category,
     success: function (data) {
       console.log('Ajax return', data);
 
-      $.each(data.TopTeams, function(ind, obj){
-        var tr = $('<tr></tr>');
-        tr.append('<td>'+obj[Category+'_Rank']+'</td>');
-        tr.append('<td><a href="'+obj.TeamHref+'"><img src="'+obj.TeamLogoURL+'"  class="small-logo" >'+obj.TeamName+'</a></td>');
-        tr.append('<td>'+NumberToGrade_True(obj[Category]).LetterGrade +'</td>');
+      var Table = $(div).find('.top-teams table').DataTable({
+        dom: 't',
+        data: data.TopTeams,
+        paging: false,
+        scrollY: "400px",
+        scrollCollapse: true,
+        columns: [
+          {'data': 'Category_Rank', "sortable": true},
+          {'data': 'TeamSeasonID__TeamID__TeamName', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+              $(td).html('<a href="'+DataObject.TeamHref+'"><img src="'+DataObject.TeamSeasonID__TeamID__TeamLogoURL+'"  class="logo-30 margin-right-8" >'+DataObject.TeamSeasonID__TeamID__TeamName+'</a>');
+          }},
+          {'data': 'TeamRating', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            var Rating = StringValue;
+            var GradeObject = NumberToGrade_True(StringValue);
+              $(td).html(NumberToGrade_True(DataObject.TeamRating).LetterGrade);
+          }},
 
-        $(div).find('.top-teams tbody').append(tr);
+        ],
+        order: [[0, 'asc']]
       });
-
-
-      $.each(data.BottomTeams, function(ind, obj){
-        var tr = $('<tr></tr>');
-        tr.append('<td>'+obj[Category+'_Rank']+'</td>');
-        tr.append('<td><a href="'+obj.TeamHref+'"><img src="'+obj.TeamLogoURL+'"  class="small-logo" >'+obj.TeamName+'</a></td>');
-        tr.append('<td>'+NumberToGrade_True(obj[Category]).LetterGrade +'</td>');
-
-        $(div).find('.bottom-teams tbody').append(tr);
-      });
-
     }
   });
 
@@ -121,8 +112,6 @@ function DrawTeamInfoChildRows(WorldID, TeamID, data) {
 
       var tr = $(this).parent();
       $(tr).addClass('shown');
-      var Category = $(tr).attr('Category');
-      var CategoryDisplayName = $(tr).attr('CategoryDisplayName');
       var row = table.row( tr );
 
       if ( row.child.isShown() ) {
@@ -133,13 +122,13 @@ function DrawTeamInfoChildRows(WorldID, TeamID, data) {
       else {
           // Open this row
           var data = row.data()
+          var Category = data.TeamInfoTopicID__AttributeName;
+          var CategoryDisplayName = data.TeamInfoTopicID__AttributeName;
           var formattedContent = DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName);
-          console.log(formattedContent,'formattedContent');
           row.child( formattedContent ).show();
-          var childrow = row.child();
-          console.log(childrow, 'childrow');
-
           tr.addClass('shown');
+
+
       }
 
 
@@ -181,17 +170,6 @@ function AddBoxScoreListeners(){
 }
 
 
-function DrawFaces(TeamJerseyStyle, TeamJerseyInvert, overrides = undefined){
-
-  $.each($('[hasplayerfacejson="1"]'), function(index,FaceDiv){
-    var FaceElement = $(FaceDiv).find('.PlayerFaceDisplay')[0];
-    var FaceJson = $(FaceDiv).attr('PlayerFaceJson').replace(/'/g, '"');
-    var PlayerFaceJson = JSON.parse(FaceJson);
-    BuildFace(PlayerFaceJson, TeamJerseyStyle, TeamJerseyInvert, overrides, $(FaceElement).attr('id'));
-  });
-}
-
-
 
 $(document).ready(function(){
 
@@ -210,7 +188,6 @@ $(document).ready(function(){
   AddScheduleListeners();
   AddBoxScoreListeners();
 
-  DrawFaces(TeamJerseyStyle, TeamJerseyInvert, overrides=overrides);
   DrawSchedule();
 
   var TeamInfoData = $('#team-info-data')[0];

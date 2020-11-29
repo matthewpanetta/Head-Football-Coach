@@ -6,6 +6,7 @@ import random
 import time
 from django.db.models import Max
 from django.shortcuts import get_object_or_404
+from .scripts.PlayerFace import GeneratePlayerFaceJSon, BuildFaceSVG
 from .utilities import GetValuesOfObject,NormalTrunc, MapNumberValuesToLetterGrade, Average, UniformTwoDecimals, WeightedProbabilityChoice, SecondsToMinutes
 # Create your models here.
 
@@ -1372,7 +1373,7 @@ class TeamSeason(models.Model):
             {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'SecondarySort': 'DEF_Tackles'},
             {'FieldName': 'DEF_INT', 'DisplayName': 'Interceptions', 'SecondarySort': 'DEF_Tackles'},
         ]
-        PTS = self.playerteamseason_set.values('PlayerID_id', 'PlayerID__PlayerFaceJson', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
+        PTS = self.playerteamseason_set.values('PlayerTeamSeasonID', 'PlayerID_id', 'PlayerID__PlayerFaceJson', 'PlayerID__PlayerFaceSVG', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
             PlayerName = Concat(F('PlayerID__PlayerFirstName'), Value(' '), F('PlayerID__PlayerLastName'), output_field=CharField()),
             PlayerFaceJson = F('PlayerID__PlayerFaceJson'),
             PlayerPosition = F('PlayerID__PositionID__PositionAbbreviation'),
@@ -1419,6 +1420,27 @@ class TeamSeason(models.Model):
                 output_field=FloatField()
             )
         ).filter(GamesPlayed__gt = 0)
+
+        PlayersToUpdate = []
+        for P in PTS:
+            PlayerTeamSeasonID = P['PlayerTeamSeasonID']
+            if P['PlayerID__PlayerFaceSVG'] is None:
+                PlayerTeamSeasonObj = PlayerTeamSeason.objects.filter(PlayerTeamSeasonID = PlayerTeamSeasonID).select_related('PlayerID__PositionID', 'TeamSeasonID__TeamID').first()
+                PlayerObj = PlayerTeamSeasonObj.PlayerID
+                PlayerTeam = PlayerTeamSeasonObj.TeamSeasonID.TeamID
+                if len(PlayerTeamSeasonObj.PlayerID.PlayerFaceJson) == 0:
+                    PlayerFaceJson = GeneratePlayerFaceJSon(PlayerObj)
+                    PlayerObj.PlayerFaceJson = PlayerFaceJson
+                else:
+                    PlayerFaceJson = PlayerObj.PlayerFaceJson
+
+                PlayerFaceSVG = BuildFaceSVG(PlayerFaceJson, TeamJerseyStyle = PlayerTeam.TeamJerseyStyle, TeamJerseyInvert = PlayerTeam.TeamJerseyInvert, TeamColors = [PlayerTeam.TeamColor_Primary_HEX, PlayerTeam.TeamColor_Secondary_HEX])
+                PlayerObj.PlayerFaceSVG = PlayerFaceSVG
+                P['PlayerID__PlayerFaceSVG'] = PlayerFaceSVG
+
+                PlayersToUpdate.append(PlayerObj)
+        Player.objects.bulk_update(PlayersToUpdate, ['PlayerFaceSVG', 'PlayerFaceJson'])
+
 
         Results = []
 

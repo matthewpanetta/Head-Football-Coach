@@ -146,7 +146,8 @@
                                     <span>({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})</span>
                                 </div>
                                 <div class="" >
-                                  <div class="SchedulePlayerFace PlayerFaceDisplay inline-block align-top" playerfacejson='{{Player.PlayerTeamSeasonID.PlayerID.PlayerFaceJson}}' teamjerseystyle='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamJerseyStyle}}' teamjerseyinvert='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamJerseyInvert}}' playerteamprimarycolor='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Primary_HEX}}' playerteamsecondarycolor='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Secondary_HEX}}' playerid='{{Player.PlayerTeamSeasonID.PlayerID.PlayerID}}' id='PlayerFace{{Player.PlayerGameStatID}}'>
+                                  <div class="PlayerFace-45 PlayerFace-Headshot PlayerFaceDisplay inline-block align-top" style='border-color:#{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Primary_HEX}}'>
+                                    {{PlayerFaceSVGDict|keyvalue:Player.PlayerTeamSeasonID.PlayerID.PlayerID|safe}}
 
                                   </div>
                                   <ul class='no-list-style font10 inline-block'>
@@ -170,8 +171,8 @@
                                     <span>({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})</span>
                                 </div>
                                 <div class="" >
-                                  <div class="SchedulePlayerFace PlayerFaceDisplay inline-block align-top" playerfacejson='{{Player.PlayerTeamSeasonID.PlayerID.PlayerFaceJson}}' teamjerseystyle='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamJerseyStyle}}' teamjerseyinvert='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamJerseyInvert}}' playerteamprimarycolor='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Primary_HEX}}' playerteamsecondarycolor='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Secondary_HEX}}' playerid='{{Player.PlayerTeamSeasonID.PlayerID.PlayerID}}' id='PlayerFace{{Player.PlayerGameStatID}}'>
-
+                                  <div class="PlayerFace-45 PlayerFace-Headshot PlayerFaceDisplay inline-block align-top"  style='border-color:#{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Primary_HEX}}' >
+                                    {{PlayerFaceSVGDict|keyvalue:Player.PlayerTeamSeasonID.PlayerID.PlayerID|safe}}
                                   </div>
                                   <ul class='no-list-style font10 inline-block'>
                                     <li>{{Player.TopStatStringDisplay1_Text}}</li>
