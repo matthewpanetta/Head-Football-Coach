@@ -1,3 +1,7 @@
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+
 
 $(document).ready(function(){
   var DataPassthruHolder = $('#PageDataPassthru')[0];
@@ -9,6 +13,7 @@ $(document).ready(function(){
   DrawSchedule();
   PopulateTeamSchedule(WorldID, TeamID);
 });
+
 
 
 function PopulateTeamSchedule(WorldID, TeamID){
@@ -141,11 +146,42 @@ function AddScheduleListeners(){
 
       var UnselectedWeekID = TargetTab.attr('WeekID');
 
-      $('.weekScheduleDisplayContainer[WeekID="'+UnselectedWeekID+'"]').addClass('w3-hide')
+      $('.weekScheduleDisplayContainer[WeekID="'+UnselectedWeekID+'"]').addClass('w3-hide');
     });
 
     $(ClickedTab).addClass('SelectedWeekBox');
-    $('.weekScheduleDisplayContainer[WeekID="'+SelectedWeekID+'"]').removeClass('w3-hide')
+    $('.weekScheduleDisplayContainer[WeekID="'+SelectedWeekID+'"]').removeClass('w3-hide');
+
+
+    if ($($('.weekScheduleDisplayContainer[WeekID="'+SelectedWeekID+'"]')[0]).attr('hasfacesdrawn') == '0'){
+      $.each($('.weekScheduleDisplayContainer[WeekID="'+SelectedWeekID+'"] .SchedulePlayerFace'), function(ind, PlayerFaceDiv){
+        var FaceJson = $(PlayerFaceDiv).attr('PlayerFaceJson').replace(/'/g, '"');
+        var TeamJerseyStyle = $(PlayerFaceDiv).attr('TeamJerseyStyle');
+        var TeamJerseyInvert = $(PlayerFaceDiv).attr('TeamJerseyInvert');
+        var overrides = {'teamColors': ['#'+$(PlayerFaceDiv).attr('playerteamprimarycolor'), '#'+$(PlayerFaceDiv).attr('playerteamsecondarycolor'),'#FFFFFF' ]};
+
+
+        if (FaceJson == undefined || FaceJson == ''){
+          console.log('Bad face');
+        }
+        else if ($(PlayerFaceDiv).children().length > 0){
+          console.log('Already had face!');
+        }
+        else {
+          var PlayerFaceJson = JSON.parse(FaceJson);
+          var PlayerID = $(PlayerFaceDiv).attr('playerid')
+          BuildFace(PlayerFaceJson, TeamJerseyStyle, TeamJerseyInvert, overrides, $(PlayerFaceDiv).attr('id'));
+
+          var InnerContent = $(PlayerFaceDiv).html();
+          $('[playerid="'+PlayerID+'"]').html(InnerContent);
+        }
+
+      });
+
+      $('.weekScheduleDisplayContainer[WeekID="'+SelectedWeekID+'"]').attr('hasfacesdrawn', '1')
+    }
+
+
 
   });
 }

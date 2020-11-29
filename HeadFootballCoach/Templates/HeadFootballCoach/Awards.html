@@ -54,7 +54,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     {{Conference.Conference.ConferenceName}} {{Team.TeamName}}
                   </div>
-                  <table id='teamOverviewConferenceStandings'>
+                  <table class='w3-table-all' id='teamOverviewConferenceStandings'>
                     {% for Player in Team.Team %}
                     <tr class='{{Conf.ShowConference}}'>
                       <td>
@@ -94,7 +94,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     {{Conference.Conference.ConferenceName}} {{Team.TeamName}}
                   </div>
-                  <table id='teamOverviewConferenceStandings'>
+                  <table class='w3-table-all' id='teamOverviewConferenceStandings'>
                     {% for Player in Team.Team %}
                     <tr class='{{Conf.ShowConference}}'>
                       <td>
@@ -137,7 +137,7 @@
               <div class="w3-bar team-primary-background-bar-generic" style='background-color: #{{NationalChampion.TeamID.TeamColor_Primary_HEX}}; color: white; border-top: 4px solid #{{NationalChampion.TeamID.TeamColor_Secondary_HEX}};'>
                 National Champion
               </div>
-              <table class='width100' style='border-left-color: #{{NationalChampion.TeamID.TeamColor_Primary_HEX}}'>
+              <table class='width100 w3-table-all' style='border-left-color: #{{NationalChampion.TeamID.TeamColor_Primary_HEX}}'>
                 <tr>
                   <td>
                     <div class='w3-row-padding ' style='text-align: initial;'>
@@ -163,7 +163,7 @@
               <div class="w3-bar team-primary-background-bar-generic" style='background-color: #{{NationalRunnerUp.TeamID.TeamColor_Primary_HEX}}; color: white; border-top: 4px solid #{{NationalRunnerUp.TeamID.TeamColor_Secondary_HEX}};'>
                 National Runner Up
               </div>
-              <table class='width100' style='border-left-color: #{{NationalRunnerUp.TeamID.TeamColor_Primary_HEX}}'>
+              <table class='width100 w3-table-all' style='border-left-color: #{{NationalRunnerUp.TeamID.TeamColor_Primary_HEX}}'>
                 <tr>
                   <td>
                     <div class='w3-row-padding ' style='text-align: initial;'>
@@ -189,7 +189,7 @@
               <div class="w3-bar team-primary-background-bar-heisman">
                 Heisman Winner
               </div>
-              <table class='width100'>
+              <table class='width100 w3-table-all'>
                 <tr>
                   <td id='heisman-highlight'>
                     <div class='w3-row-padding ' style='text-align: initial;'>
@@ -265,7 +265,7 @@
 
                                   </div>
                                   <div class="w3-container w3-hide highlight-actions w3-row-padding">
-                                    <table class=' w3-table' style='width: 50%;'>
+                                    <table class=' w3-table-all' style='width: 50%;'>
                                     </table>
                                   </div>
                                 </div>
@@ -300,7 +300,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     {{Conference.Group}} {{PositionGroup}}
                   </div>
-                  <table id='teamOverviewConferenceStandings'>
+                  <table class='w3-table-all' id='teamOverviewConferenceStandings'>
 
                     {% for Week in WeeklyAwards %}
                     <tr class='{{Conf.ShowConference}}'>

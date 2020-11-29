@@ -29,7 +29,7 @@
         {% endif %}
       </a>
       <div class="PlayerFace" id='PlayerFace'>
-
+        {{player.PlayerFaceSVG|safe}}
       </div>
       <div class='playerHeaderInfo'>
         <span class='playerFirstName'>
@@ -545,42 +545,12 @@
       "order": [[ 3, "desc" ], [ 4, "desc" ]]
   } );
 
-  //playerRecruitingTeamTable
-
 
 </script>
 
-<script>
-
-$(document).ready(function(){
-  console.log("player.PlayerFaceJson", {{player.PlayerFaceJson|safe}});
-
-  var overrides = {'teamColors': ["#{{page.PrimaryColor}}","#{{page.SecondaryColor}}","#FFF",]};
-
-  var TeamJerseyInvert = '{{player.TeamJerseyInvert}}';
-  if (TeamJerseyInvert.length == 0){
-    TeamJerseyInvert = false;
-  }
-
-    var TeamJerseyStyle = '{{player.TeamJerseyStyle}}';
-    if (TeamJerseyStyle.length == 0){
-      TeamJerseyStyle = 'football';
-    }
-
-  {% if player.PlayerFaceJson|length > 0 %}
-    BuildFace({{player.PlayerFaceJson|safe}}, TeamJerseyStyle, TeamJerseyInvert, overrides=overrides, DOMID = 'PlayerFace');
-  {% else %}
-    BuildFace(undefined, TeamJerseyStyle,TeamJerseyInvert);
-  {% endif %}
-
-
-});
-</script>
 
 {% if player.IsRecruit %}
 <script src="{% static 'Highcharts/code/highcharts.js' %}"></script>
-
-<script type="text/javascript">
 
   Highcharts.chart('RecruitingContainer', {
     title: {

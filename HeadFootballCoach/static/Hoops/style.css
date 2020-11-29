@@ -1892,3 +1892,16 @@ thead tr {
 .no-border {
   border:none !important;
 }
+
+.SchedulePlayerFace {
+  height: 45px;
+  width: 30px;
+}
+
+.align-top{
+  vertical-align: top;
+}
+
+.padding-left-8 {
+  padding-left: 8px;
+}

@@ -28,7 +28,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID, SourceTable) {
   var div = $(`
     <div class='w3-row-padding' style='text-align: initial;' id='playerinfo-` + SourceTable + `-` + PlayerID + `'>
       <div class='w3-col s2'>
-        <div class="PlayerFace" style='width: 150px; height: 250px; margin-left: 20%;'>
+        <div class="PlayerFace" style='width: 166px; height: 250px; margin-left: 0%;'>
 
         </div>
       </div>
@@ -152,19 +152,11 @@ function DrawPlayerInfo(data, WorldID, PlayerID, SourceTable) {
 
       $.each(data, function(key, val) {
 
-        if (key == 'PlayerFaceJson') {
-          var elem = $(div).find('[data-field="' + key + '"]');
+        if (key == 'PlayerFaceSVG') {
+          var elem = $(div).find('.PlayerFace');
           elem = elem[0];
           $(elem).empty();
-
-          $(div).find('.PlayerFace').attr('id', 'PlayerFace-' + SourceTable + '-' + data.PlayerID)
-
-          var DOMID = 'PlayerFace-' + SourceTable + '-' + data.PlayerID;
-
-          if (typeof val === 'string') {
-            val = $.parseJSON(val);
-          }
-          BuildFace(val, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle'], data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides = overrides, DOMID = DOMID); //playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
+          $(elem).html(data['PlayerFaceSVG']);
         } else {
           $(div).find('[html-field="' + key + '"]').html(val);
           $(div).find('[data-field="' + key + '"]').text(val);

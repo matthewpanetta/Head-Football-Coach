@@ -51,7 +51,7 @@
                 <div class="w3-card w3-light-grey w3-col s12">
                   <div class="w3-row-padding w3-white">
                     {% for Week in AllWeeks%}
-                    <div WeekID="{{Week.Week.WeekID}}" class=" w3-display-container {{Week.Week.SelectedWeekBox}} weekScheduleBox" style='flex-grow: 1;'>
+                    <div WeekID="{{Week.Week.WeekID}}" hasfacesdrawn='0' class=" w3-display-container {{Week.Week.SelectedWeekBox}} weekScheduleBox" style='flex-grow: 1;'>
                       <div class="ellipsis width100 font10-plain" style='background-color: black; text-align: center; color: white;'>Week</div>
 
                       <div class="width100 height100">
@@ -64,7 +64,7 @@
                   </div>
                   <div class="w3-row w3-display-container w3-light-grey">
                     {% for Week in AllWeeks%}
-                    <div class="w3-display-container {{Week.Week.ShowWeekClass}} weekScheduleDisplayContainer"  WeekID="{{Week.Week.WeekID}}">
+                    <div class="w3-display-container {{Week.Week.ShowWeekClass}} weekScheduleDisplayContainer" hasfacesdrawn='0'  WeekID="{{Week.Week.WeekID}}">
                       {% for Game in Week.Games%}
                       {% if forloop.counter0|modulo:2 == 0 %}
                         <div class="w3-row-padding">
@@ -135,34 +135,50 @@
                           </div>
                           {% if Game.Game.WasPlayed %}
                           <div class="w3-row-padding w3-margin-top">
-                            <div class="w3-col s6">
-                              <h6 class='font12'>Top Players</h6>
+                            <div class="w3-col s6 no-padding" style='border-left: 4px solid #{{Game.Game.HomeTeamPrimaryColor}};'>
+                              <h6 class='font12 padding-left-8' style='border-bottom: 4px solid #{{Game.Game.HomeTeamPrimaryColor}};'>{{Game.Game.HomeTeamName}} Top Players</h6>
                             <ul class='no-list-style'>
                               {% for Player in Game.HomeTopPlayers%}
                               <li class='font12'>
-                                  {{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}
+                                <div class="">
+                                  <span>{{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}</span>
                                   <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID.PlayerID.PlayerFirstName}} {{Player.PlayerTeamSeasonID.PlayerID.PlayerLastName}} </a>
-                                    ({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})
-                                  <ul class='no-list-style font10'>
-                                    <li>{{Player.TopStatStringDisplay1}}</li>
-                                    <li>{{Player.TopStatStringDisplay2}}</li>
+                                    <span>({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})</span>
+                                </div>
+                                <div class="" >
+                                  <div class="SchedulePlayerFace PlayerFaceDisplay inline-block align-top" playerfacejson='{{Player.PlayerTeamSeasonID.PlayerID.PlayerFaceJson}}' teamjerseystyle='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamJerseyStyle}}' teamjerseyinvert='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamJerseyInvert}}' playerteamprimarycolor='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Primary_HEX}}' playerteamsecondarycolor='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Secondary_HEX}}' playerid='{{Player.PlayerTeamSeasonID.PlayerID.PlayerID}}' id='PlayerFace{{Player.PlayerGameStatID}}'>
+
+                                  </div>
+                                  <ul class='no-list-style font10 inline-block'>
+                                    <li>{{Player.TopStatStringDisplay1_Text}}</li>
+                                    <li>{{Player.TopStatStringDisplay2_Text}}</li>
+                                    <li>{{Player.TopStatStringDisplay3_Text}}</li>
                                   </ul>
+                                </div>
                               </li>
                               {% endfor %}
                             </ul>
                             </div>
-                            <div class="w3-col s6">
-                              <h6 class='font12'>Top Players</h6>
+                            <div class="w3-col s6 no-padding" style='border-left: 4px solid #{{Game.Game.AwayTeamPrimaryColor}};'>
+                              <h6 class='font12 padding-left-8' style='border-bottom: 4px solid #{{Game.Game.AwayTeamPrimaryColor}};'>{{Game.Game.AwayTeamName}} Top Players</h6>
                             <ul class='no-list-style'>
                               {% for Player in Game.AwayTopPlayers%}
                               <li class='font12'>
-                                  {{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}
+                                <div class="">
+                                  <span>{{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}</span>
                                   <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID.PlayerID.PlayerFirstName}} {{Player.PlayerTeamSeasonID.PlayerID.PlayerLastName}} </a>
-                                    ({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})
-                                  <ul class='no-list-style font10'>
-                                    <li>{{Player.TopStatStringDisplay1}}</li>
-                                    <li>{{Player.TopStatStringDisplay2}}</li>
+                                    <span>({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})</span>
+                                </div>
+                                <div class="" >
+                                  <div class="SchedulePlayerFace PlayerFaceDisplay inline-block align-top" playerfacejson='{{Player.PlayerTeamSeasonID.PlayerID.PlayerFaceJson}}' teamjerseystyle='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamJerseyStyle}}' teamjerseyinvert='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamJerseyInvert}}' playerteamprimarycolor='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Primary_HEX}}' playerteamsecondarycolor='{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Secondary_HEX}}' playerid='{{Player.PlayerTeamSeasonID.PlayerID.PlayerID}}' id='PlayerFace{{Player.PlayerGameStatID}}'>
+
+                                  </div>
+                                  <ul class='no-list-style font10 inline-block'>
+                                    <li>{{Player.TopStatStringDisplay1_Text}}</li>
+                                    <li>{{Player.TopStatStringDisplay2_Text}}</li>
+                                    <li>{{Player.TopStatStringDisplay3_Text}}</li>
                                   </ul>
+                                </div>
                               </li>
                               {% endfor %}
                             </ul>
