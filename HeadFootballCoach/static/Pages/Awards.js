@@ -1,6 +1,19 @@
 
 function HeismanRaceContent(WorldID){
 
+  $('#HeismanRaceTable').DataTable({
+    dom: 't',
+    columns: [
+      {sortable: true},
+      {sortable: false},
+      {sortable: false},
+      {sortable: false},
+      {sortable: true},
+      {sortable: true},
+      {sortable: false},
+    ]
+  });
+
     $('#HeismanRaceTable tbody').on('click', 'tr', function () {
       var SelectedPlayerID = $(this).attr('PlayerID');
       console.log('clicked', this, SelectedPlayerID);

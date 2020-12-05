@@ -923,7 +923,7 @@ def GameSim(game):
                 if Down == 3 and YardsToGo > 4:
                     PassRushModifier /= 1.1
 
-                if (random.uniform(0,1) < (.0203 / PassGameModifier)):
+                if (random.uniform(0,1) < (.0103 / PassGameModifier)):
                     PassOutcome = 'Interception'
                     if GameDict[DefensiveTeam]['TeamGame'].DEF_INT >= 4 and random.uniform(0,1) < .95 :
                         PassOutcome = 'Incompletion'

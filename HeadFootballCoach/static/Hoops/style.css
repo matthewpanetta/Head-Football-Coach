@@ -1677,6 +1677,11 @@ img.teamTeamLogo {
   height: 30px;
 }
 
+
+.logo-90 {
+  height: 90px;
+}
+
 .light-padding-top{
   padding: 2px 0px !important;
 }
@@ -1945,4 +1950,16 @@ thead tr {
 
 .padding-left-8 {
   padding-left: 8px;
+}
+
+.padding-top-8 {
+  padding-top: 8px;
+}
+
+.padding-bottom-8 {
+  padding-bottom: 8px;
+}
+
+.game-recap-stat-box:nth-child(even) {
+  border-left: 1px solid;
 }

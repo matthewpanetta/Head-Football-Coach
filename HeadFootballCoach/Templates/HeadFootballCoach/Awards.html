@@ -357,8 +357,7 @@
                     <td  class='teamTableBorder' style="border-left-color: #{{Player.playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX}}">{{Player.HeismanRank}}</td>
                     <td>
                       <a href="{{Player.PlayerTeamHref}}">
-                        <img src="{{Player.playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_50}}" class='worldTeamStatLogo' alt="">
-                        {{Player.playerteamseason__TeamSeasonID__TeamID__TeamName}}
+                        <img src="{{Player.playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_100}}" class='logo-90' alt="">
                       </a>
                     </td>
                     <td>
@@ -367,7 +366,16 @@
                       </div>
                     </td>
                     <td>
-                      <a href="{{Player.PlayerHref}}">{{Player.PlayerName}}</a>
+                      <div class="font16 bold font-black">
+                        <a href="{{Player.PlayerHref}}">
+                          {{Player.PlayerName}}
+                        </a>
+                      </div>
+                      <div class="">
+                        <a href="{{Player.PlayerTeamHref}}">
+                          {{Player.playerteamseason__TeamSeasonID__TeamID__TeamName}} {{Player.playerteamseason__TeamSeasonID__TeamID__TeamNickname}}
+                        </a>
+                      </div>
                     </td>
                     <td>{{Player.PositionID__PositionAbbreviation}}</td>
                     <td>{{Player.playerteamseason__ClassID__ClassAbbreviation}}</td>
@@ -402,5 +410,6 @@
 <script src="{% static 'common/bootstrap.min.js' %}"></script>
 <script src="{% static 'Pages/Awards.js' %}"></script>
 <script src="{% static 'common/loader.js' %}"></script>
+
 
 {{ HeismanWinner|json_script:"heisman-winner-data" }}

@@ -2102,7 +2102,7 @@ def Page_Awards(request, WorldID, SeasonStartYear = None):
         HeismanWinner = json.loads(HeismanWinner.content.strip().decode())
         context['HeismanWinner'] = HeismanWinner
     else:
-        HeismanRace = Player.objects.filter(WorldID = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID=CurrentSeason).filter(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True).values('PlayerID','playerteamseason__ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__playerteamseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_50', 'PlayerFaceJson', 'PlayerFaceSVG').annotate(
+        HeismanRace = Player.objects.filter(WorldID = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID=CurrentSeason).filter(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True).values('PlayerID','playerteamseason__ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__playerteamseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamNickname','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_50','playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_100', 'PlayerFaceJson', 'PlayerFaceSVG').annotate(
             PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
             PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
             PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -2944,11 +2944,18 @@ def Page_Player(request, WorldID, PlayerID):
     if len(FirstPlayerObject.PlayerFaceJson) == 0:
         PlayerFaceJson = GeneratePlayerFaceJSon(FirstPlayerObject)
         FirstPlayerObject.PlayerFaceJson = PlayerFaceJson
-        FirstPlayerObject.PlayerFaceSVG = BuildFaceSVG(PlayerFaceJson, TeamJerseyStyle = PlayerTeam.TeamJerseyStyle, TeamJerseyInvert = PlayerTeam.TeamJerseyInvert, TeamColors = [PlayerTeam.TeamColor_Primary_HEX, PlayerTeam.TeamColor_Secondary_HEX])
+        if PlayerTeam is not None:
+            FirstPlayerObject.PlayerFaceSVG = BuildFaceSVG(PlayerFaceJson, TeamJerseyStyle = PlayerTeam.TeamJerseyStyle, TeamJerseyInvert = PlayerTeam.TeamJerseyInvert, TeamColors = [PlayerTeam.TeamColor_Primary_HEX, PlayerTeam.TeamColor_Secondary_HEX])
+        else:
+            FirstPlayerObject.PlayerFaceSVG = BuildFaceSVG(PlayerFaceJson)
+
 
         FirstPlayerObject.save()
     elif FirstPlayerObject.PlayerFaceSVG is None:
-        FirstPlayerObject.PlayerFaceSVG = BuildFaceSVG(FirstPlayerObject.PlayerFaceJson, TeamJerseyStyle = PlayerTeam.TeamJerseyStyle, TeamJerseyInvert = PlayerTeam.TeamJerseyInvert, TeamColors = [PlayerTeam.TeamColor_Primary_HEX, PlayerTeam.TeamColor_Secondary_HEX])
+        if PlayerTeam is not None:
+            FirstPlayerObject.PlayerFaceSVG = BuildFaceSVG(PlayerFaceJson, TeamJerseyStyle = PlayerTeam.TeamJerseyStyle, TeamJerseyInvert = PlayerTeam.TeamJerseyInvert, TeamColors = [PlayerTeam.TeamColor_Primary_HEX, PlayerTeam.TeamColor_Secondary_HEX])
+        else:
+            FirstPlayerObject.PlayerFaceSVG = BuildFaceSVG(PlayerFaceJson)
 
         FirstPlayerObject.save()
 
@@ -3626,6 +3633,7 @@ def Page_Game(request, WorldID, GameID):
     AwayPlayers = []
 
     context = {}
+    context['PlayerGameLeaders'] = []
     context['ShowStatBox'] = GameDict['HomeGamesPlayed'] + GameDict['AwayGamesPlayed']  > 0
     BoxScoreStatGroupings = [
         {
@@ -3825,7 +3833,7 @@ def Page_Game(request, WorldID, GameID):
         context['ScoringSummary'] = ScoringSummary
 
 
-        PlayerGames = PlayerGameStat.objects.filter(TeamGameID__GameID = GameQuerySet).values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'GamesStarted', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT', 'FUM_Lost', 'FUM_Forced', 'FUM_Fumbles', 'FUM_ReturnTD', 'FUM_Recovered', 'FUM_ReturnYards', 'KCK_XPM', 'KCK_XPA', 'KCK_FGM', 'KCK_FGA', 'KCK_FGM29', 'KCK_FGA29', 'KCK_FGM39', 'KCK_FGA39', 'KCK_FGM49', 'KCK_FGA49', 'KCK_FGM50', 'KCK_FGA50').annotate(  # call `annotate`
+        PlayerGames = PlayerGameStat.objects.filter(TeamGameID__GameID = GameQuerySet).values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'GamesStarted', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName','PlayerTeamSeasonID__PlayerID__PlayerFaceSVG', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT','DEF_TacklesForLoss', 'FUM_Lost', 'FUM_Forced', 'FUM_Fumbles', 'FUM_ReturnTD', 'FUM_Recovered', 'FUM_ReturnYards', 'KCK_XPM', 'KCK_XPA', 'KCK_FGM', 'KCK_FGA', 'KCK_FGM29', 'KCK_FGA29', 'KCK_FGM39', 'KCK_FGA39', 'KCK_FGM49', 'KCK_FGA49', 'KCK_FGM50', 'KCK_FGA50').annotate(  # call `annotate`
                 PAS_CompletionPercentage=Case(
                     When(PAS_Attempts=0, then=0.0),
                     default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1)),
@@ -3872,7 +3880,33 @@ def Page_Game(request, WorldID, GameID):
                     default=Value('gamePlayerStarted'),
                     output_field=CharField()
                 ),
+                PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerTeamSeasonID__PlayerID__PlayerID'), output_field=CharField()),
             ).order_by('-GameScore')
+
+        PlayerGameLeaders = [
+            {'Display': 'Passing Yards', 'HomePlayer':None, 'HomePlayerStats':[],  'AwayPlayer': None, 'AwayPlayerStats':[],'SortKey': 'PAS_Yards', 'StatKeys': [{'Key':'PAS_Yards', 'Label': 'pass yards'}, {'Key':'PAS_Attempts', 'Label': 'passes'},{'Key':'PAS_TD', 'Label': 'touchdowns'},  {'Key': 'PAS_INT', 'Label': 'interceptions'}]},
+            {'Display': 'Rushing Yards', 'HomePlayer':None,  'HomePlayerStats':[],'AwayPlayer': None, 'AwayPlayerStats':[],'SortKey': 'RUS_Yards', 'StatKeys': [{'Key': 'RUS_Yards', 'Label': 'yards'}, {'Key': 'RUS_Carries', 'Label': 'carries'},{'Key': 'RUS_TD', 'Label': 'touchdowns'}]},
+            {'Display': 'Receiving Yards', 'HomePlayer':None,  'HomePlayerStats':[],'AwayPlayer': None, 'AwayPlayerStats':[],'SortKey': 'REC_Yards', 'StatKeys': [{'Key': 'REC_Yards', 'Label': 'yards'}, {'Key': 'REC_Receptions', 'Label': 'catches'},{'Key': 'REC_TD', 'Label': 'touchdowns'}]},
+            {'Display': 'Tackles', 'HomePlayer':None,  'HomePlayerStats':[],'AwayPlayer': None,  'AwayPlayerStats':[],'SortKey': 'DEF_Tackles', 'StatKeys': [{'Key':'DEF_Tackles', 'Label': 'tackles'}, {'Key':'DEF_Sacks', 'Label':'sacks'},{'Key': 'DEF_TacklesForLoss', 'Label': 'TFLs'},  {'Key':'DEF_INT', 'Label': 'interceptions'}]},
+        ]
+
+        for LeaderGroup in PlayerGameLeaders:
+            LeaderGroup['HomePlayer'] = PlayerGames.filter(TeamGameID = HomeTeamGameID).order_by(f"-{LeaderGroup['SortKey']}").first()
+            LeaderGroup['AwayPlayer'] = PlayerGames.filter(TeamGameID = AwayTeamGameID).order_by(f"-{LeaderGroup['SortKey']}").first()
+
+            for StatGroup in LeaderGroup['StatKeys']:
+                StatKey = StatGroup['Key']
+                StatLabel = StatGroup['Label']
+                if LeaderGroup['HomePlayer'][StatKey] > 0:
+                    StatValue = f"{LeaderGroup['HomePlayer'][StatKey]} {StatLabel}"
+                    StatValue = StatValue[:-1] if LeaderGroup['HomePlayer'][StatKey] == 1 else StatValue
+                    LeaderGroup['HomePlayerStats'].append(StatValue)
+                if LeaderGroup['AwayPlayer'][StatKey] > 0:
+                    StatValue = f"{LeaderGroup['AwayPlayer'][StatKey]} {StatLabel}"
+                    StatValue = StatValue[:-1] if LeaderGroup['AwayPlayer'][StatKey] == 1 else StatValue
+                    LeaderGroup['AwayPlayerStats'].append(StatValue)
+
+        context['PlayerGameLeaders'] = PlayerGameLeaders
 
         for u in PlayerGames:
             u['FullName'] = u['PlayerTeamSeasonID__PlayerID__PlayerFirstName'] + ' ' + u['PlayerTeamSeasonID__PlayerID__PlayerLastName'] + ', ' + u['PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation']

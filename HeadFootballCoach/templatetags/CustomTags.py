@@ -8,6 +8,20 @@ def modulo(num, val):
 
 
 @register.filter
+def one_more(_1, _2):
+    return (_1, _2)
+
+@register.filter
+def ChooseNameToDisplay(_1_2, _3):
+    MaxLetters = 12
+    _1, _2 = _1_2
+    Options = [_1, _2, _3]
+    for Option in Options:
+        if len(Option) <= MaxLetters:
+            return Option
+
+
+@register.filter
 def ColorScale(val, args):
 
     if args is None:
