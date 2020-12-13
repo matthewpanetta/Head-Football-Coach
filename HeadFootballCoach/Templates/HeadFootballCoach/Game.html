@@ -302,7 +302,7 @@
                             <th class='ScoringSummaryTeamScore'>{{awayTeam.Abbreviation}}</th>
                           </tr>
                           {% for Score in Period.ScoreList %}
-                          <tr class='ScoringSummaryScoreRow {{Score.DriveEventClass}} teamTableBorder' style='border-left-color: {{Score.DisplayTeamID__TeamColor_Primary_HEX}}'>
+                          <tr class='ScoringSummaryScoreRow {{Score.DriveEventClass}} teamTableBorder' style='border-left-color: #{{Score.DisplayTeamID__TeamColor_Primary_HEX}}'>
                             <td class='ScoringSummaryTeamLogo'>
                                 <img src="{{Score.DisplayTeamID__TeamLogoURL}}" alt="">
                             </td>

@@ -12,7 +12,7 @@ import sys
 import numpy
 from .resources import ChooseCaptains, SetPlayerTeamSeasonTotals, TeamCuts, TeamRedshirts, CreateBowls,UpdateTeamPositions, UpdateTeamStates, EndSeason, PlayerDeparture,NewSeasonCutover,InitializeLeaguePlayers, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, EndRegularSeason
 from .scripts.rankings import     CalculateConferenceRankings,CalculateRankings, SelectBroadcast
-from .utilities import FindRange,HumanizeInteger, Logger, NormalVariance, NormalTrunc, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
+from .utilities import FindRange,HumanizeInteger, Logger, NormalVariance, NormalTrunc,TierPlacement, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
 from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting_New, PrepareForSigningDay, ScoutPlayer
 from .scripts.SeasonAwards import ChoosePlayersOfTheWeek, SelectPreseasonAllAmericans
@@ -1969,6 +1969,7 @@ def Page_World(request, WorldID):
     context['SeasonAllAmericans'] = SeasonAllAmericans
     context['PreseasonAllAmericans'] = PreseasonAllAmericans
     context['PreseasonTopProspects'] = PreseasonTopProspects
+    print('Headlines', Headlines)
     context['Headlines'] = Headlines
     return render(request, 'HeadFootballCoach/World.html', context)
 
@@ -6338,9 +6339,11 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
     )
 
 
-    AllTeams = CurrentSeason.teamseason_set.filter(teamgame__GameID__WasPlayed = True).values('TeamSeasonID', 'TeamID').annotate(
+    AllTeams = list(CurrentSeason.teamseason_set.filter(teamgame__GameID__WasPlayed = True).values('TeamSeasonID','TeamID').annotate(
         Points = Sum('teamgame__Points'),
         PointsAllowed = Sum('teamgame__OpposingTeamGameID__Points'),
+        Yards = Sum('teamgame__PAS_Yards') + Sum('teamgame__RUS_Yards'),
+        YardsAllowed = Sum('teamgame__OpposingTeamGameID__PAS_Yards') +  Sum('teamgame__OpposingTeamGameID__RUS_Yards'),
         GP = Sum('teamgame__GamesPlayed'),
         PPG = Case(
             When(GP = 0, then=Value(0.0)),
@@ -6352,6 +6355,19 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
             default= Round(F('PointsAllowed') * 1.0 / F('GP'),1),
             output_field=FloatField()
         ),
+        YardsPerGame = Case(
+            When(GP = 0, then=Value(0.0)),
+            default= Round(F('Yards') * 1.0 / F('GP'),1),
+            output_field=FloatField()
+        ),
+        YardsAllowedPerGame = Case(
+            When(GP = 0, then=Value(0.0)),
+            default= Round(F('YardsAllowed') * 1.0 / F('GP'),1),
+            output_field=FloatField()
+        ),
+
+        PPG_Margin = Round(F('PPG') - F('PAPG'),1),
+        YardsPerGame_Margin = Round(F('YardsPerGame') - F('YardsAllowedPerGame'),1),
 
         PPG_Rank = Window(
             expression=Rank(),
@@ -6360,8 +6376,25 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
         PAPG_Rank = Window(
             expression=Rank(),
             order_by=F("PAPG").asc(),
-        )
-    )
+        ),
+        PPG_Margin_Rank = Window(
+            expression=Rank(),
+            order_by=F("PPG_Margin").desc(),
+        ),
+        YardsPerGame_Rank = Window(
+            expression=Rank(),
+            order_by=F("YardsPerGame").desc(),
+        ),
+        YardsAllowedPerGame_Rank = Window(
+            expression=Rank(),
+            order_by=F("YardsAllowedPerGame").asc(),
+        ),
+        YardsPerGame_Margin_Rank = Window(
+            expression=Rank(),
+            order_by=F("YardsPerGame_Margin").desc(),
+        ),
+    ))
+
 
     AllTeamStats = {}
     for TS in AllTeams:
@@ -6370,6 +6403,49 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
         AllTeamStats[TS['TeamID']].append({'Header': 'Offense', 'Display': '{PPG} PPG ({PPG_Rank})'.format(PPG=TS['PPG'], PPG_Rank=HumanizeInteger(TS['PPG_Rank']))})
         AllTeamStats[TS['TeamID']].append({'Header': 'Defense', 'Display': '{PAPG} PAPG ({PAPG_Rank})'.format(PAPG=TS['PAPG'], PAPG_Rank=HumanizeInteger(TS['PAPG_Rank']))})
 
+
+    TeamStatsDisplay = []
+    TeamStats = [T for T in AllTeams if T['TeamID'] == TeamID][0]
+
+    TierNameMap = {
+        1: 'Elite',
+        2: 'Great',
+        3: 'Good',
+        4: 'Average',
+        5: 'Poor',
+        6: 'Bad',
+        7: 'Terrible',
+    }
+
+    TotalTeams = len(AllTeams)
+
+    YardsObj = {'Display': 'Yards'}
+    YardsObj['OffenseValue'] = TeamStats['YardsPerGame']
+    YardsObj['OffenseRank'] = HumanizeInteger(TeamStats['YardsPerGame_Rank'])
+    YardsObj['OffenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['YardsPerGame_Rank'])]
+    YardsObj['DefenseValue'] = TeamStats['YardsAllowedPerGame']
+    YardsObj['DefenseRank'] = HumanizeInteger(TeamStats['YardsAllowedPerGame_Rank'])
+    YardsObj['DefenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['YardsAllowedPerGame_Rank'])]
+    YardsObj['MarginValue'] = TeamStats['YardsPerGame_Margin']
+    YardsObj['MarginRank'] = HumanizeInteger( TeamStats['YardsPerGame_Margin_Rank'])
+    YardsObj['MarginRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['YardsPerGame_Margin_Rank'])]
+
+    TeamStatsDisplay.append( YardsObj )
+
+    PointsObj = {'Display': 'Points'}
+    PointsObj['OffenseValue'] = TeamStats['PPG']
+    PointsObj['OffenseRank'] = HumanizeInteger(TeamStats['PPG_Rank'])
+    PointsObj['OffenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['PPG_Rank'])]
+    PointsObj['DefenseValue'] = TeamStats['PAPG']
+    PointsObj['DefenseRank'] = HumanizeInteger(TeamStats['PAPG_Rank'])
+    PointsObj['DefenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['PAPG_Rank'])]
+    PointsObj['MarginValue'] = TeamStats['PPG_Margin']
+    PointsObj['MarginRank'] = HumanizeInteger(TeamStats['PPG_Margin_Rank'])
+    PointsObj['MarginRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['PPG_Margin_Rank'])]
+
+    TeamStatsDisplay.append( PointsObj )
+
+    print('AllTeams', json.dumps(TeamStatsDisplay, indent=2))
 
     TeamInfoRatings = [T for T in TeamInfoRatings if T['TeamSeasonID__TeamID'] == TeamID]
 
@@ -6565,6 +6641,7 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
     context['teamLeaders'] = TopPlayers
     context['TeamInfoRatings'] = TeamInfoRatings
     context['TopPlayersReturning'] = TopPlayersReturning
+    context['TeamStatsDisplay'] = TeamStatsDisplay
 
     context['HeaderLink'] = TeamHeaderLinks('Overview', SeasonStartYear, CurrentWorld)
     context['TeamList'] = Team.objects.filter(WorldID=WorldID).values('TeamName', 'TeamNickname', 'TeamLogoURL').annotate(

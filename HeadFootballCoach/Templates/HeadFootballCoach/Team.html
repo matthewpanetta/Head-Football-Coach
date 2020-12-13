@@ -220,7 +220,7 @@
                     <div class="w3-bar team-primary-background-bar">
                       Team Leaders
                     </div>
-                    <table class="w3-table-all">
+                    <table class="w3-table-all no-border">
                       {% for teamLeader in teamLeaders %}
                       <tr>
 
@@ -253,46 +253,62 @@
               {% endif %}
 
 
-              {% if teamLeaders|length > 0%}
+              {% if TeamStatsDisplay|length > 0%}
                 <div class="w3-col s6">
                   <div class="w3-card">
                     <div class="w3-bar team-primary-background-bar">
-                      Team Leaders
+                      Team Stats
                     </div>
-                    <table class="w3-table-all">
-                      {% for teamLeader in teamLeaders %}
-                      <tr>
-
-                      <td class="w3-col">
-
-                        <div class="" style='display:inline-block; '>
-                          <div class="teamTeamLeaderBoxPlayerFace inline-block" id="teamTeamLeaderBoxPlayerFace{{forloop.counter}}" PlayerFaceJson="{{teamLeader.PTS.PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if teamLeader.PTS.PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
-                              <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
-
-                              </div>
-                          </div>
-                          <div class="inline-block w3-cell-bottom">
-                            <div class='bold font12'>{{teamLeader.DisplayName}}</div>
-                            <div class="">
-                              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{teamLeader.PTS.PlayerID}}">{{teamLeader.PTS.PlayerName}}</a></span>
-                              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{teamLeader.PTS.PlayerPosition}}</span>
+                    <table class="w3-table-all no-border">
+                      {% for TeamStat in TeamStatsDisplay %}
+                      <tr class='team-secondary-table-row'>
+                        <th class='center-text' colspan="3">{{TeamStat.Display}}</th>
+                      </tr>
+                      <tr class='center-text-row'>
+                        <td>
+                          <div class="">
+                            <div class="font10">
+                              FOR
                             </div>
-                            <div class="">
-                              <span class=''>{{teamLeader.Value}} total{% if teamLeader.ValuePerGame%}, {{teamLeader.ValuePerGame}} per game{%endif%}</span>
+                            <div class="font16">
+                              {{TeamStat.OffenseValue}}
+                            </div>
+                            <div class="margin-8">
+                              <span class='tiers-7 {{TeamStat.OffenseRank_Tier}}' style='border-radius: 20px; padding: 5px;'>{{TeamStat.OffenseRank}}</span>
                             </div>
                           </div>
-
-                        </div>
-                      </td>
-                    </tr>
-
-
+                        </td>
+                        <td>
+                          <div class="">
+                            <div class="font10">
+                              AGAINST
+                            </div>
+                            <div class="font16">
+                              {{TeamStat.DefenseValue}}
+                            </div>
+                            <div class="margin-8">
+                              <span class='tiers-7 {{TeamStat.DefenseRank_Tier}}' style='border-radius: 20px; padding: 5px; '>{{TeamStat.DefenseRank}}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="">
+                            <div class="font10">
+                              DIFF
+                            </div>
+                            <div class="font16">
+                              {{TeamStat.MarginValue}}
+                            </div>
+                            <div class="margin-8">
+                              <span class='tiers-7 {{TeamStat.MarginRank_Tier}}' style='border-radius: 20px; padding: 5px; '>{{TeamStat.MarginRank}}</span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
                       {% endfor %}
                     </table>
                     </div>
-
                     </div>
-
               {% endif %}
               </div>
             </div>
@@ -344,7 +360,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     {{team.TeamName}} Signed Recruits
                   </div>
-                  <table  class='w3-table-all' id='teamOverviewConferenceStandings'>
+                  <table  class='w3-table-all no-border' id='teamOverviewConferenceStandings'>
                     <thead>
                       <tr class='team-secondary-table-row'>
                         <th class='teamColorBorder'>Player</th>
@@ -460,7 +476,7 @@
                 <div class="team-primary-background-bar">
                   Team Info
                 </div>
-                <table class='w3-table-all width100' id='TeamInfo' style='width: 100%;'>
+                <table class='w3-table-all width100 no-border' id='TeamInfo' style='width: 100%;'>
                   <thead>
                     <tr class='team-secondary-table-row'>
                       <th>Category</th>

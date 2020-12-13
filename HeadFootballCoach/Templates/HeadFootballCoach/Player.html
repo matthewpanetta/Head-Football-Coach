@@ -163,7 +163,7 @@
               {% endif %}
 
               {%if RecentGameStats|length > 0%}
-              <div class="w3-card">
+              <div class="w3-card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
                   Recent Game Stats
                 </div>
@@ -243,7 +243,7 @@
       </div>
       {% if player.IsRecruit %}
       <div class="tab-content"  style='display:none;' id="nav-recruiting" >
-        <div class='w3-container'>
+        <div class='w3-container w3-margin-bottom'>
           <div class='w3-row'>
             <div class='w3-col l12'>
               <table class="table table-striped sortable" id='playerRecruitingTeamTable'>
@@ -315,7 +315,7 @@
       </div>
       {% else %}
       <div class="tab-content" style='display:none;' id="nav-stats" >
-        <div class='w3-container'>
+        <div class='w3-container w3-margin-bottom'>
             <div class='w3-row-padding'>
               <div class='w3-col l10 m12'>
 
@@ -341,9 +341,9 @@
       </div>
       <div class="tab-content" style='display:none;' id="nav-game-log" >
         <div class='w3-container'>
-          <div class='w3-row-padding'>
+          <div class='w3-row-padding '>
               <div class="w3-col l10 m12">
-                <div class="w3-card">
+                <div class="w3-card w3-margin-bottom">
 
                   <div class="w3-bar team-primary-background-bar">Game Stats</div>
                 <table class="w3-table table-striped width100" id='FullGameStats' style='width: 100%;'>

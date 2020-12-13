@@ -3,7 +3,7 @@ import random
 import numpy
 import time
 import json
-from math import sin, cos, sqrt, atan2, radians, log
+from math import sin, cos, sqrt, atan2, radians, log, ceil
 
 
 class Logger:
@@ -28,6 +28,43 @@ class Logger:
         LogEvent = {'LogName': EventName, 'LogStart': time.time(), 'LogEnd': None, 'Duration': None, 'QueryCount': 0}
         self.EventList.append(LogEvent)
 
+def TierPlacement(Tiers = 5, PopulationSize = 100, Distribution = 'Normal', RankPlace = 1):
+    TierList = range(1,Tiers)
+    TierDict = {Tier: {'Start': None, 'Stop': None, 'SegmentSize': None, 'SegmentRatio': None, 'PopulationCount': None} for Tier in TierList}
+
+    MiddleTier = int(Tiers / 2) + 1
+    TotalSegmentSize = 0
+
+    PreviousStop = 0
+
+    if Distribution == 'Normal':
+        for Tier in TierDict:
+            TierObj = TierDict[Tier]
+            TierObj['SegmentSize'] = MiddleTier - abs(MiddleTier - Tier)
+            TotalSegmentSize += MiddleTier - abs(MiddleTier - Tier)
+
+            TierObj['SegmentSize']
+
+
+    elif Distibution == 'Uniform':
+        for Tier in TierDict:
+            print(Tier)
+
+    for Tier in TierDict:
+        TierObj = TierDict[Tier]
+        TierObj['SegmentRatio'] = TierObj['SegmentSize']*1.0 / TotalSegmentSize
+        TierObj['PopulationCount'] = ceil(TierObj['SegmentRatio']* PopulationSize)
+
+        TierObj['Start'] = PreviousStop + 1
+        TierObj['Stop'] = TierObj['Start']  + TierObj['PopulationCount']
+        PreviousStop = TierObj['Stop']
+
+        if RankPlace >= TierObj['Start'] and RankPlace <= TierObj['Stop']:
+            Placement = Tier
+
+    print('TierObj', json.dumps(TierObj, indent=2))
+
+    return Placement
 
 def FindRange(RangeDict, Value):
 

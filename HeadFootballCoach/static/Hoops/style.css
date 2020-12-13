@@ -1313,6 +1313,10 @@ td.WorldLeagueLeaderRowCell.NameCell {
   margin: 8px;
 }
 
+.margin-4 {
+  margin: 4px;
+}
+
 .center-text {
   text-align: center !important;
 }
@@ -1528,25 +1532,70 @@ img.teamTeamLogo {
   padding-right: 12px;
 }
 
+.tiers-7{
+  color: white;
+  font-weight: 600;
+}
+
+.tiers-7.elite{
+  color: white;
+  background-color: #5B90B3;
+  box-shadow: 0px 0px 5px #5B90B3;
+}
+
+.tiers-7.great{
+  background-color: #557538;
+}
+
+.tiers-7.good {
+  background-color: #759337;
+}
+
+.tiers-7.average{
+  background-color: #D3B63C;
+}
+
+
+.tiers-7.poor {
+  background-color: #CB7D2C;
+}
+
+
+.tiers-7.bad {
+  background-color: #BE413A;
+}
+
+
+.tiers-7.terrible {
+  background-color: #000000;
+}
+
+
 .good{
-  color: #0B5001;
-  background-color: #BDEDC4;
+  color: white;
+  background-color: #5B90B3;
 }
 
 .fine{
-  color: #894402;
-  background-color: #FEE98A;
+  color: white;
+  background-color: #5B90B3;
 }
 
 .elite {
-  color: navy;
-  box-shadow: 0px 0px 5px navy;
-  background-color: lightblue;
+  color: #174ea6;
+  box-shadow: 0px 0px 5px #174ea6;
+  background-color: #e8f0fe;
 }
 
 .bad{
   color: #8F0600;
   background-color: #8F060022;
+}
+
+
+.neutral {
+	background-color: #f1f3f4;
+	color: #3c4043
 }
 
 .W{
