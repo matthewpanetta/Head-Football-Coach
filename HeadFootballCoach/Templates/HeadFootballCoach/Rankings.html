@@ -9,6 +9,11 @@
 <link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
 
+<style>
+  #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
+    border-bottom: 2px solid black;
+  }
+</style>
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 
@@ -24,7 +29,7 @@
             <i class="fas fa-bars"></i>
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Top 25</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">League Leaders</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-playoff-picture-tab">Playoff Picture</button>
       </div>
     </nav>
     <div id="nav-tabContent">
@@ -71,25 +76,63 @@
           </div>
         </div>
       </div>
-      <div class="tab-content" style="display:none;"  id="nav-league-leaders">
+      <div class="tab-content" style="display:none;"  id="nav-playoff-picture">
         <div class='w3-display-container'>
           <div class='w3-row-padding' id='worldLeagueLeaderRow'>
-            <div id='worldLeagueLeadersClone' class='w3-col s3 w3-hide'>
-              <table id='' class='display table sortable w3-table-all'>
-                <thead>
-                  <th>Rank</th>
-                  <th>Player</th>
-                  <th>Team</th>
-                  <th data-field='DisplayName'></th>
-                </thead>
-                <tr id='worldLeagueLeadersRowClone' class='w3-hide'>
-                  <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value=""></td>
-                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href="" href-field='PlayerHref' ><span data-field='PlayerName'></span>, </a><span data-field='PlayerPosition'></span></td>
-                  <td class='WorldLeagueLeaderRowCell' data-value=""><a href-field='PlayerTeamHref'><img src="" src-field='PlayerTeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
-                  <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value=""></td>
-                </tr>
-              </table>
+            <div class="width100">
+              <div class="equal-sized-item-container centered-item">
+                {% for Round in PlayoffBracket %}
+                  <div class="equal-sized-item centered-item mw300">
+                    Round {{Round.Round}}
+                  </div>
+                {% endfor %}
+              </div>
+
+              <div class="equal-sized-item-container centered-item height100">
+                {% for Round in PlayoffBracket %}
+                <div class="equal-sized-item equal-sized-item-container column-flex height100 mw300" style='width: 200px; justify-content: space-evenly;'>
+
+                  {% for Game in Round.Matchups%}
+                  <div class="equal-sized-item width80 height100 padding-10 all-border" style='margin: 10 20 10 20; border-radius: 10px; flex: 0 1 0%; '>
+                      <table class='width100 text-left'>
+                        <tr>
+                          <td>
+
+                            <a href="{{Game.AwayTeam.TeamHref}}">
+                              <img src="{{Game.AwayTeam.TeamSeasonID__TeamID__TeamLogoURL}}" alt="" style='height: 20px;'>
+                              <span>{{Game.AwayTeam.TeamSeasonID__TeamID__TeamName}}</span>
+
+                            </a>
+                          </td>
+                          <td class='text-right'>34</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <a href="{{Game.HomeTeam.TeamHref}}">
+                              <img src="{{Game.HomeTeam.TeamSeasonID__TeamID__TeamLogoURL}}" alt="" style='height: 20px;'>
+                              <span>{{Game.HomeTeam.TeamSeasonID__TeamID__TeamName}}</span>
+
+                            </a>
+                          </td>
+                          <td class='text-right'>26</td>
+                        </tr>
+                        <tr>
+                          <td></td>
+                          <td class='text-right'>
+                            <a href="{{Game.GameHref}}">
+                              Box Score
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endfor %}
+              </div>
             </div>
+
           </div>
         </div>
       </div>

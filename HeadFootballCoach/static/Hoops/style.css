@@ -1237,7 +1237,7 @@ th {
 }
 
 td.WorldLeagueLeaderRowCell {
-  padding: .15rem !important;
+  padding: .1rem !important;
 }
 
 td.WorldLeagueLeaderRowCell.NameCell {
@@ -1995,6 +1995,10 @@ thead tr {
 
 .align-top{
   vertical-align: top;
+}
+
+.padding-10 {
+  padding: 10px;
 }
 
 .padding-left-8 {

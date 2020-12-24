@@ -12,7 +12,7 @@ import sys
 import numpy
 from .resources import ChooseCaptains, SetPlayerTeamSeasonTotals, TeamCuts, TeamRedshirts, CreateBowls,UpdateTeamPositions, UpdateTeamStates, EndSeason, PlayerDeparture,NewSeasonCutover,InitializeLeaguePlayers, InitializeLeagueSeason, BeginOffseason, CreateRecruitingClass, round_robin, CreateSchedule, CreatePlayers, ConfigureLineups, CreateCoaches, EndRegularSeason
 from .scripts.rankings import     CalculateConferenceRankings,CalculateRankings, SelectBroadcast
-from .utilities import FindRange,HumanizeInteger, Logger, NormalVariance, NormalTrunc,TierPlacement, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
+from .utilities import FindRange, vacuum_db, HumanizeInteger, Logger, NormalVariance, NormalTrunc,TierPlacement, WeightedProbabilityChoice, SecondsToMinutes,MergeDicts,GetValuesOfSingleObjectDict, UniqueFromQuerySet, IfNull, IfBlank, GetValuesOfObject, GetValuesOfSingleObject
 from .scripts.GameSim import GameSim
 from .scripts.Recruiting import WeeklyRecruiting, FakeWeeklyRecruiting_New, PrepareForSigningDay, ScoutPlayer
 from .scripts.SeasonAwards import ChoosePlayersOfTheWeek, SelectPreseasonAllAmericans
@@ -28,6 +28,7 @@ import time
 from .scripts.GenerateHeadlines import GenerateHeadlines
 from django.db import connection, reset_queries
 from .scripts.PlayerFace import BuildFaceSVG, GeneratePlayerFaceJSon
+from copy import deepcopy
 
 
 class Round(Func):
@@ -1437,6 +1438,8 @@ def Page_Rankings(request, WorldID):
     LastWeek    = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-1).first()
     TwoWeeksAgo = Week.objects.filter(WorldID = CurrentWorld).filter( WeekNumber = CurrentWeek.WeekNumber-2).first()
 
+    TeamsInPlayoff = 16
+
     UserTeam = GetUserTeam(WorldID)
 
     page = {'PageTitle': 'Top 25', 'WorldID': WorldID, 'PrimaryColor': '1763B2', 'SecondaryColor': '000000'}
@@ -1496,6 +1499,26 @@ def Page_Rankings(request, WorldID):
             output_field=CharField()
         ),
     ).order_by('NationalRank'))
+
+
+    PlayoffBracket = []
+    PlayoffTeams = []
+    for T in TopTeams:
+        if T['NationalRank'] <= TeamsInPlayoff:
+            PlayoffTeams.append(T)
+    PlayoffTeamsForCurrentRound = PlayoffTeams
+    print('logging, ', PlayoffTeams)
+    for Round in range(1, math.ceil(math.log(len(PlayoffTeams), 2)) + 1):
+        RoundObj = {'Round': Round, 'Matchups': []}
+        PlayoffTeamsForCurrentRound_Working = deepcopy(PlayoffTeamsForCurrentRound)
+        while len(PlayoffTeamsForCurrentRound_Working) > 0:
+            HomeTeam = PlayoffTeamsForCurrentRound_Working.pop(0)
+            AwayTeam = PlayoffTeamsForCurrentRound_Working.pop()
+            RoundObj['Matchups'].append({'HomeTeam': HomeTeam, 'AwayTeam': AwayTeam, 'GameHref': None})
+
+        PlayoffTeamsForCurrentRound = deepcopy(PlayoffTeamsForCurrentRound[:int(len(PlayoffTeamsForCurrentRound) / 2)])
+
+        PlayoffBracket.append(RoundObj)
 
     BubbleTeams = []
     if len(TopTeams) > 25:
@@ -1559,7 +1582,6 @@ def Page_Rankings(request, WorldID):
 
 
     for T in TopTeams:
-
         LWG = None
         TWG = None
         TeamID = T['TeamSeasonID__TeamID']
@@ -1622,11 +1644,16 @@ def Page_Rankings(request, WorldID):
     context['CurrentWeek'] = CurrentWeek
     context['DroppedOutTeams'] = DroppedOutTeams
     context['BubbleTeams'] = BubbleTeams
+    context['PlayoffTeams'] = PlayoffTeams
+    context['PlayoffBracket'] = PlayoffBracket
+
+    print('PlayoffBracket', json.dumps(PlayoffBracket, indent=2))
     if DoAudit:
         end = time.time()
         TimeElapsed = end - start
         A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Rankings Page')
     context['page'] = page
+    context['TeamsInPlayoff'] = TeamsInPlayoff
 
     return render(request, 'HeadFootballCoach/Rankings.html', context)
 
@@ -1676,6 +1703,7 @@ def Page_Index(request):
     if InTesting or InDeepTesting:
         World.objects.all().delete()
         Conference.objects.all().delete()
+        vacuum_db()
         #System_PlayoffRound.objects.all().delete()
         #NameList.objects.all().delete()
 
@@ -1697,11 +1725,11 @@ def Page_Index(request):
     if InDeepTesting:
         NumConferencesToInclude = 1
     elif InTesting:
-        NumConferencesToInclude = 4
+        NumConferencesToInclude = 2
     else:
         NumConferencesToInclude = 7
     PossibleConferences = [
-         #{'ConferenceDisplayName': 'Independents', 'ConferenceFormValue': 'FBS Independents'},
+         {'ConferenceDisplayName': 'Independents', 'ConferenceFormValue': 'FBS Independents'},
          {'ConferenceDisplayName': 'Big 12', 'ConferenceFormValue': 'Big 12 Conference'},
          {'ConferenceDisplayName': 'ACC', 'ConferenceFormValue': 'Atlantic Coast Conference'},
          {'ConferenceDisplayName': 'SEC', 'ConferenceFormValue': 'Southeastern Conference'},
@@ -5504,18 +5532,18 @@ def Common_PlayerRecords(WorldID, Timeframe = 'Career', Filters={}, ListLength =
 
 
     HistoricalLeaders = [
-        {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'Players': []},
-        {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TDs', 'Players': []},
-        {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'Players': []},
-        {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'Players': []},
-        {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'Rush YPC', 'Players': []},
-        {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'Players': []},
-        {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'Players': []},
-        {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'Players': []},
-        {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'Players': []},
-        {'FieldName': 'DEF_TacklesForLoss', 'DisplayName': 'TFL', 'Players': []},
-        {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'Players': []},
-        {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'Players': []},
+        {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'LongDisplayName': 'Passing Yards', 'Players': []},
+        {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TDs','LongDisplayName': 'Passing Touchdowns', 'Players': []},
+        {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'LongDisplayName': 'Passing Completion %','Players': []},
+        {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'LongDisplayName': 'Rushing Yards','Players': []},
+        {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'Rush YPC', 'LongDisplayName': 'Rushing Yards per Carry','Players': []},
+        {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'LongDisplayName': 'Rushing Touchdowns','Players': []},
+        {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'LongDisplayName': 'Receiving Yards','Players': []},
+        {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'LongDisplayName': 'Receiving Touchdowns','Players': []},
+        {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'LongDisplayName': 'Receptions','Players': []},
+        {'FieldName': 'DEF_TacklesForLoss', 'DisplayName': 'TFL','LongDisplayName': 'Tackles for Loss', 'Players': []},
+        {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'LongDisplayName': 'Sacks','Players': []},
+        {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'LongDisplayName': 'Interceptions','Players': []},
     ]
 
     #print(HistoricalStats.query)
@@ -5811,30 +5839,30 @@ def Common_TeamRecords(WorldID, Timeframe = 'Alltime', Filters={}, ListLength = 
 
 
     HistoricalLeaders = [
-        {'FieldName': 'Wins', 'DisplayName': 'Wins', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
-        {'FieldName': 'Losses', 'DisplayName': 'Losses', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
-        {'FieldName': 'Win_Percentage', 'DisplayName': 'Win %', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
-        {'FieldName': 'WeeksAt1', 'DisplayName': 'Weeks #1', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
-        {'FieldName': 'WeeksTop10', 'DisplayName': 'Weeks Top 10', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
-        {'FieldName': 'WeeksTop25', 'DisplayName': 'Weeks Top 25', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
-        {'FieldName': 'PPG', 'DisplayName': 'PPG', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'PAPG', 'DisplayName': 'PAPG', 'Players': [], 'Reverse': True, 'Exclude': []},
-        {'FieldName': 'MOV', 'DisplayName': 'MOV', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TDs', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'Rush YPC', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'Players': [], 'Reverse': False, 'Exclude': ['Alltime', 'Season']},
-        {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'Players': [], 'Reverse': False, 'Exclude': ['Alltime', 'Season']},
-        {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'Players': [], 'Reverse': False, 'Exclude': ['Alltime', 'Season']},
-        {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'DEF_TacklesForLoss', 'DisplayName': 'TFL', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tckls', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'DEF_Deflections', 'DisplayName': 'DEF', 'Players': [], 'Reverse': False, 'Exclude': []},
-        {'FieldName': 'FUM_Forced', 'DisplayName': 'FF', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'Wins', 'DisplayName': 'Wins', 'LongDisplayName': 'Wins', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
+        {'FieldName': 'Losses', 'DisplayName': 'Losses', 'LongDisplayName': 'Losses', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
+        {'FieldName': 'Win_Percentage', 'DisplayName': 'Win %', 'LongDisplayName': 'Win Percentage', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
+        {'FieldName': 'WeeksAt1', 'DisplayName': 'Weeks #1', 'LongDisplayName': 'Weeks Ranked #1', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
+        {'FieldName': 'WeeksTop10', 'DisplayName': 'Weeks Top 10','LongDisplayName': 'Weeks Ranked in Top 10',  'Players': [], 'Reverse': False, 'Exclude': ['Game']},
+        {'FieldName': 'WeeksTop25', 'DisplayName': 'Weeks Top 25', 'LongDisplayName': 'Weeks Ranked in Top 25', 'Players': [], 'Reverse': False, 'Exclude': ['Game']},
+        {'FieldName': 'PPG', 'DisplayName': 'PPG', 'LongDisplayName': 'Points Scored per Game', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'PAPG', 'DisplayName': 'PAPG', 'LongDisplayName': 'Points Allowed per Game', 'Players': [], 'Reverse': True, 'Exclude': []},
+        {'FieldName': 'MOV', 'DisplayName': 'MOV', 'LongDisplayName': 'Margin of Victory', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards','LongDisplayName': 'Passing Yards',  'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TDs', 'LongDisplayName': 'Passing Touchdowns', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'LongDisplayName': 'Passing Completion %', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'LongDisplayName': 'Rushing Yards', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'LongDisplayName': 'Rushing Touchdowns', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'Rush YPC', 'LongDisplayName': 'Rushing Yards per Carry', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'LongDisplayName': 'Receiving Yards', 'Players': [], 'Reverse': False, 'Exclude': ['Alltime', 'Season']},
+        {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'LongDisplayName': 'Receiving Touchdowns', 'Players': [], 'Reverse': False, 'Exclude': ['Alltime', 'Season']},
+        {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'LongDisplayName': 'Receptions', 'Players': [], 'Reverse': False, 'Exclude': ['Alltime', 'Season']},
+        {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'LongDisplayName': 'Sacks', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'DEF_TacklesForLoss', 'DisplayName': 'TFL', 'LongDisplayName': 'Tackles for Loss', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tckls', 'LongDisplayName': 'Tackles', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'LongDisplayName': 'Interceptions', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'DEF_Deflections', 'DisplayName': 'DEF', 'LongDisplayName': 'Deflections', 'Players': [], 'Reverse': False, 'Exclude': []},
+        {'FieldName': 'FUM_Forced', 'DisplayName': 'FF', 'LongDisplayName': 'Forced Fumbles', 'Players': [], 'Reverse': False, 'Exclude': []},
     ]
 
     #print('\nHistoricalStats.query', HistoricalStats.query)
@@ -6143,7 +6171,7 @@ def Common_TeamStats( Filters = {}):
                         ),
         Opponent_PAS_YardsPerAttempt = Case(
                             When(PAS_Attempts=0, then=0.0),
-                            default=(Round(F('PAS_Yards')* 1.0 / F('PAS_Attempts'),1)),
+                            default=(Round(F('Opponent_PAS_Yards')* 1.0 / F('Opponent_PAS_Attempts'),1)),
                             output_field=FloatField()
                         ),
         PAS_YPG = Case(
@@ -6178,7 +6206,7 @@ def Common_TeamStats( Filters = {}):
                         ),
         Opponent_RUS_YPC = Case(
                             When(Opponent_RUS_Carries=0, then=0.0),
-                            default=(Round(F('Opponent_RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
+                            default=(Round(F('Opponent_RUS_Yards')* 1.0 / F('Opponent_RUS_Carries'),1)),
                             output_field=FloatField()
                         ),
         REC_YPC = Case(
@@ -6405,47 +6433,50 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
 
 
     TeamStatsDisplay = []
-    TeamStats = [T for T in AllTeams if T['TeamID'] == TeamID][0]
-
-    TierNameMap = {
-        1: 'Elite',
-        2: 'Great',
-        3: 'Good',
-        4: 'Average',
-        5: 'Poor',
-        6: 'Bad',
-        7: 'Terrible',
-    }
-
+    TeamStats = []
     TotalTeams = len(AllTeams)
+    TeamStats = [T for T in AllTeams if T['TeamID'] == TeamID]
+    if len(TeamStats) > 0:
+        TeamStatsDisplay = []
+        TeamStats = TeamStats[0]
 
-    YardsObj = {'Display': 'Yards'}
-    YardsObj['OffenseValue'] = TeamStats['YardsPerGame']
-    YardsObj['OffenseRank'] = HumanizeInteger(TeamStats['YardsPerGame_Rank'])
-    YardsObj['OffenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['YardsPerGame_Rank'])]
-    YardsObj['DefenseValue'] = TeamStats['YardsAllowedPerGame']
-    YardsObj['DefenseRank'] = HumanizeInteger(TeamStats['YardsAllowedPerGame_Rank'])
-    YardsObj['DefenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['YardsAllowedPerGame_Rank'])]
-    YardsObj['MarginValue'] = TeamStats['YardsPerGame_Margin']
-    YardsObj['MarginRank'] = HumanizeInteger( TeamStats['YardsPerGame_Margin_Rank'])
-    YardsObj['MarginRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['YardsPerGame_Margin_Rank'])]
 
-    TeamStatsDisplay.append( YardsObj )
+        TierNameMap = {
+            1: 'Elite',
+            2: 'Great',
+            3: 'Good',
+            4: 'Average',
+            5: 'Poor',
+            6: 'Bad',
+            7: 'Terrible',
+        }
 
-    PointsObj = {'Display': 'Points'}
-    PointsObj['OffenseValue'] = TeamStats['PPG']
-    PointsObj['OffenseRank'] = HumanizeInteger(TeamStats['PPG_Rank'])
-    PointsObj['OffenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['PPG_Rank'])]
-    PointsObj['DefenseValue'] = TeamStats['PAPG']
-    PointsObj['DefenseRank'] = HumanizeInteger(TeamStats['PAPG_Rank'])
-    PointsObj['DefenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['PAPG_Rank'])]
-    PointsObj['MarginValue'] = TeamStats['PPG_Margin']
-    PointsObj['MarginRank'] = HumanizeInteger(TeamStats['PPG_Margin_Rank'])
-    PointsObj['MarginRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['PPG_Margin_Rank'])]
+        YardsObj = {'Display': 'Yards'}
+        YardsObj['OffenseValue'] = TeamStats['YardsPerGame']
+        YardsObj['OffenseRank'] = HumanizeInteger(TeamStats['YardsPerGame_Rank'])
+        YardsObj['OffenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['YardsPerGame_Rank'])]
+        YardsObj['DefenseValue'] = TeamStats['YardsAllowedPerGame']
+        YardsObj['DefenseRank'] = HumanizeInteger(TeamStats['YardsAllowedPerGame_Rank'])
+        YardsObj['DefenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['YardsAllowedPerGame_Rank'])]
+        YardsObj['MarginValue'] = TeamStats['YardsPerGame_Margin']
+        YardsObj['MarginRank'] = HumanizeInteger( TeamStats['YardsPerGame_Margin_Rank'])
+        YardsObj['MarginRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['YardsPerGame_Margin_Rank'])]
 
-    TeamStatsDisplay.append( PointsObj )
+        TeamStatsDisplay.append( YardsObj )
 
-    print('AllTeams', json.dumps(TeamStatsDisplay, indent=2))
+        PointsObj = {'Display': 'Points'}
+        PointsObj['OffenseValue'] = TeamStats['PPG']
+        PointsObj['OffenseRank'] = HumanizeInteger(TeamStats['PPG_Rank'])
+        PointsObj['OffenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['PPG_Rank'])]
+        PointsObj['DefenseValue'] = TeamStats['PAPG']
+        PointsObj['DefenseRank'] = HumanizeInteger(TeamStats['PAPG_Rank'])
+        PointsObj['DefenseRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['PAPG_Rank'])]
+        PointsObj['MarginValue'] = TeamStats['PPG_Margin']
+        PointsObj['MarginRank'] = HumanizeInteger(TeamStats['PPG_Margin_Rank'])
+        PointsObj['MarginRank_Tier'] = TierNameMap[TierPlacement(Tiers = 7, PopulationSize = TotalTeams, Distribution = 'Normal', RankPlace = TeamStats['PPG_Margin_Rank'])]
+
+        TeamStatsDisplay.append( PointsObj )
+
 
     TeamInfoRatings = [T for T in TeamInfoRatings if T['TeamSeasonID__TeamID'] == TeamID]
 
@@ -6642,7 +6673,7 @@ def Page_Team(request,WorldID, TeamID, SeasonStartYear = None):
     context['TeamInfoRatings'] = TeamInfoRatings
     context['TopPlayersReturning'] = TopPlayersReturning
     context['TeamStatsDisplay'] = TeamStatsDisplay
-
+    context['TotalTeamCount'] = TotalTeams
     context['HeaderLink'] = TeamHeaderLinks('Overview', SeasonStartYear, CurrentWorld)
     context['TeamList'] = Team.objects.filter(WorldID=WorldID).values('TeamName', 'TeamNickname', 'TeamLogoURL').annotate(
         TeamHref=Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamID'), output_field=CharField())

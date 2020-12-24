@@ -1,6 +1,6 @@
 from math import ceil, floor
 import json
-
+import itertools
 
 def TierPlacement(Tiers = 5, PopulationSize = 100, Distribution = 'Normal', RankPlace = 1):
     TierList = range(1,Tiers+1)
@@ -41,3 +41,16 @@ def TierPlacement(Tiers = 5, PopulationSize = 100, Distribution = 'Normal', Rank
     #print(f'RankPlace {RankPlace} Placement {Placement}')
 
     return int(Placement)
+
+
+# Objs = []
+# groups={}
+# for u in range(101):
+#     Objs.append({'Key': u, 'G': int(u/10)})
+#
+#
+# key_func = lambda x: x['G']
+# for k, g in itertools.groupby(Objs, key_func):
+#     groups[k] = list(g)
+#
+# print(json.dumps(groups, indent=2))

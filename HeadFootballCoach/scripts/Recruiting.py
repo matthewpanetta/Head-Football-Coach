@@ -1,6 +1,8 @@
 from ..models import Headline,World, Playoff,Week,Audit, WeekUpdate,RecruitTeamSeasonInterest, TeamSeasonPosition, RecruitTeamSeason,TeamSeason, Team, Player, Game, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat, Coach, CoachTeamSeason
 from random import uniform, randint, choice
 import numpy
+import json
+import itertools
 import time
 from ..utilities import WeightedProbabilityChoice, Min, Min_Int, DistanceBetweenCities, GetValuesOfSingleObject, NormalBounds, NormalTrunc
 from math import sin, cos, sqrt, atan2, radians, log
@@ -580,9 +582,6 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
         CoachRecruitingConcentration = F('coachteamseason__CoachID__RecruitingConcentration')
     ).order_by('-TeamPrestige', 'teamseasonweekrank__NationalRank')
 
-
-    print(f'\nTeamSeasonList {TeamSeasonList.query}\n')
-
     TeamSeasonList = list(TeamSeasonList)
 
     print(f'Built teamseasonlist. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
@@ -632,15 +631,14 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
         RecruitingPriority = ExpressionWrapper(F('Scouted_Overall') * F('InterestRankPriorityModifier') * F('CommitsNeededModifier') * F('ActivelyRecruitingModifier'), output_field=DecimalField())
     ).order_by('-RecruitingPriority')
 
-
-    print(f'\nAllRecruitsAvailable {AllRecruitsAvailable.query}\n')
-
+    RTS_TeamInterestDict = {}
     RTS_TeamSeasonDict = {}
     for RTS in AllRecruitsAvailable:
         if RTS.TeamSeasonID not in RTS_TeamSeasonDict:
             RTS_TeamSeasonDict[RTS.TeamSeasonID] = []
 
         RTS_TeamSeasonDict[RTS.TeamSeasonID].append(RTS)
+        RTS_TeamInterestDict[RTS] = []
 
     print(f'Built RTS_TeamSeasonDict. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
     Logger = {"Time": time.time(), "Queries": len(connection.queries)}
@@ -656,23 +654,33 @@ def FakeWeeklyRecruiting_New(WorldID, CurrentWeek):
     print(f'Built TeamSeasonPositionList. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
     Logger = {"Time": time.time(), "Queries": len(connection.queries)}
 
-    RTS_TeamInterestDict = {}
-    RTS_TeamInterestList = RecruitTeamSeasonInterest.objects.filter(RecruitTeamSeasonID__TeamSeasonID__LeagueSeasonID = CurrentSeason).annotate(
+    RTS_TeamInterestList = RecruitTeamSeasonInterest.objects.filter(RecruitTeamSeasonID__TeamSeasonID__LeagueSeasonID = CurrentSeason).filter(RecruitTeamSeasonID__PlayerTeamSeasonID__PlayerID__RecruitSigned = False).annotate(
         PitchValue =  Round(((12 - F('PlayerRecruitingInterestID__PitchRecruitInterestRank')) ** .5) * ((F('TeamRating') / 10.0) ** 2), -1),
         KnownPitchValue =  Case(
             When(PitchRecruitInterestRank_IsKnown = True, then=F('PitchValue')),
             default = Value(0),
             output_field=FloatField()
+        ),
+        KnownPitchValue_Rank = Window(
+            expression=RowNumber(),
+            partition_by=F("RecruitTeamSeasonID"),
+            order_by=F("KnownPitchValue").desc(),
         )
     ).select_related('RecruitTeamSeasonID').order_by('-KnownPitchValue', '-TeamRating')
 
     print(f'Built query for RTS_TeamInterestList. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
     Logger = {"Time": time.time(), "Queries": len(connection.queries)}
 
+    print('RTS_TeamInterestList Length', len(RTS_TeamInterestList), len(RTS_TeamInterestList) * 1.0 / len(TeamSeasonList), 'RTSI per team'  )
+    RTS_TeamInterestList = [RTSI for RTSI in RTS_TeamInterestList if RTSI.KnownPitchValue_Rank <= 8]
     for RTSI in RTS_TeamInterestList:
-        if RTSI.RecruitTeamSeasonID not in RTS_TeamInterestDict:
-            RTS_TeamInterestDict[RTSI.RecruitTeamSeasonID] = []
         RTS_TeamInterestDict[RTSI.RecruitTeamSeasonID].append(RTSI)
+
+    # key_func = lambda x: x.RecruitTeamSeasonID
+    # for RTS, RTSI_List in itertools.groupby(RTS_TeamInterestList, key_func):
+    #     RTS_TeamInterestDict[RTS] = list(RTSI_List)
+
+    print('RTS_TeamInterestDict length', len(RTS_TeamInterestDict))
 
     print(f'Build RTS_TeamInterestList Starting TS Loop. {len(connection.queries) - Logger["Queries"]} queries in {time.time() - Logger["Time"]} seconds' )
     Logger = {"Time": time.time(), "Queries": len(connection.queries)}

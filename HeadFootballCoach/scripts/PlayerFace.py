@@ -1496,7 +1496,7 @@ def BuildFaceSVG(PlayerFaceJson, TeamJerseyStyle = 'football', TeamJerseyInvert 
 
 
     if TeamJerseyInvert:
-        PlayerFaceJson['teamColors'].prepend('#FFF')
+        PlayerFaceJson['teamColors'] = ['#FFF'] + PlayerFaceJson['teamColors']
     else:
         PlayerFaceJson['teamColors'].append('#FFF')
 

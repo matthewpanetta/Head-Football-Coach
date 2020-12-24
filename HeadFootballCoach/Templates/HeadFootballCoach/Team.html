@@ -274,7 +274,7 @@
                               {{TeamStat.OffenseValue}}
                             </div>
                             <div class="margin-8">
-                              <span class='tiers-7 {{TeamStat.OffenseRank_Tier}}' style='border-radius: 20px; padding: 5px;'>{{TeamStat.OffenseRank}}</span>
+                              <span class='tiers-7 {{TeamStat.OffenseRank_Tier}}' style='border-radius: 20px; padding: 5px;'  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.OffenseRank_Tier}} - {{TeamStat.OffenseRank}} out of {{TotalTeamCount}} teams</div>">{{TeamStat.OffenseRank}}</span>
                             </div>
                           </div>
                         </td>
@@ -287,7 +287,7 @@
                               {{TeamStat.DefenseValue}}
                             </div>
                             <div class="margin-8">
-                              <span class='tiers-7 {{TeamStat.DefenseRank_Tier}}' style='border-radius: 20px; padding: 5px; '>{{TeamStat.DefenseRank}}</span>
+                              <span class='tiers-7 {{TeamStat.DefenseRank_Tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.DefenseRank_Tier}} - {{TeamStat.DefenseRank}} out of {{TotalTeamCount}} teams</div>">{{TeamStat.DefenseRank}}</span>
                             </div>
                           </div>
                         </td>
@@ -300,7 +300,7 @@
                               {{TeamStat.MarginValue}}
                             </div>
                             <div class="margin-8">
-                              <span class='tiers-7 {{TeamStat.MarginRank_Tier}}' style='border-radius: 20px; padding: 5px; '>{{TeamStat.MarginRank}}</span>
+                              <span class='tiers-7 {{TeamStat.MarginRank_Tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.MarginRank_Tier}} - {{TeamStat.MarginRank}} out of {{TotalTeamCount}} teams</div>">{{TeamStat.MarginRank}}</span>
                             </div>
                           </div>
                         </td>
@@ -518,6 +518,9 @@
 
 <script src="{% static 'Pages/Team.js' %}" type="module"></script>
 <script src="{% static 'common/loader.js' %}"></script>
+<script src="{% static 'common/popper.min.js' %}"></script>
+<script src="{% static 'common/util.js' %}"></script>
+<script type="module" src="{% static 'common/tooltip.js' %}"></script>
 
 <style media="screen">
   .teamColorBorder {
@@ -525,5 +528,6 @@
     border-bottom-color: #{{page.PrimaryColor}} !important;
   }
 </style>
+
 
 {{ TeamInfoRatings|json_script:"team-info-data" }}

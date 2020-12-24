@@ -12,6 +12,7 @@
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 
+{% include "HeadFootballCoach/ext_TeamColoring.html" %}
 
 <body>
   <div class="PageContent">
@@ -34,8 +35,10 @@
           <div class="w3-row-padding">
             <div class="w3-col l4 m6 s12">
               <div class="w3-card">
-                <span class='table_title'>Top 25</span>
-                <table class='w3-table'>
+                <div class="w3-bar team-primary-background-bar">
+                  <div class="">Top 25</div>
+                </div>
+                <table class='w3-table-all no-border'>
                   <colgroup>
                       <col span="1">
                       <col span="1">
@@ -88,8 +91,10 @@
             <div class="w3-col  l4 m6 s12">
               {% if  games|length > 0 %}
               <div class="w3-card background-eee">
+                <div class="w3-bar team-primary-background-bar">
+                  <div class="">Games This Week</div>
+                </div>
                 <div class="w3-bar boxscore-bar background-white" id="nav-tab-{{game.GameID}}">
-                  <div class="w3-bar-item fontweight500">This Week</div>
                   <button GameFilterSelection="allgame" class="w3-bar-item upcoming-gameview-tab w3-button tab selected-upcoming-gameview-tab" id="upcoming-gameview-allgame-tab">All</button>
                   <button GameFilterSelection="top25game" class="w3-bar-item upcoming-gameview-tab w3-button tab" id="upcoming-gameview-top25game-tab">Top 25</button>
                   <button GameFilterSelection="nationalgame" class="w3-bar-item upcoming-gameview-tab w3-button tab" id="upcoming-gameview-nationalgame-tab">National</button>
@@ -146,8 +151,10 @@
               </div>
               {% elif CurrentWeek.PhaseID.PhaseName == 'Preseason' %}
               <div class="w3-card">
+                <div class="w3-bar team-primary-background-bar">
+                  <div class="">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
+                </div>
                 <div class="w3-bar preseason-allamerican-team-bar" id="nav-tab-preseason-allamerican-team">
-                  <div class="w3-bar-item fontweight500">Preseason All-Americans</div>
                   <button TeamSelection='First Team' class="w3-bar-item award-team-tab w3-button tab selected-preseason-award-team-tab" id="preseason-allamerican-team-firstteam-tab">1st Team</button>
                   <button TeamSelection='Second Team' class="w3-bar-item award-team-tab w3-button tab" id="preseason-allamerican-team-secondteam-tab">2nd Team</button>
                 </div>
@@ -157,7 +164,7 @@
                   {% endfor %}
                 </div>
                 <div class="list-group list-group-flush">
-                  <table id='teamOverviewConferenceStandings'>
+                  <table id='teamOverviewConferenceStandings' class=' w3-table-all no-border'>
                     <thead class=''>
                       <th>Pos</th>
                       <th>Team</th>
@@ -184,8 +191,11 @@
               </div>
               {% elif CurrentWeek.PhaseID.PhaseName == 'Season Recap' %}
               <div class="w3-card">
+                <div class="w3-bar team-primary-background-bar">
+                  <div class="">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
+                </div>
                 <div class="w3-bar season-allamerican-team-bar" id="nav-tab-season-allamerican-team">
-                  <div class="w3-bar-item fontweight500">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
+
                   <button TeamSelection='First Team' class="w3-bar-item award-team-tab w3-button tab selected-season-award-team-tab" id="season-allamerican-team-firstteam-tab">1st Team</button>
                   <button TeamSelection='Second Team' class="w3-bar-item award-team-tab w3-button tab" id="season-allamerican-team-secondteam-tab">2nd Team</button>
                   <button TeamSelection='Freshman Team' class="w3-bar-item award-team-tab w3-button tab" id="season-allamerican-team-freshman-tab">Freshmen</button>
@@ -196,7 +206,7 @@
                   {% endfor %}
                 </div>
                 <div class="list-group list-group-flush">
-                  <table id='teamOverviewConferenceStandings'>
+                  <table id='teamOverviewConferenceStandings' class=' w3-table-all no-border'>
                     <thead class=''>
                       <th>Pos</th>
                       <th>Team</th>

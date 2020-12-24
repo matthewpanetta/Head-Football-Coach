@@ -91,7 +91,10 @@
           <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card w3-col s3 margin-sides-12 equal-sized-item no-padding'>
-              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
+              <div class="w3-bar team-primary-background-bar">
+                {{Stat.LongDisplayName}}
+              </div>
+              <table id='' class=' w3-table-all'>
                 <thead>
                   <th>Rank</th>
                   <th>Player</th>
@@ -103,10 +106,14 @@
                   {% with StatName=Stat.FieldName %}
                   {% for Player in Stat.Players%}
                   <tr id='worldLeagueLeadersRowClone' class=''>
-                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
                     <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.PlayerHref}}" href-field='PlayerHref' ><span data-field='PlayerName'>{{Player.PlayerName}}</span>, </a><span data-field='PlayerPosition'>{{Player.PlayerPosition}}</span></td>
-                    <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.TeamHref}}" href-field='PlayerTeamHref'><img src="{{Player.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
-                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Player|keyvalue:StatName}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-value="">
+                      <a href="{{Player.TeamHref}}" href-field='PlayerTeamHref'>
+                        <img src="{{Player.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
+                      </a>
+                    </td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='Value' data-value="">{{Player|keyvalue:StatName}}</td>
                     <td>{{Player.Timeframe}}</td>
                   </tr>
                   {% endfor %}
@@ -128,7 +135,10 @@
           <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
-              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
+              <div class="w3-bar team-primary-background-bar">
+                {{Stat.LongDisplayName}}
+              </div>
+              <table id='' class='w3-table-all'>
                 <thead>
                   <th>Rank</th>
                   <th>Player</th>
@@ -140,10 +150,14 @@
                   {% with StatName=Stat.FieldName %}
                   {% for Player in Stat.Players%}
                   <tr id='worldLeagueLeadersRowClone' class=''>
-                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
                     <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.PlayerHref}}" href-field='PlayerHref' ><span data-field='PlayerName'>{{Player.PlayerName}}</span>, </a><span data-field='PlayerPosition'>{{Player.PlayerPosition}}</span></td>
-                    <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.TeamHref}}" href-field='PlayerTeamHref'><img src="{{Player.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
-                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Player|keyvalue:StatName}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-value="">
+                      <a href="{{Player.TeamHref}}" href-field='PlayerTeamHref'>
+                        <img src="{{Player.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
+                      </a>
+                    </td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='Value' data-value="">{{Player|keyvalue:StatName}}</td>
                     <td>{{Player.Timeframe}}</td>
                   </tr>
                   {% endfor %}
@@ -165,7 +179,10 @@
           <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
-              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
+              <div class="w3-bar team-primary-background-bar">
+                {{Stat.LongDisplayName}}
+              </div>
+              <table id='' class='w3-table-all'>
                 <thead>
                   <th>Rank</th>
                   <th>Player</th>
@@ -177,10 +194,14 @@
                   {% with StatName=Stat.FieldName %}
                   {% for Player in Stat.Players%}
                   <tr id='worldLeagueLeadersRowClone' class=''>
-                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
                     <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.PlayerHref}}" href-field='PlayerHref' ><span data-field='PlayerName'>{{Player.PlayerName}}</span>, </a><span data-field='PlayerPosition'>{{Player.PlayerPosition}}</span></td>
-                    <td class='WorldLeagueLeaderRowCell' data-value=""><a href="{{Player.TeamHref}}" href-field='PlayerTeamHref'><img src="{{Player.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'></a></td>
-                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Player|keyvalue:StatName}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-value="">
+                      <a href="{{Player.TeamHref}}" href-field='PlayerTeamHref'>
+                        <img src="{{Player.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
+                      </a>
+                    </td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='Value' data-value="">{{Player|keyvalue:StatName}}</td>
                     <td><a href="{{Player.TimeframeHref}}">{{Player.Timeframe}}</a></td>
                   </tr>
                   {% endfor %}
@@ -202,8 +223,11 @@
           <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
-              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
-                <thead>
+              <div class="w3-bar team-primary-background-bar">
+                {{Stat.LongDisplayName}}
+              </div>
+              <table id='' class='w3-table-all'>
+                <thead class=' center-text-row'>
                   <th>Rank</th>
                   <th>Team</th>
                   <th data-field='DisplayName'>{{Stat.DisplayName}}</th>
@@ -213,14 +237,14 @@
                   {% with StatName=Stat.FieldName %}
                   {% for Team in Stat.Teams%}
                   <tr id='worldLeagueLeadersRowClone' class=''>
-                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
                     <td class='WorldLeagueLeaderRowCell' data-value="">
                       <a href="{{Team.TeamHref}}" href-field='PlayerTeamHref'>
                         <img src="{{Team.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
                         <span>{{Team.TeamName}}</span>
                       </a>
                     </td>
-                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
                     <td>{{Team.Timeframe}}</td>
                   </tr>
                   {% endfor %}
@@ -241,7 +265,10 @@
           <div class='w3-row-padding margin-top-24 w3-margin-bottom' id='worldLeagueLeaderRow'>
             {% endif %}
             <div class='w3-card s3 equal-sized-item margin-sides-12 no-padding'>
-              <table id='' class='display table sortable w3-table w3-striped w3-bordered'>
+              <div class="w3-bar team-primary-background-bar">
+                {{Stat.LongDisplayName}}
+              </div>
+              <table id='' class='w3-table-all'>
                 <thead>
                   <th>Rank</th>
                   <th>Team</th>
@@ -252,14 +279,14 @@
                   {% with StatName=Stat.FieldName %}
                   {% for Team in Stat.Teams%}
                   <tr id='worldLeagueLeadersRowClone' class=''>
-                    <td class='WorldLeagueLeaderRowCell text-center' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='ValueRank' data-value="">{{forloop.counter}}</td>
                     <td class='WorldLeagueLeaderRowCell' data-value="">
                       <a href="{{Team.TeamHref}}" href-field='PlayerTeamHref'>
                         <img src="{{Team.TeamLogoURL}}" src-field='TeamLogoURL' class='worldLeagueLeaderTeamLogo'>
                         <span>{{Team.TeamName}}</span>
                       </a>
                     </td>
-                    <td class='WorldLeagueLeaderRowCell' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
+                    <td class='WorldLeagueLeaderRowCell center-text' data-field='Value' data-value="">{{Team|keyvalue:StatName}}</td>
                     <td><a href="{{Team.TimeframeHref}}">{{Team.Timeframe}}</a></td>
                   </tr>
                   {% endfor %}

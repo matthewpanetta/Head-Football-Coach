@@ -192,7 +192,9 @@ $(document).ready(function(){
 
   var TeamInfoData = $('#team-info-data')[0];
   TeamInfoData = JSON.parse(TeamInfoData.textContent);
-  DrawTeamInfoChildRows(WorldID, TeamID, TeamInfoData)
+  DrawTeamInfoChildRows(WorldID, TeamID, TeamInfoData);
+
+  $('[data-toggle="tooltip"]').tooltip();
 
 
 });

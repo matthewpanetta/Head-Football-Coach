@@ -6,6 +6,13 @@ import json
 from math import sin, cos, sqrt, atan2, radians, log, ceil
 
 
+def vacuum_db():
+    print('Starting VACUUM')
+    from django.db import connection
+    cursor = connection.cursor()
+    cursor.execute("VACUUM")
+    connection.close()
+
 class Logger:
 
     EventList = []

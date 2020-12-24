@@ -1139,7 +1139,6 @@ def GenerateCoach(WorldID):
     SkillSegments = 13
     BaseCoachSkill = NormalVariance(1, Segments = SkillSegments, Floor = 1, Spread = 1.0)
     BaseCoachSkillModifier = 1.0 + ((BaseCoachSkill - (SkillSegments/2)) / 10.0)
-    print('BaseCoachSkillModifier', 'BaseCoachSkill', BaseCoachSkill, BaseCoachSkillModifier)
 
     C.ReputationRating       =  NormalVariance(BaseCoachSkillModifier, Segments = SkillSegments, Floor = 1, Spread = 2)
     C.CharismaRating         =  NormalVariance(BaseCoachSkillModifier, Segments = SkillSegments, Floor = 1, Spread = 2)
@@ -1667,10 +1666,11 @@ def CreateRecruitingClass(LS, WorldID):
 
             RTSToSave.append(RTS)
 
-    print('RTS created', len(connection.queries))
+    print('Populated RTS, now saving', len(connection.queries))
     Player.objects.bulk_update(PlayersToSave, ['Recruiting_StateRank', 'Recruiting_NationalPositionalRank', 'Recruiting_NationalRank', 'RecruitingStars'], batch_size=500)
     RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False, batch_size=500)
     PlayerRecruitingInterest.objects.bulk_create(PlayerRecruitingInterestToSave, ignore_conflicts=False, batch_size=500)
+    print('RTS created', len(connection.queries))
 
     RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID', 'TeamSeasonID', 'TeamSeasonID__TeamID__CityID__StateID__RegionID', 'TeamSeasonStateID').annotate(
         RecruitingTeamRank_new = Window(
