@@ -16,7 +16,6 @@ def CalculateSRS(TeamList, GameList):
         G.addTeam(T)
 
     G.buildGraph(GameList)
-    print()
     G.rateTeams()
     print()
     teams = G.getTeams()

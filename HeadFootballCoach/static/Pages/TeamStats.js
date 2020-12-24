@@ -134,8 +134,8 @@ function GetPlayerStats(WorldID, data){
   var cntrlIsPressed = false;
 
   var ColCategories = {
-    'Base': 3,
-    'Games': 3,
+    'Base': 6,
+    //'Games': 3,
     'Point Margin': 3,
     'Total Offense': 8,
     'Total Defense': 8,
@@ -232,14 +232,10 @@ function GetPlayerStats(WorldID, data){
   var DescFirst = ['desc', 'asc'];
   var AscFirst = ['asc', 'desc'];
 
-  console.log('ShowColumnMap', ShowColumnMap)
-  console.log('HideColumnMap', HideColumnMap)
-  console.log('ButtonList', ButtonList);
-
 
   var table = $('#TeamStats').DataTable({
       "dom": 'Brtp',
-    //  "scrollX": true,
+      "scrollX": true,
     fixedHeader: true,
       //"serverSide": true,
       "filter": true,
@@ -258,7 +254,7 @@ function GetPlayerStats(WorldID, data){
             $(td).addClass('teamTableBorder');
             $(td).parent().attr('TeamID', DataObject['TeamID']);
         }},
-        {"data": "ConferenceID__ConferenceName", "sortable": true, 'visible': true, 'orderSequence': AscFirst},
+        {"data": "ConferenceID__ConferenceAbbreviation", "sortable": true, 'visible': true, 'orderSequence': AscFirst},
         {"data": "NationalRank", "sortable": true, 'visible': true, 'className': 'center-text col-group','orderSequence':AscFirst},
         //NationalRank
         {"data": "GamesPlayed", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':DescFirst},
@@ -374,7 +370,7 @@ function GetPlayerStats(WorldID, data){
 
           {"data": "WeeksAt1", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "WeeksTop10", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
-          {"data": "WeeksTop25", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':AscFirst},
+          {"data": "WeeksTop25", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
 
           {"data": "Top25_GamesPlayed", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "Top25_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
@@ -395,7 +391,7 @@ function GetPlayerStats(WorldID, data){
           {"data": "Bowl_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "Bowl_Losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
           {"data": "Bowl_WinPercentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':DescFirst},
-          
+
           {"data": null, "sortable": false, 'searchable': false, 'className': 'details-control',   "defaultContent": ''},
 
       ],

@@ -164,7 +164,7 @@
                   </div>
                   <div class='equal-sized-item-container wrap'>
                     {% for Stat in TeamStatBox %}
-                    <div class='w3-padding-4 s6 ellipsis equal-sized-item inline-block w3-border-top w3-border-right w3-border-bottom w3-border-gray'>
+                    <div class='w3-padding-4 s6 ellipsis equal-sized-item inline-block w3-border-top game-recap-stat-box w3-border-gray'>
                       <span class='bold font12 '>{{Stat.DisplayName}}</span>
                       <div class='gameTeamStatAbbreviation'>{{awayTeam.Abbreviation}}</div>
                       <div class="">
@@ -218,6 +218,67 @@
                   </table>
                 </div>
                 {% endif %}
+                {% else %}
+                <div class="w3-card margin-bottom-24">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span>Team Leaders</span>
+                  </div>
+                  <div class="">
+                    <table style='width: 100%;'>
+                      {% for LeaderGroup in PlayerGameLeaders%}
+                      <tr class='center-text-row w3-border-top'>
+                        <td colspan='4' class='padding-top-8 bold'>{{LeaderGroup.Display}}</td>
+                      </tr>
+                      <tr class='center-text-row'>
+                        <td colspan='2'>
+                          <span class='font12'>
+                            <a href="{{LeaderGroup.HomePlayer.PlayerHref}}">
+                              {{LeaderGroup.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{LeaderGroup.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerLastName}}
+                            </a>
+                          </span>
+                        </td>
+                        <td colspan='2'>
+                          <span class='font12'>
+                            <a href="{{LeaderGroup.AwayPlayer.PlayerHref}}">
+                              {{LeaderGroup.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{LeaderGroup.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerLastName}}
+                            </a>
+                          </span>
+                        </td>
+                      </tr>
+                      <tr class='padding-bottom-8'>
+                        <td>
+                          <div class="PlayerFace-45 PlayerFace-Headshot">
+                            {{LeaderGroup.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceSVG|safe}}
+                          </div>
+                        </td>
+                        <td>
+                          <ul class='no-list-style right-text'>
+                            {% for Stat in LeaderGroup.HomePlayerStats%}
+                            <li>
+                              {{Stat}}
+                            </li>
+                            {% endfor %}
+                          </ul>
+                        </td>
+                        <td>
+                          <ul class='no-list-style'>
+                            {% for Stat in LeaderGroup.AwayPlayerStats%}
+                            <li>
+                              {{Stat}}
+                            </li>
+                            {% endfor %}
+                          </ul>
+                        </td>
+                        <td>
+                          <div class="PlayerFace-45 PlayerFace-Headshot">
+                            {{LeaderGroup.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceSVG|safe}}
+                          </div>
+                        </td>
+                      </tr>
+                      {%endfor%}
+                    </table>
+                                      </div>
+                </div>
                 {% endif %}
 
               </div>
@@ -241,7 +302,7 @@
                             <th class='ScoringSummaryTeamScore'>{{awayTeam.Abbreviation}}</th>
                           </tr>
                           {% for Score in Period.ScoreList %}
-                          <tr class='ScoringSummaryScoreRow {{Score.DriveEventClass}} teamTableBorder' style='border-left-color: {{Score.DisplayTeamID__TeamColor_Primary_HEX}}'>
+                          <tr class='ScoringSummaryScoreRow {{Score.DriveEventClass}} teamTableBorder' style='border-left-color: #{{Score.DisplayTeamID__TeamColor_Primary_HEX}}'>
                             <td class='ScoringSummaryTeamLogo'>
                                 <img src="{{Score.DisplayTeamID__TeamLogoURL}}" alt="">
                             </td>
@@ -325,7 +386,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     <span>{{Conference.ConferenceName}} Standings</span>
                   </div>
-                  <table id='teamOverviewConferenceStandings'>
+                  <table class='w3-table-all' id='teamOverviewConferenceStandings'>
                     {% for Division in Conference.Divisions%}
                     <thead>
                       <th>Team</th>

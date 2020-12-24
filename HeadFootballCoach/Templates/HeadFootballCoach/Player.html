@@ -18,18 +18,18 @@
 
 
 <body>
-
-
   <div class='PageContent'>
     <div class='PlayerHeader'>
       <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
-      <a href='/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}' {% if not playerTeam.LogoURL %} style='margin-left: 180px;' {% endif %}>
+      <a href='/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}' {% if not playerTeam.LogoURL %}{% if not SignedTeam.LogoURL %} style='margin-left: 180px;' {% endif %}{% endif %}>
         {% if playerTeam.LogoURL %}
         <img class='playerTeamLogo' src='{{playerTeam.LogoURL}}' alt="My image">
+        {%elif SignedTeam.LogoURL%}
+        <img class='playerTeamLogo' src='{{SignedTeam.LogoURL}}' alt="My image">
         {% endif %}
       </a>
       <div class="PlayerFace" id='PlayerFace'>
-
+        {{player.PlayerFaceSVG|safe}}
       </div>
       <div class='playerHeaderInfo'>
         <span class='playerFirstName'>
@@ -40,7 +40,11 @@
         </span>
         <div class='playerOverviewInfo'>
           {% if player.IsRecruit %}
-          <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
+            {%if SignedTeam.LogoURL%}
+              <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit, Signed</a>
+            {% else %}
+              <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
+            {% endif %}
           {% else %}
           <a href="/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}">{{playerTeam.TeamName}} {{playerTeam.TeamNickname}}</a>
           {% endif %}
@@ -159,7 +163,7 @@
               {% endif %}
 
               {%if RecentGameStats|length > 0%}
-              <div class="w3-card">
+              <div class="w3-card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
                   Recent Game Stats
                 </div>
@@ -178,7 +182,7 @@
                       <!-- Game -->
                       <th class='teamColorBorder' scope="col">OPP</th>
                       <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
-                      <th>Game Outcome</th>
+                      <th>Score</th>
 
                       <!-- Passing Stats -->
                       <th>CMP</th>
@@ -239,7 +243,7 @@
       </div>
       {% if player.IsRecruit %}
       <div class="tab-content"  style='display:none;' id="nav-recruiting" >
-        <div class='w3-container'>
+        <div class='w3-container w3-margin-bottom'>
           <div class='w3-row'>
             <div class='w3-col l12'>
               <table class="table table-striped sortable" id='playerRecruitingTeamTable'>
@@ -311,18 +315,18 @@
       </div>
       {% else %}
       <div class="tab-content" style='display:none;' id="nav-stats" >
-        <div class='w3-container'>
+        <div class='w3-container w3-margin-bottom'>
             <div class='w3-row-padding'>
               <div class='w3-col l10 m12'>
 
-                <table id="PlayerSeasonStatTableClone" class='w3-hide width100 w3-padding' style=''>
+                <table id="PlayerSeasonStatTableClone" class='w3-hide width100 no-border' style=''>
 
                   <tfoot>
                     <tr>
                     </tr>
                   </tfoot>
                  </table>
-                 <table id="PlayerCareerHighTableClone" class='w3-hide width100 w3-padding' style=''>
+                 <table id="PlayerCareerHighTableClone" class='w3-hide width100 no-border' style=''>
                    <thead>
                      <th>Stat</th>
                      <th>Value</th>
@@ -337,9 +341,9 @@
       </div>
       <div class="tab-content" style='display:none;' id="nav-game-log" >
         <div class='w3-container'>
-          <div class='w3-row-padding'>
+          <div class='w3-row-padding '>
               <div class="w3-col l10 m12">
-                <div class="w3-card">
+                <div class="w3-card w3-margin-bottom">
 
                   <div class="w3-bar team-primary-background-bar">Game Stats</div>
                 <table class="w3-table table-striped width100" id='FullGameStats' style='width: 100%;'>
@@ -357,7 +361,7 @@
                       <!-- Game -->
                       <th class='teamColorBorder' scope="col">OPP</th>
                       <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
-                      <th>Game Outcome</th>
+                      <th>Score</th>
 
                       <!-- Passing Stats -->
                       <th>CMP</th>
@@ -541,37 +545,9 @@
       "order": [[ 3, "desc" ], [ 4, "desc" ]]
   } );
 
-  //playerRecruitingTeamTable
-
 
 </script>
 
-<script>
-
-$(document).ready(function(){
-  console.log("player.PlayerFaceJson", {{player.PlayerFaceJson|safe}});
-
-  var overrides = {'teamColors': ["#{{page.PrimaryColor}}","#{{page.SecondaryColor}}","#FFF",]};
-
-  var TeamJerseyInvert = '{{player.TeamJerseyInvert}}';
-  if (TeamJerseyInvert.length == 0){
-    TeamJerseyInvert = false;
-  }
-
-    var TeamJerseyStyle = '{{player.TeamJerseyStyle}}';
-    if (TeamJerseyStyle.length == 0){
-      TeamJerseyStyle = 'football';
-    }
-
-  {% if player.PlayerFaceJson|length > 0 %}
-    BuildFace({{player.PlayerFaceJson|safe}}, TeamJerseyStyle, TeamJerseyInvert, overrides=overrides, DOMID = 'PlayerFace');
-  {% else %}
-    BuildFace(undefined, TeamJerseyStyle,TeamJerseyInvert);
-  {% endif %}
-
-
-});
-</script>
 
 {% if player.IsRecruit %}
 <script src="{% static 'Highcharts/code/highcharts.js' %}"></script>

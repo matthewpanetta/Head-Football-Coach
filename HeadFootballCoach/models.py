@@ -6,6 +6,7 @@ import random
 import time
 from django.db.models import Max
 from django.shortcuts import get_object_or_404
+from .scripts.PlayerFace import GeneratePlayerFaceJSon, BuildFaceSVG
 from .utilities import GetValuesOfObject,NormalTrunc, MapNumberValuesToLetterGrade, Average, UniformTwoDecimals, WeightedProbabilityChoice, SecondsToMinutes
 # Create your models here.
 
@@ -499,12 +500,14 @@ class Week(models.Model):
 
     UserRecruitingPointsLeftThisWeek = models.IntegerField(default = 0)
 
+    MessagesToViewThisWeek = models.IntegerField(default = 0)
+
     def __str__(self):
         return self.WeekName + ' in ' + str(self.PhaseID.LeagueSeasonID.SeasonStartYear)
 
     @property
     def NextWeek(self):
-        NextWeek = Week.objects.filter(WeekNumber = self.WeekNumber + 1).filter(PhaseID__LeagueSeasonID = self.PhaseID.LeagueSeasonID).first()
+        NextWeek = Week.objects.filter(WeekNumber = self.WeekNumber + 1).filter(PhaseID__LeagueSeasonID = self.PhaseID.LeagueSeasonID).select_related('PhaseID__LeagueSeasonID').first()
         if NextWeek is None:
             NextLS = self.PhaseID.LeagueSeasonID.NextLeagueSeason
             NextWeek = Week.objects.filter(PhaseID__LeagueSeasonID = NextLS).order_by('WeekID').first()
@@ -824,6 +827,7 @@ class Player(models.Model):
     PositionID              = models.ForeignKey(Position, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
     PlayerFaceJson          = models.CharField(max_length=2000, default='' , blank=True)
+    PlayerFaceSVG          = models.CharField(max_length=40000, blank=True, null=True, default=None)
 
     IsRecruit                 = models.BooleanField(default=False, db_index=True)
     RecruitingStars           = models.PositiveSmallIntegerField(default=0)
@@ -886,194 +890,6 @@ class Player(models.Model):
 
         return 'True'
 
-    def GeneratePlayerFaceJSon(self):
-        PlayerFatnessMean = ((self.Weight-180) * 0.5 / 100) + 0.1
-        colors = [{
-            'skin': "#f2d6cb",
-            'hair': [
-              "#272421",
-              "#3D2314",
-              "#3D2314",
-              "#5A3825",
-              "#CC9966",
-              "#2C1608",
-              "#B55239",
-              "#e9c67b",
-              "#D7BF91"
-            ]
-          },
-          {
-            'skin': "#ddb7a0",
-            'hair': [
-              "#272421",
-              "#3D2314",
-              "#5A3825",
-              "#CC9966",
-              "#2C1608",
-              "#B55239",
-              "#e9c67b",
-              "#D7BF91"
-            ]
-          },
-          {
-            'skin': "#ce967d",
-            'hair': ["#272421", "#423125", "#423125"]
-          },
-          {
-            'skin': "#bb876f",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#aa816f",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#a67358",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#a67358",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#a67358",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#ad6453",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#ad6453",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#ad6453",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#74453d",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#74453d",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#74453d",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#5c3937",
-            'hair': ["#272421"]
-          },
-          {
-            'skin': "#5c3937",
-            'hair': ["#272421"]
-          }
-        ]
-        svgsIndex = {
-          "accessories": ["headband-high", "headband", "none"],
-          "body": ["body"],
-          "ear": ["ear1", "ear2", "ear3"],
-          "eye": ["eye1", "eye2", "eye3", "eye4", "eye5", "eye6", "eye7", "eye8", "eye9"],
-          "eyeLine": ["line1", "line2", "line3", "line4", "line5", "line6", "none"],
-          "eyebrow": ["eyebrow1", "eyebrow10", "eyebrow11", "eyebrow12", "eyebrow2", "eyebrow3", "eyebrow4", "eyebrow5", "eyebrow6", "eyebrow7", "eyebrow8", "eyebrow9"],
-          "facialHair": ["beard1", "beard2", "fullgoatee", "goatee-thin", "goatee1-stache", "goatee1", "goatee2", "goatee3", "goatee4", "goatee5", "goatee6", "goatee7", "goatee8", "handlebar", "honest-abe-stache", "honest-abe", "mustache-thin", "mustache1", "none", "soul-stache", "soul"],
-          "glasses": ["facemask", "glasses1-primary", "glasses1-secondary", "glasses2-black", "glasses2-primary", "glasses2-secondary", "none"],
-          "hair": [("afro-big", 1), ("afro-med", 1), ("bald", 2), ("buzz-01",3), ("buzz-02",3), ('curly-01',1), ('curly-02',1), ('curly-03',1), ('dreads',1), ('faux-hawk-01',1), ('faux-hawk-02',1), ('hair-01',2), ('hair-02',2), ("cornrows",1), ("crop",2), ("high-01",2), ('high-02',2), ("juice",3), ('messy-01',1), ('messy-02',1), ('messy-03',1),  ('messy-spikes-01',1),( 'messy-spikes-02',1), ('messy-spikes-03',1), ("middle-part",1),( "parted",1), ("short-fade",3), ("short-01",2), ("short-02",2), ("spike-round-01",1),("spike-round-02",1),("spike-round-03",1), ("spike-straight-01",1),("spike-straight-02",1),("spike-straight-03",1),],
-          "head": ["head1", "head2", "head3", "head4", "head5", "head6", "head7", "head8"],
-          "jersey": [ "football"],
-          "miscLine": ["chin1", "chin2",  "none"],#"forehead1", "forehead2", "forehead3", "forehead4", "forehead5",
-          "mouth": ["angry", "closed", "mouth", "side", "smile-closed", "smile", "smile2", "smile3", "straight"],
-          "nose": ["honker", "nose1", "nose2", "nose3", "nose4", "nose5", "nose6", "nose7", "nose8", "pinocchio"],
-          "smileLine": ["line1", "line2", "line3", "line4", "none"]
-        }
-
-        eyeAngle = round(random.uniform(0,25) - 10, 0)
-
-        if self.PositionID.PositionAbbreviation in ['QB', 'OT', 'OG', 'OC', 'K', 'P']:
-            WPC = [(u, len(u['hair'])) for u in colors]
-            palette = WeightedProbabilityChoice(WPC, colors[0])
-
-        elif self.PositionID.PositionAbbreviation in ['MLB', 'DE', 'TE']:
-            WPC =  [(u, 1) for u in colors]
-            palette = WeightedProbabilityChoice(WPC, colors[0])
-        else:
-            WPC = [(u, (10 - len(u['hair'])) ** 2) for u in colors]
-            palette = WeightedProbabilityChoice(WPC, colors[0])
-
-
-        skinColor = palette['skin']
-        hairColor = random.choice(palette['hair'])
-        hairIsFlipped = 'false' if random.uniform(0,1) < 0.5 else 'true'
-        mouthIsFlipped = 'false' if random.uniform(0,1) < 0.5 else 'true'
-        noseIsFlipped = 'false' if random.uniform(0,1) < 0.5 else 'true'
-
-        face = {
-        'fatness': round(NormalTrunc(PlayerFatnessMean,.2, 0, 1), 2),
-        'body': {
-          'id': random.choice(svgsIndex['body']),
-          'color': skinColor
-        },
-        'jersey': {
-          'id': random.choice(svgsIndex['jersey'])
-        },
-        'ear': {
-          'id': random.choice(svgsIndex['ear']),
-          'size': round(random.uniform(0,.5) + .75,2)
-        },
-        'head': {
-          'id': random.choice(svgsIndex['head']),
-          'shave': 'rgba(0,0,0,' + str(round(random.uniform(0,1) / 5.0 if random.uniform(0,1) < 0.25 else 0,2)) + ')'
-        },
-        'eyeLine': {
-          'id': random.choice(svgsIndex['eyeLine']) if random.uniform(0,1) < 0.75 else 'none'
-        },
-        'smileLine': {
-          'id': random.choice(svgsIndex['smileLine']) if random.uniform(0,1) < 0.75 else 'none',
-          'size': round(random.uniform(0,1) + .5,2)
-        },
-        'miscLine': {
-          'id': random.choice(svgsIndex['miscLine']) if random.uniform(0,1) < 0.5 else 'none'
-        },
-        'facialHair': {
-          'id': random.choice(svgsIndex['facialHair']) if random.uniform(0,1) < 0.5 else 'none'
-        },
-        'eye': {
-          'id': random.choice(svgsIndex['eye']),
-          'angle': eyeAngle
-        },
-        'eyebrow': {
-          'id': random.choice(svgsIndex['eyebrow']),
-          'angle': round(random.uniform(0,35) - 15,2)
-        },
-        'hair': {
-          'id': WeightedProbabilityChoice(svgsIndex['hair'], 'hair-01'),
-          'color': hairColor,
-          'flip': hairIsFlipped
-        },
-        'mouth': {
-          'id': random.choice(svgsIndex['mouth']),
-          'flip': mouthIsFlipped
-        },
-        'nose': {
-          'id': random.choice(svgsIndex['nose']),
-          'flip': noseIsFlipped,
-          'size': round(random.uniform(0,.75) + .5,2)
-        },
-        'glasses': {
-          'id': random.choice(svgsIndex['glasses']) if random.uniform(0,1) < 0.04 else 'none'
-        },
-        'accessories': {
-          'id': random.choice(svgsIndex['accessories']) if random.uniform(0,1) < 0.1 else 'none'
-        }
-      }
-
-        self.PlayerFaceJson = face
-        self.save()
-
-        return None
 
     @property
     def PlayerIDURL(self):
@@ -1557,7 +1373,7 @@ class TeamSeason(models.Model):
             {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'SecondarySort': 'DEF_Tackles'},
             {'FieldName': 'DEF_INT', 'DisplayName': 'Interceptions', 'SecondarySort': 'DEF_Tackles'},
         ]
-        PTS = self.playerteamseason_set.values('PlayerID_id', 'PlayerID__PlayerFaceJson', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
+        PTS = self.playerteamseason_set.values('PlayerTeamSeasonID', 'PlayerID_id', 'PlayerID__PlayerFaceJson', 'PlayerID__PlayerFaceSVG', 'PlayerID__PositionID__PositionAbbreviation', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName').annotate(
             PlayerName = Concat(F('PlayerID__PlayerFirstName'), Value(' '), F('PlayerID__PlayerLastName'), output_field=CharField()),
             PlayerFaceJson = F('PlayerID__PlayerFaceJson'),
             PlayerPosition = F('PlayerID__PositionID__PositionAbbreviation'),
@@ -1604,6 +1420,27 @@ class TeamSeason(models.Model):
                 output_field=FloatField()
             )
         ).filter(GamesPlayed__gt = 0)
+
+        PlayersToUpdate = []
+        for P in PTS:
+            PlayerTeamSeasonID = P['PlayerTeamSeasonID']
+            if P['PlayerID__PlayerFaceSVG'] is None:
+                PlayerTeamSeasonObj = PlayerTeamSeason.objects.filter(PlayerTeamSeasonID = PlayerTeamSeasonID).select_related('PlayerID__PositionID', 'TeamSeasonID__TeamID').first()
+                PlayerObj = PlayerTeamSeasonObj.PlayerID
+                PlayerTeam = PlayerTeamSeasonObj.TeamSeasonID.TeamID
+                if len(PlayerTeamSeasonObj.PlayerID.PlayerFaceJson) == 0:
+                    PlayerFaceJson = GeneratePlayerFaceJSon(PlayerObj)
+                    PlayerObj.PlayerFaceJson = PlayerFaceJson
+                else:
+                    PlayerFaceJson = PlayerObj.PlayerFaceJson
+
+                PlayerFaceSVG = BuildFaceSVG(PlayerFaceJson, TeamJerseyStyle = PlayerTeam.TeamJerseyStyle, TeamJerseyInvert = PlayerTeam.TeamJerseyInvert, TeamColors = [PlayerTeam.TeamColor_Primary_HEX, PlayerTeam.TeamColor_Secondary_HEX])
+                PlayerObj.PlayerFaceSVG = PlayerFaceSVG
+                P['PlayerID__PlayerFaceSVG'] = PlayerFaceSVG
+
+                PlayersToUpdate.append(PlayerObj)
+        Player.objects.bulk_update(PlayersToUpdate, ['PlayerFaceSVG', 'PlayerFaceJson'])
+
 
         Results = []
 
@@ -2110,7 +1947,7 @@ class Game(models.Model):
 
         HomeTeam = self.teamgame_set.filter(IsHomeTeam = True).first()
         AwayTeam = self.teamgame_set.filter(IsHomeTeam = False).first()
-        if HomeTeam is None:
+        if HomeTeam is None or AwayTeam is None or HomeTeam.TeamSeasonID is None or AwayTeam.TeamSeasonID is None:
             return 'Null game'
         return HomeTeam.TeamSeasonID.TeamID.__str__() + ' vs ' + AwayTeam.TeamSeasonID.TeamID.__str__() + ' in ' + str(self.WeekID.WeekName)
 
@@ -3256,3 +3093,16 @@ class RecruitTeamSeasonPromise(models.Model):
 
     TimeSpanYears = models.IntegerField(default = 1)
     TimespanInclusive = models.BooleanField(default=True)
+
+
+class WeekUpdate(models.Model):
+    WorldID = models.ForeignKey(World, on_delete=models.CASCADE, db_index=True)
+    WeekUpdateID = models.AutoField(primary_key=True, db_index=True)
+
+    WeekID = models.ForeignKey(Week, on_delete=models.CASCADE, db_index=True,  default=None, null=True, blank=True)
+    LeagueSeasonID = models.ForeignKey(LeagueSeason,on_delete=models.CASCADE, null=True, blank=True, default=None)
+    MessageImportanceValue = models.PositiveSmallIntegerField(default = 0)
+
+    MessageText = models.CharField(default='', max_length=400)
+    LinkText = models.CharField(default='', max_length=400)
+    LinkHref = models.CharField(default='', max_length=400)

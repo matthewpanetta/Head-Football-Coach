@@ -43,28 +43,30 @@
             <div class="w3-col w3-display-container">
               <div class="w3-row-padding">
                 <div class="w3-col s7">
-                  <div class="w3-card">
+                  <div class="w3-card w3-margin-bottom">
 
-                  <table id='teamOverviewConferenceStandings-{{Conference.ConferenceID}}'>
+                  <table class='w3-table-all' id='teamOverviewConferenceStandings-{{Conference.ConferenceID}}'>
                     <colgroup>
                         <col span="1" class='colgroup-border-right'>
                         <col span="3" class='colgroup-border-right'>
                         <col >
                     </colgroup>
+                    {% for Division in Conference.ConferenceDivisions %}
                     <thead>
-                      <tr>
-                        <th scope="col">Team</th>
-                        <th class='initialSortColumn' scope="col">Conf. Rank</th>
-                        <th scope="col" data-defaultsort="asc">Conf. W-L</th>
-                        <th scope="col" data-defaultsort="asc">Conf. GB</th>
-
-                        <th scope="col" data-defaultsort="asc">W-L</th>
-                        <th scope="col" data-defaultsort="asc">PPG</th>
-                        <th scope="col" data-defaultsort="asc">PAPG</th>
-                        <th scope="col" data-defaultsort="asc">MOV</th>
+                      <tr class='team-secondary-table-row'>
+                        {% if Division.DivisionName %}
+                        <th>{{Division.DivisionName}}</th>
+                        {% else %}
+                        <th>Team</th>
+                        {%endif%}
+                        <th  class='center-text'>Conf. W-L</th>
+                        <th class='hide-small center-text'>GB</th>
+                        <th class='center-text'>W-L</th>
+                        <th scope="col"  class='center-text'>PPG</th>
+                        <th scope="col"  class='center-text'>PAPG</th>
+                        <th scope="col"  class='center-text'>MOV</th>
                       </tr>
                     </thead>
-                    {% for Division in Conference.ConferenceTeams %}
                     {% for standingTeam in Division.Standings%}
                     <tr class='{{standingTeam.BoldTeam}} ' style=''>
                       <td style='border-left-color: #{{standingTeam.TeamID__TeamColor_Primary_HEX}}' class='teamTableBorder'>
@@ -73,13 +75,12 @@
                           {{standingTeam.NationalRankDisplay}} {{standingTeam.TeamID__TeamName }}
                         </a>
                       </td>
-                      <td>{{standingTeam.DivisionRank}}</td>
-                      <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
-                      <td>{{standingTeam.ConferenceGB}}</td>
-                      <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
-                      <td>{{standingTeam.PPG}}</td>
-                      <td>{{standingTeam.PAPG}}</td>
-                      <td>{{standingTeam.MOV}}</td>
+                      <td class='center-text'>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
+                      <td class='center-text'>{{standingTeam.ConferenceGB}}</td>
+                      <td class='center-text'>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
+                      <td class='center-text'>{{standingTeam.PPG}}</td>
+                      <td class='center-text'>{{standingTeam.PAPG}}</td>
+                      <td class='center-text'>{{standingTeam.MOV}}</td>
                     </tr>
                     {% endfor %}
                     {% endfor %}
@@ -89,7 +90,7 @@
                 <div class="w3-col s4">
                   <div class="w3-card ">
 
-                  <table id='conferenceStandingsOpposing-{{Conference.ConferenceID}}'>
+                  <table class='w3-table-all' id='conferenceStandingsOpposing-{{Conference.ConferenceID}}'>
                     <thead>
                       <th>Conference</th>
                       <th>Total Record</th>
@@ -137,10 +138,9 @@
   var Table = $('#teamOverviewConferenceStandings-{{Conference.ConferenceID}}').DataTable({
       "scrollX": false,
       "filter": true,
-      "ordering": true,
+      "ordering": false,
       "lengthChange" : false,
       "searching": false,
-      "order": [[ 1, "asc" ]],
       "pagingType": "full_numbers",
       "paginationType": "full_numbers",
       "paging": false,
@@ -150,10 +150,9 @@
   var OppTable = $('#conferenceStandingsOpposing-{{Conference.ConferenceID}}').DataTable({
       "scrollX": false,
       "filter": true,
-      "ordering": true,
+      "ordering": false,
       "lengthChange" : false,
       "searching": false,
-      "order": [[ 1, "asc" ]],
       "pagingType": "full_numbers",
       "paginationType": "full_numbers",
       "paging": false,

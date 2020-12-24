@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 665 222" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-28.162,-191.686)">
+        <g id="EndZoneText">
+            <g transform="matrix(-1,-1.22465e-16,1.22465e-16,-1,73.35,607.6)">
+                <g id="End-Zone-Left" serif:id="End Zone Left">
+                    <g transform="matrix(0,1,-1,0,274.073,243.673)">
+                        <text x="15.2px" y="258.873px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">S</text>
+                    </g>
+                    <g transform="matrix(2.77092e-18,1,-1,2.77092e-18,298.999,268.599)">
+                        <text x="15.2px" y="283.799px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">M</text>
+                    </g>
+                    <g transform="matrix(0,1,-1,0,334.376,303.976)">
+                        <text x="15.2px" y="319.176px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">U</text>
+                    </g>
+                </g>
+            </g>
+            <g transform="matrix(1,-2.72249e-31,0,1,647.95,-1.13687e-13)">
+                <g id="End-Zone-Right" serif:id="End Zone Right">
+                    <g transform="matrix(1.68594e-18,1,-1,1.68594e-18,206.886,176.486)">
+                        <text x="15.2px" y="191.686px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">M</text>
+                    </g>
+                    <g transform="matrix(0,1,-1,0,242.24,211.84)">
+                        <text x="15.2px" y="227.04px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">U</text>
+                    </g>
+                    <g transform="matrix(-5.67585e-18,1,-1,-5.67585e-18,270.8,240.4)">
+                        <text x="15.2px" y="255.6px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">S</text>
+                    </g>
+                    <g transform="matrix(0,1,-1,0,295.768,265.368)">
+                        <text x="15.2px" y="280.568px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">T</text>
+                    </g>
+                    <g transform="matrix(0,1,-1,0,318.173,287.773)">
+                        <text x="15.2px" y="302.973px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">A</text>
+                    </g>
+                    <g transform="matrix(5.7448e-18,1,-1,5.7448e-18,349.761,319.361)">
+                        <text x="15.2px" y="334.561px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">N</text>
+                    </g>
+                    <g transform="matrix(0,1,-1,0,379.983,349.583)">
+                        <text x="15.2px" y="364.783px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">G</text>
+                    </g>
+                    <g transform="matrix(0,1,-1,0,405.139,374.739)">
+                        <text x="15.2px" y="389.939px" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white;">S</text>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

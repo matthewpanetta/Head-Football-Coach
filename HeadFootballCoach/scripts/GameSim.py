@@ -1,4 +1,4 @@
-from ..models import World, GameDrive, DrivePlay, CoachTeamSeason, PlayerTeamSeasonDepthChart, Coach, Week, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerTeamSeasonSkill, PlayerGameStat
+from ..models import World, GameDrive, DrivePlay, CoachTeamSeason, WeekUpdate, PlayerTeamSeasonDepthChart, Coach, Week, Calendar, Headline, Playoff, TeamSeason, Team, Player, Game,PlayerTeamSeason, LeagueSeason, GameEvent, PlayerTeamSeasonSkill, PlayerGameStat
 import random
 from django.db.models import  Max, Q, F, Value, CharField
 from django.db.models.functions import Length, Concat
@@ -923,7 +923,7 @@ def GameSim(game):
                 if Down == 3 and YardsToGo > 4:
                     PassRushModifier /= 1.1
 
-                if (random.uniform(0,1) < (.0203 / PassGameModifier)):
+                if (random.uniform(0,1) < (.0103 / PassGameModifier)):
                     PassOutcome = 'Interception'
                     if GameDict[DefensiveTeam]['TeamGame'].DEF_INT >= 4 and random.uniform(0,1) < .95 :
                         PassOutcome = 'Incompletion'
@@ -1058,12 +1058,10 @@ def GameSim(game):
 
                 ShankProbability = 0.0 if PunterOverall >= 90 else (100 - PunterOverall - 10) / 100.0
                 if random.uniform(0,1) < ShankProbability:
-                    print('Shanked punt!!!')
                     PuntYards = round(NormalTrunc(20, 5, 5, 30),0)
 
                 OrigBallSpot = BallSpot
 
-                print('PunterOverall', PunterOverall, 'PuntMean',PuntMean, 'PuntYards', PuntYards, 'ShankProbability', ShankProbability, 'OrigBallSpot' , OrigBallSpot)
                 if BallSpot + PuntYards > 90:
                     PuntToYard = round(NormalTrunc(90, 3, 85, 99),0)
                     PuntYards = PuntToYard - BallSpot
@@ -1513,6 +1511,20 @@ def GameSim(game):
         if game.BowlID.IsNationalChampionship:
             GameDict[WinningTeam]['TeamSeason'].NationalChampion = True
             GameDict[LosingTeam]['TeamSeason'].NationalRunnerUp = True
+
+
+    if WinningTeam.IsUserTeam or LosingTeam.IsUserTeam:
+        NextWeek = CurrentWeek.NextWeek
+        WU = WeekUpdate(WorldID = CurrentWorld, WeekID = NextWeek, LeagueSeasonID = CurrentSeason, MessageImportanceValue=3, LinkHref = f'/World/{CurrentWorld.WorldID}/Game/{game.GameID}', LinkText = 'Box Score', MessageText = '')
+
+        OutcomeDescriber = 'defeated' if WinningTeam.IsUserTeam else 'lost to'
+        OpponentTeamName = WinningTeam.TeamName if LosingTeam.IsUserTeam else LosingTeam.TeamName
+
+        WinningTeamPoints = GameDict[WinningTeam]['TeamGame'].Points
+        LosingTeamPoints = GameDict[LosingTeam]['TeamGame'].Points
+
+        WU.MessageText += f'Your team {OutcomeDescriber} {OpponentTeamName} by a score of {WinningTeamPoints}-{LosingTeamPoints}'
+        WU.save()
 
 
     for T in GameDict:

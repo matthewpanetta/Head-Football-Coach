@@ -1,9 +1,77 @@
 from django.db.models.query import QuerySet
 import random
 import numpy
-from math import sin, cos, sqrt, atan2, radians, log
+import time
+import json
+from math import sin, cos, sqrt, atan2, radians, log, ceil
 
 
+def vacuum_db():
+    print('Starting VACUUM')
+    from django.db import connection
+    cursor = connection.cursor()
+    cursor.execute("VACUUM")
+    connection.close()
+
+class Logger:
+
+    EventList = []
+    StartTime = None
+    LogName = ''
+
+    def __init__(self, LogName='', start=True, FirstEventName=''):
+        LogName = LogName
+        LogEvent = {'LogName': FirstEventName, 'LogStart': time.time(), 'LogEnd': None, 'Duration': None, 'QueryCount': 0}
+        self.StartTime = time.time()
+        self.EventList.append(LogEvent)
+
+    def lap(self, do_print=True, EventName = ''):
+        self.EventList[-1]['LogEnd'] = time.time()
+        self.EventList[-1]['Duration'] = self.EventList[-1]['LogEnd'] - self.EventList[-1]['LogStart']
+
+        if do_print:
+            print(json.dumps(self.EventList[-1], indent=2))
+
+        LogEvent = {'LogName': EventName, 'LogStart': time.time(), 'LogEnd': None, 'Duration': None, 'QueryCount': 0}
+        self.EventList.append(LogEvent)
+
+def TierPlacement(Tiers = 5, PopulationSize = 100, Distribution = 'Normal', RankPlace = 1):
+    TierList = range(1,Tiers)
+    TierDict = {Tier: {'Start': None, 'Stop': None, 'SegmentSize': None, 'SegmentRatio': None, 'PopulationCount': None} for Tier in TierList}
+
+    MiddleTier = int(Tiers / 2) + 1
+    TotalSegmentSize = 0
+
+    PreviousStop = 0
+
+    if Distribution == 'Normal':
+        for Tier in TierDict:
+            TierObj = TierDict[Tier]
+            TierObj['SegmentSize'] = MiddleTier - abs(MiddleTier - Tier)
+            TotalSegmentSize += MiddleTier - abs(MiddleTier - Tier)
+
+            TierObj['SegmentSize']
+
+
+    elif Distibution == 'Uniform':
+        for Tier in TierDict:
+            print(Tier)
+
+    for Tier in TierDict:
+        TierObj = TierDict[Tier]
+        TierObj['SegmentRatio'] = TierObj['SegmentSize']*1.0 / TotalSegmentSize
+        TierObj['PopulationCount'] = ceil(TierObj['SegmentRatio']* PopulationSize)
+
+        TierObj['Start'] = PreviousStop + 1
+        TierObj['Stop'] = TierObj['Start']  + TierObj['PopulationCount']
+        PreviousStop = TierObj['Stop']
+
+        if RankPlace >= TierObj['Start'] and RankPlace <= TierObj['Stop']:
+            Placement = Tier
+
+    print('TierObj', json.dumps(TierObj, indent=2))
+
+    return Placement
 
 def FindRange(RangeDict, Value):
 

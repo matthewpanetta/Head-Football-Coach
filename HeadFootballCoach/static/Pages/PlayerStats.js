@@ -25,7 +25,7 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
     <div class='w3-row-padding' style='text-align: initial;' id='playerinfo-`+PlayerID+`'>
       <div class='w3-col s3'>
         <img class='playerTeamLogo' src-field='playerteamseason__TeamSeasonID__TeamID__TeamLogoURL'  style='width: 80%; height: inherit; margin-left: 0%;'>
-        <div class="PlayerFace" style='width: 150px; height: 250px; margin-left: -50%;'>
+        <div class="PlayerFace" style='width: 166px; height: 250px; margin-left: -60%;'>
 
         </div>
       </div>
@@ -209,19 +209,11 @@ function DrawPlayerInfo(data, WorldID, PlayerID){
 
       $.each(data, function(key, val){
 
-        if (key == 'PlayerFaceJson'){
-          var elem = $(div).find('[data-field="'+key+'"]');
+        if (key == 'PlayerFaceSVG'){
+          var elem = $(div).find('.PlayerFace');
           elem = elem[0];
           $(elem).empty();
-
-          $(div).find('.PlayerFace').attr('id', 'PlayerFace-'+data.PlayerID)
-
-          var DOMID ='PlayerFace-'+data.PlayerID;
-
-          if (typeof val === 'string') {
-            val = $.parseJSON(val);
-          }
-          BuildFace(val, data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle'], data['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], overrides=overrides, DOMID = DOMID);//playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert
+          $(elem).html(data['PlayerFaceSVG'])
         }
         else {
           $(div).find('[html-field="'+key+'"]').html(val);
@@ -465,6 +457,7 @@ function GetPlayerStats(WorldID, data){
                  {
                      label: 'Not Eligible for Draft',
                      value: function(rowData, rowIdx){
+                       console.log('rowData', rowData)
                          return !(rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'SR' || rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'JR' || rowData['ClassDisplay'] == 'SO (RS)');
                      }
                  },

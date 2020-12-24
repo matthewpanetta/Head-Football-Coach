@@ -100,7 +100,7 @@ function DrawPlayerStats(data){
        {"data": "Field", "sortable": false, 'visible': true},
         {"data": "Value", "sortable": false, 'visible': true},
         {"data": "Week", "sortable": false, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-            $(td).html("vs. <img class='worldTeamStatLogo padding-right' src='"+DataObject['OpposingTeamLogo']+"'/><a href='"+DataObject['GameHref']+"'>"+StringValue+"</a>");
+            $(td).html("<div>vs. <img class='worldTeamStatLogo padding-right' src='"+DataObject['OpposingTeamLogo']+"'/></div><div><a href='"+DataObject['GameHref']+"'>"+StringValue+"</a></div>");
           //  $(td).attr('style', 'border-left-color: #' + DataObject['TeamColor_Primary_HEX']);
           //  $(td).addClass('teamTableBorder');
         }},

@@ -1,6 +1,6 @@
 from ..models import TeamSeasonInfoRating, RecruitingPromise, ConferenceSeason, DivisionSeason, TeamInfoTopic, SubPosition,TeamSeason, System_PlayerArchetypeRatingModifier, CoachPosition, Class, Phase,Position, PositionGroup,Bowl, Week, Audit, TeamRivalry, NameList, System_PlayoffRound, GameStructure, League,  System_PlayoffGame, World, Region, State, City, League, Headline, Playoff, Coach, Driver, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill
 import os
-from ..utilities import Max, WeightedProbabilityChoice
+from ..utilities import Max, WeightedProbabilityChoice, vacuum_db
 from datetime import timedelta, date
 import random
 import time
@@ -1060,6 +1060,8 @@ def LoadData(WorldID, LeagueID, LeagueSeasonID):
         end = time.time()
         TimeElapsed = end - start
         A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Import team data')
+
+    vacuum_db()
 
 def ExtractData():
     ExportNames = False

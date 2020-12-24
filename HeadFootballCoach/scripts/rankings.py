@@ -1,7 +1,7 @@
 from django.db.models import Max, Min, Avg, Count, Func, Q,F, Sum, Case, When, FloatField, CharField, Value, Window
 from django.db.models.functions import Coalesce
 from django.db.models.functions.window import Rank
-from ..models import World, Week,TeamSeasonWeekRank, TeamGame, TeamSeasonDateRank, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat
+from ..models import World, Week,TeamSeasonWeekRank, TeamGame, TeamSeasonDateRank,DivisionSeason, ConferenceSeason, PlayerTeamSeasonAward, Team,TeamSeason, Player, Game, Conference, Calendar, PlayerTeamSeason, GameEvent, PlayerTeamSeasonSkill, LeagueSeason, Driver, PlayerGameStat
 import itertools
 from .SRS.SRS   import CalculateSRS
 
@@ -20,7 +20,7 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
         TeamSeasonDefeatedTeamsDict[TG['TeamSeasonID']].append(TG['OpposingTeamGameID__TeamSeasonID'])
 
     TeamSeasonDict = {}
-    TeamSeasonList = TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason).filter(TeamID__isnull = False)
+    TeamSeasonList = TeamSeason.objects.filter(LeagueSeasonID = CurrentSeason).filter(TeamID__isnull = False).select_related('TeamID')
     for TS in TeamSeasonList:
         TeamSeasonDict[TS.TeamSeasonID] = TS
 
@@ -53,7 +53,8 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
             TeamSeasonConferenceDict[TS['DivisionSeasonID__ConferenceSeasonID__ConferenceID']] = []
         TeamSeasonConferenceDict[TS['DivisionSeasonID__ConferenceSeasonID__ConferenceID']].append(TS)
 
-    for Conf in Conference.objects.filter(WorldID = CurrentWorld):
+    for ConfSeason in ConferenceSeason.objects.filter(WorldID = CurrentWorld, LeagueSeasonID = CurrentSeason).select_related('ConferenceID'):
+        Conf = ConfSeason.ConferenceID
         ConfName = Conf.ConferenceName
         ConfTeams =TeamSeasonConferenceDict[Conf.ConferenceID]
 
@@ -78,7 +79,7 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
                 ConfTeamDict['NetWins'][NetWins] = []
 
             TS['ConferenceGB']   = round((ConfRankTracker[ConfName]['TopTeamRecord']['Wins'] - TS['ConferenceWins'] + TS['ConferenceLosses'] - ConfRankTracker[ConfName]['TopTeamRecord']['Losses']) / 2.0, 1)
-            TS['DivisionRank'] = ConfRankTracker[ConfName]['Counter']
+            TS['ConferenceRank'] = ConfRankTracker[ConfName]['Counter']
 
             TS['DefeatedTeams'] = []
             if TS['TeamSeasonID'] in TeamSeasonDefeatedTeamsDict:
@@ -111,15 +112,17 @@ def CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek=None):
                         ConfRankTracker[ConfName]['Teams'][Team1]['TiebreakerCount'] +=1
 
 
-        RankCount = 1
-        for TS in sorted(ConfRankTracker[ConfName]['Teams'], key=lambda TS: (ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'], -1*ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], -1*ConfRankTracker[ConfName]['Teams'][TS]['MOV']),reverse=False):
 
-            if CurrentSeason.PlayoffCreated == False:
-                TS.DivisionRank = RankCount
-                TS.ConferenceGB   = ConfRankTracker[ConfName]['Teams'][TS]['ConferenceGB']
+        for DivSeason in ConfSeason.divisionseason_set.all():
+            RankCount = 1
+            for TS in sorted([TS for TS in ConfRankTracker[ConfName]['Teams'] if TS.DivisionSeasonID == DivSeason], key=lambda TS: (ConfRankTracker[ConfName]['Teams'][TS]['RankCountWithTies'], -1*ConfRankTracker[ConfName]['Teams'][TS]['TiebreakerCount'], -1*ConfRankTracker[ConfName]['Teams'][TS]['MOV']),reverse=False):
 
-                TS_ToSave.append(TS)
-            RankCount +=1
+                if CurrentSeason.PlayoffCreated == False:
+                    TS.DivisionRank = RankCount
+                    TS.ConferenceGB   = ConfRankTracker[ConfName]['Teams'][TS]['ConferenceGB']
+
+                    TS_ToSave.append(TS)
+                RankCount +=1
 
     TeamSeason.objects.bulk_update(TS_ToSave, ['DivisionRank', 'ConferenceGB'])
 

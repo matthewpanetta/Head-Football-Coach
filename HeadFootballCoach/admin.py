@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import DivisionSeason, RecruitingPromise, RecruitTeamSeasonPromise, TeamSeasonInfoRating, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, TeamSeasonState,State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay
+from .models import DivisionSeason, RecruitingPromise, RecruitTeamSeasonPromise, TeamSeasonInfoRating, ConferenceSeason, RecruitTeamSeasonInterest, SubPosition,PlayerRecruitingInterest, TeamInfoTopic, TeamSeasonStrategy, TeamSeasonPosition, Audit, Position, Class, Bowl, Week,Phase, PositionGroup,TeamSeasonWeekRank, System_PlayerArchetypeRatingModifier,PlayerTeamSeasonAward,TeamRivalry, TeamGame, GameStructure, PlayoffRegion, PlayoffRound, System_PlayoffRound, System_PlayoffGame,TeamSeasonDateRank, User,World,Region, TeamSeasonState,State, City, NameList,League, Headline,Playoff, TeamSeason, RecruitTeamSeason, Coach, CoachTeamSeason, Team, Player, Game,PlayerTeamSeason, Conference, LeagueSeason, Calendar, GameEvent, PlayerTeamSeasonSkill,Driver, PlayerGameStat, PlayerTeamSeasonDepthChart,CoachPosition, GameDrive, DrivePlay, WeekUpdate
 
 
 class TeamSeasonStrategyAdmin(admin.ModelAdmin):
@@ -111,7 +111,10 @@ class System_PlayerArchetypeRatingModifierAdmin(admin.ModelAdmin):
     list_display = [field.name for field in System_PlayerArchetypeRatingModifier._meta.get_fields() if field.name not in ('hold')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class WeekAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Week._meta.get_fields() if field.name not in ('playerteamseasonaward', 'recruitteamseason', 'visitweek_recruitteamseason', 'commitweek_recruitteamseason', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+    list_display = [field.name for field in Week._meta.get_fields() if field.name not in ('playerteamseasonaward','weekupdate', 'recruitteamseason', 'visitweek_recruitteamseason', 'commitweek_recruitteamseason', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
+
+class WeekUpdateAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in WeekUpdate._meta.get_fields() if field.name not in ('playerteamseasonaward','weekmessage', 'recruitteamseason', 'visitweek_recruitteamseason', 'commitweek_recruitteamseason', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
 
 class PhaseAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Phase._meta.get_fields() if field.name not in ('week','playerteamseasonaward', 'hold', 'calendar', 'driver', 'teamseasonweekrank', 'game', 'headline')]#('TeamID', 'LeagueSeasonID', 'GamesPlayed', 'Points', 'ThreePM', 'ThreePointPercentage', 'FGA', 'PlayoffSeed', 'NationalBroadcast', 'RegionalBroadcast')
@@ -228,6 +231,7 @@ admin.site.register(GameStructure, GameStructureAdmin)
 admin.site.register(TeamGame, TeamGameAdmin)
 admin.site.register(TeamRivalry, TeamRivalryAdmin)
 admin.site.register(Week, WeekAdmin)
+admin.site.register(WeekUpdate, WeekUpdateAdmin)
 admin.site.register(Phase, PhaseAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(PositionGroup, PositionGroupAdmin)

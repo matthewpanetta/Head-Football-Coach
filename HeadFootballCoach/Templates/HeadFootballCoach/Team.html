@@ -40,7 +40,7 @@
     <div id="nav-tabContent">
       <div class="tab-content" style='display:block;' id="nav-overview">
         {% if games|length > 0%}
-        <div class="w3-display-container">
+        <div class="w3-display-container w3-margin-bottom">
           <div class="w3-row-padding">
             <div class="w3-col l8 m12 w3-display-container">
               <div class="w3-row">
@@ -212,91 +212,105 @@
                   </div>
                 </div>
               </div>
+              <div class="w3-row-padding w3-margin-top">
               {% if teamLeaders|length > 0%}
-              <div class="w3-row w3-margin-top">
-                <div class="w3-col s12">
+
+                <div class="w3-col s6">
                   <div class="w3-card">
                     <div class="w3-bar team-primary-background-bar">
                       Team Leaders
                     </div>
-                    <div class="w3-row">
+                    <table class="w3-table-all no-border">
                       {% for teamLeader in teamLeaders %}
-                      <div class="w3-col s6 teamTeamLeaderBox">
-                        <h2 class='teamTeamLeaderBoxStat'>{{teamLeader.DisplayName}}</h2>
-                        <div class="" style='display:inline-block; margin-top: -10px;'>
-                          <div class="teamTeamLeaderBoxPlayerFace inline-block" id="teamTeamLeaderBoxPlayerFace{{forloop.counter}}" PlayerFaceJson="{{teamLeader.PTS.PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if teamLeader.PTS.PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
-                              <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
+                      <tr>
 
-                              </div>
-                          </div>
-                          <div class="inline-block w3-cell-bottom">
-                            <div class="">
-                              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{teamLeader.PTS.PlayerID}}">{{teamLeader.PTS.PlayerName}}</a></span>
-                              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{teamLeader.PTS.PlayerPosition}}</span>
-                            </div>
-                            <div class="">
-                              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{teamLeader.Value}} total{% if teamLeader.ValuePerGame%}, {{teamLeader.ValuePerGame}} per game{%endif%}</span>
-                            </div>
-                          </div>
-
+                      <td class="w3-col center-text ">
+                        <div class="PlayerFace-60 PlayerFace-Headshot inline-block" style='border-color:#{{page.PrimaryColor}};' id="teamTeamLeaderBoxPlayerFace{{forloop.counter}}"  >
+                            {{teamLeader.PTS.PlayerID__PlayerFaceSVG|safe}}
                         </div>
-                      </div>
-                      {% if forloop.counter|divisibleby:2%}
-                    </div>
-                    <div class="w3-row">
-                      {% endif %}
+                      </td>
+                      <td>
+                        <ul class='no-list-style'>
+                          <li class='bold'>{{teamLeader.DisplayName}}</li>
+                          <li>
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{teamLeader.PTS.PlayerID}}">{{teamLeader.PTS.PlayerName}}</a></span>
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{teamLeader.PTS.PlayerPosition}}</span>
+                          </li>
+                          <li>
+                            <span class=''>{{teamLeader.Value}} total{% if teamLeader.ValuePerGame%}, {{teamLeader.ValuePerGame}} per game{%endif%}</span>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+
+
                       {% endfor %}
+                    </table>
                     </div>
 
                     </div>
-                  </div>
 
-              </div>
               {% endif %}
-              {% if teamStats|length > 0%}
-              <div class="w3-row w3-margin-top">
-                <div class="w3-col s12">
-                  <div class="w3-card ">
+
+
+              {% if TeamStatsDisplay|length > 0%}
+                <div class="w3-col s6">
+                  <div class="w3-card">
                     <div class="w3-bar team-primary-background-bar">
                       Team Stats
                     </div>
-                    <div class="w3-row">
-                      <div class="w3-col s6">
-                        <div class="teamTeamLeaderBox">
+                    <table class="w3-table-all no-border">
+                      {% for TeamStat in TeamStatsDisplay %}
+                      <tr class='team-secondary-table-row'>
+                        <th class='center-text' colspan="3">{{TeamStat.Display}}</th>
+                      </tr>
+                      <tr class='center-text-row'>
+                        <td>
                           <div class="">
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{game.HomeTeamPlayer1.PlayerID}}">{{game.HomeTeamPlayer1.PlayerName}}</a></span>
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{game.HomeTeamPlayer1.PlayerPosition}}</span>
+                            <div class="font10">
+                              FOR
+                            </div>
+                            <div class="font16">
+                              {{TeamStat.OffenseValue}}
+                            </div>
+                            <div class="margin-8">
+                              <span class='tiers-7 {{TeamStat.OffenseRank_Tier}}' style='border-radius: 20px; padding: 5px;'  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.OffenseRank_Tier}} - {{TeamStat.OffenseRank}} out of {{TotalTeamCount}} teams</div>">{{TeamStat.OffenseRank}}</span>
+                            </div>
                           </div>
+                        </td>
+                        <td>
                           <div class="">
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{game.HomeTeamPlayer1.PlayerStats}}</span>
+                            <div class="font10">
+                              AGAINST
+                            </div>
+                            <div class="font16">
+                              {{TeamStat.DefenseValue}}
+                            </div>
+                            <div class="margin-8">
+                              <span class='tiers-7 {{TeamStat.DefenseRank_Tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.DefenseRank_Tier}} - {{TeamStat.DefenseRank}} out of {{TotalTeamCount}} teams</div>">{{TeamStat.DefenseRank}}</span>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                      <div class="w3-col s6">
-                        PER Leader
-                      </div>
+                        </td>
+                        <td>
+                          <div class="">
+                            <div class="font10">
+                              DIFF
+                            </div>
+                            <div class="font16">
+                              {{TeamStat.MarginValue}}
+                            </div>
+                            <div class="margin-8">
+                              <span class='tiers-7 {{TeamStat.MarginRank_Tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.MarginRank_Tier}} - {{TeamStat.MarginRank}} out of {{TotalTeamCount}} teams</div>">{{TeamStat.MarginRank}}</span>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </table>
                     </div>
-                    <div class="w3-row">
-                      <div class="w3-col s6">
-                        APG Leader
-                      </div>
-                      <div class="w3-col s6">
-                        RPG Leader
-                      </div>
                     </div>
-                    <div class="w3-row">
-                      <div class="w3-col s6">
-                        SPG Leader
-                      </div>
-                      <div class="w3-col s6">
-                        BPG Leader
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
               {% endif %}
+              </div>
             </div>
             <div class="w3-col l4 m12 s12">
               <div class="w3-row">
@@ -306,18 +320,20 @@
                   <div class="w3-bar team-primary-background-bar">
                     {{ThisTeamSeason.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceName}}<span class='hide-small'> Standings</span>
                   </div>
-                  <table id='teamOverviewConferenceStandings'>
+                  <table id='teamOverviewConferenceStandings' class='w3-table-all width100 no-border'>
 
-                    {% for Division in conferenceTeams%}
+                    {% for Division in ConferenceDivisions%}
                     <thead>
-                      {% if Division.DivisionName %}
-                      <th>{{Division.DivisionName}}</th>
-                      {% else %}
-                      <th>Team</th>
-                      {%endif%}
-                      <th>Conf</th>
-                      <th class='hide-small'>GB</th>
-                      <th>Record</th>
+                      <tr class='team-secondary-table-row'>
+                        {% if Division.DivisionName %}
+                        <th>{{Division.DivisionName}}</th>
+                        {% else %}
+                        <th>Team</th>
+                        {%endif%}
+                        <th>Conf</th>
+                        <th class='hide-small'>GB</th>
+                        <th>Record</th>
+                      </tr>
                     </thead>
                     {% for standingTeam in Division.Standings %}
                     <tr class='{{standingTeam.BoldTeam}}'>
@@ -339,18 +355,21 @@
               <div class="w3-row w3-margin-top">
 
 
+                {% if SignedRecruits|length > 0 %}
                 <div class="w3-card">
                   <div class="w3-bar team-primary-background-bar">
                     {{team.TeamName}} Signed Recruits
                   </div>
-                  <table  class='w3-table' id='teamOverviewConferenceStandings'>
+                  <table  class='w3-table-all no-border' id='teamOverviewConferenceStandings'>
                     <thead>
-                      <th class='teamColorBorder'>Player</th>
-                      <th class='teamColorBorder'>Pos</th>
-                      <th class='teamColorBorder'>Hometown</th>
-                      <th class='teamColorBorder'>*</th>
-                      <th class='teamColorBorder'>Rank</th>
-                      <th class='teamColorBorder'>Overall</th>
+                      <tr class='team-secondary-table-row'>
+                        <th class='teamColorBorder'>Player</th>
+                        <th class='teamColorBorder'>Pos</th>
+                        <th class='teamColorBorder'>Hometown</th>
+                        <th class='teamColorBorder'>*</th>
+                        <th class='teamColorBorder'>Rank</th>
+                        <th class='teamColorBorder'>Overall</th>
+                      </tr>
                     </thead>
                     {% for Recruit in SignedRecruits %}
                     <tr >
@@ -368,12 +387,13 @@
                     {% endfor %}
                   </table>
                 </div>
+                {% endif %}
               </div>
             </div>
           </div>
         </div>
         {% else %}
-        <div class="w3-display-container">
+        <div class="w3-display-container w3-margin-bottom">
           <div class="w3-row-padding">
             <div class="w3-col l6 m12 w3-display-container">
               <div class="w3-row">
@@ -450,22 +470,36 @@
       </div>
       <div class="tab-content" style='display:none;' id="nav-info">
         <div class='w3-display-container'>
-          <div class="w3-row-padding">
+          <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-col l12 mw800">
               <div class="w3-card">
                 <div class="team-primary-background-bar">
                   Team Info
                 </div>
-                <table class='w3-table-all width100' id='TeamInfo' style='width: 100%;'>
+                <table class='w3-table-all width100 no-border' id='TeamInfo' style='width: 100%;'>
                   <thead>
-                    <th>Category</th>
-                    <th>Grade</th>
-                    <th>Rank</th>
-                    <th></th>
+                    <tr class='team-secondary-table-row'>
+                      <th>Category</th>
+                      <th>Grade</th>
+                      <th>Rank</th>
+                      <th></th>
+                    </tr>
+
                   </thead>
                   <tbody>
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+          </div>
+          <div class="w3-row-padding w3-margin-bottom">
+            <div class="w3-col l12 mw800">
+              <div class="w3-card">
+                <div class="team-primary-background-bar">
+                  Team Field
+                </div>
+                {% include "HeadFootballCoach/ext_TeamField.html"%}
               </div>
             </div>
 
@@ -484,6 +518,9 @@
 
 <script src="{% static 'Pages/Team.js' %}" type="module"></script>
 <script src="{% static 'common/loader.js' %}"></script>
+<script src="{% static 'common/popper.min.js' %}"></script>
+<script src="{% static 'common/util.js' %}"></script>
+<script type="module" src="{% static 'common/tooltip.js' %}"></script>
 
 <style media="screen">
   .teamColorBorder {
@@ -491,5 +528,6 @@
     border-bottom-color: #{{page.PrimaryColor}} !important;
   }
 </style>
+
 
 {{ TeamInfoRatings|json_script:"team-info-data" }}

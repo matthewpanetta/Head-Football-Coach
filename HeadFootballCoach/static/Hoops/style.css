@@ -836,14 +836,6 @@ input[type=text], input[type=password] {
   width: 50px;
 }
 
-#teamOverviewConferenceStandings {
-  font-size: 12px;
-  width: 100%;
-}
-
-#teamOverviewConferenceStandings tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
 
 .evenRow {
   background-color: #f2f2f2;
@@ -853,9 +845,7 @@ input[type=text], input[type=password] {
   padding: 6px 10px;
 }
 
-#teamOverviewConferenceStandings td, #teamOverviewConferenceStandings th {
-  padding: 0px 10px;
-}
+
 
 .teamScheduleGameDashboardGameDisplayTeams a {
   color: black;
@@ -917,6 +907,46 @@ input[type=text], input[type=password] {
   height: 150px;
   display: inline-block;
   margin-left: -80px;
+}
+
+.PlayerFace-90 {
+  width: 60px;
+  height: 90px;
+}
+
+.PlayerFace-60 {
+  height: 60px;
+  width: 40px;
+}
+
+.PlayerFace-45 {
+  height: 45px;
+  width: 30px;
+}
+
+.PlayerFace-Headshot {
+  border-radius: 100px;
+
+  overflow: hidden;
+}
+
+.PlayerFace-Headshot.PlayerFace-90{
+  border: 3px solid;
+  width: 90px;
+}
+
+.PlayerFace-Headshot.PlayerFace-60{
+  border: 2.5px solid;
+  width: 60px;
+}
+
+.PlayerFace-Headshot.PlayerFace-45{
+  border: 2px solid;
+  width: 45px;
+}
+
+.PlayerFace-Headshot svg {
+  margin-left: 17.5%;
 }
 
 .teamTeamLeaderBoxPlayerFace {
@@ -1207,7 +1237,7 @@ th {
 }
 
 td.WorldLeagueLeaderRowCell {
-  padding: .15rem !important;
+  padding: .1rem !important;
 }
 
 td.WorldLeagueLeaderRowCell.NameCell {
@@ -1281,6 +1311,10 @@ td.WorldLeagueLeaderRowCell.NameCell {
 
 .margin-8 {
   margin: 8px;
+}
+
+.margin-4 {
+  margin: 4px;
 }
 
 .center-text {
@@ -1498,25 +1532,70 @@ img.teamTeamLogo {
   padding-right: 12px;
 }
 
+.tiers-7{
+  color: white;
+  font-weight: 600;
+}
+
+.tiers-7.elite{
+  color: white;
+  background-color: #5B90B3;
+  box-shadow: 0px 0px 5px #5B90B3;
+}
+
+.tiers-7.great{
+  background-color: #557538;
+}
+
+.tiers-7.good {
+  background-color: #759337;
+}
+
+.tiers-7.average{
+  background-color: #D3B63C;
+}
+
+
+.tiers-7.poor {
+  background-color: #CB7D2C;
+}
+
+
+.tiers-7.bad {
+  background-color: #BE413A;
+}
+
+
+.tiers-7.terrible {
+  background-color: #000000;
+}
+
+
 .good{
-  color: #0B5001;
-  background-color: #BDEDC4;
+  color: white;
+  background-color: #5B90B3;
 }
 
 .fine{
-  color: #894402;
-  background-color: #FEE98A;
+  color: white;
+  background-color: #5B90B3;
 }
 
 .elite {
-  color: navy;
-  box-shadow: 0px 0px 5px navy;
-  background-color: lightblue;
+  color: #174ea6;
+  box-shadow: 0px 0px 5px #174ea6;
+  background-color: #e8f0fe;
 }
 
 .bad{
   color: #8F0600;
   background-color: #8F060022;
+}
+
+
+.neutral {
+	background-color: #f1f3f4;
+	color: #3c4043
 }
 
 .W{
@@ -1640,6 +1719,16 @@ img.teamTeamLogo {
 
 .logo-24 {
   height: 24px;
+}
+
+
+.logo-30 {
+  height: 30px;
+}
+
+
+.logo-90 {
+  height: 90px;
 }
 
 .light-padding-top{
@@ -1897,4 +1986,33 @@ select {
 
 thead tr {
   background-color: white;
+}
+
+.no-border {
+  border:none !important;
+}
+
+
+.align-top{
+  vertical-align: top;
+}
+
+.padding-10 {
+  padding: 10px;
+}
+
+.padding-left-8 {
+  padding-left: 8px;
+}
+
+.padding-top-8 {
+  padding-top: 8px;
+}
+
+.padding-bottom-8 {
+  padding-bottom: 8px;
+}
+
+.game-recap-stat-box:nth-child(even) {
+  border-left: 1px solid;
 }

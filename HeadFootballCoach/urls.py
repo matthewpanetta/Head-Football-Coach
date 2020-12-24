@@ -114,6 +114,8 @@ urlpatterns = [
     path('World/<int:WorldID>/Player/<int:PlayerID>/RecruitCardInfo', views.GET_RecruitCardInfo, name='RecruitCardInfo'),
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamCardInfo', views.GET_TeamCardInfo, name='TeamCardInfo'),
 
+    path('World/<int:WorldID>/WeekUpdates', views.GET_WeekUpdates, name='WeekUpdates'),
+
     path('World/<int:WorldID>/Team/<int:TeamID>/TeamInfoRating/<str:Category>', views.GET_TeamInfoRating, name='TeamInfoRating'),
 
     path('World/<int:WorldID>/Player/<int:PlayerID>/PlayerStats', views.GET_PlayerStats_Player, name='PlayerStats'),
@@ -123,7 +125,6 @@ urlpatterns = [
     path('World/<int:WorldID>/ConferenceStandings/<int:ConferenceID>', views.GET_ConferenceStandings, name='ConferenceStandings'),
     path('World/<int:WorldID>/AllTeamStats', views.GET_AllTeamStats, name='AllTeamStats'),
     path('World/<int:WorldID>/LeagueLeaders', views.GET_LeagueLeaders, name='LeagueLeaders'),
-    path('World/<int:WorldID>/RecruitingPlayers', views.GET_RecruitingPlayers, name='RecruitingPlayers'),
 
 
     path('GetPlayerPositions/', views.GET_PlayerPositions, name='GetPlayerPositions'),

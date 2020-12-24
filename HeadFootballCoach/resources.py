@@ -664,9 +664,8 @@ def CreateSchedule(LS, WorldID):
             KeepGame = True
 
             IsConferenceGame = ((ScheduleDict[HomeTeam]['Conference'] == ScheduleDict[AwayTeam]['Conference']) and (not ScheduleDict[HomeTeam]['ConferenceIsIndependent']))
-            if AwayTeam in ScheduleDict[HomeTeam]['OpposingTeams'] or AwayTeam in ScheduleDict[HomeTeam]['UnschedulableTeams'] :
-                if ScheduleDict[HomeTeam]['OpposingTeams'][AwayTeam] >= MaxGamesBetweenTeams:
-                    KeepGame = False
+            if (AwayTeam in ScheduleDict[HomeTeam]['OpposingTeams'] and ScheduleDict[HomeTeam]['OpposingTeams'][AwayTeam] >= MaxGamesBetweenTeams) or AwayTeam in ScheduleDict[HomeTeam]['UnschedulableTeams']:
+                KeepGame = False
             else:
                 if IsConferenceGame:
                     KeepGame = ScheduleDict[HomeTeam]['ConferenceGames'] < ScheduleDict[HomeTeam]['TotalConferenceGames'] and ScheduleDict[AwayTeam]['ConferenceGames'] < ScheduleDict[AwayTeam]['TotalConferenceGames']
@@ -903,6 +902,8 @@ def GeneratePlayer(t, s, c, WorldID, PositionAbbreviation = None, PlayerBioData 
     PlayerDict['Personality_LoyaltyRating'] = NormalBounds(50,20,2,98)
     PlayerDict['Personality_DesireForPlayingTimeRating'] = NormalBounds(55,20,2,98)
 
+    PlayerDict['RecruitingPointsNeeded'] = round(NormalBounds(2500,200,1000,3000), -2)
+
     P = Player(**PlayerDict)
 
 
@@ -1138,7 +1139,6 @@ def GenerateCoach(WorldID):
     SkillSegments = 13
     BaseCoachSkill = NormalVariance(1, Segments = SkillSegments, Floor = 1, Spread = 1.0)
     BaseCoachSkillModifier = 1.0 + ((BaseCoachSkill - (SkillSegments/2)) / 10.0)
-    print('BaseCoachSkillModifier', 'BaseCoachSkill', BaseCoachSkill, BaseCoachSkillModifier)
 
     C.ReputationRating       =  NormalVariance(BaseCoachSkillModifier, Segments = SkillSegments, Floor = 1, Spread = 2)
     C.CharismaRating         =  NormalVariance(BaseCoachSkillModifier, Segments = SkillSegments, Floor = 1, Spread = 2)
@@ -1575,10 +1575,12 @@ def CreateRecruitingClass(LS, WorldID):
 
         TSDict[T.TSID] = {'TSObject': T, 'TeamCity': TeamCity, 'TeamSeasonInfoRatingDict': TeamSeasonInfoRatingDict, 'TSPDict': TSPDict, 'TSSDict': {}}
 
+    print('TS Dict initialized', len(connection.queries))
     for HC in CoachTeamSeason.objects.filter(CoachPositionID__CoachPositionAbbreviation = 'HC', TeamSeasonID__LeagueSeasonID = LS).select_related('TeamSeasonID', 'CoachID'):
         TSDict[HC.TeamSeasonID_id]['CoachObj'] = HC.CoachID
 
-    for TSS in TeamSeasonState.objects.filter(WorldID = CurrentWorld, TeamSeasonID__LeagueSeasonID = LS):
+    print('TS Dict coaches added', len(connection.queries))
+    for TSS in TeamSeasonState.objects.filter(WorldID = CurrentWorld, TeamSeasonID__LeagueSeasonID = LS).select_related('StateID'):
         TSDict[TSS.TeamSeasonID_id]['TSSDict'][TSS.StateID] = TSS
 
     print('TS Dict created', len(connection.queries))
@@ -1586,7 +1588,7 @@ def CreateRecruitingClass(LS, WorldID):
 
     RecruitTeamDict = {'TeamList': []}
 
-    RecruitPool = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).select_related('PlayerID').select_related('PlayerID__CityID__StateID').select_related('playerteamseasonskill').annotate(
+    RecruitPool = PlayerTeamSeason.objects.filter(WorldID = CurrentWorld).filter(TeamSeasonID__LeagueSeasonID = LS).filter(TeamSeasonID__IsRecruitTeam = True).select_related('PlayerID').select_related('PlayerID__CityID__StateID').select_related('PlayerID__PositionID').select_related('playerteamseasonskill').annotate(
         RecruitingOverallAdjustment = F('PlayerID__PositionID__RecruitingOverallAdjustment'),
         Position = F('PlayerID__PositionID__PositionAbbreviation'),
         PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName'),
@@ -1605,6 +1607,8 @@ def CreateRecruitingClass(LS, WorldID):
     PlayerList = {}
     RecruitCityDict = {}
     RTS_Rating_Fields = [field.name for field in RecruitTeamSeason._meta.get_fields() if 'Scouted_' in field.name and '_Rating' in field.name and 'Base' not in field.name]
+
+
     for Recruit in RecruitPool:
         RecruitCount +=1
         Pos = Recruit.Position
@@ -1650,7 +1654,7 @@ def CreateRecruitingClass(LS, WorldID):
 
         for TS in TeamSeasonList:
 
-            print('TS.TeamSeasonID', TS, TS.TeamSeasonID)
+            #print('TS.TeamSeasonID', TS, TS.TeamSeasonID)
             TSP = TSDict[TS.TeamSeasonID]['TSPDict'][Pos]
             TSS = TSDict[TS.TeamSeasonID]['TSSDict'][Recruit.PlayerID.CityID.StateID]
 
@@ -1658,14 +1662,15 @@ def CreateRecruitingClass(LS, WorldID):
 
             RTS = RecruitTeamSeason(WorldID = WorldID, PlayerTeamSeasonID_id = Recruit.PlayerTeamSeasonID, TeamSeasonID_id = TS.TeamSeasonID, IsActivelyRecruiting = False, TeamSeasonStateID = TSS)
 
-            RTS = ScoutPlayer_Initial(RTS = RTS, CoachObj = CoachObj, TSP = TSP)
+            RTS = ScoutPlayer_Initial(RTS = RTS, CoachObj = CoachObj, TSP = TSP, PTS = Recruit)
 
             RTSToSave.append(RTS)
 
-    print('RTS created', len(connection.queries))
+    print('Populated RTS, now saving', len(connection.queries))
     Player.objects.bulk_update(PlayersToSave, ['Recruiting_StateRank', 'Recruiting_NationalPositionalRank', 'Recruiting_NationalRank', 'RecruitingStars'], batch_size=500)
     RecruitTeamSeason.objects.bulk_create(RTSToSave, ignore_conflicts=False, batch_size=500)
     PlayerRecruitingInterest.objects.bulk_create(PlayerRecruitingInterestToSave, ignore_conflicts=False, batch_size=500)
+    print('RTS created', len(connection.queries))
 
     RTS = RecruitTeamSeason.objects.filter(WorldID = WorldID).filter(TeamSeasonID__LeagueSeasonID = LS).select_related('PlayerTeamSeasonID__PlayerID', 'PlayerTeamSeasonID', 'TeamSeasonID', 'TeamSeasonID__TeamID__CityID__StateID__RegionID', 'TeamSeasonStateID').annotate(
         RecruitingTeamRank_new = Window(

@@ -20,6 +20,71 @@ function getCookie(name) {
 }
 var csrftoken = getCookie('csrftoken');
 
+function WeekUpdates(WorldID){
+
+  $('#WeekUpdateModal .btn-close').on('click', function(){
+    $('#WeekUpdateModal').css({'display': 'none'});
+    $('#WeekUpdateModal table').empty();
+    $(window).unbind();
+  });
+
+  $(document).on('click', '#WeekUpdates', function(event){
+
+    if ($('#WeekUpdateModal').css('display') == 'block'){
+      return null;
+    }
+
+    $('#WeekUpdateModal').css({'display': 'block'});
+    $('#WeekUpdateModal table').empty();
+
+    $(window).on('click', function(event) {
+      if ($(event.target)[0] == $('#WeekUpdateModal')[0]) {
+        $('#WeekUpdateModal').css({'display': 'none'});
+        $('#WeekUpdateModal table').empty();
+        $(window).unbind();
+      }
+    });
+
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        // if not safe, set csrftoken
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+    $.ajax({
+      method: "POST",
+      url: "/World/"+WorldID+"/WeekUpdates",
+      data: {
+        csrfmiddlewaretoken: csrftoken
+      },
+      dataType: 'json',
+      success: function(res, status) {
+        console.log(res, status);
+
+        var WeekUpdates = res.WeekUpdates;
+        var WeekUpdatesTable = $('#WeekUpdateModal table');
+        $.each(WeekUpdates, function(ind,obj){
+          console.log(ind,obj)
+          WeekUpdatesTable.append('<tr><td class="font16">'+obj.MessageText+'</td><td class="font16"> <a href="'+obj.LinkHref+'">'+obj.LinkText+'>> </a></td></tr>')
+        })
+
+      },
+      error: function(res) {
+        console.log(res)
+        $.notify(
+          res.responseJSON.message,
+          { globalPosition:"right bottom", className: 'error' }
+        );
+      }
+    });
+
+
+  });
+}
+
 function PlayerAction(WorldID){
 
   $(document).on('click', '.player-action', function(event){
@@ -250,6 +315,7 @@ $(document).ready(function() {
 
   console.log('In Action');
   PlayerAction(WorldID);
+  WeekUpdates(WorldID);
 
 
 
