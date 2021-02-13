@@ -1417,6 +1417,7 @@ tfoot td {
 
 .MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item {
   float: left;
+  margin-left: -1px;
 }
 
 .MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item>div {

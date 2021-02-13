@@ -878,7 +878,7 @@ def POST_AutoTeamDepthChart(request, WorldID, TeamID):
         for Pos in Positions:
             PositionDepthChart[Pos['PositionAbbreviation']] = {'StarterSpotsLeft': Pos['PositionCountPerAwardTeam'], 'BenchSpotsLeft': 3, 'Starters': [], 'Bench': [], 'PositionID': Pos['PositionID'] }
         DCToSave = CreateDepthChart(CurrentWorld=CurrentWorld, TS=TeamSeasonID, FullDepthChart = False, PositionDepthChart=PositionDepthChart.copy())
-        print('DCToSave', DCToSave)
+
         PlayerTeamSeasonDepthChart.objects.bulk_create(DCToSave, ignore_conflicts=False)
     else:
         return JsonResponse({'message':'Can only change redshirts from user team'}, status=422)
@@ -1729,16 +1729,16 @@ def Page_Index(request):
     else:
         NumConferencesToInclude = 7
     PossibleConferences = [
-         {'ConferenceDisplayName': 'Independents', 'ConferenceFormValue': 'FBS Independents'},
+         #{'ConferenceDisplayName': 'Independents', 'ConferenceFormValue': 'FBS Independents'},
          {'ConferenceDisplayName': 'Big 12', 'ConferenceFormValue': 'Big 12 Conference'},
-         {'ConferenceDisplayName': 'ACC', 'ConferenceFormValue': 'Atlantic Coast Conference'},
-         {'ConferenceDisplayName': 'SEC', 'ConferenceFormValue': 'Southeastern Conference'},
+         #{'ConferenceDisplayName': 'ACC', 'ConferenceFormValue': 'Atlantic Coast Conference'},
+         #{'ConferenceDisplayName': 'SEC', 'ConferenceFormValue': 'Southeastern Conference'},
          {'ConferenceDisplayName': 'Pac-12', 'ConferenceFormValue': 'Pac-12 Conference'},
          #{'ConferenceDisplayName': 'SC1', 'ConferenceFormValue': 'Sample Conference 1'},
          #{'ConferenceDisplayName': 'SC2', 'ConferenceFormValue': 'Sample Conference 2'},
-         {'ConferenceDisplayName': 'American', 'ConferenceFormValue': 'American Athletic Conference'},
+         #{'ConferenceDisplayName': 'American', 'ConferenceFormValue': 'American Athletic Conference'},
          #{'ConferenceDisplayName': 'Mountain West', 'ConferenceFormValue': 'Mountain West Conference'},
-         {'ConferenceDisplayName': 'Big 10', 'ConferenceFormValue': 'Big Ten Conference'},
+         #{'ConferenceDisplayName': 'Big 10', 'ConferenceFormValue': 'Big Ten Conference'},
     ]
 
     ConfList = []
@@ -2131,7 +2131,7 @@ def Page_Awards(request, WorldID, SeasonStartYear = None):
         HeismanWinner = json.loads(HeismanWinner.content.strip().decode())
         context['HeismanWinner'] = HeismanWinner
     else:
-        HeismanRace = Player.objects.filter(WorldID = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID=CurrentSeason).filter(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True).values('PlayerID','playerteamseason__ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__playerteamseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamNickname','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_50','playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_100', 'PlayerFaceJson', 'PlayerFaceSVG').annotate(
+        HeismanRace = Player.objects.filter(WorldID = WorldID).filter(playerteamseason__TeamSeasonID__LeagueSeasonID=CurrentSeason).filter(playerteamseason__TeamSeasonID__teamseasonweekrank__IsCurrent = True).values('PlayerID','playerteamseason__ClassID__ClassAbbreviation', 'PlayerFirstName', 'PlayerLastName', 'PositionID__PositionAbbreviation', 'playerteamseason__playerteamseasonskill__OverallRating', 'playerteamseason__TeamSeasonID__TeamID__TeamName','playerteamseason__TeamSeasonID__TeamID__TeamNickname','playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX','playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX', 'playerteamseason__TeamSeasonID__TeamID', 'playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_50','playerteamseason__TeamSeasonID__TeamID__TeamLogoURL_100', 'PlayerFaceJson', 'PlayerFaceSVG', 'playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle', 'playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert').annotate(
             PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
             PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
             PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('playerteamseason__TeamSeasonID__TeamID'), output_field=CharField()),
@@ -2180,7 +2180,6 @@ def Page_Awards(request, WorldID, SeasonStartYear = None):
                     PlayerObj.PlayerFaceJson = PlayerFaceJson
                 else:
                     PlayerFaceJson = P['PlayerFaceJson']
-
 
                 PlayerFaceSVG = BuildFaceSVG(PlayerFaceJson, TeamJerseyStyle = P['playerteamseason__TeamSeasonID__TeamID__TeamJerseyStyle'], TeamJerseyInvert = P['playerteamseason__TeamSeasonID__TeamID__TeamJerseyInvert'], TeamColors = [P['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'], P['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX']])
                 PlayerObj.PlayerFaceSVG = PlayerFaceSVG
