@@ -45,7 +45,7 @@
                       <col span="1">
                   </colgroup>
                   {% for team in allTeams %}
-                  <tr class='teamTableBorder'  style='border-left-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}};'>
+                  <tr class='teamTableBorder'  style='border-left-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}}; border-right-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}};'>
                     <td class="worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle">
                       <div class='Top25RankNumberw3-display-middle '>{{ team.NationalRank }}</div>
                       {% if team.NationalRankDelta < 0 %}

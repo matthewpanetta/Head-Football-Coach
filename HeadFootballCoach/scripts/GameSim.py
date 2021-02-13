@@ -645,6 +645,8 @@ def GameSim(game):
 
         if Period not in [2,4]:
             PlaysThisHalf = 0
+            GameDict[OffensiveTeam]['TimeoutsLeftInHalf'] = 3
+            GameDict[DefensiveTeam]['TimeoutsLeftInHalf'] = 3
         if Period not in [1,2,3]:
             FinalPeriod = True
         if Period not in [1,3]:
@@ -1138,6 +1140,7 @@ def GameSim(game):
             if SecondsThisPlay > 40:
                 print('!!!! SecondsThisPlay out of range!', SecondsThisPlay, ' at ', SecondsLeftInPeriod)
 
+            PlayClockRunning = True
             if IncompletePass:
                 SecondsThisPlay = 9
             if random.uniform(0,1) < .08: #run out of bounds

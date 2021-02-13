@@ -118,54 +118,51 @@ def TeamRedshirts(TS, WorldID, SaveInFunc = False):
     return PTRToSave
 
 
-def TeamCuts(TS, WorldID, NumPlayersToCut):
+def TeamCuts(TS, WorldID, NumPlayersToCut, PTS):
 
     # PlayersToCut = PlayerTeamSeason.objects.filter(
     #     PlayerTeamSeasonID__in = TS.playerteamseason_set.exclude(playerteamseasondepthchart__IsStarter = True).annotate(
     #         DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 10), OverallRating = F('playerteamseasonskill__OverallRating')
     #     ).order_by('-DepthChartPositionMin', 'OverallRating')[:NumPlayersToCut]).delete()
 
-    PlayersToCut = PlayerTeamSeason.objects.filter(TeamSeasonID = TS).annotate(
-            DepthChartPositionMin = Coalesce(Min('playerteamseasondepthchart__DepthPosition'), 10),
-            OverallRating = F('playerteamseasonskill__OverallRating')
-        ).order_by('-DepthChartPositionMin', 'OverallRating')[:NumPlayersToCut]
+    PlayersToCut = PTS[:NumPlayersToCut]
 
 
     return [PTS.PlayerTeamSeasonID for PTS in PlayersToCut]
 
 
-def ChooseCaptains(TS, WorldID):
-    CaptainNeedCount = 3 - TS.playerteamseason_set.filter(TeamCaptain = True).count()
+def ChooseCaptains(TS, WorldID, PTS):
+    CaptainNeedCount = 3 - TS.TeamCaptainCount
+
+    PTS_ToSave = []
 
     if CaptainNeedCount > 0:
-        PlayerList = TS.playerteamseason_set.filter(playerteamseasondepthchart__IsStarter = True).filter(ClassID__IsUpperClassman = True).exclude(TeamCaptain = True).annotate(
-            OverallRating = F('playerteamseasonskill__OverallRating'),
-            LeadershipRating = ExpressionWrapper((F('PlayerID__Personality_LeadershipRating') / 20) ** 2, output_field=IntegerField()),
-            CaptainRating = ExpressionWrapper(F('LeadershipRating') + F('OverallRating'), output_field=IntegerField()),
-            PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName')
-        ).order_by('-CaptainRating')[:CaptainNeedCount]
+        PlayerList = PTS[:CaptainNeedCount]
 
-        PositionGroups = []
+        # PositionGroups = []
         PlayersTeamSeasonToSave = []
         for P in PlayerList:
             P.TeamCaptain = True
-            PlayersTeamSeasonToSave.append(P)
+            PTS_ToSave.append(P)
 
-            if P.PositionGroup not in PositionGroups:
-                PositionGroups.append(P.PositionGroup)
+            # if P.PositionGroup not in PositionGroups:
+            #     PositionGroups.append(P.PositionGroup)
 
-        PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToSave, ['TeamCaptain'], batch_size=500)
+        # PlayerTeamSeason.objects.bulk_update(PlayersTeamSeasonToSave, ['TeamCaptain'], batch_size=500)
+        #
+        # if len(PositionGroups) == 1:
+        #     TakenPositionGroup = PositionGroups[0]
+        #     PTS = TS.playerteamseason_set.exclude(PlayerID__PositionID__PositionGroupID__PositionGroupName = TakenPositionGroup).filter(playerteamseasondepthchart__IsStarter = True).annotate(
+        #         OverallRating = F('playerteamseasonskill__OverallRating'),
+        #         LeadershipRating = ExpressionWrapper((F('PlayerID__Personality_LeadershipRating') / 20) ** 2, output_field=IntegerField()),
+        #         CaptainRating = ExpressionWrapper(F('LeadershipRating') + F('OverallRating'), output_field=IntegerField()),
+        #     ).order_by('-CaptainRating').first()
+        #
+        #     PTS.TeamCaptain = True
+        #     #PTS.save()
+        #     PTS_ToSave.append(PTS)
 
-        if len(PositionGroups) == 1:
-            TakenPositionGroup = PositionGroups[0]
-            PTS = TS.playerteamseason_set.exclude(PlayerID__PositionID__PositionGroupID__PositionGroupName = TakenPositionGroup).filter(playerteamseasondepthchart__IsStarter = True).annotate(
-                OverallRating = F('playerteamseasonskill__OverallRating'),
-                LeadershipRating = ExpressionWrapper((F('PlayerID__Personality_LeadershipRating') / 20) ** 2, output_field=IntegerField()),
-                CaptainRating = ExpressionWrapper(F('LeadershipRating') + F('OverallRating'), output_field=IntegerField()),
-            ).order_by('-CaptainRating').first()
-
-            PTS.TeamCaptain = True
-            PTS.save()
+    return PTS_ToSave
 
 
 def CreateTeamPositions(LS, WorldID):
@@ -396,7 +393,7 @@ def UpdateTeamStates(LS, WorldID, TeamSeasonID = None):
 
         TSSsToUpdate.append(TSS)
 
-    TeamSeasonState.objects.bulk_update(TSSsToUpdate, ['IsPipelineState','IsConnectedState','CurrentPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount','JuniorPlayerCount', 'SeniorPlayerCount', 'GamesInState'], batch_size=500)
+    TeamSeasonState.objects.bulk_update(TSSsToUpdate, ['IsPipelineState','IsConnectedState','CurrentPlayerCount', 'FreshmanPlayerCount', 'SophomorePlayerCount','JuniorPlayerCount', 'SeniorPlayerCount', 'GamesInState'], batch_size=1000)
 
 
     return None
@@ -461,26 +458,61 @@ def AssignRedshirts(LS, WorldID, PrepForUserTeam=False):
 def CutPlayers(LS, WorldID, PrepForUserTeam=False):
 
     if PrepForUserTeam:
-        UserTeamFilter = {}
+        UserTeamFilter_PTS = {}
+        UserTeamFilter_TS = {}
     else:
-        UserTeamFilter = {'TeamID__IsUserTeam': False}
+        UserTeamFilter_TS = {'TeamID__IsUserTeam': False}
+        UserTeamFilter_PTS = {'TeamSeasonID__TeamID__IsUserTeam': False}
+
+    PlayerTeamSeasonDict = {}
+    PlayerTeamSeasonList = WorldID.playerteamseason_set.filter(playerteamseasondepthchart__IsStarter = True).filter(TeamSeasonID__LeagueSeasonID = LS).filter(**UserTeamFilter_PTS).filter(ClassID__IsUpperClassman = True).exclude(TeamCaptain = True).annotate(
+        OverallRating = F('playerteamseasonskill__OverallRating'),
+        LeadershipRating = ExpressionWrapper((F('PlayerID__Personality_LeadershipRating') / 20) ** 2, output_field=IntegerField()),
+        CaptainRating = ExpressionWrapper(F('LeadershipRating') + F('OverallRating'), output_field=IntegerField()),
+        PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName')
+    ).select_related('TeamSeasonID__TeamID').order_by('-CaptainRating')
+
+    for PTS in PlayerTeamSeasonList:
+        if PTS.TeamSeasonID not in PlayerTeamSeasonDict:
+            PlayerTeamSeasonDict[PTS.TeamSeasonID] = []
+
+        PlayerTeamSeasonDict[PTS.TeamSeasonID].append(PTS)
 
     PlayersToDelete = []
-    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**UserTeamFilter).annotate(NumbersOfPlayers = Count('playerteamseason__PlayerTeamSeasonID'), PlayersToCut = ExpressionWrapper(F('NumbersOfPlayers') -  F('LeagueSeasonID__LeagueID__PlayersPerTeam'), output_field=IntegerField())).filter(PlayersToCut__gt = 0):
-        PlayersToDelete += TeamCuts(TS=TeamSeasonID , WorldID=WorldID,  NumPlayersToCut=TeamSeasonID.PlayersToCut)
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**UserTeamFilter_TS).annotate(NumbersOfPlayers = Count('playerteamseason__PlayerTeamSeasonID'), PlayersToCut = ExpressionWrapper(F('NumbersOfPlayers') -  F('LeagueSeasonID__LeagueID__PlayersPerTeam'), output_field=IntegerField())).filter(PlayersToCut__gt = 0):
+        PlayersToDelete += TeamCuts(TS=TeamSeasonID , WorldID=WorldID,  NumPlayersToCut=TeamSeasonID.PlayersToCut, PTS = PlayerTeamSeasonDict[TeamSeasonID])
 
     PlayerTeamSeason.objects.filter(PlayerTeamSeasonID__in = PlayersToDelete).delete()
 
 def ChooseTeamCaptains(LS, WorldID, PrepForUserTeam = False):
 
+    PTS_ToSave = []
+
     if PrepForUserTeam:
-        UserTeamFilter = {}
+        UserTeamFilter_PTS = {}
+        UserTeamFilter_TS = {}
     else:
-        UserTeamFilter = {'TeamID__IsUserTeam': False}
+        UserTeamFilter_TS = {'TeamID__IsUserTeam': False}
+        UserTeamFilter_PTS = {'TeamSeasonID__TeamID__IsUserTeam': False}
 
-    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**UserTeamFilter):
-        ChooseCaptains(TS=TeamSeasonID , WorldID=WorldID)
+    PlayerTeamSeasonDict = {}
+    PlayerTeamSeasonList = WorldID.playerteamseason_set.filter(playerteamseasondepthchart__IsStarter = True).filter(TeamSeasonID__LeagueSeasonID = LS).filter(**UserTeamFilter_PTS).filter(ClassID__IsUpperClassman = True).exclude(TeamCaptain = True).annotate(
+        OverallRating = F('playerteamseasonskill__OverallRating'),
+        LeadershipRating = ExpressionWrapper((F('PlayerID__Personality_LeadershipRating') / 20) ** 2, output_field=IntegerField()),
+        CaptainRating = ExpressionWrapper(F('LeadershipRating') + F('OverallRating'), output_field=IntegerField()),
+        PositionGroup = F('PlayerID__PositionID__PositionGroupID__PositionGroupName')
+    ).select_related('TeamSeasonID__TeamID').order_by('-CaptainRating')
 
+    for PTS in PlayerTeamSeasonList:
+        if PTS.TeamSeasonID not in PlayerTeamSeasonDict:
+            PlayerTeamSeasonDict[PTS.TeamSeasonID] = []
+
+        PlayerTeamSeasonDict[PTS.TeamSeasonID].append(PTS)
+
+    for TeamSeasonID in TeamSeason.objects.filter(WorldID = WorldID).filter(LeagueSeasonID = LS).filter(TeamID__isnull = False).filter(**UserTeamFilter_TS).annotate(TeamCaptainCount = Count('playerteamseason__TeamCaptain')):
+        PTS_ToSave += ChooseCaptains(TS=TeamSeasonID , WorldID=WorldID, PTS=PlayerTeamSeasonDict[TeamSeasonID])
+
+    PlayerTeamSeason.objects.bulk_update(PTS_ToSave, ['TeamCaptain'])
 
 def CalculateTeamOverall(LS, WorldID):
 
@@ -1166,7 +1198,7 @@ def CreatePlayers(LS, WorldID):
 
     print('Starting generate players', len(connection.queries))
 
-    PlayersPerTeam = 75
+    PlayersPerTeam = 78
 
     MinimumRosterComposition = {
         'ClassID': {c.ClassID: 13 for c in Class.objects.filter(IsRecruit = False).exclude(ClassName = 'Graduate')},
@@ -1286,12 +1318,14 @@ def CreatePlayers(LS, WorldID):
     count = 0
     print('Drafting players!', len(connection.queries))
 
+    ScarcePositions = ['FB', 'P', 'K']
+
 
     for TS in DraftOrder:
 
         count +=1
         if count % 100 == 0:
-            print('Drafting player', count)
+            print(f'Drafting player {count} of {NumberOfPlayersNeeded}')
         #TSP = TeamDict[TS]['TSP']
         if TS not in TeamRosterCompositionNeeds:
             TeamRosterCompositionNeeds[TS] = {'ClassID': MinimumRosterComposition['ClassID'], 'PositionMaximums': {Pos['Position']: Pos['PositionMaximumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}, 'StarterPosition': {Pos['Position']: Pos['PositionTypicalStarterCountPerTeam'] for Pos in MinimumRosterComposition['Position']},'FullPosition': {Pos['Position']: Pos['PositionMinimumCountPerTeam'] for Pos in MinimumRosterComposition['Position']}}
@@ -1302,11 +1336,13 @@ def CreatePlayers(LS, WorldID):
         ClassNeedModifier = {}
         for C in TeamRosterCompositionNeeds[TS]['ClassID']:
             if TeamRosterCompositionNeeds[TS]['ClassID'][C] > 6:
-                ClassNeedModifier[C] = 1.1
+                ClassNeedModifier[C] = 1.2
             elif TeamRosterCompositionNeeds[TS]['ClassID'][C] > 3:
-                ClassNeedModifier[C] = 1.05
+                ClassNeedModifier[C] = 1.1
             elif TeamRosterCompositionNeeds[TS]['ClassID'][C] > 0:
                 ClassNeedModifier[C] = 1.0
+            elif TeamRosterCompositionNeeds[TS]['ClassID'][C] < -3:
+                ClassNeedModifier[C] = .6
             else:
                 ClassNeedModifier[C] = .95
 
@@ -1322,6 +1358,9 @@ def CreatePlayers(LS, WorldID):
                 PositionNeedModifier[P] = .9
             else:
                 PositionNeedModifier[P] = 1.0
+
+            if P in ScarcePositions:
+                PositionNeedModifier[P] = PositionNeedModifier[P] ** 3
 
         ClassNeedsMet = False
         StarterNeedsMet = False
@@ -1374,12 +1413,15 @@ def CreatePlayers(LS, WorldID):
     PlayerClasses = list(Class.objects.filter(IsUpperClassman = True))
     PlayerSkillPool = []
     TotalPlayerCreatedCount = 0
-    PlayersNeededByPosition = {}
+    PlayerTeamsNeededByPosition = {}
     for TS in TeamRosterCompositionNeeds:
         PlayerCreatedCount = 0
+        PossToCreate = []
         for Pos in TeamRosterCompositionNeeds[TS]['FullPosition']:
             if TeamRosterCompositionNeeds[TS]['FullPosition'][Pos] > 0:
                 for u in range(TeamRosterCompositionNeeds[TS]['FullPosition'][Pos]):
+
+                    PossToCreate.append(Pos)
 
                     PlayerBioData = PlayerBioDataList(1, PositionAbbreviation = Pos)
                     NewPlayer = GeneratePlayer(None, CurrentSeason, None, WorldID, Pos, PlayerBioData = PlayerBioData[0])
@@ -1392,7 +1434,7 @@ def CreatePlayers(LS, WorldID):
 
                     PlayerSkillPool.append(PopulatePlayerSkills(PTS, WorldID))
                     PlayerCreatedCount +=1
-        print('Creating {NUM} players to fill holes for'.format(NUM = PlayerCreatedCount), TS)
+        print('Creating {NUM} players to fill holes for'.format(NUM = PlayerCreatedCount), PossToCreate, TS)
 
 
 
@@ -1749,8 +1791,9 @@ def CreateRecruitingClass(LS, WorldID):
         elif R.TeamSeasonStateID.IsConnectedState:
             R.InterestLevel += 100
 
+    print('Ranks updated, info ratings created - starting save', len(connection.queries))
     RecruitTeamSeasonInterest.objects.bulk_create(RecruitTeamSeasonInterest_ToSave, batch_size=500)
-    RecruitTeamSeason.objects.bulk_update(RTS,['RecruitingTeamRank', 'InterestLevel'], batch_size=500)
+    RecruitTeamSeason.objects.bulk_update(RTS,['RecruitingTeamRank', 'InterestLevel'], batch_size=1000)
 
     print('Ranks updated, info ratings created', len(connection.queries))
 

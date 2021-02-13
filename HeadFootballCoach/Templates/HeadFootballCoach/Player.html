@@ -111,7 +111,7 @@
       <div class="tab-content" style='display:block;' id="nav-overview" >
         <div class='w3-container'>
           <div class='w3-row-padding'>
-            <div class='w3-col l6 m12 playerOverviewRatingBox'>
+            <div class='w3-col l5 m12 playerOverviewRatingBox'>
               <div class="w3-card margin-bottom-24">
                 <table class='width100 w3-table w3-striped'>
                     {% for SkillGroup in Skills%}
@@ -142,7 +142,7 @@
 
               </div>
             </div>
-            <div class='w3-col l6 m12'>
+            <div class='w3-col l7 m12'>
               {% if playerTeam.IsUserTeam%}
               {% if Actions%}
               <div class="w3-card w3-margin-bottom">
@@ -167,9 +167,9 @@
                 <div class="w3-bar team-primary-background-bar">
                   Recent Game Stats
                 </div>
-                <table class="w3-table table-striped width100" id='RecentGameStats' style='width: 100%;'>
+                <table class="w3-table table-striped width100 center-text-row" id='RecentGameStats' style='width: 100%;'>
                   <thead>
-                    <tr>
+                    <tr >
                       <th colspan="3" class='center-text col-group'>GAME</th>
                       <th colspan="8" class='center-text col-group'>PASSING STATS</th>
                       <th colspan="7" class='center-text col-group'>RUSHING STATS</th>
@@ -178,7 +178,7 @@
                       <th colspan="7" class='center-text col-group'>DEFENSE STATS</th>
                       <th colspan="4" class='center-text col-group'>KICKING STATS</th>
                     </tr>
-                    <tr>
+                    <tr >
                       <!-- Game -->
                       <th class='teamColorBorder' scope="col">OPP</th>
                       <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
@@ -246,9 +246,9 @@
         <div class='w3-container w3-margin-bottom'>
           <div class='w3-row'>
             <div class='w3-col l12'>
-              <table class="table table-striped sortable" id='playerRecruitingTeamTable'>
+              <table class="table table-striped sortable center-text-row" id='playerRecruitingTeamTable'>
                 <thead>
-                  <tr>
+                  <tr  class='team-secondary-table-row'>
                     <th class='teamColorBorder' scope="col">Rank</th>
                     <th class='teamColorBorder' scope="col">Team</th>
                     <th class='teamColorBorder' scope="col">Signed?</th>
@@ -319,22 +319,27 @@
             <div class='w3-row-padding'>
               <div class='w3-col l10 m12'>
 
-                <table id="PlayerSeasonStatTableClone" class='w3-hide width100 no-border' style=''>
+                <div class="">
+                  <table id="PlayerSeasonStatTableClone" class='w3-hide width100 no-border center-text-row' style=''>
 
-                  <tfoot>
-                    <tr>
-                    </tr>
-                  </tfoot>
-                 </table>
-                 <table id="PlayerCareerHighTableClone" class='w3-hide width100 no-border' style=''>
-                   <thead>
-                     <th>Stat</th>
-                     <th>Value</th>
-                     <th>Week</th>
-                   </thead>
-                  </table>
+                    <tfoot>
+                      <tr>
+                      </tr>
+                    </tfoot>
+                   </table>
+                   <table id="PlayerCareerHighTableClone" class='w3-hide width100 no-border center-text-row' style=''>
+                     <thead>
+                       <tr  class='team-secondary-table-row'>
+                       <th class='left-text'>Stat</th>
+                       <th>Value</th>
+                       <th class='left-text'>Week</th>
+
+                       </tr>
+                     </thead>
+                    </table>
+                </div>
+
               </div>
-
             </div>
 
         </div>
@@ -346,9 +351,9 @@
                 <div class="w3-card w3-margin-bottom">
 
                   <div class="w3-bar team-primary-background-bar">Game Stats</div>
-                <table class="w3-table table-striped width100" id='FullGameStats' style='width: 100%;'>
+                <table class="w3-table table-striped width100 center-text-row" id='FullGameStats' style='width: 100%;'>
                   <thead>
-                    <tr>
+                    <tr >
                       <th colspan="3" class='center-text col-group'>GAME</th>
                       <th colspan="8" class='center-text col-group'>PASSING STATS</th>
                       <th colspan="7" class='center-text col-group'>RUSHING STATS</th>
@@ -359,7 +364,7 @@
                     </tr>
                     <tr>
                       <!-- Game -->
-                      <th class='teamColorBorder' scope="col">OPP</th>
+                      <th class='teamColorBorder left-text' scope="col">OPP</th>
                       <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
                       <th>Score</th>
 
@@ -431,7 +436,7 @@
           <div class='w3-row-padding'>
             <div class='w3-col l6 m12'>
               Awards
-              <table>
+              <table class='w3-table-all'>
                 {% for Award in Awards%}
                 <tr>
                   <td>{{Award.AwardName}} x{{Award.AwardCount}}</td>

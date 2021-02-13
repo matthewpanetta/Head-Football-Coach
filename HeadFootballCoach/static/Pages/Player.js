@@ -37,7 +37,11 @@ function PopulatePlayerSeasonStats(WorldID, PlayerID){
       console.log(res, status);
 
       $.each(res, function(ind, obj){
-        DrawPlayerStats(obj);
+        DrawPlayerSeasonStats(obj);
+      })
+
+      $.each(res, function(ind, obj){
+        DrawPlayerCareerHighs(obj);
       })
 
     },
@@ -49,7 +53,7 @@ function PopulatePlayerSeasonStats(WorldID, PlayerID){
   return null;
 }
 
-function DrawPlayerStats(data){
+function DrawPlayerSeasonStats(data){
 
   var columns = [
   ];
@@ -57,29 +61,8 @@ function DrawPlayerStats(data){
     return n.DisplayColumn
   });
 
-  console.log('DrawPlayerStats(data)', data);
-
   var Parent = $('#PlayerSeasonStatTableClone').parent();
-
-  var ParentRow = $('<div></div>').addClass('margin-top-24').addClass('w3-row-padding');
-  $(ParentRow).appendTo(Parent);
-
-  var ParentCol = $('<div></div>').addClass('w3-col').addClass('s8');
-  $(ParentCol).appendTo(ParentRow);
-
-  var ParentCard = $('<div></div>').addClass('w3-card');
-  $(ParentCard).appendTo(ParentCol);
-
-
-  var CareerHighParentCol = $('<div></div>').addClass('w3-col').addClass('s4');
-  $(CareerHighParentCol).appendTo(ParentRow);
-
-  var CareerHighParentCard = $('<div></div>').addClass('w3-card');
-  $(CareerHighParentCard).appendTo(CareerHighParentCol);
-
-
-  var CareerHighTable = $('#PlayerCareerHighTableClone').clone().addClass('w3-table-all').removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerCareerHighTable-'+data.StatGroupName).css('width', '100%');
-
+  var SeasonStatCard = $('<div></div>').addClass('w3-card').addClass('w3-margin-top');
   var Table = $('#PlayerSeasonStatTableClone').clone().addClass('w3-table-all').removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerSeasonStatTable-'+data.StatGroupName).css('width', '100%');
 
   if (data.CareerStats.length > 0){
@@ -88,29 +71,8 @@ function DrawPlayerStats(data){
     });
   }
 
-  $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Career Highs</div>').appendTo(CareerHighParentCard);
-  CareerHighTable.appendTo(CareerHighParentCard);
-  var CareerHighDataTable = $(CareerHighTable).DataTable({
-    "data": data.CareerHighs,
-    'paging': false,
-    'searching': false,
-    'info': false,
-    'ordering': false,
-    "columns": [
-       {"data": "Field", "sortable": false, 'visible': true},
-        {"data": "Value", "sortable": false, 'visible': true},
-        {"data": "Week", "sortable": false, 'searchable': true, "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-            $(td).html("<div>vs. <img class='worldTeamStatLogo padding-right' src='"+DataObject['OpposingTeamLogo']+"'/></div><div><a href='"+DataObject['GameHref']+"'>"+StringValue+"</a></div>");
-          //  $(td).attr('style', 'border-left-color: #' + DataObject['TeamColor_Primary_HEX']);
-          //  $(td).addClass('teamTableBorder');
-        }},
-
-    ],
-  });
-
-
-  $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Season Stats</div>').appendTo(ParentCard);
-  Table.appendTo(ParentCard);
+  $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Season Stats</div>').appendTo(SeasonStatCard);
+  Table.appendTo(SeasonStatCard);
   var DataTable = $(Table).DataTable( {
     data: data.SeasonStats,
     columns: columns,
@@ -119,7 +81,6 @@ function DrawPlayerStats(data){
     'info': false,
   });
 
-
   var Counter = 0;
   DataTable.columns().every( function () {
       // ... do something with data(), or this.nodes(), etc
@@ -127,7 +88,54 @@ function DrawPlayerStats(data){
       Counter +=1;
   } );
 
+  SeasonStatCard.appendTo(Parent);
+
   $(Table).find('th').addClass('teamColorBorder');
+  $(Table).find('thead tr').addClass('team-secondary-table-row');
+
+}
+
+
+function DrawPlayerCareerHighs(data){
+
+  var columns = [
+  ];
+  var columns = $.grep(data.Stats, function(n, i){
+    return n.DisplayColumn
+  });
+  var Parent = $('#PlayerSeasonStatTableClone').parent();
+
+  var CareerHighCard = $('<div></div>').addClass('w3-card').addClass('w3-margin-top');
+
+  var CareerHighTable = $('#PlayerCareerHighTableClone').clone().addClass('w3-table-all').removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerCareerHighTable-'+data.StatGroupName).css('width', '100%');
+
+  if (data.CareerStats.length > 0){
+    $.each(columns, function(){
+      $(Table).find('tfoot tr').append('<td class="bold"></td>');
+    });
+  }
+
+  $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Career Highs</div>').appendTo(CareerHighCard);
+  CareerHighTable.appendTo(CareerHighCard);
+  var CareerHighDataTable = $(CareerHighTable).DataTable({
+    "data": data.CareerHighs,
+    'paging': false,
+    'searching': false,
+    'info': false,
+    'ordering': false,
+    "columns": [
+       {"data": "Field", "sortable": false, 'visible': true, 'className': 'left-text'},
+        {"data": "Value", "sortable": false, 'visible': true},
+        {"data": "Week", "sortable": false, 'searchable': true, 'className': 'left-text', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            $(td).html("<span>vs. <img class='worldTeamStatLogo padding-right' src='"+DataObject['OpposingTeamLogo']+"'/></span><span><a href='"+DataObject['GameHref']+"'>"+StringValue+"</a></span>");
+          //  $(td).attr('style', 'border-left-color: #' + DataObject['TeamColor_Primary_HEX']);
+          //  $(td).addClass('teamTableBorder');
+        }},
+
+    ],
+  });
+
+  CareerHighCard.appendTo(Parent);
   $(CareerHighTable).find('th').addClass('teamColorBorder');
 
 }
@@ -222,13 +230,13 @@ function PopulatePlayerStats(WorldID, GameStatData, RecentGameStatData, PlayerSt
       'data': RecentGameStatData,
       autoWidth: true,
       columns: [
-        {"data": "OpponentTeamName", "sortable": true, 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+        {"data": "OpponentTeamName", "sortable": true, 'searchable': true, 'className': 'left-text',"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).html("<a href='"+DataObject['OpponentTeamHref']+"'><img class='worldTeamStatLogo padding-right' src='"+DataObject['OpponentTeamLogoURL']+"'/>"+StringValue+"</a>");
             $(td).attr('style', 'border-left-color: #' + DataObject['OpponentTeamColor_Primary_HEX']);
             $(td).addClass('teamTableBorder');
             $(td).parent().attr('PlayerID', DataObject['PlayerID']);
         }},
-        {"data": "TeamGameID__GameID__WeekID__WeekNumber", "sortable": true, 'visible': true, 'orderSequence':DescFirst,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+        {"data": "TeamGameID__GameID__WeekID__WeekNumber", "sortable": true, 'className': 'left-text','visible': true, 'orderSequence':DescFirst,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).html(DataObject.TeamGameID__GameID__WeekID__WeekName);
         }},
         {"data": "GameOutcomeLetter", "sortable": true, 'visible': true, 'className': 'col-group center-text', 'orderSequence':DescFirst,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
@@ -291,7 +299,7 @@ function PopulatePlayerStats(WorldID, GameStatData, RecentGameStatData, PlayerSt
       'paging': false,
       'data': GameStatData,
       columns: [
-        {"data": "OpponentTeamName", "sortable": true, 'searchable': true,"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+        {"data": "OpponentTeamName", "sortable": true, 'searchable': true,'className': 'left-text',"fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
             $(td).html("<a href='"+DataObject['OpponentTeamHref']+"'><img class='worldTeamStatLogo padding-right' src='"+DataObject['OpponentTeamLogoURL']+"'/>"+StringValue+"</a>");
             $(td).attr('style', 'border-left-color: #' + DataObject['OpponentTeamColor_Primary_HEX']);
             $(td).addClass('teamTableBorder');

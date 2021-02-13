@@ -6,7 +6,7 @@ from django.db import connection, reset_queries
 
 def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False, PositionDepthChart = {}, PlayerList = []):
 
-    print('in CreateDepthChart', 'PositionDepthChart:', PositionDepthChart, 'TS', TS, 'FullDepthChart', FullDepthChart)
+    #print('in CreateDepthChart', 'PositionDepthChart:', PositionDepthChart, 'TS', TS, 'FullDepthChart', FullDepthChart)
     if TS is None:
         TS = T.CurrentTeamSeason
     DoAudit = False
@@ -105,5 +105,4 @@ def CreateDepthChart(CurrentWorld=None, TS=None, T=None, FullDepthChart = False,
         TimeElapsed = end - start
         A = Audit.objects.create(TimeElapsed = TimeElapsed, AuditVersion = 1, AuditDescription='Set Depth Charts')
 
-    print('DCToSave', DCToSave)
     return DCToSave
