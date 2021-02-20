@@ -1,0 +1,27 @@
+﻿SubPositionAbbreviation,SubPositionName,PositionTypicalStarterCountPerTeam,SubPositionSortOrder,FK_PositionAbbreviation
+QB,Quarterback,1,1,QB
+RB,Running Back,1,2,RB
+FB,Fullback,0,3,FB
+WR X,X Receiver,1,4,WR
+WR Z,Z Receiver,1,5,WR
+WR S,Slot Receiver,1,6,WR
+TE,Tight End,1,7,TE
+RT,Right Tackle,1,8,OT
+LT,Left Tackle,1,9,OT
+RG,Right Guard,1,10,OG
+LG,Left Guard,1,11,OG
+OC,Offensive Center,1,12,OC
+RE,Right End,1,13,DE
+LE,Left End,1,14,DE
+DT,Defensive Tackle,2,15,DT
+LOLB,Left Outside Linebacker,1,16,OLB
+ROLB,Right Outside Linebacker,1,17,OLB
+MLB,Middle Linebacker,1,18,MLB
+CB,Cornerback,2,19,CB
+FS,Free Safety,1,20,S
+SS,Strong Safety,1,21,S
+K,Kicker,1,22,K
+P,Punter,1,23,P
+KR,Kick Returner,0,24,KR
+PR,Punt Returner,0,25,PR
+ATH,Athlete,0,26,ATH

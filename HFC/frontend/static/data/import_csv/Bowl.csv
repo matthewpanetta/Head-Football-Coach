@@ -1,0 +1,25 @@
+﻿BowlName,Team1Rank,Team2Rank,IsNationalChampionship,BowlPrestige
+National Championship,1,2,1,10
+Orange Bowl,3,4,0,7
+Cotton Bowl,5,6,0,7
+Rose Bowl,7,8,0,7
+Sugar Bowl,9,10,0,7
+Fiesta Bowl,11,12,0,7
+Peach Bowl,13,14,0,7
+Hawaii Bowl,15,16,0,5
+Pinstripe Bowl,17,18,0,5
+Military Bowl,19,20,0,5
+Texas Bowl,21,22,0,5
+Cheez-it Bowl,23,24,0,5
+Holiday Bowl,25,26,0,5
+Camping World Bowl,27,28,0,5
+Outback Bowl,29,30,0,3
+Citrus Bowl,31,32,0,3
+Alamo Bowl,33,34,0,3
+Liberty Bowl,35,36,0,3
+Sun Bowl,37,38,0,3
+Belk Bowl,39,40,0,3
+Redbox Bowl,41,42,0,1
+Music City Bowl,43,44,0,1
+Birmingham Bowl,45,46,0,1
+Idaho Potato Bowl,47,48,0,1

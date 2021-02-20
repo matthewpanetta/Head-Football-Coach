@@ -1,0 +1,10 @@
+﻿ClassName,ClassAbbreviation,IsRecruit,ClassSortOrder,IsUpperClassman
+HS Freshman,HS FR,1,1,0
+HS Sophomore,HS SO,1,2,0
+HS Junior,HS JR,1,3,0
+HS Senior,HS SR,1,4,0
+Freshman,FR,0,5,0
+Sophomore,SO,0,6,0
+Junior,JR,0,7,1
+Senior,SR,0,8,1
+Graduate,GRAD,0,9,0
