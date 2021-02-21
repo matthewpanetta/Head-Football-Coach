@@ -4,17 +4,27 @@ export default class extends AbstractView {
     constructor(params) {
         super(params);
         this.setTitle("Dashboard");
+        this['db_list'] = params['db_list'];
+        console.log('params', params)
+        console.log('this', this)
+
     }
 
     async getHtml() {
-        return `
-            <h1>Welcome back, Dom</h1>
-            <p>
-                Fugiat voluptate et nisi Lorem cillum anim sit do eiusmod occaecat irure do. Reprehenderit anim fugiat sint exercitation consequat. Sit anim laborum sit amet Lorem adipisicing ullamco duis. Anim in do magna ea pariatur et.
-            </p>
-            <p>
-                <a href="/posts" data-link>View recent posts</a>.
-            </p>
-        `;
+      var world_list = []
+      var db = null;
+
+      $.each(this.db_list, function(db_name, db){
+        var world_obj = {};
+
+        world_obj = db.world;
+
+      });
+
+      var url = '/static/html_templates/index.html'
+      var html = await fetch(url);
+      html = await html.text();
+
+
     }
 }
