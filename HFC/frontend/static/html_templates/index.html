@@ -1,31 +1,55 @@
 <div class="w3-display-topmiddle indexWorldContainer">
   World List
-  <ul class="w3-ul w3-card-4">
-    {% for World in Worlds %}
+  <div class="w3-card s8">
+    <table class='w3-table-all width100'>
+      <thead>
+        <tr>
+          <th>Dynasty Name</th>
+          <th colspan='2'>Team</th>
+          <th>Year</th>
+          <th>Date started</th>
+          <th>Date last played</th>
+          <th>Play!</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for World in world_list %}
+        <tr>
+          <td>{{World.database_name}}</td>
+          <td>
+            <img src="teamlogo" alt="">
+          </td>
+          <td>
+            <div class="">
+              Team Name
+            </div>
+            <div class="">
+              School Name
+            </div>
+          </td>
+          <td>Year</td>
+          <td>Date started</td>
+          <td>Date last played</td>
+          <td>
+            <div class="w3-button w3-blue" style='border-radius: 5px;'>
+              <a class='no-link-link' href="/World/{{World.world_id}}">Continue</a>
+            </div>
+          </td>
 
-    <li class="w3-bar indexWorldSelectionBar">
-      <a href="/World/${World.world_id}">
-        <span class="w3-bar-item w3-button w3-white w3-xlarge w3-right">×</span>
-        <img src="${World.team__TeamLogoURL}" class="w3-bar-item w3-circle w3-hide-small" style="width:85px">
-        <div class="w3-bar-item">
-          <span class="w3-large">{{World.team__TeamName}} </span><br>
-          <span>${World.week__WeekName}</span>
-        </div>
-      </a>
-    </li>
 
-    {% endfor %}
-
-    <li class="w3-bar indexWorldSelectionBar" id='indexCreateWorldButton'>
-      <a href="#">
-        <div class="w3-bar-item">
-          <span class="w3-large">New World</span><br>
-          <span>World click</span>
-        </div>
-      </a>
-    </li>
-
-  </ul>
+        </tr>
+        {% endfor %}
+        <tr>
+          <td colspan='6'>Create new game!</td>
+          <td>
+            <div id='create-world-row' class="w3-button w3-blue" style='border-radius: 5px;'>
+              New Game
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 

@@ -4,6 +4,33 @@ import Page_Team from "./views/Page_Team.js";
 import Page_Player from "./views/Page_Player.js";
 
 
+class team {
+
+  build_team_logo(size_obj){
+    var folder_prefix = '/static/img/TeamLogos/'
+    var size_suffix = ''
+    if ('img_size' in size_obj){
+      size_suffix = '_' + size_obj['img_size']
+    }
+    return folder_prefix + this.school_name + '_' + this.team_name + size_suffix + '.png';
+  }
+
+    // Prototype property
+    get team_logo() {
+        return this.build_team_logo({});
+    }
+
+    // Prototype property
+    get team_logo_50() {
+      return this.build_team_logo({img_size: 50});
+    }
+
+    // Prototype property
+    get team_logo_150() {
+      return this.build_team_logo({img_size: 150});
+    }
+}
+
 
 const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
@@ -23,11 +50,44 @@ const navigateTo = url => {
     router();
 };
 
+const get_teams = async (filters) => {
+
+  var url = '/static/data/import_json/Team.json'
+  var data = await fetch(url);
+  var TeamDimension = await data.json();
+
+  if ('conference' in filters){
+    var conference_list = filters.conference;
+    TeamDimension = TeamDimension.map(T => conference_list.includes(T.conference_name));
+  }
+
+  return TeamDimension;
+}
+
+const driver_db  = async (world_obj) => {
+
+  var dbname = 'driver';
+
+  var db = await new Dexie(dbname);
+
+  await db.version(1).stores({
+    world: "++world_id",
+    setting: ""
+  });
+
+  // Open the database
+  await db.open().catch(function (e) {
+      console.error("Open failed: " + e);
+  });
+
+  return db;
+}
+
 const get_db  = async (world_obj) => {
 
   var dbname = '';
   if ('database_id' in world_obj){
-    dbname = 'headfootballcoach'+ world_obj.world_id;
+    dbname = 'headfootballcoach'+ world_obj.database_id.toString();
   }
   else if ('database_name' in world_obj) {
     dbname = world_obj.database_name
@@ -42,7 +102,7 @@ const get_db  = async (world_obj) => {
   console.log('db', db);
 
   await db.version(1).stores({
-    team: "++team_id",
+    team: "++team_id, school_name, [team_id+team_seasons.season]",
     player: "++player_id",
     world: ""
   });
@@ -52,6 +112,8 @@ const get_db  = async (world_obj) => {
       console.error("Open failed: " + e);
   });
 
+  await db.team.mapToClass(team);
+
   return db;
 }
 
@@ -59,24 +121,44 @@ const create_db  = async (world_id) => {
   return get_db({database_id: world_id});
 }
 
+const create_new_db  = async () => {
+  // const databases = await Dexie.getDatabaseNames();
+  // var database_ids = databases.map(db => parseInt(db.replace('headfootballcoach', '')));
+  // var new_world_id = database_ids.reduce(function(a, b) {
+  //     return Math.max(a, b);
+  // }) + 1;
+
+  const ddb = await driver_db();
+  var world_res = await ddb.world.add({});
+  ddb.world.put({world_id: world_res, database_name: 'headfootballcoach' + world_res, date_created: Date.now() });
+
+  console.log('ddb.world', ddb.world);
+  const db = await create_db(world_res);
+  return db;
+}
+
 
 const get_databases_references = async () => {
 
-  const databases = await Dexie.getDatabaseNames();
-  console.log('databases', databases)
-  var database_map = {};
-  $.each(databases, async function(ind, obj){
-    database_map[obj] = await get_db({database_name: obj});
+  const ddb = await driver_db();
+  //const databases = await Dexie.getDatabaseNames();
+  const databases = await ddb.world.toArray();
+  var database_list = [];
+  var db_obj = {};
+  var world_id = 0;
+  $.each(databases, function(ind, obj){
+    db_obj = obj;
+    db_obj['db'] = get_db({database_name: obj});
+    database_list.push(db_obj)
   });
-  console.log('database_map', database_map)
-  return database_map;
+  return database_list;
 };
 
 const resolve_db = async (world_obj) => {
 
   var dbname = '';
   if ('database_id' in world_obj){
-    dbname = 'headfootballcoach'+ world_obj.world_id;
+    dbname = 'headfootballcoach'+ world_obj.database_id;
   }
   else if ('database_name' in world_obj) {
     dbname = world_obj.database_name
@@ -85,6 +167,8 @@ const resolve_db = async (world_obj) => {
     console.error('resolve_db not called correctly. Include either database_name or database_id', world_obj);
     return null;
   }
+
+  console.log('dbname', dbname, world_obj)
 
 
   const databases = await Dexie.getDatabaseNames();
@@ -101,18 +185,23 @@ const resolve_db = async (world_obj) => {
 };
 
 const router = async (db) => {
+    var pathname = location.pathname;
+    if (pathname.charAt(pathname.length - 1) != '/') {
+      pathname = pathname + '/';
+    }
+
     const routes = [
         { path: "/", view: Page_Index },
         { path: "/World/:world_id/", view: Page_World },
-        { path: "/World/:world_id/Team/:team_id", view: Page_Team },
-        { path: "/World/:world_id/Player/:player_id", view: Page_Player }
+        { path: "/World/:world_id/Team/:team_id/", view: Page_Team },
+        { path: "/World/:world_id/Player/:player_id/", view: Page_Player }
     ];
 
     // Test each route for potential match
     const potentialMatches = routes.map(route => {
         return {
             route: route,
-            result: location.pathname.match(pathToRegex(route.path))
+            result: pathname.match(pathToRegex(route.path))
         };
     });
 
@@ -121,21 +210,28 @@ const router = async (db) => {
     if (!match) {
         match = {
             route: routes[0],
-            result: [location.pathname]
+            result: [pathname]
         };
     }
 
 
     var params = getParams(match);
+    console.log('params', params)
     params['db'] = await resolve_db({database_id: params['world_id']});
 
-    if (params['db'] == null){
-      params['db_list'] = await get_databases_references();
-    }
+    var nunjucks_env = get_nunjucks_env();
+
+    params['packaged_functions'] = {create_new_db: create_new_db
+                                  , get_teams: get_teams
+                                  , get_databases_references: get_databases_references
+                                  , driver_db: driver_db
+                                  , nunjucks_env: nunjucks_env
+                                };
 
     const view = new match.route.view(params);
 
-    document.querySelector("#app").innerHTML = await view.getHtml(db);
+    document.querySelector("#body").innerHTML = await view.getHtml();
+    await view.action();
 };
 
 window.addEventListener("popstate", router);
@@ -375,25 +471,6 @@ const dbschema_Player = {
 };
 
 
-const load_team_table = async (Table_Team) => {
-  console.log('Running load_team_table');
-
-  var team_id_counter = 1;
-
-  var TeamsToCreate = [];
-
-  $.each(TeamDimension, function(ind, Obj_Team){
-    //Obj_Team['team_id'] = team_id_counter.toString()
-    Obj_Team['team_id'] = team_id_counter
-    TeamsToCreate.push(Obj_Team);
-    team_id_counter += 1;
-  });
-
-  const result = await Table_Team.bulkInsert(TeamsToCreate);
-
-}
-
-
 const load_player_table = async (Table_Team, Table_Player) => {
 
   const PlayerPositions = ['Off', 'Def'];
@@ -425,13 +502,6 @@ const load_player_table = async (Table_Team, Table_Player) => {
   const result = await Table_Player.bulkInsert(PlayersToCreate);
 
 }
-
-const init_db = async () => {
-  console.log('IN INITDB');
-
-  return 'hello'
-};
-
 
 const router_connect = async () => {
   router();

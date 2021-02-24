@@ -1,6 +1,6 @@
 
 
-function get_teams(filters){
+const get_teams = async function(filters){
   const TeamDimension = [
    {
      "school_name": "Connecticut",

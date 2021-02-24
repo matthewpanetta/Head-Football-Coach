@@ -8,8 +8,9 @@ app.use("/static", express.static(path.resolve(__dirname, "frontend", "static"))
 
 
 app.get("*html_templates*", (req, res) => {
-    console.log('routing to (html_templates)', req.url);
-  res.sendFile(path.resolve(__dirname, "frontend",req.url));
+    console.log('routing to (html_templates)', req.url, req.url.split('?')[0]);
+    var url = req.url.split('?')[0];
+  res.sendFile(path.resolve(__dirname, "frontend", url));
 });
 
 app.get("/*", (req, res) => {

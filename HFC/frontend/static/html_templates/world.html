@@ -1,0 +1,257 @@
+<link rel="stylesheet" type="text/css" href="common/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="Hoops/style.css">
+<link rel="stylesheet" type="text/css" href="font-awesome/css/all.css">
+<link rel="stylesheet" href="common/bootstrap.min.css">
+
+<div class='ext_NavBar'>
+  {% include "../../static/html_templates/ext_NavBar.html" %}
+</div>
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "../../static/html_templates/Scoreboard.html" %}
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-history-tab">History</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content show active" style="display:block;"  id="nav-overview">
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col l4 m6 s12">
+              <div class="w3-card">
+                <div class="w3-bar team-primary-background-bar">
+                  <div class="">Top 25</div>
+                </div>
+                <table class='w3-table-all no-border'>
+                  <colgroup>
+                      <col span="1">
+                      <col span="1">
+                      <col span="1">
+                  </colgroup>
+                  {% for team in allTeams %}
+                  <tr class='teamTableBorder'  style='border-left-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}}; border-right-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}};'>
+                    <td class="worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle">
+                      <div class='Top25RankNumberw3-display-middle '>{{ team.NationalRank }}</div>
+                      {% if team.NationalRankDelta < 0 %}
+                      <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaRed'>&#8595;{{team.NationalRankDeltaAbs}}</div>
+                      {% elif team.NationalRankDelta > 0 %}
+                      <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaGreen'>&#8593;{{team.NationalRankDeltaAbs}}</div>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <a  class='' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
+                        <img class='worldTeamLogo' src='{{team.TeamSeasonID__TeamID__TeamLogoURL_100}}' alt="">
+                      </a>
+                    </td>
+                    <td class='worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
+                      <ul class='no-list-style'>
+                        <li>
+                          <a  class='font14' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
+                            <span>{{ team.TeamSeasonID__TeamID__TeamName }} <span class='hide-small'>{{ team.TeamSeasonID__TeamID__TeamNickname }}</span></span>
+                          </a>
+                        </li>
+                        {% if team.TeamSeasonID__NationalChampion %}
+                        <li class='font10 bold'>National Champions</li>
+                        {% endif %}
+                        {% if team.TeamSeasonID__ConferenceChampion %}
+                        <li class='font10 bold'>{{team.TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation}} Champions</li>
+                        {% else %}
+                        <li class='font10'>{{team.TeamSeasonID__DivisionRank|ordinal}} in {{team.TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation}}</li>
+                        {% endif %}
+                      </ul>
+                    </td>
+                    <td>
+                      <img class='worldTeamLogo w3-hide {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
+                      <img class='worldTeamLogo  w3-hide {{team.AdditionalDisplayLogo2Class}}' src='{{team.AdditionalDisplayLogo2}}' alt="">
+                    </td>
+                    <td class='worldOverviewTop25TeamLineRecord w3-cell  w3-cell-middle'>
+                      <span class=''>{{team.TeamSeasonID__Wins}} - {{team.TeamSeasonID__Losses}}</span>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
+            <div class="w3-col  l4 m6 s12">
+              {% if  games|length > 0 %}
+              <div class="w3-card background-eee">
+                <div class="w3-bar team-primary-background-bar">
+                  <div class="">Games This Week</div>
+                </div>
+                <div class="w3-bar boxscore-bar background-white" id="nav-tab-{{game.GameID}}">
+                  <button GameFilterSelection="allgame" class="w3-bar-item upcoming-gameview-tab w3-button tab selected-upcoming-gameview-tab" id="upcoming-gameview-allgame-tab">All</button>
+                  <button GameFilterSelection="top25game" class="w3-bar-item upcoming-gameview-tab w3-button tab" id="upcoming-gameview-top25game-tab">Top 25</button>
+                  <button GameFilterSelection="nationalgame" class="w3-bar-item upcoming-gameview-tab w3-button tab" id="upcoming-gameview-nationalgame-tab">National</button>
+                </div>
+                <div class="">
+                  {% for game in games%}
+                  <table BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="bottom-border width100 worldUpcomingTable">
+                    <colgroup>
+                        <col span="2">
+                        <col span="2">
+                        <col span="2">
+                        <col span="2">
+                        <col span="2">
+                    </colgroup>
+                    <thead>
+                      <th class="bottom-border left-text hide-small" colspan="2">
+                        <span class='font10 padBottom20 margin-8'><a href="{{game.GameHref}}">Preview</a></span>
+                      </th>
+                      <th class="bottom-border" colspan="4">
+                        <span class='font10'>{{game.GameHeadlineDisplay}}</span>
+                      </th>
+                      <th class="bottom-border hide-medium" colspan="4">
+                        <span class='font10 padBottom20'>{{game.GameTime}} PM</span>
+                      </th>
+                    </thead>
+                    {% for TeamGame in game.TeamGames %}
+                    <tr class=" w3-margin">
+                      <td class=' hide-small' colspan='2'>
+                          <img class="overviewRecentGameDisplayTeamLogo"   src="{{TeamGame.TeamSeasonID__TeamID__TeamLogoURL_50}}" alt="">
+                      </td>
+                      <td class='worldUpcomingGameCell' colspan='4'>
+                        <div class='margin0'><span class='font10'>{{TeamGame.NationalRankDisplay}}</span> <a href="{{TeamGame.TeamHref}}" class='font16'>{{TeamGame.TeamSeasonID__TeamID__TeamName}}</a></div>
+                        <div class="">
+                          <span class='font10'>({{TeamGame.TeamRecordDisplay}})</span>
+                        </div>
+                      </td>
+                      <td class='center-text hide-medium' colspan='2'>
+                        <h2 class='font16'>{{TeamGame.PPP_Rank}}</h2>
+                        <div class="">
+                          <span class='font8 margin-right-4 '>Off Rank</span>
+                        </div>
+                      </td>
+                      <td class='center-text hide-medium' colspan='2'>
+                        <h2 class='font16'>{{TeamGame.PAPP_Rank}}</h2>
+                        <div class="">
+                          <span class='font8 margin-right-4 '>Def Rank</span>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    </table>
+                  {% endfor %}
+                </div>
+              </div>
+              {% elif CurrentWeek.PhaseID.PhaseName == 'Preseason' %}
+              <div class="w3-card">
+                <div class="w3-bar team-primary-background-bar">
+                  <div class="">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
+                </div>
+                <div class="w3-bar preseason-allamerican-team-bar" id="nav-tab-preseason-allamerican-team">
+                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab w3-button tab selected-preseason-award-team-tab" id="preseason-allamerican-team-firstteam-tab">1st Team</button>
+                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab w3-button tab" id="preseason-allamerican-team-secondteam-tab">2nd Team</button>
+                </div>
+                <div class="w3-bar preseason-allamerican-conference-bar w3-margin-bottom" id="nav-tab-preseason-allamerican-conference">
+                  {% for Conf in PreseasonAllAmericans%}
+                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab w3-button tab {{Conf.ConferenceSelected}}" id="preseason-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
+                  {% endfor %}
+                </div>
+                <div class="list-group list-group-flush">
+                  <table id='teamOverviewConferenceStandings' class=' w3-table-all no-border'>
+                    <thead class=''>
+                      <th>Pos</th>
+                      <th>Team</th>
+                      <th>Player</th>
+                    </thead>
+                    {% for Conf in PreseasonAllAmericans%}
+                    {% for AwardTeam in Conf.Teams %}
+                    {% for Award in AwardTeam.Team %}
+                    <tr class='{{Conf.ShowConference}} {{AwardTeam.ShowTeam}} pre-season-allamarican-row preseason-allamerican-conference-{{Conf.Conference.ConferenceID}} preseason-allamerican-team-{{AwardTeam.TeamName}}'>
+                      <td>{{Award.PositionID.PositionAbbreviation}}</td>
+                      <td>
+                        <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamLogoURL_50}}" />
+                           {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
+                        </a>
+                      </td>
+                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.ClassID.ClassAbbreviation}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+              {% elif CurrentWeek.PhaseID.PhaseName == 'Season Recap' %}
+              <div class="w3-card">
+                <div class="w3-bar team-primary-background-bar">
+                  <div class="">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
+                </div>
+                <div class="w3-bar season-allamerican-team-bar" id="nav-tab-season-allamerican-team">
+
+                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab w3-button tab selected-season-award-team-tab" id="season-allamerican-team-firstteam-tab">1st Team</button>
+                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab w3-button tab" id="season-allamerican-team-secondteam-tab">2nd Team</button>
+                  <button TeamSelection='Freshman Team' class="w3-bar-item award-team-tab w3-button tab" id="season-allamerican-team-freshman-tab">Freshmen</button>
+                </div>
+                <div class="w3-bar season-allamerican-conference-bar w3-margin-bottom" id="nav-tab-season-allamerican-conference">
+                  {% for Conf in SeasonAllAmericans%}
+                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab w3-button tab {{Conf.ConferenceSelected}}" id="season-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
+                  {% endfor %}
+                </div>
+                <div class="list-group list-group-flush">
+                  <table id='teamOverviewConferenceStandings' class=' w3-table-all no-border'>
+                    <thead class=''>
+                      <th>Pos</th>
+                      <th>Team</th>
+                      <th>Player</th>
+                    </thead>
+                    {% for Conf in SeasonAllAmericans%}
+                    {% for AwardTeam in Conf.Teams %}
+                    {% for Award in AwardTeam.Team %}
+                    <tr class='{{Conf.ShowConference}} {{AwardTeam.ShowTeam}} season-allamarican-row season-allamerican-conference-{{Conf.Conference.ConferenceID}} season-allamerican-team-{{AwardTeam.TeamName}}'>
+                      <td>{{Award.PositionID.PositionAbbreviation}}</td>
+                      <td>
+                        <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamLogoURL_50}}" />
+                           {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
+                        </a>
+                      </td>
+                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.ClassID.ClassAbbreviation}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+
+              {% endif %}
+            </div>
+            <div class='w3-col l3 m6 s12'>
+              <div class="w3-card">
+                <span class='table_title'>Headlines</span>
+                <ul class='margin-right-4'>
+                    {% for Headline in Headlines%}
+                    <li class='left-text gray-text'>
+                      <a href="{{Headline.HeadlineHref}}" class='charcoal-text font12'>{{Headline.HeadlineText}}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+{% include "../../static/html_templates/ext_CommonScripts.html" %}
+
+<script type="text/javascript" charset="utf8" src="common/jquery.dataTables.js"></script>
+<script src="Pages/World.js" type="module"></script>
