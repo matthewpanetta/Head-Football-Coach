@@ -1,0 +1,32 @@
+<div class='TeamHeader' style='height: 150px;'>
+  <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
+  <img class='teamTeamLogo' src='{{team.team_logo}}' alt="My image">
+  <div class='teamHeaderInfo'>
+    <span class='thin-font font20'>
+        {{ThisTeamSeason.NationalRankDisplay}}
+    </span>
+    <span class='teamSchoolName'>
+      {{ team.school_name }}
+    </span>
+    <span class='teamTeamName'>
+      {{team.team_name}}
+    </span>
+    <span class='teamRecord hide-small'>
+      {{ThisTeamSeason.Wins}} - {{ThisTeamSeason.Losses}}
+    </span>
+    <div class='teamOverviewInfo'>
+      {{team.city}}, {{team.state}} | <a href="/World/{{page.WorldID}}/Conferences/{{ThisTeamSeason.DivisonSeasonID.ConferenceSeasonID.ConferenceID.ConferenceID}}">{{ThisTeamSeason.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceName}}</a>
+    </div>
+    <div class='teamOverviewInfo'>
+      {% for Link in HeaderLink.LinkPaths%}
+      {% if forloop.counter0 > 0%}
+      |
+      {% endif %}
+      <a href="/World/{{page.WorldID}}/Team/{{ThisTeamSeason.TeamID.TeamID}}/{{Link.HrefExtension}}">{{Link.Display}}</a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="team-header-color-right align-middle hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'>
+  </div>
+
+</div>

@@ -42,9 +42,9 @@
                       <col span="1">
                   </colgroup>
                   {% for team in allTeams %}
-                  <tr class='teamTableBorder'  style='border-left-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}}; border-right-color: #{{team.TeamSeasonID__TeamID__TeamColor_Primary_HEX}};'>
+                  <tr class='teamTableBorder'  style='border-left-color: #{{team.team_color_primary_hex}}; border-right-color: #{{team.team_color_primary_hex}};'>
                     <td class="worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle">
-                      <div class='Top25RankNumberw3-display-middle '>{{ team.NationalRank }}</div>
+                      <div class='Top25RankNumberw3-display-middle '>{{ team.team_season.rankings.national_rank[0] }}</div>
                       {% if team.NationalRankDelta < 0 %}
                       <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaRed'>&#8595;{{team.NationalRankDeltaAbs}}</div>
                       {% elif team.NationalRankDelta > 0 %}
@@ -52,24 +52,24 @@
                       {% endif %}
                     </td>
                     <td>
-                      <a  class='' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
-                        <img class='worldTeamLogo' src='{{team.TeamSeasonID__TeamID__TeamLogoURL_100}}' alt="">
+                      <a  class='' href="/World/{{world_id}}/Team/{{ team.team_id }}/">
+                        <img class='worldTeamLogo' src='{{team.team_logo_100}}' alt="">
                       </a>
                     </td>
                     <td class='worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
                       <ul class='no-list-style'>
                         <li>
-                          <a  class='font14' href="/World/{{page.WorldID}}/Team/{{ team.TeamSeasonID__TeamID }}/">
-                            <span>{{ team.TeamSeasonID__TeamID__TeamName }} <span class='hide-small'>{{ team.TeamSeasonID__TeamID__TeamNickname }}</span></span>
+                          <a  class='font14' href="/World/{{world_id}}/Team/{{ team.team_id }}/">
+                            <span>{{ team.school_name }} <span class='hide-small'>{{ team.team_name }}</span></span>
                           </a>
                         </li>
                         {% if team.TeamSeasonID__NationalChampion %}
                         <li class='font10 bold'>National Champions</li>
                         {% endif %}
-                        {% if team.TeamSeasonID__ConferenceChampion %}
+                        {% if team.team_season.ConferenceChampion %}
                         <li class='font10 bold'>{{team.TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation}} Champions</li>
                         {% else %}
-                        <li class='font10'>{{team.TeamSeasonID__DivisionRank|ordinal}} in {{team.TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation}}</li>
+                        <li class='font10'>{{team.team_season.rankings.division_rank}} in {{team.team_season.conference_name}}</li>
                         {% endif %}
                       </ul>
                     </td>
@@ -78,7 +78,7 @@
                       <img class='worldTeamLogo  w3-hide {{team.AdditionalDisplayLogo2Class}}' src='{{team.AdditionalDisplayLogo2}}' alt="">
                     </td>
                     <td class='worldOverviewTop25TeamLineRecord w3-cell  w3-cell-middle'>
-                      <span class=''>{{team.TeamSeasonID__Wins}} - {{team.TeamSeasonID__Losses}}</span>
+                      <span class=''>{{team.team_season.record.wins}} - {{team.team_season.record.losses}}</span>
                     </td>
                   </tr>
                   {% endfor %}
