@@ -31,7 +31,7 @@
         <div class="w3-display-container">
           <div class="w3-row-padding">
             <div class="w3-col l4 m6 s12">
-              <div class="w3-card">
+              <div class="w3-card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
                   <div class="">Top 25</div>
                 </div>
@@ -41,7 +41,7 @@
                       <col span="1">
                       <col span="1">
                   </colgroup>
-                  {% for team in allTeams %}
+                  {% for team in teams %}
                   <tr class='teamTableBorder'  style='border-left-color: #{{team.team_color_primary_hex}}; border-right-color: #{{team.team_color_primary_hex}};'>
                     <td class="worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle">
                       <div class='Top25RankNumberw3-display-middle '>{{ team.team_season.rankings.national_rank[0] }}</div>

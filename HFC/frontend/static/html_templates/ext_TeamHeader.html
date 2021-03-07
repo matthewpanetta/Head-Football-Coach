@@ -3,7 +3,7 @@
   <img class='teamTeamLogo' src='{{team.team_logo}}' alt="My image">
   <div class='teamHeaderInfo'>
     <span class='thin-font font20'>
-        {{ThisTeamSeason.NationalRankDisplay}}
+        {{team.team_season.rankings.national_rank[0]}}
     </span>
     <span class='teamSchoolName'>
       {{ team.school_name }}
@@ -12,7 +12,7 @@
       {{team.team_name}}
     </span>
     <span class='teamRecord hide-small'>
-      {{ThisTeamSeason.Wins}} - {{ThisTeamSeason.Losses}}
+      {{team.team_season.record.wins}} - {{team.team_season.record.wins}}
     </span>
     <div class='teamOverviewInfo'>
       {{team.city}}, {{team.state}} | <a href="/World/{{page.WorldID}}/Conferences/{{ThisTeamSeason.DivisonSeasonID.ConferenceSeasonID.ConferenceID.ConferenceID}}">{{ThisTeamSeason.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceName}}</a>

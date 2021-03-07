@@ -44,17 +44,17 @@
                 <div class="w3-card w3-light-grey w3-col s12">
 
                   <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
-                    {% for game in games%}
-                    <div BoxScoreGameID="{{game.GameID.GameID}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
-                      <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.Opponent.TeamColor_Primary_HEX}}'>{{game.Week}}</div>
+                    {% for game in games %}
+                    <div BoxScoreGameID="{{game.game_id}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
+                      <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>Week {{game.week_id}}</div>
                       <div class="equal-sized-item-container">
-                        <img class='teamScheduleOpponentLogo centered-item' src='{{game.OpponentLogoURL}}' />
+                        <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team.team_logo}}' />
                       </div>
 
                       <div class="width100">
-                        <a href="/World/{{page.WorldID}}/Team/{{game.Opponent.TeamID}}">
-                          <div class='teamScheduleGameBoxVsString hide-small'>{{game.VsString}}</div>
-                          <div class='teamScheduleGameBoxVsString show-small'>{{game.Opponent.Abbreviation}}</div>
+                        <a href="/World/{{page.WorldID}}/Team/{{game.opponent_team.team_id}}">
+                          <div class='teamScheduleGameBoxVsString hide-small'>{{game['opponent_team']['team_abbreviation']}}</div>
+                          <div class='teamScheduleGameBoxVsString show-small'>{{game['opponent_team']['team_abbreviation']}}</div>
                         </a>
                         <div class="teamScheduleGameBoxResult">
                           <div class="teamGameResultLetter{{game.GameResultLetter}}">{{game.GameResultLetter}}</div>

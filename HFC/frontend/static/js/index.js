@@ -1,3 +1,4 @@
+'use strict';
 import Page_Index from "./views/Page_Index.js";
 import Page_World from "./views/Page_World.js";
 import Page_Team from "./views/Page_Team.js";
@@ -36,24 +37,26 @@ class team {
     }
 
     luma(color){
-      var R = parseInt(color.slice(2))
-      var G = parseInt(color.slice(2,4))
-      var B = parseInt(color.slice(4,6))
+      var R = color.slice(0,2)
+      var G = color.slice(2,4)
+      var B = color.slice(4,6)
+
 
       const luma = 0.2126 * parseInt(R, 16) + 0.7152 * parseInt(G, 16) + 0.0722 * parseInt(B, 16);
+      console.log('RGB', R, G, B, luma)
       return luma;
     }
 
     get secondary_color_display() {
+      console.log('this.luma(this.team_color_secondary_hex)', this.luma(this.team_color_secondary_hex), this.team_color_secondary_hex)
       if (this.luma(this.team_color_secondary_hex) < 255) {
         return this.team_color_secondary_hex;
       }
       return '000000'
     }
 
-    get team_season(){
-      console.log('db',db)
-      return db.team_season.get({team_id: this.team_id}).first();
+    get_team_season(){
+      return db.team_season.get({team_id: this.team_id});;
     }
 }
 
@@ -82,7 +85,7 @@ const navigateTo = url => {
     router();
 };
 
-const create_phase = async (db, season) => {
+const create_phase = async (season) => {
   const phases_to_create = [{season: season, phase_name: 'Pre-Season', is_current:true},
                           {season: season, phase_name: 'Regular Season', is_current:false},
                           {season: season, phase_name: 'Bowl Season', is_current:false},
@@ -94,7 +97,7 @@ const create_phase = async (db, season) => {
 
 }
 
-const create_week = async (db, phases) => {
+const create_week = async (phases) => {
   var weeks_to_create = [
                           {week_name:'Summer', is_current: true, messages:[], phase_id: phases['Pre-Season']['phase_id']},
                           {week_name:'Week 1', is_current: false, messages:[], phase_id: phases['Regular Season']['phase_id']},
@@ -161,7 +164,7 @@ const driver_db  = async (world_obj) => {
 
   var dbname = 'driver';
 
-  var db = await new Dexie(dbname);
+  db = await new Dexie(dbname);
 
   await db.version(1).stores({
     world: "++world_id",
@@ -191,31 +194,33 @@ const get_db  = async (world_obj) => {
   }
 
 
-  var db = await new Dexie(dbname);
-  console.log('db', db);
+  var new_db = await new Dexie(dbname);
+  console.log('db', new_db);
 
-  await db.version(1).stores({
+  await new_db.version(2).stores({
     team: "++team_id",
-    team_season: "++team_season_id, team_id, [team_id+season]",
+    team_season: "++team_season_id, team_id, season, [team_id+season]",
     player: "++player_id",
     player_team_season: "++player_team_season_id, player_id, team_season_id",
     conference: '++conference_id, conference_name',
     conference_season: '++conference_season_id, conference_id, season, [conference_id+season]',
     phase: '++phase_id, season',
     week: '++week_id, phase_id, season, [phase_id+season]',
-    game: '++game_id, [home_team_id+away_team_id], week_id',
+    game: 'game_id, week_id',
     award: '++award_id, player_id, week_id, season_id',
     world: ""
   });
 
   // Open the database
-  await db.open().catch(function (e) {
+  await new_db.open().catch(function (e) {
       console.error("Open failed: " + e);
   });
 
-  await db.team.mapToClass(team);
+  await new_db.team.mapToClass(team);
 
-  return db;
+  console.log('db', new_db);
+
+  return new_db;
 }
 
 const create_db  = async (world_id) => {
@@ -229,19 +234,19 @@ const create_new_db  = async () => {
   //     return Math.max(a, b);
   // }) + 1;
 
-  const ddb = await driver_db();
+  ddb = await driver_db();
   var world_res = await ddb.world.add({});
   const new_season_info = {world_id: world_res, database_name: 'headfootballcoach' + world_res, date_created: Date.now(), current_season: 2021 }
   ddb.world.put(new_season_info);
 
-  const db = await create_db(world_res);
+  db = await create_db(world_res);
   return {db: db, new_season_info: new_season_info};
 }
 
 
 const get_databases_references = async () => {
 
-  const ddb = await driver_db();
+  ddb = await driver_db();
   //const databases = await Dexie.getDatabaseNames();
   const databases = await ddb.world.toArray();
   var database_list = [];
@@ -321,7 +326,9 @@ const route_path = async (pathname, routes) => {
 
 }
 
-const router = async (db) => {
+const router = async () => {
+  var startTime = performance.now()
+
     var pathname = location.pathname;
     if (pathname.charAt(pathname.length - 1) != '/') {
       pathname = pathname + '/';
@@ -381,6 +388,10 @@ const router = async (db) => {
 
     document.querySelector("#body").innerHTML = await view.getHtml();
     await view.action();
+
+    var endTime = performance.now()
+    console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
+
 };
 
 window.addEventListener("popstate", router);

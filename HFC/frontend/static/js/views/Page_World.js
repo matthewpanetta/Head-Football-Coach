@@ -1,3 +1,4 @@
+'use strict';
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -10,8 +11,6 @@ export default class extends AbstractView {
     }
 
     async getHtml() {
-      var startTime = performance.now()
-      console.log('this', this)
       const db = this.db;
       nunjucks.configure({ autoescape: true });
       var query_to_dict = this.packaged_functions.query_to_dict;
@@ -20,19 +19,14 @@ export default class extends AbstractView {
 
       var render_content = {team_list: [], page: {PrimaryColor: '1763B2', SecondaryColor: '000000'}, world_id: this.params['world_id']};
       var teams = await db.team.toArray();
+      var team_seasons = await query_to_dict(await db.team_season.where({season: 2021}).toArray(), 'one_to_one','team_id');
       var distinct_team_seasons = [];
 
-      // $.each(teams, async function(ind, team){
-      //   team['team_season'] = await team.team_season_for_year(db, 2021);
-      // });
-
-      $.each(teams,  function(ind, team){
-        console.log(typeof team);
-        console.log('team', team)
-        console.log('team.team_season', team['team_season'])
-        console.log('team.team_season.rankings', team.team_season.rankings)
+      $.each(teams, async function(ind, team){
+        team['team_season'] =team_seasons[team.team_id]
 
       });
+
       teams = teams.filter(team => team.team_season.rankings.national_rank[0] <= 25);
 
       teams.sort(function(a, b) {
@@ -41,21 +35,8 @@ export default class extends AbstractView {
           return 0;
         });
 
-      render_content['allTeams'] = teams;
 
-      const player_team_seasons = await query_to_dict(await db.player_team_season.toArray(), 'many_to_one', 'team_season_id');
-      const players = await query_to_dict(await db.player.toArray(), 'one_to_one','player_id');
-
-      $.each(player_team_seasons, function(team_season_id, player_team_season){
-        player_team_season['player'] = players[player_team_season.player_id];
-      });
-      console.log('player_team_seasons', player_team_seasons);
-
-      $.each(render_content['allTeams'], function(ind, team){
-        team.team_season = team_seasons[team.team_id][0];
-        team.players = player_team_seasons[team.team_season.team_season_id];
-
-      });
+      render_content['teams'] = teams
       console.log('render_content', render_content)
 
       var url = '/static/html_templates/world.html'
@@ -63,10 +44,6 @@ export default class extends AbstractView {
       html = await html.text();
 
       const renderedHtml = this['packaged_functions']['nunjucks_env'].renderString(html, render_content);
-
-      var endTime = performance.now()
-      console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
-
       return renderedHtml
     }
 
