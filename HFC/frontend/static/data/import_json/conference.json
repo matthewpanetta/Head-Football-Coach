@@ -1,0 +1,110 @@
+[
+ {
+   "conference_name": "Atlantic Coast Conference",
+   "conference_abbreviation": "ACC",
+   "prestige": 7,
+   "is_independent": 0,
+   "number_conference_games": 8,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": "/static/img/ConferenceLogos/Atlantic_Coast_Conference.png"
+ },
+ {
+   "conference_name": "Ivy League",
+   "conference_abbreviation": "Ivy",
+   "prestige": 1,
+   "is_independent": 0,
+   "number_conference_games": 8,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": ""
+ },
+ {
+   "conference_name": "American Athletic Conference",
+   "conference_abbreviation": "AAC",
+   "prestige": 5,
+   "is_independent": 0,
+   "number_conference_games": 8,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": "/static/img/ConferenceLogos/American_Athletic_Conference.png"
+ },
+ {
+   "conference_name": "Big 12 Conference",
+   "conference_abbreviation": "Big 12",
+   "prestige": 7,
+   "is_independent": 0,
+   "number_conference_games": 8,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": "/static/img/ConferenceLogos/Big_12_Conference.png"
+ },
+ {
+   "conference_name": "Big Ten Conference",
+   "conference_abbreviation": "Big 10",
+   "prestige": 8,
+   "is_independent": 0,
+   "number_conference_games": 8,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": "/static/img/ConferenceLogos/Big_Ten_Conference.png"
+ },
+ {
+   "conference_name": "Southeastern Conference",
+   "conference_abbreviation": "SEC",
+   "prestige": 10,
+   "is_independent": 0,
+   "number_conference_games": 8,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": "/static/img/ConferenceLogos/Southeastern_Conference.png"
+ },
+ {
+   "conference_name": "Mountain West Conference",
+   "conference_abbreviation": "MWC",
+   "prestige": 5,
+   "is_independent": 0,
+   "number_conference_games": 8,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": "/static/img/ConferenceLogos/Mountain_West_Conference.png"
+ },
+ {
+   "conference_name": "Conference USA",
+   "conference_abbreviation": "C-USA",
+   "prestige": 3,
+   "is_independent": 0,
+   "number_conference_games": 8,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": "/static/img/ConferenceLogos/C_USA_Conference.png"
+ },
+ {
+   "conference_name": "Pac-12 Conference",
+   "conference_abbreviation": "Pac-12",
+   "prestige": 7,
+   "is_independent": 0,
+   "number_conference_games": 8,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": "/static/img/ConferenceLogos/Pac-12_Conference.png"
+ },
+ {
+   "conference_name": "FBS Independents",
+   "conference_abbreviation": "Ind",
+   "prestige": 1,
+   "is_independent": 1,
+   "number_conference_games": 0,
+   "hold_conference_championship_game": 0,
+   "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png"
+ },
+ {
+   "conference_name": "Sample Conference 1",
+   "conference_abbreviation": "SC1",
+   "prestige": 1,
+   "is_independent": 0,
+   "number_conference_games": 2,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": ""
+ },
+ {
+   "conference_name": "Sample Conference 2",
+   "conference_abbreviation": "SC2",
+   "prestige": 1,
+   "is_independent": 0,
+   "number_conference_games": 2,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": ""
+ }
+]

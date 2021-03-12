@@ -52,7 +52,7 @@
                       {% endif %}
                     </td>
                     <td>
-                      <a  class='' href="/World/{{world_id}}/Team/{{ team.team_id }}/">
+                      <a  class='' href="{{team.team_href}}">
                         <img class='worldTeamLogo' src='{{team.team_logo_100}}' alt="">
                       </a>
                     </td>
@@ -69,7 +69,7 @@
                         {% if team.team_season.ConferenceChampion %}
                         <li class='font10 bold'>{{team.TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation}} Champions</li>
                         {% else %}
-                        <li class='font10'>{{team.team_season.rankings.division_rank}} in {{team.team_season.conference_name}}</li>
+                        <li class='font10'>{{team.team_season.rankings.division_rank}} in {{team.team_season.conference_season.conference.conference_abbreviation}}</li>
                         {% endif %}
                       </ul>
                     </td>

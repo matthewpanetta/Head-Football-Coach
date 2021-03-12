@@ -45,20 +45,20 @@
 
                   <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
                     {% for game in games %}
-                    <div BoxScoreGameID="{{game.game_id}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.SelectedGameBox}}">
+                    <div BoxScoreGameID="{{game.game_id}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.selected_game_box}}">
                       <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>Week {{game.week_id}}</div>
                       <div class="equal-sized-item-container">
                         <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team.team_logo}}' />
                       </div>
 
                       <div class="width100">
-                        <a href="/World/{{page.WorldID}}/Team/{{game.opponent_team.team_id}}">
-                          <div class='teamScheduleGameBoxVsString hide-small'>{{game['opponent_team']['team_abbreviation']}}</div>
+                        <a href="{{game.opponent_team.team_href}}">
+                          <div class='teamScheduleGameBoxVsString hide-small'>{{game.game_location_char}} {{game.opponent_rank_string}} {{game['opponent_team']['team_abbreviation']}}</div>
                           <div class='teamScheduleGameBoxVsString show-small'>{{game['opponent_team']['team_abbreviation']}}</div>
                         </a>
                         <div class="teamScheduleGameBoxResult">
-                          <div class="teamGameResultLetter{{game.GameResultLetter}}">{{game.GameResultLetter}}</div>
-                          <a href="{{game.GameHref}}" class='hide-small'>{{game.GameDisplay}}</a>
+                          <div class="teamGameResultLetter{{game.game_result_letter}}">{{game.game_result_letter}}</div>
+                          <a href="{{game.GameHref}}" class='hide-small'>{{game.game_display}}</a>
                         </div>
                       </div>
                     </div>
@@ -66,26 +66,26 @@
                   </div>
                   <div class="w3-row teamScheduleGameDashboard w3-display-container w3-light-grey">
                     {% for game in games%}
-                    <div BoxScoreGameID="{{game.GameID.GameID}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col l12 mw600 w3-display-container w3-white w3-border w3-border-grey w3-hide">
+                    <div BoxScoreGameID="{{game.game_id}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col l12 mw600 w3-display-container w3-white w3-border w3-border-grey w3-hide">
                       <div class="w3-col l7 m12 s12 height100 w3-display-container">
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
-                          <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.AwayTeam.TeamColor_Primary_HEX}}'></div>
+                          <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.away_team.team_color_primary_hex}}'></div>
                           <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
-                          <img class='teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.AwayTeam.LogoURL}}' />
+                          <img class='teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.away_team.team_logo_50}}' />
                         </div>
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
-                          <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.HomeTeam.TeamColor_Primary_HEX}}'></div>
+                          <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.home_team.team_color_primary_hex}}'></div>
                           <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
-                          <img class='teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.HomeTeam.LogoURL}}' />
+                          <img class='teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo_50}}' />
                         </div>
-                        <div class="teamScheduleGameDashboardGameDisplayTeams w3-col w3-hide  s12 w3-display-container w3-display-topmiddle">
+                        <div class="teamScheduleGameDashboardGameDisplayTeams w3-col w3-hide s12 w3-display-container w3-display-topmiddle">
                           <div class=" w3-display-container">
-                            <span class='w3-display-right font10 padBottom20'>{{game.Week}}</span>
+                            <span class='w3-display-right font10 padBottom20'>{{game.week_id}}</span>
                           </div>
                           <div class=" w3-display-container">
-                            <span class='font10'>{{game.AwayTeamRankDisplay}}</span>
-                            <span class='font17 {{game.AwayTeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.AwayTeam.TeamID}}">{{game.AwayTeam.TeamName}}</a></span>
-                            <span class='font10'>{{game.AwayTeamRecord}}</span>
+                            <span class='font10'>{{game.away_team_season.national_rank_display}}</span>
+                            <span class='font17 {{game.AwayTeamWinningGameBold}}'><a href="{{game.away_team.team_href}}">{{game.away_team.team_name}}</a></span>
+                            <span class='font10'>{{game.away_team_season.record_display}}</span>
                             <span class='w3-display-right {{game.AwayTeamWinningGameBold}}'>{{game.AwayPoints}}</span>
                           </div>
                           <div class=" w3-display-container">
@@ -101,25 +101,25 @@
                             <tbody>
                               <tr>
                                 <td colspan="1" ></td>
-                                <td colspan="3" class='font10'>{{game.Week}}</td>
+                                <td colspan="3" class='font10'>Week {{game.week_id}}</td>
                               </tr>
                               <tr>
-                                <td class='font10'>{{game.AwayTeamRankDisplay}}</td>
+                                <td class='font10'>{{game.away_team.national_rank_display}}</td>
                                 <td class='font17 {{game.AwayTeamWinningGameBold}}'>
-                                  <a href="/World/{{page.WorldID}}/Team/{{game.AwayTeam.TeamID}}">
-                                    {{game.AwayTeam.TeamName}}
+                                  <a href="{{game.away_team.team_href}}">
+                                    {{game.away_team.school_name}}
                                   </a>
-                                  <span class='font10'>{{game.AwayTeamRecord}}</span>
+                                  <span class='font10'>{{game.away_team_season.record_display}}</span>
                                 </td>
                                 <td class='{{game.AwayTeamWinningGameBold}} font16'>{{game.AwayPoints}}</td>
                               </tr>
                               <tr>
                                 <td class='font10'>{{game.HomeTeamRankDisplay}}</td>
                                 <td class=''>
-                                  <a href="/World/{{page.WorldID}}/Team/{{game.HomeTeam.TeamID}}" class='font17 {{game.HomeTeamWinningGameBold}}'>
-                                    {{game.HomeTeam.TeamName}}
+                                  <a href="{{game.home_team.team_href}}" class='font17 {{game.HomeTeamWinningGameBold}}'>
+                                    {{game.home_team.school_name}}
                                   </a>
-                                  <span class='font10'>{{game.HomeTeamRecord}}</span>
+                                  <span class='font10'>{{game.home_team_season.record_display}}</span>
                                 </td>
                                 <td class='{{game.HomeTeamWinningGameBold}} font16'>{{game.HomePoints}}</td>
                               </tr>

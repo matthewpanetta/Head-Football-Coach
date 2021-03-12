@@ -743,7 +743,7 @@ input[type=text], input[type=password] {
   z-index: 10;
 }
 
-.teamScheduleGameDashboardGameTeamDisplayLogoTop {
+img.teamScheduleGameDashboardGameTeamDisplayLogoTop {
   width: 40px;
   left: 40px;
   top: -20px;
@@ -751,7 +751,7 @@ input[type=text], input[type=password] {
   transform: rotate(52deg);
 }
 
-.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
+img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
   width: 40px;
   left: 55px;
   top: -10px;

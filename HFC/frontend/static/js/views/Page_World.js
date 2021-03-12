@@ -17,13 +17,23 @@ export default class extends AbstractView {
 
       var world_obj = {};
 
-      var render_content = {team_list: [], page: {PrimaryColor: '1763B2', SecondaryColor: '000000'}, world_id: this.params['world_id']};
+      const NavBarLinks = await this.packaged_functions.nav_bar_links({
+        path: 'World',
+        group_name: 'World',
+        db: db
+      });
+
+      var render_content = {team_list: [], page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks}, world_id: this.params['world_id']};
       var teams = await db.team.toArray();
+      var conferences = await query_to_dict(await db.conference.toArray(), 'one_to_one','conference_id');
+      var conference_seasons = await query_to_dict(await db.conference_season.where({season: 2021}).toArray(), 'one_to_one','conference_season_id');
       var team_seasons = await query_to_dict(await db.team_season.where({season: 2021}).toArray(), 'one_to_one','team_id');
       var distinct_team_seasons = [];
 
       $.each(teams, async function(ind, team){
-        team['team_season'] =team_seasons[team.team_id]
+        team.team_season =team_seasons[team.team_id]
+        team.team_season.conference_season = conference_seasons[team.team_season.conference_season_id];
+        team.team_season.conference_season.conference = conferences[team.team_season.conference_season.conference_id];
 
       });
 
@@ -50,6 +60,9 @@ export default class extends AbstractView {
 
 
     async action() {
+      const packaged_functions = this.packaged_functions;
+      const db = this.db;
+
       //Show initial 'new world' modal
       $('#create-world-row').on('click', function(){
         $('#indexCreateWorldModal').css({'display': 'block'});
@@ -70,7 +83,6 @@ export default class extends AbstractView {
       });
 
 
-      const packaged_functions = this.packaged_functions;
       //Create new db if clicked 'continue'
       $('#indexCreateWorldModalContinueButton').on('click', async function(){
         const db = await packaged_functions['create_new_db']();

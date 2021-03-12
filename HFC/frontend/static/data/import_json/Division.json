@@ -1,0 +1,97 @@
+[
+ {
+   "division_name": "Coastal",
+   "conference_name": "Atlantic Coast Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "Atlantic",
+   "conference_name": "Atlantic Coast Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "",
+   "conference_name": "Ivy League",
+   "sole_division": 1
+ },
+ {
+   "division_name": "East",
+   "conference_name": "American Athletic Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "West",
+   "conference_name": "American Athletic Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "",
+   "conference_name": "Big 12 Conference",
+   "sole_division": 1
+ },
+ {
+   "division_name": "East",
+   "conference_name": "Big Ten Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "West",
+   "conference_name": "Big Ten Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "East",
+   "conference_name": "Southeastern Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "West",
+   "conference_name": "Southeastern Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "Mountain",
+   "conference_name": "Mountain West Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "West",
+   "conference_name": "Mountain West Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "East",
+   "conference_name": "Conference USA",
+   "sole_division": 0
+ },
+ {
+   "division_name": "West",
+   "conference_name": "Conference USA",
+   "sole_division": 0
+ },
+ {
+   "division_name": "North",
+   "conference_name": "Pac-12 Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "South",
+   "conference_name": "Pac-12 Conference",
+   "sole_division": 0
+ },
+ {
+   "division_name": "",
+   "conference_name": "FBS Independents",
+   "sole_division": 1
+ },
+ {
+   "division_name": "",
+   "conference_name": "Sample Conference 1",
+   "sole_division": 1
+ },
+ {
+   "division_name": "",
+   "conference_name": "Sample Conference 2",
+   "sole_division": 1
+ }
+]

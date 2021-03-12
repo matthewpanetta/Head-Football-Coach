@@ -78,28 +78,124 @@ export default class extends AbstractView {
         const world_id = new_season_info.world_id;
         const season = new_season_info.current_season;
 
+        const new_season = await db.league_season.add({season: season,
+                                                       world_id: world_id,
+                                                       is_current_season: true,
+                                                       user_team_id: 1,
+                                                       captains_per_team: 3,
+                                                       players_per_team: 70,
+                                                       preseason_tasks: {
+                                                         user_cut_players: false,
+                                                         user_set_gameplan: false,
+                                                         user_set_depth_chart: false,
+                                                       }
+                                                     });
+
         const phases = await packaged_functions['create_phase'](season);
         const weeks = await packaged_functions['create_week'](phases);
 
-        var teams = await packaged_functions['get_teams']({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
-        const num_teams = teams.length;
+        var teams_from_json = await packaged_functions['get_teams']({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
+        const num_teams = teams_from_json.length;
+
+
+        const divisions_from_json = await packaged_functions['get_divisions']({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
+        const divisions = await query_to_dict(divisions_from_json, 'many_to_one','conference_name');
+
+        const conferences_from_json = await packaged_functions['get_conferences']({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
+
+        $.each(conferences_from_json, function(ind, conference){
+          conference.world_id = world_id;
+          conference.divisions = {}
+          $.each(divisions[conference.conference_name], function(ind, division){
+            conference.divisions[division.division_name] = division;
+          })
+        });
+
+        const conferences_added = await db.conference.bulkAdd(conferences_from_json);
+        var conferences =  await query_to_dict(await db.conference.toArray(), 'one_to_one','conference_name');
+
+        var conference_seasons_to_create = [];
+
+        $.each(conferences, function(conference_name, conference){
+          var new_conference_season = {world_id: world_id,
+                                       conference_id: conference.conference_id,
+                                       season: season,
+                                       divisions: conference.divisions,
+                                       conference_champion_team_season_id: null,
+
+                                     };
+          $.each(new_conference_season.divisions, function(ind, division){
+            division.teams = [];
+            division.standings = [];
+          });
+          conference_seasons_to_create.push(new_conference_season)
+        });
+
+        const conference_seasons_added = await db.conference_season.bulkAdd(conference_seasons_to_create);
+        const conference_seasons =  await query_to_dict(await db.conference_season.toArray(), 'one_to_one','conference_id');
+
+        $.each(conferences, function(conference_name, conference){
+          conference.conference_season = conference_seasons[conference.conference_id];
+        });
+
+        console.log('conferences', conferences)
+        var teams = [];
+
+        $.each(teams_from_json, function(ind, team){
+          teams.push({
+            school_name: team.school_name,
+            team_name: team.team_name,
+            team_abbreviation: team.team_abbreviation,
+            team_color_primary_hex: team.team_color_primary_hex,
+            team_color_secondary_hex: team.team_color_secondary_hex,
+            team_jersey_invert: team.team_jersey_invert,
+
+            team_ratings: {academic_prestige: team.academic_prestige,
+                           campus_lifestyle: team.campus_lifestyle,
+                           championship_contender: team.championship_contender,
+                           facilities: team.facilities,
+                           location: team.location,
+                           pro_potential: team.pro_potential,
+                           team_prestige: team.team_prestige,
+                           television_exposure: team.television_exposure,
+                         },
+            location: {
+                          city: team.city,
+                          state: team.state
+                      },
+            conference: {conference_id: conferences[team.conference_name].conference_id,
+                         conference_name: team.conference_name,
+                         division_id: null,
+                         division_name: team.division_name},
+            });
+        });
+
+
+        $.each(teams, function(ind, team){
+          team.world_id = world_id;
+        });
 
         var teams_added = await db.team.bulkAdd(teams);
         $(par).append('<div>Adding Team Seasons</div>')
         var teams = await db.team.toArray();
         var team_seasons_tocreate = [];
 
+        console.log('conferences', conferences)
+
         var team_id = 1;
-        $.each(teams, function(ind, Obj_Team){
-          team_seasons_tocreate.push({team_id: Obj_Team.team_id,
+        $.each(teams, function(ind, team){
+          console.log('team', team)
+          team_seasons_tocreate.push({team_id: team.team_id,
+                                      world_id: world_id,
                                       season: season,
-                                      conference_name: Obj_Team.conference_name,
+                                      conference_name: team.conference_name,
                                       record: {
                                         wins: 0, losses: 0, conference_wins: 0, conference_losses: 0, games_played: 0, conference_gb: 0, win_streak: 0
                                       },
                                       rankings: {
                                         division_rank: [], national_rank: []
                                       },
+                                      conference_season_id: conferences[team.conference.conference_name].conference_season.conference_season_id,
                                       games: [],
                                       playoff: {},
                                       broadcast: {
@@ -152,7 +248,8 @@ export default class extends AbstractView {
             players_tocreate.push({ name:{
                                       first: first_names[Math.floor(Math.random() * first_names.length)],
                                       last:  last_names[Math.floor(Math.random() * last_names.length)]
-                                      },
+                                    },
+                                    world_id: world_id,
                                     redshirt: {previous: false, current: false},
                                     jersey_number: 21,
                                     hometown: {city: '', state: ''},
@@ -204,6 +301,7 @@ export default class extends AbstractView {
                                                 class_name: 'JR',
                                                 redshirted: false
                                               },
+                                              world_id: world_id,
                                               post_season_movement: null, //[quit, graduate, draft, transfer]
                                               top_stats: []
                                             });
@@ -238,7 +336,7 @@ export default class extends AbstractView {
           next_game_id = last_game.game_id + 1;
         }
 
-        team_seasons = await query_to_dict(await db.team_season.where({season: 2021}).toArray(), 'one_to_one','team_id');
+        team_seasons = await query_to_dict(await db.team_season.where({season: season}).toArray(), 'one_to_one','team_id');
         console.log('team_seasons' , team_seasons)
         while (scheduling_teams) {
           console.log('Scheduling week' , week_id)
@@ -283,7 +381,8 @@ export default class extends AbstractView {
                 home_team_season_id: team_a, away_team_season_id: team_b,
                 week_id: week_id, game_time: '7:05PM', was_played: false,
                 outcome: {home_team_score: null, away_team_score: null, winning_team_season_id: null, losing_team_season_id: null},
-                rivalry: {}, bowl: {}, broadcast: {regional_broadcast: false, national_broadcast: false,}
+                rivalry: {}, bowl: {}, broadcast: {regional_broadcast: false, national_broadcast: false,},
+                world_id: world_id,
               });
 
               games_to_create_ids.push(next_game_id);
