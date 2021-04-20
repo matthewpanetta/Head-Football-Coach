@@ -640,17 +640,20 @@ input[type=text], input[type=password] {
 }
 
 .SelectedGameBox, .SelectedWeekBox {
-  background-color: #111;
-  color: white;
-  border: 1px solid #111;
+  color: white !important;
   z-index: 1000;
+}
+
+
+.SelectedGameBox a, .SelectedWeekBox a {
+  color: white !important;
 }
 
 .SelectedGameBox::after , .SelectedWeekBox::after {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -16px;
+  bottom: -15px;
   width: 0;
   height: 0;
   border-style: solid;
@@ -2058,4 +2061,8 @@ thead tr {
 
 .no-link-link {
   text-decoration-line: none;
+}
+
+.column-shrink{
+  width: 1%;
 }

@@ -17,10 +17,6 @@
 {% include "../../static/html_templates/ext_TeamColoring.html" %}
 
 
-<link href="https://fonts.googleapis.com/css?family=Volkhov&display=swap" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="Hoops/style.css">
-<link rel="stylesheet" type="text/css" href="common/jquery.dataTables.css">
-<link rel="stylesheet" href="common/bootstrap.min.css">
 <body>
   <div class="PageContent">
     {% include "../../static/html_templates/ext_TeamHeader.html" %}
@@ -45,20 +41,20 @@
 
                   <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
                     {% for game in games %}
-                    <div BoxScoreGameID="{{game.game_id}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.selected_game_box}}">
+                    <div BoxScoreGameID="{{game.game_id}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.selected_game_box}}" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>
                       <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>Week {{game.week_id}}</div>
-                      <div class="equal-sized-item-container">
+                      <div class="equal-sized-item-container" >
                         <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team.team_logo}}' />
                       </div>
 
-                      <div class="width100">
+                      <div class="width100 white-text" style='color: white;'>
                         <a href="{{game.opponent_team.team_href}}">
-                          <div class='teamScheduleGameBoxVsString hide-small'>{{game.game_location_char}} {{game.opponent_rank_string}} {{game['opponent_team']['team_abbreviation']}}</div>
-                          <div class='teamScheduleGameBoxVsString show-small'>{{game['opponent_team']['team_abbreviation']}}</div>
+                          <div class='teamScheduleGameBoxVsString hide-small white-text'>{{game.game_location_char}} {{game.opponent_rank_string}} {{game['opponent_team']['team_abbreviation']}}</div>
+                          <div class='teamScheduleGameBoxVsString show-small white-text'>{{game['opponent_team']['team_abbreviation']}}</div>
                         </a>
                         <div class="teamScheduleGameBoxResult">
-                          <div class="teamGameResultLetter{{game.game_result_letter}}">{{game.game_result_letter}}</div>
-                          <a href="{{game.GameHref}}" class='hide-small'>{{game.game_display}}</a>
+                          <div class="teamGameResultLetter{{game.game_result_letter}} white-text" >{{game.game_result_letter}}</div>
+                          <a href="{{game.GameHref}}" class='hide-small white-text'>{{game.game_display}}</a>
                         </div>
                       </div>
                     </div>
@@ -319,12 +315,12 @@
                   </div>
                   <table id='teamOverviewConferenceStandings' class='w3-table-all width100 no-border'>
 
-                    {% for Division in ConferenceDivisions%}
                     <thead>
                       <tr class='team-secondary-table-row'>
                         {% if Division.DivisionName %}
                         <th>{{Division.DivisionName}}</th>
                         {% else %}
+                        <th></th>
                         <th>Team</th>
                         {%endif%}
                         <th>Conf</th>
@@ -332,19 +328,22 @@
                         <th>Record</th>
                       </tr>
                     </thead>
-                    {% for standingTeam in Division.Standings %}
-                    <tr class='{{standingTeam.BoldTeam}}'>
-                      <td>
-                        <a href="{{standingTeam.TeamHref}}">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamID__TeamLogoURL_50}}" />
-                          <span  class='hide-small'>{{standingTeam.NationalRankDisplay}} {{standingTeam.TeamID__TeamName }}</span>
+                    {% for standing_team in conference_standings %}
+                    <tr class='{{standing_team.BoldTeam}}'>
+                      <td style=' width: 10px; padding: 8px;'>
+                        <a href="{{standing_team.team.team_href}}">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
                         </a>
                       </td>
-                      <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
-                      <td class='hide-small'> {{standingTeam.ConferenceGB}}</td>
-                      <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
+                      <td>
+                        <a href="{{standing_team.team.team_href}}">
+                          <span  class='hide-small'>{{standing_team.national_rank_display}} {{standing_team.team.school_name }}</span>
+                        </a>
+                      </td>
+                      <td>{{standing_team.conference_record_display}}</td>
+                      <td class='hide-small'> {{standing_team.record.conference_gb}}</td>
+                      <td>{{standing_team.record_display}}</td>
                     </tr>
-                    {% endfor %}
                     {% endfor %}
                   </table>
                 </div>
@@ -496,7 +495,7 @@
                 <div class="team-primary-background-bar">
                   Team Field
                 </div>
-                {% include "HeadFootballCoach/ext_TeamField.html"%}
+                {% include "../../static/html_templates/ext_TeamField.html"%}
               </div>
             </div>
 
@@ -507,17 +506,6 @@
 </body>
 
 
-{% include "HeadFootballCoach/ext_CommonScripts.html" %}
-<script type="text/javascript" charset="utf8" src="common/jquery.dataTables.js"></script>
-
-<script src="Highcharts/code/highcharts.js"></script>
-<script src="Highcharts/code/modules/accessibility.js"></script>
-
-<script src="Pages/Team.js" type="module"></script>
-<script src="common/loader.js"></script>
-<script src="common/popper.min.js"></script>
-<script src="common/util.js"></script>
-<script type="module" src="common/tooltip.js"></script>
 
 <style media="screen">
   .teamColorBorder {

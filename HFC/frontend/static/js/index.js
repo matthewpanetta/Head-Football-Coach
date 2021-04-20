@@ -1,17 +1,15 @@
-'use strict';
-import Page_Index from "./views/Page_Index.js";
-import Page_World from "./views/Page_World.js";
-import Page_Team from "./views/Page_Team.js";
-import Page_Player from "./views/Page_Player.js";
+
 
 let db = undefined;
 var ddb = undefined;
 
+class player_stat {
+
+
+}
+
 class team {
-  constructor() {
-    console.log('in teams constructor', this);
-    alert('hey stop');
-  }
+
   build_team_logo(size_obj){
     var folder_prefix = '/static/img/TeamLogos/'
     var size_suffix = ''
@@ -22,6 +20,10 @@ class team {
     path = path.toLowerCase().replaceAll(' ', '_').replaceAll('&', '_');
 
     return path;
+  }
+
+  get full_name(){
+    return `${this.school_name} ${this.team_name}`
   }
 
     get team_href() {
@@ -71,8 +73,152 @@ class team_season {
       return `${this.record.wins} - ${this.record.losses} `
     }
 
+    get conference_record_display(){
+      return `${this.record.conference_wins} - ${this.record.conference_losses} `
+    }
+
 }
 
+class player {
+
+  get full_name(){
+    return `${this.name.first} ${this.name.last}`
+  }
+}
+
+class player_team_season {
+
+  get completion_percentage() {
+    if (this.season_stats.passing.attempts == 0){
+      return 0
+    }
+    return this.season_stats.passing.completions / this.season_stats.passing.attempts;
+  }
+
+  get passing_yards_per_game(){
+    if (this.season_stats.games.games_played == 0){
+      return 0
+    }
+    return this.season_stats.passing.yards / this.season_stats.games.games_played;  }
+
+  get rushing_yards_per_game(){
+    if (this.season_stats.games.games_played == 0){
+      return 0
+    }
+    return this.season_stats.rushing.yards / this.season_stats.games.games_played;  }
+
+  get receiving_yards_per_game(){
+    if (this.season_stats.games.games_played == 0){
+      return 0
+    }
+    return this.season_stats.receiving.yards / this.season_stats.games.games_played;  }
+
+  get yards_per_carry(){
+    if (this.season_stats.rushing.carries == 0){
+      return 0
+    }
+    return this.season_stats.rushing.yards / this.season_stats.rushing.carries;  }
+
+
+    get yards_per_catch(){
+      if (this.season_stats.receiving.receptions == 0){
+        return 0
+      }
+      return this.season_stats.receiving.yards / this.season_stats.receiving.receptions;  }
+
+
+}
+
+
+class player_team_game {
+
+}
+
+const navbar = async (page) => {
+
+        $('.nav-tab-button').on('click', function(event, target) {
+
+          if ($(this).attr('id') == 'nav-sidebar-tab'){
+            $('#sidebar').addClass('sidebar-open');
+            $('.sidebar-fade').addClass('sidebar-fade-open');
+            $('.sidebar-fade-open').on('click', function(){
+                $(this).removeClass('sidebar-fade-open');
+                $('#sidebar').removeClass('sidebar-open');
+            });
+            return false;
+          }
+
+          var ClickedTab = $(event.target)[0];
+          $.each($('.selected-tab'), function(index, tab){
+            var TargetTab = $(tab);
+            $(TargetTab).css('backgroundColor', '');
+            $(TargetTab).removeClass('selected-tab');
+          });
+
+          $(ClickedTab).addClass('selected-tab');
+          $(ClickedTab).css('background-color', '#'+page.SecondaryColor);
+
+
+          var NewTabContent = $('#' + $(this).attr('id').replace('-tab', ''))[0];
+
+          $.each($('.tab-content'), function(index, OldTabContent){
+            $(OldTabContent).css('display', 'none');
+          });
+
+          $(NewTabContent).css('display', 'block');
+        });
+    }
+
+
+
+const team_header_links = async (params) => {
+  const path = params.path;
+  const season = params.season;
+  const db = params.db;
+
+  const all_paths = [
+            {'href_extension': '', 'Display': 'Overview'},
+            {'href_extension': 'Roster', 'Display': 'Roster'},
+            {'href_extension': 'DepthChart', 'Display': 'Depth Chart'},
+            {'href_extension': 'Gameplan', 'Display': 'Gameplan'},
+            {'href_extension': 'Schedule', 'Display': 'Schedule'},
+            {'href_extension': 'History', 'Display': 'History'}
+          ];
+
+    const link_paths = all_paths.filter(link => link.Display != path);
+
+    $.each(all_paths, function(ind, path_obj){
+      if (path_obj.Display == 'History'){
+        return 0;
+      }
+      else if (season != undefined) {
+        if (path_obj.display == 'Overview'){
+          path_obj.href_extension += `Season/${season}`;
+        }
+        else {
+          path_obj.href_extension += `/Season/${season}`;
+        }
+      }
+    });
+
+    var seasons = await db.league_season.toArray();
+    if (season != undefined) {
+      seasons = seasons.map(season => `../${season}`);
+    }
+    else {
+      seasons = seasons.map(season => `./Season/${season}`)
+    }
+
+    var return_links = all_paths[0];
+    $.each(all_paths, function(ind, path_obj){
+      if (path_obj.Display == path){
+        return_links = {link_paths: link_paths, external_paths: path_obj, seasons: seasons};
+      }
+    });
+
+    return return_links;
+
+}
 
 const nav_bar_links = async (params) => {
 
@@ -85,15 +231,21 @@ const nav_bar_links = async (params) => {
   const season = current_league_season.season;
   const world_id = current_league_season.world_id;
 
+  const phases = await query_to_dict(await db.phase.where({season: 2021}).toArray(), 'one_to_one', 'phase_id');
+
   const weeks = await db.week.toArray();
   const current_week = weeks.filter(week => week.is_current)[0];
+  current_week.phase = phases[current_week.phase_id];
+  current_week.league_season = current_league_season;
+
+  console.log('current_week',current_week, phases)
 
   const user_team = await db.team.get({team_id: current_league_season.user_team_id});
 
   const team_id = user_team.team_id
   const user_team_logo = user_team.team_logo
 
-  const can_sim = true;
+  var can_sim = true, save_ls=true;
 
   var user_actions = [];
 
@@ -101,12 +253,14 @@ const nav_bar_links = async (params) => {
   var sim_action_phase = {'LinkDisplay': 'Sim This Phase', 'id': 'SimThisPhase', 'Href': '#', 'ClassName': 'sim-action'}
 
   if (current_week != null){
-    if (current_week.week_name == 'Preseason'){
-      can_sim = True;
-      save_ls = True;
+    console.log('current week isnt null!')
+    if (current_week.phase.phase_name == 'Pre-Season'){
+      console.log('its preseason! set the navbar!')
+      can_sim = true;
+      save_ls = true;
 
       //Check for user team needing to cut players
-      if (!(current_league_season.preseason_user_cut_players)){
+      if (!(current_league_season.preseason_tasks.user_cut_players)){
         if (user_team.player_count > current_league_season.players_per_team) {
           user_actions.push({'LinkDisplay': 'Cut Players', 'Href': `/World/${world_id}/Team/${team_id}/Roster`, 'ClassName': ''});
           can_sim = false;
@@ -131,7 +285,7 @@ const nav_bar_links = async (params) => {
 
       //Check for user team needing gameplan
       if (!(current_league_season.preseason_tasks.user_set_depth_chart)) {
-        user_actions.push({'LinkDisplay': 'Set Gameplan', 'Href': `/World/${world_id}/Team/${team_id}/DepthChart`, 'ClassName': ''});
+        user_actions.push({'LinkDisplay': 'Set Depth Chart', 'Href': `/World/${world_id}/Team/${team_id}/DepthChart`, 'ClassName': ''});
         can_sim = false;
       }
 
@@ -145,19 +299,19 @@ const nav_bar_links = async (params) => {
       }
 
     }
-    else if (current_week.phase_id.phase_name == 'Season Recap') {
+    else if (current_week.phase.phase_name == 'Season Recap') {
       user_actions.push({'LinkDisplay': 'View Season Awards', 'Href': `/World/${world_id}/Awards`, 'ClassName': ''})
     }
-    else if (current_week.phase_id.phase_name == 'Coach Carousel') {
+    else if (current_week.phase.phase_name == 'Coach Carousel') {
       user_actions.push({'LinkDisplay': 'View Coach Carousel', 'Href': `/World/${world_id}/CoachCarousel`, 'ClassName': ''})
     }
-    else if (current_week.phase_id.phase_name == 'Draft Departures') {
+    else if (current_week.phase.phase_name == 'Draft Departures') {
       user_actions.push({'LinkDisplay': 'View Player Departures', 'Href': `/World/${world_id}/PlayerDepartures`, 'ClassName': ''})
     }
-    else if (current_week.phase_id.phase_name == 'National Signing Day') {
+    else if (current_week.phase.phase_name == 'National Signing Day') {
       user_actions.push({'LinkDisplay': 'View Recruiting Board', 'Href': `/World/${world_id}/Recruiting`, 'ClassName': ''})
     }
-    else if (current_week.phase_id.phase_name == 'Prepare for Summer Camps') {
+    else if (current_week.phase.phase_name == 'Prepare for Summer Camps') {
       user_actions.push({'LinkDisplay': 'Set Player Development', 'Href': `/World/${world_id}/PlayerDevelopment`, 'ClassName': ''})
     }
 
@@ -221,7 +375,7 @@ const nav_bar_links = async (params) => {
 
   $.each(LinkGroups, function(ind, Group){
     $.each(Group.GroupLinks, function(ind, Link){
-      if (Link['LinkDisplay'] == path && Group['GroupName'] == GroupName){
+      if (Link['LinkDisplay'] == path && Group['GroupName'] == group_name){
         Link['ClassName'] = 'Selected';
       }
     });
@@ -257,10 +411,7 @@ const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(
     );
   };
 
-const navigateTo = url => {
-    history.pushState(null, null, url);
-    router();
-};
+
 
 const create_phase = async (season) => {
   const phases_to_create = [{season: season, phase_name: 'Pre-Season', is_current:true},
@@ -299,6 +450,7 @@ const create_week = async (phases) => {
   ]
   $.each(weeks_to_create, function(ind, week){
     week.week_updates = [];
+    week.season = 2021;
   });
   var weeks_to_create_added = await db.week.bulkAdd(weeks_to_create);
   return await db.week.toArray();
@@ -403,9 +555,8 @@ const get_db  = async (world_obj) => {
 
 
   var new_db = await new Dexie(dbname);
-  console.log('db', new_db);
 
-  await new_db.version(3).stores({
+  await new_db.version(4).stores({
     league_season: 'season',
     team: "++team_id",
     team_season: "++team_season_id, team_id, season, [team_id+season]",
@@ -414,9 +565,11 @@ const get_db  = async (world_obj) => {
     conference: '++conference_id, conference_name',
     conference_season: '++conference_season_id, conference_id, season, [conference_id+season]',
     phase: '++phase_id, season',
-    week: '++current_week, phase_id, season, [phase_id+season]',
-    game: 'game_id, current_week',
-    award: '++award_id, player_id, current_week, season_id',
+    week: '++week_id, phase_id, season, [phase_id+season]',
+    team_game: 'team_game_id, game_id, team_season_id, week_id',
+    player_team_game: '++player_team_game_id, team_game_id, player_team_season_id',
+    game: 'game_id, week_id',
+    award: '++award_id, player_id, week_id, season_id',
     world: ""
   });
 
@@ -427,8 +580,9 @@ const get_db  = async (world_obj) => {
 
   await new_db.team.mapToClass(team);
   await new_db.team_season.mapToClass(team_season);
-
-  console.log('db', new_db);
+  await new_db.player_team_season.mapToClass(player_team_season);
+  await new_db.player.mapToClass(player);
+  await new_db.player_team_game.mapToClass(player_team_game);
 
   return new_db;
 }
@@ -536,312 +690,55 @@ const route_path = async (pathname, routes) => {
 
 }
 
-const router = async () => {
-  var startTime = performance.now()
+const resolve_route_parameters = async(route_pattern) => {
+  var pathname = location.pathname;
 
-    var pathname = location.pathname;
-    if (pathname.charAt(pathname.length - 1) != '/') {
-      pathname = pathname + '/';
+  const route_pattern_split = route_pattern.split('/').filter(str => str.length > 0);
+  const route_params = pathname.split('/').filter(str => str.length > 0);
+
+  var params = {}
+  var key = '';
+  $.each(route_pattern_split, function(ind, val){
+    if (val.includes(':')) {
+      key = val.replace(':', '');
+      params[key] = parseInt(route_params[ind]);
     }
+  })
 
-    const routes = [
-        { path: "/", view: Page_Index },
-        { path: "/World/:world_id/", view: Page_World },
-        { path: "/World/:world_id/Team/:team_id/", view: Page_Team },
-        { path: "/World/:world_id/Player/:player_id/", view: Page_Player }
-    ];
+  return params;
 
-    $.each(routes, function(ind, route){
-      console.log('pathToRegex(route.path)', pathToRegex(route.path), route)
-    })
+}
 
-    // Test each route for potential match
-    const potentialMatches = routes.map(route => {
-      return {
-        route: route,
-        result: pathname.match(pathToRegex(route.path))
-      };
-    }).reverse();
+const common_functions = async (route_pattern) => {
 
-    let match = potentialMatches.find(potentialMatch => potentialMatch.result !== null);
+  const params = await resolve_route_parameters(route_pattern);
+  console.log('params',params)
+  const world_id = params.world_id;
 
-    console.log('potentialMatches', potentialMatches, match)
-    if (!match) {
-      match = {
-        route: routes[0],
-        result: [
-          pathname
-        ]
-      };
-    }
-
-      //let match = route_path(pathname, routes);
-
-
-    var params = getParams(match);
-    console.log('params', params)
-    params['db'] = await resolve_db({database_id: params['world_id']});
-
-    var nunjucks_env = get_nunjucks_env();
-
-    params['packaged_functions'] = {create_new_db: create_new_db
-                                  , get_teams: get_teams
-                                  , get_conferences: get_conferences
-                                  , get_divisions: get_divisions
-                                  , get_databases_references: get_databases_references
-                                  , driver_db: driver_db
-                                  , nunjucks_env: nunjucks_env
-                                  , query_to_dict: query_to_dict
-                                  , create_phase: create_phase
-                                  , create_week: create_week
-                                  , nav_bar_links: nav_bar_links
-                                };
-
-    const view = new match.route.view(params);
-
-    document.querySelector("#body").innerHTML = await view.getHtml();
-    await view.action();
-
-    var endTime = performance.now()
-    console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
-
+    return {  create_new_db: create_new_db
+            , get_teams: get_teams
+            , get_conferences: get_conferences
+            , get_divisions: get_divisions
+            , get_databases_references: get_databases_references
+            , driver_db: driver_db
+            , nunjucks_env: get_nunjucks_env()
+            , query_to_dict: query_to_dict
+            , create_phase: create_phase
+            , create_week: create_week
+            , nav_bar_links: nav_bar_links
+            , navbar: navbar
+            , team_header_links: team_header_links
+            , db: await resolve_db({database_id: world_id})
+            , world_id: world_id
+            , params: params
+          };
 };
 
-window.addEventListener("popstate", router);
 
-document.addEventListener("DOMContentLoaded", () => {
-    document.body.addEventListener("click", e => {
-        if (e.target.matches("[data-link]")) {
-            e.preventDefault();
-            navigateTo(e.target.href);
-        }
-    });
-
-    router_connect()
-});
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
-
-
-const dbschema_Team = {
-    version: 0,
-    type: 'object',
-    properties: {
-        team_id: {
-            type: 'number'
-        },
-        school_name: {
-            type: 'string'
-        },
-        team_name: {
-            type: 'string'
-        },
-        team_abbreviation: {
-            type: 'string'
-        },
-        city: {
-            type: 'string'
-        },
-        state: {
-            type: 'string'
-        },
-        conference_name: {
-            type: 'string'
-        },
-        division_name: {
-            type: 'string'
-        },
-        team_color_primary_hex: {
-            type: 'string'
-        },
-        team_color_secondary_hex: {
-            type: 'string'
-        },
-        team_jersey_invert: {
-            type: 'number'
-        },
-        prestige: {
-            type: 'number'
-        },
-        facilities: {
-            type: 'number'
-        },
-        pro_potential: {
-            type: 'number'
-        },
-        campus_lifestyle: {
-            type: 'number'
-        },
-        academic_prestige: {
-            type: 'number'
-        },
-        television_exposure: {
-            type: 'number'
-        },
-        location: {
-            type: 'number'
-        },
-        championship_contender: {
-            type: 'number'
-        }
-    },
-  indexes: [
-    'team_id',
-    'school_name',
-    //['lastName', 'familyName'] // <- this will create a compound-index for these two fields
-  ]
-};
-
-
-const dbschema_Player = {
-    version: 0,
-    type: 'object',
-    properties: {
-        player_id: {
-            type: 'number'
-        },
-        first_name: {
-            type: 'string'
-        },
-        last_name: {
-            type: 'string'
-        },
-        jersey_number: {
-          type: 'integer'
-        },
-        was_previously_redshirted: {
-          type: 'boolean'
-        },
-        position: {
-            type: 'string'
-        },
-        overall_rating: {
-            type: 'number'
-        },
-        height: {
-          type: 'number'
-        },
-        weight: {
-          type: 'number'
-        },
-        hometown: {
-          type: 'object',
-          properties: {
-            city: {
-              type: 'string'
-            },
-            state: {
-              type: 'string'
-            },
-          }
-        },
-        face: {
-          type: 'object',
-          properties: {
-            svg_string: {
-              type: 'string'
-            },
-            json_string: {
-              type: 'string'
-            },
-          }
-        },
-        personality: {
-          type: 'object',
-          properties: {
-            work_ethic: {
-              type: 'number'
-            },
-            loyalty: {
-              type: 'number'
-            },
-            leadership: {
-              type: 'number'
-            },
-            friendly: {
-              type: 'number'
-            },
-            expressive: {
-              type: 'number'
-            },
-          }
-        },
-        recruiting: {
-          type: 'object',
-          properties: {
-            is_recruit: {
-              type: 'boolean'
-            },
-            recruiting_speed: {
-              type: 'number'
-            },
-            recruiting_points_needed: {
-              type: 'number'
-            },
-            signed: {
-              type: 'string'
-            },
-            stage: {
-              type: 'string'
-            },
-            measurables: {
-              type: 'object',
-              properties: {
-                fourty_yard_dash: {
-                  type: 'number'
-                },
-                bench_press_reps: {
-                  type: 'number'
-                },
-                vertical_jump: {
-                  type: 'number'
-                },
-              }
-            },
-            rankings: {
-              type: 'object',
-              properties: {
-                national_rank: {
-                  type: 'number'
-                },
-                national_position_rank: {
-                  type: 'number'
-                },
-                state_rank: {
-                  type: 'number'
-                },
-                recruiting_stars: {
-                  type: 'number'
-                },
-              }
-            }
-          }
-        },
-        player_team_seasons: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                team_id: {
-                  type: 'number'
-                },
-                season_id: {
-                  type: 'number'
-                }
-              }
-            }
-        }
-    },
-  indexes: [
-    'player_id',
-    'position',
-    'player_team_seasons.[].team_id',
-    'player_team_seasons.[].season_id'
-    //['lastName', 'familyName'] // <- this will create a compound-index for these two fields
-  ]
-};
 
 
 const load_player_table = async (Table_Team, Table_Player) => {
@@ -874,8 +771,4 @@ const load_player_table = async (Table_Team, Table_Player) => {
 
   const result = await Table_Player.bulkInsert(PlayersToCreate);
 
-}
-
-const router_connect = async () => {
-  router();
 }

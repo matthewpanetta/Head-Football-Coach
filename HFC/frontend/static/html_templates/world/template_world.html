@@ -1,7 +1,4 @@
-<link rel="stylesheet" type="text/css" href="common/jquery.dataTables.css">
-<link rel="stylesheet" type="text/css" href="Hoops/style.css">
-<link rel="stylesheet" type="text/css" href="font-awesome/css/all.css">
-<link rel="stylesheet" href="common/bootstrap.min.css">
+
 
 <div class='ext_NavBar'>
   {% include "../../static/html_templates/ext_NavBar.html" %}
@@ -42,8 +39,8 @@
                       <col span="1">
                   </colgroup>
                   {% for team in teams %}
-                  <tr class='teamTableBorder'  style='border-left-color: #{{team.team_color_primary_hex}}; border-right-color: #{{team.team_color_primary_hex}};'>
-                    <td class="worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle">
+                  <tr class=''  style='border-left-color: #{{team.team_color_primary_hex}}; border-right-color: #{{team.team_color_primary_hex}};'>
+                    <td class="worldOverviewTop25TeamLineRank  w3-cell w3-cell-middle" style='background-color:  #{{team.team_color_primary_hex}}; color: white;'>
                       <div class='Top25RankNumberw3-display-middle '>{{ team.team_season.rankings.national_rank[0] }}</div>
                       {% if team.NationalRankDelta < 0 %}
                       <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaRed'>&#8595;{{team.NationalRankDeltaAbs}}</div>
@@ -51,7 +48,7 @@
                       <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaGreen'>&#8593;{{team.NationalRankDeltaAbs}}</div>
                       {% endif %}
                     </td>
-                    <td>
+                    <td style='background-color:  #{{team.team_color_primary_hex}}; color: white;'>
                       <a  class='' href="{{team.team_href}}">
                         <img class='worldTeamLogo' src='{{team.team_logo_100}}' alt="">
                       </a>
@@ -250,8 +247,3 @@
     </div>
   </div>
 </body>
-
-{% include "../../static/html_templates/ext_CommonScripts.html" %}
-
-<script type="text/javascript" charset="utf8" src="common/jquery.dataTables.js"></script>
-<script src="Pages/World.js" type="module"></script>

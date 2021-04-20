@@ -1,29 +1,17 @@
-'use strict';
-import AbstractView from "./AbstractView.js";
-
-export default class extends AbstractView {
-
-    constructor(params) {
-        super(params);
-        this.setTitle("Dashboard");
-        this.packaged_functions = params['packaged_functions'];
-        this.db = params['db'];
-    }
-
-    async getHtml() {
-      const db = this.db;
+const getHtml = async (common) => {
+      const db = common.db;
       nunjucks.configure({ autoescape: true });
-      var query_to_dict = this.packaged_functions.query_to_dict;
+      var query_to_dict = common.query_to_dict;
 
       var world_obj = {};
 
-      const NavBarLinks = await this.packaged_functions.nav_bar_links({
+      const NavBarLinks = await common.nav_bar_links({
         path: 'World',
         group_name: 'World',
         db: db
       });
 
-      var render_content = {team_list: [], page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks}, world_id: this.params['world_id']};
+      var render_content = {team_list: [], page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks}, world_id: common.world_id};
       var teams = await db.team.toArray();
       var conferences = await query_to_dict(await db.conference.toArray(), 'one_to_one','conference_id');
       var conference_seasons = await query_to_dict(await db.conference_season.where({season: 2021}).toArray(), 'one_to_one','conference_season_id');
@@ -47,20 +35,20 @@ export default class extends AbstractView {
 
 
       render_content['teams'] = teams
-      console.log('render_content', render_content)
 
-      var url = '/static/html_templates/world.html'
+      var url = '/static/html_templates/world/template_world.html'
       var html = await fetch(url);
       html = await html.text();
 
-      const renderedHtml = this['packaged_functions']['nunjucks_env'].renderString(html, render_content);
-      return renderedHtml
+      const renderedHtml = common.nunjucks_env.renderString(html, render_content);
+      //return renderedHtml
+
+      $('#body').html(renderedHtml)
     }
 
 
-
-    async action() {
-      const packaged_functions = this.packaged_functions;
+    const action = async (common) => {
+      const packaged_functions = common;
       const db = this.db;
 
       //Show initial 'new world' modal
@@ -93,8 +81,17 @@ export default class extends AbstractView {
         var ba_add = await db.team.bulkAdd(teams);
         console.log('ba_add', ba_add);
 
-
-
       });
     }
-}
+
+$(document).ready(async function(){
+  var startTime = performance.now()
+
+  const common = await common_functions('/World/:world_id/');
+
+  await getHtml(common);
+  await action(common);
+
+  var endTime = performance.now()
+  console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
+})

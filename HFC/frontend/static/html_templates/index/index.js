@@ -1,5 +1,20 @@
 import AbstractView from "./AbstractView.js";
 
+class player_stat {
+
+  constructor(){
+
+    }
+
+
+  get completion_percentage() {
+    if (this.attempts == 0){
+      return 0
+    }
+    return this.completions / this.attempts;
+  }
+}
+
 export default class extends AbstractView {
     constructor(params) {
         super(params);
@@ -8,19 +23,16 @@ export default class extends AbstractView {
     }
 
     async getHtml() {
-      console.log('this', this)
       nunjucks.configure({ autoescape: true });
 
       var db = null;
       var world_obj = {};
       const db_list = await this['packaged_functions']['get_databases_references']();
-      console.log('this.db_list', db_list)
       var render_content = {world_list: []}
 
       $.each(db_list, function(ind, db){
 
         world_obj = db;
-        console.log('world_obj', world_obj, db)
         //world_obj['world_id'] = parseInt(db['database_name'].replace('headfootballcoach', ''));
         render_content['world_list'].push(world_obj)
       });
@@ -38,6 +50,8 @@ export default class extends AbstractView {
 
 
     async action() {
+      const packaged_functions = this.packaged_functions;
+
       //Show initial 'new world' modal
       $('#create-world-row').on('click', function(){
         $('#indexCreateWorldModal').css({'display': 'block'});
@@ -57,11 +71,35 @@ export default class extends AbstractView {
         });
       });
 
+      $('#truncate-world-row').on('click', async function(){
+        const get_databases_references = packaged_functions['get_databases_references'];
 
-      const packaged_functions = this.packaged_functions;
+
+        var database_refs = await get_databases_references();
+        var db = undefined;
+        $.each(database_refs, async function(ind, db_obj){
+          db = await db_obj.db;
+
+          await db.delete();
+        });
+
+        const driver_db = await packaged_functions['driver_db']();
+
+        const driver_worlds = await driver_db.world.toArray();
+        const world_ids = driver_worlds.map(world => world.world_id);
+        await driver_db.world.bulkDelete(world_ids);
+
+        location.reload();
+        return false;
+
+      });
+
+
+
+      const classes = ['FR', 'SO', 'JR', 'SR'];
       const positions = ['QB', 'RB', 'WR', 'TE', 'OT', 'OG', 'OC', 'DE', 'DT', 'OLB', 'MLB', 'CB', 'S', 'K', 'P'];
-      const first_names = ["Tom", "Miles", "Travis", "Jack", "Maina", "Phil", "Andrew"];
-      const last_names = ['Kennedy', 'Wilson', 'Latham', 'Jackson', 'Murphy', 'Shon', "Dodson", 'Alley', 'Cate'];
+      const first_names = ["Tom", "Miles", "Travis", "Jack", "Maina", "Phil", "Andrew", 'Tyler', 'Bryan', 'Peter', 'Jeffrey', 'Brad', 'Taronish', 'Jeremy', 'Craig', 'Jim', 'Barry', 'Dan', 'Ted', 'Theodore'];
+      const last_names = ['Kennedy', 'Wilson', 'Latham', 'Jackson', 'Murphy', 'Shon', "Dodson", 'Alley', 'Cate', 'Rushton', 'Miller', 'Bollinger', 'Pope', 'Loach', 'Weiss', 'Lovalvo', 'Russell', 'Ingram', 'Zucker'];
 
       //Create new db if clicked 'continue'
       $('#indexCreateWorldModalContinueButton').on('click', async function(){
@@ -91,8 +129,8 @@ export default class extends AbstractView {
                                                        }
                                                      });
 
-        const phases = await packaged_functions['create_phase'](season);
-        const weeks = await packaged_functions['create_week'](phases);
+        const phases_created = await packaged_functions['create_phase'](season);
+        const weeks = await packaged_functions['create_week'](phases_created);
 
         var teams_from_json = await packaged_functions['get_teams']({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
         const num_teams = teams_from_json.length;
@@ -132,13 +170,12 @@ export default class extends AbstractView {
         });
 
         const conference_seasons_added = await db.conference_season.bulkAdd(conference_seasons_to_create);
-        const conference_seasons =  await query_to_dict(await db.conference_season.toArray(), 'one_to_one','conference_id');
+        var conference_seasons =  await query_to_dict(await db.conference_season.toArray(), 'one_to_one','conference_id');
 
         $.each(conferences, function(conference_name, conference){
           conference.conference_season = conference_seasons[conference.conference_id];
         });
 
-        console.log('conferences', conferences)
         var teams = [];
 
         $.each(teams_from_json, function(ind, team){
@@ -180,11 +217,9 @@ export default class extends AbstractView {
         var teams = await db.team.toArray();
         var team_seasons_tocreate = [];
 
-        console.log('conferences', conferences)
 
         var team_id = 1;
         $.each(teams, function(ind, team){
-          console.log('team', team)
           team_seasons_tocreate.push({team_id: team.team_id,
                                       world_id: world_id,
                                       season: season,
@@ -237,6 +272,35 @@ export default class extends AbstractView {
           team_season.rankings.national_rank.push(rank_count);
 
           rank_count +=1;
+        });
+
+        conference_seasons =  await db.conference_season.toArray();
+        var team_seasons_in_conference_season = [];
+        var top_record = {};
+        $.each(conference_seasons, function(ind, conference_season){
+          team_seasons_in_conference_season = team_seasons.filter(ts => ts.conference_season_id == conference_season.conference_season_id);
+          team_seasons_in_conference_season.sort(function(a, b) {
+              if (a.rating.overall < b.rating.overall) return -1;
+              if (a.rating.overall > b.rating.overall) return 1;
+              return 0;
+            });
+
+            rank_count = 1;
+            top_record = {};
+            $.each(team_seasons_in_conference_season, function(ind, team_season){
+              team_season.rankings.division_rank.push(rank_count);
+
+              if (rank_count == 1){
+                team_season.record.conference_gb
+                top_record = team_season.record;
+                team_season.record.conference_gb = 0;
+              }
+              else {
+                team_season.record.conference_gb = ((top_record.conference_wins - team_season.record.conference_wins) + ( team_season.record.conference_losses - top_record.conference_losses)) / 2;
+              }
+
+              rank_count +=1;
+            });
         });
 
         var team_season_updated = await db.team_season.bulkPut(team_seasons);
@@ -293,13 +357,168 @@ export default class extends AbstractView {
         var player_team_seasons_tocreate = [];
 
         var count = 0;
+        var player_stat_obj = undefined;
         $.each(players, function(ind, player){
           player_team_seasons_tocreate.push({ player_id: player.player_id,
                                               team_season_id: team_seasons[count % num_teams]['team_season_id'],
                                               is_captain: false,
                                               class: {
-                                                class_name: 'JR',
+                                                class_name: classes[Math.floor(Math.random() * classes.length)],
                                                 redshirted: false
+                                              },
+                                              season_stats: {
+                                                games: {
+                                                    game_score:0,
+                                                    games_played:0,
+                                                    games_started:0,
+                                                    plays_on_field:0,
+                                                    team_games_played:0,
+                                                  },
+                                                top_stats : [],
+                                                passing : {
+                                                    completions: 0,
+                                                    attempts: 0,
+                                                    yards: 0,
+                                                    tds: 0,
+                                                    ints:0,
+                                                    sacks:0,
+                                                    sack_yards:0,
+                                                  },
+                                                  rushing : {
+                                                    carries:0,
+                                                    yards:0,
+                                                    tds:0,
+                                                    over_20:0,
+                                                    lng:0,
+                                                    broken_tackles:0,
+                                                    yards_after_contact:0,
+                                                  },
+
+                                                  receiving : {
+                                                    yards:0,
+                                                    targets:0,
+                                                    receptions:0,
+                                                    tds:0,
+                                                    yards_after_catch:0,
+                                                    drops:0,
+                                                    lng:0,
+                                                    yards:0,
+                                                  },
+                                                  blocking : {
+                                                    sacks_allowed:0,
+                                                    pancakes:0,
+                                                    blocks:0,
+                                                  },
+                                                  defense : {
+                                                    tackles:0,
+                                                    solo_tackles:0,
+                                                    sacks:0,
+                                                    tackles_for_loss:0,
+                                                    deflections:0,
+                                                    qb_hits:0,
+                                                    tds:0,
+                                                    ints:0,
+                                                    int_yards:0,
+                                                    int_tds:0,
+                                                    safeties:0,
+                                                  },
+                                                  fumbles : {
+                                                    fumbles: 0,
+                                                    lost: 0,
+                                                    recovered: 0,
+                                                    forced: 0,
+                                                    return_yards: 0,
+                                                    return_tds: 0,
+                                                  },
+                                                  kicking : {
+                                                    fga:0,
+                                                    fgm:0,
+                                                    fga_29:0,
+                                                    fgm_29:0,
+                                                    fga_39:0,
+                                                    fgm_39:0,
+                                                    fga_49:0,
+                                                    fgm_49:0,
+                                                    fga_50:0,
+                                                    fgm_50:0,
+                                                    lng:0,
+                                                    xpa:0,
+                                                    xpm:0,
+                                                    kickoffs:0,
+                                                    touchbacks:0,
+                                                  },
+                                                  punting: {
+                                                    punts:0,
+                                                    yards:0,
+                                                    touchbacks:0,
+                                                    within_20:0,
+                                                  },
+                                                  returning: {
+                                                    kr_returns:0,
+                                                    kr_yards:0,
+                                                    kr_tds:0,
+                                                    kr_lng:0,
+                                                    pr_returns:0,
+                                                    pr_yards:0,
+                                                    pr_tds:0,
+                                                    pr_lng:0,
+                                                  }
+                                              },
+                                              ratings: {
+                                                athleticism: {
+                                                  strength: Math.floor(Math.random() * 100),
+                                                  agility: Math.floor(Math.random() * 100),
+                                                  speed: Math.floor(Math.random() * 100),
+                                                  acceleration: Math.floor(Math.random() * 100),
+                                                  stamina: Math.floor(Math.random() * 100),
+                                                  jumping: Math.floor(Math.random() * 100),
+                                                  injury: Math.floor(Math.random() * 100),
+                                                },
+                                                passing: {
+                                                  throwing_power: Math.floor(Math.random() * 100),
+                                                  short_throw_accuracy: Math.floor(Math.random() * 100),
+                                                  medium_throw_accuracy: Math.floor(Math.random() * 100),
+                                                  deep_throw_accuracy: Math.floor(Math.random() * 100),
+                                                  throw_on_run: Math.floor(Math.random() * 100),
+                                                  throw_under_pressure: Math.floor(Math.random() * 100),
+                                                  play_action: Math.floor(Math.random() * 100),
+                                                },
+                                                rushing: {
+                                                  elusiveness: Math.floor(Math.random() * 100),
+                                                  ball_carrier_vision: Math.floor(Math.random() * 100),
+                                                  break_tackle: Math.floor(Math.random() * 100),
+                                                  carrying: Math.floor(Math.random() * 100),
+                                                },
+                                                receiving: {
+                                                  catching: Math.floor(Math.random() * 100),
+                                                  catch_in_traffic: Math.floor(Math.random() * 100),
+                                                  route_running: Math.floor(Math.random() * 100),
+                                                  release: Math.floor(Math.random() * 100),
+                                                },
+                                                defense: {
+                                                  hit_power: Math.floor(Math.random() * 100),
+                                                  tackle: Math.floor(Math.random() * 100),
+                                                  pass_rush: Math.floor(Math.random() * 100),
+                                                  block_shedding: Math.floor(Math.random() * 100),
+                                                  pursuit: Math.floor(Math.random() * 100),
+                                                  play_recognition: Math.floor(Math.random() * 100),
+                                                  man_coverage: Math.floor(Math.random() * 100),
+                                                  zone_coverage: Math.floor(Math.random() * 100),
+                                                  press: Math.floor(Math.random() * 100),
+                                                },
+                                                blocking: {
+                                                  pass_block: Math.floor(Math.random() * 100),
+                                                  run_block: Math.floor(Math.random() * 100),
+                                                  impact_block: Math.floor(Math.random() * 100),
+                                                },
+                                                kicking: {
+                                                  kick_power: Math.floor(Math.random() * 100),
+                                                  kick_accuracy: Math.floor(Math.random() * 100),
+                                                },
+                                                overall: {
+                                                  awareness: Math.floor(Math.random() * 100),
+                                                  overall: Math.floor(Math.random() * 100),
+                                                }
                                               },
                                               world_id: world_id,
                                               post_season_movement: null, //[quit, graduate, draft, transfer]
@@ -312,7 +531,7 @@ export default class extends AbstractView {
         var player_team_seasons_tocreate_added = await db.player_team_season.bulkAdd(player_team_seasons_tocreate);
 
 
-        var games_to_create = [];
+        var games_to_create = [],team_games_to_create = [],team_games_to_create_ids = [];
         var team_season_schedule_tracker = {}
         const games_per_team = 10;
         const zip = (a, b) => a.map((k, i) => [k, b[i]]);
@@ -329,17 +548,30 @@ export default class extends AbstractView {
         var scheduling_teams = true;
         var team_season_id_list = [];
         var team_set_a = [], team_set_b = [], zipped_set = [], teams_to_schedule=[], games_to_create_ids=[];
-        var week_id = 1;
+
+        const phases = await query_to_dict(await db.phase.where({season: season}).toArray(), 'one_to_one','phase_id');;
+        var week_ids = await db.week.where({season: season}).toArray();
+        $.each(week_ids, function(ind, week){
+          week.phase = phases[week.phase_id];
+        })
+        week_ids = week_ids.filter(week => week.phase.phase_name == 'Regular Season');
+
+        var week_counter = 0, week_id=0;
         var last_game = await db.game.orderBy('game_id').first();
+        var last_team_game = await db.team_game.orderBy('team_game_id').first();
+
         var next_game_id = 1;
         if (!(last_game === undefined)){
           next_game_id = last_game.game_id + 1;
         }
+        var next_team_game_id = 1;
+        if (!(last_team_game === undefined)){
+          next_team_game_id = last_team_game.team_game_id + 1;
+        }
 
         team_seasons = await query_to_dict(await db.team_season.where({season: season}).toArray(), 'one_to_one','team_id');
-        console.log('team_seasons' , team_seasons)
         while (scheduling_teams) {
-          console.log('Scheduling week' , week_id)
+          console.log('Scheduling for week', week_counter + 1, week_counter);
           team_season_id_list = Object.keys(team_season_schedule_tracker);
           team_season_id_list = team_season_id_list.filter(team_id => team_season_schedule_tracker[team_id].games_to_schedule > 0)
           team_season_id_list.sort(function(t1, t2){
@@ -361,24 +593,31 @@ export default class extends AbstractView {
             var team_a = obj[0], team_b = obj[1];
 
             if (!(team_a in team_season_schedule_tracker[team_b].opponents_scheduled)) {
+
+              week_id = week_ids[week_counter].week_id;
               team_season_schedule_tracker[team_a].games_to_schedule -=1;
               team_season_schedule_tracker[team_a].games_scheduled   +=1;
               team_season_schedule_tracker[team_a].home_games        +=1;
-              team_season_schedule_tracker[team_a].weeks_scheduled.push(week_id);
+              team_season_schedule_tracker[team_a].weeks_scheduled.push(week_counter);
               team_season_schedule_tracker[team_a].opponents_scheduled.push(team_b);
 
               team_season_schedule_tracker[team_b].games_to_schedule -=1;
               team_season_schedule_tracker[team_b].games_scheduled   +=1;
               team_season_schedule_tracker[team_b].away_games        +=1;
-              team_season_schedule_tracker[team_b].weeks_scheduled.push(week_id);
+              team_season_schedule_tracker[team_b].weeks_scheduled.push(week_counter);
               team_season_schedule_tracker[team_b].opponents_scheduled.push(team_a);
 
-              team_seasons[team_a].games.push({week_id: week_id, game_id: next_game_id, opponent_team_season_id: team_b,opponent_team_id: team_seasons[team_b].team_id})
-              team_seasons[team_b].games.push({week_id: week_id, game_id: next_game_id, opponent_team_season_id: team_a, opponent_team_id: team_seasons[team_a].team_id})
+              team_games_to_create.push({world_id: world_id, team_game_id: next_team_game_id  , points:null, is_winning_team: null , is_home_team: true , opponent_team_game_id: next_team_game_id+1,week_id: week_id, game_id: next_game_id, team_season_id: parseInt(team_a), opponent_team_season_id: parseInt(team_b)});
+              team_games_to_create.push({world_id: world_id, team_game_id: next_team_game_id+1, points:null, is_winning_team: null , is_home_team: false, opponent_team_game_id: next_team_game_id  ,week_id: week_id, game_id: next_game_id, team_season_id: parseInt(team_b), opponent_team_season_id: parseInt(team_a), });
+
+
+              team_games_to_create_ids.push(next_team_game_id)
+              team_games_to_create_ids.push(next_team_game_id+1)
 
               games_to_create.push({
                 game_id: next_game_id,
-                home_team_season_id: team_a, away_team_season_id: team_b,
+                home_team_season_id: parseInt(team_a), away_team_season_id: parseInt(team_b),
+                home_team_game_id: next_team_game_id, away_team_game_id: next_team_game_id+1,
                 week_id: week_id, game_time: '7:05PM', was_played: false,
                 outcome: {home_team_score: null, away_team_score: null, winning_team_season_id: null, losing_team_season_id: null},
                 rivalry: {}, bowl: {}, broadcast: {regional_broadcast: false, national_broadcast: false,},
@@ -388,14 +627,15 @@ export default class extends AbstractView {
               games_to_create_ids.push(next_game_id);
 
               next_game_id +=1;
+              next_team_game_id +=2;
             }
           });
 
 
           team_season_id_list = team_season_id_list.filter(team_id => team_season_schedule_tracker[team_id].games_to_schedule > 0)
 
-          scheduling_teams = team_season_id_list.length > 1 && week_id < 16;
-          week_id +=1;
+          scheduling_teams = team_season_id_list.length > 1 && week_counter < 14;
+          week_counter +=1;
           team_set_a = [];
           team_set_b = [];
 
@@ -403,12 +643,10 @@ export default class extends AbstractView {
 
         const team_seasons_to_update = Object.values(team_seasons);
 
-        console.log('games_to_create', games_to_create, games_to_create_ids)
-
         //const games_created = await db.game.bulkAdd(games_to_create, games_to_create_ids);
         const games_created = await db.game.bulkPut(games_to_create);
+        const team_games_created = await db.team_game.bulkPut(team_games_to_create);
         team_season_updated = await db.team_season.bulkPut(team_seasons_to_update);
-        console.log('team_season_schedule_tracker', team_season_schedule_tracker)
 
         window.location.href = `/World/${world_id}`
       });

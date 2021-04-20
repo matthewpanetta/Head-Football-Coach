@@ -18,11 +18,11 @@
       {{team.location.city}}, {{team.location.state}} | <a href="/World/{{page.WorldID}}/Conferences/{{ThisTeamSeason.DivisonSeasonID.ConferenceSeasonID.ConferenceID.ConferenceID}}">{{ThisTeamSeason.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceName}}</a>
     </div>
     <div class='teamOverviewInfo'>
-      {% for Link in HeaderLink.LinkPaths%}
+      {% for Link in page.TeamHeaderLinks.link_paths%}
       {% if forloop.counter0 > 0%}
       |
       {% endif %}
-      <a href="/World/{{page.WorldID}}/Team/{{ThisTeamSeason.TeamID.TeamID}}/{{Link.HrefExtension}}">{{Link.Display}}</a>
+      <a href="{{team.team_href}}/{{Link.href_extension}}">{{Link.Display}}</a>
       {% endfor %}
     </div>
   </div>

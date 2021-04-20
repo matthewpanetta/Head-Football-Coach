@@ -1,0 +1,225 @@
+<div>
+  {% include "../../static/html_templates/ext_NavBar.html" %}
+</div>
+
+<head>
+  <style id="addedStyle">
+    .SelectedWeekBox::after {
+      border-left-width: 35px;
+      border-right-width: 35px;
+      border-width: 15px 35px 0;}
+  </style>
+</head>
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/jquery.dataTables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/searchPanes.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/select.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/buttons.dataTables.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/fixedHeader.dataTables.min.css' %}">
+<link rel="stylesheet" href="{% static 'common/bootstrap.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'Hoops/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/all.css' %}">
+
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{TeamID|default_if_none:userTeam.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "HeadFootballCoach/Scoreboard.html" %}
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button id="nav-weekly-schedule-tab" class="w3-bar-item w3-button tab nav-tab-button selected-tab" style="background-color: #{{page.SecondaryColor}};">Weekly Schedule</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-weekly-schedule">
+      {%  if AllWeeks|length > 0%}
+        <div class='w3-display-container' >
+
+          <div class='w3-row-padding'>
+            <div class='w3-col mw1100 l12'>
+              <div class="w3-card ">
+                <div class="w3-card w3-light-grey w3-col s12">
+                  <div class="w3-row-padding w3-white">
+                    {% for Week in AllWeeks%}
+                    <div WeekID="{{Week.Week.WeekID}}" hasfacesdrawn='0' class=" w3-display-container {{Week.Week.SelectedWeekBox}} weekScheduleBox" style='flex-grow: 1;'>
+                      <div class="ellipsis width100 font10-plain" style='background-color: black; text-align: center; color: white;'>Week</div>
+
+                      <div class="width100 height100">
+                        <div class="font20">
+                          <div >{{Week.Week.WeekNumber}}</div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <div class="w3-row w3-display-container w3-light-grey">
+                    {% for Week in AllWeeks%}
+                    <div class="w3-display-container {{Week.Week.ShowWeekClass}} weekScheduleDisplayContainer" hasfacesdrawn='0'  WeekID="{{Week.Week.WeekID}}">
+                      {% for Game in Week.Games%}
+                      {% if forloop.counter0|modulo:2 == 0 %}
+                        <div class="w3-row-padding">
+                      {% endif %}
+                        <div  class='w3-card w3-col l5 m12 hidden-overflow w3-margin-bottom w3-margin-top' style='background-color: white; padding: 0px; min-width: 400px;'>
+                          <div class="w3-container">
+                            <div class="scheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+                              <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{Game.Game.AwayTeamPrimaryColor}}'></div>
+                              <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
+                              <img class='teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{Game.Game.AwayTeamLogo}}' />
+                            </div>
+                            <div class="scheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+                              <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{Game.Game.HomeTeamPrimaryColor}}'></div>
+                              <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
+                              <img class='teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{Game.Game.HomeTeamLogo}}' />
+                            </div>
+                          <table class='width100 scheduleGameTable' style='table-layout: fixed;'>
+                            <colgroup>
+                                <col span="1" style='width: 40%;'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                                <col span="1" style='width: 7%'>
+                            </colgroup>
+                            <thead>
+                              {% if Game.Game.WasPlayed %}
+                              <th><a href="{{Game.Game.GameHref}}" class='font10 left-text'>Box Score</a></th>
+                              {% for Period in Game.PeriodScores%}
+                              <th>{{Period.EventPeriod|PeriodMap}}</th>
+                              {% endfor %}
+                              <th>F</th>
+                              {% else%}
+                              <th><a href="{{Game.Game.GameHref}}" class='font10 left-text'>Preview</a></th>
+                              {% endif %}
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td class='left-text'>
+                                  <span class='font10'>{{Game.Game.AwayTeamRank}}</span>
+                                  <a href="{{Game.Game.AwayTeamHref}}" class='{{Game.Game.AwayTeamWinningGameBold}}'>{{Game.Game.AwayTeamName}}</a>
+                                  <span class='font10'>{{Game.Game.AwayTeamRecord}}</span>
+                                </td>
+                                {% if Game.Game.WasPlayed %}
+                                {% for Period in Game.PeriodScores%}
+                                <td>{{ Period.AwayPointsScoredThisPeriod|default_if_none:Period.PeriodAwayPoints   }}</td>
+                                {% endfor %}
+                                <td class='{{Game.Game.AwayTeamWinningGameBold}}'>{{Game.Game.AwayPoints}}</td>
+                                {% endif %}
+                              </tr>
+                              <tr>
+                                <td class='left-text '>
+                                  <span class='font10'>{{Game.Game.HomeTeamRank}}</span>
+                                  <a href="{{Game.Game.HomeTeamHref}}" class='{{Game.Game.HomeTeamWinningGameBold}}'>{{Game.Game.HomeTeamName}}</a>
+                                  <span class='font10'>{{Game.Game.HomeTeamRecord}}</span>
+                                </td>
+                                {% if Game.Game.WasPlayed %}
+                                {% for Period in Game.PeriodScores%}
+                                <td>{{ Period.HomePointsScoredThisPeriod|default_if_none:Period.PeriodHomePoints   }}</td>
+                                {% endfor %}
+                                <td class='{{Game.Game.HomeTeamWinningGameBold}}'>{{Game.Game.HomePoints}}</td>
+                                {% endif %}
+                              </tr>
+                            </tbody>
+                          </table>
+                          </div>
+                          {% if Game.Game.WasPlayed %}
+                          <div class="w3-row-padding w3-margin-top">
+                            <div class="w3-col s6 no-padding" style='border-left: 4px solid #{{Game.Game.HomeTeamPrimaryColor}};'>
+                              <h6 class='font12 padding-left-8' style='border-bottom: 4px solid #{{Game.Game.HomeTeamPrimaryColor}};'>{{Game.Game.HomeTeamName}} Top Players</h6>
+                            <ul class='no-list-style'>
+                              {% for Player in Game.HomeTopPlayers%}
+                              <li class='font12'>
+                                <div class="">
+                                  <span>{{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}</span>
+                                  <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID.PlayerID.PlayerFirstName}} {{Player.PlayerTeamSeasonID.PlayerID.PlayerLastName}} </a>
+                                    <span>({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})</span>
+                                </div>
+                                <div class="" >
+                                  <div class="PlayerFace-45 PlayerFace-Headshot PlayerFaceDisplay inline-block align-top" style='border-color:#{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Primary_HEX}}'>
+                                    {{PlayerFaceSVGDict|keyvalue:Player.PlayerTeamSeasonID.PlayerID.PlayerID|safe}}
+
+                                  </div>
+                                  <ul class='no-list-style font10 inline-block'>
+                                    <li>{{Player.TopStatStringDisplay1_Text}}</li>
+                                    <li>{{Player.TopStatStringDisplay2_Text}}</li>
+                                    <li>{{Player.TopStatStringDisplay3_Text}}</li>
+                                  </ul>
+                                </div>
+                              </li>
+                              {% endfor %}
+                            </ul>
+                            </div>
+                            <div class="w3-col s6 no-padding" style='border-left: 4px solid #{{Game.Game.AwayTeamPrimaryColor}};'>
+                              <h6 class='font12 padding-left-8' style='border-bottom: 4px solid #{{Game.Game.AwayTeamPrimaryColor}};'>{{Game.Game.AwayTeamName}} Top Players</h6>
+                            <ul class='no-list-style'>
+                              {% for Player in Game.AwayTopPlayers%}
+                              <li class='font12'>
+                                <div class="">
+                                  <span>{{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}</span>
+                                  <a href="{{Player.PlayerHref}}">{{Player.PlayerTeamSeasonID.PlayerID.PlayerFirstName}} {{Player.PlayerTeamSeasonID.PlayerID.PlayerLastName}} </a>
+                                    <span>({{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.Abbreviation}})</span>
+                                </div>
+                                <div class="" >
+                                  <div class="PlayerFace-45 PlayerFace-Headshot PlayerFaceDisplay inline-block align-top"  style='border-color:#{{Player.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamColor_Primary_HEX}}' >
+                                    {{PlayerFaceSVGDict|keyvalue:Player.PlayerTeamSeasonID.PlayerID.PlayerID|safe}}
+                                  </div>
+                                  <ul class='no-list-style font10 inline-block'>
+                                    <li>{{Player.TopStatStringDisplay1_Text}}</li>
+                                    <li>{{Player.TopStatStringDisplay2_Text}}</li>
+                                    <li>{{Player.TopStatStringDisplay3_Text}}</li>
+                                  </ul>
+                                </div>
+                              </li>
+                              {% endfor %}
+                            </ul>
+                            </div>
+                          </div>
+                          {% endif %}
+                        </div>
+                        {% if forloop.counter0|modulo:2 == 1 %}
+                        </div>
+                        {% elif forloop.last %}
+                        </div>
+                        {% endif %}
+
+                      {% endfor %}
+                    </div>
+
+                    {% endfor %}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+          {% else %}
+          <div class="w3-display-middle">
+            <span>No games to display</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+</body>
+
+{% include "HeadFootballCoach/ext_CommonScripts.html" %}
+<script src="{% static 'Pages/Schedule.js' %}" type="module"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.select.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.searchPanes.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.buttons.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/buttons.colVis.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedColumns.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'common/dataTables.fixedHeader.min.js' %}"></script>
+
+{{ TopTeams|json_script:"top-teams-data" }}
