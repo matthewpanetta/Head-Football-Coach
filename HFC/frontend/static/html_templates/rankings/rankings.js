@@ -1,29 +1,18 @@
-'use strict';
-import AbstractView from "./AbstractView.js";
 
-export default class extends AbstractView {
-
-    constructor(params) {
-        super(params);
-        this.setTitle("Dashboard");
-        this.packaged_functions = params['packaged_functions'];
-        this.db = params['db'];
-    }
-
-    async getHtml() {
-      const db = this.db;
+    const getHtml = async(common) => {
+      const db = common.db;
       nunjucks.configure({ autoescape: true });
-      var query_to_dict = this.packaged_functions.query_to_dict;
+      var query_to_dict = common.query_to_dict;
 
       var world_obj = {};
 
-      const NavBarLinks = await this.packaged_functions.nav_bar_links({
+      const NavBarLinks = await common.nav_bar_links({
         path: 'Rankings',
         group_name: 'World',
         db: db
       });
 
-      var render_content = {team_list: [], page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks}, world_id: this.params['world_id']};
+      var render_content = {team_list: [], page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks}, world_id: common.params['world_id']};
       var teams = await db.team.toArray();
       var conferences = await query_to_dict(await db.conference.toArray(), 'one_to_one','conference_id');
       var conference_seasons = await query_to_dict(await db.conference_season.where({season: 2021}).toArray(), 'one_to_one','conference_season_id');
@@ -49,22 +38,20 @@ export default class extends AbstractView {
       render_content['teams'] = teams
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/rankings.html'
+      var url = '/static/html_templates/rankings/template_rankings.html'
       var html = await fetch(url);
       html = await html.text();
 
-      const renderedHtml = this['packaged_functions']['nunjucks_env'].renderString(html, render_content);
-      return renderedHtml
+      const renderedHtml = common.nunjucks_env.renderString(html, render_content);
+
+      $('#body').html(renderedHtml);
+
     }
 
+    const action = async (common) => {
+      const db = common.db;
 
-
-    async action() {
-      const packaged_functions = this.packaged_functions;
-      const db = this.db;
-
-
-      this.PopulateTop25();
+      PopulateTop25(common);
 /*
         LastWeekGameDict = {}
         LastWeekGameList = TeamGame.objects.filter(WorldID = WorldID).filter(GameID__WeekID = LastWeek).values('Points', 'TeamSeasonID__TeamID').annotate(
@@ -147,7 +134,7 @@ export default class extends AbstractView {
     }
 
 
-    DrawTeamInfo(data, WorldID, SelectedTeamID){
+    const DrawTeamInfo = async (data, WorldID, SelectedTeamID) => {
       var div = $(`
         <div class="w3-row-padding">
           <div class='w3-col s3'>
@@ -266,10 +253,10 @@ export default class extends AbstractView {
     }
 
 
-    async PopulateTop25(){
+    const PopulateTop25 = async (common) => {
 
-      const db = this.db;
-      const query_to_dict = this.packaged_functions.query_to_dict;
+      const db = common.db;
+      const query_to_dict = common.query_to_dict;
 
       var this_week = await db.week.where({season: 2021}).toArray();
       console.log('this_week', this_week)
@@ -358,23 +345,21 @@ export default class extends AbstractView {
           "data": top_25_team_seasons,
           "columns": [
             {"data": null, "sortable": true, 'className': '', 'searchable': true,"fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-              console.log('td, StringValue, DataObject, iRow, iCol', td, StringValue, team_season, iRow, iCol)
-                $(td).attr('style', `background-color: #${team_season.team.team_color_primary_hex}; color: white; width: 30px;` );
-                //$(td).attr('style', `border-left-color: #${team_season.team.team_color_primary_hex};`)
-                $(td).addClass(' Top25RankNumber ').addClass('align-middle')
-                $(td).html('<div class="align-middle">'+team_season.rankings.national_rank[0]+'</div>')
-                //TODO $(td).append('<span class="font12 w3-margin-left '+DataObject.NationalRankDeltaClass+'">'+DataObject.NationalRankDeltaSymbol+DataObject.NationalRankDeltaShow+'</span>')
+                $(td).attr('style', `background-color: #${team_season.team.team_color_primary_hex}; color: white; width: 3px;` );
+                $(td).addClass(' Top25RankNumber ').addClass('center-text')
+                $(td).html('<div class="center-text">'+team_season.rankings.national_rank[0]+'</div>')
             }},
-            {"data": null, "searchable": true, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+            {"data": null, "searchable": false, "sortable": false,"fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
               $(td).attr('style', `background-color: #${team_season.team.team_color_primary_hex}; color: white; width: 70px;` );
               $(td).html(`<a href='${team_season.team.team_href}'><img class='worldTeamLogo' src='${team_season.team.team_logo}'/></a>`);
             }},
-            {"data": null, "searchable": true, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-              $(td).html(`<a href='${team_season.team.team_href}'>${team_season.team.full_name}</a>`)
+
+            {"data": null, "searchable": true, "className": 'column-large', "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+              $(td).html(`<a style='width: 100%;' href='${team_season.team.team_href}'>${team_season.team.full_name}</a>`)
                 $(td).parent().attr('TeamID', team_season.team_id);
               }},
-              {"data": "record_display", "sortable": true, 'className': 'hide-small', 'orderSequence':["desc"]},
-              {"data": null, "sortable": true, 'searchable': true, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+              {"data": "record_display", "sortable": true, 'className': 'hide-small column-large', 'orderSequence':["desc"]},
+              {"data": null, "sortable": true, "className": 'column-large', 'searchable': true, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
                 if (team_season.last_week_team_game == null){
                   $(td).html('BYE')
                 }
@@ -384,7 +369,7 @@ export default class extends AbstractView {
                   $(td).append(`<span class="hide-small"> ${team_season.last_week_team_game.game_location_char} </span><a class="hide-small" href="">${team_season.last_week_team_game.opponent_team_season.national_rank_display} ${team_season.last_week_team_game.opponent_team.school_name}</a>`);
                 }
               }},
-              {"data": null, "sortable": true, 'searchable': true, 'className': 'hide-small', "fnCreatedCell": function (td, ThisWeekObject, team_season, iRow, iCol) {
+              {"data": null, "sortable": true, 'searchable': true, 'className': 'hide-small column-large', "fnCreatedCell": function (td, ThisWeekObject, team_season, iRow, iCol) {
                 if (team_season.this_week_team_game == null){
                   $(td).html('BYE')
                 }
@@ -473,4 +458,17 @@ export default class extends AbstractView {
 
         });
     }
-}
+
+
+    $(document).ready(async function(){
+      var startTime = performance.now()
+
+      const common = await common_functions('/World/:world_id/Ranking/');
+
+      await getHtml(common);
+      await action(common);
+
+      var endTime = performance.now()
+      console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
+
+    })

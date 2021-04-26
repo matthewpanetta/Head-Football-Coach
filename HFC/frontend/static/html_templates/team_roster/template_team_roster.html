@@ -1,20 +1,10 @@
-<div>
-  {% include "../../static/html_templates/ext_NavBar.html" %}
-</div>
+{% include "../../static/html_templates/ext_NavBar.html" %}
 
-<link rel="stylesheet" type="text/css" href='common/jquery.dataTables.css'>
-<link rel="stylesheet" type="text/css" href='common/searchPanes.dataTables.min.css'>
-<link rel="stylesheet" type="text/css" href='common/select.dataTables.min.css'>
-<link rel="stylesheet" type="text/css" href='common/buttons.dataTables.min.css'>
-<link rel="stylesheet" type="text/css" href='common/fixedHeader.dataTables.min.css'>
-<link rel="stylesheet" href='common/bootstrap.min.css'>
-<link rel="stylesheet" type="text/css" href='Hoops/style.css'>
-<link rel="stylesheet" type="text/css" href='font-awesome/css/all.css'>
 
-{% include "HeadFootballCoach/ext_TeamColoring.html" %}
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{ThisTeamSeason.TeamID.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
 
 <body>
   <div class="PageContent">
@@ -26,7 +16,7 @@
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Team Roster</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-home-states-tab">Home States</button>
-        {% include "HeadFootballCoach/ext_TeamList.html" %}
+        <p>team list</p>
       </div>
     </nav>
     <div id="nav-tabContent">
@@ -59,7 +49,7 @@
                 <table class="w3-table w3-table-all center-aligned-table" id='PlayerStats'  style="width:100%">
                   <thead>
                     <tr>
-                      <th colspan="6" class="col-group">PLAYER</th>
+                      <th colspan="7" class="col-group">PLAYER</th>
                       <th colspan="5" class="col-group">PASSING STATS</th>
                       <th colspan="7" class="col-group">RUSHING STATS</th>
                       <th colspan="7" class="col-group">RECEIVING STATS</th>
@@ -229,17 +219,3 @@
     </div>
   </div>
 </body>
-
-{% include "HeadFootballCoach/ext_CommonScripts.html" %}
-<script type="text/javascript" charset="utf8" src='/static/js/modules/datatables/jquery.dataTables.js'></script>
-<script src='/static/js/modules/datatables/dataTables.buttons.min.js'></script>
-
-<script src="static/js/modules/nunjucks.min.js"></script>
-
-
-<script type="text/javascript" charset="utf8" src='common/dataTables.select.min.js'></script>
-<script type="text/javascript" charset="utf8" src='common/dataTables.searchPanes.min.js'></script>
-<script type="text/javascript" charset="utf8" src='common/dataTables.buttons.min.js'></script>
-<script type="text/javascript" charset="utf8" src='common/buttons.colVis.min.js'></script>
-<script type="text/javascript" charset="utf8" src='common/dataTables.fixedColumns.min.js'></script>
-<script type="text/javascript" charset="utf8" src='common/dataTables.fixedHeader.min.js'></script>

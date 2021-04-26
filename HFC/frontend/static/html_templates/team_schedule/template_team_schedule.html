@@ -1,16 +1,7 @@
 {% include "../../static/html_templates/ext_NavBar.html" %}
 
 
-
-
-<link rel="stylesheet" type="text/css" href="common/jquery.dataTables.css">
-<link rel="stylesheet" type="text/css" href="common/searchPanes.dataTables.min.css">
-<link rel="stylesheet" type="text/css" href="common/select.dataTables.min.css">
-<link rel="stylesheet" type="text/css" href="common/buttons.dataTables.min.css">
-<link rel="stylesheet" type="text/css" href="common/fixedHeader.dataTables.min.css">
-<link rel="stylesheet" href="common/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="Hoops/style.css">
-<link rel="stylesheet" type="text/css" href="font-awesome/css/all.css">
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
 
 <head>
   <style id="addedStyle">
@@ -43,7 +34,7 @@
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">Other</button>
-        {% include "HeadFootballCoach/ext_TeamList.html" %}
+        <button>Team List</button>
       </div>
     </nav>
     <div id="nav-tabContent">
@@ -55,15 +46,14 @@
 
                 <table class="w3-table w3-table-all" id='TeamSchedule'  style="width:100%">
                   <thead>
-                    <th>Opponent</th>
                     <th>Week</th>
+                    <th>Opponent</th>
+                    <th></th>
                     <th>Outcome</th>
                     <th>W-L (Conf)</th>
                     <th class='hide-small'>Top Players</th>
                     <th></th>
                   </thead>
-
-
                 </table>
               </div>
             </div>
@@ -80,8 +70,3 @@
     </div>
   </div>
 </body>
-
-{% include "../../static/html_templates/ext_CommonScripts.html" %}
-<script src="Pages/TeamSchedule.js" type="module"></script>
-<script type="text/javascript" charset="utf8" src="common/jquery.dataTables.js"></script>
-<script type="text/javascript" charset="utf8" src="common/dataTables.select.min.js"></script>

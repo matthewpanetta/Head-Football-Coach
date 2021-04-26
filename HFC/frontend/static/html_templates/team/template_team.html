@@ -330,10 +330,10 @@
                     </thead>
                     {% for standing_team in conference_standings %}
                     <tr class='{{standing_team.BoldTeam}}'>
-                      <td style=' width: 10px; padding: 8px;'>
-                        <a href="{{standing_team.team.team_href}}">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
-                        </a>
+                      <td style=' width: 10px; padding: 8px; border-left-color: #{{standing_team.team.team_color_primary_hex}}' >
+                          <a href="{{standing_team.team.team_href}}">
+                            <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
+                          </a>
                       </td>
                       <td>
                         <a href="{{standing_team.team.team_href}}">

@@ -1,33 +1,10 @@
-import AbstractView from "./AbstractView.js";
 
-class player_stat {
-
-  constructor(){
-
-    }
-
-
-  get completion_percentage() {
-    if (this.attempts == 0){
-      return 0
-    }
-    return this.completions / this.attempts;
-  }
-}
-
-export default class extends AbstractView {
-    constructor(params) {
-        super(params);
-        this.setTitle("Dashboard");
-        this.packaged_functions = params['packaged_functions'];
-    }
-
-    async getHtml() {
+    const getHtml = async(common) => {
       nunjucks.configure({ autoescape: true });
 
       var db = null;
       var world_obj = {};
-      const db_list = await this['packaged_functions']['get_databases_references']();
+      const db_list = await common.get_databases_references();
       var render_content = {world_list: []}
 
       $.each(db_list, function(ind, db){
@@ -40,17 +17,18 @@ export default class extends AbstractView {
 
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/index.html'
+      var url = '/static/html_templates/index/template_index.html'
       var html = await fetch(url);
       html = await html.text();
 
-      return nunjucks.renderString(html, render_content);
+      const renderedHtml = nunjucks.renderString(html, render_content);
+
+      $('#body').html(renderedHtml);
     }
 
 
 
-    async action() {
-      const packaged_functions = this.packaged_functions;
+    const action = async (common) => {
 
       //Show initial 'new world' modal
       $('#create-world-row').on('click', function(){
@@ -72,7 +50,7 @@ export default class extends AbstractView {
       });
 
       $('#truncate-world-row').on('click', async function(){
-        const get_databases_references = packaged_functions['get_databases_references'];
+        const get_databases_references = common.get_databases_references;
 
 
         var database_refs = await get_databases_references();
@@ -83,7 +61,7 @@ export default class extends AbstractView {
           await db.delete();
         });
 
-        const driver_db = await packaged_functions['driver_db']();
+        const driver_db = await common.driver_db();
 
         const driver_worlds = await driver_db.world.toArray();
         const world_ids = driver_worlds.map(world => world.world_id);
@@ -106,9 +84,9 @@ export default class extends AbstractView {
         var par = $('#indexCreateWorldModalCloseButton').parent();
         $(par).empty();
         $(par).append('<div>Creating new world!</div>');
-        const new_db = await packaged_functions['create_new_db']();
+        const new_db = await common.create_new_db();
 
-        var query_to_dict = packaged_functions.query_to_dict;
+        var query_to_dict = common.query_to_dict;
 
         const db = new_db['db'];
         const new_season_info = new_db['new_season_info'];
@@ -129,17 +107,17 @@ export default class extends AbstractView {
                                                        }
                                                      });
 
-        const phases_created = await packaged_functions['create_phase'](season);
-        const weeks = await packaged_functions['create_week'](phases_created);
+        const phases_created = await common.create_phase(season);
+        const weeks = await common.create_week(phases_created);
 
-        var teams_from_json = await packaged_functions['get_teams']({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
+        var teams_from_json = await common.get_teams({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
         const num_teams = teams_from_json.length;
 
 
-        const divisions_from_json = await packaged_functions['get_divisions']({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
+        const divisions_from_json = await common.get_divisions({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
         const divisions = await query_to_dict(divisions_from_json, 'many_to_one','conference_name');
 
-        const conferences_from_json = await packaged_functions['get_conferences']({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
+        const conferences_from_json = await common.get_conferences({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
 
         $.each(conferences_from_json, function(ind, conference){
           conference.world_id = world_id;
@@ -607,8 +585,8 @@ export default class extends AbstractView {
               team_season_schedule_tracker[team_b].weeks_scheduled.push(week_counter);
               team_season_schedule_tracker[team_b].opponents_scheduled.push(team_a);
 
-              team_games_to_create.push({world_id: world_id, team_game_id: next_team_game_id  , points:null, is_winning_team: null , is_home_team: true , opponent_team_game_id: next_team_game_id+1,week_id: week_id, game_id: next_game_id, team_season_id: parseInt(team_a), opponent_team_season_id: parseInt(team_b)});
-              team_games_to_create.push({world_id: world_id, team_game_id: next_team_game_id+1, points:null, is_winning_team: null , is_home_team: false, opponent_team_game_id: next_team_game_id  ,week_id: week_id, game_id: next_game_id, team_season_id: parseInt(team_b), opponent_team_season_id: parseInt(team_a), });
+              team_games_to_create.push({world_id: world_id, team_game_id: next_team_game_id  , points:null, is_winning_team: null , record:{wins:0, losses:0, conference_wins: 0, conference_losses:0}, is_home_team: true , opponent_team_game_id: next_team_game_id+1,week_id: week_id, game_id: next_game_id, team_season_id: parseInt(team_a), opponent_team_season_id: parseInt(team_b)});
+              team_games_to_create.push({world_id: world_id, team_game_id: next_team_game_id+1, points:null, is_winning_team: null , record:{wins:0, losses:0, conference_wins: 0, conference_losses:0}, is_home_team: false, opponent_team_game_id: next_team_game_id  ,week_id: week_id, game_id: next_game_id, team_season_id: parseInt(team_b), opponent_team_season_id: parseInt(team_a), });
 
 
               team_games_to_create_ids.push(next_team_game_id)
@@ -652,4 +630,15 @@ export default class extends AbstractView {
       });
     }
 
-}
+    $(document).ready(async function(){
+      var startTime = performance.now()
+
+      const common = await common_functions('/index/');
+
+      await getHtml(common);
+      await action(common);
+
+      var endTime = performance.now()
+      console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
+
+    })

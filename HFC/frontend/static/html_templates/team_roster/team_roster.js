@@ -1,30 +1,19 @@
-import AbstractView from "./AbstractView.js";
 
-export default class extends AbstractView {
-
-    constructor(params) {
-        super(params);
-        this.setTitle("Dashboard");
-        this.packaged_functions = params['packaged_functions'];
-        this.db = params['db'];
-    }
-
-
-    async getHtml() {
+    const getHtml = async (common) => {
       nunjucks.configure({ autoescape: true });
 
       var world_obj = {};
-      const team_id = parseInt(this.params.team_id);
-      const db = this.db;
-      const query_to_dict = this.packaged_functions.query_to_dict;
+      const team_id = parseInt(common.params.team_id);
+      const db = common.db;
+      const query_to_dict = common.query_to_dict;
 
-      const NavBarLinks = await this.packaged_functions.nav_bar_links({
+      const NavBarLinks = await common.nav_bar_links({
         path: 'Roster',
         group_name: 'Team',
         db: db
       });
 
-      const TeamHeaderLinks = await this.packaged_functions.team_header_links({
+      const TeamHeaderLinks = await common.team_header_links({
         path: 'Roster',
         season: undefined,
         db: db
@@ -53,9 +42,6 @@ export default class extends AbstractView {
       var players = await db.player.bulkGet(player_ids);
 
       const player_team_season_games = await query_to_dict(await db.player_team_game.where({player_team_season_id: player_team_season_ids}).toArray(), 'many_to_one', 'player_team_season_id' );
-      console.log('player_team_season_games', player_team_season_games)
-
-      console.log('players', players)
 
       var player_counter = 0;
       $.each(player_team_seasons, function(ind,player_team_season){
@@ -68,36 +54,34 @@ export default class extends AbstractView {
         player_counter +=1;
       });
 
-
-      console.log('team.team_season.player_team_seasons', players)
-
-      this.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
+      common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
-                            page:     this.page,
-                            world_id: this.params['world_id'],
+                            page:     common.page,
+                            world_id: common.params['world_id'],
                             team_id:  team_id,
                             team: team,
                             players: players,
                             teams: teams,
                           }
 
-      this.render_content = render_content;
+      common.render_content = render_content;
 
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/team_roster.html'
+      var url = '/static/html_templates/team_roster/template_team_roster.html'
       var html = await fetch(url);
       html = await html.text();
 
-      var renderedHtml = await this['packaged_functions']['nunjucks_env'].renderString(html, render_content)
+      var renderedHtml = await common.nunjucks_env.renderString(html, render_content)
 
-      return renderedHtml;
+      $('#body').html(renderedHtml)
+
     }
 
 
-        GetPlayerStats(){
+        const GetPlayerStats = (common) => {
 
-          var data = this.render_content.players;
+          var data = common.render_content.players;
           var PositionSortOrderMap = {
               'QB': '01',
               'RB': '02',
@@ -283,14 +267,13 @@ export default class extends AbstractView {
                          {
                              label: 'Eligible for Draft',
                              value: function(rowData, rowIdx){
-                                 return rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'SR' || rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'JR' || rowData['ClassDisplay'] == 'SO (RS)';
+                                 return rowData.player_team_season.class.class_name == 'SR' || rowData.player_team_season.class.class_name == 'JR' || (rowData.player_team_season.class.class_name == 'SO' && rowData.player_team_season.class.redshirted == true);
                              }
                          },
                          {
                              label: 'Not Eligible for Draft',
                              value: function(rowData, rowIdx){
-                               console.log('rowData', rowData)
-                                 return !(rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'SR' || rowData['playerteamseason__ClassID__ClassAbbreviation'] == 'JR' || rowData['ClassDisplay'] == 'SO (RS)');
+                               return !(rowData.player_team_season.class.class_name == 'SR' || rowData.player_team_season.class.class_name == 'JR' || (rowData.player_team_season.class.class_name == 'SO' && rowData.player_team_season.class.redshirted == true));
                              }
                          },
                      ],
@@ -322,24 +305,25 @@ export default class extends AbstractView {
                         {
                             label: 'Offensive Line',
                             value: function(rowData, rowIdx){
-                                return rowData['PositionID__PositionAbbreviation'] == 'OT' || rowData['PositionID__PositionAbbreviation'] == 'OG' || rowData['PositionID__PositionAbbreviation'] == 'OC';
+                                return rowData.position  == 'OT' || rowData.position  == 'OG' || rowData.position == 'OC';
                             }
                         },
                           {
                               label: 'Skill Position',
                               value: function(rowData, rowIdx){
-                                  return rowData['PositionID__PositionAbbreviation'] == 'QB' || rowData['PositionID__PositionAbbreviation'] == 'RB' || rowData['PositionID__PositionAbbreviation'] == 'WR' || rowData['PositionID__PositionAbbreviation'] == 'TE';
+                                console.log('rowData', rowData)
+                                  return rowData.position == 'QB' || rowData.position  == 'RB' || rowData.position  == 'WR' || rowData.position  == 'TE';
                               }
                           },
                           {
                               label: 'Defensive Line',
                               value: function(rowData, rowIdx){
-                                  return rowData['PositionID__PositionAbbreviation'] == 'DE' || rowData['PositionID__PositionAbbreviation'] == 'DT';
+                                  return rowData.position  == 'DE' || rowData.position  == 'DT';
                               }
                           },
                     ],
                 },
-                targets: [69]
+                targets: [70]
               },
               ],
               "columns": [
@@ -351,8 +335,8 @@ export default class extends AbstractView {
                   {"data": "player_team_season.team_season.team.school_name", "sortable": true, 'className': 'left-text', 'searchable': true,"fnCreatedCell": function (td, StringValue, player, iRow, iCol) {
                       $(td).html(`<a href='${player.player_team_season.team_season.team.team_href}'>${player.player_team_season.team_season.team.school_name}</a>`);
                   }},
-                  {"data": "full_name", "searchable": true, 'className': 'left-text', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-                      $(td).html("<a href='"+DataObject['PlayerHref']+"'>"+StringValue+"</a>");
+                  {"data": "full_name", "searchable": true, 'className': 'left-text', "fnCreatedCell": function (td, full_name, player, iRow, iCol) {
+                      $(td).html(`<a href='${player.player_href}'>${full_name}</a>`);
                   }},
                   {"data": "player_team_season.class.class_name", render: function ( data, type, row ) {
                                         var returnVal = data;
@@ -441,8 +425,8 @@ export default class extends AbstractView {
                   {"data": "player_team_season.ratings.defense.block_shedding", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
                   {"data": "player_team_season.ratings.defense.tackle", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
                   {"data": "player_team_season.ratings.defense.hit_power", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-                  {"data": "player_team_season.ratings.defense.man_coverage", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
-                  {"data": "player_team_season.ratings.defense.zone_coverage", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
+                  {"data": "player_team_season.ratings.defense.man_coverage", "sortable": true, 'visible': false,  'orderSequence':["desc"]},
+                  {"data": "player_team_season.ratings.defense.zone_coverage", "sortable": true, 'visible': false,  'orderSequence':["desc"]},
                   {"data": "player_team_season.ratings.defense.press", "sortable": true, 'visible': false,'className': 'col-group',  'orderSequence':["desc"]},
 
                   {"data": "player_team_season.ratings.kicking.kick_power", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
@@ -491,17 +475,13 @@ export default class extends AbstractView {
             });
         }
 
-    async action() {
+    const action = async (common) => {
 
-      const query_to_dict = this.packaged_functions.query_to_dict;
-      const navbar = this.packaged_functions.navbar;
-      navbar(this.page);
-
-      this.GetPlayerStats();
+      GetPlayerStats(common);
     }
 
 
-    DrawPlayerInfo(data, WorldID, PlayerID){
+    const DrawPlayerInfo = (data, WorldID, PlayerID) => {
       var div = $(`
         <div class='w3-row-padding' style='text-align: initial;' id='playerinfo-`+PlayerID+`'>
           <div class='w3-col s3'>
@@ -733,4 +713,16 @@ export default class extends AbstractView {
       return div;
     }
 
-}
+
+    $(document).ready(async function(){
+      var startTime = performance.now()
+
+      const common = await common_functions('/World/:world_id/Team/:team_id/Roster/');
+
+      await getHtml(common);
+      await action(common);
+
+      var endTime = performance.now()
+      console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
+
+    })

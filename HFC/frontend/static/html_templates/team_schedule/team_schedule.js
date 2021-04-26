@@ -1,30 +1,19 @@
-import AbstractView from "./AbstractView.js";
 
-export default class extends AbstractView {
-
-    constructor(params) {
-        super(params);
-        this.setTitle("Dashboard");
-        this.packaged_functions = params['packaged_functions'];
-        this.db = params['db'];
-    }
-
-
-    async getHtml() {
+    const getHtml = async(common) => {
       nunjucks.configure({ autoescape: true });
 
       var world_obj = {};
-      const team_id = parseInt(this.params.team_id);
-      const db = this.db;
-      const query_to_dict = this.packaged_functions.query_to_dict;
+      const team_id = parseInt(common.params.team_id);
+      const db = common.db;
+      const query_to_dict = common.query_to_dict;
 
-      const NavBarLinks = await this.packaged_functions.nav_bar_links({
+      const NavBarLinks = await common.nav_bar_links({
         path: 'Schedule',
         group_name: 'Team',
         db: db
       });
 
-      const TeamHeaderLinks = await this.packaged_functions.team_header_links({
+      const TeamHeaderLinks = await common.team_header_links({
         path: 'Schedule',
         season: undefined,
         db: db
@@ -72,7 +61,6 @@ export default class extends AbstractView {
       console.log('opponent_teams', opponent_teams, opponent_team_seasons, opponent_team_games)
       var counter_games = 0;
       const pop_games = await $.each(games, async function(ind, game){
-
         game.week = weeks[game.week_id]
 
         game.team_game = team_games[counter_games];
@@ -82,12 +70,13 @@ export default class extends AbstractView {
 
 
         game.game_display = 'Preview'
-        game.game_result_letter = ''
+        game.game_outcome_letter = ''
+        game.overtime_display = ''
         if (game.was_played){
           game.game_display = `${game.home_team_score} - ${game.away_team_score}`;
 
           if (game.home_team_score > game.away_team_score){
-            game.game_result_letter = 'W'
+            game.game_outcome_letter = 'W'
           }
         }
 
@@ -113,6 +102,8 @@ export default class extends AbstractView {
         game.opponent_rank_string = game.opponent_team_game.team_season.national_rank_display;
 
         counter_games +=1;
+        console.log('game', game)
+
       });
 
 
@@ -133,10 +124,10 @@ export default class extends AbstractView {
       })
 
 
-      this.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
+      common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
-                            page:     this.page,
-                            world_id: this.params['world_id'],
+                            page:     common.page,
+                            world_id: common.params['world_id'],
                             team_id:  team_id,
                             team: team,
                             games: games,
@@ -144,58 +135,22 @@ export default class extends AbstractView {
                             conference_standings: team_seasons_in_conference
                           }
 
-      this.render_content = render_content;
+      common.render_content = render_content;
 
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/team_schedule.html'
+      var url = '/static/html_templates/team_schedule/template_team_schedule.html'
       var html = await fetch(url);
       html = await html.text();
 
-      var renderedHtml = await this['packaged_functions']['nunjucks_env'].renderString(html, render_content)
+      var renderedHtml = await common.nunjucks_env.renderString(html, render_content)
 
-      return renderedHtml;
+      $('#body').html(renderedHtml);
     }
 
-
-    navbar(){
-        const page = this.page;
-        $('.nav-tab-button').on('click', function(event, target) {
-
-          if ($(this).attr('id') == 'nav-sidebar-tab'){
-            $('#sidebar').addClass('sidebar-open');
-            $('.sidebar-fade').addClass('sidebar-fade-open');
-            $('.sidebar-fade-open').on('click', function(){
-                $(this).removeClass('sidebar-fade-open');
-                $('#sidebar').removeClass('sidebar-open');
-            });
-            return false;
-          }
-
-          var ClickedTab = $(event.target)[0];
-          $.each($('.selected-tab'), function(index, tab){
-            var TargetTab = $(tab);
-            $(TargetTab).css('backgroundColor', '');
-            $(TargetTab).removeClass('selected-tab');
-          });
-
-          $(ClickedTab).addClass('selected-tab');
-          $(ClickedTab).css('background-color', '#'+page.SecondaryColor);
-
-
-          var NewTabContent = $('#' + $(this).attr('id').replace('-tab', ''))[0];
-
-          $.each($('.tab-content'), function(index, OldTabContent){
-            $(OldTabContent).css('display', 'none');
-          });
-
-          $(NewTabContent).css('display', 'block');
-        });
-    }
-
-    PopulateTeamSchedule(){
-      console.log(' in PopulateTeamSchedule', this.render_content);
-      var games = this.render_content.games;
+    const PopulateTeamSchedule = (common) => {
+      console.log(' in PopulateTeamSchedule', common.render_content);
+      var games = common.render_content.games;
 
       var ScheduleTable = $('#TeamSchedule').DataTable({
         'searching': false,
@@ -205,17 +160,17 @@ export default class extends AbstractView {
         "pageLength": 25,
         "data": games,
          "columns": [
-           {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
+           {"data": null, "sortable": true, 'className': 'center-text','visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
              $(td).html(`<span>${game.week.week_name}</span>`)
              $(td).attr('style', 'color: white; width: 70px; background-color: #' + game.opponent_team_game.team_season.team.team_color_primary_hex);
            }},
-           {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-               $(td).html("<span></span> ");
+           {"data": null, "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
+               $(td).html(" ");
                $(td).append(`<img class='worldTeamLogo' src='${game.opponent_team_game.team_season.team.team_logo}'/>`);
-               $(td).attr('style', 'color: white; width: 70px; background-color: #' + game.opponent_team_game.team_season.team.team_color_primary_hex);
+               $(td).attr('style', 'color: white; width: 10px; background-color: #' + game.opponent_team_game.team_season.team.team_color_primary_hex);
 
            }},
-           {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
+           {"data": null, "sortable": true, 'visible': true,'className': 'column-med', 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
                $(td).html("<span></span> ");
                $(td).append(`<span class='font10'>${game.opponent_team_game.team_season.national_rank_display}</span> `); //TODO SWITCH TO CORRECT WEEK RANK
                $(td).append(`<a href='${game.opponent_team_game.team_season.team.team_href}'>${game.opponent_team_game.team_season.team.school_name}</a>`);
@@ -225,13 +180,20 @@ export default class extends AbstractView {
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
                $(td).html(`<span class='${game.game_outcome_letter}'>${game.game_outcome_letter}</span>
                            <span>
-                             <a href='${game.game_href}'>${game.score_display}</a>
+                             <a href='${game.game_href}'>${game.game_display}</a>
                              ${game.overtime_display}
                            </span>`);
            }},
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-               $(td).html(`<span>${game.team_game.record}</span>`);
+               $(td).html(`<span>${game.team_game.record.wins} - ${game.team_game.record.losses} (${game.team_game.record.conference_wins} - ${game.team_game.record.conference_losses})</span>`);
            }},
+           {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
+               $(td).html(`<span></span>`);
+           }},
+           {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
+               $(td).html(`<span></span>`);
+           }},
+
            // TODO add player stats
            // {"data": "TopPlayerStats", "sortable": true, 'className': 'hide-small','visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, TopPlayerStats, DataObject, iRow, iCol) {
            //   if (TopPlayerStats.length > 0){
@@ -265,9 +227,23 @@ export default class extends AbstractView {
 
 
 
-    async action() {
+    const action = async (common) => {
 
-      const query_to_dict = this.packaged_functions.query_to_dict;
-      this.PopulateTeamSchedule();
+      const query_to_dict = common.query_to_dict;
+      PopulateTeamSchedule(common);
     }
-}
+
+
+
+    $(document).ready(async function(){
+      var startTime = performance.now()
+
+      const common = await common_functions('/World/:world_id/Team/:team_id/Schedule/');
+
+      await getHtml(common);
+      await action(common);
+
+      var endTime = performance.now()
+      console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
+
+    })

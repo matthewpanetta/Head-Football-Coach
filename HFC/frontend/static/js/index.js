@@ -84,6 +84,10 @@ class player {
   get full_name(){
     return `${this.name.first} ${this.name.last}`
   }
+
+  get player_href(){
+    return `/World/${this.world_id}/Player/${this.player_id}`;
+  }
 }
 
 class player_team_season {
@@ -125,8 +129,12 @@ class player_team_season {
         return 0
       }
       return this.season_stats.receiving.yards / this.season_stats.receiving.receptions;  }
+}
 
-
+class game {
+  get game_href() {
+      return `/World/${this.world_id}/Game/${this.game_id}`;
+  }
 }
 
 
@@ -583,6 +591,7 @@ const get_db  = async (world_obj) => {
   await new_db.player_team_season.mapToClass(player_team_season);
   await new_db.player.mapToClass(player);
   await new_db.player_team_game.mapToClass(player_team_game);
+  await new_db.game.mapToClass(game);
 
   return new_db;
 }
