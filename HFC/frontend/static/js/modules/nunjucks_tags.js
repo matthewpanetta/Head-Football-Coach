@@ -74,25 +74,25 @@
 // def NumberToGrade(NumberValue):
 //
 //     GradeValueMap = [
-//         {'LetterGrade': 'A+', 'LowerBound': 91, 'UpperBound': 1000},
-//         {'LetterGrade': 'A',  'LowerBound': 86, 'UpperBound': 90},
-//         {'LetterGrade': 'A-', 'LowerBound': 81, 'UpperBound': 85},
-//         {'LetterGrade': 'B+', 'LowerBound': 76, 'UpperBound': 80},
-//         {'LetterGrade': 'B',  'LowerBound': 71, 'UpperBound': 75},
-//         {'LetterGrade': 'B-', 'LowerBound': 66, 'UpperBound': 70},
-//         {'LetterGrade': 'C+', 'LowerBound': 61, 'UpperBound': 65},
-//         {'LetterGrade': 'C',  'LowerBound': 56, 'UpperBound': 60},
-//         {'LetterGrade': 'C-', 'LowerBound': 51, 'UpperBound': 55},
-//         {'LetterGrade': 'D+', 'LowerBound': 46, 'UpperBound': 50},
-//         {'LetterGrade': 'D',  'LowerBound': 41, 'UpperBound': 45},
-//         {'LetterGrade': 'D-', 'LowerBound': 36, 'UpperBound': 40},
-//         {'LetterGrade': 'F',  'LowerBound': 31, 'UpperBound': 35},
-//         {'LetterGrade': 'F-', 'LowerBound': -1000, 'UpperBound': 30},
+//         {'letter_grade': 'A+', 'lower_bound': 91, 'upper_bound': 1000},
+//         {'letter_grade': 'A',  'lower_bound': 86, 'upper_bound': 90},
+//         {'letter_grade': 'A-', 'lower_bound': 81, 'upper_bound': 85},
+//         {'letter_grade': 'B+', 'lower_bound': 76, 'upper_bound': 80},
+//         {'letter_grade': 'B',  'lower_bound': 71, 'upper_bound': 75},
+//         {'letter_grade': 'B-', 'lower_bound': 66, 'upper_bound': 70},
+//         {'letter_grade': 'C+', 'lower_bound': 61, 'upper_bound': 65},
+//         {'letter_grade': 'C',  'lower_bound': 56, 'upper_bound': 60},
+//         {'letter_grade': 'C-', 'lower_bound': 51, 'upper_bound': 55},
+//         {'letter_grade': 'D+', 'lower_bound': 46, 'upper_bound': 50},
+//         {'letter_grade': 'D',  'lower_bound': 41, 'upper_bound': 45},
+//         {'letter_grade': 'D-', 'lower_bound': 36, 'upper_bound': 40},
+//         {'letter_grade': 'F',  'lower_bound': 31, 'upper_bound': 35},
+//         {'letter_grade': 'F-', 'lower_bound': -1000, 'upper_bound': 30},
 //     ]
 //
 //     for GradeObj in GradeValueMap:
-//         if NumberValue >= GradeObj['LowerBound'] and NumberValue <= GradeObj['UpperBound']:
-//             return GradeObj['LetterGrade']
+//         if NumberValue >= GradeObj['lower_bound'] and NumberValue <= GradeObj['upper_bound']:
+//             return GradeObj['letter_grade']
 //
 //     return 'NA'
 //
@@ -185,12 +185,41 @@ function get_nunjucks_env() {
       return "FFF";
   });
 
+
+  env.addFilter('NumberToGradeClass', function(NumberValue) {
+    return NumberToGrade(NumberValue).replace('-', '-Minus').replace('+', '-Plus')
+  });
+
+  env.addFilter('NumberToGrade', function(number_value) {
+    const grade_value_map = [
+        {'letter_grade': 'A+', 'lower_bound': 91, 'upper_bound': 1000},
+        {'letter_grade': 'A',  'lower_bound': 86, 'upper_bound': 90},
+        {'letter_grade': 'A-', 'lower_bound': 81, 'upper_bound': 85},
+        {'letter_grade': 'B+', 'lower_bound': 76, 'upper_bound': 80},
+        {'letter_grade': 'B',  'lower_bound': 71, 'upper_bound': 75},
+        {'letter_grade': 'B-', 'lower_bound': 66, 'upper_bound': 70},
+        {'letter_grade': 'C+', 'lower_bound': 61, 'upper_bound': 65},
+        {'letter_grade': 'C',  'lower_bound': 56, 'upper_bound': 60},
+        {'letter_grade': 'C-', 'lower_bound': 51, 'upper_bound': 55},
+        {'letter_grade': 'D+', 'lower_bound': 46, 'upper_bound': 50},
+        {'letter_grade': 'D',  'lower_bound': 41, 'upper_bound': 45},
+        {'letter_grade': 'D-', 'lower_bound': 36, 'upper_bound': 40},
+        {'letter_grade': 'F',  'lower_bound': 31, 'upper_bound': 35},
+        {'letter_grade': 'F-', 'lower_bound': -1000, 'upper_bound': 30},
+    ]
+
+    const letter_grade = grade_value_map.filter(grade => grade.lower_bound <= number_value && grade.upper_bound >= number_value)[0];
+
+    return letter_grade;
+  });
+
+
   env.addFilter('ordinal', function(num) {
     var s=["th","st","nd","rd"],
         v=num%100;
     return num+(s[(v-20)%10]||s[v]||s[0]);
   });
-  
+
   return env;
 
 }

@@ -1,0 +1,491 @@
+{% include "../../static/html_templates/ext_NavBar.html" %}
+
+
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
+
+
+<body>
+  <div class='PageContent'>
+    <div class='PlayerHeader'>
+      <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
+      <a href='/World/{{page.WorldID}}/Team/{{playerTeam.TeamID}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 180px;' {% endif %}{% endif %}>
+        {% if player.current_player_team_season.team_season.team.team_logo %}
+        <img class='playerTeamLogo' src='{{player.current_player_team_season.team_season.team.team_logo}}' alt="My image">
+        {%elif SignedTeam.LogoURL%}
+        <img class='playerTeamLogo' src='{{SignedTeam.LogoURL}}' alt="My image">
+        {% endif %}
+      </a>
+      <div class="PlayerFace" id='PlayerFace'>
+        {{player.PlayerFaceSVG|safe}}
+      </div>
+      <div class='playerHeaderInfo'>
+        <span class='playerFirstName'>
+          {{player.name.first}}
+        </span>
+        <span class='playerLastName'>
+          {{player.name.last}}
+        </span>
+        <div class='playerOverviewInfo'>
+          {% if player.is_recruit %}
+            {%if SignedTeam.LogoURL%}
+              <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit, Signed</a>
+            {% else %}
+              <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
+            {% endif %}
+          {% else %}
+          <a href="{{current_team.team_href}}">{{current_team.school_name}} {{current_team.team_name}}</a>
+          {% endif %}
+          | #{{player.jersey_number}} | {{player.position}}
+        </div>
+        <div  class='playerOverviewInfo player-captain'>
+          {% if TeamCaptain%}
+          <i class="fas fa-crown w3-text-green"></i><span class='italic'>Team Captain</span>
+          {% endif %}
+        </div>
+      </div>
+      <ul class='playerHeaderBio' style='border-color:{{page.PrimaryColor}}'>
+        <li class='playerHeaderClass'>
+          <div class='playerHeaderBioDescription'>CLASS</div>
+          <div class='player-class'>{{player.current_player_team_season.class.class_name}}
+            {% if player.redshirt.current %}
+              <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>
+            {% endif %}
+          </div>
+        </li>
+        <li class='playerHeaderHtWt'>
+          <div class='playerHeaderBioDescription'>HT/WT</div>
+          <div>{{player.body.height}}, {{player.body.weight}} lbs</div>
+        </li>
+        <li class='playerHeaderHometown'>
+          <div class='playerHeaderBioDescription'>HOMETOWN</div>
+          <div>{{player.hometown_and_state}}</div>
+        </li>
+      </ul>
+      <div class="font32 inline-block bold w3-display-container" style="height: 80px; width:100px; border: 1px solid black; vertical-align: top; margin: 20px 20px 20px 40px;">
+        <div class="team-primary-background font12 center-text" style=" color: white;">
+          Overall
+        </div>
+        <div class=" center-text">
+          {{OverallRating}}
+        </div>
+        <div class="w3-display-bottommiddle statBar" style='width: 100%; background-color: inherit;'>
+          <div class="w3-container  {{OverallRating|NumberToGradeClass}}-Fill" style="width:{{OverallRating}}%; height: 8px;"></div>
+        </div>
+      </div>
+      <div class="team-header-color-right hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
+
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: {{page.PrimaryColor|TeamBackgroundFontColor}}; ">
+        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-ratings-tab">Ratings</button>
+        {% if player.IsRecruit %}
+        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-recruiting-tab">Recruiting</button>
+        {% else %}
+        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-stats-tab">Stats</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-game-log-tab">Game Log</button>
+        {% endif %}
+        {% if Awards %}
+        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-awards-tab">Awards</button>
+        {%endif%}
+        <button> PLAYER LIST </button>
+      </div>
+    </nav>
+    <div  id="nav-tabContent">
+      <div class="tab-content" style='display:block;' id="nav-overview" >
+        <div class='w3-container'>
+          <div class='w3-row-padding'>
+            <div class='w3-col l5 m12 playerOverviewRatingBox'>
+              <div class="w3-card margin-bottom-24">
+                <table class='width100 w3-table w3-striped'>
+                    {% for SkillGroup in Skills%}
+                    {% if SkillGroup.TopShow%}
+                    <thead>
+                    <tr  class='team-primary-background'>
+                      <th colspan="3">{{SkillGroup.SkillGroup}}</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for Skill in SkillGroup.Skills%}
+                    <tr>
+                      <td style='width:15%' class='bold'>{{Skill.SkillName}}</td>
+                      <td style='width:70%'>
+                        <div class="w3-border w3-round-xlarge statBar" style='width: 60%; margin-left: 20%; background-color: inherit;'>
+                          <div class="w3-container w3-round-xlarge {{Skill.SkillValue|NumberToGradeClass}}-Fill" style="width:{{Skill.SkillValue}}%; height: 8px;"></div>
+                        </div>
+                      </td>
+                      <td style='width:15%' class='font20'>{{Skill.SkillValue}}</td>
+                    </tr>
+
+                    {% endfor %}
+                  </tbody>
+                    {% endif %}
+                    {% endfor %}
+                </table>
+
+              </div>
+            </div>
+            <div class='w3-col l7 m12'>
+              {% if playerTeam.IsUserTeam%}
+              {% if Actions%}
+              <div class="w3-card w3-margin-bottom">
+                <div class="w3-bar team-primary-background-bar">
+                  Actions
+                </div>
+                <table class=' w3-table' style='width: 50%;'>
+                  {% for Action in Actions%}
+                  <tr>
+                    <td style='width:10%;'>{{Action.Icon|safe}}</td>
+                    <td confirm-info='{{Action.ConfirmInfo}}' response-type='refresh' background-ajax='{{Action.AjaxLink}}' class="w3-button {{Action.Class}} text-left"> {{Action.Display}} </td>
+                  </tr>
+                  {% endfor %}
+                </table>
+
+            </div>
+              {% endif %}
+              {% endif %}
+
+              {%if RecentGameStats|length > 0%}
+              <div class="w3-card w3-margin-bottom">
+                <div class="w3-bar team-primary-background-bar">
+                  Recent Game Stats
+                </div>
+                <table class="w3-table table-striped width100 center-text-row" id='RecentGameStats' style='width: 100%;'>
+                  <thead>
+                    <tr >
+                      <th colspan="3" class='center-text col-group'>GAME</th>
+                      <th colspan="8" class='center-text col-group'>PASSING STATS</th>
+                      <th colspan="7" class='center-text col-group'>RUSHING STATS</th>
+                      <th colspan="6" class='center-text col-group'>RECEIVING STATS</th>
+                      <th colspan="2" class='center-text col-group'>BLOCKING STATS</th>
+                      <th colspan="7" class='center-text col-group'>DEFENSE STATS</th>
+                      <th colspan="4" class='center-text col-group'>KICKING STATS</th>
+                    </tr>
+                    <tr >
+                      <!-- Game -->
+                      <th class='teamColorBorder' scope="col">OPP</th>
+                      <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
+                      <th>Score</th>
+
+                      <!-- Passing Stats -->
+                      <th>CMP</th>
+                      <th>ATT</th>
+                      <th>CMP %</th>
+                      <th>YRDs</th>
+                      <th>YPA</th>
+                      <th>TDs</th>
+                      <th>INTs</th>
+                      <th>Sacks</th>
+
+                      <!-- Rushing Stats -->
+                      <th>CAR</th>
+                      <th>YRDs</th>
+                      <th>YPC</th>
+                      <th>TDs</th>
+                      <th>FUM</th>
+                      <th>20+</th>
+                      <th>LNG</th>
+
+                      <!-- Receiving Stats -->
+                      <th>TGT</th>
+                      <th>REC</th>
+                      <th>YRDs</th>
+                      <th>YPC</th>
+                      <th>TD</th>
+                      <th>LNG</th>
+
+                      <!-- Blocking Stats -->
+                      <th>PNC</th>
+                      <th>SCK</th>
+
+                      <!-- Defense Stats -->
+                      <th>TCK</th>
+                      <th>TFL</th>
+                      <th>SACK</th>
+                      <th>INT</th>
+                      <th>DEF</th>
+                      <th>FF</th>
+                      <th>FR</th>
+
+                      <!-- Kicking Stats -->
+                      <th>FGM</th>
+                      <th>FGA</th>
+                      <th>XPM</th>
+                      <th>XPA</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+            </div>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if player.IsRecruit %}
+      <div class="tab-content"  style='display:none;' id="nav-recruiting" >
+        <div class='w3-container w3-margin-bottom'>
+          <div class='w3-row'>
+            <div class='w3-col l12'>
+              <table class="table table-striped sortable center-text-row" id='playerRecruitingTeamTable'>
+                <thead>
+                  <tr  class='team-secondary-table-row'>
+                    <th class='teamColorBorder' scope="col">Rank</th>
+                    <th class='teamColorBorder' scope="col">Team</th>
+                    <th class='teamColorBorder' scope="col">Signed?</th>
+                    <th class='teamColorBorder' scope="col">Scholarship Offered?</th>
+                    <th class='teamColorBorder' scope="col">Interest Level</th>
+                    <th class='teamColorBorder' scope="col">Actively Recruiting?</th>
+                    <th class='teamColorBorder' scope="col">Team Prestige Rating</th>
+                    <th class='teamColorBorder' scope="col">Distance Match</th>
+                    <th class='teamColorBorder' scope="col">Match 1</th>
+                    <th class='teamColorBorder' scope="col">Match 2</th>
+                    <th class='teamColorBorder' scope="col">Match 3</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for RecruitTeamSeason in RecruitTeamSeasons %}
+                  <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>
+                      <a href="/World/{{page.WorldID}}/Team/{{ RecruitTeamSeason.TeamSeasonID.TeamID.TeamID }}/">
+                        <img class='indexConferenceStandingTeamLogo' src='{{RecruitTeamSeason.TeamSeasonID.TeamID.LogoURL}}' alt="My image">
+                        {{ RecruitTeamSeason.TeamSeasonID.TeamID.Name }}
+                      </a>
+                    </td>
+                    <td>
+                        {{ RecruitTeamSeason.Signed }}
+                    </td>
+                    <td>
+                        {{ RecruitTeamSeason.OfferMade }}
+                    </td>
+                    <td>
+                        {{ RecruitTeamSeason.InterestLevel }}
+                    </td>
+                    <td>
+                        {{ RecruitTeamSeason.IsActivelyRecruiting }}
+                    </td>
+                    <td>
+                        {{ RecruitTeamSeason.TeamPrestigeRating }}
+                    </td>
+                    <td>
+                        {{ RecruitTeamSeason.DistanceMatchRating }}
+                    </td>
+                    <td>
+                        {{RecruitTeamSeason.Preference1MatchRating}} - {{RecruitTeamSeason.Preference1Name}}
+                    </td>
+                    <td>
+                        {{RecruitTeamSeason.Preference2MatchRating}} - {{RecruitTeamSeason.Preference2Name}}
+                    </td>
+                    <td>
+                        {{RecruitTeamSeason.Preference3MatchRating}} - {{RecruitTeamSeason.Preference3Name}}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          <div class="w3-row">
+            <div class="" id='RecruitingContainer' style='width: 100%; height: 400px;'>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="tab-content" style='display:none;' id="nav-stats" >
+        <div class='w3-container w3-margin-bottom'>
+            <div class='w3-row-padding'>
+              <div class='w3-col l10 m12'>
+
+                <div class="">
+                  <table id="PlayerSeasonStatTableClone" class='w3-hide width100 no-border center-text-row' style=''>
+
+                    <tfoot>
+                      <tr>
+                      </tr>
+                    </tfoot>
+                   </table>
+                   <table id="PlayerCareerHighTableClone" class='w3-hide width100 no-border center-text-row' style=''>
+                     <thead>
+                       <tr  class='team-secondary-table-row'>
+                       <th class='left-text'>Stat</th>
+                       <th>Value</th>
+                       <th class='left-text'>Week</th>
+
+                       </tr>
+                     </thead>
+                    </table>
+                </div>
+
+              </div>
+            </div>
+
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-game-log" >
+        <div class='w3-container'>
+          <div class='w3-row-padding '>
+              <div class="w3-col l10 m12">
+                <div class="w3-card w3-margin-bottom">
+
+                  <div class="w3-bar team-primary-background-bar">Game Stats</div>
+                <table class="w3-table table-striped width100 center-text-row" id='FullGameStats' style='width: 100%;'>
+                  <thead>
+                    <tr >
+                      <th colspan="3" class='center-text col-group'>GAME</th>
+                      <th colspan="8" class='center-text col-group'>PASSING STATS</th>
+                      <th colspan="7" class='center-text col-group'>RUSHING STATS</th>
+                      <th colspan="6" class='center-text col-group'>RECEIVING STATS</th>
+                      <th colspan="2" class='center-text col-group'>BLOCKING STATS</th>
+                      <th colspan="7" class='center-text col-group'>DEFENSE STATS</th>
+                      <th colspan="4" class='center-text col-group'>KICKING STATS</th>
+                    </tr>
+                    <tr>
+                      <!-- Game -->
+                      <th class='teamColorBorder left-text' scope="col">OPP</th>
+                      <th class='initialSortColumn teamColorBorder' data-defaultsort="asc">Date</th>
+                      <th>Score</th>
+
+                      <!-- Passing Stats -->
+                      <th>CMP</th>
+                      <th>ATT</th>
+                      <th>CMP %</th>
+                      <th>YRDs</th>
+                      <th>YPA</th>
+                      <th>TDs</th>
+                      <th>INTs</th>
+                      <th>Sacks</th>
+
+                      <!-- Rushing Stats -->
+                      <th>CAR</th>
+                      <th>YRDs</th>
+                      <th>YPC</th>
+                      <th>TDs</th>
+                      <th>FUM</th>
+                      <th>20+</th>
+                      <th>LNG</th>
+
+                      <!-- Receiving Stats -->
+                      <th>TGT</th>
+                      <th>REC</th>
+                      <th>YRDs</th>
+                      <th>YPC</th>
+                      <th>TD</th>
+                      <th>LNG</th>
+
+                      <!-- Blocking Stats -->
+                      <th>PNC</th>
+                      <th>SCK</th>
+
+                      <!-- Defense Stats -->
+                      <th>TCK</th>
+                      <th>TFL</th>
+                      <th>SACK</th>
+                      <th>INT</th>
+                      <th>DEF</th>
+                      <th>FF</th>
+                      <th>FR</th>
+
+                      <!-- Kicking Stats -->
+                      <th>FGM</th>
+                      <th>FGA</th>
+                      <th>XPM</th>
+                      <th>XPA</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+              </div>
+          </div>
+          <div class='w3-row-padding'>
+
+          </div>
+
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-analytics" >
+      </div>
+      {% endif %}
+      <div class="tab-content" style='display:none;' id="nav-awards" >
+        <div class='w3-container'>
+          <div class='w3-row-padding'>
+            <div class='w3-col l6 m12'>
+              Awards
+              <table class='w3-table-all'>
+                {% for Award in Awards%}
+                <tr>
+                  <td>{{Award.AwardName}} x{{Award.AwardCount}}</td>
+                </tr>
+                {%endfor%}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-ratings" >
+        <div class='w3-container'>
+          <div class='w3-row-padding'>
+            <div class='w3-col l12 mw1000'>
+              <div class="w3-card margin-bottom-24">
+                <table class='width100 w3-table w3-striped'>
+                    {% for SkillGroup in Skills%}
+                    <thead>
+                    <tr class='team-primary-background'>
+                      <th colspan="3">{{SkillGroup.SkillGroup}}</th>
+                      <th class=" text-center">Avg {{player.Position}} Starter</th>
+                      {%if CurrentPlayerTeamSeason.TeamSeasonID.DivisionSeasonID.ConferenceSeasonID.ConferenceID is not None %}
+                      <th class=" text-center">Avg {{CurrentPlayerTeamSeason.TeamSeasonID.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceAbbreviation}} {{player.Position}} Starter</th>
+                      {% endif %}
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for Skill in SkillGroup.Skills%}
+                    <tr>
+                      <td class='bold'>{{Skill.SkillName}}</td>
+                      <td style='width:55%'>
+                        <div class="w3-border w3-round-xlarge statBar" style='width: 100%; background-color: inherit;'>
+                          <div class="w3-container w3-round-xlarge {{Skill.SkillValue|NumberToGradeClass}}-Fill" style="width:{{Skill.SkillValue}}%; height: 8px;"></div>
+                        </div>
+                      </td>
+                      <td class='font20 text-center'>{{Skill.SkillValue}}</td>
+                      <td class="text-center">
+                        {{Skill.PositionAverage}}
+                      </td>
+                      {%if Skill.PositionConferenceAverage %}
+                      <td class="text-center">
+                        {{Skill.PositionConferenceAverage}}
+                      </td>
+                      {% endif %}
+                    </tr>
+
+                    {% endfor %}
+                  </tbody>
+                    {% endfor %}
+                </table>
+
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="" id='face'>
+
+  </div>
+</body>
