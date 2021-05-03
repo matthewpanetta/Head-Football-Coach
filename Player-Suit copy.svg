@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 405 272" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
     <g transform="matrix(1,0,0,1,2.36932,-491.359)">
         <g id="Apparel">
             <path id="Shirt" d="M10,600C10,600 10,550 70,530C77.392,527.536 84.025,524.92 89.977,522.218C89.977,522.218 113.72,507.873 119.12,504.312C120.038,509.976 111.076,508.897 125.931,521.518C137.439,531.295 167.631,551 200,551C243.448,551 266.521,524.459 275.782,510.725C282.326,501.02 280.325,508.919 281,504.756C286.644,508.456 302.123,518.639 310.023,522.218L310.583,522.471C316.39,525.083 322.839,527.613 330,530C390,550 390,600 390,600L10,600Z" style="fill:white;stroke:black;stroke-width:6px;"/>

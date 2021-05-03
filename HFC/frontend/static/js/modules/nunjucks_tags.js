@@ -220,6 +220,22 @@ function get_nunjucks_env() {
     return num+(s[(v-20)%10]||s[v]||s[0]);
   });
 
+
+    env.addFilter('TeamSecondaryColor', function(Color) {
+      console.log('Color', Color)
+      var R = parseInt(Color.slice(2))
+      var G = parseInt(Color.slice(2,4))
+      var B = parseInt(Color.slice(4,6))
+
+      var Luma = (0.299 * (R**2) + 0.587 * (G**2) + 0.114 * (B**2)) ** .5
+
+      if (Luma > 200){
+        return "000";
+      }
+      return "Color";
+      });
+
+
   return env;
 
 }

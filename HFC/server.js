@@ -15,6 +15,8 @@ const routes = [
 
   {route: "/World/:world_id/Player/:player_id/",     path: 'player/player/base.html'},
 
+  {route: "/World/:world_id/Game/:game_id/",     path: 'game/game/base.html'},
+
   {route: "/static",          path: 'static'},
   {route: "*html_templates*", path: 'url'},
   {route: "*js/modules*",     path: 'url'},

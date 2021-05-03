@@ -1,0 +1,599 @@
+{% include "../../static/html_templates/ext_NavBar.html" %}
+
+<head>
+
+  <style media="screen">
+    .GameHeadlineDisplay {
+      background: linear-gradient(to right,#{{awayTeam.TeamColor_Primary_HEX}},#{{homeTeam.TeamColor_Primary_HEX}});
+    }
+
+     .away-drop-shadow {
+         box-shadow: 0 2px 4px 0 #{{awayTeam.TeamColor_Primary_HEX}}, 0 2px 8px 0 #{{awayTeam.TeamColor_Primary_HEX}}
+     }
+
+      .home-drop-shadow {
+          box-shadow: 0 2px 4px 0 #{{homeTeam.TeamColor_Primary_HEX}}, 0 2px 8px 0 #{{homeTeam.TeamColor_Primary_HEX}}
+      }
+  </style>
+  <style media="screen">
+    .away-team-primary-background-bar {
+      background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}} !important;
+      color: #{{game.away_team_game.team_season.team.team_color_primary_hex|TeamBackgroundFontColor}} !important;
+      font-size: 12.5px;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-top: 4px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}} !important;
+    }
+
+    .home-team-primary-background-bar {
+      background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}} !important;
+      color: #{{game.home_team_game.team_season.team.team_color_primary_hex|TeamBackgroundFontColor}} !important;
+      font-size: 12.5px;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-top: 4px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}} !important;
+    }
+
+
+    .team-primary-background-bar {
+      background-color: #{{page.PrimaryColor}} !important;
+      color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
+      font-size: 12.5px;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-top: 4px solid #{{page.SecondaryColor|TeamSecondaryColor}} !important;
+    }
+
+    .drive-event-bar button.w3-bar-item.w3-button:hover {
+      background-color: inherit !important;
+      color: #FFF !important;
+    }
+  </style>
+</head>
+<body>
+  <div class='PageContent'>
+
+    <div class="">
+      <div class="w3-row-padding GameHeadlineDisplay">
+        {{game.GameHeadlineDisplay}}
+      </div>
+      <div class='w3-row height-150'>
+        <div class='w3-col s2 text-left skew-45' style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}; border-right: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex}}; border-left: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex}}; '>
+          <a href="{{game.away_team_game.team_season.team.team_href}}"><img class='gameTeamLogo skew-neg-45' src='{{game.away_team_game.team_season.team.team_logo}}' alt="My image"></a>
+        </div>
+        <div class="w3-col s2 gameHeaderTeamContent away">
+          <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
+            <div class="gameHeaderTeamContainerInfo">
+              <div class="gameHeaderTeamContainerName">
+                {{game.away_team_game.team_season.national_rank_display}} <span class='bold'>{{game.away_team_game.team_season.team.school_name}}</span> {{game.away_team_game.team_season.team.team_name}}
+              </div>
+              <div class="gameHeaderTeamContainerRecord">
+                {{game.away_team_game.team_season.record_display}}
+              </div>
+            </div>
+          </div>
+          <div class="gameHeaderScoreContainer gameOutcome{{game.away_outcome_letter}}">
+            {% if game.was_played == 1 %}
+              {{game.away_point}}
+            {%endif%}
+          </div>
+        </div>
+        <div class='w3-col s4 text-center'>
+          {% if game.WasPlayed == 1 %}
+          <table class='gameBoxScoreTable w3-table-all'>
+            <thead>
+              <th>{{game.week.week_name}}</th>
+              {% for EventPeriod in boxScore %}
+              <th class='w3-center'>{{EventPeriod.PeriodTitle}}</th>
+              {% endfor %}
+              <th class='w3-center'>F</th>
+            </thead>
+            <tr>
+              <td class='gameBoxScoreTeamName colgroup-border-right'>{{game.away_team_game.team_season.team.team_abbreviation}}</td>
+              {% for EventPeriod in boxScore %}
+              <td class='w3-center'>{{EventPeriod.AwayPoints}}</td>
+              {% endfor %}
+              <td class='w3-center colgroup-border-left gameOutcome{{game.AwayOutcomeLetter}}'>{{game.away_points}}</td>
+            </tr>
+            <tr>
+              <td class='gameBoxScoreTeamName colgroup-border-right'>{{game.home_team_game.team_season.team.team_abbreviation}}</td>
+              {% for EventPeriod in boxScore %}
+              <td class='w3-center'>{{EventPeriod.HomePoints}}</td>
+              {% endfor %}
+              <td class='w3-center colgroup-border-left gameOutcome{{game.HomeOutcomeLetter}}'>{{game.home_points}}</td>
+            </tr>
+          </table>
+          {% else %}
+          <div class="width100 height100">
+            <table class="width100">
+              <tbody>
+                <tr>
+                  <td class='font16'>{{game.week.week_name}}</td>
+                </tr>
+                <tr>
+                  <td class='font16'>{{game.home_team_game.team_season.team.location.city}}, {{game.home_team_game.team_season.team.location.state}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+
+        </div>
+        <div class="w3-col s2 gameHeaderTeamContent home">
+          <div class="gameHeaderScoreContainer gameOutcome{{game.home_outcome_letter}}">
+            {% if game.was_played == 1 %}
+              {{game.home_points}}
+            {% endif %}
+          </div>
+          <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
+            <div class="gameHeaderTeamContainerInfo">
+              <div class="gameHeaderTeamContainerName">
+                {{game.home_team_game.team_season.national_rank_display}} <span class='bold'>{{game.home_team_game.team_season.team.school_name}}</span> {{game.home_team_game.team_season.team.team_name}}
+              </div>
+              <div class="gameHeaderTeamContainerRecord">
+                {{game.home_team_game.team_season.record_display}}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class='w3-col s2 text-right skew-neg-45' style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}; border-left: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex}};  border-right: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex}}; '>
+          <a href="{{game.home_team_game.team_season.team.team_href}}"><img class='gameTeamLogo skew-45' src='{{game.home_team_game.team_season.team.team_logo}}' alt="My image"></a>
+        </div>
+
+      </div>
+
+      <nav>
+        <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+          <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+              <i class="fas fa-bars"></i>
+          </button>
+          <button class="w3-bar-item w3-button tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+          {% if game.WasPlayed == 1 %}
+          <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-boxscore-tab">Box Score</button>
+          {% endif %}
+        </div>
+      </nav>
+      <div class="" id="nav-tabContent">
+        <div class="tab-pane show active tab-content" id="nav-overview">
+          <div class="w3-display-container">
+            <div class="w3-row-padding">
+              {% if ShowStatBox or LastTeamMeetings|length > 0%}
+
+              <div class='w3-col l3 m4'>
+                {% if ShowStatBox %}
+                <div class='w3-card w3-margin-bottom'>
+                  <div class="w3-bar team-primary-background-bar">
+                    <span>Team Stats {{TeamStatHeaderSuffix}}</span>
+                  </div>
+                  <div class='equal-sized-item-container wrap'>
+                    {% for Stat in TeamStatBox %}
+                    <div class='w3-padding-4 s6 ellipsis equal-sized-item inline-block w3-border-top game-recap-stat-box w3-border-gray'>
+                      <span class='bold font12 '>{{Stat.DisplayName}}</span>
+                      <div class='gameTeamStatAbbreviation'>{{awayTeam.Abbreviation}}</div>
+                      <div class="">
+                        <span style="background-color:#f2f2f2;" class="bar-total"><span style="background-color:#{{awayTeam.TeamColor_Primary_HEX}} !important; height: 8px; width:{{Stat.AwayRatio}}%" class=" bar-percentage"></span></span>
+                        <span class='font12'>{{Stat.AwayValue}}</span>
+                      </div>
+                      <div class="">
+                        <span style="background-color:#f2f2f2;" class="bar-total"><span style="background-color:#{{homeTeam.TeamColor_Primary_HEX}} !important; height: 8px; width:{{Stat.HomeRatio}}%" class=" bar-percentage"></span></span>
+                        <span class='font12'>{{Stat.HomeValue}}</span>
+                      </div>
+                      <div class='gameTeamStatAbbreviation'>{{homeTeam.Abbreviation}}</div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if game.WasPlayed == 0 %}
+                {% if LastTeamMeetings|length > 0 %}
+
+                <div class="w3-card">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span>Past Meetings</span>
+                  </div>
+                  <table class='w3-table-all'>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Week</th>
+                        <th>Winner</th>
+                        <th>Score</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for GamePlayed in LastTeamMeetings%}
+                      <tr>
+                        <td>{{GamePlayed.GameOrderRank}}</td>
+                        <td>{{GamePlayed.WeekName}}, {{GamePlayed.Year}}</td>
+
+                        <td class='bold' style='background-color: #{{GamePlayed.WinningTeamPrimaryColor}}; color: #{{GamePlayed.WinningTeamSecondaryColor}};'>
+                          {{GamePlayed.WinningTeamName}}
+                        </td>
+                        <td>
+                          <a href="{{GamePlayed.GameHref}}">
+                            {{GamePlayed.ScoreDisplay}}
+                          </a>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="w3-card margin-bottom-24">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span>Team Leaders</span>
+                  </div>
+                  <div class="">
+                    <table style='width: 100%;'>
+                      {% for LeaderGroup in PlayerGameLeaders%}
+                      <tr class='center-text-row w3-border-top'>
+                        <td colspan='4' class='padding-top-8 bold'>{{LeaderGroup.Display}}</td>
+                      </tr>
+                      <tr class='center-text-row'>
+                        <td colspan='2'>
+                          <span class='font12'>
+                            <a href="{{LeaderGroup.HomePlayer.PlayerHref}}">
+                              {{LeaderGroup.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{LeaderGroup.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerLastName}}
+                            </a>
+                          </span>
+                        </td>
+                        <td colspan='2'>
+                          <span class='font12'>
+                            <a href="{{LeaderGroup.AwayPlayer.PlayerHref}}">
+                              {{LeaderGroup.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{LeaderGroup.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerLastName}}
+                            </a>
+                          </span>
+                        </td>
+                      </tr>
+                      <tr class='padding-bottom-8'>
+                        <td>
+                          <div class="PlayerFace-45 PlayerFace-Headshot">
+                            {{LeaderGroup.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceSVG|safe}}
+                          </div>
+                        </td>
+                        <td>
+                          <ul class='no-list-style right-text'>
+                            {% for Stat in LeaderGroup.HomePlayerStats%}
+                            <li>
+                              {{Stat}}
+                            </li>
+                            {% endfor %}
+                          </ul>
+                        </td>
+                        <td>
+                          <ul class='no-list-style'>
+                            {% for Stat in LeaderGroup.AwayPlayerStats%}
+                            <li>
+                              {{Stat}}
+                            </li>
+                            {% endfor %}
+                          </ul>
+                        </td>
+                        <td>
+                          <div class="PlayerFace-45 PlayerFace-Headshot">
+                            {{LeaderGroup.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceSVG|safe}}
+                          </div>
+                        </td>
+                      </tr>
+                      {%endfor%}
+                    </table>
+                                      </div>
+                </div>
+                {% endif %}
+
+              </div>
+              {%endif%}
+              <div class='w3-col l6 m8'>
+                {% if game.WasPlayed %}
+
+                <div class="w3-card w3-margin-bottom">
+                  <div class="">
+                    <div class="w3-bar team-primary-background-bar drive-event-bar">
+                      <div class='w3-bar-item  margin-right-12 no-padding'>Scoring Summary</div>
+                      <button class="w3-bar-item margin-right-12 w3-button tab no-padding selected-drive-event-tab" id="DriveEndingEvent-Score-tab">Scoring Drives</button>
+                      <button class="w3-bar-item margin-right-12 w3-button tab no-padding " id="DriveEndingEvent-All-tab">All Drives</button>
+                    </div>
+                    <table class='ScoringSummary' style='width: calc(100% - 12px);'>
+                      <tbody>
+                        {% for Period in ScoringSummary %}
+                          <tr class='ScoringSummaryQuarterHeader'>
+                            <th colspan='4'>{{Period.PeriodName}}</th>
+                            <th class='ScoringSummaryTeamScore'>{{homeTeam.Abbreviation}}</th>
+                            <th class='ScoringSummaryTeamScore'>{{awayTeam.Abbreviation}}</th>
+                          </tr>
+                          {% for Score in Period.ScoreList %}
+                          <tr class='ScoringSummaryScoreRow {{Score.DriveEventClass}} teamTableBorder' style='border-left-color: #{{Score.DisplayTeamID__TeamColor_Primary_HEX}}'>
+                            <td class='ScoringSummaryTeamLogo'>
+                                <img src="{{Score.DisplayTeamID__TeamLogoURL}}" alt="">
+                            </td>
+                            <td class="">
+                              {{Score.PlayType}}
+                            </td>
+                            <td class="">
+                              {{Score.DisplayTime}}
+                            </td>
+                            <td class="ScoringSummaryDrive">
+                              <div class="">
+                                {{Score.PlayDescription}}
+                              </div>
+                              <div class="ScoringSummaryDriveDescription">
+                                {{Score.DriveDescription}}
+                              </div>
+                            </td>
+                              <td class='ScoringSummaryTeamScore'>{{Score.HomePoints}}</td>
+                              <td class='ScoringSummaryTeamScore'>{{Score.AwayPoints}}</td>
+                          </tr>
+                          {% endfor %}
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div  class='w3-card w3-margin-bottom' id="GameFlowChart"></div>
+                {% else %}
+                <div class="w3-card w3-margin-bottom">
+                  <table class='w3-table w3-striped'>
+                    <thead>
+                      <tr class=' team-primary-background-bar'>
+                        <th class='right-text '>OVR</th>
+                        <th class='right-text '>{{awayTeam.TeamName}}</th>
+                        <th class='center-text '></th>
+                        <th class='center-text '>Pos</th>
+                        <th class='center-text '></th>
+                        <th class=' '>{{homeTeam.TeamName}}</th>
+                        <th class=' '>OVR</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for Players in PlayerTalentComparison%}
+                      <tr>
+
+                        <td class='right-text font16'>{{Players.AwayPlayer.PlayerTeamSeasonID__playerteamseasonskill__OverallRating}}</td>
+                        <td class='right-text font16'>
+                          <a href="{{Players.AwayPlayer.PlayerHref}}">
+                          {{Players.AwayPlayer.PlayerName}}
+                          </a>
+                          <div class="teamStarterPlayerFace inline-block" id="teamStarterPlayerFace{{forloop.counter}}" PlayerFaceJson="{{Players.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if Players.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
+                              <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
+
+                              </div>
+                          </div>
+                        </td>
+                        <td style='font-size: 24px; color:#{{Players.AdvantageColor}}' class='center-text font24'><span>{{Players.AwayPlayer.AdvantageIcon|safe}}</span></td>
+                        <td style='' class='center-text font16'><span>{{Players.Position}}</span></td>
+                        <td style='font-size: 24px; color:#{{Players.AdvantageColor}}' class='center-text font24'><span>{{Players.HomePlayer.AdvantageIcon|safe}}</span></td>
+                        <td class='left-text font16'>
+                          <div class="teamStarterPlayerFace inline-block" id="teamStarterPlayerFace-{{forloop.counter}}" PlayerFaceJson="{{Players.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if Players.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
+                              <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
+
+                              </div>
+                          </div>
+                          <a href="{{Players.HomePlayer.PlayerHref}}">
+                          {{Players.HomePlayer.PlayerName}}
+                          </a>
+                        </td>
+                        <td class='left-text font16'>{{Players.HomePlayer.PlayerTeamSeasonID__playerteamseasonskill__OverallRating}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                {% endif %}
+              </div>
+              <div class='w3-col l3 m6'>
+                {% for Conference in ConferenceStandings%}
+                <div class="w3-card margin-bottom-12">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span>{{Conference.ConferenceName}} Standings</span>
+                  </div>
+                  <table class='w3-table-all' id='teamOverviewConferenceStandings'>
+                    {% for Division in Conference.Divisions%}
+                    <thead>
+                      <th>Team</th>
+                      <th>Conf</th>
+                      <th>GB</th>
+                      <th>Record</th>
+                    </thead>
+                    {% for standingTeam in Division.Standings %}
+                    <tr class='{{standingTeam.BoldTeam}}'>
+                      <td>
+                        <a href="{{standingTeam.TeamHref}}/">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standingTeam.TeamID__TeamLogoURL_50}}" />
+                          {{standingTeam.NationalRankDisplay}} {{standingTeam.TeamID__TeamName }}
+                        </a>
+                      </td>
+                      <td>{{standingTeam.ConferenceWins}}-{{standingTeam.ConferenceLosses}}</td>
+                      <td>{{standingTeam.ConferenceGB}}</td>
+                      <td>{{standingTeam.Wins}}-{{standingTeam.Losses}}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                  </table>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane tab-content" style='display:none;' id="nav-boxscore">
+          <div class='w3-container'>
+            {% for StatGrouping in BoxScoreStatGroupings %}
+            <div class='w3-row-padding'>
+              <div class='w3-col s5 gamePlayerBoxStats w3-card away-drop-shadow margin-bottom-12 height100 no-padding'>
+                <div class="w3-bar away-team-primary-background-bar">
+                  <span>{{awayTeam.TeamName}} {{StatGrouping.StatGroupName}}</span>
+                </div>
+                <table id='gameAwayTeamBoxScore' class='table table-striped'>
+                  <thead>
+                      {% for Stat in StatGrouping.Stats %}
+                      {% if Stat.DisplayColumn %}
+                      <th scope="col" data-defaultsort="asc">{{Stat.DisplayName}}</th>
+                      {% endif %}
+                      {% endfor %}
+                  </thead>
+                  {% for player in StatGrouping.AwayTeam %}
+                  <tr>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}' class='{{player.GameStarted_Class}}'>{{player.FullName}}</a></td>
+                    {% for Stat in player.Stats%}
+                    <td>{{Stat.Value}}</td>
+                    {%endfor %}
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
+              <div class='w3-col s5 gamePlayerBoxStats w3-card home-drop-shadow margin-bottom-12 height100 no-padding'>
+                <div class="w3-bar home-team-primary-background-bar">
+                  <span>{{homeTeam.TeamName}} {{StatGrouping.StatGroupName}}</span>
+                </div>
+                <table id='gameAwayTeamBoxScore' class='table table-striped'>
+                  <thead>
+                      {% for Stat in StatGrouping.Stats %}
+                      {% if Stat.DisplayColumn %}
+                      <th scope="col" data-defaultsort="asc">{{Stat.DisplayName}}</th>
+                      {% endif %}
+                      {% endfor %}
+                  </thead>
+                  {% for player in StatGrouping.HomeTeam %}
+                  <tr>
+                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}' class='{{player.GameStarted_Class}}'>{{player.FullName}}</a></td>
+                    {% for Stat in player.Stats%}
+                    <td>{{Stat.Value}}</td>
+                    {%endfor %}
+                  </tr>
+                  {% endfor %}
+                </table>
+              </div>
+
+            </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+
+
+<script type="text/javascript">
+
+  function SecondsToMinutes(s) {
+      var SecondsInToThisHalf = s;
+      var PeriodList = ['1st', '2nd', '3rd', '4th', 'OT1', 'OT2', 'OT3']
+      var PeriodCount = 0;
+      var SecondsInPeriod = 15 * 60;
+      while (SecondsInToThisHalf > SecondsInPeriod) {
+        SecondsInToThisHalf -= SecondsInPeriod;
+        PeriodCount +=1;
+      }
+      var Period = PeriodList[PeriodCount] + ' | ';
+
+      SecondsInToThisHalf = SecondsInPeriod - SecondsInToThisHalf;
+      var Secs = SecondsInToThisHalf%60;
+      if (Secs < 10){
+        Secs = '0'+Secs;
+      }
+
+      var Mins = parseInt(SecondsInToThisHalf / 60);
+      var Time = Mins + ':' + Secs
+
+      return Period + Time
+  }
+
+  $(document).ready(function() {
+    let colors = {}
+    colors['{{homeTeam.TeamName}}'] = '{{homeTeam.TeamColor_Primary_HEX}}';
+    colors['{{awayTeam.TeamName}}'] = '{{awayTeam.TeamColor_Primary_HEX}}';
+
+    var SeriesValues = [{% for event in gameEvents %}{'eventTime': {{event.GameTime}}, 'homePoints': {{event.HomePoints}}, 'awayPoints': {{event.AwayPoints}}},{% endfor %}];
+    var HomeSeries = [];
+    var AwaySeries = [];
+    $.each(SeriesValues, function(ind, obj){
+      obj.formattedTime = SecondsToMinutes(obj['eventTime']);
+      obj.x = obj['eventTime'];
+      obj.y = obj['homePoints'];
+      HomeSeries.push(obj);
+      obj.y = obj['awayPoints'];
+      AwaySeries.push(obj);
+    });
+
+    if ('{{game.WasPlayed}}' == 'True'){
+      var myChart = Highcharts.chart('GameFlowChart', {
+              chart: {
+                  type: 'line'
+              },
+              plotOptions: {
+                  series: {
+                      marker: {
+                          enabled: false
+                      }
+                  }
+              },
+              tooltip: {
+                  shared: true,
+                  headerFormat: '<span style="font-size: 10px">{point.point.formattedTime}</span><br/>',
+
+                  snap: 50,
+              },
+              title: {
+                  text: '{{homeTeam.TeamName}} vs {{awayTeam.TeamName}}'
+              },
+              colors: ['#{{homeTeam.TeamColor_Primary_HEX}}', '#{{awayTeam.TeamColor_Primary_HEX}}'],
+              yAxis: {
+                title: {
+                    enabled: false
+                }
+              },
+              xAxis: {
+                  labels: {
+                      formatter: function () {
+                        return SecondsToMinutes(this.value);
+                      }
+                    },
+                    plotLines: [{
+                        color: '#BBB',
+                        width: .5,
+                        value: 900
+                    },{
+                        color: '#666',
+                        width: 1,
+                        value: 1800
+                    },{
+                        color: '#BBB',
+                        width: .5,
+                        value: 2700
+                    },{
+                        color: '#BBB',
+                        width: .5,
+                        value: 3600
+                    }]
+              },
+              series: [{
+                  name: '{{homeTeam.TeamName}}',
+                  data: [{x:0, y:0, formattedTime: '1st | 15:00'},
+                        {% for event in gameEvents %}
+                            {x:{{event.GameTime}}, y:{{event.HomePoints}}, formattedTime: '{{event.DisplayTime}}'},
+                        {% endfor %}],
+                  step: true,
+                  lineWidth: 4
+              }, {
+                  name: '{{awayTeam.TeamName}}',
+                  data: [{x:0, y:0, formattedTime: '1st | 15:00'},
+                        {% for event in gameEvents %}
+                            {x:{{event.GameTime}}, y:{{event.AwayPoints}}, formattedTime: '{{event.DisplayTime}}'},
+                        {% endfor %}],
+                  step: true,
+                  lineWidth: 4
+              }]
+          });
+    }
+  });
+
+</script>

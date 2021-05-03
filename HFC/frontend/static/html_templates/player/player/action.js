@@ -7,10 +7,6 @@ const getHtml = async (common) => {
   const query_to_dict = common.query_to_dict;
   const season = 1;
 
-  var asians = await db.player.toArray();
-  asians  = asians.filter(p => p.ethnicity == 'asian')
-  console.log('asians', asians)
-
   const NavBarLinks = await common.nav_bar_links({
     path: 'Player',
     group_name: 'Player',
@@ -687,7 +683,45 @@ const getHtml = async (common) => {
 
     const action = async (common) => {
 
-      common.display_player_face(common.render_content.player.player_face, {jersey: {id: 'football2'}, teamColors: ['#'+common.render_content.player.current_player_team_season.team_season.team.team_color_primary_hex, '#'+common.render_content.player.current_player_team_season.team_season.team.team_color_secondary_hex, '#FFFFFF' ]},'PlayerFace');
+      common.display_player_face(common.render_content.player.player_face, {jersey: common.render_content.player.current_player_team_season.team_season.team.jersey, teamColors: common.render_content.player.current_player_team_season.team_season.team.jersey.teamColors}, 'PlayerFace');
+      //
+      //
+      // const features = {
+      //   // 'eye': {'eye1': .75, 'eye2': 1, 'eye3': 1, 'eye4': 1, 'eye5': 1, 'eye6': 1, 'eye7': 1, 'eye8': 1, 'eye9': 1, 'eye10': 1, 'eye11': 1, 'eye12': .1, 'eye13': 1, 'eye14': 1, 'eye15': 1, 'eye16': 1, 'eye17': 1, 'eye18': 1, 'eye19': 1, },
+      //   // 'body': {'body': 1, 'body2': 1, 'body3': 1, 'body4': 1, 'body5': 1, },
+      //   // 'ear': {'ear1': 1, 'ear2': 1, 'ear3': 1, },
+      //   // 'head': {'head1': 1, 'head2': 1, 'head3': 1, 'head4': 1, 'head5': 1, 'head6': 1, 'head7': 1, 'head8': 1, 'head9': 1, 'head10': 1, 'head12': 1, 'head12': 1, 'head13': 1, 'head14': 1, 'head15': 1, 'head16': 1, 'head17': 1, 'head18': .1, },
+      //   // 'mouth': {'straight': 1, 'angry': 1, 'closed': 1, 'mouth': 1, 'mouth2': 1, 'mouth3': 1, 'mouth4': 1, 'mouth5': 1, 'mouth6': 1, 'mouth7': 1, 'mouth8': 1, 'smile-closed': 1, 'smile': 1, 'smile2': 1, 'smile3': 1, },
+      //   // 'nose': {'nose1': 1, 'nose2': .65, 'nose3': 1, 'nose4': 2, 'nose5': 1, 'nose6': .3, 'nose7': .2, 'nose8': .2, 'nose9': 2, 'nose10': 1, 'nose11': 1, 'nose12': 1, 'nose13': 1, 'nose14': 1, 'honker': 1, 'pinocchio': .1, },
+      //   // 'eyebrow': {'eyebrow1': 1, 'eyebrow2': 1, 'eyebrow3': 1, 'eyebrow4': 1, 'eyebrow5': 1, 'eyebrow6': 1, 'eyebrow7': 1, 'eyebrow8': 1, 'eyebrow9': 1, 'eyebrow10': 1, 'eyebrow11': 1, 'eyebrow12': 1, 'eyebrow13': 1, 'eyebrow14': 1, 'eyebrow15': 1, 'eyebrow16': 1, 'eyebrow17': 1, 'eyebrow18': 1, 'eyebrow19': 1, 'eyebrow20': 1, },
+      //   // 'hair': {'afro': 5, 'afro2': 15, 'bald': 10, 'blowoutFade': 15, 'cornrows': 7, 'crop-fade': 13, 'crop-fade2': 10,  'crop': 7, 'curly': 10,'curly2': 13, 'curly3': 15, 'curlyFade1': 7,'curlyFade2': 7, 'dreads': 12, 'emo': 1, 'faux-hawk': 5, 'fauxhawk-fade': 7, 'hair': 3, 'high': 10, 'juice': 15, 'messy-short': 15, 'messy': 15,  'middle-part': 12, 'parted': 10, 'shaggy1': 3, 'crop': 7, 'short-fade': 20, 'crop': 7, 'short3': 25, 'crop': 7, 'spike2': 10, 'spike4': 10, 'tall-fade': 20,  },
+      //   // 'accessories': {'none': 80, 'headband': 10,  'headband-high': 10},
+      //   // 'glasses': {'none': 95, 'glasses1-primary': 7,  'glasses1-secondary': 3},
+      //   // 'eyeLine': {'none': 80, 'line1': 15, 'line2': 5},
+      //   // 'smileLine': {'none': 85, 'line1': 5, 'line4': 10, },
+      //   // 'miscLine': {'none': 85, 'chin2': 3, 'forehead2': 3, 'forehead3': 3,'forehead4': 3,'freckles1': 1, 'freckles2': 1, },
+      //   // 'facialHair': {'none': 60, 'beard-point': 2, 'beard1': 2, 'beard2': 2, 'beard3': 1, 'beard4': 1, 'beard5': 1, 'beard6': 1 , 'chin-strap': 2, 'chin-strapStache': 3, 'fullgoatee': .5 , 'fullgoatee2': .5 , 'fullgoatee3': .5 , 'fullgoatee4': .5 , 'fullgoatee5': .5 , 'fullgoatee6': .5 , 'goatee1-stache':3, 'goatee1': .1, 'goatee2': .1, 'goatee3': .1, 'goatee4': .1, 'goatee5': .1, 'goatee6': .1, 'goatee7': .1, 'goatee8': .1, 'goatee9': .1, 'goatee10': .1, 'goatee11': .1, 'goatee12': .1,  'goatee15': .1, 'goatee16': .1, 'goatee17': .1, 'goatee18': .1, 'goatee19': .1, 'honest-abe': 3, 'honest-abe-stache': 1, 'mustache1': 4, 'mustache-thin': 3, 'soul': 5},
+      //   'jersey': {'football': 1,'football2': 1,'football3': 1,'football4': 1,}
+      // }
+      //
+      // let svgs2 = {};
+      // var url = '', html = '';
+      //
+      // $.each(features, async function(group, group_obj){
+      //   svgs2[group] = {}
+      //   $.each(group_obj, async function(feature, odds){
+      //     url = `/static/facesjs/${group}/${feature}.svg`;
+      //     html = await fetch(url);
+      //     html_text = await html.text();
+      //     html_text = html_text.replace(/\n|\r/g, '');
+      //     svgs2[group][feature] = html_text;
+      //   })
+      // })
+      //
+      //
+      // console.log('svgs', JSON.stringify(svgs2))
+
+
 
     }
 

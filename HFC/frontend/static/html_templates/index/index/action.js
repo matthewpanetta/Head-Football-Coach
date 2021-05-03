@@ -114,14 +114,14 @@
         const phases_created = await common.create_phase(season);
         const weeks = await common.create_week(phases_created);
 
-        var teams_from_json = await common.get_teams({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
+        var teams_from_json = await common.get_teams({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big Ten Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
         const num_teams = teams_from_json.length;
 
 
-        const divisions_from_json = await common.get_divisions({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
+        const divisions_from_json = await common.get_divisions({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big Ten Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
         const divisions = await query_to_dict(divisions_from_json, 'many_to_one','conference_name');
 
-        const conferences_from_json = await common.get_conferences({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big 10 Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
+        const conferences_from_json = await common.get_conferences({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big Ten Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference']});
 
         $.each(conferences_from_json, function(ind, conference){
           conference.world_id = world_id;
@@ -159,16 +159,38 @@
         });
 
         var teams = [];
+        var jersey_colors = [], jersey_lettering = {};
+        const jersey_options = ['football', 'football2', 'football3', 'football4', ]
 
         $.each(teams_from_json, function(ind, team){
+          if (team.team_jersey_invert) {
+            jersey_colors = ['#FFFFFF', `#${team.team_color_primary_hex}`, `#${team.team_color_secondary_hex}`];
+          }
+          else {
+            jersey_colors = [`#${team.team_color_primary_hex}`, `#${team.team_color_secondary_hex}`, '#FFFFFF'];
+          }
+
+          jersey_lettering = {text_color: '#FFFFFF', text: ''};
+
+          if (Math.random() < .2) {
+            jersey_lettering.text = team.team_name
+          }
+          else if (Math.random() < .1) {
+            jersey_lettering.text = team.school_name
+          }
+
+
           teams.push({
             school_name: team.school_name,
             team_name: team.team_name,
             team_abbreviation: team.team_abbreviation,
             team_color_primary_hex: team.team_color_primary_hex,
             team_color_secondary_hex: team.team_color_secondary_hex,
-            team_jersey_invert: team.team_jersey_invert,
-
+            jersey: {
+              id: jersey_options[Math.floor(Math.random() * jersey_options.length)],
+              teamColors: jersey_colors,
+              lettering: jersey_lettering
+            },
             team_ratings: {academic_prestige: team.academic_prestige,
                            campus_lifestyle: team.campus_lifestyle,
                            championship_contender: team.championship_contender,
