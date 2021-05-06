@@ -42,7 +42,7 @@
                   <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
                     {% for game in games %}
                     <div BoxScoreGameID="{{game.game_id}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.selected_game_box}}" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>
-                      <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>Week {{game.week_id}}</div>
+                      <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>{{game.week.week_name}}</div>
                       <div class="equal-sized-item-container" >
                         <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team.team_logo}}' />
                       </div>
@@ -97,7 +97,7 @@
                             <tbody>
                               <tr>
                                 <td colspan="1" ></td>
-                                <td colspan="3" class='font10'>Week {{game.week_id}}</td>
+                                <td colspan="3" class='font10'>{{game.week.week_name}}</td>
                               </tr>
                               <tr>
                                 <td class='font10'>{{game.away_team.national_rank_display}}</td>
@@ -136,7 +136,7 @@
                           <button TeamID="{{game.AwayTeam.TeamID}}" GameID="{{game.GameID.GameID}}" class="w3-bar-item boxscore-tab w3-button tab" id="boxscore-awayteam-tab">{{game.AwayTeam.Abbreviation}}</button>
                         </div>
                         <div class="w3-display-container">
-                          {% if game.WasPlayed == 1%}
+                          {% if game.was_played == 1%}
                           <div TeamID="{{game.HomeTeam.TeamID}}" GameID="{{game.GameID.GameID}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
                             {% for Player in game.HomePlayers %}
                             <div class="">

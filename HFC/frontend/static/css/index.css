@@ -634,6 +634,9 @@ input[type=text], input[type=password] {
 .height90 {
   height: 90%;
 }
+.height80 {
+  height: 80%;
+}
 
 .height-70 {
   height: 70px;
@@ -817,6 +820,10 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
 
 .padding-4-6 {
   padding: 4px 6px;
+}
+
+.padding-20-10 {
+  padding: 20px 10px;
 }
 
 .teamScheduleGameDashboardGameDisplayTeams {
@@ -1109,6 +1116,12 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
   justify-content: center;
 }
 
+.gameHeaderTeamContent.home * {
+  text-align: left;
+  align-items: center;
+  justify-content: center;
+}
+
 .gameHeaderScoreContainer {
   font-size: 32px;
 }
@@ -1123,7 +1136,6 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
 
 .gameHeaderTeamContainerName {
   font-size: 18px;
-  color: #6c6d6f;
 }
 
 .gameHeaderTeamContainerRecord {
@@ -1352,6 +1364,10 @@ td.WorldLeagueLeaderRowCell.NameCell {
 
 .margin-8 {
   margin: 8px;
+}
+
+.margin-24 {
+  margin: 24px;
 }
 
 .margin-4 {
@@ -1648,6 +1664,24 @@ img.teamTeamLogo {
 .L{
   color: #8F0600;
   font-weight: 600;
+}
+
+.W-L-badge {
+  border-radius: 4px;
+  color: white;
+  padding: 2px 5px;
+  margin-right: 8px;
+  width: 16px;
+float: left;
+text-align: center;
+}
+
+.W-L-badge.L {
+  background-color: #8F0600;
+}
+
+.W-L-badge.W {
+  background-color: #0B5001;
 }
 
 

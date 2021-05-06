@@ -83,7 +83,7 @@
               </div>
             </div>
             <div class="w3-col  l4 m6 s12">
-              {% if  games|length > 0 %}
+              {% if  this_week_games|length > 0 %}
               <div class="w3-card background-eee">
                 <div class="w3-bar team-primary-background-bar">
                   <div class="">Games This Week</div>
@@ -94,8 +94,8 @@
                   <button GameFilterSelection="nationalgame" class="w3-bar-item upcoming-gameview-tab w3-button tab" id="upcoming-gameview-nationalgame-tab">National</button>
                 </div>
                 <div class="">
-                  {% for game in games%}
-                  <table BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="bottom-border width100 worldUpcomingTable">
+                  {% for game in this_week_games%}
+                  <table BoxScoreGameID="{{game.game_id}}" {{game.WorldPageFilterAttributes}} class="bottom-border width100 worldUpcomingTable">
                     <colgroup>
                         <col span="2">
                         <col span="2">
@@ -105,34 +105,34 @@
                     </colgroup>
                     <thead>
                       <th class="bottom-border left-text hide-small" colspan="2">
-                        <span class='font10 padBottom20 margin-8'><a href="{{game.GameHref}}">Preview</a></span>
+                        <span class='font10 padBottom20 margin-8'><a href="{{game.game_href}}">Preview</a></span>
                       </th>
                       <th class="bottom-border" colspan="4">
-                        <span class='font10'>{{game.GameHeadlineDisplay}}</span>
+                        <span class='font10'>{{game.game_headline_display}}</span>
                       </th>
-                      <th class="bottom-border hide-medium" colspan="4">
-                        <span class='font10 padBottom20'>{{game.GameTime}} PM</span>
+                      <th class="bottom-border hide-medium right-text" colspan="4">
+                        <span class='font10 padBottom20'>{{game.game_time}}</span>
                       </th>
                     </thead>
-                    {% for TeamGame in game.TeamGames %}
-                    <tr class=" w3-margin">
-                      <td class=' hide-small' colspan='2'>
-                          <img class="overviewRecentGameDisplayTeamLogo"   src="{{TeamGame.TeamSeasonID__TeamID__TeamLogoURL_50}}" alt="">
+                    {% for team_game in game.team_games %}
+                    <tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
+                      <td class=' hide-small' colspan='2' style='background-color: #{{team_game.team_season.team.team_color_primary_hex}}; width: 1%;'>
+                          <img class="overviewRecentGameDisplayTeamLogo"   src="{{team_game.team_season.team.team_logo_50}}" alt="">
                       </td>
-                      <td class='worldUpcomingGameCell' colspan='4'>
-                        <div class='margin0'><span class='font10'>{{TeamGame.NationalRankDisplay}}</span> <a href="{{TeamGame.TeamHref}}" class='font16'>{{TeamGame.TeamSeasonID__TeamID__TeamName}}</a></div>
+                      <td class='worldUpcomingGameCell padding-left-8' colspan='4'>
+                        <div class='margin0'><span class='font10'>{{team_game.team_season.national_rank_display}}</span> <a href="{{team_game.team_season.team.team_href}}" class='font16'>{{team_game.team_season.team.school_name}}</a></div>
                         <div class="">
-                          <span class='font10'>({{TeamGame.TeamRecordDisplay}})</span>
+                          <span class='font10'>({{team_game.team_season.record_display}})</span>
                         </div>
                       </td>
                       <td class='center-text hide-medium' colspan='2'>
-                        <h2 class='font16'>{{TeamGame.PPP_Rank}}</h2>
+                        <h2 class='font16'>{{team_game.team_season.stat_rankings.offense}}</h2>
                         <div class="">
                           <span class='font8 margin-right-4 '>Off Rank</span>
                         </div>
                       </td>
                       <td class='center-text hide-medium' colspan='2'>
-                        <h2 class='font16'>{{TeamGame.PAPP_Rank}}</h2>
+                        <h2 class='font16'>{{team_game.team_season.stat_rankings.defense}}</h2>
                         <div class="">
                           <span class='font8 margin-right-4 '>Def Rank</span>
                         </div>

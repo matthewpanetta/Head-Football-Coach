@@ -9,6 +9,8 @@ const getHtml = async (common) => {
 
   var game = await db.game.get({game_id: game_id});
 
+  game.week = await db.week.get({week_id: game.week_id});
+
   game.home_team_game = await db.team_game.get({team_game_id: game.home_team_game_id});
   game.away_team_game = await db.team_game.get({team_game_id: game.away_team_game_id});
 
@@ -19,6 +21,17 @@ const getHtml = async (common) => {
   game.away_team_game.team_season.team = await db.team.get({team_id: game.away_team_game.team_season.team_id});
 
   console.log('game', game)
+
+  if (game.was_played) {
+    if (game.scoring.final[0] < game.scoring.final[1]) {
+      game.home_outcome_letter = 'W';
+      game.away_outcome_letter = 'L';
+    }
+    else {
+      game.away_outcome_letter = 'W';
+      game.home_outcome_letter = 'L';
+    }
+  }
 
   const NavBarLinks = await common.nav_bar_links({
     path: 'Game',

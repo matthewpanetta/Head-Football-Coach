@@ -629,7 +629,7 @@
                 game_id: next_game_id,
                 season: season,
                 home_team_season_id: parseInt(team_a), away_team_season_id: parseInt(team_b),
-                home_team_game_id: next_team_game_id, away_team_game_id: next_team_game_id+1,
+                home_team_game_id: next_team_game_id , away_team_game_id: next_team_game_id+1,
                 week_id: week_id, game_time: '7:05PM', was_played: false,
                 outcome: {home_team_score: null, away_team_score: null, winning_team_season_id: null, losing_team_season_id: null},
                 rivalry: {}, bowl: {}, broadcast: {regional_broadcast: false, national_broadcast: false,},

@@ -73,7 +73,7 @@
         game.game_outcome_letter = ''
         game.overtime_display = ''
         if (game.was_played){
-          game.game_display = `${game.home_team_score} - ${game.away_team_score}`;
+          game.game_display = game.score_display;
 
           if (game.home_team_score > game.away_team_score){
             game.game_outcome_letter = 'W'
@@ -178,14 +178,23 @@
 
            }},
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-               $(td).html(`<span class='${game.game_outcome_letter}'>${game.game_outcome_letter}</span>
-                           <span>
+             $(td).html('')
+             if (game.was_played){
+               $(td).html(`<span class='${game.team_game.game_outcome_letter} W-L-badge'>${game.team_game.game_outcome_letter}</span>`);
+             }
+
+               $(td).append(`<span>
                              <a href='${game.game_href}'>${game.game_display}</a>
                              ${game.overtime_display}
                            </span>`);
            }},
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
+             if (game.was_played){
                $(td).html(`<span>${game.team_game.record.wins} - ${game.team_game.record.losses} (${game.team_game.record.conference_wins} - ${game.team_game.record.conference_losses})</span>`);
+             }
+             else {
+               $(td).html(``);
+             }
            }},
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
                $(td).html(`<span></span>`);

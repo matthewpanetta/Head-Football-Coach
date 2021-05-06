@@ -62,6 +62,10 @@ class team {
 
 class team_season {
 
+  get national_rank(){
+    return this.rankings.national_rank[0];
+  }
+
     get national_rank_display() {
       if (this.rankings.national_rank[0] <= 25){
         return `(${this.rankings.national_rank[0]})`
@@ -145,6 +149,11 @@ class player_team_season {
 class game {
   get game_href() {
       return `/World/${this.world_id}/Game/${this.game_id}`;
+  }
+
+  get score_display(){
+    var points = `${this.outcome.winning_team.points} - ${this.outcome.losing_team.points}`
+    return points;
   }
 }
 
@@ -252,7 +261,7 @@ const nav_bar_links = async (params) => {
 
   const phases = await query_to_dict(await db.phase.where({season: 2021}).toArray(), 'one_to_one', 'phase_id');
 
-  const weeks = await db.week.toArray();
+  const weeks = await db.week.where({season: season}).toArray();
   const current_week = weeks.filter(week => week.is_current)[0];
   current_week.phase = phases[current_week.phase_id];
   current_week.league_season = current_league_season;
@@ -446,8 +455,8 @@ const create_phase = async (season) => {
 
 const create_week = async (phases) => {
   var weeks_to_create = [
-                          {week_name:'Summer', is_current: true, phase_id: phases['Pre-Season']['phase_id']},
-                          {week_name:'Week 1', is_current: false, phase_id: phases['Regular Season']['phase_id']},
+                          {week_name:'Summer', is_current: false, phase_id: phases['Pre-Season']['phase_id']},
+                          {week_name:'Week 1', is_current: true, phase_id: phases['Regular Season']['phase_id']},
                           {week_name:'Week 2', is_current: false, phase_id: phases['Regular Season']['phase_id']},
                           {week_name:'Week 3', is_current: false, phase_id: phases['Regular Season']['phase_id']},
                           {week_name:'Week 4', is_current: false, phase_id: phases['Regular Season']['phase_id']},
@@ -517,9 +526,9 @@ const get_divisions = async (filters) => {
   return DivisionDimension;
 }
 
-const query_to_dict  = async (query_list, query_type, key) => {
+const index_group = async (query_list, query_type, key) => {
   var dict = {}
-  if (query_type == 'many_to_one'){
+  if ((query_type == 'many_to_one') || (query_type == 'group')){
     $.each(query_list, function(ind, obj){
       if (!(obj[key] in dict)){
         dict[obj[key]] = [];
@@ -527,14 +536,17 @@ const query_to_dict  = async (query_list, query_type, key) => {
       dict[obj[key]].push(obj) ;
     });
   }
-  else if (query_type == 'one_to_one') {
+  else if ((query_type == 'one_to_one') || (query_type == 'index')) {
     $.each(query_list, function(ind, obj){
       dict[obj[key]] = obj;
     });
   }
 
-
   return dict;
+}
+
+const query_to_dict  = async (query_list, query_type, key) => {
+  return index_group(query_list, query_type, key)
 }
 
 
@@ -575,16 +587,16 @@ const get_db  = async (world_obj) => {
 
   var new_db = await new Dexie(dbname);
 
-  await new_db.version(4).stores({
+  await new_db.version(5).stores({
     league_season: 'season',
     team: "++team_id",
-    team_season: "++team_season_id, team_id, season, [team_id+season]",
+    team_season: "++team_season_id, team_id, season",
     player: "++player_id",
-    player_team_season: "++player_team_season_id, player_id, team_season_id",
+    player_team_season: "++player_team_season_id, player_id, team_season_id, season",
     conference: '++conference_id, conference_name',
     conference_season: '++conference_season_id, conference_id, season, [conference_id+season]',
     phase: '++phase_id, season',
-    week: '++week_id, phase_id, season, [phase_id+season]',
+    week: '++week_id, season, [phase_id+season]',
     team_game: 'team_game_id, game_id, team_season_id, week_id',
     player_team_game: '++player_team_game_id, team_game_id, player_team_season_id',
     game: 'game_id, week_id',
@@ -764,10 +776,55 @@ const common_functions = async (route_pattern) => {
             , weighted_random_choice: weighted_random_choice
             , generate_face: generate_face
             , display_player_face: display_player_face
+            , add_listeners: add_listeners
+            , index_group: index_group
+            , recent_games: recent_games
           };
 };
 
 
+const recent_games = async(common) => {
+
+  const season = common.season;
+  const db = common.db;
+  const all_weeks = await db.week.where({season: season}).toArray();
+  const current_week = all_weeks.filter(w => w.is_current)[0];
+
+  const all_weeks_by_week_id = await index_group(all_weeks, 'index', 'week_id');
+  const previous_week = all_weeks_by_week_id[current_week.week_id - 1];
+
+  var games_in_week = await db.game.where({week_id: previous_week.week_id}).toArray();
+
+  const team_seasons = await db.team_season.where({season: season}).toArray();
+  const team_seasons_by_team_season_id = await index_group(team_seasons, 'index', 'team_season_id');
+
+  const teams = await db.team.toArray();
+  const teams_by_team_id = await index_group(teams, 'index', 'team_id');
+
+  const team_games = await db.team_game.where({week_id: previous_week.week_id}).toArray();
+  $.each(team_games, function(ind, team_game){
+    team_game.team_season = team_seasons_by_team_season_id[team_game.team_season_id];
+    team_game.team_season.team = teams_by_team_id[team_game.team_season.team_id];
+  });
+
+  const team_games_by_game_id = await index_group(team_games, 'group', 'game_id');
+  var min_national_rank = 0;
+  $.each(games_in_week, function(ind, game){
+    game.team_games = team_games_by_game_id[game.game_id]
+
+    min_national_rank = Math.min(game.team_games[0].team_season.national_rank,  game.team_games[1].team_season.national_rank)
+    game.summed_national_rank =  game.team_games[0].team_season.national_rank + game.team_games[1].team_season.national_rank + min_national_rank;
+
+  });
+
+  games_in_week = games_in_week.sort(function(a, b) {
+      if (a.summed_national_rank < b.summed_national_rank) return -1;
+      if (a.summed_national_rank > b.summed_national_rank) return 1;
+      return 0;
+    });
+
+  return games_in_week;
+}
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -803,8 +860,424 @@ const load_player_table = async (Table_Team, Table_Player) => {
   });
 
   const result = await Table_Player.bulkInsert(PlayersToCreate);
+}
+
+
+const sim_game = async (game_dict, common) => {
+  console.log('Simming game', game_dict)
+  var team_games = game_dict.game.team_games;
+
+  if (game_dict.game.was_played){
+    return 0;
+  }
+
+  var scores = {};
+  $.each(game.team_games, function(ind, team_game){
+    team_game.depth_chart = {};
+    team_game.coaches = {};
+    team_game.players = {};
+
+    scores[team_game.team_game_id] = 0
+  })
+
+  var possessions_left = 10;
+  var scoring = {
+    periods: [],
+    final: [0,0]
+  }
+
+  var score_possibilities = {0: 50, 3: 30, 7: 20}
+
+  var team_game_id_with_possession = 0, points_this_drive = 0, period = {}, possession_count=0;
+
+
+  while ((possession_count <= 24 || scoring.final[0] == scoring.final[1]) && (possession_count <  50)) {
+    if ((possession_count % 6 == 0)){
+      if (possession_count > 0){
+        scoring.periods.push(period);
+      }
+      period = {period_number: parseInt(possession_count / 6) + 1, points: [0,0]};
+    }
+    points_this_drive = parseInt(weighted_random_choice(score_possibilities));
+
+    period.points[team_game_id_with_possession] += points_this_drive;
+    scoring.final[team_game_id_with_possession] += points_this_drive;
+    team_game_id_with_possession = ((team_game_id_with_possession + 1) % 2);
+
+    possession_count += 1;
+
+  }
+
+  console.log('scoring', scoring)
+
+
+  game_dict.game.was_played = true;
+  game_dict.game.scoring = scoring;
+
+  game_dict.team_games[0].points = scoring.final[0];
+  game_dict.team_games[1].points = scoring.final[1];
+
+  game_dict.team_seasons[0].record.games_played  += 1;
+  game_dict.team_seasons[1].record.games_played  += 1;
+
+  const is_conference_game = game_dict.team_seasons[0].conference_season_id == game_dict.team_seasons[1].conference_season_id;
+
+  if (scoring.final[0] > scoring.final[1]){
+    game_dict.team_games[0].is_winning_team = true;
+    game_dict.team_games[1].is_winning_team = false;
+
+    game_dict.team_games[0].game_outcome_letter = 'W';
+    game_dict.team_games[1].game_outcome_letter = 'L';
+
+    game_dict.team_seasons[0].record.wins  += 1;
+    game_dict.team_seasons[1].record.losses  += 1;
+
+    if (is_conference_game){
+      game_dict.team_seasons[0].record.conference_wins  += 1;
+      game_dict.team_seasons[1].record.conference_losses  += 1;
+    }
+
+    game_dict.game.outcome = {winning_team: {team_id: game_dict.teams[0].team_id, team_season_id: game_dict.team_seasons[0].team_season_id, team_game_id: game_dict.team_games[0].team_game_id, points: scoring.final[0]}, losing_team: {team_id: game_dict.teams[1].team_id, team_season_id: game_dict.team_seasons[1].team_season_id, team_game_id: game_dict.team_games[1].team_game_id, points: scoring.final[1]}, };
+  }
+  else {
+    game_dict.team_games[0].is_winning_team = false;
+    game_dict.team_games[1].is_winning_team = true;
+
+    game_dict.team_games[0].game_outcome_letter = 'L';
+    game_dict.team_games[1].game_outcome_letter = 'W';
+
+    game_dict.team_seasons[0].record.losses  += 1;
+    game_dict.team_seasons[1].record.wins  += 1;
+
+    if (is_conference_game){
+      game_dict.team_seasons[1].record.conference_wins  += 1;
+      game_dict.team_seasons[0].record.conference_losses  += 1;
+    }
+
+    game_dict.game.outcome = {losing_team: {team_id: game_dict.teams[0].team_id, team_season_id: game_dict.team_seasons[0].team_season_id, team_game_id: game_dict.team_games[0].team_game_id, points: scoring.final[0]}, winning_team: {team_id: game_dict.teams[1].team_id, team_season_id: game_dict.team_seasons[1].team_season_id, team_game_id: game_dict.team_games[1].team_game_id, points: scoring.final[1]}, };
+  }
+
+  game_dict.team_games[0].record = game_dict.team_seasons[0].record;
+  game_dict.team_games[1].record = game_dict.team_seasons[1].record;
+
+  var p = $(`<div>${game_dict.teams[0].school_name} ${scoring.final[0]} - ${game_dict.teams[1].school_name} ${scoring.final[1]}</div>`);
+  $('.modal-body').append(p)
+
+  return game_dict;
+}
+
+const refresh_page = async () => {
+  window.location.reload();
+}
+
+const sim_action = async(duration, common) => {
+
+  const db = common.db;
+
+  const season = common.world_object.current_season;
+  const world_id = common.world_id;
+
+  const all_weeks = await db.week.where({season: season}).toArray();
+  const all_weeks_by_week_id = await index_group(all_weeks, 'index', 'week_id');
+  const current_week = all_weeks.filter(w => w.is_current)[0];
+
+  const team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index', 'team_season_id');
+  const teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id');
+
+  const all_phases_by_phase_id = await index_group(await db.phase.where({season: season}), 'index', 'phase_id');
+  const current_phase = all_phases_by_phase_id[current_week.phase_id];
+
+  var redirect_href = '';
+
+  var sim_week_list = [];
+
+  if (duration == 'SimWeek'){
+    sim_week_list = [current_week];
+  }
+  else if (duration == 'SimPhase') {
+    sim_week_list = all_weeks.filter(w => w.week_id >= current_week.week_id && w.phase_id == current_week.phase_id)
+  }
+  else {
+    sim_week_list = [current_week];
+  }
+
+
+  console.log('sim_week_list', sim_week_list)
+  var next_week = undefined, games_this_week = [], team_seasons=[], teams=[];
+  $.each(sim_week_list, async function(ind, this_week){
+    console.log('Simming week ', this_week)
+
+    next_week = all_weeks_by_week_id[this_week.week_id + 1];
+
+    team_games_this_week = await db.team_game.where({week_id: this_week.week_id}).toArray();
+    team_games_by_game_id = await index_group( team_games_this_week, 'group', 'game_id');
+
+    games_this_week = await db.game.where({week_id: this_week.week_id}).toArray();
+    //games_this_week = games_this_week.filter(g => g.was_played == false);
+
+    var game_dicts_this_week = [];
+
+    $.each(games_this_week, async function(ind, game){
+      game_dict = {game: game};
+      team_games = team_games_by_game_id[game.game_id].sort(function(a, b) {
+          if (a.is_home_team) return 1;
+          if (b.is_home_team) return -1;
+          return 0;
+        });
+
+      team_seasons = [];
+      teams = [];
+      $.each(team_games, function(ind, team_game){
+        team_seasons.push(team_seasons_by_team_season_id[team_game.team_season_id]);
+      });
+
+      $.each(team_seasons, function(ind, team_season){
+        teams.push(teams_by_team_id[team_season.team_id]);
+      });
+
+      game_dict.team_games = team_games;
+      game_dict.team_seasons = team_seasons;
+      game_dict.teams = teams;
+
+      game_dicts_this_week.push(game_dict);
+
+    })
+
+
+    var completed_games = [], completed_game = undefined;
+    await $.each(game_dicts_this_week, async function(ind, game){
+      completed_game = await sim_game(game, common)
+      console.log('completed_game', completed_game)
+        completed_games.push(completed_game);
+    });
+
+    var game_ids_to_save = [];
+    var games_to_save = [];
+
+    var team_game_ids_to_save = [];
+    var team_games_to_save = [];
+
+    var team_season_ids_to_save = [];
+    var team_seasons_to_save = [];
+
+    await $.each(completed_games, async function(ind, completed_game){
+      console.log('completed_game', completed_game)
+      game_ids_to_save.push(completed_game.game_id);
+      games_to_save.push(completed_game.game);
+
+      $.each(completed_game.team_games, function(ind, team_game){
+        team_game_ids_to_save.push(team_game.team_game_id);
+        team_games_to_save.push(team_game);
+      });
+
+      $.each(completed_game.team_seasons, function(ind, team_season){
+        team_season_ids_to_save.push(team_season.team_season_id);
+        team_seasons_to_save.push(team_season);
+      });
+    });
+
+    console.log('games_to_save', games_to_save)
+    console.log('team_games_to_save', team_games_to_save)
+    console.log('team_seasons_to_save', team_seasons_to_save)
+
+    const updated_games = await db.game.bulkPut(games_to_save);
+    const updated_team_games = await db.team_game.bulkPut(team_games_to_save, );
+    const updated_team_seasons = await db.team_season.bulkPut(team_seasons_to_save );
+
+
+    this_week.is_current = false;
+    next_week.is_current = true;
+
+    const updated_weeks = await db.week.bulkPut([this_week, next_week]  );
+
+    //alert('done updated')
+
+  });
+
+  await refresh_page();
+
+
+
+
+    //
+    // for ThisWeek in WeekList:
+    //     NextWeek = ThisWeek.NextWeek
+    //
+    //     if ThisWeek.PhaseID.PhaseName in ['Regular Season', 'Conference Championships', 'Bowl Season']:
+    //         log.lap(EventName='Calculate rankings')
+    //         CalculateRankings(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+    //
+    //         log.lap(EventName='Choose players of thr week')
+    //         ChoosePlayersOfTheWeek(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+    //
+    //     log.lap(EventName='Check: is recruiting allowed?')
+    //
+    //     if ThisWeek.RecruitingAllowed:
+    //         FakeWeeklyRecruiting_New(WorldID, CurrentWeek = ThisWeek)
+    //         print('would be doing recruting')
+    //
+    //     log.lap(EventName='Check: is it regular season?')
+    //
+    //     if ThisWeek.PhaseID.PhaseName == 'Regular Season':
+    //
+    //         #DO TOURNEY STUFF HERE
+    //         CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+    //         log.lap(EventName='SelectBroadcast')
+    //         SelectBroadcast(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+    //         log.lap(EventName='LastWeekInPhase')
+    //
+    //         if ThisWeek.LastWeekInPhase:
+    //             print('End regular season!!!')
+    //             EndRegularSeason(WorldID, CurrentWeek = ThisWeek)
+    //         log.lap(EventName='Done')
+    //
+    //     elif ThisWeek.PhaseID.PhaseName == 'Conference Championships':
+    //         #DO TOURNEY STUFF HERE
+    //         CalculateConferenceRankings(CurrentSeason, CurrentWorld, CurrentWeek = ThisWeek)
+    //         print('Creating bowls!!!')
+    //         CreateBowls(WorldID)
+    //
+    //     elif ThisWeek.PhaseID.PhaseName == 'Bowl Season' and ThisWeek.LastWeekInPhase:
+    //         #DO TOURNEY STUFF HERE
+    //         print('End Season')
+    //         EndSeason(WorldID)
+    //
+    //         RedirectHref = "/World/"+ str(WorldID)
+    //
+    //     elif ThisWeek.PhaseID.PhaseName == 'Season Recap':
+    //         #DO TOURNEY STUFF HERE
+    //         print('Moving to StartCoachingCarousel')
+    //         CreateNextLeagueSeason(CurrentSeason, WorldID)
+    //         StartCoachingCarousel(CurrentSeason, WorldID)
+    //
+    //     elif ThisWeek.WeekName == 'Coach Carousel':
+    //         GraduateSeniors(CurrentSeason, WorldID)
+    //
+    //     elif ThisWeek.PhaseID.PhaseName == 'Offseason Recruiting' and  NextWeek.LastWeekInPhase:
+    //         PrepareForSigningDay(CurrentSeason,WorldID)
+    //
+    //     elif NextWeek.WeekName == 'Training Results':
+    //         TrainingCamps(CurrentSeason, WorldID)
+    //
+    //     elif NextWeek.WeekName == 'Preseason':
+    //         log = Logger(LogName='Preseason SimAction', FirstEventName = 'Get UserTeam')
+    //         UserTeam = GetUserTeam(WorldID)
+    //         NavBarLinksStatus = NavBarLinks(Path = 'Overview', GroupName='World', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
+    //         PrepForUserTeam = not NavBarLinksStatus['CanSim']
+    //
+    //         log.lap(EventName='Prep for season')
+    //         PrepForSeason(CurrentSeason, CurrentWorld, ThisWeek, PrepForUserTeam=PrepForUserTeam)
+    //
+    //         log.lap(EventName='UpdateTeamPositions')
+    //         UpdateTeamPositions(CurrentSeason, CurrentWorld)
+    //
+    //         log.lap(EventName='UpdateTeamStates')
+    //         UpdateTeamStates(CurrentSeason, CurrentWorld)
+    //
+    //         log.lap(EventName='Done')
+    //
+    //     elif ThisWeek.WeekName == 'Preseason':
+    //         log = Logger(LogName='SetWeek1RecruitingPoints', FirstEventName = 'SetWeek1RecruitingPoints')
+    //         SetWeek1RecruitingPoints(CurrentSeason, CurrentWorld)
+    //
+    //         log.lap(EventName='Done')
+    //
+    //
+    //
+    //     SetPlayerTeamSeasonTotals(CurrentWorld, CurrentSeason)
+    //     AdvanceToNextWeek(WorldID, LeagueSeasonID=CurrentSeason, CurrentWeek = ThisWeek)
+    //     GenerateHeadlines(CurrentSeason, WorldID, CurrentWeek = ThisWeek)
+    //
+    // return JsonResponse({'success':'value', 'redirect': RedirectHref})
+
 
 }
+
+
+const add_listeners = async(common) => {
+  console.log('adding listeners')
+  var SimMap = {
+    'SimThisWeek': 'SimWeek',
+    'SimThisPhase': 'SimPhase'
+  }
+
+  $('#SimDayModalCloseButton').on('click', function(){
+    console.log('Clicked on indexCreateWorldModalCloseButton!!', this);
+    $('#SimDayModal').css({'display': 'none'});
+    $(window).unbind();
+  });
+
+  $('.sim-action:not(.w3-disabled)').click(async function(e) {
+
+    $('#SimDayModal').css({'display': 'block'});
+
+    $(window).on('click', function(event) {
+      if ($(event.target)[0] == $('#SimDayModal')[0]) {
+        $('#SimDayModal').css({'display': 'none'});
+        $(window).unbind();
+      }
+    });
+
+
+    var sim_duration = SimMap[$(this).attr('id')];
+    console.log($(this), sim_duration);
+
+    await sim_action(sim_duration, common);
+
+
+    //TODO add notifications
+    // $.notify(
+    //   res.status,
+    //   { globalPosition:"right bottom", className: 'error' }
+    // );
+
+  });
+
+
+  $('.nav-tab-button').on('click', function(event, target) {
+
+    if ($(this).attr('id') == 'nav-sidebar-tab'){
+      $('#sidebar').addClass('sidebar-open');
+      $('.sidebar-fade').addClass('sidebar-fade-open');
+
+
+        $('.sidebar-fade-open').on('click', function(){
+          $(this).removeClass('sidebar-fade-open');
+          $('#sidebar').removeClass('sidebar-open');
+        });
+      return false;
+    }
+
+    var ClickedTab = $(event.target)[0];
+    console.log(event, target);
+    $.each($('.selected-tab'), function(index, tab){
+      var TargetTab = $(tab);
+      console.log(TargetTab);
+      $(TargetTab).css('backgroundColor', '');
+      $(TargetTab).removeClass('selected-tab');
+      console.log(TargetTab);
+    });
+
+    console.log('ClickedTab', ClickedTab);
+    $(ClickedTab).addClass('selected-tab');
+//    $(ClickedTab).css({'background-color': "#{{playerTeam.TeamColor_Secondary_HEX}}"});
+    $(ClickedTab).css('background-color', SecondaryColor);
+
+
+    var NewTabContent = $('#' + $(this).attr('id').replace('-tab', ''))[0];
+    console.log('new tab??  #' + $(this).attr('id').replace('-tab', ''), NewTabContent);
+
+    $.each($('.tab-content'), function(index, OldTabContent){
+      console.log('hiding ', $(OldTabContent));
+      $(OldTabContent).css('display', 'none');
+      //$(OldTabContent).addClass('w3-hide');
+    });
+
+    $(NewTabContent).css('display', 'block');
+    //$(NewTabContent).removeClass('w3-hide');
+  });
+}
+
 
 const weighted_random_choice =  (options) => {
   var total = 0;

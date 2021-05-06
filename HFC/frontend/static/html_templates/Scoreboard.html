@@ -1,11 +1,11 @@
 
 
-{% if recentGames%}
+{% if recent_games %}
 <div class="scoreboard-slideshow">
   <div class="scoreboard-slideshow-row">
-    <div class="MultiCarousel" data-items="4,6,8,10" data-slide="3" id="MultiCarousel" data-interval="100">
+    <div class="MultiCarousel" data-items="3,5,7,9" data-slide="3" id="MultiCarousel" data-interval="100">
       <div class="MultiCarousel-inner">
-        {% for game in recentGames%}
+        {% for game in recent_games%}
         <div class="inline-block table-cell scoreboard-carousel-item w3-hide">
           <table BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="all-border width100 background-white height-70">
             <colgroup>
@@ -18,19 +18,19 @@
                 <span class='font10'></span>
               </th>
               <th class="" colspan="2">
-                <span class='font10'><a href="{{game.GameHref}}">Recap</a></span>
+                <span class='font10'><a href="{{game.game_href}}">Recap</a></span>
               </th>
             </thead>
-            {% for TeamGame in game.TeamGames %}
-            <tr class="{{TeamGame.TeamWinningGameBold}} w3-margin">
+            {% for team_game in game.team_games %}
+            <tr class="{{team_game.TeamWinningGameBold}} w3-margin">
               <td colspan='2'>
-                <img class="small-logo margin-right-4" src="{{TeamGame.TeamSeasonID__TeamID__TeamLogoURL}}" alt="">
+                <img class="small-logo margin-right-4" src="{{team_game.team_season.team.team_logo}}" alt="">
               </td>
               <td class='min-width-50 left-text' colspan='4'>
-                <div class='margin0'><span class='font10'>{{TeamGame.NationalRankDisplay}}</span> <a href="{{TeamGame.TeamHref}}" class='font14'>{{TeamGame.TeamSeasonID__TeamID__Abbreviation}}</a></div>
+                <div class='margin0'><span class='font10'>{{team_game.team_season.national_rank_display}}</span> <a href="{{team_game.team_season.team.team_href}}" class='font14'>{{team_game.team_season.team.team_abbreviation}}</a></div>
               </td>
               <td class='center-text font14 w3-padding-4' colspan='2'>
-                {{TeamGame.Points}}
+                {{team_game.points}}
               </td>
             </tr>
             {% endfor %}
@@ -39,8 +39,8 @@
 
         {% endfor %}
       </div>
-      <button class="btn btn-primary leftLst">
-        <</button> <button class="btn btn-primary rightLst">>
+      <button class="btn btn-primary leftLst" style='background-color: #{{page.PrimaryColor}}; border-color:  #{{page.PrimaryColor}};'>
+        <</button> <button class="btn btn-primary rightLst" style='background-color: #{{page.PrimaryColor}}; border-color:  #{{page.PrimaryColor}};'>>
       </button>
     </div>
   </div>
@@ -48,4 +48,4 @@
 {% endif %}
 
 
-<script src="Pages/InitializeScoreboard.js" type="module"></script>
+<script type="text/javascript" src='/static/js/modules/scoreboard.js'></script>

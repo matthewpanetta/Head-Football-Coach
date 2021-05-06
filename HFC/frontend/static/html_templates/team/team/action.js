@@ -206,6 +206,8 @@ const getHtml = async (common) => {
   const team_id = common.params.team_id;
   const db = common.db;
 
+  weeks_by_week_id = await common.index_group(await db.week.where({season: 2021}).toArray(), 'index', 'week_id')
+
   const NavBarLinks = await common.nav_bar_links({
     path: 'Overview',
     group_name: 'Team',
@@ -258,6 +260,12 @@ const getHtml = async (common) => {
   var counter_games = 0;
   const pop_games = await $.each(games, async function(ind, game){
 
+    game.team = team;
+    game.team_season = team_season;
+    game.team_game = team_games[counter_games];
+
+    game.week = weeks_by_week_id[game.week_id];
+
     game.opponent_team_game = opponent_team_games[counter_games];
     game.opponent_team = opponent_teams[counter_games];
     game.opponent_team_season = opponent_team_seasons[counter_games];
@@ -265,10 +273,13 @@ const getHtml = async (common) => {
     game.game_display = 'Preview'
     game.game_result_letter = ''
     if (game.was_played){
-      game.game_display = `${game.home_team_score} - ${game.away_team_score}`;
+      game.game_display = game.score_display;
 
-      if (game.home_team_score > game.away_team_score){
+      if (game.outcome.winning_team.team_id == team.team_id){
         game.game_result_letter = 'W'
+      }
+      else {
+        game.game_result_letter = 'L'
       }
     }
 
@@ -318,6 +329,7 @@ const getHtml = async (common) => {
   })
 
 
+  console.log('games', games)
   common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
   var render_content = {
                         page:     common.page,
@@ -385,6 +397,7 @@ $(document).ready(async function(){
 
   await getHtml(common);
   await action(common);
+  await common.add_listeners(common);
 
   var endTime = performance.now()
   console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
