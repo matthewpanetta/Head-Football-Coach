@@ -258,7 +258,34 @@ const getHtml = async (common) => {
 
   console.log('opponent_teams', opponent_teams, opponent_team_seasons, opponent_team_games)
   var counter_games = 0;
+  var selected_game_chosen = false;
+  var selected_game_id = 0;
+  var games_played = games.filter(g => g.was_played == true).length;
+  if (games_played == 0) {
+    //no games played
+    selected_game_chosen = true;
+    selected_game_id = games[0].game_id;
+  }
+  else if (games_played == games.length) {
+    //All games played
+    selected_game_chosen = true;
+    selected_game_id = games[games.length - 1].game_id;
+  }
+  console.log('games_played', games_played, games.length, selected_game_chosen, selected_game_id, games)
+
   const pop_games = await $.each(games, async function(ind, game){
+
+    if (!(selected_game_chosen) && !(game.was_played)){
+      game.selected_game_box = 'SelectedGameBox'
+      selected_game_id = game.game_id;
+      selected_game_chosen = true;
+    }
+    else if ((selected_game_chosen) && (selected_game_id == game.game_id)) {
+      game.selected_game_box = 'SelectedGameBox'
+    }
+    else {
+      game.selected_game_box = '';
+    }
 
     game.team = team;
     game.team_season = team_season;
@@ -299,11 +326,6 @@ const getHtml = async (common) => {
       game.away_team_season = team_season;
       game.home_team = game.opponent_team;
       game.home_team_season = game.opponent_team_season;
-    }
-
-    game.selected_game_box = '';
-    if (counter_games == 0){
-      game.selected_game_box = 'SelectedGameBox';
     }
 
     game.opponent_rank_string = game.opponent_team_season.national_rank_display;
