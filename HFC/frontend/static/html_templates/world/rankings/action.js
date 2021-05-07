@@ -2,7 +2,7 @@
     const getHtml = async(common) => {
       const db = common.db;
       nunjucks.configure({ autoescape: true });
-      var query_to_dict = common.query_to_dict;
+      var index_group = common.index_group;
 
       var world_obj = {};
 
@@ -14,9 +14,9 @@
 
       var render_content = {team_list: [], page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks}, world_id: common.params['world_id']};
       var teams = await db.team.toArray();
-      var conferences = await query_to_dict(await db.conference.toArray(), 'one_to_one','conference_id');
-      var conference_seasons = await query_to_dict(await db.conference_season.where({season: 2021}).toArray(), 'one_to_one','conference_season_id');
-      var team_seasons = await query_to_dict(await db.team_season.where({season: 2021}).toArray(), 'one_to_one','team_id');
+      var conferences = await index_group(await db.conference.toArray(), 'one_to_one','conference_id');
+      var conference_seasons = await index_group(await db.conference_season.where({season: 2021}).toArray(), 'one_to_one','conference_season_id');
+      var team_seasons = await index_group(await db.team_season.where({season: 2021}).toArray(), 'one_to_one','team_id');
       var distinct_team_seasons = [];
 
       $.each(teams, async function(ind, team){
@@ -256,7 +256,7 @@
     const PopulateTop25 = async (common) => {
 
       const db = common.db;
-      const query_to_dict = common.query_to_dict;
+      const index_group = common.index_group;
 
       var this_week = await db.week.where({season: 2021}).toArray();
       console.log('this_week', this_week)
@@ -274,20 +274,28 @@
       const team_ids = top_25_team_seasons.map(ts => ts.team_id);
       const teams = await db.team.bulkGet(team_ids);
 
-      const this_week_team_games = await query_to_dict(await db.team_game.where({week_id: this_week_id}).toArray(), 'one_to_one','team_season_id');
-      const last_week_team_games = await query_to_dict(await db.team_game.where({week_id: last_week_id}).toArray(), 'one_to_one','team_season_id');
+      const this_week_team_games = await index_group(await db.team_game.where({week_id: this_week_id}).toArray(), 'one_to_one','team_season_id');
+      const last_week_team_games = await index_group(await db.team_game.where({week_id: last_week_id}).toArray(), 'one_to_one','team_season_id');
 
       const total_team_games = Object.values(this_week_team_games).concat(Object.values(last_week_team_games));
       const total_team_game_ids = total_team_games.map(team_game => team_game.game_id);
 
-      const games = await query_to_dict(await db.game.bulkGet(total_team_game_ids), 'one_to_one','game_id');
+      const games = await index_group(await db.game.bulkGet(total_team_game_ids), 'one_to_one','game_id');
 
-      const all_teams = await query_to_dict(await db.team.toArray(), 'one_to_one','team_id');
-      const all_team_seasons = await query_to_dict(await db.team_season.where({season: 2021}).toArray(), 'one_to_one','team_season_id');
+      const all_teams = await index_group(await db.team.toArray(), 'index','team_id');
+      const all_team_games = await index_group(await db.team_game.where('week_id').anyOf([this_week_id, last_week_id]).toArray(), 'index','team_game_id');
+      const all_team_seasons = await index_group(await db.team_season.where({season: 2021}).toArray(), 'index','team_season_id');
+
+      const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: 2021}).toArray(), 'index','conference_season_id');
+      const conferences_by_conference_id = await index_group(await db.conference.toArray(), 'index','conference_id');
 
       var team_counter = 0;
       $.each(top_25_team_seasons, function(ind, team_season){
         team_season.team = teams[team_counter];
+        team_season.national_rank = team_season.rankings.national_rank[0];
+
+        team_season.conference_season = conference_seasons_by_conference_season_id[team_season.conference_season_id]
+        team_season.conference = conferences_by_conference_id[team_season.conference_season.conference_id]
 
         team_counter +=1;
         if (team_season.team_season_id in this_week_team_games) {
@@ -295,6 +303,7 @@
           team_season.this_week_team_game.game = games[team_season.this_week_team_game.game_id];
 
           team_season.this_week_team_game.opponent_team_season = all_team_seasons[team_season.this_week_team_game.opponent_team_season_id];
+          team_season.this_week_team_game.opponent_team_game = all_team_games[team_season.this_week_team_game.opponent_team_game_id];
           team_season.this_week_team_game.opponent_team = all_teams[team_season.this_week_team_game.opponent_team_season.team_id];
 
           if (team_season.this_week_team_game.is_home_team == true){
@@ -314,6 +323,10 @@
         if (team_season.team_season_id in last_week_team_games) {
           team_season.last_week_team_game = last_week_team_games[team_season.team_season_id];
           team_season.last_week_team_game.game = games[team_season.last_week_team_game.game_id];
+
+          team_season.last_week_team_game.opponent_team_season = all_team_seasons[team_season.last_week_team_game.opponent_team_season_id];
+          team_season.last_week_team_game.opponent_team_game = all_team_games[team_season.last_week_team_game.opponent_team_game_id];
+          team_season.last_week_team_game.opponent_team = all_teams[team_season.last_week_team_game.opponent_team_season.team_id];
 
           if (team_season.last_week_team_game.is_home_team == true){
             team_season.last_week_team_game.game_location = 'home'
@@ -344,44 +357,80 @@
           "paginationType": "full_numbers",
           "data": top_25_team_seasons,
           "columns": [
-            {"data": null, "sortable": true, 'className': '', 'searchable': true,"fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+            {"data": 'national_rank', "sortable": true, 'className': 'center-text ', 'searchable': true,"fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+              //console.log('teamseason', team_season.rankings.national_rank[0], team_season);
                 $(td).attr('style', `background-color: #${team_season.team.team_color_primary_hex}; color: white; width: 3px;` );
                 $(td).addClass(' Top25RankNumber ').addClass('center-text')
-                $(td).html('<div class="center-text">'+team_season.rankings.national_rank[0]+'</div>')
+                $(td).html('<div>'+team_season.rankings.national_rank[0]+'</div>')
             }},
-            {"data": null, "searchable": false, "sortable": false,"fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+            {"data": 'team.full_name', "searchable": false, "sortable": false,"fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
               $(td).attr('style', `background-color: #${team_season.team.team_color_primary_hex}; color: white; width: 70px;` );
               $(td).html(`<a href='${team_season.team.team_href}'><img class='worldTeamLogo' src='${team_season.team.team_logo}'/></a>`);
             }},
 
-            {"data": null, "searchable": true, "className": 'column-large', "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-              $(td).html(`<a style='width: 100%;' href='${team_season.team.team_href}'>${team_season.team.full_name}</a>`)
+            {"data": 'team.full_name', "searchable": true, "className": 'column-med', "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+              //$(td).html(`<a style='width: 100%;' href='${team_season.team.team_href}'>${team_season.team.full_name}</a>`)
                 $(td).parent().attr('TeamID', team_season.team_id);
+
+                $(td).html(`<ul class='no-list-style'>
+                  <li>
+                    <a  class='font14' href="${ team_season.team.team_href }">
+                      <span>${ team_season.team.school_name } <span class='hide-small'>${ team_season.team.team_name }</span></span>
+                    </a>
+                  </li>
+                  <li class='font10'>${team_season.rankings.division_rank[0]} in ${team_season.conference.conference_abbreviation}</li>
+                </ul>`)
               }},
-              {"data": "record_display", "sortable": true, 'className': 'hide-small column-large', 'orderSequence':["desc"]},
-              {"data": null, "sortable": true, "className": 'column-large', 'searchable': true, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+              {"data": "rankings.national_rank_delta", "sortable": true, 'className': 'center-text hide-small', 'orderSequence':["desc", 'asc'], "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+
+                console.log('team_season.rankings.national_rank_delta', team_season.rankings.national_rank_delta, team_season.rankings.national_rank_delta_abs)
+                if (team_season.rankings.national_rank_delta > 0){
+                  $(td).html(`
+                    <div class="font14 W">
+                      <span><i class="fas fa-angle-up"></i></span>
+                      ${team_season.rankings.national_rank_delta_abs}
+                    </div>
+                    <div class='font10'>Prev: <span class='bold'>${team_season.rankings.national_rank[1]}</span></div>
+                    `);
+                }
+                else if (team_season.rankings.national_rank_delta < 0) {
+                  $(td).html(`
+                    <div class="font14 L">
+                      <span><i class="fas fa-angle-down"></i></span>
+                      ${team_season.rankings.national_rank_delta_abs}
+                    </div>
+                    <div class='font10'>Prev: <span class='bold'>${team_season.rankings.national_rank[1]}</span></div>`);
+                  }
+                  else {
+                    $(td).html('-')
+                  }
+              }},
+              {"data": "record_display", "sortable": true, 'className': 'center-text hide-small', 'orderSequence':["desc"], "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+                  $(td).html(`<div class="font14">${team_season.record_display}</div>`)
+              }},
+              {"data": null, "sortable": false, "className": 'column-med', 'searchable': true, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
                 if (team_season.last_week_team_game == null){
                   $(td).html('BYE')
                 }
                 else{
-                  $(td).html(`<a href="${team_season.last_week_game.game.game_href}">${team_season.last_week_game.points} - ${team_season.last_week_game.opponent_team_game.points}</a>`)
-                  $(td).append(`<span class="${team_season.last_week_game.win_loss_letter}">${team_season.last_week_game.win_loss_letter}</span>`);
-                  $(td).append(`<span class="hide-small"> ${team_season.last_week_team_game.game_location_char} </span><a class="hide-small" href="">${team_season.last_week_team_game.opponent_team_season.national_rank_display} ${team_season.last_week_team_game.opponent_team.school_name}</a>`);
+                  $(td).html('<div></div>');
+                  $(td).find('div').append(`<a href="${team_season.last_week_team_game.game.game_href}">${team_season.last_week_team_game.points} - ${team_season.last_week_team_game.opponent_team_game.points}</a>`)
+                  $(td).find('div').append(`<span class="W-L-badge ${team_season.last_week_team_game.game_outcome_letter}">${team_season.last_week_team_game.game_outcome_letter}</span>`);
+                  $(td).find('div').append(`<span class="hide-small"> ${team_season.last_week_team_game.game_location_char} </span><a class="hide-small" href="${team_season.last_week_team_game.opponent_team.team_href}">${team_season.last_week_team_game.opponent_team_season.national_rank_display} ${team_season.last_week_team_game.opponent_team.school_name}</a>`);
                 }
               }},
-              {"data": null, "sortable": true, 'searchable': true, 'className': 'hide-small column-large', "fnCreatedCell": function (td, ThisWeekObject, team_season, iRow, iCol) {
+              {"data": null, "sortable": false, 'searchable': true, 'className': 'hide-small column-med', "fnCreatedCell": function (td, ThisWeekObject, team_season, iRow, iCol) {
                 if (team_season.this_week_team_game == null){
                   $(td).html('BYE')
                 }
                 else{
-                  console.log('team_season.this_week_team_game.game_location_char', team_season.this_week_team_game.game_location_char)
                   $(td).html(`<span class="hide-small"> ${team_season.this_week_team_game.game_location_char} </span><a class="hide-small" href="${team_season.this_week_team_game.opponent_team.team_href}">${team_season.this_week_team_game.opponent_team_season.national_rank_display} ${team_season.this_week_team_game.opponent_team.school_name}</a>`);
                 }
               }},
               {"data": null, "sortable": false, 'searchable': false, 'className': 'details-control',   "defaultContent": ''},
 
           ],
-          'order': [[ 0, "asc" ]],
+        //  'order': [[ 0, "asc" ]],
       });
 
 

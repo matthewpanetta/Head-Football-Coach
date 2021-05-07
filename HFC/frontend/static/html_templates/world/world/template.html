@@ -50,7 +50,7 @@
                     </td>
                     <td style='background-color:  #{{team.team_color_primary_hex}}; color: white;' class=''>
                       <a  class='' href="{{team.team_href}}">
-                        <img class='worldTeamLogo' src='{{team.team_logo_100}}' alt="">
+                        <img class='worldTeamLogo'  loading="lazy" src='{{team.team_logo_100}}' alt="">
                       </a>
                     </td>
                     <td class='worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
@@ -66,7 +66,7 @@
                         {% if team.team_season.ConferenceChampion %}
                         <li class='font10 bold'>{{team.TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation}} Champions</li>
                         {% else %}
-                        <li class='font10'>{{team.team_season.rankings.division_rank}} in {{team.team_season.conference_season.conference.conference_abbreviation}}</li>
+                        <li class='font10'>{{team.team_season.rankings.division_rank[0]}} in {{team.team_season.conference_season.conference.conference_abbreviation}}</li>
                         {% endif %}
                       </ul>
                     </td>
@@ -117,7 +117,7 @@
                     {% for team_game in game.team_games %}
                     <tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
                       <td class=' hide-small' colspan='2' style='background-color: #{{team_game.team_season.team.team_color_primary_hex}}; width: 1%;'>
-                          <img class="overviewRecentGameDisplayTeamLogo"   src="{{team_game.team_season.team.team_logo_50}}" alt="">
+                          <img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="{{team_game.team_season.team.team_logo_50}}" alt="">
                       </td>
                       <td class='worldUpcomingGameCell padding-left-8' colspan='4'>
                         <div class='margin0'><span class='font10'>{{team_game.team_season.national_rank_display}}</span> <a href="{{team_game.team_season.team.team_href}}" class='font16'>{{team_game.team_season.team.school_name}}</a></div>
@@ -171,7 +171,7 @@
                       <td>{{Award.PositionID.PositionAbbreviation}}</td>
                       <td>
                         <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamLogoURL_50}}" />
+                          <img class='teamOverviewConferenceStandingsTeamLogo'  loading="lazy" src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamLogoURL_50}}" />
                            {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
                         </a>
                       </td>
@@ -213,7 +213,7 @@
                       <td>{{Award.PositionID.PositionAbbreviation}}</td>
                       <td>
                         <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamLogoURL_50}}" />
+                          <img class='teamOverviewConferenceStandingsTeamLogo'  loading="lazy" src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamLogoURL_50}}" />
                            {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
                         </a>
                       </td>

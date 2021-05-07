@@ -644,7 +644,7 @@ input[type=text], input[type=password] {
 
 .SelectedGameBox, .SelectedWeekBox {
   color: white !important;
-  z-index: 1000;
+  z-index: 1;
 }
 
 
@@ -2110,5 +2110,5 @@ thead tr {
 }
 
 .column-med {
-  width: 30%;
+  width: 20%;
 }

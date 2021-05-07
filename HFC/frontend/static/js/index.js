@@ -162,6 +162,16 @@ class player_team_game {
 
 }
 
+const union = (a, b) => {
+  var c = a.concat(b.filter((item) => a.indexOf(item) < 0))
+  return c;
+}
+
+const except = (a, b) => {
+  var c = a.filter(x => !(b.includes(x)))
+  return c;
+}
+
 const navbar = async (page) => {
 
         $('.nav-tab-button').on('click', function(event, target) {
@@ -774,11 +784,15 @@ const common_functions = async (route_pattern) => {
             , season: world_object.current_season
             , create_player_face: create_player_face
             , weighted_random_choice: weighted_random_choice
+            , uniform_random_choice: uniform_random_choice
+            , shuffle: shuffle
             , generate_face: generate_face
             , display_player_face: display_player_face
             , add_listeners: add_listeners
             , index_group:  index_group
             , recent_games: recent_games
+            , union: union
+            , except: except
           };
 };
 
@@ -888,7 +902,7 @@ const sim_game = async (game_dict, common) => {
 
   var score_possibilities = {0: 50, 3: 30, 7: 20}
 
-  var team_game_id_with_possession = 0, points_this_drive = 0, period = {}, possession_count=0;
+  var team_game_id_with_possession = 0, points_this_drive = 0, period = {}, possession_count=0, adjusted_score_possibilities={};
 
 
   while ((possession_count <= 24 || scoring.final[0] == scoring.final[1]) && (possession_count <  50)) {
@@ -898,7 +912,12 @@ const sim_game = async (game_dict, common) => {
       }
       period = {period_number: parseInt(possession_count / 6) + 1, points: [0,0]};
     }
-    points_this_drive = parseInt(weighted_random_choice(score_possibilities));
+
+    adjusted_score_possibilities = JSON.parse(JSON.stringify(score_possibilities));
+    adjusted_score_possibilities['3'] += Math.floor(game_dict.team_seasons[team_game_id_with_possession].rating.overall / 5);
+    adjusted_score_possibilities['7'] += Math.floor(game_dict.team_seasons[team_game_id_with_possession].rating.overall / 5);
+
+    points_this_drive = parseInt(weighted_random_choice(adjusted_score_possibilities));
 
     period.points[team_game_id_with_possession] += points_this_drive;
     scoring.final[team_game_id_with_possession] += points_this_drive;
@@ -957,6 +976,12 @@ const sim_game = async (game_dict, common) => {
     game_dict.game.outcome = {losing_team: {team_id: game_dict.teams[0].team_id, team_season_id: game_dict.team_seasons[0].team_season_id, team_game_id: game_dict.team_games[0].team_game_id, points: scoring.final[0]}, winning_team: {team_id: game_dict.teams[1].team_id, team_season_id: game_dict.team_seasons[1].team_season_id, team_game_id: game_dict.team_games[1].team_game_id, points: scoring.final[1]}, };
   }
 
+  game_dict.team_seasons[0].record.conference_net_wins = game_dict.team_seasons[0].record.conference_wins - game_dict.team_seasons[0].record.conference_losses;
+  game_dict.team_seasons[1].record.conference_net_wins = game_dict.team_seasons[1].record.conference_wins - game_dict.team_seasons[1].record.conference_losses;
+
+  game_dict.team_seasons[0].record.net_wins = game_dict.team_seasons[0].record.wins - game_dict.team_seasons[0].record.losses;
+  game_dict.team_seasons[1].record.net_wins = game_dict.team_seasons[1].record.wins - game_dict.team_seasons[1].record.losses;
+
   game_dict.team_games[0].record = game_dict.team_seasons[0].record;
   game_dict.team_games[1].record = game_dict.team_seasons[1].record;
 
@@ -981,7 +1006,7 @@ const sim_week_games = async(this_week, common) => {
 
   var game_dicts_this_week = [];
 
-  $.each(games_this_week, async function(ind, game){
+  await $.each(games_this_week, function(ind, game){
     game_dict = {game: game};
     team_games = team_games_by_game_id[game.game_id].sort(function(a, b) {
         if (a.is_home_team) return 1;
@@ -1009,10 +1034,12 @@ const sim_week_games = async(this_week, common) => {
 
 
   var completed_games = [], completed_game = undefined;
+  console.log('game_dicts_this_week', game_dicts_this_week)
+  //alert('starting sim_game')
   await $.each(game_dicts_this_week, async function(ind, game){
     completed_game = await sim_game(game, common)
     console.log('completed_game', completed_game)
-      completed_games.push(completed_game);
+      await completed_games.push(completed_game);
   });
 
   var game_ids_to_save = [];
@@ -1024,7 +1051,7 @@ const sim_week_games = async(this_week, common) => {
   var team_season_ids_to_save = [];
   var team_seasons_to_save = [];
 
-  await $.each(completed_games, async function(ind, completed_game){
+  await $.each(completed_games, function(ind, completed_game){
     console.log('completed_game', completed_game)
     game_ids_to_save.push(completed_game.game_id);
     games_to_save.push(completed_game.game);
@@ -1047,6 +1074,74 @@ const sim_week_games = async(this_week, common) => {
   const updated_games = await db.game.bulkPut(games_to_save);
   const updated_team_games = await db.team_game.bulkPut(team_games_to_save, );
   const updated_team_seasons = await db.team_season.bulkPut(team_seasons_to_save );
+
+}
+
+const calculate_national_rankings = async(this_week, all_weeks, common) => {
+  const db = await common.db;
+  const all_weeks_by_week_id = await index_group(all_weeks, 'index', 'week_id');
+
+  next_week = all_weeks_by_week_id[this_week.week_id + 1];
+  const team_seasons = await db.team_season.where({season: this_week.phase.season}).toArray();
+
+  var rank_counter = 0, sorted_team_seasons=[], team_seasons_to_save = [];
+
+  sorted_team_seasons = team_seasons.sort(function(a, b) {
+      if (a.record.net_wins > b.record.net_wins) return -1;
+      if (a.record.net_wins < b.record.net_wins) return 1;
+      if (a.record.wins < b.record.wins) return 1;
+      if (a.record.wins > b.record.wins) return -1;
+      return 0;
+    });
+
+  rank_counter = 1;
+  await $.each(sorted_team_seasons, async function(ind, team_season){
+
+    team_season.rankings.national_rank.unshift(rank_counter);
+    rank_counter +=1;
+
+    team_season.rankings.national_rank_delta = team_season.rankings.national_rank[1] - team_season.rankings.national_rank[0]
+    team_season.rankings.national_rank_delta_abs = Math.abs(team_season.rankings.national_rank_delta)
+
+    team_seasons_to_save.push(team_season);
+  });
+
+  await db.team_season.bulkPut(team_seasons_to_save);
+
+}
+
+const calculate_conference_rankings = async(this_week, all_weeks, common) => {
+  const db = await common.db;
+  const all_weeks_by_week_id = await index_group(all_weeks, 'index', 'week_id');
+
+  next_week = all_weeks_by_week_id[this_week.week_id + 1];
+  const team_seasons_by_conference_season_id = await index_group(await db.team_season.where({season: this_week.phase.season}).toArray(), 'group', 'conference_season_id');
+
+  var rank_counter = 0, sorted_team_seasons=[], team_seasons_to_save = [];
+  console.log('team_seasons_by_conference_season_id', team_seasons_by_conference_season_id)
+
+  await $.each(team_seasons_by_conference_season_id, async function(conference_season_id, team_seasons){
+    console.log('conference_season_id, team_seasons', conference_season_id, team_seasons);
+
+    sorted_team_seasons = team_seasons.sort(function(a, b) {
+        if (a.record.conference_net_wins > b.record.conference_net_wins) return -1;
+        if (a.record.conference_net_wins < b.record.conference_net_wins) return 1;
+        if (a.record.conference_wins < b.record.conference_wins) return 1;
+        if (a.record.conference_wins > b.record.conference_wins) return -1;
+        return 0;
+      });
+
+    rank_counter = 1;
+    await $.each(sorted_team_seasons, async function(ind, team_season){
+
+      team_season.rankings.division_rank.unshift(rank_counter);
+      rank_counter +=1;
+
+      team_seasons_to_save.push(team_season);
+    });
+  });
+
+  await db.team_season.bulkPut(team_seasons_to_save);
 
 }
 
@@ -1108,9 +1203,15 @@ const sim_action = async(duration, common) => {
 
     await sim_week_games(this_week, common);
 
-    //alert('done updated')
+    //alert('done sim_week_games')
 
-    await advance_to_next_week(this_week, all_weeks, common);
+     await calculate_conference_rankings(this_week, all_weeks, common);
+     await calculate_national_rankings(this_week, all_weeks, common);
+
+     //alert('done calculate_conference_rankings')
+
+     await advance_to_next_week(this_week, all_weeks, common);
+     //alert('done advance_to_next_week')
 
     await refresh_page();
   });
@@ -1299,6 +1400,21 @@ const add_listeners = async(common) => {
   });
 }
 
+const shuffle = (a) => {
+
+  var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
+}
+
+const uniform_random_choice = (options) => {
+  return options[Math.floor(Math.random() * options.length)];
+}
 
 const weighted_random_choice =  (options) => {
   var total = 0;
