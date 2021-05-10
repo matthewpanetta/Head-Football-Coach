@@ -1,62 +1,92 @@
 
-<div class="w3-display-topmiddle indexWorldContainer">
-  World List
-  <div class="w3-card s8">
-    <table class='w3-table-all width100'>
-      <thead>
-        <tr>
-          <th>Dynasty Name</th>
-          <th colspan='2'>Team</th>
-          <th>Year</th>
-          <th>Date started</th>
-          <th>Date last played</th>
-          <th>Play!</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for World in world_list %}
-        <tr>
-          <td>{{World.database_name}}</td>
-          <td>
-            <img src="teamlogo" alt="">
-          </td>
-          <td>
-            <div class="">
-              Team Name
-            </div>
-            <div class="">
-              School Name
-            </div>
-          </td>
-          <td>Year</td>
-          <td>Date started</td>
-          <td>Date last played</td>
-          <td>
-            <div class="w3-button w3-blue" style='border-radius: 5px;'>
-              <a class='no-link-link' href="/World/{{World.world_id}}">Continue</a>
-            </div>
-          </td>
+<div class="w3-row-padding ">
+  <div class=" w3-col s10 w3-padding">
+    <div class="w3-card">
+      <table class='w3-table-all width100'>
+        <thead>
+          <tr>
+            <th>Dynasty Name</th>
+            <th colspan='2'>Team</th>
+            <th>Year</th>
+            <th>Date started</th>
+            <th>Date last played</th>
+            <th>Play!</th>
+            <th>Export</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for World in world_list %}
+          <tr>
+            <td>{{World.database_name}}</td>
+            <td>
+              <img src="{{World.user_team.team_logo_url}}" alt="" style='width: 50px;'>
+            </td>
+            <td>
+              <div class="">
+                <div class=" font14">
+                  <span class='bold'>{{World.user_team.school_name}}</span> <span>{{World.user_team.team_name}}</span>
+                </div>
+                <div class="font10">
+                  {{World.user_team.team_record}}
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="bold font14">
+                {{World.current_season}}
+              </div>
+              <div class="font10">
+                {{World.current_week}}
+              </div>
+            </td>
+            <td>
+              <div class=" font14">
+                {{World.date_created|toLocaleDateString}}
+              </div>
+              <div class="font10">
+                {{World.date_created|toLocaleTimeString}}
+              </div>
+            </td>            <td>
+              <div class=" font14">
+                {{World.date_last_updated|toLocaleDateString}}
+              </div>
+              <div class="font10">
+                {{World.date_last_updated|toLocaleTimeString}}
+              </div>
+            </td>
+            <td>
+              <div class="w3-button w3-blue" style='border-radius: 5px;'>
+                <a class='no-link-link' href="/World/{{World.world_id}}">Continue</a>
+              </div>
+            </td>
+            <td>
+              <div id='headfootballcoach{{World.world_id}}' class="w3-button w3-blue width100 idb-export" style='border-radius: 5px;'>
+                Export
+              </div>
+            </td>
 
 
-        </tr>
-        {% endfor %}
-        <tr>
-          <td colspan='6'>Create new game!</td>
-          <td>
-            <div id='create-world-row' class="w3-button w3-blue" style='border-radius: 5px;'>
-              New Game
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td colspan='6'>Delete existing leagues</td>
-          <td>
-            <div id='truncate-world-row' class="w3-button w3-red" style='border-radius: 5px;'>
-              DELETE ALL
-            </div>
-          </td>
-        </tr>      </tbody>
-    </table>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td colspan='6'>Create new game!</td>
+            <td colspan='2'>
+              <div id='create-world-row' class="w3-button w3-blue width100" style='border-radius: 5px;'>
+                New Game
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan='6'>Delete existing leagues</td>
+            <td colspan='2'>
+              <div id='truncate-world-row' class="w3-button w3-red width100" style='border-radius: 5px;'>
+                DELETE ALL
+              </div>
+            </td>
+          </tr>      </tbody>
+      </table>
+    </div>
+
   </div>
 </div>
 

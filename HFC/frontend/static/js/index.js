@@ -849,7 +849,19 @@ const create_new_db  = async () => {
 
   ddb = await driver_db();
   var world_res = await ddb.world.add({});
-  const new_season_info = {world_id: world_res, database_name: 'headfootballcoach' + world_res, date_created: Date.now(), current_season: 2021 }
+  const new_season_info = {world_id: world_res
+                         , database_name: 'headfootballcoach' + world_res
+                         , date_created: Date.now()
+                         , date_last_updated: Date.now()
+                         , user_team: {
+                                         team_name: null,
+                                         school_name: null,
+                                         team_logo_url: null,
+                                         team_record: null,
+                                      }
+                         , current_season: 2021
+                         , current_week: 'Week 1'
+                       }
   ddb.world.put(new_season_info);
 
   db = await create_db(world_res);
@@ -1121,7 +1133,7 @@ const sim_game = async (game_dict, common) => {
       if (possession_count > 0){
         scoring.periods.push(period);
       }
-      period = {period_number: parseInt(possession_count / 6) + 1, points: [0,0]};
+      period = {period_number: Math.floor(possession_count / 6) + 1, points: [0,0]};
     }
 
     adjusted_score_possibilities = JSON.parse(JSON.stringify(score_possibilities));
@@ -1394,6 +1406,7 @@ const calculate_conference_rankings = async(this_week, all_weeks, common) => {
 const advance_to_next_week = async(this_week, all_weeks, common) => {
 
   const db = await common.db;
+  const ddb = await common.driver_db();
   const all_weeks_by_week_id = await index_group(all_weeks, 'index', 'week_id');
 
   next_week = all_weeks_by_week_id[this_week.week_id + 1];
@@ -1401,6 +1414,16 @@ const advance_to_next_week = async(this_week, all_weeks, common) => {
   next_week.is_current = true;
 
   const updated_weeks = await db.week.bulkPut([this_week, next_week]  );
+
+  const world = await ddb.world.get({world_id: common.world_id});
+  console.log('world', world);
+  const current_team_season = await db.team_season.get({team_id: world.user_team.team_id, season: common.season});
+  world.current_week = next_week.week_name;
+  world.user_team.team_record =current_team_season.record_display;
+
+  await ddb.world.put(world);
+
+
 
 }
 
@@ -2343,3 +2366,25 @@ const display_player_face = async (face, overrides, dom_id) => {
 
 
 };
+
+function download(filename, text, type="text/json") {
+  // Create an invisible A element
+  const a = document.createElement("a");
+  a.style.display = "none";
+  document.body.appendChild(a);
+
+  // Set the HREF to a Blob representation of the data to be downloaded
+  a.href = window.URL.createObjectURL(
+    new Blob([text], { type })
+  );
+
+  // Use download attribute to set set desired file name
+  a.setAttribute("download", filename);
+
+  // Trigger the download by simulating click
+  a.click();
+
+  // Cleanup
+  window.URL.revokeObjectURL(a.href);
+  document.body.removeChild(a);
+}

@@ -1,6 +1,7 @@
 
     const getHtml = async(common) => {
       nunjucks.configure({ autoescape: true });
+      const nunjucks_env = await get_nunjucks_env();
 
       var db = null;
       var world_obj = {};
@@ -21,7 +22,7 @@
       var html = await fetch(url);
       html = await html.text();
 
-      const renderedHtml = nunjucks.renderString(html, render_content);
+      const renderedHtml = nunjucks_env.renderString(html, render_content);
 
       $('#body').html(renderedHtml);
     }
@@ -48,6 +49,49 @@
         $('#indexCreateWorldModalCloseButton').on('click', function(){
           $('#indexCreateWorldModal').css({'display': 'none'});
           $(window).unbind();
+        });
+      });
+
+      $('.idb-export').on('click', async function(){
+        console.log('idb export click', $(this).attr('id'))
+        var db_name = $(this).attr('id');
+
+        const db = await new Dexie(db_name);
+
+        await db.version(5).stores({
+          league_season: 'season',
+          team: "team_id",
+          team_season: "++team_season_id, team_id, season",
+          player: "++player_id",
+          player_team_season: "++player_team_season_id, player_id, team_season_id, season",
+          conference: '++conference_id, conference_name',
+          conference_season: '++conference_season_id, conference_id, season, [conference_id+season]',
+          phase: '++phase_id, season',
+          week: '++week_id, season, [phase_id+season]',
+          team_game: 'team_game_id, game_id, team_season_id, week_id',
+          player_team_game: '++player_team_game_id, team_game_id, player_team_season_id',
+          game: 'game_id, week_id',
+          award: '++award_id, player_id, week_id, season_id',
+          world: ""
+        });
+
+
+        console.log('db', db)
+
+        db.open().then(function() {
+          const idbDatabase = db.backendDB(); // get native IDBDatabase object from Dexie wrapper
+
+          // export to JSON, clear database, and import from JSON
+          exportToJsonString(idbDatabase, function(err, jsonString) {
+            if (err) {
+              console.error(err);
+            } else {
+              console.log('Exported as JSON: ' + jsonString);
+              download(`${db_name}.json`, jsonString)
+            }
+          });
+        }).catch(function(e) {
+          console.error('Could not connect. ' + e);
         });
       });
 
@@ -99,10 +143,13 @@
         const world_id = new_season_info.world_id;
         const season = new_season_info.current_season;
 
+        var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference']});
+        const num_teams = teams_from_json.length;
+
         const new_season = await db.league_season.add({season: season,
                                                        world_id: world_id,
                                                        is_current_season: true,
-                                                       user_team_id: 1,
+                                                       user_team_id: Math.ceil(Math.random() * num_teams),
                                                        captains_per_team: 3,
                                                        players_per_team: 70,
                                                        preseason_tasks: {
@@ -112,11 +159,10 @@
                                                        }
                                                      });
 
+
         const phases_created = await common.create_phase(season);
         var weeks = await common.create_week(phases_created);
 
-        var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference']});
-        const num_teams = teams_from_json.length;
 
 
         const divisions_from_json = await common.get_divisions({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference']});
@@ -271,6 +317,102 @@
                                         conference_champion: false,
                                         national_champion: false,
                                         bowl: null,
+                                      },
+                                      season_stats: {
+                                        games: {
+                                            game_score:0,
+                                            games_played:0,
+                                            games_started:0,
+                                            plays_on_field:0,
+                                            team_games_played:0,
+                                          },
+                                        passing : {
+                                            completions: 0,
+                                            attempts: 0,
+                                            yards: 0,
+                                            tds: 0,
+                                            ints:0,
+                                            sacks:0,
+                                            sack_yards:0,
+                                          },
+                                          rushing : {
+                                            carries:0,
+                                            yards:0,
+                                            tds:0,
+                                            over_20:0,
+                                            lng:0,
+                                            broken_tackles:0,
+                                            yards_after_contact:0,
+                                          },
+                                          receiving : {
+                                            yards:0,
+                                            targets:0,
+                                            receptions:0,
+                                            tds:0,
+                                            yards_after_catch:0,
+                                            drops:0,
+                                            lng:0,
+                                            yards:0,
+                                          },
+                                          blocking : {
+                                            sacks_allowed:0,
+                                            pancakes:0,
+                                            blocks:0,
+                                          },
+                                          defense : {
+                                            tackles:0,
+                                            solo_tackles:0,
+                                            sacks:0,
+                                            tackles_for_loss:0,
+                                            deflections:0,
+                                            qb_hits:0,
+                                            tds:0,
+                                            ints:0,
+                                            int_yards:0,
+                                            int_tds:0,
+                                            safeties:0,
+                                          },
+                                          fumbles : {
+                                            fumbles: 0,
+                                            lost: 0,
+                                            recovered: 0,
+                                            forced: 0,
+                                            return_yards: 0,
+                                            return_tds: 0,
+                                          },
+                                          kicking : {
+                                            fga:0,
+                                            fgm:0,
+                                            fga_29:0,
+                                            fgm_29:0,
+                                            fga_39:0,
+                                            fgm_39:0,
+                                            fga_49:0,
+                                            fgm_49:0,
+                                            fga_50:0,
+                                            fgm_50:0,
+                                            lng:0,
+                                            xpa:0,
+                                            xpm:0,
+                                            kickoffs:0,
+                                            touchbacks:0,
+                                          },
+                                          punting: {
+                                            punts:0,
+                                            yards:0,
+                                            touchbacks:0,
+                                            within_20:0,
+                                          },
+                                          returning: {
+                                            kr_returns:0,
+                                            kr_yards:0,
+                                            kr_tds:0,
+                                            kr_lng:0,
+                                            pr_returns:0,
+                                            pr_yards:0,
+                                            pr_tds:0,
+                                            pr_lng:0,
+                                          }
                                       }
                                     });
 
@@ -764,7 +906,19 @@
         const team_games_created = await db.team_game.bulkPut(team_games_to_create);
         team_season_updated = await db.team_season.bulkPut(team_seasons_to_update);
 
-        //window.location.href = `/World/${world_id}`
+        const current_league_season = await db.league_season.where({season: season}).first();
+        const world = await ddb.world.get({world_id: world_id});
+         const user_team = await db.team.get({team_id: current_league_season.user_team_id});
+
+         world.user_team.team_name = user_team.team_name;
+         world.user_team.school_name = user_team.school_name;
+         world.user_team.team_logo_url = user_team.team_logo;
+         world.user_team.team_record = '0-0';
+         world.user_team.team_id = user_team.team_id;
+
+         await ddb.world.put(world);
+
+        window.location.href = `/World/${world_id}`
       });
     }
 

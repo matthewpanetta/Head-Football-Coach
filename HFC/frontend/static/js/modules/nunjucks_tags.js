@@ -237,6 +237,19 @@ function get_nunjucks_env() {
       });
 
 
+    env.addFilter('toLocaleDateString', function(DateInt){
+      console.log(DateInt);
+      const Dt = new Date(DateInt)
+      return Dt.toLocaleString('en-US',{dateStyle: 'short'})
+    });
+
+    env.addFilter('toLocaleTimeString', function(DateInt){
+      console.log(DateInt);
+      const Dt = new Date(DateInt)
+      return Dt.toLocaleString('en-US',{timeStyle: "short"})
+    });
+
+
   return env;
 
 }
