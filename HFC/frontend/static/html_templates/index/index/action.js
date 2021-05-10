@@ -30,6 +30,8 @@
 
     const action = async (common) => {
 
+      const ddb = await common.driver_db();
+
       //Show initial 'new world' modal
       $('#create-world-row').on('click', function(){
         $('#indexCreateWorldModal').css({'display': 'block'});
@@ -113,14 +115,14 @@
         const phases_created = await common.create_phase(season);
         var weeks = await common.create_week(phases_created);
 
-        var teams_from_json = await common.get_teams({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big Ten Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference', 'Conference USA', 'FBS Independents']});
+        var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference']});
         const num_teams = teams_from_json.length;
 
 
-        const divisions_from_json = await common.get_divisions({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big Ten Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference', 'Conference USA', 'FBS Independents']});
+        const divisions_from_json = await common.get_divisions({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference']});
         const divisions = await index_group(divisions_from_json, 'group','conference_name');
 
-        const conferences_from_json = await common.get_conferences({conference: ['Big 12 Conference', 'Southeastern Conference', 'Big Ten Conference', 'Atlantic Coast Conference', 'American Athletic Conference', 'Pac-12 Conference', 'Conference USA', 'FBS Independents']});
+        const conferences_from_json = await common.get_conferences({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference']});
 
         const rivalries = await common.get_rivalries(teams_from_json);
 
@@ -244,7 +246,7 @@
                                       season: season,
                                       conference_name: team.conference_name,
                                       record: {
-                                        wins: 0, losses: 0, conference_wins: 0, conference_losses: 0, games_played: 0, conference_gb: 0, win_streak: 0
+                                        wins: 0, losses: 0, conference_wins: 0, conference_losses: 0, conference_net_wins:0, games_played: 0, conference_gb: 0, win_streak: 0, defeated_teams: []
                                       },
                                       rankings: {
                                         division_rank: [], national_rank: [], national_rank_delta: 0, national_rank_delta_abs: 0
@@ -328,18 +330,22 @@
         var position = '';
         var ethnicity = '';
 
+        const num_players_per_team = 75;
+        const num_players_to_create = num_players_per_team * team_seasons.length;
+
+        const player_names = await common.random_name(ddb, num_players_to_create);
+        const player_cities = await common.random_city(ddb, num_players_to_create);
+
+        var player_counter = 0;
         $.each(team_seasons,  function(ind, team_season){
-          for(var i = 0; i<=50; i++){
+          for(var i = 0; i<num_players_per_team; i++){
             position = positions[Math.floor(Math.random() * positions.length)];
             ethnicity = common.weighted_random_choice(position_ethnicity[position]);
-            players_tocreate.push({ name:{
-                                      first: first_names[Math.floor(Math.random() * first_names.length)],
-                                      last:  last_names[Math.floor(Math.random() * last_names.length)]
-                                    },
+            players_tocreate.push({ name:player_names[player_counter],
                                     world_id: world_id,
                                     redshirt: {previous: false, current: false},
                                     jersey_number: 21,
-                                    hometown: {city: 'Hartford', state: 'VT'},
+                                    hometown: player_cities[player_counter],
                                     position: position,
                                     ethnicity: ethnicity,
                                     player_face: undefined,
@@ -373,6 +379,7 @@
                                       desire_for_playtime: 90
                                     }
                               })
+                player_counter +=1;
           }
         });
         var players_tocreate_added = await db.player.bulkAdd(players_tocreate);
@@ -565,6 +572,8 @@
         const teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id')
         const team_seasons_by_team_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index', 'team_id')
         const team_rivalries_by_team_season_id = await index_group(team_seasons.map(function(ts){ return { team_season_id: ts.team_season_id, rivals:teams_by_team_id[ts.team_id].rivals}}), 'index', 'team_season_id');
+        const conferences_by_conference_id = await index_group(await db.conference.toArray(), 'index', 'conference_id');
+        const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: season}).toArray(), 'index', 'conference_season_id');
         console.log('team_rivalries_by_team_season_id', team_rivalries_by_team_season_id)
 
         const phases = await index_group(await db.phase.where({season: season}).toArray(), 'index','phase_id');;
@@ -574,13 +583,13 @@
         })
         weeks = weeks.filter(week => week.phase.phase_name == 'Regular Season');
         all_week_ids = weeks.map(w => w.week_id);
+        all_weeks_by_week_id = await index_group(weeks, 'index', 'week_id')
 
         const weeks_by_week_name = await index_group(weeks, 'index', 'week_name')
 
         $.each(team_seasons, function(ind, team_season){
           team_season_rivals = team_rivalries_by_team_season_id[team_season.team_season_id].rivals;
           $.each(team_season_rivals, function(ind, rival_obj){
-            console.log('rival_obj', rival_obj)
             rival_obj.preferred_week_id = undefined;
             if (rival_obj.preferred_week_number != null){
               rival_obj.preferred_week_id = weeks_by_week_name['Week '+ rival_obj.preferred_week_number];
@@ -589,11 +598,12 @@
             rival_obj.opponent_team_season_id = team_seasons_by_team_id[rival_obj.opponent_team_id.toString()].team_season_id
           });
 
-          console.log('team_season_rivals', team_season ,team_season_rivals)
+
+          team_conference = conferences_by_conference_id[conference_seasons_by_conference_season_id[team_season.conference_season_id].conference_id];
 
           team_season_schedule_tracker[team_season.team_season_id] = {
-            conference: {games_to_schedule: 8, games_scheduled: 0,},
-            non_conference: {games_to_schedule: games_per_team - 8, games_scheduled: 0,},
+            conference: {games_to_schedule: team_conference.number_conference_games, games_scheduled: 0,},
+            non_conference: {games_to_schedule: games_per_team - team_conference.number_conference_games, games_scheduled: 0,},
             weeks_scheduled: [], opponents_scheduled: [],
             home_games: 0, away_games: 0, net_home_games: 0,
             conference_season_id: team_season.conference_season_id,
@@ -621,11 +631,11 @@
 
         team_seasons = await index_group(await db.team_season.where({season: season}).toArray(), 'index','team_id');
         team_seasons_by_conference_season_id = await index_group(await db.team_season.where({season: season}).toArray(), 'group','conference_season_id');
-        console.log('team_seasons_by_conference_season_id', team_seasons_by_conference_season_id)
 
         var scheduling_dict = {
           team_season_schedule_tracker: team_season_schedule_tracker,
           all_week_ids: all_week_ids,
+          all_weeks_by_week_id: all_weeks_by_week_id,
           world_id: world_id,
           season: season,
           next_team_game_id: next_team_game_id,
@@ -644,18 +654,13 @@
 
           zipped_set = []
           $.each(team_season_id_list, function(ind, team_season_id){
-            console.log('team_season_schedule_tracker[team_season_id]', team_season_schedule_tracker[team_season_id])
             rival_list = team_season_schedule_tracker[team_season_id].rivals;
-            console.log('rival_list', team_season_id,rival_list)
             $.each(rival_list, function(ind, rival_obj){
 
-
-              console.log('rival_obj.opponent_team_id', rival_obj, team_seasons_by_team_id)
               zipped_set.push([team_season_id, team_seasons_by_team_id[rival_obj.opponent_team_id.toString()].team_season_id.toString(), rival_obj]);
             });
           });
 
-          console.log('rivalries scheduled', zipped_set);
           //console.log('zipped_set', zipped_set)
           $.each(zipped_set, function(ind, team_set){
             //check if confernece, pass to next
@@ -664,7 +669,6 @@
             if (team_season_schedule_tracker[team_a].conference_season_id == team_season_schedule_tracker[team_b].conference_season_id) {
               game_type = 'conference';
             }
-            console.log(team_set, game_type)
             game_scheduled = common.schedule_game(common, scheduling_dict, team_set, game_type, rival_obj)
             if (game_scheduled != 'Scheduled'){
               console.log('Couldnt schedule game!', game_scheduled, team_set, game_type)
@@ -705,7 +709,7 @@
 
           team_season_id_list = team_season_id_list.filter(team_id => team_season_schedule_tracker[team_id].conference.games_to_schedule > 0)
 
-          scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 100;
+          scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 200;
 
           attempt_counter +=1;
           team_set_a = [];
@@ -743,7 +747,7 @@
 
           team_season_id_list = team_season_id_list.filter(team_id => team_season_schedule_tracker[team_id].non_conference.games_to_schedule > 0)
 
-          scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 300;
+          scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 400;
 
           attempt_counter +=1;
           team_set_a = [];

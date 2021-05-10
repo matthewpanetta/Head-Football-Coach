@@ -205,6 +205,8 @@ const getHtml = async (common) => {
   var world_obj = {};
   const team_id = common.params.team_id;
   const db = common.db;
+  const season = common.season;
+  const index_group = common.index_group;
 
   weeks_by_week_id = await common.index_group(await db.week.where({season: 2021}).toArray(), 'index', 'week_id')
 
@@ -234,7 +236,12 @@ const getHtml = async (common) => {
   const team = await db.team.get({team_id: team_id})
   const team_season = await db.team_season.get({team_id: team_id, season: 2021});
 
+  const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: season}).toArray(), 'index', 'conference_season_id');
+  const conference_by_conference_id = await index_group(await db.conference.toArray(), 'index', 'conference_id');
+
   team.team_season = team_season;
+  team.team_season.conference_season = conference_seasons_by_conference_season_id[team.team_season.conference_season_id];
+  team.team_season.conference_season.conference = conference_by_conference_id[team.team_season.conference_season.conference_id];
 
   var team_games = await db.team_game.where({team_season_id: team_season.team_season_id}).toArray();
   team_games = team_games.sort(function(team_game_a,team_game_b){
@@ -293,6 +300,11 @@ const getHtml = async (common) => {
 
     game.week = weeks_by_week_id[game.week_id];
 
+    game.game_headline = game.week.week_name;
+    if (game.week.week_name == 'Conference Championships'){
+      game.game_headline = team.team_season.conference_season.conference.conference_abbreviation + ' Championship'
+    }
+
     game.opponent_team_game = opponent_team_games[counter_games];
     game.opponent_team = opponent_teams[counter_games];
     game.opponent_team_season = opponent_team_seasons[counter_games];
@@ -329,6 +341,9 @@ const getHtml = async (common) => {
     }
 
     game.opponent_rank_string = game.opponent_team_season.national_rank_display;
+    if (game.opponent_team_game.national_rank != null){
+      game.opponent_rank_string = game.opponent_team_game.national_rank_display;
+    }
 
     counter_games +=1;
   });

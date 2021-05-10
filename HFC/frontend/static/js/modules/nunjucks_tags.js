@@ -159,9 +159,9 @@ function get_nunjucks_env() {
     if (BackgroundColor == undefined){
       BackgroundColor = "FFFFFF"
     }
-      var R = parseInt(BackgroundColor.slice(2))
-      var G = parseInt(BackgroundColor.slice(2,4))
-      var B = parseInt(BackgroundColor.slice(4,6))
+      var R = parseInt(BackgroundColor.slice(0,2), 16)
+      var G = parseInt(BackgroundColor.slice(2,4), 16)
+      var B = parseInt(BackgroundColor.slice(4,6), 16)
 
       var Luma = (0.299 * (R**2) + 0.587 * (G**2) + 0.114 * (B**2)) ** .5
       if (Luma > 200){
@@ -174,11 +174,12 @@ function get_nunjucks_env() {
     if (BackgroundColor == undefined){
       BackgroundColor = "FFFFFF"
     }
-      var R = parseInt(BackgroundColor.slice(2))
-      var G = parseInt(BackgroundColor.slice(2,4))
-      var B = parseInt(BackgroundColor.slice(4,6))
+      var R = parseInt(BackgroundColor.slice(0,2), 16)
+      var G = parseInt(BackgroundColor.slice(2,4), 16)
+      var B = parseInt(BackgroundColor.slice(4,6), 16)
 
       var Luma = (0.299 * (R**2) + 0.587 * (G**2) + 0.114 * (B**2)) ** .5
+      console.log('TeamBackgroundFontColor', BackgroundColor, Luma, [R,G,B])
       if (Luma > 200){
         return "000";
       }
@@ -223,9 +224,9 @@ function get_nunjucks_env() {
 
     env.addFilter('TeamSecondaryColor', function(Color) {
       console.log('Color', Color)
-      var R = parseInt(Color.slice(2))
-      var G = parseInt(Color.slice(2,4))
-      var B = parseInt(Color.slice(4,6))
+      var R = parseInt(Color.slice(0,2), 16)
+      var G = parseInt(Color.slice(2,4), 16)
+      var B = parseInt(Color.slice(4,6), 16)
 
       var Luma = (0.299 * (R**2) + 0.587 * (G**2) + 0.114 * (B**2)) ** .5
 

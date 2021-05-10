@@ -27,8 +27,8 @@
    "conference_logo_url": "/static/img/ConferenceLogos/American_Athletic_Conference.png"
  },
  {
-   "conference_name": "Big 12 Conference",
-   "conference_abbreviation": "Big 12",
+   "conference_name": "Big 12",
+   "conference_abbreviation": "B12",
    "prestige": 7,
    "is_independent": 0,
    "number_conference_games": 8,
@@ -36,8 +36,8 @@
    "conference_logo_url": "/static/img/ConferenceLogos/Big_12_Conference.png"
  },
  {
-   "conference_name": "Big Ten Conference",
-   "conference_abbreviation": "Big 10",
+   "conference_name": "Big Ten",
+   "conference_abbreviation": "B10",
    "prestige": 8,
    "is_independent": 0,
    "number_conference_games": 8,
@@ -72,13 +72,13 @@
    "conference_logo_url": "/static/img/ConferenceLogos/C_USA_Conference.png"
  },
  {
-   "conference_name": "Pac-12 Conference",
-   "conference_abbreviation": "Pac-12",
+   "conference_name": "PAC-12",
+   "conference_abbreviation": "PAC-12",
    "prestige": 7,
    "is_independent": 0,
    "number_conference_games": 8,
    "hold_conference_championship_game": 1,
-   "conference_logo_url": "/static/img/ConferenceLogos/Pac-12_Conference.png"
+   "conference_logo_url": "/static/img/ConferenceLogos/PAC-12_Conference.png"
  },
  {
    "conference_name": "FBS Independents",

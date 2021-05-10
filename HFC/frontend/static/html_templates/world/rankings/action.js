@@ -416,7 +416,7 @@
                   $(td).html('<div></div>');
                   $(td).find('div').append(`<a href="${team_season.last_week_team_game.game.game_href}">${team_season.last_week_team_game.points} - ${team_season.last_week_team_game.opponent_team_game.points}</a>`)
                   $(td).find('div').append(`<span class="W-L-badge ${team_season.last_week_team_game.game_outcome_letter}">${team_season.last_week_team_game.game_outcome_letter}</span>`);
-                  $(td).find('div').append(`<span class="hide-small"> ${team_season.last_week_team_game.game_location_char} </span><a class="hide-small" href="${team_season.last_week_team_game.opponent_team.team_href}">${team_season.last_week_team_game.opponent_team_season.national_rank_display} ${team_season.last_week_team_game.opponent_team.school_name}</a>`);
+                  $(td).find('div').append(`<span class="hide-small"> ${team_season.last_week_team_game.game_location_char} </span><a class="hide-small" href="${team_season.last_week_team_game.opponent_team.team_href}">${team_season.last_week_team_game.opponent_team_game.national_rank_display} ${team_season.last_week_team_game.opponent_team.school_name}</a>`);
                 }
               }},
               {"data": null, "sortable": false, 'searchable': true, 'className': 'hide-small column-med', "fnCreatedCell": function (td, ThisWeekObject, team_season, iRow, iCol) {
