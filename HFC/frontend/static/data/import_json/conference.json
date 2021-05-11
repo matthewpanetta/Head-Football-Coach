@@ -81,6 +81,15 @@
    "conference_logo_url": "/static/img/ConferenceLogos/PAC-12_Conference.png"
  },
  {
+   "conference_name": "Sun Belt",
+   "conference_abbreviation": "SBC",
+   "prestige": 1,
+   "is_independent": 0,
+   "number_conference_games": 6,
+   "hold_conference_championship_game": 1,
+   "conference_logo_url": "/static/img/ConferenceLogos/Sun_Belt_Conference.png"
+ },
+ {
    "conference_name": "FBS Independents",
    "conference_abbreviation": "Ind",
    "prestige": 1,

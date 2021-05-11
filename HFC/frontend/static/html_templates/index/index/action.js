@@ -143,7 +143,7 @@
         const world_id = new_season_info.world_id;
         const season = new_season_info.current_season;
 
-        var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference']});
+        var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt']});
         const num_teams = teams_from_json.length;
 
         const new_season = await db.league_season.add({season: season,
@@ -165,10 +165,10 @@
 
 
 
-        const divisions_from_json = await common.get_divisions({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference']});
+        const divisions_from_json = await common.get_divisions({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt']});
         const divisions = await index_group(divisions_from_json, 'group','conference_name');
 
-        const conferences_from_json = await common.get_conferences({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference']});
+        const conferences_from_json = await common.get_conferences({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt']});
 
         const rivalries = await common.get_rivalries(teams_from_json);
 
