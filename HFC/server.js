@@ -8,6 +8,8 @@ const routes = [
 
   {route: "/World/:world_id/",          path: 'world/world/base.html'},
   {route: "/World/:world_id/Rankings/", path: 'world/rankings/base.html'},
+  {route: "/World/:world_id/Standings/", path: 'world/standings/base.html'},
+  {route: "/World/:world_id/Standings/Conference/:conference_id", path: 'world/standings/base.html'},
 
   {route: "/World/:world_id/Team/:team_id/",         path: 'team/team/base.html'},
   {route: "/World/:world_id/Team/:team_id/Schedule", path: 'team/schedule/base.html'},

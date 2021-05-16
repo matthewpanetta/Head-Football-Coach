@@ -8,6 +8,20 @@ const getHtml = async (common) => {
 
       var world_obj = {};
 
+      //TEST
+      const all_weeks = await db.week.where({season: 2021}).toArray();
+
+      const all_phases_by_phase_id = await index_group(await db.phase.where({season: 2021}).toArray(), 'index', 'phase_id');
+      const current_phase = all_phases_by_phase_id[current_week.phase_id];
+      $.each(all_weeks, function(ind, week){
+        week.phase = all_phases_by_phase_id[week.phase_id];
+        week.phase.season = 2021;
+      })
+
+      //common.schedule_bowl_season(all_weeks, common)
+
+      //END TEST
+
       const NavBarLinks = await common.nav_bar_links({
         path: 'World',
         group_name: 'World',
@@ -31,6 +45,7 @@ const getHtml = async (common) => {
 
       });
 
+      console.log('teams', teams)
       teams = teams.filter(team => team.team_season.rankings.national_rank[0] <= 25);
 
       teams.sort(function(a, b) {
@@ -49,12 +64,8 @@ const getHtml = async (common) => {
         game.home_team_game = this_week_team_games[game.home_team_game_id]
         game.away_team_game = this_week_team_games[game.away_team_game_id]
 
-        console.log('game', game)
-
         game.home_team_game.team_season = team_seasons_by_team_season_id[game.home_team_game.team_season_id];
         game.away_team_game.team_season = team_seasons_by_team_season_id[game.away_team_game.team_season_id];
-
-        console.log('game', game)
 
         game.home_team_game.team_season.stat_rankings = {offense: Math.floor(Math.random() * 50), defense: Math.floor(Math.random() * 50)}
         game.away_team_game.team_season.stat_rankings = {offense: Math.floor(Math.random() * 50), defense: Math.floor(Math.random() * 50)}
@@ -85,6 +96,10 @@ const getHtml = async (common) => {
               this_week_games: this_week_games,
               recent_games: recent_games
           };
+
+      common.render_content = render_content
+
+      console.log('render_content', render_content)
 
       var url = '/static/html_templates/world/world/template.html'
       var html = await fetch(url);
@@ -142,6 +157,7 @@ $(document).ready(async function(){
   await getHtml(common);
   await action(common);
   await common.add_listeners(common);
+  await common.initialize_scoreboard();
 
   var endTime = performance.now()
   console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );

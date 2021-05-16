@@ -330,6 +330,10 @@ const getHtml = async (common) => {
       game.away_team = game.opponent_team;
       game.away_team_season = game.opponent_team_season;
 
+      if (game.game_result_letter == 'W'){
+        game.home_team_winning_game_bold = 'bold'
+      }
+
     }
     else {
       game.game_location = 'away';
@@ -338,6 +342,10 @@ const getHtml = async (common) => {
       game.away_team_season = team_season;
       game.home_team = game.opponent_team;
       game.home_team_season = game.opponent_team_season;
+
+      if (game.game_result_letter == 'W'){
+        game.away_team_winning_game_bold = 'bold'
+      }
     }
 
     game.opponent_rank_string = game.opponent_team_season.national_rank_display;
@@ -367,7 +375,7 @@ const getHtml = async (common) => {
 
 
   console.log('games', games)
-  common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
+  common.page = {page_title: team.full_name, page_icon: team.team_logo_50, PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
   var render_content = {
                         page:     common.page,
                         world_id: common.params.world_id,
@@ -375,9 +383,12 @@ const getHtml = async (common) => {
                         team: team,
                         games: games,
                         teams: teams,
+                        all_teams: await common.all_teams(common),
                         conference_standings: team_seasons_in_conference
                       }
 
+
+  common.render_content = render_content;
   console.log('render_content', render_content)
 
   var url = '/static/html_templates/team/team/template.html'

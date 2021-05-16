@@ -61,6 +61,7 @@
                             team_id:  team_id,
                             team: team,
                             players: players,
+                            all_teams: await common.all_teams(common),
                             teams: teams,
                           }
 

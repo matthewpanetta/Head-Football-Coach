@@ -11,7 +11,6 @@
       border-width: 15px 35px 0;}
 
   </style>
-
 </head>
 
 {% include "../../static/html_templates/ext_TeamColoring.html" %}
@@ -66,6 +65,7 @@
                   <div class="w3-row teamScheduleGameDashboard w3-display-container w3-light-grey">
                     {% for game in games%}
                     <div BoxScoreGameID="{{game.game_id}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col l12 mw600 w3-display-container w3-white w3-border w3-border-grey w3-hide">
+                      {{game|log}}
                       <div class="w3-col l7 m12 s12 height100 w3-display-container">
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.away_team.team_color_primary_hex}}'></div>
@@ -83,15 +83,15 @@
                           </div>
                           <div class=" w3-display-container">
                             <span class='font10'>{{game.away_team_season.national_rank_display}}</span>
-                            <span class='font17 {{game.AwayTeamWinningGameBold}}'><a href="{{game.away_team.team_href}}">{{game.away_team.team_name}}</a></span>
+                            <span class='font17 {{game.away_team_winning_game_bold}}'><a href="{{game.away_team.team_href}}">{{game.away_team.team_name}}</a></span>
                             <span class='font10'>{{game.away_team_season.record_display}}</span>
-                            <span class='w3-display-right {{game.AwayTeamWinningGameBold}}'>{{game.AwayPoints}}</span>
+                            <span class='w3-display-right {{game.away_team_winning_game_bold}}'>{{game.scoring.final[0]}}</span>
                           </div>
                           <div class=" w3-display-container">
-                            <span class='font10'>{{game.HomeTeamRankDisplay}}</span>
-                            <span class='font17 {{game.HomeTeamWinningGameBold}}'><a href="/World/{{page.WorldID}}/Team/{{game.HomeTeam.TeamID}}">{{game.HomeTeam.TeamName}}</a></span>
+                            <span class='font10'>{{game.home_team_season.national_rank_display}}</span>
+                            <span class='font17 {{game.home_team_winning_game_bold}}'><a href="{{game.home_team.team_href}}">{{game.home_team.team_name}}</a></span>
                             <span class='font10'>{{game.HomeTeamRecord}}</span>
-                            <span class='w3-display-right {{game.HomeTeamWinningGameBold}}'>{{game.HomePoints}}</span>
+                            <span class='w3-display-right {{game.home_team_winning_game_bold}}'>{{game.scoring.final[1]}}</span>
 
                           </div>
                         </div>
@@ -103,24 +103,24 @@
                                 <td colspan="3" class='font10'>{{game.game_headline}}</td>
                               </tr>
                               <tr>
-                                <td class='font10'>{{game.away_team.national_rank_display}}</td>
-                                <td class='font17 {{game.AwayTeamWinningGameBold}}'>
+                                <td class='font10 no-width align-bottom'><span>{{game.away_team_season.national_rank_display}}</span></td>
+                                <td class='font17 {{game.AwayTeamWinningGameBold}} align-bottom'>
                                   <a href="{{game.away_team.team_href}}">
                                     {{game.away_team.school_name}}
                                   </a>
                                   <span class='font10'>{{game.away_team_season.record_display}}</span>
                                 </td>
-                                <td class='{{game.AwayTeamWinningGameBold}} font16'>{{game.AwayPoints}}</td>
+                                <td class='{{game.away_team_winning_game_bold}} font16'>{{game.scoring.final[0]}}</td>
                               </tr>
                               <tr>
-                                <td class='font10'>{{game.HomeTeamRankDisplay}}</td>
-                                <td class=''>
+                                <td class='font10 no-width align-bottom'>{{game.home_team_season.national_rank_display}}</td>
+                                <td class=' align-bottom'>
                                   <a href="{{game.home_team.team_href}}" class='font17 {{game.HomeTeamWinningGameBold}}'>
                                     {{game.home_team.school_name}}
                                   </a>
                                   <span class='font10'>{{game.home_team_season.record_display}}</span>
                                 </td>
-                                <td class='{{game.HomeTeamWinningGameBold}} font16'>{{game.HomePoints}}</td>
+                                <td class='{{game.home_team_winning_game_bold}} font16'>{{game.scoring.final[1]}}</td>
                               </tr>
                             </tbody>
                           </table>
@@ -128,7 +128,7 @@
                         </div>
 
                         <div class="w3-display-bottomleft teamScheduleGameDashboardGameDisplayBoxScoreText">
-                          <a href="/World/{{page.WorldID}}/Game/{{game.GameID.GameID}}">
+                          <a href="{{game.game_href}}">
                             Box Score
                           </a>
                         </div>

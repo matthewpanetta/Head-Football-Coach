@@ -1,5 +1,6 @@
-{% include "../../static/html_templates/ext_NavBar.html" %}
-
+<div class='ext_NavBar'>
+  {% include "../../static/html_templates/ext_NavBar.html" %}
+</div>
 <style>
   #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
     border-bottom: 2px solid black;
@@ -12,7 +13,7 @@
 <body>
   <div class="PageContent">
     <div class='worldHeader w3-row background-eee'>
-      <p>scoreboard</p>
+      {% include "../../static/html_templates/Scoreboard.html" %}
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
@@ -48,15 +49,15 @@
                 <table class="w3-table no-border"   style="width:100%">
                   <tr>
                     <td>Others receiving votes:
-                      {% for Team in BubbleTeams%}
-                      <span><a href="{{Team.TeamHref}}">{{Team.TeamSeasonID__TeamID__TeamName}}</a>{% include "HeadFootballCoach/ext_Comma.html" %}</span>
+                      {% for team in bubble_teams%}
+                      <span><a href="{{team.team_href}}">{{team.school_name}}</a>{% if loop.last %} {% else %}, {% endif%}</span>
                       {% endfor %}</td>
                   </tr>
-                  {%if DroppedOutTeams%}
+                  {%if dropped_teams%}
                   <tr>
                     <td>Teams dropped from rankings:
-                      {% for Team in DroppedOutTeams%}
-                      <span><a href="{{Team.TeamHref}}">{{Team.TeamSeasonID__TeamID__TeamName}}</a> ({{Team.PreviousRank}}) </span>
+                      {% for team in dropped_teams%}
+                      <span><a href="{{team.team_href}}">{{team.school_name}}</a> ({{team.team_season.rankings.national_rank[1]}}) {% if loop.last %} {% else %}, {% endif%}</span>
                       {% endfor %}</td>
                   </tr>
                   {%endif%}

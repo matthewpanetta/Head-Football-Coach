@@ -132,6 +132,7 @@
                             team: team,
                             games: games,
                             teams: teams,
+                            all_teams: await common.all_teams(common),
                             conference_standings: team_seasons_in_conference
                           }
 

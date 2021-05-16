@@ -12,7 +12,6 @@
         db: db
       });
 
-      var render_content = {team_list: [], page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks}, world_id: common.params['world_id']};
       var teams = await db.team.toArray();
       var conferences = await index_group(await db.conference.toArray(), 'one_to_one','conference_id');
       var conference_seasons = await index_group(await db.conference_season.where({season: 2021}).toArray(), 'one_to_one','conference_season_id');
@@ -26,6 +25,9 @@
 
       });
 
+      dropped_teams = teams.filter(team => team.team_season.rankings.national_rank[0] > 25 && team.team_season.rankings.national_rank[1] <= 25);
+      bubble_teams = teams.filter(team => team.team_season.rankings.national_rank[0] > 25 && team.team_season.rankings.national_rank[0] < 29);
+
       teams = teams.filter(team => team.team_season.rankings.national_rank[0] <= 25);
 
       teams.sort(function(a, b) {
@@ -34,8 +36,18 @@
           return 0;
         });
 
+      const recent_games = await common.recent_games(common);
 
-      render_content['teams'] = teams
+      var render_content = {page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks},
+                            team_list: [],
+                            world_id: common.params['world_id'],
+                            teams: teams,
+                            recent_games: recent_games,
+                            dropped_teams: dropped_teams,
+                            bubble_teams: bubble_teams
+
+                          };
+      common.render_content = render_content;
       console.log('render_content', render_content)
 
       var url = '/static/html_templates/world/rankings/template.html'
@@ -383,7 +395,6 @@
               }},
               {"data": "rankings.national_rank_delta", "sortable": true, 'className': 'center-text hide-small', 'orderSequence':["desc", 'asc'], "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
 
-                console.log('team_season.rankings.national_rank_delta', team_season.rankings.national_rank_delta, team_season.rankings.national_rank_delta_abs)
                 if (team_season.rankings.national_rank_delta > 0){
                   $(td).html(`
                     <div class="font14 W">
@@ -517,6 +528,7 @@
       await getHtml(common);
       await action(common);
       await common.add_listeners(common);
+      await common.initialize_scoreboard();
 
       var endTime = performance.now()
       console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );

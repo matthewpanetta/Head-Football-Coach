@@ -25,6 +25,7 @@
       const renderedHtml = nunjucks_env.renderString(html, render_content);
 
       $('#body').html(renderedHtml);
+      //$('head').append('<title>Alabama</title>');
     }
 
 
@@ -93,6 +94,8 @@
         }).catch(function(e) {
           console.error('Could not connect. ' + e);
         });
+
+
       });
 
       $('#truncate-world-row').on('click', async function(){
@@ -138,12 +141,14 @@
         var index_group = common.index_group;
 
         const db = new_db['db'];
+        common.db = await db;
+
         const new_season_info = new_db['new_season_info'];
 
         const world_id = new_season_info.world_id;
         const season = new_season_info.current_season;
 
-        var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt']});
+        var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
         const num_teams = teams_from_json.length;
 
         const new_season = await db.league_season.add({season: season,
@@ -165,10 +170,10 @@
 
 
 
-        const divisions_from_json = await common.get_divisions({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt']});
+        const divisions_from_json = await common.get_divisions({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
         const divisions = await index_group(divisions_from_json, 'group','conference_name');
 
-        const conferences_from_json = await common.get_conferences({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt']});
+        const conferences_from_json = await common.get_conferences({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
 
         const rivalries = await common.get_rivalries(teams_from_json);
 
@@ -213,26 +218,31 @@
 
         var team_id_counter = 1;
         $.each(teams_from_json, function(ind, team){
-          if (team.team_jersey_invert) {
-            jersey_colors = ['#FFFFFF', `#${team.team_color_primary_hex}`, `#${team.team_color_secondary_hex}`];
+          if (team.jersey.invert) {
+            team.jersey.teamColors = ['#FFFFFF', `#${team.team_color_primary_hex}`, `#${team.team_color_secondary_hex}`];
           }
           else {
-            jersey_colors = [`#${team.team_color_primary_hex}`, `#${team.team_color_secondary_hex}`, '#FFFFFF'];
+            team.jersey.teamColors = [`#${team.team_color_primary_hex}`, `#${team.team_color_secondary_hex}`, '#FFFFFF'];
           }
 
-          jersey_lettering = {text_color: '#FFFFFF', text: ''};
+          team.jersey.lettering = {text_color: '#FFFFFF', text: ''};
+
+          if (Math.random() < .2) {
+            team.jersey.lettering.text = team.team_name
+          }
+          else if (Math.random() < .1) {
+            team.jersey.lettering.text = team.school_name
+          }
+
+          if (team.jersey.id == null){
+            team.jersey.id = jersey_options[Math.floor(Math.random() * jersey_options.length)];
+          }
+
 
           rivals_team_1 = rivalries.filter(r => r.team_name_1 == team.school_name).map(function(r) { return {opponent_name: r.team_name_2, opponent_team_id: null, preferred_week_number: r.preferred_week_number, rivalry_name: r.rivalry_name}});
           rivals_team_2 = rivalries.filter(r => r.team_name_2 == team.school_name).map(function(r) { return {opponent_name: r.team_name_1, opponent_team_id: null, preferred_week_number: r.preferred_week_number, rivalry_name: r.rivalry_name}});
 
           rivals = rivals_team_1.concat(rivals_team_2);
-
-          if (Math.random() < .2) {
-            jersey_lettering.text = team.team_name
-          }
-          else if (Math.random() < .1) {
-            jersey_lettering.text = team.school_name
-          }
 
 
           teams.push({
@@ -244,11 +254,7 @@
             team_color_primary_hex: team.team_color_primary_hex,
             team_color_secondary_hex: team.team_color_secondary_hex,
             rivals: rivals,
-            jersey: {
-              id: jersey_options[Math.floor(Math.random() * jersey_options.length)],
-              teamColors: jersey_colors,
-              lettering: jersey_lettering
-            },
+            jersey: team.jersey,
             team_ratings: {academic_prestige: team.academic_prestige,
                            campus_lifestyle: team.campus_lifestyle,
                            championship_contender: team.championship_contender,
@@ -422,68 +428,63 @@
 
         var team_seasons_tocreate_added = await db.team_season.bulkAdd(team_seasons_tocreate);
         $(par).append('<div>Ranking teams</div>')
-        var team_seasons = await db.team_season.toArray();
+        const all_weeks = await db.week.where({season: season}).toArray();
+        const this_week = all_weeks.filter(w => w.is_current)[0];
 
-        team_seasons.sort(function(a, b) {
-            if (a.rating.overall > b.rating.overall) return -1;
-            if (a.rating.overall < b.rating.overall) return 1;
-            return 0;
-          });
+        this_week.phase = await db.phase.get({phase_id: this_week.phase_id});
+        this_week.phase.season = season;
 
-        var rank_count = 1;
-        $.each(team_seasons, function(ind, team_season){
-          team_season.rankings.national_rank.push(rank_count);
+        console.log('this_week',this_week, all_weeks, common)
 
-          rank_count +=1;
-        });
+        await common.calculate_national_rankings(this_week, all_weeks, common)
+        await common.calculate_conference_rankings(this_week, all_weeks, common)
 
-        conference_seasons =  await db.conference_season.toArray();
-        var team_seasons_in_conference_season = [];
-        var top_record = {};
-        $.each(conference_seasons, function(ind, conference_season){
-          team_seasons_in_conference_season = team_seasons.filter(ts => ts.conference_season_id == conference_season.conference_season_id);
-          team_seasons_in_conference_season.sort(function(a, b) {
-              if (a.rating.overall > b.rating.overall) return -1;
-              if (a.rating.overall < b.rating.overall) return 1;
-              return 0;
-            });
+        var team_seasons = await db.team_season.where({season: season}).toArray();
 
-            rank_count = 1;
-            top_record = {};
-            $.each(team_seasons_in_conference_season, function(ind, team_season){
-              team_season.rankings.division_rank.push(rank_count);
-
-              if (rank_count == 1){
-                team_season.record.conference_gb
-                top_record = team_season.record;
-                team_season.record.conference_gb = 0;
-              }
-              else {
-                team_season.record.conference_gb = ((top_record.conference_wins - team_season.record.conference_wins) + ( team_season.record.conference_losses - top_record.conference_losses)) / 2;
-              }
-
-              rank_count +=1;
-            });
-        });
-
-        var team_season_updated = await db.team_season.bulkPut(team_seasons);
         $(par).append('<div>Adding Players</div>')
         var players_tocreate = [];
+        var player_team_seasons_tocreate = [];
         var position = '';
         var ethnicity = '';
 
-        const num_players_per_team = 75;
-        const num_players_to_create = num_players_per_team * team_seasons.length;
+        var team_position_option = {};
+        var team_position_options = [
+            ["QB","QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","P","P"],
+            ["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","OLB","OLB","OLB","MLB","MLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"],
+            ["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","OLB","OLB","MLB","MLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
+            ["QB","QB","QB","RB","RB","RB","RB","RB","RB","RB","FB","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","OLB","MLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
+            ["QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","OLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"]
+          ]
+
+        const num_players_per_team = 10;
+        const num_players_to_create = num_players_per_team * team_seasons_tocreate.length;
 
         const player_names = await common.random_name(ddb, num_players_to_create);
         const player_cities = await common.random_city(ddb, num_players_to_create);
 
+        const last_player = await db.player.orderBy('player_id').last();
+        const last_player_team_season = await db.player_team_season.orderBy('player_team_season_id').last();
+
         var player_counter = 0;
+
+        var player_id_counter = 1;
+        var player_team_season_id_counter = 1;
+        if (last_player != undefined) {
+          player_id_counter = last_player.player_id + 1;
+        }
+        if (last_player_team_season != undefined) {
+          player_team_season_id_counter = last_player_team_season.player_team_season_id + 1;
+        }
+
         $.each(team_seasons,  function(ind, team_season){
+          team_position_option = team_position_options[Math.floor(Math.random() * team_position_options.length)];
           for(var i = 0; i<num_players_per_team; i++){
-            position = positions[Math.floor(Math.random() * positions.length)];
+            position = team_position_option[i];
+            body = common.body_from_position(position);
             ethnicity = common.weighted_random_choice(position_ethnicity[position]);
-            players_tocreate.push({ name:player_names[player_counter],
+            players_tocreate.push({
+                                    player_id: player_id_counter,
+                                    name:player_names[player_counter],
                                     world_id: world_id,
                                     redshirt: {previous: false, current: false},
                                     jersey_number: 21,
@@ -491,11 +492,7 @@
                                     position: position,
                                     ethnicity: ethnicity,
                                     player_face: undefined,
-                                    body: {
-                                      height_inches: 73,
-                                      height: "6'1",
-                                      weight: 225
-                                    },
+                                    body: common.body_from_position(position),
                                     recruiting: {
                                       is_recruit: false,
                                       speed: 1,
@@ -521,188 +518,181 @@
                                       desire_for_playtime: 90
                                     }
                               })
+
+            player_team_seasons_tocreate.push({ player_id: player_id_counter,
+                                                player_team_season_id: player_team_season_id_counter,
+                                                team_season_id: team_season.team_season_id,
+                                                season: season,
+                                                is_captain: false,
+                                                position: position,
+                                                class: {
+                                                  class_name: classes[Math.floor(Math.random() * classes.length)],
+                                                  redshirted: false
+                                                },
+                                                season_stats: {
+                                                  games: {
+                                                      game_score:0,
+                                                      games_played:0,
+                                                      games_started:0,
+                                                      plays_on_field:0,
+                                                      team_games_played:0,
+                                                    },
+                                                  top_stats : [],
+                                                  passing : {
+                                                      completions: 0,
+                                                      attempts: 0,
+                                                      yards: 0,
+                                                      tds: 0,
+                                                      ints:0,
+                                                      sacks:0,
+                                                      sack_yards:0,
+                                                    },
+                                                    rushing : {
+                                                      carries:0,
+                                                      yards:0,
+                                                      tds:0,
+                                                      over_20:0,
+                                                      lng:0,
+                                                      broken_tackles:0,
+                                                      yards_after_contact:0,
+                                                    },
+
+                                                    receiving : {
+                                                      yards:0,
+                                                      targets:0,
+                                                      receptions:0,
+                                                      tds:0,
+                                                      yards_after_catch:0,
+                                                      drops:0,
+                                                      lng:0,
+                                                      yards:0,
+                                                    },
+                                                    blocking : {
+                                                      sacks_allowed:0,
+                                                      pancakes:0,
+                                                      blocks:0,
+                                                    },
+                                                    defense : {
+                                                      tackles:0,
+                                                      solo_tackles:0,
+                                                      sacks:0,
+                                                      tackles_for_loss:0,
+                                                      deflections:0,
+                                                      qb_hits:0,
+                                                      tds:0,
+                                                      ints:0,
+                                                      int_yards:0,
+                                                      int_tds:0,
+                                                      safeties:0,
+                                                    },
+                                                    fumbles : {
+                                                      fumbles: 0,
+                                                      lost: 0,
+                                                      recovered: 0,
+                                                      forced: 0,
+                                                      return_yards: 0,
+                                                      return_tds: 0,
+                                                    },
+                                                    kicking : {
+                                                      fga:0,
+                                                      fgm:0,
+                                                      fga_29:0,
+                                                      fgm_29:0,
+                                                      fga_39:0,
+                                                      fgm_39:0,
+                                                      fga_49:0,
+                                                      fgm_49:0,
+                                                      fga_50:0,
+                                                      fgm_50:0,
+                                                      lng:0,
+                                                      xpa:0,
+                                                      xpm:0,
+                                                      kickoffs:0,
+                                                      touchbacks:0,
+                                                    },
+                                                    punting: {
+                                                      punts:0,
+                                                      yards:0,
+                                                      touchbacks:0,
+                                                      within_20:0,
+                                                    },
+                                                    returning: {
+                                                      kr_returns:0,
+                                                      kr_yards:0,
+                                                      kr_tds:0,
+                                                      kr_lng:0,
+                                                      pr_returns:0,
+                                                      pr_yards:0,
+                                                      pr_tds:0,
+                                                      pr_lng:0,
+                                                    }
+                                                },
+                                                ratings: {
+                                                  athleticism: {
+                                                    strength: Math.floor(Math.random() * 100),
+                                                    agility: Math.floor(Math.random() * 100),
+                                                    speed: Math.floor(Math.random() * 100),
+                                                    acceleration: Math.floor(Math.random() * 100),
+                                                    stamina: Math.floor(Math.random() * 100),
+                                                    jumping: Math.floor(Math.random() * 100),
+                                                    injury: Math.floor(Math.random() * 100),
+                                                  },
+                                                  passing: {
+                                                    throwing_power: Math.floor(Math.random() * 100),
+                                                    short_throw_accuracy: Math.floor(Math.random() * 100),
+                                                    medium_throw_accuracy: Math.floor(Math.random() * 100),
+                                                    deep_throw_accuracy: Math.floor(Math.random() * 100),
+                                                    throw_on_run: Math.floor(Math.random() * 100),
+                                                    throw_under_pressure: Math.floor(Math.random() * 100),
+                                                    play_action: Math.floor(Math.random() * 100),
+                                                  },
+                                                  rushing: {
+                                                    elusiveness: Math.floor(Math.random() * 100),
+                                                    ball_carrier_vision: Math.floor(Math.random() * 100),
+                                                    break_tackle: Math.floor(Math.random() * 100),
+                                                    carrying: Math.floor(Math.random() * 100),
+                                                  },
+                                                  receiving: {
+                                                    catching: Math.floor(Math.random() * 100),
+                                                    catch_in_traffic: Math.floor(Math.random() * 100),
+                                                    route_running: Math.floor(Math.random() * 100),
+                                                    release: Math.floor(Math.random() * 100),
+                                                  },
+                                                  defense: {
+                                                    hit_power: Math.floor(Math.random() * 100),
+                                                    tackle: Math.floor(Math.random() * 100),
+                                                    pass_rush: Math.floor(Math.random() * 100),
+                                                    block_shedding: Math.floor(Math.random() * 100),
+                                                    pursuit: Math.floor(Math.random() * 100),
+                                                    play_recognition: Math.floor(Math.random() * 100),
+                                                    man_coverage: Math.floor(Math.random() * 100),
+                                                    zone_coverage: Math.floor(Math.random() * 100),
+                                                    press: Math.floor(Math.random() * 100),
+                                                  },
+                                                  blocking: {
+                                                    pass_block: Math.floor(Math.random() * 100),
+                                                    run_block: Math.floor(Math.random() * 100),
+                                                    impact_block: Math.floor(Math.random() * 100),
+                                                  },
+                                                  kicking: {
+                                                    kick_power: Math.floor(Math.random() * 100),
+                                                    kick_accuracy: Math.floor(Math.random() * 100),
+                                                  },
+                                                  overall: {
+                                                    awareness: Math.floor(Math.random() * 100),
+                                                    overall: Math.floor(Math.random() * 100),
+                                                  }
+                                                },
+                                                world_id: world_id,
+                                                post_season_movement: null, //[quit, graduate, draft, transfer]
+                                                top_stats: []
+                                              });
                 player_counter +=1;
+                player_id_counter +=1;
+                player_team_season_id_counter +=1;
           }
         });
         var players_tocreate_added = await db.player.bulkAdd(players_tocreate);
-        $(par).append('<div>Adding Players to teams</div>')
-        const players = await db.player.toArray();
-        var player_team_seasons_tocreate = [];
-
-        var count = 0;
-        var player_stat_obj = undefined;
-        $.each(players, function(ind, player){
-          player_team_seasons_tocreate.push({ player_id: player.player_id,
-                                              team_season_id: team_seasons[count % num_teams]['team_season_id'],
-                                              season: season,
-                                              is_captain: false,
-                                              position: player.position,
-                                              class: {
-                                                class_name: classes[Math.floor(Math.random() * classes.length)],
-                                                redshirted: false
-                                              },
-                                              season_stats: {
-                                                games: {
-                                                    game_score:0,
-                                                    games_played:0,
-                                                    games_started:0,
-                                                    plays_on_field:0,
-                                                    team_games_played:0,
-                                                  },
-                                                top_stats : [],
-                                                passing : {
-                                                    completions: 0,
-                                                    attempts: 0,
-                                                    yards: 0,
-                                                    tds: 0,
-                                                    ints:0,
-                                                    sacks:0,
-                                                    sack_yards:0,
-                                                  },
-                                                  rushing : {
-                                                    carries:0,
-                                                    yards:0,
-                                                    tds:0,
-                                                    over_20:0,
-                                                    lng:0,
-                                                    broken_tackles:0,
-                                                    yards_after_contact:0,
-                                                  },
-
-                                                  receiving : {
-                                                    yards:0,
-                                                    targets:0,
-                                                    receptions:0,
-                                                    tds:0,
-                                                    yards_after_catch:0,
-                                                    drops:0,
-                                                    lng:0,
-                                                    yards:0,
-                                                  },
-                                                  blocking : {
-                                                    sacks_allowed:0,
-                                                    pancakes:0,
-                                                    blocks:0,
-                                                  },
-                                                  defense : {
-                                                    tackles:0,
-                                                    solo_tackles:0,
-                                                    sacks:0,
-                                                    tackles_for_loss:0,
-                                                    deflections:0,
-                                                    qb_hits:0,
-                                                    tds:0,
-                                                    ints:0,
-                                                    int_yards:0,
-                                                    int_tds:0,
-                                                    safeties:0,
-                                                  },
-                                                  fumbles : {
-                                                    fumbles: 0,
-                                                    lost: 0,
-                                                    recovered: 0,
-                                                    forced: 0,
-                                                    return_yards: 0,
-                                                    return_tds: 0,
-                                                  },
-                                                  kicking : {
-                                                    fga:0,
-                                                    fgm:0,
-                                                    fga_29:0,
-                                                    fgm_29:0,
-                                                    fga_39:0,
-                                                    fgm_39:0,
-                                                    fga_49:0,
-                                                    fgm_49:0,
-                                                    fga_50:0,
-                                                    fgm_50:0,
-                                                    lng:0,
-                                                    xpa:0,
-                                                    xpm:0,
-                                                    kickoffs:0,
-                                                    touchbacks:0,
-                                                  },
-                                                  punting: {
-                                                    punts:0,
-                                                    yards:0,
-                                                    touchbacks:0,
-                                                    within_20:0,
-                                                  },
-                                                  returning: {
-                                                    kr_returns:0,
-                                                    kr_yards:0,
-                                                    kr_tds:0,
-                                                    kr_lng:0,
-                                                    pr_returns:0,
-                                                    pr_yards:0,
-                                                    pr_tds:0,
-                                                    pr_lng:0,
-                                                  }
-                                              },
-                                              ratings: {
-                                                athleticism: {
-                                                  strength: Math.floor(Math.random() * 100),
-                                                  agility: Math.floor(Math.random() * 100),
-                                                  speed: Math.floor(Math.random() * 100),
-                                                  acceleration: Math.floor(Math.random() * 100),
-                                                  stamina: Math.floor(Math.random() * 100),
-                                                  jumping: Math.floor(Math.random() * 100),
-                                                  injury: Math.floor(Math.random() * 100),
-                                                },
-                                                passing: {
-                                                  throwing_power: Math.floor(Math.random() * 100),
-                                                  short_throw_accuracy: Math.floor(Math.random() * 100),
-                                                  medium_throw_accuracy: Math.floor(Math.random() * 100),
-                                                  deep_throw_accuracy: Math.floor(Math.random() * 100),
-                                                  throw_on_run: Math.floor(Math.random() * 100),
-                                                  throw_under_pressure: Math.floor(Math.random() * 100),
-                                                  play_action: Math.floor(Math.random() * 100),
-                                                },
-                                                rushing: {
-                                                  elusiveness: Math.floor(Math.random() * 100),
-                                                  ball_carrier_vision: Math.floor(Math.random() * 100),
-                                                  break_tackle: Math.floor(Math.random() * 100),
-                                                  carrying: Math.floor(Math.random() * 100),
-                                                },
-                                                receiving: {
-                                                  catching: Math.floor(Math.random() * 100),
-                                                  catch_in_traffic: Math.floor(Math.random() * 100),
-                                                  route_running: Math.floor(Math.random() * 100),
-                                                  release: Math.floor(Math.random() * 100),
-                                                },
-                                                defense: {
-                                                  hit_power: Math.floor(Math.random() * 100),
-                                                  tackle: Math.floor(Math.random() * 100),
-                                                  pass_rush: Math.floor(Math.random() * 100),
-                                                  block_shedding: Math.floor(Math.random() * 100),
-                                                  pursuit: Math.floor(Math.random() * 100),
-                                                  play_recognition: Math.floor(Math.random() * 100),
-                                                  man_coverage: Math.floor(Math.random() * 100),
-                                                  zone_coverage: Math.floor(Math.random() * 100),
-                                                  press: Math.floor(Math.random() * 100),
-                                                },
-                                                blocking: {
-                                                  pass_block: Math.floor(Math.random() * 100),
-                                                  run_block: Math.floor(Math.random() * 100),
-                                                  impact_block: Math.floor(Math.random() * 100),
-                                                },
-                                                kicking: {
-                                                  kick_power: Math.floor(Math.random() * 100),
-                                                  kick_accuracy: Math.floor(Math.random() * 100),
-                                                },
-                                                overall: {
-                                                  awareness: Math.floor(Math.random() * 100),
-                                                  overall: Math.floor(Math.random() * 100),
-                                                }
-                                              },
-                                              world_id: world_id,
-                                              post_season_movement: null, //[quit, graduate, draft, transfer]
-                                              top_stats: []
-                                            });
-
-            count +=1;
-
-        });
         var player_team_seasons_tocreate_added = await db.player_team_season.bulkAdd(player_team_seasons_tocreate);
 
         $(par).append('<div>Creating season schedule</div>')
@@ -812,9 +802,6 @@
               game_type = 'conference';
             }
             game_scheduled = common.schedule_game(common, scheduling_dict, team_set, game_type, rival_obj)
-            if (game_scheduled != 'Scheduled'){
-              console.log('Couldnt schedule game!', game_scheduled, team_set, game_type)
-            }
 
           });
 

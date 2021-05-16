@@ -11,7 +11,7 @@
 <div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
   <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Teams</button>
   <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
-    {% for Team in teams %}
+    {% for Team in all_teams %}
     <a href="{{Team.team_href}}" class="w3-bar-item w3-button"><img src="{{Team.team_logo}}" class="small-logo" alt="">{{Team.school_name}} {{Team.team_name}}</a>
     {% endfor %}
   </div>

@@ -15,7 +15,7 @@
       {{team.team_season.record_display}}
     </span>
     <div class='teamOverviewInfo'>
-      {{team.location.city}}, {{team.location.state}} | <a href="/World/{{page.WorldID}}/Conferences/{{ThisTeamSeason.DivisonSeasonID.ConferenceSeasonID.ConferenceID.ConferenceID}}">{{ThisTeamSeason.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceName}}</a>
+      {{team.location.city}}, {{team.location.state}} | <a href="{{team.team_season.conference_season.conference.conference_href}}">{{team.team_season.conference_season.conference.conference_name}}</a>
     </div>
     <div class='teamOverviewInfo'>
       {% for Link in page.TeamHeaderLinks.link_paths%}

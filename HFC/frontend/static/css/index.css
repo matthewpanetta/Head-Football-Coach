@@ -1475,6 +1475,7 @@ tfoot td {
 .MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item {
   float: left;
   margin-left: -1px;
+  margin-right: -1px;
 }
 
 .MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item>div {
@@ -2073,6 +2074,11 @@ thead tr {
   vertical-align: top;
 }
 
+
+.align-bottom{
+  vertical-align: bottom !important;
+}
+
 .padding-10 {
   padding: 10px;
 }
@@ -2111,4 +2117,8 @@ thead tr {
 
 .column-med {
   width: 20%;
+}
+
+.no-width {
+  width:1%;
 }

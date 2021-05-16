@@ -249,6 +249,10 @@ function get_nunjucks_env() {
       return Dt.toLocaleString('en-US',{timeStyle: "short"})
     });
 
+    env.addFilter('log', function(Obj){
+      console.log('Logging from template', Obj);
+    });
+
 
   return env;
 
