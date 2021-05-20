@@ -302,7 +302,7 @@ const getHtml = async (common) => {
 
     game.game_headline = game.week.week_name;
     if (game.week.week_name == 'Conference Championships'){
-      game.game_headline = team.team_season.conference_season.conference.conference_abbreviation + ' Championship'
+      game.game_headline = team.team_season.conference_season.conference.conference_abbreviation + ' Champ'
     }
 
     game.opponent_team_game = opponent_team_games[counter_games];

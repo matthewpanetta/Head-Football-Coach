@@ -19,10 +19,8 @@
     </div>
     <div class='teamOverviewInfo'>
       {% for Link in page.TeamHeaderLinks.link_paths%}
-      {% if forloop.counter0 > 0%}
-      |
-      {% endif %}
       <a href="{{team.team_href}}/{{Link.href_extension}}">{{Link.Display}}</a>
+      {% if loop.last %} {% else %}  |  {% endif%}
       {% endfor %}
     </div>
   </div>

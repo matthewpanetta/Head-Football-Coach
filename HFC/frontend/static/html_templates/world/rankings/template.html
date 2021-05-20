@@ -8,6 +8,7 @@
 </style>
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
 
 
 <body>
@@ -33,7 +34,7 @@
 
                 <table class="w3-table w3-table-all no-border" id='Top25Table'  style="width:100%">
                   <thead>
-                    <tr>
+                    <tr class='team-primary-background-bar'>
                       <th class=''>Rank</th>
                       <th></th>
                       <th>Team</th>

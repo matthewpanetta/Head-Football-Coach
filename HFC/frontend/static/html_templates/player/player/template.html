@@ -66,10 +66,10 @@
           Overall
         </div>
         <div class=" center-text">
-          {{OverallRating}}
+          {{player.player_team_seasons[0].ratings.overall.overall}}
         </div>
         <div class="w3-display-bottommiddle statBar" style='width: 100%; background-color: inherit;'>
-          <div class="w3-container  {{OverallRating|NumberToGradeClass}}-Fill" style="width:{{OverallRating}}%; height: 8px;"></div>
+          <div class="w3-container  {{player.player_team_seasons[0].ratings.overall.overall|NumberToGradeClass}}-Fill" style="width:{{player.player_team_seasons[0].ratings.overall.overall}}%; height: 8px;"></div>
         </div>
       </div>
       <div class="team-header-color-right hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>

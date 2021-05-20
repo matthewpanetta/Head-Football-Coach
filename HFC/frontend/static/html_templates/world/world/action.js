@@ -43,6 +43,11 @@ const getHtml = async (common) => {
         team.team_season.conference_season = conference_seasons[team.team_season.conference_season_id];
         team.team_season.conference_season.conference = conferences[team.team_season.conference_season.conference_id];
 
+        team.conference_position_display = `${team.team_season.rankings.division_rank[0]} in ${team.team_season.conference_season.conference.conference_abbreviation}`
+        if (team.team_season.results.conference_champion){
+          team.conference_position_display = `${team.team_season.conference_season.conference.conference_abbreviation} Champions`
+        }
+
       });
 
       console.log('teams', teams)
@@ -61,6 +66,19 @@ const getHtml = async (common) => {
       var min_national_rank = 0;
       console.log('this_week_games', this_week_games, this_week_team_games)
       $.each(this_week_games, function(ind, game){
+        game.game_headline_display = '';
+        if (game.bowl != null){
+          game.game_headline_display = game.bowl.bowl_name;
+        }
+        else if (game.rivalry != null) {
+          if (game.rivalry.rivalry_name.length > 0){
+            game.game_headline_display = game.rivalry.rivalry_name;
+          }
+          else {
+            game.game_headline_display = 'Rivalry Game'
+          }
+        }
+
         game.home_team_game = this_week_team_games[game.home_team_game_id]
         game.away_team_game = this_week_team_games[game.away_team_game_id]
 

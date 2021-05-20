@@ -54,6 +54,7 @@
         player_counter +=1;
       });
 
+
       common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
                             page:     common.page,
@@ -312,7 +313,6 @@
                           {
                               label: 'Skill Position',
                               value: function(rowData, rowIdx){
-                                console.log('rowData', rowData)
                                   return rowData.position == 'QB' || rowData.position  == 'RB' || rowData.position  == 'WR' || rowData.position  == 'TE';
                               }
                           },

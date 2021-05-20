@@ -103,7 +103,7 @@
    "conference_abbreviation": "Ind",
    "prestige": 1,
    "is_independent": 1,
-   "number_conference_games": 0,
+   "number_conference_games": 1,
    "hold_conference_championship_game": 0,
    "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png"
  },

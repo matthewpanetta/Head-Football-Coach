@@ -60,13 +60,13 @@
                             <span>{{ team.school_name }} <span class='hide-small'>{{ team.team_name }}</span></span>
                           </a>
                         </li>
-                        {% if team.TeamSeasonID__NationalChampion %}
-                        <li class='font10 bold'>National Champions</li>
+                        {% if team.team_season.results.national_champion %}
+                        <li class='font10 bold opacity-1' style='color: darkgoldenrod;'>National Champions</li>
                         {% endif %}
-                        {% if team.team_season.ConferenceChampion %}
-                        <li class='font10 bold'>{{team.TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID__ConferenceAbbreviation}} Champions</li>
+                        {% if  team.team_season.results.conference_champion %}
+                        <li class='font10 bold opacity-1'>{{team.team_season.conference_season.conference.conference_abbreviation}} Champions</li>
                         {% else %}
-                        <li class='font10'>{{team.team_season.rankings.division_rank[0]}} in {{team.team_season.conference_season.conference.conference_abbreviation}}</li>
+                        <li class='font10'>{{team.team_season.rankings.division_rank[0]|ordinal}} in {{team.team_season.conference_season.conference.conference_abbreviation}}</li>
                         {% endif %}
                       </ul>
                     </td>
@@ -107,7 +107,7 @@
                       <th class="bottom-border left-text hide-small" colspan="2">
                         <span class='font10 padBottom20 margin-8'><a href="{{game.game_href}}">Preview</a></span>
                       </th>
-                      <th class="bottom-border" colspan="4">
+                      <th class="bottom-border left-text" colspan="4">
                         <span class='font10'>{{game.game_headline_display}}</span>
                       </th>
                       <th class="bottom-border hide-medium right-text" colspan="4">

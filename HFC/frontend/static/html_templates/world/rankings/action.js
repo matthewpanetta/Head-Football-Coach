@@ -416,7 +416,7 @@
                     $(td).html('-')
                   }
               }},
-              {"data": "record_display", "sortable": true, 'className': 'center-text hide-small', 'orderSequence':["desc"], "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+              {"data": "record.wins", "sortable": true, 'className': 'center-text hide-small', 'orderSequence':["desc", "asc"], "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
                   $(td).html(`<div class="font14">${team_season.record_display}</div>`)
               }},
               {"data": null, "sortable": false, "className": 'column-med', 'searchable': true, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {

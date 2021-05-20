@@ -2036,6 +2036,11 @@ flex-direction: column;
   opacity: 0;
 }
 
+
+.opacity-1 {
+  opacity: 1;
+}
+
 .alert-row {
   background-color: #BF0D00;
   color: white;
