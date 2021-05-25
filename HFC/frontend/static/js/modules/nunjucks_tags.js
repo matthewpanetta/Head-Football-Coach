@@ -179,7 +179,6 @@ function get_nunjucks_env() {
       var B = parseInt(BackgroundColor.slice(4,6), 16)
 
       var Luma = (0.299 * (R**2) + 0.587 * (G**2) + 0.114 * (B**2)) ** .5
-      console.log('TeamBackgroundFontColor', BackgroundColor, Luma, [R,G,B])
       if (Luma > 200){
         return "000";
       }
@@ -223,7 +222,6 @@ function get_nunjucks_env() {
 
 
     env.addFilter('TeamSecondaryColor', function(Color) {
-      console.log('Color', Color)
       var R = parseInt(Color.slice(0,2), 16)
       var G = parseInt(Color.slice(2,4), 16)
       var B = parseInt(Color.slice(4,6), 16)
@@ -238,13 +236,11 @@ function get_nunjucks_env() {
 
 
     env.addFilter('toLocaleDateString', function(DateInt){
-      console.log(DateInt);
       const Dt = new Date(DateInt)
       return Dt.toLocaleString('en-US',{dateStyle: 'short'})
     });
 
     env.addFilter('toLocaleTimeString', function(DateInt){
-      console.log(DateInt);
       const Dt = new Date(DateInt)
       return Dt.toLocaleString('en-US',{timeStyle: "short"})
     });

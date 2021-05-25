@@ -207,6 +207,7 @@ const getHtml = async (common) => {
   const db = common.db;
   const season = common.season;
   const index_group = common.index_group;
+  const index_group_sync = common.index_group_sync;
 
   weeks_by_week_id = await common.index_group(await db.week.where({season: 2021}).toArray(), 'index', 'week_id')
 
@@ -280,6 +281,28 @@ const getHtml = async (common) => {
   }
   console.log('games_played', games_played, games.length, selected_game_chosen, selected_game_id, games)
 
+  var team_game_ids = opponent_team_game_ids.concat(team_games.map(tg => tg.team_game_id));
+  const player_team_games = await db.player_team_game.where('team_game_id').anyOf(team_game_ids).toArray();
+
+  const player_team_season_ids = player_team_games.map(ptg => ptg.player_team_season_id);
+  var player_team_seasons = await db.player_team_season.where({season:season}).toArray();
+
+  const player_ids = player_team_seasons.map(pts => pts.player_id);
+  const players = await db.player.bulkGet(player_ids);
+  const players_by_player_id = index_group_sync(players, 'index', 'player_id')
+
+  for (var player_team_season of player_team_seasons){
+    player_team_season.player = players_by_player_id[player_team_season.player_id]
+  }
+
+  var player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id')
+
+  for (var player_team_game of player_team_games){
+    player_team_game.player_team_season = player_team_seasons_by_player_team_season_id[player_team_game.player_team_season_id]
+  }
+
+  const player_team_game_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
+
   const pop_games = await $.each(games, async function(ind, game){
 
     if (!(selected_game_chosen) && !(game.was_played)){
@@ -308,6 +331,14 @@ const getHtml = async (common) => {
     game.opponent_team_game = opponent_team_games[counter_games];
     game.opponent_team = opponent_teams[counter_games];
     game.opponent_team_season = opponent_team_seasons[counter_games];
+
+    for (var stat_detail of game.opponent_team_game.game_stats.top_stats.concat(game.team_game.game_stats.top_stats)) {
+      stat_detail.player_team_game = player_team_game_by_player_team_game_id[stat_detail.player_team_game_id];
+    }
+
+    for (var stat_detail of game.opponent_team_season.season_stats.top_stats.concat(game.team_season.season_stats.top_stats)) {
+      stat_detail.player_team_season = player_team_seasons_by_player_team_season_id[stat_detail.player_team_season_id];
+    }
 
     game.game_display = 'Preview'
     game.game_result_letter = ''
@@ -356,23 +387,22 @@ const getHtml = async (common) => {
     counter_games +=1;
   });
 
+  const conference_standings = await common.conference_standings(team.team_season.conference_season_id, common);
 
-  var conference_season = await db.conference_season.get({conference_season_id: team.team_season.conference_season_id})  ;
-  var conference = await db.conference.get({conference_id: conference_season.conference_id})  ;
+  player_team_seasons = player_team_seasons.filter(pts => pts.team_season_id == team.team_season.team_season_id);
+  const team_leaders = [
+    {stat_group: 'passing', stat: 'yards', display: 'Leading Passer'},
+    {stat_group: 'rushing', stat: 'yards', display: 'Leading Rusher'},
+    {stat_group: 'receiving', stat: 'yards', display: 'Leading Receiver'},
+  ]
+  for (var stat_detail of team_leaders){
+    console.log('stat_detail', stat_detail)
+    player_team_seasons = player_team_seasons.sort(function(pts_a, pts_b){
+      return pts_b.season_stats[stat_detail.stat_group][stat_detail.stat] - pts_a.season_stats[stat_detail.stat_group][stat_detail.stat];
+    });
 
-  var team_seasons_in_conference = await db.team_season.where({season: 2021}).toArray();
-  team_seasons_in_conference = team_seasons_in_conference.filter(team_season => team_season.conference_season_id == team.team_season.conference_season_id).sort(function(teamA,teamB){
-    return teamA.rankings.division_rank[0] - teamB.rankings.division_rank[0];
-  });
-
-  var team_ids = team_seasons_in_conference.map(team_season => team_season.team_id);
-  var teams = await db.team.bulkGet(team_ids);
-  var team_counter = 0;
-  $.each(team_seasons_in_conference, function(ind, team_season){
-    team_season.team = teams[team_counter];
-    team_counter +=1;
-  })
-
+    stat_detail.player_team_season = player_team_seasons[0]
+  }
 
   console.log('games', games)
   common.page = {page_title: team.full_name, page_icon: team.team_logo_50, PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
@@ -384,7 +414,8 @@ const getHtml = async (common) => {
                         games: games,
                         teams: teams,
                         all_teams: await common.all_teams(common),
-                        conference_standings: team_seasons_in_conference
+                        conference_standings: conference_standings,
+                        team_leaders: team_leaders
                       }
 
 
@@ -400,6 +431,54 @@ const getHtml = async (common) => {
   $('#body').html(renderedHtml)
 }
 
+
+const draw_faces = async (common) => {
+  const db = common.db;
+  const season = common.season;
+  const index_group_sync = common.index_group_sync;
+  console.log('PlayerFace-Headshot', $('.PlayerFace-Headshot'));
+
+  const player_ids = [];
+  const face_div_by_player_id = {};
+
+  $('.PlayerFace-Headshot').each(function(ind, elem){
+    console.log('ind, elem', ind, elem)
+    player_ids.push(parseInt($(elem).attr('player_id')))
+    face_div_by_player_id[parseInt($(elem).attr('player_id'))] = elem;
+  })
+
+  const players = await db.player.bulkGet(player_ids);
+  var player_team_seasons = await db.player_team_season.where('player_id').anyOf(player_ids).toArray();
+  player_team_seasons = player_team_seasons.filter(pts => pts.season == season);
+  const player_team_seasons_by_player_id = index_group_sync(player_team_seasons, 'index', 'player_id')
+
+  const team_season_ids = player_team_seasons.map(pts => pts.team_season_id);
+  const team_seasons = await db.team_season.bulkGet(team_season_ids);
+  const team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id')
+
+  const team_ids = team_seasons.map(ts => ts.team_id);
+  const teams = await db.team.bulkGet(team_ids);
+  const teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
+
+  console.log('player_ids', player_ids, 'players', players, 'player_team_seasons_by_player_id', player_team_seasons_by_player_id, 'team_seasons_by_team_season_id', team_seasons_by_team_season_id, 'teams_by_team_id', teams_by_team_id)
+
+  for (var player of players){
+    var elem = face_div_by_player_id[player.player_id];
+    player.player_team_season = player_team_seasons_by_player_id[player.player_id];
+    player.team_season = team_seasons_by_team_season_id[player.player_team_season.team_season_id]
+    player.team = teams_by_team_id[player.team_season.team_id]
+
+    if (player.player_face == undefined){
+      player.player_face = await common.create_player_face('single', player.player_id, db);
+    }
+
+    common.display_player_face(player.player_face, {jersey: player.team.jersey, teamColors: player.team.jersey.teamColors}, $(elem).attr('id'));
+  }
+
+
+
+
+}
 
 
 const action = async (common) => {
@@ -431,6 +510,8 @@ const action = async (common) => {
     team_seasons.team = teams[team_season.team_id];
   });
   const TeamInfoData = [];
+
+  await draw_faces(common);
 
   //this.DrawTeamInfoChildRows(WorldID, TeamID, team_seasons);
 

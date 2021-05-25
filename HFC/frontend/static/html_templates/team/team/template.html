@@ -69,7 +69,6 @@
                   <div class="w3-row teamScheduleGameDashboard w3-display-container w3-light-grey">
                     {% for game in games%}
                     <div BoxScoreGameID="{{game.game_id}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col l12 mw600 w3-display-container w3-white w3-border w3-border-grey w3-hide">
-                      {{game|log}}
                       <div class="w3-col l7 m12 s12 height100 w3-display-container">
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.away_team.team_color_primary_hex}}'></div>
@@ -138,69 +137,67 @@
                         </div>
                       </div>
                       <div class="w3-col w3-display-container l5 m12 height100">
-                        <div class="w3-bar boxscore-bar" id="nav-tab-{{game.GameID.GameID}}">
-                          <button TeamID="{{game.HomeTeam.TeamID}}" GameID="{{game.GameID.GameID}}" class="w3-bar-item boxscore-tab w3-button tab selected-boxscore-tab" id="boxscore-hometeam-tab">{{game.HomeTeam.Abbreviation}}</button>
-                          <button TeamID="{{game.AwayTeam.TeamID}}" GameID="{{game.GameID.GameID}}" class="w3-bar-item boxscore-tab w3-button tab" id="boxscore-awayteam-tab">{{game.AwayTeam.Abbreviation}}</button>
+                        <div class="w3-bar boxscore-bar" id="nav-tab-{{game.game_id}}">
+                          <button TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab w3-button tab selected-boxscore-tab" id="boxscore-hometeam-tab">{{game.team.team_abbreviation}}</button>
+                          <button TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab w3-button tab" id="boxscore-awayteam-tab">{{game.opponent_team.team_abbreviation}}</button>
                         </div>
                         <div class="w3-display-container">
-                          {% if game.was_played == 1%}
-                          <div TeamID="{{game.HomeTeam.TeamID}}" GameID="{{game.GameID.GameID}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
-                            {% for Player in game.HomePlayers %}
+                          {% if game.was_played%}
+                          <div TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
+                            {% for player_stat in game.team_game.game_stats.top_stats.slice(0,3) %}
                             <div class="">
                               <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{Player.PlayerTeamSeasonID.PlayerID.PlayerID}}">{{Player.PlayerTeamSeasonID.PlayerID.PlayerFirstName}} {{Player.PlayerTeamSeasonID.PlayerID.PlayerLastName}}</a></span>
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}</span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_game.player_team_season.player.player_href}}">{{player_stat.player_team_game.player_team_season.player.full_name}}</a></span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_game.player_team_season.position}}</span>
                               </div>
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Player.TopStatStringDisplay1}}</span>
-                                {%if Player.TopStatStringDisplay2%}and <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Player.TopStatStringDisplay2}}</span>{% endif %}
+                              <div class=" font-black" style='font-size: 10px;'>
+                                <span class=''>{{player_stat.top_stats[0].display}}</span>
+                                {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
                               </div>
                             </div>
                             {% endfor %}
-
                           </div>
-                          <div TeamID="{{game.AwayTeam.TeamID}}" GameID="{{game.GameID.GameID}}" class="w3-display-container team-highlights w3-light-grey w3-hide height100">
-                            {% for Player in game.AwayPlayers %}
+                          <div TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
+                            {% for player_stat in game.opponent_team_game.game_stats.top_stats.slice(0,3) %}
                             <div class="">
                               <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{Player.PlayerTeamSeasonID.PlayerID.PlayerID}}">{{Player.PlayerTeamSeasonID.PlayerID.PlayerFirstName}} {{Player.PlayerTeamSeasonID.PlayerID.PlayerLastName}}</a></span>
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{Player.PlayerTeamSeasonID.PlayerID.PositionID.PositionAbbreviation}}</span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_game.player_team_season.player.player_href}}">{{player_stat.player_team_game.player_team_season.player.full_name}}</a></span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_game.player_team_season.position}}</span>
                               </div>
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Player.TopStatStringDisplay1}}</span>
-                                {%if Player.TopStatStringDisplay2%}and <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Player.TopStatStringDisplay2}}</span>{% endif %}
+                              <div class=" font-black" style='font-size: 10px;'>
+                                <span class=''>{{player_stat.top_stats[0].display}}</span>
+                                {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
                               </div>
                             </div>
                             {% endfor %}
-
                           </div>
                           {% else %}
-                          <div  TeamID="{{game.HomeTeam.TeamID}}" GameID="{{game.GameID.GameID}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
-                            {% for Stat in game.HomeTeamStats%}
+                          <div TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
+                            {% for player_stat in game.team_season.season_stats.top_stats.slice(0,3) %}
+                            <div class="">
                               <div class="">
-
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'>{{Stat.Header}}</span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_game.player_team_season.player.player_href}}">{{player_stat.player_team_season.player.full_name}}</a></span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_season.position}}</span>
                               </div>
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Stat.Display}}</span>
+                              <div class=" font-black" style='font-size: 10px;'>
+                                <span class=''>{{player_stat.top_stats[0].display}}</span>
+                                {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
                               </div>
                             </div>
-
                             {% endfor %}
                           </div>
-                          <div  TeamID="{{game.AwayTeam.TeamID}}" GameID="{{game.GameID.GameID}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
-                            {% for Stat in game.AwayTeamStats%}
+                          <div TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
+                            {% for player_stat in game.opponent_team_season.season_stats.top_stats.slice(0,3) %}
+                            <div class="">
                               <div class="">
-
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'>{{Stat.Header}}</span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_season.player.player_href}}">{{player_stat.player_team_season.player.full_name}}</a></span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_season.position}}</span>
                               </div>
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerStats'>{{Stat.Display}}</span>
+                              <div class=" font-black" style='font-size: 10px;'>
+                                <span class=''>{{player_stat.top_stats[0].display}}</span>
+                                {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
                               </div>
                             </div>
-
                             {% endfor %}
                           </div>
                           {% endif %}
@@ -213,44 +210,7 @@
                 </div>
               </div>
               <div class="w3-row-padding w3-margin-top">
-              {% if teamLeaders|length > 0%}
 
-                <div class="w3-col s6">
-                  <div class="w3-card">
-                    <div class="w3-bar team-primary-background-bar">
-                      Team Leaders
-                    </div>
-                    <table class="w3-table-all no-border">
-                      {% for teamLeader in teamLeaders %}
-                      <tr>
-
-                      <td class="w3-col center-text ">
-                        <div class="PlayerFace-60 PlayerFace-Headshot inline-block" style='border-color:#{{page.PrimaryColor}};' id="teamTeamLeaderBoxPlayerFace{{forloop.counter}}"  >
-                            {{teamLeader.PTS.PlayerID__PlayerFaceSVG|safe}}
-                        </div>
-                      </td>
-                      <td>
-                        <ul class='no-list-style'>
-                          <li class='bold'>{{teamLeader.DisplayName}}</li>
-                          <li>
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="/World/{{page.WorldID}}/Player/{{teamLeader.PTS.PlayerID}}">{{teamLeader.PTS.PlayerName}}</a></span>
-                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{teamLeader.PTS.PlayerPosition}}</span>
-                          </li>
-                          <li>
-                            <span class=''>{{teamLeader.Value}} total{% if teamLeader.ValuePerGame%}, {{teamLeader.ValuePerGame}} per game{%endif%}</span>
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-
-
-                      {% endfor %}
-                    </table>
-                    </div>
-
-                    </div>
-
-              {% endif %}
 
 
               {% if TeamStatsDisplay|length > 0%}
@@ -335,7 +295,7 @@
                         <th>Record</th>
                       </tr>
                     </thead>
-                    {% for standing_team in conference_standings %}
+                    {% for standing_team in conference_standings.conference_standings %}
                     <tr class='{{standing_team.BoldTeam}}'>
                       <td style=' width: 10px; padding: 8px; border-left-color: #{{standing_team.team.team_color_primary_hex}}' >
                           <a href="{{standing_team.team.team_href}}">
@@ -393,85 +353,43 @@
                 {% endif %}
               </div>
             </div>
-            <div class="w3-col l4 m12 s12">
-              <div class="w3-row">
+            {% if team_leaders|length > 0%}
+
+              <div class="w3-col s4">
                 <div class="w3-card">
                   <div class="w3-bar team-primary-background-bar">
-                    {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Standings</span>
+                    Team Leaders
                   </div>
-                  <table id='teamOverviewConferenceStandings' class='w3-table-all width100 no-border'>
+                  <table class="w3-table-all no-border">
+                    {% for team_leader in team_leaders %}
+                    <tr>
 
-                    <thead>
-                      <tr class='team-secondary-table-row'>
-                        {% if Division.DivisionName %}
-                        <th>{{Division.DivisionName}}</th>
-                        {% else %}
-                        <th></th>
-                        <th>Team</th>
-                        {%endif%}
-                        <th>Conf</th>
-                        <th class='hide-small'>GB</th>
-                        <th>Record</th>
-                      </tr>
-                    </thead>
-                    {% for standing_team in conference_standings %}
-                    <tr class='{{standing_team.BoldTeam}}'>
-                      <td style=' width: 10px; padding: 8px; border-left-color: #{{standing_team.team.team_color_primary_hex}}' >
-                          <a href="{{standing_team.team.team_href}}">
-                            <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
-                          </a>
-                      </td>
-                      <td>
-                        <a href="{{standing_team.team.team_href}}">
-                          <span  class='hide-small'>{{standing_team.national_rank_display}} {{standing_team.team.school_name }}</span>
-                        </a>
-                      </td>
-                      <td>{{standing_team.conference_record_display}}</td>
-                      <td class='hide-small'> {{standing_team.record.conference_gb}}</td>
-                      <td>{{standing_team.record_display}}</td>
-                    </tr>
+                    <td class="w3-col center-text ">
+                      <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{team_leader.player_team_season.player.player_id}}' style='border-color:#{{page.PrimaryColor}};' id="teamTeamLeaderBoxPlayerFace{{loop.index}}"  >
+                      </div>
+                    </td>
+                    <td>
+                      <ul class='no-list-style'>
+                        <li class='bold'>{{team_leader.display}}</li>
+                        <li>
+                          <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{team_leader.player_team_season.player.player_href}}">{{team_leader.player_team_season.player.full_name}}</a></span>
+                          <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{team_leader.player_team_season.position}}</span>
+                        </li>
+                        <li>
+                          {%for stat in team_leader.player_team_season.season_stats.top_stats%}{%if loop.index > 1%}, {%endif%}<span class=''>{{stat.display}}</span>{%endfor%}
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+
+
                     {% endfor %}
                   </table>
-                </div>
-              </div>
-              <div class="w3-row w3-margin-top">
-
-
-                {% if SignedRecruits|length > 0 %}
-                <div class="w3-card">
-                  <div class="w3-bar team-primary-background-bar">
-                    {{team.TeamName}} Signed Recruits
                   </div>
-                  <table  class='w3-table-all no-border' id='teamOverviewConferenceStandings'>
-                    <thead>
-                      <tr class='team-secondary-table-row'>
-                        <th class='teamColorBorder'>Player</th>
-                        <th class='teamColorBorder'>Pos</th>
-                        <th class='teamColorBorder'>Hometown</th>
-                        <th class='teamColorBorder'>*</th>
-                        <th class='teamColorBorder'>Rank</th>
-                        <th class='teamColorBorder'>Overall</th>
-                      </tr>
-                    </thead>
-                    {% for Recruit in SignedRecruits %}
-                    <tr >
-                      <td  class='w3-margin-top'>
-                        <a href="{{Recruit.PlayerHref}}">
-                          {{Recruit.PlayerName}}
-                        </a>
-                      </td>
-                      <td>{{Recruit.Position}}</td>
-                      <td>{{Recruit.Hometown}}</td>
-                      <td>{{Recruit.PlayerTeamSeasonID__PlayerID__RecruitingStars}}</td>
-                      <td>{{Recruit.PlayerTeamSeasonID__PlayerID__Recruiting_NationalRank}}</td>
-                      <td>{{Recruit.OverallRating}}</td>
-                    </tr>
-                    {% endfor %}
-                  </table>
-                </div>
-                {% endif %}
-              </div>
-            </div>
+
+                  </div>
+
+            {% endif %}
             <div class="w3-col l4 m12 s12">
               <div class="w3-row">
                 <div class="w3-card">

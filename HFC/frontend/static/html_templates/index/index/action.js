@@ -149,7 +149,10 @@
         const world_id = new_season_info.world_id;
         const season = new_season_info.current_season;
 
-        var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
+        const conferences_to_include = ['Big 12', 'Southeastern Conference', 'Sun Belt']
+
+        //var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
+        var teams_from_json = await common.get_teams({conference: conferences_to_include});
         const num_teams = teams_from_json.length;
 
         const new_season = await db.league_season.add({season: season,
@@ -171,10 +174,10 @@
 
 
 
-        const divisions_from_json = await common.get_divisions({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
+        const divisions_from_json = await common.get_divisions({conference: conferences_to_include});
         const divisions = await index_group(divisions_from_json, 'group','conference_name');
 
-        const conferences_from_json = await common.get_conferences({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
+        const conferences_from_json = await common.get_conferences({conference: conferences_to_include});
 
         const rivalries = await common.get_rivalries(teams_from_json);
 
@@ -419,7 +422,8 @@
                                             pr_yards:0,
                                             pr_tds:0,
                                             pr_lng:0,
-                                          }
+                                          },
+                                          top_stats: []
                                       }
                                     });
 
@@ -458,8 +462,8 @@
             ["QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","OLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"]
           ]
 
-        //const num_players_per_team = team_position_options[0].length;
-        const num_players_per_team = 10;
+        const num_players_per_team = team_position_options[0].length;
+        //const num_players_per_team = 10;
         const num_players_to_create = num_players_per_team * team_seasons_tocreate.length;
 
         const player_names = await common.random_name(ddb, num_players_to_create);
@@ -714,7 +718,6 @@
         $(par).append('<div>Populating depth charts</div>')
         var team_seasons_to_update = [];
         var team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index', 'team_season_id');
-        console.log('team_seasons_by_team_season_id', team_seasons_by_team_season_id)
         var player_team_seasons = player_team_seasons_tocreate;
         var player_team_seasons_by_team_season_id = await index_group(player_team_seasons, 'group', 'team_season_id');
 
@@ -722,10 +725,9 @@
 
         await $.each(player_team_seasons_by_team_season_id,  function(team_season_id, player_team_season_list) {
           team_season = team_seasons_by_team_season_id[team_season_id];
-          console.log('ts loop', team_season_id, player_team_season_list, team_season)
 
           player_team_season_list =  player_team_season_list.sort(function(pts_a, pts_b) {
-            return pts_a.ratings.overall.overall - pts_b.ratings.overall.overall;
+            return pts_b.ratings.overall.overall - pts_a.ratings.overall.overall;
           });
 
           team_season.depth_chart = {}
@@ -736,16 +738,10 @@
             team_season.depth_chart[position] = position_player_team_season_list.map(pts => pts.player_team_season_id);
           });
 
-          console.log('pushing TS', team_season)
-
           team_seasons_to_update.push(team_season)
         })
 
-        console.log('team_seasons_to_update BULKPUT', team_seasons_to_update)
         var tsu = await db.team_season.bulkPut(team_seasons_to_update);
-
-        console.log('tsu', tsu)
-
 
         $(par).append('<div>Creating season schedule</div>')
         var games_to_create = [],team_games_to_create = [],team_games_to_create_ids = [];
@@ -754,7 +750,6 @@
         const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
         team_seasons = await db.team_season.where({season: season}).toArray();
-        console.log('team_seasons Post BULKPUT', team_seasons)
         const team_seasons_by_team_id = await index_group(team_seasons, 'index', 'team_id')
         const team_rivalries_by_team_season_id = await index_group(team_seasons.map(function(ts){ return { team_season_id: ts.team_season_id, rivals:teams_by_team_id[ts.team_id].rivals}}), 'index', 'team_season_id');
         const conferences_by_conference_id = await index_group(await db.conference.toArray(), 'index', 'conference_id');
@@ -972,7 +967,7 @@
 
          await ddb.world.put(world);
 
-        //window.location.href = `/World/${world_id}`
+        window.location.href = `/World/${world_id}`
       });
     }
 

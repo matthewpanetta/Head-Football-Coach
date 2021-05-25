@@ -5,7 +5,8 @@ const getHtml = async (common) => {
   const game_id = parseInt(common.params.game_id);
   const db = common.db;
   const query_to_dict = common.query_to_dict;
-  const season = 1;
+  const index_group = common.index_group;
+  const season = common.season;
 
   var game = await db.game.get({game_id: game_id});
 
@@ -14,11 +15,69 @@ const getHtml = async (common) => {
   game.home_team_game = await db.team_game.get({team_game_id: game.home_team_game_id});
   game.away_team_game = await db.team_game.get({team_game_id: game.away_team_game_id});
 
-  game.home_team_game.team_season = await db.team_season.get({team_season_id: game.home_team_game.team_season_id});
-  game.away_team_game.team_season = await db.team_season.get({team_season_id: game.away_team_game.team_season_id});
 
-  game.home_team_game.team_season.team = await db.team.get({team_id: game.home_team_game.team_season.team_id});
-  game.away_team_game.team_season.team = await db.team.get({team_id: game.away_team_game.team_season.team_id});
+  var team_seasons = await db.team_season.bulkGet([game.home_team_game.team_season_id, game.away_team_game.team_season_id]);
+  var team_ids = team_seasons.map(ts => ts.team_id);
+
+  var team_seasons_by_team_season_id =  await index_group(team_seasons, 'index', 'team_season_id');
+  var teams_by_team_id =  await index_group(await db.team.bulkGet(team_ids), 'index', 'team_id')
+
+  $.each(team_seasons_by_team_season_id, function(ind, team_season){
+    team_season.team = teams_by_team_id[team_season.team_id];
+  });
+
+  game.home_team_game.team_season = team_seasons_by_team_season_id[game.home_team_game.team_season_id];
+  game.away_team_game.team_season = team_seasons_by_team_season_id[game.away_team_game.team_season_id];
+
+  console.log('team_seasons_by_team_season_id', team_seasons_by_team_season_id)
+
+
+  var player_team_seasons = await db.player_team_season.where({season: season}).toArray();
+  var player_ids = player_team_seasons.map(pts => pts.player_id);
+
+  var player_team_seasons_by_team_season_id = await index_group(player_team_seasons, 'index', 'player_team_season_id');
+  var players_by_player_id = await index_group(await db.player.where('player_id').anyOf(player_ids).toArray(), 'index', 'player_id');
+
+  $.each(player_team_seasons_by_team_season_id, function(ind, player_team_season){
+    player_team_season.player = players_by_player_id[player_team_season.player_id];
+    player_team_season.team_season = team_seasons_by_team_season_id[player_team_season.team_season_id]
+  });
+
+
+  var positions_to_display = {'QB': 1, 'RB': 1, 'WR': 3, 'TE': 1, 'OT': 2, 'OG': 2, 'OC': 1, 'DE': 2, 'DT': 2, 'OLB': 2, 'MLB': 1, 'CB': 2, 'S': 2}
+
+  var team_game_ids = [];
+  var player_talent_comparison = [];
+  $.each(positions_to_display, function(pos, count){
+
+    for (var ind = 0; ind < count; ind++){
+      position_count = {position: pos}
+
+      position_count.home_player_team_season_id = game.home_team_game.team_season.depth_chart[pos][ind]
+      position_count.away_player_team_season_id = game.away_team_game.team_season.depth_chart[pos][ind]
+
+      position_count.home_player_team_season = player_team_seasons_by_team_season_id[position_count.home_player_team_season_id]
+      position_count.away_player_team_season = player_team_seasons_by_team_season_id[position_count.away_player_team_season_id]
+
+      if (position_count.home_player_team_season.ratings.overall.overall > position_count.away_player_team_season.ratings.overall.overall){
+        position_count.home_player_team_season.advantage_icon = '<i class="fas fa-angle-right"></i>'
+        if (position_count.home_player_team_season.ratings.overall.overall > position_count.away_player_team_season.ratings.overall.overall * 1.1){
+          position_count.home_player_team_season.advantage_icon = '<i class="fas fa-angle-double-right"></i>'
+        }
+      }
+      else if (position_count.home_player_team_season.ratings.overall.overall < position_count.away_player_team_season.ratings.overall.overall) {
+        position_count.away_player_team_season.advantage_icon = '<i class="fas fa-angle-left"></i>'
+        if (position_count.home_player_team_season.ratings.overall.overall < position_count.away_player_team_season.ratings.overall.overall * .9){
+          position_count.away_player_team_season.advantage_icon = '<i class="fas fa-angle-double-left"></i>'
+        }
+      }
+
+      player_talent_comparison.push(position_count)
+
+    }
+  })
+
+  console.log('player_talent_comparison', player_talent_comparison)
 
   console.log('game', game)
 
@@ -33,22 +92,51 @@ const getHtml = async (common) => {
     }
   }
 
+  for (const period of game.scoring.periods){
+    for (const drive of period.drives) {
+      drive.drive_end.display_team = teams_by_team_id[drive.drive_end.display_team_id]
+    }
+  }
+
   const NavBarLinks = await common.nav_bar_links({
     path: 'Game',
     group_name: 'Game',
     db: db
   });
 
+  const conference_standings = [];
+
+  for (const conference_season_id of [...new Set([game.away_team_game.team_season.conference_season_id, game.home_team_game.team_season.conference_season_id])] ){
+    var this_conference_standings = await common.conference_standings(conference_season_id, common)
+     conference_standings.push(this_conference_standings);
+  }
+
+  team_stat_box = [
+    {display_name: 'Points', away_value: game.away_team_game.points, home_value: game.home_team_game.points,}
+  ]
+
+  for (const stat of team_stat_box){
+    stat.max_value = Math.max(stat.away_value, stat.home_value)
+    stat.home_ratio = stat.home_value / stat.max_value * 100;
+    stat.away_ratio = stat.away_value / stat.max_value * 100;
+  }
+
+  console.log('conference_standings', conference_standings)
+
   common.page = {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks};
   var render_content = {
                         page:     common.page,
                         world_id: common.params.world_id,
-                        game: game
+                        game: game,
+                        player_talent_comparison:player_talent_comparison,
+                        conference_standings: conference_standings,
+                        show_stat_box: true,
+                        team_stat_box: team_stat_box
                       }
 
   common.render_content = render_content;
 
-  console.log('render_content', render_content)
+  await console.log('render_content', render_content)
 
   var url = '/static/html_templates/game/game/template.html'
   var html = await fetch(url);
@@ -62,8 +150,68 @@ const getHtml = async (common) => {
 
     const action = async (common) => {
 
+      const drives = common.render_content.game.scoring.drives;
+      console.log('drives', drives)
+
+      var scoring_data = [['Period', common.render_content.game.home_team_game.team_season.team.school_name, common.render_content.game.away_team_game.team_season.team.school_name]]
+
+      for (const drive of drives) {
+        scoring_data.push([drive.drive_end.period_number, drive.drive_end.home_team_points, drive.drive_end.away_team_points])
+      }
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable(scoring_data);
+
+        var options = {
+          title: 'Company Performance',
+          legend: { position: 'bottom' },
+          colors: [common.render_content.game.home_team_game.team_season.team.team_color_primary_hex, common.render_content.game.away_team_game.team_season.team.team_color_primary_hex],
+          lineWidth: 4,
+          chartArea: {width: '90%', height: '80%'},
+          focusTarget: 'category'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('GameFlowChart'));
+
+        chart.draw(data, options);
+      }
+
     }
 
+
+
+    function AddScoringSummaryListeners(){
+
+      //  DriveEndingEvent-All
+      //  DriveEndingEvent-Score
+
+      $('.drive-event-bar button').on('click', function(event, target) {
+
+        var ClickedTab = $(event.target)
+        console.log('ClickedTab', ClickedTab);
+        var ClickedTabParent = ClickedTab.attr('id');
+        var SelectedEventSelection = ClickedTabParent.replace('-tab', '');
+
+        if (! $(ClickedTab).hasClass('selected-drive-event-tab')) {
+          $('.selected-drive-event-tab').each(function(ind, obj){
+            $(obj).removeClass('selected-drive-event-tab');
+          })
+          $(ClickedTab).addClass('selected-drive-event-tab');
+        }
+
+        $('.DriveEndingEvent-All').each(function(ind, obj){
+          $(obj).addClass('w3-hide');
+        });
+
+        $('.' + SelectedEventSelection).each(function(ind, obj){
+          $(obj).removeClass('w3-hide');
+        });
+
+      });
+    }
 
 
 
@@ -74,6 +222,8 @@ $(document).ready(async function(){
 
   await getHtml(common);
   await action(common);
+  await common.add_listeners(common);
+  await AddScoringSummaryListeners();
 
   var endTime = performance.now()
   console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );

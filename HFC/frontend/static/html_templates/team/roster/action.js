@@ -328,7 +328,7 @@
               },
               ],
               "columns": [
-                {"data": "player_team_season.team_season.team.school_name", "sortable": true, 'className': 'column-shrink', 'searchable': true,"fnCreatedCell": function (td, StringValue, player, iRow, iCol) {
+                {"data": "player_team_season.team_season.team.school_name", "sortable": false, 'className': 'column-shrink', 'searchable': true,"fnCreatedCell": function (td, StringValue, player, iRow, iCol) {
                     $(td).html(`<a href='${player.player_team_season.team_season.team.team_href}'><img class='worldTeamStatLogo padding-right' src='${player.player_team_season.team_season.team.team_logo}'/></a>`);
                     $(td).attr('style', `background-color: #${player.player_team_season.team_season.team.team_color_primary_hex}`);
                     $(td).parent().attr('PlayerID', player.player_id);
