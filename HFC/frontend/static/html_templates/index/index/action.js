@@ -297,135 +297,13 @@
 
         var team_id = 1;
         $.each(teams, function(ind, team){
-          team_seasons_tocreate.push({team_id: team.team_id,
+          var new_team_season = new common.team_season({team_id: team.team_id,
                                       world_id: world_id,
                                       season: season,
                                       conference_name: team.conference_name,
-                                      record: {
-                                        wins: 0, losses: 0, conference_wins: 0, conference_losses: 0, conference_net_wins:0, games_played: 0, conference_gb: 0, win_streak: 0, defeated_teams: []
-                                      },
-                                      rankings: {
-                                        division_rank: [], national_rank: [], national_rank_delta: 0, national_rank_delta_abs: 0
-                                      },
                                       conference_season_id: conferences[team.conference.conference_name].conference_season.conference_season_id,
-                                      games: [],
-                                      playoff: {},
-                                      broadcast: {
-                                        national_broadcast: 0, regional_broadcast: 0
-                                      },
-                                      recruiting: {
-                                        scholarships_to_offer: 25,
-                                        recruiting_class_rank: 1,
-                                        points_per_week: 100
-                                      },
-                                      rating: {
-                                        overall: Math.floor(Math.random() * 100),
-                                        offense: Math.floor(Math.random() * 100),
-                                        defense: Math.floor(Math.random() * 100)
-                                      },
-                                      results: {
-                                        conference_champion: false,
-                                        national_champion: false,
-                                        bowl: null,
-                                      },
-                                      season_stats: {
-                                        games: {
-                                            game_score:0,
-                                            games_played:0,
-                                            games_started:0,
-                                            plays_on_field:0,
-                                            team_games_played:0,
-                                          },
-                                        passing : {
-                                            completions: 0,
-                                            attempts: 0,
-                                            yards: 0,
-                                            tds: 0,
-                                            ints:0,
-                                            sacks:0,
-                                            sack_yards:0,
-                                          },
-                                          rushing : {
-                                            carries:0,
-                                            yards:0,
-                                            tds:0,
-                                            over_20:0,
-                                            lng:0,
-                                            broken_tackles:0,
-                                            yards_after_contact:0,
-                                          },
-                                          receiving : {
-                                            yards:0,
-                                            targets:0,
-                                            receptions:0,
-                                            tds:0,
-                                            yards_after_catch:0,
-                                            drops:0,
-                                            lng:0,
-                                            yards:0,
-                                          },
-                                          blocking : {
-                                            sacks_allowed:0,
-                                            pancakes:0,
-                                            blocks:0,
-                                          },
-                                          defense : {
-                                            tackles:0,
-                                            solo_tackles:0,
-                                            sacks:0,
-                                            tackles_for_loss:0,
-                                            deflections:0,
-                                            qb_hits:0,
-                                            tds:0,
-                                            ints:0,
-                                            int_yards:0,
-                                            int_tds:0,
-                                            safeties:0,
-                                          },
-                                          fumbles : {
-                                            fumbles: 0,
-                                            lost: 0,
-                                            recovered: 0,
-                                            forced: 0,
-                                            return_yards: 0,
-                                            return_tds: 0,
-                                          },
-                                          kicking : {
-                                            fga:0,
-                                            fgm:0,
-                                            fga_29:0,
-                                            fgm_29:0,
-                                            fga_39:0,
-                                            fgm_39:0,
-                                            fga_49:0,
-                                            fgm_49:0,
-                                            fga_50:0,
-                                            fgm_50:0,
-                                            lng:0,
-                                            xpa:0,
-                                            xpm:0,
-                                            kickoffs:0,
-                                            touchbacks:0,
-                                          },
-                                          punting: {
-                                            punts:0,
-                                            yards:0,
-                                            touchbacks:0,
-                                            within_20:0,
-                                          },
-                                          returning: {
-                                            kr_returns:0,
-                                            kr_yards:0,
-                                            kr_tds:0,
-                                            kr_lng:0,
-                                            pr_returns:0,
-                                            pr_yards:0,
-                                            pr_tds:0,
-                                            pr_lng:0,
-                                          },
-                                          top_stats: []
-                                      }
-                                    });
+                                    })
+          team_seasons_tocreate.push(new_team_season);
 
           team_id += 1;
         });

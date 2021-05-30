@@ -90,13 +90,15 @@ const getHtml = async (common) => {
       game.away_outcome_letter = 'W';
       game.home_outcome_letter = 'L';
     }
-  }
 
-  for (const period of game.scoring.periods){
-    for (const drive of period.drives) {
-      drive.drive_end.display_team = teams_by_team_id[drive.drive_end.display_team_id]
+    for (const period of game.scoring.periods){
+      for (const drive of period.drives) {
+        drive.drive_end.display_team = teams_by_team_id[drive.drive_end.display_team_id]
+      }
     }
   }
+
+
 
   const NavBarLinks = await common.nav_bar_links({
     path: 'Game',
@@ -107,7 +109,8 @@ const getHtml = async (common) => {
   const conference_standings = [];
 
   for (const conference_season_id of [...new Set([game.away_team_game.team_season.conference_season_id, game.home_team_game.team_season.conference_season_id])] ){
-    var this_conference_standings = await common.conference_standings(conference_season_id, common)
+    var this_conference_standings = await common.conference_standings(conference_season_id, [game.home_team_game.team_season_id, game.away_team_game.team_season_id], common)
+
      conference_standings.push(this_conference_standings);
   }
 
@@ -150,34 +153,37 @@ const getHtml = async (common) => {
 
     const action = async (common) => {
 
-      const drives = common.render_content.game.scoring.drives;
-      console.log('drives', drives)
+      if (common.render_content.game.was_played){
+        const drives = common.render_content.game.scoring.drives;
+        console.log('drives', drives)
 
-      var scoring_data = [['Period', common.render_content.game.home_team_game.team_season.team.school_name, common.render_content.game.away_team_game.team_season.team.school_name]]
+        var scoring_data = [['Period', common.render_content.game.home_team_game.team_season.team.school_name, common.render_content.game.away_team_game.team_season.team.school_name]]
 
-      for (const drive of drives) {
-        scoring_data.push([drive.drive_end.period_number, drive.drive_end.home_team_points, drive.drive_end.away_team_points])
+        for (const drive of drives) {
+          scoring_data.push([drive.drive_end.period_number, drive.drive_end.home_team_points, drive.drive_end.away_team_points])
+        }
+
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable(scoring_data);
+
+          var options = {
+            title: 'Company Performance',
+            legend: { position: 'bottom' },
+            colors: [common.render_content.game.home_team_game.team_season.team.team_color_primary_hex, common.render_content.game.away_team_game.team_season.team.team_color_primary_hex],
+            lineWidth: 4,
+            chartArea: {width: '90%', height: '80%'},
+            focusTarget: 'category'
+          };
+
+          var chart = new google.visualization.LineChart(document.getElementById('GameFlowChart'));
+
+          chart.draw(data, options);
+        }
       }
 
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable(scoring_data);
-
-        var options = {
-          title: 'Company Performance',
-          legend: { position: 'bottom' },
-          colors: [common.render_content.game.home_team_game.team_season.team.team_color_primary_hex, common.render_content.game.away_team_game.team_season.team.team_color_primary_hex],
-          lineWidth: 4,
-          chartArea: {width: '90%', height: '80%'},
-          focusTarget: 'category'
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('GameFlowChart'));
-
-        chart.draw(data, options);
-      }
 
     }
 

@@ -94,7 +94,9 @@
                         <td class='center-text'>{{team_season.overall_outcomes.ppg}}</td>
                         <td class='center-text'>{{team_season.overall_outcomes.papg}}</td>
                         <td class='center-text {{team_season.overall_outcomes.color}}'>{{team_season.overall_outcomes.mov}}</td>
-                        <td class='center-text {{team_season.win_streak_color}}'>{{team_season.win_streak_string}}</td>
+                        <td class='center-text '>
+                          <span class='{{team_season.win_streak_color}} W-L-Badge' style='float:none;'>{{team_season.win_streak_string}}</span>
+                        </td>
                       </tr>
                       {% endfor %}
                     </tbody>

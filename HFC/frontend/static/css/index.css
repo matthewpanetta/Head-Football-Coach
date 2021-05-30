@@ -679,8 +679,8 @@ input[type=text], input[type=password] {
 }
 
 .teamScheduleGameDashboard {
-  height: 260px;
-  margin-top: 20px;
+  height: 200px;
+  margin-top: 12px;
 }
 
 .worldScheduleGameDashboard {
@@ -703,14 +703,14 @@ input[type=text], input[type=password] {
 }
 
 .teamScheduleGameDashboardGameTeamDisplayOffsetTop {
-  top: 2px;
+  top: 2px !important;
   width: 100%;
   z-index: 2;
   height: 2px;
 }
 
 .teamScheduleGameDashboardGameTeamDisplayOffsetBottom {
-  bottom: 2px;
+  bottom: 2px !important;
   width: 100%;
   z-index: 2;
   height: 2px;
@@ -2090,6 +2090,10 @@ thead tr {
 
 .padding-left-8 {
   padding-left: 8px;
+}
+
+table tr td.padding-left-8 {
+  padding-left: 8px !important;
 }
 
 .padding-top-8 {

@@ -410,17 +410,22 @@
                   </div>
                   <table class='w3-table-all no-border' id='teamOverviewConferenceStandings'>
                     <thead>
-                      <th>Team</th>
+                      <th colspan='2'>Team</th>
                       <th>Conf</th>
                       <th>GB</th>
                       <th>Record</th>
                     </thead>
                     {% for standing_team in conference.conference_standings %}
-                    <tr class='{{standing_team.BoldTeam}}'>
-                      <td>
-                        <a href="{{standing_team.TeamHref}}/">
+                    <tr class='{{standing_team.bold}}'>
+                      <td class='column-shrink padding-left-8' style='background-color: #{{standing_team.team.team_color_primary_hex}}'>
+                        <a href="{{standing_team.team.team_href}}">
                           <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
-                          {{standing_team.NationalRankDisplay}} {{standing_team.TeamID__TeamName }}
+                        </a>
+                      </td>
+                      <td>
+                        <a href="{{standing_team.team.team_href}}">
+                          <span class='font10'>{{standing_team.national_rank_display}} </span>
+                          <span>{{standing_team.team.team_abbreviation }}</span>
                         </a>
                       </td>
                       <td>{{standing_team.conference_record_display}}</td>
