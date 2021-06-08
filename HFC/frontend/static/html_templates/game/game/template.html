@@ -191,11 +191,11 @@
                       <div class='gameTeamStatAbbreviation'>{{game.away_team_game.team_season.team.team_abbreviation}}</div>
                       <div class="">
                         <span style="background-color:#f2f2f2;" class="bar-total"><span style="background-color:#{{game.away_team_game.team_season.team.team_color_primary_hex}} !important; height: 8px; width:{{stat.away_ratio}}%" class=" bar-percentage"></span></span>
-                        <span class='font12'>{{stat.away_value}}</span>
+                        <span class='font12'>{{stat.away_display_value}}</span>
                       </div>
                       <div class="">
                         <span style="background-color:#f2f2f2;" class="bar-total"><span style="background-color:#{{game.home_team_game.team_season.team.team_color_primary_hex}} !important; height: 8px; width:{{stat.home_ratio}}%" class=" bar-percentage"></span></span>
-                        <span class='font12'>{{stat.home_value}}</span>
+                        <span class='font12'>{{stat.home_display_value}}</span>
                       </div>
                       <div class='gameTeamStatAbbreviation'>{{game.home_team_game.team_season.team.team_abbreviation}}</div>
                     </div>
@@ -332,7 +332,7 @@
                               {{drive.drive_end.play_type}}
                             </td>
                             <td class="">
-                              {{score.DisplayTime}}
+                              {{drive.drive_end.display_time}}
                             </td>
                             <td class="ScoringSummaryDrive">
                               <div class="">

@@ -11,6 +11,9 @@ const routes = [
   {route: "/World/:world_id/Standings/", path: 'world/standings/base.html'},
   {route: "/World/:world_id/Standings/Conference/:conference_id", path: 'world/standings/base.html'},
 
+  {route: "/World/:world_id/PlayerStats/Season/:season", path: 'world/player_stats/base.html'},
+  {route: "/World/:world_id/TeamStats/Season/:season", path: 'world/team_stats/base.html'},
+
   {route: "/World/:world_id/Team/:team_id/",         path: 'team/team/base.html'},
   {route: "/World/:world_id/Team/:team_id/Schedule", path: 'team/schedule/base.html'},
   {route: "/World/:world_id/Team/:team_id/Roster",   path: 'team/roster/base.html'},

@@ -44,7 +44,7 @@ const getHtml = async (common) => {
   });
 
 
-  var positions_to_display = {'QB': 1, 'RB': 1, 'WR': 3, 'TE': 1, 'OT': 2, 'OG': 2, 'OC': 1, 'DE': 2, 'DT': 2, 'OLB': 2, 'MLB': 1, 'CB': 2, 'S': 2}
+  var positions_to_display = {'QB': 1, 'RB': 1, 'WR': 3, 'TE': 1, 'OT': 2, 'OG': 2, 'OC': 1, 'EDGE': 2, 'DL': 2, 'LB': 3, 'CB': 2, 'S': 2}
 
   var team_game_ids = [];
   var player_talent_comparison = [];
@@ -91,9 +91,15 @@ const getHtml = async (common) => {
       game.home_outcome_letter = 'L';
     }
 
+
     for (const period of game.scoring.periods){
       for (const drive of period.drives) {
         drive.drive_end.display_team = teams_by_team_id[drive.drive_end.display_team_id]
+
+        var seconds_left_in_period = (15 * 60) - (drive.drive_end.seconds_in_to_game % (15 * 60))
+        var display_time = `${Math.floor(seconds_left_in_period/60)}:${Math.floor(seconds_left_in_period%60)}`
+        drive.drive_end.display_time =  display_time
+
       }
     }
   }
@@ -115,13 +121,25 @@ const getHtml = async (common) => {
   }
 
   team_stat_box = [
-    {display_name: 'Points', away_value: game.away_team_game.points, home_value: game.home_team_game.points,}
+    {special_format: false, display_name: 'Total Yards', away_value: game.away_team_game.total_yards, home_value: game.home_team_game.total_yards,},
+    {special_format: false, display_name: 'First Downs', away_value: game.away_team_game.game_stats.team.downs.first_downs.total, home_value: game.home_team_game.game_stats.team.downs.first_downs.total,},
+    {special_format: true,  display_name: 'Time of Possession', away_value: game.away_team_game.game_stats.team.time_of_possession, home_value: game.home_team_game.game_stats.team.time_of_possession, away_display_value: game.away_team_game.time_of_possession_formatted, home_display_value: game.home_team_game.time_of_possession_formatted, },
+    {special_format: false, display_name: 'Turnovers', away_value: game.away_team_game.game_stats.team.turnovers, home_value: game.home_team_game.game_stats.team.turnovers,},
+    {special_format: false, display_name: 'Sacks', away_value: game.away_team_game.game_stats.defense.sacks, home_value: game.home_team_game.game_stats.defense.sacks,},
+    {special_format: false, display_name: 'Punts', away_value: game.away_team_game.game_stats.punting.punts, home_value: game.home_team_game.game_stats.punting.punts,},
+    {special_format: true, display_name: 'Third Down Percentage', away_value: game.away_team_game.third_down_conversion_percentage, away_display_value: `${game.away_team_game.third_down_conversion_percentage}%`, home_value: game.home_team_game.third_down_conversion_percentage, home_display_value: `${game.home_team_game.third_down_conversion_percentage}%`},
+    {special_format: false, display_name: 'Biggest Lead', away_value: game.away_team_game.game_stats.team.biggest_lead, home_value: game.home_team_game.game_stats.team.biggest_lead,},
   ]
 
   for (const stat of team_stat_box){
     stat.max_value = Math.max(stat.away_value, stat.home_value)
     stat.home_ratio = stat.home_value / stat.max_value * 100;
     stat.away_ratio = stat.away_value / stat.max_value * 100;
+
+    if (!(stat.special_format)){
+      stat.home_display_value = stat.home_value;
+      stat.away_display_value = stat.away_value;
+    }
   }
 
   console.log('conference_standings', conference_standings)
@@ -161,6 +179,7 @@ const getHtml = async (common) => {
 
         for (const drive of drives) {
           scoring_data.push([drive.drive_end.period_number, drive.drive_end.home_team_points, drive.drive_end.away_team_points])
+
         }
 
         google.charts.load('current', {'packages':['corechart']});
@@ -170,7 +189,7 @@ const getHtml = async (common) => {
           var data = google.visualization.arrayToDataTable(scoring_data);
 
           var options = {
-            title: 'Company Performance',
+            title: `${common.render_content.game.away_team_game.team_season.team.school_name} @ ${common.render_content.game.home_team_game.team_season.team.school_name}`,
             legend: { position: 'bottom' },
             colors: [common.render_content.game.home_team_game.team_season.team.team_color_primary_hex, common.render_content.game.away_team_game.team_season.team.team_color_primary_hex],
             lineWidth: 4,

@@ -123,12 +123,12 @@
 
 
       const classes = ['FR', 'SO', 'JR', 'SR'];
-      const positions = ['QB', 'RB', 'WR', 'TE', 'OT', 'OG', 'OC', 'DE', 'DT', 'OLB', 'MLB', 'CB', 'S', 'K', 'P'];
+      const positions = ['QB', 'RB', 'WR', 'TE', 'OT', 'OG', 'OC', 'EDGE', 'DL', 'LB', 'CB', 'S', 'K', 'P'];
       const first_names = ["Tom", "Miles", "Travis", "Jack", "Maina", "Phil", "Andrew", 'Tyler', 'Bryan', 'Peter', 'Jeffrey', 'Brad', 'Taronish', 'Jeremy', 'Craig', 'Jim', 'Barry', 'Dan', 'Ted', 'Theodore'];
       const last_names = ['Kennedy', 'Wilson', 'Latham', 'Jackson', 'Murphy', 'Shon', "Dodson", 'Alley', 'Cate', 'Rushton', 'Miller', 'Bollinger', 'Pope', 'Loach', 'Weiss', 'Lovalvo', 'Russell', 'Ingram', 'Zucker'];
 
       const position_ethnicity =    //numbers normalized from https://theundefeated.com/features/the-nfls-racial-divide/
-          {"QB":{"white":75,"black":15,"hispanic":5,"asian":5},"RB":{"white":15,"black":80,"hispanic":10,"asian":5},"WR":{"white":10,"black":85,"hispanic":5,"asian":5},"TE":{"white":50,"black":50,"hispanic":15,"asian":2},"OT":{"white":45,"black":55,"hispanic":15,"asian":1},"OG":{"white":40,"black":50,"hispanic":15,"asian":1},"OC":{"white":40,"black":50,"hispanic":15,"asian":1},"DE":{"white":20,"black":80,"hispanic":10,"asian":1},"DT":{"white":10,"black":80,"hispanic":10,"asian":1},"OLB":{"white":20,"black":80,"hispanic":10,"asian":1},"MLB":{"white":25,"black":75,"hispanic":10,"asian":1},"CB":{"white":2,"black":100,"hispanic":10,"asian":2},"S":{"white":15,"black":80,"hispanic":10,"asian":5},"K":{"white":70,"black":10,"hispanic":25,"asian":25},"P":{"white":70,"black":10,"hispanic":25,"asian":25}}
+          {"QB":{"white":75,"black":15,"hispanic":5,"asian":5},"RB":{"white":15,"black":80,"hispanic":10,"asian":5},"WR":{"white":10,"black":85,"hispanic":5,"asian":5},"TE":{"white":50,"black":50,"hispanic":15,"asian":2},"OT":{"white":45,"black":55,"hispanic":15,"asian":1},"OG":{"white":40,"black":50,"hispanic":15,"asian":1},"OC":{"white":40,"black":50,"hispanic":15,"asian":1},"EDGE":{"white":20,"black":80,"hispanic":10,"asian":1},"DL":{"white":10,"black":80,"hispanic":10,"asian":1},"LB":{"white":25,"black":75,"hispanic":10,"asian":1},"CB":{"white":2,"black":100,"hispanic":10,"asian":2},"S":{"white":15,"black":80,"hispanic":10,"asian":5},"K":{"white":70,"black":10,"hispanic":25,"asian":25},"P":{"white":70,"black":10,"hispanic":25,"asian":25}}
 
 
       //Create new db if clicked 'continue'
@@ -333,11 +333,11 @@
 
         var team_position_option = {};
         var team_position_options = [
-            ["QB","QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","P","P"],
-            ["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","OLB","OLB","OLB","MLB","MLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"],
-            ["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","OLB","OLB","MLB","MLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
-            ["QB","QB","QB","RB","RB","RB","RB","RB","RB","RB","FB","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","OLB","MLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
-            ["QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","DE","DE","DE","DE","DE","DE","DE","DT","DT","DT","DT","DT","OLB","OLB","OLB","OLB","OLB","MLB","MLB","MLB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"]
+            ["QB","QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","P","P"],
+            ["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"],
+            ["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
+            ["QB","QB","QB","RB","RB","RB","RB","RB","RB","RB","FB","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
+            ["QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"]
           ]
 
         const num_players_per_team = team_position_options[0].length;

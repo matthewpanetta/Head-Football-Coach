@@ -1,3 +1,551 @@
+const clean_rating_string = (str) => {
+  return str
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map(function(word) {
+          return word[0].toUpperCase() + word.substr(1);
+      })
+      .join(' ');
+ }
+
+const combine_starters_for_position = (depth_chart_list, position) => {
+
+  const starters_by_position = {
+    'QB': 1,
+    'RB': 1,
+    'WR': 3,
+    'TE': 1,
+    'OT': 2,
+    'OG': 2,
+    'OC': 1,
+    'EDGE': 2,
+    'DL': 2,
+    'LB': 3,
+    'CB': 2,
+    'S': 2,
+    'K': 1,
+    'P': 1,
+  }
+
+  const slice_amount = starters_by_position[position]
+  var player_team_season_id_list = [];
+  for (var team_player_team_season_id_list of depth_chart_list) {
+    player_team_season_id_list = player_team_season_id_list.concat(team_player_team_season_id_list.slice(0,slice_amount));
+  }
+
+  return player_team_season_id_list;
+}
+
+
+function DrawPlayerSeasonStats(data){
+
+  var columns = [
+  ];
+  var columns = $.grep(data.Stats, function(n, i){
+    return n.DisplayColumn
+  });
+
+  var Parent = $('#PlayerSeasonStatTableClone').parent();
+  var SeasonStatCard = $('<div></div>').addClass('w3-card').addClass('w3-margin-top');
+  var Table = $('#PlayerSeasonStatTableClone').clone().addClass('w3-table-all').removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerSeasonStatTable-'+data.StatGroupName).css('width', '100%');
+
+  if (data.CareerStats.length > 0){
+    $.each(columns, function(){
+      $(Table).find('tfoot tr').append('<td class="bold"></td>');
+    });
+  }
+
+  $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Season Stats</div>').appendTo(SeasonStatCard);
+  Table.appendTo(SeasonStatCard);
+  var DataTable = $(Table).DataTable( {
+    data: data.SeasonStats,
+    columns: columns,
+    "paging": false,
+    'searching': false,
+    'info': false,
+  });
+
+  var Counter = 0;
+  DataTable.columns().every( function () {
+      // ... do something with data(), or this.nodes(), etc
+      $(this.footer()).html(data.CareerStats[Counter])
+      Counter +=1;
+  } );
+
+  SeasonStatCard.appendTo(Parent);
+
+  $(Table).find('th').addClass('teamColorBorder');
+  $(Table).find('thead tr').addClass('team-secondary-table-row');
+
+}
+
+
+function DrawPlayerCareerHighs(data){
+
+  var columns = [
+  ];
+  var columns = $.grep(data.Stats, function(n, i){
+    return n.DisplayColumn
+  });
+  var Parent = $('#PlayerSeasonStatTableClone').parent();
+
+  var CareerHighCard = $('<div></div>').addClass('w3-card').addClass('w3-margin-top');
+
+  var CareerHighTable = $('#PlayerCareerHighTableClone').clone().addClass('w3-table-all').removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerCareerHighTable-'+data.StatGroupName).css('width', '100%');
+
+  if (data.CareerStats.length > 0){
+    $.each(columns, function(){
+      $(Table).find('tfoot tr').append('<td class="bold"></td>');
+    });
+  }
+
+  $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Career Highs</div>').appendTo(CareerHighCard);
+  CareerHighTable.appendTo(CareerHighCard);
+  var CareerHighDataTable = $(CareerHighTable).DataTable({
+    "data": data.CareerHighs,
+    'paging': false,
+    'searching': false,
+    'info': false,
+    'ordering': false,
+    "columns": [
+       {"data": "Field", "sortable": false, 'visible': true, 'className': 'left-text'},
+        {"data": "Value", "sortable": false, 'visible': true},
+        {"data": "Week", "sortable": false, 'searchable': true, 'className': 'left-text', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
+            $(td).html("<span>vs. <img class='worldTeamStatLogo padding-right' src='"+DataObject['OpposingTeamLogo']+"'/></span><span><a href='"+DataObject['GameHref']+"'>"+StringValue+"</a></span>");
+          //  $(td).attr('style', 'border-left-color: #' + DataObject['TeamColor_Primary_HEX']);
+          //  $(td).addClass('teamTableBorder');
+        }},
+
+    ],
+  });
+
+  CareerHighCard.appendTo(Parent);
+  $(CareerHighTable).find('th').addClass('teamColorBorder');
+
+}
+
+
+const populate_player_stats = async (common) => {
+
+    const db = await common.db;
+    const player = common.render_content.player;
+    const current_player_team_season = player.current_player_team_season;
+
+    const weeks = await db.week.where({season: common.season}).toArray();
+    const weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
+
+    var player_team_games = await db.player_team_game.where({player_team_season_id: current_player_team_season.player_team_season_id}).toArray();
+    const team_game_ids = player_team_games.map(ptg => ptg.team_game_id);
+    const team_games = await db.team_game.bulkGet(team_game_ids);
+
+    const game_ids = team_games.map(tg => tg.game_id);
+    const games = await db.game.bulkGet(game_ids);
+
+    const team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id');
+    const games_by_game_id = index_group_sync(games, 'index', 'game_id');
+
+    const team_seasons = await db.team_season.where({season: common.season}).toArray();
+    const team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+    const teams = await db.team.toArray();
+    const teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+
+    for (var player_team_game of player_team_games){
+      player_team_game.team_game = team_games_by_team_game_id[player_team_game.team_game_id];
+      player_team_game.team_game.game = games_by_game_id[player_team_game.team_game.game_id];
+
+      player_team_game.team_game.game.week = weeks_by_week_id[player_team_game.team_game.game.week_id];
+
+      player_team_game.team_game.team_season = team_seasons_by_team_season_id[player_team_game.team_game.team_season_id];
+      player_team_game.team_game.opponent_team_season = team_seasons_by_team_season_id[player_team_game.team_game.opponent_team_season_id];
+
+      player_team_game.team_game.team_season.team = teams_by_team_id[player_team_game.team_game.team_season.team_id];
+      player_team_game.team_game.opponent_team_season.team = teams_by_team_id[player_team_game.team_game.opponent_team_season.team_id];
+    }
+
+    player_team_games = player_team_games.sort((ptg_a, ptg_b) => ptg_a.team_game.game.week_id - ptg_b.team_game.game.week_id);
+
+    const recent_game_stats_data = player_team_games.slice(-5);
+
+    console.log('populate_player_stats', {player:player, player_team_games:player_team_games, recent_game_stats_data:recent_game_stats_data})
+
+    const player_stats_show = {'Passing': false,
+                      'Rushing': false,
+                      'Receiving': false,
+                      'Blocking': false,
+                      'Defense': false,
+                      'Kicking': false,}
+
+    const player_stats_show_position_map = {
+                'QB': 'Passing',
+                'RB': 'Rushing',
+                'FB': 'Rushing',
+                'WR': 'Receiving',
+                'TE': 'Receiving',
+                'OT': 'Blocking',
+                'OG': 'Blocking',
+                'OC': 'Blocking',
+                'DE': 'Defense',
+                'DT': 'Defense',
+                'OLB': 'Defense',
+                'MLB': 'Defense',
+                'CB': 'Defense',
+                'S': 'Defense',
+                'K': 'Kicking',
+                'P': 'Kicking'
+                      }
+    const primary_stat_show = player_stats_show_position_map[player.position]
+    const player_season_stat = player.current_player_team_season.season_stats;
+
+    console.log('player_season_stat.defense.tackles + player_season_stat.defense.interceptions + player_season_stat.fumbles.forced + player_season_stat.defense.deflections', player_season_stat.defense.tackles , player_season_stat.defense.ints , player_season_stat.fumbles.forced , player_season_stat.defense.deflections, player_season_stat.defense.tackles + player_season_stat.defense.ints + player_season_stat.fumbles.forced + player_season_stat.defense.deflections)
+    if (player_season_stat.passing.attempts > 0)
+        player_stats_show['Passing'] = true
+    if ( player_season_stat.rushing.carries > 0)
+        player_stats_show['Rushing'] = true
+    if (player_season_stat.receiving.targets > 0)
+        player_stats_show['Receiving'] = true
+    if (player_season_stat.blocking.blocks > 0)
+        player_stats_show['Blocking'] = true
+    if ((player_season_stat.defense.tackles + player_season_stat.defense.ints + player_season_stat.fumbles.forced + player_season_stat.defense.deflections) > 0)
+        player_stats_show['Defense'] = true
+    if (player_season_stat.kicking.fga > 0)
+        player_stats_show['Kicking'] = true
+
+
+  console.log('GameStatDate, RecentGameStatData', {player_season_stat:player_season_stat, player_stats_show:player_stats_show});
+  var desc_first = ["desc", 'asc'];
+
+
+    var col_categories = {
+      'Base': 3,
+      'Passing': 8,
+      'Rushing': 7,
+      'Receiving': 6,
+      'Blocking': 2,
+      'Defense': 7,
+      'Kicking': 4,
+    }
+
+    var show_column_map = {}
+    var col_counter = 0;
+    $.each(col_categories, function(key, val){
+      show_column_map[key] = []
+      for(var i = col_counter; i < col_counter+val; i++){
+        show_column_map[key].push(i);
+      }
+      col_counter = col_counter + val;
+    })
+
+    var full_column_list = [];
+    var hide_column_map = {}
+    $.each(show_column_map, function(key, col_list){
+      $.each(col_list, function(ind, col_num){
+        if ((($.inArray( col_num,  show_column_map['Base'])) == -1)){
+          full_column_list.push(col_num);
+        }
+      })
+    });
+
+
+    $.each(show_column_map, function(key, col_list){
+       var cols = $.grep( full_column_list, function( val, ind ) {
+          return $.inArray( val,  col_list) == -1
+        });
+        hide_column_map[key] = cols;
+    });
+
+    console.log({full_column_list: full_column_list, show_column_map:show_column_map, hide_column_map:hide_column_map})
+    var button_list = []
+
+    var initial_button_to_click = undefined;
+    $.each(col_categories, function(key, val){
+      if (key == 'Base'){
+        return true;
+      }
+
+      if (player_stats_show[key] == false){
+        return true;
+      }
+
+      var button_obj = {extend: 'colvisGroup',
+                        text: key,
+                        show: show_column_map[key],
+                        hide: hide_column_map[key],
+                        className: 'stats-button-'+key,
+                        action: function( e, dt, node, config){
+                          console.log('config', e, dt, node, config)
+                          dt.columns(config.show).visible(true);
+                          dt.columns(config.hide).visible(false);
+
+                          $(node).parent().find('button').removeClass("active");
+
+                         //$(".dt-buttons").find("button").removeClass("active");
+                         node.addClass("active");
+
+                   }}
+      button_list.push(button_obj)
+    });
+
+    console.log('button_list', button_list);
+
+//playerteamseasonid='{{Player.PlayerTeamSeasonID}}' position='{{Player.PositionID__PositionAbbreviation}}'
+  var recent_game_stats = $('#RecentGameStats').DataTable({
+      dom: 'Brt',
+      'buttons':button_list,
+      'ordering': true,
+      'sorting': false,
+      "filter": true,
+      'paging': false,
+      //scrollX: true,
+      'data': recent_game_stats_data,
+      autoWidth: true,
+      columns: [
+        {"data": "team_game.game.week.week_name", "sortable": true, 'className': 'left-text width15','visible': true, 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
+            $(td).html(player_team_game.team_game.game.week.week_name);
+            //$(td).addClass('bold');
+            $(td).attr('style', `color: white; background-color: #${player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}`);
+        }},
+        {"data": "team_game.opponent_team_season.team.full_name", "sortable": true, 'searchable': true, 'className': 'column-shrink left-text',"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
+            $(td).html(`<a href='${player_team_game.team_game.opponent_team_season.team.team_href}'><img class='worldTeamStatLogo' src='${player_team_game.team_game.opponent_team_season.team.team_logo}'/></a>`);
+            $(td).attr('style', `background-color: #${player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}`);
+            $(td).parent().attr('PlayerID', player.player_id);
+        }},
+        {"data": "team_game.game_outcome_letter", "sortable": true, 'visible': true, 'className': 'column-med col-group left-text', 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
+            $(td).html(`<span class='W-L-Badge ${player_team_game.team_game.game_outcome_letter}'> ${player_team_game.team_game.game_outcome_letter} </span><span><a href='${player_team_game.team_game.game.game_href}'> ${player_team_game.team_game.game.score_display}</a></span>`);
+        }},
+        {"data": "game_stats.passing.completions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.passing.attempts", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "completion_percentage", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.passing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "passing_yards_per_attempt", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.passing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.passing.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.passing.sacks", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+        {"data": "game_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.rushing.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+        {"data": "game_stats.receiving.targets", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.receiving.receptions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.receiving.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "receiving_yards_per_catch", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.receiving.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.receiving.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+        {"data": "game_stats.blocking.pancakes", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.blocking.sacks_allowed", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+        {"data": "game_stats.defense.tackles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.defense.tackles_for_loss", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.defense.sacks", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.defense.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.defense.deflections", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.fumbles.forced", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.fumbles.recovered", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+        {"data": "game_stats.kicking.fgm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.kicking.fga", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.kicking.xpm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "game_stats.kicking.xpa", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+      ],
+      'info': false,
+      //'order': [[ 1, "asc" ]],
+      'initComplete': function(){
+        $('.stats-button-'+primary_stat_show).click();
+      }
+  });
+
+  var FullGameStats = undefined;
+  $('#nav-game-log-tab').on('click', function(){
+    if (!(FullGameStats == undefined)){
+      return false;
+    }
+
+    FullGameStats = $('#FullGameStats').DataTable({
+        dom: 'Brt',
+        'buttons':button_list,
+        'ordering': true,
+        'sorting': false,
+        "filter": true,
+        'paging': false,
+        //scrollX: true,
+        'data': player_team_games,
+        autoWidth: true,
+        columns: [
+          {"data": "team_game.game.week.week_name", "sortable": true, 'className': 'left-text width15','visible': true, 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
+              $(td).html(player_team_game.team_game.game.week.week_name);
+              //$(td).addClass('bold');
+              $(td).attr('style', `color: white; background-color: #${player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}`);
+          }},
+          {"data": "team_game.opponent_team_season.team.full_name", "sortable": true, 'searchable': true, 'className': 'column-shrink left-text',"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
+              $(td).html(`<a href='${player_team_game.team_game.opponent_team_season.team.team_href}'><img class='worldTeamStatLogo' src='${player_team_game.team_game.opponent_team_season.team.team_logo}'/></a>`);
+              $(td).attr('style', `background-color: #${player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}`);
+              $(td).parent().attr('PlayerID', player.player_id);
+          }},
+          {"data": "team_game.game_outcome_letter", "sortable": true, 'visible': true, 'className': 'column-med col-group left-text', 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
+              $(td).html(`<span class='W-L-Badge ${player_team_game.team_game.game_outcome_letter}'> ${player_team_game.team_game.game_outcome_letter} </span><span><a href='${player_team_game.team_game.game.game_href}'> ${player_team_game.team_game.game.score_display}</a></span>`);
+          }},
+          {"data": "game_stats.passing.completions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.passing.attempts", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "completion_percentage", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.passing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "passing_yards_per_attempt", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.passing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.passing.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.passing.sacks", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+          {"data": "game_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.rushing.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+          {"data": "game_stats.receiving.targets", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.receiving.receptions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.receiving.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "receiving_yards_per_catch", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.receiving.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.receiving.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+          {"data": "game_stats.blocking.pancakes", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.blocking.sacks_allowed", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+          {"data": "game_stats.defense.tackles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.defense.tackles_for_loss", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.defense.sacks", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.defense.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.defense.deflections", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.fumbles.forced", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.fumbles.recovered", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+          {"data": "game_stats.kicking.fgm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.kicking.fga", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.kicking.xpm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "game_stats.kicking.xpa", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+        ],
+        'info': false,
+        //'order': [[ 1, "asc" ]],
+        'initComplete': function(){
+          $('.stats-button-'+primary_stat_show).click();
+        }
+    });
+  })
+
+
+
+    var clicked_season_stats = false;
+    $('#nav-stats-tab').on('click', function(){
+      if ((clicked_season_stats)){
+        return false;
+      }
+
+      clicked_season_stats = true;
+
+      for (var player_stat_group in player_stats_show){
+        if (player_stats_show[player_stat_group] == false) {
+          continue;
+        }
+        console.log('player_stat', {'player.player_team_seasons': player.player_team_seasons, player_stat_group: player_stat_group, 'player_stats_show[player_stat_group]': player_stats_show[player_stat_group]});
+
+        var div_clone = $('#PlayerSeasonStatDivClone').clone().removeClass('w3-hide');
+        $(div_clone).appendTo($('#PlayerSeasonStatDivClone').parent())
+        var season_stats_table = $(div_clone).find('table').first();
+        $(div_clone).find('.w3-bar').text(player_stat_group + ' Stats')
+        $(season_stats_table).removeClass('w3-hide').attr('id', '')
+
+        console.log('season_stats_table', season_stats_table)
+
+        var season_stats = $(season_stats_table).DataTable({
+            dom: 't',
+            data: player.player_team_seasons,
+            columns: [
+              {"data": "season", "sortable": true, 'className': 'left-text column-shrink ','visible': true, 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_season, iRow, iCol) {
+                  $(td).html(StringValue);
+                  //$(td).addClass('bold');
+                  $(td).attr('style', `color: white; background-color: #${player_team_season.team_season.team.team_color_primary_hex}`);
+              }},
+              {"data": "team_season.team.full_name", "sortable": true, 'searchable': true, 'className': 'column-shrink left-text',"fnCreatedCell": function (td, StringValue, player_team_season, iRow, iCol) {
+                  $(td).html(`<a href='${player_team_season.team_season.team.team_href}'><img class='worldTeamStatLogo' src='${player_team_season.team_season.team.team_logo}'/></a>`);
+                  $(td).attr('style', `background-color: #${player_team_season.team_season.team.team_color_primary_hex}`);
+                  $(td).parent().attr('PlayerID', player.player_id);
+              }},
+
+              {"data": "class.class_name", "sortable": false, 'visible': true, 'orderSequence':desc_first},
+              {"data": "season_stats.passing.completions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.passing.attempts", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "completion_percentage", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.passing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "passing_yards_per_attempt", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.passing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.passing.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.passing.sacks", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+              {"data": "season_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.rushing.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+              {"data": "season_stats.receiving.targets", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.receiving.receptions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.receiving.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "receiving_yards_per_catch", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.receiving.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.receiving.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+              {"data": "season_stats.blocking.pancakes", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.blocking.sacks_allowed", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+              {"data": "season_stats.defense.tackles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.defense.tackles_for_loss", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.defense.sacks", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.defense.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.defense.deflections", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.fumbles.forced", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.fumbles.recovered", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+              {"data": "season_stats.kicking.fgm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.kicking.fga", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.kicking.xpm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "season_stats.kicking.xpa", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+            ],
+            //'order': [[ 1, "asc" ]],
+            'initComplete': function(settings, json){
+              var api = this.api();
+              for (var column_index of show_column_map[player_stat_group]){
+                console.log('column_index', column_index);
+                api.columns(column_index).visible(true);
+              }
+              console.log('show_column_map', {settings:settings, 'this': this, show_column_map:show_column_map, player_stat_group:player_stat_group,'show_column_map[player_stat_group]':show_column_map[player_stat_group]});
+
+
+            }
+        });
+
+        console.log('season_stats', season_stats)
+
+      }
+
+
+
+
+    })
+
+
+}
+
 const getHtml = async (common) => {
   nunjucks.configure({ autoescape: true });
 
@@ -5,7 +553,7 @@ const getHtml = async (common) => {
   const player_id = parseInt(common.params.player_id);
   const db = common.db;
   const query_to_dict = common.query_to_dict;
-  const season = 1;
+  const season = common.season;
 
   const NavBarLinks = await common.nav_bar_links({
     path: 'Player',
@@ -36,39 +584,36 @@ const getHtml = async (common) => {
   player.player_team_seasons = player_team_seasons;
   player.current_player_team_season = player_team_seasons.filter(pts => pts.season = season)[0];
 
-  /*
-  TODO BUILD FACE
-  */
 
 
-  var skill_set_rating_map = {
-      'Overall': {'Overall': 'OverallRating'},
-       'Physical': {'Agility': 'Agility_Rating', 'Speed': 'Speed_Rating', 'Acceleration': 'Acceleration_Rating', 'Strength': 'Strength_Rating', 'Jumping': 'Jumping_Rating'},
-       'Passing': {'Throw Power': 'ThrowPower_Rating', 'Throw Accuracy (S)': 'ShortThrowAccuracy_Rating', 'Throw Accuracy (M)': 'MediumThrowAccuracy_Rating', 'Throw Accuracy (D)': 'DeepThrowAccuracy_Rating', 'Throw on Run': 'ThrowOnRun_Rating', 'Throw Under Pressure': 'ThrowUnderPressure_Rating', 'Play Action': 'PlayAction_Rating'},
-       'Running': {'Carrying': 'Carrying_Rating', 'Elusiveness': 'Elusiveness_Rating', 'Ball Carrier Vision': 'BallCarrierVision_Rating', 'Break Tackle': 'BreakTackle_Rating'},
-       'Receiving': { 'Catching': 'Catching_Rating', 'Catch In Traffic': 'CatchInTraffic_Rating', 'Route Running': 'RouteRunning_Rating', 'Release': 'Release_Rating'},
-       'Blocking': {'Pass Block':'PassBlock_Rating', 'Run Block': 'RunBlock_Rating', 'Impact Block': 'ImpactBlock_Rating'},
-       'Defense': {'Pass Rush':'PassRush_Rating', 'Block Shedding': 'BlockShedding_Rating','Tackle': 'Tackle_Rating','Hit Power': 'HitPower_Rating', 'Man Coverage': 'ManCoverage_Rating', 'Zone Coverage': 'ZoneCoverage_Rating', 'Press': 'Press_Rating',},
-       'Kicking': {'Kick Power': 'KickPower_Rating','Kick Accuracy':  'KickAccuracy_Rating'},
-  }
-
-  const position_skill_set_map ={'QB': ['Overall','Physical', 'Passing', 'Running'],
-                           'RB': ['Overall','Physical', 'Running'],
-                           'FB': ['Overall','Physical', 'Running', 'Blocking'],
-                           'WR': ['Overall','Physical', 'Receiving'],
-                           'TE': ['Overall','Physical', 'Receiving', 'Blocking'],
-                           'OT': ['Overall','Physical', 'Blocking'],
-                           'OG': ['Overall','Physical', 'Blocking'],
-                           'OC': ['Overall','Physical', 'Blocking'],
-                           'DE': ['Overall','Physical', 'Defense'],
-                           'DT': ['Overall','Physical', 'Defense'],
-                           'MLB': ['Overall','Physical', 'Defense'],
-                           'OLB': ['Overall','Physical', 'Defense'],
-                           'CB': ['Overall','Physical', 'Defense'],
-                           'S': ['Overall','Physical', 'Defense'],
-                           'K': ['Overall','Kicking'],
-                           'P': ['Overall','Kicking'],
+      const position_skill_set_map ={'QB': ['overall','athleticism', 'passing', 'rushing'],
+                           'RB': ['overall','athleticism', 'rushing'],
+                           'FB': ['overall','athleticism', 'rushing', 'Blocking'],
+                           'WR': ['overall','athleticism', 'receiving'],
+                           'TE': ['overall','athleticism', 'receiving', 'blocking'],
+                           'OT': ['overall','athleticism', 'blocking'],
+                           'OG': ['overall','athleticism', 'blocking'],
+                           'OC': ['overall','athleticism', 'blocking'],
+                           'EDGE': ['overall','athleticism', 'defense'],
+                           'DL': ['overall','athleticism', 'defense'],
+                           'LB': ['overall','athleticism', 'defense'],
+                           'CB': ['overall','athleticism', 'defense'],
+                           'S': ['overall','athleticism', 'defense'],
+                           'K': ['overall','kicking'],
+                           'P': ['overall','kicking'],
       }
+
+      const all_rating_groups = {
+        'overall': 'Overall',
+        'athleticism': 'Athleticism',
+        'passing': 'Passing',
+        'rushing': 'Running',
+        'receiving': 'Receiving',
+        'blocking': 'Blocking',
+        'defense': 'Defense',
+        'kicking': 'Kicking',
+      }
+
 
       const season_stat_groupings = [
           {
@@ -123,525 +668,57 @@ const getHtml = async (common) => {
               ],
           },
       ]
-      const position_rating_map = {'QB': ['OverallRating', 'Awareness_Rating', 'Speed_Rating',  'ShortThrowAccuracy_Rating', 'MediumThrowAccuracy_Rating', 'DeepThrowAccuracy_Rating', 'ThrowPower_Rating','ThrowOnRun_Rating', 'ThrowUnderPressure_Rating', 'PlayAction_Rating'],
-                           'RB': ['OverallRating', 'Agility_Rating', 'Speed_Rating', 'Acceleration_Rating', 'Carrying_Rating', 'Elusiveness_Rating', 'BallCarrierVision_Rating', 'BreakTackle_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'FB': ['OverallRating', 'Agility_Rating', 'Speed_Rating', 'Acceleration_Rating', 'Carrying_Rating', 'Elusiveness_Rating', 'BallCarrierVision_Rating', 'BreakTackle_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'WR': ['OverallRating', 'Catching_Rating', 'CatchInTraffic_Rating', 'RouteRunning_Rating', 'Release_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'TE': ['OverallRating', 'Catching_Rating', 'CatchInTraffic_Rating', 'RouteRunning_Rating', 'Release_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'OT': ['OverallRating', 'PassBlock_Rating', 'RunBlock_Rating', 'ImpactBlock_Rating', 'Strength_Rating', 'Awareness_Rating'],
-                           'OG': ['OverallRating', 'PassBlock_Rating', 'RunBlock_Rating', 'ImpactBlock_Rating', 'Strength_Rating', 'Awareness_Rating'],
-                           'OC': ['OverallRating', 'PassBlock_Rating', 'RunBlock_Rating', 'ImpactBlock_Rating', 'Strength_Rating', 'Awareness_Rating'],
-                           'DE': ['OverallRating', 'PassRush_Rating', 'BlockShedding_Rating', 'Tackle_Rating', 'HitPower_Rating', 'Strength_Rating', 'PlayRecognition_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'DT': ['OverallRating', 'PassRush_Rating', 'BlockShedding_Rating', 'Tackle_Rating', 'HitPower_Rating', 'Strength_Rating', 'PlayRecognition_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'OLB': ['OverallRating', 'PassRush_Rating', 'BlockShedding_Rating', 'Tackle_Rating', 'HitPower_Rating', 'Strength_Rating', 'PlayRecognition_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'MLB': ['OverallRating', 'PassRush_Rating', 'BlockShedding_Rating', 'Tackle_Rating', 'HitPower_Rating', 'Strength_Rating', 'PlayRecognition_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'CB': ['OverallRating', 'ManCoverage_Rating', 'ZoneCoverage_Rating', 'Press_Rating', 'Agility_Rating', 'Acceleration_Rating', 'Tackle_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'S': ['OverallRating', 'ManCoverage_Rating', 'ZoneCoverage_Rating', 'Press_Rating', 'Agility_Rating', 'Acceleration_Rating', 'Tackle_Rating', 'Awareness_Rating', 'Speed_Rating'],
-                           'K': ['OverallRating', 'KickPower_Rating', 'KickAccuracy_Rating'],
-                           'P': ['OverallRating', 'KickPower_Rating', 'KickAccuracy_Rating'],
+
+      const all_player_team_seasons_by_player_team_season_id = index_group_sync(await db.player_team_season.where({season: season}).toArray(), 'index', 'player_team_season_id');
+      const all_team_seasons = await db.team_season.where({season: season}).toArray();
+      const all_team_seasons_in_conference = all_team_seasons.filter(ts => ts.conference_season_id == player.current_player_team_season.team_season.conference_season_id);
+      const player_position = player.current_player_team_season.position;
+
+      const all_player_team_season_ids_starters_at_position = combine_starters_for_position(all_team_seasons.map(ts => ts.depth_chart[player_position]), player.current_player_team_season.position)
+      const all_conference_player_team_season_ids_starters_at_position = combine_starters_for_position(all_team_seasons_in_conference.map(ts => ts.depth_chart[player_position]), player.current_player_team_season.position)
+
+      const all_player_team_season_starters_at_position = all_player_team_season_ids_starters_at_position.map(pts_id => all_player_team_seasons_by_player_team_season_id[pts_id]);
+      const all_conference_player_team_season_starters_at_position = all_conference_player_team_season_ids_starters_at_position.map(pts_id => all_player_team_seasons_by_player_team_season_id[pts_id]);
+
+
+      const skills = []
+      for (var rating_group in all_rating_groups) {
+
+        var rating_group_obj = {rating_group: all_rating_groups[rating_group], ratings: []}
+
+        if (position_skill_set_map[player_position].includes(rating_group)){
+          rating_group_obj.top_show = true;
+        }
+
+        for (var rating in player.current_player_team_season.ratings[rating_group]){
+          var rating_obj = {rating: clean_rating_string(rating), player_value: player.current_player_team_season.ratings[rating_group][rating], all_players: {value_sum: 0, value_count: 0, value: 0}, conference_players: {value_sum: 0, value_count: 0, value: 0}}
+
+          for (const player_team_season of all_player_team_season_starters_at_position){
+            rating_obj.all_players.value_count +=1;
+            rating_obj.all_players.value_sum += player_team_season.ratings[rating_group][rating];
+          }
+
+          for (const player_team_season of all_conference_player_team_season_starters_at_position){
+            rating_obj.conference_players.value_count +=1;
+            rating_obj.conference_players.value_sum += player_team_season.ratings[rating_group][rating];
+          }
+
+          rating_obj.all_players.value = round_decimal(rating_obj.all_players.value_sum / rating_obj.all_players.value_count, 0);
+          rating_obj.conference_players.value = round_decimal(rating_obj.conference_players.value_sum / rating_obj.conference_players.value_count, 0);
+
+          rating_group_obj.ratings.push(rating_obj) ;
+        }
+
+        if (rating_group_obj.rating_group_obj == 'overall'){
+          skills.unshift(rating_group_obj)
+        }
+        else {
+          skills.push(rating_group_obj)
+        }
       }
 
-      const skill_name_map = {
-          'OverallRating': 'Overall',
-          'Awareness_Rating': 'Awareness',
-          'Speed_Rating': 'Speed',
-          'ShortThrowAccuracy_Rating': 'Short Throw Accuracy',
-          'MediumThrowAccuracy_Rating': 'Medium Throw Accuracy',
-          'DeepThrowAccuracy_Rating': 'Deep Throw Accuracy',
-          'ThrowPower_Rating': 'Throw Power',
-          'ThrowOnRun_Rating': 'Throw on Run',
-          'ThrowUnderPressure_Rating': 'Throw Under Pressure',
-          'PlayAction_Rating': 'Play Action',
-          'Agility_Rating': 'Agility',
-          'Acceleration_Rating': 'Acceleration',
-          'Carrying_Rating': 'Carrying',
-          'Elusiveness_Rating': 'Elusiveness',
-          'BallCarrierVision_Rating': 'Ball Carrier Vision',
-          'BreakTackle_Rating': 'Break Tackle',
-          'Catching_Rating': 'Catching',
-          'CatchInTraffic_Rating': 'Catch in Traffic',
-          'RouteRunning_Rating': 'Route Running',
-          'Release_Rating': 'Release',
-          'PassBlock_Rating': 'Pass Block',
-          'RunBlock_Rating': 'Run Block',
-          'ImpactBlock_Rating': 'Impact Block',
-          'Strength_Rating': 'Strength',
-          'PassRush_Rating': 'Pass Rush',
-          'BlockShedding_Rating': 'Block Shedding',
-          'Tackle_Rating': 'Tackling',
-          'HitPower_Rating': 'Hit Power',
-          'PlayRecognition_Rating': 'Play Recognition',
-          'ManCoverage_Rating': 'Man Coverage',
-          'ZoneCoverage_Rating': 'Zone Coverage',
-          'Press_Rating': 'Press',
-          'KickPower_Rating': 'Kick Power',
-          'KickAccuracy_Rating': 'Kick Accuracy'
-      }
 
-      //TODO add recruits
-      // if (player.is_recruit) {
-      //
-      //
-      //
-      //   PlayerDict['OverallRating'] = RTSDict['Scouted_Overall']
-      //   context['OverallRating'] = RTSDict['Scouted_Overall']
-      //   PlayerSkills['OverallRating'] = RTSDict['Scouted_Overall']
-      //   for key in PlayerSkills:
-      //       ScoutedKey = 'Scouted_'+key
-      //       if ScoutedKey in RTSDict:
-      //           PlayerSkills[key] = RTSDict[ScoutedKey]
-      //
-      // }
-
-
-
-      const all_player_team_seasons = db.player_team_season.where({season: season})
-
-      //
-      //
-      // PositionAverageSkills = PlayerTeamSeasonSkill.objects.filter(WorldID_id = WorldID).filter(PlayerTeamSeasonID__playerteamseasondepthchart__PositionID = PlayerObject.PositionID,  PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = true, PlayerTeamSeasonID__playerteamseasondepthchart__IsStarter = true).values('PlayerTeamSeasonID__PlayerID__PositionID').annotate(
-      //     PlayerCount = Count('PlayerTeamSeasonID'),
-      //     OverallRating = Round(Avg('OverallRating'),1),
-      //     Awareness_Rating = Round(Avg('Awareness_Rating'),1),
-      //     Speed_Rating = Round(Avg('Speed_Rating'),1),
-      //     Jumping_Rating = Round(Avg('Jumping_Rating'),1),
-      //     ShortThrowAccuracy_Rating = Round(Avg('ShortThrowAccuracy_Rating'),1),
-      //     MediumThrowAccuracy_Rating = Round(Avg('MediumThrowAccuracy_Rating'),1),
-      //     DeepThrowAccuracy_Rating = Round(Avg('DeepThrowAccuracy_Rating'),1),
-      //     ThrowPower_Rating = Round(Avg('ThrowPower_Rating'),1),
-      //     ThrowOnRun_Rating = Round(Avg('ThrowOnRun_Rating'),1),
-      //     ThrowUnderPressure_Rating = Round(Avg('ThrowUnderPressure_Rating'),1),
-      //     PlayAction_Rating = Round(Avg('PlayAction_Rating'),1),
-      //     Agility_Rating = Round(Avg('Agility_Rating'),1),
-      //     Acceleration_Rating = Round(Avg('Acceleration_Rating'),1),
-      //     Carrying_Rating = Round(Avg('Carrying_Rating'),1),
-      //     Elusiveness_Rating = Round(Avg('Elusiveness_Rating'),1),
-      //     BallCarrierVision_Rating = Round(Avg('BallCarrierVision_Rating'),1),
-      //     BreakTackle_Rating = Round(Avg('BreakTackle_Rating'),1),
-      //     Catching_Rating = Round(Avg('Catching_Rating'),1),
-      //     CatchInTraffic_Rating = Round(Avg('CatchInTraffic_Rating'),1),
-      //     RouteRunning_Rating = Round(Avg('RouteRunning_Rating'),1),
-      //     Release_Rating = Round(Avg('Release_Rating'),1),
-      //     PassBlock_Rating = Round(Avg('PassBlock_Rating'),1),
-      //     RunBlock_Rating = Round(Avg('RunBlock_Rating'),1),
-      //     ImpactBlock_Rating = Round(Avg('ImpactBlock_Rating'),1),
-      //     Strength_Rating = Round(Avg('Strength_Rating'),1),
-      //     PassRush_Rating = Round(Avg('PassRush_Rating'),1),
-      //     BlockShedding_Rating = Round(Avg('BlockShedding_Rating'),1),
-      //     Tackle_Rating = Round(Avg('Tackle_Rating'),1),
-      //     HitPower_Rating = Round(Avg('HitPower_Rating'),1),
-      //     PlayRecognition_Rating = Round(Avg('PlayRecognition_Rating'),1),
-      //     ManCoverage_Rating = Round(Avg('ManCoverage_Rating'),1),
-      //     ZoneCoverage_Rating = Round(Avg('ZoneCoverage_Rating'),1),
-      //     Press_Rating = Round(Avg('Press_Rating'),1),
-      //     KickPower_Rating = Round(Avg('KickPower_Rating'),1),
-      //     KickAccuracy_Rating = Round(Avg('KickAccuracy_Rating'),1),
-      // )
-      //
-      // if PositionAverageSkills.count() > 0:
-      //     PositionAverageSkills = PositionAverageSkills[0]
-      //
-      //
-      // if TS.DivisionSeasonID is not None:
-      //     PositionConferenceAverageSkills = PlayerTeamSeasonSkill.objects.filter(WorldID_id = WorldID).filter(PlayerTeamSeasonID__TeamSeasonID__LeagueSeasonID__IsCurrent = true).filter(PlayerTeamSeasonID__TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID = TS.DivisionSeasonID.ConferenceSeasonID.ConferenceID).filter(PlayerTeamSeasonID__playerteamseasondepthchart__IsStarter = true).filter(PlayerTeamSeasonID__playerteamseasondepthchart__PositionID = PlayerObject.PositionID).values('PlayerTeamSeasonID__TeamSeasonID__DivisionSeasonID__ConferenceSeasonID__ConferenceID').annotate(
-      //         OverallRating = Round(Avg('OverallRating'),1),
-      //         Awareness_Rating = Round(Avg('Awareness_Rating'),1),
-      //         Speed_Rating = Round(Avg('Speed_Rating'),1),
-      //         Jumping_Rating = Round(Avg('Jumping_Rating'),1),
-      //         ShortThrowAccuracy_Rating = Round(Avg('ShortThrowAccuracy_Rating'),1),
-      //         MediumThrowAccuracy_Rating = Round(Avg('MediumThrowAccuracy_Rating'),1),
-      //         DeepThrowAccuracy_Rating = Round(Avg('DeepThrowAccuracy_Rating'),1),
-      //         ThrowPower_Rating = Round(Avg('ThrowPower_Rating'),1),
-      //         ThrowOnRun_Rating = Round(Avg('ThrowOnRun_Rating'),1),
-      //         ThrowUnderPressure_Rating = Round(Avg('ThrowUnderPressure_Rating'),1),
-      //         PlayAction_Rating = Round(Avg('PlayAction_Rating'),1),
-      //         Agility_Rating = Round(Avg('Agility_Rating'),1),
-      //         Acceleration_Rating = Round(Avg('Acceleration_Rating'),1),
-      //         Carrying_Rating = Round(Avg('Carrying_Rating'),1),
-      //         Elusiveness_Rating = Round(Avg('Elusiveness_Rating'),1),
-      //         BallCarrierVision_Rating = Round(Avg('BallCarrierVision_Rating'),1),
-      //         BreakTackle_Rating = Round(Avg('BreakTackle_Rating'),1),
-      //         Catching_Rating = Round(Avg('Catching_Rating'),1),
-      //         CatchInTraffic_Rating = Round(Avg('CatchInTraffic_Rating'),1),
-      //         RouteRunning_Rating = Round(Avg('RouteRunning_Rating'),1),
-      //         Release_Rating = Round(Avg('Release_Rating'),1),
-      //         PassBlock_Rating = Round(Avg('PassBlock_Rating'),1),
-      //         RunBlock_Rating = Round(Avg('RunBlock_Rating'),1),
-      //         ImpactBlock_Rating = Round(Avg('ImpactBlock_Rating'),1),
-      //         Strength_Rating = Round(Avg('Strength_Rating'),1),
-      //         PassRush_Rating = Round(Avg('PassRush_Rating'),1),
-      //         BlockShedding_Rating = Round(Avg('BlockShedding_Rating'),1),
-      //         Tackle_Rating = Round(Avg('Tackle_Rating'),1),
-      //         HitPower_Rating = Round(Avg('HitPower_Rating'),1),
-      //         PlayRecognition_Rating = Round(Avg('PlayRecognition_Rating'),1),
-      //         ManCoverage_Rating = Round(Avg('ManCoverage_Rating'),1),
-      //         ZoneCoverage_Rating = Round(Avg('ZoneCoverage_Rating'),1),
-      //         Press_Rating = Round(Avg('Press_Rating'),1),
-      //         KickPower_Rating = Round(Avg('KickPower_Rating'),1),
-      //         KickAccuracy_Rating = Round(Avg('KickAccuracy_Rating'),1),
-      //     )
-      //
-      //     if PositionConferenceAverageSkills.count() > 0:
-      //         PositionConferenceAverageSkills = PositionConferenceAverageSkills[0]
-      //
-      // PlayerDict['Skills'] = []
-      //
-      // for SkillGroup in SkillSetRatingMap:
-      //     SkillObj = {'TopShow': false, 'Skills': [], 'SkillGroup': SkillGroup}
-      //     for SkillSet in SkillSetRatingMap[SkillGroup]:
-      //         RatingName = SkillSetRatingMap[SkillGroup][SkillSet]
-      //         SkillValue = PlayerSkills[RatingName]
-      //         SkillAttr = {'SkillName': SkillSet, 'SkillValue': SkillValue}
-      //         if TS.DivisionSeasonID is not None and len(PositionConferenceAverageSkills) >0:
-      //             SkillAttr['PositionConferenceAverage'] = PositionConferenceAverageSkills[RatingName]
-      //         if len(PositionAverageSkills) > 0:
-      //             SkillAttr['PositionAverage'] = PositionAverageSkills[RatingName]
-      //
-      //         SkillObj['Skills'].append(SkillAttr)
-      //
-      //     if SkillGroup in PositionSkillSetMap[PlayerDict['Position']]:
-      //         SkillObj['TopShow'] = true
-      //
-      //     PlayerDict['Skills'].append(SkillObj)
-      //
-      // print("PlayerDict['Skills']", PlayerDict['Skills'])
-      //
-      // if PlayerDict['IsRecruit'] == false:
-      //     PlayerDict['PlayerName'] = PlayerDict['PlayerFirstName'] + ' ' + PlayerDict['PlayerLastName']
-      //
-      //     if CurrentWeek.PhaseID.PhaseName == 'Preseason' and PlayerTeam.IsUserTeam:
-      //         if not PlayerDict['WasPreviouslyRedshirted']:
-      //             if not PTS.RedshirtedThisSeason:
-      //                 context['Actions'].append({'Display': 'Redshirt player', 'ConfirmInfo': PlayerDict['PlayerName'],'ResponseType': 'refresh','Class': 'player-action','AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerRedshirt/Add', 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-tshirt w3-text-red"></i></span>'})
-      //             else:
-      //                 context['Actions'].append({'Display': 'Remove Redshirt'
-      //                                          , 'ConfirmInfo': PlayerDict['PlayerName']
-      //                                          , 'ResponseType': 'refresh'
-      //                                          , 'Class': 'player-action'
-      //                                          , 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerRedshirt/Remove'
-      //                                          , 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-stack-2x fa-inverse fa-tshirt w3-text-red"></i></span>'})
-      //
-      //
-      //         if not PTS.TeamCaptain:
-      //             context['Actions'].append({'Display': 'Add as captain', 'ConfirmInfo': PlayerDict['PlayerName'],'ResponseType': 'refresh', 'Class': 'player-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerCaptain/Add', 'Icon': '<span  class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-crown w3-text-green"></i></span>'})
-      //         else:
-      //             context['Actions'].append({'Display': 'Remove as Captain', 'ConfirmInfo': PlayerDict['PlayerName'],'ResponseType': 'refresh', 'Class': 'player-action', 'AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerCaptain/Remove', 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-crown fa-stack-2x w3-text-green"></i></span>'})
-      //
-      //         context['Actions'].append({'Display': 'Cut from team', 'ConfirmInfo': PlayerDict['PlayerName'], 'ResponseType': 'refresh','Class': 'player-action','AjaxLink': '/World/'+str(WorldID)+'/Player/'+str(PlayerID)+'/PlayerCut', 'Icon': '<span class="fa-stack fa-1x"><i class="fas fa-2x fa-stack-2x fa-cut"></i></span>'})
-      //
-      //
-      //     context['RedshirtedThisSeason'] = PTS.RedshirtedThisSeason
-      //     context['TeamCaptain'] = PTS.TeamCaptain
-      //
-      //     page = {'PageTitle': PlayerDict['FullName'] + ' - ' + PlayerTeam.TeamName, 'PlayerID': PlayerID, 'WorldID': WorldID, 'PrimaryColor': PlayerTeam.TeamColor_Primary_HEX, 'SecondaryColor': PlayerTeam.SecondaryColor_Display, 'SecondaryJerseyColor': PlayerTeam.TeamColor_Secondary_HEX}
-      //     page['NavBarLinks'] = NavBarLinks(Path = 'Player', GroupName='Player', WeekID = CurrentWeek, WorldID = WorldID, UserTeam = UserTeam)
-      //
-      //     #PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__GameDateID')
-      //     PlayerStats = PTS.playergamestat_set.all().order_by('TeamGameID__GameID__WeekID').values('RUS_Yards', 'RUS_TD', 'RUS_Carries', 'RUS_20', 'RUS_LNG', 'REC_LNG', 'PAS_Yards', 'PAS_TD', 'PAS_Completions', 'PAS_Attempts', 'PAS_Sacks', 'PAS_SackYards', 'PAS_INT', 'REC_Yards','REC_Receptions', 'REC_TD', 'REC_Targets', 'FUM_Forced', 'FUM_Lost', 'FUM_Recovered', 'DEF_TacklesForLoss',  'GameScore', 'PlayerTeamSeasonID__PlayerID__PlayerFirstName', 'PlayerTeamSeasonID__PlayerID__PlayerLastName', 'PlayerTeamSeasonID__PlayerID_id', 'PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation','PlayerTeamSeasonID__ClassID__ClassName','PlayerTeamSeasonID__TeamSeasonID__TeamID_id', 'GamesStarted', 'GamesPlayed', 'DEF_Tackles', 'DEF_Sacks', 'DEF_INT', 'DEF_Deflections', 'DEF_TacklesForLoss', 'FUM_Fumbles', 'TeamGameID', 'TeamGameID__GameID', 'TeamGameID__GameID__WeekID__WeekNumber', 'TeamGameID__GameID__WeekID__WeekName', 'TeamGameID__GameID__WeekID_id', 'BLK_Pancakes', 'BLK_Sacks', 'BLK_Blocks', 'KCK_FGA', 'KCK_FGM', 'KCK_XPM', 'KCK_XPA').annotate(  # call `annotate`
-      //             PAS_CompletionPercentage=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Round(Sum(F('PAS_Completions'))* 100.0 / Sum(F('PAS_Attempts')),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             PAS_YardsPerAttempt=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Round(Sum(F('PAS_Yards')) * 1.0 / Sum(F('PAS_Attempts')),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             PAS_YardsPerCompletion=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('PAS_Completions')),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             RUS_YardsPerCarry=Case(
-      //                 When(RUS_Carries=0, then=0.0),
-      //                 default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('RUS_Carries')),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             PAS_CompletionsAndAttempts=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Concat('PAS_Completions', Value('-') ,'PAS_Attempts')),
-      //                 output_field=CharField()
-      //             ),
-      //             PAS_SacksAndYards=Case(
-      //                 When(PAS_Attempts=0, then=0),
-      //                 default=(Concat('PAS_Sacks', Value('-') ,'PAS_SackYards')),
-      //                 output_field=CharField()
-      //             ),
-      //             REC_YardsPerCatch=Case(
-      //                 When(REC_Receptions=0, then=0.0),
-      //                 default=(Round(Sum(F('REC_Yards'))* 1.0 / Sum(F('REC_Receptions')),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             REC_YardsPerGame=Case(
-      //                 When(REC_Receptions=0, then=0.0),
-      //                 default=(Round(Sum(F('REC_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             RUS_YardsPerGame=Case(
-      //                 When(RUS_Carries=0, then=0.0),
-      //                 default=(Round(Sum(F('RUS_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             PAS_YardsPerGame=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Round(Sum(F('PAS_Yards'))* 1.0 / Sum(F('GamesPlayed')),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             Position = F('PlayerTeamSeasonID__PlayerID__PositionID__PositionAbbreviation'),
-      //             GameOutcomeLetter = Case(
-      //                 When(TeamGameID__IsWinningTeam = true, then=Value('W')),
-      //                 When(Q(TeamGameID__IsWinningTeam = false) & Q(TeamGameID__GameID__WasPlayed = true), then=Value('L')),
-      //                 default=Value(''),
-      //                 output_field=CharField()
-      //             ),
-      //             OpponentTeamName = F('TeamGameID__OpposingTeamGameID__TeamSeasonID__TeamID__TeamName'),
-      //             OpponentTeamLogoURL = F('TeamGameID__OpposingTeamGameID__TeamSeasonID__TeamID__TeamLogoURL'),
-      //             OpponentTeamColor_Primary_HEX= F('TeamGameID__OpposingTeamGameID__TeamSeasonID__TeamID__TeamColor_Primary_HEX'),
-      //             OpponentTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamGameID__OpposingTeamGameID__TeamSeasonID__TeamID'), output_field=CharField()),
-      //             GameHref = Concat(Value('/World/'), Value(WorldID), Value('/Game/'), F('TeamGameID__GameID'), output_field=CharField()),
-      //             GameScoreDisplay = Concat(F('TeamGameID__Points'), Value('-'), F('TeamGameID__OpposingTeamGameID__Points'), output_field=CharField()),
-      //         ).order_by('-TeamGameID__GameID__WeekID__WeekNumber')
-      //
-      //
-      //     PlayerStatsShow = {'Passing': false,
-      //                       'Rushing': false,
-      //                       'Receiving': false,
-      //                       'Blocking': false,
-      //                       'Defense': false,
-      //                       'Kicking': false,}
-      //
-      //     PlayerStatsShowMap = {
-      //                 'QB': 'Passing',
-      //                 'RB': 'Rushing',
-      //                 'FB': 'Rushing',
-      //                 'WR': 'Receiving',
-      //                 'TE': 'Receiving',
-      //                 'OT': 'Blocking',
-      //                 'OG': 'Blocking',
-      //                 'OC': 'Blocking',
-      //                 'DE': 'Defense',
-      //                 'DT': 'Defense',
-      //                 'OLB': 'Defense',
-      //                 'MLB': 'Defense',
-      //                 'CB': 'Defense',
-      //                 'S': 'Defense',
-      //                 'K': 'Kicking',
-      //                 'P': 'Kicking'
-      //                       }
-      //     PrimaryStatShow = PlayerStatsShowMap[PlayerDict['PositionID__PositionAbbreviation']]
-      //     for PS in PlayerStats:
-      //         if PS['PAS_Attempts'] > 0:
-      //             PlayerStatsShow['Passing'] = true
-      //         if PS['RUS_Carries'] > 0:
-      //             PlayerStatsShow['Rushing'] = true
-      //         if PS['REC_Targets'] > 0:
-      //             PlayerStatsShow['Receiving'] = true
-      //         if PS['BLK_Blocks'] > 0:
-      //             PlayerStatsShow['Blocking'] = true
-      //         if PS['DEF_Tackles'] + PS['DEF_Deflections'] + PS['DEF_INT'] + PS['FUM_Forced'] > 0:
-      //             PlayerStatsShow['Defense'] = true
-      //         if PS['KCK_FGA'] + PS['KCK_XPA'] > 0:
-      //             PlayerStatsShow['Kicking'] = true
-      //
-      //
-      //     SeasonStats = PlayerObject.playerteamseason_set.all().order_by('TeamSeasonID__LeagueSeasonID').values('ClassID__ClassName', 'PlayerID__PlayerFirstName', 'PlayerID__PlayerLastName', 'PlayerID_id', 'PlayerID__PositionID__PositionAbbreviation','TeamSeasonID__TeamID_id', 'TeamSeasonID__LeagueSeasonID__SeasonStartYear', 'TeamSeasonID__LeagueSeasonID__IsCurrent').annotate(  # call `annotate`
-      //             Position = F('PlayerID__PositionID__PositionAbbreviation'),
-      //             GameScore=Sum('playergamestat__GameScore'),
-      //             GamesPlayed=Sum('playergamestat__GamesPlayed'),
-      //             RUS_Yards=Sum('playergamestat__RUS_Yards'),
-      //             RUS_TD=Sum('playergamestat__RUS_TD'),
-      //             RUS_Carries=Sum('playergamestat__RUS_Carries'),
-      //             REC_Receptions=Sum('playergamestat__REC_Receptions'),
-      //             REC_TD=Sum('playergamestat__REC_TD'),
-      //             REC_Targets=Sum('playergamestat__REC_Targets'),
-      //             PAS_Yards=Sum('playergamestat__PAS_Yards'),
-      //             PAS_TD=Sum('playergamestat__PAS_TD'),
-      //             PAS_Sacks=Sum('playergamestat__PAS_Sacks'),
-      //             PAS_SackYards=Sum('playergamestat__PAS_SackYards'),
-      //             PAS_Attempts=Sum('playergamestat__PAS_Attempts'),
-      //             PAS_Completions=Sum('playergamestat__PAS_Completions'),
-      //             PAS_INT=Sum('playergamestat__PAS_INT'),
-      //             REC_Yards=Sum('playergamestat__REC_Yards'),
-      //             DEF_Sacks=Sum('playergamestat__DEF_Sacks'),
-      //             DEF_INT=Sum('playergamestat__DEF_INT'),
-      //             DEF_Tackles=Sum('playergamestat__DEF_Tackles'),
-      //             DEF_TacklesForLoss=Sum('playergamestat__DEF_TacklesForLoss'),
-      //             FUM_Forced=Sum('playergamestat__FUM_Forced'),
-      //             FUM_Recovered=Sum('playergamestat__FUM_Recovered'),
-      //             PlayerPosition = F('PlayerID__PositionID__PositionAbbreviation'),
-      //             PlayerName = Concat(F('PlayerID__PlayerFirstName'), Value(' '), F('PlayerID__PlayerLastName'), output_field=CharField()),
-      //             PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID_id'), output_field=CharField()),
-      //             PlayerTeamHref = Concat(Value('/World/'), Value(WorldID), Value('/Team/'), F('TeamSeasonID__TeamID_id'), output_field=CharField()),
-      //             PlayerTeamLogoURL = F('TeamSeasonID__TeamID__TeamLogoURL'),
-      //             SeasonYear = F('TeamSeasonID__LeagueSeasonID__SeasonStartYear'),
-      //             PAS_CompletionPercentage=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Round(F('PAS_Completions')* 100.0 / F('PAS_Attempts'),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             PAS_YardsPerAttempt=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Round(F('PAS_Yards') * 1.0 / F('PAS_Attempts'),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             PAS_YardsPerCompletion=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Round(F('PAS_Yards')* 1.0 / F('PAS_Completions'),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             RUS_YardsPerCarry=Case(
-      //                 When(RUS_Carries=0, then=0.0),
-      //                 default=(Round(F('RUS_Yards')* 1.0 / F('RUS_Carries'),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             PAS_CompletionsAndAttempts=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Concat('PAS_Completions', Value('-') ,'PAS_Attempts')),
-      //                 output_field=CharField()
-      //             ),
-      //             PAS_SacksAndYards=Case(
-      //                 When(PAS_Attempts=0, then=0),
-      //                 default=(Concat('PAS_Sacks', Value('-') ,'PAS_SackYards')),
-      //                 output_field=CharField()
-      //             ),
-      //             REC_YardsPerCatch=Case(
-      //                 When(REC_Receptions=0, then=0.0),
-      //                 default=(Round(F('REC_Yards')* 1.0 / F('REC_Receptions'),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             REC_YardsPerGame=Case(
-      //                 When(REC_Receptions=0, then=0.0),
-      //                 default=(Round(F('REC_Yards')* 1.0 / F('GamesPlayed'),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             RUS_YardsPerGame=Case(
-      //                 When(RUS_Carries=0, then=0.0),
-      //                 default=(Round(F('RUS_Yards')* 1.0 / F('GamesPlayed'),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //             PAS_YardsPerGame=Case(
-      //                 When(PAS_Attempts=0, then=0.0),
-      //                 default=(Round(F('PAS_Yards')* 1.0 / F('GamesPlayed'),1)),
-      //                 output_field=FloatField()
-      //             ),
-      //         ).filter(GamesPlayed__gt = 0)
-      //
-      //     CareerHigh = {}
-      //     if PlayerStats.count() >0:
-      //         PAS_Yards_CareerHigh = PlayerStats.order_by('-PAS_Yards').first()
-      //         RUS_Yards_CareerHigh = PlayerStats.order_by('-RUS_Yards').first()
-      //         REC_Yards_CareerHigh = PlayerStats.order_by('-REC_Yards').first()
-      //         CareerHigh = {'PAS_Yards': {'Stat': 'Passing Yards', 'Game': PAS_Yards_CareerHigh['TeamGameID__GameID'], 'Value': PAS_Yards_CareerHigh['PAS_Yards']}, 'RUS_Yards':{'Stat': 'Rushing Yards', 'Game': RUS_Yards_CareerHigh['TeamGameID__GameID'], 'Value': RUS_Yards_CareerHigh['RUS_Yards']}, 'REC_Yards': {'Stat': 'Receiving Yards Yards', 'Game': REC_Yards_CareerHigh['TeamGameID__GameID'], 'Value': REC_Yards_CareerHigh['REC_Yards']}}
-      //
-      //         StatGrouping = []
-      //         PlayerStatCategories = []
-      //         for StatGrouping in SeasonStatGroupings:
-      //             KeepGroup = false
-      //             for u in SeasonStats:
-      //                 u['SeasonStatVals'] = []
-      //                 for Stat in StatGrouping['Stats']:
-      //                     val = u[Stat['FieldName']]
-      //
-      //                     if Stat['DisplayColumn']:
-      //                         u['SeasonStatVals'].append(val)
-      //                         print(val)
-      //                         if val is not None and str(val) not in ['0', '0.0', '-'] and Stat['FieldName'] != 'GamesPlayed':
-      //                             KeepGroup = true
-      //                             StatGrouping['KeepGroup'] = true
-      //
-      //
-      //             if KeepGroup:
-      //                 StatGrouping['SeasonStats'] = []
-      //                 for u in SeasonStats:
-      //
-      //                     StatGrouping['SeasonStats'].append({'SeasonYear': u['SeasonYear'], 'Stats': u['SeasonStatVals']})
-      //
-      //
-      //     PlayerStats = [u for u in PlayerStats]
-      //     for G in PlayerStats:
-      //         G['Stats'] = []
-      //         for StatCategory in PlayerStatCategories:
-      //             #print('StatCategory', StatCategory)
-      //             if StatCategory['SeasonAggregateValue'] == true:
-      //                 continue
-      //             SC = {}
-      //             SC['Value'] = G[StatCategory['FieldName']]
-      //             SC['FieldName'] = StatCategory['FieldName']
-      //             G['Stats'].append(SC)
-      //
-      //     RecentGameStats = PlayerStats[:5]
-      //     GameStats = PlayerStats
-      //
-      //     CareerHighList = []
-      //     for ch in CareerHigh:
-      //         CareerHighList.append({'Stat': ch, 'Game': CareerHigh[ch]['Game'], 'Value': CareerHigh[ch]['Value']})
-      //
-      //
-      //     PlayerListFlat = Player.objects.filter(playerteamseason__TeamSeasonID = TS).values(
-      //         'PositionID__PositionAbbreviation', 'playerteamseason__playerteamseasonskill__OverallRating'
-      //     ).annotate(
-      //         PlayerName = Concat(F('PlayerFirstName'), Value(' '), F('PlayerLastName'), output_field=CharField()),
-      //         PlayerHref = Concat(Value('/World/'), Value(WorldID), Value('/Player/'), F('PlayerID'), output_field=CharField()),
-      //         PlayerTeamLogoURL = F('playerteamseason__TeamSeasonID__TeamID__TeamLogoURL'),
-      //     ).order_by('PositionID__PositionSortOrder', '-playerteamseason__playerteamseasonskill__OverallRating')
-      //
-      //     print('PlayerListFlat', PlayerListFlat.query)
-      //
-      //     PlayerList = {}
-      //     for P in list(PlayerListFlat):
-      //         if P['PositionID__PositionAbbreviation'] not in PlayerList:
-      //             PlayerList[P['PositionID__PositionAbbreviation']] = []
-      //         PlayerList[P['PositionID__PositionAbbreviation']].append(P)
-      //
-      //
-      //     context['GameStats'] = GameStats
-      //     context['RecentGameStats'] = RecentGameStats
-      //     context['careerHigh'] = CareerHighList
-      //     context['SeasonStats'] = SeasonStats
-      //     context['playerTeam'] = PlayerTeam
-      //     context['CurrentPlayerTeamSeason'] = CurrentPlayerTeamSeason
-      //     #context['PlayerStatCategories'] = PlayerStatCategories
-      //     context['SeasonStatGroupings'] = SeasonStatGroupings
-      //     context['PlayerStatsShow'] = PlayerStatsShow
-      //     context['PrimaryStatShow'] = PrimaryStatShow
-      //     context['PlayerList'] = PlayerList
-      //
-      //     Awards = []
-      //     AwardQS = PlayerTeamSeasonAward.objects.filter(PlayerTeamSeasonID__PlayerID = PlayerDict['Player'])
-      //     for Award in AwardQS.values('IsWeekAward', 'IsSeasonAward', 'IsPreseasonAward', 'IsConferenceAward', 'ConferenceID', 'IsNationalAward').annotate(AwardCount = Count('PlayerTeamSeasonAwardID')).order_by('-AwardCount'):
-      //         s = ''
-      //         if Award['IsNationalAward']:
-      //             s += 'National Player of the '
-      //         elif Award['IsConferenceAward']:
-      //             Conf = CurrentWorld.conference_set.filter(ConferenceID = Award['ConferenceID']).first()
-      //             s += Conf.ConferenceName + ' Player of the '
-      //
-      //         if Award['IsWeekAward']:
-      //             s += 'Week'
-      //         elif Award['IsSeasonAward']:
-      //             s+= 'Year'
-      //         elif Award['IsPreseasonAward']:
-      //             s+= 'Preseason'
-      //
-      //         Award['AwardName'] = s
-      //
-      //         Awards.append(Award)
-      //     context['Awards'] = Awards
-      //
-      //
-      // else:
-      //     page['PrimaryColor'] =  '1763B2'
-      //     page['SecondaryColor'] = '000000'
-      //
-      //     RTS = RecruitTeamSeason.objects.filter(WorldID=WorldID).filter(PlayerTeamSeasonID__PlayerID = PlayerID).filter(Q(IsActivelyRecruiting=true) | Q(Signed=true)).select_related('TeamSeasonID__TeamID').order_by('-InterestLevel')
-      //     context['RecruitTeamSeasons'] = RTS
-      //
-      //     if PlayerObject.RecruitSigned:
-      //         SignedRTS = RTS.filter(Signed = true).first()
-      //         SignedTeam = SignedRTS.TeamSeasonID.TeamID
-      //         context['SignedTeam'] = SignedTeam
-
+      console.log('all_player_team_seasons', {skills:skills, all_conference_player_team_season_starters_at_position:all_conference_player_team_season_starters_at_position, all_player_team_season_starters_at_position:all_player_team_season_starters_at_position, all_team_seasons:all_team_seasons, all_conference_player_team_season_ids_starters_at_position: all_conference_player_team_season_ids_starters_at_position, 'all_player_team_season_ids_starters_at_position': all_player_team_season_ids_starters_at_position, 'player.current_player_team_season.team_season': player.current_player_team_season.team_season, all_team_seasons_in_conference: all_team_seasons_in_conference, player_position:player_position, all_player_team_season_ids_starters_at_position:all_player_team_season_ids_starters_at_position})
 
 
   var all_teams = await db.team.toArray();
@@ -655,6 +732,7 @@ const getHtml = async (common) => {
     return 0;
   });
 
+  const player_team_games = await db.player_team_game.where({player_team_season_id: player.current_player_team_season.player_team_season_id}).toArray()
 
   const current_team = player.current_player_team_season.team_season.team;
   common.page = {PrimaryColor: current_team.team_color_primary_hex, SecondaryColor: current_team.secondary_color_display, NavBarLinks: NavBarLinks};
@@ -663,7 +741,9 @@ const getHtml = async (common) => {
                         world_id: common.params.world_id,
                         all_teams: all_teams,
                         player: player,
-                        current_team: current_team
+                        current_team: current_team,
+                        skills: skills,
+                        player_team_games: player_team_games
 
                       }
 
@@ -684,42 +764,7 @@ const getHtml = async (common) => {
     const action = async (common) => {
 
       common.display_player_face(common.render_content.player.player_face, {jersey: common.render_content.player.current_player_team_season.team_season.team.jersey, teamColors: common.render_content.player.current_player_team_season.team_season.team.jersey.teamColors}, 'PlayerFace');
-      //
-      //
-      // const features = {
-      //   // 'eye': {'eye1': .75, 'eye2': 1, 'eye3': 1, 'eye4': 1, 'eye5': 1, 'eye6': 1, 'eye7': 1, 'eye8': 1, 'eye9': 1, 'eye10': 1, 'eye11': 1, 'eye12': .1, 'eye13': 1, 'eye14': 1, 'eye15': 1, 'eye16': 1, 'eye17': 1, 'eye18': 1, 'eye19': 1, },
-      //   // 'body': {'body': 1, 'body2': 1, 'body3': 1, 'body4': 1, 'body5': 1, },
-      //   // 'ear': {'ear1': 1, 'ear2': 1, 'ear3': 1, },
-      //   // 'head': {'head1': 1, 'head2': 1, 'head3': 1, 'head4': 1, 'head5': 1, 'head6': 1, 'head7': 1, 'head8': 1, 'head9': 1, 'head10': 1, 'head12': 1, 'head12': 1, 'head13': 1, 'head14': 1, 'head15': 1, 'head16': 1, 'head17': 1, 'head18': .1, },
-      //   // 'mouth': {'straight': 1, 'angry': 1, 'closed': 1, 'mouth': 1, 'mouth2': 1, 'mouth3': 1, 'mouth4': 1, 'mouth5': 1, 'mouth6': 1, 'mouth7': 1, 'mouth8': 1, 'smile-closed': 1, 'smile': 1, 'smile2': 1, 'smile3': 1, },
-      //   // 'nose': {'nose1': 1, 'nose2': .65, 'nose3': 1, 'nose4': 2, 'nose5': 1, 'nose6': .3, 'nose7': .2, 'nose8': .2, 'nose9': 2, 'nose10': 1, 'nose11': 1, 'nose12': 1, 'nose13': 1, 'nose14': 1, 'honker': 1, 'pinocchio': .1, },
-      //   // 'eyebrow': {'eyebrow1': 1, 'eyebrow2': 1, 'eyebrow3': 1, 'eyebrow4': 1, 'eyebrow5': 1, 'eyebrow6': 1, 'eyebrow7': 1, 'eyebrow8': 1, 'eyebrow9': 1, 'eyebrow10': 1, 'eyebrow11': 1, 'eyebrow12': 1, 'eyebrow13': 1, 'eyebrow14': 1, 'eyebrow15': 1, 'eyebrow16': 1, 'eyebrow17': 1, 'eyebrow18': 1, 'eyebrow19': 1, 'eyebrow20': 1, },
-      //   // 'hair': {'afro': 5, 'afro2': 15, 'bald': 10, 'blowoutFade': 15, 'cornrows': 7, 'crop-fade': 13, 'crop-fade2': 10,  'crop': 7, 'curly': 10,'curly2': 13, 'curly3': 15, 'curlyFade1': 7,'curlyFade2': 7, 'dreads': 12, 'emo': 1, 'faux-hawk': 5, 'fauxhawk-fade': 7, 'hair': 3, 'high': 10, 'juice': 15, 'messy-short': 15, 'messy': 15,  'middle-part': 12, 'parted': 10, 'shaggy1': 3, 'crop': 7, 'short-fade': 20, 'crop': 7, 'short3': 25, 'crop': 7, 'spike2': 10, 'spike4': 10, 'tall-fade': 20,  },
-      //   // 'accessories': {'none': 80, 'headband': 10,  'headband-high': 10},
-      //   // 'glasses': {'none': 95, 'glasses1-primary': 7,  'glasses1-secondary': 3},
-      //   // 'eyeLine': {'none': 80, 'line1': 15, 'line2': 5},
-      //   // 'smileLine': {'none': 85, 'line1': 5, 'line4': 10, },
-      //   // 'miscLine': {'none': 85, 'chin2': 3, 'forehead2': 3, 'forehead3': 3,'forehead4': 3,'freckles1': 1, 'freckles2': 1, },
-      //   // 'facialHair': {'none': 60, 'beard-point': 2, 'beard1': 2, 'beard2': 2, 'beard3': 1, 'beard4': 1, 'beard5': 1, 'beard6': 1 , 'chin-strap': 2, 'chin-strapStache': 3, 'fullgoatee': .5 , 'fullgoatee2': .5 , 'fullgoatee3': .5 , 'fullgoatee4': .5 , 'fullgoatee5': .5 , 'fullgoatee6': .5 , 'goatee1-stache':3, 'goatee1': .1, 'goatee2': .1, 'goatee3': .1, 'goatee4': .1, 'goatee5': .1, 'goatee6': .1, 'goatee7': .1, 'goatee8': .1, 'goatee9': .1, 'goatee10': .1, 'goatee11': .1, 'goatee12': .1,  'goatee15': .1, 'goatee16': .1, 'goatee17': .1, 'goatee18': .1, 'goatee19': .1, 'honest-abe': 3, 'honest-abe-stache': 1, 'mustache1': 4, 'mustache-thin': 3, 'soul': 5},
-      //   'jersey': {'football': 1,'football2': 1,'football3': 1,'football4': 1,}
-      // }
-      //
-      // let svgs2 = {};
-      // var url = '', html = '';
-      //
-      // $.each(features, async function(group, group_obj){
-      //   svgs2[group] = {}
-      //   $.each(group_obj, async function(feature, odds){
-      //     url = `/static/facesjs/${group}/${feature}.svg`;
-      //     html = await fetch(url);
-      //     html_text = await html.text();
-      //     html_text = html_text.replace(/\n|\r/g, '');
-      //     svgs2[group][feature] = html_text;
-      //   })
-      // })
-      //
-      //
-      // console.log('svgs', JSON.stringify(svgs2))
+      await populate_player_stats(common)
 
 
 

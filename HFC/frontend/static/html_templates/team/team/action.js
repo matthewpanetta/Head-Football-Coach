@@ -404,7 +404,7 @@ const getHtml = async (common) => {
       return pts_b.season_stats[stat_detail.stat_group][stat_detail.stat] - pts_a.season_stats[stat_detail.stat_group][stat_detail.stat];
     });
 
-    console.log('player_team_seasons', player_team_seasons)
+    console.log('stat_detail', stat_detail, player_team_seasons[0])
 
     if (player_team_seasons[0].season_stats[stat_detail.stat_group][stat_detail.stat] > 0){
       stat_detail.player_team_season = player_team_seasons[0]
@@ -596,12 +596,19 @@ const action = async (common) => {
   });
   const TeamInfoData = [];
 
-  await draw_faces(common);
+  var first_click = false;
 
-  if (common.render_content.team_leaders.length > 0){
-    chart(common.render_content.conference_standings.conference_standings, common);
-  }
+  $('#nav-team-stats-tab').on('click',async function(){
+    if (!(first_click)){
+      await draw_faces(common);
 
+      if (common.render_content.team_leaders.length > 0){
+        chart(common.render_content.conference_standings.conference_standings, common);
+      }
+    }
+
+    first_click = true;
+  })
 
 }
 

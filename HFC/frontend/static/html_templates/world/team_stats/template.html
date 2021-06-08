@@ -1,0 +1,248 @@
+<div class='ext_NavBar'>
+  {% include "../../static/html_templates/ext_NavBar.html" %}
+</div>
+<style>
+  #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
+    border-bottom: 2px solid black;
+  }
+</style>
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
+
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "../../static/html_templates/Scoreboard.html" %}
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Top 25</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-playoff-picture-tab">Playoff Picture</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-player-stats">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding'>
+            <div class='w3-col l11'>
+              <div class="w3-card ">
+
+                <table class="w3-table w3-table-all center-text" id='TeamStats'  style="width:100%;">
+                  <thead>
+                    <tr >
+                      <th colspan="3" class='center-text col-group'>TEAM</th>
+                      <th colspan="3" class='center-text col-group'>GAMES</th>
+                      <th colspan="3" class='center-text col-group'>POINT MARGIN</th>
+                      <!-- OFFENSE TOTALS -->
+                      <th colspan="2" class='center-text col-group'>TOTAL</th>
+                      <th colspan="2" class='center-text col-group'>PASSING</th>
+                      <th colspan="2" class='center-text col-group'>RUSHING</th>
+                      <th colspan="2" class='center-text col-group'>POINTS</th>
+                      <!-- DEFENSE TOTALS -->
+                      <th colspan="2" class='center-text col-group'>TOTAL</th>
+                      <th colspan="2" class='center-text col-group'>PASSING</th>
+                      <th colspan="2" class='center-text col-group'>RUSHING</th>
+                      <th colspan="2" class='center-text col-group'>POINTS</th>
+                      <!-- OFFENSE PASSING -->
+                      <th colspan="12" class='center-text col-group'>PASSING</th>
+                      <!-- OFFENSE RUSHING -->
+                      <th colspan="6" class='center-text col-group'>RUSHING</th>
+                      <!-- OFFENSE REC -->
+                      <th colspan="6" class='center-text col-group'>RECEIVING</th>
+                      <!-- OFFENSE DOWNS -->
+                      <th colspan="4" class='center-text col-group'>FIRST DOWN</th>
+                      <th colspan="3" class='center-text col-group'>THIRD DOWN</th>
+                      <th colspan="3" class='center-text col-group'>FOURTH DOWN</th>
+                      <th colspan="2" class='center-text col-group'>PENALTIES</th>
+                      <!-- DEFENSE PASSING -->
+                      <th colspan="12" class='center-text col-group'>PASSING</th>
+                      <!-- DEFENSE RUSHING -->
+                      <th colspan="6" class='center-text col-group'>RUSHING</th>
+                      <!-- Kicking -->
+                      <th colspan="8" class='center-text col-group'>FIELD GOALS</th>
+                      <th colspan="3" class='center-text col-group'>POINT AFTER</th>
+                      <!-- PUNTING -->
+                      <th colspan="5" class='center-text col-group'>PUNTING</th>
+                      <!-- RETURNING -->
+                      <th colspan="5" class='center-text col-group'>KICKOFFS</th>
+                      <th colspan="5" class='center-text col-group'>PUNTS</th>
+
+                      <th colspan="3" class='center-text col-group'>RANKINGS</th>
+                      <th colspan="4" class='center-text col-group'>VS TOP 25</th>
+                      <th colspan="7" class='center-text col-group'>AWARDS</th>
+                      <th colspan="6" class='center-text col-group'>BOWLS</th>
+                      <th></th>
+                    </tr>
+                    <tr>
+                      <th colspan="1" data-data="PlayerTeam" data-tooltip-title="Player Current Team">Team</th>
+                      <th  colspan="1" data-data="PlayerTeam" data-tooltip-title="Player Current Team">Conference</th>
+                      <th  colspan="1" data-data="PlayerTeam" data-tooltip-title="Player Current Team">Rank</th>
+                      <th  colspan="1" data-data="GamesPlayed" data-tooltip-title="Player Current Team">GP</th>
+                      <th  colspan="1" data-data="Wins" data-tooltip-title="Player Current Team">Wins</th>
+                      <th  colspan="1" data-data="Losses" data-tooltip-title="Player Current Team">Losses</th>
+                      <th  colspan="1" data-data="Points" data-tooltip-title="Player Current Team">PPG</th>
+                      <th  colspan="1" data-data="Points Allowed" data-tooltip-title="Player Current Team">PAPG</th>
+                      <th  colspan="1" data-data="Points Allowed" data-tooltip-title="Player Current Team">MOV</th>
+
+                      <!-- OFFENSE TOTALS -->
+                      <th  colspan="1">Yrds</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">Yrds</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">Yrds</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">Points</th>
+                      <th  colspan="1">PPG</th>
+                      <!-- DEFENSE TOTALS -->
+                      <th  colspan="1">Yrds</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">Yrds</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">Yrds</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">Points</th>
+                      <th  colspan="1">PPG</th>
+
+                      <!-- OFFENSE PASSING -->
+                      <th  colspan="1">CMP</th>
+                      <th  colspan="1">ATT</th>
+                      <th  colspan="1">CMP %</th>
+                      <th  colspan="1">Yards</th>
+                      <th  colspan="1">YPA</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">LNG</th>
+                      <th  colspan="1">TD</th>
+                      <th  colspan="1">INT</th>
+                      <th  colspan="1">SACK</th>
+                      <th  colspan="1">SYL</th>
+                      <th  colspan="1">RTG</th>
+
+                      <!-- OFFENSE RUSHING -->
+                      <th  colspan="1">ATT</th>
+                      <th  colspan="1">Yards</th>
+                      <th  colspan="1">AVG</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">LNG</th>
+                      <th  colspan="1">TD</th>
+
+                      <!-- OFFENSE REC -->
+                      <th  colspan="1">REC</th>
+                      <th  colspan="1">Yards</th>
+                      <th  colspan="1">AVG</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">LNG</th>
+                      <th  colspan="1">TD</th>
+                      <!-- OFFENSE DOWNS -->
+                      <th  colspan="1">Total</th>
+                      <th  colspan="1">Rush</th>
+                      <th  colspan="1">Pass</th>
+                      <th  colspan="1">Pen</th>
+
+                      <th  colspan="1">MADE</th>
+                      <th  colspan="1">ATT</th>
+                      <th  colspan="1">%</th>
+
+                      <th  colspan="1">MADE</th>
+                      <th  colspan="1">ATT</th>
+                      <th  colspan="1">%</th>
+
+                      <th  colspan="1">Total</th>
+                      <th  colspan="1">Yards</th>
+
+                      <!-- DEFENSE PASSING -->
+                      <th  colspan="1">CMP</th>
+                      <th  colspan="1">ATT</th>
+                      <th  colspan="1">CMP %</th>
+                      <th  colspan="1">Yards</th>
+                      <th  colspan="1">YPA</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">LNG</th>
+                      <th  colspan="1">TD</th>
+                      <th  colspan="1">INT</th>
+                      <th  colspan="1">SACK</th>
+                      <th  colspan="1">SYL</th>
+                      <th  colspan="1">RTG</th>
+                      <!-- DEFENSE RUSHING -->
+                      <th  colspan="1">ATT</th>
+                      <th  colspan="1">Yards</th>
+                      <th  colspan="1">AVG</th>
+                      <th  colspan="1">YPG</th>
+                      <th  colspan="1">LNG</th>
+                      <th  colspan="1">TD</th>
+                      <!-- Kicking -->
+                      <th  colspan="1">FGM</th>
+                      <th  colspan="1">FGA</th>
+                      <th  colspan="1">FG %</th>
+                      <th  colspan="1">LNG</th>
+                      <th  colspan="1">20-29</th>
+                      <th  colspan="1">30-39</th>
+                      <th  colspan="1">40-49</th>
+                      <th  colspan="1">50+</th>
+
+                      <th  colspan="1">XPM</th>
+                      <th  colspan="1">XPA</th>
+                      <th  colspan="1">XP %</th>
+
+                      <!-- PUNTING -->
+                      <th  colspan="1">Punts</th>
+                      <th  colspan="1">Yards</th>
+                      <th  colspan="1">LNG</th>
+                      <th  colspan="1">AVG</th>
+                      <th  colspan="1">Net</th>
+                      <!-- RETURNING -->
+                      <th  colspan="1">ATT</th>
+                      <th  colspan="1">Yards</th>
+                      <th  colspan="1">AVG</th>
+                      <th  colspan="1">LNG</th>
+                      <th  colspan="1">TD</th>
+
+                      <th  colspan="1">ATT</th>
+                      <th  colspan="1">Yards</th>
+                      <th  colspan="1">AVG</th>
+                      <th  colspan="1">LNG</th>
+                      <th  colspan="1">TD</th>
+
+                      <th  colspan="1">Weeks #1</th>
+                      <th  colspan="1">Weeks Top 10</th>
+                      <th  colspan="1">Weeks Top 25</th>
+
+                      <th  colspan="1">GP</th>
+                      <th  colspan="1">Wins</th>
+                      <th  colspan="1">Losses</th>
+                      <th  colspan="1">Win %</th>
+
+                      <th  colspan="1">Heisman</th>
+                      <th  colspan="1">AA</th>
+                      <th  colspan="1">PreSeason AA</th>
+                      <th  colspan="1">POTW</th>
+                      <th  colspan="1">All-Conf</th>
+                      <th  colspan="1">PreSeason All-Conf</th>
+                      <th  colspan="1">Conf POTW</th>
+
+                      <th  colspan="1">Natl Champs</th>
+                      <th  colspan="1">Conf Champs</th>
+                      <th  colspan="1">Bowl GP</th>
+                      <th  colspan="1">Bowl Wins</th>
+                      <th  colspan="1">Bowl Losses</th>
+                      <th  colspan="1">Bowl Win %</th>
+
+                      <th></th>
+
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

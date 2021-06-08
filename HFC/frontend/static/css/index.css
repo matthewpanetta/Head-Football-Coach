@@ -628,6 +628,10 @@ input[type=text], input[type=password] {
   text-align: center;
 }
 
+.width15 {
+  width: 15%;
+}
+
 .height100 {
   height: 100%;
 }
@@ -1673,8 +1677,7 @@ img.teamTeamLogo {
   padding: 2px 5px;
   margin-right: 8px;
   width: 16px;
-float: left;
-text-align: center;
+  text-align: center;
 }
 
 .W-L-badge.L {
@@ -1801,6 +1804,11 @@ text-align: center;
 
 .logo-30 {
   height: 30px;
+}
+
+
+.logo-50 {
+  height: 50px;
 }
 
 
@@ -2126,6 +2134,10 @@ table tr td.padding-left-8 {
 
 .column-med {
   width: 20%;
+}
+
+.column-small {
+  width: 10%;
 }
 
 .no-width {

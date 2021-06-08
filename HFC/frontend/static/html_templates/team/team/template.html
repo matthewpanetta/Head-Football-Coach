@@ -25,6 +25,7 @@
             <i class="fas fa-bars"></i>
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-info-tab">Team Info</button>
         {% include "../../static/html_templates/ext_TeamList.html" %}
       </div>
@@ -176,7 +177,7 @@
                             {% for player_stat in game.team_season.top_stats.slice(0,3) %}
                             <div class="">
                               <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_game.player_team_season.player.player_href}}">{{player_stat.player_team_season.player.full_name}}</a></span>
+                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_season.player.player_href}}">{{player_stat.player_team_season.player.full_name}}</a></span>
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_season.position}}</span>
                               </div>
                               <div class=" font-black" style='font-size: 10px;'>
@@ -214,46 +215,7 @@
             <div class="w3-row-padding">
             <div class="w3-col l4 m12 s12">
               <div class="w3-row">
-                <div class="w3-card">
-                  <div class="w3-bar team-primary-background-bar">
-                    {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Standings</span>
-                  </div>
-                  <table id='teamOverviewConferenceStandings' class='w3-table-all width100 no-border'>
 
-                    <thead>
-                      <tr class='team-secondary-table-row'>
-                        {% if Division.DivisionName %}
-                        <th>{{Division.DivisionName}}</th>
-                        {% else %}
-                        <th></th>
-                        <th>Team</th>
-                        {%endif%}
-                        <th>Conf</th>
-                        <th class='hide-small'>GB</th>
-                        <th>Record</th>
-                      </tr>
-                    </thead>
-                    {% for standing_team in conference_standings.conference_standings %}
-                    <tr class='{{standing_team.bold}}'>
-                      <td style=' width: 10px; padding: 8px; border-left-color: #{{standing_team.team.team_color_primary_hex}}' >
-                          <a href="{{standing_team.team.team_href}}">
-                            <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
-                          </a>
-                      </td>
-                      <td>
-                        <a href="{{standing_team.team.team_href}}">
-
-                          <span  class='hide-small font10'>{{standing_team.national_rank_display}} </span>
-                          <span  class='hide-small'>{{standing_team.team.school_name }}</span>
-                        </a>
-                      </td>
-                      <td>{{standing_team.conference_record_display}}</td>
-                      <td class='hide-small'> {{standing_team.record.conference_gb}}</td>
-                      <td>{{standing_team.record_display}}</td>
-                    </tr>
-                    {% endfor %}
-                  </table>
-                </div>
                 </div>
               <div class="w3-row w3-margin-top">
 
@@ -293,123 +255,8 @@
                 {% endif %}
               </div>
             </div>
-            {% if team_leaders|length > 0%}
-
-              <div class="w3-col s4">
-                <div class="w3-card margin-bottom-24">
-                  <div class="w3-bar team-primary-background-bar">
-                    Team Leaders
-                  </div>
-
-                  <table class="w3-table-all no-border">
-                    {% for team_leader in team_leaders %}
-                    <tr>
-
-                    <td class="w3-col center-text ">
-                      <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{team_leader.player_team_season.player.player_id}}' style='border-color:#{{page.PrimaryColor}};' id="teamTeamLeaderBoxPlayerFace{{loop.index}}"  >
-                      </div>
-                    </td>
-                    <td>
-                      <ul class='no-list-style'>
-                        <li class='bold'>{{team_leader.display}}</li>
-                        <li>
-                          <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{team_leader.player_team_season.player.player_href}}">{{team_leader.player_team_season.player.full_name}}</a></span>
-                          <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{team_leader.player_team_season.position}}</span>
-                        </li>
-                        <li>
-                          {%for stat in team_leader.player_team_season.top_stats%}{%if loop.index > 1%}, {%endif%}<span class=''>{{stat.display}}</span>{%endfor%}
-                        </li>
-                      </ul>
-                    </td>
-                  </tr>
 
 
-                    {% endfor %}
-                  </table>
-                  </div>
-                  <div class="w3-row">
-                  <div class="w3-card">
-                    <div class="w3-bar team-primary-background-bar">
-                      {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Bar Chart</span>
-                    </div>
-                    <div id='selector' style='margin-left: 15%; margin-right: 15%; width: 70%;'>
-
-                    </div>
-                    <div class="w3-padding" id='bar_chart'>
-
-                    </div>
-                  </div>
-
-                </div>
-
-                  </div>
-
-            {% endif %}
-            {% if team_stats|length > 0%}
-              <div class="w3-col s4">
-                <div class="w3-row margin-bottom-24">
-                                  <div class="w3-card">
-                  <div class="w3-bar team-primary-background-bar">
-                    Team Stats
-                  </div>
-                  <table class="w3-table-all no-border">
-                    {% for stat_detail in team_stats %}
-                    <tr class='team-secondary-table-row'>
-                      <th class='center-text' colspan="3">{{stat_detail.display}}</th>
-                    </tr>
-                    <tr class='center-text-row'>
-                      <td>
-                        <div class="">
-                          <div class="font10">
-                            FOR
-                          </div>
-                          <div class="font16">
-                            {{stat_detail.stats['for'].team_value}}
-                          </div>
-                          <div class="margin-8">
-                            <span class='tiers-7 {{stat_detail.stats["for"].tier}}' style='border-radius: 20px; padding: 5px;'  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.OffenseRank_Tier}} - {{TeamStat.OffenseRank}} out of {{TotalTeamCount}} teams</div>">
-                              {{stat_detail.stats['for'].team_rank|ordinal}}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="">
-                          <div class="font10">
-                            AGAINST
-                          </div>
-                          <div class="font16">
-                            {{stat_detail.stats['against'].team_value}}
-                          </div>
-                          <div class="margin-8">
-                            <span class='tiers-7 {{stat_detail.stats["against"].tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.DefenseRank_Tier}} - {{TeamStat.DefenseRank}} out of {{TotalTeamCount}} teams</div>">
-                              {{stat_detail.stats['against'].team_rank|ordinal}}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="">
-                          <div class="font10">
-                            DIFF
-                          </div>
-                          <div class="font16">
-                            {{stat_detail.stats['diff'].team_value}}
-                          </div>
-                          <div class="margin-8">
-                            <span class='tiers-7 {{stat_detail.stats["diff"].tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.MarginRank_Tier}} - {{TeamStat.MarginRank}} out of {{TotalTeamCount}} teams</div>">
-                              {{stat_detail.stats['diff'].team_rank|ordinal}}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </table>
-                  </div>
-                  </div>
-                  </div>
-            {% endif %}
           </div>
         </div>
         {% else %}
@@ -482,12 +329,182 @@
                   </table>
                 </div>
               </div>
+              <div class="w3-row">
+
+
+            </div>
             </div>
           </div>
         </div>
         {% endif %}
       </div>
       </div>
+      <div class="tab-content" style='display:none;' id="nav-team-stats">
+        <div class='w3-display-container'>
+          <div class="w3-row-padding w3-margin-bottom">
+            <div class="w3-col s4">
+
+            <div class="w3-card">
+              <div class="w3-bar team-primary-background-bar">
+                {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Standings</span>
+              </div>
+              <table id='teamOverviewConferenceStandings' class='w3-table-all width100 no-border'>
+
+                <thead>
+                  <tr class='team-secondary-table-row'>
+                    {% if Division.DivisionName %}
+                    <th>{{Division.DivisionName}}</th>
+                    {% else %}
+                    <th></th>
+                    <th>Team</th>
+                    {%endif%}
+                    <th>Conf</th>
+                    <th class='hide-small'>GB</th>
+                    <th>Record</th>
+                  </tr>
+                </thead>
+                {% for standing_team in conference_standings.conference_standings %}
+                <tr class='{{standing_team.bold}}'>
+                  <td style=' width: 10px; padding: 8px; border-left-color: #{{standing_team.team.team_color_primary_hex}}' >
+                      <a href="{{standing_team.team.team_href}}">
+                        <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
+                      </a>
+                  </td>
+                  <td>
+                    <a href="{{standing_team.team.team_href}}">
+
+                      <span  class='hide-small font10'>{{standing_team.national_rank_display}} </span>
+                      <span  class='hide-small'>{{standing_team.team.school_name }}</span>
+                    </a>
+                  </td>
+                  <td>{{standing_team.conference_record_display}}</td>
+                  <td class='hide-small'> {{standing_team.record.conference_gb}}</td>
+                  <td>{{standing_team.record_display}}</td>
+                </tr>
+                {% endfor %}
+              </table>
+            </div>
+          </div>
+
+            <div class="w3-col s4">
+              <div class="w3-card">
+                <div class="w3-bar team-primary-background-bar">
+                  {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Bar Chart</span>
+                </div>
+                <div id='selector' style='margin-left: 15%; margin-right: 15%; width: 70%;'>
+
+                </div>
+                <div class="w3-padding" id='bar_chart'>
+
+                </div>
+              </div>
+              {% if team_leaders|length > 0%}
+
+                  <div class="w3-card margin-bottom-24">
+                    <div class="w3-bar team-primary-background-bar">
+                      Team Leaders
+                    </div>
+
+                    <table class="w3-table-all no-border">
+                      {% for team_leader in team_leaders %}
+                      <tr>
+
+                      <td class="w3-col center-text ">
+                        <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{team_leader.player_team_season.player.player_id}}' style='border-color:#{{page.PrimaryColor}};' id="teamTeamLeaderBoxPlayerFace{{loop.index}}"  >
+                        </div>
+                      </td>
+                      <td>
+                        <ul class='no-list-style'>
+                          <li class='bold'>{{team_leader.display}}</li>
+                          <li>
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{team_leader.player_team_season.player.player_href}}">{{team_leader.player_team_season.player.full_name}}</a></span>
+                            <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{team_leader.player_team_season.position}}</span>
+                          </li>
+                          <li>
+                            {%for stat in team_leader.player_team_season.top_stats%}{%if loop.index > 1%}, {%endif%}<span class=''>{{stat.display}}</span>{%endfor%}
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+
+
+                      {% endfor %}
+                    </table>
+                    </div>
+              {% endif %}
+
+            </div>
+
+
+            {% if team_stats|length > 0%}
+              <div class="w3-col s4">
+                <div class="w3-row margin-bottom-24">
+                                  <div class="w3-card">
+                  <div class="w3-bar team-primary-background-bar">
+                    Team Stats
+                  </div>
+                  <table class="w3-table-all no-border">
+                    {% for stat_detail in team_stats %}
+                    <tr class='team-secondary-table-row'>
+                      <th class='center-text' colspan="3">{{stat_detail.display}}</th>
+                    </tr>
+                    <tr class='center-text-row'>
+                      <td>
+                        <div class="">
+                          <div class="font10">
+                            FOR
+                          </div>
+                          <div class="font16">
+                            {{stat_detail.stats['for'].team_value}}
+                          </div>
+                          <div class="margin-8">
+                            <span class='tiers-7 {{stat_detail.stats["for"].tier}}' style='border-radius: 20px; padding: 5px;'  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.OffenseRank_Tier}} - {{TeamStat.OffenseRank}} out of {{TotalTeamCount}} teams</div>">
+                              {{stat_detail.stats['for'].team_rank|ordinal}}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="">
+                          <div class="font10">
+                            AGAINST
+                          </div>
+                          <div class="font16">
+                            {{stat_detail.stats['against'].team_value}}
+                          </div>
+                          <div class="margin-8">
+                            <span class='tiers-7 {{stat_detail.stats["against"].tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.DefenseRank_Tier}} - {{TeamStat.DefenseRank}} out of {{TotalTeamCount}} teams</div>">
+                              {{stat_detail.stats['against'].team_rank|ordinal}}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="">
+                          <div class="font10">
+                            DIFF
+                          </div>
+                          <div class="font16">
+                            {{stat_detail.stats['diff'].team_value}}
+                          </div>
+                          <div class="margin-8">
+                            <span class='tiers-7 {{stat_detail.stats["diff"].tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.MarginRank_Tier}} - {{TeamStat.MarginRank}} out of {{TotalTeamCount}} teams</div>">
+                              {{stat_detail.stats['diff'].team_rank|ordinal}}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+                  </div>
+                  </div>
+                  </div>
+            {% endif %}
+
+          </div>
+        </div>
+    </div>
       <div class="tab-content" style='display:none;' id="nav-info">
         <div class='w3-display-container'>
           <div class="w3-row-padding w3-margin-bottom">
