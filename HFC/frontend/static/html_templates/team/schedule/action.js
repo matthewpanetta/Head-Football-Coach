@@ -39,6 +39,7 @@
       team.team_season = team_season;
 
       var team_games = await db.team_game.where({team_season_id: team_season.team_season_id}).toArray();
+      var team_game_ids = team_games.map(tg => tg.team_game_id);
       team_games = team_games.sort(function(team_game_a,team_game_b){
         return team_game_a.week_id - team_game_b.week_id;
       });
@@ -49,7 +50,9 @@
       console.log('team_games', team_games)
 
       const opponent_team_game_ids = team_games.map(team_game => team_game.opponent_team_game_id);
-      console.log('opponent_team_game_ids', opponent_team_game_ids)
+
+      const all_team_game_ids = opponent_team_game_ids.concat(team_game_ids);
+      console.log('opponent_team_game_ids', {opponent_team_game_ids:opponent_team_game_ids, all_team_game_ids:all_team_game_ids})
       const opponent_team_games = await db.team_game.bulkGet(opponent_team_game_ids);
 
       const opponent_team_season_ids = opponent_team_games.map(team_game => parseInt(team_game.team_season_id));
@@ -58,12 +61,33 @@
       const opponent_team_ids = opponent_team_seasons.map(team_season => parseInt(team_season.team_id));
       const opponent_teams = await db.team.bulkGet(opponent_team_ids);
 
-      console.log('opponent_teams', opponent_teams, opponent_team_seasons, opponent_team_games)
+      const player_team_games = await db.player_team_game.where('team_game_id').anyOf(all_team_game_ids).toArray();
+
+      const player_team_season_ids = player_team_games.map(ptg => ptg.player_team_season_id);
+
+      const player_team_seasons = await db.player_team_season.bulkGet(player_team_season_ids);
+      const player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id');
+      const player_ids = player_team_seasons.map(pts => pts.player_id);
+
+      const players = await db.player.bulkGet(player_ids);
+      const players_by_player_id = index_group_sync(players, 'index', 'player_id');
+
+      for (var player_team_game of player_team_games){
+        player_team_game.player_team_season = player_team_seasons_by_player_team_season_id[player_team_game.player_team_season_id];
+        player_team_game.player_team_season.player = players_by_player_id[player_team_game.player_team_season.player_id];
+      }
+
+      const player_team_games_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
+
+
+      console.log('opponent_teams', {opponent_teams:opponent_teams, opponent_team_seasons:opponent_team_seasons, opponent_team_games:opponent_team_games, player_team_games:player_team_games, player_team_games_by_player_team_game_id:player_team_games_by_player_team_game_id})
       var counter_games = 0;
       const pop_games = await $.each(games, async function(ind, game){
         game.week = weeks[game.week_id]
 
         game.team_game = team_games[counter_games];
+        game.team_game.team_season = team.team_season;
+        game.team_game.team_season.team = team;
         game.opponent_team_game = opponent_team_games[counter_games];
         game.opponent_team_game.team_season = opponent_team_seasons[counter_games];
         game.opponent_team_game.team_season.team = opponent_teams[counter_games];
@@ -77,6 +101,13 @@
 
           if (game.home_team_score > game.away_team_score){
             game.game_outcome_letter = 'W'
+          }
+
+          for (var top_stat of game.team_game.top_stats){
+            top_stat.player_team_game = player_team_games_by_player_team_game_id[top_stat.player_team_game_id]
+          }
+          for (var top_stat of game.opponent_team_game.top_stats){
+            top_stat.player_team_game = player_team_games_by_player_team_game_id[top_stat.player_team_game_id]
           }
         }
 
@@ -199,26 +230,42 @@
              }
            }},
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-               $(td).html(`<span></span>`);
+             if (game.was_played){
+               $(td).html(`
+                  <span class='font10'>${game.team_game.top_stats[0].player_team_game.player_team_season.position}</span>
+                  <a href='${game.team_game.top_stats[0].player_team_game.player_team_season.player.player_href}'>
+                    ${game.team_game.top_stats[0].player_team_game.player_team_season.player.full_name}
+                  </a>
+                  <span> - ${game.team_game.team_season.team.team_abbreviation}</span>
+                  <ul class='no-list-style'>
+                    <li>${game.team_game.top_stats[0].top_stats[0].display}</li>
+                    <li>${game.team_game.top_stats[0].top_stats[1].display}</li>
+                  </ul>
+                `);
+             }
+             else {
+               $(td).html('');
+             }
            }},
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-               $(td).html(`<span></span>`);
+             if (game.was_played){
+               console.log({'game.opponent_team_game': game.opponent_team_game})
+               $(td).html(`
+                  <span class='font10'>${game.opponent_team_game.top_stats[0].player_team_game.player_team_season.position}</span>
+                  <a href='${game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.player_href}'>
+                    ${game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.full_name}
+                  </a>
+                  <span> - ${game.opponent_team_game.team_season.team.team_abbreviation}</span>
+                  <ul class='no-list-style'>
+                    <li>${game.opponent_team_game.top_stats[0].top_stats[0].display}</li>
+                    <li>${game.opponent_team_game.top_stats[0].top_stats[1].display}</li>
+                  </ul>
+                `);
+             }
+             else {
+               $(td).html('');
+             }
            }},
-
-           // TODO add player stats
-           // {"data": "TopPlayerStats", "sortable": true, 'className': 'hide-small','visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, TopPlayerStats, DataObject, iRow, iCol) {
-           //   if (TopPlayerStats.length > 0){
-           //     $(td).html(`
-           //        <span>`+TopPlayerStats[0].PlayerPosition+`</span>
-           //        <a href='`+TopPlayerStats[0].PlayerHref+`'>`+TopPlayerStats[0].PlayerName+`</a>
-           //        <span>`+TopPlayerStats[0].PlayerTeam+`</span>
-           //        <ul class='no-list-style'>
-           //          <li>`+TopPlayerStats[0].PlayerStats[0]+`</li>
-           //          <li>`+TopPlayerStats[0].PlayerStats[1]+`</li>
-           //        </ul>
-           //      `);
-           //    }
-           // }},
            // {"data": "TopPlayerStats", "sortable": true, 'className': 'hide-medium','visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, TopPlayerStats, DataObject, iRow, iCol) {
            //   if (TopPlayerStats.length > 0 ){
            //     $(td).html(`

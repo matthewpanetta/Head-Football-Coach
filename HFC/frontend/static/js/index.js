@@ -174,6 +174,10 @@ class player_team_game {
 	      }
 	      return round_decimal(this.game_stats.receiving.yards / this.game_stats.receiving.receptions,1);  }
 
+			get defense_action_count(){
+				return this.game_stats.defense.tackles + this.game_stats.defense.deflections + this.game_stats.defense.ints + this.game_stats.defense.sacks;
+			}
+
 }
 
 class team_game {
@@ -751,6 +755,14 @@ class player_team_season {
     }
     return round_decimal(this.season_stats.passing.completions * 100 / this.season_stats.passing.attempts,1);
   }
+
+	get passer_rating(){
+		if (this.season_stats.passing.attempts == 0){
+      return 0
+    }
+
+		return round_decimal((((8.4 * this.season_stats.passing.yards) + (330 * this.season_stats.passing.tds) + (100 * this.season_stats.passing.completions) - (200 * this.season_stats.passing.ints)) / this.season_stats.passing.attempts), 1)
+	}
 
 
 	get passing_yards_per_attempt(){
@@ -2036,9 +2048,21 @@ const sim_game = (game_dict, common) => {
 
 				chosen_players = {
 					'QB': offensive_team_players.by_position['QB'][0],
-					'Pass_Catcher': uniform_random_choice(offensive_team_players.by_position['WR'].concat(offensive_team_players.by_position['TE']).concat(offensive_team_players.by_position['RB'])),
 					'OT_List': offensive_team_players.by_position['OT'].concat(offensive_team_players.by_position['OG']).concat(offensive_team_players.by_position['OC'])
 				}
+
+				var valid_pass_catchers = offensive_team_players.by_position['WR'].concat(offensive_team_players.by_position['TE']).concat(offensive_team_players.by_position['RB'])
+				var valid_pass_catchers_weights = valid_pass_catchers.map(function(player_obj){
+					var odds = player_obj.player_team_season.ratings.overall.overall ** 3
+					if (player_obj.player_team_season.position == 'TE'){
+						odds *= .9;
+					}
+					else if (player_obj.player_team_season.position != 'WR') {
+						odds *= .4;
+					}
+					return [player_obj, odds]
+				})
+				chosen_players.Pass_Catcher = weighted_random_choice(valid_pass_catchers_weights)
 
 				for (var PTS of chosen_players.OT_List) {
 					PTS.player_team_game.game_stats.blocking.blocks +=1;
@@ -2073,8 +2097,18 @@ const sim_game = (game_dict, common) => {
 					//interception
 					chosen_players.QB.player_team_game.game_stats.passing.ints +=1;
 
-					chosen_int_index = Math.floor(Math.random() * defensive_team_players.by_position['CB'].length);
-					chosen_players.Interceptor = defensive_team_players.by_position['CB'][chosen_int_index]
+					var valid_interceptor = defensive_team_players.by_position['CB'].concat(defensive_team_players.by_position['S']).concat(defensive_team_players.by_position['LB'])
+					var valid_interceptor_weights = valid_interceptor.map(function(player_obj){
+						var odds = player_obj.player_team_season.ratings.overall.overall ** 3
+						if (player_obj.player_team_season.position == 'S'){
+							odds *= .8;
+						}
+						else if (player_obj.player_team_season.position != 'CB') {
+							odds *= .4;
+						}
+						return [player_obj, odds]
+					})
+					chosen_players.Interceptor = weighted_random_choice(valid_interceptor_weights)
 
 					chosen_players.Interceptor.player_team_game.game_stats.defense.ints +=1;
 
@@ -2681,7 +2715,9 @@ const sim_week_games = async(this_week, common) => {
 
 
     $.each(completed_game.player_team_games, function(ind, player_team_game){
-      player_team_games_to_save.push(player_team_game);
+			if (player_team_game.game_stats.games.games_played > 0){
+				player_team_games_to_save.push(player_team_game);
+			}
     });
 
     $.each(completed_game.player_team_seasons, function(ind, player_team_season){
@@ -3578,19 +3614,43 @@ const uniform_random_choice = (options) => {
 
 const weighted_random_choice =  (options) => {
   var total = 0;
-  $.each(options, function(value, odds){
-    total += odds;
-  })
-  var r = Math.floor(Math.random() * total);
 
-  var chosen_val = undefined;
-  $.each(options, function(value, odds){
-    r -= odds;
-    if (r < 0) {
-      chosen_val = value;
-      return false;
-    }
-  });
+	if (Array.isArray( options)){
+		$.each(options, function(ind, obj){
+			var odds = obj[1]
+	    total += odds;
+	  })
+	  var r = Math.floor(Math.random() * total);
+
+	  var chosen_val = undefined;
+	  $.each(options, function(ind, obj){
+			var value = obj[0]
+			var odds = obj[1]
+	    r -= odds;
+	    if (r < 0) {
+	      chosen_val = value;
+	      return false;
+	    }
+	  });
+
+	}
+	else {
+
+		$.each(options, function(value, odds){
+	    total += odds;
+	  })
+	  var r = Math.floor(Math.random() * total);
+
+	  var chosen_val = undefined;
+	  $.each(options, function(value, odds){
+	    r -= odds;
+	    if (r < 0) {
+	      chosen_val = value;
+	      return false;
+	    }
+	  });
+	}
+
 
   return chosen_val;
 }
@@ -4307,4 +4367,15 @@ const tier_placement = (tiers, population_size, distribution, rank_place) => {
 	console.log('placement', placement)
 
 	return placement;
+}
+
+const get = (obj, key) => {
+	const keys = key.split('.');
+	var drill_obj = obj
+	for (var new_key of keys) {
+		drill_obj = drill_obj[new_key]
+	}
+
+	return drill_obj;
+
 }

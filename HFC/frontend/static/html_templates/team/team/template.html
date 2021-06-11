@@ -54,13 +54,13 @@
                         <a href="{{game.opponent_team.team_href}}">
                           <div class='teamScheduleGameBoxVsString hide-small white-text'>
                             <span>{{game.game_location_char}}</span>
-                            <span>{{game.opponent_rank_string}} </span>
+                            <span class='font10'>{{game.opponent_rank_string}} </span>
                             <span>{{game['opponent_team']['team_abbreviation']}}</span>
                           </div>
                           <div class='teamScheduleGameBoxVsString show-small white-text'>{{game['opponent_team']['team_abbreviation']}}</div>
                         </a>
                         <div class="teamScheduleGameBoxResult">
-                          <div class="teamGameResultLetter{{game.game_result_letter}} white-text" >{{game.game_result_letter}}</div>
+                          <div class="teamGameResultLetter{{game.game_result_letter}} white-text bold" >{{game.game_result_letter}}</div>
                           <a href="{{game.game_href}}" class='hide-small white-text'>{{game.game_display}}</a>
                         </div>
                       </div>

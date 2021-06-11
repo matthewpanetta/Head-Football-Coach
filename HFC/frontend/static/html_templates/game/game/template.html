@@ -8,11 +8,11 @@
     }
 
      .away-drop-shadow {
-         box-shadow: 0 2px 4px 0 #{{awayTeam.TeamColor_Primary_HEX}}, 0 2px 8px 0 #{{awayTeam.TeamColor_Primary_HEX}}
+         box-shadow: 0 2px 4px 0 #{{game.away_team_game.team_season.team.team_color_primary_hex}}, 0 2px 8px 0 #{{game.away_team_game.team_season.team.team_color_primary_hex}}
      }
 
       .home-drop-shadow {
-          box-shadow: 0 2px 4px 0 #{{homeTeam.TeamColor_Primary_HEX}}, 0 2px 8px 0 #{{homeTeam.TeamColor_Primary_HEX}}
+          box-shadow: 0 2px 4px 0 #{{game.home_team_game.team_season.team.team_color_primary_hex}}, 0 2px 8px 0 #{{game.home_team_game.team_season.team.team_color_primary_hex}}
       }
   </style>
   <style media="screen">
@@ -320,11 +320,11 @@
                         {% for period in game.scoring.periods %}
                           <tr class='ScoringSummaryQuarterHeader'>
                             <th colspan='4'>{{period.period_number}}</th>
-                            <th class='ScoringSummaryTeamScore'>{{game.home_team_game.team_season.team.team_abbreviation}}</th>
-                            <th class='ScoringSummaryTeamScore'>{{game.away_team_game.team_season.team.team_abbreviation}}</th>
+                            <th class='ScoringSummaryTeamScore center-text'>{{game.home_team_game.team_season.team.team_abbreviation}}</th>
+                            <th class='ScoringSummaryTeamScore center-text'>{{game.away_team_game.team_season.team.team_abbreviation}}</th>
                           </tr>
                           {% for drive in period.drives %}
-                          <tr class='ScoringSummaryScoreRow {{drive.drive_end.drive_event_class}}' >
+                          <tr class='ScoringSummaryScoreRow {{drive.drive_end.drive_event_class}}' style='background-color: {{drive.drive_end.display_team.team_color_primary_hex|Color_RGB_With_Opacity}}'>
                             <td class='ScoringSummaryTeamLogo column-shrink' style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
                                 <img src="{{drive.drive_end.display_team.team_logo}}" alt="">
                             </td>
@@ -342,8 +342,8 @@
                                 {{drive.drive_end.drive_description}}
                               </div>
                             </td>
-                              <td class='ScoringSummaryTeamScore {{drive.drive_end.home_team_bold}}'>{{drive.drive_end.home_team_points}}</td>
-                              <td class='ScoringSummaryTeamScore {{drive.drive_end.away_team_bold}}'>{{drive.drive_end.away_team_points}}</td>
+                              <td class='ScoringSummaryTeamScore {{drive.drive_end.home_team_bold}} center-text'>{{drive.drive_end.home_team_points}}</td>
+                              <td class='ScoringSummaryTeamScore {{drive.drive_end.away_team_bold}} center-text'>{{drive.drive_end.away_team_points}}</td>
                           </tr>
                           {% endfor %}
                         {% endfor %}
@@ -442,50 +442,24 @@
         </div>
         <div class="tab-pane tab-content" style='display:none;' id="nav-boxscore">
           <div class='w3-container'>
-            {% for StatGrouping in BoxScoreStatGroupings %}
+            {% for stat_grouping in box_score_stat_groupings %}
             <div class='w3-row-padding'>
               <div class='w3-col s5 gamePlayerBoxStats w3-card away-drop-shadow margin-bottom-12 height100 no-padding'>
                 <div class="w3-bar away-team-primary-background-bar">
-                  <span>{{awayTeam.TeamName}} {{StatGrouping.StatGroupName}}</span>
+                  <span>{{game.away_team_game.team_season.team.school_name}} {{stat_grouping.stat_group_name}}</span>
                 </div>
-                <table id='gameAwayTeamBoxScore' class='table table-striped'>
+                <table id='away-box-score-{{stat_grouping.stat_group_name}}' class='w3-table-all no-border'>
                   <thead>
-                      {% for Stat in StatGrouping.Stats %}
-                      {% if Stat.DisplayColumn %}
-                      <th scope="col" data-defaultsort="asc">{{Stat.DisplayName}}</th>
-                      {% endif %}
-                      {% endfor %}
                   </thead>
-                  {% for player in StatGrouping.AwayTeam %}
-                  <tr>
-                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}' class='{{player.GameStarted_Class}}'>{{player.FullName}}</a></td>
-                    {% for Stat in player.Stats%}
-                    <td>{{Stat.Value}}</td>
-                    {%endfor %}
-                  </tr>
-                  {% endfor %}
                 </table>
               </div>
               <div class='w3-col s5 gamePlayerBoxStats w3-card home-drop-shadow margin-bottom-12 height100 no-padding'>
                 <div class="w3-bar home-team-primary-background-bar">
-                  <span>{{homeTeam.TeamName}} {{StatGrouping.StatGroupName}}</span>
+                  <span>{{game.home_team_game.team_season.team.school_name}} {{stat_grouping.stat_group_name}}</span>
                 </div>
-                <table id='gameAwayTeamBoxScore' class='table table-striped'>
+                <table id='home-box-score-{{stat_grouping.stat_group_name}}' class='w3-table-all no-border'>
                   <thead>
-                      {% for Stat in StatGrouping.Stats %}
-                      {% if Stat.DisplayColumn %}
-                      <th scope="col" data-defaultsort="asc">{{Stat.DisplayName}}</th>
-                      {% endif %}
-                      {% endfor %}
                   </thead>
-                  {% for player in StatGrouping.HomeTeam %}
-                  <tr>
-                    <td><a href='/World/{{page.WorldID}}/Player/{{player.PlayerID}}' class='{{player.GameStarted_Class}}'>{{player.FullName}}</a></td>
-                    {% for Stat in player.Stats%}
-                    <td>{{Stat.Value}}</td>
-                    {%endfor %}
-                  </tr>
-                  {% endfor %}
                 </table>
               </div>
 
@@ -499,121 +473,3 @@
     </div>
   </div>
 </body>
-
-
-
-<script type="text/javascript">
-
-  function SecondsToMinutes(s) {
-      var SecondsInToThisHalf = s;
-      var PeriodList = ['1st', '2nd', '3rd', '4th', 'OT1', 'OT2', 'OT3']
-      var PeriodCount = 0;
-      var SecondsInPeriod = 15 * 60;
-      while (SecondsInToThisHalf > SecondsInPeriod) {
-        SecondsInToThisHalf -= SecondsInPeriod;
-        PeriodCount +=1;
-      }
-      var Period = PeriodList[PeriodCount] + ' | ';
-
-      SecondsInToThisHalf = SecondsInPeriod - SecondsInToThisHalf;
-      var Secs = SecondsInToThisHalf%60;
-      if (Secs < 10){
-        Secs = '0'+Secs;
-      }
-
-      var Mins = parseInt(SecondsInToThisHalf / 60);
-      var Time = Mins + ':' + Secs
-
-      return Period + Time
-  }
-
-  $(document).ready(function() {
-    let colors = {}
-    colors['{{homeTeam.TeamName}}'] = '{{homeTeam.TeamColor_Primary_HEX}}';
-    colors['{{awayTeam.TeamName}}'] = '{{awayTeam.TeamColor_Primary_HEX}}';
-
-    var SeriesValues = [{% for event in gameEvents %}{'eventTime': {{event.GameTime}}, 'homePoints': {{event.HomePoints}}, 'awayPoints': {{event.AwayPoints}}},{% endfor %}];
-    var HomeSeries = [];
-    var AwaySeries = [];
-    $.each(SeriesValues, function(ind, obj){
-      obj.formattedTime = SecondsToMinutes(obj['eventTime']);
-      obj.x = obj['eventTime'];
-      obj.y = obj['homePoints'];
-      HomeSeries.push(obj);
-      obj.y = obj['awayPoints'];
-      AwaySeries.push(obj);
-    });
-
-    if ('{{game.was_played}}' == 'True'){
-      var myChart = Highcharts.chart('GameFlowChart', {
-              chart: {
-                  type: 'line'
-              },
-              plotOptions: {
-                  series: {
-                      marker: {
-                          enabled: false
-                      }
-                  }
-              },
-              tooltip: {
-                  shared: true,
-                  headerFormat: '<span style="font-size: 10px">{point.point.formattedTime}</span><br/>',
-
-                  snap: 50,
-              },
-              title: {
-                  text: '{{homeTeam.TeamName}} vs {{awayTeam.TeamName}}'
-              },
-              colors: ['#{{homeTeam.TeamColor_Primary_HEX}}', '#{{awayTeam.TeamColor_Primary_HEX}}'],
-              yAxis: {
-                title: {
-                    enabled: false
-                }
-              },
-              xAxis: {
-                  labels: {
-                      formatter: function () {
-                        return SecondsToMinutes(this.value);
-                      }
-                    },
-                    plotLines: [{
-                        color: '#BBB',
-                        width: .5,
-                        value: 900
-                    },{
-                        color: '#666',
-                        width: 1,
-                        value: 1800
-                    },{
-                        color: '#BBB',
-                        width: .5,
-                        value: 2700
-                    },{
-                        color: '#BBB',
-                        width: .5,
-                        value: 3600
-                    }]
-              },
-              series: [{
-                  name: '{{homeTeam.TeamName}}',
-                  data: [{x:0, y:0, formattedTime: '1st | 15:00'},
-                        {% for event in gameEvents %}
-                            {x:{{event.GameTime}}, y:{{event.HomePoints}}, formattedTime: '{{event.DisplayTime}}'},
-                        {% endfor %}],
-                  step: true,
-                  lineWidth: 4
-              }, {
-                  name: '{{awayTeam.TeamName}}',
-                  data: [{x:0, y:0, formattedTime: '1st | 15:00'},
-                        {% for event in gameEvents %}
-                            {x:{{event.GameTime}}, y:{{event.AwayPoints}}, formattedTime: '{{event.DisplayTime}}'},
-                        {% endfor %}],
-                  step: true,
-                  lineWidth: 4
-              }]
-          });
-    }
-  });
-
-</script>

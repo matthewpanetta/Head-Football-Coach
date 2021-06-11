@@ -231,8 +231,17 @@ function get_nunjucks_env() {
       if (Luma > 200){
         return "000";
       }
-      return "Color";
+      return Color;
       });
+
+      env.addFilter('Color_RGB_With_Opacity', function(Color) {
+        var R = parseInt(Color.slice(0,2), 16)
+        var G = parseInt(Color.slice(2,4), 16)
+        var B = parseInt(Color.slice(4,6), 16)
+
+
+        return `rgb(${R},${G},${B},.125)`;
+        });
 
 
     env.addFilter('toLocaleDateString', function(DateInt){
