@@ -735,7 +735,7 @@ const getHtml = async (common) => {
   const player_team_games = await db.player_team_game.where({player_team_season_id: player.current_player_team_season.player_team_season_id}).toArray()
 
   const current_team = player.current_player_team_season.team_season.team;
-  common.page = {PrimaryColor: current_team.team_color_primary_hex, SecondaryColor: current_team.secondary_color_display, NavBarLinks: NavBarLinks};
+  common.page = {PrimaryColor: current_team.team_color_primary_hex, SecondaryColor: current_team.secondary_color_display, NavBarLinks: NavBarLinks, page_title: player.full_name};
   var render_content = {
                         page:     common.page,
                         world_id: common.params.world_id,

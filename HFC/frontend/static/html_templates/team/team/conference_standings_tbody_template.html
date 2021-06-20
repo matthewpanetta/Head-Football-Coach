@@ -1,0 +1,19 @@
+{% for standing_team in conference_standings.conference_standings %}
+<tr class='{{standing_team.bold}}'>
+  <td style=' width: 10px; padding: 8px; border-left-color: #{{standing_team.team.team_color_primary_hex}}' >
+      <a href="{{standing_team.team.team_href}}">
+        <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
+      </a>
+  </td>
+  <td>
+    <a href="{{standing_team.team.team_href}}">
+
+      <span  class='hide-small font10'>{{standing_team.national_rank_display}} </span>
+      <span  class='hide-small'>{{standing_team.team.school_name }}</span>
+    </a>
+  </td>
+  <td>{{standing_team.conference_record_display}}</td>
+  <td class='hide-small'> {{standing_team.record.conference_gb}}</td>
+  <td>{{standing_team.record_display}}</td>
+</tr>
+{% endfor %}

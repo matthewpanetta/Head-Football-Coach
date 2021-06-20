@@ -10,11 +10,14 @@ const routes = [
   {route: "/World/:world_id/Rankings/", path: 'world/rankings/base.html'},
   {route: "/World/:world_id/Standings/", path: 'world/standings/base.html'},
   {route: "/World/:world_id/Standings/Conference/:conference_id", path: 'world/standings/base.html'},
+  {route: "/World/:world_id/Schedule/", path: 'world/schedule/base.html'},
+  {route: "/World/:world_id/Awards/", path: 'world/awards/base.html'},
 
   {route: "/World/:world_id/PlayerStats/Season/:season", path: 'almanac/player_stats/base.html'},
   {route: "/World/:world_id/TeamStats/Season/:season", path: 'almanac/team_stats/base.html'},
 
   {route: "/World/:world_id/PlayerRecords", path: 'almanac/player_records/base.html'},
+  {route: "/World/:world_id/TeamRecords", path: 'almanac/team_records/base.html'},
 
   {route: "/World/:world_id/Team/:team_id/",         path: 'team/team/base.html'},
   {route: "/World/:world_id/Team/:team_id/Schedule", path: 'team/schedule/base.html'},

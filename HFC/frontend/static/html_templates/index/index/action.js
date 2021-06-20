@@ -149,7 +149,7 @@
         const world_id = new_season_info.world_id;
         const season = new_season_info.current_season;
 
-        const conferences_to_include = ['Big 12', 'Southeastern Conference', 'Sun Belt']
+        const conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
 
         //var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
         var teams_from_json = await common.get_teams({conference: conferences_to_include});
@@ -422,6 +422,7 @@
                                                       games_started:0,
                                                       plays_on_field:0,
                                                       team_games_played:0,
+                                                      points: 0,
                                                     },
                                                   top_stats : [],
                                                   passing : {

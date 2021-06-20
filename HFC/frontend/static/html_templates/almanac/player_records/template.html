@@ -21,12 +21,12 @@
         <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-leaders-tab" style="background-color: #{{page.SecondaryColor}};">Leaders</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-all-players-tab">All Players</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-season-records-tab" style="background-color: #{{page.SecondaryColor}};">Season Records</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-game-records-tab">Game Records</button>
       </div>
     </nav>
     <div id="nav-tabContent">
-      <div class="tab-content" style="display:block;"  id="nav-leaders" >
+      <div class="tab-content" style="display:block;"  id="nav-season-records" >
         <div class='w3-display-container' >
 
             {% for player_leader_category in player_leader_categories%}
@@ -42,31 +42,34 @@
                 <table class='w3-table-all no-border'>
                   <tbody class="">
                     <tr>
-                      <td class="center-text bold font20" style='background-color: #{{player_leader_category.players[0].player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+                      <td class="center-text bold font20" style='background-color: #{{player_leader_category.player_team_seasons[0].player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
                         1
                       </td>
-                      <td class="" style='background-color: #{{player_leader_category.players[0].player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
-                        <a href="{{player_leader_category.players[0].player_team_season.team_season.team.team_href}}">
-                          <img src="{{player_leader_category.players[0].player_team_season.team_season.team.team_logo}}" alt="" class='logo-50'>
+                      <td class="" style='background-color: #{{player_leader_category.player_team_seasons[0].player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+                        <a href="{{player_leader_category.player_team_seasons[0].player_team_season.team_season.team.team_href}}">
+                          <img src="{{player_leader_category.player_team_seasons[0].player_team_season.team_season.team.team_logo}}" alt="" class='logo-50'>
                         </a>
                       </td>
                       <td class="" colspan='2'>
                         <div class="inline-block">
-                          <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{player_leader_category.players[0].player_team_season.player.player_id}}' style='border-color:#{{player_leader_category.players[0].player_team_season.team_season.team.team_color_primary_hex}};' id="teamTeamLeaderBoxPlayerFace{{player_leader_category.players[0].player_team_season.player.player_id}}-{{loop.index}}"  >
+                          <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{player_leader_category.player_team_seasons[0].player_team_season.player.player_id}}' style='border-color:#{{player_leader_category.player_team_seasons[0].player_team_season.team_season.team.team_color_primary_hex}};' id="teamTeamLeaderBoxPlayerFace{{player_leader_category.player_team_seasons[0].player_team_season.player.player_id}}-{{loop.index}}"  >
                           </div>
                         </div>
                         <div class="inline-block">
                           <div class="font16">
-                            <a href="{{player_leader_category.players[0].player_team_season.player.player_href}}">
-                              {{player_leader_category.players[0].player_team_season.player.full_name}}
+                            <a href="{{player_leader_category.player_team_seasons[0].player_team_season.player.player_href}}">
+                              {{player_leader_category.player_team_seasons[0].player_team_season.player.full_name}}
                             </a>
                           </div>
                           <div class="font10">
-                            <span>{{player_leader_category.players[0].player_team_season.team_season.team.team_abbreviation}}</span>
+                            <span>{{player_leader_category.player_team_seasons[0].player_team_season.team_season.team.team_abbreviation}}</span>
                             &#183;
-                            <span>{{player_leader_category.players[0].player_team_season.position}}</span>
+                            <span>{{player_leader_category.player_team_seasons[0].player_team_season.position}}</span>
                             &#183;
-                            <span>{{player_leader_category.players[0].player_team_season.class.class_name}}</span>
+                            <span>{{player_leader_category.player_team_seasons[0].player_team_season.class.class_name}}</span>
+                          </div>
+                          <div class="font10">
+                            {{player_leader_category.player_team_seasons[0].player_team_season.season}} Season
                           </div>
                         </div>
 
@@ -75,7 +78,7 @@
                       </td>
                       <td class="center-text">
                         <div class="font20">
-                          {{player_leader_category.players[0].value}}
+                          {{player_leader_category.player_team_seasons[0].value}}
                         </div>
                         <div class="font10">
                           {{player_leader_category.category_abbr}}
@@ -88,7 +91,7 @@
                       <th>Player</th>
                       <th class='center-text'>{{player_leader_category.category_abbr}}</th>
                     </tr>
-                    {% for player_obj in player_leader_category.players.slice(1,5)%}
+                    {% for player_obj in player_leader_category.player_team_seasons.slice(1,5)%}
                     <tr>
                       <td class='center-text bold' style='background-color: #{{player_obj.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
                         {{loop.index + 1}}
@@ -104,10 +107,15 @@
                         </a>
                       </td>
                       <td>
-                        <span>
-                          <a href="{{player.player.player_href}}">{{player_obj.player_team_season.player.full_name}}</a>
-                        </span>
-                        <span class='font10'>{{player_obj.player_team_season.position}}</span>
+                        <div class="">
+                          <span>
+                            <a href="{{player_obj.player_team_season.player.player_href}}">{{player_obj.player_team_season.player.full_name}}</a>
+                          </span>
+                          <span class='font10'>{{player_obj.player_team_season.position}}</span>
+                        </div>
+                        <div class="font10">
+                          {{player_obj.player_team_season.season}} Season
+                        </div>
 
                       </td>
                       <td class='center-text'>{{player_obj.value}}</td>
@@ -124,155 +132,8 @@
             {% endfor %}
         </div>
       </div>
-      <div class="tab-content" style="display:none;"  id="nav-all-players">
-        <div class='w3-display-container' >
-          <div class='w3-row-padding'>
-            <div class='w3-col l10'>
-              <div class="w3-card ">
-
-                <table class="w3-table w3-table-all center-aligned-table" id='PlayerStats'  style="width:100%">
-                  <thead>
-                    <tr>
-                      <th colspan="7" class="col-group">PLAYER</th>
-                      <th colspan="5" class="col-group">PASSING STATS</th>
-                      <th colspan="7" class="col-group">RUSHING STATS</th>
-                      <th colspan="7" class="col-group">RECEIVING STATS</th>
-                      <th colspan="7" class="col-group">DEFENSE STATS</th>
-                      <th colspan="7" class="col-group">PHYSICAL SKILLS</th>
-                      <th colspan="7" class="col-group">PASSING SKILLS</th>
-                      <th colspan="4" class="col-group">RUSHING SKILLS</th>
-                      <th colspan="4" class="col-group">RECEIVING SKILLS</th>
-                      <th colspan="3" class="col-group">BLOCKING SKILLS</th>
-                      <th colspan="7" class="col-group">DEFENSE SKILLS</th>
-                      <th colspan="2" class="col-group">KICKING SKILLS</th>
-                      <th></th>
-                    </tr>
-                    <tr>
-                      <th data-data="PlayerTeam" data-tooltip-title="Player Current Team"></th>
-                      <th data-data="PlayerTeam" data-tooltip-title="Player Current Team">Team</th>
-                      <th data-data="PlayerName">Player</th>
-                      <th data-data="ClassID__ClassAbbreviation">Class</th>
-                      <th data-data="Position">Position</th>
-                      <th data-data="playerseasonskill__OverallRating">OVR</th>
-                      <th data-data="GameScore" class="col-group">Game Score</th>
-                      <th data-data="PAS_Yards" class='WorldPlayerStats-Stat-Passing'>Yards</th>
-                      <th data-data="PAS_CompletionPercentage" class='WorldPlayerStats-Stat-Passing'>CMP %</th>
-                      <th data-data="PAS_YPG" class='WorldPlayerStats-Stat-Passing'>YPG</th>
-                      <th data-data="PAS_TD" class='WorldPlayerStats-Stat-Passing'>TDs</th>
-                      <th data-data="PAS_INT" class='WorldPlayerStats-Stat-Passing col-group'>INT</th>
-                      <th data-data="RUS_Yards" class='WorldPlayerStats-Stat-Rushing'>Yards</th>
-                      <th data-data="RUS_YPC" class='WorldPlayerStats-Stat-Rushing'>YPC</th>
-                      <th data-data="RUS_YPG" class='WorldPlayerStats-Stat-Rushing'>YPG</th>
-                      <th data-data="RUS_TD" class='WorldPlayerStats-Stat-Rushing'>TDs</th>
-                      <th data-data="RUS_LNG" class='WorldPlayerStats-Stat-Rushing'>LNG</th>
-                      <th data-data="RUS_20" class='WorldPlayerStats-Stat-Rushing'>20+</th>
-                      <th data-data="FUM_Fumbles" class='WorldPlayerStats-Stat-Rushing col-group'>Fum</th>
-                      <th data-data="REC_Yards" class='WorldPlayerStats-Stat-Receiving'>Yards</th>
-                      <th data-data="REC_Receptions" class='WorldPlayerStats-Stat-Receiving'>Catches</th>
-                      <th data-data="REC_YPC" class='WorldPlayerStats-Stat-Receiving'>YPC</th>
-                      <th data-data="REC_YPG" class='WorldPlayerStats-Stat-Receiving'>YPG</th>
-                      <th data-data="REC_TD" class='WorldPlayerStats-Stat-Receiving'>TDs</th>
-                      <th data-data="REC_Targets" class='WorldPlayerStats-Stat-Receiving'>Targets</th>
-                      <th data-data="REC_LNG" class='WorldPlayerStats-Stat-Receiving col-group'>LNG</th>
-
-                      <th data-data="DEF_Tackles" class='WorldPlayerStats-Stat-Defense'>Tackles</th>
-                      <th data-data="DEF_TacklesForLoss" class='WorldPlayerStats-Stat-Defense'>TFL</th>
-                      <th data-data="DEF_Sacks" class='WorldPlayerStats-Stat-Defense'>Sacks</th>
-                      <th data-data="DEF_INT" class='WorldPlayerStats-Stat-Defense'>INTs</th>
-                      <th data-data="DEF_Deflections" class='WorldPlayerStats-Stat-Defense'>DEFL</th>
-                      <th data-data="FUM_Forced" class='WorldPlayerStats-Stat-Defense'>FF</th>
-                      <th data-data="FUM_Recovered" class='WorldPlayerStats-Stat-Defense col-group'>FR</th>
-
-                      <th>STR</th>
-                      <th>AGI</th>
-                      <th>SPD</th>
-                      <th>ACC</th>
-                      <th>STA</th>
-                      <th>JMP</th>
-                      <th class="col-group">AWR</th>
-
-                      <th>THP</th>
-                      <th>TA(S)</th>
-                      <th>TA(M)</th>
-                      <th>TA(D)</th>
-                      <th>ToR</th>
-                      <th>TUP</th>
-                      <th class="col-group">PA</th>
-
-                      <th>CAR</th>
-                      <th>ELU</th>
-                      <th>BC</th>
-                      <th class="col-group">BRK</th>
-
-                      <th>CTH</th>
-                      <th>CIT</th>
-                      <th>ROU</th>
-                      <th class="col-group">REL</th>
-
-                      <th>PassBlk</th>
-                      <th>RunBlk</th>
-                      <th class="col-group">ImpBlk</th>
-
-                      <th>PR</th>
-                      <th>SHD</th>
-                      <th>TCK</th>
-                      <th>HP</th>
-                      <th>MCov</th>
-                      <th>ZCov</th>
-                      <th class="col-group">PRS</th>
-
-                      <th>KckPow</th>
-                      <th class="col-group">KckAcc</th>
-
-                      <th></th>
-                      <th>Qualifiers</th>
-                      <th>Draft Eligibility</th>
-                      <th>Position Groups</th>
-                    </tr>
-                  </thead>
-                  <tfoot>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
+      <div class="tab-content" style="display:block;"  id="nav-game-records" >
+        
       </div>
     </div>
   </div>

@@ -202,6 +202,7 @@
                                     dt.columns(config.show).visible(true);
                                     dt.columns(config.hide).visible(false);
 
+                                    dt.column(config.show[0]).order('desc').draw();
                                    $(".dt-buttons").find("button").removeClass("active");
                                    node.addClass("active");
 

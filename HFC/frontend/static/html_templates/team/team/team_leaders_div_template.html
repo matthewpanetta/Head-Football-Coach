@@ -1,0 +1,34 @@
+{% if team_leaders|length > 0%}
+
+    <div class="w3-card margin-bottom-24">
+      <div class="w3-bar team-primary-background-bar">
+        Team Leaders
+      </div>
+
+      <table class="w3-table-all no-border">
+        {% for team_leader in team_leaders %}
+        <tr>
+
+        <td class="w3-col center-text ">
+          <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{team_leader.player_team_season.player.player_id}}' style='border-color:#{{page.PrimaryColor}};' id="teamTeamLeaderBoxPlayerFace{{loop.index}}"  >
+          </div>
+        </td>
+        <td>
+          <ul class='no-list-style'>
+            <li class='bold'>{{team_leader.display}}</li>
+            <li>
+              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{team_leader.player_team_season.player.player_href}}">{{team_leader.player_team_season.player.full_name}}</a></span>
+              <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{team_leader.player_team_season.position}}</span>
+            </li>
+            <li>
+              {%for stat in team_leader.player_team_season.top_stats%}{%if loop.index > 1%}, {%endif%}<span class=''>{{stat.display}}</span>{%endfor%}
+            </li>
+          </ul>
+        </td>
+      </tr>
+
+
+        {% endfor %}
+      </table>
+      </div>
+{% endif %}

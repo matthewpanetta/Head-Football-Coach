@@ -641,6 +641,9 @@ input[type=text], input[type=password] {
 .height80 {
   height: 80%;
 }
+.height50p {
+  height: 50%;
+}
 
 .height-70 {
   height: 70px;
@@ -1455,7 +1458,7 @@ tfoot td {
   color: #454545;
 }
 
-.scoreboard-slideshow {
+.scoreboard-slideshow, .headline-slideshow  {
   overflow: hidden;
 }
 
@@ -1476,13 +1479,13 @@ tfoot td {
   float: left;
 }
 
-.MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item {
+.MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item, .MultiCarousel .MultiCarousel-inner .headline-carousel-item {
   float: left;
   margin-left: -1px;
   margin-right: -1px;
 }
 
-.MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item>div {
+.MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item>div, .MultiCarousel .MultiCarousel-inner .headline-carousel-item>div {
   text-align: center;
   padding: 10px;
   margin: 10px;

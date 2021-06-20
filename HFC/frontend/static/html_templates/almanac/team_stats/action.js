@@ -451,6 +451,7 @@
       const db = common.db;
 
       const team_seasons = await db.team_season.where({season: common.season}).toArray();
+      const team_season_ids = team_seasons.map(ts => ts.team_season_id);
       const teams = await db.team.toArray();
       const teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
 
@@ -460,11 +461,58 @@
       const conference_seasons = await db.conference_season.where({season: common.season}).toArray();
       const conference_seasons_by_conference_season_id = index_group_sync(conference_seasons, 'index', 'conference_season_id');
 
+      var team_games = await db.team_game.where('team_season_id').anyOf(team_season_ids).toArray();
+      team_games = team_games.filter(tg => tg.points != null);
+      const team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id');
+      const team_games_by_team_season_id = index_group_sync(team_games, 'group', 'team_season_id');
+
+      console.log({team_seasons:team_seasons, team_season_ids:team_season_ids, team_games:team_games, team_games_by_team_game_id:team_games_by_team_game_id, team_games_by_team_season_id:team_games_by_team_season_id})
+
       for (var team_season of team_seasons){
         team_season.team = teams_by_team_id[team_season.team_id];
 
         team_season.conference_season = conference_seasons_by_conference_season_id[team_season.conference_season_id];
         team_season.conference_season.conference = conferences_by_conference_id[team_season.conference_season.conference_id]
+
+        team_season.team_games = [];
+        if (team_season.team_season_id in team_games_by_team_season_id){
+          team_season.team_games = team_games_by_team_season_id[team_season.team_season_id]
+        }
+
+        team_season.top_25_games_played = 0;
+        team_season.top_25_wins = 0;
+        team_season.top_25_losses = 0;
+
+        team_season.top_25_win_percentage = 0;
+
+        team_season.heisman_count = 0;
+        team_season.national_all_americans_count = 0;
+        team_season.national_preseason_all_americans_count = 0;
+        team_season.national_players_of_the_week_count = 0;
+        team_season.conference_all_americans_count = 0;
+        team_season.conference_players_of_the_week_count = 0;
+        team_season.conference_preseason_all_americans_count = 0;        
+
+
+        for (const team_game of team_season.team_games){
+          team_game.opponent_team_game = team_games_by_team_game_id[team_game.opponent_team_game_id];
+
+          if (team_game.opponent_team_game.national_rank <= 25){
+            team_season.top_25_games_played += 1;
+
+            if (team_game.is_winning_team){
+              team_season.top_25_wins += 1;
+            }
+            else {
+              team_season.top_25_losses += 1;
+            }
+          }
+        }
+
+        if (team_season.top_25_games_played > 0){
+          team_season.top_25_win_percentage = round_decimal(team_season.top_25_wins * 100 / team_season.top_25_games_played, 1);
+        }
+
       }
 
       console.log('in draw team stats', {team_seasons:team_seasons})
@@ -482,21 +530,21 @@
       var cntrlIsPressed = false;
 
       var col_categories = {
-        'Base': 6,
+        'Base': 7,
         //'Games': 3,
         'Point Margin': 3,
         'Total Offense': 8,
         'Total Defense': 8,
-        'Passing - OFF': 12,
+        'Passing - OFF': 11,
         'Rushing - OFF': 6,
         'Receiving - OFF': 6,
         'Downs - OFF': 12,
-        'Passing - DEF': 12,
+        'Passing - DEF': 11,
         'Rushing - DEF': 6,
         'Kicking': 11,
         'Punting': 5,
         'Returning': 10,
-        'Rank': 3,
+        'Rank': 4,
         'Top 25': 4,
         'Awards': 7,
         'Bowls': 6,
@@ -596,12 +644,18 @@
           data: team_seasons,
            buttons:button_list,
           columns: [
-            {"data": "team.school_name", "sortable": true, 'searchable': true, 'orderSequence': asc_first, "fnCreatedCell": function (td, school_name, team_season, iRow, iCol) {
-                $(td).html("<a href='"+team_season.team.team_href+"'><img class='worldTeamStatLogo padding-right' src='"+team_season.team.team_logo+"'/>"+team_season.team.school_name+"</a>");
+            {"data": "team.school_name", "sortable": true, 'searchable': true, 'className': 'column-shrink', 'orderSequence': asc_first, "fnCreatedCell": function (td, school_name, team_season, iRow, iCol) {
+              $(td).html("<a href='"+team_season.team.team_href+"'><img class='worldTeamStatLogo padding-right' src='"+team_season.team.team_logo+"'/></a>");
                 $(td).attr('style', `background-color: #${team_season.team.team_color_primary_hex}; color:white;` );
                 $(td).parent().attr('TeamID', team_season.team.team_id);
             }},
-            {"data": "conference_season.conference.conference_abbreviation", "sortable": true, 'visible': true, 'orderSequence': asc_first},
+            {"data": "team.school_name", "sortable": true, 'searchable': true, 'className': 'font14','orderSequence': asc_first, "fnCreatedCell": function (td, school_name, team_season, iRow, iCol) {
+              $(td).html("<a href='"+team_season.team.team_href+"'>"+team_season.team.school_name+"</a>");
+                $(td).attr('style', `background-color: #${team_season.team.team_color_primary_hex}; color:white;` );
+            }},
+            {"data": "conference_season.conference.conference_abbreviation",'className': 'center-text', "sortable": true, 'visible': true, 'orderSequence': asc_first,  "fnCreatedCell": function (td, conference_abbreviation, team_season, iRow, iCol) {
+                $(td).html(`<a href='${team_season.conference_season.conference.conference_href}'>${team_season.conference_season.conference.conference_abbreviation}</a>`);
+            }},
             {"data": "national_rank", "sortable": true, 'visible': true, 'className': 'center-text col-group','orderSequence':asc_first},
             //NationalRank
             {"data": "record.games_played", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
@@ -618,131 +672,148 @@
             {"data": "rushing_yards_per_game", "sortable": true, 'visible': false, 'className': 'col-group center-text','orderSequence':desc_first},
             {"data": "season_stats.team.points", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "points_per_game", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-            {"data": "opponent_season_stats.team.yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+
+            {"data": "yards_allowed", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "yards_allowed_per_game", "sortable": true, 'visible': false,'className': 'col-group center-text', 'orderSequence':desc_first},
             {"data": "opponent_season_stats.passing.yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "opponent_passing_yards_per_game", "sortable": true, 'visible': false, 'className': 'col-group center-text','orderSequence':desc_first},
             {"data": "opponent_season_stats.rushing.yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "opponent_rushing_yards_per_game", "sortable": true, 'visible': false, 'className': 'col-group center-text','orderSequence':desc_first},
-            {"data": "opponent_team_season.team.points", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+            {"data": "opponent_season_stats.team.points", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "points_allowed_per_game", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
             {"data": "season_stats.passing.completions", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "season_stats.passing.attempts", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "completion_percentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "season_stats.passing.yards", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
             {"data": "passing_yards_per_attempt", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
             {"data": "passing_yards_per_game", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-            {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "season_stats.passing.tds", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "season_stats.passing.ints", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "season_stats.passing.sacks", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "season_stats.passing.sacks", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-            {"data": "passing_rating", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-            {"data": "RUS_Carries", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-            {"data": "RUS_Yards", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
-            {"data": "RUS_YPC", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-            {"data": "RUS_YPG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-            {"data": "RUS_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-            {"data": "RUS_TD", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-            {"data": "REC_Receptions", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "REC_Yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "REC_YPC", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "REC_YPG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "REC_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "REC_TD", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-              {"data": "FirstDowns", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "FirstDowns_Rush", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
-              {"data": "FirstDowns_Pass", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
-              {"data": "FirstDowns_Penalties", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-              {"data": "ThirdDownConversion", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "ThirdDownAttempt", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "ThirdDownPercentage", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-              {"data": "FourthDownConversion", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "FourthDownAttempt", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "FourthDownPercentage", "sortable": true, 'visible': false,'className': 'col-group center-text',  'orderSequence':desc_first},
-              {"data": "Penalties", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "PenaltyYards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_PAS_Completions", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_PAS_Attempts", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_PAS_CompletionPercentage", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
-              {"data": "Opponent_PAS_Yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_PAS_YardsPerAttempt", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_PAS_YPG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_PAS_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_PAS_TD", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_PAS_INT", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
-              {"data": "Opponent_PAS_Sacks", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
-              {"data": "Opponent_PAS_SackYards", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
-              {"data": "Opponent_PAS_RTG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_RUS_Carries", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_RUS_Yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_RUS_YPC", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_RUS_YPG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_RUS_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Opponent_RUS_TD", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "FGM", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "FGA", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "FGPercent", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-              {"data": "FG_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "FGM_29", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                  $(td).html("<span>"+team_season.FG29+"</span>");
-              }},
-              {"data": "FGM_39", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                  $(td).html("<span>"+team_season.FG39+"</span>");
-              }},
-              {"data": "team_season.season_stats.kicking.fg49", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                  $(td).html("<span>"+team_season.season_stats.kicking.FG49+"</span>");
-              }},
-              {"data": "FGM_50", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                  $(td).html("<span>"+team_season.FG50+"</span>");
-              }},
-              {"data": "XPM", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "XPA", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "XPPercent", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "PNT_Punts", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "PNT_Yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "PNT_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "PNT_AVG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "PNT_NET", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "RET_PNT_ATT", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "RET_PNT_Yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "RET_PNT_AVG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "RET_PNT_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "RET_PNT_TD", "sortable": true, 'visible': false,'className': 'col-group center-text',  'orderSequence':desc_first},
-              {"data": "RET_KCK_ATT", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "RET_KCK_Yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "RET_KCK_AVG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "RET_KCK_LNG", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "RET_KCK_TD", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+            {"data": "passer_rating", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
 
-              {"data": "WeeksAt1", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "WeeksTop10", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "WeeksTop25", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
 
-              {"data": "Top25_GamesPlayed", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Top25_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Top25_Losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':asc_first},
-              {"data": "Top25_WinPercentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+            {"data": "season_stats.rushing.carries", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+            {"data": "season_stats.rushing.yards", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
+            {"data": "rushing_yards_per_carry", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+            {"data": "rushing_yards_per_game", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+            {"data": "season_stats.rushing.lng", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+            {"data": "season_stats.rushing.tds", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
 
-              {"data": "Heisman_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Natl_AllAmericans_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Natl_PreSeasonAllAmericans_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Natl_POTW_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Conf_AllAmericans_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Conf_PreSeasonAllAmericans_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Conf_POTW_Count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+            {"data": "season_stats.receiving.receptions", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.receiving.yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "receiving_yards_per_catch", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "receiving_yards_per_game", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.receiving.lng", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.receiving.tds", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
 
-              {"data": "NationalChampionshipWins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "ConferenceChampionshipWins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Bowl_GamesPlayed", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Bowl_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Bowl_Losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "Bowl_WinPercentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.team.downs.first_downs.total", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.team.downs.first_downs.rushing", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
+              {"data": "season_stats.team.downs.first_downs.passing", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
+              {"data": "season_stats.team.downs.first_downs.penalty", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+              {"data": "season_stats.team.downs.third_downs.conversions", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.team.downs.third_downs.attempts", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "third_down_conversion_percentage", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+              {"data": "season_stats.team.downs.fourth_downs.conversions", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.team.downs.fourth_downs.attempts", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "fourth_down_conversion_percentage", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+
+              {"data": "opponent_season_stats.passing.completions", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_season_stats.passing.attempts", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_completion_percentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_season_stats.passing.yards", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
+              {"data": "opponent_passing_yards_per_attempt", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
+              {"data": "opponent_passing_yards_per_game", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_season_stats.passing.tds", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_season_stats.passing.ints", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_season_stats.passing.sacks", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_season_stats.passing.sacks", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_passer_rating", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+              {"data": "opponent_season_stats.rushing.carries", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_season_stats.rushing.yards", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
+              {"data": "opponent_rushing_yards_per_carry", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_rushing_yards_per_game", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_season_stats.rushing.lng", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "opponent_season_stats.rushing.tds", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+
+              {"data": "season_stats.kicking.fgm", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.kicking.fga", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "kicking_field_goal_percentage", "sortable": true, 'visible': false, 'className': 'center-text', 'orderSequence':desc_first},
+              {"data": "season_stats.kicking.lng", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.kicking.fgm_29", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+                  $(td).html(`<span>${team_season.season_stats.kicking.fgm_29}/${team_season.season_stats.kicking.fga_29}</span>`);
+              }},
+              {"data": "season_stats.kicking.fgm_39", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+                $(td).html(`<span>${team_season.season_stats.kicking.fgm_39}/${team_season.season_stats.kicking.fga_39}</span>`);
+              }},
+              {"data": "season_stats.kicking.fgm_49", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+                $(td).html(`<span>${team_season.season_stats.kicking.fgm_49}/${team_season.season_stats.kicking.fga_49}</span>`);
+              }},
+              {"data": "season_stats.kicking.fgm_50", "sortable": true, 'visible': false, 'className': 'col-group center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
+                $(td).html(`<span>${team_season.season_stats.kicking.fgm_50}/${team_season.season_stats.kicking.fga_50}</span>`);
+              }},
+              {"data": "season_stats.kicking.xpm", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.kicking.xpa", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "kicking_extra_point_percentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+
+              {"data": "season_stats.punting.punts", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.punting.yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "season_stats.punting.lng", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "punting_average_yards", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+
+              {"data": "weeks_ranked_1", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "weeks_ranked_top_5", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "weeks_ranked_top_10", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "weeks_ranked_top_25", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+
+              {"data": "top_25_games_played", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "top_25_wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "top_25_losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "top_25_win_percentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+
+              {"data": "heisman_count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "national_all_americans_count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "national_preseason_all_americans_count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "national_players_of_the_week_count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "conference_all_americans_count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "conference_preseason_all_americans_count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "conference_players_of_the_week_count", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+
+              // {"data": "NationalChampionshipWins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              // {"data": "ConferenceChampionshipWins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              // {"data": "Bowl_GamesPlayed", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              // {"data": "Bowl_Wins", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              // {"data": "Bowl_Losses", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              // {"data": "Bowl_WinPercentage", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": null, "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
 
               {"data": null, "sortable": false, 'searchable': false, 'className': 'details-control',   "defaultContent": ''},
 
           ],
-          order: [[ 2, "asc" ]],
+          order: [[ 3, "asc" ]],
       });
 
 

@@ -1,0 +1,111 @@
+<div class='w3-display-container' >
+  {% for player_leader_category in player_leader_categories%}
+  {% if loop.index % 3 == 1 %}
+  <div class='w3-row-padding'>
+  {% endif %}
+  <div class="w3-col s4">
+    <div class="w3-card margin-bottom-24">
+      <div class='team-primary-background-bar'>
+        {{player_leader_category.category_name}}
+      </div>
+      <table class='w3-table-all no-border'>
+        <tbody class="">
+          <tr>
+            <td class="center-text bold font20" style='background-color: #{{player_leader_category.player_team_games[0].player_team_game.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+              1
+            </td>
+            <td class="" style='background-color: #{{player_leader_category.player_team_games[0].player_team_game.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+              <a href="{{player_leader_category.player_team_games[0].player_team_game.player_team_season.team_season.team.team_href}}">
+                <img src="{{player_leader_category.player_team_games[0].player_team_game.player_team_season.team_season.team.team_logo}}" alt="" class='logo-50'>
+              </a>
+            </td>
+            <td class="" colspan='2'>
+              <div class="inline-block">
+                <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{player_leader_category.player_team_games[0].player_team_game.player_team_season.player.player_id}}' style='border-color:#{{player_leader_category.players[0].player_team_season.team_season.team.team_color_primary_hex}};' id="teamTeamLeaderBoxPlayerFace{{player_leader_category.players[0].player_team_season.player.player_id}}-{{loop.index}}"  >
+                </div>
+              </div>
+              <div class="inline-block">
+                <div class="font16">
+                  <a href="{{player_leader_category.player_team_games[0].player_team_game.player_team_season.player.player_href}}">
+                    {{player_leader_category.player_team_games[0].player_team_game.player_team_season.player.full_name}}
+                  </a>
+                </div>
+                <div class="font10">
+                  <span>{{player_leader_category.player_team_games[0].player_team_game.player_team_season.team_season.team.team_abbreviation}}</span>
+                  &#183;
+                  <span>{{player_leader_category.player_team_games[0].player_team_game.player_team_season.position}}</span>
+                  &#183;
+                  <span>{{player_leader_category.player_team_games[0].player_team_game.player_team_season.class.class_name}}</span>
+                </div>
+                <div class="font10">
+                  {{player_leader_category.player_team_games[0].player_team_game.team_game.game.week.week_name}}, {{player_leader_category.player_team_games[0].player_team_game.player_team_season.season}} Season
+                </div>
+                <div class="font10">
+                  <span class='{{player_leader_category.player_team_games[0].player_team_game.team_game.game_outcome_letter}} bold'>{{player_leader_category.player_team_games[0].player_team_game.team_game.game_outcome_letter}} </span>
+                  <a href='{{player_leader_category.player_team_games[0].player_team_game.team_game.game.game_href}}'>{{player_leader_category.player_team_games[0].player_team_game.team_game.game_stats.team.points}}-{{player_leader_category.player_team_games[0].player_team_game.team_game.opponent_game_stats.team.points}} </a>
+                  vs.
+                  <a href='{{player_leader_category.player_team_games[0].player_team_game.team_game.opponent_team_season.team.team_href}}'>{{player_leader_category.player_team_games[0].player_team_game.team_game.opponent_team_season.team.team_abbreviation}}</a>
+                </div>
+              </div>
+            </td>
+            <td class="center-text">
+              <div class="font20">
+                {{player_leader_category.player_team_games[0].value}}
+              </div>
+              <div class="font10">
+                {{player_leader_category.category_abbr}}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th class='center-text'>Rank</th>
+            <th colspan='2'>Team</th>
+            <th>Player</th>
+            <th class='center-text'>{{player_leader_category.category_abbr}}</th>
+          </tr>
+          {% for player_obj in player_leader_category.player_team_games.slice(1,5)%}
+          <tr>
+            <td class='center-text bold' style='background-color: #{{player_obj.player_team_game.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+              {{loop.index + 1}}
+            </td>
+            <td style='background-color: #{{player_obj.player_team_game.player_team_season.team_season.team.team_color_primary_hex}}' class='center-text'>
+              <a href="{{player_obj.player_team_game.player_team_season.team_season.team.team_href}}">
+                <img src="{{player_obj.player_team_game.player_team_season.team_season.team.team_logo}}" alt="" class='logo-30'>
+              </a>
+            </td>
+            <td>
+              <a href="{{player_obj.player_team_game.player_team_season.team_season.team.team_href}}">
+                {{player_obj.player_team_game.player_team_season.team_season.team.team_abbreviation}}
+              </a>
+            </td>
+            <td>
+              <div class="">
+                <span>
+                  <a href="{{player_obj.player_team_game.player_team_season.player.player_href}}">{{player_obj.player_team_game.player_team_season.player.full_name}}</a>
+                </span>
+                <span class='font10'>{{player_obj.player_team_game.player_team_season.position}}</span>
+              </div>
+              <div class="font10">
+                {{player_obj.player_team_game.team_game.game.week.week_name}}, {{player_obj.player_team_game.player_team_season.season}} Season
+              </div>
+              <div class="font10">
+                <span class='{{player_obj.player_team_game.team_game.game_outcome_letter}} bold'>{{player_obj.player_team_game.team_game.game_outcome_letter}} </span>
+                <a href='{{player_obj.player_team_game.team_game.game.game_href}}'>{{player_obj.player_team_game.team_game.game_stats.team.points}}-{{player_obj.player_team_game.team_game.opponent_game_stats.team.points}} </a>
+                vs.
+                <a href='{{player_obj.player_team_game.team_game.opponent_team_season.team.team_href}}'>{{player_obj.player_team_game.team_game.opponent_team_season.team.team_abbreviation}}</a>
+              </div>
+
+            </td>
+            <td class='center-text'>{{player_obj.value}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if loop.index % 3 == 0 %}
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>

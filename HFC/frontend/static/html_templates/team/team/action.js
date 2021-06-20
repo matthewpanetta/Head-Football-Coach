@@ -32,112 +32,6 @@ function DrawSchedule(){
 
 }
 
-function DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName){
-  var div = $(`
-      <div class='w3-row-padding'>
-        <div class='w3-col s10 top-teams'>
-          <table class='width100 w3-table-all'>
-            <thead>
-              <th>Rank</th>
-              <th>Team</th>
-              <th>`+CategoryDisplayName+`</th>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `);
-
-
-  $.ajax({
-    url: '/World/'+WorldID+'/Team/'+TeamID+'/TeamInfoRating/'+Category,
-    success: function (data) {
-      console.log('Ajax return', data);
-
-      var Table = $(div).find('.top-teams table').DataTable({
-        dom: 't',
-        data: data.TopTeams,
-        paging: false,
-        scrollY: "400px",
-        scrollCollapse: true,
-        columns: [
-          {'data': 'Category_Rank', "sortable": true},
-          {'data': 'TeamSeasonID__TeamID__TeamName', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-              $(td).html('<a href="'+DataObject.TeamHref+'"><img src="'+DataObject.TeamSeasonID__TeamID__TeamLogoURL+'"  class="logo-30 margin-right-8" >'+DataObject.TeamSeasonID__TeamID__TeamName+'</a>');
-          }},
-          {'data': 'TeamRating', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-            var Rating = StringValue;
-            var GradeObject = NumberToGrade_True(StringValue);
-              $(td).html(NumberToGrade_True(DataObject.TeamRating).LetterGrade);
-          }},
-
-        ],
-        order: [[0, 'asc']]
-      });
-    }
-  });
-
-  return div;
-}
-
-function DrawTeamInfoChildRows(WorldID, TeamID, data) {
-
-  var DescFirst = ['desc', 'asc'];
-  var AscFirst = ['asc', 'desc', ];
-
-  console.log('DrawTeamInfoChildRows', data);
-  $.extend( true, $.fn.dataTable.defaults, {
-    "orderSequence": DescFirst,
-} );
-
-
-  var table = $('#TeamInfo').DataTable({
-    dom: 't',
-    data: data,
-    columns: [
-      {'data': 'TeamInfoTopicID__AttributeName', "sortable": true, 'orderSequence': AscFirst},
-      {'data': 'TeamRating', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-        var Rating = StringValue;
-        var GradeObject = NumberToGrade_True(StringValue);
-        console.log('GradeObject', GradeObject)
-          $(td).html("<span class='"+GradeObject.GradeClass+"'>"+GradeObject.LetterGrade+"</span>");
-
-
-          $(td).parent().attr('Category', DataObject.Category)
-          $(td).parent().attr('CategoryDisplayName', DataObject['Field Name'])
-      }},
-      {'data': 'TeamInfoTopic_Rank', "sortable": true,  "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-          $(td).html("<span>"+ordinal_suffix_of(StringValue)+"</span>");
-      }},
-      {'data': null, "sortable": false, 'className': 'details-control',   "defaultContent": ''},
-    ],
-    order: [[1, 'desc']]
-  });
-
-
-    $('#TeamInfo tbody').on('click', '.details-control', function () {
-
-      var tr = $(this).parent();
-      $(tr).addClass('shown');
-      var row = table.row( tr );
-
-      if ( row.child.isShown() ) {
-          // This row is already open - close it
-          row.child.hide();
-          tr.removeClass('shown');
-      }
-      else {
-          // Open this row
-          var data = row.data()
-          var Category = data.TeamInfoTopicID__AttributeName;
-          var CategoryDisplayName = data.TeamInfoTopicID__AttributeName;
-          var formattedContent = DrawTeamInfo(data, WorldID, TeamID, Category, CategoryDisplayName);
-          row.child( formattedContent ).show();
-          tr.addClass('shown');
-      }
-    });
-}
 
 
 function AddBoxScoreListeners(){
@@ -264,6 +158,28 @@ const getHtml = async (common) => {
   const opponent_team_ids = opponent_team_seasons.map(team_season => parseInt(team_season.team_id));
   const opponent_teams = await db.team.bulkGet(opponent_team_ids);
 
+  const headline_ids = team.team_season.headlines;
+  var headlines = await db.headline.bulkGet(headline_ids);
+
+  headlines = headlines.sort((h_a, h_b) => h_b.week_id - h_a.week_id);
+
+  var team_seasons = await db.team_season.where({season:season}).toArray();
+
+  var teams = await db.team.toArray();
+  var teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+
+  for (var team_season_iter of team_seasons){
+    team_season_iter.team = teams_by_team_id[team_season_iter.team_id];
+  }
+  var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+  for (var headline of headlines){
+    headline.team_seasons = [];
+    for (var team_season_id of headline.team_season_ids){
+      headline.team_seasons.push(team_seasons_by_team_season_id[team_season_id])
+    }
+  }
+
   console.log('opponent_teams', opponent_teams, opponent_team_seasons, opponent_team_games)
   var counter_games = 0;
   var selected_game_chosen = false;
@@ -387,98 +303,6 @@ const getHtml = async (common) => {
     counter_games +=1;
   });
 
-  const conference_standings = await common.conference_standings(team.team_season.conference_season_id, [team.team_season.team_season_id],common);
-
-  player_team_seasons = player_team_seasons.filter(pts => pts.team_season_id == team.team_season.team_season_id);
-  const team_leaders = []
-  const team_leaders_raw = [
-    {stat_group: 'passing', stat: 'yards', display: 'Leading Passer'},
-    {stat_group: 'rushing', stat: 'yards', display: 'Leading Rusher'},
-    {stat_group: 'receiving', stat: 'yards', display: 'Leading Receiver'},
-    {stat_group: 'defense', stat: 'sacks', display: 'Leading Pass Rusher'},
-    {stat_group: 'defense', stat: 'tackles', display: 'Leading Tackler'},
-    {stat_group: 'defense', stat: 'ints', display: 'Leading Pass Defender'},
-  ]
-  for (var stat_detail of team_leaders_raw){
-    player_team_seasons = player_team_seasons.sort(function(pts_a, pts_b){
-      return pts_b.season_stats[stat_detail.stat_group][stat_detail.stat] - pts_a.season_stats[stat_detail.stat_group][stat_detail.stat];
-    });
-
-    console.log('stat_detail', stat_detail, player_team_seasons[0])
-
-    if (player_team_seasons[0].season_stats[stat_detail.stat_group][stat_detail.stat] > 0){
-      stat_detail.player_team_season = player_team_seasons[0]
-      team_leaders.push(stat_detail)
-    }
-  }
-
-  console.log('team_leaders', team_leaders)
-
-  const team_stats = [
-    {display: 'Points Per Game', stats: {
-      for: {stat: 'points_per_game', sort: 'desc'},
-      against: {stat: 'points_allowed_per_game', sort: 'asc'},
-      diff: {stat: 'point_differential_per_game', sort: 'desc'}
-      },
-    },
-    {display: 'Yards Per Game', stats: {
-      for: {stat: 'yards_per_game', sort: 'desc'},
-      against: {stat: 'yards_allowed_per_game', sort: 'asc'},
-      diff: {stat: 'yards_per_game_diff', sort: 'desc'}
-      },
-    },
-    {display: 'Third Down Efficiency', stats: {
-      for: {stat: 'third_down_conversion_percentage', sort: 'desc'},
-      against: {stat: 'defensive_third_down_conversion_percentage', sort: 'asc'},
-      diff: {stat: 'third_down_conversion_percentage_diff', sort: 'desc'}
-      },
-    },
-    {display: 'Takeaways', stats: {
-      for: {stat: 'takeaways', sort: 'desc'},
-      against: {stat: 'turnovers', sort: 'asc'},
-      diff: {stat: 'turnover_diff', sort: 'desc'}
-      },
-    },
-  ]
-
-  var all_team_seasons = await db.team_season.where({season:season}).toArray();
-
-  var tier_map = {
-    1: 'elite',
-    2: 'great',
-    3: 'good',
-    4: 'average',
-    5: 'poor',
-    6: 'bad',
-    7: 'terrible',
-  }
-
-  console.log('team_stats', team_stats)
-  for (var stat_group of team_stats){
-    console.log('stat_group', stat_group)
-    for (var stat_detail_key in  stat_group.stats){
-      var stat_detail = stat_group.stats[stat_detail_key];
-      console.log('stat_detail', stat_detail, 'stat_detail_key', stat_detail_key)
-      stat_detail.team_value = team_season[stat_detail.stat];
-
-      all_team_season_stat_value = all_team_seasons.map(ts => ts[stat_detail.stat]).sort(function(value_a, value_b){
-        if (stat_detail.sort == 'desc'){
-          return value_b - value_a;
-        }
-        else {
-          return value_a - value_b;
-        }
-        return 0;
-      });
-
-      stat_detail.team_rank = all_team_season_stat_value.indexOf(team_season[stat_detail.stat]) + 1
-      stat_detail.total_teams = all_team_seasons.length;
-      stat_detail.tier = tier_map[common.tier_placement(7, all_team_seasons.length, 'Normal', stat_detail.team_rank)]
-    }
-  }
-
-
-
   console.log('games', games)
   common.page = {page_title: team.full_name, page_icon: team.team_logo_50, PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
   var render_content = {
@@ -490,8 +314,10 @@ const getHtml = async (common) => {
                         teams: teams,
                         all_teams: await common.all_teams(common),
                         conference_standings: conference_standings,
-                        team_leaders: team_leaders,
-                        team_stats: team_stats
+                        //team_leaders: team_leaders,
+                        //team_stats: team_stats,
+                        player_team_seasons:player_team_seasons,
+                        headlines: headlines
                       }
 
 
@@ -518,6 +344,9 @@ const draw_faces = async (common) => {
   const face_div_by_player_id = {};
 
   $('.PlayerFace-Headshot').each(function(ind, elem){
+    if ($(elem).find('svg').length > 0){
+      return true;
+    }
     console.log('ind, elem', ind, elem)
     player_ids.push(parseInt($(elem).attr('player_id')))
     if (!(parseInt($(elem).attr('player_id')) in face_div_by_player_id)) {
@@ -560,9 +389,6 @@ const draw_faces = async (common) => {
 
   }
 
-
-
-
 }
 
 
@@ -588,27 +414,153 @@ const action = async (common) => {
   DrawSchedule();
   navbar(common.page);
 
-  const team_seasons = await common.db.team_season.toArray();
-  const teams = await common.query_to_dict(await common.db.team.toArray(), 'one_to_one','team_id');
+  initialize_headlines();
 
-  $.each(team_seasons, function(ind, team_season){
-    team_seasons.team = teams[team_season.team_id];
-  });
-  const TeamInfoData = [];
 
-  var first_click = false;
-
-  $('#nav-team-stats-tab').on('click',async function(){
-    if (!(first_click)){
-      await draw_faces(common);
-
-      if (common.render_content.team_leaders.length > 0){
-        chart(common.render_content.conference_standings.conference_standings, common);
+    var first_click = false;
+    $('#nav-team-stats-tab').on('click', async function(){
+      console.log({first_click:first_click})
+      if ((first_click)){
+        return false;
       }
-    }
+      first_click = true;
 
-    first_click = true;
-  })
+      var team = common.render_content.team;
+      var player_team_seasons = common.render_content.player_team_seasons;
+      var db = common.db;
+      var season = common.season;
+
+        const conference_standings = await common.conference_standings(team.team_season.conference_season_id, [team.team_season.team_season_id],common);
+
+        player_team_seasons = player_team_seasons.filter(pts => pts.team_season_id == team.team_season.team_season_id);
+        const team_leaders = []
+        const team_leaders_raw = [
+          {stat_group: 'passing', stat: 'yards', display: 'Leading Passer'},
+          {stat_group: 'rushing', stat: 'yards', display: 'Leading Rusher'},
+          {stat_group: 'receiving', stat: 'yards', display: 'Leading Receiver'},
+          {stat_group: 'defense', stat: 'sacks', display: 'Leading Pass Rusher'},
+          {stat_group: 'defense', stat: 'tackles', display: 'Leading Tackler'},
+          {stat_group: 'defense', stat: 'ints', display: 'Leading Pass Defender'},
+        ]
+        for (var stat_detail of team_leaders_raw){
+          player_team_seasons = player_team_seasons.sort(function(pts_a, pts_b){
+            return pts_b.season_stats[stat_detail.stat_group][stat_detail.stat] - pts_a.season_stats[stat_detail.stat_group][stat_detail.stat];
+          });
+
+          console.log('stat_detail', stat_detail, player_team_seasons[0])
+
+          if (player_team_seasons[0].season_stats[stat_detail.stat_group][stat_detail.stat] > 0){
+            stat_detail.player_team_season = player_team_seasons[0]
+            team_leaders.push(stat_detail)
+          }
+        }
+
+        console.log('team_leaders', team_leaders)
+
+        const team_stats = [
+          {display: 'Points Per Game', stats: {
+            for: {stat: 'points_per_game', sort: 'desc'},
+            against: {stat: 'points_allowed_per_game', sort: 'asc'},
+            diff: {stat: 'point_differential_per_game', sort: 'desc'}
+            },
+          },
+          {display: 'Yards Per Game', stats: {
+            for: {stat: 'yards_per_game', sort: 'desc'},
+            against: {stat: 'yards_allowed_per_game', sort: 'asc'},
+            diff: {stat: 'yards_per_game_diff', sort: 'desc'}
+            },
+          },
+          {display: 'Third Down Efficiency', stats: {
+            for: {stat: 'third_down_conversion_percentage', sort: 'desc'},
+            against: {stat: 'defensive_third_down_conversion_percentage', sort: 'asc'},
+            diff: {stat: 'third_down_conversion_percentage_diff', sort: 'desc'}
+            },
+          },
+          {display: 'Takeaways', stats: {
+            for: {stat: 'takeaways', sort: 'desc'},
+            against: {stat: 'turnovers', sort: 'asc'},
+            diff: {stat: 'turnover_diff', sort: 'desc'}
+            },
+          },
+        ]
+
+        var all_team_seasons = await db.team_season.where({season:season}).toArray();
+
+        var tier_map = {
+          1: 'elite',
+          2: 'great',
+          3: 'good',
+          4: 'average',
+          5: 'poor',
+          6: 'bad',
+          7: 'terrible',
+        }
+
+        //console.log('team_stats', team_stats)
+        for (var stat_group of team_stats){
+          //console.log('stat_group', stat_group)
+          for (var stat_detail_key in  stat_group.stats){
+            var stat_detail = stat_group.stats[stat_detail_key];
+            console.log({stat_detail:stat_detail, stat_detail_key:stat_detail_key, stat_group:stat_group,team_stats:team_stats })
+            stat_detail.team_value = team.team_season[stat_detail.stat];
+
+            all_team_season_stat_value = all_team_seasons.map(ts => ts[stat_detail.stat]).sort(function(value_a, value_b){
+              if (stat_detail.sort == 'desc'){
+                return value_b - value_a;
+              }
+              else {
+                return value_a - value_b;
+              }
+              return 0;
+            });
+
+            stat_detail.team_rank = all_team_season_stat_value.indexOf(team.team_season[stat_detail.stat]) + 1
+            stat_detail.total_teams = all_team_seasons.length;
+            console.log({all_team_seasons:all_team_seasons, stat_detail:stat_detail, all_team_season_stat_value:all_team_season_stat_value})
+            stat_detail.tier = tier_map[common.tier_placement(7, all_team_seasons.length, 'Normal', stat_detail.team_rank)]
+          }
+        }
+
+        if (team_leaders.length > 0){
+          chart(conference_standings.conference_standings, common);
+        }
+
+        var url = '/static/html_templates/team/team/conference_standings_tbody_template.html'
+        var html = await fetch(url);
+        html = await html.text();
+
+        var renderedHtml = await common.nunjucks_env.renderString(html, {conference_standings:conference_standings})
+        console.log({renderedHtml:renderedHtml})
+
+        $('#conference_standings_tbody').append(renderedHtml);
+
+
+        var url = '/static/html_templates/team/team/team_leaders_div_template.html'
+        var html = await fetch(url);
+        html = await html.text();
+
+        var renderedHtml = await common.nunjucks_env.renderString(html, {team_leaders:team_leaders})
+        console.log({renderedHtml:renderedHtml})
+
+        $('#team_leaders').append(renderedHtml);
+
+        await draw_faces(common);
+
+
+        var url = '/static/html_templates/team/team/team_stats_div_template.html'
+        var html = await fetch(url);
+        html = await html.text();
+
+        var renderedHtml = await common.nunjucks_env.renderString(html, {team_stats:team_stats})
+        console.log({renderedHtml:renderedHtml})
+
+        $('#team_stats').append(renderedHtml);
+
+        await draw_faces(common);
+
+
+
+    })
 
 }
 
@@ -1159,6 +1111,8 @@ $(document).ready(async function(){
   const common = await common_functions('/World/:world_id/Team/:team_id/');
 
   await getHtml(common);
+  var endTime = performance.now()
+  console.log(`Time taken to first HTML draw: ${parseInt(endTime - startTime)} ms` );
   await action(common);
   await common.add_listeners(common);
 

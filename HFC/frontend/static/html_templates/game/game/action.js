@@ -22,6 +22,8 @@ const getHtml = async (common) => {
   var team_seasons_by_team_season_id =  await index_group(team_seasons, 'index', 'team_season_id');
   var teams_by_team_id =  await index_group(await db.team.bulkGet(team_ids), 'index', 'team_id')
 
+  var team_stat_box = []
+
   $.each(team_seasons_by_team_season_id, function(ind, team_season){
     team_season.team = teams_by_team_id[team_season.team_id];
   });

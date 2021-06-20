@@ -95,6 +95,16 @@ const getHtml = async (common) => {
 
         min_national_rank = Math.min(game.home_team_game.team_season.national_rank, game.away_team_game.team_season.national_rank)
         game.summed_national_rank = game.home_team_game.team_season.national_rank + game.away_team_game.team_season.national_rank + min_national_rank;
+
+        game.world_page_filter_attributes = 'AllGame=1 '
+        console.log({'game.away_team_game.national_rank': game.away_team_game.team_season.national_rank, 'game.home_team_game.national_rank': game.home_team_game.team_season.national_rank})
+        if (game.away_team_game.team_season.national_rank <= 25 || game.home_team_game.team_season.national_rank <= 25){
+          game.world_page_filter_attributes += 'Top25Game=1 '
+        }
+        else {
+          game.world_page_filter_attributes += 'Top25Game=0 '
+        }
+
       })
 
       this_week_games = this_week_games.sort(function(a, b) {
@@ -165,6 +175,38 @@ const getHtml = async (common) => {
         console.log('ba_add', ba_add);
 
       });
+
+      var InitialBoxScore = $('.recent-gameview-tab')[0];
+
+      var SelectedTeamID = $(InitialBoxScore).attr('TeamID');
+      $('.upcoming-gameview-tab').on('click', function(event, target) {
+        console.log('clicked this', event, target)
+
+          var ClickedTab = $(event.target)
+          //console.log('ClickedTab', ClickedTab);
+          var ClickedTabParent = ClickedTab.closest('.boxscore-bar').attr('id');
+          var SelectedGameFilterSelection = ClickedTab.attr('GameFilterSelection');
+
+          $.each($('#'+ClickedTabParent+' > .selected-upcoming-gameview-tab'), function(index, tab){
+            var TargetTab = $(tab);
+            $(TargetTab).removeClass('selected-upcoming-gameview-tab');
+            var TargetTabParent = TargetTab.closest('.boxscore-bar').attr('id');
+
+
+            var UnselectedTeamID = TargetTab.attr('TeamID');
+            var UnselectedGameID = TargetTab.attr('GameID');
+
+            $('.team-highlights[TeamID="'+UnselectedTeamID+'"][GameID="'+UnselectedGameID+'"]').addClass('w3-hide')
+          });
+
+          console.log('Trying to filter ' , '.worldUpcomingTable['+SelectedGameFilterSelection+'="1"]', $('.worldUpcomingTable['+SelectedGameFilterSelection+'="1"]'));
+          $('.worldUpcomingTable['+SelectedGameFilterSelection+'="1"]').removeClass('w3-hide');
+          $('.worldUpcomingTable['+SelectedGameFilterSelection+'="0"]').addClass('w3-hide');
+
+          $(ClickedTab).addClass('selected-upcoming-gameview-tab');
+          $('.team-highlights[TeamID="'+SelectedTeamID+'"]').removeClass('w3-hide')
+
+        });
     }
 
 $(document).ready(async function(){

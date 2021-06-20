@@ -1,0 +1,122 @@
+<div class='ext_NavBar'>
+  {% include "../../static/html_templates/ext_NavBar.html" %}
+</div>
+<style>
+  #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
+    border-bottom: 2px solid black;
+  }
+</style>
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
+
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "../../static/html_templates/Scoreboard.html" %}
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-season-records-tab" style="background-color: #{{page.SecondaryColor}};">Season Records</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-game-records-tab">Game Records</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-season-records" >
+        <div class='w3-display-container' >
+
+            {% for team_leader_category in team_leader_categories%}
+            {% if loop.index % 3 == 1 %}
+            <div class='w3-row-padding'>
+            {% endif %}
+            <div class="w3-col s4">
+              <div class="w3-card margin-bottom-24">
+                <div class='team-primary-background-bar'>
+                  {{team_leader_category.category_name}}
+                </div>
+
+                <table class='w3-table-all no-border'>
+                  <tbody class="">
+                    <tr>
+                      <td class="center-text bold font20" style='background-color: #{{team_leader_category.team_seasons[0].team_season.team.team_color_primary_hex}}; color:white;'>
+                        1
+                      </td>
+                      <td class="" style='background-color: #{{team_leader_category.team_seasons[0].team_season.team.team_color_primary_hex}}; color:white;'>
+                        <a href="{{team_leader_category.team_seasons[0].team_season.team.team_href}}">
+                          <img src="{{team_leader_category.team_seasons[0].team_season.team.team_logo}}" alt="" class='logo-50'>
+                        </a>
+                      </td>
+                      <td class="" colspan='1'>
+                        <div class="inline-block">
+                          <div class="font16">
+                            <a href="{{team_leader_category.team_seasons[0].team_season.team.team_href}}">
+                              {{team_leader_category.team_seasons[0].team_season.team.full_name}}
+                            </a>
+                          </div>
+                          <div class="font10">
+                            {{team_leader_category.team_seasons[0].team_season.season}} Season
+                          </div>
+                        </div>
+
+
+
+                      </td>
+                      <td class="center-text">
+                        <div class="font20">
+                          {{team_leader_category.team_seasons[0].value}}
+                        </div>
+                        <div class="font10">
+                          {{team_leader_category.category_abbr}}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class='center-text'>Rank</th>
+                      <th colspan='2'>Team</th>
+                      <th class='center-text'>{{team_leader_category.category_abbr}}</th>
+                    </tr>
+                    {% for team_obj in team_leader_category.team_seasons.slice(1,5)%}
+                    <tr>
+                      <td class='center-text bold' style='background-color: #{{team_obj.team_season.team.team_color_primary_hex}}; color:white;'>
+                        {{loop.index + 1}}
+                      </td>
+                      <td style='background-color: #{{team_obj.team_season.team.team_color_primary_hex}}' class='center-text'>
+                        <a href="{{team_obj.team_season.team.team_href}}">
+                          <img src="{{team_obj.team_season.team.team_logo}}" alt="" class='logo-30'>
+                        </a>
+                      </td>
+                      <td>
+                        <div class="">
+                          <span>
+                            <a href="{{team_obj.team_season.team.team_href}}">{{team_obj.team_season.team.full_name}}</a>
+                          </span>
+                        </div>
+                        <div class="font10">
+                          {{team_obj.team_season.season}} Season
+                        </div>
+
+                      </td>
+                      <td class='center-text'>{{team_obj.value}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {% if loop.index % 3 == 0 %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+      </div>
+      <div class="tab-content" style="display:block;"  id="nav-game-records" >
+
+      </div>
+    </div>
+  </div>
+</body>

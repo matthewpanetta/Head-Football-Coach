@@ -1,0 +1,52 @@
+  <div class="w3-display-container">
+    <div class="w3-row-padding w3-margin-bottom">
+      <div class="w3-col l12 mw1100">
+        <div class=" w3-card">
+
+        <table class='w3-table-all' id='HeismanRaceTable'>
+
+          <tbody>
+            {% for player_team_season in player_team_seasons%}
+            <tr playerid='{{player_team_season.player.player_id}}'>
+              <td  class='font32 white-text column-shrink center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">{{loop.index}}</td>
+              <td  class='center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">
+                <a href="{{Player.PlayerTeamHref}}">
+                  <img src="{{player_team_season.team_season.team.team_logo_100}}" class='logo-90' alt="">
+                </a>
+              </td>
+              <td class='column-shrink center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">
+                <div id='heisman-face-{{player_team_season.player.player_id}}' player_id='{{player_team_season.player.player_id}}'  class='PlayerFace-90 PlayerFace-Headshot' style='background-color: white; border-color: #{{player_team_season.team_season.team.team_color_secondary_hex}}'>
+                </div>
+              </td>
+              <td>
+                <div class="font32 bold font-black">
+                  <a href="{{player_team_season.player.player_href}}">
+                    {{player_team_season.player.full_name}}
+                  </a>
+                </div>
+                <div class="">
+                  <a href="{{player_team_season.team_season.team.team_href}}">
+                    {{player_team_season.team_season.team.full_name}}
+                  </a>
+                </div>
+                <div class="">
+                  <span>{{player_team_season.position}}</span>
+                  <span>{{player_team_season.class.class_name}}</span>
+                </div>
+              </td>
+              <td>
+                  <ul class='no-list-style'>
+                    {% for stat in player_team_season.top_stats%}
+                    <li>{{stat.display}}</li>
+                    {% endfor %}
+                  </ul>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      </div>
+    </div>
+  </div>
