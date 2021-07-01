@@ -23,7 +23,7 @@ const getHtml = async (common) => {
       //END TEST
 
       const NavBarLinks = await common.nav_bar_links({
-        path: 'World',
+        path: 'Overview',
         group_name: 'World',
         db: db
       });
@@ -218,6 +218,16 @@ $(document).ready(async function(){
   await action(common);
   await common.add_listeners(common);
   await common.initialize_scoreboard();
+
+  console.log({common: common});
+
+  const db = common.db;
+
+  const weeks = await db.week.where({season: common.season}).toArray();
+
+  const this_week = weeks.filter(w => w.is_current)[0];
+
+  await choose_all_americans(this_week, common)
 
   var endTime = performance.now()
   console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );

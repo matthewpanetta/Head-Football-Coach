@@ -75,7 +75,9 @@
 
       weekly_awards = index_group_sync(weekly_awards, 'group', 'conference_season_id');
 
-      console.log({weekly_awards:weekly_awards});
+      console.log({weekly_awards:weekly_awards, conference_seasons:conference_seasons});
+
+      conference_seasons.unshift({conference_season_id: null, conference: {conference_name: 'National'}})
 
       conference_seasons = nest_children(conference_seasons, weekly_awards, 'conference_season_id', 'weekly_awards')
 
@@ -140,6 +142,14 @@
 
     }
 
+    const last_action = async (common) => {
+      const db = common.db;
+
+      draw_faces(common, '');
+
+
+    }
+
 
 
     const draw_faces = async (common, parent_div) => {
@@ -162,8 +172,6 @@
 
         face_div_by_player_id[parseInt($(elem).attr('player_id'))].push(elem)
       })
-
-      console.log({face_div_by_player_id: face_div_by_player_id})
 
       const players = await db.player.bulkGet(player_ids);
       var player_team_seasons = await db.player_team_season.where('player_id').anyOf(player_ids).toArray();
@@ -191,7 +199,6 @@
 
 
         for (var elem of elems){
-          console.log({"player.player_face": player.player_face, face: {jersey: player.team.jersey, teamColors: player.team.jersey.teamColors}," $(elem).attr('id')": $(elem).attr('id')})
           common.display_player_face(player.player_face, {jersey: player.team.jersey, teamColors: player.team.jersey.teamColors}, $(elem).attr('id'));
         }
 
@@ -211,6 +218,7 @@
       await action(common);
       await common.add_listeners(common);
       await common.initialize_scoreboard();
+      await last_action(common);
 
       var endTime = performance.now()
       console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );

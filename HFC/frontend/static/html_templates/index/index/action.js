@@ -834,6 +834,8 @@
         const team_games_created = await db.team_game.bulkPut(team_games_to_create);
         //team_season_updated = await db.team_season.bulkPut(team_seasons_to_update);
 
+        //await choose_preseason_all_americans(this_week, common);
+
         const current_league_season = await db.league_season.where({season: season}).first();
         const world = await ddb.world.get({world_id: world_id});
          const user_team = await db.team.get({team_id: current_league_season.user_team_id});

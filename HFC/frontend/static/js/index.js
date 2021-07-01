@@ -49,7 +49,7 @@ class headline {
 }
 
 class award {
-	constructor(player_team_season_id, player_team_game_id, week_id, season, award_group, award_group_type, award_team_set,award_timeframe, conference_season_id) {
+	constructor(player_team_season_id, player_team_game_id, week_id, season, award_group, award_group_type, award_team_set,award_timeframe, conference_season_id, award_team) {
 		this.week_id = week_id;
 		this.player_team_season_id = player_team_season_id;
 		this.player_team_game_id = player_team_game_id;
@@ -59,6 +59,7 @@ class award {
 		this.conference_season_id = conference_season_id;
 		this.award_group_type = award_group_type; //offense, defense, QB, RB, etc
 		this.award_timeframe = award_timeframe // Week, Season, Preseason, Playoffs
+		this.award_team = award_team; //First, Second, National
 	}
 }
 
@@ -1955,7 +1956,12 @@ const recent_games = async(common) => {
   const current_week = all_weeks.filter(w => w.is_current)[0];
 
   const all_weeks_by_week_id = await index_group(all_weeks, 'index', 'week_id');
+
   const previous_week = all_weeks_by_week_id[current_week.week_id - 1];
+
+	if (previous_week == undefined){
+		return null;
+	}
 
   var games_in_week = await db.game.where({week_id: previous_week.week_id}).toArray();
 
@@ -2083,7 +2089,7 @@ const calculate_game_score = (player_team_game, player_team_season, team_game, t
         {stat_group: 'passing', stat: 'tds',    point_to_stat_ratio: 4.0 / 1, display: ' pass TDs'},
         {stat_group: 'passing', stat: 'completions', point_to_stat_ratio: 0.0 / 10, display: ' comp'},
         {stat_group: 'passing', stat: 'attempts', point_to_stat_ratio: -1.0 / 5, display: ' att'},
-        {stat_group: 'passing', stat: 'ints',    point_to_stat_ratio: -4.0 / 1, display: ' picks'},
+        {stat_group: 'passing', stat: 'ints',    point_to_stat_ratio: -6.0 / 1, display: ' picks'},
         {stat_group: 'passing', stat: 'sacks',  point_to_stat_ratio: 0.0 / 4, display: ' sacked'},
         {stat_group: 'receiving', stat: 'receptions', point_to_stat_ratio: 1.0 / 2, display: ' rec.'},
         {stat_group: 'receiving', stat: 'yards', point_to_stat_ratio: 1.0 / 15, display: ' rec. yards'},
@@ -3226,7 +3232,7 @@ const choose_players_of_the_week = async (this_week, common) => {
 
 	for (const position_group in player_team_games_by_position_group){
 		var position_group_player_team_games = player_team_games_by_position_group[position_group];
-		var player_team_game = player_team_games[0]
+		var player_team_game = position_group_player_team_games[0]
 		var a = new award(player_team_game.player_team_season_id, player_team_game.player_team_game_id, this_week.week_id, this_week.season, 'position_group', position_group, 'national', 'week', null)
 		awards_to_save.push(a)
 	}
@@ -3246,11 +3252,93 @@ const choose_players_of_the_week = async (this_week, common) => {
 	}
 
 
-
-
 	await db.award.bulkAdd(awards_to_save)
 
 	console.log({player_team_games:player_team_games, player_team_games_by_conference_season_id:player_team_games_by_conference_season_id, player_team_games_by_position_group:player_team_games_by_position_group})
+
+}
+
+
+const choose_all_americans = async (this_week, common) => {
+	const db = common.db;
+
+	const position_count_map = {
+		'QB': 1,
+		'RB': 2,
+		'FB': 0,
+		'WR': 3,
+		'TE': 1,
+		'OT': 2,
+		'OG': 2,
+		'OC': 1,
+
+		'EDGE': 2,
+		'DL': 2,
+		'LB': 3,
+		'CB': 2,
+		'S': 2,
+
+		'K': 1,
+		'P': 1,
+	}
+
+	var player_team_seasons = await db.player_team_season.where({season: common.season}).toArray();
+	player_team_seasons = player_team_seasons.filter(pts => pts.season_stats.games.game_score > 0);
+	player_team_seasons = player_team_seasons.sort((pts_a, pts_b) => pts_b.season_stats.games.game_score - pts_a.season_stats.games.game_score)
+
+	const player_ids = player_team_seasons.map(pts => pts.player_id);
+	var players = await db.player.bulkGet(player_ids);
+	const players_by_player_id = index_group_sync(players, 'index', 'player_id');
+
+	const team_season_ids = player_team_seasons.map(pts => pts.team_season_id);
+	var team_seasons = await db.team_season.bulkGet(team_season_ids);
+
+	const team_ids = team_seasons.map(ts => ts.team_id);
+	var teams = await db.team.bulkGet(team_ids);
+	const teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+
+	team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
+	const team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+	player_team_seasons = nest_children(player_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+	player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
+
+	console.log({player_team_seasons:player_team_seasons})
+	const conference_season_ids = player_team_seasons.map(pts => get(pts, 'team_season.conference_season_id'));
+
+	const player_team_seasons_by_conference_season_id = index_group_sync(player_team_seasons, 'group', 'team_season.conference_season_id');
+	var player_team_seasons_by_position = index_group_sync(player_team_seasons, 'group', 'position');
+
+	var awards_to_save = []
+
+	for (const position in player_team_seasons_by_position){
+		var position_player_team_seasons = player_team_seasons_by_position[position];
+		for (var i = 0; i< position_count_map[position]; i++){
+			player_team_season = player_team_seasons_by_position[position][i]
+			var a = new award(player_team_season.player_team_season_id, null, this_week.week_id, this_week.season, 'position', position, 'national', 'regular season', null)
+			awards_to_save.push(a)
+		}
+	}
+
+	for (const conference_season_id in player_team_seasons_by_conference_season_id) {
+		player_team_seasons = player_team_seasons_by_conference_season_id[conference_season_id];
+
+		var player_team_seasons_by_position = index_group_sync(player_team_seasons, 'group', 'position');
+
+		for (const position in player_team_seasons_by_position){
+			var position_player_team_seasons = player_team_seasons_by_position[position];
+			for (var i = 0; i< position_count_map[position]; i++){
+				player_team_season = player_team_seasons_by_position[position][i]
+				var a = new award(player_team_season.player_team_season_id, null, this_week.week_id, this_week.season, 'position', position, 'national', 'regular season', null)
+				awards_to_save.push(a)
+			}
+		}
+	}
+
+
+	//await db.award.bulkAdd(awards_to_save)
+
+	console.log({awards_to_save:awards_to_save, player_team_seasons:player_team_seasons, player_team_seasons_by_conference_season_id:player_team_seasons_by_conference_season_id, player_team_seasons_by_position:player_team_seasons_by_position})
 
 }
 
@@ -3337,6 +3425,10 @@ const sim_action = async(duration, common) => {
       await calculate_national_rankings(this_week, all_weeks, common);
     }
 
+		if (this_week.week_name == 'Bowl Week 3'){
+			await choose_all_americans(this_week, common);
+		}
+
     if (this_week.week_name == 'Week 15'){
       await schedule_conference_championships(this_week, next_week, common);
     }
@@ -3344,7 +3436,6 @@ const sim_action = async(duration, common) => {
     if (this_week.week_name == 'Early Signing Day'){
       await schedule_bowl_season(all_weeks, common);
     }
-
 
      await choose_players_of_the_week(this_week, common);
      // TODO await weekly_recruiting(this_week, common);
