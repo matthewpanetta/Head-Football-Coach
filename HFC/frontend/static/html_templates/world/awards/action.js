@@ -93,7 +93,7 @@
 
       console.log({weekly_awards:weekly_awards, conference_seasons:conference_seasons})
 
-      player_team_seasons = player_team_seasons.sort((pts_a, pts_b) => pts_b.season_stats.games.game_score - pts_a.season_stats.games.game_score);
+      player_team_seasons = player_team_seasons.sort((pts_a, pts_b) => pts_b.season_stats.games.weighted_game_score - pts_a.season_stats.games.weighted_game_score);
 
       player_team_seasons = player_team_seasons.slice(0,10)
 
@@ -137,15 +137,38 @@
     const action = async (common) => {
       const db = common.db;
 
-      //draw_faces(common);
-
-
     }
 
     const last_action = async (common) => {
       const db = common.db;
 
-      draw_faces(common, '');
+      face_in_view()
+      $(window).scroll(face_in_view);
+
+
+    function isScrolledIntoView(elem) {
+        var docViewTop = $(window).scrollTop();
+        var docViewBottom = docViewTop + $(window).height();
+
+        var elemTop = $(elem).offset().top;
+        var elemBottom = elemTop;
+
+        //console.log({elem:elem,'$(window).height()': $(window).height(), 'return': (elemBottom <= docViewBottom) && (elemTop >= docViewTop), elemTop: elemTop, elemBottom:elemBottom, docViewTop:docViewTop, docViewBottom:docViewBottom})
+
+        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+    }
+
+    function face_in_view() {
+
+        $('.PlayerFace-Headshot[face_drawn="false"]').each( function(){
+          //console.log($(this), isScrolledIntoView($(this)));
+          if (isScrolledIntoView($(this))){
+            draw_faces(common, '#'+$(this).parent().attr('id'))
+            $(this).attr('face_drawn', 'true')
+          }
+        })
+
+    }
 
 
     }
@@ -160,14 +183,18 @@
       const player_ids = [];
       const face_div_by_player_id = {};
 
+      console.log($(parent_div+' .PlayerFace-Headshot'));
+
       $(parent_div+' .PlayerFace-Headshot').each(function(ind, elem){
         if ($(elem).find('svg').length > 0){
           return true;
         }
 
-        player_ids.push(parseInt($(elem).attr('player_id')))
+
         if (!(parseInt($(elem).attr('player_id')) in face_div_by_player_id)) {
           face_div_by_player_id[parseInt($(elem).attr('player_id'))] = [];
+
+          player_ids.push(parseInt($(elem).attr('player_id')))
         }
 
         face_div_by_player_id[parseInt($(elem).attr('player_id'))].push(elem)

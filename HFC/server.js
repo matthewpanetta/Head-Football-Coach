@@ -16,6 +16,7 @@ const routes = [
   {route: "/World/:world_id/PlayerStats/Season/:season", path: 'almanac/player_stats/base.html'},
   {route: "/World/:world_id/TeamStats/Season/:season", path: 'almanac/team_stats/base.html'},
 
+  {route: "/World/:world_id/History", path: 'almanac/history/base.html'},
   {route: "/World/:world_id/PlayerRecords", path: 'almanac/player_records/base.html'},
   {route: "/World/:world_id/TeamRecords", path: 'almanac/team_records/base.html'},
 

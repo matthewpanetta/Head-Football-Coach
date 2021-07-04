@@ -418,6 +418,7 @@
                                                 season_stats: {
                                                   games: {
                                                       game_score:0,
+                                                      weighted_game_score: 0,
                                                       games_played:0,
                                                       games_started:0,
                                                       plays_on_field:0,

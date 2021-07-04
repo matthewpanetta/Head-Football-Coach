@@ -230,6 +230,7 @@
              }
            }},
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
+             console.log({game: game})
              if (game.was_played){
                $(td).html(`
                   <span class='font10'>${game.team_game.top_stats[0].player_team_game.player_team_season.position}</span>
@@ -238,6 +239,7 @@
                   </a>
                   <span> - ${game.team_game.team_season.team.team_abbreviation}</span>
                   <ul class='no-list-style'>
+                    
                     <li>${game.team_game.top_stats[0].top_stats[0].display}</li>
                     <li>${game.team_game.top_stats[0].top_stats[1].display}</li>
                   </ul>
