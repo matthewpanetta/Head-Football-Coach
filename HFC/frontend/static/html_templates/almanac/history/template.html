@@ -44,6 +44,7 @@
                     {% for season in seasons%}
                     <tr>
                       <td class='font16'>{{season.season}}</td>
+                      {% if season.national_champion%}
                       <td class='colgroup-border-right' style='background-color: #{{season.national_champion.team.team_color_primary_hex}}'>
                         <a href="{{season.national_champion.team.team_href}}">
                           <img src="{{season.national_champion.team.team_logo}}" alt="" class='logo-50'>
@@ -52,12 +53,19 @@
                           {{season.national_champion.team.full_name}}
                         </a>
                       </td>
+                      {% else%}
+                      <td></td>
+                      {% endif %}
                       {% for team_season in season.final_four_runner_ups %}
+                      {% if team_season%}
                       <td class='center-text' style='background-color: #{{team_season.team.team_color_primary_hex}}'>
                           <a href="{{team_season.team.team_href}}">
                             <img src="{{team_season.team.team_logo}}" alt="" class='logo-50'>
                           </a>
                       </td>
+                      {% else%}
+                      <td></td>
+                      {% endif %}
                       {% endfor %}
                       <td class='center-text colgroup-border-right colgroup-border-left'  style='background-color: #{{season.preseason_number_1.team.team_color_primary_hex}}'>
                         <a href="{{season.preseason_number_1.team.team_href}}">
@@ -65,7 +73,7 @@
                         </a>
                       </td>
 
-
+                      {% if season.heisman_winner%}
                       <td  class='center-text' style="background-color: #{{season.heisman_winner.player_team_season.team_season.team.team_color_primary_hex}}">
                         <a href="{{season.heisman_winner.player_team_season.player.player_href}}">
                           <img src="{{season.heisman_winner.player_team_season.team_season.team.team_logo_100}}" class='logo-50' alt="">
@@ -91,6 +99,9 @@
                           <span>{{season.heisman_winner.player_team_season.class.class_name}}</span>
                         </div>
                       </td>
+                      {% else%}
+                      <td></td><td></td><td></td>
+                      {% endif%}
 
                       <td>
                         <div class="">

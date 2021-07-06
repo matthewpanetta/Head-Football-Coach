@@ -10,6 +10,9 @@
 
       var world_obj = {};
 
+      const weeks = await db.week.where({season: common.season}).toArray();
+      const this_week = weeks.filter(w => w.is_current)[0];
+
       const NavBarLinks = await common.nav_bar_links({
         path: 'Player Stats',
         group_name: 'Almanac',
@@ -64,24 +67,33 @@
 
       for (var season of seasons){
 
-        var season_team_seasons = team_seasons_by_season[season.season]
-
-        season.awards = awards_by_season[season.season]
-
-        season.heisman_winner = season.awards.filter(a => a.award_group_type == 'Heisman')[0];
-
-        season.preseason_number_1 = season_team_seasons.filter(ts => ts.rankings.national_rank[ts.rankings.national_rank.length - 1] == 1)[0]
-        season.national_champion = season_team_seasons.filter(ts => ts.results.national_champion)[0]
-
-        season.final_four_runner_ups = season_team_seasons.filter(ts => ts.results.final_four && !(ts.results.national_champion))
-
-        season.team_seasons = season_team_seasons;
+        console.log({season: season})
 
         season.links = []
         season.links.push({'display': 'Schedule', 'href': `/World/${world_id}/Schedule/${season.season}`});
         season.links.push({'display': 'Standings', 'href': `/World/${world_id}/Standings/${season.season}`});
         season.links.push({'display': 'Player Stats', 'href': `/World/${world_id}/PlayerStats/${season.season}`});
         season.links.push({'display': 'Team Stats', 'href': `/World/${world_id}/TeamStats/${season.season}`});
+
+        var season_team_seasons = team_seasons_by_season[season.season]
+        season.preseason_number_1 = season_team_seasons.filter(ts => ts.rankings.national_rank[ts.rankings.national_rank.length - 1] == 1)[0]
+
+        if (season.is_current_season && !(this_week.week_name == 'Season Recap')){
+          season.final_four_runner_ups = [null,null,null]
+          continue;
+        }
+
+
+        season.awards = awards_by_season[season.season]
+
+        season.heisman_winner = season.awards.filter(a => a.award_group_type == 'Heisman')[0];
+
+        season.national_champion = season_team_seasons.filter(ts => ts.results.national_champion)[0]
+
+        season.final_four_runner_ups = season_team_seasons.filter(ts => ts.results.final_four && !(ts.results.national_champion))
+
+        season.team_seasons = season_team_seasons;
+
 
         console.log({season: season})
       }

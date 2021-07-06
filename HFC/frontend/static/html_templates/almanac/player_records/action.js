@@ -7,7 +7,7 @@
       var world_obj = {};
 
       const NavBarLinks = await common.nav_bar_links({
-        path: 'Player Stats',
+        path: 'Player Records',
         group_name: 'Almanac',
         db: db
       });

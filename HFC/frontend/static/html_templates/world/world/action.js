@@ -227,7 +227,7 @@ $(document).ready(async function(){
 
   const this_week = weeks.filter(w => w.is_current)[0];
 
-  await choose_all_americans(this_week, common)
+  //await choose_all_americans(this_week, common)
 
   var endTime = performance.now()
   console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );

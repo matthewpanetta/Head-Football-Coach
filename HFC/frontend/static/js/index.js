@@ -466,6 +466,32 @@ class team {
     }
 }
 
+class league_season {
+	constructor(init_obj, previous_season){
+
+		this.season = init_obj.season;
+		this.world_id = init_obj.world_id;
+		this.is_current_season = true;
+
+		this.preseason_tasks = {
+				 		 user_cut_players: false,
+				 		 user_set_gameplan: false,
+				 		 user_set_depth_chart: false,
+				 	 }
+
+		if (previous_season == undefined){
+			this.user_team_id = Math.ceil(Math.random() * init_obj.num_teams)
+			this.captains_per_team = init_obj.captains_per_team;
+			this.players_per_team = init_obj.players_per_team;
+		}
+		else {
+			this.user_team_id = previous_season.user_team_id
+			this.captains_per_team = previous_season.captains_per_team;
+			this.players_per_team = previous_season.players_per_team;
+		}
+	}
+}
+
 
 class team_season {
 
@@ -928,6 +954,44 @@ class team_season {
 
 class player {
 
+	constructor(init_data){
+		this.player_id = init_data.player_id;
+		this.name = init_data.name;
+		this.world_id = init_data.world_id;
+		this.hometown = init_data.hometown;
+		this.position = init_data.position;
+		this.ethnicity = init_data.ethnicity;
+		this.body = init_data.body;
+
+		this.redshirt = {previous: false, current: false};
+		this.jersey_number = 21;
+		this.recruiting =  {
+			is_recruit: false,
+			speed: 1,
+			stars: 4,
+			signed: false,
+			stage: 'Signed',
+			rank: {
+				national: 100,
+				position_rank: 20,
+				state: 10
+			},
+			measurables: {
+				fourty_yard_dash: 4.5,
+				bench_press_reps: 10,
+				vertical_jump: 31
+			}
+		};
+		this.personality =  {
+			leadership: 80,
+			work_ethic: 75,
+			desire_for_winner: 50,
+			loyalty: 70,
+			desire_for_playtime: 90
+		};
+
+	}
+
   get full_name(){
     return `${this.name.first} ${this.name.last}`
   }
@@ -949,6 +1013,176 @@ class player {
 }
 
 class player_team_season {
+
+
+	constructor(init_data){
+
+		this.post_season_movement = null; //[quit, graduate, draft, transfer]
+		this.top_stats = [];
+		this.is_captain = false;
+		this.ratings = {
+			athleticism: {
+				strength: Math.floor(Math.random() * 100),
+				agility: Math.floor(Math.random() * 100),
+				speed: Math.floor(Math.random() * 100),
+				acceleration: Math.floor(Math.random() * 100),
+				stamina: Math.floor(Math.random() * 100),
+				jumping: Math.floor(Math.random() * 100),
+				injury: Math.floor(Math.random() * 100),
+			},
+			passing: {
+				throwing_power: Math.floor(Math.random() * 100),
+				short_throw_accuracy: Math.floor(Math.random() * 100),
+				medium_throw_accuracy: Math.floor(Math.random() * 100),
+				deep_throw_accuracy: Math.floor(Math.random() * 100),
+				throw_on_run: Math.floor(Math.random() * 100),
+				throw_under_pressure: Math.floor(Math.random() * 100),
+				play_action: Math.floor(Math.random() * 100),
+			},
+			rushing: {
+				elusiveness: Math.floor(Math.random() * 100),
+				ball_carrier_vision: Math.floor(Math.random() * 100),
+				break_tackle: Math.floor(Math.random() * 100),
+				carrying: Math.floor(Math.random() * 100),
+			},
+			receiving: {
+				catching: Math.floor(Math.random() * 100),
+				catch_in_traffic: Math.floor(Math.random() * 100),
+				route_running: Math.floor(Math.random() * 100),
+				release: Math.floor(Math.random() * 100),
+			},
+			defense: {
+				hit_power: Math.floor(Math.random() * 100),
+				tackle: Math.floor(Math.random() * 100),
+				pass_rush: Math.floor(Math.random() * 100),
+				block_shedding: Math.floor(Math.random() * 100),
+				pursuit: Math.floor(Math.random() * 100),
+				play_recognition: Math.floor(Math.random() * 100),
+				man_coverage: Math.floor(Math.random() * 100),
+				zone_coverage: Math.floor(Math.random() * 100),
+				press: Math.floor(Math.random() * 100),
+			},
+			blocking: {
+				pass_block: Math.floor(Math.random() * 100),
+				run_block: Math.floor(Math.random() * 100),
+				impact_block: Math.floor(Math.random() * 100),
+			},
+			kicking: {
+				kick_power: Math.floor(Math.random() * 100),
+				kick_accuracy: Math.floor(Math.random() * 100),
+			},
+			overall: {
+				awareness: Math.floor(Math.random() * 100),
+				overall: Math.floor(normal_trunc(75 , 3, 0, 99)),
+			}
+		};
+		this.season_stats =  {
+			games: {
+					game_score:0,
+					weighted_game_score: 0,
+					games_played:0,
+					games_started:0,
+					plays_on_field:0,
+					team_games_played:0,
+					points: 0,
+				},
+			top_stats : [],
+			passing : {
+					completions: 0,
+					attempts: 0,
+					yards: 0,
+					tds: 0,
+					ints:0,
+					sacks:0,
+					sack_yards:0,
+				},
+				rushing : {
+					carries:0,
+					yards:0,
+					tds:0,
+					over_20:0,
+					lng:0,
+					broken_tackles:0,
+					yards_after_contact:0,
+				},
+
+				receiving : {
+					yards:0,
+					targets:0,
+					receptions:0,
+					tds:0,
+					yards_after_catch:0,
+					drops:0,
+					lng:0,
+					yards:0,
+				},
+				blocking : {
+					sacks_allowed:0,
+					pancakes:0,
+					blocks:0,
+				},
+				defense : {
+					tackles:0,
+					solo_tackles:0,
+					sacks:0,
+					tackles_for_loss:0,
+					deflections:0,
+					qb_hits:0,
+					tds:0,
+					ints:0,
+					int_yards:0,
+					int_tds:0,
+					safeties:0,
+				},
+				fumbles : {
+					fumbles: 0,
+					lost: 0,
+					recovered: 0,
+					forced: 0,
+					return_yards: 0,
+					return_tds: 0,
+				},
+				kicking : {
+					fga:0,
+					fgm:0,
+					fga_29:0,
+					fgm_29:0,
+					fga_39:0,
+					fgm_39:0,
+					fga_49:0,
+					fgm_49:0,
+					fga_50:0,
+					fgm_50:0,
+					lng:0,
+					xpa:0,
+					xpm:0,
+					kickoffs:0,
+					touchbacks:0,
+				},
+				punting: {
+					punts:0,
+					yards:0,
+					touchbacks:0,
+					within_20:0,
+				},
+				returning: {
+					kr_returns:0,
+					kr_yards:0,
+					kr_tds:0,
+					kr_lng:0,
+					pr_returns:0,
+					pr_yards:0,
+					pr_tds:0,
+					pr_lng:0,
+				}
+		}
+
+		for (const key in init_data){
+			this[key] = init_data[key]
+		}
+
+
+	}
 
   get completion_percentage() {
     if (this.season_stats.passing.attempts == 0){
@@ -1315,6 +1549,117 @@ const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(
     );
   };
 
+const create_team_season = async (data) => {
+
+	const common = data.common;
+	const db = common.db;
+
+	var teams = await db.team.toArray();
+	var team_seasons_tocreate = [];
+
+	var team_id = 1;
+	$.each(teams, function(ind, team){
+		var new_team_season = new team_season({team_id: team.team_id,
+																world_id: data.world_id,
+																season: data.season,
+																conference_name: team.conference_name,
+																conference_season_id: data.conferences[team.conference.conference_name].conference_season.conference_season_id,
+															})
+		team_seasons_tocreate.push(new_team_season);
+
+		team_id += 1;
+	});
+
+
+	var team_seasons_tocreate_added = await db.team_season.bulkAdd(team_seasons_tocreate);
+}
+
+const create_players = async (data) => {
+
+	const common = data.common;
+	const db = common.db;
+
+
+	var players_tocreate = [];
+	var player_team_seasons_tocreate = [];
+	var position = '';
+	var ethnicity = '';
+
+	const classes = ['FR', 'SO', 'JR', 'SR'];
+	const positions = ['QB', 'RB', 'WR', 'TE', 'OT', 'OG', 'OC', 'EDGE', 'DL', 'LB', 'CB', 'S', 'K', 'P'];
+	const position_ethnicity =    //numbers normalized from https://theundefeated.com/features/the-nfls-racial-divide/
+			{"QB":{"white":75,"black":15,"hispanic":5,"asian":5},"RB":{"white":15,"black":80,"hispanic":10,"asian":5},"WR":{"white":10,"black":85,"hispanic":5,"asian":5},"TE":{"white":50,"black":50,"hispanic":15,"asian":2},"OT":{"white":45,"black":55,"hispanic":15,"asian":1},"OG":{"white":40,"black":50,"hispanic":15,"asian":1},"OC":{"white":40,"black":50,"hispanic":15,"asian":1},"EDGE":{"white":20,"black":80,"hispanic":10,"asian":1},"DL":{"white":10,"black":80,"hispanic":10,"asian":1},"LB":{"white":25,"black":75,"hispanic":10,"asian":1},"CB":{"white":2,"black":100,"hispanic":10,"asian":2},"S":{"white":15,"black":80,"hispanic":10,"asian":5},"K":{"white":70,"black":10,"hispanic":25,"asian":25},"P":{"white":70,"black":10,"hispanic":25,"asian":25}}
+
+
+	var team_position_option = {};
+	var team_position_options = [
+			["QB","QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","P","P"],
+			["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"],
+			["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
+			["QB","QB","QB","RB","RB","RB","RB","RB","RB","RB","FB","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
+			["QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"]
+		]
+
+	const num_players_per_team = team_position_options[0].length;
+	//const num_players_per_team = 10;
+	const num_players_to_create = num_players_per_team * data.team_seasons_tocreate.length;
+
+	const player_names = await common.random_name(ddb, num_players_to_create);
+	const player_cities = await common.random_city(ddb, num_players_to_create);
+
+	const last_player = await db.player.orderBy('player_id').last();
+	const last_player_team_season = await db.player_team_season.orderBy('player_team_season_id').last();
+
+	var player_counter = 0;
+
+	var player_id_counter = 1, player_team=null;
+	var player_team_season_id_counter = 1;
+	if (last_player != undefined) {
+		player_id_counter = last_player.player_id + 1;
+	}
+	if (last_player_team_season != undefined) {
+		player_team_season_id_counter = last_player_team_season.player_team_season_id + 1;
+	}
+
+	$.each(data.team_seasons,  function(ind, team_season){
+		player_team = data.teams_by_team_id[team_season.team_id];
+		team_position_option = team_position_options[Math.floor(Math.random() * team_position_options.length)];
+		for(var i = 0; i<num_players_per_team; i++){
+			position = team_position_option[i];
+			body = common.body_from_position(position);
+			ethnicity = common.weighted_random_choice(position_ethnicity[position]);
+			players_tocreate.push(new player({
+															player_id: player_id_counter,
+															name:player_names[player_counter],
+															world_id: data.world_id,
+															position: position,
+															hometown: player_cities[player_counter],
+															ethnicity: ethnicity,
+															body: common.body_from_position(position)
+														}))
+
+			player_team_seasons_tocreate.push(new player_team_season({ player_id: player_id_counter,
+																					player_team_season_id: player_team_season_id_counter,
+																					team_season_id: team_season.team_season_id,
+																					season: data.season,
+																					position: position,
+																					class: {
+																						class_name: classes[Math.floor(Math.random() * classes.length)],
+																						redshirted: false
+																					},
+																					world_id: data.world_id,
+																				}));
+					player_counter +=1;
+					player_id_counter +=1;
+					player_team_season_id_counter +=1;
+		}
+	});
+
+	console.log({players_tocreate:players_tocreate, player_team_seasons_tocreate:player_team_seasons_tocreate})
+	var players_tocreate_added = await db.player.bulkAdd(players_tocreate);
+	var player_team_seasons_tocreate_added = await db.player_team_season.bulkAdd(player_team_seasons_tocreate);
+
+}
 
 
 const create_phase = async (season) => {
@@ -1322,7 +1667,10 @@ const create_phase = async (season) => {
                           {season: season, phase_name: 'Regular Season', is_current:false},
                           {season: season, phase_name: 'End of Regular Season', is_current:false},
                           {season: season, phase_name: 'Bowl Season', is_current:false},
-                          {season: season, phase_name: 'Off-Season', is_current:false},
+                          {season: season, phase_name: 'Season Recap', is_current:false},
+                          {season: season, phase_name: 'Departures', is_current:false},
+                          {season: season, phase_name: 'Off-Season Recruiting', is_current:false},
+                          {season: season, phase_name: 'Summer Camp', is_current:false},
                          ];
   const phases_to_create_added = await db.phase.bulkAdd(phases_to_create);
   const phases = await query_to_dict(await db.phase.toArray(), 'one_to_one', 'phase_name');
@@ -1333,7 +1681,8 @@ const create_phase = async (season) => {
 const create_week = async (phases) => {
 
   var weeks_to_create = [
-                          {week_name:'Summer', is_current: false, phase_id: phases['Pre-Season']['phase_id'], schedule_week_number: null},
+                          {week_name:'Season Prep', is_current: false, phase_id: phases['Pre-Season']['phase_id'], schedule_week_number: null},
+
                           {week_name:'Week 1',  is_current: true,  phase_id: phases['Regular Season']['phase_id'], schedule_week_number: 1},
                           {week_name:'Week 2',  is_current: false, phase_id: phases['Regular Season']['phase_id'], schedule_week_number: 2},
                           {week_name:'Week 3',  is_current: false, phase_id: phases['Regular Season']['phase_id'], schedule_week_number: 3},
@@ -1349,13 +1698,33 @@ const create_week = async (phases) => {
                           {week_name:'Week 13', is_current: false, phase_id: phases['Regular Season']['phase_id'], schedule_week_number: 13},
                           {week_name:'Week 14', is_current: false, phase_id: phases['Regular Season']['phase_id'], schedule_week_number: 14},
                           {week_name:'Week 15', is_current: false, phase_id: phases['Regular Season']['phase_id'], schedule_week_number: 15},
+
                           {week_name:'Conference Championships', is_current: false, phase_id: phases['End of Regular Season']['phase_id'],schedule_week_number: null },
                           {week_name:'Early Signing Day', is_current: false, phase_id: phases['End of Regular Season']['phase_id'], schedule_week_number: null},
                           {week_name:'Bowl Prep', is_current: false, phase_id: phases['End of Regular Season']['phase_id'], schedule_week_number: null},
+
                           {week_name:'Bowl Week 1', is_current: false, phase_id: phases['Bowl Season']['phase_id'], schedule_week_number: null},
                           {week_name:'Bowl Week 2', is_current: false, phase_id: phases['Bowl Season']['phase_id'], schedule_week_number: null},
                           {week_name:'Bowl Week 3', is_current: false, phase_id: phases['Bowl Season']['phase_id'], schedule_week_number: null},
-                          {week_name:'Season Recap', is_current: false, phase_id: phases['Off-Season']['phase_id'], schedule_week_number: null},
+
+                          {week_name:'Season Recap', is_current: false, phase_id: phases['Season Recap']['phase_id'], schedule_week_number: null},
+
+													// {week_name:'Coach Carousel', is_current: false, phase_id: phases['Departures']['phase_id'], schedule_week_number: null},
+													// {week_name:'Draft Departures', is_current: false, phase_id: phases['Departures']['phase_id'], schedule_week_number: null},
+													// {week_name:'Transfer Announcements', is_current: false, phase_id: phases['Departures']['phase_id'], schedule_week_number: null},
+													//
+													// {week_name:'Recruiting Week 1', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+													// {week_name:'Recruiting Week 2', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+													// {week_name:'Recruiting Week 3', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+													// {week_name:'Recruiting Week 4', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+													// {week_name:'National Signing Day', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+													//
+													// {week_name:'Summer Week 1', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
+													// {week_name:'Summer Week 2', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
+													// {week_name:'Summer Week 3', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
+													// {week_name:'Summer Week 4', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
+													{week_name:'Plan for Season', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
+
   ]
   $.each(weeks_to_create, function(ind, week){
     week.week_updates = [];
@@ -1364,6 +1733,8 @@ const create_week = async (phases) => {
   var weeks_to_create_added = await db.week.bulkAdd(weeks_to_create);
   return await db.week.toArray();
 }
+
+
 
 const get_rivalries = async(teams) => {
 
@@ -1713,6 +2084,7 @@ const get_db  = async (world_obj) => {
   await new_db.game.mapToClass(game);
   await new_db.team_game.mapToClass(team_game);
   await new_db.conference.mapToClass(conference);
+	await new_db.league_season.mapToClass(league_season);
 
   return new_db;
 }
@@ -1883,6 +2255,8 @@ const common_functions = async (route_pattern) => {
             , query_to_dict: query_to_dict
             , create_phase: create_phase
             , create_week: create_week
+						, create_players: create_players
+
             , nav_bar_links: nav_bar_links
             , navbar: navbar
             , team_header_links: team_header_links
@@ -2137,26 +2511,39 @@ const calculate_game_score = (player_team_game, player_team_season, team_game, t
 
 		player_team_game.game_stats.games.weighted_game_score = player_team_game.game_stats.games.game_score;
 		if (team_game.is_winning_team){
-			player_team_game.game_stats.games.weighted_game_score *= 1.1;
 
 			if (opponent_team_game.national_rank <= 5){
-				player_team_game.game_stats.games.weighted_game_score *= 1.35;
+				player_team_game.game_stats.games.weighted_game_score *= 1.45;
+			}
+			else if (opponent_team_game.national_rank <= 10) {
+				player_team_game.game_stats.games.weighted_game_score *= 1.325;
 			}
 			else if (opponent_team_game.national_rank <= 15) {
-				player_team_game.game_stats.games.weighted_game_score *= 1.225;
+				player_team_game.game_stats.games.weighted_game_score *= 1.25;
 			}
-			else if (opponent_team_game.national_rank <= 25) {
-				player_team_game.game_stats.games.weighted_game_score *= 1.125;
+			else if (opponent_team_game.national_rank <= 20) {
+				player_team_game.game_stats.games.weighted_game_score *= 1.2;
+			}
+			else if (opponent_team_game.national_rank <= 30) {
+				player_team_game.game_stats.games.weighted_game_score *= 1.15;
 			}
 			else if (opponent_team_game.national_rank <= 40) {
-				player_team_game.game_stats.games.weighted_game_score *= 1.05;
+				player_team_game.game_stats.games.weighted_game_score *= 1.01;
+			}
+			else if (opponent_team_game.national_rank <= 50) {
+				player_team_game.game_stats.games.weighted_game_score *= 1.075;
 			}
 			else if (opponent_team_game.national_rank <= 65) {
+				player_team_game.game_stats.games.weighted_game_score *= 1.05;
+			}
+			else if (opponent_team_game.national_rank <= 85) {
+				player_team_game.game_stats.games.weighted_game_score *= 1.025;
+			}
+			else if (opponent_team_game.national_rank <= 105) {
 				player_team_game.game_stats.games.weighted_game_score *= 1.01;
 			}
 		}
 		else {
-			player_team_game.game_stats.games.weighted_game_score *= .9;
 
 			if (opponent_team_game.national_rank <= 5){
 				player_team_game.game_stats.games.weighted_game_score *= 1.1;
@@ -2178,7 +2565,7 @@ const calculate_game_score = (player_team_game, player_team_season, team_game, t
 			}
 		}
 
-		player_team_season.season_stats.games.weighted_game_score = player_team_game.game_stats.games.weighted_game_score;
+		player_team_season.season_stats.games.weighted_game_score += player_team_game.game_stats.games.weighted_game_score;
 
     player_team_game.top_stats = player_team_game.top_stats.filter(s => s.abs_game_score_value != 0).sort(function(stat_a, stat_b){
       return stat_b.abs_game_score_value - stat_a.abs_game_score_value;
@@ -3504,7 +3891,7 @@ const sim_action = async(duration, common) => {
 
      await advance_to_next_week(this_week, all_weeks, common);
 		 console.log('Ready to refresh_page')
-     //await refresh_page();
+     await refresh_page();
   });
 
 

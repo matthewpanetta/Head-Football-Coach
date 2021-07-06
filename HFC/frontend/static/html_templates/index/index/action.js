@@ -121,16 +121,6 @@
       });
 
 
-
-      const classes = ['FR', 'SO', 'JR', 'SR'];
-      const positions = ['QB', 'RB', 'WR', 'TE', 'OT', 'OG', 'OC', 'EDGE', 'DL', 'LB', 'CB', 'S', 'K', 'P'];
-      const first_names = ["Tom", "Miles", "Travis", "Jack", "Maina", "Phil", "Andrew", 'Tyler', 'Bryan', 'Peter', 'Jeffrey', 'Brad', 'Taronish', 'Jeremy', 'Craig', 'Jim', 'Barry', 'Dan', 'Ted', 'Theodore'];
-      const last_names = ['Kennedy', 'Wilson', 'Latham', 'Jackson', 'Murphy', 'Shon', "Dodson", 'Alley', 'Cate', 'Rushton', 'Miller', 'Bollinger', 'Pope', 'Loach', 'Weiss', 'Lovalvo', 'Russell', 'Ingram', 'Zucker'];
-
-      const position_ethnicity =    //numbers normalized from https://theundefeated.com/features/the-nfls-racial-divide/
-          {"QB":{"white":75,"black":15,"hispanic":5,"asian":5},"RB":{"white":15,"black":80,"hispanic":10,"asian":5},"WR":{"white":10,"black":85,"hispanic":5,"asian":5},"TE":{"white":50,"black":50,"hispanic":15,"asian":2},"OT":{"white":45,"black":55,"hispanic":15,"asian":1},"OG":{"white":40,"black":50,"hispanic":15,"asian":1},"OC":{"white":40,"black":50,"hispanic":15,"asian":1},"EDGE":{"white":20,"black":80,"hispanic":10,"asian":1},"DL":{"white":10,"black":80,"hispanic":10,"asian":1},"LB":{"white":25,"black":75,"hispanic":10,"asian":1},"CB":{"white":2,"black":100,"hispanic":10,"asian":2},"S":{"white":15,"black":80,"hispanic":10,"asian":5},"K":{"white":70,"black":10,"hispanic":25,"asian":25},"P":{"white":70,"black":10,"hispanic":25,"asian":25}}
-
-
       //Create new db if clicked 'continue'
       $('#indexCreateWorldModalContinueButton').on('click', async function(){
         var par = $('#indexCreateWorldModalCloseButton').parent();
@@ -149,29 +139,23 @@
         const world_id = new_season_info.world_id;
         const season = new_season_info.current_season;
 
-        const conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
+        //FULL LEAGUE
+        //const conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
+        //MID SIZE
+        //const conferences_to_include = ['Big 12', 'American Athletic Conference','Big Ten','Southeastern Conference','FBS Independents','Mid-American Conference']
+        //SMALL SIZE
+        const conferences_to_include = ['Big 12', 'American Athletic Conference']
 
         //var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
         var teams_from_json = await common.get_teams({conference: conferences_to_include});
         const num_teams = teams_from_json.length;
 
-        const new_season = await db.league_season.add({season: season,
-                                                       world_id: world_id,
-                                                       is_current_season: true,
-                                                       user_team_id: Math.ceil(Math.random() * num_teams),
-                                                       captains_per_team: 3,
-                                                       players_per_team: 70,
-                                                       preseason_tasks: {
-                                                         user_cut_players: false,
-                                                         user_set_gameplan: false,
-                                                         user_set_depth_chart: false,
-                                                       }
-                                                     });
-
+        const season_data = {season: season, world_id: world_id, captains_per_team: 3, players_per_team: 70,  num_teams: num_teams}
+        const new_season = new league_season(season_data, undefined)
+        await db.league_season.add(new_season);
 
         const phases_created = await common.create_phase(season);
         var weeks = await common.create_week(phases_created);
-
 
 
         const divisions_from_json = await common.get_divisions({conference: conferences_to_include});
@@ -291,25 +275,9 @@
 
         var teams_added = await db.team.bulkAdd(teams);
         $(par).append('<div>Adding Team Seasons</div>')
-        var teams = await db.team.toArray();
-        var team_seasons_tocreate = [];
 
+        await common.create_team_season({common: common, season:season, world_id: world_id, conferences:conferences})
 
-        var team_id = 1;
-        $.each(teams, function(ind, team){
-          var new_team_season = new common.team_season({team_id: team.team_id,
-                                      world_id: world_id,
-                                      season: season,
-                                      conference_name: team.conference_name,
-                                      conference_season_id: conferences[team.conference.conference_name].conference_season.conference_season_id,
-                                    })
-          team_seasons_tocreate.push(new_team_season);
-
-          team_id += 1;
-        });
-
-
-        var team_seasons_tocreate_added = await db.team_season.bulkAdd(team_seasons_tocreate);
         $(par).append('<div>Ranking teams</div>')
         const all_weeks = await db.week.where({season: season}).toArray();
         const this_week = all_weeks.filter(w => w.is_current)[0];
@@ -326,279 +294,14 @@
         const teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id')
 
         $(par).append('<div>Adding Players</div>')
-        var players_tocreate = [];
-        var player_team_seasons_tocreate = [];
-        var position = '';
-        var ethnicity = '';
 
-        var team_position_option = {};
-        var team_position_options = [
-            ["QB","QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","P","P"],
-            ["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"],
-            ["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
-            ["QB","QB","QB","RB","RB","RB","RB","RB","RB","RB","FB","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
-            ["QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"]
-          ]
+        await common.create_players({common: common, team_seasons_tocreate:team_seasons_tocreate, team_seasons:team_seasons, teams_by_team_id:teams_by_team_id, world_id:world_id, season:season})
 
-        const num_players_per_team = team_position_options[0].length;
-        //const num_players_per_team = 10;
-        const num_players_to_create = num_players_per_team * team_seasons_tocreate.length;
-
-        const player_names = await common.random_name(ddb, num_players_to_create);
-        const player_cities = await common.random_city(ddb, num_players_to_create);
-
-        const last_player = await db.player.orderBy('player_id').last();
-        const last_player_team_season = await db.player_team_season.orderBy('player_team_season_id').last();
-
-        var player_counter = 0;
-
-        var player_id_counter = 1, player_team=null;
-        var player_team_season_id_counter = 1;
-        if (last_player != undefined) {
-          player_id_counter = last_player.player_id + 1;
-        }
-        if (last_player_team_season != undefined) {
-          player_team_season_id_counter = last_player_team_season.player_team_season_id + 1;
-        }
-
-        $.each(team_seasons,  function(ind, team_season){
-          player_team = teams_by_team_id[team_season.team_id];
-          team_position_option = team_position_options[Math.floor(Math.random() * team_position_options.length)];
-          for(var i = 0; i<num_players_per_team; i++){
-            position = team_position_option[i];
-            body = common.body_from_position(position);
-            ethnicity = common.weighted_random_choice(position_ethnicity[position]);
-            players_tocreate.push({
-                                    player_id: player_id_counter,
-                                    name:player_names[player_counter],
-                                    world_id: world_id,
-                                    redshirt: {previous: false, current: false},
-                                    jersey_number: 21,
-                                    hometown: player_cities[player_counter],
-                                    position: position,
-                                    ethnicity: ethnicity,
-                                    player_face: undefined,
-                                    body: common.body_from_position(position),
-                                    recruiting: {
-                                      is_recruit: false,
-                                      speed: 1,
-                                      stars: 4,
-                                      signed: false,
-                                      stage: 'Signed',
-                                      rank: {
-                                        national: 100,
-                                        position_rank: 20,
-                                        state: 10
-                                      },
-                                      measurables: {
-                                        fourty_yard_dash: 4.5,
-                                        bench_press_reps: 10,
-                                        vertical_jump: 31
-                                      }
-                                    },
-                                    personality: {
-                                      leadership: 80,
-                                      work_ethic: 75,
-                                      desire_for_winner: 50,
-                                      loyalty: 70,
-                                      desire_for_playtime: 90
-                                    }
-                              })
-
-            player_team_seasons_tocreate.push({ player_id: player_id_counter,
-                                                player_team_season_id: player_team_season_id_counter,
-                                                team_season_id: team_season.team_season_id,
-                                                season: season,
-                                                is_captain: false,
-                                                position: position,
-                                                class: {
-                                                  class_name: classes[Math.floor(Math.random() * classes.length)],
-                                                  redshirted: false
-                                                },
-                                                season_stats: {
-                                                  games: {
-                                                      game_score:0,
-                                                      weighted_game_score: 0,
-                                                      games_played:0,
-                                                      games_started:0,
-                                                      plays_on_field:0,
-                                                      team_games_played:0,
-                                                      points: 0,
-                                                    },
-                                                  top_stats : [],
-                                                  passing : {
-                                                      completions: 0,
-                                                      attempts: 0,
-                                                      yards: 0,
-                                                      tds: 0,
-                                                      ints:0,
-                                                      sacks:0,
-                                                      sack_yards:0,
-                                                    },
-                                                    rushing : {
-                                                      carries:0,
-                                                      yards:0,
-                                                      tds:0,
-                                                      over_20:0,
-                                                      lng:0,
-                                                      broken_tackles:0,
-                                                      yards_after_contact:0,
-                                                    },
-
-                                                    receiving : {
-                                                      yards:0,
-                                                      targets:0,
-                                                      receptions:0,
-                                                      tds:0,
-                                                      yards_after_catch:0,
-                                                      drops:0,
-                                                      lng:0,
-                                                      yards:0,
-                                                    },
-                                                    blocking : {
-                                                      sacks_allowed:0,
-                                                      pancakes:0,
-                                                      blocks:0,
-                                                    },
-                                                    defense : {
-                                                      tackles:0,
-                                                      solo_tackles:0,
-                                                      sacks:0,
-                                                      tackles_for_loss:0,
-                                                      deflections:0,
-                                                      qb_hits:0,
-                                                      tds:0,
-                                                      ints:0,
-                                                      int_yards:0,
-                                                      int_tds:0,
-                                                      safeties:0,
-                                                    },
-                                                    fumbles : {
-                                                      fumbles: 0,
-                                                      lost: 0,
-                                                      recovered: 0,
-                                                      forced: 0,
-                                                      return_yards: 0,
-                                                      return_tds: 0,
-                                                    },
-                                                    kicking : {
-                                                      fga:0,
-                                                      fgm:0,
-                                                      fga_29:0,
-                                                      fgm_29:0,
-                                                      fga_39:0,
-                                                      fgm_39:0,
-                                                      fga_49:0,
-                                                      fgm_49:0,
-                                                      fga_50:0,
-                                                      fgm_50:0,
-                                                      lng:0,
-                                                      xpa:0,
-                                                      xpm:0,
-                                                      kickoffs:0,
-                                                      touchbacks:0,
-                                                    },
-                                                    punting: {
-                                                      punts:0,
-                                                      yards:0,
-                                                      touchbacks:0,
-                                                      within_20:0,
-                                                    },
-                                                    returning: {
-                                                      kr_returns:0,
-                                                      kr_yards:0,
-                                                      kr_tds:0,
-                                                      kr_lng:0,
-                                                      pr_returns:0,
-                                                      pr_yards:0,
-                                                      pr_tds:0,
-                                                      pr_lng:0,
-                                                    }
-                                                },
-                                                ratings: {
-                                                  athleticism: {
-                                                    strength: Math.floor(Math.random() * 100),
-                                                    agility: Math.floor(Math.random() * 100),
-                                                    speed: Math.floor(Math.random() * 100),
-                                                    acceleration: Math.floor(Math.random() * 100),
-                                                    stamina: Math.floor(Math.random() * 100),
-                                                    jumping: Math.floor(Math.random() * 100),
-                                                    injury: Math.floor(Math.random() * 100),
-                                                  },
-                                                  passing: {
-                                                    throwing_power: Math.floor(Math.random() * 100),
-                                                    short_throw_accuracy: Math.floor(Math.random() * 100),
-                                                    medium_throw_accuracy: Math.floor(Math.random() * 100),
-                                                    deep_throw_accuracy: Math.floor(Math.random() * 100),
-                                                    throw_on_run: Math.floor(Math.random() * 100),
-                                                    throw_under_pressure: Math.floor(Math.random() * 100),
-                                                    play_action: Math.floor(Math.random() * 100),
-                                                  },
-                                                  rushing: {
-                                                    elusiveness: Math.floor(Math.random() * 100),
-                                                    ball_carrier_vision: Math.floor(Math.random() * 100),
-                                                    break_tackle: Math.floor(Math.random() * 100),
-                                                    carrying: Math.floor(Math.random() * 100),
-                                                  },
-                                                  receiving: {
-                                                    catching: Math.floor(Math.random() * 100),
-                                                    catch_in_traffic: Math.floor(Math.random() * 100),
-                                                    route_running: Math.floor(Math.random() * 100),
-                                                    release: Math.floor(Math.random() * 100),
-                                                  },
-                                                  defense: {
-                                                    hit_power: Math.floor(Math.random() * 100),
-                                                    tackle: Math.floor(Math.random() * 100),
-                                                    pass_rush: Math.floor(Math.random() * 100),
-                                                    block_shedding: Math.floor(Math.random() * 100),
-                                                    pursuit: Math.floor(Math.random() * 100),
-                                                    play_recognition: Math.floor(Math.random() * 100),
-                                                    man_coverage: Math.floor(Math.random() * 100),
-                                                    zone_coverage: Math.floor(Math.random() * 100),
-                                                    press: Math.floor(Math.random() * 100),
-                                                  },
-                                                  blocking: {
-                                                    pass_block: Math.floor(Math.random() * 100),
-                                                    run_block: Math.floor(Math.random() * 100),
-                                                    impact_block: Math.floor(Math.random() * 100),
-                                                  },
-                                                  kicking: {
-                                                    kick_power: Math.floor(Math.random() * 100),
-                                                    kick_accuracy: Math.floor(Math.random() * 100),
-                                                  },
-                                                  overall: {
-                                                    awareness: Math.floor(Math.random() * 100),
-                                                    overall: Math.floor(common.normal_trunc(70 + (player_team.team_ratings.team_prestige / 5), 3, 0, 99)),
-                                                  }
-                                                },
-                                                world_id: world_id,
-                                                post_season_movement: null, //[quit, graduate, draft, transfer]
-                                                top_stats: []
-                                              });
-                player_counter +=1;
-                player_id_counter +=1;
-                player_team_season_id_counter +=1;
-          }
-        });
-        var players_tocreate_added = await db.player.bulkAdd(players_tocreate);
-        var player_team_seasons_tocreate_added = await db.player_team_season.bulkAdd(player_team_seasons_tocreate);
-
-        //
-        // players = players.sort(function(player_a, player_b){
-        //     return player_a.player_team_season.ratings.overall.overall - player_b.player_team_season.ratings.overall.overall
-        // });
-        // var players_by_position = await index_group(players, 'group', 'position');
-        // var players_by_position_2 = {};
-        // $.each(players_by_position, function(position, player_list){
-        //   players_by_position_2[position] = player_list.map(player => player.player_team_season.player_team_season_id);
-        // });
-        //
-        // console.log('players_by_position', players_by_position, players_by_position_2)
 
         $(par).append('<div>Populating depth charts</div>')
         var team_seasons_to_update = [];
         var team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index', 'team_season_id');
-        var player_team_seasons = player_team_seasons_tocreate;
+        var player_team_seasons = await db.player_team_season.where({season: season}).toArray();
         var player_team_seasons_by_team_season_id = await index_group(player_team_seasons, 'group', 'team_season_id');
 
         var team_season = null;
