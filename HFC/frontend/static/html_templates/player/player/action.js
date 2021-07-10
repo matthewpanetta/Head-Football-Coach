@@ -198,18 +198,22 @@ const populate_player_stats = async (common) => {
     const player_season_stat = player.current_player_team_season.season_stats;
 
     console.log('player_season_stat.defense.tackles + player_season_stat.defense.interceptions + player_season_stat.fumbles.forced + player_season_stat.defense.deflections', player_season_stat.defense.tackles , player_season_stat.defense.ints , player_season_stat.fumbles.forced , player_season_stat.defense.deflections, player_season_stat.defense.tackles + player_season_stat.defense.ints + player_season_stat.fumbles.forced + player_season_stat.defense.deflections)
-    if (player_season_stat.passing.attempts > 0)
-        player_stats_show['Passing'] = true
-    if ( player_season_stat.rushing.carries > 0)
-        player_stats_show['Rushing'] = true
-    if (player_season_stat.receiving.targets > 0)
-        player_stats_show['Receiving'] = true
-    if (player_season_stat.blocking.blocks > 0)
-        player_stats_show['Blocking'] = true
-    if ((player_season_stat.defense.tackles + player_season_stat.defense.ints + player_season_stat.fumbles.forced + player_season_stat.defense.deflections) > 0)
-        player_stats_show['Defense'] = true
-    if (player_season_stat.kicking.fga > 0)
-        player_stats_show['Kicking'] = true
+
+    for (const player_team_season of player.player_team_seasons){
+      if (player_team_season.season_stats.passing.attempts > 0)
+          player_stats_show['Passing'] = true
+      if ( player_team_season.season_stats.rushing.carries > 0)
+          player_stats_show['Rushing'] = true
+      if (player_team_season.season_stats.receiving.targets > 0)
+          player_stats_show['Receiving'] = true
+      if (player_team_season.season_stats.blocking.blocks > 0)
+          player_stats_show['Blocking'] = true
+      if ((player_team_season.season_stats.defense.tackles + player_season_stat.defense.ints + player_season_stat.fumbles.forced + player_season_stat.defense.deflections) > 0)
+          player_stats_show['Defense'] = true
+      if (player_team_season.season_stats.kicking.fga > 0)
+          player_stats_show['Kicking'] = true
+    }
+
 
 
   console.log('GameStatDate, RecentGameStatData', {player_season_stat:player_season_stat, player_stats_show:player_stats_show});
@@ -581,8 +585,10 @@ const getHtml = async (common) => {
     c+=1;
   });
 
+  console.log({player_team_seasons:player_team_seasons})
+
   player.player_team_seasons = player_team_seasons;
-  player.current_player_team_season = player_team_seasons.filter(pts => pts.season = season)[0];
+  player.current_player_team_season = player_team_seasons.filter(pts => pts.season == season)[0];
 
 
 

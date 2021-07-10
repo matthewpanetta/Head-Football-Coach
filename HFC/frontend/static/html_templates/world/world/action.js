@@ -1,22 +1,30 @@
 const getHtml = async (common) => {
       const db = common.db;
+      const ddb = common.ddb;
       nunjucks.configure({ autoescape: true });
       var index_group = common.index_group;
+      const season = common.season;
 
       var current_week = await db.week.toArray();
       current_week = current_week.filter(w => w.is_current)[0];
 
-      var world_obj = {};
+      // const league_seasons = await db.league_season.toArray();
+      //
+      // console.log({league_seasons:league_seasons})
+      //
+      // const first_season = league_seasons.filter(ls=>ls.season == 2021)[0];
+      // const second_season = league_seasons.filter(ls=>ls.season == 2022)[0];
+      //
+      // first_season.is_current_season = false;
+      // second_season.is_current_season = true;
+      //
+      // await db.league_season.bulkPut([first_season, second_season])
+      //
+      // const world_obj = common.world_object;
+      // world_obj.current_season = 2022;
+      // console.log({ddb: ddb,world_obj:world_obj })
+      // await ddb.world.put(world_obj);
 
-      //TEST
-      const all_weeks = await db.week.where({season: 2021}).toArray();
-
-      const all_phases_by_phase_id = await index_group(await db.phase.where({season: 2021}).toArray(), 'index', 'phase_id');
-      const current_phase = all_phases_by_phase_id[current_week.phase_id];
-      $.each(all_weeks, function(ind, week){
-        week.phase = all_phases_by_phase_id[week.phase_id];
-        week.phase.season = 2021;
-      })
 
       //common.schedule_bowl_season(all_weeks, common)
 
@@ -32,9 +40,9 @@ const getHtml = async (common) => {
 
       var teams = await db.team.toArray();
       var conferences = await index_group(await db.conference.toArray(), 'index','conference_id');
-      var conference_seasons = await index_group(await db.conference_season.where({season: 2021}).toArray(), 'index','conference_season_id');
-      var team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: 2021}).toArray(), 'index','team_season_id');
-      var team_seasons_by_team_id = await index_group(await db.team_season.where({season: 2021}).toArray(), 'index','team_id');
+      var conference_seasons = await index_group(await db.conference_season.where({season: season}).toArray(), 'index','conference_season_id');
+      var team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index','team_season_id');
+      var team_seasons_by_team_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index','team_id');
       var teams_by_team_id = await index_group(await db.team.toArray(), 'index','team_id');
       var distinct_team_seasons = [];
 

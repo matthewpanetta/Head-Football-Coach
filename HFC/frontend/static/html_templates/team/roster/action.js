@@ -4,6 +4,7 @@
 
       var world_obj = {};
       const team_id = parseInt(common.params.team_id);
+      const season = common.season;
       const db = common.db;
       const query_to_dict = common.query_to_dict;
 
@@ -32,7 +33,7 @@
 
 
       const team = await db.team.get({team_id: team_id})
-      const team_season = await db.team_season.get({team_id: team_id, season: 2021});
+      const team_season = await db.team_season.get({team_id: team_id, season: season});
 
       team.team_season = team_season;
       const player_team_seasons = await db.player_team_season.where({team_season_id: team_season.team_season_id}).toArray();

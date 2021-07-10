@@ -93,7 +93,9 @@
 
       $.each(conference_seasons, function(ind, conference_season){
         conference_season.conference = conferences_by_conference_id[conference_season.conference_id];
-        conference_season.team_seasons = team_seasons_by_conference_season_id[conference_season.conference_id];
+        conference_season.team_seasons = team_seasons_by_conference_season_id[conference_season.conference_season_id];
+
+        console.log({conference_season:conference_season, season:season, conference: conference_season.conference, team_seasons:conference_season.team_seasons, team_seasons_by_conference_season_id:team_seasons_by_conference_season_id})
 
         conference_season.team_seasons = conference_season.team_seasons.sort(function(a, b) {
             if (a.rankings.division_rank[0] < b.rankings.division_rank[0]) return -1;

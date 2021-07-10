@@ -4,6 +4,7 @@
 
       var world_obj = {};
       const team_id = parseInt(common.params.team_id);
+      const season = common.season;
       const db = common.db;
       const query_to_dict = common.query_to_dict;
 
@@ -30,11 +31,11 @@
         return 0;
       });
 
-      const weeks = await query_to_dict(await db.week.where({season: 2021}).toArray(), 'one_to_one','week_id');
+      const weeks = await query_to_dict(await db.week.where({season: season}).toArray(), 'one_to_one','week_id');
       console.log('weeks', weeks)
 
       const team = await db.team.get({team_id: team_id})
-      const team_season = await db.team_season.get({team_id: team_id, season: 2021});
+      const team_season = await db.team_season.get({team_id: team_id, season: season});
 
       team.team_season = team_season;
 
@@ -141,7 +142,7 @@
       var conference_season = await db.conference_season.get({conference_season_id: team.team_season.conference_season_id})  ;
       var conference = await db.conference.get({conference_id: conference_season.conference_id})  ;
 
-      var team_seasons_in_conference = await db.team_season.where({season: 2021}).toArray();
+      var team_seasons_in_conference = await db.team_season.where({season: season}).toArray();
       team_seasons_in_conference = team_seasons_in_conference.filter(team_season => team_season.conference_season_id == team.team_season.conference_season_id).sort(function(teamA,teamB){
         return teamA.rankings.division_rank[0] - teamB.rankings.division_rank[0];
       });
@@ -239,7 +240,7 @@
                   </a>
                   <span> - ${game.team_game.team_season.team.team_abbreviation}</span>
                   <ul class='no-list-style'>
-                    
+
                     <li>${game.team_game.top_stats[0].top_stats[0].display}</li>
                     <li>${game.team_game.top_stats[0].top_stats[1].display}</li>
                   </ul>

@@ -23,6 +23,9 @@
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-season-records-tab" style="background-color: #{{page.SecondaryColor}};">Season Records</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-game-records-tab">Game Records</button>
+        {% if sum_career %}
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-career-records-tab">Career Records</button>
+        {% endif %}
       </div>
     </nav>
     <div id="nav-tabContent">
@@ -133,7 +136,10 @@
         </div>
       </div>
       <div class="tab-content" style="display:block;"  id="nav-game-records" >
-        
+
+      </div>
+      <div class="tab-content" style="display:block;"  id="nav-career-records" >
+
       </div>
     </div>
   </div>

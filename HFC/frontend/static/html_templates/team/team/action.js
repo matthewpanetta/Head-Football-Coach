@@ -103,7 +103,7 @@ const getHtml = async (common) => {
   const index_group = common.index_group;
   const index_group_sync = common.index_group_sync;
 
-  weeks_by_week_id = await common.index_group(await db.week.where({season: 2021}).toArray(), 'index', 'week_id')
+  weeks_by_week_id = await common.index_group(await db.week.where({season: season}).toArray(), 'index', 'week_id')
 
   const NavBarLinks = await common.nav_bar_links({
     path: 'Overview',
@@ -129,7 +129,7 @@ const getHtml = async (common) => {
   });
 
   const team = await db.team.get({team_id: team_id})
-  const team_season = await db.team_season.get({team_id: team_id, season: 2021});
+  const team_season = await db.team_season.get({team_id: team_id, season: season});
 
   const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: season}).toArray(), 'index', 'conference_season_id');
   const conference_by_conference_id = await index_group(await db.conference.toArray(), 'index', 'conference_id');

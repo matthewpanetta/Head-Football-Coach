@@ -3,6 +3,7 @@
       const db = common.db;
       nunjucks.configure({ autoescape: true });
       var index_group = common.index_group;
+      const season = common.season;
 
       var world_obj = {};
 
@@ -14,8 +15,8 @@
 
       var teams = await db.team.toArray();
       var conferences = await index_group(await db.conference.toArray(), 'one_to_one','conference_id');
-      var conference_seasons = await index_group(await db.conference_season.where({season: 2021}).toArray(), 'one_to_one','conference_season_id');
-      var team_seasons = await index_group(await db.team_season.where({season: 2021}).toArray(), 'one_to_one','team_id');
+      var conference_seasons = await index_group(await db.conference_season.where({season: season}).toArray(), 'one_to_one','conference_season_id');
+      var team_seasons = await index_group(await db.team_season.where({season: season}).toArray(), 'one_to_one','team_id');
       var distinct_team_seasons = [];
 
       $.each(teams, async function(ind, team){
@@ -269,14 +270,15 @@
 
       const db = common.db;
       const index_group = common.index_group;
+      const season = common.season;
 
-      var this_week = await db.week.where({season: 2021}).toArray();
+      var this_week = await db.week.where({season: season}).toArray();
       console.log('this_week', this_week)
       this_week = this_week.filter(week => week.is_current)[0];
       const this_week_id = this_week.week_id;
       const last_week_id = this_week_id-1;
 
-      var top_25_team_seasons = await db.team_season.where({season:2021}).toArray();
+      var top_25_team_seasons = await db.team_season.where({season:season}).toArray();
       console.log('top_25_team_seasons', top_25_team_seasons)
       top_25_team_seasons = top_25_team_seasons.filter(ts => ts.rankings.national_rank[0] <= 25).sort(function(a, b) {
           if (a.rankings.national_rank[0] < b.rankings.national_rank[0]) return -1;
@@ -296,9 +298,9 @@
 
       const all_teams = await index_group(await db.team.toArray(), 'index','team_id');
       const all_team_games = await index_group(await db.team_game.where('week_id').anyOf([this_week_id, last_week_id]).toArray(), 'index','team_game_id');
-      const all_team_seasons = await index_group(await db.team_season.where({season: 2021}).toArray(), 'index','team_season_id');
+      const all_team_seasons = await index_group(await db.team_season.where({season: season}).toArray(), 'index','team_season_id');
 
-      const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: 2021}).toArray(), 'index','conference_season_id');
+      const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: season}).toArray(), 'index','conference_season_id');
       const conferences_by_conference_id = await index_group(await db.conference.toArray(), 'index','conference_id');
 
       var team_counter = 0;

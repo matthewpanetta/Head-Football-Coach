@@ -18,11 +18,16 @@
       var team_seasons =  await db.team_season.toArray();
       var distinct_team_seasons = [];
 
+      var sum_career = false;
+      if (team_seasons.length > teams.length){
+        sum_career = true;
+      }
+
       const player_team_seasons = await db.player_team_season.toArray();
       const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
 
       const player_ids = player_team_seasons.map(pts => pts.player_id);
-      var players = await db.player.bulkGet(player_ids);
+      var players = await db.player.where('player_id').anyOf(player_ids).toArray();
       const players_by_player_id = index_group_sync(players, 'index', 'player_id');
 
       for (const team_season of team_seasons){
@@ -81,7 +86,8 @@
                             teams: teams,
                             recent_games: recent_games,
                             players: players,
-                            player_leader_categories: player_leader_categories
+                            player_leader_categories: player_leader_categories,
+                            sum_career: sum_career
 
                           };
       common.render_content = render_content;
@@ -156,6 +162,66 @@
         draw_faces(common)
       })
 
+
+      var draw_career_records = false;
+      $('#nav-career-records-tab').on('click', async function(){
+
+        if (draw_career_records == true){
+          return false;
+        }
+        draw_career_records = true;
+        console.log({players:players})
+        const player_team_seasons_by_player_id = index_group_sync(player_team_seasons, 'group', 'player_id');
+        players = nest_children(players, player_team_seasons_by_player_id, 'player_id', 'player_team_seasons');
+        console.log({players:players})
+
+        players = players.map(p => Object.assign(p, {career_stats: {}}))
+
+        for (const player of players){
+          var this_player_player_team_seasons = player.player_team_seasons;
+          for (const player_team_season of this_player_player_team_seasons){
+
+            increment_parent(deep_copy(player_team_season.season_stats), player.career_stats)
+          }
+        }
+
+        console.log({players:players})
+
+        for (const player_leader_category of player_leader_categories){
+
+          var original_player_leader_category_stat = player_leader_category.stat
+
+          player_leader_category.season_stat = original_player_leader_category_stat.replace('game_stats', 'season_stats')
+          player_leader_category.stat = original_player_leader_category_stat.replace('season_stats', 'career_stats').replace('game_stats', 'career_stats')
+          player_leader_category.players = []
+          player_leader_category.player_team_seasons = []
+
+          var player_leaders = players.filter(p => get(p, player_leader_category.stat) > 0).sort((p_a, p_b) => get(p_b, player_leader_category.stat) - get(p_a, player_leader_category.stat));
+
+          console.log({'player_leader_category.stat':player_leader_category.stat, player_leader_category:player_leader_category, players:players, player_leaders:player_leaders})
+          for (const player of player_leaders.slice(0,5)){
+            let player_obj = {player: player, value: get(player, player_leader_category.stat)}
+            player_leader_category.players.push(player_obj)
+          }
+
+          console.log('player_leader_category', {player_leader_category: player_leader_category, player_leaders: player_leaders})
+        }
+
+        console.log({players:players})
+
+        var url = '/static/html_templates/almanac/player_records/career_records.html'
+        var html = await fetch(url);
+        html = await html.text();
+
+        var renderedHtml = common.nunjucks_env.renderString(html, {players:players, player_leader_categories:player_leader_categories});
+
+        console.log({renderedHtml:renderedHtml, html:html, "$('#nav-career-records')": $('#nav-career-records')})
+
+        $('#nav-career-records').html(renderedHtml);
+
+        draw_faces(common)
+      })
+
     }
 
     const action = async (common) => {
@@ -182,8 +248,9 @@
         face_div_by_player_id[parseInt($(elem).attr('player_id'))].push(elem)
       })
 
+      console.log({player_ids:player_ids})
 
-      const players = await db.player.bulkGet(player_ids);
+      const players = await db.player.where('player_id').anyOf(player_ids).toArray();
       var player_team_seasons = await db.player_team_season.where('player_id').anyOf(player_ids).toArray();
       const player_team_seasons_by_player_id = index_group_sync(player_team_seasons, 'index', 'player_id')
 
@@ -194,7 +261,7 @@
 
 
       const team_ids = team_seasons.map(ts => ts.team_id);
-      const teams = await db.team.bulkGet(team_ids);
+      const teams = await db.team.where('team_id').anyOf(team_ids).toArray();
       const teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
 
 
