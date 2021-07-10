@@ -2022,18 +2022,18 @@ const create_players = async (data) => {
 	var ethnicity = '';
 
 	const classes = ['FR', 'SO', 'JR', 'SR'];
-	const positions = ['QB', 'RB', 'WR', 'TE', 'OT', 'OG', 'OC', 'EDGE', 'DL', 'LB', 'CB', 'S', 'K', 'P'];
+	const positions = ['QB', 'RB', 'WR', 'TE', 'OT', 'IOL', 'EDGE', 'DL', 'LB', 'CB', 'S', 'K', 'P'];
 	const position_ethnicity =    //numbers normalized from https://theundefeated.com/features/the-nfls-racial-divide/
-			{"QB":{"white":75,"black":15,"hispanic":5,"asian":5},"RB":{"white":15,"black":80,"hispanic":10,"asian":5},"WR":{"white":10,"black":85,"hispanic":5,"asian":5},"TE":{"white":50,"black":50,"hispanic":15,"asian":2},"OT":{"white":45,"black":55,"hispanic":15,"asian":1},"OG":{"white":40,"black":50,"hispanic":15,"asian":1},"OC":{"white":40,"black":50,"hispanic":15,"asian":1},"EDGE":{"white":20,"black":80,"hispanic":10,"asian":1},"DL":{"white":10,"black":80,"hispanic":10,"asian":1},"LB":{"white":25,"black":75,"hispanic":10,"asian":1},"CB":{"white":2,"black":100,"hispanic":10,"asian":2},"S":{"white":15,"black":80,"hispanic":10,"asian":5},"K":{"white":70,"black":10,"hispanic":25,"asian":25},"P":{"white":70,"black":10,"hispanic":25,"asian":25}}
+			{"QB":{"white":75,"black":15,"hispanic":5,"asian":5},"RB":{"white":15,"black":80,"hispanic":10,"asian":5},"WR":{"white":10,"black":85,"hispanic":5,"asian":5},"TE":{"white":50,"black":50,"hispanic":15,"asian":2},"OT":{"white":45,"black":55,"hispanic":15,"asian":1},"IOL":{"white":40,"black":50,"hispanic":15,"asian":1},"EDGE":{"white":20,"black":80,"hispanic":10,"asian":1},"DL":{"white":10,"black":80,"hispanic":10,"asian":1},"LB":{"white":25,"black":75,"hispanic":10,"asian":1},"CB":{"white":2,"black":100,"hispanic":10,"asian":2},"S":{"white":15,"black":80,"hispanic":10,"asian":5},"K":{"white":70,"black":10,"hispanic":25,"asian":25},"P":{"white":70,"black":10,"hispanic":25,"asian":25}}
 
 
 	var team_position_option = {};
 	var team_position_options = [
-			["QB","QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","P","P"],
-			["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"],
-			["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
-			["QB","QB","QB","RB","RB","RB","RB","RB","RB","RB","FB","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","TE","OT","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
-			["QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OG","OG","OG","OG","OG","OC","OC","OC","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"]
+			["QB","QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","P","P"],
+			["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"],
+			["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","OT","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
+			["QB","QB","QB","RB","RB","RB","RB","RB","RB","RB","FB","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","TE","OT","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
+			["QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"]
 		]
 
 	const num_players_per_team = team_position_options[0].length;
@@ -2851,7 +2851,7 @@ const pick_players_on_field = (depth_chart, player_team_seasons, players, player
   var p = null;
 
   if (side_of_ball == 'offense') {
-    var position_list = {'QB': 1, 'RB': 1, 'WR': 3, 'TE': 1, 'OT': 2, 'OG': 2, 'OC': 1, 'K': 1, 'P': 1}
+    var position_list = {'QB': 1, 'RB': 1, 'WR': 3, 'TE': 1, 'OT': 2, 'IOL': 3, 'K': 1, 'P': 1}
   }
   else if (side_of_ball == 'defense')  {
     var position_list = {'EDGE': 2, 'DL': 2,'LB': 3, 'CB': 2, 'S': 2}
@@ -2863,13 +2863,13 @@ const pick_players_on_field = (depth_chart, player_team_seasons, players, player
     var position_list = {'KR': 2, 'TE': 4, 'S': 2, 'LB': 3}
   }
   else if (side_of_ball == 'punt kicking')  {
-    var position_list = {'P': 1, 'OT': 2, 'OG': 2, 'OC': 1, 'TE': 2, 'CB': 2, 'LB': 1}
+    var position_list = {'P': 1, 'OT': 2, 'IOL': 3, 'TE': 2, 'CB': 2, 'LB': 1}
   }
   else if (side_of_ball == 'punt receiving')  {
     var position_list = {'KR': 1, 'S': 2, 'CB': 2, 'TE': 2, 'EDGE': 2, 'DL': 2}
   }
   else {
-    var position_list = {'QB': 1, 'RB': 1, 'WR': 3, 'TE': 1, 'OT': 2, 'OG': 2, 'OC': 1, 'EDGE': 2, 'DL': 2, 'LB': 3, 'CB': 2, 'S': 2, 'P': 1, 'K': 1}
+    var position_list = {'QB': 1, 'RB': 1, 'WR': 3, 'TE': 1, 'OT': 2, 'IOL': 3, 'EDGE': 2, 'DL': 2, 'LB': 3, 'CB': 2, 'S': 2, 'P': 1, 'K': 1}
   }
 
 	var player_obj = {};
@@ -3167,7 +3167,7 @@ const sim_game = (game_dict, common) => {
 
 				chosen_players = {
 					'QB': offensive_team_players.by_position['QB'][0],
-					'OT_List': offensive_team_players.by_position['OT'].concat(offensive_team_players.by_position['OG']).concat(offensive_team_players.by_position['OC'])
+					'OT_List': offensive_team_players.by_position['OT'].concat(offensive_team_players.by_position['IOL'])
 				}
 
 				var valid_pass_catchers = offensive_team_players.by_position['WR'].concat(offensive_team_players.by_position['TE']).concat(offensive_team_players.by_position['RB'])
@@ -4047,8 +4047,7 @@ const choose_players_of_the_week = async (this_week, common) => {
 		'WR': 'Offense',
 		'TE': 'Offense',
 		'OT': 'Offense',
-		'OG': 'Offense',
-		'OC': 'Offense',
+		'IOL': 'Offense',
 
 		'EDGE': 'Defense',
 		'DL': 'Defense',
@@ -4152,8 +4151,7 @@ const choose_all_americans = async (this_week, common) => {
 		'WR': 3,
 		'TE': 1,
 		'OT': 2,
-		'OG': 2,
-		'OC': 1,
+		'IOL': 3,
 
 		'EDGE': 2,
 		'DL': 2,
@@ -5609,7 +5607,7 @@ const inches_to_height = (all_inches) => {
 }
 
 const body_from_position = (position) => {
-  const position_measurables = {"QB":{"height_avg":74.4,"height_std":1.73,"weight_avg":196.45,"weight_std":15.43},"RB":{"height_avg":70.51,"height_std":1.73,"weight_avg":191.69,"weight_std":16.36},"FB":{"height_avg":73,"height_std":1.47,"weight_avg":232,"weight_std":14.12},"WR":{"height_avg":73.17,"height_std":2.3,"weight_avg":183.67,"weight_std":15.07},"TE":{"height_avg":76.42,"height_std":1.26,"weight_avg":229.05,"weight_std":13.15},"OT":{"height_avg":77.4,"height_std":1.16,"weight_avg":285.06,"weight_std":23.29},"OG":{"height_avg":75.63,"height_std":1.1,"weight_avg":292.36,"weight_std":22.27},"OC":{"height_avg":74.98,"height_std":1.01,"weight_avg":283.92,"weight_std":15.91},"EDGE":{"height_avg":75.73,"height_std":1.37,"weight_avg":238.76,"weight_std":18.83},"DL":{"height_avg":74.57,"height_std":1.46,"weight_avg":282.73,"weight_std":23.55},"LB":{"height_avg":73.3,"height_std":1.32,"weight_avg":220.63,"weight_std":11.75},"CB":{"height_avg":71.58,"height_std":1.61,"weight_avg":175.16,"weight_std":9.9},"S":{"height_avg":72.64,"height_std":1.5,"weight_avg":187.73,"weight_std":10.83},"K":{"height_avg":71.89,"height_std":2,"weight_avg":178.32,"weight_std":15.76},"P":{"height_avg":73.86,"height_std":1.69,"weight_avg":191.54,"weight_std":17.31}}
+  const position_measurables = {"QB":{"height_avg":74.4,"height_std":1.73,"weight_avg":196.45,"weight_std":15.43},"RB":{"height_avg":70.51,"height_std":1.73,"weight_avg":191.69,"weight_std":16.36},"FB":{"height_avg":73,"height_std":1.47,"weight_avg":232,"weight_std":14.12},"WR":{"height_avg":73.17,"height_std":2.3,"weight_avg":183.67,"weight_std":15.07},"TE":{"height_avg":76.42,"height_std":1.26,"weight_avg":229.05,"weight_std":13.15},"OT":{"height_avg":77.4,"height_std":1.16,"weight_avg":285.06,"weight_std":23.29},"IOL":{"height_avg":74.98,"height_std":1.01,"weight_avg":283.92,"weight_std":15.91},"EDGE":{"height_avg":75.73,"height_std":1.37,"weight_avg":238.76,"weight_std":18.83},"DL":{"height_avg":74.57,"height_std":1.46,"weight_avg":282.73,"weight_std":23.55},"LB":{"height_avg":73.3,"height_std":1.32,"weight_avg":220.63,"weight_std":11.75},"CB":{"height_avg":71.58,"height_std":1.61,"weight_avg":175.16,"weight_std":9.9},"S":{"height_avg":72.64,"height_std":1.5,"weight_avg":187.73,"weight_std":10.83},"K":{"height_avg":71.89,"height_std":2,"weight_avg":178.32,"weight_std":15.76},"P":{"height_avg":73.86,"height_std":1.69,"weight_avg":191.54,"weight_std":17.31}}
 
   var body = {
     height_inches: Math.floor(normal_trunc( position_measurables[position]['height_avg'],position_measurables[position]['height_std'], 66, 81)),

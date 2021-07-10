@@ -92,8 +92,7 @@
               'WR': '04',
               'TE': '05',
               'OT': '06',
-              'OG': '07',
-              'OC': '08',
+              'IOL': '07',
               'EDGE': '09',
               'DL': '10',
               'LB': '12',
@@ -111,8 +110,7 @@
                 'WR': 'Offense',
                 'TE': 'Offense',
                 'OT': 'Offense',
-                'OG': 'Offense',
-                'OC': 'Offense',
+                'IOL': 'Offense',
                 'EDGE': 'Defense',
                 'DL': 'Defense',
                 'LB': 'Defense',
@@ -307,7 +305,7 @@
                         {
                             label: 'Offensive Line',
                             value: function(rowData, rowIdx){
-                                return rowData.position  == 'OT' || rowData.position  == 'OG' || rowData.position == 'OC';
+                                return rowData.position  == 'OT' || rowData.position  == 'IOL';
                             }
                         },
                           {

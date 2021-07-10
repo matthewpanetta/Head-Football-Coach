@@ -58,8 +58,7 @@
           'WR': '04',
           'TE': '05',
           'OT': '06',
-          'OG': '07',
-          'OC': '08',
+          'IOL': '07',
           'EDGE': '09',
           'DL': '10',
           'LB': '12',
@@ -77,8 +76,7 @@
             'WR': 'Offense',
             'TE': 'Offense',
             'OT': 'Offense',
-            'OG': 'Offense',
-            'OC': 'Offense',
+            'IOL': 'Offense',
             'EDGE': 'Defense',
             'DL': 'Defense',
             'LB': 'Defense',
@@ -272,7 +270,7 @@
                     {
                         label: 'Offensive Line',
                         value: function(rowData, rowIdx){
-                            return rowData.position  == 'OT' || rowData.position  == 'OG' || rowData.position == 'OC';
+                            return rowData.position  == 'OT' || rowData.position  == 'IOL';
                         }
                     },
                       {
@@ -491,7 +489,7 @@
         team_season.national_players_of_the_week_count = 0;
         team_season.conference_all_americans_count = 0;
         team_season.conference_players_of_the_week_count = 0;
-        team_season.conference_preseason_all_americans_count = 0;        
+        team_season.conference_preseason_all_americans_count = 0;
 
 
         for (const team_game of team_season.team_games){

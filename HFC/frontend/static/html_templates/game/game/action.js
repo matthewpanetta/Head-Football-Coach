@@ -62,7 +62,7 @@ const getHtml = async (common) => {
   }
 
 
-  var positions_to_display = {'QB': 1, 'RB': 1, 'WR': 3, 'TE': 1, 'OT': 2, 'OG': 2, 'OC': 1, 'EDGE': 2, 'DL': 2, 'LB': 3, 'CB': 2, 'S': 2}
+  var positions_to_display = {'QB': 1, 'RB': 1, 'WR': 3, 'TE': 1, 'OT': 2, 'IOL': 3, 'EDGE': 2, 'DL': 2, 'LB': 3, 'CB': 2, 'S': 2}
 
   var team_game_ids = [];
   var player_talent_comparison = [];
