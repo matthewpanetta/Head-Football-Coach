@@ -1043,65 +1043,13 @@ class player_team_season {
 
 	constructor(init_data){
 
+		this.player_id = init_data.player_id;
+		this.player_team_season_id = init_data.player_team_season_id;
+
 		this.post_season_movement = null; //[quit, graduate, draft, transfer]
 		this.top_stats = [];
 		this.is_captain = false;
-		this.ratings = {
-			athleticism: {
-				strength: Math.floor(Math.random() * 100),
-				agility: Math.floor(Math.random() * 100),
-				speed: Math.floor(Math.random() * 100),
-				acceleration: Math.floor(Math.random() * 100),
-				stamina: Math.floor(Math.random() * 100),
-				jumping: Math.floor(Math.random() * 100),
-				injury: Math.floor(Math.random() * 100),
-			},
-			passing: {
-				throwing_power: Math.floor(Math.random() * 100),
-				short_throw_accuracy: Math.floor(Math.random() * 100),
-				medium_throw_accuracy: Math.floor(Math.random() * 100),
-				deep_throw_accuracy: Math.floor(Math.random() * 100),
-				throw_on_run: Math.floor(Math.random() * 100),
-				throw_under_pressure: Math.floor(Math.random() * 100),
-				play_action: Math.floor(Math.random() * 100),
-			},
-			rushing: {
-				elusiveness: Math.floor(Math.random() * 100),
-				ball_carrier_vision: Math.floor(Math.random() * 100),
-				break_tackle: Math.floor(Math.random() * 100),
-				carrying: Math.floor(Math.random() * 100),
-			},
-			receiving: {
-				catching: Math.floor(Math.random() * 100),
-				catch_in_traffic: Math.floor(Math.random() * 100),
-				route_running: Math.floor(Math.random() * 100),
-				release: Math.floor(Math.random() * 100),
-			},
-			defense: {
-				hit_power: Math.floor(Math.random() * 100),
-				tackle: Math.floor(Math.random() * 100),
-				pass_rush: Math.floor(Math.random() * 100),
-				block_shedding: Math.floor(Math.random() * 100),
-				pursuit: Math.floor(Math.random() * 100),
-				play_recognition: Math.floor(Math.random() * 100),
-				man_coverage: Math.floor(Math.random() * 100),
-				zone_coverage: Math.floor(Math.random() * 100),
-				press: Math.floor(Math.random() * 100),
-			},
-			blocking: {
-				pass_block: Math.floor(Math.random() * 100),
-				run_block: Math.floor(Math.random() * 100),
-				impact_block: Math.floor(Math.random() * 100),
-			},
-			kicking: {
-				kick_power: Math.floor(Math.random() * 100),
-				kick_accuracy: Math.floor(Math.random() * 100),
-			},
-			overall: {
-				awareness: Math.floor(Math.random() * 100),
-				overall: Math.floor(normal_trunc(75 , 3, 0, 99)),
-			}
-		};
+		this.ratings = init_data.ratings;
 		this.season_stats =  {
 			games: {
 					game_score:0,
@@ -1948,8 +1896,13 @@ const create_player_team_seasons = async (data) => {
 	const common = data.common;
 	const db = common.db;
 
-	const team_seasons_by_team_id = index_group_sync(data.team_seasons, 'index', 'team_id')
-	const team_seasons_by_team_season_id = index_group_sync(data.team_seasons, 'index', 'team_season_id')
+	const teams = await db.team.toArray();
+	const teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
+
+	const team_seasons = nest_children(data.team_seasons, teams_by_team_id, 'team_id', 'team');
+
+	const team_seasons_by_team_id = index_group_sync(team_seasons, 'index', 'team_id')
+	const team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id')
 
 
 	var player_team_season_id_counter = 1;
@@ -1960,49 +1913,127 @@ const create_player_team_seasons = async (data) => {
 		player_team_season_id_counter = last_player_team_season.player_team_season_id + 1;
 	}
 
+
+	var team_position_options = [
+		{QB: 6, RB: 5, WR:8 , TE:4, OT:5, IOL:8, EDGE:6, DL:7, LB: 7 , CB:7, S:4, K:1, P:2},
+		{QB: 4, RB: 5, WR:8 , TE:4, OT:4, IOL:8, EDGE:6, DL:5, LB: 12, CB:6, S:5, K:1, P:2},
+		{QB: 4, RB: 5, WR:9 , TE:3, OT:5, IOL:7, EDGE:7, DL:5, LB: 11, CB:7, S:4, K:2, P:1},
+		{QB: 3, RB: 8, WR:7 , TE:5, OT:5, IOL:8, EDGE:5, DL:5, LB: 9 , CB:8, S:4, K:2, P:1},
+		{QB: 5, RB: 6, WR:10, TE:4, OT:4, IOL:8, EDGE:7, DL:5, LB: 8 , CB:5, S:5, K:1, P:2},
+	]
+
+
+	for (const team_season of team_seasons){
+		team_season.team_position_option = deep_copy(team_position_options[Math.floor(Math.random() * team_position_options.length)]);
+	}
+
 	const classes = ['FR', 'SO', 'JR', 'SR'];
 	const next_class = {
 		'FR': 'SO',
 		'SO': 'JR',
 		'JR': 'SR',
 		'SR': 'SR',
-
 	}
+
+	var url = '/static/data/import_json/Player_Archetype.json'
+  var json_data = await fetch(url);
+  var position_archetypes = await json_data.json();
+	console.log({url:url, data:data, position_archetypes:position_archetypes})
+
+	var position_overall_max = {};
+	var position_overall_min = {};
 
 	for (const player of data.players){
 		var init_data = { player_id: player.player_id,
-																				player_team_season_id: player_team_season_id_counter,
-																				team_season_id: team_season.team_season_id,
-																				season: data.season,
-																				world_id: data.world_id,
-																			}
+											player_team_season_id: player_team_season_id_counter,
+											team_season_id: -1,
+											season: data.season,
+											world_id: data.world_id,
+											position: player.position,
+											class: {
+												class_name: classes[Math.floor(Math.random() * classes.length)],
+												redshirted: false
+											}
+										}
 
-				if (player.previous_player_team_season != undefined){
-					init_data.position = player.previous_player_team_season.position
-					init_data.class = {
-						class_name: next_class[player.previous_player_team_season.class.class_name],
-						redshirted: false
-					}
-					init_data.team_season_id = team_seasons_by_team_id[player.team_id].team_season_id; //TODO - i'll regret this once players change teams!
-					init_data.ratings = deep_copy(player.previous_player_team_season.ratings)
-				}
-				else {
-					init_data.position = player.position;
-					init_data.class = {
-						class_name: classes[Math.floor(Math.random() * classes.length)],
-						redshirted: false
-					}
-					init_data.team_season_id = team_seasons_by_team_id[player.team_id].team_season_id; //TODO - i'll regret this once players change teams!
+			init_data.ratings = {}
+			var overall_impact = 0;
 
-					//console.log({player:player, previous_player_team_season:player.previous_player_team_season})
+			const position_archetype = deep_copy(position_archetypes[player.position]['Balanced'])
+			for (const rating_group_key in position_archetype){
+				var rating_group = position_archetype[rating_group_key];
+				init_data.ratings[rating_group_key] = {}
+				for (const rating_key in rating_group){
+					var rating_obj = rating_group[rating_key]
+					var rating_mean = rating_obj.rating_mean;
+					var rating_overall_impact = rating_obj.overall_impact;
+
+					var rating_value = round_decimal(normal_trunc( rating_mean, 1, 1, 20), 0)
+
+					overall_impact += ((rating_value - rating_mean) * rating_overall_impact)
+
+					init_data.ratings[rating_group_key][rating_key] = rating_value
 				}
+			}
+
+			init_data.ratings.overall.overall = overall_impact;
+			if (!(player.position in position_overall_max)){
+				position_overall_max[player.position] = init_data.ratings.overall.overall
+				position_overall_min[player.position] = init_data.ratings.overall.overall
+			}
+
+			position_overall_max[player.position] = Math.max(position_overall_max[player.position], init_data.ratings.overall.overall)
+			position_overall_min[player.position] = Math.min(position_overall_min[player.position], init_data.ratings.overall.overall)
 
 			var new_pts = new player_team_season(init_data)
-
 
 			player_team_seasons_tocreate.push(new_pts);
 			player_team_season_id_counter +=1;
 
+	}
+
+	var goal_overall_max = 99;
+	var goal_overall_min = 40;
+	var goal_overall_range = goal_overall_max - goal_overall_min;
+
+	for (const player_team_season of player_team_seasons_tocreate){
+		player_team_season.ratings.overall.overall = Math.floor((((player_team_season.ratings.overall.overall - position_overall_min[player_team_season.position]) * goal_overall_range) / (position_overall_max[player_team_season.position] - position_overall_min[player_team_season.position])) + goal_overall_min)
+
+	}
+
+	const player_team_seasons_by_position = index_group_sync(player_team_seasons_tocreate, 'group', 'position');
+	console.log({player_team_seasons_tocreate:player_team_seasons_tocreate, player_team_seasons_by_position:player_team_seasons_by_position})
+	player_team_seasons_tocreate = [];
+
+	for (const position in player_team_seasons_by_position){
+		var player_team_seasons = player_team_seasons_by_position[position];
+		player_team_seasons = player_team_seasons.sort((pts_a, pts_b) => pts_b.ratings.overall.overall - pts_a.ratings.overall.overall);
+
+		position_team_season_ids = team_seasons.map(ts => Array(ts.team_position_option[position]).fill([ts.team_season_id]).flat() ).flat()
+
+		position_team_season_ids = shuffle(position_team_season_ids)
+
+		for (const team_season_id of position_team_season_ids){
+
+			var team_season = team_seasons_by_team_season_id[team_season_id];
+			var team_prestige = team_season.team.team_ratings.team_prestige
+			var prestige_slice_ratio = 1.1 - (team_prestige / 100);
+			var prestige_slice_bound = player_team_seasons.length * prestige_slice_ratio;
+
+			var player_team_season_index = Math.floor(Math.random() * prestige_slice_bound);
+
+			var chosen_player_team_season = player_team_seasons.splice(player_team_season_index, 1);
+			chosen_player_team_season = chosen_player_team_season[0]
+			if (chosen_player_team_season != undefined){
+				chosen_player_team_season.team_season_id = team_season_id;
+
+				player_team_seasons_tocreate.push(chosen_player_team_season)
+			}
+
+			//debugger;
+		}
+
+		console.log({position:position, position_team_season_ids:position_team_season_ids, player_team_seasons:player_team_seasons})
 	}
 
 	console.log({player_team_seasons_tocreate:player_team_seasons_tocreate})
@@ -2027,16 +2058,27 @@ const create_players = async (data) => {
 			{"QB":{"white":75,"black":15,"hispanic":5,"asian":5},"RB":{"white":15,"black":80,"hispanic":10,"asian":5},"WR":{"white":10,"black":85,"hispanic":5,"asian":5},"TE":{"white":50,"black":50,"hispanic":15,"asian":2},"OT":{"white":45,"black":55,"hispanic":15,"asian":1},"IOL":{"white":40,"black":50,"hispanic":15,"asian":1},"EDGE":{"white":20,"black":80,"hispanic":10,"asian":1},"DL":{"white":10,"black":80,"hispanic":10,"asian":1},"LB":{"white":25,"black":75,"hispanic":10,"asian":1},"CB":{"white":2,"black":100,"hispanic":10,"asian":2},"S":{"white":15,"black":80,"hispanic":10,"asian":5},"K":{"white":70,"black":10,"hispanic":25,"asian":25},"P":{"white":70,"black":10,"hispanic":25,"asian":25}}
 
 
-	var team_position_option = {};
-	var team_position_options = [
-			["QB","QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","P","P"],
-			["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"],
-			["QB","QB","QB","QB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","OT","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
-			["QB","QB","QB","RB","RB","RB","RB","RB","RB","RB","FB","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","TE","OT","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","CB","CB","CB","S","S","S","S","K","K","P"],
-			["QB","QB","QB","QB","QB","RB","RB","RB","RB","RB","RB","WR","WR","WR","WR","WR","WR","WR","WR","WR","WR","TE","TE","TE","TE","OT","OT","OT","OT","IOL","IOL","IOL","IOL","IOL","IOL","IOL","IOL","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","EDGE","DL","DL","DL","DL","DL","LB","LB","LB","LB","LB","LB","LB","LB","CB","CB","CB","CB","CB","S","S","S","S","S","K","P","P"]
-		]
 
-	const num_players_per_team = team_position_options[0].length;
+	var team_position_counts = {
+		'QB': 5,
+		'RB': 6,
+		'FB': 1,
+		'WR': 9,
+		'TE': 4,
+		'OT': 5,
+		'IOL': 8,
+		'EDGE': 7,
+		'DL': 6,
+		'LB': 10,
+		'CB':7,
+		'S': 5,
+		'K': 2,
+		'P': 2
+	}
+
+	const num_players_per_team = Object.values(team_position_counts).reduce(function (accumulator, currentValue) {
+		  return accumulator + currentValue
+		}, 0);
 	//const num_players_per_team = 10;
 	const num_players_to_create = num_players_per_team * data.team_seasons.length;
 
@@ -2054,26 +2096,26 @@ const create_players = async (data) => {
 
 
 	$.each(data.team_seasons,  function(ind, team_season){
-		player_team = data.teams_by_team_id[team_season.team_id];
-		team_position_option = team_position_options[Math.floor(Math.random() * team_position_options.length)];
-		for(var i = 0; i<num_players_per_team; i++){
-			position = team_position_option[i];
-			body = common.body_from_position(position);
-			ethnicity = common.weighted_random_choice(position_ethnicity[position]);
-			players_tocreate.push(new player({
-															player_id: player_id_counter,
-															name:player_names[player_counter],
-															world_id: data.world_id,
-															position: position,
-															team_id: team_season.team_id,
-															hometown: player_cities[player_counter],
-															ethnicity: ethnicity,
-															body: common.body_from_position(position)
-														}))
+		for(const position in team_position_counts){
+			for (var i = 0; i<team_position_counts[position]; i++){
+				body = common.body_from_position(position);
+				ethnicity = common.weighted_random_choice(position_ethnicity[position]);
+				var player_obj = {
+																player_id: player_id_counter,
+																name:player_names[player_counter],
+																world_id: data.world_id,
+																position: position,
+																hometown: player_cities[player_counter],
+																ethnicity: ethnicity,
+																body: common.body_from_position(position)
+															}
 
+				players_tocreate.push(new player(player_obj))
 
-					player_counter +=1;
-					player_id_counter +=1;
+				player_counter +=1;
+				player_id_counter +=1;
+			}
+
 		}
 	});
 
@@ -5609,11 +5651,13 @@ const inches_to_height = (all_inches) => {
 const body_from_position = (position) => {
   const position_measurables = {"QB":{"height_avg":74.4,"height_std":1.73,"weight_avg":196.45,"weight_std":15.43},"RB":{"height_avg":70.51,"height_std":1.73,"weight_avg":191.69,"weight_std":16.36},"FB":{"height_avg":73,"height_std":1.47,"weight_avg":232,"weight_std":14.12},"WR":{"height_avg":73.17,"height_std":2.3,"weight_avg":183.67,"weight_std":15.07},"TE":{"height_avg":76.42,"height_std":1.26,"weight_avg":229.05,"weight_std":13.15},"OT":{"height_avg":77.4,"height_std":1.16,"weight_avg":285.06,"weight_std":23.29},"IOL":{"height_avg":74.98,"height_std":1.01,"weight_avg":283.92,"weight_std":15.91},"EDGE":{"height_avg":75.73,"height_std":1.37,"weight_avg":238.76,"weight_std":18.83},"DL":{"height_avg":74.57,"height_std":1.46,"weight_avg":282.73,"weight_std":23.55},"LB":{"height_avg":73.3,"height_std":1.32,"weight_avg":220.63,"weight_std":11.75},"CB":{"height_avg":71.58,"height_std":1.61,"weight_avg":175.16,"weight_std":9.9},"S":{"height_avg":72.64,"height_std":1.5,"weight_avg":187.73,"weight_std":10.83},"K":{"height_avg":71.89,"height_std":2,"weight_avg":178.32,"weight_std":15.76},"P":{"height_avg":73.86,"height_std":1.69,"weight_avg":191.54,"weight_std":17.31}}
 
-  var body = {
-    height_inches: Math.floor(normal_trunc( position_measurables[position]['height_avg'],position_measurables[position]['height_std'], 66, 81)),
-    weight: Math.floor(normal_trunc( position_measurables[position]['weight_avg'],position_measurables[position]['weight_std'], 150, 390))
-  }
+	var height_inches = Math.floor(normal_trunc( position_measurables[position]['height_avg'],position_measurables[position]['height_std'], 66, 81));
+	var body = {height_inches:height_inches};
 
+	var height_variations = 0//(height_inches - position_measurables[position]['height_avg']) / position_measurables[position]['height_std'];
+	var weight = Math.floor(normal_trunc( position_measurables[position]['weight_avg'] * (1 + (height_variations/4)),position_measurables[position]['weight_std'] * .8, 150, 390))
+
+	body.weight = weight;
   body.height = inches_to_height(body.height_inches);
 
   return body;
