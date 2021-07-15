@@ -335,7 +335,7 @@
               {"data": "player_team_season.season_stats.passing.ints", "sortable": true, 'visible': false,'className': 'col-group', 'orderSequence':["desc"]},
 
               {"data": "player_team_season.season_stats.rushing.yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-              {"data": "player_team_season.rushing_yards_per_carry", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+              {"data": "player_team_season.rushing_yards_per_carry_qualified", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
               {"data": "player_team_season.rushing_yards_per_game", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
               {"data": "player_team_season.season_stats.rushing.tds", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
               {"data": "player_team_season.season_stats.rushing.lng", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
@@ -695,7 +695,7 @@
 
             {"data": "season_stats.rushing.carries", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "season_stats.rushing.yards", "sortable": true, 'visible': false,'className': 'center-text', 'orderSequence':desc_first},
-            {"data": "rushing_yards_per_carry", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+            {"data": "rushing_yards_per_carry_qualified", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "rushing_yards_per_game", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "season_stats.rushing.lng", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
             {"data": "season_stats.rushing.tds", "sortable": true, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},

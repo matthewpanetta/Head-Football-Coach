@@ -1,0 +1,78 @@
+{% include "../../static/html_templates/ext_NavBar.html" %}
+
+
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
+
+<head>
+  <style id="addedStyle">
+    .w3-button.dt-button {
+      border: 2px solid #{{page.PrimaryColor}} !important;
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      background-image: none !important;
+      font-weight: 500;
+      font-size: 14px!important;
+    }
+
+    .w3-button.dt-button:hover {
+      box-shadow: 0px 2px 12px #{{page.PrimaryColor}};
+      border: 3px solid #{{page.PrimaryColor}};
+    }
+  </style>
+</head>
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+
+
+<body>
+  <div class="PageContent">
+    {% include "../../static/html_templates/ext_TeamHeader.html" %}
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-league-leaders-tab">Other</button>
+        {% include "../../static/html_templates/ext_TeamList.html" %}
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-schedule">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding w3-margin-bottom'>
+            <div class='w3-col mw1000 l12'>
+              <div class="w3-card ">
+                <div class="w3-bar team-primary-background-bar">
+                  {{season}} {{team.school_name}} Schedule
+                </div>
+
+                <table class="w3-table w3-table-all" id='TeamSchedule'  style="width:100%">
+                  <thead>
+                    <tr class='team-secondary-table-row'>
+                      <th>Week</th>
+                      <th>Opponent</th>
+                      <th></th>
+                      <th>Outcome</th>
+                      <th>W-L (Conf)</th>
+                      <th class='hide-small'>Top Players</th>
+                      <th></th>
+                    </tr>
+
+                  </thead>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-league-leaders">
+        <div class='w3-display-container'>
+          <div class='w3-row-padding' id='worldLeagueLeaderRow'>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

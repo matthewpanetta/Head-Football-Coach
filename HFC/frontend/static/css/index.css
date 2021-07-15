@@ -2146,3 +2146,8 @@ table tr td.padding-left-8 {
 .no-width {
   width:1%;
 }
+
+.nowrap {
+
+  white-space: nowrap;
+}

@@ -140,12 +140,12 @@
         const season = new_season_info.current_season;
 
         //FULL LEAGUE
-        const conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
+        //const conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
         //MID SIZE
         //const conferences_to_include = ['Big 12', 'American Athletic Conference','Big Ten','Southeastern Conference','FBS Independents','Mid-American Conference']
         //SMALL SIZE
-        // var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
-        // //conferences_to_include = ['Mid-American Conference', 'Big Ten']
+        //var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
+        const conferences_to_include = ['Mid-American Conference']
         // conferences_to_include = shuffle(conferences_to_include)
         // var num_conferences_to_include = 2
         // conferences_to_include = conferences_to_include.slice(0, num_conferences_to_include)
@@ -153,6 +153,8 @@
         //var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
         var teams_from_json = await common.get_teams({conference: conferences_to_include});
         const num_teams = teams_from_json.length;
+
+        common.season = season;
 
         const season_data = {season: season, world_id: world_id, captains_per_team: 3, players_per_team: 70,  num_teams: num_teams}
         const new_season = new league_season(season_data, undefined)
@@ -266,18 +268,6 @@
 
         await common.create_team_season({common: common, season:season, world_id: world_id, conferences_by_conference_name:conferences_by_conference_name})
 
-        $(par).append('<div>Ranking teams</div>')
-        const all_weeks = await db.week.where({season: season}).toArray();
-        const this_week = all_weeks.filter(w => w.is_current)[0];
-
-        this_week.phase = await db.phase.get({phase_id: this_week.phase_id});
-        this_week.phase.season = season;
-
-        console.log('this_week',this_week, all_weeks, common)
-
-        await common.calculate_national_rankings(this_week, all_weeks, common)
-        await common.calculate_conference_rankings(this_week, all_weeks, common)
-
         var team_seasons = await db.team_season.where({season: season}).toArray();
         const teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id')
 
@@ -291,6 +281,22 @@
 
         $(par).append('<div>Populating depth charts</div>')
         await common.populate_all_depth_charts({common: common, season:season, world_id:world_id});
+
+        $(par).append('<div>Evaluating team talent</div>')
+        await common.calculate_team_overalls(common);
+
+
+        $(par).append('<div>Ranking teams</div>')
+        const all_weeks = await db.week.where({season: season}).toArray();
+        const this_week = all_weeks.filter(w => w.is_current)[0];
+
+        this_week.phase = await db.phase.get({phase_id: this_week.phase_id});
+        this_week.phase.season = season;
+
+        console.log('this_week',this_week, all_weeks, common)
+
+        await common.calculate_national_rankings(this_week, all_weeks, common)
+        await common.calculate_conference_rankings(this_week, all_weeks, common)
 
         $(par).append('<div>Creating season schedule</div>')
         await common.create_schedule({common: common, season:season, world_id:world_id});

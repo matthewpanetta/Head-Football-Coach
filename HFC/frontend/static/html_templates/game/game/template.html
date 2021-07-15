@@ -182,8 +182,14 @@
                 {% if show_stat_box %}
                 <div class='w3-card w3-margin-bottom'>
                   <div class="w3-bar team-primary-background-bar">
+                    {% if game.was_played%}
                     <span>Team Stats {{TeamStatHeaderSuffix}}</span>
+                    {% else %}
+                    <span>Team Ratings</span>
+                    {% endif%}
                   </div>
+
+                  {% if game.was_played%}
                   <div class='equal-sized-item-container wrap'>
                     {% for stat in team_stat_box %}
                     <div class='w3-padding-4 s6 ellipsis equal-sized-item inline-block w3-border-top game-recap-stat-box w3-border-gray'>
@@ -201,6 +207,11 @@
                     </div>
                     {% endfor %}
                   </div>
+                  {% else %}
+                  <div class="">
+
+                  </div>
+                  {% endif %}
                 </div>
                 {% endif %}
 
@@ -354,6 +365,73 @@
                 <div  class='w3-card w3-margin-bottom' id="GameFlowChart"></div>
                 {% else %}
                 <div class="w3-card w3-margin-bottom">
+                  <div class="w3-row" style='height: 400px;'>
+                    <div class="w3-col s2 height100 white-text center-text" style=' background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}'>
+                      <div class="font20">
+                        {{game.away_team_game.team_season.team.team_abbreviation}}
+                      </div>
+                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                        <div class="font16 ">
+                          {{game.away_team_game.team_season.rating.overall|int}}
+                        </div>
+                        <div class="">
+                          OVR
+                        </div>
+                      </div>
+                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                        <div class="font16">
+                          {{game.away_team_game.team_season.rating.by_position_group.Offense|int}}
+                        </div>
+                        <div class="">
+                          OFF
+                        </div>
+                      </div>
+                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                        <div class="font16">
+                          {{game.away_team_game.team_season.rating.by_position_group.Defense|int}}
+                        </div>
+                        <div class="">
+                          DEF
+                        </div>
+                      </div>
+                    </div>
+                    <div class="w3-col s8">
+                      <div id="team-ratings-chart" class='' >
+                      </div>
+                    </div>
+                    <div class="w3-col s2 height100 white-text center-text" style=' background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}'>
+                      <div class="font20">
+                        {{game.home_team_game.team_season.team.team_abbreviation}}
+                      </div>
+                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                        <div class="font16 ">
+                          {{game.home_team_game.team_season.rating.overall|int}}
+                        </div>
+                        <div class="">
+                          OVR
+                        </div>
+                      </div>
+                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                        <div class="font16">
+                          {{game.home_team_game.team_season.rating.by_position_group.Offense|int}}
+                        </div>
+                        <div class="">
+                          OFF
+                        </div>
+                      </div>
+                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                        <div class="font16">
+                          {{game.home_team_game.team_season.rating.by_position_group.Defense|int}}
+                        </div>
+                        <div class="">
+                          DEF
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="w3-card w3-margin-bottom">
                   <table class='w3-table w3-striped'>
                     <thead>
                       <tr class=' team-primary-background-bar'>
@@ -370,7 +448,7 @@
                       {% for players in player_talent_comparison%}
                       <tr>
 
-                        <td class='right-text font16'>{{players.away_player_team_season.ratings.overall.overall}}</td>
+                        <td class='right-text font16 column-shrink'>{{players.away_player_team_season.ratings.overall.overall}}</td>
                         <td class='right-text font16'>
                           <a href="{{players.away_player_team_season.player.player_href}}">
                           {{players.away_player_team_season.player.full_name}}
@@ -381,9 +459,19 @@
                               </div>
                           </div>
                         </td>
-                        <td style='font-size: 24px; color:#{{players.away_player_team_season.team_season.team.team_color_primary_hex}}' class='center-text font24'><span>{{players.away_player_team_season.advantage_icon|safe}}</span></td>
+                        <td style='font-size: 24px; color:white; background-color:#{{players.away_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
+                          <span>{{players.away_player_team_season.advantage_icon|safe}}</span>
+                          {% if players.away_player_team_season.advantage_logo_url%}
+                          <img src="{{players.away_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
+                          {% endif %}
+                        </td>
                         <td style='' class='center-text font16'><span>{{players.position}}</span></td>
-                        <td style='font-size: 24px; color:#{{players.home_player_team_season.team_season.team.team_color_primary_hex}}' class='center-text font24'><span>{{players.home_player_team_season.advantage_icon|safe}}</span></td>
+                        <td style='font-size: 24px; color:white; background-color:#{{players.home_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
+                          {% if players.home_player_team_season.advantage_logo_url%}
+                          <img src="{{players.home_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
+                          {% endif %}
+                          <span>{{players.home_player_team_season.advantage_icon|safe}}</span>
+                        </td>
                         <td class='left-text font16'>
                           <div class="teamStarterPlayerFace inline-block" id="teamStarterPlayerFace-{{forloop.counter}}" PlayerFaceJson="{{Players.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if Players.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
                               <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
@@ -394,7 +482,7 @@
                           {{players.home_player_team_season.player.full_name}}
                           </a>
                         </td>
-                        <td class='left-text font16'>{{players.home_player_team_season.ratings.overall.overall}}</td>
+                        <td class='left-text font16  column-shrink'>{{players.home_player_team_season.ratings.overall.overall}}</td>
                       </tr>
                       {% endfor %}
                     </tbody>

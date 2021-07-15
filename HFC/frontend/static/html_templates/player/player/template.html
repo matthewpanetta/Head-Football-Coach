@@ -115,7 +115,7 @@
                       <td style='width:20%' class='bold'>{{skill.rating}}</td>
                       <td style='width:60%'>
                         <div class="w3-border w3-round-xlarge statBar" style='width: 80%; margin-left: 10%; background-color: inherit;'>
-                          <div class="w3-container w3-round-xlarge {{skill.player_value|NumberToGradeClass}}-Fill" style="width:{{skill.player_value}}%; height: 8px;"></div>
+                          <div class="w3-container w3-round-xlarge {{(skill.bar_width)|NumberToGradeClass}}-Fill" style="width:{{skill.bar_width}}%; height: 8px;"></div>
                         </div>
                       </td>
                       <td style='width:20%' class='font20 center-text'>{{skill.player_value}}</td>
@@ -502,7 +502,7 @@
                       <td class='bold'>{{rating.rating}}</td>
                       <td style='width:55%'>
                         <div class="w3-border w3-round-xlarge statBar" style='width: 100%; background-color: inherit;'>
-                          <div class="w3-container w3-round-xlarge {{rating.player_value|NumberToGradeClass}}-Fill" style="width:{{rating.player_value}}%; height: 8px;"></div>
+                          <div class="w3-container w3-round-xlarge {{rating.bar_width|NumberToGradeClass}}-Fill" style="width:{{rating.bar_width}}%; height: 8px;"></div>
                         </div>
                       </td>
                       <td class='font20 text-center'>{{rating.player_value}}</td>

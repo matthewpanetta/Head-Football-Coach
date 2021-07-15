@@ -39,7 +39,7 @@
         {category_name: 'Passer Rating', category_abbr: 'RAT', stat: 'passer_rating', players: []},
         {category_name: 'Rushing Yards Per Game', category_abbr: 'YPG', stat: 'rushing_yards_per_game', players: []},
         {category_name: 'Rushing Touchdowns', category_abbr: 'TDs', stat: ['season_stats','rushing', 'tds'], players: []},
-        {category_name: 'Rushing Yards Per Carry', category_abbr: 'YPC', stat: 'rushing_yards_per_carry', players: []},
+        {category_name: 'Rushing Yards Per Carry', category_abbr: 'YPC', stat: 'rushing_yards_per_carry_qualified', players: []},
         {category_name: 'Receiving Yards Per Game', category_abbr: 'YPG', stat: 'receiving_yards_per_game', players: []},
         {category_name: 'Receiving Touchdowns', category_abbr: 'TDs', stat: ['season_stats','receiving', 'tds'], players: []},
         {category_name: 'Receptions', category_abbr: 'RECs', stat: ['season_stats','receiving', 'receptions'], players: []},
@@ -407,7 +407,7 @@
               {"data": "player_team_season.season_stats.passing.ints", "sortable": true, 'visible': false,'className': 'col-group', 'orderSequence':["desc"]},
 
               {"data": "player_team_season.season_stats.rushing.yards", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
-              {"data": "player_team_season.rushing_yards_per_carry", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
+              {"data": "player_team_season.rushing_yards_per_carry_qualified", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
               {"data": "player_team_season.rushing_yards_per_game", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
               {"data": "player_team_season.season_stats.rushing.tds", "sortable": true, 'visible': false, 'orderSequence':["desc"]},
               {"data": "player_team_season.season_stats.rushing.lng", "sortable": true, 'visible': false, 'orderSequence':["desc"]},

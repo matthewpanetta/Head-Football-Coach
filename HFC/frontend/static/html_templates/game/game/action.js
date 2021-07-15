@@ -128,12 +128,16 @@ const getHtml = async (common) => {
 
         if (position_count.home_player_team_season.ratings.overall.overall > position_count.away_player_team_season.ratings.overall.overall){
           position_count.home_player_team_season.advantage_icon = '<i class="fas fa-angle-right"></i>'
+          position_count.home_player_team_season.advantage_color = position_count.home_player_team_season.team_season.team.team_color_primary_hex
+          position_count.home_player_team_season.advantage_logo_url = position_count.home_player_team_season.team_season.team.team_logo_50;
           if (position_count.home_player_team_season.ratings.overall.overall > position_count.away_player_team_season.ratings.overall.overall * 1.1){
             position_count.home_player_team_season.advantage_icon = '<i class="fas fa-angle-double-right"></i>'
           }
         }
         else if (position_count.home_player_team_season.ratings.overall.overall < position_count.away_player_team_season.ratings.overall.overall) {
           position_count.away_player_team_season.advantage_icon = '<i class="fas fa-angle-left"></i>'
+          position_count.away_player_team_season.advantage_color = position_count.away_player_team_season.team_season.team.team_color_primary_hex
+          position_count.away_player_team_season.advantage_logo_url = position_count.away_player_team_season.team_season.team.team_logo_50;
           if (position_count.home_player_team_season.ratings.overall.overall < position_count.away_player_team_season.ratings.overall.overall * .9){
             position_count.away_player_team_season.advantage_icon = '<i class="fas fa-angle-double-left"></i>'
           }
@@ -173,7 +177,7 @@ const getHtml = async (common) => {
     {stat_group_name: 'Rushing', filter_key: 'game_stats.rushing.carries', order: [[ 1 + 1, "desc" ]], columns: [
                                                                                         {title: 'CAR', data: 'game_stats.rushing.carries'},
                                                                                         {title: 'YRD', data: 'game_stats.rushing.yards'},
-                                                                                        {title: 'YPC', data: 'rushing_yards_per_carry'},
+                                                                                        {title: 'YPC', data: 'rushing_yards_per_carry_qualified'},
                                                                                         {title: 'TD', data: 'game_stats.rushing.tds'},
                                                                                         {title: 'LNG', data: 'game_stats.rushing.lng'},
                                                                                       ]},
@@ -216,7 +220,10 @@ const getHtml = async (common) => {
 
   var renderedHtml = await common.nunjucks_env.renderString(html, render_content)
 
-  $('#body').html(renderedHtml)
+  $('#body').html(renderedHtml);
+
+
+  common.calculate_team_overalls(common);
 
 }
 
@@ -252,6 +259,30 @@ const getHtml = async (common) => {
 
           chart.draw(data, options);
         }
+      }
+      else {
+        var team_seasons = [common.render_content.game.home_team_game.team_season, common.render_content.game.away_team_game.team_season]
+        var radar_data = team_seasons.map((ts, ind) => ([{axis:'OVR', value: ts.rating.overall, ind:ind}]).concat(Object.entries(ts.rating.by_position_unit).map(e => ({axis: e[0], value: e[1], ind:ind}))));
+        console.log({radar_data:radar_data})
+
+        var margin = {top: 50, right: 50, bottom: 50, left: 50},
+        width = Math.min(700, $('#team-ratings-chart').parent().width() - 10) - margin.left - margin.right,
+        height = 280;
+
+        console.log({d3:d3});
+        var color = d3.scaleOrdinal()
+  				.range(team_seasons.map(ts => `#${ts.team.team_color_primary_hex}`)); // CODE FROM http://bl.ocks.org/nbremer/21746a9668ffdf6d8242
+        var radarChartOptions = {
+  			  w: width,
+  			  h: height,
+  			  margin: margin,
+  			  maxValue: 100,
+  			  levels: 10,
+  			  roundStrokes: true,
+  			  color: color
+  			};
+
+        RadarChart("#team-ratings-chart", radar_data, radarChartOptions);
       }
 
 

@@ -23,6 +23,7 @@ const routes = [
   {route: "/World/:world_id/Team/:team_id/",         path: 'team/team/base.html'},
   {route: "/World/:world_id/Team/:team_id/Schedule", path: 'team/schedule/base.html'},
   {route: "/World/:world_id/Team/:team_id/Roster",   path: 'team/roster/base.html'},
+  {route: "/World/:world_id/Team/:team_id/History",   path: 'team/history/base.html'},
 
   {route: "/World/:world_id/Player/:player_id/",     path: 'player/player/base.html'},
 

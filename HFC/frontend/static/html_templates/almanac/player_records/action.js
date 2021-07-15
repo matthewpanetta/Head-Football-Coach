@@ -48,7 +48,7 @@
         {category_name: 'Passer Rating', category_abbr: 'RAT', stat: 'passer_rating'},
         {category_name: 'Rushing Yards', category_abbr: 'YRD', stat: 'timeframe.rushing.yards'},
         {category_name: 'Rushing Touchdowns', category_abbr: 'TDs', stat: 'timeframe.rushing.tds'},
-        {category_name: 'Rushing Yards Per Carry', category_abbr: 'YPC', stat: 'rushing_yards_per_carry'},
+        {category_name: 'Rushing Yards Per Carry', category_abbr: 'YPC', stat: 'rushing_yards_per_carry_qualified'},
         {category_name: 'Receiving Yards', category_abbr: 'YRD', stat: 'timeframe.receiving.yards'},
         {category_name: 'Receiving Touchdowns', category_abbr: 'TDs', stat: 'timeframe.receiving.tds'},
         {category_name: 'Receptions', category_abbr: 'RECs', stat: 'timeframe.receiving.receptions'},

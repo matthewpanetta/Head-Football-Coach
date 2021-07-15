@@ -326,7 +326,7 @@ const populate_player_stats = async (common) => {
 
         {"data": "game_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
         {"data": "game_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        {"data": "rushing_yards_per_carry_qualified", "sortable": false, 'visible': false, 'orderSequence':desc_first},
         {"data": "game_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
         {"data": "game_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
         {"data": "game_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
@@ -404,7 +404,7 @@ const populate_player_stats = async (common) => {
 
           {"data": "game_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
           {"data": "game_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+          {"data": "rushing_yards_per_carry_qualified", "sortable": false, 'visible': false, 'orderSequence':desc_first},
           {"data": "game_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
           {"data": "game_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
           {"data": "game_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
@@ -493,7 +493,7 @@ const populate_player_stats = async (common) => {
 
               {"data": "season_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
               {"data": "season_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+              {"data": "rushing_yards_per_carry_qualified", "sortable": false, 'visible': false, 'orderSequence':desc_first},
               {"data": "season_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
               {"data": "season_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
               {"data": "season_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
@@ -696,6 +696,13 @@ const getHtml = async (common) => {
         for (var rating in player.current_player_team_season.ratings[rating_group]){
           var rating_obj = {rating: clean_rating_string(rating), player_value: player.current_player_team_season.ratings[rating_group][rating], all_players: {value_sum: 0, value_count: 0, value: 0}, conference_players: {value_sum: 0, value_count: 0, value: 0}}
 
+          if (rating_obj.rating == 'Overall'){
+            rating_obj.bar_width = rating_obj.player_value;
+          }
+          else {
+            rating_obj.bar_width = rating_obj.player_value * 5;
+          }
+
           for (const player_team_season of all_player_team_season_starters_at_position){
             rating_obj.all_players.value_count +=1;
             rating_obj.all_players.value_sum += player_team_season.ratings[rating_group][rating];
@@ -706,8 +713,8 @@ const getHtml = async (common) => {
             rating_obj.conference_players.value_sum += player_team_season.ratings[rating_group][rating];
           }
 
-          rating_obj.all_players.value = round_decimal(rating_obj.all_players.value_sum / rating_obj.all_players.value_count, 0);
-          rating_obj.conference_players.value = round_decimal(rating_obj.conference_players.value_sum / rating_obj.conference_players.value_count, 0);
+          rating_obj.all_players.value = round_decimal(rating_obj.all_players.value_sum / rating_obj.all_players.value_count, 1);
+          rating_obj.conference_players.value = round_decimal(rating_obj.conference_players.value_sum / rating_obj.conference_players.value_count, 1);
 
           rating_group_obj.ratings.push(rating_obj) ;
         }
