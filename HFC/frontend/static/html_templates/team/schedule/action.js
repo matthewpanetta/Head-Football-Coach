@@ -4,7 +4,7 @@
 
       var world_obj = {};
       const team_id = parseInt(common.params.team_id);
-      const season = parseInt(common.params.season) ?? common.season;
+      const season = common.params.season ?? common.season;
       const db = common.db;
       const query_to_dict = common.query_to_dict;
 
@@ -16,7 +16,7 @@
 
       const TeamHeaderLinks = await common.team_header_links({
         path: 'Schedule',
-        season: undefined,
+        season: common.params.season,
         db: db
       });
 
@@ -25,15 +25,20 @@
 
       const weeks = await db.week.where({season: season}).toArray();
       const weeks_by_week_id = index_group_sync(weeks, 'index','week_id');
-      console.log('weeks', {weeks:weeks, weeks_by_week_id:weeks_by_week_id})
 
       const team = await db.team.get({team_id: team_id})
       const team_season = await db.team_season.get({team_id: team_id, season: season});
 
+      const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: season}).toArray(), 'index', 'conference_season_id');
+      const conference_by_conference_id = await index_group(await db.conference.toArray(), 'index', 'conference_id');
+
       team.team_season = team_season;
+      team.team_season.conference_season = conference_seasons_by_conference_season_id[team.team_season.conference_season_id];
+      team.team_season.conference_season.conference = conference_by_conference_id[team.team_season.conference_season.conference_id];
+
+
 
       var team_games = await db.team_game.where({team_season_id: team_season.team_season_id}).toArray();
-      console.log({team_games:team_games})
       var team_game_ids = team_games.map(tg => tg.team_game_id);
       team_games = team_games.sort((tg_a, tg_b) => tg_a.week_id - tg_b.week_id);
       const game_ids = team_games.map(game => parseInt(game.game_id));
@@ -41,12 +46,9 @@
       var games = await db.game.bulkGet(game_ids);
       games = nest_children(games, weeks_by_week_id, 'week_id', 'week')
 
-      console.log('team_games', {games:games, team_games:team_games, team_season:team_season, season:season})
-
       const opponent_team_game_ids = team_games.map(team_game => team_game.opponent_team_game_id);
 
       const all_team_game_ids = opponent_team_game_ids.concat(team_game_ids);
-      console.log('opponent_team_game_ids', {opponent_team_game_ids:opponent_team_game_ids, all_team_game_ids:all_team_game_ids})
       const opponent_team_games = await db.team_game.bulkGet(opponent_team_game_ids);
 
       const opponent_team_season_ids = opponent_team_games.map(team_game => parseInt(team_game.team_season_id));
@@ -71,8 +73,6 @@
       player_team_games = nest_children(player_team_games, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season')
       const player_team_games_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
 
-
-      console.log('opponent_teams', {opponent_teams:opponent_teams, opponent_team_seasons:opponent_team_seasons, opponent_team_games:opponent_team_games, player_team_games:player_team_games, player_team_games_by_player_team_game_id:player_team_games_by_player_team_game_id})
       var counter_games = 0;
       const pop_games = await $.each(games, async function(ind, game){
 
@@ -124,7 +124,6 @@
         game.opponent_rank_string = game.opponent_team_game.team_season.national_rank_display;
 
         counter_games +=1;
-        console.log('game', game)
 
       });
 
@@ -145,6 +144,8 @@
         team_counter +=1;
       })
 
+      var all_teams = await common.all_teams(common, '/Schedule/');
+
 
       common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
@@ -155,7 +156,7 @@
                             games: games,
                             teams: teams,
                             season: season,
-                            all_teams: await common.all_teams(common),
+                            all_teams: all_teams,
                             conference_standings: team_seasons_in_conference
                           }
 
@@ -173,7 +174,6 @@
     }
 
     const PopulateTeamSchedule = (common) => {
-      console.log(' in PopulateTeamSchedule', common.render_content);
       var games = common.render_content.games;
 
       var ScheduleTable = $('#TeamSchedule').DataTable({
@@ -221,7 +221,6 @@
              }
            }},
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-             console.log({game: game})
              if (game.was_played){
                $(td).html(`
                   <span class='font10'>${game.team_game.top_stats[0].player_team_game.player_team_season.position}</span>
@@ -242,7 +241,6 @@
            }},
            {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
              if (game.was_played){
-               console.log({'game.opponent_team_game': game.opponent_team_game})
                $(td).html(`
                   <span class='font10'>${game.opponent_team_game.top_stats[0].player_team_game.player_team_season.position}</span>
                   <a href='${game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.player_href}'>
@@ -289,7 +287,13 @@
     $(document).ready(async function(){
       var startTime = performance.now()
 
-      const common = await common_functions('/World/:world_id/Team/:team_id/Schedule/Season/:season/');
+
+      if ( location.pathname.includes('/Season/')){
+        var common = await common_functions('/World/:world_id/Team/:team_id/Schedule/Season/:season/');
+      }
+      else {
+        var common = await common_functions('/World/:world_id/Team/:team_id/Schedule/');
+      }
 
       await getHtml(common);
       await action(common);

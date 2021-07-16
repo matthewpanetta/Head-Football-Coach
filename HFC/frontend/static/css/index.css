@@ -651,7 +651,6 @@ input[type=text], input[type=password] {
 
 .SelectedGameBox, .SelectedWeekBox {
   color: white !important;
-  z-index: 1;
 }
 
 

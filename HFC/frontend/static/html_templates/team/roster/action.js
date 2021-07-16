@@ -16,7 +16,7 @@
 
       const TeamHeaderLinks = await common.team_header_links({
         path: 'Roster',
-        season: undefined,
+        season: common.params.season,
         db: db
       });
 
@@ -35,7 +35,13 @@
       const team = await db.team.get({team_id: team_id})
       const team_season = await db.team_season.get({team_id: team_id, season: season});
 
+      const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: season}).toArray(), 'index', 'conference_season_id');
+      const conference_by_conference_id = await index_group(await db.conference.toArray(), 'index', 'conference_id');
+
       team.team_season = team_season;
+      team.team_season.conference_season = conference_seasons_by_conference_season_id[team.team_season.conference_season_id];
+      team.team_season.conference_season.conference = conference_by_conference_id[team.team_season.conference_season.conference_id];
+
       const player_team_seasons = await db.player_team_season.where({team_season_id: team_season.team_season_id}).toArray();
       const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
 
@@ -63,7 +69,7 @@
                             team_id:  team_id,
                             team: team,
                             players: players,
-                            all_teams: await common.all_teams(common),
+                            all_teams: await common.all_teams(common, '/Roster/'),
                             teams: teams,
                           }
 

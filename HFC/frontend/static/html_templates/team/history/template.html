@@ -77,7 +77,9 @@
                   <tbody>
                     {%for team_season in team_seasons %}
                     <tr class='center-text-row'>
-                      <td class='left-text'>{{team_season.season}}</td>
+                      <td class='left-text'>
+                        <a href="{{team_season.team_season_href}}">{{team_season.season}}</a>
+                      </td>
                       <td>{{team_season.record_display}}</td>
                       <td class=' col-group'>
                         {%if team_season.league_season.is_season_complete%}
@@ -111,6 +113,7 @@
                       <td class='column-shrink'>{{team_season.rating.overall|round}}</td>
                       <td class='column-shrink'>{{team_season.rating.by_position_group['Offense']|round}}</td>
                       <td class='column-shrink'>{{team_season.rating.by_position_group['Defense']|round}}</td>
+
                     </tr>
                     {% endfor %}
                   </tbody>

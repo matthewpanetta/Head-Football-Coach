@@ -16,7 +16,7 @@
 
       const TeamHeaderLinks = await common.team_header_links({
         path: 'History',
-        season: common.season,
+        season: common.params.season,
         db: db
       });
 
@@ -33,13 +33,17 @@
 
 
       const team = await db.team.get(team_id);
+      var team_season = await db.team_season.get({team_id: team_id, season: season});
       var team_seasons = await db.team_season.where({team_id: team_id}).toArray()
+
+      team.team_season = team_season;
+      team.team_season.conference_season = conference_seasons_by_conference_season_id[team.team_season.conference_season_id];
+      team.team_season.conference_season.conference = conferences_by_conference_id[team.team_season.conference_season.conference_id];
 
       team_seasons = nest_children(team_seasons, conference_seasons_by_conference_season_id, 'conference_season_id', 'conference_season')
       team_seasons = nest_children(team_seasons, league_seasons_by_season, 'season', 'league_season')
 
       const bowl_game_ids = team_seasons.map(function(g){
-        console.log({g:g, results:g.results})
         if (g.results.bowl){
           return g.results.bowl.game_id
         }
@@ -48,7 +52,6 @@
 
       const bowl_games = await db.game.bulkGet(bowl_game_ids);
       const bowl_games_by_game_id = index_group_sync(bowl_games, 'index', 'game_id')
-      console.log({bowl_game_ids:bowl_game_ids, bowl_games:bowl_games, bowl_games_by_game_id:bowl_games_by_game_id})
 
       var ts_index = 0;
       var ts_cs_list = []
@@ -87,7 +90,7 @@
         }
       }
 
-
+      console.log({TeamHeaderLinks:TeamHeaderLinks})
       common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
                             page:     common.page,
@@ -96,7 +99,7 @@
                             team: team,
                             team_seasons: team_seasons,
                             season: common.season,
-                            all_teams: await common.all_teams(common),
+                            all_teams: await common.all_teams(common, '/History/'),
                           }
 
       common.render_content = render_content;

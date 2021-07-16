@@ -99,7 +99,7 @@ const getHtml = async (common) => {
   var world_obj = {};
   const team_id = common.params.team_id;
   const db = common.db;
-  const season = common.season;
+  const season = common.params.season ?? common.season;
   const index_group = common.index_group;
   const index_group_sync = common.index_group_sync;
 
@@ -113,7 +113,7 @@ const getHtml = async (common) => {
 
   const TeamHeaderLinks = await common.team_header_links({
     path: 'Overview',
-    season: undefined,
+    season: common.params.season,
     db: db
   });
 
@@ -312,7 +312,7 @@ const getHtml = async (common) => {
                         team: team,
                         games: games,
                         teams: teams,
-                        all_teams: await common.all_teams(common),
+                        all_teams: await common.all_teams(common, ''),
                         conference_standings: conference_standings,
                         //team_leaders: team_leaders,
                         //team_stats: team_stats,
@@ -1108,7 +1108,13 @@ function chart(raw_data, common) {
 $(document).ready(async function(){
   var startTime = performance.now()
 
-  const common = await common_functions('/World/:world_id/Team/:team_id/');
+  if ( location.pathname.includes('/Season/')){
+    var common = await common_functions('/World/:world_id/Team/:team_id/Season/:season/');
+  }
+  else {
+    var common = await common_functions('/World/:world_id/Team/:team_id/');
+  }
+
 
   await getHtml(common);
   var endTime = performance.now()

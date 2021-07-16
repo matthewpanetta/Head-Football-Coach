@@ -1,18 +1,23 @@
-{% if HeaderLink.Seasons|length > 1 %}
+<div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
+  <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Teams</button>
+  <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
+    {% for team in all_teams %}
+    <a href="{{team.adjusted_team_href}}" class="w3-bar-item w3-button">
+      <img src="{{team.team_logo}}" class="small-logo" alt="">
+      {{team.full_name}}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+{% if page.TeamHeaderLinks.seasons|length > 1 %}
 <div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
   <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Seasons</button>
   <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
-    {% for Season in HeaderLink.Seasons%}
-    <a href="{{Season.SeasonHref}}" class="w3-bar-item w3-button">{{Season.SeasonStartYear}}</a>
+    {% for season in page.TeamHeaderLinks.seasons%}
+    {{season|log}}
+    <a href="{{season.season_href}}" class="w3-bar-item w3-button">{{season.season}}</a>
     {% endfor %}
   </div>
 </div>
 {% endif %}
-<div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
-  <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Teams</button>
-  <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
-    {% for Team in all_teams %}
-    <a href="{{Team.team_href}}" class="w3-bar-item w3-button"><img src="{{Team.team_logo}}" class="small-logo" alt="">{{Team.school_name}} {{Team.team_name}}</a>
-    {% endfor %}
-  </div>
-</div>
