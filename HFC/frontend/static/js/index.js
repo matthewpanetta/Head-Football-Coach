@@ -505,6 +505,7 @@ class league_season {
 
 		this.season = init_obj.season;
 		this.world_id = init_obj.world_id;
+		this.is_season_complete = false;
 
 
 		this.preseason_tasks = {
@@ -1615,11 +1616,11 @@ const initialize_new_season = async (this_week, common) => {
 	const new_season_data = {season: new_season, world_id: world_id, captains_per_team: 3, players_per_team: 70,  num_teams: num_teams}
 	const new_season_obj = new league_season(new_season_data, current_league_season)
 
-	await db.league_season.delete(new_season);
-	await db.phase.where({season: new_season}).delete();
-	await db.week.where({season: new_season}).delete();
-	await db.team_season.where({season: new_season}).delete();
-	await db.player_team_season.where({season: new_season}).delete();
+	// await db.league_season.delete(new_season);
+	// await db.phase.where({season: new_season}).delete();
+	// await db.week.where({season: new_season}).delete();
+	// await db.team_season.where({season: new_season}).delete();
+	// await db.player_team_season.where({season: new_season}).delete();
 
 
 	console.log({new_season_obj:new_season_obj})
@@ -1682,6 +1683,7 @@ const create_team_season = async (data) => {
 	var team_seasons_tocreate = [];
 
 	var team_id = 1;
+	console.log({team_season:team_season})
 	$.each(teams, function(ind, team){
 		var new_team_season = new team_season({team_id: team.team_id,
 																world_id: data.world_id,
@@ -1816,8 +1818,8 @@ const create_schedule = async (data) => {
 
 
 	var week_counter = 0, week_id=0, chosen_week=0, game_type='', game_scheduled=true;
-	var last_game = await db.game.orderBy('game_id').first();
-	var last_team_game = await db.team_game.orderBy('team_game_id').first();
+	var last_game = await db.game.orderBy('game_id').last();
+	var last_team_game = await db.team_game.orderBy('team_game_id').last();
 
 	var next_game_id = 1;
 	if (!(last_game === undefined)){
@@ -1971,8 +1973,8 @@ const create_schedule = async (data) => {
 	team_seasons_to_update = Object.values(team_seasons);
 
 	//const games_created = await db.game.bulkAdd(games_to_create, games_to_create_ids);
-	const games_created = await db.game.bulkPut(games_to_create);
-	const team_games_created = await db.team_game.bulkPut(team_games_to_create);
+	const games_created = await db.game.bulkAdd(games_to_create);
+	const team_games_created = await db.team_game.bulkAdd(team_games_to_create);
 }
 
 
@@ -4429,6 +4431,16 @@ const choose_players_of_the_week = async (this_week, common) => {
 }
 
 
+const close_out_season = async (this_week, common) => {
+	const db = common.db;
+
+	const league_season = await db.league_season.get(this_week.season);
+
+	league_season.is_season_complete = true;
+
+	await db.league_season.put(league_season);
+}
+
 const choose_all_americans = async (this_week, common) => {
 	const db = common.db;
 
@@ -4633,6 +4645,7 @@ const sim_action = async(duration, common) => {
 
 		if (this_week.week_name == 'Bowl Week 3'){
 			await choose_all_americans(this_week, common);
+			await close_out_season(this_week, common);
 		}
 
     if (this_week.week_name == 'Week 15'){
@@ -4902,8 +4915,8 @@ const schedule_conference_championships = async (this_week, next_week, common) =
     next_team_game_id +=2;
   });
 
-  const games_created = await db.game.bulkPut(games_to_create);
-  const team_games_created = await db.team_game.bulkPut(team_games_to_create);
+  const games_created = await db.game.bulkAdd(games_to_create);
+  const team_games_created = await db.team_game.bulkAdd(team_games_to_create);
 
 
 }
@@ -4923,27 +4936,23 @@ const process_bowl_results = async(this_week, all_weeks, common) => {
   $.each(games_this_week, function(ind, game){
     winning_team_season = team_seasons_by_team_season_id[game.outcome.winning_team.team_season_id];
     losing_team_season = team_seasons_by_team_season_id[game.outcome.losing_team.team_season_id];
-    console.log('team_seasons_by_team_season_id', team_seasons_by_team_season_id, game, winning_team_season, common)
 
     if (game.bowl.is_playoff){
+			winning_team_season.results.bowl = game.bowl;
+			winning_team_season.results.bowl.is_winning_team = true;
+
+			losing_team_season.results.bowl = game.bowl;
+			losing_team_season.results.bowl.is_winning_team = false;
+
       if (game.bowl.bowl_name == 'National Championship'){
         //do champ stuff
-        winning_team_season.results.bowl = game.bowl;
-        winning_team_season.results.bowl.is_winning_team = true;
-
-        losing_team_season.results.bowl = game.bowl;
-        losing_team_season.results.bowl.is_winning_team = false;
-
         winning_team_season.results.national_champion = true;
-
-        team_seasons_to_save.push(winning_team_season)
-        team_seasons_to_save.push(losing_team_season)
       }
       else{
         playoff_teams_advancing.push(winning_team_season)
-      }
+	      }
     }
-    else if (!(game.bowl.is_playoff)) {
+    else {
 
 
       winning_team_season.results.bowl = game.bowl;
@@ -4952,9 +4961,16 @@ const process_bowl_results = async(this_week, all_weeks, common) => {
       losing_team_season.results.bowl = game.bowl;
       losing_team_season.results.bowl.is_winning_team = false;
 
-      team_seasons_to_save.push(winning_team_season)
-      team_seasons_to_save.push(losing_team_season)
     }
+
+		winning_team_season.results.bowl.game_id = game.game_id;
+		losing_team_season.results.bowl.game_id = game.game_id;
+
+		winning_team_season.results.bowl.opposing_team_season_id = losing_team_season.team_season_id;
+		losing_team_season.results.bowl.opposing_team_season_id = winning_team_season.team_season_id;
+
+		team_seasons_to_save.push(winning_team_season)
+		team_seasons_to_save.push(losing_team_season)
   });
 
   var team_a=0,team_b=0, team_games_to_create = [], team_games_to_create_ids=[], games_to_create=[], games_to_create_ids=[], team_ids=[];
@@ -4998,8 +5014,8 @@ const process_bowl_results = async(this_week, all_weeks, common) => {
 
   }
 
-  await db.game.bulkPut(games_to_create);
-  await db.team_game.bulkPut(team_games_to_create);
+  await db.game.bulkAdd(games_to_create);
+  await db.team_game.bulkAdd(team_games_to_create);
   await db.team_season.bulkPut(team_seasons_to_save);
 
 }
@@ -5160,8 +5176,8 @@ const schedule_bowl_season = async (all_weeks, common) => {
 
   console.log('games_to_create', games_to_create, team_games_to_create)
 
-  const games_created = await db.game.bulkPut(games_to_create);
-  const team_games_created = await db.team_game.bulkPut(team_games_to_create);
+  const games_created = await db.game.bulkAdd(games_to_create);
+  const team_games_created = await db.team_game.bulkAdd(team_games_to_create);
 
 
 }
@@ -5568,8 +5584,8 @@ const translate = (
   yAlign = "center"
 ) => {
   const bbox = element.getBBox();
-  let cx;
-  let cy;
+  var cx;
+  var cy;
   if (xAlign === "left") {
     cx = bbox.x;
   } else if (xAlign === "right") {
@@ -5605,9 +5621,9 @@ const drawFeature = async (svg, face, info) => {
   // @ts-ignore
   // var url = `/static/facesjs/${info.name}/${feature.id}.svg`;
   // var html = await fetch(url);
-  // let featureSVGString = await html.text();
+  // var featureSVGString = await html.text();
 
-  let featureSVGString = svgs[info.name][feature.id]
+  var featureSVGString = svgs[info.name][feature.id]
 
   if (!featureSVGString) {
     return;
@@ -5663,7 +5679,7 @@ const drawFeature = async (svg, face, info) => {
 
     if (position !== null) {
       // Special case, for the pinocchio nose it should not be centered but should stick out to the left or right
-      let xAlign;
+      var xAlign;
       if (feature.id === "nose4" || feature.id === "pinocchio") {
         // @ts-ignore
         xAlign = feature.flip ? "right" : "left";

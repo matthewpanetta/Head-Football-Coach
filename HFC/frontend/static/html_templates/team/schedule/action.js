@@ -4,7 +4,7 @@
 
       var world_obj = {};
       const team_id = parseInt(common.params.team_id);
-      const season = common.season;
+      const season = parseInt(common.params.season) ?? common.season;
       const db = common.db;
       const query_to_dict = common.query_to_dict;
 
@@ -21,18 +21,11 @@
       });
 
       var teams = await db.team.toArray();
-      teams = teams.sort(function(teamA, teamB) {
-        if ( teamA.school_name < teamB.school_name ){
-          return -1;
-        }
-        if ( teamA.school_name > teamB.school_name ){
-          return 1;
-        }
-        return 0;
-      });
+      teams = teams.sort((team_a, team_b) => team_a.school_name - team_b.school_name);
 
-      const weeks = await query_to_dict(await db.week.where({season: season}).toArray(), 'one_to_one','week_id');
-      console.log('weeks', weeks)
+      const weeks = await db.week.where({season: season}).toArray();
+      const weeks_by_week_id = index_group_sync(weeks, 'index','week_id');
+      console.log('weeks', {weeks:weeks, weeks_by_week_id:weeks_by_week_id})
 
       const team = await db.team.get({team_id: team_id})
       const team_season = await db.team_season.get({team_id: team_id, season: season});
@@ -40,15 +33,15 @@
       team.team_season = team_season;
 
       var team_games = await db.team_game.where({team_season_id: team_season.team_season_id}).toArray();
+      console.log({team_games:team_games})
       var team_game_ids = team_games.map(tg => tg.team_game_id);
-      team_games = team_games.sort(function(team_game_a,team_game_b){
-        return team_game_a.week_id - team_game_b.week_id;
-      });
+      team_games = team_games.sort((tg_a, tg_b) => tg_a.week_id - tg_b.week_id);
       const game_ids = team_games.map(game => parseInt(game.game_id));
 
-      const games = await db.game.bulkGet(game_ids);
+      var games = await db.game.bulkGet(game_ids);
+      games = nest_children(games, weeks_by_week_id, 'week_id', 'week')
 
-      console.log('team_games', team_games)
+      console.log('team_games', {games:games, team_games:team_games, team_season:team_season, season:season})
 
       const opponent_team_game_ids = team_games.map(team_game => team_game.opponent_team_game_id);
 
@@ -62,29 +55,26 @@
       const opponent_team_ids = opponent_team_seasons.map(team_season => parseInt(team_season.team_id));
       const opponent_teams = await db.team.bulkGet(opponent_team_ids);
 
-      const player_team_games = await db.player_team_game.where('team_game_id').anyOf(all_team_game_ids).toArray();
+      var player_team_games = await db.player_team_game.where('team_game_id').anyOf(all_team_game_ids).toArray();
 
       const player_team_season_ids = player_team_games.map(ptg => ptg.player_team_season_id);
 
-      const player_team_seasons = await db.player_team_season.bulkGet(player_team_season_ids);
-      const player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id');
+      var player_team_seasons = await db.player_team_season.bulkGet(player_team_season_ids);
       const player_ids = player_team_seasons.map(pts => pts.player_id);
 
       const players = await db.player.bulkGet(player_ids);
       const players_by_player_id = index_group_sync(players, 'index', 'player_id');
 
-      for (var player_team_game of player_team_games){
-        player_team_game.player_team_season = player_team_seasons_by_player_team_season_id[player_team_game.player_team_season_id];
-        player_team_game.player_team_season.player = players_by_player_id[player_team_game.player_team_season.player_id];
-      }
+      player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
+      const player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id');
 
+      player_team_games = nest_children(player_team_games, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season')
       const player_team_games_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
 
 
       console.log('opponent_teams', {opponent_teams:opponent_teams, opponent_team_seasons:opponent_team_seasons, opponent_team_games:opponent_team_games, player_team_games:player_team_games, player_team_games_by_player_team_game_id:player_team_games_by_player_team_game_id})
       var counter_games = 0;
       const pop_games = await $.each(games, async function(ind, game){
-        game.week = weeks[game.week_id]
 
         game.team_game = team_games[counter_games];
         game.team_game.team_season = team.team_season;
@@ -164,7 +154,7 @@
                             team: team,
                             games: games,
                             teams: teams,
-                            season: common.season,
+                            season: season,
                             all_teams: await common.all_teams(common),
                             conference_standings: team_seasons_in_conference
                           }
@@ -299,7 +289,7 @@
     $(document).ready(async function(){
       var startTime = performance.now()
 
-      const common = await common_functions('/World/:world_id/Team/:team_id/Schedule/');
+      const common = await common_functions('/World/:world_id/Team/:team_id/Schedule/Season/:season/');
 
       await getHtml(common);
       await action(common);

@@ -9,151 +9,83 @@
       const query_to_dict = common.query_to_dict;
 
       const NavBarLinks = await common.nav_bar_links({
-        path: 'Schedule',
+        path: 'History',
         group_name: 'Team',
         db: db
       });
 
       const TeamHeaderLinks = await common.team_header_links({
-        path: 'Schedule',
-        season: undefined,
+        path: 'History',
+        season: common.season,
         db: db
       });
 
-      var teams = await db.team.toArray();
-      teams = teams.sort(function(teamA, teamB) {
-        if ( teamA.school_name < teamB.school_name ){
-          return -1;
+      const league_seasons = await db.league_season.toArray();
+      const league_seasons_by_season = index_group_sync(league_seasons, 'index', 'season')
+
+      const conferences = await db.conference.toArray();
+      const conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
+
+      var conference_seasons = await db.conference_season.toArray();
+      conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference')
+
+      const conference_seasons_by_conference_season_id = index_group_sync(conference_seasons, 'index', 'conference_season_id');
+
+
+      const team = await db.team.get(team_id);
+      var team_seasons = await db.team_season.where({team_id: team_id}).toArray()
+
+      team_seasons = nest_children(team_seasons, conference_seasons_by_conference_season_id, 'conference_season_id', 'conference_season')
+      team_seasons = nest_children(team_seasons, league_seasons_by_season, 'season', 'league_season')
+
+      const bowl_game_ids = team_seasons.map(function(g){
+        console.log({g:g, results:g.results})
+        if (g.results.bowl){
+          return g.results.bowl.game_id
         }
-        if ( teamA.school_name > teamB.school_name ){
-          return 1;
+        return undefined
+      }).filter(g_id => g_id != undefined);
+
+      const bowl_games = await db.game.bulkGet(bowl_game_ids);
+      const bowl_games_by_game_id = index_group_sync(bowl_games, 'index', 'game_id')
+      console.log({bowl_game_ids:bowl_game_ids, bowl_games:bowl_games, bowl_games_by_game_id:bowl_games_by_game_id})
+
+      var ts_index = 0;
+      var ts_cs_list = []
+      var previous_conference_id = -1;
+      for (const team_season of team_seasons){
+
+        team_season.final_conference_rank = team_season.rankings.division_rank[0];
+
+        team_season.final_national_rank = team_season.rankings.national_rank[0];
+        team_season.first_national_rank = team_season.rankings.national_rank[team_season.rankings.national_rank.length - 1];
+        team_season.best_national_rank = team_season.rankings.national_rank.reduce((acc, val) => Math.min(acc,val), 999);
+
+        if (team_season.conference_season.conference.conference_id != previous_conference_id){
+          ts_cs_list.push(ts_index)
+          previous_conference_id = team_season.conference_season.conference.conference_id;
         }
-        return 0;
-      });
 
-      const weeks = await query_to_dict(await db.week.where({season: season}).toArray(), 'one_to_one','week_id');
-      console.log('weeks', weeks)
+        ts_index +=1;
 
-      const team = await db.team.get({team_id: team_id})
-      const team_season = await db.team_season.get({team_id: team_id, season: season});
+        if (team_season.results.bowl){
+          team_season.results.bowl.game = bowl_games_by_game_id[team_season.results.bowl.game_id];
+        }
 
-      team.team_season = team_season;
-
-      var team_games = await db.team_game.where({team_season_id: team_season.team_season_id}).toArray();
-      var team_game_ids = team_games.map(tg => tg.team_game_id);
-      team_games = team_games.sort(function(team_game_a,team_game_b){
-        return team_game_a.week_id - team_game_b.week_id;
-      });
-      const game_ids = team_games.map(game => parseInt(game.game_id));
-
-      const games = await db.game.bulkGet(game_ids);
-
-      console.log('team_games', team_games)
-
-      const opponent_team_game_ids = team_games.map(team_game => team_game.opponent_team_game_id);
-
-      const all_team_game_ids = opponent_team_game_ids.concat(team_game_ids);
-      console.log('opponent_team_game_ids', {opponent_team_game_ids:opponent_team_game_ids, all_team_game_ids:all_team_game_ids})
-      const opponent_team_games = await db.team_game.bulkGet(opponent_team_game_ids);
-
-      const opponent_team_season_ids = opponent_team_games.map(team_game => parseInt(team_game.team_season_id));
-      const opponent_team_seasons = await db.team_season.bulkGet(opponent_team_season_ids);
-
-      const opponent_team_ids = opponent_team_seasons.map(team_season => parseInt(team_season.team_id));
-      const opponent_teams = await db.team.bulkGet(opponent_team_ids);
-
-      const player_team_games = await db.player_team_game.where('team_game_id').anyOf(all_team_game_ids).toArray();
-
-      const player_team_season_ids = player_team_games.map(ptg => ptg.player_team_season_id);
-
-      const player_team_seasons = await db.player_team_season.bulkGet(player_team_season_ids);
-      const player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id');
-      const player_ids = player_team_seasons.map(pts => pts.player_id);
-
-      const players = await db.player.bulkGet(player_ids);
-      const players_by_player_id = index_group_sync(players, 'index', 'player_id');
-
-      for (var player_team_game of player_team_games){
-        player_team_game.player_team_season = player_team_seasons_by_player_team_season_id[player_team_game.player_team_season_id];
-        player_team_game.player_team_season.player = players_by_player_id[player_team_game.player_team_season.player_id];
       }
 
-      const player_team_games_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
+      for (var i = 0; i < ts_cs_list.length; i++){
+        ts_index = ts_cs_list[i];
 
+        var team_season = team_seasons[ts_index]
+        team_season.conference_row_span = (ts_cs_list[i+1] ?? team_seasons.length) - ts_cs_list[i];
+      }
 
-      console.log('opponent_teams', {opponent_teams:opponent_teams, opponent_team_seasons:opponent_team_seasons, opponent_team_games:opponent_team_games, player_team_games:player_team_games, player_team_games_by_player_team_game_id:player_team_games_by_player_team_game_id})
-      var counter_games = 0;
-      const pop_games = await $.each(games, async function(ind, game){
-        game.week = weeks[game.week_id]
-
-        game.team_game = team_games[counter_games];
-        game.team_game.team_season = team.team_season;
-        game.team_game.team_season.team = team;
-        game.opponent_team_game = opponent_team_games[counter_games];
-        game.opponent_team_game.team_season = opponent_team_seasons[counter_games];
-        game.opponent_team_game.team_season.team = opponent_teams[counter_games];
-
-
-        game.game_display = 'Preview'
-        game.game_outcome_letter = ''
-        game.overtime_display = ''
-        if (game.was_played){
-          game.game_display = game.score_display;
-
-          if (game.home_team_score > game.away_team_score){
-            game.game_outcome_letter = 'W'
-          }
-
-          for (var top_stat of game.team_game.top_stats){
-            top_stat.player_team_game = player_team_games_by_player_team_game_id[top_stat.player_team_game_id]
-          }
-          for (var top_stat of game.opponent_team_game.top_stats){
-            top_stat.player_team_game = player_team_games_by_player_team_game_id[top_stat.player_team_game_id]
-          }
+      for (const team_season of team_seasons){
+        if (team_season.conference_row_span == undefined){
+          team_season.conference_row_span = 0
         }
-
-        if (game.home_team_season_id == team.team_season.team_season_id){
-          game.game_location = 'home'
-          game.game_location_char = 'vs.'
-          game.home_team_game = game.team_game;
-          game.away_team_game = game.opponent_team_game;
-
-        }
-        else {
-          game.game_location = 'away';
-          game.game_location_char = '@'
-          game.away_team_game = game.team_game;
-          game.home_team_game = game.opponent_team_game;
-        }
-
-        game.selected_game_box = '';
-        if (counter_games == 0){
-          game.selected_game_box = 'SelectedGameBox';
-        }
-
-        game.opponent_rank_string = game.opponent_team_game.team_season.national_rank_display;
-
-        counter_games +=1;
-        console.log('game', game)
-
-      });
-
-
-      var conference_season = await db.conference_season.get({conference_season_id: team.team_season.conference_season_id})  ;
-      var conference = await db.conference.get({conference_id: conference_season.conference_id})  ;
-
-      var team_seasons_in_conference = await db.team_season.where({season: season}).toArray();
-      team_seasons_in_conference = team_seasons_in_conference.filter(team_season => team_season.conference_season_id == team.team_season.conference_season_id).sort(function(teamA,teamB){
-        return teamA.rankings.division_rank[0] - teamB.rankings.division_rank[0];
-      });
-
-      var team_ids = team_seasons_in_conference.map(team_season => team_season.team_id);
-      var teams = await db.team.bulkGet(team_ids);
-      var team_counter = 0;
-      $.each(team_seasons_in_conference, function(ind, team_season){
-        team_season.team = teams[team_counter];
-        team_counter +=1;
-      })
+      }
 
 
       common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
@@ -162,18 +94,16 @@
                             world_id: common.params['world_id'],
                             team_id:  team_id,
                             team: team,
-                            games: games,
-                            teams: teams,
+                            team_seasons: team_seasons,
                             season: common.season,
                             all_teams: await common.all_teams(common),
-                            conference_standings: team_seasons_in_conference
                           }
 
       common.render_content = render_content;
 
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/team/schedule/template.html'
+      var url = '/static/html_templates/team/history/template.html'
       var html = await fetch(url);
       html = await html.text();
 
@@ -182,116 +112,9 @@
       $('#body').html(renderedHtml);
     }
 
-    const PopulateTeamSchedule = (common) => {
-      console.log(' in PopulateTeamSchedule', common.render_content);
-      var games = common.render_content.games;
-
-      var ScheduleTable = $('#TeamSchedule').DataTable({
-        'searching': false,
-        'paging': false,
-        'info': false,
-        'ordering': false,
-        "pageLength": 25,
-        "data": games,
-         "columns": [
-           {"data": null, "sortable": true, 'className': 'center-text','visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-             $(td).html(`<span>${game.week.week_name}</span>`)
-             $(td).attr('style', 'color: white; width: 70px; background-color: #' + game.opponent_team_game.team_season.team.team_color_primary_hex);
-           }},
-           {"data": null, "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-               $(td).html(" ");
-               $(td).append(`<img class='worldTeamLogo' src='${game.opponent_team_game.team_season.team.team_logo}'/>`);
-               $(td).attr('style', 'color: white; width: 10px; background-color: #' + game.opponent_team_game.team_season.team.team_color_primary_hex);
-
-           }},
-           {"data": null, "sortable": true, 'visible': true,'className': 'column-med', 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-               $(td).html("<span></span> ");
-               $(td).append(`<span class='font10'>${game.opponent_team_game.team_season.national_rank_display}</span> `); //TODO SWITCH TO CORRECT WEEK RANK
-               $(td).append(`<a href='${game.opponent_team_game.team_season.team.team_href}'>${game.opponent_team_game.team_season.team.school_name}</a>`);
-               $(td).append(` <span class="font10">${game.opponent_team_game.team_season.record_display}</span>`);
-
-           }},
-           {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-             $(td).html('')
-             if (game.was_played){
-               $(td).html(`<span class='${game.team_game.game_outcome_letter} W-L-badge'>${game.team_game.game_outcome_letter}</span>`);
-             }
-
-               $(td).append(`<span>
-                             <a href='${game.game_href}'>${game.game_display}</a>
-                             ${game.overtime_display}
-                           </span>`);
-           }},
-           {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-             if (game.was_played){
-               $(td).html(`<span>${game.team_game.record.wins} - ${game.team_game.record.losses} (${game.team_game.record.conference_wins} - ${game.team_game.record.conference_losses})</span>`);
-             }
-             else {
-               $(td).html(``);
-             }
-           }},
-           {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-             console.log({game: game})
-             if (game.was_played){
-               $(td).html(`
-                  <span class='font10'>${game.team_game.top_stats[0].player_team_game.player_team_season.position}</span>
-                  <a href='${game.team_game.top_stats[0].player_team_game.player_team_season.player.player_href}'>
-                    ${game.team_game.top_stats[0].player_team_game.player_team_season.player.full_name}
-                  </a>
-                  <span> - ${game.team_game.team_season.team.team_abbreviation}</span>
-                  <ul class='no-list-style'>
-
-                    <li>${game.team_game.top_stats[0].top_stats[0].display}</li>
-                    <li>${game.team_game.top_stats[0].top_stats[1].display}</li>
-                  </ul>
-                `);
-             }
-             else {
-               $(td).html('');
-             }
-           }},
-           {"data": null, "sortable": true, 'visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, StringValue, game, iRow, iCol) {
-             if (game.was_played){
-               console.log({'game.opponent_team_game': game.opponent_team_game})
-               $(td).html(`
-                  <span class='font10'>${game.opponent_team_game.top_stats[0].player_team_game.player_team_season.position}</span>
-                  <a href='${game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.player_href}'>
-                    ${game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.full_name}
-                  </a>
-                  <span> - ${game.opponent_team_game.team_season.team.team_abbreviation}</span>
-                  <ul class='no-list-style'>
-                    <li>${game.opponent_team_game.top_stats[0].top_stats[0].display}</li>
-                    <li>${game.opponent_team_game.top_stats[0].top_stats[1].display}</li>
-                  </ul>
-                `);
-             }
-             else {
-               $(td).html('');
-             }
-           }},
-           // {"data": "TopPlayerStats", "sortable": true, 'className': 'hide-medium','visible': true, 'orderSequence':["asc", "desc"], "fnCreatedCell": function (td, TopPlayerStats, DataObject, iRow, iCol) {
-           //   if (TopPlayerStats.length > 0 ){
-           //     $(td).html(`
-           //        <span>`+TopPlayerStats[1].PlayerPosition+`</span>
-           //        <a href='`+TopPlayerStats[1].PlayerHref+`'>`+TopPlayerStats[1].PlayerName+`</a>
-           //        <span>`+TopPlayerStats[1].PlayerTeam+`</span>
-           //        <ul class='no-list-style'>
-           //          <li>`+TopPlayerStats[1].PlayerStats[0]+`</li>
-           //          <li>`+TopPlayerStats[1].PlayerStats[1]+`</li>
-           //        </ul>
-           //      `);
-           //    }
-           // }},
-         ],
-      });
-    }
-
-
 
     const action = async (common) => {
 
-      const query_to_dict = common.query_to_dict;
-      PopulateTeamSchedule(common);
     }
 
 

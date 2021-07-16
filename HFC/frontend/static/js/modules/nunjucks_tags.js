@@ -258,6 +258,10 @@ function get_nunjucks_env() {
       console.log('Logging from template', Obj);
     });
 
+    env.addFilter('round', function(val){
+      return val.toFixed(0);
+    });
+
     env.addFilter('coalesce', function(val_a, val_b){
       return val_a ?? val_b
     });
