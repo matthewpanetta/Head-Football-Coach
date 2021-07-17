@@ -146,7 +146,35 @@ const getHtml = async (common) => {
         player_talent_comparison.push(position_count)
 
       }
-    })
+    });
+
+
+    var all_home_team_seasons = await db.team_season.where({team_id: game.home_team_game.team_season.team_id}).toArray();
+    var all_home_team_season_ids = all_home_team_seasons.map(ts => ts.team_season_id);
+    var all_home_team_games = await db.team_game.where('team_season_id').anyOf(all_home_team_season_ids).toArray();
+    var all_home_game_ids = all_home_team_games.map(tg => tg.game_id);
+
+    var all_away_team_seasons = await db.team_season.where({team_id: game.away_team_game.team_season.team_id}).toArray();
+    var all_away_team_season_ids = all_away_team_seasons.map(ts => ts.team_season_id);
+    var all_away_team_games = await db.team_game.where('team_season_id').anyOf(all_away_team_season_ids).toArray();
+    var all_away_game_ids = all_away_team_games.map(tg => tg.game_id);
+
+    var past_game_ids = intersect(all_home_game_ids, all_away_game_ids)
+
+    var last_team_meetings = await db.game.bulkGet(past_game_ids);
+    last_team_meetings = last_team_meetings.filter(g => g.was_played);
+
+    const last_team_meetings_week_ids = last_team_meetings.map(g => g.week_id);
+    const last_team_meetings_weeks = await db.week.bulkGet(last_team_meetings_week_ids);
+    const last_team_meetings_weeks_by_week_id = index_group_sync(last_team_meetings_weeks, 'index', 'week_id')
+
+    last_team_meetings = nest_children(last_team_meetings, last_team_meetings_weeks_by_week_id, 'week_id', 'week')
+
+    for (const game of last_team_meetings){
+      game.outcome.winning_team.team = teams_by_team_id[game.outcome.winning_team.team_id]
+    }
+
+    console.log({last_team_meetings_week_ids:last_team_meetings_week_ids,last_team_meetings_weeks_by_week_id:last_team_meetings_weeks_by_week_id, last_team_meetings:last_team_meetings, past_game_ids:past_game_ids, all_home_team_games:all_home_team_games, all_away_team_games:all_away_team_games})
   }
 
 
@@ -207,7 +235,8 @@ const getHtml = async (common) => {
                         conference_standings: conference_standings,
                         show_stat_box: true,
                         team_stat_box: team_stat_box,
-                        box_score_stat_groupings: box_score_stat_groupings
+                        box_score_stat_groupings: box_score_stat_groupings,
+                        last_team_meetings:last_team_meetings
                       }
 
   common.render_content = render_content;

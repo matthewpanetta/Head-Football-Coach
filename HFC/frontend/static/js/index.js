@@ -1313,6 +1313,11 @@ class conference {
 }
 
 
+const intersect = (a, b) => {
+  var c = a.filter(a_val => b.includes(a_val));
+  return c;
+}
+
 const union = (a, b) => {
   var c = a.concat(b.filter((item) => a.indexOf(item) < 0))
   return c;
@@ -2972,7 +2977,6 @@ const conference_standings = async (conference_season_id, team_season_ids, commo
   var team_counter = 0;
   $.each(team_seasons_in_conference, function(ind, team_season){
     team_season.team = teams[team_counter];
-		console.log('team_season_ids', team_season_ids, team_season.team_season_id, (team_season_ids.includes(team_season.team_season_id)))
 		if (team_season_ids.includes(team_season.team_season_id) ){
 			team_season.bold = 'bold'
 		}

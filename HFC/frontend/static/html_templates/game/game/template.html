@@ -58,31 +58,25 @@
         {{game.game_headline_display}}
       </div>
       <div class='w3-row height-150'>
-        <div class="w3-col s5 gameHeaderTeamContent away height100 padding-20-10" style=''>
-          <div class="w3-row-padding height100" style='border-radius: 10px 0px 0px 10px; color: white; background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}'>
-            <div class="w3-col s7 gameHeaderTeamContainer gameSchoolName gameTeamName">
-              <div class="gameHeaderTeamContainerInfo">
-                <div class="gameHeaderTeamContainerName">
-                  <div class="">
-                    {{game.away_team_game.team_season.national_rank_display}}
-                    <span class='gameOutcome{{game.away_outcome_letter}}'>{{game.away_team_game.team_season.team.school_name}}</span>
-                  </div>
-                </div>
-                <div class="gameHeaderTeamContainerRecord">
-                  {{game.away_team_game.team_season.record_display}}
-                </div>
+        <div class='w3-col s2 text-left skew-45' style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}; border-right: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex}}; border-left: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex}}; '>
+          <a href="{{game.away_team_game.team_season.team.team_href}}"><img class='gameTeamLogo skew-neg-45' src='{{game.away_team_game.team_season.team.team_logo}}' alt="My image"></a>
+        </div>
+        <div class="w3-col s3 gameHeaderTeamContent away">
+          <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
+            <div class="gameHeaderTeamContainerInfo">
+              <div class="gameHeaderTeamContainerName">
+                {{game.away_team_game.team_season.national_rank_display}} <span class='bold'>{{game.away_team_game.team_season.team.school_name}}</span> {{game.away_team_game.team_season.team.team_name}}
+              </div>
+              <div class="gameHeaderTeamContainerRecord">
+                {{game.away_team_game.team_season.record_display}}
               </div>
             </div>
-            <div class="w3-col s2">
-              <a href="{{game.away_team_game.team_season.team.team_href}}"><img class='worldTeamLogo' src='{{game.away_team_game.team_season.team.team_logo}}' alt="My image"></a>
-            </div>
-            <div class="w3-col s2 gameHeaderScoreContainer gameOutcome{{game.away_outcome_letter}}">
-              {% if game.was_played == 1 %}
-                {{game.scoring.final[0]}}
-              {% endif %}
-            </div>
           </div>
-
+          <div class="gameHeaderScoreContainer gameOutcome{{game.away_outcome_letter}}">
+            {% if game.was_played == 1 %}
+              {{game.away_point}}
+            {%endif%}
+          </div>
         </div>
 
         <div class='w3-col s2 text-center height100'>
@@ -134,31 +128,31 @@
           </div>
         </div>
         -->
-        <div class="w3-col s5 gameHeaderTeamContent home height100 padding-20-10"  style=''>
-          <div class="w3-row-padding height100" style='border-radius: 0px 10px 10px 0px; color: white; background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}'>
-            <div class="w3-col s2 gameHeaderScoreContainer gameOutcome{{game.home_outcome_letter}}">
-              {% if game.was_played == 1 %}
-                {{game.scoring.final[1]}}
-              {% endif %}
-            </div>
-            <div class="w3-col s2">
-              <a href="{{game.home_team_game.team_season.team.team_href}}"><img class='worldTeamLogo' src='{{game.home_team_game.team_season.team.team_logo}}' alt="My image"></a>
-            </div>
-            <div class="w3-col s7 gameHeaderTeamContainer gameSchoolName gameTeamName">
-              <div class="gameHeaderTeamContainerInfo">
-                <div class="gameHeaderTeamContainerName">
-                  <div class="">
-                    {{game.home_team_game.team_season.national_rank_display}}
-                    <span class='gameOutcome{{game.home_outcome_letter}}'>{{game.home_team_game.team_season.team.school_name}}</span>
-                  </div>
-                </div>
-                <div class="gameHeaderTeamContainerRecord">
-                  {{game.home_team_game.team_season.record_display}}
-                </div>
+
+        <div class="w3-col s3 gameHeaderTeamContent home">
+          <div class="gameHeaderScoreContainer gameOutcome{{game.home_outcome_letter}}">
+            {% if game.was_played == 1 %}
+              {{game.home_points}}
+            {% endif %}
+          </div>
+          <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
+            <div class="gameHeaderTeamContainerInfo">
+              <div class="gameHeaderTeamContainerName">
+                {{game.home_team_game.team_season.national_rank_display}} <span class='bold'>{{game.home_team_game.team_season.team.school_name}}</span> {{game.home_team_game.team_season.team.team_name}}
+              </div>
+              <div class="gameHeaderTeamContainerRecord">
+                {{game.home_team_game.team_season.record_display}}
               </div>
             </div>
           </div>
+
         </div>
+
+        <div class='w3-col s2 text-right skew-neg-45' style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}; border-left: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex}};  border-right: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex}}; '>
+          <a href="{{game.home_team_game.team_season.team.team_href}}"><img class='gameTeamLogo skew-45' src='{{game.home_team_game.team_season.team.team_logo}}' alt="My image"></a>
+        </div>
+
+      </div>
       </div>
 
       <nav>
@@ -225,24 +219,22 @@
                   <table class='w3-table-all'>
                     <thead>
                       <tr>
-                        <th>#</th>
                         <th>Week</th>
                         <th>Winner</th>
                         <th>Score</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {% for GamePlayed in LastTeamMeetings%}
+                      {% for game in last_team_meetings%}
                       <tr>
-                        <td>{{GamePlayed.GameOrderRank}}</td>
-                        <td>{{GamePlayed.WeekName}}, {{GamePlayed.Year}}</td>
+                        <td>{{game.week.week_name}}, {{game.week.season}}</td>
 
-                        <td class='bold' style='background-color: #{{GamePlayed.WinningTeamPrimaryColor}}; color: #{{GamePlayed.WinningTeamSecondaryColor}};'>
-                          {{GamePlayed.WinningTeamName}}
+                        <td class='bold center-text' style='background-color: #{{game.outcome.winning_team.team.team_color_primary_hex}};'>
+                          <img class='logo-30' src="{{game.outcome.winning_team.team.team_logo}}" alt="">
                         </td>
                         <td>
-                          <a href="{{GamePlayed.GameHref}}">
-                            {{GamePlayed.ScoreDisplay}}
+                          <a href="{{game.game_href}}">
+                            {{game.score_display}}
                           </a>
                         </td>
                       </tr>
@@ -329,17 +321,17 @@
                     <table class='no-border w3-table-all' style='width: 100%;'>
                       <tbody>
                         {% for period in game.scoring.periods %}
-                          <tr class='ScoringSummaryQuarterHeader'>
+                          <tr class='ScoringSummaryQuarterHeader' style='background-color: white;'>
                             <th colspan='4'>{{period.period_number}}</th>
                             <th class='ScoringSummaryTeamScore center-text'>{{game.home_team_game.team_season.team.team_abbreviation}}</th>
                             <th class='ScoringSummaryTeamScore center-text'>{{game.away_team_game.team_season.team.team_abbreviation}}</th>
                           </tr>
                           {% for drive in period.drives %}
-                          <tr class='ScoringSummaryScoreRow {{drive.drive_end.drive_event_class}}' style='background-color: {{drive.drive_end.display_team.team_color_primary_hex|Color_RGB_With_Opacity}}'>
+                          <tr class='ScoringSummaryScoreRow {{drive.drive_end.drive_event_class}}' style='border-bottom: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; border-right: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; background-color: white;'>
                             <td class='ScoringSummaryTeamLogo column-shrink' style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
                                 <img src="{{drive.drive_end.display_team.team_logo}}" alt="">
                             </td>
-                            <td class="">
+                            <td class="white-text font16"  style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
                               {{drive.drive_end.play_type}}
                             </td>
                             <td class="">

@@ -4,6 +4,7 @@
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
 
 <body>
   <div class="PageContent">
@@ -18,9 +19,9 @@
         </button>
         {% for conference_season in conference_seasons%}
         {% if loop.index == 1%}
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-{{conference_season.conference.conference_id}}-tab" style="background-color: #{{page.SecondaryColor}};">{{conference_season.conference.conference_abbreviation}}</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" conference_id='{{conference_season.conference.conference_id}}' id="nav-{{conference_season.conference.conference_id}}-tab" style="background-color: #{{page.SecondaryColor}};">{{conference_season.conference.conference_abbreviation}}</button>
         {% else %}
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-{{conference_season.conference.conference_id}}-tab">{{conference_season.conference.conference_abbreviation}}</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" conference_id='{{conference_season.conference.conference_id}}' id="nav-{{conference_season.conference.conference_id}}-tab">{{conference_season.conference.conference_abbreviation}}</button>
         {% endif %}
         {% endfor %}
       </div>
@@ -100,6 +101,24 @@
                       {% endfor %}
                     </tbody>
                   </table>
+                </div>
+                <div class="w3-card">
+                  <div class="w3-bar team-primary-background-bar">
+                    Conference Standings Trend
+                  </div>
+                  <div class="standings-trend-chart" conference_id='{{conference_season.conference_id}}' id='standings-trend-chart-{{conference_season.conference_id}}'>
+                    <svg width='500' height='50'>
+                      <g transform='translate(30,30)'>
+                        <circle r='8' fill='none' stroke='grey'></circle>
+                        <text transform='translate(10,4)'> = start of season rank</text>
+                      </g>
+                      <g transform='translate(200,30)'>
+                        <circle r='8' fill='gray'></circle>
+                        <text transform='translate(10,4)'> = end of season rank</text>
+                      </g>
+
+                    </svg>
+                  </div>
                 </div>
                 </div>
             </div>
