@@ -6,7 +6,7 @@
         <table class='w3-table-all' id='HeismanRaceTable'>
 
           <tbody>
-            {% for player_team_season in player_team_seasons%}
+            {% for player_team_season in heisman_race%}
             <tr playerid='{{player_team_season.player.player_id}}'>
               <td  class='font32 white-text column-shrink center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">{{loop.index}}</td>
               <td  class='center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">

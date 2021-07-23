@@ -140,15 +140,14 @@
         const season = new_season_info.current_season;
 
         //FULL LEAGUE
-        //const conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
+        const conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
         //MID SIZE
         //const conferences_to_include = ['Big 12', 'American Athletic Conference','Big Ten','Southeastern Conference','FBS Independents','Mid-American Conference']
         //SMALL SIZE
-      var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
-      //  const conferences_to_include = ['Mid-American Conference']
-         conferences_to_include = shuffle(conferences_to_include)
-         var num_conferences_to_include = 5
-         conferences_to_include = conferences_to_include.slice(0, num_conferences_to_include)
+         // var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
+         // conferences_to_include = shuffle(conferences_to_include)
+         // var num_conferences_to_include = 5
+         // conferences_to_include = conferences_to_include.slice(0, num_conferences_to_include)
 
         //var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
         var teams_from_json = await common.get_teams({conference: conferences_to_include});

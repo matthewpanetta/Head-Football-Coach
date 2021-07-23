@@ -984,6 +984,16 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
   overflow: hidden;
 }
 
+.PlayerFace-200{
+  width: 240px;
+  height: 240px;
+  border-radius: 250px;
+}
+
+.PlayerFace-Headshot.PlayerFace-200{
+  border: 6px solid;
+}
+
 .PlayerFace-Headshot.PlayerFace-90{
   border: 3px solid;
   width: 90px;

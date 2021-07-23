@@ -163,6 +163,9 @@
 
         var width = $($('.standings-trend-chart:visible')[0]).parent().width() - margin.left - margin.right;
 
+        //CODE CREDIT:
+        //https://observablehq.com/@d3/dot-plot
+        //https://www.d3-graph-gallery.com/graph/lollipop_cleveland.html
         var svg = d3.select(chart_div)
                       .append("svg")
                         .attr("width", width + margin.left + margin.right)
@@ -172,7 +175,7 @@
                               "translate(" + margin.left + "," + margin.top + ")");
 
         var x = d3.scaleLinear()
-              .domain([1, max_rank]) // set to min and max
+              .domain([1, max_rank])
               .range([ 0, width]);
             svg.append("g")
               .attr("transform", "translate(0," + height + ")")

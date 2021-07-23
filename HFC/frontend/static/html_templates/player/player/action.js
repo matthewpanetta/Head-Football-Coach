@@ -700,7 +700,7 @@ const getHtml = async (common) => {
             rating_obj.bar_width = rating_obj.player_value;
           }
           else {
-            rating_obj.bar_width = rating_obj.player_value * 5;
+            rating_obj.bar_width = rating_obj.player_value;
           }
 
           for (const player_team_season of all_player_team_season_starters_at_position){

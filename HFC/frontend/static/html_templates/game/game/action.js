@@ -6,9 +6,9 @@ const getHtml = async (common) => {
   const db = common.db;
   const query_to_dict = common.query_to_dict;
   const index_group = common.index_group;
-  const season = common.season;
 
   var game = await db.game.get({game_id: game_id});
+  const season = game.season;
 
   game.week = await db.week.get({week_id: game.week_id});
 
@@ -83,7 +83,7 @@ const getHtml = async (common) => {
         drive.drive_end.display_team = teams_by_team_id[drive.drive_end.display_team_id]
 
         var seconds_left_in_period = (15 * 60) - (drive.drive_end.seconds_in_to_game % (15 * 60))
-        var display_time = `${Math.floor(seconds_left_in_period/60)}:${Math.floor(seconds_left_in_period%60)}`
+        var display_time = seconds_to_time(seconds_left_in_period)
         drive.drive_end.display_time =  display_time
 
       }

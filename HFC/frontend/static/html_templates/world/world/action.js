@@ -5,6 +5,8 @@ const getHtml = async (common) => {
       var index_group = common.index_group;
       const season = common.season;
 
+      //common.choose_preseason_all_americans(common)
+
       var current_week = await db.week.toArray();
       current_week = current_week.filter(w => w.is_current)[0];
 

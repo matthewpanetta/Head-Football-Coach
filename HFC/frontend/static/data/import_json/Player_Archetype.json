@@ -2,800 +2,2353 @@
   "QB": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 4, "overall_impact": 0},
-        "agility": {"rating_mean": 8, "overall_impact": 1},
-        "speed": {"rating_mean": 8, "overall_impact": 5},
-        "acceleration": {"rating_mean": 8, "overall_impact": 3},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 4, "overall_impact": 0},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 20,
+          "overall_impact": 0
+        },
+        "agility": {
+          "rating_mean": 40,
+          "overall_impact": 1
+        },
+        "speed": {
+          "rating_mean": 40,
+          "overall_impact": 5
+        },
+        "acceleration": {
+          "rating_mean": 40,
+          "overall_impact": 3
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 20,
+          "overall_impact": 0
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 15, "overall_impact": 20},
-        "short_throw_accuracy": {"rating_mean": 14, "overall_impact": 20},
-        "medium_throw_accuracy": {"rating_mean": 12, "overall_impact": 15},
-        "deep_throw_accuracy": {"rating_mean": 10, "overall_impact": 10},
-        "throw_on_run": {"rating_mean": 8, "overall_impact": 8},
-        "throw_under_pressure": {"rating_mean": 10, "overall_impact": 8},
-        "play_action": {"rating_mean": 10, "overall_impact": 8}
+        "throwing_power": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 70,
+          "overall_impact": 20
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 60,
+          "overall_impact": 15
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 50,
+          "overall_impact": 10
+        },
+        "throw_on_run": {
+          "rating_mean": 40,
+          "overall_impact": 8
+        },
+        "throw_under_pressure": {
+          "rating_mean": 50,
+          "overall_impact": 8
+        },
+        "play_action": {
+          "rating_mean": 50,
+          "overall_impact": 8
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 2, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 2, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 3, "overall_impact": 0},
-        "carrying": {"rating_mean": 3, "overall_impact": 3}
+        "elusiveness": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 15,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 15,
+          "overall_impact": 3
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 1, "overall_impact": 0},
-        "catch_in_traffic": {"rating_mean": 1, "overall_impact": 0},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "catch_in_traffic": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 1, "overall_impact": 0},
-        "tackle": {"rating_mean": 1, "overall_impact": 0},
-        "pass_rush": {"rating_mean": 1, "overall_impact": 0},
-        "block_shedding": {"rating_mean": 1, "overall_impact": 0},
-        "pursuit": {"rating_mean": 1, "overall_impact": 0},
-        "play_recognition": {"rating_mean": 1, "overall_impact": 0},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pass_rush": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "block_shedding": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pursuit": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_recognition": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 1, "overall_impact": 0},
-        "run_block": {"rating_mean": 1, "overall_impact": 0},
-        "impact_block": {"rating_mean": 1, "overall_impact": 0}
+        "pass_block": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "run_block": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "impact_block": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "RB": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 6, "overall_impact": 1},
-        "agility": {"rating_mean": 15, "overall_impact": 10},
-        "speed": {"rating_mean": 15, "overall_impact": 10},
-        "acceleration": {"rating_mean": 15, "overall_impact": 10},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 13, "overall_impact": 1},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 30,
+          "overall_impact": 1
+        },
+        "agility": {
+          "rating_mean": 75,
+          "overall_impact": 10
+        },
+        "speed": {
+          "rating_mean": 75,
+          "overall_impact": 10
+        },
+        "acceleration": {
+          "rating_mean": 75,
+          "overall_impact": 10
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 65,
+          "overall_impact": 1
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 15, "overall_impact": 10},
-        "ball_carrier_vision": {"rating_mean": 15, "overall_impact": 15},
-        "break_tackle": {"rating_mean": 15, "overall_impact": 20},
-        "carrying": {"rating_mean": 15, "overall_impact": 20}
+        "elusiveness": {
+          "rating_mean": 75,
+          "overall_impact": 10
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "break_tackle": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "carrying": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 12, "overall_impact": 2},
-        "catch_in_traffic": {"rating_mean": 8, "overall_impact": 2},
-        "route_running": {"rating_mean": 8, "overall_impact": 2},
-        "release": {"rating_mean": 6, "overall_impact": 1}
+        "catching": {
+          "rating_mean": 60,
+          "overall_impact": 2
+        },
+        "catch_in_traffic": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        },
+        "route_running": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        },
+        "release": {
+          "rating_mean": 30,
+          "overall_impact": 1
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 1, "overall_impact": 0},
-        "tackle": {"rating_mean": 1, "overall_impact": 0},
-        "pass_rush": {"rating_mean": 1, "overall_impact": 0},
-        "block_shedding": {"rating_mean": 1, "overall_impact": 0},
-        "pursuit": {"rating_mean": 1, "overall_impact": 0},
-        "play_recognition": {"rating_mean": 1, "overall_impact": 0},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pass_rush": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "block_shedding": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pursuit": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_recognition": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 8, "overall_impact": 2},
-        "run_block": {"rating_mean": 4, "overall_impact": 1},
-        "impact_block": {"rating_mean": 2, "overall_impact": 1}
+        "pass_block": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        },
+        "run_block": {
+          "rating_mean": 20,
+          "overall_impact": 1
+        },
+        "impact_block": {
+          "rating_mean": 10,
+          "overall_impact": 1
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "WR": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 4, "overall_impact": 1},
-        "agility": {"rating_mean": 13, "overall_impact": 8},
-        "speed": {"rating_mean": 15, "overall_impact": 15},
-        "acceleration": {"rating_mean": 15, "overall_impact": 8},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 15, "overall_impact": 5},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 20,
+          "overall_impact": 1
+        },
+        "agility": {
+          "rating_mean": 65,
+          "overall_impact": 8
+        },
+        "speed": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "acceleration": {
+          "rating_mean": 75,
+          "overall_impact": 8
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 8, "overall_impact": 2},
-        "ball_carrier_vision": {"rating_mean": 6, "overall_impact": 2},
-        "break_tackle": {"rating_mean": 6, "overall_impact": 2},
-        "carrying": {"rating_mean": 10, "overall_impact": 5}
+        "elusiveness": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 30,
+          "overall_impact": 2
+        },
+        "break_tackle": {
+          "rating_mean": 30,
+          "overall_impact": 2
+        },
+        "carrying": {
+          "rating_mean": 50,
+          "overall_impact": 5
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 15, "overall_impact": 20},
-        "catch_in_traffic": {"rating_mean": 15, "overall_impact": 8},
-        "route_running": {"rating_mean": 13, "overall_impact": 15},
-        "release": {"rating_mean": 15, "overall_impact": 15}
+        "catching": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "catch_in_traffic": {
+          "rating_mean": 75,
+          "overall_impact": 8
+        },
+        "route_running": {
+          "rating_mean": 65,
+          "overall_impact": 15
+        },
+        "release": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 1, "overall_impact": 0},
-        "tackle": {"rating_mean": 1, "overall_impact": 0},
-        "pass_rush": {"rating_mean": 1, "overall_impact": 0},
-        "block_shedding": {"rating_mean": 1, "overall_impact": 0},
-        "pursuit": {"rating_mean": 1, "overall_impact": 0},
-        "play_recognition": {"rating_mean": 1, "overall_impact": 0},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pass_rush": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "block_shedding": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pursuit": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_recognition": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 1, "overall_impact": 0},
-        "run_block": {"rating_mean": 1, "overall_impact": 0},
-        "impact_block": {"rating_mean": 1, "overall_impact": 0}
+        "pass_block": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "run_block": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "impact_block": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "TE": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 12, "overall_impact": 10},
-        "agility": {"rating_mean": 8, "overall_impact": 2},
-        "speed": {"rating_mean": 11, "overall_impact": 8},
-        "acceleration": {"rating_mean": 11, "overall_impact": 8},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 8, "overall_impact": 2},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 60,
+          "overall_impact": 10
+        },
+        "agility": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        },
+        "speed": {
+          "rating_mean": 55,
+          "overall_impact": 8
+        },
+        "acceleration": {
+          "rating_mean": 55,
+          "overall_impact": 8
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 4, "overall_impact": 1},
-        "ball_carrier_vision": {"rating_mean": 6, "overall_impact": 2},
-        "break_tackle": {"rating_mean": 8, "overall_impact": 2},
-        "carrying": {"rating_mean": 12, "overall_impact": 5}
+        "elusiveness": {
+          "rating_mean": 20,
+          "overall_impact": 1
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 30,
+          "overall_impact": 2
+        },
+        "break_tackle": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        },
+        "carrying": {
+          "rating_mean": 60,
+          "overall_impact": 5
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 15, "overall_impact": 20},
-        "catch_in_traffic": {"rating_mean": 15, "overall_impact": 15},
-        "route_running": {"rating_mean": 15, "overall_impact": 15},
-        "release": {"rating_mean": 12, "overall_impact": 10}
+        "catching": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "catch_in_traffic": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "route_running": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "release": {
+          "rating_mean": 60,
+          "overall_impact": 10
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 1, "overall_impact": 0},
-        "tackle": {"rating_mean": 1, "overall_impact": 0},
-        "pass_rush": {"rating_mean": 1, "overall_impact": 0},
-        "block_shedding": {"rating_mean": 1, "overall_impact": 0},
-        "pursuit": {"rating_mean": 1, "overall_impact": 0},
-        "play_recognition": {"rating_mean": 1, "overall_impact": 0},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pass_rush": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "block_shedding": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pursuit": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_recognition": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 11, "overall_impact": 10},
-        "run_block": {"rating_mean": 11, "overall_impact": 10},
-        "impact_block": {"rating_mean": 8, "overall_impact": 2}
+        "pass_block": {
+          "rating_mean": 55,
+          "overall_impact": 10
+        },
+        "run_block": {
+          "rating_mean": 55,
+          "overall_impact": 10
+        },
+        "impact_block": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "FB": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 13, "overall_impact": 20},
-        "agility": {"rating_mean": 8, "overall_impact": 2},
-        "speed": {"rating_mean": 8, "overall_impact": 8},
-        "acceleration": {"rating_mean": 8, "overall_impact": 8},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 4, "overall_impact": 2},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 65,
+          "overall_impact": 20
+        },
+        "agility": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        },
+        "speed": {
+          "rating_mean": 40,
+          "overall_impact": 8
+        },
+        "acceleration": {
+          "rating_mean": 40,
+          "overall_impact": 8
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 20,
+          "overall_impact": 2
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 4, "overall_impact": 1},
-        "ball_carrier_vision": {"rating_mean": 10, "overall_impact": 6},
-        "break_tackle": {"rating_mean": 15, "overall_impact": 10},
-        "carrying": {"rating_mean": 15, "overall_impact": 10}
+        "elusiveness": {
+          "rating_mean": 20,
+          "overall_impact": 1
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 50,
+          "overall_impact": 6
+        },
+        "break_tackle": {
+          "rating_mean": 75,
+          "overall_impact": 10
+        },
+        "carrying": {
+          "rating_mean": 75,
+          "overall_impact": 10
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 5, "overall_impact": 3},
-        "catch_in_traffic": {"rating_mean": 3, "overall_impact": 1},
-        "route_running": {"rating_mean": 3, "overall_impact": 1},
-        "release": {"rating_mean": 3, "overall_impact": 1}
+        "catching": {
+          "rating_mean": 25,
+          "overall_impact": 3
+        },
+        "catch_in_traffic": {
+          "rating_mean": 15,
+          "overall_impact": 1
+        },
+        "route_running": {
+          "rating_mean": 15,
+          "overall_impact": 1
+        },
+        "release": {
+          "rating_mean": 15,
+          "overall_impact": 1
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 1, "overall_impact": 0},
-        "tackle": {"rating_mean": 1, "overall_impact": 0},
-        "pass_rush": {"rating_mean": 1, "overall_impact": 0},
-        "block_shedding": {"rating_mean": 1, "overall_impact": 0},
-        "pursuit": {"rating_mean": 1, "overall_impact": 0},
-        "play_recognition": {"rating_mean": 1, "overall_impact": 0},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pass_rush": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "block_shedding": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pursuit": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_recognition": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 13, "overall_impact": 15},
-        "run_block": {"rating_mean": 15, "overall_impact": 20},
-        "impact_block": {"rating_mean": 15, "overall_impact": 20}
+        "pass_block": {
+          "rating_mean": 65,
+          "overall_impact": 15
+        },
+        "run_block": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "impact_block": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "OT": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 15, "overall_impact": 20},
-        "agility": {"rating_mean": 5, "overall_impact": 1},
-        "speed": {"rating_mean": 5, "overall_impact": 1},
-        "acceleration": {"rating_mean": 11, "overall_impact": 8},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 2, "overall_impact": 0},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "agility": {
+          "rating_mean": 25,
+          "overall_impact": 1
+        },
+        "speed": {
+          "rating_mean": 25,
+          "overall_impact": 1
+        },
+        "acceleration": {
+          "rating_mean": 55,
+          "overall_impact": 8
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 1, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 1, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 1, "overall_impact": 0},
-        "carrying": {"rating_mean": 1, "overall_impact": 0}
+        "elusiveness": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 1, "overall_impact": 0},
-        "catch_in_traffic": {"rating_mean": 1, "overall_impact": 0},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "catch_in_traffic": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 1, "overall_impact": 0},
-        "tackle": {"rating_mean": 1, "overall_impact": 0},
-        "pass_rush": {"rating_mean": 1, "overall_impact": 0},
-        "block_shedding": {"rating_mean": 1, "overall_impact": 0},
-        "pursuit": {"rating_mean": 1, "overall_impact": 0},
-        "play_recognition": {"rating_mean": 1, "overall_impact": 0},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pass_rush": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "block_shedding": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pursuit": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_recognition": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 15, "overall_impact": 20},
-        "run_block": {"rating_mean": 15, "overall_impact": 15},
-        "impact_block": {"rating_mean": 15, "overall_impact": 10}
+        "pass_block": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "run_block": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "impact_block": {
+          "rating_mean": 75,
+          "overall_impact": 10
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "IOL": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 15, "overall_impact": 20},
-        "agility": {"rating_mean": 5, "overall_impact": 1},
-        "speed": {"rating_mean": 5, "overall_impact": 1},
-        "acceleration": {"rating_mean": 11, "overall_impact": 8},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 2, "overall_impact": 0},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "agility": {
+          "rating_mean": 25,
+          "overall_impact": 1
+        },
+        "speed": {
+          "rating_mean": 25,
+          "overall_impact": 1
+        },
+        "acceleration": {
+          "rating_mean": 55,
+          "overall_impact": 8
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 1, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 1, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 1, "overall_impact": 0},
-        "carrying": {"rating_mean": 1, "overall_impact": 0}
+        "elusiveness": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 1, "overall_impact": 0},
-        "catch_in_traffic": {"rating_mean": 1, "overall_impact": 0},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "catch_in_traffic": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 1, "overall_impact": 0},
-        "tackle": {"rating_mean": 1, "overall_impact": 0},
-        "pass_rush": {"rating_mean": 1, "overall_impact": 0},
-        "block_shedding": {"rating_mean": 1, "overall_impact": 0},
-        "pursuit": {"rating_mean": 1, "overall_impact": 0},
-        "play_recognition": {"rating_mean": 1, "overall_impact": 0},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pass_rush": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "block_shedding": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pursuit": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_recognition": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 15, "overall_impact": 15},
-        "run_block": {"rating_mean": 15, "overall_impact": 20},
-        "impact_block": {"rating_mean": 15, "overall_impact": 10}
+        "pass_block": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "run_block": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "impact_block": {
+          "rating_mean": 75,
+          "overall_impact": 10
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "DL": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 15, "overall_impact": 20},
-        "agility": {"rating_mean": 8, "overall_impact": 5},
-        "speed": {"rating_mean": 6, "overall_impact": 1},
-        "acceleration": {"rating_mean": 12, "overall_impact": 15},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 2, "overall_impact": 0},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "agility": {
+          "rating_mean": 40,
+          "overall_impact": 5
+        },
+        "speed": {
+          "rating_mean": 30,
+          "overall_impact": 1
+        },
+        "acceleration": {
+          "rating_mean": 60,
+          "overall_impact": 15
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 1, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 1, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 1, "overall_impact": 0},
-        "carrying": {"rating_mean": 1, "overall_impact": 0}
+        "elusiveness": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 1, "overall_impact": 0},
-        "catch_in_traffic": {"rating_mean": 1, "overall_impact": 0},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "catch_in_traffic": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 12, "overall_impact": 5},
-        "tackle": {"rating_mean": 12, "overall_impact": 12},
-        "pass_rush": {"rating_mean": 12, "overall_impact": 10},
-        "block_shedding": {"rating_mean": 15, "overall_impact": 20},
-        "pursuit": {"rating_mean": 6, "overall_impact": 2},
-        "play_recognition": {"rating_mean": 12, "overall_impact": 8},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 60,
+          "overall_impact": 5
+        },
+        "tackle": {
+          "rating_mean": 60,
+          "overall_impact": 12
+        },
+        "pass_rush": {
+          "rating_mean": 60,
+          "overall_impact": 10
+        },
+        "block_shedding": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "pursuit": {
+          "rating_mean": 30,
+          "overall_impact": 2
+        },
+        "play_recognition": {
+          "rating_mean": 60,
+          "overall_impact": 8
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 5, "overall_impact": 0},
-        "run_block": {"rating_mean": 5, "overall_impact": 0},
-        "impact_block": {"rating_mean": 5, "overall_impact": 0}
+        "pass_block": {
+          "rating_mean": 25,
+          "overall_impact": 0
+        },
+        "run_block": {
+          "rating_mean": 25,
+          "overall_impact": 0
+        },
+        "impact_block": {
+          "rating_mean": 25,
+          "overall_impact": 0
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "EDGE": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 12, "overall_impact": 10},
-        "agility": {"rating_mean": 10, "overall_impact": 10},
-        "speed": {"rating_mean": 10, "overall_impact": 10},
-        "acceleration": {"rating_mean": 12, "overall_impact": 15},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 2, "overall_impact": 0},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 60,
+          "overall_impact": 10
+        },
+        "agility": {
+          "rating_mean": 50,
+          "overall_impact": 10
+        },
+        "speed": {
+          "rating_mean": 50,
+          "overall_impact": 10
+        },
+        "acceleration": {
+          "rating_mean": 60,
+          "overall_impact": 15
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 1, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 1, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 1, "overall_impact": 0},
-        "carrying": {"rating_mean": 1, "overall_impact": 0}
+        "elusiveness": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 1, "overall_impact": 0},
-        "catch_in_traffic": {"rating_mean": 1, "overall_impact": 0},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "catch_in_traffic": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 13, "overall_impact": 2},
-        "tackle": {"rating_mean": 12, "overall_impact": 10},
-        "pass_rush": {"rating_mean": 15, "overall_impact": 20},
-        "block_shedding": {"rating_mean": 14, "overall_impact": 15},
-        "pursuit": {"rating_mean": 10, "overall_impact": 2},
-        "play_recognition": {"rating_mean": 12, "overall_impact": 8},
-        "man_coverage": {"rating_mean": 6, "overall_impact": 2},
-        "zone_coverage": {"rating_mean": 6, "overall_impact": 2},
-        "press": {"rating_mean": 2, "overall_impact": 1}
+        "hit_power": {
+          "rating_mean": 65,
+          "overall_impact": 2
+        },
+        "tackle": {
+          "rating_mean": 60,
+          "overall_impact": 10
+        },
+        "pass_rush": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "block_shedding": {
+          "rating_mean": 70,
+          "overall_impact": 15
+        },
+        "pursuit": {
+          "rating_mean": 50,
+          "overall_impact": 2
+        },
+        "play_recognition": {
+          "rating_mean": 60,
+          "overall_impact": 8
+        },
+        "man_coverage": {
+          "rating_mean": 30,
+          "overall_impact": 2
+        },
+        "zone_coverage": {
+          "rating_mean": 30,
+          "overall_impact": 2
+        },
+        "press": {
+          "rating_mean": 10,
+          "overall_impact": 1
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 3, "overall_impact": 0},
-        "run_block": {"rating_mean": 3, "overall_impact": 0},
-        "impact_block": {"rating_mean": 3, "overall_impact": 0}
+        "pass_block": {
+          "rating_mean": 15,
+          "overall_impact": 0
+        },
+        "run_block": {
+          "rating_mean": 15,
+          "overall_impact": 0
+        },
+        "impact_block": {
+          "rating_mean": 15,
+          "overall_impact": 0
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "LB": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 12, "overall_impact": 7},
-        "agility": {"rating_mean": 12, "overall_impact": 7},
-        "speed": {"rating_mean": 12, "overall_impact": 15},
-        "acceleration": {"rating_mean": 12, "overall_impact": 7},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 2, "overall_impact": 0},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 60,
+          "overall_impact": 7
+        },
+        "agility": {
+          "rating_mean": 60,
+          "overall_impact": 7
+        },
+        "speed": {
+          "rating_mean": 60,
+          "overall_impact": 15
+        },
+        "acceleration": {
+          "rating_mean": 60,
+          "overall_impact": 7
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 1, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 1, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 1, "overall_impact": 0},
-        "carrying": {"rating_mean": 1, "overall_impact": 0}
+        "elusiveness": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 1, "overall_impact": 0},
-        "catch_in_traffic": {"rating_mean": 1, "overall_impact": 0},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "catch_in_traffic": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 15, "overall_impact": 5},
-        "tackle": {"rating_mean": 15, "overall_impact": 20},
-        "pass_rush": {"rating_mean": 11, "overall_impact": 8},
-        "block_shedding": {"rating_mean": 15, "overall_impact": 20},
-        "pursuit": {"rating_mean": 15, "overall_impact": 20},
-        "play_recognition": {"rating_mean": 15, "overall_impact": 20},
-        "man_coverage": {"rating_mean": 9, "overall_impact": 10},
-        "zone_coverage": {"rating_mean": 11, "overall_impact": 10},
-        "press": {"rating_mean": 8, "overall_impact": 2}
+        "hit_power": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        },
+        "tackle": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "pass_rush": {
+          "rating_mean": 55,
+          "overall_impact": 8
+        },
+        "block_shedding": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "pursuit": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "play_recognition": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "man_coverage": {
+          "rating_mean": 45,
+          "overall_impact": 10
+        },
+        "zone_coverage": {
+          "rating_mean": 55,
+          "overall_impact": 10
+        },
+        "press": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 2, "overall_impact": 0},
-        "run_block": {"rating_mean": 2, "overall_impact": 0},
-        "impact_block": {"rating_mean": 2, "overall_impact": 0}
+        "pass_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "run_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "impact_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "S": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 10, "overall_impact": 7},
-        "agility": {"rating_mean": 13, "overall_impact": 7},
-        "speed": {"rating_mean": 13, "overall_impact": 15},
-        "acceleration": {"rating_mean": 15, "overall_impact": 15},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 2, "overall_impact": 0},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 50,
+          "overall_impact": 7
+        },
+        "agility": {
+          "rating_mean": 65,
+          "overall_impact": 7
+        },
+        "speed": {
+          "rating_mean": 65,
+          "overall_impact": 15
+        },
+        "acceleration": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 1, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 1, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 1, "overall_impact": 0},
-        "carrying": {"rating_mean": 1, "overall_impact": 0}
+        "elusiveness": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 8, "overall_impact": 5},
-        "catch_in_traffic": {"rating_mean": 6, "overall_impact": 2},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 40,
+          "overall_impact": 5
+        },
+        "catch_in_traffic": {
+          "rating_mean": 30,
+          "overall_impact": 2
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 13, "overall_impact": 5},
-        "tackle": {"rating_mean": 14, "overall_impact": 15},
-        "pass_rush": {"rating_mean": 8, "overall_impact": 5},
-        "block_shedding": {"rating_mean": 13, "overall_impact": 10},
-        "pursuit": {"rating_mean": 15, "overall_impact": 15},
-        "play_recognition": {"rating_mean": 15, "overall_impact": 10},
-        "man_coverage": {"rating_mean": 12, "overall_impact": 20},
-        "zone_coverage": {"rating_mean": 15, "overall_impact": 20},
-        "press": {"rating_mean": 11, "overall_impact": 10}
+        "hit_power": {
+          "rating_mean": 65,
+          "overall_impact": 5
+        },
+        "tackle": {
+          "rating_mean": 70,
+          "overall_impact": 15
+        },
+        "pass_rush": {
+          "rating_mean": 40,
+          "overall_impact": 5
+        },
+        "block_shedding": {
+          "rating_mean": 65,
+          "overall_impact": 10
+        },
+        "pursuit": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "play_recognition": {
+          "rating_mean": 75,
+          "overall_impact": 10
+        },
+        "man_coverage": {
+          "rating_mean": 60,
+          "overall_impact": 20
+        },
+        "zone_coverage": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "press": {
+          "rating_mean": 55,
+          "overall_impact": 10
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 2, "overall_impact": 0},
-        "run_block": {"rating_mean": 2, "overall_impact": 0},
-        "impact_block": {"rating_mean": 2, "overall_impact": 0}
+        "pass_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "run_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "impact_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "CB": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 6, "overall_impact": 3},
-        "agility": {"rating_mean": 15, "overall_impact": 15},
-        "speed": {"rating_mean": 15, "overall_impact": 20},
-        "acceleration": {"rating_mean": 15, "overall_impact": 20},
-        "stamina": {"rating_mean": 15, "overall_impact": 1},
-        "jumping": {"rating_mean": 8, "overall_impact": 2},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 30,
+          "overall_impact": 3
+        },
+        "agility": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "speed": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "acceleration": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 1
+        },
+        "jumping": {
+          "rating_mean": 40,
+          "overall_impact": 2
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 1, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 1, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 1, "overall_impact": 0},
-        "carrying": {"rating_mean": 1, "overall_impact": 0}
+        "elusiveness": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 11, "overall_impact": 8},
-        "catch_in_traffic": {"rating_mean": 8, "overall_impact": 3},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 55,
+          "overall_impact": 8
+        },
+        "catch_in_traffic": {
+          "rating_mean": 40,
+          "overall_impact": 3
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 8, "overall_impact": 3},
-        "tackle": {"rating_mean": 10, "overall_impact": 8},
-        "pass_rush": {"rating_mean": 5, "overall_impact": 1},
-        "block_shedding": {"rating_mean": 11, "overall_impact": 8},
-        "pursuit": {"rating_mean": 12, "overall_impact": 8},
-        "play_recognition": {"rating_mean": 12, "overall_impact": 2},
-        "man_coverage": {"rating_mean": 15, "overall_impact": 20},
-        "zone_coverage": {"rating_mean": 15, "overall_impact": 20},
-        "press": {"rating_mean": 13, "overall_impact": 10}
+        "hit_power": {
+          "rating_mean": 40,
+          "overall_impact": 3
+        },
+        "tackle": {
+          "rating_mean": 50,
+          "overall_impact": 8
+        },
+        "pass_rush": {
+          "rating_mean": 25,
+          "overall_impact": 1
+        },
+        "block_shedding": {
+          "rating_mean": 55,
+          "overall_impact": 8
+        },
+        "pursuit": {
+          "rating_mean": 60,
+          "overall_impact": 8
+        },
+        "play_recognition": {
+          "rating_mean": 60,
+          "overall_impact": 2
+        },
+        "man_coverage": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "zone_coverage": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "press": {
+          "rating_mean": 65,
+          "overall_impact": 10
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 2, "overall_impact": 0},
-        "run_block": {"rating_mean": 2, "overall_impact": 0},
-        "impact_block": {"rating_mean": 2, "overall_impact": 0}
+        "pass_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "run_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "impact_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 1, "overall_impact": 0},
-        "kick_accuracy": {"rating_mean": 1, "overall_impact": 0}
+        "kick_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "kick_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "K": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 2, "overall_impact": 0},
-        "agility": {"rating_mean": 2, "overall_impact": 0},
-        "speed": {"rating_mean": 2, "overall_impact": 0},
-        "acceleration": {"rating_mean": 2, "overall_impact": 0},
-        "stamina": {"rating_mean": 15, "overall_impact": 0},
-        "jumping": {"rating_mean": 2, "overall_impact": 0},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "agility": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "speed": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "acceleration": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 0
+        },
+        "jumping": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 1, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 1, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 1, "overall_impact": 0},
-        "carrying": {"rating_mean": 1, "overall_impact": 0}
+        "elusiveness": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 1, "overall_impact": 0},
-        "catch_in_traffic": {"rating_mean": 1, "overall_impact": 0},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "catch_in_traffic": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 1, "overall_impact": 0},
-        "tackle": {"rating_mean": 1, "overall_impact": 0},
-        "pass_rush": {"rating_mean": 1, "overall_impact": 0},
-        "block_shedding": {"rating_mean": 1, "overall_impact": 0},
-        "pursuit": {"rating_mean": 1, "overall_impact": 0},
-        "play_recognition": {"rating_mean": 1, "overall_impact": 0},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pass_rush": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "block_shedding": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pursuit": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_recognition": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 2, "overall_impact": 0},
-        "run_block": {"rating_mean": 2, "overall_impact": 0},
-        "impact_block": {"rating_mean": 2, "overall_impact": 0}
+        "pass_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "run_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "impact_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 15, "overall_impact": 15},
-        "kick_accuracy": {"rating_mean": 15, "overall_impact": 20}
+        "kick_power": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        },
+        "kick_accuracy": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   },
   "P": {
     "Balanced": {
       "athleticism": {
-        "strength": {"rating_mean": 2, "overall_impact": 0},
-        "agility": {"rating_mean": 2, "overall_impact": 0},
-        "speed": {"rating_mean": 2, "overall_impact": 0},
-        "acceleration": {"rating_mean": 2, "overall_impact": 0},
-        "stamina": {"rating_mean": 15, "overall_impact": 0},
-        "jumping": {"rating_mean": 2, "overall_impact": 0},
-        "injury": {"rating_mean": 18, "overall_impact": 0}
+        "strength": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "agility": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "speed": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "acceleration": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "stamina": {
+          "rating_mean": 75,
+          "overall_impact": 0
+        },
+        "jumping": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "injury": {
+          "rating_mean": 90,
+          "overall_impact": 0
+        }
       },
       "passing": {
-        "throwing_power": {"rating_mean": 1, "overall_impact": 0},
-        "short_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "medium_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "deep_throw_accuracy": {"rating_mean": 1, "overall_impact": 0},
-        "throw_on_run": {"rating_mean": 1, "overall_impact": 0},
-        "throw_under_pressure": {"rating_mean": 1, "overall_impact": 0},
-        "play_action": {"rating_mean": 1, "overall_impact": 0}
+        "throwing_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "short_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "medium_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "deep_throw_accuracy": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_on_run": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "throw_under_pressure": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_action": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "rushing": {
-        "elusiveness": {"rating_mean": 1, "overall_impact": 0},
-        "ball_carrier_vision": {"rating_mean": 1, "overall_impact": 0},
-        "break_tackle": {"rating_mean": 1, "overall_impact": 0},
-        "carrying": {"rating_mean": 1, "overall_impact": 0}
+        "elusiveness": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "ball_carrier_vision": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "break_tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "carrying": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "receiving": {
-        "catching": {"rating_mean": 1, "overall_impact": 0},
-        "catch_in_traffic": {"rating_mean": 1, "overall_impact": 0},
-        "route_running": {"rating_mean": 1, "overall_impact": 0},
-        "release": {"rating_mean": 1, "overall_impact": 0}
+        "catching": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "catch_in_traffic": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "route_running": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "release": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "defense": {
-        "hit_power": {"rating_mean": 1, "overall_impact": 0},
-        "tackle": {"rating_mean": 1, "overall_impact": 0},
-        "pass_rush": {"rating_mean": 1, "overall_impact": 0},
-        "block_shedding": {"rating_mean": 1, "overall_impact": 0},
-        "pursuit": {"rating_mean": 1, "overall_impact": 0},
-        "play_recognition": {"rating_mean": 1, "overall_impact": 0},
-        "man_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "zone_coverage": {"rating_mean": 1, "overall_impact": 0},
-        "press": {"rating_mean": 1, "overall_impact": 0}
+        "hit_power": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "tackle": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pass_rush": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "block_shedding": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "pursuit": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "play_recognition": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "man_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "zone_coverage": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        },
+        "press": {
+          "rating_mean": 5,
+          "overall_impact": 0
+        }
       },
       "blocking": {
-        "pass_block": {"rating_mean": 2, "overall_impact": 0},
-        "run_block": {"rating_mean": 2, "overall_impact": 0},
-        "impact_block": {"rating_mean": 2, "overall_impact": 0}
+        "pass_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "run_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        },
+        "impact_block": {
+          "rating_mean": 10,
+          "overall_impact": 0
+        }
       },
       "kicking": {
-        "kick_power": {"rating_mean": 15, "overall_impact": 20},
-        "kick_accuracy": {"rating_mean": 15, "overall_impact": 15}
+        "kick_power": {
+          "rating_mean": 75,
+          "overall_impact": 20
+        },
+        "kick_accuracy": {
+          "rating_mean": 75,
+          "overall_impact": 15
+        }
       },
       "overall": {
-        "awareness": {"rating_mean": 15, "overall_impact": 5}
+        "awareness": {
+          "rating_mean": 75,
+          "overall_impact": 5
+        }
       }
     }
   }
-
 }
