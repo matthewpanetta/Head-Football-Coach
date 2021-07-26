@@ -140,14 +140,14 @@
         const season = new_season_info.current_season;
 
         //FULL LEAGUE
-        const conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
+        var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
         //MID SIZE
         //const conferences_to_include = ['Big 12', 'American Athletic Conference','Big Ten','Southeastern Conference','FBS Independents','Mid-American Conference']
         //SMALL SIZE
          // var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
-         // conferences_to_include = shuffle(conferences_to_include)
-         // var num_conferences_to_include = 5
-         // conferences_to_include = conferences_to_include.slice(0, num_conferences_to_include)
+          conferences_to_include = shuffle(conferences_to_include)
+          var num_conferences_to_include = 3
+          conferences_to_include = conferences_to_include.slice(0, num_conferences_to_include)
 
         //var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
         var teams_from_json = await common.get_teams({conference: conferences_to_include});
@@ -300,7 +300,7 @@
         $(par).append('<div>Creating season schedule</div>')
         await common.create_schedule({common: common, season:season, world_id:world_id});
 
-        //await choose_preseason_all_americans(this_week, common);
+        await choose_preseason_all_americans(common);
 
         const current_league_season = await db.league_season.where({season: season}).first();
         const world = await ddb.world.get({world_id: world_id});

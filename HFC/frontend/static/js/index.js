@@ -3255,8 +3255,8 @@ const average = arr => arr.reduce((acc,v) => acc + v) / arr.length;
 
 const calculate_game_score = (player_team_game, player_team_season, team_game, team_season, opponent_team_game) => {
   var game_score_map = [
-        {stat_group: 'rushing', stat: 'yards', point_to_stat_ratio: 1.0 / 6, display: ' rush yards'},
-				{stat_group: 'rushing', stat: 'carries', point_to_stat_ratio: -1.0 / 3, display: ' carries'},
+        {stat_group: 'rushing', stat: 'yards', point_to_stat_ratio: 1.0 / 10, display: ' rush yards'},
+				{stat_group: 'rushing', stat: 'carries', point_to_stat_ratio: -1.0 / 6, display: ' carries'},
         {stat_group: 'rushing', stat: 'tds'   , point_to_stat_ratio: 6.0 / 1, display: ' rush TDs'},
 
         {stat_group: 'passing', stat: 'yards', point_to_stat_ratio: 1.0 / 10, display: ' pass yards'},
@@ -4741,7 +4741,7 @@ const close_out_season = async (this_week, common) => {
 
 const choose_preseason_all_americans = async (common) => {
 	const db = common.db;
-	const all_weeks = await db.week.where({season: common.season}).toArray();
+	const all_weeks = await db.week.toArray();
 	const this_week = all_weeks.filter(w => w.is_current)[0];
 	console.log({this_week:this_week})
 
@@ -4800,7 +4800,18 @@ const choose_preseason_all_americans = async (common) => {
 		position_player_team_seasons = position_player_team_seasons.sort((pts_a, pts_b) => pts_b.ratings.overall.overall - pts_a.ratings.overall.overall)
 		position_player_team_seasons = position_player_team_seasons.map((pts, ind) => Object.assign(pts, {overall_rating_rank: ind}));
 
-		position_player_team_seasons = position_player_team_seasons.sort((pts_a, pts_b) => pts_b.previous_player_team_season.player_award_rating - pts_a.previous_player_team_season.player_award_rating  )
+		position_player_team_seasons = position_player_team_seasons.sort(function(pts_a, pts_b){
+			if (pts_b.previous_player_team_season == undefined && pts_a.previous_player_team_season == undefined){
+				return 0;
+			}
+			else if (pts_b.previous_player_team_season == undefined) {
+				return 100000 - pts_a.previous_player_team_season.player_award_rating;
+			}
+			else if (pts_a.previous_player_team_season == undefined) {
+				return pts_b.previous_player_team_season.player_award_rating - 100000;
+			}
+			return pts_b.previous_player_team_season.player_award_rating - pts_a.previous_player_team_season.player_award_rating
+		})
 		position_player_team_seasons = position_player_team_seasons.map((pts, ind) => Object.assign(pts, {previous_game_score_rank: ind}));
 
 		position_player_team_seasons = position_player_team_seasons.map((pts, ind) => Object.assign(pts, {award_rank: pts.overall_rating_rank + (3*pts.previous_game_score_rank)}));
@@ -4826,7 +4837,18 @@ const choose_preseason_all_americans = async (common) => {
 			position_player_team_seasons = position_player_team_seasons.sort((pts_a, pts_b) => pts_b.ratings.overall.overall - pts_a.ratings.overall.overall)
 			position_player_team_seasons = position_player_team_seasons.map((pts, ind) => Object.assign(pts, {overall_rating_rank: ind}));
 
-			position_player_team_seasons = position_player_team_seasons.sort((pts_a, pts_b) => pts_b.previous_player_team_season.player_award_rating - pts_a.previous_player_team_season.player_award_rating )
+			position_player_team_seasons = position_player_team_seasons.sort(function(pts_a, pts_b){
+				if (pts_b.previous_player_team_season == undefined && pts_a.previous_player_team_season == undefined){
+					return 0;
+				}
+				else if (pts_b.previous_player_team_season == undefined) {
+					return 100000 - pts_a.previous_player_team_season.player_award_rating;
+				}
+				else if (pts_a.previous_player_team_season == undefined) {
+					return pts_b.previous_player_team_season.player_award_rating - 100000;
+				}
+				return pts_b.previous_player_team_season.player_award_rating - pts_a.previous_player_team_season.player_award_rating
+			})
 			position_player_team_seasons = position_player_team_seasons.map((pts, ind) => Object.assign(pts, {previous_game_score_rank: ind}));
 
 			position_player_team_seasons = position_player_team_seasons.map((pts, ind) => Object.assign(pts, {award_rank: pts.overall_rating_rank + (4*pts.previous_game_score_rank)}));
@@ -4835,7 +4857,7 @@ const choose_preseason_all_americans = async (common) => {
 
 			for (var i = 0; i< position_count_map[position]; i++){
 				player_team_season = position_player_team_seasons[i]
-				var a = new award(player_team_season.player_team_season_id, null, this_week.week_id, this_week.season, 'position', position, 'conference', 'pre-season', parseInt(conference_season_id), 'First')
+				var a = new award(player_team_season.player_team_season_id, null, this_week.week_id, common.season, 'position', position, 'conference', 'pre-season', parseInt(conference_season_id), 'First')
 
 				awards_to_save.push(a)
 			}

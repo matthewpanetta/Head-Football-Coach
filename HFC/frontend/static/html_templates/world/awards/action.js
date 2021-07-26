@@ -157,22 +157,26 @@
           })
         }
 
-        var this_conference_regular_season_all_american_awards = regular_season_all_american_awards_by_conference_season_id[conference_season.conference_season_id].sort((award_a, award_b) => position_order_map[award_a.award_group_type] - position_order_map[award_b.award_group_type])
-        this_conference_regular_season_all_american_awards = this_conference_regular_season_all_american_awards.map(function(award){
-          award.position_group = position_group_map[award.player_team_season.position]
-          return award;
-        });
-        var this_conference_regular_season_all_american_awards_by_position_group = index_group_sync(this_conference_regular_season_all_american_awards, 'group', 'position_group');
-
-
         conference_season.regular_season_all_american_awards = []
+        if (conference_season.conference_season_id in regular_season_all_american_awards_by_conference_season_id){
+          var this_conference_regular_season_all_american_awards = regular_season_all_american_awards_by_conference_season_id[conference_season.conference_season_id].sort((award_a, award_b) => position_order_map[award_a.award_group_type] - position_order_map[award_b.award_group_type])
+          this_conference_regular_season_all_american_awards = this_conference_regular_season_all_american_awards.map(function(award){
+            award.position_group = position_group_map[award.player_team_season.position]
+            return award;
+          });
+          var this_conference_regular_season_all_american_awards_by_position_group = index_group_sync(this_conference_regular_season_all_american_awards, 'group', 'position_group');
 
-        for (var i = 0; i < this_conference_regular_season_all_american_awards_by_position_group.Offense.length; i++){
-          conference_season.regular_season_all_american_awards.push({
-            Offense: this_conference_regular_season_all_american_awards_by_position_group.Offense[i],
-            Defense: this_conference_regular_season_all_american_awards_by_position_group.Defense[i],
-          })
+
+
+
+          for (var i = 0; i < this_conference_regular_season_all_american_awards_by_position_group.Offense.length; i++){
+            conference_season.regular_season_all_american_awards.push({
+              Offense: this_conference_regular_season_all_american_awards_by_position_group.Offense[i],
+              Defense: this_conference_regular_season_all_american_awards_by_position_group.Defense[i],
+            })
+          }
         }
+
 
         return conference_season;
       });
