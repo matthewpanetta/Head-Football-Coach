@@ -59,7 +59,7 @@
         {{game.game_headline_display}}
       </div>
       <div class='w3-row height-150'>
-        <div class='w3-col s2 text-left skew-45' style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}; border-right: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex}}; border-left: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex}}; '>
+        <div class='w3-col s2 text-left skew-45' style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}; border-right: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; border-left: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; '>
           <a href="{{game.away_team_game.team_season.team.team_href}}"><img class='gameTeamLogo skew-neg-45' src='{{game.away_team_game.team_season.team.team_logo}}' alt="My image"></a>
         </div>
         <div class="w3-col s3 gameHeaderTeamContent away w3-row-padding height100 align-middle">
@@ -177,7 +177,7 @@
 
         </div>
 
-        <div class='w3-col s2 text-right skew-neg-45' style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}; border-left: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex}};  border-right: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex}}; '>
+        <div class='w3-col s2 text-right skew-neg-45' style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}; border-left: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}};  border-right: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; '>
           <a href="{{game.home_team_game.team_season.team.team_href}}"><img class='gameTeamLogo skew-45' src='{{game.home_team_game.team_season.team.team_logo}}' alt="My image"></a>
         </div>
 
