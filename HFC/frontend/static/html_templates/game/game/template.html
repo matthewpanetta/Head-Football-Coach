@@ -1,4 +1,5 @@
 {% include "../../static/html_templates/ext_NavBar.html" %}
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
 <div id='tooltip' style='position:absolute;background-color:lightgray;padding:5px'></div>
 <head>
 
@@ -297,57 +298,53 @@
                     <span>Team Leaders</span>
                   </div>
                   <div class="">
-                    <table style='width: 100%;'>
-                      {% for LeaderGroup in PlayerGameLeaders%}
-                      <tr class='center-text-row w3-border-top'>
-                        <td colspan='4' class='padding-top-8 bold'>{{LeaderGroup.Display}}</td>
+                    <table class='w3-table-all' style='width: 100%;' id='team-leaders-table'>
+                      {% for stat in player_stat_box%}
+                      <tr class='center-text-row w3-border-top team-secondary-table-row white-text'>
+                        <td colspan='4' class='padding-top-8 bold'>{{stat.display}}</td>
                       </tr>
                       <tr class='center-text-row'>
-                        <td colspan='2'>
-                          <span class='font12'>
-                            <a href="{{LeaderGroup.HomePlayer.PlayerHref}}">
-                              {{LeaderGroup.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{LeaderGroup.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerLastName}}
-                            </a>
-                          </span>
+                        <td style='background-color: #{{stat.home_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  >
+                          <img class='logo-45' src="{{stat.home_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
                         </td>
-                        <td colspan='2'>
-                          <span class='font12'>
-                            <a href="{{LeaderGroup.AwayPlayer.PlayerHref}}">
-                              {{LeaderGroup.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFirstName}} {{LeaderGroup.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerLastName}}
-                            </a>
-                          </span>
-                        </td>
-                      </tr>
-                      <tr class='padding-bottom-8'>
-                        <td>
-                          <div class="PlayerFace-45 PlayerFace-Headshot">
-                            {{LeaderGroup.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceSVG|safe}}
+                        <td class='center-text' style='background-color: #{{stat.home_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{loop.index}}-{{stat.home_player_team_game.player_team_season.player_id}}">
+                          <div class="PlayerFace-45 PlayerFace-Headshot inline-block" player_id='{{stat.home_player_team_game.player_team_season.player_id}}' style='border-color:#{{stat.home_player_team_game.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="teamTeamLeaderBoxPlayerFace-{{loop.index}}-{{stat.home_player_team_game.player_team_season.player_id}}" face_drawn='false' >
                           </div>
                         </td>
-                        <td>
-                          <ul class='no-list-style right-text'>
-                            {% for Stat in LeaderGroup.HomePlayerStats%}
-                            <li>
-                              {{Stat}}
-                            </li>
-                            {% endfor %}
-                          </ul>
-                        </td>
-                        <td>
-                          <ul class='no-list-style'>
-                            {% for Stat in LeaderGroup.AwayPlayerStats%}
-                            <li>
-                              {{Stat}}
-                            </li>
-                            {% endfor %}
-                          </ul>
-                        </td>
-                        <td>
-                          <div class="PlayerFace-45 PlayerFace-Headshot">
-                            {{LeaderGroup.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceSVG|safe}}
+                        <td class='left-text background-eee'>
+                          <div class='font12 '>
+                            <a href="{{stat.home_player_team_game.player_team_season.player.player_href}}">
+                              {{stat.home_player_team_game.player_team_season.player.full_name}}
+                            </a>
+                          </div>
+                          <div class="font10">
+                            {{stat.home_player_team_game.player_team_season.class.class_name}} | {{stat.home_player_team_game.player_team_season.position}}
                           </div>
                         </td>
+                        <td class='bold font14 background-eee'>{{stat.home_player_value}}</td>
                       </tr>
+
+                      <tr class='center-text-row'>
+                        <td style='background-color: #{{stat.away_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  >
+                          <img class='logo-45' src="{{stat.away_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
+                        </td>
+                        <td class='center-text' style='background-color: #{{stat.away_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{loop.index}}-{{stat.away_player_team_game.player_team_season.player_id}}">
+                          <div class="PlayerFace-45 PlayerFace-Headshot inline-block" player_id='{{stat.away_player_team_game.player_team_season.player_id}}' style='border-color:#{{stat.away_player_team_game.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="teamTeamLeaderBoxPlayerFace-{{loop.index}}-{{stat.away_player_team_game.player_team_season.player_id}}" face_drawn='false' >
+                          </div>
+                        </td>
+                        <td class='left-text background-white'>
+                          <div class='font12 '>
+                            <a href="{{stat.away_player_team_game.player_team_season.player.player_href}}">
+                              {{stat.away_player_team_game.player_team_season.player.full_name}}
+                            </a>
+                          </div>
+                          <div class="font10">
+                            {{stat.away_player_team_game.player_team_season.class.class_name}} | {{stat.away_player_team_game.player_team_season.position}}
+                          </div>
+                        </td>
+                        <td class='bold font14 background-white'>{{stat.away_player_value}}</td>
+                      </tr>
+
                       {%endfor%}
                     </table>
                                       </div>
