@@ -1,6 +1,6 @@
 {% include "../../static/html_templates/ext_NavBar.html" %}
 {% include "../../static/html_templates/ext_TeamColoring.html" %}
-<div id='tooltip' style='position:absolute;background-color:lightgray;padding:5px'></div>
+
 <head>
 
   <style media="screen">
@@ -282,7 +282,7 @@
                           <img class='logo-30' src="{{game.outcome.winning_team.team.team_logo}}" alt="">
                         </td>
                         <td>
-                          <a href="{{game.game_href}}">
+                          <a href="{{game.game_href}}" class='nowrap'>
                             {{game.score_display}}
                           </a>
                         </td>
@@ -305,7 +305,7 @@
                       </tr>
                       <tr class='center-text-row'>
                         <td style='background-color: #{{stat.home_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  >
-                          <img class='logo-45' src="{{stat.home_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
+                          <img class='logo-50' src="{{stat.home_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
                         </td>
                         <td class='center-text' style='background-color: #{{stat.home_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{loop.index}}-{{stat.home_player_team_game.player_team_season.player_id}}">
                           <div class="PlayerFace-45 PlayerFace-Headshot inline-block" player_id='{{stat.home_player_team_game.player_team_season.player_id}}' style='border-color:#{{stat.home_player_team_game.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="teamTeamLeaderBoxPlayerFace-{{loop.index}}-{{stat.home_player_team_game.player_team_season.player_id}}" face_drawn='false' >
@@ -326,7 +326,7 @@
 
                       <tr class='center-text-row'>
                         <td style='background-color: #{{stat.away_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  >
-                          <img class='logo-45' src="{{stat.away_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
+                          <img class='logo-50' src="{{stat.away_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
                         </td>
                         <td class='center-text' style='background-color: #{{stat.away_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{loop.index}}-{{stat.away_player_team_game.player_team_season.player_id}}">
                           <div class="PlayerFace-45 PlayerFace-Headshot inline-block" player_id='{{stat.away_player_team_game.player_team_season.player_id}}' style='border-color:#{{stat.away_player_team_game.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="teamTeamLeaderBoxPlayerFace-{{loop.index}}-{{stat.away_player_team_game.player_team_season.player_id}}" face_drawn='false' >
@@ -400,8 +400,11 @@
                   </div>
                 </div>
                 <div  class='w3-card w3-margin-bottom'>
-                  <div class="" style='height: 550px;'>
-                    <svg width='550' height='550' id="GameFlowChart"></svg>
+                  <div class="" style='height: 400px;'>
+                    <div id='tooltip' class='w3-card' style='position:absolute;padding:5px; background-color: white;'></div>
+                    <svg width='550' height='550' id="GameFlowChart">
+
+                    </svg>
                   </div>
                 </div>
                 {% else %}

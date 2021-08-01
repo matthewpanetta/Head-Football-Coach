@@ -222,6 +222,10 @@ const getHtml = async (common) => {
         {display: 'MOV', attribute: 'point_differential_per_game', better: 'high'},
         {display: 'Passing Yards Per Game', attribute: 'passing_yards_per_game', better: 'high'},
         {display: 'Rushing Yards Per Game', attribute: 'rushing_yards_per_game', better: 'high'},
+        {display: 'Points Per Drive within 20', attribute: 'points_per_drive_within_20', better: 'high'},
+        {display: 'Points Per Drive within 40', attribute: 'points_per_drive_within_40', better: 'high'},
+        {display: 'Down Efficiency', attribute: 'down_efficiency', better: 'high'},
+        {display: 'Avg Field Position', attribute: 'average_field_position', better: 'high'},
       ]
       show_stat_box = true;
     }
@@ -232,7 +236,7 @@ const getHtml = async (common) => {
       season_stat.away_team_value = get(game.away_team_game.team_season, season_stat.attribute);
       season_stat.max_val = Math.max(season_stat.home_team_value, season_stat.away_team_value);
 
-      if (season_stat.home_team_value > season_stat.away_team_value && season_stat.better == 'high') {
+      if ((season_stat.home_team_value > season_stat.away_team_value && season_stat.better == 'high') || (season_stat.home_team_value < season_stat.away_team_value && season_stat.better == 'low')) {
         season_stat.better_team_for_stat = game.home_team_game.team_season.team;
         season_stat.left_arrow = '<i class="fas fa-angle-left"></i>';
       }
@@ -273,7 +277,7 @@ const getHtml = async (common) => {
     {stat_group_name: 'Rushing', filter_key: 'game_stats.rushing.carries', order: [[ 1 + 1, "desc" ]], columns: [
                                                                                         {title: 'CAR', data: 'game_stats.rushing.carries'},
                                                                                         {title: 'YRD', data: 'game_stats.rushing.yards'},
-                                                                                        {title: 'YPC', data: 'rushing_yards_per_carry_qualified'},
+                                                                                        {title: 'YPC', data: 'rushing_yards_per_carry'},
                                                                                         {title: 'TD', data: 'game_stats.rushing.tds'},
                                                                                         {title: 'LNG', data: 'game_stats.rushing.lng'},
                                                                                       ]},
@@ -329,10 +333,17 @@ const getHtml = async (common) => {
     const action = async (common) => {
 
       if (common.render_content.game.was_played){
-        const drives = common.render_content.game.scoring.drives;
-        console.log('drives', drives)
+        var drives = common.render_content.game.scoring.drives;
 
         const game = common.render_content.game;
+
+        for(const drive of drives){
+          drive.drive_end.team_drives = [
+             {seconds_in_to_game: drive.drive_end.seconds_in_to_game, points:  drive.drive_end.home_team_points, team: game.home_team_game.team_season.team},
+             {seconds_in_to_game: drive.drive_end.seconds_in_to_game, points:  drive.drive_end.away_team_points, team: game.away_team_game.team_season.team},
+
+          ]
+        }
 
         var scoring_data = [
           {
@@ -340,29 +351,31 @@ const getHtml = async (common) => {
             show: true,
             color: '#'+game.home_team_game.team_season.team.team_color_primary_hex,
             final_score: game.home_team_game.points,
-            drives: drives.map(d => ({seconds_in_to_game: d.drive_end.seconds_in_to_game, points:  d.drive_end.home_team_points}))
+            drives: drives.map(d => d.drive_end.team_drives[0])
           },
           {
             name: game.away_team_game.team_season.team.school_name,
             show: true,
             color: '#'+game.away_team_game.team_season.team.team_color_primary_hex,
             final_score: game.away_team_game.points,
-            drives: drives.map(d => ({seconds_in_to_game: d.drive_end.seconds_in_to_game, points:  d.drive_end.away_team_points}))
+            drives: drives.map(d => d.drive_end.team_drives[1])
           }
         ]
 
         var max_time = drives.map(d => d.drive_end.seconds_in_to_game).reduce((acc, val) => Math.max(acc, val), 0);
+        max_time = Math.ceil(max_time / (15 * 60)) * (15 * 60)
         var max_points = drives.map(d => Math.max(d.drive_end.away_team_points, d.drive_end.home_team_points)).reduce((acc, val) => Math.max(acc, val), 0);
-        max_points = Math.ceil(max_points / 5) * 5;
+        max_points = Math.ceil((max_points + .01) / 5) * 5;
 
         console.log({scoring_data:scoring_data, drives:drives, max_time:max_time, max_points:max_points})
 
-
+        var quarters = [1,2,3,4]
+        quarters = quarters.map(q => q * 15 * 60);
 
         function drawChart() {
 
             // Define margins, dimensions, and some line colors
-            const margin = {top: 40, right: 120, bottom: 30, left: 40};
+            const margin = {top: 40, right: 0, bottom: 30, left: 40};
             const width = $('#GameFlowChart').width() - margin.left - margin.right;
             const height = 400 - margin.top - margin.bottom;
 
@@ -370,7 +383,6 @@ const getHtml = async (common) => {
             const x = d3.scaleLinear().domain([0, max_time]).range([0, width]);
             const y = d3.scaleLinear().domain([0, max_points]).range([height, 0]);
             const line = d3.line().x(function(d){
-              console.log({d:d})
               return x(d.seconds_in_to_game);
             }).y(d => y(d.points));
 
@@ -380,43 +392,71 @@ const getHtml = async (common) => {
             const tooltip = d3.select('#tooltip');
             const tooltipLine = chart.append('line');
 
+            var tipBox = chart.append('rect')
+              .attr('width', width)
+              .attr('height', height)
+              .attr('opacity', 0)
+              .on('mousemove', drawTooltip)
+              .on('mouseout', removeTooltip);
+
             // Add the axes and a title
-            const xAxis = d3.axisBottom(x).tickFormat(d3.format('.4'));
-            const yAxis = d3.axisLeft(y).tickFormat(d3.format('.2s'));
+            const xAxis = d3.axisBottom(x).tickFormat(quarter_seconds_to_time);
+            const yAxis = d3.axisLeft(y).tickFormat(d3.format(''));
             chart.append('g').call(yAxis);
             chart.append('g').attr('transform', 'translate(0,' + height + ')').call(xAxis);
-            chart.append('text').html('State Population Over Time').attr('x', 200);
+            chart.append('text')
+                  .html(`${game.away_team_game.team_season.team.school_name} @ ${game.home_team_game.team_season.team.school_name}`)
+                  .attr('text-anchor', 'middle')
+                  .attr('x', '50%');
 
-            // Load the data and draw a chart
-            let states, tipBox;
+            chart.selectAll().data(quarters).enter()
+              .append('line')
+              .attr('stroke', '#aaa')
+              .attr('x1', q => x(q))
+              .attr('x2', q => x(q))
+              .attr('y1', 0)
+              .attr('y2', height)
+              .attr('stroke-width', 1)
+              ;
+
+              var legend = chart.selectAll()
+                .data([game.home_team_game.team_season.team, game.away_team_game.team_season.team])
+                .enter()
+                .append('g')
+                .attr('class', 'legend');
+
+              legend.append('rect')
+                .attr('x', 10)
+                .attr('y', function(d, i) {
+                  return i * 20;
+                })
+                .attr('width', 10)
+                .attr('height', 10)
+                .style('fill', function(d) {
+                  return `#${d.team_color_primary_hex}`;
+                });
+
+              legend.append('text')
+                .attr('x', 22)
+                .attr('y', function(d, i) {
+                  return (i * 20) + 9;
+                })
+                .text(function(d) {
+                  return d.school_name;
+                });
 
             chart.selectAll()
               .data(scoring_data).enter()
               .append('path')
               .attr('fill', 'none')
               .attr('stroke', d => d.color)
-              .attr('stroke-width', 2)
+              .attr('stroke-width', 3)
               .datum(function(d){
                 return d.drives;
               })
               .attr('d', line);
 
-            chart.selectAll()
-              .data(scoring_data).enter()
-              .append('text')
-              .html(d => d.name)
-              .attr('fill', d => d.color)
-              .attr('alignment-baseline', 'middle')
-              .attr('x', width)
-              .attr('dx', '.5em')
-              .attr('y', d => y(d.final_score));
 
-            tipBox = chart.append('rect')
-              .attr('width', width)
-              .attr('height', height)
-              .attr('opacity', 0)
-              .on('mousemove', drawTooltip)
-              .on('mouseout', removeTooltip);
 
             function removeTooltip() {
             if (tooltip) tooltip.style('display', 'none');
@@ -424,32 +464,37 @@ const getHtml = async (common) => {
             }
 
             function drawTooltip(mouse_event) {
-            var xPosition = x.invert(mouse_event.layerX),
-                bisect = d3.bisector(function(d) { return d.seconds_in_to_game; }).right,
-                idx = bisect(scoring_data[0].drives, xPosition, 1),
-                seconds_in_to_game = scoring_data[0].drives[idx].seconds_in_to_game;
+            var xPosition = x.invert(mouse_event.layerX - margin.left) ;
 
-            //console.log({xPosition:xPosition,seconds_in_to_game:seconds_in_to_game,  mouse_event:mouse_event, bisect:bisect, idx:idx})
-
-            scoring_data.sort((a, b) => {
-              return b.drives.find(d => d.seconds_in_to_game == seconds_in_to_game).points - a.drives.find(d => d.seconds_in_to_game == seconds_in_to_game).points;
+            var sorted_drives = drives.sort((drive_a, drive_b) => {
+              return Math.abs(drive_a.drive_end.seconds_in_to_game - xPosition) - Math.abs(drive_b.drive_end.seconds_in_to_game - xPosition)
+              //return b.drives.find(d => d.seconds_in_to_game == seconds_in_to_game).points - a.drives.find(d => d.seconds_in_to_game == seconds_in_to_game).points;
             })
 
-            tooltipLine.attr('stroke', 'black')
-              .attr('x1', x(seconds_in_to_game))
-              .attr('x2', x(seconds_in_to_game))
-              .attr('y1', 0)
-              .attr('y2', height);
+            var highlighted_drive = sorted_drives[0]
 
-            tooltip.html(seconds_in_to_game)
+            tooltipLine.attr('stroke', '#888')
+              .attr('x1', x(highlighted_drive.drive_end.seconds_in_to_game))
+              .attr('x2', x(highlighted_drive.drive_end.seconds_in_to_game))
+              .attr('y1', 0)
+              .attr('y2', height)
+              .attr('stroke-width', 2)
+              ;
+
+            tooltip
+              .html(
+                `<span class='bold'>Quarter ${highlighted_drive.drive_end.period}</span> - <span>${highlighted_drive.drive_end.display_time}</span>`
+                )
               .style('display', 'block')
-              .style('left', mouse_event.x + 20)
-              .style('top', mouse_event.y - 20)
+              .style('left', mouse_event.x - 150)
+              .style('top', mouse_event.y + 350)
               .selectAll()
-              .data(scoring_data).enter()
+              .data(highlighted_drive.drive_end.team_drives).enter()
               .append('div')
-              .style('color', d => d.color)
-              .html(d => d.name + ': ' + d.drives.find(d => d.seconds_in_to_game == seconds_in_to_game).points);
+              //.style('color', d => d.color)
+              .html(d => (
+                `<i class="fas fa-square" style='margin-right: 4px; color: #${d.team.team_color_primary_hex};'></i>${d.team.school_name} - ${d.points}`
+              ));
             }
 }
         drawChart()
@@ -460,13 +505,11 @@ const getHtml = async (common) => {
       else {
         var team_seasons = [common.render_content.game.home_team_game.team_season, common.render_content.game.away_team_game.team_season]
         var radar_data = team_seasons.map((ts, ind) => ([{axis:'OVR', value: ts.rating.overall, ind:ind}]).concat(Object.entries(ts.rating.by_position_unit).map(e => ({axis: e[0], value: e[1], ind:ind}))));
-        console.log({radar_data:radar_data})
 
         var margin = {top: 50, right: 50, bottom: 50, left: 50},
         width = Math.min(700, $('#team-ratings-chart').parent().width() - 10) - margin.left - margin.right,
         height = 280;
 
-        console.log({d3:d3});
         var color = d3.scaleOrdinal()
   				.range(team_seasons.map(ts => `#${ts.team.team_color_primary_hex}`)); // CODE FROM http://bl.ocks.org/nbremer/21746a9668ffdf6d8242
         var radarChartOptions = {

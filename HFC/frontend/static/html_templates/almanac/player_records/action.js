@@ -45,19 +45,46 @@
       const player_leader_categories = [
         {category_name: 'Passing Yards', category_abbr: 'YRD', stat: 'timeframe.passing.yards'},
         {category_name: 'Passing Touchdowns', category_abbr: 'TDs', stat: 'timeframe.passing.tds'},
+        {category_name: 'Interceptions Thrown', category_abbr: 'INT', stat: 'timeframe.passing.ints'},
+
+        {category_name: 'Passing Completions', category_abbr: 'COMP', stat: 'timeframe.passing.completions'},
+        {category_name: 'Passing Attempts', category_abbr: 'ATT', stat: 'timeframe.passing.attempts'},
+        {category_name: 'Passing Yards Per Attempt', category_abbr: 'YPA', stat: 'passing_yards_per_attempt'},
+
+        {category_name: 'Passing Completion Percentage', category_abbr: 'CMP%', stat: 'completion_percentage'},
         {category_name: 'Passer Rating', category_abbr: 'RAT', stat: 'passer_rating'},
+        {category_name: 'Passing Yards Per Game', category_abbr: 'YPG', stat: 'passing_yards_per_game'},
+
         {category_name: 'Rushing Yards', category_abbr: 'YRD', stat: 'timeframe.rushing.yards'},
         {category_name: 'Rushing Touchdowns', category_abbr: 'TDs', stat: 'timeframe.rushing.tds'},
         {category_name: 'Rushing Yards Per Carry', category_abbr: 'YPC', stat: 'rushing_yards_per_carry_qualified'},
+
+        {category_name: 'Rushing Carries', category_abbr: 'CAR', stat: 'timeframe.rushing.carries'},
+        {category_name: 'Rushing Yards Per Game', category_abbr: 'YPG', stat: 'rushing_yards_per_game'},
+        {category_name: 'Rushes for 20+ Yards', category_abbr: '20+', stat: 'timeframe.rushing.over_20'},
+
         {category_name: 'Receiving Yards', category_abbr: 'YRD', stat: 'timeframe.receiving.yards'},
         {category_name: 'Receiving Touchdowns', category_abbr: 'TDs', stat: 'timeframe.receiving.tds'},
         {category_name: 'Receptions', category_abbr: 'RECs', stat: 'timeframe.receiving.receptions'},
+
+        {category_name: 'Receiving Yards Per Catch', category_abbr: 'YPC', stat: 'receiving_yards_per_catch_qualified'},
+        {category_name: 'Receiving Yards Per Game', category_abbr: 'YPG', stat: 'receiving_yards_per_game'},
+        {category_name: 'Receiving Targets', category_abbr: 'TARG', stat: 'timeframe.receiving.targets'},
+
         {category_name: 'Points Scored', category_abbr: 'Points', stat: 'timeframe.games.points'},
         {category_name: 'Yards From Scrimmage', category_abbr: 'YRD', stat: 'yards_from_scrimmage'},
         {category_name: 'Games Played', category_abbr: 'GP', stat: 'timeframe.games.games_played'},
+
         {category_name: 'Tackles', category_abbr: 'Tackles', stat: 'timeframe.defense.tackles'},
+        {category_name: 'Tackles for Loss', category_abbr: 'TFLs', stat: 'timeframe.defense.tackles_for_loss'},
         {category_name: 'Sacks', category_abbr: 'Sacks', stat: 'timeframe.defense.sacks'},
         {category_name: 'Interceptions', category_abbr: 'Ints', stat: 'timeframe.defense.ints'},
+        {category_name: 'Interceptions', category_abbr: 'Ints', stat: 'timeframe.defense.ints'},
+        {category_name: 'Interceptions', category_abbr: 'Ints', stat: 'timeframe.defense.ints'},
+
+        {category_name: 'Field Goals Made', category_abbr: 'FGM', stat: 'timeframe.kicking.fgm'},
+        {category_name: 'Field Goals Attempted', category_abbr: 'FGA', stat: 'timeframe.kicking.fga'},
+        {category_name: 'Extra Points Made', category_abbr: 'XPM', stat: 'timeframe.kicking.xpm'},
       ]
 
       for (const player_leader_category of player_leader_categories){
@@ -240,12 +267,16 @@
         if ($(elem).find('svg').length > 0){
           return true;
         }
-        player_ids.push(parseInt($(elem).attr('player_id')))
-        if (!(parseInt($(elem).attr('player_id')) in face_div_by_player_id)) {
-          face_div_by_player_id[parseInt($(elem).attr('player_id'))] = [];
+        var player_id = parseInt($(elem).attr('player_id'));
+        if (isNaN(player_id)){
+          return true;
+        }
+        player_ids.push(player_id)
+        if (!(player_id in face_div_by_player_id)) {
+          face_div_by_player_id[player_id] = [];
         }
 
-        face_div_by_player_id[parseInt($(elem).attr('player_id'))].push(elem)
+        face_div_by_player_id[player_id].push(elem)
       })
 
       console.log({player_ids:player_ids})

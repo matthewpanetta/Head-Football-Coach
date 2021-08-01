@@ -228,7 +228,7 @@ function get_nunjucks_env() {
 
       var Luma = (0.299 * (R**2) + 0.587 * (G**2) + 0.114 * (B**2)) ** .5
 
-      if (Luma > 200){
+      if (Luma > 230){
         return "000";
       }
       return Color;

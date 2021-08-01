@@ -36,54 +36,38 @@
 
       const player_leader_categories = [
         {category_name: 'Passing Yards Per Game', category_abbr: 'YPG', stat: 'passing_yards_per_game', players: []},
-        {category_name: 'Passing Touchdowns', category_abbr: 'TDs', stat: ['season_stats','passing', 'tds'], players: []},
+        {category_name: 'Passing Touchdowns', category_abbr: 'TDs', stat: 'season_stats.passing.tds', players: []},
         {category_name: 'Passer Rating', category_abbr: 'RAT', stat: 'passer_rating', players: []},
+
+        {category_name: 'Passing Completions', category_abbr: 'COMP', stat: 'season_stats.passing.completions', players: []},
+        {category_name: 'Passer Rating', category_abbr: 'RAT', stat: 'passer_rating', players: []},
+        {category_name: 'Passer Rating', category_abbr: 'RAT', stat: 'passer_rating', players: []},
+
+
+
         {category_name: 'Rushing Yards Per Game', category_abbr: 'YPG', stat: 'rushing_yards_per_game', players: []},
-        {category_name: 'Rushing Touchdowns', category_abbr: 'TDs', stat: ['season_stats','rushing', 'tds'], players: []},
+        {category_name: 'Rushing Touchdowns', category_abbr: 'TDs', stat: 'season_stats.rushing.tds', players: []},
         {category_name: 'Rushing Yards Per Carry', category_abbr: 'YPC', stat: 'rushing_yards_per_carry_qualified', players: []},
         {category_name: 'Receiving Yards Per Game', category_abbr: 'YPG', stat: 'receiving_yards_per_game', players: []},
-        {category_name: 'Receiving Touchdowns', category_abbr: 'TDs', stat: ['season_stats','receiving', 'tds'], players: []},
-        {category_name: 'Receptions', category_abbr: 'RECs', stat: ['season_stats','receiving', 'receptions'], players: []},
-        {category_name: 'Tackles', category_abbr: 'Tackles', stat: ['season_stats','defense', 'tackles'], players: []},
-        {category_name: 'Sacks', category_abbr: 'Sacks', stat: ['season_stats','defense', 'sacks'], players: []},
-        {category_name: 'Interceptions', category_abbr: 'Ints', stat: ['season_stats','defense', 'ints'], players: []},
+        {category_name: 'Receiving Touchdowns', category_abbr: 'TDs', stat: 'season_stats.receiving.tds', players: []},
+        {category_name: 'Receptions', category_abbr: 'RECs', stat: 'season_stats.receiving.receptions', players: []},
+        {category_name: 'Tackles', category_abbr: 'Tackles', stat: 'season_stats.defense.tackles', players: []},
+        {category_name: 'Sacks', category_abbr: 'Sacks', stat: 'season_stats.defense.sacks', players: []},
+        {category_name: 'Interceptions', category_abbr: 'Ints', stat: 'season_stats.defense.ints', players: []},
       ]
 
       for (const player_leader_category of player_leader_categories){
 
-        if (Array.isArray( player_leader_category.stat)) {
-          console.log('IS ARRAY', player_leader_category)
-          var player_leaders = players.filter(p => p.player_team_season[player_leader_category.stat[0]][player_leader_category.stat[1]][player_leader_category.stat[2]] > 0).sort((p_a, p_b) => p_b.player_team_season[player_leader_category.stat[0]][player_leader_category.stat[1]][player_leader_category.stat[2]] - p_a.player_team_season[player_leader_category.stat[0]][player_leader_category.stat[1]][player_leader_category.stat[2]]);
-        }
-        else if (typeof player_leader_category.stat == 'string'){
-          console.log('STRING', player_leader_category.stat)
-           var player_leaders = players.filter(p => p.player_team_season[player_leader_category.stat] > 0).sort((p_a, p_b) => p_b.player_team_season[player_leader_category.stat] - p_a.player_team_season[player_leader_category.stat]);
-        }
-        else{
-          console.log('DIDNT CATCH TYPE')
-          var player_leaders = []
-        }
+        var player_leaders = players.filter(p => get(p.player_team_season, player_leader_category.stat) > 0).sort((p_a, p_b) => get(p_b.player_team_season, player_leader_category.stat) - get(p_a.player_team_season, player_leader_category.stat));
 
         for (const player of player_leaders.slice(0,5)){
 
           let player_obj = {player: player, value: null}
 
-
-          if (Array.isArray( player_leader_category.stat)) {
-            console.log('IS ARRAY', player_leader_category)
-            player_obj.value = player.player_team_season[player_leader_category.stat[0]][player_leader_category.stat[1]][player_leader_category.stat[2]]
-          }
-          else if (typeof player_leader_category.stat == 'string'){
-            console.log('STRING', player_leader_category.stat)
-             player_obj.value = player.player_team_season[player_leader_category.stat]
-          }
-          else{
-            console.log('DIDNT CATCH TYPE')
-          }
+          player_obj.value = get(player.player_team_season, player_leader_category.stat)
 
           player_leader_category.players.push(player_obj)
         }
-        console.log('player_leader_category', {player_leader_category: player_leader_category, player_leaders: player_leaders, 'Array.isArray( player_leader_category.stat)': Array.isArray( player_leader_category.stat)})
       }
 
       const recent_games = await common.recent_games(common);

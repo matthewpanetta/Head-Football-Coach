@@ -104,7 +104,15 @@
                       <td rowspan='{{team_season.conference_row_span}}'>{{team_season.conference_season.conference.conference_name}}</td>
                       {% endif %}
                       <td>{{team_season.conference_record_display}}</td>
-                      <td class=' col-group'>{{team_season.final_conference_rank|ordinal}}</td>
+                      <td class=' col-group'>
+                        {%if team_season.league_season.is_season_complete and team_season.final_conference_rank == 1 %}
+                            <span style='color: darkgoldenrod;' class='bold opacity-1'>{{team_season.final_conference_rank|ordinal}}</span>
+                        {%else%}
+                            {{team_season.final_conference_rank|ordinal}}
+                        {% endif %}
+
+
+                      </td>
 
                       <td class='column-shrink'>{{team_season.final_national_rank}}</td>
                       <td class='column-shrink'>{{team_season.first_national_rank}}</td>
