@@ -40,12 +40,13 @@ const getHtml = async (common) => {
 
       const recent_games = await common.recent_games(common);
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
+      var team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
       var conferences = await index_group(await db.conference.toArray(), 'index','conference_id');
       var conference_seasons = await index_group(await db.conference_season.where({season: season}).toArray(), 'index','conference_season_id');
-      var team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index','team_season_id');
-      var team_seasons_by_team_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index','team_id');
-      var teams_by_team_id = await index_group(await db.team.toArray(), 'index','team_id');
+      var team_seasons_by_team_season_id = await index_group(team_seasons, 'index','team_season_id');
+      var team_seasons_by_team_id = await index_group(team_seasons, 'index','team_id');
+      var teams_by_team_id = await index_group(teams, 'index','team_id');
       var distinct_team_seasons = [];
 
       $.each(teams, async function(ind, team){

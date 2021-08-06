@@ -146,7 +146,7 @@
         //SMALL SIZE
          // var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
           conferences_to_include = shuffle(conferences_to_include)
-          var num_conferences_to_include = 3
+          var num_conferences_to_include = 2
           conferences_to_include = conferences_to_include.slice(0, num_conferences_to_include)
 
         //var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
@@ -254,6 +254,43 @@
             team_id_counter +=1;
         });
 
+        teams.push({
+          team_id: -1,
+          school_name: 'Available',
+          team_name: 'Players',
+          world_id: world_id,
+          team_abbreviation: 'AVAIL',
+          team_color_primary_hex: '1763B2',
+          team_color_secondary_hex: 'FFFFFF',
+          rivals: [],
+          jersey: {invert:false, id: 'football', teamColors: ['#1763B2', '#000000', '#FFFFFF'], lettering: {text_color: '#FFFFFF', text: ''}},
+          team_ratings: {},
+          location: {
+                        city: 'Washington',
+                        state: 'DC'
+                    },
+          conference: {},
+          });
+
+          teams.push({
+            team_id: -2,
+            school_name: season,
+            team_name: 'Recruits',
+            world_id: world_id,
+            team_abbreviation: 'RECRUIT',
+            team_color_primary_hex: '1763B2',
+            team_color_secondary_hex: 'FFFFFF',
+            rivals: [],
+            jersey: {invert:false, id: 'football', teamColors: ['#1763B2', '#000000', '#FFFFFF'], lettering: {text_color: '#FFFFFF', text: ''}},
+            team_ratings: {},
+            location: {
+                          city: 'Washington',
+                          state: 'DC'
+                      },
+            conference: {},
+            });
+
+
         const teams_by_team_name = await index_group(teams, 'index', 'school_name');
 
         $.each(teams, function(ind, team){
@@ -267,16 +304,19 @@
 
         await common.create_team_season({common: common, season:season, world_id: world_id, conferences_by_conference_name:conferences_by_conference_name})
 
-        var team_seasons = await db.team_season.where({season: season}).toArray();
-        const teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id')
+        var team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
+        const teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id')
 
         $(par).append('<div>Adding Players</div>')
 
         await common.create_players({common: common, team_seasons:team_seasons, teams_by_team_id:teams_by_team_id, world_id:world_id, season:season});
 
+        $(par).append('<div>Assigning players to teams</div>')
         var players = await db.player.toArray();
         await common.create_player_team_seasons({common: common, players:players, world_id:world_id, team_seasons:team_seasons, season:season})
 
+        $(par).append('<div>Creating recruiting class</div>')
+        await common.create_recruiting_class(common);
 
         $(par).append('<div>Populating depth charts</div>')
         await common.populate_all_depth_charts({common: common, season:season, world_id:world_id});

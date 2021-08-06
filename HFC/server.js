@@ -13,6 +13,8 @@ const routes = [
   {route: "/World/:world_id/Schedule/", path: 'world/schedule/base.html'},
   {route: "/World/:world_id/Awards/", path: 'world/awards/base.html'},
 
+  {route: "/World/:world_id/Recruiting/", path: 'world/recruiting/base.html'},
+
   {route: "/World/:world_id/PlayerStats/Season/:season", path: 'almanac/player_stats/base.html'},
   {route: "/World/:world_id/TeamStats/Season/:season", path: 'almanac/team_stats/base.html'},
 

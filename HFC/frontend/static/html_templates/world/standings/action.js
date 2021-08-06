@@ -19,10 +19,10 @@
       const weeks = await db.week.where({season:season}).toArray();
       const week_ids = weeks.map(week => week.week_id);
 
-      var teams_by_team_id = await index_group(await db.team.toArray(), 'index','team_id');
+      var teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index','team_id');
       var conferences_by_conference_id = await index_group(await db.conference.toArray(), 'index','conference_id');
       var conference_seasons =  await db.conference_season.where({season: season}).toArray();
-      var team_seasons = await db.team_season.where({season: season}).toArray();
+      var team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
       var distinct_team_seasons = [];
 
       var games_by_game_id = await index_group(await db.game.where('week_id').anyOf(week_ids).toArray(), 'index', 'game_id');

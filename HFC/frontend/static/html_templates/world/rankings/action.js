@@ -13,10 +13,10 @@
         db: db
       });
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
       var conferences = await index_group(await db.conference.toArray(), 'one_to_one','conference_id');
       var conference_seasons = await index_group(await db.conference_season.where({season: season}).toArray(), 'one_to_one','conference_season_id');
-      var team_seasons = await index_group(await db.team_season.where({season: season}).toArray(), 'one_to_one','team_id');
+      var team_seasons = await index_group(await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray(), 'one_to_one','team_id');
       var distinct_team_seasons = [];
 
       $.each(teams, async function(ind, team){
@@ -278,7 +278,7 @@
       const this_week_id = this_week.week_id;
       const last_week_id = this_week_id-1;
 
-      var top_25_team_seasons = await db.team_season.where({season:season}).toArray();
+      var top_25_team_seasons = await db.team_season.where({season:season}).and(ts => ts.team_id > 0).toArray();
       console.log('top_25_team_seasons', top_25_team_seasons)
       top_25_team_seasons = top_25_team_seasons.filter(ts => ts.rankings.national_rank[0] <= 25).sort(function(a, b) {
           if (a.rankings.national_rank[0] < b.rankings.national_rank[0]) return -1;
@@ -296,9 +296,9 @@
 
       const games = await index_group(await db.game.bulkGet(total_team_game_ids), 'one_to_one','game_id');
 
-      const all_teams = await index_group(await db.team.toArray(), 'index','team_id');
+      const all_teams = await index_group(await db.team.where('team_id').above(0).toArray(), 'index','team_id');
       const all_team_games = await index_group(await db.team_game.where('week_id').anyOf([this_week_id, last_week_id]).toArray(), 'index','team_game_id');
-      const all_team_seasons = await index_group(await db.team_season.where({season: season}).toArray(), 'index','team_season_id');
+      const all_team_seasons = await index_group(await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray(), 'index','team_season_id');
 
       const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: season}).toArray(), 'index','conference_season_id');
       const conferences_by_conference_id = await index_group(await db.conference.toArray(), 'index','conference_id');

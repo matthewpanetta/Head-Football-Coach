@@ -12,10 +12,10 @@
         db: db
       });
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
       const teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
 
-      var team_seasons = await db.team_season.where({season: common.season}).toArray();
+      var team_seasons = await db.team_season.where({season: common.season}).and(ts => ts.team_id > 0).toArray();
       team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
       const team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
 
@@ -31,7 +31,7 @@
 
       console.log({team_games:team_games})
 
-      const top_stats = team_games.filter(tg => tg.points != null).map(tg => tg.top_stats).reduce((acc, val) => acc.concat(val))
+      const top_stats = team_games.filter(tg => tg.points != null).map(tg => tg.top_stats).reduce((acc, val) => acc.concat(val), [])
       console.log({top_stats:top_stats})
       const player_team_game_ids = top_stats.map(ts => ts.player_team_game_id);
 

@@ -20,7 +20,7 @@
       var team_seasons_by_team_season_id =  index_group_sync(team_seasons, 'index','team_season_id');
       var distinct_team_seasons = [];
 
-      const player_team_seasons = await db.player_team_season.where({season: season}).toArray();
+      const player_team_seasons = await db.player_team_season.where({season: season}).and(pts => pts.team_season_id > 0).toArray();
       const player_team_seasons_by_player_id = index_group_sync(player_team_seasons, 'index', 'player_id')
       const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
 

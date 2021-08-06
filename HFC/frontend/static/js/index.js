@@ -488,7 +488,14 @@ class team {
     if ('img_size' in size_obj){
       size_suffix = '_' + size_obj['img_size']
     }
-    var path = folder_prefix + this.school_name + '_' + this.team_name + size_suffix + '.png';
+
+		if (this.team_id < 0){
+			var path = folder_prefix + 'ncaa.png';
+		}
+		else {
+			var path = folder_prefix + this.school_name + '_' + this.team_name + size_suffix + '.png';
+		}
+
     path = path.toLowerCase().replaceAll(' ', '_').replaceAll('&', '_').replaceAll("'", '');
 
     return path;
@@ -499,10 +506,14 @@ class team {
   }
 
     get team_href() {
+			if (this.team_id == -2){
+				return `/World/${this.world_id}/Recruiting`;
+			}
         return `/World/${this.world_id}/Team/${this.team_id}`;
     }
 
     get team_logo() {
+
         return this.build_team_logo({});
     }
 
@@ -565,176 +576,180 @@ class team_season {
 
   constructor(init_obj){
 
-    this.record = {
-      wins: 0, losses: 0, conference_wins: 0, conference_losses: 0, conference_net_wins:0, games_played: 0, conference_gb: 0, win_streak: 0, defeated_teams: []
-    };
-    this.rankings = {
-      division_rank: [], national_rank: [], national_rank_delta: 0, national_rank_delta_abs: 0, stat_rankings: {offense: [], defense: [], overall: []}
-    };
-    this.games = [];
-    this.playoff = {};
-    this.broadcast = {
-      national_broadcast: 0, regional_broadcast: 0
-    };
-    this.recruiting = {
-      scholarships_to_offer: 25,
-      recruiting_class_rank: 1,
-      points_per_week: 100
-    };
-    this.results = {
-      conference_champion: false,
-      national_champion: false,
-			final_four: false,
-      bowl: null,
-    }
-		this.headlines = []
-    this.top_stats = [];
-    this.season_stats = {
-      team: {
-          points: 0,
-          time_of_possession: 0,
-          possessions: 0,
-          turnovers: 0,
-          biggest_lead: 0,
-					down_efficiency: {
-						all: {success: 0, total: 0},
-						1: {success: 0, total: 0},
-						2: {success: 0, total: 0},
-						3: {success: 0, total: 0}
-					},
-					field_position: {
-						total_drives: 0, total_start_yard: 0
-					},
-					drive_efficiency: {
-						20: {
-							total_trips: 0, scores: 0, total_points: 0
+		if (init_obj.team_id > 0){
+			this.record = {
+	      wins: 0, losses: 0, conference_wins: 0, conference_losses: 0, conference_net_wins:0, games_played: 0, conference_gb: 0, win_streak: 0, defeated_teams: []
+	    };
+	    this.rankings = {
+	      division_rank: [], national_rank: [], national_rank_delta: 0, national_rank_delta_abs: 0, stat_rankings: {offense: [], defense: [], overall: []}
+	    };
+	    this.games = [];
+			this.signed_player_team_season_id = [];
+	    this.playoff = {};
+	    this.broadcast = {
+	      national_broadcast: 0, regional_broadcast: 0
+	    };
+	    this.recruiting = {
+	      scholarships_to_offer: 25,
+	      recruiting_class_rank: 1,
+	      points_per_week: 100
+	    };
+	    this.results = {
+	      conference_champion: false,
+	      national_champion: false,
+				final_four: false,
+	      bowl: null,
+	    }
+			this.headlines = []
+	    this.top_stats = [];
+	    this.season_stats = {
+	      team: {
+	          points: 0,
+	          time_of_possession: 0,
+	          possessions: 0,
+	          turnovers: 0,
+	          biggest_lead: 0,
+						down_efficiency: {
+							all: {success: 0, total: 0},
+							1: {success: 0, total: 0},
+							2: {success: 0, total: 0},
+							3: {success: 0, total: 0}
 						},
-						40: {
-							total_trips: 0, scores: 0, total_points: 0
-						}
-					},
-          downs: {
-            first_downs: {
-              total: 0,
-              passing: 0,
-              rushing: 0,
-              penalty: 0
-            },
-            third_downs: {
-              attempts: 0,
-              conversions: 0,
-            },
-            fourth_downs: {
-              attempts: 0,
-              conversions: 0,
-            },
-            two_points: {
-              attempts: 0,
-              conversions: 0,
-            },
-          }
-      },
-      games: {
-          game_score:0,
-          games_played:0,
-          games_started:0,
-          plays_on_field:0,
-          team_games_played:0,
-					points:0,
-        },
-      passing : {
-          completions: 0,
-          attempts: 0,
-          yards: 0,
-          tds: 0,
-          ints:0,
-          sacks:0,
-          sack_yards:0,
-        },
-        rushing : {
-          carries:0,
-          yards:0,
-          tds:0,
-          over_20:0,
-          lng:0,
-          broken_tackles:0,
-          yards_after_contact:0,
-        },
-        receiving : {
-          yards:0,
-          targets:0,
-          receptions:0,
-          tds:0,
-          yards_after_catch:0,
-          drops:0,
-          lng:0,
-          yards:0,
-        },
-        blocking : {
-          sacks_allowed:0,
-          pancakes:0,
-          blocks:0,
-        },
-        defense : {
-          tackles:0,
-          solo_tackles:0,
-          sacks:0,
-          tackles_for_loss:0,
-          deflections:0,
-          qb_hits:0,
-          tds:0,
-          ints:0,
-          int_yards:0,
-          int_tds:0,
-          safeties:0,
-        },
-        fumbles : {
-          fumbles: 0,
-          lost: 0,
-          recovered: 0,
-          forced: 0,
-          return_yards: 0,
-          return_tds: 0,
-        },
-        kicking : {
-          fga:0,
-          fgm:0,
-          fga_29:0,
-          fgm_29:0,
-          fga_39:0,
-          fgm_39:0,
-          fga_49:0,
-          fgm_49:0,
-          fga_50:0,
-          fgm_50:0,
-          lng:0,
-          xpa:0,
-          xpm:0,
-          kickoffs:0,
-          touchbacks:0,
-        },
-        punting: {
-          punts:0,
-          yards:0,
-          touchbacks:0,
-          within_20:0,
-					lng:0,
-					net_yards: 0
-        },
-        returning: {
-          kr_returns:0,
-          kr_yards:0,
-          kr_tds:0,
-          kr_lng:0,
-          pr_returns:0,
-          pr_yards:0,
-          pr_tds:0,
-          pr_lng:0,
-        },
+						field_position: {
+							total_drives: 0, total_start_yard: 0
+						},
+						drive_efficiency: {
+							20: {
+								total_trips: 0, scores: 0, total_points: 0
+							},
+							40: {
+								total_trips: 0, scores: 0, total_points: 0
+							}
+						},
+	          downs: {
+	            first_downs: {
+	              total: 0,
+	              passing: 0,
+	              rushing: 0,
+	              penalty: 0
+	            },
+	            third_downs: {
+	              attempts: 0,
+	              conversions: 0,
+	            },
+	            fourth_downs: {
+	              attempts: 0,
+	              conversions: 0,
+	            },
+	            two_points: {
+	              attempts: 0,
+	              conversions: 0,
+	            },
+	          }
+	      },
+	      games: {
+	          game_score:0,
+	          games_played:0,
+	          games_started:0,
+	          plays_on_field:0,
+	          team_games_played:0,
+						points:0,
+	        },
+	      passing : {
+	          completions: 0,
+	          attempts: 0,
+	          yards: 0,
+	          tds: 0,
+	          ints:0,
+	          sacks:0,
+	          sack_yards:0,
+	        },
+	        rushing : {
+	          carries:0,
+	          yards:0,
+	          tds:0,
+	          over_20:0,
+	          lng:0,
+	          broken_tackles:0,
+	          yards_after_contact:0,
+	        },
+	        receiving : {
+	          yards:0,
+	          targets:0,
+	          receptions:0,
+	          tds:0,
+	          yards_after_catch:0,
+	          drops:0,
+	          lng:0,
+	          yards:0,
+	        },
+	        blocking : {
+	          sacks_allowed:0,
+	          pancakes:0,
+	          blocks:0,
+	        },
+	        defense : {
+	          tackles:0,
+	          solo_tackles:0,
+	          sacks:0,
+	          tackles_for_loss:0,
+	          deflections:0,
+	          qb_hits:0,
+	          tds:0,
+	          ints:0,
+	          int_yards:0,
+	          int_tds:0,
+	          safeties:0,
+	        },
+	        fumbles : {
+	          fumbles: 0,
+	          lost: 0,
+	          recovered: 0,
+	          forced: 0,
+	          return_yards: 0,
+	          return_tds: 0,
+	        },
+	        kicking : {
+	          fga:0,
+	          fgm:0,
+	          fga_29:0,
+	          fgm_29:0,
+	          fga_39:0,
+	          fgm_39:0,
+	          fga_49:0,
+	          fgm_49:0,
+	          fga_50:0,
+	          fgm_50:0,
+	          lng:0,
+	          xpa:0,
+	          xpm:0,
+	          kickoffs:0,
+	          touchbacks:0,
+	        },
+	        punting: {
+	          punts:0,
+	          yards:0,
+	          touchbacks:0,
+	          within_20:0,
+						lng:0,
+						net_yards: 0
+	        },
+	        returning: {
+	          kr_returns:0,
+	          kr_yards:0,
+	          kr_tds:0,
+	          kr_lng:0,
+	          pr_returns:0,
+	          pr_yards:0,
+	          pr_tds:0,
+	          pr_lng:0,
+	        },
 
-    };
+	    };
 
-    this.opponent_season_stats = deep_copy(this.season_stats);
+	    this.opponent_season_stats = deep_copy(this.season_stats);
+		}
+
 
     for (const key in init_obj){
       this[key] = init_obj[key]
@@ -1562,10 +1577,10 @@ const team_header_links = async (params) => {
 
     var seasons = await db.league_season.toArray();
     if (season != undefined) {
-      seasons = seasons.map(ls => ({season:ls.season, season_href:`../Season/${ls.season}`}));
+      seasons = seasons.map(ls => ({season:ls.season, season_href:`./Season/${ls.season}`}));
     }
     else {
-      seasons = seasons.map(ls => ({season:ls.season, season_href:`./Season/${ls.season}`}))
+      seasons = seasons.map(ls => ({season:ls.season, season_href:`Season/${ls.season}`}))
     }
 
     var return_links = all_paths[0];
@@ -1701,6 +1716,7 @@ const nav_bar_links = async (params) => {
           {'LinkDisplay': 'Rankings', 'id': '', 'Href': `/World/${world_id}/Rankings`, 'ClassName': ''},
           {'LinkDisplay': 'Schedule', 'id': '', 'Href': `/World/${world_id}/Schedule`, 'ClassName': ''},
           {'LinkDisplay': 'Headline', 'id': '', 'Href': `/World/${world_id}/Headlines`, 'ClassName': ''},
+					{'LinkDisplay': 'Recruiting', 'id': '', 'Href': `/World/${world_id}/Recruiting`, 'ClassName': ''},
           {'LinkDisplay': 'Awards & Races', 'id': '', 'Href': `/World/${world_id}/Awards`, 'ClassName': ''}
       ]},
       {'GroupName': 'Team', 'GroupDisplay': `<img src="${user_team_logo}" class="" alt="">`, 'GroupLinks':[
@@ -1710,7 +1726,6 @@ const nav_bar_links = async (params) => {
           {'LinkDisplay': 'Depth Chart', 'id': '', 'Href': `/World/${world_id}/Team/${team_id}/DepthChart`, 'ClassName': ''},
           {'LinkDisplay': 'Gameplan', 'id': '', 'Href': `/World/${world_id}/Team/${team_id}/Gameplan`, 'ClassName': ''},
           {'LinkDisplay': 'Coaches', 'id': '', 'Href': `/World/${world_id}/Coaches/Team/${team_id}`, 'ClassName': ''},
-          {'LinkDisplay': 'Recruiting', 'id': '', 'Href': `/World/${world_id}/Recruiting`, 'ClassName': ''},
           {'LinkDisplay': 'Player Development', 'id': '', 'Href': `/World/${world_id}/PlayerDevelopment/Team/${team_id}`, 'ClassName': ''},
           {'LinkDisplay': 'History', 'id': '', 'Href': `/World/${world_id}/Team/${team_id}/History`, 'ClassName': ''}
       ]},
@@ -1781,7 +1796,7 @@ const initialize_new_season = async (this_week, common) => {
 	common.season = new_season;
 	const world_id= common.world_id;
 
-	const teams = await db.team.toArray();
+	const teams = await db.team.where('team_id').above(0).toArray();
 
 	const num_teams = teams.length;
 
@@ -1823,11 +1838,11 @@ const initialize_new_season = async (this_week, common) => {
 
 	console.log('this_week',next_week, all_weeks, common)
 
-	var team_seasons = await db.team_season.where({season: new_season}).toArray();
-	const teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id')
+	var team_seasons = await db.team_season.where({season: new_season}).and(ts => ts.team_id > 0).toArray();
+	const teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id')
 
 	var players = await db.player.toArray(); //TODO - I'll regret this once players graduate & start fresh
-	const previous_team_seasons = await db.team_season.where({season: current_season}).toArray();
+	const previous_team_seasons = await db.team_season.where({season: current_season}).and(ts => ts.team_id > 0).toArray();
 	const previous_player_team_seasons = await db.player_team_season.where({season: current_season}).toArray();
 	const previous_player_team_seasons_by_player_id = index_group_sync(previous_player_team_seasons, 'index', 'player_id')
 	players = nest_children(players, previous_player_team_seasons_by_player_id, 'player_id', 'previous_player_team_season');
@@ -1850,6 +1865,7 @@ const create_team_season = async (data) => {
 
 	const common = data.common;
 	const db = common.db;
+	const season = common.season;
 
 	var teams = await db.team.toArray();
 	var team_seasons_tocreate = [];
@@ -1857,15 +1873,41 @@ const create_team_season = async (data) => {
 	var team_id = 1;
 	console.log({team_season:team_season})
 	$.each(teams, function(ind, team){
-		var new_team_season = new team_season({team_id: team.team_id,
-																world_id: data.world_id,
-																season: data.season,
-																conference_name: team.conference_name,
-																conference_season_id: data.conferences_by_conference_name[team.conference.conference_name].conference_season.conference_season_id,
-															})
+		var team_season_id = team_id;
+		if (team.team_id < 0){
+			if (team.team_id == -1){
+				team_season_id = -1;
+			}
+			else {
+				team_season_id = -1 * season;
+			}
+			var new_team_season = new team_season({
+																	team_season_id: team_season_id,
+																	team_id: team.team_id,
+																	world_id: data.world_id,
+																	season: data.season,
+																	conference_name: null,
+																	conference_season_id: null,
+																})
+		}
+		else {
+			var new_team_season = new team_season({
+																	team_season_id: team_season_id,
+																	team_id: team.team_id,
+																	world_id: data.world_id,
+																	season: data.season,
+																	conference_name: team.conference_name,
+																	conference_season_id: data.conferences_by_conference_name[team.conference.conference_name].conference_season.conference_season_id,
+																})
+
+			team_id += 1;
+
+		}
+
+
+
 		team_seasons_tocreate.push(new_team_season);
 
-		team_id += 1;
 	});
 
 
@@ -1878,8 +1920,8 @@ const populate_all_depth_charts = async (data) => {
 	const season = data.season;
 
 	var team_seasons_to_update = [];
-	var team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index', 'team_season_id');
-	var player_team_seasons = await db.player_team_season.where({season: season}).toArray();
+	var team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray(), 'index', 'team_season_id');
+	var player_team_seasons = await db.player_team_season.where({season: season}).and(pts => pts.team_season_id > 0).toArray();
 	var player_team_seasons_by_team_season_id = await index_group(player_team_seasons, 'group', 'team_season_id');
 
 	var team_season = null;
@@ -1935,7 +1977,7 @@ const create_schedule = async (data) => {
 	const season = data.season;
 	const world_id = data.world_id;
 
-	const teams = await db.team.toArray();
+	const teams = await db.team.where('team_id').above(0).toArray();
 	const teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
 
 	var games_to_create = [],team_games_to_create = [],team_games_to_create_ids = [];
@@ -1943,7 +1985,7 @@ const create_schedule = async (data) => {
 	const games_per_team = 12;
 	const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
-	team_seasons = await db.team_season.where({season: season}).toArray();
+	team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
 	const team_seasons_by_team_id = await index_group(team_seasons, 'index', 'team_id')
 	const team_rivalries_by_team_season_id = await index_group(team_seasons.map(function(ts){ return { team_season_id: ts.team_season_id, rivals:teams_by_team_id[ts.team_id].rivals}}), 'index', 'team_season_id');
 	const conferences_by_conference_id = await index_group(await db.conference.toArray(), 'index', 'conference_id');
@@ -2002,8 +2044,8 @@ const create_schedule = async (data) => {
 		next_team_game_id = last_team_game.team_game_id + 1;
 	}
 
-	team_seasons = await index_group(await db.team_season.where({season: season}).toArray(), 'index','team_id');
-	team_seasons_by_conference_season_id = await index_group(await db.team_season.where({season: season}).toArray(), 'group','conference_season_id');
+	team_seasons = await index_group(await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray(), 'index','team_id');
+	team_seasons_by_conference_season_id = await index_group(await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray(), 'group','conference_season_id');
 
 	var scheduling_dict = {
 		team_season_schedule_tracker: team_season_schedule_tracker,
@@ -2277,12 +2319,127 @@ const age_out_rating = (rating_group, rating, value, class_name) => {
 
 }
 
+const create_recruiting_class = async (common) => {
+	const db = common.db;
+	const season = common.season;
+	const recruiting_team_season_id = -1 * common.season;
+
+	var team_seasons = await db.team_season.where({season: common.season}).and(ts => ts.team_id > 0).toArray();
+
+	const teams = await db.team.where('team_id').above(0).toArray();
+	const teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
+
+	team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
+
+	//const team_seasons_by_team_id = index_group_sync(team_seasons, 'index', 'team_id')
+	const team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id')
+
+	var player_team_seasons = await db.player_team_season.where({season: common.season}).and(pts => pts.team_season_id == recruiting_team_season_id).toArray();
+	const player_ids = player_team_seasons.map(pts => pts.player_id);
+
+	const players = await db.player.bulkGet(player_ids);
+	const players_by_player_id = index_group_sync(players, 'index', 'player_id')
+
+	player_team_seasons = nest_children(player_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+
+	var position_star_weight_map = {
+		'QB': 0,
+		'RB': -1,
+		'FB': -10,
+		'WR': -1,
+		'TE': -4,
+		'OT': -1,
+		'IOL': -4,
+		'DL': 0,
+		'EDGE': 0,
+		'LB': -2,
+		'CB': -1,
+		'S': -5,
+		'K': -10,
+		'P': -10,
+	}
+
+	player_team_seasons = player_team_seasons.sort((pts_a, pts_b) => (pts_b.ratings.overall.overall + position_star_weight_map[pts_b.position]) - (pts_a.ratings.overall.overall + position_star_weight_map[pts_a.position]));
+
+	var players_to_update = []
+
+	var player_count = 1;
+	var total_players = player_team_seasons.length;
+	var player_star_map = [
+		{stars: 5, percent: .01},
+		{stars: 4, percent: .10},
+		{stars: 3, percent: .30},
+		{stars: 2, percent: .45},
+		{stars: 1, percent: .14},
+	]
+	var player_star_tracker = 0;
+	for (const star_obj of player_star_map){
+		star_obj.players_in_bucket = Math.ceil(total_players * star_obj.percent);
+		player_star_tracker += star_obj.players_in_bucket;
+		star_obj.players_in_bucket_cumulative = player_star_tracker;
+	}
+
+	var position_rank_map = {};
+	var state_rank_map = {};
+
+	for (const player_team_season of player_team_seasons){
+		var player = players_by_player_id[player_team_season.player_id]
+
+		player.recruiting.stars = null;
+		player.recruiting.is_recruit = true;
+		player.recruiting.stage = 'Early';
+
+		var player_state = player.hometown.state;
+		var player_position = player.position;
+
+		if (!(player_state in state_rank_map)){
+			state_rank_map[player_state] = 0;
+		}
+		state_rank_map[player_state] +=1;
+
+
+		if (!(player_position in position_rank_map)){
+			position_rank_map[player_position] = 0;
+		}
+		position_rank_map[player_position] +=1;
+
+
+		player.recruiting.rank.national = player_count;
+		player.recruiting.rank.position_rank = position_rank_map[player_position];
+		player.recruiting.rank.state = state_rank_map[player_state];
+
+		for (const star_obj of player_star_map){
+			if (player.recruiting.stars == null && player_count <= star_obj.players_in_bucket_cumulative){
+				player.recruiting.stars = star_obj.stars;
+			}
+		}
+
+		// measurables: {
+		// 	fourty_yard_dash: 4.5,
+		// 	bench_press_reps: 10,
+		// 	vertical_jump: 31
+		// }
+
+		player_count +=1;
+		players_to_update.push(player);
+	}
+
+	console.log({players_to_update:players_to_update});
+	debugger;
+
+	await db.player.bulkPut(players_to_update);
+
+
+
+}
+
 const create_player_team_seasons = async (data) => {
 
 	const common = data.common;
 	const db = common.db;
+	const season = common.season;
 
-	const teams = await db.team.toArray();
+	const teams = await db.team.where('team_id').above(0).toArray();
 	const teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
 
 	const team_seasons = nest_children(data.team_seasons, teams_by_team_id, 'team_id', 'team');
@@ -2301,11 +2458,11 @@ const create_player_team_seasons = async (data) => {
 
 
 	var team_position_options = [
-		{QB: 6, RB: 5, WR:8 , TE:4, OT:5, IOL:8, EDGE:6, DL:7, LB: 7 , CB:7, S:4, K:1, P:2},
-		{QB: 4, RB: 5, WR:8 , TE:4, OT:4, IOL:8, EDGE:6, DL:5, LB: 12, CB:6, S:5, K:1, P:2},
-		{QB: 4, RB: 5, WR:9 , TE:3, OT:5, IOL:7, EDGE:7, DL:5, LB: 11, CB:7, S:4, K:2, P:1},
-		{QB: 3, RB: 8, WR:7 , TE:5, OT:5, IOL:8, EDGE:5, DL:5, LB: 9 , CB:8, S:4, K:2, P:1},
-		{QB: 5, RB: 6, WR:10, TE:4, OT:4, IOL:8, EDGE:7, DL:5, LB: 8 , CB:5, S:5, K:1, P:2},
+		{QB: 6, RB: 5, FB:1, WR:8 , TE:4, OT:5, IOL:8, EDGE:6, DL:7, LB: 7 , CB:7, S:4, K:1, P:2},
+		{QB: 4, RB: 5, FB:1, WR:8 , TE:4, OT:4, IOL:8, EDGE:6, DL:5, LB: 12, CB:6, S:5, K:1, P:2},
+		{QB: 4, RB: 5, FB:1, WR:9 , TE:3, OT:5, IOL:7, EDGE:7, DL:5, LB: 11, CB:7, S:4, K:2, P:1},
+		{QB: 3, RB: 8, FB:1, WR:7 , TE:5, OT:5, IOL:8, EDGE:5, DL:5, LB: 9 , CB:8, S:4, K:2, P:1},
+		{QB: 5, RB: 6, FB:1, WR:10, TE:4, OT:4, IOL:8, EDGE:7, DL:5, LB: 8 , CB:5, S:5, K:1, P:2},
 	]
 
 
@@ -2313,8 +2470,9 @@ const create_player_team_seasons = async (data) => {
 		team_season.team_position_option = deep_copy(team_position_options[Math.floor(Math.random() * team_position_options.length)]);
 	}
 
-	const classes = ['FR', 'SO', 'JR', 'SR'];
+	const classes = ['HS SR', 'FR', 'SO', 'JR', 'SR'];
 	const next_class = {
+		'HS SR': 'FR',
 		'FR': 'SO',
 		'SO': 'JR',
 		'JR': 'SR',
@@ -2420,6 +2578,8 @@ const create_player_team_seasons = async (data) => {
 
 	for (const position in player_team_seasons_by_position){
 		var player_team_seasons = player_team_seasons_by_position[position];
+		var high_school_player_team_seasons = player_team_seasons.filter(pts => pts.class.class_name == 'HS SR');
+		player_team_seasons = player_team_seasons.filter(pts => pts.class.class_name != 'HS SR');
 		player_team_seasons = player_team_seasons.sort((pts_a, pts_b) => pts_b.ratings.overall.overall - pts_a.ratings.overall.overall);
 
 		position_team_season_ids = team_seasons.map(ts => Array(ts.team_position_option[position]).fill([ts.team_season_id]).flat() ).flat()
@@ -2444,6 +2604,11 @@ const create_player_team_seasons = async (data) => {
 			}
 
 			//debugger;
+		}
+
+		for (const player_team_season of high_school_player_team_seasons){
+			player_team_season.team_season_id = -1 * season;
+			player_team_seasons_tocreate.push(player_team_season)
 		}
 
 		console.log({position:position, position_team_season_ids:position_team_season_ids, player_team_seasons:player_team_seasons})
@@ -2487,7 +2652,6 @@ const create_player_team_seasons = async (data) => {
 
 	for (const player_team_season of player_team_seasons_tocreate){
 		player_team_season.ratings.overall.overall = Math.floor((((player_team_season.ratings.overall.overall - position_overall_min[player_team_season.position]) * goal_overall_range) / (position_overall_max[player_team_season.position] - position_overall_min[player_team_season.position])) + goal_overall_min)
-
 	}
 
 	console.log({player_team_seasons_tocreate:player_team_seasons_tocreate})
@@ -2507,27 +2671,27 @@ const create_players = async (data) => {
 	var ethnicity = '';
 
 	const classes = ['FR', 'SO', 'JR', 'SR'];
-	const positions = ['QB', 'RB', 'WR', 'TE', 'OT', 'IOL', 'EDGE', 'DL', 'LB', 'CB', 'S', 'K', 'P'];
+	const positions = ['QB', 'RB', 'FB', 'WR', 'TE', 'OT', 'IOL', 'EDGE', 'DL', 'LB', 'CB', 'S', 'K', 'P'];
 	const position_ethnicity =    //numbers normalized from https://theundefeated.com/features/the-nfls-racial-divide/
 			{"QB":{"white":75,"black":15,"hispanic":5,"asian":5},"RB":{"white":15,"black":80,"hispanic":10,"asian":5},"FB":{"white":50,"black":50,"hispanic":15,"asian":2},"WR":{"white":10,"black":85,"hispanic":5,"asian":5},"TE":{"white":50,"black":50,"hispanic":15,"asian":2},"OT":{"white":45,"black":55,"hispanic":15,"asian":1},"IOL":{"white":40,"black":50,"hispanic":15,"asian":1},"EDGE":{"white":20,"black":80,"hispanic":10,"asian":1},"DL":{"white":10,"black":80,"hispanic":10,"asian":1},"LB":{"white":25,"black":75,"hispanic":10,"asian":1},"CB":{"white":2,"black":100,"hispanic":10,"asian":2},"S":{"white":15,"black":80,"hispanic":10,"asian":5},"K":{"white":70,"black":10,"hispanic":25,"asian":25},"P":{"white":70,"black":10,"hispanic":25,"asian":25}}
 
 
 
 	var team_position_counts = {
-		'QB': 5,
-		'RB': 6,
-		'FB': 1,
-		'WR': 9,
-		'TE': 4,
-		'OT': 5,
-		'IOL': 8,
-		'EDGE': 7,
-		'DL': 6,
-		'LB': 10,
-		'CB':7,
-		'S': 5,
-		'K': 2,
-		'P': 2
+		'QB': 7,
+		'RB': 8,
+		'FB': 2,
+		'WR': 12,
+		'TE': 6,
+		'OT': 7,
+		'IOL': 10,
+		'EDGE': 9,
+		'DL': 8,
+		'LB': 12,
+		'CB':9,
+		'S': 7,
+		'K': 3,
+		'P': 3
 	}
 
 	const num_players_per_team = Object.values(team_position_counts).reduce(function (accumulator, currentValue) {
@@ -2575,7 +2739,6 @@ const create_players = async (data) => {
 
 	console.log({players_tocreate:players_tocreate})
 	var players_tocreate_added = await db.player.bulkAdd(players_tocreate);
-
 
 }
 
@@ -2981,7 +3144,7 @@ const get_db  = async (world_obj) => {
   await new_db.version(9).stores({
     league_season: 'season',
     team: "team_id",
-    team_season: "++team_season_id, team_id, season",
+    team_season: "team_season_id, team_id, season",
     player: "player_id",
     player_team_season: "player_team_season_id, player_id, team_season_id, season",
     conference: '++conference_id, conference_name',
@@ -3145,7 +3308,7 @@ const resolve_route_parameters = async(route_pattern) => {
 
 const all_teams = async (common, link_suffix) => {
   const db = await common.db;
-  var team_list = await db.team.toArray();
+  var team_list = await db.team.where('team_id').above(0).toArray();
   team_list = team_list.sort(function(team_a, team_b){
     if (team_a.school_name < team_b.school_name) return -1;
     if (team_a.school_name > team_b.school_name) return 1;
@@ -3195,6 +3358,8 @@ const common_functions = async (route_pattern) => {
             , create_week: create_week
 						, create_players: create_players
 						, create_player_team_seasons: create_player_team_seasons
+						, create_recruiting_class:create_recruiting_class
+
 						, populate_all_depth_charts: populate_all_depth_charts
 						, choose_preseason_all_americans:choose_preseason_all_americans
 						, create_schedule: create_schedule
@@ -3252,7 +3417,7 @@ const conference_standings = async (conference_season_id, team_season_ids, commo
   var conference_season = await db.conference_season.get({conference_season_id: conference_season_id})  ;
   var conference = await db.conference.get({conference_id: conference_season.conference_id})  ;
 
-  var team_seasons_in_conference = await db.team_season.where({season: season}).toArray();
+  var team_seasons_in_conference = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
   team_seasons_in_conference = team_seasons_in_conference.filter(team_season => team_season.conference_season_id == conference_season_id).sort(function(teamA,teamB){
     return teamA.rankings.division_rank[0] - teamB.rankings.division_rank[0];
   });
@@ -3291,10 +3456,10 @@ const recent_games = async(common) => {
 
   var games_in_week = await db.game.where({week_id: previous_week.week_id}).toArray();
 
-  const team_seasons = await db.team_season.where({season: season}).toArray();
+  const team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
   const team_seasons_by_team_season_id = await index_group(team_seasons, 'index', 'team_season_id');
 
-  const teams = await db.team.toArray();
+  const teams = await db.team.where('team_id').above(0).toArray();
   const teams_by_team_id = await index_group(teams, 'index', 'team_id');
 
   const team_games = await db.team_game.where({week_id: previous_week.week_id}).toArray();
@@ -4406,7 +4571,7 @@ const sim_week_games = async(this_week, common) => {
   var team_season_ids_playing_this_week = team_games_this_week.map(tg => tg.team_season_id);
 
   var team_seasons_by_team_season_id = await index_group(await db.team_season.bulkGet(team_season_ids_playing_this_week), 'index', 'team_season_id');
-  var teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id');
+  var teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id');
 
 
   var player_team_seasons = await db.player_team_season.where('team_season_id').anyOf(team_season_ids_playing_this_week).toArray();
@@ -4566,12 +4731,12 @@ const sim_week_games = async(this_week, common) => {
 const calculate_team_overalls = async(common) => {
 	const db = await common.db;
 	const season = common.season;
-	const team_seasons = await db.team_season.where({season: season}).toArray();
+	const team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
 
 	const position_map = {
 		'QB': {group: 'Offense', unit: 'QB', typical_starters: 1},
 		'RB': {group: 'Offense', unit: 'RB', typical_starters: 1},
-		'FB': {group: 'Offense', unit: 'RB', typical_starters: 1},
+		'FB': {group: 'Offense', unit: 'FB', typical_starters: 1},
 		'WR': {group: 'Offense', unit: 'REC', typical_starters: 2},
 		'TE': {group: 'Offense', unit: 'REC', typical_starters: 1},
 		'OT': {group: 'Offense', unit: 'OL', typical_starters: 2},
@@ -4617,6 +4782,8 @@ const calculate_team_overalls = async(common) => {
 
 	for (const team_season of team_seasons){
 		team_season.rating = {overall: {sum:0, count:0}, by_position: {}, by_position_group: {}, by_position_unit: {}}
+		console.log({team_season:team_season});
+
 		for (const position in position_map){
 			var position_obj = position_map[position]
 			var position_unit = position_obj.unit;
@@ -4631,6 +4798,8 @@ const calculate_team_overalls = async(common) => {
 			if (!(position_unit in team_season.rating.by_position_unit)){
 				team_season.rating.by_position_unit[position_unit] = {sum:0, count:0}
 			}
+			console.log({position:position, 'team_season.depth_chart[position]': team_season.depth_chart[position]});
+
 
 			var player_team_season_ids = team_season.depth_chart[position].slice(0, position_map[position].typical_starters);
 
@@ -4708,8 +4877,8 @@ const calculate_national_rankings = async(this_week, all_weeks, common) => {
   const all_weeks_by_week_id = await index_group(all_weeks, 'index', 'week_id');
 
   next_week = all_weeks_by_week_id[this_week.week_id + 1];
-  const team_seasons = await db.team_season.where({season: this_week.phase.season}).toArray();
-  const teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id');
+  const team_seasons = await db.team_season.where({season: this_week.phase.season}).and(ts => ts.team_id > 0).toArray();
+  const teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id');
 
   var rank_counter = 0, sorted_team_seasons=[], team_seasons_to_save = [];
 
@@ -4796,7 +4965,7 @@ const calculate_conference_rankings = async(this_week, all_weeks, common) => {
   const all_weeks_by_week_id = await index_group(all_weeks, 'index', 'week_id');
 
   next_week = all_weeks_by_week_id[this_week.week_id + 1];
-  const team_seasons_by_conference_season_id = await index_group(await db.team_season.where({season: this_week.phase.season}).toArray(), 'group', 'conference_season_id');
+  const team_seasons_by_conference_season_id = await index_group(await db.team_season.where({season: this_week.phase.season}).and(ts => ts.team_id > 0).toArray(), 'group', 'conference_season_id');
 
   var rank_counter = 0, sorted_team_seasons=[], team_seasons_to_save = [];
 
@@ -4974,7 +5143,7 @@ const choose_preseason_all_americans = async (common) => {
 		'P': 1,
 	}
 
-	var player_team_seasons = await db.player_team_season.where({season: common.season}).toArray();
+	var player_team_seasons = await db.player_team_season.where({season: common.season}).and(pts => pts.team_season_id > 0).toArray();
 	var previous_player_team_seasons = await db.player_team_season.where({season: common.season - 1}).toArray();
 	var previous_player_team_seasons_by_player_id = index_group_sync(previous_player_team_seasons, 'index', 'player_id')
 	player_team_seasons = nest_children(player_team_seasons, previous_player_team_seasons_by_player_id, 'player_id', 'previous_player_team_season');
@@ -5102,7 +5271,7 @@ const choose_all_americans = async (this_week, common) => {
 		'P': 1,
 	}
 
-	var player_team_seasons = await db.player_team_season.where({season: common.season}).toArray();
+	var player_team_seasons = await db.player_team_season.where({season: common.season}).and(pts => pts.team_season_id > 0).toArray();
 	player_team_seasons = player_team_seasons.filter(pts => pts.season_stats.games.weighted_game_score > 0);
 	player_team_seasons = player_team_seasons.sort((pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating)
 
@@ -5479,7 +5648,7 @@ const assign_conference_champions = async(this_week, common) => {
   const index_group = common.index_group
 
   const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: season}).toArray(), 'index', 'conference_season_id')
-  const team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: season}).toArray(), 'index', 'team_season_id')
+  const team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray(), 'index', 'team_season_id')
   const team_games_this_week = await db.team_game.where({week_id: this_week.week_id}).toArray();
 
   const winning_team_seasons = team_games_this_week.filter(tg => tg.is_winning_team).map(tg => team_seasons_by_team_season_id[tg.team_season_id]);
@@ -5508,7 +5677,7 @@ const schedule_conference_championships = async (this_week, next_week, common) =
   //conference_seasons = conference_seasons.filter(cs => cs.hold_conference_championship);
   conference_seasons = conference_seasons.filter(cs => true);
 
-  var team_seasons = await db.team_season.where({season: this_week.phase.season}).toArray();
+  var team_seasons = await db.team_season.where({season: this_week.phase.season}).and(ts => ts.team_id > 0).toArray();
   team_seasons = team_seasons.filter(ts => ts.rankings.division_rank[0] <= 2);
   var team_seasons_by_conference_season_id = await index_group(team_seasons, 'group', 'conference_season_id');
 
@@ -5565,8 +5734,8 @@ const process_bowl_results = async(this_week, all_weeks, common) => {
   const db = common.db;
   var bowl_weeks = await index_group(all_weeks.filter(w => w.phase.phase_name == 'Bowl Season'), 'index', 'week_name')
 
-  var teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id')
-  var team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: common.season}).toArray(), 'index', 'team_season_id')
+  var teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id')
+  var team_seasons_by_team_season_id = await index_group(await db.team_season.where({season: common.season}).and(ts => ts.team_id > 0).toArray(), 'index', 'team_season_id')
 
   var games_this_week = await db.game.where({week_id: this_week.week_id}).toArray();
   var team_games_by_game_id = await index_group(await db.team_game.where({week_id: this_week.week_id}).toArray(), 'group', 'game_id');
@@ -5689,10 +5858,10 @@ const schedule_bowl_season = async (all_weeks, common) => {
   ]
   const db = await common.db;
 
-  var team_seasons = await db.team_season.where({season: common.season}).toArray();
-  var teams_by_team_id = await index_group(await db.team.toArray(), 'index', 'team_id')
+  var team_seasons = await db.team_season.where({season: common.season}).and(ts => ts.team_id > 0).toArray();
+  var teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id')
 
-  var num_teams = await db.team.count();
+  var num_teams = await db.team.where('team_id').above(0).count();
 
   var max_bowl_bound_teams = num_teams - 4;
   var max_bowls = Math.floor(max_bowl_bound_teams / 2);

@@ -143,10 +143,10 @@ const populate_player_stats = async (common) => {
     const team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id');
     const games_by_game_id = index_group_sync(games, 'index', 'game_id');
 
-    var team_seasons = await db.team_season.where({season: common.season}).toArray();
+    var team_seasons = await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
     var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
 
-    const teams = await db.team.toArray();
+    const teams = await db.team.where('team_id').above(0).toArray();
     const teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
 
     for (var player_team_game of player_team_games){
@@ -565,10 +565,8 @@ const getHtml = async (common) => {
   const player = await db.player.get(player_id);
   var player_team_seasons = await db.player_team_season.where({player_id: player_id}).toArray();
   var player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
-
-  if (player.player_face == undefined){
-    player.player_face = await common.create_player_face('single', player.player_id, db);
-  }
+  player.player_team_seasons = player_team_seasons;
+  player.current_player_team_season = player_team_seasons.filter(pts => pts.season == season)[0];
 
   var team_season_ids = player_team_seasons.map(pts => pts.team_season_id);
   var team_seasons = await db.team_season.bulkGet(team_season_ids);
@@ -583,277 +581,293 @@ const getHtml = async (common) => {
     c+=1;
   });
 
-  console.log({player_team_seasons:player_team_seasons})
-
   player.player_team_seasons = player_team_seasons;
-  player.current_player_team_season = player_team_seasons.filter(pts => pts.season == season)[0];
+  player.current_player_team_season = player.player_team_seasons.filter(pts => pts.season == season)[0];
+  var current_team = player.current_player_team_season.team_season.team;
 
 
 
-      const position_skill_set_map ={'QB': ['overall','athleticism', 'passing', 'rushing'],
-                           'RB': ['overall','athleticism', 'rushing'],
-                           'FB': ['overall','athleticism', 'rushing', 'Blocking'],
-                           'WR': ['overall','athleticism', 'receiving'],
-                           'TE': ['overall','athleticism', 'receiving', 'blocking'],
-                           'OT': ['overall','athleticism', 'blocking'],
-                           'IOL': ['overall','athleticism', 'blocking'],
-                           'EDGE': ['overall','athleticism', 'defense'],
-                           'DL': ['overall','athleticism', 'defense'],
-                           'LB': ['overall','athleticism', 'defense'],
-                           'CB': ['overall','athleticism', 'defense'],
-                           'S': ['overall','athleticism', 'defense'],
-                           'K': ['overall','kicking'],
-                           'P': ['overall','kicking'],
+  console.log({current_team:current_team,current_player_team_season:player.current_player_team_season, player_team_seasons:player.player_team_seasons})
+
+  if (player.player_face == undefined){
+    player.player_face = await common.create_player_face('single', player.player_id, db);
+  }
+
+
+  if (player.recruiting.is_recruit){
+    var team_season = null;
+
+  }
+  else {
+
+        const season_stat_groupings = [
+            {
+                'StatGroupName': 'Passing',
+                'Stats': [
+                    {'FieldName': 'GamesPlayed', 'DisplayName': 'Games', 'DisplayColumn': true, 'DisplayOrder': 1, 'SeasonAggregateValue': true, 'SmallDisplay': false},
+                    {'FieldName': 'PAS_CompletionsAndAttempts', 'DisplayName': 'C/ATT', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                    {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'PAS_YardsPerAttempt', 'DisplayName': 'YPA', 'DisplayColumn': true, 'DisplayOrder': 2.5, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                    {'FieldName': 'PAS_Attempts', 'DisplayName': 'A', 'DisplayColumn': false, 'DisplayOrder': 3, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                    {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'DisplayColumn': true, 'DisplayOrder': 4, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'PAS_YardsPerGame', 'DisplayName': 'Pass YPG', 'DisplayColumn': true, 'DisplayOrder': 4.5, 'SeasonAggregateValue': true, 'SmallDisplay': false},
+                    {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TD', 'DisplayColumn': true, 'DisplayOrder': 5, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'PAS_INT', 'DisplayName': 'INT', 'DisplayColumn': true, 'DisplayOrder': 6, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                    {'FieldName': 'PAS_SacksAndYards', 'DisplayName': 'Sck/Yrd', 'DisplayColumn': true, 'DisplayOrder': 7, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                    {'FieldName': 'PAS_SackYards', 'DisplayName': 'Sack Yards', 'DisplayColumn': false, 'DisplayOrder': 998, 'SeasonAggregateValue': false, 'SmallDisplay': false}
+                ]
+            },
+            {
+                'StatGroupName': 'Rushing',
+                'Stats': [
+                    {'FieldName': 'GamesPlayed', 'DisplayName': 'Games', 'DisplayColumn': true, 'DisplayOrder': 1, 'SeasonAggregateValue': true, 'SmallDisplay': false},
+                    {'FieldName': 'RUS_Carries', 'DisplayName': 'Car', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                    {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'DisplayColumn': true, 'DisplayOrder': 3, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'RUS_YardsPerGame', 'DisplayName': 'Rush YPG', 'DisplayColumn': true, 'DisplayOrder': 3.2, 'SeasonAggregateValue': true, 'SmallDisplay': false},
+                    {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'YPC', 'DisplayColumn': true, 'DisplayOrder': 3.5, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'DisplayColumn': true, 'DisplayOrder': 4, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                ],
+            },
+            {
+                'StatGroupName': 'Receiving',
+                'Stats': [
+                    {'FieldName': 'GamesPlayed', 'DisplayName': 'Games', 'DisplayColumn': true, 'DisplayOrder': 1, 'SeasonAggregateValue': true, 'SmallDisplay': false},
+                    {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'DisplayColumn': true, 'DisplayOrder': 3, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'REC_YardsPerGame', 'DisplayName': 'Rec YPG', 'DisplayColumn': true, 'DisplayOrder': 3.2, 'SeasonAggregateValue': true, 'SmallDisplay': false},
+                    {'FieldName': 'REC_YardsPerCatch', 'DisplayName': 'YPC', 'DisplayColumn': true, 'DisplayOrder': 3.5, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                    {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'DisplayColumn': true, 'DisplayOrder': 4, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'REC_Targets', 'DisplayName': 'Targets', 'DisplayColumn': true, 'DisplayOrder': 5, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                ],
+            },
+            {
+                'StatGroupName': 'Defense',
+                'Stats': [
+                    {'FieldName': 'GamesPlayed', 'DisplayName': 'Games', 'DisplayColumn': true, 'DisplayOrder': 1, 'SeasonAggregateValue': true, 'SmallDisplay': false},
+                    {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'DisplayColumn': true, 'DisplayOrder': 3, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'DisplayColumn': true, 'DisplayOrder': 4, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'DEF_TacklesForLoss', 'DisplayName': 'TFL', 'DisplayColumn': true, 'DisplayOrder': 5, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                    {'FieldName': 'FUM_Forced', 'DisplayName': 'FF', 'DisplayColumn': true, 'DisplayOrder': 6, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                    {'FieldName': 'FUM_Recovered', 'DisplayName': 'FR', 'DisplayColumn': true, 'DisplayOrder': 7, 'SeasonAggregateValue': false, 'SmallDisplay': false},
+                ],
+            },
+        ]
+
+
+
+    var all_teams = await db.team.where('team_id').above(0).toArray();
+    all_teams = all_teams.sort(function(teamA, teamB) {
+      if ( teamA.school_name < teamB.school_name ){
+        return -1;
+      }
+      if ( teamA.school_name > teamB.school_name ){
+        return 1;
+      }
+      return 0;
+    });
+
+
+
+    var player_awards = await db.award.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
+    var award_set = {}
+    if (player_awards.length > 0){
+      const seasons = player_awards.map(a => a.season);
+
+
+      const player_team_season_ids = player.player_team_seasons.filter(pts => seasons.includes(pts.season)).map(pts => pts.player_team_season_id);
+
+      var player_team_games = await db.player_team_game.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
+      var team_game_ids = player_team_games.map(ptg => ptg.team_game_id);
+      var team_games = await db.team_game.bulkGet(team_game_ids);
+
+      var game_ids = team_games.map(tg => tg.game_id);
+      var games = await db.game.bulkGet(game_ids);
+
+      var team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id');
+      var games_by_game_id = index_group_sync(games, 'index', 'game_id');
+
+      var team_seasons = await db.team_season.where('season').anyOf(seasons).and(ts=>ts.team_id>0).toArray();
+      var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+      var teams = await db.team.where('team_id').above(0).toArray();
+      var teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+
+      for (var player_team_game of player_team_games){
+        player_team_game.team_game = team_games_by_team_game_id[player_team_game.team_game_id];
+        player_team_game.team_game.game = games_by_game_id[player_team_game.team_game.game_id];
+
+        player_team_game.team_game.team_season = team_seasons_by_team_season_id[player_team_game.team_game.team_season_id];
+        player_team_game.team_game.opponent_team_season = team_seasons_by_team_season_id[player_team_game.team_game.opponent_team_season_id];
+
+        player_team_game.team_game.team_season.team = teams_by_team_id[player_team_game.team_game.team_season.team_id];
+        player_team_game.team_game.opponent_team_season.team = teams_by_team_id[player_team_game.team_game.opponent_team_season.team_id];
       }
 
-      const all_rating_groups = {
-        'overall': 'Overall',
-        'athleticism': 'Athleticism',
-        'passing': 'Passing',
-        'rushing': 'Running',
-        'receiving': 'Receiving',
-        'blocking': 'Blocking',
-        'defense': 'Defense',
-        'kicking': 'Kicking',
-      }
+      var player_team_games_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
+
+      const weeks = await db.week.where('season').anyOf(seasons).toArray();
+      const weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
+      player_awards = nest_children(player_awards, weeks_by_week_id, 'week_id', 'week');
+      player_awards = nest_children(player_awards, player_team_games_by_player_team_game_id, 'player_team_game_id', 'player_team_game');
+
+      const conference_season_ids = player_awards.map(a => a.conference_season_id).filter(cs_id => cs_id != null).map(cs_id => parseInt(cs_id));
+      var conference_seasons = await db.conference_season.where('conference_season_id').anyOf(conference_season_ids).toArray();
+
+      const conference_ids = conference_seasons.map(cs => cs.conference_id);
+      const conferences = await db.conference.where('conference_id').anyOf(conference_ids).toArray();
+      const conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
+
+      conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference');
+      const conference_seasons_by_conference_season_id = index_group_sync(conference_seasons, 'index', 'conference_season_id');
+      player_awards = nest_children(player_awards, conference_seasons_by_conference_season_id, 'conference_season_id', 'conference_season')
 
 
-      const season_stat_groupings = [
-          {
-              'StatGroupName': 'Passing',
-              'Stats': [
-                  {'FieldName': 'GamesPlayed', 'DisplayName': 'Games', 'DisplayColumn': true, 'DisplayOrder': 1, 'SeasonAggregateValue': true, 'SmallDisplay': false},
-                  {'FieldName': 'PAS_CompletionsAndAttempts', 'DisplayName': 'C/ATT', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-                  {'FieldName': 'PAS_CompletionPercentage', 'DisplayName': 'Pass %', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'PAS_YardsPerAttempt', 'DisplayName': 'YPA', 'DisplayColumn': true, 'DisplayOrder': 2.5, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-                  {'FieldName': 'PAS_Attempts', 'DisplayName': 'A', 'DisplayColumn': false, 'DisplayOrder': 3, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-                  {'FieldName': 'PAS_Yards', 'DisplayName': 'Pass Yards', 'DisplayColumn': true, 'DisplayOrder': 4, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'PAS_YardsPerGame', 'DisplayName': 'Pass YPG', 'DisplayColumn': true, 'DisplayOrder': 4.5, 'SeasonAggregateValue': true, 'SmallDisplay': false},
-                  {'FieldName': 'PAS_TD', 'DisplayName': 'Pass TD', 'DisplayColumn': true, 'DisplayOrder': 5, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'PAS_INT', 'DisplayName': 'INT', 'DisplayColumn': true, 'DisplayOrder': 6, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-                  {'FieldName': 'PAS_SacksAndYards', 'DisplayName': 'Sck/Yrd', 'DisplayColumn': true, 'DisplayOrder': 7, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-                  {'FieldName': 'PAS_SackYards', 'DisplayName': 'Sack Yards', 'DisplayColumn': false, 'DisplayOrder': 998, 'SeasonAggregateValue': false, 'SmallDisplay': false}
-              ]
-          },
-          {
-              'StatGroupName': 'Rushing',
-              'Stats': [
-                  {'FieldName': 'GamesPlayed', 'DisplayName': 'Games', 'DisplayColumn': true, 'DisplayOrder': 1, 'SeasonAggregateValue': true, 'SmallDisplay': false},
-                  {'FieldName': 'RUS_Carries', 'DisplayName': 'Car', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-                  {'FieldName': 'RUS_Yards', 'DisplayName': 'Rush Yards', 'DisplayColumn': true, 'DisplayOrder': 3, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'RUS_YardsPerGame', 'DisplayName': 'Rush YPG', 'DisplayColumn': true, 'DisplayOrder': 3.2, 'SeasonAggregateValue': true, 'SmallDisplay': false},
-                  {'FieldName': 'RUS_YardsPerCarry', 'DisplayName': 'YPC', 'DisplayColumn': true, 'DisplayOrder': 3.5, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'RUS_TD', 'DisplayName': 'Rush TDs', 'DisplayColumn': true, 'DisplayOrder': 4, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-              ],
-          },
-          {
-              'StatGroupName': 'Receiving',
-              'Stats': [
-                  {'FieldName': 'GamesPlayed', 'DisplayName': 'Games', 'DisplayColumn': true, 'DisplayOrder': 1, 'SeasonAggregateValue': true, 'SmallDisplay': false},
-                  {'FieldName': 'REC_Receptions', 'DisplayName': 'Rec', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'REC_Yards', 'DisplayName': 'Rec Yards', 'DisplayColumn': true, 'DisplayOrder': 3, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'REC_YardsPerGame', 'DisplayName': 'Rec YPG', 'DisplayColumn': true, 'DisplayOrder': 3.2, 'SeasonAggregateValue': true, 'SmallDisplay': false},
-                  {'FieldName': 'REC_YardsPerCatch', 'DisplayName': 'YPC', 'DisplayColumn': true, 'DisplayOrder': 3.5, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-                  {'FieldName': 'REC_TD', 'DisplayName': 'Rec TDs', 'DisplayColumn': true, 'DisplayOrder': 4, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'REC_Targets', 'DisplayName': 'Targets', 'DisplayColumn': true, 'DisplayOrder': 5, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-              ],
-          },
-          {
-              'StatGroupName': 'Defense',
-              'Stats': [
-                  {'FieldName': 'GamesPlayed', 'DisplayName': 'Games', 'DisplayColumn': true, 'DisplayOrder': 1, 'SeasonAggregateValue': true, 'SmallDisplay': false},
-                  {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'DisplayColumn': true, 'DisplayOrder': 3, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'DisplayColumn': true, 'DisplayOrder': 4, 'SeasonAggregateValue': false, 'SmallDisplay': true},
-                  {'FieldName': 'DEF_TacklesForLoss', 'DisplayName': 'TFL', 'DisplayColumn': true, 'DisplayOrder': 5, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-                  {'FieldName': 'FUM_Forced', 'DisplayName': 'FF', 'DisplayColumn': true, 'DisplayOrder': 6, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-                  {'FieldName': 'FUM_Recovered', 'DisplayName': 'FR', 'DisplayColumn': true, 'DisplayOrder': 7, 'SeasonAggregateValue': false, 'SmallDisplay': false},
-              ],
-          },
-      ]
+      for (const award of player_awards){
+        var award_group_name = '';
+        var award_name = '';
+        var award_href = '';
+        console.log({award:award})
 
-      const all_player_team_seasons_by_player_team_season_id = index_group_sync(await db.player_team_season.where({season: season}).toArray(), 'index', 'player_team_season_id');
-      const all_team_seasons = await db.team_season.where({season: season}).toArray();
-      const all_team_seasons_in_conference = all_team_seasons.filter(ts => ts.conference_season_id == player.current_player_team_season.team_season.conference_season_id);
-      const player_position = player.current_player_team_season.position;
-
-      const all_player_team_season_ids_starters_at_position = combine_starters_for_position(all_team_seasons.map(ts => ts.depth_chart[player_position]), player.current_player_team_season.position)
-      const all_conference_player_team_season_ids_starters_at_position = combine_starters_for_position(all_team_seasons_in_conference.map(ts => ts.depth_chart[player_position]), player.current_player_team_season.position)
-
-      const all_player_team_season_starters_at_position = all_player_team_season_ids_starters_at_position.map(pts_id => all_player_team_seasons_by_player_team_season_id[pts_id]);
-      const all_conference_player_team_season_starters_at_position = all_conference_player_team_season_ids_starters_at_position.map(pts_id => all_player_team_seasons_by_player_team_season_id[pts_id]);
-
-
-      const skills = []
-      for (var rating_group in all_rating_groups) {
-
-        var rating_group_obj = {rating_group: all_rating_groups[rating_group], ratings: []}
-
-        if (position_skill_set_map[player_position].includes(rating_group)){
-          rating_group_obj.top_show = true;
-        }
-
-        for (var rating in player.current_player_team_season.ratings[rating_group]){
-          var rating_obj = {rating: clean_rating_string(rating), player_value: player.current_player_team_season.ratings[rating_group][rating], all_players: {value_sum: 0, value_count: 0, value: 0}, conference_players: {value_sum: 0, value_count: 0, value: 0}}
-
-          if (rating_obj.rating == 'Overall'){
-            rating_obj.bar_width = rating_obj.player_value;
+        if (award.award_team_set == 'conference'){
+          if (award.award_timeframe == 'week'){
+            award_group_name = `${award.conference_season.conference.conference_abbreviation} ${award.award_group_type} Player of the Week`
+            award_name = `${award.week.week_name}, ${award.week.season}`;
+            award.award_href = award.player_team_game.team_game.game.game_href;
           }
-          else {
-            rating_obj.bar_width = rating_obj.player_value;
+          else if (award.award_timeframe == 'regular season') {
+            award_group_name = `${award.conference_season.conference.conference_abbreviation} All-Conference ${award.award_group_type}`
+            award_name = `${award.season}`;
           }
-
-          for (const player_team_season of all_player_team_season_starters_at_position){
-            rating_obj.all_players.value_count +=1;
-            rating_obj.all_players.value_sum += player_team_season.ratings[rating_group][rating];
+          else if (award.award_timeframe == 'pre-season') {
+            award_group_name = `${award.conference_season.conference.conference_abbreviation} Preseason All-Conference ${award.award_group_type}`
+            award_name = `${award.season}`;
           }
-
-          for (const player_team_season of all_conference_player_team_season_starters_at_position){
-            rating_obj.conference_players.value_count +=1;
-            rating_obj.conference_players.value_sum += player_team_season.ratings[rating_group][rating];
-          }
-
-          rating_obj.all_players.value = round_decimal(rating_obj.all_players.value_sum / rating_obj.all_players.value_count, 1);
-          rating_obj.conference_players.value = round_decimal(rating_obj.conference_players.value_sum / rating_obj.conference_players.value_count, 1);
-
-          rating_group_obj.ratings.push(rating_obj) ;
-        }
-
-        if (rating_group_obj.rating_group_obj == 'overall'){
-          skills.unshift(rating_group_obj)
         }
         else {
-          skills.push(rating_group_obj)
-        }
-      }
-
-
-      console.log('all_player_team_seasons', {skills:skills, all_conference_player_team_season_starters_at_position:all_conference_player_team_season_starters_at_position, all_player_team_season_starters_at_position:all_player_team_season_starters_at_position, all_team_seasons:all_team_seasons, all_conference_player_team_season_ids_starters_at_position: all_conference_player_team_season_ids_starters_at_position, 'all_player_team_season_ids_starters_at_position': all_player_team_season_ids_starters_at_position, 'player.current_player_team_season.team_season': player.current_player_team_season.team_season, all_team_seasons_in_conference: all_team_seasons_in_conference, player_position:player_position, all_player_team_season_ids_starters_at_position:all_player_team_season_ids_starters_at_position})
-
-
-  var all_teams = await db.team.toArray();
-  all_teams = all_teams.sort(function(teamA, teamB) {
-    if ( teamA.school_name < teamB.school_name ){
-      return -1;
-    }
-    if ( teamA.school_name > teamB.school_name ){
-      return 1;
-    }
-    return 0;
-  });
-
-
-
-  var player_awards = await db.award.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
-  var award_set = {}
-  if (player_awards.length > 0){
-    const seasons = player_awards.map(a => a.season);
-
-
-    const player_team_season_ids = player.player_team_seasons.filter(pts => seasons.includes(pts.season)).map(pts => pts.player_team_season_id);
-
-    var player_team_games = await db.player_team_game.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
-    var team_game_ids = player_team_games.map(ptg => ptg.team_game_id);
-    var team_games = await db.team_game.bulkGet(team_game_ids);
-
-    var game_ids = team_games.map(tg => tg.game_id);
-    var games = await db.game.bulkGet(game_ids);
-
-    var team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id');
-    var games_by_game_id = index_group_sync(games, 'index', 'game_id');
-
-    var team_seasons = await db.team_season.where('season').anyOf(seasons).toArray();
-    var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
-
-    var teams = await db.team.toArray();
-    var teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
-
-    for (var player_team_game of player_team_games){
-      player_team_game.team_game = team_games_by_team_game_id[player_team_game.team_game_id];
-      player_team_game.team_game.game = games_by_game_id[player_team_game.team_game.game_id];
-
-      player_team_game.team_game.team_season = team_seasons_by_team_season_id[player_team_game.team_game.team_season_id];
-      player_team_game.team_game.opponent_team_season = team_seasons_by_team_season_id[player_team_game.team_game.opponent_team_season_id];
-
-      player_team_game.team_game.team_season.team = teams_by_team_id[player_team_game.team_game.team_season.team_id];
-      player_team_game.team_game.opponent_team_season.team = teams_by_team_id[player_team_game.team_game.opponent_team_season.team_id];
-    }
-
-    var player_team_games_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
-
-    const weeks = await db.week.where('season').anyOf(seasons).toArray();
-    const weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
-    player_awards = nest_children(player_awards, weeks_by_week_id, 'week_id', 'week');
-    player_awards = nest_children(player_awards, player_team_games_by_player_team_game_id, 'player_team_game_id', 'player_team_game');
-
-    const conference_season_ids = player_awards.map(a => a.conference_season_id).filter(cs_id => cs_id != null).map(cs_id => parseInt(cs_id));
-    var conference_seasons = await db.conference_season.where('conference_season_id').anyOf(conference_season_ids).toArray();
-
-    const conference_ids = conference_seasons.map(cs => cs.conference_id);
-    const conferences = await db.conference.where('conference_id').anyOf(conference_ids).toArray();
-    const conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
-
-    conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference');
-    const conference_seasons_by_conference_season_id = index_group_sync(conference_seasons, 'index', 'conference_season_id');
-    player_awards = nest_children(player_awards, conference_seasons_by_conference_season_id, 'conference_season_id', 'conference_season')
-
-
-    for (const award of player_awards){
-      var award_group_name = '';
-      var award_name = '';
-      var award_href = '';
-      console.log({award:award})
-
-      if (award.award_team_set == 'conference'){
-        if (award.award_timeframe == 'week'){
-          award_group_name = `${award.conference_season.conference.conference_abbreviation} ${award.award_group_type} Player of the Week`
-          award_name = `${award.week.week_name}, ${award.week.season}`;
-          award.award_href = award.player_team_game.team_game.game.game_href;
-        }
-        else if (award.award_timeframe == 'regular season') {
-          award_group_name = `${award.conference_season.conference.conference_abbreviation} All-Conference ${award.award_group_type}`
-          award_name = `${award.season}`;
-        }
-        else if (award.award_timeframe == 'pre-season') {
-          award_group_name = `${award.conference_season.conference.conference_abbreviation} Preseason All-Conference ${award.award_group_type}`
-          award_name = `${award.season}`;
-        }
-      }
-      else {
-        if (award.award_timeframe == 'week'){
-          award_group_name = `National ${award.award_group_type} Player of the Week`
-          award_name = `${award.week.week_name}, ${award.week.season}`;
-          award.award_href = award.player_team_game.team_game.game.game_href;
-        }
-        else if (award.award_timeframe == 'regular season') {
-          if (award.award_group_type == 'Heisman'){
-            award_group_name = 'Heisman'
-            award_name = `${award.season}`;
+          if (award.award_timeframe == 'week'){
+            award_group_name = `National ${award.award_group_type} Player of the Week`
+            award_name = `${award.week.week_name}, ${award.week.season}`;
+            award.award_href = award.player_team_game.team_game.game.game_href;
           }
-          else{
-            award_group_name = `All-American ${award.award_group_type}`
-            award_name = `${award.season}`;
+          else if (award.award_timeframe == 'regular season') {
+            if (award.award_group_type == 'Heisman'){
+              award_group_name = 'Heisman'
+              award_name = `${award.season}`;
+            }
+            else{
+              award_group_name = `All-American ${award.award_group_type}`
+              award_name = `${award.season}`;
+            }
+          }
+          else if (award.award_timeframe == 'pre-season') {
+            award_group_name = `Preseason All-American ${award.award_group_type}`
           }
         }
-        else if (award.award_timeframe == 'pre-season') {
-          award_group_name = `Preseason All-American ${award.award_group_type}`
+
+
+        award.award_group_name = award_group_name
+        award.award_name = award_name
+
+        if (!(award.award_group_name in award_set)){
+          award_set[award.award_group_name] = []
         }
+        award_set[award.award_group_name].push(award)
       }
-
-
-      award.award_group_name = award_group_name
-      award.award_name = award_name
-
-      if (!(award.award_group_name in award_set)){
-        award_set[award.award_group_name] = []
-      }
-      award_set[award.award_group_name].push(award)
     }
   }
 
-  //var player_team_games = await db.player_team_game.where({player_team_season_id: player.current_player_team_season.player_team_season_id}).toArray()
 
-  const current_team = player.current_player_team_season.team_season.team;
+
+  const position_skill_set_map ={'QB': ['overall','athleticism', 'passing', 'rushing'],
+                       'RB': ['overall','athleticism', 'rushing'],
+                       'FB': ['overall','athleticism', 'rushing', 'Blocking'],
+                       'WR': ['overall','athleticism', 'receiving'],
+                       'TE': ['overall','athleticism', 'receiving', 'blocking'],
+                       'OT': ['overall','athleticism', 'blocking'],
+                       'IOL': ['overall','athleticism', 'blocking'],
+                       'EDGE': ['overall','athleticism', 'defense'],
+                       'DL': ['overall','athleticism', 'defense'],
+                       'LB': ['overall','athleticism', 'defense'],
+                       'CB': ['overall','athleticism', 'defense'],
+                       'S': ['overall','athleticism', 'defense'],
+                       'K': ['overall','kicking'],
+                       'P': ['overall','kicking'],
+  }
+
+  const all_rating_groups = {
+    'overall': 'Overall',
+    'athleticism': 'Athleticism',
+    'passing': 'Passing',
+    'rushing': 'Running',
+    'receiving': 'Receiving',
+    'blocking': 'Blocking',
+    'defense': 'Defense',
+    'kicking': 'Kicking',
+  }
+
+  const all_player_team_seasons_by_player_team_season_id = index_group_sync(await db.player_team_season.where({season: season}).toArray(), 'index', 'player_team_season_id');
+  const all_team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
+  const all_team_seasons_in_conference = all_team_seasons.filter(function(ts){
+    if (player.recruiting.is_recruit) return false;
+    return ts.conference_season_id == player.current_player_team_season.team_season.conference_season_id;
+  });
+  const player_position = player.current_player_team_season.position;
+
+  const all_player_team_season_ids_starters_at_position = combine_starters_for_position(all_team_seasons.map(ts => ts.depth_chart[player_position]), player.current_player_team_season.position)
+  const all_conference_player_team_season_ids_starters_at_position = combine_starters_for_position(all_team_seasons_in_conference.map(ts => ts.depth_chart[player_position]), player.current_player_team_season.position)
+
+  const all_player_team_season_starters_at_position = all_player_team_season_ids_starters_at_position.map(pts_id => all_player_team_seasons_by_player_team_season_id[pts_id]);
+  const all_conference_player_team_season_starters_at_position = all_conference_player_team_season_ids_starters_at_position.map(pts_id => all_player_team_seasons_by_player_team_season_id[pts_id]);
+
+
+  const skills = []
+  for (var rating_group in all_rating_groups) {
+
+    var rating_group_obj = {rating_group: all_rating_groups[rating_group], ratings: []}
+
+    if (position_skill_set_map[player_position].includes(rating_group)){
+      rating_group_obj.top_show = true;
+    }
+
+    for (var rating in player.current_player_team_season.ratings[rating_group]){
+      var rating_obj = {rating: clean_rating_string(rating), player_value: player.current_player_team_season.ratings[rating_group][rating], all_players: {value_sum: 0, value_count: 0, value: 0}, conference_players: {value_sum: 0, value_count: 0, value: 0}}
+
+      if (rating_obj.rating == 'Overall'){
+        rating_obj.bar_width = rating_obj.player_value;
+      }
+      else {
+        rating_obj.bar_width = rating_obj.player_value;
+      }
+
+      for (const player_team_season of all_player_team_season_starters_at_position){
+        rating_obj.all_players.value_count +=1;
+        rating_obj.all_players.value_sum += player_team_season.ratings[rating_group][rating];
+      }
+
+      for (const player_team_season of all_conference_player_team_season_starters_at_position){
+        rating_obj.conference_players.value_count +=1;
+        rating_obj.conference_players.value_sum += player_team_season.ratings[rating_group][rating];
+      }
+
+      rating_obj.all_players.value = round_decimal(rating_obj.all_players.value_sum / rating_obj.all_players.value_count, 1);
+      rating_obj.conference_players.value = round_decimal(rating_obj.conference_players.value_sum / rating_obj.conference_players.value_count, 1);
+
+      rating_group_obj.ratings.push(rating_obj) ;
+    }
+
+    if (rating_group_obj.rating_group_obj == 'overall'){
+      skills.unshift(rating_group_obj)
+    }
+    else {
+      skills.push(rating_group_obj)
+    }
+  }
+
+
+  console.log('all_player_team_seasons', {player:player, current_team:current_team, skills:skills, all_conference_player_team_season_starters_at_position:all_conference_player_team_season_starters_at_position, all_player_team_season_starters_at_position:all_player_team_season_starters_at_position, all_team_seasons:all_team_seasons, all_conference_player_team_season_ids_starters_at_position: all_conference_player_team_season_ids_starters_at_position, 'all_player_team_season_ids_starters_at_position': all_player_team_season_ids_starters_at_position, 'player.current_player_team_season.team_season': player.current_player_team_season.team_season, all_team_seasons_in_conference: all_team_seasons_in_conference, player_position:player_position, all_player_team_season_ids_starters_at_position:all_player_team_season_ids_starters_at_position})
+
+  //var player_team_games = await db.player_team_game.where({player_team_season_id: player.current_player_team_season.player_team_season_id}).toArray()
   common.page = {PrimaryColor: current_team.team_color_primary_hex, SecondaryColor: current_team.secondary_color_display, NavBarLinks: NavBarLinks, page_title: player.full_name};
   var render_content = {
                         page:     common.page,
@@ -886,8 +900,6 @@ const getHtml = async (common) => {
 
       common.display_player_face(common.render_content.player.player_face, {jersey: common.render_content.player.current_player_team_season.team_season.team.jersey, teamColors: common.render_content.player.current_player_team_season.team_season.team.jersey.teamColors}, 'PlayerFace');
       await populate_player_stats(common)
-
-
 
     }
 
