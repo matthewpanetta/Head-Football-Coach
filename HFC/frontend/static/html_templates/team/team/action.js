@@ -117,7 +117,7 @@ const getHtml = async (common) => {
     db: db
   });
 
-  var teams = await db.team.toArray();
+  var teams = await db.team.where('team_id').above(0).toArray();
   teams = teams.sort(function(teamA, teamB) {
     if ( teamA.school_name < teamB.school_name ){
       return -1;
@@ -163,9 +163,9 @@ const getHtml = async (common) => {
 
   headlines = headlines.sort((h_a, h_b) => h_b.week_id - h_a.week_id);
 
-  var team_seasons = await db.team_season.where({season:season}).toArray();
+  var team_seasons = await db.team_season.where({season:season}).and(ts=>ts.team_id>0).toArray();
 
-  var teams = await db.team.toArray();
+  var teams = await db.team.where('team_id').above(0).toArray();
   var teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
 
   for (var team_season_iter of team_seasons){
@@ -484,7 +484,7 @@ const action = async (common) => {
           },
         ]
 
-        var all_team_seasons = await db.team_season.where({season:season}).toArray();
+        var all_team_seasons = await db.team_season.where({season:season}).and(ts=>ts.team_id>0).toArray();
 
         var tier_map = {
           1: 'elite',

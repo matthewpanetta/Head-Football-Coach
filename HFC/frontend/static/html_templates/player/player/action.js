@@ -593,9 +593,33 @@ const getHtml = async (common) => {
     player.player_face = await common.create_player_face('single', player.player_id, db);
   }
 
-
+  var recruit_team_seasons = [];
   if (player.recruiting.is_recruit){
     var team_season = null;
+
+    var team_seasons = await db.team_season.where({season: season}).and(ts=>ts.team_id>0).toArray();
+
+    var teams = await db.team.where('team_id').above(0).toArray();
+    var teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+
+    team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team')
+    var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+    var recruit_team_seasons = await db.recruit_team_season.where({player_team_season_id: player.current_player_team_season.player_team_season_id}).toArray();
+    recruit_team_seasons  = nest_children(recruit_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+
+    var player_interest_entries = Object.entries(player.recruiting.interests);
+    player_interest_entries = player_interest_entries.sort((interest_obj_a, interest_obj_b) => interest_obj_b[1] - interest_obj_a[1]);
+    var top_player_interest_entries = player_interest_entries.filter(i => i[1] > 3).slice(0,5);
+
+    player.recruiting.top_player_interest_entries = top_player_interest_entries.map(i => i[0]);
+
+    recruit_team_seasons = recruit_team_seasons.map(function(rts){
+      var rts_interest_entries = player.recruiting.top_player_interest_entries.map(i => rts.match_ratings[i]);
+      return Object.assign(rts, {player_interest_entries: rts_interest_entries})
+    })
+
+    console.log({recruit_team_seasons:recruit_team_seasons})
 
   }
   else {
@@ -878,7 +902,8 @@ const getHtml = async (common) => {
                         skills: skills,
                         player_team_games: player_team_games,
                         player_awards:player_awards,
-                        award_set:award_set
+                        award_set:award_set,
+                        recruit_team_seasons:recruit_team_seasons
 
                       }
 

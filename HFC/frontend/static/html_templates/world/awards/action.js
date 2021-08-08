@@ -78,7 +78,7 @@
       const games_by_game_id = index_group_sync(games, 'index', 'game_id')
       team_games = nest_children(team_games, games_by_game_id, 'game_id', 'game');
 
-      var team_seasons = await db.team_season.where({season: common.season}).toArray();
+      var team_seasons = await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
 
     	const team_ids = team_seasons.map(ts => ts.team_id);
     	var teams = await db.team.bulkGet(team_ids);

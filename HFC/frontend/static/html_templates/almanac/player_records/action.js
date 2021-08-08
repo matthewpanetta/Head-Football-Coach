@@ -12,10 +12,10 @@
         db: db
       });
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
       var teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
 
-      var team_seasons =  await db.team_season.toArray();
+      var team_seasons =  await db.team_season.where('team_id').above(0).toArray();
       var distinct_team_seasons = [];
 
       var sum_career = false;

@@ -59,20 +59,22 @@
 
         const db = await new Dexie(db_name);
 
-        await db.version(9).stores({
+        await db.version(10).stores({
           league_season: 'season',
           team: "team_id",
-          team_season: "++team_season_id, team_id, season",
-          player: "++player_id",
-          player_team_season: "++player_team_season_id, player_id, team_season_id, season",
+          team_season: "team_season_id, team_id, season",
+          player: "player_id",
+          player_team_season: "player_team_season_id, player_id, team_season_id, season",
+      		recruit_team_season: "++recruit_team_season_id, player_team_season_id, team_season_id",
           conference: '++conference_id, conference_name',
           conference_season: '++conference_season_id, conference_id, season, [conference_id+season]',
           phase: '++phase_id, season',
           week: '++week_id, season, [phase_id+season]',
           team_game: 'team_game_id, game_id, team_season_id, week_id',
-          player_team_game: '++player_team_game_id, team_game_id, player_team_season_id',
+          player_team_game: 'player_team_game_id, team_game_id, player_team_season_id',
           game: 'game_id, week_id',
-          award: '++award_id, player_id, week_id, season_id',
+          award: '++award_id, player_team_season_id, week_id, season',
+          headline: 'headline_id, week_id',
           world: ""
         });
 
@@ -232,19 +234,8 @@
             team_color_secondary_hex: team.team_color_secondary_hex,
             rivals: rivals,
             jersey: team.jersey,
-            team_ratings: {academic_prestige: team.academic_prestige,
-                           campus_lifestyle: team.campus_lifestyle,
-                           championship_contender: team.championship_contender,
-                           facilities: team.facilities,
-                           location: team.location,
-                           pro_potential: team.pro_potential,
-                           team_prestige: team.team_prestige,
-                           television_exposure: team.television_exposure,
-                         },
-            location: {
-                          city: team.city,
-                          state: team.state
-                      },
+            team_ratings: team.team_ratings,
+            location: team.location,
             conference: {conference_id: conferences_by_conference_name[team.conference_name].conference_id,
                          conference_name: team.conference_name,
                          division_id: null,
@@ -358,6 +349,38 @@
       });
     }
 
+
+    const reformat_teams = async (common) => {
+
+      const driver_db = await common.driver_db();
+      console.log({driver_db:driver_db})
+      var cities = await driver_db.cities.toArray();
+      var states = {}
+
+      for (const city_obj of cities){
+        if (!(city_obj.state in states)){
+          states[city_obj.state] = {}
+        }
+
+        states[city_obj.state][city_obj.city] = deep_copy(city_obj)
+      }
+
+      console.log({states:states})
+
+      for (const team of teams ){
+        if (states[team.state][team.city] == undefined){
+          console.log({team:team, state:team.state, city:team.city, state_obj: states[team.state], city_obj: states[team.state][team.city]})
+        }
+        team.location = states[team.state][team.city];
+        delete team.city;
+        delete team.state;
+      }
+
+      console.log(JSON.stringify(teams))
+
+    }
+
+
     $(document).ready(async function(){
       var startTime = performance.now()
 
@@ -365,6 +388,8 @@
 
       await getHtml(common);
       await action(common);
+
+      //reformat_teams(common)
 
       var endTime = performance.now()
       console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );

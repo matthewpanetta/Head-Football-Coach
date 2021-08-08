@@ -20,7 +20,7 @@
         db: db
       });
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
       teams = teams.sort(function(teamA, teamB) {
         if ( teamA.school_name < teamB.school_name ){
           return -1;

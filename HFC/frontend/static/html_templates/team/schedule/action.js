@@ -20,7 +20,7 @@
         db: db
       });
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
       teams = teams.sort((team_a, team_b) => team_a.school_name - team_b.school_name);
 
       const weeks = await db.week.where({season: season}).toArray();
@@ -131,7 +131,7 @@
       var conference_season = await db.conference_season.get({conference_season_id: team.team_season.conference_season_id})  ;
       var conference = await db.conference.get({conference_id: conference_season.conference_id})  ;
 
-      var team_seasons_in_conference = await db.team_season.where({season: season}).toArray();
+      var team_seasons_in_conference = await db.team_season.where({season: season}).and(ts=>ts.team_id>0).toArray();
       team_seasons_in_conference = team_seasons_in_conference.filter(team_season => team_season.conference_season_id == team.team_season.conference_season_id).sort(function(teamA,teamB){
         return teamA.rankings.division_rank[0] - teamB.rankings.division_rank[0];
       });

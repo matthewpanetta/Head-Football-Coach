@@ -13,7 +13,7 @@
         db: db
       });
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
 
       const recent_games = await common.recent_games(common);
 
@@ -48,7 +48,7 @@
       var players = await db.player.bulkGet(player_ids);
       var players_by_player_id = index_group_sync(players, 'index', 'player_id');
       player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
-      console.log({player_team_seasons:player_team_seasons})
+      console.log({recruiting_team_season_id:recruiting_team_season_id, player_team_seasons:player_team_seasons})
       draw_recruiting_table(player_team_seasons);
 
     }

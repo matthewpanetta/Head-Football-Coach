@@ -24393,5 +24393,40 @@
    "city_name": "Rutland",
    "state_abbreviation": "VT",
    "player_count": 1
+ },
+ {
+   "city_name": "University Park",
+   "state_abbreviation": "TX",
+   "player_count": 10
+ },
+ {
+   "city_name": "Highland Park",
+   "state_abbreviation": "TX",
+   "player_count": 10
+ },
+ {
+   "city_name": "Laramie",
+   "state_abbreviation": "WY",
+   "player_count": 2
+ },
+ {
+   "city_name": "Storrs",
+   "state_abbreviation": "CT",
+   "player_count": 1
+ },
+ {
+   "city_name": "Chestnut Hill",
+   "state_abbreviation": "MA",
+   "player_count": 1
+ },
+ {
+   "city_name": "Clemson",
+   "state_abbreviation": "SC",
+   "player_count": 4
+ },
+ {
+   "city_name": "Athens",
+   "state_abbreviation": "OH",
+   "player_count": 2
  }
 ]

@@ -12,10 +12,10 @@
         db: db
       });
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
       var teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
 
-      var team_seasons =  await db.team_season.where({season: common.season}).toArray();
+      var team_seasons =  await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
       var team_seasons_by_team_season_id =  index_group_sync(team_seasons, 'index','team_season_id');
       var distinct_team_seasons = [];
 
@@ -64,8 +64,8 @@
       var desc_first = ['desc', 'asc'];
       var asc_first = [ 'asc', 'desc'];
 
-      var team_seasons = await db.team_season.where({season: common.season}).toArray();
-      const teams = await db.team.toArray();
+      var team_seasons = await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
+      const teams = await db.team.where('team_id').above(0).toArray();
       const teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
 
 
@@ -158,9 +158,9 @@
 
       const db = common.db;
 
-      const team_seasons = await db.team_season.where({season: common.season}).toArray();
+      const team_seasons = await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
       const team_season_ids = team_seasons.map(ts => ts.team_season_id);
-      const teams = await db.team.toArray();
+      const teams = await db.team.where('team_id').above(0).toArray();
       const teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
 
       const conferences = await db.conference.toArray();

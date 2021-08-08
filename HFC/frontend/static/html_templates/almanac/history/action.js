@@ -31,12 +31,12 @@
 
 
 
-      var players = await db.team.toArray();
+      var players = await db.team.where('team_id').above(0).toArray();
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
       var teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
 
-      var team_seasons =  await db.team_season.toArray();
+      var team_seasons =  await db.team_season.where('team_id').above(0).toArray();
 
       for (var team_season of team_seasons){
         team_season.results.final_four = false;

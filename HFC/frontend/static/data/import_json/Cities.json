@@ -30280,14 +30280,6 @@
    "timezone": "E"
  },
  {
-   "city": "College Park",
-   "state": "Maryland",
-   "lat": 38.9962,
-   "long": -76.9337,
-   "population": 32303,
-   "timezone": "E"
- },
- {
    "city": "Colmar Manor",
    "state": "Maryland",
    "lat": 38.9302,
@@ -52085,14 +52077,6 @@
    "lat": 40.4588,
    "long": -84.1782,
    "population": 1151,
-   "timezone": "E"
- },
- {
-   "city": "Bowling Green",
-   "state": "Ohio",
-   "lat": 41.3773,
-   "long": -83.65,
-   "population": 32572,
    "timezone": "E"
  },
  {
@@ -81939,6 +81923,15 @@
     "timezone": "E"
   },
   {
+    "city": "College Park",
+    "state": "Maryland",
+    "player_count": 62,
+    "population": 30413,
+    "lat": 38.9897,
+    "long": -76.9378,
+    "timezone": "E"
+  },
+  {
     "city": "Cypress",
     "state": "Texas",
     "player_count": 59,
@@ -82188,6 +82181,15 @@
     "population": 60958,
     "lat": 39.21,
     "long": -84.21,
+    "timezone": "C"
+  },
+  {
+    "city": "Bowling Green",
+    "state": "Ohio",
+    "player_count": 26,
+    "population": 31526,
+    "lat": 41.3748,
+    "long": -83.6513,
     "timezone": "C"
   },
   {

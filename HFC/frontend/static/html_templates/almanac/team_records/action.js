@@ -12,10 +12,10 @@
         db: db
       });
 
-      var teams = await db.team.toArray();
+      var teams = await db.team.where('team_id').above(0).toArray();
       var teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
 
-      var team_seasons =  await db.team_season.toArray();
+      var team_seasons =  await db.team_season.where('team_id').above(0).toArray();
       var distinct_team_seasons = [];
 
       for (const team_season of team_seasons){
@@ -185,7 +185,7 @@
       })
 
 
-      const team_seasons = await db.team_season.where({season: common.season}).toArray();
+      const team_seasons = await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
       const team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id')
 
 
