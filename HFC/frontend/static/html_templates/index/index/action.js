@@ -148,7 +148,7 @@
         //SMALL SIZE
          // var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
           conferences_to_include = shuffle(conferences_to_include)
-          var num_conferences_to_include = 2
+          var num_conferences_to_include = 3
           conferences_to_include = conferences_to_include.slice(0, num_conferences_to_include)
 
         //var teams_from_json = await common.get_teams({conference: ['Big 12', 'Southeastern Conference', 'Big Ten', 'Atlantic Coast Conference', 'American Athletic Conference', 'PAC-12', 'Conference USA', 'FBS Independents', 'Mountain West Conference', 'Sun Belt', 'Mid-American Conference']});
@@ -292,6 +292,8 @@
 
         var teams_added = await db.team.bulkAdd(teams);
         $(par).append('<div>Adding Team Seasons</div>')
+        $('#modal-progress-parent').removeClass('w3-hide');
+        $('#modal-progress').css('width', '0%');
 
         await common.create_team_season({common: common, season:season, world_id: world_id, conferences_by_conference_name:conferences_by_conference_name})
 
@@ -299,24 +301,32 @@
         const teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id')
 
         $(par).append('<div>Adding Players</div>')
+        $('#modal-progress').css('width', '0%');
 
         await common.create_players({common: common, team_seasons:team_seasons, teams_by_team_id:teams_by_team_id, world_id:world_id, season:season});
 
+
         $(par).append('<div>Assigning players to teams</div>')
+        $('#modal-progress').css('width', '0%');
         var players = await db.player.toArray();
         await common.create_player_team_seasons({common: common, players:players, world_id:world_id, team_seasons:team_seasons, season:season})
 
+
         $(par).append('<div>Creating recruiting class</div>')
-        await common.create_recruiting_class(common);
+        $('#modal-progress').css('width', '0%');
+        //await common.create_recruiting_class(common);
 
         $(par).append('<div>Populating depth charts</div>')
+        $('#modal-progress').css('width', '0%');
         await common.populate_all_depth_charts({common: common, season:season, world_id:world_id});
 
         $(par).append('<div>Evaluating team talent</div>')
+        $('#modal-progress').css('width', '0%');
         await common.calculate_team_overalls(common);
 
 
         $(par).append('<div>Ranking teams</div>')
+        $('#modal-progress').css('width', '0%');
         const all_weeks = await db.week.where({season: season}).toArray();
         const this_week = all_weeks.filter(w => w.is_current)[0];
 
@@ -329,6 +339,7 @@
         await common.calculate_conference_rankings(this_week, all_weeks, common)
 
         $(par).append('<div>Creating season schedule</div>')
+        $('#modal-progress').css('width', '0%');
         await common.create_schedule({common: common, season:season, world_id:world_id});
 
         await choose_preseason_all_americans(common);
@@ -380,6 +391,28 @@
 
     }
 
+    const test_nums = (common) => {
+      const round_decimal = common.round_decimal;
+      const normal_trunc = common.normal_trunc;
+      const normal_trunc_bounce = common.normal_trunc_bounce;
+
+      var nums = [];
+      var num_map = {}
+
+      for (var i = 0; i < 10000; i++){
+        var n = round_decimal(normal_trunc_bounce( 2, 4, 1, 7), 0);
+
+        nums.push(n)
+
+        if (!(n in num_map)){
+          num_map[n] = 0;
+        }
+        num_map[n] +=1;
+      }
+
+      console.log({nums:nums, num_map:num_map})
+    }
+
 
     $(document).ready(async function(){
       var startTime = performance.now()
@@ -389,6 +422,7 @@
       await getHtml(common);
       await action(common);
 
+      //test_nums(common);
       //reformat_teams(common)
 
       var endTime = performance.now()

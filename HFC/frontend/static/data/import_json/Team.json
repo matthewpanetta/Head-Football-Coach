@@ -346,10 +346,10 @@
     "student_life": 12,
     "academic_quality": 14,
     "facilities": 8,
-    "program_history": 2,
+    "program_history": 12,
     "team_competitiveness": 2,
     "brand": 8,
-    "pro_pipeline": 2
+    "pro_pipeline": 4
   },
   "location": {
     "city": "University Park",
@@ -494,7 +494,7 @@
   "team_ratings": {
     "location": 14,
     "student_life": 6,
-    "academic_quality": 14,
+    "academic_quality": 15,
     "facilities": 2,
     "program_history": 8,
     "team_competitiveness": 8,
@@ -522,8 +522,8 @@
     "id": null
   },
   "team_ratings": {
-    "location": 6,
-    "student_life": 6,
+    "location": 3,
+    "student_life": 12,
     "academic_quality": 8,
     "facilities": 2,
     "program_history": 8,
@@ -884,7 +884,7 @@
   "team_ratings": {
     "location": 6,
     "student_life": 8,
-    "academic_quality": 20,
+    "academic_quality": 8,
     "facilities": 18,
     "program_history": 18,
     "team_competitiveness": 18,
@@ -942,14 +942,14 @@
     "id": null
   },
   "team_ratings": {
-    "location": 6,
-    "student_life": 6,
+    "location": 2,
+    "student_life": 3,
     "academic_quality": 12,
     "facilities": 14,
     "program_history": 2,
     "team_competitiveness": 2,
-    "brand": 2,
-    "pro_pipeline": 2
+    "brand": 12,
+    "pro_pipeline": 10
   },
   "location": {
     "city": "Waco",
@@ -1063,7 +1063,7 @@
   },
   "team_ratings": {
     "location": 6,
-    "student_life": 6,
+    "student_life": 13,
     "academic_quality": 4,
     "facilities": 12,
     "program_history": 2,
@@ -1093,7 +1093,7 @@
   },
   "team_ratings": {
     "location": 9,
-    "student_life": 6,
+    "student_life": 8,
     "academic_quality": 14,
     "facilities": 8,
     "program_history": 8,
@@ -1153,7 +1153,7 @@
   },
   "team_ratings": {
     "location": 9,
-    "student_life": 6,
+    "student_life": 11,
     "academic_quality": 14,
     "facilities": 8,
     "program_history": 6,
@@ -1183,7 +1183,7 @@
   },
   "team_ratings": {
     "location": 9,
-    "student_life": 6,
+    "student_life": 8,
     "academic_quality": 14,
     "facilities": 12,
     "program_history": 8,
@@ -1213,7 +1213,7 @@
   },
   "team_ratings": {
     "location": 8,
-    "student_life": 6,
+    "student_life": 7,
     "academic_quality": 14,
     "facilities": 12,
     "program_history": 12,
@@ -1243,7 +1243,7 @@
   },
   "team_ratings": {
     "location": 11,
-    "student_life": 6,
+    "student_life": 8,
     "academic_quality": 14,
     "facilities": 2,
     "program_history": 8,
@@ -1273,7 +1273,7 @@
   },
   "team_ratings": {
     "location": 11,
-    "student_life": 6,
+    "student_life": 13,
     "academic_quality": 14,
     "facilities": 16,
     "program_history": 16,
@@ -1303,7 +1303,7 @@
   },
   "team_ratings": {
     "location": 2,
-    "student_life": 6,
+    "student_life": 10,
     "academic_quality": 14,
     "facilities": 14,
     "program_history": 14,
@@ -1333,7 +1333,7 @@
   },
   "team_ratings": {
     "location": 9,
-    "student_life": 6,
+    "student_life": 10,
     "academic_quality": 14,
     "facilities": 12,
     "program_history": 2,
@@ -1363,8 +1363,8 @@
   },
   "team_ratings": {
     "location": 6,
-    "student_life": 6,
-    "academic_quality": 14,
+    "student_life": 7,
+    "academic_quality": 7,
     "facilities": 14,
     "program_history": 2,
     "team_competitiveness": 2,
@@ -1393,7 +1393,7 @@
   },
   "team_ratings": {
     "location": 9,
-    "student_life": 6,
+    "student_life": 9,
     "academic_quality": 14,
     "facilities": 6,
     "program_history": 6,
@@ -1423,7 +1423,7 @@
   },
   "team_ratings": {
     "location": 11,
-    "student_life": 6,
+    "student_life": 13,
     "academic_quality": 14,
     "facilities": 20,
     "program_history": 18,
@@ -1453,7 +1453,7 @@
   },
   "team_ratings": {
     "location": 2,
-    "student_life": 6,
+    "student_life": 12,
     "academic_quality": 14,
     "facilities": 14,
     "program_history": 16,
@@ -1483,7 +1483,7 @@
   },
   "team_ratings": {
     "location": 9,
-    "student_life": 6,
+    "student_life": 11,
     "academic_quality": 14,
     "facilities": 12,
     "program_history": 16,
@@ -1542,10 +1542,10 @@
     "id": null
   },
   "team_ratings": {
-    "location": 4,
-    "student_life": 6,
-    "academic_quality": 6,
-    "facilities": 6,
+    "location": 14,
+    "student_life": 13,
+    "academic_quality": 4,
+    "facilities": 3,
     "program_history": 4,
     "team_competitiveness": 4,
     "brand": 2,
@@ -1572,11 +1572,11 @@
     "id": null
   },
   "team_ratings": {
-    "location": 4,
-    "student_life": 6,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 4,
+    "location": 15,
+    "student_life": 13,
+    "academic_quality": 2,
+    "facilities": 2,
+    "program_history": 1,
     "team_competitiveness": 4,
     "brand": 2,
     "pro_pipeline": 2
@@ -1753,7 +1753,7 @@
   },
   "team_ratings": {
     "location": 4,
-    "student_life": 6,
+    "student_life": 5,
     "academic_quality": 6,
     "facilities": 4,
     "program_history": 6,
@@ -1812,7 +1812,7 @@
     "id": null
   },
   "team_ratings": {
-    "location": 4,
+    "location": 1,
     "student_life": 6,
     "academic_quality": 6,
     "facilities": 2,
@@ -1842,9 +1842,9 @@
     "id": null
   },
   "team_ratings": {
-    "location": 4,
-    "student_life": 6,
-    "academic_quality": 6,
+    "location": 2,
+    "student_life": 3,
+    "academic_quality": 2,
     "facilities": 1,
     "program_history": 4,
     "team_competitiveness": 4,
@@ -1903,7 +1903,7 @@
   },
   "team_ratings": {
     "location": 4,
-    "student_life": 6,
+    "student_life": 11,
     "academic_quality": 6,
     "facilities": 2,
     "program_history": 2,
@@ -2503,7 +2503,7 @@
   },
   "team_ratings": {
     "location": 17,
-    "student_life": 6,
+    "student_life": 14,
     "academic_quality": 6,
     "facilities": 8,
     "program_history": 6,
@@ -2532,7 +2532,7 @@
     "id": null
   },
   "team_ratings": {
-    "location": 9,
+    "location": 11,
     "student_life": 6,
     "academic_quality": 6,
     "facilities": 2,
@@ -2563,7 +2563,7 @@
   },
   "team_ratings": {
     "location": 8,
-    "student_life": 6,
+    "student_life": 1,
     "academic_quality": 6,
     "facilities": 4,
     "program_history": 6,
@@ -2622,8 +2622,8 @@
     "id": null
   },
   "team_ratings": {
-    "location": 7,
-    "student_life": 6,
+    "location": 5,
+    "student_life": 8,
     "academic_quality": 6,
     "facilities": 12,
     "program_history": 2,
@@ -2682,8 +2682,8 @@
     "id": null
   },
   "team_ratings": {
-    "location": 3,
-    "student_life": 6,
+    "location": 10,
+    "student_life": 10,
     "academic_quality": 6,
     "facilities": 6,
     "program_history": 6,
@@ -2742,8 +2742,8 @@
     "id": null
   },
   "team_ratings": {
-    "location": 9,
-    "student_life": 6,
+    "location": 3,
+    "student_life": 3,
     "academic_quality": 6,
     "facilities": 2,
     "program_history": 4,
@@ -2772,7 +2772,7 @@
     "id": null
   },
   "team_ratings": {
-    "location": 6,
+    "location": 2,
     "student_life": 6,
     "academic_quality": 6,
     "facilities": 2,
@@ -2892,8 +2892,8 @@
     "id": null
   },
   "team_ratings": {
-    "location": 3,
-    "student_life": 6,
+    "location": 13,
+    "student_life": 4,
     "academic_quality": 18,
     "facilities": 12,
     "program_history": 12,
@@ -2922,7 +2922,7 @@
     "id": null
   },
   "team_ratings": {
-    "location": 99,
+    "location": 20,
     "student_life": 12,
     "academic_quality": 14,
     "facilities": 2,
@@ -3042,7 +3042,7 @@
     "id": null
   },
   "team_ratings": {
-    "location": 9,
+    "location": 13,
     "student_life": 6,
     "academic_quality": 8,
     "facilities": 2,
@@ -3704,7 +3704,7 @@
   "team_ratings": {
     "location": 14,
     "student_life": 9,
-    "academic_quality": 99,
+    "academic_quality": 19,
     "facilities": 8,
     "program_history": 8,
     "team_competitiveness": 8,
@@ -4032,9 +4032,9 @@
     "id": null
   },
   "team_ratings": {
-    "location": 4,
-    "student_life": 6,
-    "academic_quality": 6,
+    "location": 11,
+    "student_life": 11,
+    "academic_quality": 2,
     "facilities": 2,
     "program_history": 4,
     "team_competitiveness": 4,
@@ -4064,7 +4064,7 @@
   "team_ratings": {
     "location": 4,
     "student_life": 6,
-    "academic_quality": 6,
+    "academic_quality": 2,
     "facilities": 2,
     "program_history": 4,
     "team_competitiveness": 4,

@@ -1,3 +1,81 @@
+const refresh_playoffs = async (common) => {
+
+  const db = common.db;
+  const season = common.season;
+
+  const all_league_seasons = await db.league_season.toArray();
+  const current_league_season = all_league_seasons[0];
+
+  current_league_season.playoffs = {
+  	playoffs_started: false,
+  	playoffs_complete: false,
+  	number_playoff_rounds: 3,
+  	number_playoff_teams: 6,
+  	playoff_rounds: [
+  		{playoff_round_number: 1, is_current_round: false, is_championship: false, week_name: 'Bowl Week 1', next_week_name: 'Bowl Week 2', round_name: 'National Quarterfinals', playoff_games: [
+  			{team_objs: [{seed: 1, team_game_id: null, team_season_id: null}], bye_game: true, seeds_set: true,  game_id: null},
+        {team_objs: [{seed: 4, team_game_id: null, team_season_id: null}, {seed: 5, team_game_id: null, team_season_id: null}], bye_game: false, seeds_set: true,  game_id: null},
+        {team_objs: [{seed: 2, team_game_id: null, team_season_id: null}], bye_game: true, seeds_set: true,  game_id: null},
+        {team_objs: [{seed: 3, team_game_id: null, team_season_id: null}, {seed: 6, team_game_id: null, team_season_id: null}], bye_game: false, seeds_set: true,  game_id: null},
+  		]},
+  		{playoff_round_number: 2, is_current_round: false, is_championship: false, week_name: 'Bowl Week 2',next_week_name: 'Bowl Week 3',round_name: 'National Semifinals', playoff_games: [
+        {team_objs: [], bye_game: false, seeds_set: false,  game_id: null},
+        {team_objs: [], bye_game: false, seeds_set: false,  game_id: null},
+  		]},
+  		{playoff_round_number: 3, is_current_round: false, is_championship: true, week_name: 'Bowl Week 3',next_week_name: null,round_name: 'National Championship', playoff_games: [
+  			{team_objs: [], bye_game: false, seeds_set: false,  game_id: null}
+  		]}
+  	]
+  };
+
+  await db.league_season.put(current_league_season)
+
+  await db.game.where('game_id').above(241).delete();
+  await db.team_game.where('game_id').above(241).delete();
+
+  const phases = await db.phase.toArray();
+  const all_phases_by_phase_id = index_group_sync(phases, 'index', 'phase_id')
+  var all_weeks = await db.week.where({season: season}).toArray();
+  all_weeks = nest_children(all_weeks, all_phases_by_phase_id, 'phase_id', 'phase')
+  await common.schedule_bowl_season(all_weeks, common);
+  console.log('done')
+}
+
+const refresh_bowls = async (common) => {
+  const db = common.db;
+  const season = common.season;
+
+//this_week, all_weeks, common
+  const current_league_season = await db.league_season.where({season:season}).first();
+
+  await db.game.where('game_id').above(260).delete();
+  await db.team_game.where('game_id').above(260).delete();
+
+  var weeks = await db.week.where({season:season}).toArray();
+  for (const week of weeks){
+    if (week.week_name == 'Bowl Week 1'){
+      week.is_current = true;
+    }
+    else{
+      week.is_current = false;
+    }
+  }
+
+  await db.week.bulkPut(weeks);
+
+  await common.process_bowl_results(common);
+
+}
+
+
+const reset_bowls = async (common) => {
+  const db = common.db;
+
+  await db.game.where('game_id').above(262).delete();
+  await db.team_game.where('game_id').above(262).delete();
+
+}
+
 const getHtml = async (common) => {
       const db = common.db;
       const ddb = common.ddb;
@@ -6,6 +84,10 @@ const getHtml = async (common) => {
       const season = common.season;
 
       //common.choose_preseason_all_americans(common)
+
+      //await refresh_playoffs(common);
+      //await refresh_bowls(common);
+      //await reset_bowls(common);
 
       var current_week = await db.week.toArray();
       current_week = current_week.filter(w => w.is_current)[0];

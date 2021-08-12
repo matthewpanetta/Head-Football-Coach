@@ -5,6 +5,8 @@
       var index_group = common.index_group;
       const season = common.season;
 
+      const current_league_season = await db.league_season.where({season:season}).first();
+
       var world_obj = {};
 
       const NavBarLinks = await common.nav_bar_links({
@@ -14,38 +16,67 @@
       });
 
       var teams = await db.team.where('team_id').above(0).toArray();
-      var conferences = await index_group(await db.conference.toArray(), 'one_to_one','conference_id');
-      var conference_seasons = await index_group(await db.conference_season.where({season: season}).toArray(), 'one_to_one','conference_season_id');
-      var team_seasons = await index_group(await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray(), 'one_to_one','team_id');
+      var teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
+
+      var conferences = await db.conference.toArray();
+      var conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id')
+
+      var conference_seasons = await db.conference_season.where({season: season}).toArray();
+      conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference')
+
+      var conference_seasons_by_conference_season_id = index_group_sync(conference_seasons, 'index','conference_season_id');
+
+      var team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
+      team_seasons = nest_children(team_seasons, conference_seasons_by_conference_season_id, 'conference_season_id', 'conference_season')
+      team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team')
+      var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index','team_season_id');
+
+      const games = await db.game.filter(g => g.season == season && g.bowl != null && g.bowl.is_playoff == true).toArray();
+      const games_by_game_id = index_group_sync(games, 'index', 'game_id')
+      const game_ids = games.map(g => g.game_id);
+
+      const team_games = await db.team_game.where('game_id').anyOf(game_ids).toArray();
+      const team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id')
+
+      console.log({team_seasons:team_seasons, team_seasons_by_team_season_id:team_seasons_by_team_season_id, teams_by_team_id:teams_by_team_id})
+
       var distinct_team_seasons = [];
 
-      $.each(teams, async function(ind, team){
-        team.team_season =team_seasons[team.team_id]
-        team.team_season.conference_season = conference_seasons[team.team_season.conference_season_id];
-        team.team_season.conference_season.conference = conferences[team.team_season.conference_season.conference_id];
+      dropped_teams = team_seasons.filter(ts => ts.rankings.national_rank[0] > 25 && ts.rankings.national_rank[1] <= 25);
+      bubble_teams = team_seasons.filter(ts => ts.rankings.national_rank[0] > 25 && ts.rankings.national_rank[0] < 29);
 
-      });
+      team_seasons = team_seasons.filter(ts => ts.rankings.national_rank[0] <= 25);
 
-      dropped_teams = teams.filter(team => team.team_season.rankings.national_rank[0] > 25 && team.team_season.rankings.national_rank[1] <= 25);
-      bubble_teams = teams.filter(team => team.team_season.rankings.national_rank[0] > 25 && team.team_season.rankings.national_rank[0] < 29);
-
-      teams = teams.filter(team => team.team_season.rankings.national_rank[0] <= 25);
-
-      teams.sort(function(a, b) {
-          if (a.team_season.rankings.national_rank[0] < b.team_season.rankings.national_rank[0]) return -1;
-          if (a.team_season.rankings.national_rank[0] > b.team_season.rankings.national_rank[0]) return 1;
+      team_seasons.sort(function(ts_a, ts_b) {
+          if (ts_a.rankings.national_rank[0] < ts_b.rankings.national_rank[0]) return -1;
+          if (ts_a.rankings.national_rank[0] > ts_b.rankings.national_rank[0]) return 1;
           return 0;
         });
 
       const recent_games = await common.recent_games(common);
 
+      const playoffs = current_league_season.playoffs;
+
+      if (playoffs.playoffs_started){
+        for (const playoff_round of playoffs.playoff_rounds){
+          for (const playoff_game of playoff_round.playoff_games){
+            console.log({playoff_game:playoff_game})
+            playoff_game.game = games_by_game_id[playoff_game.game_id];
+            playoff_game.team_objs = nest_children(playoff_game.team_objs, team_seasons_by_team_season_id, 'team_season_id', 'team_season')
+            playoff_game.team_objs = nest_children(playoff_game.team_objs, team_games_by_team_game_id, 'team_game_id', 'team_game')
+
+          }
+        }
+      }
+
       var render_content = {page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks},
                             team_list: [],
                             world_id: common.params['world_id'],
-                            teams: teams,
+                            team_seasons: team_seasons,
                             recent_games: recent_games,
                             dropped_teams: dropped_teams,
-                            bubble_teams: bubble_teams
+                            bubble_teams: bubble_teams,
+                            playoffs: playoffs
 
                           };
       common.render_content = render_content;
