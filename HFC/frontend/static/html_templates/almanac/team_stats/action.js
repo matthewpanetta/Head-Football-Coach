@@ -104,11 +104,82 @@
 
       }
 
+      var col_categories = {
+        'Base': 4,
+        //'Games': 3,
+        'Ratings': 11,
+        'School': 8
+      }
+
+      var show_column_map = {}
+      var col_counter = 0;
+      $.each(col_categories, function(key, val){
+        show_column_map[key] = []
+        for(var i = col_counter; i < col_counter+val; i++){
+          show_column_map[key].push(i);
+        }
+        col_counter = col_counter + val;
+      })
+
+      console.log('show_column_map', show_column_map);
+
+
+      var full_column_list = [];
+      var hide_column_map = {}
+      $.each(show_column_map, function(key, col_list){
+        $.each(col_list, function(ind, col_num){
+          if ((($.inArray( col_num,  show_column_map['Base'])) == -1) && ($.inArray( col_num,  show_column_map['Expand']) == -1)){
+            full_column_list.push(col_num);
+          }
+        })
+      });
+
+      $.each(show_column_map, function(key, col_list){
+         var cols = $.grep( full_column_list, function( val, ind ) {
+            return $.inArray( val,  col_list) == -1
+          });
+          hide_column_map[key] = cols;
+      });
+
+      var search_pane_columns = [2];
+
+      var button_list = [{
+          extend: 'searchPanes',
+          config: {
+            cascadePanes: true,
+            viewTotal: false, //maybe true later - TODO
+            columns:search_pane_columns,
+            collapse: 'Filter Team',
+          },
+      }]
+
+
+
+      $.each(col_categories, function(key, val){
+        if (key == 'Base' || key == 'Expand' ){
+          return true;
+        }
+        var button_obj = {extend: 'colvisGroup',
+                          text: key,
+                          show: show_column_map[key],
+                          hide: hide_column_map[key],
+                          action: function( e, dt, node, config){
+                            //console.log('cntrlIsPressed', cntrlIsPressed, 'e, dt, node, config', e, dt, node, config)
+                            $('#team-ratings').DataTable().columns(config.show).visible(true);
+                            $('#team-ratings').DataTable().columns(config.hide).visible(false);
+
+                           $(".dt-buttons").find("button").removeClass("active");
+                           node.addClass("active");
+
+                     }}
+        button_list.push(button_obj)
+      });
+
       console.log({common: common, team_seasons:team_seasons})
 
       var ratings_table = $('#team-ratings').DataTable({
           //"serverSide": true,
-          dom: 't',
+          dom: 'Brtp',
           ordering: true,
           lengthChange : false,
           pageLength: 150,
@@ -116,6 +187,7 @@
           paginationType: "full_numbers",
           paging: false,
           data: team_seasons,
+          buttons:button_list,
           columns: [
             {"data": "team.school_name", "sortable": true, 'searchable': true, 'className': 'column-shrink', 'orderSequence': asc_first, "fnCreatedCell": function (td, school_name, team_season, iRow, iCol) {
               //console.log({td:td, school_name:school_name, team_season:team_season, iRow:iRow, iCol:iCol})
@@ -133,19 +205,28 @@
             }},
             {"data": "national_rank", "sortable": true, 'visible': true, 'className': 'center-text col-group','orderSequence':asc_first},
 
+              {"data": "rating.overall", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "rating.by_position_group.Offense", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "rating.by_position_group.Defense", "sortable": true, 'visible': false, 'className': 'center-text col-group', 'orderSequence':desc_first},
 
-              {"data": "rating.overall", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "rating.by_position_group.Offense", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "rating.by_position_group.Defense", "sortable": true, 'visible': true, 'className': 'center-text col-group', 'orderSequence':desc_first},
+              {"data": "rating.by_position_unit.QB", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "rating.by_position_unit.RB", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "rating.by_position.WR", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "rating.by_position_unit.OL", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "rating.by_position_unit.DL", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "rating.by_position_unit.LB", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "rating.by_position_unit.DB", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "rating.by_position_unit.ST", "sortable": true, 'visible': false, 'className': 'center-text col-group','orderSequence':desc_first},
 
-              {"data": "rating.by_position_unit.QB", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "rating.by_position_unit.RB", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "rating.by_position.WR", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "rating.by_position_unit.OL", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "rating.by_position_unit.DL", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "rating.by_position_unit.LB", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "rating.by_position_unit.DB", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
-              {"data": "rating.by_position_unit.ST", "sortable": true, 'visible': true, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "team.team_ratings.brand", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "team.team_ratings.facilities", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "team.team_ratings.location", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "team.team_ratings.pro_pipeline", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "team.team_ratings.program_history", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "team.team_ratings.fan_support", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "team.team_ratings.team_competitiveness", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
+              {"data": "team.team_ratings.academic_quality", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first}
+
 
           ],
           order: [[ 3, "asc" ]],
@@ -523,38 +604,6 @@
           ],
           order: [[ 3, "asc" ]],
       });
-
-
-        $('#TeamStats tbody').on('click', '.details-control', function () {
-          //console.log('clicked', this, SelectedTeamID);
-
-          var tr = $(this).parent();
-          $(tr).addClass('shown');
-          var SelectedTeamID = $(tr).attr('TeamID');
-          var row = table.row( tr );
-
-          if ( row.child.isShown() ) {
-              // This row is already open - close it
-              row.child.hide();
-              tr.removeClass('shown');
-          }
-          else {
-              // Open this row
-              var data = row.data()
-              var formattedContent = DrawTeamInfo(data, WorldID, SelectedTeamID);
-              console.log(formattedContent,'formattedContent');
-              row.child( formattedContent, 'teamTableBorder' ).show();
-              var childrow = row.child();
-              console.log(childrow, 'childrow');
-
-              var teamcolor = data.TeamColor_Primary_HEX;
-              childrow.find('td').css('border-left-color', teamcolor)
-
-              tr.addClass('shown');
-          }
-
-
-        });
 
 
     }

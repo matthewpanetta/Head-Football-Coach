@@ -50,15 +50,15 @@
                 <table class="w3-table no-border"   style="width:100%">
                   <tr>
                     <td>Others receiving votes:
-                      {% for team in bubble_teams%}
-                      <span><a href="{{team.team_href}}">{{team.school_name}}</a>{% if loop.last %} {% else %}, {% endif%}</span>
+                      {% for team_season in bubble_teams%}
+                      <span><a href="{{team_season.team.team_href}}">{{team_season.team.school_name}}</a>{% if loop.last %} {% else %}, {% endif%}</span>
                       {% endfor %}</td>
                   </tr>
                   {%if dropped_teams%}
                   <tr>
                     <td>Teams dropped from rankings:
-                      {% for team in dropped_teams%}
-                      <span><a href="{{team.team_href}}">{{team.school_name}}</a> ({{team.team_season.rankings.national_rank[1]}}) {% if loop.last %} {% else %}, {% endif%}</span>
+                      {% for team_season in dropped_teams%}
+                      <span><a href="{{team_season.team.team_href}}">{{team_season.team.school_name}}</a> ({{team_season.rankings.national_rank[1]}}) {% if loop.last %} {% else %}, {% endif%}</span>
                       {% endfor %}</td>
                   </tr>
                   {%endif%}

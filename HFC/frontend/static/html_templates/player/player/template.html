@@ -235,7 +235,7 @@
                   <tr  >
                     <th colspan="3" class='center-text col-group'>TEAM</th>
                     {% for interest_key in player.recruiting.top_player_interest_entries%}
-                    <th>{{interest_key}}</th>
+                    <th>{{interest_key.display}}</th>
                     {% endfor %}
 
                   </tr>
@@ -250,7 +250,11 @@
                     <td class='white-text column-shrink left-text nowrap' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>{{recruit_team_season.team_season.team.school_name}}</td>
 
                     {% for interest_obj in recruit_team_season.player_interest_entries%}
-                    <td>{{interest_obj.team}}</td>
+                    <td>
+                      <span class='rating-badge rating-badge-{{interest_obj.team}}'>
+                        {{interest_obj.team}}
+                      </span>
+                    </td>
                     {% endfor %}
                   </tr>
                   {% endfor %}

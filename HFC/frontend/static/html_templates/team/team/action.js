@@ -417,13 +417,13 @@ const action = async (common) => {
   initialize_headlines();
 
 
-    var first_click = false;
+    var stats_first_click = false;
     $('#nav-team-stats-tab').on('click', async function(){
-      console.log({first_click:first_click})
-      if ((first_click)){
+      console.log({stats_first_click:stats_first_click})
+      if ((stats_first_click)){
         return false;
       }
-      first_click = true;
+      stats_first_click = true;
 
       var team = common.render_content.team;
       var player_team_seasons = common.render_content.player_team_seasons;
@@ -558,10 +558,58 @@ const action = async (common) => {
 
         await draw_faces(common);
 
-
-
     })
 
+    var info_first_click = false;
+    $('#nav-info-tab').on('click', async function(){
+      console.log({info_first_click:info_first_click})
+      if ((info_first_click)){
+        return false;
+      }
+      info_first_click = true;
+
+      var team = common.render_content.team;
+      var db = common.db;
+      var season = common.season;
+      var all_teams = await db.team.where('team_id').above(0).toArray();
+
+      var rating_display_map = {
+        brand: 'Brand',
+        facilities: 'Facilities',
+        location: 'Location',
+        pro_pipeline: 'Pro Pipeline',
+        program_history: 'Program History',
+        fan_support: 'Fan Support',
+        brand: 'Brand',
+        team_competitiveness: 'Team Competitiveness',
+        academic_quality: 'Academic Quality'
+      };
+
+
+      console.log({'common.render_content': common.render_content, team:team, all_teams:all_teams})
+
+      for (const rating in team.team_ratings){
+        console.log({rating:rating})
+        all_teams = all_teams.sort((t_a, t_b) => get(t_b, 'team_ratings.'+rating) - get(t_a, 'team_ratings.'+rating));
+        var attribute_map = all_teams.map(t => get(t, 'team_ratings.'+rating))
+
+        team.team_ratings[rating] = {value: team.team_ratings[rating], rank: 0};
+        team.team_ratings[rating].rank = attribute_map.indexOf(team.team_ratings[rating].value) + 1;
+
+        team.team_ratings[rating].display = rating_display_map[rating]
+      }
+
+      console.log({team:team})
+
+      var url = '/static/html_templates/team/team/team_info_div_template.html'
+      var html = await fetch(url);
+      html = await html.text();
+
+      var renderedHtml = await common.nunjucks_env.renderString(html, {team:team})
+      console.log({renderedHtml:renderedHtml})
+
+      $('#nav-info').append(renderedHtml);
+    })
 }
 
 

@@ -276,10 +276,10 @@
                             <span>` + string_val + `</span>
                         </div>
                         <div class="recruiting-player-city font10">
-                          <span>State ` + player_team_season.player.recruiting.rank.position_rank + `</span>
+                          <span>Pos ` + player_team_season.player.recruiting.rank.position_rank + `</span>
                         </div>
                         <div class="recruiting-player-city font10">
-                          <span>Pos ` + player_team_season.player.recruiting.rank.state + `</span>
+                          <span>State ` + player_team_season.player.recruiting.rank.state + `</span>
                         </div>`);
 
               $(td).closest('tr').attr('PlayerID', player_team_season.player_id)

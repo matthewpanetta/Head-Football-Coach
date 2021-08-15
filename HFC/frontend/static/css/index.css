@@ -1700,6 +1700,95 @@ img.teamTeamLogo {
   background-color: #0B5001;
 }
 
+.rating-badge {
+  border-radius: 6px;
+  font-weight: 600;
+  color: white;
+  padding: 4px 8px;
+}
+
+.rating-badge.rating-badge-20 {
+  background-color: #174ea6;
+  box-shadow: 0px 0px 5px #174ea6;
+}
+
+.rating-badge.rating-badge-19 {
+  background-color: #5B90B3;
+  box-shadow: 0px 0px 5px #5B90B3;
+}
+
+.rating-badge.rating-badge-18 {
+  background-color: #0B5001;
+}
+
+.rating-badge.rating-badge-17 {
+  background-color: #386616;
+}
+
+.rating-badge.rating-badge-16 {
+  background-color: #597827;
+}
+
+.rating-badge.rating-badge-15 {
+  background-color: #748533;
+}
+
+.rating-badge.rating-badge-14 {
+  background-color: #8b8e3c;
+}
+
+.rating-badge.rating-badge-13 {
+  background-color: #9e9141;
+}
+
+.rating-badge.rating-badge-12 {
+  background-color: #ab8f43;
+}
+
+.rating-badge.rating-badge-11 {
+  background-color: #b48940;
+}
+
+.rating-badge.rating-badge-10 {
+  background-color: #b87d3a;
+}
+
+.rating-badge.rating-badge-9 {
+  background-color: #b66c31;
+}
+
+.rating-badge.rating-badge-8 {
+  background-color: #af5624;
+}
+
+.rating-badge.rating-badge-7 {
+  background-color: #a23914;
+}
+
+.rating-badge.rating-badge-6 {
+  background-color: #8f0600;
+}
+
+.rating-badge.rating-badge-5 {
+  background-color: #8f0600;
+}
+
+.rating-badge.rating-badge-4 {
+  background-color: #8f0600;
+}
+
+.rating-badge.rating-badge-3 {
+  background-color: #8f0600;
+}
+
+.rating-badge.rating-badge-2 {
+  background-color: #8f0600;
+}
+
+.rating-badge.rating-badge-1 {
+  background-color: #8f0600;
+}
+
 
 .A-Plus, .Rating-Most{
   color: #0B5001;

@@ -1,6 +1,6 @@
 <style >
   .end-zone-fill{
-    fill:#{{ThisTeamSeason.TeamID.TeamColor_Primary_HEX}};
+    fill:#{{team.team_color_primary_hex}};
   }
 </style>
 <div style='width:100%;'>
@@ -325,17 +325,17 @@
               </g>
               <g id="EndZoneText">
                   <rect id="End-Zone-Right1" serif:id="End Zone Right" x="648.5" y="143.5" width="59.2" height="320.6" style="fill:none;"/>
-                  <text text-anchor="middle" alignment-baseline="central" x="306.4" y="-674.1" transform="rotate(90)" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:#{{team.team_color_secondary_hex}}; stroke: #{{team.team_color_primary_hex}}; stroke-width: 1.5px;text-transform: uppercase;">
+                  <text text-anchor="middle" alignment-baseline="central" x="306.4" y="-674.1" transform="rotate(90)" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white; stroke: #{{team.team_color_secondary_hex|TeamSecondaryColor}}; stroke-width: 1.5px;text-transform: uppercase;">
                     {{team.team_name}}
                   </text>
 
 
                   <rect id="End-Zone-Left1" serif:id="End Zone Left" x="14.2" y="143.5" width="58.9" height="320.6" style="fill:none;"/>
-                  <text text-anchor="middle" alignment-baseline="central" x="-306.4" y="47.7" transform="rotate(-90)" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:#{{team.team_color_secondary_hex}}; stroke: #{{team.team_color_primary_hex}}; stroke-width: 1.5px;text-transform: uppercase;">
+                  <text text-anchor="middle" alignment-baseline="central" x="-306.4" y="47.7" transform="rotate(-90)" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white; stroke: #{{team.team_color_secondary_hex|TeamSecondaryColor}}; stroke-width: 1.5px;text-transform: uppercase;">
                     {{team.school_name}}
                   </text>
 
-                  {% if ThisTeamSeason.TeamID.TeamName|length < 5 %}
+                  {% if team.school_name|length < 6 %}
                   <g transform=" rotate(-90) translate(-226.4,16) scale(.18,.18)" y="">
                       <g id="Team-Logo" serif:id="Team Logo">
                           <use id="team_logo" xlink:href="#_Image1" x="0" y="0" width="300px" height="300px"></use>
@@ -348,7 +348,7 @@
                   </g>
                   {% endif %}
 
-                  {% if ThisTeamSeason.TeamID.TeamNickname|length < 5 %}
+                  {% if team.team_name|length < 6 %}
                   <g transform=" rotate(90) translate(160,-705) scale(.18,.18)" y="">
                       <g id="Team-Logo" serif:id="Team Logo">
                           <use id="team_logo" xlink:href="#_Image1" x="0" y="0" width="300px" height="300px"></use>

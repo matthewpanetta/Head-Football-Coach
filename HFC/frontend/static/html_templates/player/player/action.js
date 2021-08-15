@@ -612,14 +612,31 @@ const getHtml = async (common) => {
     player_interest_entries = player_interest_entries.sort((interest_obj_a, interest_obj_b) => interest_obj_b[1] - interest_obj_a[1]);
     var top_player_interest_entries = player_interest_entries.filter(i => i[1] > 3).slice(0,5);
 
-    player.recruiting.top_player_interest_entries = top_player_interest_entries.map(i => i[0]);
+    var rating_display_map = {
+      brand: 'Brand',
+      facilities: 'Facilities',
+      location: 'Location',
+      pro_pipeline: 'Pro Pipeline',
+      program_history: 'Program History',
+      fan_support: 'Fan Support',
+      brand: 'Brand',
+      team_competitiveness: 'Team Competitiveness',
+      academic_quality: 'Academic Quality',
+
+      close_to_home: 'Close to Home',
+      playing_time: 'Playing Time',
+      program_stability: 'Program Stability'
+    };
+
+    player.recruiting.top_player_interest_entries = top_player_interest_entries.map(i => ({field_name: i[0], display: rating_display_map[i[0]]}));
 
     recruit_team_seasons = recruit_team_seasons.map(function(rts){
-      var rts_interest_entries = player.recruiting.top_player_interest_entries.map(i => rts.match_ratings[i]);
+      var rts_interest_entries = player.recruiting.top_player_interest_entries.map(i => rts.match_ratings[i.field_name]);
       return Object.assign(rts, {player_interest_entries: rts_interest_entries})
     })
 
-    console.log({recruit_team_seasons:recruit_team_seasons})
+    console.log({recruit_team_seasons:recruit_team_seasons,top_player_interest_entries:top_player_interest_entries, 'player.recruiting.top_player_interest_entries':player.recruiting.top_player_interest_entries})
+
 
   }
   else {
@@ -691,47 +708,45 @@ const getHtml = async (common) => {
       return 0;
     });
 
-
-
+    const player_team_season_ids = player.player_team_seasons.map(pts => pts.player_team_season_id);
+    const team_season_ids = player.player_team_seasons.map(pts => pts.team_season_id);
+    const seasons =  player.player_team_seasons.map(pts => pts.season);
     var player_awards = await db.award.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
     var award_set = {}
+
+
+    var player_team_games = await db.player_team_game.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
+    var team_game_ids = player_team_games.map(ptg => ptg.team_game_id);
+    var team_games = await db.team_game.bulkGet(team_game_ids);
+
+    var game_ids = team_games.map(tg => tg.game_id);
+    var games = await db.game.bulkGet(game_ids);
+
+    var games_by_game_id = index_group_sync(games, 'index', 'game_id');
+
+    var teams = await db.team.where('team_id').above(0).toArray();
+    var teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+
+    var team_seasons = await db.team_season.bulkGet(team_season_ids)
+    team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
+
+    var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+    team_games = nest_children(team_games, games_by_game_id, 'game_id', 'game');
+    team_games = nest_children(team_games, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+    team_games = nest_children(team_games, team_seasons_by_team_season_id, 'team_season_id', 'opponent_team_season');
+
+    var team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id');
+
+    player_team_games = nest_children(player_team_games, team_games_by_team_game_id, 'team_game_id', 'team_game')
+
+    var player_team_games_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
+
+    const weeks = await db.week.where('season').anyOf(seasons).toArray();
+    const weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
+
     if (player_awards.length > 0){
-      const seasons = player_awards.map(a => a.season);
 
-
-      const player_team_season_ids = player.player_team_seasons.filter(pts => seasons.includes(pts.season)).map(pts => pts.player_team_season_id);
-
-      var player_team_games = await db.player_team_game.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
-      var team_game_ids = player_team_games.map(ptg => ptg.team_game_id);
-      var team_games = await db.team_game.bulkGet(team_game_ids);
-
-      var game_ids = team_games.map(tg => tg.game_id);
-      var games = await db.game.bulkGet(game_ids);
-
-      var team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id');
-      var games_by_game_id = index_group_sync(games, 'index', 'game_id');
-
-      var team_seasons = await db.team_season.where('season').anyOf(seasons).and(ts=>ts.team_id>0).toArray();
-      var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
-
-      var teams = await db.team.where('team_id').above(0).toArray();
-      var teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
-
-      for (var player_team_game of player_team_games){
-        player_team_game.team_game = team_games_by_team_game_id[player_team_game.team_game_id];
-        player_team_game.team_game.game = games_by_game_id[player_team_game.team_game.game_id];
-
-        player_team_game.team_game.team_season = team_seasons_by_team_season_id[player_team_game.team_game.team_season_id];
-        player_team_game.team_game.opponent_team_season = team_seasons_by_team_season_id[player_team_game.team_game.opponent_team_season_id];
-
-        player_team_game.team_game.team_season.team = teams_by_team_id[player_team_game.team_game.team_season.team_id];
-        player_team_game.team_game.opponent_team_season.team = teams_by_team_id[player_team_game.team_game.opponent_team_season.team_id];
-      }
-
-      var player_team_games_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
-
-      const weeks = await db.week.where('season').anyOf(seasons).toArray();
-      const weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
       player_awards = nest_children(player_awards, weeks_by_week_id, 'week_id', 'week');
       player_awards = nest_children(player_awards, player_team_games_by_player_team_game_id, 'player_team_game_id', 'player_team_game');
 
