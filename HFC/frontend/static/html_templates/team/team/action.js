@@ -8,7 +8,7 @@ function ResArrowSize() {
 
     var team_color = $('.SelectedGameBox').css('background-color');
 
-    console.log('team_color', team_color, $('.SelectedGameBox'))
+    //console.log('team_color', team_color, $('.SelectedGameBox'))
 
     var styleAdd = '';
     styleAdd += `border-left-width: ${side_length}px;`
@@ -138,6 +138,11 @@ const getHtml = async (common) => {
   team.team_season.conference_season = conference_seasons_by_conference_season_id[team.team_season.conference_season_id];
   team.team_season.conference_season.conference = conference_by_conference_id[team.team_season.conference_season.conference_id];
 
+  var recruit_team_seasons = await db.recruit_team_season.where({team_season_id: team_season.team_season_id}).toArray();
+  recruit_team_seasons = recruit_team_seasons.sort((rts_a, rts_b) => rts_b.team_top_level_interest - rts_a.team_top_level_interest );
+  console.log({recruit_team_seasons:recruit_team_seasons})
+  debugger;
+
   var team_games = await db.team_game.where({team_season_id: team_season.team_season_id}).toArray();
   team_games = team_games.sort(function(team_game_a,team_game_b){
     return team_game_a.week_id - team_game_b.week_id;
@@ -146,10 +151,10 @@ const getHtml = async (common) => {
 
   const games = await db.game.bulkGet(game_ids);
 
-  console.log('team_games', team_games)
+  //console.log('team_games', team_games)
 
   const opponent_team_game_ids = team_games.map(team_game => team_game.opponent_team_game_id);
-  console.log('opponent_team_game_ids', opponent_team_game_ids)
+  //console.log('opponent_team_game_ids', opponent_team_game_ids)
   const opponent_team_games = await db.team_game.bulkGet(opponent_team_game_ids);
 
   const opponent_team_season_ids = opponent_team_games.map(team_game => parseInt(team_game.team_season_id));
@@ -180,7 +185,7 @@ const getHtml = async (common) => {
     }
   }
 
-  console.log('opponent_teams', opponent_teams, opponent_team_seasons, opponent_team_games)
+  //console.log('opponent_teams', opponent_teams, opponent_team_seasons, opponent_team_games)
   var counter_games = 0;
   var selected_game_chosen = false;
   var selected_game_id = 0;
@@ -195,7 +200,7 @@ const getHtml = async (common) => {
     selected_game_chosen = true;
     selected_game_id = games[games.length - 1].game_id;
   }
-  console.log('games_played', games_played, games.length, selected_game_chosen, selected_game_id, games)
+  //console.log('games_played', games_played, games.length, selected_game_chosen, selected_game_id, games)
 
   var team_game_ids = opponent_team_game_ids.concat(team_games.map(tg => tg.team_game_id));
   const player_team_games = await db.player_team_game.where('team_game_id').anyOf(team_game_ids).toArray();
@@ -303,7 +308,22 @@ const getHtml = async (common) => {
     counter_games +=1;
   });
 
-  console.log('games', games)
+
+  var signed_recruit_team_seasons = await db.recruit_team_season.where({team_season_id: team_season.team_season_id}).and(rts => rts.signed).toArray();
+  var signed_recruit_player_team_season_ids = signed_recruit_team_seasons.map(rts => rts.player_team_season_id);
+  var signed_recruit_player_team_seasons = await db.player_team_season.bulkGet(signed_recruit_player_team_season_ids);
+
+  var signed_recruit_player_ids = signed_recruit_player_team_seasons.map(pts => pts.player_id);
+  var signed_recruit_players = await db.player.bulkGet(signed_recruit_player_ids);
+
+  var signed_recruit_player_by_player_id = index_group_sync(signed_recruit_players, 'index', 'player_id');
+  signed_recruit_player_team_seasons = nest_children(signed_recruit_player_team_seasons, signed_recruit_player_by_player_id, 'player_id', 'player');
+
+  var signed_recruit_player_team_seasons_by_player_team_season_id = index_group_sync(signed_recruit_player_team_seasons, 'index', 'player_team_season_id');
+
+  signed_recruit_team_seasons = nest_children(signed_recruit_team_seasons, signed_recruit_player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season')
+
+  //console.log('games', games)
   common.page = {page_title: team.full_name, page_icon: team.team_logo_50, PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
   var render_content = {
                         page:     common.page,
@@ -314,6 +334,7 @@ const getHtml = async (common) => {
                         teams: teams,
                         all_teams: await common.all_teams(common, ''),
                         conference_standings: conference_standings,
+                        signed_recruit_team_seasons:signed_recruit_team_seasons,
                         //team_leaders: team_leaders,
                         //team_stats: team_stats,
                         player_team_seasons:player_team_seasons,
@@ -338,7 +359,7 @@ const draw_faces = async (common) => {
   const db = common.db;
   const season = common.season;
   const index_group_sync = common.index_group_sync;
-  console.log('PlayerFace-Headshot', $('.PlayerFace-Headshot'));
+  //console.log('PlayerFace-Headshot', $('.PlayerFace-Headshot'));
 
   const player_ids = [];
   const face_div_by_player_id = {};
@@ -347,7 +368,7 @@ const draw_faces = async (common) => {
     if ($(elem).find('svg').length > 0){
       return true;
     }
-    console.log('ind, elem', ind, elem)
+    //console.log('ind, elem', ind, elem)
     player_ids.push(parseInt($(elem).attr('player_id')))
     if (!(parseInt($(elem).attr('player_id')) in face_div_by_player_id)) {
       face_div_by_player_id[parseInt($(elem).attr('player_id'))] = [];
@@ -369,7 +390,7 @@ const draw_faces = async (common) => {
   const teams = await db.team.bulkGet(team_ids);
   const teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
 
-  console.log('player_ids', player_ids, 'players', players, 'player_team_seasons_by_player_id', player_team_seasons_by_player_id, 'team_seasons_by_team_season_id', team_seasons_by_team_season_id, 'teams_by_team_id', teams_by_team_id)
+  //console.log('player_ids', player_ids, 'players', players, 'player_team_seasons_by_player_id', player_team_seasons_by_player_id, 'team_seasons_by_team_season_id', team_seasons_by_team_season_id, 'teams_by_team_id', teams_by_team_id)
 
   for (var player of players){
     var elems = face_div_by_player_id[player.player_id];
@@ -381,7 +402,7 @@ const draw_faces = async (common) => {
       player.player_face = await common.create_player_face('single', player.player_id, db);
     }
 
-    console.log( $(elem).attr('id'))
+    //console.log( $(elem).attr('id'))
 
     for (var elem of elems){
       common.display_player_face(player.player_face, {jersey: player.team.jersey, teamColors: player.team.jersey.teamColors}, $(elem).attr('id'));
@@ -412,14 +433,13 @@ const action = async (common) => {
   AddBoxScoreListeners();
 
   DrawSchedule();
-  navbar(common.page);
 
   initialize_headlines();
 
 
     var stats_first_click = false;
     $('#nav-team-stats-tab').on('click', async function(){
-      console.log({stats_first_click:stats_first_click})
+      //console.log({stats_first_click:stats_first_click})
       if ((stats_first_click)){
         return false;
       }
@@ -447,7 +467,7 @@ const action = async (common) => {
             return pts_b.season_stats[stat_detail.stat_group][stat_detail.stat] - pts_a.season_stats[stat_detail.stat_group][stat_detail.stat];
           });
 
-          console.log('stat_detail', stat_detail, player_team_seasons[0])
+          //console.log('stat_detail', stat_detail, player_team_seasons[0])
 
           if (player_team_seasons[0].season_stats[stat_detail.stat_group][stat_detail.stat] > 0){
             stat_detail.player_team_season = player_team_seasons[0]
@@ -455,7 +475,7 @@ const action = async (common) => {
           }
         }
 
-        console.log('team_leaders', team_leaders)
+        //console.log('team_leaders', team_leaders)
 
         const team_stats = [
           {display: 'Points Per Game', stats: {
@@ -501,7 +521,7 @@ const action = async (common) => {
           //console.log('stat_group', stat_group)
           for (var stat_detail_key in  stat_group.stats){
             var stat_detail = stat_group.stats[stat_detail_key];
-            console.log({stat_detail:stat_detail, stat_detail_key:stat_detail_key, stat_group:stat_group,team_stats:team_stats })
+            //console.log({stat_detail:stat_detail, stat_detail_key:stat_detail_key, stat_group:stat_group,team_stats:team_stats })
             stat_detail.team_value = team.team_season[stat_detail.stat];
 
             all_team_season_stat_value = all_team_seasons.map(ts => ts[stat_detail.stat]).sort(function(value_a, value_b){
@@ -516,7 +536,7 @@ const action = async (common) => {
 
             stat_detail.team_rank = all_team_season_stat_value.indexOf(team.team_season[stat_detail.stat]) + 1
             stat_detail.total_teams = all_team_seasons.length;
-            console.log({all_team_seasons:all_team_seasons, stat_detail:stat_detail, all_team_season_stat_value:all_team_season_stat_value})
+            //console.log({all_team_seasons:all_team_seasons, stat_detail:stat_detail, all_team_season_stat_value:all_team_season_stat_value})
             stat_detail.tier = tier_map[common.tier_placement(7, all_team_seasons.length, 'Normal', stat_detail.team_rank)]
           }
         }
@@ -539,7 +559,7 @@ const action = async (common) => {
         var html = await fetch(url);
         html = await html.text();
 
-        var renderedHtml = await common.nunjucks_env.renderString(html, {team_leaders:team_leaders})
+        var renderedHtml = await common.nunjucks_env.renderString(html, {page:common.render_content.page, team_leaders:team_leaders})
         console.log({renderedHtml:renderedHtml})
 
         $('#team_leaders').append(renderedHtml);
@@ -562,7 +582,7 @@ const action = async (common) => {
 
     var info_first_click = false;
     $('#nav-info-tab').on('click', async function(){
-      console.log({info_first_click:info_first_click})
+      //console.log({info_first_click:info_first_click})
       if ((info_first_click)){
         return false;
       }
@@ -589,7 +609,7 @@ const action = async (common) => {
       console.log({'common.render_content': common.render_content, team:team, all_teams:all_teams})
 
       for (const rating in team.team_ratings){
-        console.log({rating:rating})
+        //console.log({rating:rating})
         all_teams = all_teams.sort((t_a, t_b) => get(t_b, 'team_ratings.'+rating) - get(t_a, 'team_ratings.'+rating));
         var attribute_map = all_teams.map(t => get(t, 'team_ratings.'+rating))
 
@@ -599,7 +619,7 @@ const action = async (common) => {
         team.team_ratings[rating].display = rating_display_map[rating]
       }
 
-      console.log({team:team})
+      //console.log({team:team})
 
       var url = '/static/html_templates/team/team/team_info_div_template.html'
       var html = await fetch(url);
@@ -922,7 +942,7 @@ function chart(raw_data, common) {
         hover_value = svg.append("g").append("text").attr("fill", "white").attr("class", "carbon bold " + yFont).attr("x", x(minimumX) - value_offset).attr("y", y(hover_y_value) + value_y_offset).text(hover_y_value).attr("opacity", 0);
 
         image_icons = svg.append("g").selectAll("image").data(data).join('image').attr('xlink:href', function(d) {
-              console.log(d);
+              //console.log(d);
               return d.logo;
         }).attr('width', image_width).attr('height', image_width).attr("id", function(d) {
             return "logo-" + d.team_id
@@ -1072,7 +1092,7 @@ function chart(raw_data, common) {
     }
 
     function new_chart(selected_field) {
-      console.log(selected_field)
+      //console.log(selected_field)
         current_stat = selected_field;
         setup_data(selected_field);
         svg.selectAll("rect").remove();
@@ -1111,12 +1131,11 @@ function chart(raw_data, common) {
         }
         html += "</select>"
 
-        console.log('columns, html', columns, html)
+        //console.log('columns, html', columns, html)
 
         document.getElementById("selector").innerHTML = html;
 
         $('#stat_select').on('change', function(a,b,c){
-          console.log({a:a, b:b, c:c})
           new_chart(this.value)
         });
     }

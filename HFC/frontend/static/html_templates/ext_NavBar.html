@@ -18,7 +18,14 @@
   </h3>
   <ul class='no-list-style w3-margin-bottom'>
     {% for Link in Group.GroupLinks%}
+    {% if Link.id == 'nav-search'%}
+    <li>
+      <input worldid="{{Link.world_id}}" type="text" class='w3-input' name="" value="" id='nav-search-input' placeholder="Search" style='padding:8px; width: 90%;'>
+      <button type="submit" id='{{Link.id}}' class='w3-button' style='width: 30px; margin-left: -40px; vertical-align: baseline; padding: 8px; margin-right: 0px;'><i class="fa fa-search"></i></button>
+    </li>
+    {% else %}
     <li><a href="{{Link.Href}}" id='{{Link.id}}' class="w3-bar-item w3-button SideNavItem w3-padding-small {{Link.ClassName}}">{{Link.LinkDisplay}}</a></li>
+    {% endif %}
     {% endfor %}
   </ul>
   {% endfor %}

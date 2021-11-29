@@ -635,6 +635,8 @@ const getHtml = async (common) => {
       return Object.assign(rts, {player_interest_entries: rts_interest_entries})
     })
 
+    recruit_team_seasons = recruit_team_seasons.sort((rts_a, rts_b) => rts_b.match_rating - rts_a.match_rating);
+
     console.log({recruit_team_seasons:recruit_team_seasons,top_player_interest_entries:top_player_interest_entries, 'player.recruiting.top_player_interest_entries':player.recruiting.top_player_interest_entries})
 
 

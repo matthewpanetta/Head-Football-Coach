@@ -2002,6 +2002,9 @@ div.dt-buttons {
 .col-group {
   border-right: 1px solid grey;
 }
+.col-group-left {
+  border-left: 1px solid grey;
+}
 
 .is-starter {
   background-color: lightyellow;

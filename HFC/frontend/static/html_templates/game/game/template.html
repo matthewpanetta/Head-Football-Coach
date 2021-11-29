@@ -100,27 +100,31 @@
             </table>
             <table class='gameBoxScoreTable w3-table-all'>
               <thead>
-                <tr>
+                <tr class='center-text-row'>
                   <th></th>
                   {% for period in game.scoring.periods %}
                   <th class='w3-center'>{{period.period_number}}</th>
                   {% endfor %}
-                  <th>F</th>
+                  <th class='col-group-left'>F</th>
                 </tr>
               </thead>
-              <tr>
-                <td class='gameBoxScoreTeamName colgroup-border-right gameOutcome{{game.away_outcome_letter}}'>{{game.away_team_game.team_season.team.team_abbreviation}}</td>
+              <tr class='center-text-row'>
+                <td class='white-text padding-left-8 left-text gameBoxScoreTeamName col-group gameOutcome{{game.away_outcome_letter}}' style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}'>
+                  {{game.away_team_game.team_season.team.team_abbreviation}}
+                </td>
                 {% for period in game.scoring.periods %}
                 <td class='w3-center'>{{period.points[0]}}</td>
                 {% endfor %}
-                <td class=' gameOutcome{{game.away_outcome_letter}}'>{{game.scoring.final[0]}}</td>
+                <td class='col-group-left gameOutcome{{game.away_outcome_letter}}'>{{game.scoring.final[0]}}</td>
               </tr>
-              <tr>
-                <td class='gameBoxScoreTeamName colgroup-border-right gameOutcome{{game.home_outcome_letter}}'>{{game.home_team_game.team_season.team.team_abbreviation}}</td>
+              <tr class='center-text-row'>
+                <td class='white-text padding-left-8 left-text gameBoxScoreTeamName col-group gameOutcome{{game.home_outcome_letter}}' style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}'>
+                  {{game.home_team_game.team_season.team.team_abbreviation}}
+                </td>
                 {% for period in game.scoring.periods %}
                 <td class='w3-center'>{{period.points[1]}}</td>
                 {% endfor %}
-                <td class=' gameOutcome{{game.home_outcome_letter}}'>{{game.scoring.final[1]}}</td>
+                <td class='col-group-left gameOutcome{{game.home_outcome_letter}}'>{{game.scoring.final[1]}}</td>
               </tr>
             </table>
           </div>

@@ -215,7 +215,7 @@
             </div>
             <div class=" w3-margin-bottom">
               <div class="w3-row-padding w3-margin-bottom">
-                <div class="w3-col s12">
+                <div class="w3-col s8">
                   <div class="w3-card w3-light-grey w3-col s12">
                     <div class="w3-bar team-primary-background-bar">
                       Headlines
@@ -273,6 +273,46 @@
                       {% endif %}
 
                     </div>
+                  </div>
+                </div>
+                <div class="w3-col s4">
+                  <div class="w3-card w3-light-grey w3-col s12">
+                    <div class="w3-bar team-primary-background-bar">
+                      Signed Recruits
+                    </div>
+                      <table class='width100 w3-table-all'>
+                        <thead class='center-text-row'>
+                          <th class='left-text'>Player</th>
+                          <th>Pos</th>
+                          <th>Rating</th>
+                        </thead>
+                        <tbody>
+                          {% for recruit_team_season in signed_recruit_team_seasons%}
+                          <tr class='center-text-row'>
+                            <td class='left-text'>
+                              <div class="">
+                                <a href="{{recruit_team_season.player_team_season.player.player_href}}">{{recruit_team_season.player_team_season.player.full_name}}</a>
+                              </div>
+                              <div class='left-text font10'>{{recruit_team_season.player_team_season.player.hometown_and_state}}</div>
+                            </td>
+                            <td>{{recruit_team_season.player_team_season.player.position}}</td>
+                            <td>
+                              <div class="">
+                                {% for i in range(0, recruit_team_season.player_team_season.player.recruiting.stars) %}
+                                  <i class="fas fa-star" style='color: #{{page.PrimaryColor}}'></i>
+                                {% endfor %}
+                              </div>
+                              <div class="font10">
+                                <span>Nat. {{recruit_team_season.player_team_season.player.recruiting.rank.national}}</span> |
+                                <span>Pos. {{recruit_team_season.player_team_season.player.recruiting.rank.position_rank}}</span> |
+                                <span>State {{recruit_team_season.player_team_season.player.recruiting.rank.state}}</span>
+                              </div>
+                            </td>
+                          </tr>
+
+                          {% endfor %}
+                        </tbody>
+                      </table>
                   </div>
                 </div>
 
@@ -467,7 +507,7 @@
         </div>
     </div>
       <div class="tab-content" style='display:none;' id="nav-info">
-        
+
     </div>
   </div>
 </body>

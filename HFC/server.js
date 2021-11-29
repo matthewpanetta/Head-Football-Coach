@@ -34,6 +34,8 @@ const routes = [
 
   {route: "/World/:world_id/Game/:game_id/",     path: 'game/game/base.html'},
 
+  {route: "/World/:world_id/Search/:search_keyword/",     path: 'search/search/base.html'},
+
   {route: "/static",          path: 'static'},
   {route: "*html_templates*", path: 'url'},
   {route: "*js/modules*",     path: 'url'},

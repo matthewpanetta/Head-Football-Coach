@@ -143,7 +143,7 @@
 
         //FULL LEAGUE
         var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
-        conferences_to_include = ['Southeastern Conference', 'Sun Belt', 'PAC-12','Mountain West Conference']
+        conferences_to_include = ['Southeastern Conference', 'Ivy League', 'PAC-12','Big 12']
         //MID SIZE
         //const conferences_to_include = ['Big 12', 'American Athletic Conference','Big Ten','Southeastern Conference','FBS Independents','Mid-American Conference']
         //SMALL SIZE
@@ -312,18 +312,20 @@
         var players = await db.player.toArray();
         await common.create_player_team_seasons({common: common, players:players, world_id:world_id, team_seasons:team_seasons, season:season})
 
-
-        $(par).append('<div>Creating recruiting class</div>')
-        $('#modal-progress').css('width', '0%');
-        await common.create_recruiting_class(common);
-
         $(par).append('<div>Populating depth charts</div>')
         $('#modal-progress').css('width', '0%');
-        await common.populate_all_depth_charts({common: common, season:season, world_id:world_id});
+        common.season = season;
+        common.world_id = world_id;
+        await common.populate_all_depth_charts(common);
 
         $(par).append('<div>Evaluating team talent</div>')
         $('#modal-progress').css('width', '0%');
         await common.calculate_team_overalls(common);
+
+        $(par).append('<div>Creating recruiting class</div>')
+        $('#modal-progress').css('width', '0%');
+        await common.calculate_team_needs(common);
+        await common.create_recruiting_class(common);
 
 
         $(par).append('<div>Ranking teams</div>')

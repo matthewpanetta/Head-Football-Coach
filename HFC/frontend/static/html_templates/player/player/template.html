@@ -233,7 +233,9 @@
               <table class="w3-table-all width100 center-text-row" id='recruit_team_seasons' style='width: 100%;'>
                 <thead>
                   <tr  >
-                    <th colspan="3" class='center-text col-group'>TEAM</th>
+                    <th colspan="2" class='center-text col-group'>TEAM</th>
+                    <th>SIGNED</th>
+                    <th>MATCH</th>
                     {% for interest_key in player.recruiting.top_player_interest_entries%}
                     <th>{{interest_key.display}}</th>
                     {% endfor %}
@@ -243,12 +245,14 @@
                 <tbody>
                   {% for recruit_team_season in recruit_team_seasons.slice(0,10)%}
                   <tr>
-                    <td class='white-text column-shrink' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>{{recruit_team_season.match_rank}}</td>
                     <td class='white-text column-shrink' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>
-                      <img class='logo-30' src="{{recruit_team_season.team_season.team.team_logo}}" alt="">
+                      <a href="{{recruit_team_season.team_season.team.team_href}}">
+                        <img class='logo-30' src="{{recruit_team_season.team_season.team.team_logo}}" alt="">
+                      </a>
                     </td>
                     <td class='white-text column-shrink left-text nowrap' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>{{recruit_team_season.team_season.team.school_name}}</td>
-
+                    <td>{{recruit_team_season.signed}}</td>
+                    <td>{{recruit_team_season.match_rating}}</td>
                     {% for interest_obj in recruit_team_season.player_interest_entries%}
                     <td>
                       <span class='rating-badge rating-badge-{{interest_obj.team}}'>
@@ -277,6 +281,7 @@
                     <th class='teamColorBorder' scope="col">Rank</th>
                     <th class='teamColorBorder' scope="col">Team</th>
                     <th class='teamColorBorder' scope="col">Signed?</th>
+                    <th class='teamColorBorder' scope="col">Match</th>
                     <th class='teamColorBorder' scope="col">Scholarship Offered?</th>
                     <th class='teamColorBorder' scope="col">Interest Level</th>
                     <th class='teamColorBorder' scope="col">Actively Recruiting?</th>
@@ -299,6 +304,9 @@
                     </td>
                     <td>
                         {{ RecruitTeamSeason.Signed }}
+                    </td>
+                    <td>
+                        {{ RecruitTeamSeason.match_rating }}
                     </td>
                     <td>
                         {{ RecruitTeamSeason.OfferMade }}

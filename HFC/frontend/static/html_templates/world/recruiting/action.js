@@ -8,12 +8,20 @@
       var world_obj = {};
 
       const NavBarLinks = await common.nav_bar_links({
-        path: 'Rankings',
+        path: 'Recruiting',
         group_name: 'World',
         db: db
       });
 
       var teams = await db.team.where('team_id').above(0).toArray();
+      var team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
+
+      var team_seasons_by_team_id = index_group_sync(team_seasons, 'index', 'team_id');
+
+      teams = nest_children(teams, team_seasons_by_team_id, 'team_id', 'team_season');
+      teams = teams.sort((t_a, t_b) => t_a.team_season.recruiting.recruiting_class_rank - t_b.team_season.recruiting.recruiting_class_rank)
+
+      console.log({t: teams.map(t => [t.team_name, t.team_season.recruiting.class_points, t.team_season.recruiting.recruiting_class_rank])})
 
       const recent_games = await common.recent_games(common);
 
@@ -40,14 +48,37 @@
       const db = common.db;
       const season = common.season;
 
-      const recruiting_team_season_id = (-1 * season)
+      const recruiting_team_season_id = (-1 * season);
+
+      var teams = await db.team.toArray();
+      var teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+
+      var team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_season_id > 0).toArray();
+      team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
+
+      var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id')
 
       var player_team_seasons = await db.player_team_season.where({season: common.season}).and(pts => pts.team_season_id == recruiting_team_season_id).toArray();
       var player_ids = player_team_seasons.map(pts => pts.player_id);
 
       var players = await db.player.bulkGet(player_ids);
       var players_by_player_id = index_group_sync(players, 'index', 'player_id');
+
+      var recruit_team_seasons = await db.recruit_team_season.toArray();
+      recruit_team_seasons = nest_children(recruit_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season')
+      var recruit_team_seasons_by_player_team_season_id = index_group_sync(recruit_team_seasons, 'group', 'player_team_season_id');
+
       player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
+      player_team_seasons = nest_children(player_team_seasons, recruit_team_seasons_by_player_team_season_id, 'player_team_season_id', 'recruit_team_seasons')
+
+      player_team_seasons = player_team_seasons.map(function(pts){
+        var sorted_match_rating = pts.recruit_team_seasons.map(rts => rts.match_rating).sort((mr_a, mr_b) => mr_b - mr_a);
+        var max_match_rating = sorted_match_rating[0];
+        var second_match_rating = sorted_match_rating[1]
+
+        return Object.assign(pts, {max_match_rating: max_match_rating, second_match_rating_ratio: second_match_rating/max_match_rating});
+      })
+
       console.log({recruiting_team_season_id:recruiting_team_season_id, player_team_seasons:player_team_seasons})
       draw_recruiting_table(player_team_seasons);
 
@@ -353,7 +384,7 @@
             }
           },
           {
-            "data": null,
+            "data": 'max_match_rating',
             "sortable": true,
             'visible': true,
             'className': '',
@@ -367,38 +398,41 @@
             'orderSequence': ["desc", "asc"],
             'className': 'col-group',
             'fnCreatedCell': function(td, string_val, player_team_season, iRow, iCol) {
-              return '';
+              //return '';
               var container = $('<div class="equal-sized-item-container"></div>');
-              var MaxInterestLevel = 0;
-              var Opacity = 100;
-              var IsLeader = false;
-              var Trailing = 0;
-              $.each(player_team_season.RecruitingTeams, function(i, o) {
-                IsLeader = false;
-                if (o.InterestLevel >= MaxInterestLevel) {
-                  MaxInterestLevel = o.InterestLevel;
-                  IsLeader = true;
+              var max_interest_level = player_team_season.max_match_rating;
+              var opacity = 100;
+              var is_leader = false;
+              var trailing = 0;
+              var recruit_team_seasons = player_team_season.recruit_team_seasons;
+              recruit_team_seasons = recruit_team_seasons.sort((rts_a, rts_b) => rts_b.match_rating - rts_a.match_rating);
+              recruit_team_seasons = recruit_team_seasons.slice(0,3)
+              $.each(recruit_team_seasons, function(i, rts) {
+                is_leader = false;
+                if (rts.match_rating >= max_interest_level) {
+                  max_interest_level = rts.match_rating;
+                  is_leader = true;
                 } else {
-                  Trailing = MaxInterestLevel - o.InterestLevel;
+                  trailing = max_interest_level - rts.match_rating;
                 }
 
-                Opacity = Math.max(100 * ((o.InterestLevel / MaxInterestLevel) ** 3), 50);
+                opacity = Math.max(100 * ((rts.match_rating / max_interest_level) ** 3), 50);
 
-                if (o.Signed == true) {
+                if (rts.signed == true) {
                   var subtext = 'Signed';
-                } else if (IsLeader == true) {
+                } else if (is_leader == true) {
                   var subtext = '1st';
                 } else {
-                  var subtext = '-' + Trailing;
+                  var subtext = '-' + trailing;
                 }
                 container.append($(`<div class="equal-sized-item"><div class="section font16">
-                               <a href=` + o.TeamHref + `><img class='recruitingLeadingTeamLogo' style='opacity: ` + Opacity + `%;' src=` + o.TeamSeasonID__TeamID__TeamLogoURL + `  /></a>
+                               <a href=` + rts.team_season.team.team_href + `><img class='recruitingLeadingTeamLogo' style='opacity: ` + opacity + `%;' src=` + rts.team_season.team.team_logo  + `  /></a>
                              </div>
                              <div class="font10">
                                <span>` + subtext + `</span>
                              </div></div>`));
 
-                if (o.Signed == true) {
+                if (rts.signed == true) {
                   return false;
                 }
               })
@@ -761,28 +795,28 @@
             "defaultContent": ''
           },
           {
-            "data": 'CityID__StateID__StateAbbreviation',
+            "data": 'player.hometown.state',
             "sortable": true,
             'visible': false,
             'className': 'col-group',
             'orderSequence': ["desc"]
           },
           {
-            "data": 'CityID__StateID__StateAbbreviation',
+            "data": 'player.hometown.state',
             "sortable": true,
             'visible': false,
             'className': 'col-group',
             'orderSequence': ["desc"]
           },
           {
-            "data": 'CityID__StateID__StateAbbreviation',
+            "data": 'player.hometown.state',
             "sortable": true,
             'visible': false,
             'className': 'col-group',
             'orderSequence': ["desc"]
           },
           {
-            "data": 'CityID__StateID__StateAbbreviation',
+            "data": 'player.hometown.state',
             "sortable": true,
             'visible': false,
             'className': 'col-group',

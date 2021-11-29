@@ -92,6 +92,9 @@ const getHtml = async (common) => {
       var current_week = await db.week.toArray();
       current_week = current_week.filter(w => w.is_current)[0];
 
+      //common.weekly_recruiting(common);
+      //common.calculate_team_needs(common)
+
       // const league_seasons = await db.league_season.toArray();
       //
       // console.log({league_seasons:league_seasons})
@@ -313,6 +316,8 @@ $(document).ready(async function(){
   await common.initialize_scoreboard();
 
   console.log({common: common});
+
+  //await common.create_recruiting_class(common);
 
   const db = common.db;
 

@@ -4078,4 +4078,244 @@
     "lat": 29.8734,
     "long": -97.9382
   }
+}, {
+  "school_name": "Dartmouth",
+  "team_name": "Big Green",
+  "team_abbreviation": "DART",
+  "division_name": "",
+  "conference_name": "Ivy League",
+  "team_color_primary_hex": "00693e",
+  "team_color_secondary_hex": "FFFFFF",
+  "jersey": {
+    "invert": false,
+    "teamColors": null,
+    "id": null
+  },
+  "team_ratings": {
+    "location": 12,
+    "fan_support": 3,
+    "academic_quality": 19,
+    "facilities": 4,
+    "program_history": 12,
+    "team_competitiveness": 3,
+    "brand": 3,
+    "pro_pipeline": 1
+  },
+  "location": {
+    "city": "Hanover",
+    "state": "New Hampshire",
+    "stop": 15000,
+    "lat": 43.4208,
+    "long": -72.1722
+  }
+}, {
+  "school_name": "Brown",
+  "team_name": "Bears",
+  "team_abbreviation": "BROWN",
+  "division_name": "",
+  "conference_name": "Ivy League",
+  "team_color_primary_hex": "54301a",
+  "team_color_secondary_hex": "FFFFFF",
+  "jersey": {
+    "invert": false,
+    "teamColors": null,
+    "id": null
+  },
+  "team_ratings": {
+    "location": 10,
+    "fan_support": 2,
+    "academic_quality": 19,
+    "facilities": 2,
+    "program_history": 5,
+    "team_competitiveness": 2,
+    "brand": 1,
+    "pro_pipeline": 1
+  },
+  "location": {
+    "city": "Providence",
+    "state": "Rhode Island",
+    "stop": 15000,
+    "lat": 41.4925,
+    "long": -71.2520
+  }
+}, {
+  "school_name": "Columbia",
+  "team_name": "Lions",
+  "team_abbreviation": "CLMB",
+  "division_name": "",
+  "conference_name": "Ivy League",
+  "team_color_primary_hex": "99caea",
+  "team_color_secondary_hex": "183863",
+  "jersey": {
+    "invert": false,
+    "teamColors": null,
+    "id": null
+  },
+  "team_ratings": {
+    "location": 15,
+    "fan_support": 1,
+    "academic_quality": 19,
+    "facilities": 2,
+    "program_history": 4,
+    "team_competitiveness": 2,
+    "brand": 1,
+    "pro_pipeline": 1
+  },
+  "location": {
+    "city": "New York",
+    "state": "New York",
+    "stop": 1500000,
+    "lat": 40.4246,
+    "long": -74.0022
+  }
+}, {
+  "school_name": "Cornell",
+  "team_name": "Big Red",
+  "team_abbreviation": "CRN",
+  "division_name": "",
+  "conference_name": "Ivy League",
+  "team_color_primary_hex": "b31b1b",
+  "team_color_secondary_hex": "000000",
+  "jersey": {
+    "invert": false,
+    "teamColors": null,
+    "id": null
+  },
+  "team_ratings": {
+    "location": 3,
+    "fan_support": 1,
+    "academic_quality": 19,
+    "facilities": 2,
+    "program_history": 3,
+    "team_competitiveness": 1,
+    "brand": 1,
+    "pro_pipeline": 1
+  },
+  "location": {
+    "city": "Ithaca",
+    "state": "New York",
+    "stop": 15000,
+    "lat": 42.2636,
+    "long": -76.3000
+  }
+}, {
+  "school_name": "Harvard",
+  "team_name": "Crimson",
+  "team_abbreviation": "HARV",
+  "division_name": "",
+  "conference_name": "Ivy League",
+  "team_color_primary_hex": "931e2f",
+  "team_color_secondary_hex": "FFFFFF",
+  "jersey": {
+    "invert": false,
+    "teamColors": null,
+    "id": null
+  },
+  "team_ratings": {
+    "location": 11,
+    "fan_support": 3,
+    "academic_quality": 20,
+    "facilities": 4,
+    "program_history": 6,
+    "team_competitiveness": 3,
+    "brand": 5,
+    "pro_pipeline": 2
+  },
+  "location": {
+    "city": "Cambridge",
+    "state": "Massachusetts",
+    "stop": 150000,
+    "lat": 42.2225,
+    "long": -71.0638
+  }
+}, {
+  "school_name": "Penn",
+  "team_name": "Quakers",
+  "team_abbreviation": "PENN",
+  "division_name": "",
+  "conference_name": "Ivy League",
+  "team_color_primary_hex": "011f5b",
+  "team_color_secondary_hex": "990000",
+  "jersey": {
+    "invert": false,
+    "teamColors": null,
+    "id": null
+  },
+  "team_ratings": {
+    "location": 10,
+    "fan_support": 2,
+    "academic_quality": 19,
+    "facilities": 2,
+    "program_history": 3,
+    "team_competitiveness": 1,
+    "brand": 1,
+    "pro_pipeline": 1
+  },
+  "location": {
+    "city": "Philadelphia",
+    "state": "Pennsylvania",
+    "stop": 150000,
+    "lat": 39.5710,
+    "long": -75.0949
+  }
+}, {
+  "school_name": "Princeton",
+  "team_name": "Tigers",
+  "team_abbreviation": "PRINC",
+  "division_name": "",
+  "conference_name": "Ivy League",
+  "team_color_primary_hex": "FF6000",
+  "team_color_secondary_hex": "000000",
+  "jersey": {
+    "invert": false,
+    "teamColors": null,
+    "id": null
+  },
+  "team_ratings": {
+    "location": 8,
+    "fan_support": 1,
+    "academic_quality": 20,
+    "facilities": 2,
+    "program_history": 2,
+    "team_competitiveness": 1,
+    "brand": 1,
+    "pro_pipeline": 1
+  },
+  "location": {
+    "city": "Princeton",
+    "state": "New Jersey",
+    "stop": 15000,
+    "lat": 40.3582,
+    "long": -74.6667
+  }
+}, {
+  "school_name": "Yale",
+  "team_name": "Bulldogs",
+  "team_abbreviation": "YALE",
+  "division_name": "",
+  "conference_name": "Ivy League",
+  "team_color_primary_hex": "00356b",
+  "team_color_secondary_hex": "FFFFFF",
+  "jersey": {
+    "invert": false,
+    "teamColors": null,
+    "id": null
+  },
+  "team_ratings": {
+    "location": 5,
+    "fan_support": 3,
+    "academic_quality": 20,
+    "facilities": 2,
+    "program_history": 3,
+    "team_competitiveness": 2,
+    "brand": 2,
+    "pro_pipeline": 1
+  },
+  "location": {
+    "city": "New Haven",
+    "state": "Connecticut",
+    "stop": 15000,
+    "lat": 41.1836,
+    "long": -72.5525
+  }
 }]

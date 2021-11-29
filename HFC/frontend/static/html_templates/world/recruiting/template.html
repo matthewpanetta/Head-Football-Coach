@@ -143,9 +143,12 @@
               <div class="w3-card">
 
                 <table id='recruitingNationalRankingTable' class='w3-table-all'>
-                  <thead>
+                  <thead class='center-text-row'>
                     <th>
                       Rank
+                    </th>
+                    <th>
+
                     </th>
                     <th>
                       Team
@@ -170,21 +173,23 @@
                     </th>
 
                   </thead>
-                  {% for Team in RecruitingRankings %}
-                  <tr>
-                    <td data-value='{{Team.RecruitingRank}}'>{{Team.RecruitingRank}}</td>
-                    <td>
-                      <a href='/World/{{page.WorldID}}/Team/{{Team.TeamID}}'>
-                        <img class='recruitingCommitTeamLogo' src='{{Team.TeamID__TeamLogoURL}}' alt=''>
-                        {{Team.TeamID__TeamName}}
+                  {% for team in teams %}
+                  <tr class='center-text-row'>
+                    <td class='column-shrink font16' style='color: white; background-color: #{{team.team_color_primary_hex}};'>{{team.team_season.recruiting.recruiting_class_rank}}</td>
+                    <td class='column-shrink' style='background-color: #{{team.team_color_primary_hex}};'>
+                      <a href='{{team.team_href}}'>
+                        <img class='recruitingCommitTeamLogo' src='{{team.team_logo}}' alt=''>
                       </a>
                     </td>
-                    <td style='{{Team.RecruitsSignedStyle5}}'>{{Team.RecruitsSigned5}}</td>
-                    <td style='{{Team.RecruitsSignedStyle4}}'>{{Team.RecruitsSigned4}}</td>
-                    <td style='{{Team.RecruitsSignedStyle3}}'>{{Team.RecruitsSigned3}}</td>
-                    <td style='{{Team.RecruitsSignedStyle2}}'>{{Team.RecruitsSigned2}}</td>
-                    <td style='{{Team.RecruitsSignedStyle1}}'>{{Team.RecruitsSigned1}}</td>
-                    <td>{{Team.RecruitsSigned}}</td>
+                    <td class='left-text nowrap column-shrink font16' style='color: white; background-color: #{{team.team_color_primary_hex}};'>
+                      <a href="{{team.team_href}}">{{team.full_name}}</a>
+                    </td>
+                    <td style='{{team.team_season.recruiting.signed_players.stars_5}}'>{{team.team_season.recruiting.signed_players.stars_5}}</td>
+                    <td style='{{Team.RecruitsSignedStyle4}}'>{{team.team_season.recruiting.signed_players.stars_4}}</td>
+                    <td style='{{Team.RecruitsSignedStyle3}}'>{{team.team_season.recruiting.signed_players.stars_3}}</td>
+                    <td style='{{Team.RecruitsSignedStyle2}}'>{{team.team_season.recruiting.signed_players.stars_2}}</td>
+                    <td style='{{Team.RecruitsSignedStyle1}}'>{{team.team_season.recruiting.signed_players.stars_1}}</td>
+                    <td>{{team.team_season.recruiting.signed_players.total}}</td>
                   </tr>
                   {% endfor %}
                   <tfoot>
