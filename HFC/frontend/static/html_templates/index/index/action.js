@@ -143,11 +143,11 @@
 
         //FULL LEAGUE
         var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
-        conferences_to_include = ['Southeastern Conference', 'Ivy League', 'PAC-12','Big 12']
+        // conferences_to_include = ['Southeastern Conference', 'Ivy League', 'PAC-12','Big 12']
         //MID SIZE
         //const conferences_to_include = ['Big 12', 'American Athletic Conference','Big Ten','Southeastern Conference','FBS Independents','Mid-American Conference']
         //SMALL SIZE
-         // var conferences_to_include = ['Big 12', 'American Athletic Conference','Atlantic Coast Conference','Big Ten','Southeastern Conference', 'Sun Belt', 'PAC-12','Conference USA','Mountain West Conference','FBS Independents','Mid-American Conference']
+         var conferences_to_include = ['American Athletic Conference']
           conferences_to_include = shuffle(conferences_to_include)
           var num_conferences_to_include = 4
           conferences_to_include = conferences_to_include.slice(0, num_conferences_to_include)

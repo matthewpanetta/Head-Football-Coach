@@ -64,15 +64,10 @@
       var players = await db.player.bulkGet(player_ids);
       var players_by_player_id = index_group_sync(players, 'index', 'player_id');
 
-      var recruit_team_seasons = await db.recruit_team_season.toArray();
-      recruit_team_seasons = nest_children(recruit_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season')
-      var recruit_team_seasons_by_player_team_season_id = index_group_sync(recruit_team_seasons, 'group', 'player_team_season_id');
-
       player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
-      player_team_seasons = nest_children(player_team_seasons, recruit_team_seasons_by_player_team_season_id, 'player_team_season_id', 'recruit_team_seasons')
 
       player_team_seasons = player_team_seasons.map(function(pts){
-        var sorted_match_rating = pts.recruit_team_seasons.map(rts => rts.match_rating).sort((mr_a, mr_b) => mr_b - mr_a);
+        var sorted_match_rating = Object.values(pts.recruiting.recruit_team_seasons).map(pts => pts.match_rating).sort((mr_a, mr_b) => mr_b - mr_a);
         var max_match_rating = sorted_match_rating[0];
         var second_match_rating = sorted_match_rating[1]
 
@@ -80,12 +75,12 @@
       })
 
       console.log({recruiting_team_season_id:recruiting_team_season_id, player_team_seasons:player_team_seasons})
-      draw_recruiting_table(player_team_seasons);
+      draw_recruiting_table(player_team_seasons, team_seasons_by_team_season_id);
 
     }
 
 
-    function draw_recruiting_table(player_team_seasons) {
+    function draw_recruiting_table(player_team_seasons, team_seasons_by_team_season_id) {
 
 
       var desc_first = ["desc", "asc"];
@@ -298,7 +293,7 @@
         "columns": [
 
           {
-            "data": "player.recruiting.rank.national",
+            "data": "recruiting.rank.national",
             "sortable": true,
             'searchable': true,
             'className': 'recruiting-player-rank',
@@ -307,17 +302,17 @@
                             <span>` + string_val + `</span>
                         </div>
                         <div class="recruiting-player-city font10">
-                          <span>Pos ` + player_team_season.player.recruiting.rank.position_rank + `</span>
+                          <span>Pos ` + player_team_season.recruiting.rank.position_rank + `</span>
                         </div>
                         <div class="recruiting-player-city font10">
-                          <span>State ` + player_team_season.player.recruiting.rank.state + `</span>
+                          <span>State ` + player_team_season.recruiting.rank.state + `</span>
                         </div>`);
 
               $(td).closest('tr').attr('PlayerID', player_team_season.player_id)
             }
           },
           {
-            "data": "player.recruiting.stars",
+            "data": "recruiting.stars",
             "sortable": true,
             'searchable': true,
             'className': 'recruiting-player-rank font14',
@@ -392,7 +387,7 @@
             "defaultContent": ''
           }, //% Scouted
           {
-            "data": "player.recruiting.stage",
+            "data": "recruiting.stage",
             "sortable": true,
             'visible': true,
             'orderSequence': ["desc", "asc"],
@@ -404,9 +399,10 @@
               var opacity = 100;
               var is_leader = false;
               var trailing = 0;
-              var recruit_team_seasons = player_team_season.recruit_team_seasons;
+              var recruit_team_seasons = Object.values(player_team_season.recruiting.recruit_team_seasons);
               recruit_team_seasons = recruit_team_seasons.sort((rts_a, rts_b) => rts_b.match_rating - rts_a.match_rating);
               recruit_team_seasons = recruit_team_seasons.slice(0,3)
+              recruit_team_seasons = nest_children(recruit_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season')
               $.each(recruit_team_seasons, function(i, rts) {
                 is_leader = false;
                 if (rts.match_rating >= max_interest_level) {
@@ -548,21 +544,21 @@
             'orderSequence': ["desc", "asc"],
           },
           {
-            "data": 'player.recruiting.measurables.fourty_yard_dash',
+            "data": 'recruiting.measurables.fourty_yard_dash',
             "sortable": true,
             'visible': false,
             'orderSequence': asc_first,
             'className': ''
           },
           {
-            "data": 'player.recruiting.measurables.bench_press_reps',
+            "data": 'recruiting.measurables.bench_press_reps',
             "sortable": true,
             'visible': false,
             'orderSequence': desc_first,
             'className': ''
           },
           {
-            "data": 'player.recruiting.measurables.vertical_jump',
+            "data": 'recruiting.measurables.vertical_jump',
             "sortable": true,
             'visible': false,
             'orderSequence': desc_first,

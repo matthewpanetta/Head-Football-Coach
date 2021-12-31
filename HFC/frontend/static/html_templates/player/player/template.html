@@ -26,7 +26,7 @@
           {{player.name.last}}
         </span>
         <div class='playerOverviewInfo'>
-          {% if player.is_recruit %}
+          {% if player.current_player_team_season.is_recruit %}
             {%if SignedTeam.LogoURL%}
               <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit, Signed</a>
             {% else %}
@@ -82,7 +82,7 @@
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-ratings-tab">Ratings</button>
-        {% if player.recruiting.is_recruit %}
+        {% if player.current_player_team_season.recruiting.is_recruit %}
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-recruiting-tab">Recruiting</button>
         {% else %}
           {% if player_team_games|length > 0%}
@@ -225,7 +225,7 @@
                   </tbody>
                 </table>
             </div>
-            {% elseif player.recruiting.is_recruit %}
+            {% elseif player.current_player_team_season.recruiting.is_recruit %}
             <div class="w3-card w3-margin-bottom">
               <div class="w3-bar team-primary-background-bar">
                 Recruiting Status
@@ -236,7 +236,7 @@
                     <th colspan="2" class='center-text col-group'>TEAM</th>
                     <th>SIGNED</th>
                     <th>MATCH</th>
-                    {% for interest_key in player.recruiting.top_player_interest_entries%}
+                    {% for interest_key in player.current_player_team_season.recruiting.top_player_interest_entries%}
                     <th>{{interest_key.display}}</th>
                     {% endfor %}
 
@@ -250,13 +250,19 @@
                         <img class='logo-30' src="{{recruit_team_season.team_season.team.team_logo}}" alt="">
                       </a>
                     </td>
-                    <td class='white-text column-shrink left-text nowrap' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>{{recruit_team_season.team_season.team.school_name}}</td>
+                    <td class='white-text column-shrink left-text nowrap' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>
+                      <a href="{{recruit_team_season.team_season.team.team_href}}">
+                        {{recruit_team_season.team_season.team.school_name}}
+                      </a>
+                    </td>
                     <td>{{recruit_team_season.signed}}</td>
                     <td>{{recruit_team_season.match_rating}}</td>
+                    
                     {% for interest_obj in recruit_team_season.player_interest_entries%}
                     <td>
-                      <span class='rating-badge rating-badge-{{interest_obj.team}}'>
-                        {{interest_obj.team}}
+                      {{interest_obj|log}}
+                      <span class='rating-badge rating-badge-{{interest_obj}}'>
+                        {{interest_obj}}
                       </span>
                     </td>
                     {% endfor %}

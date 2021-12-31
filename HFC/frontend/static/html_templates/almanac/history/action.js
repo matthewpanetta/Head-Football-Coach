@@ -14,7 +14,7 @@
       const this_week = weeks.filter(w => w.is_current)[0];
 
       const NavBarLinks = await common.nav_bar_links({
-        path: 'Player Stats',
+        path: 'History',
         group_name: 'Almanac',
         db: db
       });

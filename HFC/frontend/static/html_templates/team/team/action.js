@@ -138,11 +138,6 @@ const getHtml = async (common) => {
   team.team_season.conference_season = conference_seasons_by_conference_season_id[team.team_season.conference_season_id];
   team.team_season.conference_season.conference = conference_by_conference_id[team.team_season.conference_season.conference_id];
 
-  var recruit_team_seasons = await db.recruit_team_season.where({team_season_id: team_season.team_season_id}).toArray();
-  recruit_team_seasons = recruit_team_seasons.sort((rts_a, rts_b) => rts_b.team_top_level_interest - rts_a.team_top_level_interest );
-  console.log({recruit_team_seasons:recruit_team_seasons})
-  debugger;
-
   var team_games = await db.team_game.where({team_season_id: team_season.team_season_id}).toArray();
   team_games = team_games.sort(function(team_game_a,team_game_b){
     return team_game_a.week_id - team_game_b.week_id;
@@ -309,19 +304,19 @@ const getHtml = async (common) => {
   });
 
 
-  var signed_recruit_team_seasons = await db.recruit_team_season.where({team_season_id: team_season.team_season_id}).and(rts => rts.signed).toArray();
-  var signed_recruit_player_team_season_ids = signed_recruit_team_seasons.map(rts => rts.player_team_season_id);
-  var signed_recruit_player_team_seasons = await db.player_team_season.bulkGet(signed_recruit_player_team_season_ids);
+  // var signed_recruit_team_seasons = await db.recruit_team_season.where({team_season_id: team_season.team_season_id}).and(rts => rts.signed).toArray();
+  // var signed_recruit_player_team_season_ids = signed_recruit_team_seasons.map(rts => rts.player_team_season_id);
+  // var signed_recruit_player_team_seasons = await db.player_team_season.bulkGet(signed_recruit_player_team_season_ids);
 
-  var signed_recruit_player_ids = signed_recruit_player_team_seasons.map(pts => pts.player_id);
-  var signed_recruit_players = await db.player.bulkGet(signed_recruit_player_ids);
+  // var signed_recruit_player_ids = signed_recruit_player_team_seasons.map(pts => pts.player_id);
+  // var signed_recruit_players = await db.player.bulkGet(signed_recruit_player_ids);
 
-  var signed_recruit_player_by_player_id = index_group_sync(signed_recruit_players, 'index', 'player_id');
-  signed_recruit_player_team_seasons = nest_children(signed_recruit_player_team_seasons, signed_recruit_player_by_player_id, 'player_id', 'player');
+  // var signed_recruit_player_by_player_id = index_group_sync(signed_recruit_players, 'index', 'player_id');
+  // signed_recruit_player_team_seasons = nest_children(signed_recruit_player_team_seasons, signed_recruit_player_by_player_id, 'player_id', 'player');
 
-  var signed_recruit_player_team_seasons_by_player_team_season_id = index_group_sync(signed_recruit_player_team_seasons, 'index', 'player_team_season_id');
+  // var signed_recruit_player_team_seasons_by_player_team_season_id = index_group_sync(signed_recruit_player_team_seasons, 'index', 'player_team_season_id');
 
-  signed_recruit_team_seasons = nest_children(signed_recruit_team_seasons, signed_recruit_player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season')
+  // signed_recruit_team_seasons = nest_children(signed_recruit_team_seasons, signed_recruit_player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season')
 
   //console.log('games', games)
   common.page = {page_title: team.full_name, page_icon: team.team_logo_50, PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
@@ -334,7 +329,7 @@ const getHtml = async (common) => {
                         teams: teams,
                         all_teams: await common.all_teams(common, ''),
                         conference_standings: conference_standings,
-                        signed_recruit_team_seasons:signed_recruit_team_seasons,
+                        // signed_recruit_team_seasons:signed_recruit_team_seasons,
                         //team_leaders: team_leaders,
                         //team_stats: team_stats,
                         player_team_seasons:player_team_seasons,
