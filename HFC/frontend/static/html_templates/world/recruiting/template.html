@@ -184,12 +184,12 @@
                     <td class='left-text nowrap column-shrink font16' style='color: white; background-color: #{{team.team_color_primary_hex}};'>
                       <a href="{{team.team_href}}">{{team.full_name}}</a>
                     </td>
-                    <td style='{{team.team_season.recruiting.signed_players.stars_5}}'>{{team.team_season.recruiting.signed_players.stars_5}}</td>
-                    <td style='{{Team.RecruitsSignedStyle4}}'>{{team.team_season.recruiting.signed_players.stars_4}}</td>
-                    <td style='{{Team.RecruitsSignedStyle3}}'>{{team.team_season.recruiting.signed_players.stars_3}}</td>
-                    <td style='{{Team.RecruitsSignedStyle2}}'>{{team.team_season.recruiting.signed_players.stars_2}}</td>
-                    <td style='{{Team.RecruitsSignedStyle1}}'>{{team.team_season.recruiting.signed_players.stars_1}}</td>
-                    <td>{{team.team_season.recruiting.signed_players.total}}</td>
+                    <td style='{{team.team_season.recruiting.signed_players.stars_5}}'>{{team.team_season.recruiting.signed_player_stars.stars_5}}</td>
+                    <td style='{{Team.RecruitsSignedStyle4}}'>{{team.team_season.recruiting.signed_player_stars.stars_4}}</td>
+                    <td style='{{Team.RecruitsSignedStyle3}}'>{{team.team_season.recruiting.signed_player_stars.stars_3}}</td>
+                    <td style='{{Team.RecruitsSignedStyle2}}'>{{team.team_season.recruiting.signed_player_stars.stars_2}}</td>
+                    <td style='{{Team.RecruitsSignedStyle1}}'>{{team.team_season.recruiting.signed_player_stars.stars_1}}</td>
+                    <td>{{team.team_season.recruiting.signed_player_stars.total}}</td>
                   </tr>
                   {% endfor %}
                   <tfoot>

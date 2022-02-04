@@ -623,6 +623,14 @@ input[type=text], input[type=password] {
   text-align: center;
 }
 
+.width100p {
+  width: 100%;
+}
+
+.width90p {
+  width: 90%;
+}
+
 .width80 {
   width: 80%;
   text-align: center;
@@ -2255,4 +2263,51 @@ table tr td.padding-left-8 {
 .nowrap {
 
   white-space: nowrap;
+}
+
+
+.football-table-row:nth-child(odd) {
+  background-color: #efefef;
+}
+
+
+.football-table-row {
+  margin: 0px;
+  height: 100%;
+}
+
+.football-table-row div, .football-table-header .football-table-group th {
+  align-self: center;
+}
+
+.football-table-group {
+  height: 100%;
+}
+
+.football-table-column-headers th {
+  cursor: pointer;
+}
+
+
+.football-table-column-headers th.sort-desc {
+  -moz-box-shadow: inset 0 -3px 0px -1px white;
+  -webkit-box-shadow: inset 0 -3px 0px -1px white;
+  box-shadow: inset 0 -3px 0px -1px white;
+  -webkit-filter: brightness(90%);
+}
+
+.football-table-column-headers th.sort-asc {
+  -moz-box-shadow: inset 0 2px 0px 0px white;
+  -webkit-box-shadow: inset 0 2px 0px 0px white;
+  box-shadow: inset 0 2px 0px 0px white;
+  -webkit-filter: brightness(90%);
+}
+
+.football-table-column-headers > th:hover {
+  -webkit-filter: brightness(80%);
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -o-transition: all .5s ease;
+    -ms-transition: all .5s ease;
+    transition: all .5s ease;
 }

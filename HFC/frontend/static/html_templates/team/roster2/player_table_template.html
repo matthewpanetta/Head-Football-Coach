@@ -1,0 +1,125 @@
+<style>
+    .football-table-column-headers th {
+        background-color: #{{page.PrimaryColor}};
+    }
+
+</style>
+
+<div>
+    <div style='max-width: 100%; width:100%; overflow-x: scroll;'>
+        <div class='football-table-controls'>
+            <!-- <div>Teams</div>
+            <div>Positions</div>
+            <div>Class</div> -->
+        </div>
+        <table class='football-table-content font14' style='table-layout: fixed; max-width: 100%; width:100%; '>
+            <col style='width: 180px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+
+            <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
+                <tr class='football-table-column-groups' style='background-color: #{{page.SecondaryColor}}; height: 30px;'>
+                    <!-- BASELINE -->
+                    <th colspan='5' style='width: 420px;' class='center-text col-group'>Player</th>
+                
+                    <!-- PASSING -->
+                    <th colspan='6' style='width: 360px;' class='col-group'>Passing Stats</th>
+                    
+                    <!-- RUSHING -->
+                    <th colspan='5' style='width: 300px;' class='col-group'>Rushing Stats</th>
+
+                    <!-- RECEIVING -->
+                    <th colspan='5'  style='width: 300px;'>Receiving Stats</th>
+                </tr> 
+                <tr class='football-table-column-headers' style=' height: 30px; '>
+                    <!-- BASELINE -->
+                    <th style='width: 180px;' class='left-text padding-left-8' value-key='full_name' sort-order='sort-asc'>Name</th>
+                    <th style='width:  60px;' value-key='player_team_season.position_sort_order' sort-order='sort-asc'>Pos</th>
+                    <th style='width:  60px;' value-key='player_team_season.class_sort_order'>Class</th>
+                    <th style='width:  60px;' value-key='body.height_inches'>Ht</th>
+                    <th style='width:  60px;' class='col-group' value-key='body.weight'>Wt</th>
+                    
+                    <!-- PASSING -->
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.passing.yards'>Yards</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.passing.attempts'>Att</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.passing.completions'>Cmp</th>
+                    <th style='width:  60px;' value-key='player_team_season.passing_completion_percentage'>Cmp%</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.passing.tds'>TDs</th>
+                    <th style='width:  60px;' class='col-group' value-key='player_team_season.season_stats.passing.ints'>Ints</th>
+                    
+                    <!-- RUSHING -->
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.rushing.yards'>Yards</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.rushing.carries'>Car</th>
+                    <th style='width:  60px;' value-key='player_team_season.rushing_yards_per_carry'>YPC</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.rushing.broken_tackles'>Brk</th>
+                    <th style='width:  60px;' class='col-group' value-key='player_team_season.season_stats.rushing.tds'>TDs</th>
+                       
+                    <!-- RECEIVING -->
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.receiving.yards'>Yards</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.receiving.receptions'>Rec</th>
+                    <th style='width:  60px;' value-key='player_team_season.receiving_yards_per_catch'>YPC</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.receiving.targets'>Tgt</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.receiving.tds'>TDs</th>
+                </tr> 
+            </thead>
+            <tbody class='football-table-body' style=' min-height: 100%; width: 100%; max-width: 100%;'>
+                {% for player in players%}
+                <tr class='football-table-row center-text vertical-align-middle' style='height: 30px;'>
+                    <!-- BASELINE -->
+                    <td style='width: 180px;' class='left-text padding-left-8'>
+                        <a href="{{player.player_href}}">{{player.full_name}}</a>
+                      </td>
+                    <td style='width:  60px;'>{{player.position}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.class.class_name}}</td>
+                    <td style='width:  60px;'>{{player.body.height}}</td>
+                    <td style='width:  60px;' class='col-group'>{{player.body.weight}}</td>
+                    
+                    <!-- PASSING -->
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.passing.yards}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.passing.attempts}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.passing.completions}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.passing_completion_percentage}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.passing.tds}}</td>
+                    <td style='width:  60px;' class='col-group'>{{player.player_team_season.season_stats.passing.ints}}</td>
+                    
+                     <!-- RUSHING -->
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.yards}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.carries}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing_yards_per_carry}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.broken_tackles}}</td>
+                    <td style='width:  60px;' class='col-group'>{{player.player_team_season.season_stats.rushing.tds}}</td>
+                
+                      <!-- RECEIVING -->
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.yards}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.receptions}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving_yards_per_catch}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.targets}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.tds}}</td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
