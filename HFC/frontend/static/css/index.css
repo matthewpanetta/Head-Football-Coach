@@ -2266,7 +2266,7 @@ table tr td.padding-left-8 {
 }
 
 
-.football-table-row:nth-child(odd) {
+.football-table-row:nth-child(even) {
   background-color: #efefef;
 }
 
@@ -2274,10 +2274,13 @@ table tr td.padding-left-8 {
 .football-table-row {
   margin: 0px;
   height: 100%;
+  border-bottom: 1px solid #ddd;
+  
 }
 
-.football-table-row div, .football-table-header .football-table-group th {
+.football-table-row td, .football-table-header th {
   align-self: center;
+  padding: 10px;
 }
 
 .football-table-group {
@@ -2310,4 +2313,8 @@ table tr td.padding-left-8 {
     -o-transition: all .5s ease;
     -ms-transition: all .5s ease;
     transition: all .5s ease;
+}
+
+.football-table-row:hover {
+  background-color: #ddd;
 }

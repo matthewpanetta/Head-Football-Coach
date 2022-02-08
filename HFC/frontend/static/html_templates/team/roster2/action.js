@@ -43,7 +43,7 @@
       });
 
       const TeamHeaderLinks = await common.team_header_links({
-        path: 'Roster',
+        path: 'Roster2',
         season: common.params.season,
         db: db
       });
@@ -101,7 +101,7 @@
                             team_id:  team_id,
                             team: team,
                             players: players,
-                            all_teams: await common.all_teams(common, '/Roster/'),
+                            all_teams: await common.all_teams(common, '/Roster2/'),
                             teams: teams,
                           }
 
@@ -119,6 +119,30 @@
 
     }
 
+      const player_sorter = (common, players, sorted_columns) => {
+        players = players.map(p => Object.assign(p, {sort_value: common.get_from_dict(p, sort_column_obj.key)}))
+        for(player of players){
+            player.sort_vals = {};
+            for (sort_column_obj of sorted_columns ){
+              player.sort_vals[sort_column_obj.key] = common.get_from_dict(player, sort_column_obj.key);
+            }
+          }  
+
+
+        return players.sort(function(p_a, p_b) {
+          for (sort_column_obj of sorted_columns){
+            if (p_b.sort_vals[sort_column_obj.key] != p_a.sort_vals[sort_column_obj.key]){
+              if (sort_column_obj.sort_direction == 'sort-asc'){
+                return (p_b.sort_vals[sort_column_obj.key] < p_a.sort_vals[sort_column_obj.key]) ? 1 : -1;
+              }
+              else {
+                return (p_b.sort_vals[sort_column_obj.key] > p_a.sort_vals[sort_column_obj.key]) ? 1 : -1;
+              }
+            }
+          }
+          return 0;
+        });
+      }
 
         const GetPlayerStats = async (common) => {
 
@@ -133,34 +157,24 @@
           sorted_columns.push({key: 'player_id', sort_direction: 'sort-asc'});
 
           var players = common.render_content.players;
+          var players_by_player_id = index_group_sync(players, 'index', 'player_id');
 
-          for(player of players){
-            player.sort_vals = {};
-            for (sort_column_obj of sorted_columns ){
-              player.sort_vals[sort_column_obj.key] = common.get_from_dict(player, sort_column_obj.key);
-            }
-          }  
-          
-          players = players.sort(function(p_a, p_b) {
-            for (sort_column_obj of sorted_columns){
-              if (p_b.sort_vals[sort_column_obj.key] != p_a.sort_vals[sort_column_obj.key]){
-                if (sort_column_obj.sort_direction == 'sort-asc'){
-                  return (p_b.sort_vals[sort_column_obj.key] < p_a.sort_vals[sort_column_obj.key]) ? 1 : -1;
-                }
-                else {
-                  return (p_b.sort_vals[sort_column_obj.key] > p_a.sort_vals[sort_column_obj.key]) ? 1 : -1;
-                }
-              }
-            }
-            return 0;
-          });
-
+          players = players.sort((p_a, p_b) => p_a.player_id - p_b.player_id);
           
 
           var renderedHtml = await common.nunjucks_env.renderString(common.GetPlayerStats_html_text, {players:players, page:common.page})
 
           $('#player-stats-table-container').empty();
           $('#player-stats-table-container').append(renderedHtml);
+
+          let football_table_body = $('.football-table-body').eq(0);
+          let football_table_rows_map = {};
+          $('.football-table-row').each(function(ind, row){
+            
+            football_table_rows_map[$(row).attr('player_id')] = row;
+
+            console.log({row:row, id: $(row).attr('player_id'), val: football_table_rows_map[$(row).attr('player_id')]})
+          })
 
           let column_counter = 1;
           $('.football-table-column-headers th').each(function(){
@@ -182,22 +196,28 @@
             else if ($(e.target).hasClass('sort-asc')){
               target_new_class = 'sort-desc';
             }
-           
-            $('.football-table-column-headers th').removeClass('sort-desc');
-            $('.football-table-column-headers th').removeClass('sort-asc');
-            sorted_columns = [];
+
+            if (!(e.shiftKey)){
+              sorted_columns = [];
+              $('.football-table-column-headers th').removeClass('sort-desc');
+              $('.football-table-column-headers th').removeClass('sort-asc');
+            }
 
             let sort_direction = target_new_class;
 
             $(e.target).addClass(sort_direction);
             sorted_columns.push({key: $(e.target).attr('value-key'), sort_direction: sort_direction})
-            
+ 
 
-            
+            var sorted_players = player_sorter(common, players, sorted_columns);
 
-            common.sorted_columns = sorted_columns;
-            $('.football-table-column-headers th').off('click');
-            GetPlayerStats(common);
+            var player_rows = sorted_players.map(p => football_table_rows_map[p.player_id]);
+
+            console.log({player_rows:player_rows, e:e, index: $(this).index(), football_table_rows_map:football_table_rows_map, football_table_body:football_table_body, sorted_players:sorted_players})
+
+            for (var i = 0; i < player_rows.length; i++){football_table_body.append(player_rows[i])}
+
+           
           })
 
 
@@ -466,7 +486,7 @@
     $(document).ready(async function(){
       var startTime = performance.now()
 
-      const common = await common_functions('/World/:world_id/Team/:team_id/Roster/');
+      const common = await common_functions('/World/:world_id/Team/:team_id/Roster2/');
 
       await getHtml(common);
       await action(common);
