@@ -1,11 +1,14 @@
 {% for standing_team in conference_standings.conference_standings %}
-<tr class='{{standing_team.bold}}'>
-  <td style=' width: 10px; padding: 8px; border-left-color: #{{standing_team.team.team_color_primary_hex}}' >
+<tr class='center-text-row {{standing_team.bold}}'>
+  <td class=' white-text padding-left-8' style='background-color: #{{standing_team.team.team_color_primary_hex}};'>
+    {{standing_team.rankings.division_rank[0]}}
+  </td>
+  <td style=' width: 10px; padding: 8px; background-color: #{{standing_team.team.team_color_primary_hex}}' >
       <a href="{{standing_team.team.team_href}}">
-        <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
+        <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_100}}" />
       </a>
   </td>
-  <td>
+  <td class='left-text'>
     <a href="{{standing_team.team.team_href}}">
 
       <span  class='hide-small font10'>{{standing_team.national_rank_display}} </span>

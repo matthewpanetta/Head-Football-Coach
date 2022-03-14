@@ -1,22 +1,49 @@
-<div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
-  <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Teams</button>
-  <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
-    {% for team in all_teams %}
-    <a href="{{team.adjusted_team_href}}" class="w3-bar-item w3-button">
-      <img src="{{team.team_logo}}" class="small-logo" alt="">
-      {{team.full_name}}
-    </a>
-    {% endfor %}
+<div class="w3-dropdown-hover w3-right" style="margin-right: 20px" id='nav-team-dropdown-container'>
+  <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-team-dropdown" >
+    Teams
+  </button>
+
+  <div class="w3-dropdown-content w3-card w3-animate-opacity"  style="right: 20px; max-height: 70vh;" >
+    <div>
+      <span>Select a team to navigate to</span>
+      
+    </div>
+    <div style='display: flex;'>
+      <div class='w3-bar-block ' style='border-right: 1px solid grey; max-height: 65vh; overflow-y: scroll;'>
+        <button href="" class="conference-button w3-bar-item w3-button" conference-button-val='All'>
+          <img src="/static/img/TeamLogos/ncaa-text.png" alt="" class="small-logo">
+          <span class='padding-left-8'>All</span>
+        </button>
+        {% for conference in all_teams.conferences%}
+        <button href="" class="conference-button w3-bar-item w3-button" conference-button-val='{{conference.conference_id}}'>
+          <img src="{{conference.conference_logo_url}}" class="small-logo" alt="">
+          <span class='padding-left-8'>{{conference.conference_abbreviation}}</span>
+        </button>
+        {% endfor %}
+      </div>
+      <div class='w3-bar-block ' style='max-height: 65vh; overflow-y: scroll'>
+        {% for team in all_teams.all_teams %}
+        <a href="{{team.adjusted_team_href}}" class="team-link w3-bar-item w3-button" conference-button-val='{{team.conference.conference_id}}'>
+          <img src="{{team.team_logo}}" class="small-logo" alt="" />
+          <span class='padding-left-8'>{{team.full_name}}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    
+    
   </div>
 </div>
 
 {% if page.TeamHeaderLinks.seasons|length > 1 %}
-<div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
-  <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Seasons</button>
-  <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
-    {% for season in page.TeamHeaderLinks.seasons%}
-    {{season|log}}
-    <a href="{{season.season_href}}" class="w3-bar-item w3-button">{{season.season}}</a>
+<div class="w3-dropdown-click w3-right" style="margin-right: 20px">
+  <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-season-dropdown" >
+    Seasons
+  </button>
+  <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right: 20px; max-height: 70vh; overflow-y: scroll" >
+    {% for season in page.TeamHeaderLinks.seasons%} {{season|log}}
+    <a href="{{season.season_href}}" class="w3-bar-item w3-button" >{{season.season}}</a>
     {% endfor %}
   </div>
 </div>

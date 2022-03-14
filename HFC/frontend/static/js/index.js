@@ -1577,10 +1577,10 @@ class player_team_season {
 		}
 
 		get average_weighted_game_score(){
-			if (this.season_stats.games.games_played == 0){
-	      return 0
-	    }
-	    return round_decimal(this.season_stats.games.weighted_game_score / this.season_stats.games.games_played,1);
+			if (!this.season_stats.games || this.season_stats.games.games_played == 0){
+				return 0
+			}
+	    	return round_decimal(this.season_stats.games.weighted_game_score / this.season_stats.games.games_played,1);
 		}
 
 		get player_award_rating(){
@@ -1632,6 +1632,7 @@ const team_header_links = async (params) => {
   const all_paths = [
             {'href_extension': '', 'Display': 'Overview'},
             {'href_extension': 'Roster', 'Display': 'Roster'},
+            {'href_extension': 'Roster2', 'Display': 'Roster2'},
             {'href_extension': 'DepthChart', 'Display': 'Depth Chart'},
             {'href_extension': 'Gameplan', 'Display': 'Gameplan'},
             {'href_extension': 'Schedule', 'Display': 'Schedule'},
@@ -3627,10 +3628,16 @@ const all_teams = async (common, link_suffix) => {
     if (team_a.school_name > team_b.school_name) return 1;
     return 0;
   });
+  team_list = team_list.map(t => Object.assign(t, {conference_id: t.conference.conference_id}));
 
-	team_list = team_list.map(t => Object.assign(t, {adjusted_team_href: (t.team_href + link_suffix)}))
-  return team_list;
+  var conferences = await db.conference.toArray();
+  var conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
 
+  team_list = nest_children(team_list, conferences_by_conference_id, 'conference_id', 'conference');
+  team_list = team_list.map(t => Object.assign(t, {adjusted_team_href: (t.team_href + link_suffix)}))
+
+  var team_return_obj = {all_teams: team_list, conferences:conferences}
+  return team_return_obj;
 }
 
 const all_seasons = async (common, link) => {
@@ -6317,6 +6324,19 @@ const add_listeners = async(common) => {
 
     $(NewTabContent).css('display', 'block');
   });
+
+
+  $('#nav-team-dropdown-container .conference-button').on('click', function(event, target){
+	var conference_selected = $(event.currentTarget).attr('conference-button-val');
+	console.log({conference_selected:conference_selected, event:event, target:event.currentTarget, teams: $('#nav-team-dropdown-container .team-link[conference-button-val="'+conference_selected+'"]')});
+	if (conference_selected == 'All'){
+		$('#nav-team-dropdown-container .team-link').removeClass('w3-hide');
+	}
+	else {
+		$('#nav-team-dropdown-container .team-link').addClass('w3-hide');
+		$('#nav-team-dropdown-container .team-link[conference-button-val="'+conference_selected+'"]').removeClass('w3-hide');
+	}
+  })
 
 }
 

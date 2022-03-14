@@ -144,6 +144,25 @@
         });
       }
 
+      const add_table_listeners = async (common) => {
+        console.log({f: $('.football-table-filter')})
+        $('.football-table-filter').on('click', function(event, target){
+          console.log({event:event, target:target})
+        })
+
+        $('.football-table-filter-button').on('click', function(){
+          console.log('clicked', this, $(this).next())
+          let table_filter_content = $(this).next();
+          $(table_filter_content).toggleClass('hidden')
+
+        })
+
+        $('.football-table-filter-option').on('click', function(){
+          $(this).toggleClass('selected')
+        })
+
+      }
+
         const GetPlayerStats = async (common) => {
 
           var url = '/static/html_templates/team/roster2/player_table_template.html'
@@ -173,7 +192,7 @@
             
             football_table_rows_map[$(row).attr('player_id')] = row;
 
-            console.log({row:row, id: $(row).attr('player_id'), val: football_table_rows_map[$(row).attr('player_id')]})
+            //console.log({row:row, id: $(row).attr('player_id'), val: football_table_rows_map[$(row).attr('player_id')]})
           })
 
           let column_counter = 1;
@@ -213,7 +232,7 @@
 
             var player_rows = sorted_players.map(p => football_table_rows_map[p.player_id]);
 
-            console.log({player_rows:player_rows, e:e, index: $(this).index(), football_table_rows_map:football_table_rows_map, football_table_body:football_table_body, sorted_players:sorted_players})
+            //console.log({player_rows:player_rows, e:e, index: $(this).index(), football_table_rows_map:football_table_rows_map, football_table_body:football_table_body, sorted_players:sorted_players})
 
             for (var i = 0; i < player_rows.length; i++){football_table_body.append(player_rows[i])}
 
@@ -222,7 +241,7 @@
 
 
 
-
+          add_table_listeners(common);
 
           //   var PositionGroupMap = {
           //       'QB': 'Offense',
@@ -247,6 +266,7 @@
     const action = async (common) => {
 
       GetPlayerStats(common);
+      
     }
 
 

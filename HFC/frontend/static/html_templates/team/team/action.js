@@ -410,20 +410,6 @@ const draw_faces = async (common) => {
 
 const action = async (common) => {
 
-  const query_to_dict = common.query_to_dict;
-
-  var DataPassthruHolder = $('#PageDataPassthru')[0];
-  var WorldID = parseInt($(DataPassthruHolder).attr('WorldID'));
-  var TeamID  = parseInt($(DataPassthruHolder).attr('TeamID'));
-  var TeamJerseyStyle  = $(DataPassthruHolder).attr('TeamJerseyStyle');
-  var TeamJerseyInvert  = $(DataPassthruHolder).attr('TeamJerseyInvert');
-  var TeamColor_Primary_HEX  = $(DataPassthruHolder).attr('PrimaryColor');
-  var TeamColor_Secondary_HEX  = $(DataPassthruHolder).attr('SecondaryJerseyColor');
-  var TeamName = '';
-  var CoachOrg = '';
-
-  var overrides = {'teamColors': ['#'+TeamColor_Primary_HEX, '#'+TeamColor_Secondary_HEX , '#FFF']};
-
   AddScheduleListeners();
   AddBoxScoreListeners();
 
@@ -474,27 +460,27 @@ const action = async (common) => {
 
         const team_stats = [
           {display: 'Points Per Game', stats: {
-            for: {stat: 'points_per_game', sort: 'desc'},
-            against: {stat: 'points_allowed_per_game', sort: 'asc'},
-            diff: {stat: 'point_differential_per_game', sort: 'desc'}
+            OFFENSE: {stat: 'points_per_game', sort: 'desc'},
+            DEFENSE: {stat: 'points_allowed_per_game', sort: 'asc'},
+            DIFF: {stat: 'point_differential_per_game', sort: 'desc'}
             },
           },
           {display: 'Yards Per Game', stats: {
-            for: {stat: 'yards_per_game', sort: 'desc'},
-            against: {stat: 'yards_allowed_per_game', sort: 'asc'},
-            diff: {stat: 'yards_per_game_diff', sort: 'desc'}
+            OFFENSE: {stat: 'yards_per_game', sort: 'desc'},
+            DEFENSE: {stat: 'yards_allowed_per_game', sort: 'asc'},
+            DIFF: {stat: 'yards_per_game_diff', sort: 'desc'}
             },
           },
           {display: 'Third Down Efficiency', stats: {
-            for: {stat: 'third_down_conversion_percentage', sort: 'desc'},
-            against: {stat: 'defensive_third_down_conversion_percentage', sort: 'asc'},
-            diff: {stat: 'third_down_conversion_percentage_diff', sort: 'desc'}
+            OFFENSE: {stat: 'third_down_conversion_percentage', sort: 'desc'},
+            DEFENSE: {stat: 'defensive_third_down_conversion_percentage', sort: 'asc'},
+            DIFF: {stat: 'third_down_conversion_percentage_diff', sort: 'desc'}
             },
           },
           {display: 'Takeaways', stats: {
-            for: {stat: 'takeaways', sort: 'desc'},
-            against: {stat: 'turnovers', sort: 'asc'},
-            diff: {stat: 'turnover_diff', sort: 'desc'}
+            "Take aways": {stat: 'takeaways', sort: 'desc'},
+            "Give aways": {stat: 'turnovers', sort: 'asc'},
+            "+/-": {stat: 'turnover_diff', sort: 'desc'}
             },
           },
         ]
@@ -536,13 +522,11 @@ const action = async (common) => {
           }
         }
 
-        if (team_leaders.length > 0){
-          chart(conference_standings.conference_standings, common);
-        }
-
         var url = '/static/html_templates/team/team/conference_standings_tbody_template.html'
         var html = await fetch(url);
         html = await html.text();
+
+        console.log({conference_standings:conference_standings})
 
         var renderedHtml = await common.nunjucks_env.renderString(html, {conference_standings:conference_standings})
         console.log({renderedHtml:renderedHtml})
@@ -572,6 +556,13 @@ const action = async (common) => {
         $('#team_stats').append(renderedHtml);
 
         await draw_faces(common);
+
+
+        if (team_leaders.length > 0){
+          conference_bar_chart(conference_standings.conference_standings, common);
+          rankings_trend_chart(team, common)
+        }
+        
 
     })
 
@@ -627,8 +618,96 @@ const action = async (common) => {
     })
 }
 
+function rankings_trend_chart(team, common){
+  console.log({team:team, common:common});
 
-function chart(raw_data, common) {
+  let rank_trends = [];
+  let rank_count = team.team_season.rankings.division_rank.length
+
+  for (var week_counter = 1; week_counter < rank_count; week_counter++){
+    rank_trends.push({
+      week: week_counter,
+      ranks: {
+        conference_rank: team.team_season.rankings.division_rank[rank_count - week_counter],
+        national_rank: team.team_season.rankings.national_rank[rank_count - week_counter],
+      }
+    })
+  }
+
+  var team_ranking_trend_chart_div = document.getElementById("team_ranking_trend_chart");
+
+  console.log({rank_trends:rank_trends, team_ranking_trend_chart_div:team_ranking_trend_chart_div})
+
+
+  var height =  300
+    , width = team_ranking_trend_chart_div.clientWidth * .75
+    , margin = ({
+      top: 20,
+      right: 20,
+      bottom: 30,
+      left: 50
+  });
+
+  // append the svg object to the body of the page
+  var svg = d3.select(team_ranking_trend_chart_div)
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scaleLinear()
+      .domain(d3.extent(rank_trends, function(d) { return d.week; }))
+      .range([ 0, width ]);
+
+    const xAxisTicks = x.ticks()
+      .filter(tick => Number.isInteger(tick));
+
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+      
+    // Add Y axis
+    var y_left_conference = d3.scaleLinear()
+      .domain([Math.max(10,d3.max(rank_trends, function(d) { return d.ranks.conference_rank; })), 1])
+      .range([ height, 0 ]);
+    svg.append("g")
+      .call(d3.axisLeft(y_left_conference));
+
+    // Add Y axis
+    var y_right_national = d3.scaleLinear()
+      .domain([ Math.max(25, d3.max(rank_trends, function(d) { return d.ranks.national_rank; })), 1])
+      .range([ height, 0 ]);
+    svg.append("g")
+      .attr("transform", "translate(" + width + " ,0)")	
+      .call(d3.axisRight(y_right_national));
+
+    // Add the line
+    svg.append("path")
+      .datum(rank_trends)
+      .attr("fill", "none")
+      .attr("stroke", '#'+common.page.PrimaryColor)
+      .attr("stroke-width", 3.5)
+      .attr("d", d3.line()
+        .x(function(d) { return x(d.week) })
+        .y(function(d) { return y_left_conference(d.ranks.conference_rank) })
+        )
+
+    // Add the line
+    svg.append("path")
+      .datum(rank_trends)
+      .attr("fill", "none")
+      .attr("stroke", '#'+common.page.SecondaryColor)
+      .attr("stroke-width", 3.5)
+      .attr("d", d3.line()
+        .x(function(d) { return x(d.week) })
+        .y(function(d) { return y_right_national(d.ranks.national_rank) })
+        )
+  }
+
+
+function conference_bar_chart(raw_data, common) {
 
   console.log(common.render_content)
 
@@ -706,7 +785,7 @@ function chart(raw_data, common) {
             }
         }
 
-        if (selected_field === "opponent_passing_yards" || selected_field === "opponent_rushing_yards" || selected_field === "era" || selected_field === "whip" || selected_field === "personal_fouls" || selected_field === "goals_against_per_game" || selected_field === "shots_on_goal_against_per_game" || selected_field === "penalty_minutes_per_game" || selected_field === "turnovers" || selected_field === "offsides" || selected_field === "goalkeeper_goals_against" || selected_field === "k" || selected_field === "errors" || selected_field === "losses" || selected_field === "pitching_bb" || selected_field === "passing_interceptions") {
+        if (selected_field === "opponent_passing_yards" || selected_field === "opponent_rushing_yards") {
             data.sort(function(a, b) {
                     return (a.value > b.value) ? 1 : -1
                 })
@@ -832,7 +911,7 @@ function chart(raw_data, common) {
     var image_width = 25;
     var minimumY, maximumY, yMinScale, yMaxScale, x, y, xAxis, yAxis, hover_line, highlight_line, highlight_value, hover_value, player_name, chart_lines;
 
-    function initialize_chart() {
+    function initialize_conference_bar_chart() {
         minimumY = d3.min(data, function(d) {
             return d.value
         }),
@@ -949,7 +1028,7 @@ function chart(raw_data, common) {
 
     }
 
-    function update_chart() {
+    function update_conference_bar_chart() {
 
 
         height = 300;
@@ -1013,9 +1092,9 @@ function chart(raw_data, common) {
 
     }
 
-    initialize_chart();
-    update_chart();
-    window.addEventListener("resize", update_chart);
+    initialize_conference_bar_chart();
+    update_conference_bar_chart();
+    window.addEventListener("resize", update_conference_bar_chart);
 
     function highlight_bar(highlight) {
         return function() {
@@ -1086,7 +1165,7 @@ function chart(raw_data, common) {
         d3.select("#rank-" + highlighted_rank).attr("opacity", 1);
     }
 
-    function new_chart(selected_field) {
+    function new_conference_bar_chart(selected_field) {
       //console.log(selected_field)
         current_stat = selected_field;
         setup_data(selected_field);
@@ -1104,15 +1183,15 @@ function chart(raw_data, common) {
 
         d3.selectAll(".y .tick").remove()
 
-        initialize_chart();
-        update_chart();
+        initialize_conference_bar_chart();
+        update_conference_bar_chart();
         d3.select("#rank-1").attr("opacity", 1);
         d3.select("#rank-" + data.length).attr("opacity", 1);
         d3.select("#rank-" + highlighted_rank).attr("opacity", 1);
     }
 
     function build_selector(columns) {
-        var html = "<select id='stat_select' onChange='new_chart(this.value)' class='calibre w3-select font-16 form-control select-container'>";
+        var html = "<select id='stat_select' onChange='new_conference_bar_chart(this.value)' class='calibre w3-select font-16 form-control select-container'>";
 
         for (var i = 0; i < columns.length; i++) {
             var col = columns[i];
@@ -1131,14 +1210,14 @@ function chart(raw_data, common) {
         document.getElementById("selector").innerHTML = html;
 
         $('#stat_select').on('change', function(a,b,c){
-          new_chart(this.value)
+          new_conference_bar_chart(this.value)
         });
     }
 
     function switch_teams(id) {
         team_id = id;
         var c_field = document.getElementById("stat_select").value;
-        new_chart(c_field);
+        new_conference_bar_chart(c_field);
     }
 
     // Utilites

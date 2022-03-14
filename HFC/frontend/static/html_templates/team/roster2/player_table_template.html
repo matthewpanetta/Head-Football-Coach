@@ -5,13 +5,37 @@
 
 </style>
 
-<div>
+<div class='w3-card w3-margin-bottom football-table-filter-bar'>
+    <div class="w3-dropdown-hover football-table-filter">
+        <button class="w3-button football-table-filter-button">Positions</button>
+        <div class="w3-dropdown-content w3-card w3-animate-opacity"  style="max-height: 70vh;" >
+            <div>
+              <button>All</button>
+              <button>None</button>
+            </div>
+              <div class='w3-bar-block ' style='border-right: 1px solid grey; max-height: 65vh; overflow-y: scroll;'>
+                <button href="" class="football-table-filter-option conference-button w3-bar-item w3-button" filter-button-type='position' filter-button-val='All'>
+                  <span class=''>All</span>
+                </button>
+                <button href="" class="football-table-filter-option conference-button w3-bar-item w3-button" filter-button-val='Offense'>
+                  <span class=''>Offense</span>
+                </button>
+                <button href="" class="football-table-filter-option conference-button w3-bar-item w3-button" style='margin-left: 20px;' filter-button-val='Defense'>
+                  <span class=''>QB</span>
+                </button>
+                <button href="" class="football-table-filter-option conference-button w3-bar-item w3-button" filter-button-val='Defense'>
+                  <span class=''>Defense</span>
+                </button>
+                <button href="" class="football-table-filter-option conference-button w3-bar-item w3-button" filter-button-val='Special Teams'>
+                  <span class=''>Special Teams</span>
+                </button>
+              </div>
+          </div>
+      </div>
+</div>
+
+<div class='w3-card '>
     <div style='max-width: 100%; width:100%; overflow-x: scroll;'>
-        <div class='football-table-controls'>
-            <!-- <div>Teams</div>
-            <div>Positions</div>
-            <div>Class</div> -->
-        </div>
         <table class='football-table-content font14' style='table-layout: fixed; max-width: 100%; width:100%; '>
             <!-- BASELINE -->
             <col style='width: 180px;'>
@@ -69,27 +93,27 @@
             <col style='width: 60px;'>
 
             <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
-                <tr class='football-table-column-groups' style='background-color: #{{page.SecondaryColor}}; height: 30px;'>
+                <tr class='football-table-column-groups' style='background-color: #{{page.SecondaryColor}}; border-top: 3px solid #{{page.PrimaryColor}}; height: 30px;'>
                     <!-- BASELINE -->
-                    <th colspan='5' style='width: 420px;' football-table-group='baseline' class='center-text col-group'>Player</th>
+                    <th colspan='5' style='width: 420px;' football-table-group='baseline' class=' center-text col-group'>Player</th>
                 
                     <!-- PASSING -->
-                    <th colspan='6' style='width: 360px;' football-table-group='passing stats' class='col-group'>Passing Stats</th>
+                    <th colspan='6' style='width: 360px;' football-table-group='passing stats' class=' col-group'>Passing Stats</th>
                     
                     <!-- RUSHING -->
-                    <th colspan='5' style='width: 300px;' class='col-group'>Rushing Stats</th>
+                    <th colspan='5' style='width: 300px;' class=' col-group'>Rushing Stats</th>
 
                     <!-- RECEIVING -->
-                    <th colspan='5'  style='width: 300px;' class='col-group'>Receiving Stats</th>
+                    <th colspan='5'  style='width: 300px;' class=' col-group'>Receiving Stats</th>
 
                     <!-- BLOCKING STATS -->
-                    <th colspan='2'  style='width: 120px;' class='col-group'>Blocking Stats</th>
+                    <th colspan='2'  style='width: 120px;' class=' col-group'>Blocking Stats</th>
 
                     <!-- DEFENSE STATS -->
-                    <th colspan='7'  style='width: 420px;'>Defensive Stats</th>
+                    <th colspan='7'  style='width: 420px;' class=' '>Defensive Stats</th>
 
                     <!-- DEFENSE STATS -->
-                    <th colspan='4'  style='width: 240px;'>Kicking Stats</th>
+                    <th colspan='4'  style='width: 240px;' class=' '>Kicking Stats</th>
 
 
                 </tr> 

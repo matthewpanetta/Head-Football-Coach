@@ -147,7 +147,7 @@
         //MID SIZE
         //const conferences_to_include = ['Big 12', 'American Athletic Conference','Big Ten','Southeastern Conference','FBS Independents','Mid-American Conference']
         //SMALL SIZE
-         var conferences_to_include = ['American Athletic Conference']
+         var conferences_to_include = ['American Athletic Conference', 'Big 12']
           conferences_to_include = shuffle(conferences_to_include)
           var num_conferences_to_include = 4
           conferences_to_include = conferences_to_include.slice(0, num_conferences_to_include)

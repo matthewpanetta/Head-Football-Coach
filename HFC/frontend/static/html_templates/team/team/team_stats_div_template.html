@@ -11,51 +11,23 @@
           <th class='center-text' colspan="3">{{stat_detail.display}}</th>
         </tr>
         <tr class='center-text-row'>
+          {% for stat_side, stat_val in stat_detail.stats%}
           <td>
             <div class="">
               <div class="font10">
-                FOR
+                {{stat_side}}
               </div>
               <div class="font16">
-                {{stat_detail.stats['for'].team_value}}
+                {{stat_detail.stats[stat_side].team_value}}
               </div>
               <div class="margin-8">
-                <span class='tiers-7 {{stat_detail.stats["for"].tier}}' style='border-radius: 20px; padding: 5px;'  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.OffenseRank_Tier}} - {{TeamStat.OffenseRank}} out of {{TotalTeamCount}} teams</div>">
-                  {{stat_detail.stats['for'].team_rank|ordinal}}
+                <span class='tiers-7 {{stat_detail.stats[stat_side].tier}}' style='border-radius: 20px; padding: 5px;'  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.OffenseRank_Tier}} - {{TeamStat.OffenseRank}} out of {{TotalTeamCount}} teams</div>">
+                  {{stat_detail.stats[stat_side].team_rank|ordinal}}
                 </span>
               </div>
             </div>
           </td>
-          <td>
-            <div class="">
-              <div class="font10">
-                AGAINST
-              </div>
-              <div class="font16">
-                {{stat_detail.stats['against'].team_value}}
-              </div>
-              <div class="margin-8">
-                <span class='tiers-7 {{stat_detail.stats["against"].tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.DefenseRank_Tier}} - {{TeamStat.DefenseRank}} out of {{TotalTeamCount}} teams</div>">
-                  {{stat_detail.stats['against'].team_rank|ordinal}}
-                </span>
-              </div>
-            </div>
-          </td>
-          <td>
-            <div class="">
-              <div class="font10">
-                DIFF
-              </div>
-              <div class="font16">
-                {{stat_detail.stats['diff'].team_value}}
-              </div>
-              <div class="margin-8">
-                <span class='tiers-7 {{stat_detail.stats["diff"].tier}}' style='border-radius: 20px; padding: 5px; '  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.MarginRank_Tier}} - {{TeamStat.MarginRank}} out of {{TotalTeamCount}} teams</div>">
-                  {{stat_detail.stats['diff'].team_rank|ordinal}}
-                </span>
-              </div>
-            </div>
-          </td>
+          {% endfor %}
         </tr>
         {% endfor %}
       </table>
