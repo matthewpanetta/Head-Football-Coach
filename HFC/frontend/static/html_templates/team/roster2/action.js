@@ -36,6 +36,23 @@
             'P': '16',
           };
 
+          var position_group_map = {
+              'QB': 'Offense',
+              'RB': 'Offense',
+              'FB': 'Offense',
+              'WR': 'Offense',
+              'TE': 'Offense',
+              'OT': 'Offense',
+              'IOL': 'Offense',
+              'EDGE': 'Defense',
+              'DL': 'Defense',
+              'LB': 'Defense',
+              'CB': 'Defense',
+              'S': 'Defense',
+              'K': 'Special Teams',
+              'P': 'Special Teams',
+            };
+
       const NavBarLinks = await common.nav_bar_links({
         path: 'Roster',
         group_name: 'Team',
@@ -78,6 +95,9 @@
 
       const player_team_season_games = await query_to_dict(await db.player_team_game.where({player_team_season_id: player_team_season_ids}).toArray(), 'many_to_one', 'player_team_season_id' );
 
+
+      
+
       var player_counter = 0;
       $.each(player_team_seasons, function(ind,player_team_season){
         team_season.team = team;
@@ -86,6 +106,7 @@
 
         player_team_season.class_sort_order = class_sort_order_map[player_team_season.class.class_name]
         player_team_season.position_sort_order = position_sort_order_map[player_team_season.position]
+        player_team_season.position_group = position_group_map[player_team_season.position]
 
         players[player_counter].player_team_season = player_team_season;
 
@@ -93,8 +114,47 @@
 
       });
 
+      let classes = ['ALL', 'SR', 'JR', 'SO', 'FR'];
+      let position_groups = ['ALL', 'OFF', 'DEF', 'ST' ]
 
-      common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
+      let roster_summary = {}
+      for (player_class of classes ){
+        roster_summary[player_class] = {}
+        for (position_group of position_groups){
+          roster_summary[player_class][position_group] = {
+            'players': player_team_seasons.filter(pts => (pts.class.class_name == player_class || player_class == 'ALL') && (pts.position_group == position_group || position_group == 'ALL')).length,
+            'starters': 0
+          }
+          console.log({player_team_seasons:player_team_seasons, player_class:player_class, position_group:position_group, summary: roster_summary[player_class][position_group]})
+        }
+      }
+
+      var table_filters = {
+        'position': {
+          'player_count': 0,'display': 'Position', 'raw_options': ['QB', 'RB', 'FB', 'WR', 'TE', 'OT', 'IOL', 'DL', 'EDGE', 'LB', "CB", 'S', 'K', 'P']
+        },
+        'position_group': {
+          'player_count': 0, 'display': 'Position Group', 'raw_options': ['Offense', 'Defense', 'Special Teams']
+        },
+        'class.class_name': {
+          'player_count': 0,'display': 'Class', 'raw_options': ['FR', 'SO', 'JR', 'SR']
+        }
+      }
+
+      for (table_filter_key in table_filters){
+        table_filters[table_filter_key].options = [];
+        for (table_filter_option of table_filters[table_filter_key].raw_options){
+          console.log({pts: player_team_seasons, table_filter_option:table_filter_option, table_filter_key:table_filter_key, g:get(player_team_seasons[0], table_filter_key)});
+          var player_count =  player_team_seasons.filter(pts => get(pts, table_filter_key) == table_filter_option).length;
+          table_filters[table_filter_key].player_count += player_count
+          table_filters[table_filter_key].options.push({
+            display: table_filter_option, player_count:player_count
+          })
+        }
+      }
+
+
+      common.page = {table_filters: table_filters, PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
                             page:     common.page,
                             world_id: common.params['world_id'],
@@ -103,6 +163,7 @@
                             players: players,
                             all_teams: await common.all_teams(common, '/Roster2/'),
                             teams: teams,
+                            roster_summary:roster_summary,
                           }
 
       common.render_content = render_content;
@@ -116,6 +177,13 @@
       var renderedHtml = await common.nunjucks_env.renderString(html, render_content)
 
       $('#body').html(renderedHtml)
+
+
+      var filter_url = '/static/html_templates/team/roster2/player_table_filter_template.html'
+      var html = await fetch(filter_url);
+      html = await html.text();
+      var renderedHtml = await common.nunjucks_env.renderString(html, render_content)
+      $('#player-stats-table-filter').html(renderedHtml)
 
     }
 
@@ -144,7 +212,37 @@
         });
       }
 
-      const add_table_listeners = async (common) => {
+      const find_filtered_columns = (clicked_button) => {
+        var filtered_columns = [];
+        $('#player-stats-table-filter .football-table-filter-row').each(function(){
+          var all_named_button = $(this).find('.football-table-filter-option[filter_value="All"]').first()
+
+          if ($(clicked_button).is(all_named_button)){
+            $(this).find('.football-table-filter-option.selected:not([filter_value="All"])').toggleClass('selected')
+          }
+
+          var filter_option = $(this).attr('filter_option');
+          var all_children = $(this).find('.football-table-filter-option:not([filter_value="All"])').toArray()
+          var selected_options = $(this).find('.football-table-filter-option.selected:not([filter_value="All"])').toArray()
+
+          if (all_children.length != selected_options.length && selected_options.length > 0){
+            var values = selected_options.map(so =>  $(so).attr('filter_value'));
+            console.log({'pushing': {field:filter_option, values:values}})
+            filtered_columns.push({field:filter_option, values:values})
+
+            $(this).find('.football-table-filter-option[filter_value="All"]').removeClass('selected')
+
+          }
+          else {
+            $(this).find('.football-table-filter-option[filter_value="All"]').addClass('selected')
+          }
+        });
+
+        return filtered_columns;
+
+      }
+
+      const add_filter_listeners = async (common) => {
         console.log({f: $('.football-table-filter')})
         $('.football-table-filter').on('click', function(event, target){
           console.log({event:event, target:target})
@@ -154,11 +252,46 @@
           console.log('clicked', this, $(this).next())
           let table_filter_content = $(this).next();
           $(table_filter_content).toggleClass('hidden')
-
         })
 
         $('.football-table-filter-option').on('click', function(){
+          var clicked_button = $(this);
           $(this).toggleClass('selected')
+          console.log({clicked_button:clicked_button, table_filters: common.page.table_filters})
+          common.filtered_columns = find_filtered_columns(clicked_button);
+          console.log({filtered_columns: common.filtered_columns})
+          GetPlayerStats(common)
+        })
+      }
+
+       const add_table_listeners = async (common) => {
+        
+        
+
+        $('.football-table-column-headers th').on('click', function(e){
+          let target_new_class = $(e.target).attr('sort-order') || 'sort-desc';
+          if ($(e.target).hasClass('sort-desc')){
+            target_new_class = 'sort-asc';
+          }
+          else if ($(e.target).hasClass('sort-asc')){
+            target_new_class = 'sort-desc';
+          }
+
+          if (!(e.shiftKey)){
+            sorted_columns = [];
+            $('.football-table-column-headers th').removeClass('sort-desc');
+            $('.football-table-column-headers th').removeClass('sort-asc');
+          }
+
+          let sort_direction = target_new_class;
+
+          $(e.target).addClass(sort_direction);
+          sorted_columns.push({key: $(e.target).attr('value-key'), sort_direction: sort_direction})
+
+          var sorted_players = player_sorter(common, players, sorted_columns);
+          var player_rows = sorted_players.map(p => football_table_rows_map[p.player_id]);
+
+          for (var i = 0; i < player_rows.length; i++){football_table_body.append(player_rows[i])}
         })
 
       }
@@ -172,16 +305,18 @@
           }
 
           var sorted_columns = common.sorted_columns || [];
+          var filtered_columns = common.filtered_columns || [];
 
           sorted_columns.push({key: 'player_id', sort_direction: 'sort-asc'});
 
           var players = common.render_content.players;
-          var players_by_player_id = index_group_sync(players, 'index', 'player_id');
-
           players = players.sort((p_a, p_b) => p_a.player_id - p_b.player_id);
-          
 
-          var renderedHtml = await common.nunjucks_env.renderString(common.GetPlayerStats_html_text, {players:players, page:common.page})
+          for (filtered_column of filtered_columns){
+            players = players.filter(p => filtered_column.values.includes(get(p.player_team_season, filtered_column.field) ) );
+          }
+          
+          var renderedHtml = await common.nunjucks_env.renderString(common.GetPlayerStats_html_text, { players:players, page:common.page})
 
           $('#player-stats-table-container').empty();
           $('#player-stats-table-container').append(renderedHtml);
@@ -189,10 +324,7 @@
           let football_table_body = $('.football-table-body').eq(0);
           let football_table_rows_map = {};
           $('.football-table-row').each(function(ind, row){
-            
             football_table_rows_map[$(row).attr('player_id')] = row;
-
-            //console.log({row:row, id: $(row).attr('player_id'), val: football_table_rows_map[$(row).attr('player_id')]})
           })
 
           let column_counter = 1;
@@ -207,299 +339,15 @@
             column_counter +=1;
           })
 
-          $('.football-table-column-headers th').on('click', function(e){
-            let target_new_class = $(e.target).attr('sort-order') || 'sort-desc';
-            if ($(e.target).hasClass('sort-desc')){
-              target_new_class = 'sort-asc';
-            }
-            else if ($(e.target).hasClass('sort-asc')){
-              target_new_class = 'sort-desc';
-            }
-
-            if (!(e.shiftKey)){
-              sorted_columns = [];
-              $('.football-table-column-headers th').removeClass('sort-desc');
-              $('.football-table-column-headers th').removeClass('sort-asc');
-            }
-
-            let sort_direction = target_new_class;
-
-            $(e.target).addClass(sort_direction);
-            sorted_columns.push({key: $(e.target).attr('value-key'), sort_direction: sort_direction})
- 
-
-            var sorted_players = player_sorter(common, players, sorted_columns);
-
-            var player_rows = sorted_players.map(p => football_table_rows_map[p.player_id]);
-
-            //console.log({player_rows:player_rows, e:e, index: $(this).index(), football_table_rows_map:football_table_rows_map, football_table_body:football_table_body, sorted_players:sorted_players})
-
-            for (var i = 0; i < player_rows.length; i++){football_table_body.append(player_rows[i])}
-
-           
-          })
-
-
-
           add_table_listeners(common);
-
-          //   var PositionGroupMap = {
-          //       'QB': 'Offense',
-          //       'RB': 'Offense',
-          //       'FB': 'Offense',
-          //       'WR': 'Offense',
-          //       'TE': 'Offense',
-          //       'OT': 'Offense',
-          //       'IOL': 'Offense',
-          //       'EDGE': 'Defense',
-          //       'DL': 'Defense',
-          //       'LB': 'Defense',
-          //       'CB': 'Defense',
-          //       'S': 'Defense',
-          //       'K': 'Special Teams',
-          //       'P': 'Special Teams',
-          //   };
-
 
         }
 
     const action = async (common) => {
 
       GetPlayerStats(common);
+      add_filter_listeners(common)
       
-    }
-
-
-    const DrawPlayerInfo = (data, WorldID, PlayerID) => {
-      var div = $(`
-        <div class='w3-row-padding' style='text-align: initial;' id='playerinfo-`+PlayerID+`'>
-          <div class='w3-col s3'>
-            <img class='playerTeamLogo' src-field='playerteamseason__TeamSeasonID__TeamID__TeamLogoURL'  style='width: 80%; height: inherit; margin-left: 0%;'>
-            <div class="PlayerFace" style='width: 166px; height: 250px; margin-left: -60%;'>
-
-            </div>
-          </div>
-          <div class='w3-col s4 vertical-align-middle'>
-            <div class=''>
-              <div class='playerHeaderInfo'>
-                <span data-field="PlayerFirstName" class='playerFirstName'>
-                </span>
-                <span data-field="PlayerLastName" class='playerLastName' style='margin-top: 0px; margin-bottom: 0px;'>
-
-                </span>
-                <div class='playerOverviewInfo'>
-                  <a href-field="PlayerTeamHref"><span data-field="playerteamseason__TeamSeasonID__TeamID__TeamName"></span> <span data-field="playerteamseason__TeamSeasonID__TeamID__TeamNickname"></span></a>
-                  | #<span data-field="JerseyNumber"></span> | <span data-field="Position"></span>
-                </div>
-                <div class='playerOverviewInfo italic player-captain'>
-                  <span html-field="TeamCaptainIcon"></span><span data-field="TeamCaptain"></span>
-                </div>
-
-              </div>
-              <ul class='playerHeaderBio' style='border-color:{{playerTeam.TeamColor_Primary_HEX}}'>
-                <li class='playerHeaderClass'>
-                  <div class='playerHeaderBioDescription'>CLASS</div>
-                  <div class="player-class">
-                    <span data-field="playerteamseason__ClassID__ClassName"></span><span  html-field="RedshirtIcon"></span>
-                  </div>
-                </li>
-                <li class='playerHeaderHtWt'>
-                  <div class='playerHeaderBioDescription'>HT/WT</div>
-                  <div><span data-field="HeightFormatted"></span>, <span data-field="WeightFormatted"></span></div>
-                </li>
-                <li class='playerHeaderHometown'>
-                  <div class='playerHeaderBioDescription'>HOMETOWN</div>
-                  <div><span data-field="HometownAndState"></span></div>
-                </li>
-                <li class='playerHeaderHometown'>
-                  <div class='playerHeaderBioDescription'>OVR</div>
-                  <div><span data-field="playerteamseason__playerteamseasonskill__OverallRating"></span></div>
-                </li>
-              </ul>
-
-            </div>
-          </div>
-          <div class='w3-col s5'>
-          <div class="w3-row-padding">
-                    <div id='' class="w3-bar w3-row-padding player-highlight-info-selection-bar">
-                      <button class='w3-button w3-bar-item highlight-tab selected-highlight-tab highlight-ratings-tab' type="button" name="button" id="highlight-ratings-tab">Ratings</button>
-                      <button class='w3-button w3-bar-item w3-hide highlight-tab highlight-stats-tab' type="button" name="button" id="highlight-stats-tab">Stats</button>
-                      <button class='w3-button w3-bar-item highlight-tab highlight-awards-tab' type="button" name="button" id="highlight-awards-tab">Awards</button>
-                      <button class='w3-button w3-bar-item highlight-tab highlight-recruiting-tab' type="button" name="button" id="highlight-recruiting-tab">Recruiting</button>
-                      <button class='w3-button w3-bar-item highlight-tab highlight-actions-tab' type="button" name="button" id="highlight-actions-tab">Actions</button>
-                    </div>
-                  </div>
-                  <div class='w3-row-padding'>
-                    <div style="width: 100%;" class='player-highlight-info-content'>
-                      <div  class="w3-row-padding highlight-ratings">
-
-                      </div>
-                      <div class="w3-container w3-hide highlight-stats">
-                        stats here
-                      </div>
-                      <div class="w3-container w3-hide highlight-awards">
-                      </div>
-                      <div class="w3-container w3-hide highlight-recruiting">
-                        recruting here
-                      </div>
-                      <div class="w3-container w3-hide highlight-actions w3-row-padding">
-                        <table class=' w3-table' style='width: 50%;'>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-          </div>
-
-        </div>
-        `);
-
-      $.ajax({
-        url: '/World/'+WorldID+'/Player/'+PlayerID+'/PlayerCardInfo',
-        success: function (data) {
-          console.log('Ajax return', data);
-
-          $(div,' div.w3-hide.w3-row-padding').removeClass('w3-hide');
-
-          var overrides = {"teamColors":["#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Primary_HEX'],"#"+data['playerteamseason__TeamSeasonID__TeamID__TeamColor_Secondary_HEX'],"#FFF"]}
-
-          $('[css-field="OverallCss"].player-highlight-pills').removeClass('elite').removeClass('good').removeClass('fine').removeClass('bad').addClass(data['OverallCss'])
-
-
-          $.each(data.Skills, function(SkillGroup, SkillObj){
-            var Container = $('<div class=" w3-col s4"></div>').appendTo($(div).find('.highlight-ratings'));
-            $('<div class="w3-margin-top bold">'+SkillGroup+'</div>').appendTo(Container);
-            $.each(SkillObj, function(key, val){
-              //$('<div class="inline-block min-width-75" style="margin: 2px 2px; "><div class="font10 width100">'+key+'  </div>  <div class="font20 width100">'+val+'</div></div>').appendTo(Container);
-              $(`<div>`+key+`</div>
-                <div class="w3-grey w3-round-xlarge statBar inline-block" style='width: 80%;'>
-                  <div class="w3-container  w3-round-xlarge   `+NumberToGradeClass(val)+`-Fill" style="width:`+val+`%; height: 8px;"></div>
-                </div>
-                <span>`+val+`</span>`).appendTo(Container);
-            });
-          });
-
-
-          console.log('Awards', data.Awards)
-
-          if (Object.keys(data.Awards).length > 0){
-            $('#highlight-awards-tab').removeClass('w3-hide');
-            $('<div class=""></div>').appendTo($(div).find( '.highlight-awards'));
-            var Container = $('<ul class="w3-ul w3-small"></ul>').appendTo($(div).find('.highlight-awards > div'));
-          }
-          else {
-            console.log('hiding awards tab', $(div).find('.highlight-awards-tab'));
-            $(div).find('.highlight-awards-tab').addClass('w3-hide');
-            if ($(div).find( '.highlight-awards-tab').hasClass('selected-highlight-tab')){
-              $(div).find('.highlight-ratings-tab').click()
-            }
-          }
-
-          $.each(data.Awards, function(AwardName, AwardCount){
-            console.log('AwardName, AwardCount', AwardName, AwardCount, Container)
-            $('<li>'+AwardCount+'x '+AwardName+' </li>').appendTo(Container);
-
-          });
-
-          if (Object.keys(data.Stats).length > 0){
-            $(div).find('.highlight-stats-tab').removeClass('w3-hide');
-          }
-          else {
-            $(div).find('.highlight-stats-tab').addClass('w3-hide');
-            if ($(div).find('.highlight-stats-tab').hasClass('selected-highlight-tab')){
-              $(div).find('.highlight-ratings-tab').click()
-            }
-          }
-
-
-          if (Object.keys(data.Actions).length > 0){
-            $(div).find('.highlight-actions-tab').removeClass('w3-hide');
-            var Container = $(div).find('.highlight-actions table')
-          }
-          else {
-            $(div).find('.highlight-actions-tab').addClass('w3-hide');
-            if ($(div).find('.highlight-actions-tab').hasClass('selected-highlight-tab')){
-              $(div).find('.highlight-ratings-tab').click()
-            }
-          }
-
-          $.each(data.Actions, function(ActionCount, Action){
-            console.log('ActionName, Action', ActionCount, Action, Container)
-
-            $(`<tr>
-                <td style='width:10%;'>`+Action.Icon+`</td>
-                <td confirm-info='`+Action.ConfirmInfo+`' response-type='refresh' background-ajax='`+Action.AjaxLink+`' class="w3-button `+Action.Class+` text-left"> `+Action.Display+` </td>
-              </tr>`).appendTo(Container);
-          });
-
-
-          $.each(data.Stats, function(StatGroup, StatObj){
-            var Container = $('<div class=""></div>').appendTo($(div).find('.highlight-stats'));
-            $('<div class="w3-margin-top">'+StatGroup+'</div>').appendTo(Container);
-            $('<div class="width100" style="width: 100%;"><table class="tiny highlight-stat-statgroup-'+StatGroup+'" style="width: 100%;"></table> </div>').appendTo(Container);
-
-            var columnNames = Object.keys(StatObj[0]);
-            var columns = [];
-            for (var i in columnNames) {
-              columns.push({data: columnNames[i],
-                            title: columnNames[i]});
-            }
-
-            console.log("$(div).find('.highlight-stat-statgroup-'+StatGroup)", $(div).find('.highlight-stat-statgroup-'+StatGroup))
-            var table = $(div).find('.highlight-stat-statgroup-'+StatGroup).DataTable({
-              data: StatObj,
-              columns: columns,
-              dom: 't',
-
-            });
-
-            $('.highlight-tab').on('click', function(){
-              table.columns.adjust().draw();
-            })
-          });
-
-          $.each(data, function(key, val){
-
-            if (key == 'PlayerFaceSVG'){
-              var elem = $(div).find('.PlayerFace');
-              elem = elem[0];
-              $(elem).empty();
-              $(elem).html(data['PlayerFaceSVG'])
-            }
-            else {
-              $(div).find('[html-field="'+key+'"]').html(val);
-              $(div).find('[data-field="'+key+'"]').text(val);
-              $(div).find('[src-field="'+key+'"]').attr('src', val);
-              $(div).find('[href-field="'+key+'"]').attr('href',val);
-              $(div).find('[width-field="'+key+'"]').css('width', val + '%');
-              $(div).find('[class-grade-field="'+key+'"]').addClass( NumberToGradeClass(val) + '-Fill');
-
-            }
-          });
-
-          $(div).find('.highlight-tab').on('click', function(event, target) {
-
-            var ClickedTab = $(event.target)
-            var ClickedTabContent = ClickedTab.attr('id').replace('-tab', '');
-            var ClickedTabParent = ClickedTab.closest('.player-highlight-info-selection-bar');
-
-            $.each($(ClickedTabParent).find(' .selected-highlight-tab'), function(index, tab){
-              var TargetTab = $(tab);
-              $(TargetTab).removeClass('selected-highlight-tab');
-              var TargetTabContent = TargetTab.attr('id').replace('-tab', '');
-              $(div).find('.'+TargetTabContent).addClass('w3-hide');
-
-            });
-
-            $(ClickedTab).addClass('selected-highlight-tab');
-            $(div).find( '.'+ClickedTabContent).removeClass('w3-hide')
-
-          });
-        }
-      });
-
-
-
-      return div;
     }
 
 

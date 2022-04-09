@@ -5514,9 +5514,9 @@ const weekly_recruiting = async (common) => {
 			var potential_player = recruit_team_seasons_for_team.shift();
 
 			var time_used = 0;
-			console.log({potential_player:potential_player, time_remaining:time_remaining, team_season:team_season,recruit_team_seasons_for_team:recruit_team_seasons_for_team, 'player_tracker[potential_player.player_team_season_id]': player_tracker[potential_player.player_team_season_id] })
-			if (potential_player == undefined){
-				waiting_for_player = false;
+			console.log({potential_player:potential_player, time_remaining:time_remaining, team_season:team_season,recruit_team_seasons_for_team:recruit_team_seasons_for_team, player_tracker:player_tracker, 'player_tracker[potential_player.player_team_season_id]': player_tracker[potential_player.player_team_season_id] })
+			if (potential_player == undefined || !(potential_player.player_team_season_id in player_tracker)){
+				waiting_for_player = true;
 			}
 			else if(player_tracker[potential_player.player_team_season_id].recruit_calls_remaining.length > 0){
 				waiting_for_player = false;

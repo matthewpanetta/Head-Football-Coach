@@ -13,7 +13,7 @@
             <i class="fas fa-bars"></i>
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Team Roster</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-home-states-tab">Home States</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-overview-tab">Overview</button>
         {% include "../../static/html_templates/ext_TeamList.html" %}
       </div>
     </nav>
@@ -22,6 +22,17 @@
         <div class='w3-display-container' >
           <div class='w3-row-padding w3-margin-bottom'>
             <div class='width90p'>
+              <div >
+                <div class='w3-card w3-margin-bottom football-table-filter-bar'>
+                  <div class="w3-bar team-primary-background-bar">
+                    <span class='hide-small'>Filters</span>
+                    <span class="details-control"></span>
+                  </div>
+                  <div id='player-stats-table-filter'>
+                    
+                  </div>
+              </div>
+              </div>
               <div id='player-stats-table-container' class=''></div>
 
                </div>
@@ -29,30 +40,65 @@
             
         </div>
       </div>
-      <div class="tab-content" style="display:none;"  id="nav-home-states">
-        <div class='w3-row-padding'>
-          <div class="w3-col mw1000" >
-            <div class="w3-card">
-              <svg xmlns="http://www.w3.org/2000/svg" style='width: 100%;' preserveAspectRatio="xMinYMin" viewBox="0 0 959 593">
-              <defs>
-                <style type="text/css">
-                  .state {fill:#D3D3D3;}
-                </style>
-              </defs>
-              <g class="state">
-                {% for TSS in TeamSeasonStates%}
-                <path id="{{TSS.StateID.StateAbbreviation}}" d="{{TSS.StateID.SVGPath}}" fill=''>
-                  <title>
-                    {{TSS.StateID.StateName}}, {{TSS.CurrentPlayerCount}} players
-                  </title>
-                </path>
-                {% endfor %}
-              </g>
-              </svg>
-            </div>
-
+      <div class="tab-content" style="display:none;"  id="nav-overview">
+        <div class='w3-display-container' >
+          <div class="w3-col l9 s12">
+            <div class='w3-row-padding w3-margin-bottom'>
+              <div class='width100'>
+                <div class="w3-card w3-margin-bottom">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span class='hide-small'>Team Summary</span>
+                  </div>
+                  <div>
+                    <table class="w3-table-all">
+                      <thead>
+                        <tr class="center-text-row">
+                          <th></th>
+                          {% for position_group, player_counts in roster_summary.FR%}
+                            <th>{{position_group}}</th>
+                          {% endfor %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for player_class, position_groups in roster_summary%}
+                        <tr class="center-text-row">
+                          <th>{{player_class}}</th>
+                          {% for position_group, player_counts in position_groups %}
+                          <td>
+                            <div>
+                              <div>{{player_counts.players}} players</div>
+                              <div>{{player_counts.starters}} starters</div>
+                            </div>
+                          </td>
+                          {% endfor %}
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div id='' class='w3-card'>
+  
+                  Top players
+                </div>
+  
+                </div>
+              </div>
 
           </div>
+          <div class="w3-col l3 s12">
+            <div class='w3-row-padding w3-margin-bottom'>
+              <div class='width100'>
+                <div class="w3-card w3-margin-bottom">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span class='hide-small'>Coaches</span>
+                  </div>
+                </div>
+  
+                </div>
+              </div>
+          </div>
+            
         </div>
       </div>
     </div>

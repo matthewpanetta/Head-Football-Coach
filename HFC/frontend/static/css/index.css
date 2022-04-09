@@ -32,10 +32,6 @@ body {
     font-weight: 500;
 }
 
-a {
-    color: #009579;
-}
-
 * {
   font-family: Lato;
 }
@@ -513,10 +509,6 @@ article>header {
 
 .worldOverviewTop25TeamLineRankDelta {
   font-size: 10px;
-}
-
-a {
-  color: #1763B2;
 }
 
 .worldOverviewTop25TeamLineRankDeltaGreen {
@@ -2081,13 +2073,13 @@ div.dt-buttons {
   max-width: 1200px;
 }
 
-td.details-control {
+.details-control {
     cursor: pointer;
     background: url('../img/Icons/dropdown-down.png') no-repeat center center;
     background-size: 30%;
     opacity: 50%;
 }
-tr.shown td.details-control {
+.shown.details-control {
     background: url('../img/Icons/dropdown-up.png') no-repeat center center;
     background-size: 30%;
     opacity: 50%;
@@ -2324,12 +2316,10 @@ table tr td.padding-left-8 {
   background-color: #ddd;
 }
 
-div.football-table-filter div.w3-dropdown-content div button.w3-bar-item.football-table-filter-option:hover {
-  border: 1px solid #ddd !important;
-  border-radius: 10px !important;
-  color: white !important;
-  background-color: navy !important;
 
+button.football-table-filter-option:hover {
+  
+  -webkit-filter: brightness(80%);
   -webkit-transition: all .5s ease;
   -moz-transition: all .5s ease;
   -o-transition: all .5s ease;
@@ -2338,18 +2328,61 @@ div.football-table-filter div.w3-dropdown-content div button.w3-bar-item.footbal
 }
 
 button.football-table-filter-option {
-  margin: 8px;
+  margin: 2px;
+  border-radius: 10px;
+  border: 1.5px solid #ccc;
+  min-width: 70px;
+
+  -webkit-transition: all .5s ease;
+  -moz-transition: all .5s ease;
+  -o-transition: all .5s ease;
+  -ms-transition: all .5s ease;
+  transition: all .5s ease;
   /* width: 160px !important; */
 }
 
 button.football-table-filter-option.selected {
-  background-color: steelblue !important;
-  color: white !important;
+  background-color: #ccc !important;
+  border: 1.5px solid black;
+  color: black !important;
+
+  -webkit-transition: all .5s ease;
+  -moz-transition: all .5s ease;
+  -o-transition: all .5s ease;
+  -ms-transition: all .5s ease;
+  transition: all .5s ease;
 }
 
-.football-table-filter-dropdown{
-  position: absolute;
-  min-width: 200px;
-  background-color: #fff;
-  z-index: 1;
+.football-table-filter-option span.filter-option-pill {
+  float: right;
+  background-color: #cfcfcf;
+  text-align: center;
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
+  width: auto;
+  color: black;
+  font-size: 0.9em;
+  padding: 0 4px;
+}
+.football-table-filter-option div.filter-option-pill {
+  text-align: center;
+  font-size: 0.9em;
+  padding: 0 4px;
+}
+
+a:hover {
+  color: #003399;
+  text-decoration: underline;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul {
+  margin-top: 0;
+}
+
+table {
+  border-collapse: collapse;
 }
