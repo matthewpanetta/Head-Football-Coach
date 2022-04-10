@@ -3665,6 +3665,8 @@ const common_functions = async (route_pattern) => {
 
 	console.log({world_object:world_object,params:params, route_pattern:route_pattern})
 
+	var db = await resolve_db({database_id: world_id});
+
     return {  create_new_db: create_new_db
             , get_teams: get_teams
             , get_rivalries: get_rivalries
@@ -3677,23 +3679,20 @@ const common_functions = async (route_pattern) => {
 			, get_from_dict: get_from_dict
             , create_phase: create_phase
             , create_week: create_week
-						, create_players: create_players
-						, create_player_team_seasons: create_player_team_seasons
-						, create_recruiting_class:create_recruiting_class
-
-						, populate_all_depth_charts: populate_all_depth_charts
-						, choose_preseason_all_americans:choose_preseason_all_americans
-						, create_schedule: create_schedule
-						, create_team_season: create_team_season
-						, create_conference_seasons: create_conference_seasons
-						, calculate_team_overalls:calculate_team_overalls
-
-						, create_new_player_team_seasons:create_new_player_team_seasons
-
+			, create_players: create_players
+			, create_player_team_seasons: create_player_team_seasons
+			, create_recruiting_class:create_recruiting_class
+			, populate_all_depth_charts: populate_all_depth_charts
+			, choose_preseason_all_americans:choose_preseason_all_americans
+			, create_schedule: create_schedule
+			, create_team_season: create_team_season
+			, create_conference_seasons: create_conference_seasons
+			, calculate_team_overalls:calculate_team_overalls
+			, create_new_player_team_seasons:create_new_player_team_seasons
             , nav_bar_links: nav_bar_links
             , team_header_links: team_header_links
-            , db: await resolve_db({database_id: world_id})
-						, ddb: ddb
+            , db: db
+			, ddb: ddb
             , world_id: world_id
             , world_object: world_object
             , params: params
@@ -3704,7 +3703,7 @@ const common_functions = async (route_pattern) => {
             , uniform_random_choice: uniform_random_choice
             , shuffle: shuffle
             , normal_trunc: normal_trunc
-						, normal_trunc_bounce:normal_trunc_bounce
+			, normal_trunc_bounce:normal_trunc_bounce
             , random_name: random_name
             , random_city: random_city
             , body_from_position: body_from_position
@@ -3718,20 +3717,18 @@ const common_functions = async (route_pattern) => {
             , union: union
             , except: except
             , all_teams: all_teams
-						, all_seasons: all_seasons
+			, all_seasons: all_seasons
             , initialize_scoreboard: initialize_scoreboard
             , round_decimal: round_decimal
             , calculate_national_rankings: calculate_national_rankings
             , calculate_conference_rankings: calculate_conference_rankings
             , schedule_bowl_season: schedule_bowl_season
-						, process_bowl_results: process_bowl_results
-
-						, weekly_recruiting: weekly_recruiting
-						, calculate_team_needs: calculate_team_needs
-
+			, process_bowl_results: process_bowl_results
+			, weekly_recruiting: weekly_recruiting
+			, calculate_team_needs: calculate_team_needs
+			, populate_player_modal:populate_player_modal
             , team_season: team_season
-
-						, tier_placement: tier_placement
+			, tier_placement: tier_placement
           };
 };
 
@@ -6238,6 +6235,66 @@ const search_input_action = () => {
 	}
 	console.log({this:this, val:val});
 }
+
+
+const populate_player_modal = async (common, target) => {
+	var db = common.db;
+	var player_id = parseInt($(target).parents('tr').attr('player_id'))
+	var season = common.season;
+
+	var player = await db.player.get({player_id: player_id})
+	var player_team_seasons = await db.player_team_season.where({player_id: player_id}).toArray();
+	var player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
+	player.player_team_seasons = player_team_seasons;
+	player.current_player_team_season = player_team_seasons.filter(pts => pts.season == season)[0];
+  
+	var team_season_ids = player_team_seasons.map(pts => pts.team_season_id);
+	var team_seasons = await db.team_season.bulkGet(team_season_ids);
+  
+	var player_team_ids = team_seasons.map(ts => ts.team_id);
+	var player_teams = await db.team.bulkGet(player_team_ids);
+  
+	var c = 0;
+	$.each(player_team_seasons, function(ind, pts){
+	  pts.team_season = team_seasons[c];
+	  pts.team_season.team = player_teams[c];
+	  c+=1;
+	});
+  
+	player.player_team_seasons = player_team_seasons;
+	player.current_player_team_season = player.player_team_seasons.filter(pts => pts.season == season)[0];
+	var current_team = player.current_player_team_season.team_season.team;
+
+	page = {PrimaryColor: current_team.team_color_primary_hex, SecondaryColor: current_team.secondary_color_display};
+	console.log({player:player, target:target, player_id:player_id})
+
+
+
+	var modal_url = '/static/html_templates/player_info_modal_template.html'
+	var html = await fetch(modal_url);
+	html = await html.text();
+	var renderedHtml = await common.nunjucks_env.renderString(html, {page: page, player: player})
+	console.log({renderedHtml:renderedHtml})
+	$('#player-info-modal').html(renderedHtml)
+	$('#player-info-modal').addClass('shown')
+
+	$(window).on('click', function(event) {
+		if ($(event.target)[0] == $('#player-info-modal')[0]) {
+		  $('#player-info-modal').removeClass('shown')
+		  $(window).unbind();
+		}
+	  });
+
+	  if (player.player_face == undefined){
+		player.player_face = await common.create_player_face('single', player.player_id, db);
+	  }
+
+      common.display_player_face(player.player_face, {jersey: player.current_player_team_season.team_season.team.jersey, teamColors: player.current_player_team_season.team_season.team.jersey.teamColors}, 'player-modal-player-face');
+
+	
+  
+
+  }
 
 
 const add_listeners = async(common) => {

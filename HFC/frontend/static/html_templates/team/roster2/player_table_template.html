@@ -10,6 +10,7 @@
     <div style='max-width: 100%; width:100%; overflow-x: scroll;'>
         <table class='football-table-content font14' style='table-layout: fixed; max-width: 100%; width:100%; '>
             <!-- BASELINE -->
+            <col style='width:  20px;'>
             <col style='width: 180px;'>
             <col style='width: 60px;'>
             <col style='width: 60px;'>
@@ -67,7 +68,7 @@
             <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
                 <tr class='football-table-column-groups' style='background-color: #{{page.SecondaryColor}}; border-top: 3px solid #{{page.PrimaryColor}}; height: 30px;'>
                     <!-- BASELINE -->
-                    <th colspan='5' style='width: 420px;' football-table-group='baseline' class=' center-text col-group'>Player</th>
+                    <th colspan='6' style='width: 440px;' football-table-group='baseline' class=' center-text col-group'>Player</th>
                 
                     <!-- PASSING -->
                     <th colspan='6' style='width: 360px;' football-table-group='passing stats' class=' col-group'>Passing Stats</th>
@@ -91,6 +92,7 @@
                 </tr> 
                 <tr class='football-table-column-headers' style=' height: 30px; '>
                     <!-- BASELINE -->
+                    <th style='width: 20px;' football-table-group='baseline'></th>
                     <th style='width: 180px;' football-table-group='baseline' class='left-text' value-key='full_name' sort-order='sort-asc'>Name</th>
                     <th style='width:  60px;' football-table-group='baseline' value-key='player_team_season.position_sort_order' sort-order='sort-asc'>Pos</th>
                     <th style='width:  60px;' football-table-group='baseline' value-key='player_team_season.class_sort_order'>Class</th>
@@ -144,6 +146,9 @@
                 {% for player in players%}
                 <tr class='football-table-row center-text vertical-align-middle' style='height: 30px;' player_id='{{player.player_id}}'>
                     <!-- BASELINE -->
+                    <td style='width:  20px;' >
+                      <i class="fa fa-address-card player-profile-popup-icon"></i>
+                    </td>
                     <td style='width: 180px;' football-table-group='baseline' class='left-text'>
                         <a href="{{player.player_href}}">{{player.full_name}}</a>
                       </td>
@@ -228,3 +233,4 @@
         {% endif %}
     </div>
 </div>
+

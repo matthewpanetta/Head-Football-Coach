@@ -247,6 +247,8 @@
 
       }
 
+      
+
       const adjust_button_text = (common, players) => {
         $('.football-table-filter-option')
 
@@ -332,6 +334,11 @@
           var page_destination = $(this).attr('pagination-action');
           common.pagination.current_page = parseInt(page_destination);
           GetPlayerStats(common)
+        })
+
+
+        $('.player-profile-popup-icon').on('click', async function(){
+          await common.populate_player_modal(common, this)
         })
 
       }

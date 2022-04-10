@@ -86,6 +86,13 @@ body {
   height: 150px;
 }
 
+.player-modal-header, .coach-modal-header {
+  align-items: center;
+  height: 120px;
+  overflow: hidden;
+  position: relative;
+}
+
 .teamHeaderRankHeaderRow {
   font-size: 11px;
 }
@@ -226,6 +233,15 @@ body {
   margin-left: 20px;
   margin-right: 20px;
   vertical-align: top;
+}
+
+.player-modal-team-logo {
+  height: 120px;
+  margin-left: 20px;
+  margin-right: 20px;
+  vertical-align: top;
+  z-index: 2;
+    position: relative;
 }
 
 .gameTeamLogo {
@@ -962,11 +978,19 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
   height: 150px;
   display: inline-block;
   margin-left: -80px;
+  position: relative;
+  z-index: 3;
 }
 
 .PlayerFace-90 {
   width: 60px;
   height: 90px;
+}
+
+.PlayerFace-120 {
+  width: 80px;
+  height: 120px;
+  margin-left: -60px;
 }
 
 .PlayerFace-60 {
@@ -1577,6 +1601,17 @@ tfoot td {
   border-right: 30px solid;
 }
 
+
+.team-modal-header-color-left {
+  width: 250px;
+  margin-left: -100px;
+  height: inherit;
+  position: absolute;
+  z-index: 1;
+  transform: skewX(-45deg);
+  border-right: 30px solid;
+}
+
 .team-header-color-right {
   width: 350px;
   margin-right: -100px;
@@ -2057,6 +2092,10 @@ div.dt-buttons {
 .mw300 {
   max-width: 300px;
 }
+
+.mw225 {
+  max-width: 225px;
+}
 .mw600 {
   max-width: 600px;
 }
@@ -2315,6 +2354,12 @@ table tr td.padding-left-8 {
 
 .football-table-row:hover {
   background-color: #ddd;
+
+  -webkit-transition: all .3s ease;
+  -moz-transition: all .3s ease;
+  -o-transition: all .3s ease;
+  -ms-transition: all .3s ease;
+  transition: all .3s ease;
 }
 
 
@@ -2326,6 +2371,18 @@ button.football-table-filter-option:hover, button.football-table-pagination-butt
   -o-transition: all .5s ease;
   -ms-transition: all .5s ease;
   transition: all .5s ease;
+}
+
+a i.fa:hover{
+  opacity: .5;
+  -webkit-transition: all .5s ease;
+  -moz-transition: all .5s ease;
+  -o-transition: all .5s ease;
+  -ms-transition: all .5s ease;
+  transition: all .5s ease;
+
+  color: inherit;
+  text-decoration: inherit;
 }
 
 button.football-table-filter-option {
@@ -2362,7 +2419,7 @@ button.football-table-filter-option.selected, button.football-table-pagination-b
 }
 
 
-a:hover {
+a:hover:not(.no-hover) {
   color: #003399;
   text-decoration: underline;
 }
@@ -2377,4 +2434,55 @@ ul {
 
 table {
   border-collapse: collapse;
+}
+
+.player-profile-popup-icon:hover{
+  color: black;
+
+  -webkit-transition: all .5s ease;
+  -moz-transition: all .5s ease;
+  -o-transition: all .5s ease;
+  -ms-transition: all .5s ease;
+  transition: all .5s ease;
+}
+
+
+#player-info-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 2000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+#player-info-modal.shown {
+  display: block;
+}
+
+
+/* Modal Content/Box */
+#player-info-modal .modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  width: 50%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
