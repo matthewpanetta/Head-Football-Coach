@@ -1367,7 +1367,7 @@ td.WorldLeagueLeaderRowCell.NameCell {
 }
 
 .margin-right-12 {
-  margin-right: 12px;
+  margin-right: 12px !important;
 }
 
 .margin-top-24 {
@@ -1453,7 +1453,7 @@ tfoot td {
 }
 
 .margin-left-12 {
-  margin-left: 12px;
+  margin-left: 12px !important;
 }
 
 .white-text {
@@ -2318,7 +2318,7 @@ table tr td.padding-left-8 {
 }
 
 
-button.football-table-filter-option:hover {
+button.football-table-filter-option:hover, button.football-table-pagination-button:hover {
   
   -webkit-filter: brightness(80%);
   -webkit-transition: all .5s ease;
@@ -2342,7 +2342,14 @@ button.football-table-filter-option {
   /* width: 160px !important; */
 }
 
-button.football-table-filter-option.selected {
+button.football-table-pagination-button {
+  margin: 2px;
+  border-radius: 10px;
+  border: 1.5px solid #ccc;
+  min-width: 40px;
+}
+
+button.football-table-filter-option.selected, button.football-table-pagination-button.selected {
   background-color: #ccc !important;
   border: 1.5px solid black;
   color: black !important;
@@ -2354,22 +2361,6 @@ button.football-table-filter-option.selected {
   transition: all .5s ease;
 }
 
-.football-table-filter-option span.filter-option-pill {
-  float: right;
-  background-color: #cfcfcf;
-  text-align: center;
-  border: 1px solid #cfcfcf;
-  border-radius: 10px;
-  width: auto;
-  color: black;
-  font-size: 0.9em;
-  padding: 0 4px;
-}
-.football-table-filter-option div.filter-option-pill {
-  text-align: center;
-  font-size: 0.9em;
-  padding: 0 4px;
-}
 
 a:hover {
   color: #003399;

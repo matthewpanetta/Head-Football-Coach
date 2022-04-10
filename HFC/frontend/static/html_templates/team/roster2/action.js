@@ -87,8 +87,8 @@
       team.team_season.conference_season = conference_seasons_by_conference_season_id[team.team_season.conference_season_id];
       team.team_season.conference_season.conference = conference_by_conference_id[team.team_season.conference_season.conference_id];
 
-      const player_team_seasons = await db.player_team_season.where({team_season_id: team_season.team_season_id}).toArray();
-      //const player_team_seasons = await db.player_team_season.toArray();
+      //const player_team_seasons = await db.player_team_season.where({team_season_id: team_season.team_season_id}).toArray();
+      const player_team_seasons = await db.player_team_season.toArray();
       const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
 
       const player_ids = player_team_seasons.map(pts => pts.player_id);
@@ -169,7 +169,7 @@
                           }
 
       common.sorted_columns = [{key: 'player_id', sort_direction: 'sort-asc'}];
-      common.pagination = {page_size: 100, current_page: 1, max_pages: Math.ceil(players.length / 100)};
+      common.pagination = {page_size: 75, current_page: 1, max_pages: Math.ceil(players.length / 100)};
       common.render_content = render_content;
 
       console.log('render_content', render_content)
@@ -328,6 +328,12 @@
           GetPlayerStats(common)
         })
 
+        $('#football-table-pagination button').on('click', function(){
+          var page_destination = $(this).attr('pagination-action');
+          common.pagination.current_page = parseInt(page_destination);
+          GetPlayerStats(common)
+        })
+
       }
 
         const GetPlayerStats = async (common) => {
@@ -354,14 +360,28 @@
 
           players = player_sorter(common, players, sorted_columns);
 
-          var pagination_index_start = common.pagination.page_size * (common.pagination.current_page - 1);
-          var pagination_index_end = pagination_index_start + common.pagination.page_size;
-          players = players.slice(pagination_index_start, pagination_index_end)
+          common.pagination.max_pages = Math.ceil(players.length / common.pagination.page_size);
+          common.pagination.pagination_index_start = common.pagination.page_size * (common.pagination.current_page - 1);
+          common.pagination.pagination_index_end = common.pagination.pagination_index_start + common.pagination.page_size;
+          common.pagination.available_page_navigation = [common.pagination.current_page];
+          for (var step = 1; step <= 4; step++){
+            if (common.pagination.available_page_navigation.length < 5){
+              if ((common.pagination.current_page - step) > 0){
+                common.pagination.available_page_navigation.push(common.pagination.current_page - step)
+              }
+              if ((common.pagination.current_page + step) <= common.pagination.max_pages){
+                common.pagination.available_page_navigation.push(common.pagination.current_page + step)
+              }
+            }
+          }
+          common.pagination.available_page_navigation = common.pagination.available_page_navigation.sort((a,b)=>a-b)
+          console.log({'common.pagination.available_page_navigation': common.pagination.available_page_navigation})
+          players = players.slice(common.pagination.pagination_index_start, common.pagination.pagination_index_end)
 
           var renderTime = performance.now()
           console.log(`Time taken to sort & filter: ${parseInt(renderTime - startTime)} ms` );
           
-          var renderedHtml = await common.nunjucks_env.renderString(common.GetPlayerStats_html_text, { players:players, page:common.page})
+          var renderedHtml = await common.nunjucks_env.renderString(common.GetPlayerStats_html_text, {pagination:common.pagination, players:players, page:common.page})
 
           $('#player-stats-table-container').empty();
           $('#player-stats-table-container').append(renderedHtml);
