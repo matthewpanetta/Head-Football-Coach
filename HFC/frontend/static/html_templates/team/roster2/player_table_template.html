@@ -153,7 +153,7 @@
                     <td style='width:  60px;' football-table-group='baseline' class='col-group'>{{player.body.weight}}</td>
                     
                     <!-- PASSING -->
-                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing.yards}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing.yards|toLocaleString}}</td>
                     <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing.attempts}}</td>
                     <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing.completions}}</td>
                     <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing_completion_percentage}}</td>
@@ -161,14 +161,14 @@
                     <td style='width:  60px;' football-table-group='passing stats'  class='col-group'>{{player.player_team_season.season_stats.passing.ints}}</td>
                     
                      <!-- RUSHING -->
-                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.yards}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.yards|toLocaleString}}</td>
                     <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.carries}}</td>
                     <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing_yards_per_carry}}</td>
                     <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.broken_tackles}}</td>
                     <td style='width:  60px;' class='col-group'>{{player.player_team_season.season_stats.rushing.tds}}</td>
                 
                       <!-- RECEIVING -->
-                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.yards}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.yards|toLocaleString}}</td>
                     <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.receptions}}</td>
                     <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving_yards_per_catch}}</td>
                     <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.targets}}</td>

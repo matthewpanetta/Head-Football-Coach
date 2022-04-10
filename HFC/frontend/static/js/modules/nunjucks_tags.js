@@ -185,6 +185,10 @@ function get_nunjucks_env() {
       return "FFF";
   });
 
+  env.addFilter('toLocaleString', function(val){
+    return (val || '').toLocaleString("en-US")
+  })
+
 
   env.addFilter('NumberToGradeClass', function(NumberValue) {
     return NumberToGrade(NumberValue).replace('-', '-Minus').replace('+', '-Plus')
