@@ -190,6 +190,14 @@
       $('#player-stats-table-filter').empty();
       $('#player-stats-table-filter').html(renderedHtml)
 
+
+      var column_control_url = '/static/html_templates/team/roster2/player_table_column_control_template.html'
+      var html = await fetch(column_control_url);
+      html = await html.text();
+      var renderedHtml = await common.nunjucks_env.renderString(html, render_content)
+      $('#player-stats-table-column-control').empty();
+      $('#player-stats-table-column-control').html(renderedHtml)
+
     }
 
       const player_sorter = (common, players, sorted_columns) => {
@@ -295,6 +303,36 @@
           $(this).toggleClass('shown');
 
           $('#football-table-filter-table').toggleClass('hidden')
+        })
+      }
+
+      const add_column_control_listeners = async (common) => {
+        console.log({f: $('.football-table-column-control')})
+        $('.football-column-control-filter').on('click', function(event, target){
+          console.log({event:event, target:target})
+        })
+
+        $('.football-table-column-control-button').on('click', function(){
+          console.log('clicked', this, $(this).next())
+          let table_column_control_content = $(this).next();
+          $(table_column_control_content).toggleClass('hidden')
+        })
+
+        $('.football-table-column-control-option').on('click', function(){
+          var clicked_button = $(this);
+          $(this).toggleClass('selected')
+          common.filtered_columns = find_filtered_columns(clicked_button);
+          
+          common.pagination.current_page = 1;
+          GetPlayerStats(common)
+        })
+
+        $('#column-control-dropdown-button').on('click', function(){
+          $(this).find('i').toggleClass('fa-angle-down');
+          $(this).find('i').toggleClass('fa-angle-up');
+          $(this).toggleClass('shown');
+
+          $('#football-table-column-control-table').toggleClass('hidden')
         })
       }
 
@@ -416,6 +454,7 @@
 
       GetPlayerStats(common);
       add_filter_listeners(common)
+      add_column_control_listeners(common)
       
     }
 
