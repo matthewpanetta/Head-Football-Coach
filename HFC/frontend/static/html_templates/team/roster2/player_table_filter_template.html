@@ -1,20 +1,24 @@
-<div  >
-  <table class="w3-table-all" style="table-layout: fixed; width: 100%; max-width: 100%;">
+<div class='w3-card w3-margin-bottom football-table-filter-bar'>
+  <div class="w3-bar team-primary-background-bar">
+    <span class='hide-small'>Filters</span>
+    <span class="details-control" id="filter-dropdown-button"><i class="fa fa-angle-down" style="padding: 0px 10px; font-size: 15px;"></i></span>
+  </div>            
+  <table id="football-table-filter-table" class="w3-table-all hidden" style="table-layout: fixed; width: 100%; max-width: 100%;">
     {% for table_filter_group_name, table_filter_group in page.table_filters %}
     <tr class='football-table-filter-row' filter_option="{{table_filter_group_name}}">
       <td style="width: 150px;" class="bold">{{table_filter_group.display}}</td>
       <td style="width: 100px;">
         <button class="w3-button football-table-filter-option selected" filter_value="All">
           <div class="bold">All</div>
-          <div class="font10">{{table_filter_group.player_count}}</div>
+          <div class="font10">{{table_filter_group.player_count.toLocaleString("en-US")}}</div>
         </button>
       </td>
       <td  style='display: block; '>
         <div style='  margin: 0;  padding: 0; overflow: auto; white-space: nowrap;'>
           {% for table_filter_option in table_filter_group.options%}
-          <button class="w3-button football-table-filter-option" filter_value="{{table_filter_option.display}}">
+          <button class="w3-button football-table-filter-option" count_value="{{table_filter_option.player_count}}" filter_value="{{table_filter_option.display}}">
             <div class="bold">{{table_filter_option.display}}</div>
-            <div class="font10">{{table_filter_option.player_count}}</div>
+            <div class="font10 football-table-filter-option-value">{{table_filter_option.player_count.toLocaleString("en-US")}}</div>
           </button>
           {% endfor %}
         </div>

@@ -563,7 +563,7 @@ input[type=text], input[type=password] {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .indexChooseTeamModalTeamListTeamDiv {
@@ -2075,15 +2075,16 @@ div.dt-buttons {
 
 .details-control {
     cursor: pointer;
-    background: url('../img/Icons/dropdown-down.png') no-repeat center center;
-    background-size: 30%;
-    opacity: 50%;
+    opacity: 80%;
+}
+.details-control:hover {
+  -webkit-filter: brightness(90%) !important;
+  background-color: inherit !important;
 }
 .shown.details-control {
     background: url('../img/Icons/dropdown-up.png') no-repeat center center;
     background-size: 30%;
     opacity: 50%;
-
   }
 
 .column-flex {
