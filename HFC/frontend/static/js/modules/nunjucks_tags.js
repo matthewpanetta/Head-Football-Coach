@@ -194,6 +194,11 @@ function get_nunjucks_env() {
     return NumberToGrade(NumberValue).replace('-', '-Minus').replace('+', '-Plus')
   });
 
+
+  env.addFilter('OrZero', function(NumberValue) {
+    return NumberValue || 0;
+  });
+
   env.addFilter('NumberToGrade', function(number_value) {
     const grade_value_map = [
         {'letter_grade': 'A+', 'lower_bound': 91, 'upper_bound': 1000},

@@ -2363,7 +2363,7 @@ table tr td.padding-left-8 {
 }
 
 
-button.football-table-filter-option:hover, button.football-table-pagination-button:hover {
+button.football-table-filter-option:hover, button.football-table-column-control-option:hover, button.football-table-pagination-button:hover {
   
   -webkit-filter: brightness(80%);
   -webkit-transition: all .5s ease;
@@ -2385,7 +2385,7 @@ a i.fa:hover{
   text-decoration: inherit;
 }
 
-button.football-table-filter-option {
+button.football-table-filter-option, button.football-table-column-control-option {
   margin: 2px;
   border-radius: 10px;
   border: 1.5px solid #ccc;
@@ -2406,7 +2406,7 @@ button.football-table-pagination-button {
   min-width: 40px;
 }
 
-button.football-table-filter-option.selected, button.football-table-pagination-button.selected {
+button.football-table-filter-option.selected, button.football-table-column-control-option.selected, button.football-table-pagination-button.selected {
   background-color: #ccc !important;
   border: 1.5px solid black;
   color: black !important;

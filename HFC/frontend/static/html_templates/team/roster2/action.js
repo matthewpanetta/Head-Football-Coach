@@ -170,7 +170,17 @@
 
       common.sorted_columns = [{key: 'player_id', sort_direction: 'sort-asc'}];
       common.pagination = {page_size: 75, current_page: 1, max_pages: Math.ceil(players.length / 100)};
+      
       common.render_content = render_content;
+
+      common.render_content.column_controls = {
+        'passing_stats': {shown: false, display: 'Passing Stats'},
+        'rushing_stats': {shown: false, display: 'Rushing Stats'},
+        'receiving_stats': {shown: false, display: 'Receiving Stats'},
+        'blocking_stats': {shown: false, display: 'Blocking Stats'},
+        'defense_stats': {shown: false, display: 'Defense Stats'},
+        'kicking_stats': {shown: false, display: 'Kicking Stats'},
+      }
 
       console.log('render_content', render_content)
 
@@ -194,7 +204,8 @@
       var column_control_url = '/static/html_templates/team/roster2/player_table_column_control_template.html'
       var html = await fetch(column_control_url);
       html = await html.text();
-      var renderedHtml = await common.nunjucks_env.renderString(html, render_content)
+      console.log({'common.render_content': common.render_content})
+      var renderedHtml = await common.nunjucks_env.renderString(html, common.render_content)
       $('#player-stats-table-column-control').empty();
       $('#player-stats-table-column-control').html(renderedHtml)
 
@@ -255,6 +266,23 @@
 
       }
 
+
+      const find_column_controls = (common, clicked_button) => {
+        var column_controls = common.render_content.column_controls;
+        console.log({column_controls:column_controls})
+        $('.football-table-column-control-option').each(function(){
+          var column_group = $(this).attr('column_group');
+          console.log({this:this, column_group:column_group})
+          if (column_group == 'All'){
+            return true;
+          }
+          column_controls[column_group].shown = $(this).hasClass('selected');
+        })
+
+        console.log({column_controls: column_controls})
+        return column_controls;
+      }
+
       
 
       const adjust_button_text = (common, players) => {
@@ -277,11 +305,6 @@
       }
 
       const add_filter_listeners = async (common) => {
-        console.log({f: $('.football-table-filter')})
-        $('.football-table-filter').on('click', function(event, target){
-          console.log({event:event, target:target})
-        })
-
         $('.football-table-filter-button').on('click', function(){
           console.log('clicked', this, $(this).next())
           let table_filter_content = $(this).next();
@@ -307,11 +330,6 @@
       }
 
       const add_column_control_listeners = async (common) => {
-        console.log({f: $('.football-table-column-control')})
-        $('.football-column-control-filter').on('click', function(event, target){
-          console.log({event:event, target:target})
-        })
-
         $('.football-table-column-control-button').on('click', function(){
           console.log('clicked', this, $(this).next())
           let table_column_control_content = $(this).next();
@@ -321,9 +339,8 @@
         $('.football-table-column-control-option').on('click', function(){
           var clicked_button = $(this);
           $(this).toggleClass('selected')
-          common.filtered_columns = find_filtered_columns(clicked_button);
+          common.render_content.column_controls = find_column_controls(common, clicked_button);
           
-          common.pagination.current_page = 1;
           GetPlayerStats(common)
         })
 
@@ -426,7 +443,7 @@
           var renderTime = performance.now()
           console.log(`Time taken to sort & filter: ${parseInt(renderTime - startTime)} ms` );
           
-          var renderedHtml = await common.nunjucks_env.renderString(common.GetPlayerStats_html_text, {pagination:common.pagination, players:players, page:common.page})
+          var renderedHtml = await common.nunjucks_env.renderString(common.GetPlayerStats_html_text, {column_controls: common.render_content.column_controls, pagination:common.pagination, players:players, page:common.page})
 
           $('#player-stats-table-container').empty();
           $('#player-stats-table-container').append(renderedHtml);

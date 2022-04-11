@@ -5,27 +5,23 @@
   </div>          
   <div style="max-height: 250px; overflow-y: scroll;">
     <table id="football-table-column-control-table" class="w3-table-all hidden" style="table-layout: fixed; width: 100%; max-width: 100%;">
-      {% for table_filter_group_name, table_filter_group in page.table_filters %}
       <tr class='football-table-filter-row' filter_option="{{table_filter_group_name}}">
-        <td style="width: 150px;" class="bold">{{table_filter_group.display}}</td>
+        <td style="width: 150px;" class="bold">Column Filters</td>
         <td style="width: 100px;">
-          <button class="w3-button football-table-filter-option selected" filter_value="All">
+          <button class="w3-button football-table-column-control-option" column_group="All">
             <div class="bold">All</div>
-            <div class="font10">{{table_filter_group.player_count.toLocaleString("en-US")}}</div>
           </button>
         </td>
         <td  style='display: block; '>
           <div style='  margin: 0;  padding: 0; overflow: auto; white-space: nowrap;'>
-            {% for table_filter_option in table_filter_group.options%}
-            <button class="w3-button football-table-filter-option" count_value="{{table_filter_option.player_count}}" filter_value="{{table_filter_option.display}}">
-              <div class="bold">{{table_filter_option.display}}</div>
-              <div class="font10 football-table-filter-option-value">{{table_filter_option.player_count.toLocaleString("en-US")}}</div>
+            {% for column_control_name, column_control in column_controls%}
+            <button class="w3-button football-table-column-control-option" column_group="{{column_control_name}}">
+              <div class="bold">{{column_control.display}}</div>
             </button>
             {% endfor %}
           </div>
         </td>
       </tr>
-      {% endfor %}
     </table>
   </div>  
 </div>
