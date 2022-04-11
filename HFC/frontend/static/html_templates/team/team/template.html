@@ -139,6 +139,12 @@
                         </div>
                       </div>
                       <div class="w3-col w3-display-container l5 m12 height100">
+                        <div>
+                          {% if game.was_played%}
+                          <div class='w3-light-grey padding-left-8 font12'>Game stats</div>
+                          {% else %}
+                          <div class='w3-light-grey padding-left-8 font12'>Season stats</div>
+                          {% endif %}                        </div>
                         <div class="w3-bar boxscore-bar" id="nav-tab-{{game.game_id}}">
                           <button TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab w3-button tab selected-boxscore-tab" id="boxscore-hometeam-tab">{{game.team.team_abbreviation}}</button>
                           <button TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab w3-button tab" id="boxscore-awayteam-tab">{{game.opponent_team.team_abbreviation}}</button>
@@ -152,7 +158,7 @@
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_game.player_team_season.player.player_href}}">{{player_stat.player_team_game.player_team_season.player.full_name}}</a></span>
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_game.player_team_season.position}}</span>
                               </div>
-                              <div class=" font-black" style='font-size: 10px;'>
+                              <div class="padding-left-16 font-black" style='font-size: 10px;'>
                                 <span class=''>{{player_stat.top_stats[0].display}}</span>
                                 {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
                               </div>
@@ -166,7 +172,7 @@
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_game.player_team_season.player.player_href}}">{{player_stat.player_team_game.player_team_season.player.full_name}}</a></span>
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_game.player_team_season.position}}</span>
                               </div>
-                              <div class=" font-black" style='font-size: 10px;'>
+                              <div class="padding-left-16 font-black" style='font-size: 10px;'>
                                 <span class=''>{{player_stat.top_stats[0].display}}</span>
                                 {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
                               </div>
@@ -181,7 +187,7 @@
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_season.player.player_href}}">{{player_stat.player_team_season.player.full_name}}</a></span>
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_season.position}}</span>
                               </div>
-                              <div class=" font-black" style='font-size: 10px;'>
+                              <div class="padding-left-16 font-black" style='font-size: 10px;'>
                                 <span class=''>{{player_stat.top_stats[0].display}}</span>
                                 {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
                               </div>
@@ -195,7 +201,7 @@
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_season.player.player_href}}">{{player_stat.player_team_season.player.full_name}}</a></span>
                                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_season.position}}</span>
                               </div>
-                              <div class=" font-black" style='font-size: 10px;'>
+                              <div class="padding-left-16 font-black" style='font-size: 10px;'>
                                 <span class=''>{{player_stat.top_stats[0].display}}</span>
                                 {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
                               </div>
@@ -452,7 +458,7 @@
           <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-col s4">
 
-            <div class="w3-card">
+            <div class="w3-card w3-margin-bottom">
               <div class="w3-bar team-primary-background-bar">
                 {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Standings</span>
               </div>
@@ -463,8 +469,8 @@
                     {% if Division.DivisionName %}
                     <th>{{Division.DivisionName}}</th>
                     {% else %}
-                    <th></th>
-                    <th>Team</th>
+                    <th class='padding-left-8'>#</th>
+                    <th colspan="2">Team</th>
                     {%endif%}
                     <th>Conf</th>
                     <th class='hide-small'>GB</th>
@@ -477,10 +483,19 @@
 
               </table>
             </div>
+            <div class='w3-card'>
+              <div class="w3-bar team-primary-background-bar">
+                <span>Ranking Trend</span>
+              </div>
+              <div id='team_ranking_trend_chart'>
+
+              </div>
+
+            </div>
           </div>
 
             <div class="w3-col s4">
-              <div class="w3-card">
+              <div class="w3-card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
                   {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Bar Chart</span>
                 </div>
@@ -491,7 +506,7 @@
 
                 </div>
               </div>
-              <div class="" id='team_leaders'>
+              <div class="w3-card" id='team_leaders'>
 
               </div>
 
@@ -499,8 +514,10 @@
             </div>
 
 
-            <div class="w3-col s4" id='team_stats'>
+            <div class="w3-col s4" >
+              <div class="w3-card w3-margin-bottom" id='team_stats'>
 
+              </div>
             </div>
 
           </div>

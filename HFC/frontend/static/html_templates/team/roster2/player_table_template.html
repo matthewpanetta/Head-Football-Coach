@@ -1,0 +1,362 @@
+<style>
+    .football-table-column-headers th {
+        background-color: #{{page.PrimaryColor}};
+    }
+
+</style>
+
+
+<div class='w3-card '>
+    <div style='max-width: 100%; width:100%; overflow-x: scroll;'>
+        <table class='football-table-content font14' style='table-layout: fixed; max-width: 100%; width:100%; '>
+            <!-- BASELINE -->
+            <col style='width:  20px;'>
+            <col style='width: 180px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+
+            {% if column_controls.Personal.personal.shown %}
+            <!-- PERSONAL -->
+            <col style='width: 120px;'>
+            {% endif %}
+            
+            {% if column_controls.Stats.games.shown %}
+            <!-- GAMES STATS -->
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            {% endif %}
+            
+            {% if column_controls.Stats.passing.shown %}
+            <!-- PASSING STATS -->
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            {% endif %}
+
+            {% if column_controls.Stats.rushing.shown %}
+            <!-- RUSHING STATS -->
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            {% endif %}
+
+            {% if column_controls.Stats.receiving.shown %}
+            <!-- RECEIVING STATS -->
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            {% endif %}
+
+            {% if column_controls.Stats.blocking.shown %}
+            <!-- BLOCKING STATS -->
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            {% endif %}
+
+            {% if column_controls.Stats.defense.shown %}
+            <!-- DEFENSE STATS -->
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            {% endif %}
+
+            {% if column_controls.Stats.kicking.shown %}
+            <!-- KICKING STATS -->
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            {% endif %}
+
+            {% if page.column_groups.awards %}
+            <!-- AWARDS -->
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            <col style='width: 60px;'>
+            {% endif %}
+
+            <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
+                <tr class='football-table-column-groups' style='background-color: #{{page.SecondaryColor}}; border-top: 3px solid #{{page.PrimaryColor}}; height: 30px;'>
+                    <!-- BASELINE -->
+                    <th colspan='6' style='width: 440px;' football-table-group='baseline' class=' center-text col-group'>Player</th>
+
+                    {% if column_controls.Personal.personal.shown %}
+                    <!-- PERSONAL -->
+                    <th colspan='1' style='width:  120px;' football-table-group='personal' class=' col-group'>Personal Info</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.games.shown %}
+                    <!-- GAMES STATS -->
+                    <th colspan='6' style='width: 360px;' football-table-group='games stats' class=' col-group'>Game Stats</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.passing.shown %}
+                    <!-- PASSING -->
+                    <th colspan='6' style='width: 360px;' football-table-group='passing stats' class=' col-group'>Passing Stats</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.rushing.shown %}                    
+                    <!-- RUSHING -->
+                    <th colspan='5' style='width: 300px;' football-table-group='rushing stats' class=' col-group'>Rushing Stats</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.receiving.shown %}                    
+                    <!-- RECEIVING -->
+                    <th colspan='5'  style='width: 300px;' football-table-group='receiving stats' class=' col-group'>Receiving Stats</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.blocking.shown %}                    
+                    <!-- BLOCKING STATS -->
+                    <th colspan='2'  style='width: 120px;' football-table-group='blocking stats' class=' col-group'>Blocking Stats</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.defense.shown %}                    
+                    <!-- DEFENSE STATS -->
+                    <th colspan='7'  style='width: 420px;' football-table-group='defense stats' class='col-group '>Defensive Stats</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.kicking.shown %}                    
+                    <!-- KICKING STATS -->
+                    <th colspan='4'  style='width: 240px;' football-table-group='kicking stats' class='col-group '>Kicking Stats</th>
+                    {% endif %}
+
+                    {% if page.column_groups.awards %}                    
+                    <!-- AWRDAS STATS -->
+                    <th colspan='5'  style='width: 300px;' football-table-group='awards' class=' '>Awards</th>
+                    {% endif %}
+
+                </tr> 
+                <tr class='football-table-column-headers' style=' height: 30px; '>
+                    <!-- BASELINE -->
+                    <th style='width: 20px;' football-table-group='baseline'></th>
+                    <th style='width: 180px;' football-table-group='baseline' class='left-text' value-key='full_name' sort-order='sort-asc'>Name</th>
+                    <th style='width:  60px;' football-table-group='baseline' value-key='player_team_season.position_sort_order' sort-order='sort-asc'>Pos</th>
+                    <th style='width:  60px;' football-table-group='baseline' value-key='player_team_season.class_sort_order'>Class</th>
+                    <th style='width:  60px;' football-table-group='baseline' value-key='body.height_inches'>Ht</th>
+                    <th style='width:  60px;' football-table-group='baseline' class='col-group' value-key='body.weight'>Wt</th>
+                    
+                    {% if column_controls.Personal.personal.shown %}
+                    <!-- PERSONAL -->
+                    <th style='width:  120px;' football-table-group='personal' class='col-group' value-key='hometown_and_state'>Hometown</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.games.shown %}
+                    <!-- GAMES STATS -->
+                    <th style='width:  60px;' football-table-group='game stats' value-key='player_team_season.season_stats.games.games_played'>Played</th>
+                    <th style='width:  60px;' football-table-group='game stats' value-key='player_team_season.season_stats.games.games_started'>Started</th>
+                    <th style='width:  60px;' football-table-group='game stats' value-key='player_team_season.season_stats.games.plays_on_field'>Snaps</th>
+                    <th style='width:  60px;' football-table-group='game stats' value-key='player_team_season.season_stats.games.points'>Points</th>
+                    <th style='width:  60px;' football-table-group='game stats' value-key='player_team_season.season_stats.games.weighted_game_score'>WGS</th>
+                    <th style='width:  60px;' football-table-group='game stats' class='col-group' value-key='player_team_season.season_stats.games.game_score'>GS</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.passing.shown %}
+                    <!-- PASSING -->
+                    <th style='width:  60px;' football-table-group='passing stats' value-key='player_team_season.season_stats.passing.yards'>Yards</th>
+                    <th style='width:  60px;' football-table-group='passing stats' value-key='player_team_season.season_stats.passing.attempts'>Att</th>
+                    <th style='width:  60px;' football-table-group='passing stats' value-key='player_team_season.season_stats.passing.completions'>Cmp</th>
+                    <th style='width:  60px;' football-table-group='passing stats' value-key='player_team_season.passing_completion_percentage'>Cmp%</th>
+                    <th style='width:  60px;' football-table-group='passing stats' value-key='player_team_season.season_stats.passing.tds'>TDs</th>
+                    <th style='width:  60px;' football-table-group='passing stats' class='col-group' value-key='player_team_season.season_stats.passing.ints'>Ints</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.rushing.shown %}
+                    <!-- RUSHING -->
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.rushing.yards'>Yards</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.rushing.carries'>Car</th>
+                    <th style='width:  60px;' value-key='player_team_season.rushing_yards_per_carry'>YPC</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.rushing.broken_tackles'>Brk</th>
+                    <th style='width:  60px;' class='col-group' value-key='player_team_season.season_stats.rushing.tds'>TDs</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.receiving.shown %}
+                    <!-- RECEIVING -->
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.receiving.yards'>Yards</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.receiving.receptions'>Rec</th>
+                    <th style='width:  60px;' value-key='player_team_season.receiving_yards_per_catch'>YPC</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.receiving.targets'>Tgt</th>
+                    <th style='width:  60px;'  class='col-group' value-key='player_team_season.season_stats.receiving.tds'>TDs</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.blocking.shown %}
+                    <!-- BLOCKING STATS -->
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.blocking.pancakes'>PAN</th>
+                    <th style='width:  60px;'  class='col-group' value-key='player_team_season.season_stats.blocking.sacks_allowed'>Sacks</th>
+                    {% endif %}
+
+                    {% if column_controls.Stats.defense.shown %}
+                    <!-- DEFENSE STATS -->
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.defense.tackles'>Tackles</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.defense.tackles_for_loss'>TFL</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.defense.sacks'>Sacks</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.defense.ints'>Ints</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.defense.deflections'>Defl</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.fumbles.forces'>FF</th>
+                    <th style='width:  60px;' class='col-group' value-key='player_team_season.season_stats.fumbles.recovered'>FR</th>     
+                    {% endif %}
+
+                    {% if column_controls.Stats.kicking.shown %}
+                    <!-- KICKING STATS -->
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.kicking.fgm'>FGM</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.kicking.fga'>FGA</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.punting.punts'>Punts</th>
+                    <th style='width:  60px;' class='col-group' value-key='player_team_season.season_stats.punting.within_20'> W20 </th>
+                    {% endif %}
+
+                    {% if page.column_groups.awards %}
+                    <!-- AWARDS -->
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.kicking.fgm'>FGM</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.kicking.fga'>FGA</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.punting.punts'>Punts</th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.punting.within_20'> W20 </th>
+                    <th style='width:  60px;' value-key='player_team_season.season_stats.punting.within_20'> W20 </th>
+                    {% endif %}
+                </tr> 
+            </thead>
+            <tbody class='football-table-body' style=' min-height: 100%; width: 100%; max-width: 100%;'>
+                {% for player in players%}
+                <tr class='football-table-row center-text vertical-align-middle' style='height: 30px;' player_id='{{player.player_id}}'>
+                    <!-- BASELINE -->
+                    <td style='width:  20px;' >
+                      <i class="fa fa-address-card player-profile-popup-icon"></i>
+                    </td>
+                    <td style='width: 180px;' football-table-group='baseline' class='left-text'>
+                        <a href="{{player.player_href}}">{{player.full_name}}</a>
+                      </td>
+                    <td style='width:  60px;' football-table-group='baseline' >{{player.position}}</td>
+                    <td style='width:  60px;' football-table-group='baseline'>{{player.player_team_season.class.class_name}}</td>
+                    <td style='width:  60px;' football-table-group='baseline'>{{player.body.height}}</td>
+                    <td style='width:  60px;' football-table-group='baseline' class='col-group'>{{player.body.weight}}</td>
+
+                    {% if column_controls.Personal.personal.shown %}
+                    <!-- PERSONAL -->
+                    <td style='width:  120px;' football-table-group='personal' class="col-group">{{player.hometown_and_state}}</td>
+                    {% endif %}
+
+                    {% if column_controls.Stats.games.shown %}
+                    <!-- GAMES STATS -->
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.games.games_played|toLocaleString|OrZero}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.games.games_started|OrZero}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.games.plays_on_field|OrZero}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.games.points|OrZero}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.games.weighted_game_score|RoundDown}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats'  class='col-group'>{{player.player_team_season.season_stats.games.game_score|RoundDown}}</td>
+                    {% endif %}
+
+                    {% if column_controls.Stats.passing.shown %}
+                    <!-- PASSING -->
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing.yards|toLocaleString|OrZero}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing.attempts|OrZero}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing.completions|OrZero}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing_completion_percentage}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats' >{{player.player_team_season.season_stats.passing.tds|OrZero}}</td>
+                    <td style='width:  60px;' football-table-group='passing stats'  class='col-group'>{{player.player_team_season.season_stats.passing.ints|OrZero}}</td>
+                    {% endif %}
+
+                    {% if column_controls.Stats.rushing.shown %}
+                     <!-- RUSHING -->
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.yards|toLocaleString|OrZero}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.carries|OrZero}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing_yards_per_carry}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.rushing.broken_tackles|OrZero}}</td>
+                    <td style='width:  60px;' class='col-group'>{{player.player_team_season.season_stats.rushing.tds|OrZero}}</td>
+                    {% endif %}
+
+                    {% if column_controls.Stats.receiving.shown %}
+                      <!-- RECEIVING -->
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.yards|toLocaleString|OrZero}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.receptions|OrZero}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving_yards_per_catch}}</td>
+                    <td style='width:  60px;'>{{player.player_team_season.season_stats.receiving.targets|OrZero}}</td>
+                    <td style='width:  60px;' class='col-group'>{{player.player_team_season.season_stats.receiving.tds|OrZero}}</td>
+                    {% endif %}
+
+                    {% if column_controls.Stats.blocking.shown %}
+                    <!-- BLOCKING STATS -->
+                  <td style='width:  60px;'>{{player.player_team_season.season_stats.blocking.pancakes|OrZero}}</td>
+                  <td style='width:  60px;' class='col-group'>{{player.player_team_season.season_stats.blocking.sacks_allowed|OrZero}}</td>
+                  {% endif %}
+
+                  {% if column_controls.Stats.defense.shown %}
+                    <!-- DEFENSE STATS -->
+                  <td style='width:  60px;'>{{player.player_team_season.season_stats.defense.tackles|OrZero}}</td>
+                  <td style='width:  60px;'>{{player.player_team_season.season_stats.defense.tackles_for_loss|OrZero}}</td>
+                  <td style='width:  60px;'>{{player.player_team_season.season_stats.defense.sacks|OrZero}}</td>
+                  <td style='width:  60px;'>{{player.player_team_season.season_stats.defense.ints|OrZero}}</td>
+                  <td style='width:  60px;'>{{player.player_team_season.season_stats.defense.deflections|OrZero}}</td>
+                  <td style='width:  60px;'>{{player.player_team_season.season_stats.fumbles.forced|OrZero}}</td>
+                  <td style='width:  60px;' class='col-group'>{{player.player_team_season.season_stats.fumbles.recovered|OrZero}}</td>
+                  {% endif %}
+
+                  {% if column_controls.Stats.kicking.shown %}
+                  <!-- KICKING STATS -->
+                <td style='width:  60px;'>{{player.player_team_season.season_stats.kicking.fgm|OrZero}}</td>
+                <td style='width:  60px;'>{{player.player_team_season.season_stats.kicking.fga|OrZero}}</td>
+                <td style='width:  60px;'>{{player.player_team_season.season_stats.punting.punts|OrZero}}</td>
+                <td style='width:  60px;' class='col-group'>{{player.player_team_season.season_stats.punting.within_20|OrZero}}</td>
+                {% endif %}
+
+                {% if page.column_groups.awards %}
+                <!-- KICKING STATS -->
+              <td style='width:  60px;'>{{player.player_team_season.season_stats.kicking.fgm}}</td>
+              <td style='width:  60px;'>{{player.player_team_season.season_stats.kicking.fga}}</td>
+              <td style='width:  60px;'>{{player.player_team_season.season_stats.punting.punts}}</td>
+              <td style='width:  60px;'>{{player.player_team_season.season_stats.punting.within_20}}</td>
+              <td style='width:  60px;'>{{player.player_team_season.season_stats.punting.within_20}}</td>
+                {% endif %}
+
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if pagination.max_pages > 1%}
+        <div id="football-table-pagination" style="float: right;">
+          {% if pagination.current_page > 1%}
+          <button class='w3-button football-table-pagination-button font12' pagination-action="1">
+            First
+          </button>
+          <button class='w3-button football-table-pagination-button font12 margin-right-12' pagination-action="{{pagination.current_page - 1}}">
+            Prev
+          </button>
+          {% endif %}
+          {% for page_number in pagination.available_page_navigation%}
+          <button class='w3-button football-table-pagination-button font12 
+                        {% if page_number == pagination.current_page %} selected {% endif %}' 
+                  pagination-action="{{page_number}}">
+            {{page_number}}
+          </button>
+          {% endfor %}
+          {% if pagination.current_page < pagination.max_pages%}
+          <button class='w3-button football-table-pagination-button font12 margin-left-12' pagination-action="{{pagination.current_page + 1}}">
+            Next
+          </button>
+          <button class='w3-button football-table-pagination-button font12' pagination-action="{{pagination.max_pages}}">
+            Last 
+            <span class="font10">({{pagination.max_pages}})</span>
+          </button>
+          {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+

@@ -185,9 +185,23 @@ function get_nunjucks_env() {
       return "FFF";
   });
 
+  env.addFilter('toLocaleString', function(val){
+    return (val || '').toLocaleString("en-US")
+  })
+
 
   env.addFilter('NumberToGradeClass', function(NumberValue) {
     return NumberToGrade(NumberValue).replace('-', '-Minus').replace('+', '-Plus')
+  });
+
+
+  env.addFilter('RoundDown', function(NumberValue) {
+    return Math.floor(NumberValue || 0);
+  });
+
+
+  env.addFilter('OrZero', function(NumberValue) {
+    return NumberValue || 0;
   });
 
   env.addFilter('NumberToGrade', function(number_value) {

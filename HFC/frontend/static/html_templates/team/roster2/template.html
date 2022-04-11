@@ -1,0 +1,95 @@
+{% include "../../static/html_templates/ext_NavBar.html" %}
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{ThisTeamSeason.TeamID.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+
+{% include "../../static/html_templates/ext_TeamColoring.html" %}
+
+<body>
+  <div class="PageContent">
+    {% include "../../static/html_templates/ext_TeamHeader.html" %}
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Team Roster</button>
+        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-overview-tab">Overview</button>
+        {% include "../../static/html_templates/ext_TeamList.html" %}
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-player-stats">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding w3-margin-bottom'>
+            <div class='width90p'>
+              <div id='player-stats-table-filter'></div>
+              <div id='player-stats-table-column-control'></div>
+              <div id='player-stats-table-container' class=''></div>
+            </div> 
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-overview">
+        <div class='w3-display-container' >
+          <div class="w3-col l9 s12">
+            <div class='w3-row-padding w3-margin-bottom'>
+              <div class='width100'>
+                <div class="w3-card w3-margin-bottom">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span class='hide-small'>Team Summary</span>
+                  </div>
+                  <div>
+                    <table class="w3-table-all">
+                      <thead>
+                        <tr class="center-text-row">
+                          <th></th>
+                          {% for position_group, player_counts in roster_summary.FR%}
+                            <th>{{position_group}}</th>
+                          {% endfor %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for player_class, position_groups in roster_summary%}
+                        <tr class="center-text-row">
+                          <th>{{player_class}}</th>
+                          {% for position_group, player_counts in position_groups %}
+                          <td>
+                            <div>
+                              <div>{{player_counts.players}} players</div>
+                              <div>{{player_counts.starters}} starters</div>
+                            </div>
+                          </td>
+                          {% endfor %}
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div id='' class='w3-card'>
+  
+                  Top players
+                </div>
+  
+                </div>
+              </div>
+
+          </div>
+          <div class="w3-col l3 s12">
+            <div class='w3-row-padding w3-margin-bottom'>
+              <div class='width100'>
+                <div class="w3-card w3-margin-bottom">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span class='hide-small'>Coaches</span>
+                  </div>
+                </div>
+  
+                </div>
+              </div>
+          </div>
+            
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
