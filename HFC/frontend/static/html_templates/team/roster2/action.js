@@ -174,13 +174,29 @@
       common.render_content = render_content;
 
       common.render_content.column_controls = {
-        'passing_stats': {shown: false, display: 'Passing Stats'},
-        'rushing_stats': {shown: false, display: 'Rushing Stats'},
-        'receiving_stats': {shown: false, display: 'Receiving Stats'},
-        'blocking_stats': {shown: false, display: 'Blocking Stats'},
-        'defense_stats': {shown: false, display: 'Defense Stats'},
-        'kicking_stats': {shown: false, display: 'Kicking Stats'},
-      }
+        Stats: {
+          'games': {shown: true, display: 'Games'},
+          'passing': {shown: false, display: 'Passing'},
+          'rushing': {shown: false, display: 'Rushing'},
+          'receiving': {shown: false, display: 'Receiving'},
+          'blocking': {shown: false, display: 'Blocking'},
+          'defense': {shown: false, display: 'Defense'},
+          'kicking': {shown: false, display: 'Kicking'},
+          },
+        Ratings: {
+          'athleticism': {shown: false, display: 'Athleticsm'},
+          'passing': {shown: false, display: 'Throwing'},
+          'rushing': {shown: false, display: 'Running'},
+          'receiving': {shown: false, display: 'Receiving'},
+          'blocking': {shown: false, display: 'Blocking'},
+          'defense': {shown: false, display: 'Defense'},
+          'kicking': {shown: false, display: 'Kicking'},
+          },  
+        Personal: {
+          'personal': {shown: false, display: 'Personal'},
+          'awards': {shown: false, display: 'Awards'},
+          },     
+        }
 
       console.log('render_content', render_content)
 
@@ -251,7 +267,6 @@
 
           if (all_children.length != selected_options.length && selected_options.length > 0){
             var values = selected_options.map(so =>  $(so).attr('filter_value'));
-            console.log({'pushing': {field:filter_option, values:values}})
             filtered_columns.push({field:filter_option, values:values})
 
             $(this).find('.football-table-filter-option[filter_value="All"]').removeClass('selected')
@@ -269,15 +284,47 @@
 
       const find_column_controls = (common, clicked_button) => {
         var column_controls = common.render_content.column_controls;
-        console.log({column_controls:column_controls})
-        $('.football-table-column-control-option').each(function(){
-          var column_group = $(this).attr('column_group');
-          console.log({this:this, column_group:column_group})
-          if (column_group == 'All'){
-            return true;
+        console.log({column_controls:column_controls, clicked_button:clicked_button})
+
+        $('#player-stats-table-column-control .football-table-column-control-row').each(function(ind, row){
+          console.log({row:row})
+          var all_named_button = $(row).find('.football-table-column-control-option[column_control_group="All"]').first()
+
+          var all_children = $(row).find('.football-table-column-control-option:not([column_control_group="All"])').toArray()
+          var selected_options = $(row).find('.football-table-column-control-option.selected:not([column_control_group="All"])').toArray()
+
+          if ($(clicked_button).is(all_named_button)){
+            if (all_children.length == selected_options.length){
+              $(row).find('.football-table-column-control-option.selected:not([column_control_group="All"])').removeClass('selected')
+            }
+            else {
+              $(row).find('.football-table-column-control-option:not([column_control_group="All"])').addClass('selected')
+            }
           }
-          column_controls[column_group].shown = $(this).hasClass('selected');
-        })
+          else {
+            if (all_children.length == selected_options.length){
+              $(all_named_button).addClass('selected')
+            }
+            else {
+              $(all_named_button).removeClass('selected')
+            }
+          }
+
+          var selected_options = $(row).find('.football-table-column-control-option.selected:not([column_control_group="All"])').toArray()
+          console.log({all_children:all_children, selected_options:selected_options})
+
+          $.each(all_children, function(ind, button){
+            var column_control_group = $(button).attr('column_control_group');
+            common.get_from_dict(column_controls, column_control_group).shown = $(button).hasClass('selected');
+          })
+
+          if (selected_options.length > 0){
+            
+          }
+          else {
+            $(row).find('.football-table-column-control-option[column_control_group="All"]').removeClass('selected')
+          }
+        });
 
         console.log({column_controls: column_controls})
         return column_controls;
@@ -290,18 +337,13 @@
 
         for (table_filter_field in common.page.table_filters){
           var table_filter_obj = common.page.table_filters[table_filter_field];
-          console.log({table_filter_field:table_filter_field, table_filter_obj:table_filter_obj})
           for(filter_option of table_filter_obj.raw_options){
             var count_value = players.filter(p => get_from_dict(p, table_filter_field) == filter_option).length;
-            console.log({count_value:count_value, filter_option: filter_option, players:players, table_filter_field:table_filter_field, h:$('.football-table-filter-option[filter_value="'+filter_option+'"] .football-table-filter-option-value')})
             $('.football-table-filter-option[filter_value="'+filter_option+'"]').attr('count_value', count_value);
             $('.football-table-filter-option[filter_value="'+filter_option+'"] .football-table-filter-option-value').text(count_value);
           }
         
         }
-
-        console.log({players:players, filters: common.page.table_filters})
-
       }
 
       const add_filter_listeners = async (common) => {

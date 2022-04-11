@@ -195,6 +195,11 @@ function get_nunjucks_env() {
   });
 
 
+  env.addFilter('RoundDown', function(NumberValue) {
+    return Math.floor(NumberValue || 0);
+  });
+
+
   env.addFilter('OrZero', function(NumberValue) {
     return NumberValue || 0;
   });
