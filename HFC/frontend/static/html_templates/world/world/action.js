@@ -83,39 +83,8 @@ const getHtml = async (common) => {
       var index_group = common.index_group;
       const season = common.season;
 
-      //common.choose_preseason_all_americans(common)
-
-      //await refresh_playoffs(common);
-      //await refresh_bowls(common);
-      //await reset_bowls(common);
-
       var current_week = await db.week.toArray();
       current_week = current_week.filter(w => w.is_current)[0];
-
-      //common.weekly_recruiting(common);
-      //common.calculate_team_needs(common)
-
-      // const league_seasons = await db.league_season.toArray();
-      //
-      // console.log({league_seasons:league_seasons})
-      //
-      // const first_season = league_seasons.filter(ls=>ls.season == 2021)[0];
-      // const second_season = league_seasons.filter(ls=>ls.season == 2022)[0];
-      //
-      // first_season.is_current_season = false;
-      // second_season.is_current_season = true;
-      //
-      // await db.league_season.bulkPut([first_season, second_season])
-      //
-      // const world_obj = common.world_object;
-      // world_obj.current_season = 2022;
-      // console.log({ddb: ddb,world_obj:world_obj })
-      // await ddb.world.put(world_obj);
-
-
-      //common.schedule_bowl_season(all_weeks, common)
-
-      //END TEST
 
       const NavBarLinks = await common.nav_bar_links({
         path: 'Overview',
@@ -123,7 +92,9 @@ const getHtml = async (common) => {
         db: db
       });
 
+      common.stopwatch(common, 'Time before recent_games');
       const recent_games = await common.recent_games(common);
+      common.stopwatch(common, 'Time after recent_games');
 
       var teams = await db.team.where('team_id').above(0).toArray();
       var team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
@@ -133,6 +104,7 @@ const getHtml = async (common) => {
       var team_seasons_by_team_id = await index_group(team_seasons, 'index','team_id');
       var teams_by_team_id = await index_group(teams, 'index','team_id');
       var distinct_team_seasons = [];
+      common.stopwatch(common, 'Time after selecting teams');
 
       $.each(teams, async function(ind, team){
         team.team_season =team_seasons_by_team_id[team.team_id]
@@ -146,7 +118,6 @@ const getHtml = async (common) => {
 
       });
 
-      console.log('teams', teams)
       teams = teams.filter(team => team.team_season.rankings.national_rank[0] <= 25);
 
       teams.sort(function(a, b) {
@@ -160,7 +131,6 @@ const getHtml = async (common) => {
       var this_week_games =  await db.game.where({week_id: current_week.week_id}).toArray();
 
       var min_national_rank = 0;
-      console.log('this_week_games', this_week_games, this_week_team_games)
       $.each(this_week_games, function(ind, game){
         game.game_headline_display = '';
         if (game.bowl != null){
@@ -208,9 +178,7 @@ const getHtml = async (common) => {
           if (a.summed_national_rank > b.summed_national_rank) return 1;
           return 0;
         });
-
-      console.log('this_week_games', this_week_games)
-
+      common.stopwatch(common, 'Time after this_week_games');
       const page = {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks}
       var render_content = {
               team_list: [],
@@ -230,7 +198,6 @@ const getHtml = async (common) => {
       html = await html.text();
 
       const renderedHtml = common.nunjucks_env.renderString(html, render_content);
-      //return renderedHtml
 
       $('#body').html(renderedHtml)
     }
@@ -309,11 +276,16 @@ $(document).ready(async function(){
   var startTime = performance.now()
 
   const common = await common_functions('/World/:world_id/');
+  common.startTime = startTime;
 
   await getHtml(common);
+  common.stopwatch(common, 'Time after getHtml');
   await action(common);
+  common.stopwatch(common, 'Time after action');
   await common.add_listeners(common);
+  common.stopwatch(common, 'Time after listeners');
   await common.initialize_scoreboard();
+  common.stopwatch(common, 'Time after scoreboard');
 
   console.log({common: common});
 
@@ -323,10 +295,5 @@ $(document).ready(async function(){
 
   const weeks = await db.week.where({season: common.season}).toArray();
 
-  const this_week = weeks.filter(w => w.is_current)[0];
-
-  //await choose_all_americans(this_week, common)
-
-  var endTime = performance.now()
-  console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
+  common.stopwatch(common, 'Time taken to render HTML');
 })
