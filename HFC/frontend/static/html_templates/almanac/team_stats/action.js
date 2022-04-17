@@ -239,10 +239,15 @@
 
       const db = common.db;
 
-      const team_seasons = await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
+      let team_seasons = await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
       const team_season_ids = team_seasons.map(ts => ts.team_season_id);
       const teams = await db.team.where('team_id').above(0).toArray();
       const teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+
+      const team_season_stats = await db.team_season_stats.bulkGet(team_season_ids);
+      const team_season_stats_by_team_season_id = index_group_sync(team_season_stats, 'index', 'team_season_id');
+
+      team_seasons = nest_children(team_seasons, team_season_stats_by_team_season_id, 'team_season_id', 'stats')
 
       const conferences = await db.conference.toArray();
       const conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
@@ -536,16 +541,16 @@
               {"data": "kicking_field_goal_percentage", "sortable": true, 'visible': false, 'className': 'center-text', 'orderSequence':desc_first},
               {"data": "season_stats.kicking.lng", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
               {"data": "season_stats.kicking.fgm_29", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                  $(td).html(`<span>${team_season.season_stats.kicking.fgm_29}/${team_season.season_stats.kicking.fga_29}</span>`);
+                  $(td).html(`<span>${team_season.stats.season_stats.kicking.fgm_29}/${team_season.stats.season_stats.kicking.fga_29}</span>`);
               }},
               {"data": "season_stats.kicking.fgm_39", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                $(td).html(`<span>${team_season.season_stats.kicking.fgm_39}/${team_season.season_stats.kicking.fga_39}</span>`);
+                $(td).html(`<span>${team_season.stats.season_stats.kicking.fgm_39}/${team_season.stats.season_stats.kicking.fga_39}</span>`);
               }},
               {"data": "season_stats.kicking.fgm_49", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                $(td).html(`<span>${team_season.season_stats.kicking.fgm_49}/${team_season.season_stats.kicking.fga_49}</span>`);
+                $(td).html(`<span>${team_season.stats.season_stats.kicking.fgm_49}/${team_season.stats.season_stats.kicking.fga_49}</span>`);
               }},
               {"data": "season_stats.kicking.fgm_50", "sortable": true, 'visible': false, 'className': 'col-group center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                $(td).html(`<span>${team_season.season_stats.kicking.fgm_50}/${team_season.season_stats.kicking.fga_50}</span>`);
+                $(td).html(`<span>${team_season.stats.season_stats.kicking.fgm_50}/${team_season.stats.season_stats.kicking.fga_50}</span>`);
               }},
               {"data": "season_stats.kicking.xpm", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
               {"data": "season_stats.kicking.xpa", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
@@ -613,6 +618,7 @@
       var startTime = performance.now()
 
       const common = await common_functions('/World/:world_id/TeamStats/Season/:season');
+      common.startTime = startTime;
 
       await getHtml(common);
       await action(common);

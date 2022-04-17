@@ -421,6 +421,7 @@
       var startTime = performance.now()
 
       const common = await common_functions('/index/');
+      common.startTime = startTime;
 
       await getHtml(common);
       await action(common);

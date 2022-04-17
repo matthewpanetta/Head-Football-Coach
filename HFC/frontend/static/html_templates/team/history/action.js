@@ -126,6 +126,7 @@
       var startTime = performance.now()
 
       const common = await common_functions('/World/:world_id/Team/:team_id/Schedule/');
+      common.startTime = startTime;
 
       await getHtml(common);
       await action(common);

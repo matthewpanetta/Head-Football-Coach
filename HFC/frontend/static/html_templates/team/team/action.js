@@ -1255,7 +1255,7 @@ $(document).ready(async function(){
   else {
     var common = await common_functions('/World/:world_id/Team/:team_id/');
   }
-
+  common.startTime = startTime;
 
   await getHtml(common);
   var endTime = performance.now()

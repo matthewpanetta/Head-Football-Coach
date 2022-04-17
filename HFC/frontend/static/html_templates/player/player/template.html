@@ -82,7 +82,7 @@
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-ratings-tab">Ratings</button>
-        {% if player.current_player_team_season.recruiting.is_recruit %}
+        {% if player.current_player_team_season.is_recruit %}
         <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-recruiting-tab">Recruiting</button>
         {% else %}
           {% if player_team_games|length > 0%}
@@ -225,7 +225,7 @@
                   </tbody>
                 </table>
             </div>
-            {% elseif player.current_player_team_season.recruiting.is_recruit %}
+            {% elseif player.current_player_team_season.is_recruit %}
             <div class="w3-card w3-margin-bottom">
               <div class="w3-bar team-primary-background-bar">
                 Recruiting Status

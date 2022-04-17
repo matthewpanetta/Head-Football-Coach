@@ -191,6 +191,7 @@ function get_nunjucks_env() {
 
 
   env.addFilter('NumberToGradeClass', function(NumberValue) {
+    console.log('NumberToGradeClass', {NumberValue:NumberValue})
     return NumberToGrade(NumberValue).replace('-', '-Minus').replace('+', '-Plus')
   });
 

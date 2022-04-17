@@ -555,6 +555,7 @@ const getHtml = async (common) => {
   const db = common.db;
   const query_to_dict = common.query_to_dict;
   const season = common.season;
+  const index_group_sync = common.index_group_sync;
 
   const NavBarLinks = await common.nav_bar_links({
     path: 'Player',
@@ -565,6 +566,20 @@ const getHtml = async (common) => {
   const player = await db.player.get(player_id);
   var player_team_seasons = await db.player_team_season.where({player_id: player_id}).toArray();
   var player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
+
+  console.log({player_team_season_ids:player_team_season_ids, player_team_seasons:player_team_seasons})
+
+  const player_team_season_recruitings = await db.player_team_season_recruiting.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
+  console.log({player_team_season_recruitings:player_team_season_recruitings})
+  const player_team_season_recruitings_by_player_team_season_id = index_group_sync(player_team_season_recruitings, 'index', 'player_team_season_id');
+
+  const player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
+  const player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id');
+  
+  console.log({player_team_season_stats_by_player_team_season_id:player_team_season_stats_by_player_team_season_id, player_team_season_recruitings_by_player_team_season_id:player_team_season_recruitings_by_player_team_season_id, player_team_seasons:player_team_seasons})
+  player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats')
+  player_team_seasons = nest_children(player_team_seasons, player_team_season_recruitings_by_player_team_season_id, 'player_team_season_id', 'recruiting')
+
   player.player_team_seasons = player_team_seasons;
   player.current_player_team_season = player_team_seasons.filter(pts => pts.season == season)[0];
 
@@ -594,7 +609,7 @@ const getHtml = async (common) => {
   }
 
   var recruit_team_seasons = [];
-  if (player.current_player_team_season.recruiting.is_recruit){
+  if (player.current_player_team_season.is_recruit){
     var team_season = null;
 
     var team_seasons = await db.team_season.where({season: season}).and(ts=>ts.team_id>0).toArray();
@@ -848,7 +863,7 @@ const getHtml = async (common) => {
   const all_player_team_seasons_by_player_team_season_id = index_group_sync(await db.player_team_season.where({season: season}).toArray(), 'index', 'player_team_season_id');
   const all_team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
   const all_team_seasons_in_conference = all_team_seasons.filter(function(ts){
-    if (player.current_player_team_season.recruiting.is_recruit) return false;
+    if (player.current_player_team_season.is_recruit) return false;
     return ts.conference_season_id == player.current_player_team_season.team_season.conference_season_id;
   });
   const player_position = player.current_player_team_season.position;
@@ -950,6 +965,7 @@ $(document).ready(async function(){
   var startTime = performance.now()
 
   const common = await common_functions('/World/:world_id/Player/:player_id/');
+  common.startTime = startTime;
 
   await getHtml(common);
   await action(common);

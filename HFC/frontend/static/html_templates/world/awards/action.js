@@ -96,7 +96,14 @@
       player_team_games = nest_children(player_team_games, team_games_by_team_game_id, 'team_game_id', 'team_game');
 
     	var player_team_seasons = await db.player_team_season.where({season: common.season}).toArray();
+      console.log({player_team_seasons:player_team_seasons})
+      player_team_seasons = player_team_seasons.filter(pts => pts.is_recruit == false);
+      const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
       var previous_player_team_seasons = await db.player_team_season.where({season: common.season - 1}).toArray();
+
+      const player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
+      console.log({player_team_seasons:player_team_seasons, player_team_season_stats:player_team_season_stats})
+      const player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id')
 
     	const player_ids = player_team_seasons.map(pts => pts.player_id);
     	var players = await db.player.bulkGet(player_ids);
@@ -106,6 +113,7 @@
     	player_team_seasons = nest_children(player_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
     	player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
       player_team_seasons = nest_children(player_team_seasons, previous_player_team_seasons_by_player_id, 'player_id', 'previous_player_team_season')
+      player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats')
 
       const player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id');
     	player_team_games = nest_children(player_team_games, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
@@ -121,6 +129,8 @@
 
       regular_season_all_american_awards = nest_children(regular_season_all_american_awards, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
       regular_season_all_american_awards_by_conference_season_id = index_group_sync(regular_season_all_american_awards, 'group', 'conference_season_id');
+
+      console.log({player_team_seasons:player_team_seasons, player_team_seasons_by_player_team_season_id:player_team_seasons_by_player_team_season_id, regular_season_all_american_awards:regular_season_all_american_awards, preseason_awards:preseason_awards, weekly_awards:weekly_awards})
 
       if (heisman_winner != undefined){
         heisman_winner.player_team_season = player_team_seasons_by_player_team_season_id[heisman_winner.player_team_season_id];
@@ -141,6 +151,7 @@
         conference_season.weekly_awards = conference_season.weekly_awards.filter(w => w.awards != undefined && w.awards.length > 0);
 
         var this_conference_preseason_awards = preseason_awards_by_conference_season_id[conference_season.conference_season_id].sort((award_a, award_b) => position_order_map[award_a.award_group_type] - position_order_map[award_b.award_group_type])
+        console.log({this_conference_preseason_awards:this_conference_preseason_awards})
         this_conference_preseason_awards = this_conference_preseason_awards.map(function(award){
           award.position_group = position_group_map[award.player_team_season.position]
           return award;
@@ -386,6 +397,7 @@
       var startTime = performance.now()
 
       const common = await common_functions('/World/:world_id/Ranking/');
+      common.startTime = startTime;
 
       await getHtml(common);
       await action(common);

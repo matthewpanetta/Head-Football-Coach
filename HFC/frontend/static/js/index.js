@@ -1455,7 +1455,6 @@ class player_team_season_stats {
 class player_team_season_recruiting {
 	constructor(player_team_season_id){
 		this.player_team_season_id = player_team_season_id;
-		this.is_recruit = false;
 		this.speed = 1;
 		this.stars = 4;
 		this.signed = false;
@@ -1496,7 +1495,7 @@ class player_team_season {
 
 		this.player_id = init_data.player_id;
 		this.player_team_season_id = init_data.player_team_season_id;
-
+		this.is_recruit = false;
 		this.post_season_movement = null; //[quit, graduate, draft, transfer]
 		this.top_stats = [];
 		this.is_captain = false;
@@ -2612,8 +2611,9 @@ const create_recruiting_class = async (common) => {
 	for (const player_team_season of player_team_seasons){
 		var player = players_by_player_id[player_team_season.player_id]
 
+		player_team_season.is_recruit = true;
+
 		player_team_season.recruiting.stars = null;
-		player_team_season.recruiting.is_recruit = true;
 		player_team_season.recruiting.stage = 'Early';
 
 		player_team_season.recruiting.player_interest_cutoff = deep_copy(player_interest_cutoffs[Math.floor(Math.random() * player_interest_cutoffs.length)])
@@ -2764,6 +2764,7 @@ const create_recruiting_class = async (common) => {
 	for (team_season of team_seasons){
 		team_season_recruitings_to_save.push(team_season.recruiting);
 		delete team_season.team;
+		delete team_season.stats;
 		delete team_season.team_games;
 		delete team_season.recruiting;
 	}
@@ -2908,6 +2909,7 @@ const create_player_team_seasons = async (data) => {
 			var new_pts = new player_team_season(init_data)
 
 			if (new_pts.class.class_name == 'HS SR'){
+				new_pts.is_recruit = true;
 				var new_player_team_season_recruiting = new player_team_season_recruiting(new_pts.player_team_season_id)
 				player_team_season_recruitings_tocreate.push(new_player_team_season_recruiting);
 			}
@@ -3911,7 +3913,7 @@ const recent_games = async(common) => {
   common.stopwatch(common, 'Stopwatch 4.3');
 
 	const eval_roughSizeOfObject = JSON.stringify(team_seasons_b).length;
-  console.log({roughSizeOfObject: eval_roughSizeOfObject})
+  console.log({roughSizeOfObject: eval_roughSizeOfObject, team_seasons_b:team_seasons_b})
 
   console.log({db:db, team_season: db.team_season, season: season, team_seasons_b:team_seasons_b, team_seasons:team_seasons, team_seasons_by_team_season_id:team_seasons_by_team_season_id})
   const teams = await db.team.where('team_id').above(0).toArray();
@@ -3919,10 +3921,10 @@ const recent_games = async(common) => {
   common.stopwatch(common, 'Stopwatch 5');
 
   const team_games = await db.team_game.where({week_id: previous_week.week_id}).toArray();
-//   for (team_game of team_games){
-//     team_game.team_season = team_seasons_by_team_season_id[team_game.team_season_id];
-//     team_game.team_season.team = teams_by_team_id[team_game.team_season.team_id];
-//   }
+  for (team_game of team_games){
+    team_game.team_season = team_seasons_by_team_season_id[team_game.team_season_id];
+    team_game.team_season.team = teams_by_team_id[team_game.team_season.team_id];
+  }
   common.stopwatch(common, 'Stopwatch 6');
 
   const team_games_by_game_id = await index_group(team_games, 'group', 'game_id');
@@ -4957,6 +4959,8 @@ const sim_game = (game_dict, common) => {
 
     opponent_team_game.opponent_game_stats = deep_copy(team_game.game_stats);
 
+	console.log({'team_game': team_game, 'team_season': team_season})
+	console.log({'team_game.game_stats': team_game.game_stats, 'team_season.stats.season_stats': team_season.stats.season_stats})
     increment_parent(team_game.game_stats, team_season.stats.season_stats);
     increment_parent(team_game.game_stats, opponent_team_season.stats.opponent_season_stats);
 
@@ -5026,15 +5030,25 @@ const sim_week_games = async(this_week, common) => {
   team_games_by_game_id = await index_group( team_games_this_week, 'group', 'game_id');
 
   var team_season_ids_playing_this_week = team_games_this_week.map(tg => tg.team_season_id);
+  var team_seasons = await db.team_season.bulkGet(team_season_ids_playing_this_week);
 
-  var team_seasons_by_team_season_id = await index_group(await db.team_season.bulkGet(team_season_ids_playing_this_week), 'index', 'team_season_id');
+  var team_season_stats = await db.team_season_stats.bulkGet(team_season_ids_playing_this_week);
+  const team_season_stats_by_team_season_id = index_group_sync(team_season_stats, 'index', 'team_season_id');
+  team_seasons = nest_children(team_seasons, team_season_stats_by_team_season_id, 'team_season_id', 'stats')
+
+  var team_seasons_by_team_season_id = await index_group(team_seasons, 'index', 'team_season_id');
   var teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id');
-
 
   var player_team_seasons = await db.player_team_season.where('team_season_id').anyOf(team_season_ids_playing_this_week).toArray();
   var player_team_seasons_by_team_season_id = await index_group(player_team_seasons, 'group', 'team_season_id');
 
   var player_ids = player_team_seasons.map(pts => pts.player_id)
+  var player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id)
+
+  const player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
+  const player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id');
+
+  player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats')
 
   const players_by_player_id = await index_group(await db.player.bulkGet(player_ids), 'index', 'player_id');
 
@@ -5139,47 +5153,51 @@ const sim_week_games = async(this_week, common) => {
   var team_game_ids_to_save = [];
   var team_games_to_save = [];
 
-  var team_season_ids_to_save = [];
   var team_seasons_to_save = [];
+  var team_season_stats_to_save = [];
   var player_team_games_to_save = [];
   var player_team_seasons_to_save = [];
+  var player_team_season_stats_to_save = [];
 	var headlines_to_save = [];
 
-  await $.each(completed_games, function(ind, completed_game){
-    game_ids_to_save.push(completed_game.game_id);
-    games_to_save.push(completed_game.game);
+  for (completed_game of completed_games) {
+	  console.log({completed_game:completed_game})
+		game_ids_to_save.push(completed_game.game_id);
+		games_to_save.push(completed_game.game);
 
-    $.each(completed_game.team_games, function(ind, team_game){
-      team_game_ids_to_save.push(team_game.team_game_id);
-      team_games_to_save.push(team_game);
-    });
+		for (team_game of completed_game.team_games) {
+			team_game_ids_to_save.push(team_game.team_game_id);
+			team_games_to_save.push(team_game);
+		}
 
-    $.each(completed_game.team_seasons, function(ind, team_season){
-      team_season_ids_to_save.push(team_season.team_season_id);
-	  team_season.team_games = [];
-      team_seasons_to_save.push(team_season);
-    });
+		for (team_season of completed_game.team_seasons){
+			team_season_stats_to_save.push(team_season.stats);
+			delete team_season.stats;
+			delete team_season.team_games;
+			team_seasons_to_save.push(team_season);
+		}
 
-
-    $.each(completed_game.player_team_games, function(ind, player_team_game){
+		for ([player_team_game_id, player_team_game] of Object.entries(completed_game.player_team_games)){
 			if (player_team_game.game_stats.games.games_played > 0){
 				player_team_games_to_save.push(player_team_game);
 			}
-    });
+		}
 
-    $.each(completed_game.player_team_seasons, function(ind, player_team_season){
-      player_team_seasons_to_save.push(player_team_season);
-    });
+		for ([player_team_season_id, player_team_season] of Object.entries(completed_game.player_team_seasons)){
+			player_team_season_stats_to_save.push(player_team_season.season_stats);
+			delete player_team_season.season_stats;
+			player_team_seasons_to_save.push(player_team_season);
+		}
 
-    $.each(completed_game.headlines, function(ind, headline){
-      headlines_to_save.push(headline);
-    });
-  });
-
+		for (headline of completed_game.headlines) {
+			headlines_to_save.push(headline);
+		}
+	}
 
   const updated_games = await db.game.bulkPut(games_to_save);
   const updated_team_games = await db.team_game.bulkPut(team_games_to_save, );
   const updated_team_seasons = await db.team_season.bulkPut(team_seasons_to_save );
+  const updated_player_team_season_stats = await db.player_team_season_stats.bulkPut(player_team_season_stats_to_save );
   const updated_player_team_seasons = await db.player_team_season.bulkPut(player_team_seasons_to_save );
   const saved_player_team_games = await db.player_team_game.bulkAdd(player_team_games_to_save );
 	const saved_headlines = await db.headline.bulkAdd(headlines_to_save );
@@ -5502,6 +5520,7 @@ const calculate_national_rankings = async(this_week, all_weeks, common) => {
 	console.log({sorted_team_seasons:sorted_team_seasons})
 	for (team_season of sorted_team_seasons){
 		delete team_season.team;
+		delete team_season.stats;
 		delete team_season.team_games;
 	}
 	console.log({sorted_team_seasons:sorted_team_seasons})
@@ -5589,11 +5608,16 @@ const weekly_recruiting = async (common) => {
 	}
 
 	var player_team_seasons = await db.player_team_season.where({season: season}).and(pts => pts.team_season_id < -1).toArray();
+	const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
+	const player_team_season_recruitings = await db.player_team_season_recruiting.bulkGet(player_team_season_ids);
+	const player_team_season_recruitings_by_player_team_season_id = index_group_sync(player_team_season_recruitings, 'index', 'player_team_season_id');
+	
+	
 	var player_ids = player_team_seasons.map(pts => pts.player_id);
 	var players = await db.player.where('player_id').anyOf(player_ids).toArray();
-
 	var players_by_player_id = index_group_sync(players, 'index', 'player_id')
 
+	player_team_seasons = nest_children(player_team_seasons, player_team_season_recruitings_by_player_team_season_id, 'player_team_season_id', 'recruiting');
 	player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player');
 	player_team_seasons = player_team_seasons.filter(pts => !(pts.recruiting.signed == true))
 
@@ -5807,12 +5831,17 @@ const weekly_recruiting = async (common) => {
 
 	player_team_seasons = Object.values(player_team_seasons_by_player_team_season_id);
 
+	const player_team_season_recruitings_to_put = player_team_seasons.map(pts => pts.recruiting);
+	player_team_seasons.forEach(pts => delete pts.recruiting);
+	player_team_seasons.forEach(pts => delete pts.player);
 
 	await db.player_team_season.bulkPut(player_team_seasons);
+	await db.player_team_season_recruiting.bulkPut(player_team_season_recruitings_to_put);
 
 	const team_season_recruitings_to_put = team_seasons.map(ts => ts.recruiting);
 	for (team_season of team_seasons){
 		delete team_season.team;
+		delete team_season.stats;
 		delete team_season.team_games;
 		delete team_season.recruiting;
 	}
@@ -8014,4 +8043,72 @@ const change_archetypes = () => {
 			}
 		}
 	}
+}
+
+
+
+function NumberToGrade(NumberValue) {
+
+    var returnVal = 'NA'
+
+    var GradeValueMap = [
+        {'LetterGrade': 'A+', 'LowerBound': 91, 'UpperBound': 1000},
+        {'LetterGrade': 'A',  'LowerBound': 86, 'UpperBound': 90},
+        {'LetterGrade': 'A-', 'LowerBound': 81, 'UpperBound': 85},
+        {'LetterGrade': 'B+', 'LowerBound': 76, 'UpperBound': 80},
+        {'LetterGrade': 'B',  'LowerBound': 71, 'UpperBound': 75},
+        {'LetterGrade': 'B-', 'LowerBound': 66, 'UpperBound': 70},
+        {'LetterGrade': 'C+', 'LowerBound': 61, 'UpperBound': 65},
+        {'LetterGrade': 'C',  'LowerBound': 56, 'UpperBound': 60},
+        {'LetterGrade': 'C-', 'LowerBound': 51, 'UpperBound': 55},
+        {'LetterGrade': 'D+', 'LowerBound': 46, 'UpperBound': 50},
+        {'LetterGrade': 'D',  'LowerBound': 41, 'UpperBound': 45},
+        {'LetterGrade': 'D-', 'LowerBound': 36, 'UpperBound': 40},
+        {'LetterGrade': 'F',  'LowerBound': 31, 'UpperBound': 35},
+        {'LetterGrade': 'F-', 'LowerBound': -1000, 'UpperBound': 30},
+    ]
+
+    $.each(GradeValueMap, function(ind, GradeObj){
+      if ((NumberValue >= GradeObj['LowerBound']) && (NumberValue <= GradeObj['UpperBound'])){
+        GradeObj['GradeClass'] =
+          returnVal = GradeObj['LetterGrade']
+      }
+    });
+
+    return returnVal
+}
+
+function NumberToGradeClass(NumberValue){
+    return NumberToGrade(NumberValue).replace('-', '-Minus').replace('+', '-Plus');
+
+}
+
+function NumberToGrade_True(NumberValue){
+
+    var GradeValueMap = [
+        {'LetterGrade': 'A+', 'GradeClass': 'A-Plus',  'LowerBound': 91, 'UpperBound': 1000},
+        {'LetterGrade': 'A',  'GradeClass': 'A',       'LowerBound': 86, 'UpperBound': 90},
+        {'LetterGrade': 'A-', 'GradeClass': 'A-Minus', 'LowerBound': 81, 'UpperBound': 85},
+        {'LetterGrade': 'B+', 'GradeClass': 'B-Plus',  'LowerBound': 76, 'UpperBound': 80},
+        {'LetterGrade': 'B',  'GradeClass': 'B',       'LowerBound': 71, 'UpperBound': 75},
+        {'LetterGrade': 'B-', 'GradeClass': 'B-Minus', 'LowerBound': 66, 'UpperBound': 70},
+        {'LetterGrade': 'C+', 'GradeClass': 'C-Plus',  'LowerBound': 61, 'UpperBound': 65},
+        {'LetterGrade': 'C',  'GradeClass': 'C',       'LowerBound': 56, 'UpperBound': 60},
+        {'LetterGrade': 'C-', 'GradeClass': 'D-Minus', 'LowerBound': 51, 'UpperBound': 55},
+        {'LetterGrade': 'D+', 'GradeClass': 'D-Plus',  'LowerBound': 46, 'UpperBound': 50},
+        {'LetterGrade': 'D',  'GradeClass': 'D',       'LowerBound': 41, 'UpperBound': 45},
+        {'LetterGrade': 'D-', 'GradeClass': 'D-Minus', 'LowerBound': 36, 'UpperBound': 40},
+        {'LetterGrade': 'F',  'GradeClass': 'F',       'LowerBound': 31, 'UpperBound': 35},
+        {'LetterGrade': 'F-', 'GradeClass': 'F-Minus', 'LowerBound': -1000, 'UpperBound': 30},
+    ]
+
+    var GradeReturn = $.grep(GradeValueMap, function(d){
+      return NumberValue >= d.LowerBound && NumberValue <= d.UpperBound;
+    });
+
+    if (GradeReturn.length > 0){
+      return GradeReturn[0];
+    }
+
+    return {'LetterGrade': 'F-', 'GradeClass': 'F-Minus'}
 }

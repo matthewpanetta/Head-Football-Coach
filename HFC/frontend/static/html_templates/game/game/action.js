@@ -17,18 +17,22 @@ const getHtml = async (common) => {
 
 
   var team_seasons = await db.team_season.bulkGet([game.home_team_game.team_season_id, game.away_team_game.team_season_id]);
+  var team_season_ids = team_seasons.map(ts => ts.team_season_id);
   var team_ids = team_seasons.map(ts => ts.team_id);
 
-  var team_seasons_by_team_season_id =  await index_group(team_seasons, 'index', 'team_season_id');
-  var teams_by_team_id =  await index_group(await db.team.bulkGet(team_ids), 'index', 'team_id')
+  const team_season_stats = await db.team_season_stats.bulkGet(team_season_ids);
+  const team_season_stats_by_team_season_id = index_group_sync(team_season_stats, 'index', 'team_season_id')
+
+  var team_seasons_by_team_season_id =  index_group_sync(team_seasons, 'index', 'team_season_id');
+  const teams  = await db.team.bulkGet(team_ids);
+  var teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+
+  team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
+  team_seasons = nest_children(team_seasons, team_season_stats_by_team_season_id, 'team_season_id', 'stats');
 
   var team_stat_box = []
   var season_stats = []
   var player_stat_box = []
-
-  $.each(team_seasons_by_team_season_id, function(ind, team_season){
-    team_season.team = teams_by_team_id[team_season.team_id];
-  });
 
   game.home_team_game.team_season = team_seasons_by_team_season_id[game.home_team_game.team_season_id];
   game.away_team_game.team_season = team_seasons_by_team_season_id[game.away_team_game.team_season_id];
@@ -211,7 +215,7 @@ const getHtml = async (common) => {
     }
 
 
-    if (game.home_team_game.team_season.season_stats.games.games_played + game.away_team_game.team_season.season_stats.games.games_played == 0){
+    if (game.home_team_game.team_season.stats.season_stats.games.games_played + game.away_team_game.team_season.stats.season_stats.games.games_played == 0){
       season_stats = []
       show_stat_box = false;
     }
@@ -632,6 +636,7 @@ $(document).ready(async function(){
   var startTime = performance.now()
 
   const common = await common_functions('/World/:world_id/Game/:game_id/');
+  common.startTime = startTime;
 
   await getHtml(common);
   await action(common);

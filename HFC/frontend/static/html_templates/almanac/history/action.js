@@ -204,6 +204,7 @@
 
     $(document).ready(async function(){
       var startTime = performance.now()
+      common.startTime = startTime;
 
       const common = await common_functions('/World/:world_id/PlayerStats/Season/:season');
 
