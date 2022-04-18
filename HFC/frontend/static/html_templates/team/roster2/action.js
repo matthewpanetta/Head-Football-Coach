@@ -91,6 +91,11 @@
       const player_team_seasons = await db.player_team_season.toArray();
       const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
 
+      let player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
+      console.log({player_team_season_stats:player_team_season_stats})
+      player_team_season_stats = player_team_season_stats.filter(pts => pts != undefined);
+      const player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id');
+
       const player_ids = player_team_seasons.map(pts => pts.player_id);
       var players = await db.player.bulkGet(player_ids);
 
@@ -103,6 +108,7 @@
       $.each(player_team_seasons, function(ind,player_team_season){
         team_season.team = team;
         player_team_season.team_season = team_season;
+        player_team_season.season_stats = player_team_season_stats_by_player_team_season_id[player_team_season.player_team_season_id];
         player_team_season.player_team_games = player_team_season_games[player_team_season.player_team_season_id];
 
         player_team_season.class_sort_order = class_sort_order_map[player_team_season.class.class_name]
@@ -114,6 +120,8 @@
         player_counter +=1;
 
       });
+
+      console.log({player_team_seasons:player_team_seasons})
 
 
       let classes = ['All', 'SR', 'JR', 'SO', 'FR'];
@@ -228,6 +236,7 @@
     }
 
       const player_sorter = (common, players, sorted_columns) => {
+        console.log({players:players, sorted_columns:sorted_columns})
         players = players.map(p => Object.assign(p, {sort_value: common.get_from_dict(p, sorted_columns[0].key)}))
         for(player of players){
             player.sort_vals = {};

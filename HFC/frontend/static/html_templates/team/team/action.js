@@ -304,20 +304,21 @@ const getHtml = async (common) => {
   });
 
 
-  // var signed_recruit_team_seasons = await db.recruit_team_season.where({team_season_id: team_season.team_season_id}).and(rts => rts.signed).toArray();
-  // var signed_recruit_player_team_season_ids = signed_recruit_team_seasons.map(rts => rts.player_team_season_id);
-  // var signed_recruit_player_team_seasons = await db.player_team_season.bulkGet(signed_recruit_player_team_season_ids);
+  var signed_player_team_season_recruitings = await db.player_team_season_recruiting.filter(ptsr => ptsr.signed).filter(ptsr => ptsr.signed_team_season_id == team.team_season.team_season_id).toArray();
+  console.log({signed_player_team_season_recruitings:signed_player_team_season_recruitings, team:team})
+  const signed_player_team_season_recruitings_by_player_team_season_id = index_group_sync(signed_player_team_season_recruitings, 'index', 'player_team_season_id')
+  var signed_player_team_season_ids = signed_player_team_season_recruitings.map(ptsr => ptsr.player_team_season_id);
+  var signed_player_team_seasons = await db.player_team_season.bulkGet(signed_player_team_season_ids);
 
-  // var signed_recruit_player_ids = signed_recruit_player_team_seasons.map(pts => pts.player_id);
-  // var signed_recruit_players = await db.player.bulkGet(signed_recruit_player_ids);
+  var signed_player_ids = signed_player_team_seasons.map(pts => pts.player_id);
+  var signed_players = await db.player.bulkGet(signed_player_ids);
 
-  // var signed_recruit_player_by_player_id = index_group_sync(signed_recruit_players, 'index', 'player_id');
-  // signed_recruit_player_team_seasons = nest_children(signed_recruit_player_team_seasons, signed_recruit_player_by_player_id, 'player_id', 'player');
+  var signed_players_by_player_id = index_group_sync(signed_players, 'index', 'player_id');
+  signed_player_team_seasons = nest_children(signed_player_team_seasons, signed_players_by_player_id, 'player_id', 'player');
+  signed_player_team_seasons = nest_children(signed_player_team_seasons, signed_player_team_season_recruitings_by_player_team_season_id, 'player_team_season_id', 'recruiting')
 
-  // var signed_recruit_player_team_seasons_by_player_team_season_id = index_group_sync(signed_recruit_player_team_seasons, 'index', 'player_team_season_id');
-
-  // signed_recruit_team_seasons = nest_children(signed_recruit_team_seasons, signed_recruit_player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season')
-
+  signed_player_team_seasons = signed_player_team_seasons.sort((pts_a, pts_b) => pts_a.recruiting.rank.national - pts_b.recruiting.rank.national )
+  console.log({signed_player_team_seasons:signed_player_team_seasons})
   //console.log('games', games)
   common.page = {page_title: team.full_name, page_icon: team.team_logo_50, PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
   var render_content = {
@@ -329,7 +330,7 @@ const getHtml = async (common) => {
                         teams: teams,
                         all_teams: await common.all_teams(common, ''),
                         conference_standings: conference_standings,
-                        // signed_recruit_team_seasons:signed_recruit_team_seasons,
+                        signed_player_team_seasons:signed_player_team_seasons,
                         //team_leaders: team_leaders,
                         //team_stats: team_stats,
                         player_team_seasons:player_team_seasons,

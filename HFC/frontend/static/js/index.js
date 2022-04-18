@@ -651,7 +651,7 @@ class team_season_recruiting {
 		this.points_per_week = 100;
 		this.class_points = 0;
 		this.signed_player_stars = {stars_1:0, stars_2:0, stars_3:0, stars_4:0, stars_5:0};
-		this.signed_players = [];
+		this.signed_player_team_season_ids = [];
 		this.recruit_team_seasons = {};
 	}
 }
@@ -820,7 +820,6 @@ class team_season {
 	      division_rank: [], national_rank: [], national_rank_delta: 0, national_rank_delta_abs: 0, stat_rankings: {offense: [], defense: [], overall: []}
 	    };
 	    this.games = [];
-			this.signed_player_team_season_id = [];
 	    this.playoff = {};
 	    this.broadcast = {
 	      national_broadcast: 0, regional_broadcast: 0
@@ -1458,6 +1457,7 @@ class player_team_season_recruiting {
 		this.speed = 1;
 		this.stars = 4;
 		this.signed = false;
+		this.signed_team_season_id = null;
 		this.stage = null;
 		this.rank = {
 			national: null,
@@ -2084,6 +2084,7 @@ const populate_all_depth_charts = async (common) => {
 	var player_team_seasons = await db.player_team_season.where({season: season}).and(pts => pts.team_season_id > 0).toArray();
 	var player_team_seasons_by_team_season_id = await index_group(player_team_seasons, 'group', 'team_season_id');
 
+	//TODO fix this shit
 	var signed_recruit_team_seasons = [];//await db.recruit_team_season.filter(rts => rts.signed).toArray();
 	var signed_recruits_player_team_season_ids = signed_recruit_team_seasons.map(rts => rts.player_team_season_id);
 	var signed_recruits_player_team_seasons = await db.player_team_season.bulkGet(signed_recruits_player_team_season_ids);
@@ -2908,14 +2909,13 @@ const create_player_team_seasons = async (data) => {
 
 			var new_pts = new player_team_season(init_data)
 
+			var new_player_team_season_stats = new player_team_season_stats(new_pts.player_team_season_id)
+			player_team_season_stats_tocreate.push(new_player_team_season_stats);
+
 			if (new_pts.class.class_name == 'HS SR'){
 				new_pts.is_recruit = true;
 				var new_player_team_season_recruiting = new player_team_season_recruiting(new_pts.player_team_season_id)
 				player_team_season_recruitings_tocreate.push(new_player_team_season_recruiting);
-			}
-			else {
-				var new_player_team_season_stats = new player_team_season_stats(new_pts.player_team_season_id)
-				player_team_season_stats_tocreate.push(new_player_team_season_stats);
 			}
 
 			player_team_seasons_tocreate.push(new_pts);
@@ -3921,7 +3921,7 @@ const recent_games = async(common) => {
   common.stopwatch(common, 'Stopwatch 5');
 
   const team_games = await db.team_game.where({week_id: previous_week.week_id}).toArray();
-  for (team_game of team_games){
+  for (var team_game of team_games){
     team_game.team_season = team_seasons_by_team_season_id[team_game.team_season_id];
     team_game.team_season.team = teams_by_team_id[team_game.team_season.team_id];
   }
@@ -3929,7 +3929,7 @@ const recent_games = async(common) => {
 
   const team_games_by_game_id = await index_group(team_games, 'group', 'game_id');
   var min_national_rank = 0;
-	for (game of games_in_week){
+	for (var game of games_in_week){
 
     game.team_games = team_games_by_game_id[game.game_id]
 
@@ -4915,14 +4915,14 @@ const sim_game = (game_dict, common) => {
 		player_team_season = game_dict.player_team_seasons[player_team_season_id];
     player_team_game = game_dict.player_team_games[player_team_season_id];
 
-    var player_team_index = 1;
+    let player_team_index = 1;
     if (player_team_season.team_season_id == game_dict.team_seasons[0].team_season_id){
       player_team_index = 0;
     }
 
-    var team_season = game_dict.team_seasons[player_team_index];
-    var team_game = game_dict.team_games[player_team_index];
-		var opponent_team_game = game_dict.team_games[(player_team_index + 1) % 2];
+    let team_season = game_dict.team_seasons[player_team_index];
+    let team_game = game_dict.team_games[player_team_index];
+	let opponent_team_game = game_dict.team_games[(player_team_index + 1) % 2];
 
 
     for (var stat_group in player_team_game.game_stats){
@@ -4950,8 +4950,8 @@ const sim_game = (game_dict, common) => {
   }
 
   for (const team_index of [0,1]){
-    team_game = game_dict.team_games[team_index]
-    team_season = game_dict.team_seasons[team_index]
+    var team_game = game_dict.team_games[team_index]
+    var team_season = game_dict.team_seasons[team_index]
 
     var opponent_team_index = (team_index + 1) % 2;
     opponent_team_game = game_dict.team_games[opponent_team_index]
@@ -5095,24 +5095,24 @@ const sim_week_games = async(this_week, common) => {
     var player_team_seasons = [];
     var players = [], players_list = [], player_team_games = {};
 
-		for (var team_game of team_games){
-			team_seasons.push(team_seasons_by_team_season_id[team_game.team_season_id]);
+		for (let tg of team_games){
+			team_seasons.push(team_seasons_by_team_season_id[tg.team_season_id]);
 		}
 
-		for (var team_season of team_seasons){
-			teams.push(teams_by_team_id[team_season.team_id]);
+		for (let ts of team_seasons){
+			teams.push(teams_by_team_id[ts.team_id]);
 		}
 
 		var ind = 0;
-		for (var team_season of team_seasons){
+		for (let team_season of team_seasons){
 			var player_team_seasons_to_add = index_group_sync(player_team_seasons_by_team_season_id[team_season.team_season_id], 'index', 'player_team_season_id')
       player_team_seasons = {...player_team_seasons, ...player_team_seasons_to_add};
 
-      for (var player_team_season_id in player_team_seasons_to_add){
-        player_team_season = player_team_seasons_to_add[player_team_season_id];
-        player_team_season.season_stats.games_played += 1;
-        player_team_season.season_stats.team_games_played += 1;
-        new_player_team_game = new player_team_game(player_team_game_id_counter, team_games[ind].team_game_id, player_team_season.player_team_season_id);
+      for (let player_team_season_id in player_team_seasons_to_add){
+        pts = player_team_seasons_to_add[player_team_season_id];
+        pts.season_stats.games_played += 1;
+        pts.season_stats.team_games_played += 1;
+        new_player_team_game = new player_team_game(player_team_game_id_counter, team_games[ind].team_game_id, pts.player_team_season_id);
 
         player_team_games[player_team_season_id] = new_player_team_game
 
@@ -5165,32 +5165,32 @@ const sim_week_games = async(this_week, common) => {
 		game_ids_to_save.push(completed_game.game_id);
 		games_to_save.push(completed_game.game);
 
-		for (team_game of completed_game.team_games) {
-			team_game_ids_to_save.push(team_game.team_game_id);
-			team_games_to_save.push(team_game);
+		for (let tg of completed_game.team_games) {
+			team_game_ids_to_save.push(tg.team_game_id);
+			team_games_to_save.push(tg);
 		}
 
-		for (team_season of completed_game.team_seasons){
-			team_season_stats_to_save.push(team_season.stats);
-			delete team_season.stats;
-			delete team_season.team_games;
-			team_seasons_to_save.push(team_season);
+		for (let ts of completed_game.team_seasons){
+			team_season_stats_to_save.push(ts.stats);
+			delete ts.stats;
+			delete ts.team_games;
+			team_seasons_to_save.push(ts);
 		}
 
-		for ([player_team_game_id, player_team_game] of Object.entries(completed_game.player_team_games)){
-			if (player_team_game.game_stats.games.games_played > 0){
-				player_team_games_to_save.push(player_team_game);
+		for ([player_team_game_id, ptg] of Object.entries(completed_game.player_team_games)){
+			if (ptg.game_stats.games.games_played > 0){
+				player_team_games_to_save.push(ptg);
 			}
 		}
 
-		for ([player_team_season_id, player_team_season] of Object.entries(completed_game.player_team_seasons)){
-			player_team_season_stats_to_save.push(player_team_season.season_stats);
-			delete player_team_season.season_stats;
-			player_team_seasons_to_save.push(player_team_season);
+		for ([player_team_season_id, pts] of Object.entries(completed_game.player_team_seasons)){
+			player_team_season_stats_to_save.push(pts.season_stats);
+			delete pts.season_stats;
+			player_team_seasons_to_save.push(pts);
 		}
 
-		for (headline of completed_game.headlines) {
-			headlines_to_save.push(headline);
+		for (hdl of completed_game.headlines) {
+			headlines_to_save.push(hdl);
 		}
 	}
 
@@ -5780,6 +5780,7 @@ const weekly_recruiting = async (common) => {
 
 			if (signed_team_season.recruiting.scholarships_to_offer > 0){
 				player_team_season.recruiting.signed = true;
+				player_team_season.recruiting.signed_team_season_id = signed_recruit_team_season.team_season_id;
 				player_team_season.recruiting.stage = 'Signed';
 
 				var player_stars = player_team_season.recruiting.stars;
@@ -5899,6 +5900,7 @@ const choose_players_of_the_week = async (this_week, common) => {
 
 	const player_ids = player_team_seasons.map(pts => pts.player_id);
 	var players = await db.player.bulkGet(player_ids);
+	console.log({players:players, player_ids:player_ids, player_team_seasons:player_team_seasons, player_team_season_ids:player_team_season_ids, player_team_games:player_team_games})
 	const players_by_player_id = index_group_sync(players, 'index', 'player_id');
 
 	const team_season_ids = player_team_seasons.map(pts => pts.team_season_id);
@@ -6122,6 +6124,10 @@ const choose_all_americans = async (this_week, common) => {
 	}
 
 	var player_team_seasons = await db.player_team_season.where({season: common.season}).and(pts => pts.team_season_id > 0).toArray();
+	const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
+	const player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
+	const player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id');
+	player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats')
 	player_team_seasons = player_team_seasons.filter(pts => pts.season_stats.games.weighted_game_score > 0);
 	player_team_seasons = player_team_seasons.sort((pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating)
 
@@ -6281,8 +6287,10 @@ const sim_action = async(duration, common) => {
 
   var games_this_week = [], team_seasons=[], teams=[];
   $.each(sim_week_list, async function(ind, this_week){
-
+	console.log({team_game: team_game})
     await sim_week_games(this_week, common);
+
+	console.log({team_game: team_game})
 
     if (this_week.week_name == 'Conference Championships') {
       alert('assign_conference_champions', assign_conference_champions)
@@ -6532,6 +6540,7 @@ const assign_conference_champions = async(this_week, common) => {
 }
 
 const schedule_conference_championships = async (this_week, next_week, common) => {
+	console.log({team_game:team_game})
   const db = await common.db;
 
   var conference_seasons = await db.conference_season.where({season: this_week.phase.season}).toArray();
@@ -6561,6 +6570,7 @@ const schedule_conference_championships = async (this_week, next_week, common) =
 
     championship_teams = championship_teams.map(ts => ts.team_season_id);
     [team_a, team_b] = championship_teams;
+	console.log({team_game:team_game, championship_teams:championship_teams, conference_season:conference_season})
 
     var team_game_a = new team_game({world_id: common.world_id, season: common.season, team_game_id: next_team_game_id  , is_home_team: true , opponent_team_game_id: next_team_game_id+1,week_id: next_week.week_id, game_id: next_game_id, team_season_id: parseInt(team_a), opponent_team_season_id: parseInt(team_b)});
     var team_game_b = new team_game({world_id: common.world_id, season: common.season, team_game_id: next_team_game_id+1, is_home_team: false, opponent_team_game_id: next_team_game_id  ,week_id: next_week.week_id, game_id: next_game_id, team_season_id: parseInt(team_b), opponent_team_season_id: parseInt(team_a)});

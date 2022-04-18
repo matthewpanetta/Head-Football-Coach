@@ -27,10 +27,8 @@
 
       var games_by_game_id = await index_group(await db.game.where('week_id').anyOf(week_ids).toArray(), 'index', 'game_id');
       var team_games = await db.team_game.where('week_id').anyOf(week_ids).toArray();
+      team_games = nest_children(team_games, games_by_game_id, 'game_id', 'game')
 
-      $.each(team_games, function(ind, team_game){
-          team_game.game = games_by_game_id[team_game.game_id];
-      });
 
       team_games = team_games.filter(tg => tg.game.was_played == true);
       var team_games_by_team_season_id = await index_group(team_games, 'group','team_season_id');
@@ -47,18 +45,18 @@
         team_season.first_conference_rank = team_season.rankings.division_rank[team_season.rankings.division_rank.length - 1];
         team_season.final_conference_rank = team_season.rankings.division_rank[0];
 
-        $.each(team_season.team_games, function(ind, team_game){
-          team_game.opponent_team_game = team_games_by_team_game_id[team_game.opponent_team_game_id]
+        for (tg of team_season.team_games){
+          tg.opponent_team_game = team_games_by_team_game_id[tg.opponent_team_game_id]
           team_season.overall_outcomes.games_played += 1;
-          team_season.overall_outcomes.points_for += team_game.points;
-          team_season.overall_outcomes.points_against += team_game.opponent_team_game.points;
+          team_season.overall_outcomes.points_for += tg.points;
+          team_season.overall_outcomes.points_against += tg.opponent_team_game.points;
 
-          if (team_game.game.is_conference_game){
+          if (tg.game.is_conference_game){
             team_season.conference_outcomes.games_played += 1;
-            team_season.conference_outcomes.points_for += team_game.points;
-            team_season.conference_outcomes.points_against += team_game.opponent_team_game.points;
-          }
-        });
+            team_season.conference_outcomes.points_for += tg.points;
+            team_season.conference_outcomes.points_against += tg.opponent_team_game.points;
+          }        
+        }
 
         if (team_season.overall_outcomes.games_played > 0){
           team_season.overall_outcomes.ppg = common.round_decimal(team_season.overall_outcomes.points_for / team_season.overall_outcomes.games_played, 1)
