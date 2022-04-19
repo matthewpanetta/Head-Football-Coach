@@ -580,6 +580,8 @@ input[type=text], input[type=password] {
 
 .hidden {
   display: none !important;
+
+  animation:b .5s infinite;
 }
 
 .indexChooseTeamModalTeamListTeamDiv {
@@ -2485,4 +2487,9 @@ table {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+@-webkit-keyframes moving-gradient {
+  0% { background-position: -250px 0; }
+  100% { background-position: 250px 0; }
 }

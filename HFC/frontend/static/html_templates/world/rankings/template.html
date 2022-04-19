@@ -38,13 +38,25 @@
                       <th class=''>Rank</th>
                       <th></th>
                       <th>Team</th>
-                      <th>Trend</th>
-                      <th>Record</th>
+                      <th class="center-text">Trend</th>
+                      <th class="center-text">Record</th>
                       <th>Last Week</th>
                       <th class='hide-small'>This Week</th>
-                      <th></th>
                     </tr>
                   </thead>
+                  <tbody id="Top25Table-body">
+                    {% for i in range(5)%}
+                    <tr>
+                      <td class="moving-gradient"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
                 </table>
 
                 <table class="w3-table no-border"   style="width:100%">

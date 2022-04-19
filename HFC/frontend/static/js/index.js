@@ -1649,7 +1649,6 @@ const team_header_links = async (params) => {
   const all_paths = [
             {'href_extension': '', 'Display': 'Overview'},
             {'href_extension': 'Roster', 'Display': 'Roster'},
-            {'href_extension': 'Roster2', 'Display': 'Roster2'},
             {'href_extension': 'DepthChart', 'Display': 'Depth Chart'},
             {'href_extension': 'Gameplan', 'Display': 'Gameplan'},
             {'href_extension': 'Schedule', 'Display': 'Schedule'},
@@ -3812,6 +3811,7 @@ const common_functions = async (route_pattern) => {
 			, tier_placement: tier_placement
 
 			, stopwatch: stopwatch
+			, ordinal: ordinal
           };
 };
 
@@ -8121,4 +8121,10 @@ function NumberToGrade_True(NumberValue){
     }
 
     return {'LetterGrade': 'F-', 'GradeClass': 'F-Minus'}
+}
+
+const ordinal = (num) => {
+	var s=["th","st","nd","rd"],
+	v=num%100;
+	return num+(s[(v-20)%10]||s[v]||s[0]);
 }

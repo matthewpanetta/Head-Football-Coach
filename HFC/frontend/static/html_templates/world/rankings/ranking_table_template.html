@@ -1,0 +1,69 @@
+
+
+  {% for team_season in top_25_team_seasons %}
+  <tr teamid="15" class="center-text">
+    <td
+      class="center-text Top25RankNumber"
+      style="background-color: #{{team_season.team.team_color_primary_hex}}; color: white; width: 3px;"
+    >
+      <div>{{team_season.rankings.national_rank[0]}}</div>
+    </td>
+    <td style="background-color: #{{team_season.team.team_color_primary_hex}}; color: white; width: 70px">
+      <a href="{{team_season.team.team_href}}"
+        ><img
+          class="worldTeamLogo"
+          src="{{team_season.team.team_logo}}"
+      /></a>
+    </td>
+    <td class="column-med">
+      <ul class="no-list-style">
+        <li>
+          <a class="font14" href="{{team_season.team.team_href}}">
+            <span>{{team_season.team.school_name}} <span class="hide-small">{{team_season.team.team_name}}</span></span>
+          </a>
+        </li>
+        <li class="font10">{{team_season.rankings.division_rank[0]|ordinal}} in {{team_season.conference.conference_abbreviation}}</li>
+      </ul>
+    </td>
+    <td class="center-text hide-small">
+      {% if team_season.rankings.national_rank_delta > 0 %}
+      <div class="font14 W">
+        <span><i class="fas fa-angle-up"></i></span>
+        {{team_season.rankings.national_rank_delta_abs}}
+      </div>
+      <div class='font10'>Prev: <span class='bold'>{{team_season.rankings.national_rank[1]}}</span></div>
+      {% elseif team_season.rankings.national_rank_delta < 0%}
+      <div class="font14 L">
+        <span><i class="fas fa-angle-down"></i></span>
+        {{team_season.rankings.national_rank_delta_abs}}
+      </div>
+      <div class='font10'>Prev: <span class='bold'>{{team_season.rankings.national_rank[1]}}</span></div>
+      {% else %}
+      -
+      {% endif %}
+    </td>
+    <td class="center-text hide-small"><div class="font14">{{team_season.record_display}}</div></td>
+    <td class="column-med">
+      {% if team_season.last_week_team_game == null %}
+      BYE
+      {% else %}
+      <div class="inline-block" style="width: 15%">
+        <span class="W-L-badge {{team_season.last_week_team_game.game_outcome_letter}}">{{team_season.last_week_team_game.game_outcome_letter}}</span>
+      </div>
+      <div class="inline-block" style="width: 75%">
+        <a href="{{team_season.last_week_team_game.game.game_href}}">{{team_season.last_week_team_game.points}} - {{team_season.last_week_team_game.opponent_team_game.points}}</a>
+        <span class="hide-small"> {{team_season.last_week_team_game.game_location_char}} </span
+        ><a class="hide-small" href="{{team_season.last_week_team_game.opponent_team.team_href}}">{{team_season.last_week_team_game.opponent_team_game.national_rank_display}} {{team_season.last_week_team_game.opponent_team.school_name}}</a>
+      </div>
+      {% endif %}
+    </td>
+    <td class="hide-small column-med">
+      {% if team_season.this_week_team_game == null%}
+      BYE
+      {% else %}
+      <span class="hide-small"> {{team_season.this_week_team_game.game_location_char}} </span>
+      <a class="hide-small" href="{{team_season.this_week_team_game.opponent_team.team_href}}">{{team_season.this_week_team_game.opponent_team_season.national_rank_display}} {{team_season.this_week_team_game.opponent_team.school_name}}</a>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
