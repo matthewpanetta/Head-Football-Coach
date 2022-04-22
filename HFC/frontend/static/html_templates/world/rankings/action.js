@@ -82,7 +82,7 @@
       common.render_content = render_content;
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/world/rankings/template.html'
+      var url = '/static/html_templates/world/rankings/template.njk'
       var html = await fetch(url);
       html = await html.text();
 
@@ -194,7 +194,7 @@
       console.log('In PopulateTopTeams!', top_25_team_seasons)
 
 
-      let table_template_url = '/static/html_templates/world/rankings/ranking_table_template.html'
+      let table_template_url = '/static/html_templates/world/rankings/ranking_table_template.njk'
       let table_html = await fetch(table_template_url);
       let table_html_text = await table_html.text();
 

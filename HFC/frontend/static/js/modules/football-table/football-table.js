@@ -96,7 +96,7 @@ async function create_football_filters(common, table_config) {
 
   table_config.filters.filter_url =
     table_config.filters.filter_url ||
-    "/static/html_templates/common_templates/football-table/player_table_filter_template.html";
+    "/static/html_templates/common_templates/football-table/player_table_filter_template.njk";
   var filter_template_html = await fetch(table_config.filters.filter_url);
   var filter_template_html_text = await filter_template_html.text();
   var renderedHtml = await common.nunjucks_env.renderString(
@@ -122,7 +122,7 @@ async function create_football_controls(common, table_config) {
 
   table_config.column_control.column_control_url =
     table_config.column_control.column_control_url ||
-    "/static/html_templates/common_templates/football-table/player_table_column_control_template.html";
+    "/static/html_templates/common_templates/football-table/player_table_column_control_template.njk";
   var column_control_html = await fetch(
     table_config.column_control.column_control_url
   );
@@ -150,7 +150,7 @@ async function create_football_table(common, table_config) {
   console.log({ table_config: table_config });
   table_config.table_template_url =
     table_config.table_template_url ||
-    "/static/html_templates/common_templates/football-table/player_table_template.html";
+    "/static/html_templates/common_templates/football-table/player_table_template.njk";
   //TODO only fetch if havent fetched before
   var table_template_html = await fetch(table_config.table_template_url);
   var table_template_html_text = await table_template_html.text();

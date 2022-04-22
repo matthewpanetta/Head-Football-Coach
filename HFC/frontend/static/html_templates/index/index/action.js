@@ -18,7 +18,7 @@
 
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/index/index/template.html'
+      var url = '/static/html_templates/index/index/template.njk'
       var html = await fetch(url);
       html = await html.text();
 

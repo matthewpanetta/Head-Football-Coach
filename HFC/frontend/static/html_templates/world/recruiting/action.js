@@ -39,7 +39,7 @@
       common.render_content = render_content;
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/world/recruiting/template.html'
+      var url = '/static/html_templates/world/recruiting/template.njk'
       var html = await fetch(url);
       html = await html.text();
 

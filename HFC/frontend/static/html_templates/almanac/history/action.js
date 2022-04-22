@@ -125,7 +125,7 @@
       common.render_content = render_content;
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/almanac/history/template.html'
+      var url = '/static/html_templates/almanac/history/template.njk'
       var html = await fetch(url);
       html = await html.text();
 
@@ -204,9 +204,9 @@
 
     $(document).ready(async function(){
       var startTime = performance.now()
-      common.startTime = startTime;
 
       const common = await common_functions('/World/:world_id/PlayerStats/Season/:season');
+      common.startTime = startTime;
 
       await getHtml(common);
       await action(common);

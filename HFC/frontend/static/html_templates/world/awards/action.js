@@ -260,7 +260,7 @@
       common.render_content = render_content;
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/world/awards/template.html'
+      var url = '/static/html_templates/world/awards/template.njk'
       var html = await fetch(url);
       html = await html.text();
 
@@ -272,7 +272,7 @@
       $('#nav-heisman-race-tab').on('click', async function(){
 
 
-        var url = '/static/html_templates/world/awards/heisman_race_table_template.html'
+        var url = '/static/html_templates/world/awards/heisman_race_table_template.njk'
         var html = await fetch(url);
         html = await html.text();
 

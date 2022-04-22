@@ -120,7 +120,7 @@
       common.render_content = render_content;
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/almanac/player_records/template.html'
+      var url = '/static/html_templates/almanac/player_records/template.njk'
       var html = await fetch(url);
       html = await html.text();
 
@@ -178,7 +178,7 @@
 
 
         console.log('CLICKED ON tab')
-        var url = '/static/html_templates/almanac/player_records/game_records.html'
+        var url = '/static/html_templates/almanac/player_records/game_records.njk'
         var html = await fetch(url);
         html = await html.text();
 
@@ -236,7 +236,7 @@
 
         console.log({players:players})
 
-        var url = '/static/html_templates/almanac/player_records/career_records.html'
+        var url = '/static/html_templates/almanac/player_records/career_records.njk'
         var html = await fetch(url);
         html = await html.text();
 

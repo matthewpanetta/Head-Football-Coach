@@ -1,17 +1,17 @@
 
 
 <div class='ext_NavBar'>
-  {% include "../../static/html_templates/ext_NavBar.html" %}
+  {% include "../../static/html_templates/ext_NavBar.njk" %}
 </div>
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 
-{% include "../../static/html_templates/ext_TeamColoring.html" %}
+{% include "../../static/html_templates/ext_TeamColoring.njk" %}
 
 <body>
   <div class="PageContent">
     <div class='worldHeader w3-row background-eee'>
-      <!-- {% include "../../static/html_templates/Scoreboard.html" %} -->
+      <!-- {% include "../../static/html_templates/Scoreboard.njk" %} -->
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">

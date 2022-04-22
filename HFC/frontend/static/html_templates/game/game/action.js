@@ -321,7 +321,7 @@ const getHtml = async (common) => {
 
   await console.log('render_content', render_content)
 
-  var url = '/static/html_templates/game/game/template.html'
+  var url = '/static/html_templates/game/game/template.njk'
   var html = await fetch(url);
   html = await html.text();
 

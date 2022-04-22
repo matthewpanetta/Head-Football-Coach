@@ -6385,7 +6385,7 @@ const populate_player_modal = async (common, target) => {
 
 
 
-	var modal_url = '/static/html_templates/player_info_modal_template.html'
+	var modal_url = '/static/html_templates/player_info_modal_template.njk'
 	var html = await fetch(modal_url);
 	html = await html.text();
 	var renderedHtml = await common.nunjucks_env.renderString(html, {page: page, player: player})

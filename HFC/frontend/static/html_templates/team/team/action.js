@@ -341,7 +341,7 @@ const getHtml = async (common) => {
   common.render_content = render_content;
   console.log('render_content', render_content)
 
-  var url = '/static/html_templates/team/team/template.html'
+  var url = '/static/html_templates/team/team/template.njk'
   var html = await fetch(url);
   html = await html.text();
 
@@ -523,7 +523,7 @@ const action = async (common) => {
           }
         }
 
-        var url = '/static/html_templates/team/team/conference_standings_tbody_template.html'
+        var url = '/static/html_templates/team/team/conference_standings_tbody_template.njk'
         var html = await fetch(url);
         html = await html.text();
 
@@ -535,7 +535,7 @@ const action = async (common) => {
         $('#conference_standings_tbody').append(renderedHtml);
 
 
-        var url = '/static/html_templates/team/team/team_leaders_div_template.html'
+        var url = '/static/html_templates/team/team/team_leaders_div_template.njk'
         var html = await fetch(url);
         html = await html.text();
 
@@ -547,7 +547,7 @@ const action = async (common) => {
         await draw_faces(common);
 
 
-        var url = '/static/html_templates/team/team/team_stats_div_template.html'
+        var url = '/static/html_templates/team/team/team_stats_div_template.njk'
         var html = await fetch(url);
         html = await html.text();
 
@@ -608,7 +608,7 @@ const action = async (common) => {
 
       //console.log({team:team})
 
-      var url = '/static/html_templates/team/team/team_info_div_template.html'
+      var url = '/static/html_templates/team/team/team_info_div_template.njk'
       var html = await fetch(url);
       html = await html.text();
 

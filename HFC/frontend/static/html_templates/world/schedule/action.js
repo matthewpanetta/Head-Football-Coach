@@ -102,7 +102,7 @@
       common.render_content = render_content;
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/world/schedule/template.html'
+      var url = '/static/html_templates/world/schedule/template.njk'
       var html = await fetch(url);
       html = await html.text();
 
@@ -121,7 +121,7 @@
         }
         week.nav_clicked = true;
 
-        var url = '/static/html_templates/world/schedule/week_schedule_template.html'
+        var url = '/static/html_templates/world/schedule/week_schedule_template.njk'
         var html = await fetch(url);
         html = await html.text();
 
