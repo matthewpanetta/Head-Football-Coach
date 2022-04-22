@@ -2320,6 +2320,11 @@ table tr td.padding-left-8 {
 .football-table-row td, .football-table-header th {
   align-self: center;
   padding: 10px;
+  width: 60px;
+}
+
+.football-table-content col, .football-table-column-headers th {
+  width: 60px;
 }
 
 .football-table-group {

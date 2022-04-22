@@ -3812,6 +3812,7 @@ const common_functions = async (route_pattern) => {
 
 			, stopwatch: stopwatch
 			, ordinal: ordinal
+			, deep_copy:deep_copy
           };
 };
 
