@@ -110,7 +110,9 @@
               </thead>
               <tr class='center-text-row'>
                 <td class='white-text padding-left-8 left-text gameBoxScoreTeamName col-group gameOutcome{{game.away_outcome_letter}}' style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}'>
+                  <a href='{{game.away_team_game.team_season.team.team_href}}'>
                   {{game.away_team_game.team_season.team.team_abbreviation}}
+                  </a>
                 </td>
                 {% for period in game.scoring.periods %}
                 <td class='w3-center'>{{period.points[0]}}</td>
@@ -119,7 +121,9 @@
               </tr>
               <tr class='center-text-row'>
                 <td class='white-text padding-left-8 left-text gameBoxScoreTeamName col-group gameOutcome{{game.home_outcome_letter}}' style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}'>
+                  <a href='{{game.home_team_game.team_season.team.team_href}}'>
                   {{game.home_team_game.team_season.team.team_abbreviation}}
+                  </a>
                 </td>
                 {% for period in game.scoring.periods %}
                 <td class='w3-center'>{{period.points[1]}}</td>
@@ -245,7 +249,9 @@
                             {{season_stat.left_arrow|safe}}
                           </td>
                           <td class=' column-shrink' style='background-color: #{{season_stat.better_team_for_stat.team_color_primary_hex}};'>
-                            <img class='logo-30' src="{{season_stat.better_team_for_stat.team_logo}}" alt="">
+                            <a href='{{season_stat.better_team_for_stat.team_href}}'>
+                             <img class='logo-30' src="{{season_stat.better_team_for_stat.team_logo}}" alt="">
+                            </a>
                           </td>
                           <td class='white-text font24 column-shrink' style='background-color: #{{season_stat.better_team_for_stat.team_color_primary_hex}};'>
                             {{season_stat.right_arrow|safe}}
@@ -283,7 +289,9 @@
                         <td>{{game.week.week_name}}, {{game.week.season}}</td>
 
                         <td class='bold center-text' style='background-color: #{{game.outcome.winning_team.team.team_color_primary_hex}};'>
-                          <img class='logo-30' src="{{game.outcome.winning_team.team.team_logo}}" alt="">
+                          <a href='{{game.outcome.winning_team.team.team_href}}'>
+                            <img class='logo-30' src="{{game.outcome.winning_team.team.team_logo}}" alt="">
+                          </a>
                         </td>
                         <td>
                           <a href="{{game.game_href}}" class='nowrap'>
@@ -309,20 +317,23 @@
                       </tr>
                       <tr class='center-text-row'>
                         <td style='background-color: #{{stat.home_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  >
-                          <img class='logo-50' src="{{stat.home_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
+                          <a href='{{stat.home_player_team_game.player_team_season.team_season.team.team_href}}'>
+                           <img class='logo-50' src="{{stat.home_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
+                          </a>
                         </td>
                         <td class='center-text' style='background-color: #{{stat.home_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{loop.index}}-{{stat.home_player_team_game.player_team_season.player_id}}">
                           <div class="PlayerFace-45 PlayerFace-Headshot inline-block" player_id='{{stat.home_player_team_game.player_team_season.player_id}}' style='border-color:#{{stat.home_player_team_game.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="teamTeamLeaderBoxPlayerFace-{{loop.index}}-{{stat.home_player_team_game.player_team_season.player_id}}" face_drawn='false' >
                           </div>
                         </td>
-                        <td class='left-text background-eee'>
+                        <td class='left-text background-eee' player_id='{{stat.home_player_team_game.player_team_season.player.player_id}}'>
                           <div class='font12 '>
                             <a href="{{stat.home_player_team_game.player_team_season.player.player_href}}">
                               {{stat.home_player_team_game.player_team_season.player.full_name}}
                             </a>
                           </div>
                           <div class="font10">
-                            {{stat.home_player_team_game.player_team_season.class.class_name}} | {{stat.home_player_team_game.player_team_season.position}}
+                            <span><i class="fa fa-address-card player-profile-popup-icon"></i></span>
+                            | {{stat.home_player_team_game.player_team_season.class.class_name}} | {{stat.home_player_team_game.player_team_season.position}}
                           </div>
                         </td>
                         <td class='bold font14 background-eee'>{{stat.home_player_value}}</td>
@@ -330,7 +341,9 @@
 
                       <tr class='center-text-row'>
                         <td style='background-color: #{{stat.away_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  >
-                          <img class='logo-50' src="{{stat.away_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
+                          <a href='{{stat.away_player_team_game.player_team_season.team_season.team.team_href}}'>
+                            <img class='logo-50' src="{{stat.away_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
+                          </a>
                         </td>
                         <td class='center-text' style='background-color: #{{stat.away_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{loop.index}}-{{stat.away_player_team_game.player_team_season.player_id}}">
                           <div class="PlayerFace-45 PlayerFace-Headshot inline-block" player_id='{{stat.away_player_team_game.player_team_season.player_id}}' style='border-color:#{{stat.away_player_team_game.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="teamTeamLeaderBoxPlayerFace-{{loop.index}}-{{stat.away_player_team_game.player_team_season.player_id}}" face_drawn='false' >
@@ -342,8 +355,9 @@
                               {{stat.away_player_team_game.player_team_season.player.full_name}}
                             </a>
                           </div>
-                          <div class="font10">
-                            {{stat.away_player_team_game.player_team_season.class.class_name}} | {{stat.away_player_team_game.player_team_season.position}}
+                          <div class="font10" player_id='{{stat.away_player_team_game.player_team_season.player.player_id}}'>
+                            <span><i class="fa fa-address-card player-profile-popup-icon"></i></span>
+                            | {{stat.away_player_team_game.player_team_season.class.class_name}} | {{stat.away_player_team_game.player_team_season.position}}
                           </div>
                         </td>
                         <td class='bold font14 background-white'>{{stat.away_player_value}}</td>
@@ -370,15 +384,17 @@
                     <table class='no-border w3-table-all' style='width: 100%;'>
                       <tbody>
                         {% for period in game.scoring.periods %}
-                          <tr class='ScoringSummaryQuarterHeader' style='background-color: white;'>
-                            <th colspan='4'>{{period.period_number}}</th>
+                          <tr class='team-secondary-table-row white-text' style='border-bottom: 2px solid black; border-right: 2px solid black; '>
+                            <th class='padding-top-8 bold' colspan='4'>Quarter {{period.period_number}}</th>
                             <th class='ScoringSummaryTeamScore center-text'>{{game.home_team_game.team_season.team.team_abbreviation}}</th>
                             <th class='ScoringSummaryTeamScore center-text'>{{game.away_team_game.team_season.team.team_abbreviation}}</th>
                           </tr>
                           {% for drive in period.drives %}
                           <tr class='ScoringSummaryScoreRow {{drive.drive_end.drive_event_class}}' style='border-bottom: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; border-right: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; background-color: white;'>
                             <td class='ScoringSummaryTeamLogo column-shrink' style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
-                                <img src="{{drive.drive_end.display_team.team_logo}}" alt="">
+                                <a href='{{drive.drive_end.display_team.team_href}}'>
+                                  <img src="{{drive.drive_end.display_team.team_logo}}" alt="">
+                                </a>
                             </td>
                             <td class="white-text font16"  style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
                               {{drive.drive_end.play_type}}
@@ -510,13 +526,17 @@
                         <td style='font-size: 24px; color:white; background-color:#{{players.away_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
                           <span>{{players.away_player_team_season.advantage_icon|safe}}</span>
                           {% if players.away_player_team_season.advantage_logo_url%}
-                          <img src="{{players.away_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
+                          <a href='{{players.away_player_team_season.team.team_href}}'> 
+                            <img src="{{players.away_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
+                          </a>
                           {% endif %}
                         </td>
                         <td style='' class='center-text font16'><span>{{players.position}}</span></td>
                         <td style='font-size: 24px; color:white; background-color:#{{players.home_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
                           {% if players.home_player_team_season.advantage_logo_url%}
-                          <img src="{{players.home_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
+                          <a href='{{players.home_player_team_season.team.team_href}}'>
+                            <img src="{{players.home_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
+                          </a>
                           {% endif %}
                           <span>{{players.home_player_team_season.advantage_icon|safe}}</span>
                         </td>
@@ -546,10 +566,12 @@
                   </div>
                   <table class='w3-table-all no-border' id='teamOverviewConferenceStandings'>
                     <thead>
-                      <th colspan='2'>Team</th>
-                      <th>Conf</th>
-                      <th>GB</th>
-                      <th>Record</th>
+                      <tr class='team-secondary-table-row white-text'>
+                        <th colspan='2'>Team</th>
+                        <th>Conf</th>
+                        <th>GB</th>
+                        <th>Record</th>
+                      </tr>      
                     </thead>
                     {% for standing_team in conference.conference_standings %}
                     <tr class='{{standing_team.bold}}'>

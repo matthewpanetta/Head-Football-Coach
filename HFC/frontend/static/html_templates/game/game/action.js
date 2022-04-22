@@ -336,6 +336,10 @@ const getHtml = async (common) => {
 
     const action = async (common) => {
 
+      $(".player-profile-popup-icon").on("click", async function () {
+        await common.populate_player_modal(common, this);
+      });
+
       if (common.render_content.game.was_played){
         var drives = common.render_content.game.scoring.drives;
 

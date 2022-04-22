@@ -6354,7 +6354,8 @@ const search_input_action = () => {
 
 const populate_player_modal = async (common, target) => {
 	var db = common.db;
-	var player_id = parseInt($(target).parents('tr').attr('player_id'))
+	var player_id = parseInt($(target).closest('*[player_id]').attr('player_id'))
+	console.log({player_id:player_id, target:target, p: $(target).closest('*[player_id]')})
 	var season = common.season;
 
 	var player = await db.player.get({player_id: player_id})

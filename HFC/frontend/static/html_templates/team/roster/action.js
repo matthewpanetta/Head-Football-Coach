@@ -107,10 +107,10 @@ const getHtml = async (common) => {
       team.team_season.conference_season.conference_id
     ];
 
-  // const player_team_seasons = await db.player_team_season
-  //   .where({ team_season_id: team_season.team_season_id })
-  //   .toArray();
-  const player_team_seasons = await db.player_team_season.toArray();
+  const player_team_seasons = await db.player_team_season
+    .where({ team_season_id: team_season.team_season_id })
+    .toArray();
+  // const player_team_seasons = await db.player_team_season.toArray();
   const player_team_season_ids = player_team_seasons.map(
     (pts) => pts.player_team_season_id
   );
