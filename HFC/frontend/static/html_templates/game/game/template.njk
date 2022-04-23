@@ -35,6 +35,14 @@
       border-top: 4px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}} !important;
     }
 
+    .home-team-scoring-summary-row {
+      box-shadow: inset -1px -1px 0px 1px #{{game.home_team_game.team_season.team.team_color_primary_hex}};
+    }
+
+    .away-team-scoring-summary-row {
+      box-shadow: inset -1px -1px 0px 1px #{{game.away_team_game.team_season.team.team_color_primary_hex}};
+    }
+
 
     .team-primary-background-bar {
       background-color: #{{page.PrimaryColor}} !important;
@@ -48,6 +56,15 @@
     .drive-event-bar button.w3-bar-item.w3-button:hover {
       background-color: inherit !important;
       color: #FFF !important;
+    }
+
+    .home-team-secondary-row th {
+      background-color: #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}} !important;
+      color: #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor|TeamBackgroundFontColor}} !important;
+    }
+    .away-team-secondary-row th {
+      background-color: #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}} !important;
+      color: #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor|TeamBackgroundFontColor}} !important;
     }
   </style>
 </head>
@@ -390,6 +407,7 @@
                             <th class='ScoringSummaryTeamScore center-text'>{{game.away_team_game.team_season.team.team_abbreviation}}</th>
                           </tr>
                           {% for drive in period.drives %}
+                          
                           <tr class='ScoringSummaryScoreRow {{drive.drive_end.drive_event_class}}' style='border-bottom: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; border-right: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; background-color: white;'>
                             <td class='ScoringSummaryTeamLogo column-shrink' style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
                                 <a href='{{drive.drive_end.display_team.team_href}}'>
@@ -526,7 +544,7 @@
                         <td style='font-size: 24px; color:white; background-color:#{{players.away_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
                           <span>{{players.away_player_team_season.advantage_icon|safe}}</span>
                           {% if players.away_player_team_season.advantage_logo_url%}
-                          <a href='{{players.away_player_team_season.team.team_href}}'> 
+                          <a href='{{players.away_player_team_season.team_season.team.team_href}}'> 
                             <img src="{{players.away_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
                           </a>
                           {% endif %}
@@ -534,7 +552,7 @@
                         <td style='' class='center-text font16'><span>{{players.position}}</span></td>
                         <td style='font-size: 24px; color:white; background-color:#{{players.home_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
                           {% if players.home_player_team_season.advantage_logo_url%}
-                          <a href='{{players.home_player_team_season.team.team_href}}'>
+                          <a href='{{players.home_player_team_season.team_season.team.team_href}}'>
                             <img src="{{players.home_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
                           </a>
                           {% endif %}
@@ -601,26 +619,45 @@
         <div class="tab-pane tab-content" style='display:none;' id="nav-boxscore">
           <div class='w3-container'>
             {% for stat_grouping in box_score_stat_groupings %}
-            <div class='w3-row-padding'>
-              <div class='w3-col s5 gamePlayerBoxStats w3-card away-drop-shadow margin-bottom-12 height100 no-padding'>
-                <div class="w3-bar away-team-primary-background-bar">
-                  <span>{{game.away_team_game.team_season.team.school_name}} {{stat_grouping.stat_group_name}}</span>
-                </div>
-                <table id='away-box-score-{{stat_grouping.stat_group_name}}' class='w3-table-all no-border'>
-                  <thead>
-                  </thead>
-                </table>
-              </div>
-              <div class='w3-col s5 gamePlayerBoxStats w3-card home-drop-shadow margin-bottom-12 height100 no-padding'>
-                <div class="w3-bar home-team-primary-background-bar">
-                  <span>{{game.home_team_game.team_season.team.school_name}} {{stat_grouping.stat_group_name}}</span>
-                </div>
-                <table id='home-box-score-{{stat_grouping.stat_group_name}}' class='w3-table-all no-border'>
-                  <thead>
-                  </thead>
-                </table>
-              </div>
 
+            <div class='w3-row-padding'>
+              {% for team_game_obj in [ {'home_or_away': 'away', 'team_game': game.away_team_game}, {'home_or_away': 'home', 'team_game': game.home_team_game}]%}
+              <div class='w3-col s5 gamePlayerBoxStats w3-card {{team_game_obj.home_or_away}}-drop-shadow margin-bottom-12 height100 no-padding'>
+                <div class="w3-bar {{team_game_obj.home_or_away}}-team-primary-background-bar">
+                  <span>{{team_game_obj.team_game.team_season.team.school_name}} {{stat_grouping.stat_group_name}}</span>
+                </div>
+                <table id='{{team_game_obj.home_or_away}}-box-score-{{stat_grouping.stat_group_name}}' class='w3-table-all no-border width100'>
+                  <thead>
+                    <tr class='center-text-row  football-table-column-headers {{team_game_obj.home_or_away}}-team-secondary-row'>
+                      <th class='left-text' sort-direction='sort-asc' style='width: auto;'>Player</th>
+                      {% for column in stat_grouping.columns%}
+                      <th value-key='{{column.data}}' style='width: auto;'>{{column.title}}</th>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for player_team_game in team_game_obj.team_game.player_team_games%}
+                      {% if common.get_from_dict(player_team_game, stat_grouping.filter_key) > 0%}
+                      <tr class='center-text-row' player_id='{{player_team_game.player_team_season.player.player_id}}'>
+                        <td value='{{player_team_game.player_team_season.player.name.last}},{{player_team_game.player_team_season.player.name.first}}' class='left-text padding-left-8'>
+                          <i class="fa fa-address-card player-profile-popup-icon"></i>
+                          <a href='{{player_team_game.player_team_season.player.player_href}}'>
+                            <span>{{player_team_game.player_team_season.player.full_name}}<span>
+                          </a>
+                          <span class='font10'>{{player_team_game.player_team_season.position}}<span>
+                        </td>
+                        {% for column in stat_grouping.columns%}
+                        {% set value = common.get_from_dict(player_team_game, column.data)%}
+                        <td value='{{value}}'>{{value}}</td>
+                        {% endfor %}
+
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% endfor %}
             </div>
             {% endfor %}
 

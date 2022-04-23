@@ -1175,7 +1175,7 @@
   "division_name": "East",
   "conference_name": "Big Ten",
   "team_color_primary_hex": "cfb991",
-  "team_color_secondary_hex": "9d9795",
+  "team_color_secondary_hex": "000000",
   "jersey": {
     "invert": false,
     "teamColors": null,

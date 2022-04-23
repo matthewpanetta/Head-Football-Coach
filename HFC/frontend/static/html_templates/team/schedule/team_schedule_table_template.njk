@@ -1,0 +1,95 @@
+<style>
+    .football-table-column-headers th {
+        background-color: #{{page.SecondaryColor}};
+    }
+</style>
+
+
+<div class='w3-card '>
+    <div style='max-width: 100%; width:100%; overflow-x: scroll;'>
+        <table class='football-table-content font14' style='table-layout: fixed; max-width: 100%; width:100%; '>
+            <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
+                <tr class='football-table-column-headers unselectable' style=' height: 30px; '>
+                    <!-- BASELINE -->
+                    <th style='max-width: 40px;' class='center-text' value-key='game.week.week_id'>Week</th>
+                    <th style='max-width: 40px;' class='center-text' value-key='game.opponent_team_game.team_season.team.team_name' sort-order='sort-asc'>Team</th>
+                    <th style='min-width: 70px;' class='left-text' value-key='game.opponent_team_game.team_season.team.full_name' sort-order='sort-asc'></th>
+                    <th class='center-text' value-key='player_team_season.position_sort_order' sort-order='sort-asc'>Result</th>
+                    <th  class='center-text' value-key='player_team_season.class_sort_order'>Record</th>
+                    <th value-key='body.height_inches'>Top Players</th>
+                    <th class='col-group' value-key='body.weight'>Opponent Top Players</th>
+                    
+                </tr> 
+            </thead>
+            <tbody class='football-table-body center-text vertical-align-middle' style=' min-height: 100%; width: 100%; max-width: 100%;'>
+                {% if data|length == 0%}
+                <tr class='football-table-row left-text vertical-align-middle' style='height: 30px;'>
+                  <td colspan="5">No Games To Display</td>
+                </tr>
+                {% endif %}
+                {% for game in data%}
+                <tr class='football-table-row  ' style='height: 30px;' game_id='{{game.game_id}}'>
+                    <!-- BASELINE -->
+                    <td style='color: white; width: 70px; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
+                      <span>{{game.week.week_name}}</span>
+                    </td>
+                    <td style='color: white; width: 10px; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
+                      <a href='{{game.opponent_team_game.team_season.team.team_href}}'>
+                        <img class='worldTeamLogo' src='{{game.opponent_team_game.team_season.team.team_logo}}'/>
+                      </a>
+                    </td>
+                    <td class='column-med'>
+                      <span class='font10'>{{game.opponent_team_game.team_season.national_rank_display}}</span>
+                      <a href='{{game.opponent_team_game.team_season.team.team_href}}'>{{game.opponent_team_game.team_season.team.school_name}}</a>
+                      <span class="font10">{{game.opponent_team_game.team_season.record_display}}</span>
+                    </td>
+                    <td class='center-text' >
+                      {% if game.was_played%}
+                      <span class='{{game.team_game.game_outcome_letter}} W-L-badge'>{{game.team_game.game_outcome_letter}}</span>
+                      {% endif %}
+                      <span>
+                              <a href='{{game.game_href}}'>{{game.game_display}}</a>
+                              {{game.overtime_display}}
+                            </span>
+                    </td>              
+                    <td class='center-text'>
+                      {% if game.was_played%}
+                      <span>{{game.team_game.record.wins}} - {{game.team_game.record.losses}} ({{game.team_game.record.conference_wins}} - {{game.team_game.record.conference_losses}})</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if game.was_played%}
+                      <span class='font10'>{{game.team_game.top_stats[0].player_team_game.player_team_season.position}}</span>
+                      <a href='{{game.team_game.top_stats[0].player_team_game.player_team_season.player.player_href}}'>
+                       {{game.team_game.top_stats[0].player_team_game.player_team_season.player.full_name}}
+                      </a>
+                      <span> - {{game.team_game.team_season.team.team_abbreviation}}</span>
+                      <ul class='no-list-style'>
+
+                       <li>{{game.team_game.top_stats[0].top_stats[0].display}}</li>
+                       <li>{{game.team_game.top_stats[0].top_stats[1].display}}</li>
+                     </ul>
+                      {% endif %}                      
+                    </td>
+                    <td class='col-group'>
+                      {% if game.was_played%}
+                      <span class='font10'>{{game.opponent_team_game.top_stats[0].player_team_game.player_team_season.position}}</span>
+                      <a href='{{game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.player_href}}'>
+                       {{game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.full_name}}
+                      </a>
+                      <span> - {{game.opponent_team_game.team_season.team.team_abbreviation}}</span>
+                      <ul class='no-list-style'>
+
+                       <li>{{game.opponent_team_game.top_stats[0].top_stats[0].display}}</li>
+                       <li>{{game.opponent_team_game.top_stats[0].top_stats[1].display}}</li>
+                     </ul>
+                      {% endif %}                      
+                    </td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+

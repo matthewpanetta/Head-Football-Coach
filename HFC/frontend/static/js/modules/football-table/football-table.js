@@ -1,3 +1,51 @@
+const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
+  var data = [];
+  const table = $(table_id);
+
+  $(table_id)
+    .find("th")
+    .on("click", function (event) {
+      var clicked_th = $(event.target);
+      var sort_direction = clicked_th.attr("sort-direction") || "sort-desc";
+      if ($(clicked_th).hasClass("sort-desc")) {
+        sort_direction = "sort-asc";
+      } else if ($(clicked_th).hasClass("sort-asc")) {
+        sort_direction = "sort-desc";
+      }
+      
+      var sort_direction_multiplier = -1;
+      if (sort_direction == "sort-desc") {
+        sort_direction_multiplier = 1;
+      }
+
+      $(table_id).find("th").removeClass("sort-asc").removeClass("sort-desc");
+
+      clicked_th.addClass(sort_direction);
+
+      const th_index = clicked_th.index();
+
+      var data_rows = $(table_id).find("tbody tr").toArray();
+      data = data_rows.map((tr) => ({
+        tr: $(tr),
+        val: $(tr).find(`td:eq(${th_index})`).attr("value"),
+      }));
+      data = data.sort(function (elem_a, elem_b) {
+        if (
+          (Number(elem_b.val) || elem_b.val) <
+          (Number(elem_a.val) || elem_a.val)
+        ) {
+          return -1 * sort_direction_multiplier;
+        }
+        return 1 * sort_direction_multiplier;
+      });
+
+      for (var elem of data) {
+        $(table_id).find("tbody").append(elem.tr);
+      }
+    });
+  $(table_id).find(`th:eq(${initial_sort_index})`).click();
+};
+
 const get_initial_column_controls = (subject) => {
   if (subject == "player stats") {
     return {
@@ -94,19 +142,25 @@ async function create_football_filters(common, table_config) {
   table_config.filters.filtered_columns =
     table_config.filters.filtered_columns || [];
 
-  table_config.filters.filter_url =
-    table_config.filters.filter_url ||
-    "/static/html_templates/common_templates/football-table/player_table_filter_template.njk";
-  var filter_template_html = await fetch(table_config.filters.filter_url);
+  table_config.templates.filter_template_url =
+    table_config.templates.filter_template_url;
+
+  if (!table_config.templates.filter_template_url) {
+    return 0;
+  }
+
+  var filter_template_html = await fetch(
+    table_config.templates.filter_template_url
+  );
   var filter_template_html_text = await filter_template_html.text();
   var renderedHtml = await common.nunjucks_env.renderString(
     filter_template_html_text,
     { filter_options: table_config.filters.filter_options }
   );
-  table_config.filters.filter_dom_selector =
-    table_config.filters.filter_dom_selector || "#player-stats-table-filter";
-  $(table_config.filters.filter_dom_selector).empty();
-  $(table_config.filters.filter_dom_selector).html(renderedHtml);
+  table_config.dom.filter_dom_selector =
+    table_config.dom.filter_dom_selector || "#player-stats-table-filter";
+  $(table_config.dom.filter_dom_selector).empty();
+  $(table_config.dom.filter_dom_selector).html(renderedHtml);
 
   add_filter_listeners(common, table_config);
 }
@@ -118,33 +172,38 @@ async function create_football_controls(common, table_config) {
     table_config.column_control.column_controls ||
     get_initial_column_controls(table_config.subject);
 
-  table_config.column_control.column_control_url =
-    table_config.column_control.column_control_url ||
-    "/static/html_templates/common_templates/football-table/player_table_column_control_template.njk";
+  table_config.templates.column_control_template_url =
+    table_config.templates.column_control_template_url;
+
+  if (!table_config.templates.column_control_template_url) {
+    return 0;
+  }
+
   var column_control_html = await fetch(
-    table_config.column_control.column_control_url
+    table_config.templates.column_control_template_url
   );
   column_control_html_text = await column_control_html.text();
   var renderedHtml = await common.nunjucks_env.renderString(
     column_control_html_text,
     { column_controls: table_config.column_control.column_controls }
   );
-  table_config.column_control.column_control_dom_selector =
-    table_config.column_control.column_control_dom_selector ||
+  table_config.dom.column_control_dom_selector =
+    table_config.dom.column_control_dom_selector ||
     "#player-stats-table-column-control";
-  $(table_config.column_control.column_control_dom_selector).empty();
-  $(table_config.column_control.column_control_dom_selector).html(renderedHtml);
+  $(table_config.dom.column_control_dom_selector).empty();
+  $(table_config.dom.column_control_dom_selector).html(renderedHtml);
 
   add_column_control_listeners(common, table_config);
 }
 
 async function create_football_table(common, table_config) {
   table_config.data = table_config.original_data;
-  table_config.table_template_url =
-    table_config.table_template_url ||
-    "/static/html_templates/common_templates/football-table/player_table_template.njk";
+  table_config.templates.table_template_url =
+    table_config.templates.table_template_url;
   //TODO only fetch if havent fetched before
-  var table_template_html = await fetch(table_config.table_template_url);
+  var table_template_html = await fetch(
+    table_config.templates.table_template_url
+  );
   var table_template_html_text = await table_template_html.text();
 
   table_template_html_text = table_template_html_text.replaceAll("  ", " ");
@@ -209,19 +268,26 @@ async function create_football_table(common, table_config) {
     }
   );
 
-  $("#player-stats-table-container").empty();
-  $("#player-stats-table-container").append(renderedHtml);
+  table_config.dom.table_dom_selector =
+    table_config.dom.table_dom_selector || "#player-stats-table-container";
+
+  $(table_config.dom.table_dom_selector).empty();
+  $(table_config.dom.table_dom_selector).append(renderedHtml);
 
   let column_counter = 1;
-  $(".football-table-column-headers th").each(function () {
+  $(
+    table_config.dom.table_dom_selector + " .football-table-column-headers th"
+  ).each(function () {
     for (sort_column_obj of table_config.sorted_columns) {
       if ($(this).attr("value-key") == sort_column_obj.key) {
         $(this).addClass(sort_column_obj.sort_direction);
 
-        $(".football-table-content col:nth-child(" + column_counter + ")").css(
-          "background-color",
-          "#efefef"
-        );
+        $(
+          table_config.dom.table_dom_selector +
+            " .football-table-content col:nth-child(" +
+            column_counter +
+            ")"
+        ).css("background-color", "#efefef");
       }
     }
     column_counter += 1;
@@ -299,11 +365,16 @@ const add_column_control_listeners = async (common, table_config) => {
 const add_table_listeners = async (common, table_config) => {
   let football_table_body = $(".football-table-body").eq(0);
   let football_table_rows_map = {};
-  $(".football-table-row").each(function (ind, row) {
+  $(table_config.dom.table_dom_selector + ".football-table-row").each(function (
+    ind,
+    row
+  ) {
     football_table_rows_map[$(row).attr("player_id")] = row;
   });
 
-  $(".football-table-column-headers th").on("click", function (e) {
+  $(
+    table_config.dom.table_dom_selector + " .football-table-column-headers th"
+  ).on("click", function (e) {
     table_config.pagination.current_page = 1;
     let target_new_class = $(e.target).attr("sort-order") || "sort-desc";
     if ($(e.target).hasClass("sort-desc")) {
@@ -314,8 +385,14 @@ const add_table_listeners = async (common, table_config) => {
 
     if (!e.shiftKey) {
       table_config.sorted_columns = [];
-      $(".football-table-column-headers th").removeClass("sort-desc");
-      $(".football-table-column-headers th").removeClass("sort-asc");
+      $(
+        table_config.dom.table_dom_selector +
+          " .football-table-column-headers th"
+      ).removeClass("sort-desc");
+      $(
+        table_config.dom.table_dom_selector +
+          " .football-table-column-headers th"
+      ).removeClass("sort-asc");
     }
 
     let sort_direction = target_new_class;
@@ -328,7 +405,9 @@ const add_table_listeners = async (common, table_config) => {
     create_football_table(common, table_config);
   });
 
-  $("#football-table-pagination button").on("click", function () {
+  $(
+    table_config.dom.table_dom_selector + " .football-table-pagination button"
+  ).on("click", function () {
     var page_destination = $(this).attr("pagination-action");
     table_config.pagination.current_page = parseInt(page_destination);
     create_football_table(common, table_config);
@@ -503,7 +582,12 @@ const data_filterer = (common, table_config) => {
 };
 
 const data_sorter = (common, table_config) => {
+  console.log({ table_config: table_config });
   var data = table_config.data;
+
+  if (table_config.sorted_columns.length == 0) {
+    return data;
+  }
 
   data = data.map((elem) =>
     Object.assign(elem, {
@@ -544,6 +628,8 @@ const data_sorter = (common, table_config) => {
     }
     return 0;
   });
+
+  console.log({ data: data });
 
   return data;
 };

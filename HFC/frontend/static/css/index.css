@@ -2428,8 +2428,8 @@ button.football-table-filter-option.selected, button.football-table-column-contr
 
 a:hover:not(.no-hover) {
   color: inherit;
-  /* font-weight: bolder; */
-  text-shadow: 0px 0px 0.75px;
+  font-weight: bolder;
+  /* text-shadow: 0px 0px 0.75px; */
   text-decoration: underline;
 }
 

@@ -1,6 +1,6 @@
 <style>
     .football-table-column-headers th {
-        background-color: #{{page.PrimaryColor}};
+        background-color: #{{page.SecondaryColor}};
     }
 
 </style>
@@ -95,7 +95,7 @@
             {% endif %}
 
             <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
-                <tr class='football-table-column-groups' style='background-color: #{{page.SecondaryColor}}; border-top: 3px solid #{{page.PrimaryColor}}; height: 30px;'>
+                <tr class='football-table-column-groups team-primary-background-bar' style=' height: 30px;'>
                     <!-- BASELINE -->
                     <th colspan='6' style='width: 440px;' class='center-text col-group'>Player</th>
 
@@ -335,7 +335,7 @@
             </tbody>
         </table>
         {% if pagination.max_pages > 1%}
-        <div id="football-table-pagination" style="float: right;">
+        <div class="football-table-pagination" style="float: right;">
           {% if pagination.current_page > 1%}
           <button class='w3-button football-table-pagination-button font12' pagination-action="1">
             First

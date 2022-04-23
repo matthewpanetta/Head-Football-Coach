@@ -228,11 +228,20 @@ const GetPlayerStats = async (common) => {
 
   var table_config = {
     original_data: players,
-    subject: 'player stats'
+    subject: 'player stats',
+    templates: {
+      table_template_url: '/static/html_templates/common_templates/football-table/player_table_template.njk',
+      filter_template_url: '/static/html_templates/common_templates/football-table/player_table_filter_template.njk',
+      column_control_template_url: '/static/html_templates/common_templates/football-table/player_table_column_control_template.njk'
+    },
+    dom: {
+      filter_dom_selector:  "#player-stats-table-filter",
+      column_control_dom_selector:  "#player-stats-table-column-control",
+      table_dom_selector:  "#player-stats-table-container",
+    }
   };
 
   const create_table = await initialize_football_table;
-  console.log({football_table: create_table})
   var football_table = create_table(common, table_config);
 };
 
