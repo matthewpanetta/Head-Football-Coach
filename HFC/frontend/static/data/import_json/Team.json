@@ -1,4321 +1,4208 @@
-[{
-  "school_name": "Connecticut",
-  "team_name": "Huskies",
-  "team_abbreviation": "UCONN",
-  "division_name": "East",
-  "conference_name": "FBS Independents",
-  "team_color_primary_hex": "0A1D5A",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 12,
-    "academic_quality": 8,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Storrs",
-    "state": "Connecticut",
-    "stop": 47555,
-    "lat": 41.3112,
-    "long": -72.9245
-  }
-}, {
-  "school_name": "South Florida",
-  "team_name": "Bulls",
-  "team_abbreviation": "USF",
-  "division_name": "East",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "004A36",
-  "team_color_secondary_hex": "A08B4D",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 12,
-    "academic_quality": 6,
-    "facilities": 8,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 6,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Tampa",
-    "state": "Florida",
-    "stop": 15740,
-    "lat": 27.9937,
-    "long": -82.4454
-  }
-}, {
-  "school_name": "UCF",
-  "team_name": "Knights",
-  "team_abbreviation": "UCF",
-  "division_name": "East",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "B4985A",
-  "team_color_secondary_hex": "231F20",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 12,
-    "academic_quality": 4,
-    "facilities": 2,
-    "program_history": 12,
-    "team_competitiveness": 12,
-    "brand": 9,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Orlando",
-    "state": "Florida",
-    "stop": 14380,
-    "lat": 28.4788,
-    "long": -81.342
-  }
-}, {
-  "school_name": "Tulane",
-  "team_name": "Green Wave",
-  "team_abbreviation": "TUL",
-  "division_name": "West",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "11472A",
-  "team_color_secondary_hex": "1890CC",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 14,
-    "academic_quality": 14,
-    "facilities": 4,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 4,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "New Orleans",
-    "state": "Louisiana",
-    "stop": 24268,
-    "lat": 30.0687,
-    "long": -89.9288
-  }
-}, {
-  "school_name": "Navy",
-  "team_name": "Midshipmen",
-  "team_abbreviation": "NAVY",
-  "division_name": "East",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "00205B",
-  "team_color_secondary_hex": "C5B783",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 1,
-    "academic_quality": 18,
-    "facilities": 4,
-    "program_history": 12,
-    "team_competitiveness": 8,
-    "brand": 6,
-    "pro_pipeline": 0
-  },
-  "location": {
-    "city": "Annapolis",
-    "state": "Maryland",
-    "stop": 24613,
-    "lat": 38.9706,
-    "long": -76.5047
-  }
-}, {
-  "school_name": "East Carolina",
-  "team_name": "Pirates",
-  "team_abbreviation": "ECU",
-  "division_name": "East",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "4A1F68",
-  "team_color_secondary_hex": "FFCE28",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 12,
-    "academic_quality": 2,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Greenville",
-    "state": "North Carolina",
-    "stop": 30849,
-    "lat": 35.5957,
-    "long": -77.3764
-  }
-}, {
-  "school_name": "Cincinnati",
-  "team_name": "Bearcats",
-  "team_abbreviation": "CIN",
-  "division_name": "West",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "000000",
-  "team_color_secondary_hex": "E00122",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 6,
-    "academic_quality": 8,
-    "facilities": 10,
-    "program_history": 10,
-    "team_competitiveness": 14,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Cincinnati",
-    "state": "Ohio",
-    "stop": 32134,
-    "lat": 39.1412,
-    "long": -84.5059
-  }
-}, {
-  "school_name": "Tulsa",
-  "team_name": "Golden Hurricane",
-  "team_abbreviation": "TUL",
-  "division_name": "West",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "0E387C",
-  "team_color_secondary_hex": "C8102E",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 4,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Tulsa",
-    "state": "Oklahoma",
-    "stop": 34603,
-    "lat": 36.1284,
-    "long": -95.9042
-  }
-}, {
-  "school_name": "Temple",
-  "team_name": "Owls",
-  "team_abbreviation": "TEM",
-  "division_name": "East",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "A80532",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 8,
-    "academic_quality": 2,
-    "facilities": 6,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 4,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Philadelphia",
-    "state": "Pennsylvania",
-    "stop": 35660,
-    "lat": 40.0076,
-    "long": -75.134
-  }
-}, {
-  "school_name": "Memphis",
-  "team_name": "Tigers",
-  "team_abbreviation": "MEM",
-  "division_name": "West",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "092D6D",
-  "team_color_secondary_hex": "8B8E91",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 8,
-    "academic_quality": 4,
-    "facilities": 8,
-    "program_history": 6,
-    "team_competitiveness": 10,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Memphis",
-    "state": "Tennessee",
-    "stop": 37677,
-    "lat": 35.1047,
-    "long": -89.9773
-  }
-}, {
-  "school_name": "Houston",
-  "team_name": "Cougars",
-  "team_abbreviation": "HOU",
-  "division_name": "West",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "C90822",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 8,
-    "academic_quality": 8,
-    "facilities": 10,
-    "program_history": 9,
-    "team_competitiveness": 9,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Houston",
-    "state": "Texas",
-    "stop": 41928,
-    "lat": 29.7868,
-    "long": -95.3905
-  }
-}, {
-  "school_name": "SMU",
-  "team_name": "Mustangs",
-  "team_abbreviation": "SMU",
-  "division_name": "West",
-  "conference_name": "American Athletic Conference",
-  "team_color_primary_hex": "C2032C",
-  "team_color_secondary_hex": "27388F",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 7,
-    "academic_quality": 13,
-    "facilities": 8,
-    "program_history": 13,
-    "team_competitiveness": 6,
-    "brand": 8,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "University Park",
-    "state": "Texas",
-    "stop": 44770,
-    "lat": 32.8506,
-    "long": -96.7937
-  }
-}, {
-  "school_name": "Florida State",
-  "team_name": "Seminoles",
-  "team_abbreviation": "FSU",
-  "division_name": "Coastal",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "642132",
-  "team_color_secondary_hex": "A8936B",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 16,
-    "academic_quality": 8,
-    "facilities": 14,
-    "program_history": 17,
-    "team_competitiveness": 14,
-    "brand": 15,
-    "pro_pipeline": 20
-  },
-  "location": {
-    "city": "Tallahassee",
-    "state": "Florida",
-    "stop": 15382,
-    "lat": 30.455,
-    "long": -84.2526
-  }
-}, {
-  "school_name": "Miami",
-  "team_name": "Hurricanes",
-  "team_abbreviation": "MIA",
-  "division_name": "Coastal",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "F47321",
-  "team_color_secondary_hex": "204F33",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 18,
-    "fan_support": 11,
-    "academic_quality": 13,
-    "facilities": 14,
-    "program_history": 15,
-    "team_competitiveness": 12,
-    "brand": 16,
-    "pro_pipeline": 18
-  },
-  "location": {
-    "city": "Coral Gables",
-    "state": "Florida",
-    "stop": 10732,
-    "lat": 25.7037,
-    "long": -80.2715
-  }
-}, {
-  "school_name": "Georgia Tech",
-  "team_name": "Yellow Jackets",
-  "team_abbreviation": "GT",
-  "division_name": "Coastal",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "B3A369",
-  "team_color_secondary_hex": "091D3A",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 3,
-    "academic_quality": 18,
-    "facilities": 8,
-    "program_history": 11,
-    "team_competitiveness": 7,
-    "brand": 8,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Atlanta",
-    "state": "Georgia",
-    "stop": 16547,
-    "lat": 33.7626,
-    "long": -84.4228
-  }
-}, {
-  "school_name": "Louisville",
-  "team_name": "Cardinals",
-  "team_abbreviation": "U of L",
-  "division_name": "Atlantic",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "CA001A",
-  "team_color_secondary_hex": "070707",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 14,
-    "academic_quality": 6,
-    "facilities": 12,
-    "program_history": 8,
-    "team_competitiveness": 11,
-    "brand": 8,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Louisville",
-    "state": "Kentucky",
-    "stop": 23038,
-    "lat": 38.1662,
-    "long": -85.6488
-  }
-}, {
-  "school_name": "Boston College",
-  "team_name": "Eagles",
-  "team_abbreviation": "BC",
-  "division_name": "Atlantic",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "821E1E",
-  "team_color_secondary_hex": "DBCCA4",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 6,
-    "academic_quality": 15,
-    "facilities": 2,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 6,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Chestnut Hill",
-    "state": "Massachusetts",
-    "stop": 47554,
-    "lat": 42.3188,
-    "long": -71.0846
-  }
-}, {
-  "school_name": "Syracuse",
-  "team_name": "Orange",
-  "team_abbreviation": "SYR",
-  "division_name": "Atlantic",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "C82F04",
-  "team_color_secondary_hex": "06162E",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 3,
-    "fan_support": 12,
-    "academic_quality": 8,
-    "facilities": 2,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Syracuse",
-    "state": "New York",
-    "stop": 30171,
-    "lat": 43.0409,
-    "long": -76.1438
-  }
-}, {
-  "school_name": "Duke",
-  "team_name": "Blue Devils",
-  "team_abbreviation": "DUKE",
-  "division_name": "Atlantic",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "013088",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 6,
-    "academic_quality": 20,
-    "facilities": 8,
-    "program_history": 6,
-    "team_competitiveness": 4,
-    "brand": 8,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Durham",
-    "state": "North Carolina",
-    "stop": 30663,
-    "lat": 35.9797,
-    "long": -78.9037
-  }
-}, {
-  "school_name": "NC State",
-  "team_name": "Wolfpack",
-  "team_abbreviation": "NCST",
-  "division_name": "Atlantic",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "CC0000",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 12,
-    "academic_quality": 12,
-    "facilities": 6,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Raleigh",
-    "state": "North Carolina",
-    "stop": 31236,
-    "lat": 35.8323,
-    "long": -78.6439
-  }
-}, {
-  "school_name": "North Carolina",
-  "team_name": "Tar Heels",
-  "team_abbreviation": "UNC",
-  "division_name": "Atlantic",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "7BAFD4",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 11,
-    "academic_quality": 16,
-    "facilities": 14,
-    "program_history": 10,
-    "team_competitiveness": 14,
-    "brand": 8,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Chapel Hill",
-    "state": "North Carolina",
-    "stop": 30300,
-    "lat": 35.9269,
-    "long": -79.039
-  }
-}, {
-  "school_name": "Wake Forest",
-  "team_name": "Demon Deacons",
-  "team_abbreviation": "WAKE",
-  "division_name": "Coastal",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "A67F31",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 4,
-    "academic_quality": 17,
-    "facilities": 4,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 6,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Winston-Salem",
-    "state": "North Carolina",
-    "stop": 31490,
-    "lat": 36.1029,
-    "long": -80.261
-  }
-}, {
-  "school_name": "Pittsburgh",
-  "team_name": "Panthers",
-  "team_abbreviation": "PITT",
-  "division_name": "Atlantic",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "0B3390",
-  "team_color_secondary_hex": "FEB01D",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 6,
-    "academic_quality": 14,
-    "facilities": 2,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Pittsburgh",
-    "state": "Pennsylvania",
-    "stop": 35851,
-    "lat": 40.4396,
-    "long": -79.9763
-  }
-}, {
-  "school_name": "Clemson",
-  "team_name": "Tigers",
-  "team_abbreviation": "CLEM",
-  "division_name": "Coastal",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "F06014",
-  "team_color_secondary_hex": "441F6F",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 17,
-    "academic_quality": 6,
-    "facilities": 20,
-    "program_history": 17,
-    "team_competitiveness": 20,
-    "brand": 20,
-    "pro_pipeline": 18
-  },
-  "location": {
-    "city": "Clemson",
-    "state": "South Carolina",
-    "stop": 36243,
-    "lat": 34.6838,
-    "long": -82.8124
-  }
-}, {
-  "school_name": "Virginia",
-  "team_name": "Cavaliers",
-  "team_abbreviation": "UVA",
-  "division_name": "Coastal",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "232d4b",
-  "team_color_secondary_hex": "f84c1e",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 3,
-    "fan_support": 6,
-    "academic_quality": 18,
-    "facilities": 8,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 6,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Charlottesville",
-    "state": "Virginia",
-    "stop": 45595,
-    "lat": 38.0375,
-    "long": -78.4855
-  }
-}, {
-  "school_name": "Virginia Tech",
-  "team_name": "Hokies",
-  "team_abbreviation": "VT",
-  "division_name": "Coastal",
-  "conference_name": "Atlantic Coast Conference",
-  "team_color_primary_hex": "630031",
-  "team_color_secondary_hex": "CF4420",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 15,
-    "academic_quality": 16,
-    "facilities": 14,
-    "program_history": 10,
-    "team_competitiveness": 11,
-    "brand": 8,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Blacksburg",
-    "state": "Virginia",
-    "stop": 45584,
-    "lat": 37.23,
-    "long": -80.428
-  }
-}, {
-  "school_name": "Iowa State",
-  "team_name": "Cyclones",
-  "team_abbreviation": "ISU",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "840A2C",
-  "team_color_secondary_hex": "FEC938",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 6,
-    "fan_support": 8,
-    "academic_quality": 4,
-    "facilities": 10,
-    "program_history": 8,
-    "team_competitiveness": 13,
-    "brand": 8,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Ames",
-    "state": "Iowa",
-    "stop": 21727,
-    "lat": 42.0261,
-    "long": -93.6279
-  }
-}, {
-  "school_name": "Kansas",
-  "team_name": "Jayhawks",
-  "team_abbreviation": "KU",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "0051BA",
-  "team_color_secondary_hex": "E8000D",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 5,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 6,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 6,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Lawrence",
-    "state": "Kansas",
-    "stop": 22590,
-    "lat": 38.9597,
-    "long": -95.2641
-  }
-}, {
-  "school_name": "Kansas State",
-  "team_name": "Wildcats",
-  "team_abbreviation": "KSU",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "633194",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 6,
-    "fan_support": 6,
-    "academic_quality": 4,
-    "facilities": 8,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Manhattan",
-    "state": "Kansas",
-    "stop": 22608,
-    "lat": 39.1882,
-    "long": -96.6053
-  }
-}, {
-  "school_name": "Oklahoma",
-  "team_name": "Sooners",
-  "team_abbreviation": "OU",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "841617",
-  "team_color_secondary_hex": "ffffff",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 6,
-    "fan_support": 8,
-    "academic_quality": 8,
-    "facilities": 18,
-    "program_history": 18,
-    "team_competitiveness": 18,
-    "brand": 20,
-    "pro_pipeline": 18
-  },
-  "location": {
-    "city": "Norman",
-    "state": "Oklahoma",
-    "stop": 34285,
-    "lat": 35.2335,
-    "long": -97.3471
-  }
-}, {
-  "school_name": "Oklahoma State",
-  "team_name": "Cowboys",
-  "team_abbreviation": "OKST",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "EF641A",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 8,
-    "academic_quality": 4,
-    "facilities": 12,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Stillwater",
-    "state": "Oklahoma",
-    "stop": 34459,
-    "lat": 36.1315,
-    "long": -97.0739
-  }
-}, {
-  "school_name": "Baylor",
-  "team_name": "Bears",
-  "team_abbreviation": "BAY",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "118353",
-  "team_color_secondary_hex": "FCB212",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 3,
-    "academic_quality": 12,
-    "facilities": 14,
-    "program_history": 6,
-    "team_competitiveness": 10,
-    "brand": 12,
-    "pro_pipeline": 10
-  },
-  "location": {
-    "city": "Waco",
-    "state": "Texas",
-    "stop": 44853,
-    "lat": 31.5597,
-    "long": -97.1883
-  }
-}, {
-  "school_name": "TCU",
-  "team_name": "Horned Frogs",
-  "team_abbreviation": "TCU",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "3D156F",
-  "team_color_secondary_hex": "A3A9AC",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 13,
-    "academic_quality": 12,
-    "facilities": 14,
-    "program_history": 12,
-    "team_competitiveness": 12,
-    "brand": 14,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Fort Worth",
-    "state": "Texas",
-    "stop": 40775,
-    "lat": 32.7814,
-    "long": -97.3473
-  }
-}, {
-  "school_name": "Texas",
-  "team_name": "Longhorns",
-  "team_abbreviation": "UT",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "D65918",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 17,
-    "fan_support": 16,
-    "academic_quality": 18,
-    "facilities": 18,
-    "program_history": 19,
-    "team_competitiveness": 16,
-    "brand": 20,
-    "pro_pipeline": 16
-  },
-  "location": {
-    "city": "Austin",
-    "state": "Texas",
-    "stop": 38762,
-    "lat": 30.3006,
-    "long": -97.7517
-  }
-}, {
-  "school_name": "Texas Tech",
-  "team_name": "Red Raiders",
-  "team_abbreviation": "TTU",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "CC0000",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 6,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 14,
-    "program_history": 12,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Lubbock",
-    "state": "Texas",
-    "stop": 42731,
-    "lat": 33.5643,
-    "long": -101.8871
-  }
-}, {
-  "school_name": "West Virginia",
-  "team_name": "Mountaineers",
-  "team_abbreviation": "WVU",
-  "division_name": "",
-  "conference_name": "Big 12",
-  "team_color_primary_hex": "134B9B",
-  "team_color_secondary_hex": "EAAA00",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 6,
-    "fan_support": 13,
-    "academic_quality": 4,
-    "facilities": 12,
-    "program_history": 8,
-    "team_competitiveness": 12,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Morgantown",
-    "state": "West Virginia",
-    "stop": 47145,
-    "lat": 39.638,
-    "long": -79.9468
-  }
-}, {
-  "school_name": "Illinois",
-  "team_name": "Fighting Illini",
-  "team_abbreviation": "ILL",
-  "division_name": "West",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "E1311B",
-  "team_color_secondary_hex": "0A1A39",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 8,
-    "academic_quality": 15,
-    "facilities": 9,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Urbana",
-    "state": "Illinois",
-    "stop": 20973,
-    "lat": 40.1106,
-    "long": -88.1972
-  }
-}, {
-  "school_name": "Northwestern",
-  "team_name": "Wildcats",
-  "team_abbreviation": "NU",
-  "division_name": "West",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "4E2A84",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 13,
-    "fan_support": 6,
-    "academic_quality": 19,
-    "facilities": 14,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 6,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Evanston",
-    "state": "Illinois",
-    "stop": 20318,
-    "lat": 42.0463,
-    "long": -87.6942
-  }
-}, {
-  "school_name": "Indiana",
-  "team_name": "Hoosiers",
-  "team_abbreviation": "IU",
-  "division_name": "West",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "860001",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 11,
-    "academic_quality": 14,
-    "facilities": 8,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 6,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Bloomington",
-    "state": "Indiana",
-    "stop": 21072,
-    "lat": 39.1637,
-    "long": -86.5256
-  }
-}, {
-  "school_name": "Purdue",
-  "team_name": "Boilermakers",
-  "team_abbreviation": "PUR",
-  "division_name": "East",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "cfb991",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 8,
-    "academic_quality": 15,
-    "facilities": 12,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "West Lafayette",
-    "state": "Indiana",
-    "stop": 21704,
-    "lat": 40.4432,
-    "long": -86.9239
-  }
-}, {
-  "school_name": "Iowa",
-  "team_name": "Hawkeyes",
-  "team_abbreviation": "IOWA",
-  "division_name": "West",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "000000",
-  "team_color_secondary_hex": "FFD700",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 7,
-    "academic_quality": 11,
-    "facilities": 11,
-    "program_history": 11,
-    "team_competitiveness": 12,
-    "brand": 9,
-    "pro_pipeline": 7
-  },
-  "location": {
-    "city": "Iowa City",
-    "state": "Iowa",
-    "stop": 21881,
-    "lat": 41.6559,
-    "long": -91.5304
-  }
-}, {
-  "school_name": "Maryland",
-  "team_name": "Terrapins",
-  "team_abbreviation": "UM",
-  "division_name": "East",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "D5002B",
-  "team_color_secondary_hex": "FEC619",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 8,
-    "academic_quality": 14,
-    "facilities": 2,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "College Park",
-    "state": "Maryland",
-    "stop": 48369,
-    "lat": 38.9897,
-    "long": -76.9378
-  }
-}, {
-  "school_name": "Michigan",
-  "team_name": "Wolverines",
-  "team_abbreviation": "MICH",
-  "division_name": "East",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "00274C",
-  "team_color_secondary_hex": "FFCB05",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 19,
-    "academic_quality": 15,
-    "facilities": 16,
-    "program_history": 19,
-    "team_competitiveness": 16,
-    "brand": 18,
-    "pro_pipeline": 16
-  },
-  "location": {
-    "city": "Ann Arbor",
-    "state": "Michigan",
-    "stop": 25097,
-    "lat": 42.2755,
-    "long": -83.7312
-  }
-}, {
-  "school_name": "Michigan State",
-  "team_name": "Spartans",
-  "team_abbreviation": "MSU",
-  "division_name": "East",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "1C453A",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 10,
-    "academic_quality": 14,
-    "facilities": 14,
-    "program_history": 14,
-    "team_competitiveness": 14,
-    "brand": 12,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "East Lansing",
-    "state": "Michigan",
-    "stop": 25462,
-    "lat": 42.748,
-    "long": -84.4835
-  }
-}, {
-  "school_name": "Minnesota",
-  "team_name": "Golden Gophers",
-  "team_abbreviation": "MINN",
-  "division_name": "West",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "7A0019",
-  "team_color_secondary_hex": "FBB246",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 10,
-    "academic_quality": 14,
-    "facilities": 12,
-    "program_history": 8,
-    "team_competitiveness": 7,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Minneapolis",
-    "state": "Minnesota",
-    "stop": 26390,
-    "lat": 44.9635,
-    "long": -93.2678
-  }
-}, {
-  "school_name": "Nebraska",
-  "team_name": "Cornhuskers",
-  "team_abbreviation": "NEB",
-  "division_name": "West",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "DC0029",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 6,
-    "fan_support": 7,
-    "academic_quality": 7,
-    "facilities": 14,
-    "program_history": 17,
-    "team_competitiveness": 10,
-    "brand": 14,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Lincoln",
-    "state": "Nebraska",
-    "stop": 28591,
-    "lat": 40.8098,
-    "long": -96.6802
-  }
-}, {
-  "school_name": "Rutgers",
-  "team_name": "Scarlet Knights",
-  "team_abbreviation": "RUT",
-  "division_name": "East",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "CC0033",
-  "team_color_secondary_hex": "5F6A72",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 9,
-    "academic_quality": 14,
-    "facilities": 6,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 6,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "New Brunswick",
-    "state": "New Jersey",
-    "stop": 29330,
-    "lat": 40.487,
-    "long": -74.445
-  }
-}, {
-  "school_name": "Ohio State",
-  "team_name": "Buckeyes",
-  "team_abbreviation": "OSU",
-  "division_name": "East",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "CE0F3D",
-  "team_color_secondary_hex": "b0b7bc",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 18,
-    "academic_quality": 13,
-    "facilities": 20,
-    "program_history": 18,
-    "team_competitiveness": 18,
-    "brand": 20,
-    "pro_pipeline": 20
-  },
-  "location": {
-    "city": "Columbus",
-    "state": "Ohio",
-    "stop": 32548,
-    "lat": 39.986,
-    "long": -82.9852
-  }
-}, {
-  "school_name": "Penn State",
-  "team_name": "Nittany Lions",
-  "team_abbreviation": "PSU",
-  "division_name": "East",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "151F49",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 7,
-    "fan_support": 19,
-    "academic_quality": 14,
-    "facilities": 14,
-    "program_history": 16,
-    "team_competitiveness": 16,
-    "brand": 16,
-    "pro_pipeline": 14
-  },
-  "location": {
-    "city": "State College",
-    "state": "Pennsylvania",
-    "stop": 35993,
-    "lat": 40.7909,
-    "long": -77.8568
-  }
-}, {
-  "school_name": "Wisconsin",
-  "team_name": "Badgers",
-  "team_abbreviation": "WIS",
-  "division_name": "West",
-  "conference_name": "Big Ten",
-  "team_color_primary_hex": "B70021",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 17,
-    "academic_quality": 14,
-    "facilities": 12,
-    "program_history": 16,
-    "team_competitiveness": 16,
-    "brand": 14,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Madison",
-    "state": "Wisconsin",
-    "stop": 47330,
-    "lat": 43.0808,
-    "long": -89.3922
-  }
-}, {
-  "school_name": "UAB",
-  "team_name": "Blazers",
-  "team_abbreviation": "UAB",
-  "division_name": "East",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "0C5F3A",
-  "team_color_secondary_hex": "BEB66A",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Birmingham",
-    "state": "Alabama",
-    "stop": 335,
-    "lat": 33.5276,
-    "long": -86.7988
-  }
-}, {
-  "school_name": "Florida Atlantic",
-  "team_name": "Owls",
-  "team_abbreviation": "FAU",
-  "division_name": "East",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "004B85",
-  "team_color_secondary_hex": "CD1041",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 13,
-    "academic_quality": 4,
-    "facilities": 3,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Boca Raton",
-    "state": "Florida",
-    "stop": 10387,
-    "lat": 26.3749,
-    "long": -80.1077
-  }
-}, {
-  "school_name": "Florida International",
-  "team_name": "Panthers",
-  "team_abbreviation": "FIU",
-  "division_name": "East",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "002D62",
-  "team_color_secondary_hex": "C5960B",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 15,
-    "fan_support": 13,
-    "academic_quality": 2,
-    "facilities": 2,
-    "program_history": 1,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Miami",
-    "state": "Florida",
-    "stop": 13720,
-    "lat": 25.784,
-    "long": -80.2102
-  }
-}, {
-  "school_name": "Western Kentucky",
-  "team_name": "Hilltoppers",
-  "team_abbreviation": "WKU",
-  "division_name": "West",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "9F0B1C",
-  "team_color_secondary_hex": "010000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 2,
-    "team_competitiveness": 2,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Bowling Green",
-    "state": "Kentucky",
-    "stop": 22800,
-    "lat": 36.9721,
-    "long": -86.4367
-  }
-}, {
-  "school_name": "Louisiana Tech",
-  "team_name": "Bulldogs",
-  "team_abbreviation": "LTU",
-  "division_name": "West",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "001B75",
-  "team_color_secondary_hex": "BF1B2B",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 6,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 4,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Ruston",
-    "state": "Louisiana",
-    "stop": 24354,
-    "lat": 32.5329,
-    "long": -92.6364
-  }
-}, {
-  "school_name": "Southern Miss",
-  "team_name": "Golden Eagles",
-  "team_abbreviation": "USM",
-  "division_name": "West",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "F7C237",
-  "team_color_secondary_hex": "010000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 6,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Hattiesburg",
-    "state": "Mississippi",
-    "stop": 27085,
-    "lat": 31.3072,
-    "long": -89.3168
-  }
-}, {
-  "school_name": "UNC Charlotte",
-  "team_name": "49ers",
-  "team_abbreviation": "UNCC",
-  "division_name": "East",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "0A4631",
-  "team_color_secondary_hex": "897637",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Charlotte",
-    "state": "North Carolina",
-    "stop": 30533,
-    "lat": 35.2079,
-    "long": -80.8303
-  }
-}, {
-  "school_name": "Middle Tennessee",
-  "team_name": "Blue Raiders",
-  "team_abbreviation": "MT",
-  "division_name": "East",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "094FC1",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 2,
-    "team_competitiveness": 2,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Murfreesboro",
-    "state": "Tennessee",
-    "stop": 37764,
-    "lat": 35.8493,
-    "long": -86.4098
-  }
-}, {
-  "school_name": "North Texas",
-  "team_name": "Mean Green",
-  "team_abbreviation": "UNT",
-  "division_name": "West",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "117430",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 5,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 4,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Denton",
-    "state": "Texas",
-    "stop": 40258,
-    "lat": 33.2176,
-    "long": -97.1421
-  }
-}, {
-  "school_name": "Rice",
-  "team_name": "Owls",
-  "team_abbreviation": "RICE",
-  "division_name": "West",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "011648",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 19,
-    "facilities": 4,
-    "program_history": 2,
-    "team_competitiveness": 2,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Houston",
-    "state": "Texas",
-    "stop": 41928,
-    "lat": 29.7868,
-    "long": -95.3905
-  }
-}, {
-  "school_name": "UTEP",
-  "team_name": "Miners",
-  "team_abbreviation": "UTEP",
-  "division_name": "West",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "061633",
-  "team_color_secondary_hex": "FD6D07",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 1,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "El Paso",
-    "state": "Texas",
-    "stop": 40494,
-    "lat": 31.8479,
-    "long": -106.4309
-  }
-}, {
-  "school_name": "UTSA",
-  "team_name": "Roadrunners",
-  "team_abbreviation": "UTSA",
-  "division_name": "West",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "021D4A",
-  "team_color_secondary_hex": "EE5C1A",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 3,
-    "academic_quality": 2,
-    "facilities": 1,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "San Antonio",
-    "state": "Texas",
-    "stop": 44208,
-    "lat": 29.4722,
-    "long": -98.5247
-  }
-}, {
-  "school_name": "Old Dominion",
-  "team_name": "Monarchs",
-  "team_abbreviation": "ODU",
-  "division_name": "East",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "042549",
-  "team_color_secondary_hex": "858A8D",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 2,
-    "team_competitiveness": 2,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Norfolk",
-    "state": "Virginia",
-    "stop": 46128,
-    "lat": 36.8945,
-    "long": -76.259
-  }
-}, {
-  "school_name": "Marshall",
-  "team_name": "Thundering Herd",
-  "team_abbreviation": "MARSH",
-  "division_name": "East",
-  "conference_name": "Conference USA",
-  "team_color_primary_hex": "17A82F",
-  "team_color_secondary_hex": "1B1718",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 11,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 2,
-    "team_competitiveness": 2,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Huntington",
-    "state": "West Virginia",
-    "stop": 47115,
-    "lat": 38.4109,
-    "long": -82.4344
-  }
-}, {
-  "school_name": "Notre Dame",
-  "team_name": "Fighting Irish",
-  "team_abbreviation": "ND",
-  "division_name": "",
-  "conference_name": "FBS Independents",
-  "team_color_primary_hex": "0C2340",
-  "team_color_secondary_hex": "C99700",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 15,
-    "academic_quality": 14,
-    "facilities": 16,
-    "program_history": 19,
-    "team_competitiveness": 18,
-    "brand": 18,
-    "pro_pipeline": 16
-  },
-  "location": {
-    "city": "South Bend",
-    "state": "Indiana",
-    "stop": 21683,
-    "lat": 41.6771,
-    "long": -86.2692
-  }
-}, {
-  "school_name": "Umass",
-  "team_name": "Minutemen",
-  "team_abbreviation": "UMASS",
-  "division_name": "",
-  "conference_name": "FBS Independents",
-  "team_color_primary_hex": "830D24",
-  "team_color_secondary_hex": "7E8081",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 8,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 3,
-    "team_competitiveness": 3,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Amherst",
-    "state": "Massachusetts",
-    "stop": 24996,
-    "lat": 42.3732,
-    "long": -72.5199
-  }
-}, {
-  "school_name": "New Mexico State",
-  "team_name": "Aggies",
-  "team_abbreviation": "NMSU",
-  "division_name": "",
-  "conference_name": "FBS Independents",
-  "team_color_primary_hex": "750312",
-  "team_color_secondary_hex": "777777",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 3,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 2,
-    "program_history": 2,
-    "team_competitiveness": 2,
-    "brand": 1,
-    "pro_pipeline": 1
-  },
-  "location": {
-    "city": "Las Cruces",
-    "state": "New Mexico",
-    "stop": 29702,
-    "lat": 32.3265,
-    "long": -106.7893
-  }
-}, {
-  "school_name": "Army",
-  "team_name": "Black Knights",
-  "team_abbreviation": "ARMY",
-  "division_name": "",
-  "conference_name": "FBS Independents",
-  "team_color_primary_hex": "000000",
-  "team_color_secondary_hex": "C9A06C",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 0,
-    "academic_quality": 19,
-    "facilities": 6,
-    "program_history": 8,
-    "team_competitiveness": 4,
-    "brand": 8,
-    "pro_pipeline": 0
-  },
-  "location": {
-    "city": "West Point",
-    "state": "New York",
-    "stop": 29770,
-    "lat": 41.3915,
-    "long": -73.956
-  }
-}, {
-  "school_name": "BYU",
-  "team_name": "Cougars",
-  "team_abbreviation": "BYU",
-  "division_name": "",
-  "conference_name": "FBS Independents",
-  "team_color_primary_hex": "001843",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 6,
-    "fan_support": 1,
-    "academic_quality": 6,
-    "facilities": 8,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Provo",
-    "state": "Utah",
-    "stop": 45270,
-    "lat": 40.2458,
-    "long": -111.6457
-  }
-}, {
-  "school_name": "Liberty",
-  "team_name": "Flames",
-  "team_abbreviation": "LIB",
-  "division_name": "",
-  "conference_name": "FBS Independents",
-  "team_color_primary_hex": "0A1B3D",
-  "team_color_secondary_hex": "850003",
-  "jersey": {
-    "invert": true,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 3,
-    "fan_support": 1,
-    "academic_quality": 4,
-    "facilities": 2,
-    "program_history": 2,
-    "team_competitiveness": 2,
-    "brand": 1,
-    "pro_pipeline": 1
-  },
-  "location": {
-    "city": "Lynchburg",
-    "state": "Virginia",
-    "stop": 46039,
-    "lat": 37.4003,
-    "long": -79.1908
-  }
-}, {
-  "school_name": "Northern Illinois",
-  "team_name": "Huskies",
-  "team_abbreviation": "NIU",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "ba0c2f",
-  "team_color_secondary_hex": "9ea2a2",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "DeKalb",
-    "state": "Illinois",
-    "stop": 20222,
-    "lat": 41.9312,
-    "long": -88.7483
-  }
-}, {
-  "school_name": "Ball State",
-  "team_name": "Cardinals",
-  "team_abbreviation": "BALL",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "ba0c2f",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Muncie",
-    "state": "Indiana",
-    "stop": 21619,
-    "lat": 40.1989,
-    "long": -85.395
-  }
-}, {
-  "school_name": "Central Michigan",
-  "team_name": "Chippewas",
-  "team_abbreviation": "CMU",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "6a0032",
-  "team_color_secondary_hex": "ffc82e",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Mount Pleasant",
-    "state": "Michigan",
-    "stop": 25809,
-    "lat": 43.5966,
-    "long": -84.7759
-  }
-}, {
-  "school_name": "Eastern Michigan",
-  "team_name": "Eagles",
-  "team_abbreviation": "EMU",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "0B5F24",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Ypsilanti",
-    "state": "Michigan",
-    "stop": 26147,
-    "lat": 42.2437,
-    "long": -83.6205
-  }
-}, {
-  "school_name": "Western Michigan",
-  "team_name": "Broncos",
-  "team_abbreviation": "WMU",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "6c4023",
-  "team_color_secondary_hex": "b5a268",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Kalamazoo",
-    "state": "Michigan",
-    "stop": 25726,
-    "lat": 42.2749,
-    "long": -85.5881
-  }
-}, {
-  "school_name": "Buffalo",
-  "team_name": "Bulls",
-  "team_abbreviation": "BUF",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "0064A2",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Buffalo",
-    "state": "New York",
-    "stop": 29950,
-    "lat": 42.9017,
-    "long": -78.8487
-  }
-}, {
-  "school_name": "Akron",
-  "team_name": "Zips",
-  "team_abbreviation": "AKR",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "041e42",
-  "team_color_secondary_hex": "a89968",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Akron",
-    "state": "Ohio",
-    "stop": 31606,
-    "lat": 41.0802,
-    "long": -81.5219
-  }
-}, {
-  "school_name": "Bowling Green",
-  "team_name": "Falcons",
-  "team_abbreviation": "BG",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "fe5000",
-  "team_color_secondary_hex": "4f2c1d",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Bowling Green",
-    "state": "Ohio",
-    "stop": 49478,
-    "lat": 41.3748,
-    "long": -83.6513
-  }
-}, {
-  "school_name": "Kent State",
-  "team_name": "Golden Flashes",
-  "team_abbreviation": "KENT",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "003875",
-  "team_color_secondary_hex": "efab00",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Kent",
-    "state": "Ohio",
-    "stop": 32942,
-    "lat": 41.149,
-    "long": -81.361
-  }
-}, {
-  "school_name": "Miami (OH)",
-  "team_name": "Redhawks",
-  "team_abbreviation": "MIA",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "b61e2e",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Oxford",
-    "state": "Ohio",
-    "stop": 33293,
-    "lat": 39.5062,
-    "long": -84.7434
-  }
-}, {
-  "school_name": "Ohio",
-  "team_name": "Bobcats",
-  "team_abbreviation": "OHIO",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "00694e",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Athens",
-    "state": "Ohio",
-    "stop": 31621,
-    "lat": 39.3269,
-    "long": -82.0988
-  }
-}, {
-  "school_name": "Toledo",
-  "team_name": "Rockets",
-  "team_abbreviation": "TOL",
-  "division_name": "",
-  "conference_name": "Mid-American Conference",
-  "team_color_primary_hex": "15397F",
-  "team_color_secondary_hex": "FFDA00",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Toledo",
-    "state": "Ohio",
-    "stop": 33621,
-    "lat": 41.6639,
-    "long": -83.5822
-  }
-}, {
-  "school_name": "Fresno State",
-  "team_name": "Bulldogs",
-  "team_abbreviation": "FRES",
-  "division_name": "West",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "c03",
-  "team_color_secondary_hex": "00235d",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 7,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 6,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 4,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Fresno",
-    "state": "California",
-    "stop": 4644,
-    "lat": 36.7834,
-    "long": -119.7941
-  }
-}, {
-  "school_name": "San Diego State",
-  "team_name": "Aztecs",
-  "team_abbreviation": "SDST",
-  "division_name": "West",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "c41230",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 17,
-    "fan_support": 14,
-    "academic_quality": 6,
-    "facilities": 8,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 6,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "San Diego",
-    "state": "California",
-    "stop": 8020,
-    "lat": 32.8312,
-    "long": -117.1226
-  }
-}, {
-  "school_name": "San Jose State",
-  "team_name": "Spartans",
-  "team_abbreviation": "SJSU",
-  "division_name": "West",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "134B9B",
-  "team_color_secondary_hex": "FBD016",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "San Jose",
-    "state": "California",
-    "stop": 8256,
-    "lat": 37.3018,
-    "long": -121.8485
-  }
-}, {
-  "school_name": "Air Force",
-  "team_name": "Falcons",
-  "team_abbreviation": "AFA",
-  "division_name": "Mountain",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "00458C",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 1,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 6,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Colorado Springs",
-    "state": "Colorado",
-    "stop": 9548,
-    "lat": 38.8674,
-    "long": -104.7606
-  }
-}, {
-  "school_name": "Colorado State",
-  "team_name": "Rams",
-  "team_abbreviation": "CSU",
-  "division_name": "Mountain",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "1e4d2b",
-  "team_color_secondary_hex": "c8c372",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 4,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Fort Collins",
-    "state": "Colorado",
-    "stop": 9685,
-    "lat": 40.5479,
-    "long": -105.0658
-  }
-}, {
-  "school_name": "Boise State",
-  "team_name": "Broncos",
-  "team_abbreviation": "BSU",
-  "division_name": "Mountain",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "0033a0",
-  "team_color_secondary_hex": "FA4616",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 5,
-    "fan_support": 8,
-    "academic_quality": 6,
-    "facilities": 12,
-    "program_history": 9,
-    "team_competitiveness": 11,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Boise",
-    "state": "Idaho",
-    "stop": 19694,
-    "lat": 43.6006,
-    "long": -116.2316
-  }
-}, {
-  "school_name": "Nevada",
-  "team_name": "Wolf Pack",
-  "team_abbreviation": "NEV",
-  "division_name": "West",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "011e41",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 6,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 4,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Reno",
-    "state": "Nevada",
-    "stop": 28975,
-    "lat": 39.5497,
-    "long": -119.8483
-  }
-}, {
-  "school_name": "UNLV",
-  "team_name": "Rebels",
-  "team_abbreviation": "UNLV",
-  "division_name": "West",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "cf0a2c",
-  "team_color_secondary_hex": "C6C8C9",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 10,
-    "fan_support": 10,
-    "academic_quality": 6,
-    "facilities": 6,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 4,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Las Vegas",
-    "state": "Nevada",
-    "stop": 28920,
-    "lat": 36.2291,
-    "long": -115.2607
-  }
-}, {
-  "school_name": "New Mexico",
-  "team_name": "Lobos",
-  "team_abbreviation": "NM",
-  "division_name": "Mountain",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "ba0c2f",
-  "team_color_secondary_hex": "9fa0a2",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 7,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Albuquerque",
-    "state": "New Mexico",
-    "stop": 29672,
-    "lat": 35.1053,
-    "long": -106.6464
-  }
-}, {
-  "school_name": "Utah State",
-  "team_name": "Aggies",
-  "team_abbreviation": "USU",
-  "division_name": "Mountain",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "00263A",
-  "team_color_secondary_hex": "8A8D8F",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 3,
-    "fan_support": 3,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Logan",
-    "state": "Utah",
-    "stop": 45177,
-    "lat": 41.7402,
-    "long": -111.8419
-  }
-}, {
-  "school_name": "Wyoming",
-  "team_name": "Cowboys",
-  "team_abbreviation": "WYO",
-  "division_name": "Mountain",
-  "conference_name": "Mountain West Conference",
-  "team_color_primary_hex": "492f24",
-  "team_color_secondary_hex": "ffc425",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 6,
-    "team_competitiveness": 6,
-    "brand": 2,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Laramie",
-    "state": "Wyoming",
-    "stop": 47550,
-    "lat": 41.3099,
-    "long": -105.6086
-  }
-}, {
-  "school_name": "Arizona",
-  "team_name": "Wildcats",
-  "team_abbreviation": "ZONA",
-  "division_name": "South",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "00205C",
-  "team_color_secondary_hex": "C10230",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 18,
-    "academic_quality": 4,
-    "facilities": 10,
-    "program_history": 9,
-    "team_competitiveness": 9,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Tucson",
-    "state": "Arizona",
-    "stop": 2523,
-    "lat": 32.1546,
-    "long": -110.8782
-  }
-}, {
-  "school_name": "Arizona State",
-  "team_name": "Sun Devils",
-  "team_abbreviation": "ASU",
-  "division_name": "South",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "96203D",
-  "team_color_secondary_hex": "FEC927",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 13,
-    "fan_support": 18,
-    "academic_quality": 4,
-    "facilities": 12,
-    "program_history": 11,
-    "team_competitiveness": 11,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Tempe",
-    "state": "Arizona",
-    "stop": 2402,
-    "lat": 33.3881,
-    "long": -111.9318
-  }
-}, {
-  "school_name": "California",
-  "team_name": "Golden Bears",
-  "team_abbreviation": "CAL",
-  "division_name": "North",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "1D2161",
-  "team_color_secondary_hex": "E29819",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 13,
-    "fan_support": 12,
-    "academic_quality": 16,
-    "facilities": 6,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 6,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Berkeley",
-    "state": "California",
-    "stop": 3403,
-    "lat": 37.8723,
-    "long": -122.276
-  }
-}, {
-  "school_name": "Stanford",
-  "team_name": "Cardinal",
-  "team_abbreviation": "STAN",
-  "division_name": "North",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "950026",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 13,
-    "fan_support": 4,
-    "academic_quality": 20,
-    "facilities": 12,
-    "program_history": 12,
-    "team_competitiveness": 12,
-    "brand": 9,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Palo Alto",
-    "state": "California",
-    "stop": 6931,
-    "lat": 37.3913,
-    "long": -122.1467
-  }
-}, {
-  "school_name": "UCLA",
-  "team_name": "Bruins",
-  "team_abbreviation": "UCLA",
-  "division_name": "South",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "2D68C4",
-  "team_color_secondary_hex": "F2A900",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 20,
-    "fan_support": 12,
-    "academic_quality": 14,
-    "facilities": 10,
-    "program_history": 12,
-    "team_competitiveness": 12,
-    "brand": 10,
-    "pro_pipeline": 9
-  },
-  "location": {
-    "city": "Los Angeles",
-    "state": "California",
-    "stop": 6020,
-    "lat": 34.1139,
-    "long": -118.4068
-  }
-}, {
-  "school_name": "USC",
-  "team_name": "Trojans",
-  "team_abbreviation": "USC",
-  "division_name": "South",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "990000",
-  "team_color_secondary_hex": "FFC72C",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 20,
-    "fan_support": 16,
-    "academic_quality": 16,
-    "facilities": 14,
-    "program_history": 16,
-    "team_competitiveness": 16,
-    "brand": 18,
-    "pro_pipeline": 20
-  },
-  "location": {
-    "city": "Los Angeles",
-    "state": "California",
-    "stop": 6020,
-    "lat": 34.1139,
-    "long": -118.4068
-  }
-}, {
-  "school_name": "Colorado",
-  "team_name": "Buffaloes",
-  "team_abbreviation": "CU",
-  "division_name": "South",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "000000",
-  "team_color_secondary_hex": "C4AB68",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 16,
-    "academic_quality": 12,
-    "facilities": 8,
-    "program_history": 13,
-    "team_competitiveness": 8,
-    "brand": 6,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Boulder",
-    "state": "Colorado",
-    "stop": 9495,
-    "lat": 40.0249,
-    "long": -105.2523
-  }
-}, {
-  "school_name": "Oregon",
-  "team_name": "Ducks",
-  "team_abbreviation": "ORE",
-  "division_name": "North",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "0C643F",
-  "team_color_secondary_hex": "FEE123",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 16,
-    "academic_quality": 7,
-    "facilities": 20,
-    "program_history": 14,
-    "team_competitiveness": 14,
-    "brand": 17,
-    "pro_pipeline": 15
-  },
-  "location": {
-    "city": "Eugene",
-    "state": "Oregon",
-    "stop": 34700,
-    "lat": 44.0563,
-    "long": -123.1173
-  }
-}, {
-  "school_name": "Oregon State",
-  "team_name": "Beavers",
-  "team_abbreviation": "OSU",
-  "division_name": "North",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "DC4405",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 13,
-    "fan_support": 6,
-    "academic_quality": 8,
-    "facilities": 2,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 6,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Corvallis",
-    "state": "Oregon",
-    "stop": 34670,
-    "lat": 44.5697,
-    "long": -123.278
-  }
-}, {
-  "school_name": "Utah",
-  "team_name": "Utes",
-  "team_abbreviation": "UTAH",
-  "division_name": "South",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "CC0000",
-  "team_color_secondary_hex": "808080",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 4,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 12,
-    "team_competitiveness": 12,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Salt Lake City",
-    "state": "Utah",
-    "stop": 45448,
-    "lat": 40.7774,
-    "long": -111.9301
-  }
-}, {
-  "school_name": "Washington",
-  "team_name": "Huskies",
-  "team_abbreviation": "UW",
-  "division_name": "North",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "306",
-  "team_color_secondary_hex": "e8d3a2",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 7,
-    "fan_support": 12,
-    "academic_quality": 15,
-    "facilities": 12,
-    "program_history": 14,
-    "team_competitiveness": 14,
-    "brand": 12,
-    "pro_pipeline": 14
-  },
-  "location": {
-    "city": "Seattle",
-    "state": "Washington",
-    "stop": 46917,
-    "lat": 47.6211,
-    "long": -122.3244
-  }
-}, {
-  "school_name": "Washington State",
-  "team_name": "Cougars",
-  "team_abbreviation": "WSU",
-  "division_name": "North",
-  "conference_name": "PAC-12",
-  "team_color_primary_hex": "951A30",
-  "team_color_secondary_hex": "5E6A71",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 7,
-    "fan_support": 4,
-    "academic_quality": 4,
-    "facilities": 8,
-    "program_history": 2,
-    "team_competitiveness": 2,
-    "brand": 6,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Pullman",
-    "state": "Washington",
-    "stop": 46767,
-    "lat": 46.7342,
-    "long": -117.1661
-  }
-}, {
-  "school_name": "Eastern Catholic",
-  "team_name": "Hedgehogs",
-  "team_abbreviation": "ECC",
-  "division_name": "",
-  "conference_name": "Sample Conference 1",
-  "team_color_primary_hex": "A0000B",
-  "team_color_secondary_hex": "FEE123",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 16,
-    "academic_quality": 8,
-    "facilities": 6,
-    "program_history": 8,
-    "team_competitiveness": 12,
-    "brand": 2,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Baltimore",
-    "state": "Maryland",
-    "stop": 24724,
-    "lat": 39.3051,
-    "long": -76.6144
-  }
-}, {
-  "school_name": "Sun Belt",
-  "team_name": "Eels",
-  "team_abbreviation": "SBU",
-  "division_name": "",
-  "conference_name": "Sample Conference 1",
-  "team_color_primary_hex": "005700",
-  "team_color_secondary_hex": "ECDF28",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 6,
-    "fan_support": 6,
-    "academic_quality": 11,
-    "facilities": 14,
-    "program_history": 16,
-    "team_competitiveness": 16,
-    "brand": 18,
-    "pro_pipeline": 16
-  },
-  "location": {
-    "city": "Jackson",
-    "state": "Mississippi",
-    "stop": 27164,
-    "lat": 32.3163,
-    "long": -90.2124
-  }
-}, {
-  "school_name": "Texas Poly",
-  "team_name": "Colonels",
-  "team_abbreviation": "TPU",
-  "division_name": "",
-  "conference_name": "Sample Conference 1",
-  "team_color_primary_hex": "5A2D81",
-  "team_color_secondary_hex": "63727A",
-  "jersey": {
-    "invert": true,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 8,
-    "academic_quality": 8,
-    "facilities": 2,
-    "program_history": 9,
-    "team_competitiveness": 7,
-    "brand": 14,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "San Antonio",
-    "state": "Texas",
-    "stop": 44208,
-    "lat": 29.4722,
-    "long": -98.5247
-  }
-}, {
-  "school_name": "Northern California",
-  "team_name": "Gunners",
-  "team_abbreviation": "NCU",
-  "division_name": "",
-  "conference_name": "Sample Conference 2",
-  "team_color_primary_hex": "C5A566",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 14,
-    "academic_quality": 12,
-    "facilities": 18,
-    "program_history": 12,
-    "team_competitiveness": 14,
-    "brand": 14,
-    "pro_pipeline": 16
-  },
-  "location": {
-    "city": "Oakland",
-    "state": "California",
-    "stop": 6650,
-    "lat": 37.7903,
-    "long": -122.2165
-  }
-}, {
-  "school_name": "Northern",
-  "team_name": "Yetis",
-  "team_abbreviation": "NU",
-  "division_name": "",
-  "conference_name": "Sample Conference 2",
-  "team_color_primary_hex": "D65918",
-  "team_color_secondary_hex": "B7A57A",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 6,
-    "fan_support": 2,
-    "academic_quality": 18,
-    "facilities": 8,
-    "program_history": 4,
-    "team_competitiveness": 8,
-    "brand": 7,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Minneapolis",
-    "state": "Minnesota",
-    "stop": 26390,
-    "lat": 44.9635,
-    "long": -93.2678
-  }
-}, {
-  "school_name": "West College",
-  "team_name": "Miners",
-  "team_abbreviation": "WC",
-  "division_name": "",
-  "conference_name": "Sample Conference 2",
-  "team_color_primary_hex": "00274C",
-  "team_color_secondary_hex": "FF4208",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 17,
-    "fan_support": 3,
-    "academic_quality": 12,
-    "facilities": 16,
-    "program_history": 14,
-    "team_competitiveness": 4,
-    "brand": 3,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Las Vegas",
-    "state": "Nevada",
-    "stop": 28920,
-    "lat": 36.2291,
-    "long": -115.2607
-  }
-}, {
-  "school_name": "Alabama",
-  "team_name": "Crimson Tide",
-  "team_abbreviation": "BAMA",
-  "division_name": "West",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "A80532",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 20,
-    "program_history": 20,
-    "team_competitiveness": 20,
-    "brand": 20,
-    "pro_pipeline": 20
-  },
-  "location": {
-    "city": "Tuscaloosa",
-    "state": "Alabama",
-    "stop": 1583,
-    "lat": 33.2349,
-    "long": -87.5267
-  }
-}, {
-  "school_name": "Auburn",
-  "team_name": "Tigers",
-  "team_abbreviation": "AUB",
-  "division_name": "West",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "172240",
-  "team_color_secondary_hex": "E26D35",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 16,
-    "program_history": 12,
-    "team_competitiveness": 12,
-    "brand": 14,
-    "pro_pipeline": 18
-  },
-  "location": {
-    "city": "Auburn",
-    "state": "Alabama",
-    "stop": 135,
-    "lat": 32.6084,
-    "long": -85.4897
-  }
-}, {
-  "school_name": "Arkansas",
-  "team_name": "Razorbacks",
-  "team_abbreviation": "ARK",
-  "division_name": "West",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "8B0D26",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 7,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 12,
-    "program_history": 13,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Fayetteville",
-    "state": "Arkansas",
-    "stop": 2709,
-    "lat": 36.0713,
-    "long": -94.166
-  }
-}, {
-  "school_name": "Florida",
-  "team_name": "Gators",
-  "team_abbreviation": "UF",
-  "division_name": "East",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "2139CE",
-  "team_color_secondary_hex": "FF4208",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 14,
-    "program_history": 14,
-    "team_competitiveness": 14,
-    "brand": 14,
-    "pro_pipeline": 18
-  },
-  "location": {
-    "city": "Gainesville",
-    "state": "Florida",
-    "stop": 11789,
-    "lat": 29.6808,
-    "long": -82.3455
-  }
-}, {
-  "school_name": "Georgia",
-  "team_name": "Bulldogs",
-  "team_abbreviation": "UGA",
-  "division_name": "East",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "BC032B",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 16,
-    "program_history": 18,
-    "team_competitiveness": 18,
-    "brand": 19,
-    "pro_pipeline": 20
-  },
-  "location": {
-    "city": "Athens",
-    "state": "Georgia",
-    "stop": 16202,
-    "lat": 33.9508,
-    "long": -83.3689
-  }
-}, {
-  "school_name": "Kentucky",
-  "team_name": "Wildcats",
-  "team_abbreviation": "UK",
-  "division_name": "East",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "08329B",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 16,
-    "program_history": 9,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 8
-  },
-  "location": {
-    "city": "Lexington",
-    "state": "Kentucky",
-    "stop": 22913,
-    "lat": 38.0423,
-    "long": -84.4587
-  }
-}, {
-  "school_name": "LSU",
-  "team_name": "Tigers",
-  "team_abbreviation": "LSU",
-  "division_name": "West",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "33297B",
-  "team_color_secondary_hex": "FDB827",
-  "jersey": {
-    "invert": true,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 13,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 18,
-    "program_history": 16,
-    "team_competitiveness": 16,
-    "brand": 18,
-    "pro_pipeline": 20
-  },
-  "location": {
-    "city": "Baton Rouge",
-    "state": "Louisiana",
-    "stop": 23378,
-    "lat": 30.4423,
-    "long": -91.1314
-  }
-}, {
-  "school_name": "Mississippi State",
-  "team_name": "Bulldogs",
-  "team_abbreviation": "MSST",
-  "division_name": "West",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "660000",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 9,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 12,
-    "program_history": 9,
-    "team_competitiveness": 9,
-    "brand": 8,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Starkville",
-    "state": "Mississippi",
-    "stop": 27733,
-    "lat": 33.4608,
-    "long": -88.8297
-  }
-}, {
-  "school_name": "Ole Miss",
-  "team_name": "Rebels",
-  "team_abbreviation": "MISS",
-  "division_name": "West",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "13223F",
-  "team_color_secondary_hex": "CE1026",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 12,
-    "program_history": 13,
-    "team_competitiveness": 10,
-    "brand": 12,
-    "pro_pipeline": 14
-  },
-  "location": {
-    "city": "Oxford",
-    "state": "Mississippi",
-    "stop": 27459,
-    "lat": 34.3609,
-    "long": -89.5286
-  }
-}, {
-  "school_name": "Missouri",
-  "team_name": "Tigers",
-  "team_abbreviation": "MIZZOU",
-  "division_name": "East",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "000000",
-  "team_color_secondary_hex": "F1B82D",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 5,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 12,
-    "program_history": 10,
-    "team_competitiveness": 10,
-    "brand": 8,
-    "pro_pipeline": 13
-  },
-  "location": {
-    "city": "Columbia",
-    "state": "Missouri",
-    "stop": 28026,
-    "lat": 38.9478,
-    "long": -92.3258
-  }
-}, {
-  "school_name": "South Carolina",
-  "team_name": "Gamecocks",
-  "team_abbreviation": "SCAR",
-  "division_name": "East",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "73000A",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 18,
-    "program_history": 12,
-    "team_competitiveness": 9,
-    "brand": 8,
-    "pro_pipeline": 14
-  },
-  "location": {
-    "city": "Columbia",
-    "state": "South Carolina",
-    "stop": 36312,
-    "lat": 34.037,
-    "long": -80.9042
-  }
-}, {
-  "school_name": "Tennessee",
-  "team_name": "Volunteers",
-  "team_abbreviation": "TENN",
-  "division_name": "East",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "FF8200",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 18,
-    "program_history": 15,
-    "team_competitiveness": 12,
-    "brand": 2,
-    "pro_pipeline": 12
-  },
-  "location": {
-    "city": "Knoxville",
-    "state": "Tennessee",
-    "stop": 37336,
-    "lat": 35.9692,
-    "long": -83.9495
-  }
-}, {
-  "school_name": "Vanderbilt",
-  "team_name": "Commodores",
-  "team_abbreviation": "VANDY",
-  "division_name": "East",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "866D4B",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 14,
-    "fan_support": 9,
-    "academic_quality": 19,
-    "facilities": 8,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 8,
-    "pro_pipeline": 6
-  },
-  "location": {
-    "city": "Nashville",
-    "state": "Tennessee",
-    "stop": 37961,
-    "lat": 36.1714,
-    "long": -86.7844
-  }
-}, {
-  "school_name": "Texas A&M",
-  "team_name": "Aggies",
-  "team_abbreviation": "TAMU",
-  "division_name": "West",
-  "conference_name": "Southeastern Conference",
-  "team_color_primary_hex": "500000",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 2,
-    "fan_support": 11,
-    "academic_quality": 8,
-    "facilities": 19,
-    "program_history": 14,
-    "team_competitiveness": 14,
-    "brand": 14,
-    "pro_pipeline": 14
-  },
-  "location": {
-    "city": "College Station",
-    "state": "Texas",
-    "stop": 39411,
-    "lat": 30.5852,
-    "long": -96.296
-  }
-}, {
-  "school_name": "South Alabama",
-  "team_name": "Jaguars",
-  "team_abbreviation": "USA",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "BA002F",
-  "team_color_secondary_hex": "0E1944",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Mobile",
-    "state": "Alabama",
-    "stop": 1066,
-    "lat": 30.6783,
-    "long": -88.1162
-  }
-}, {
-  "school_name": "Troy",
-  "team_name": "Trojans",
-  "team_abbreviation": "TROY",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "960026",
-  "team_color_secondary_hex": "7E7F7E",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Troy",
-    "state": "Alabama",
-    "stop": 1527,
-    "lat": 31.8021,
-    "long": -85.9665
-  }
-}, {
-  "school_name": "Arkansas State",
-  "team_name": "Red Wolves",
-  "team_abbreviation": "ARST",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "cc092f",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Jonesboro",
-    "state": "Arkansas",
-    "stop": 2775,
-    "lat": 35.8212,
-    "long": -90.6795
-  }
-}, {
-  "school_name": "Arkansas-Little Rock",
-  "team_name": "Trojans",
-  "team_abbreviation": "UALR",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "6e2639",
-  "team_color_secondary_hex": "a7a9ac",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Little Rock",
-    "state": "Arkansas",
-    "stop": 2859,
-    "lat": 34.7255,
-    "long": -92.3581
-  }
-}, {
-  "school_name": "Georgia Southern",
-  "team_name": "Eagles",
-  "team_abbreviation": "GSU",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "011e41",
-  "team_color_secondary_hex": "9ba1a6",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 6,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Statesboro",
-    "state": "Georgia",
-    "stop": 18864,
-    "lat": 32.4376,
-    "long": -81.775
-  }
-}, {
-  "school_name": "Georgia State",
-  "team_name": "Panthers",
-  "team_abbreviation": "GSU",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "0039a6",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 6,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Atlanta",
-    "state": "Georgia",
-    "stop": 16547,
-    "lat": 33.7626,
-    "long": -84.4228
-  }
-}, {
-  "school_name": "Louisiana Lafayette",
-  "team_name": "Ragin' Cajuns",
-  "team_abbreviation": "UL",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "ce181e",
-  "team_color_secondary_hex": "0a0203",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Lafayette",
-    "state": "Louisiana",
-    "stop": 23689,
-    "lat": 30.2083,
-    "long": -92.0322
-  }
-}, {
-  "school_name": "Louisiana Monroe",
-  "team_name": "Warhawks",
-  "team_abbreviation": "ULM",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "840029",
-  "team_color_secondary_hex": "fdb913",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 4,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Monroe",
-    "state": "Louisiana",
-    "stop": 23885,
-    "lat": 32.5184,
-    "long": -92.0774
-  }
-}, {
-  "school_name": "Appalachian State",
-  "team_name": "Mountaineers",
-  "team_abbreviation": "APP",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "fc0",
-  "team_color_secondary_hex": "222",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 6,
-    "facilities": 6,
-    "program_history": 8,
-    "team_competitiveness": 8,
-    "brand": 4,
-    "pro_pipeline": 4
-  },
-  "location": {
-    "city": "Boone",
-    "state": "North Carolina",
-    "stop": 30269,
-    "lat": 36.2111,
-    "long": -81.6669
-  }
-}, {
-  "school_name": "Coastal Carolina",
-  "team_name": "Chanticleers",
-  "team_abbreviation": "CCU",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "006f71",
-  "team_color_secondary_hex": "a27752",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 11,
-    "academic_quality": 2,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Conway",
-    "state": "South Carolina",
-    "stop": 36323,
-    "lat": 33.8404,
-    "long": -79.0419
-  }
-}, {
-  "school_name": "Texas State",
-  "team_name": "Bobcats",
-  "team_abbreviation": "TEXST",
-  "division_name": "",
-  "conference_name": "Sun Belt",
-  "team_color_primary_hex": "501214",
-  "team_color_secondary_hex": "8d734a",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 4,
-    "fan_support": 6,
-    "academic_quality": 2,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 4,
-    "brand": 2,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "San Marcos",
-    "state": "Texas",
-    "stop": 44210,
-    "lat": 29.8734,
-    "long": -97.9382
-  }
-}, {
-  "school_name": "Dartmouth",
-  "team_name": "Big Green",
-  "team_abbreviation": "DART",
-  "division_name": "",
-  "conference_name": "Ivy League",
-  "team_color_primary_hex": "00693e",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 12,
-    "fan_support": 3,
-    "academic_quality": 19,
-    "facilities": 4,
-    "program_history": 12,
-    "team_competitiveness": 3,
-    "brand": 3,
-    "pro_pipeline": 1
-  },
-  "location": {
-    "city": "Hanover",
-    "state": "New Hampshire",
-    "stop": 15000,
-    "lat": 43.4208,
-    "long": -72.1722
-  }
-}, {
-  "school_name": "Brown",
-  "team_name": "Bears",
-  "team_abbreviation": "BROWN",
-  "division_name": "",
-  "conference_name": "Ivy League",
-  "team_color_primary_hex": "54301a",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 10,
-    "fan_support": 2,
-    "academic_quality": 19,
-    "facilities": 2,
-    "program_history": 5,
-    "team_competitiveness": 2,
-    "brand": 1,
-    "pro_pipeline": 1
-  },
-  "location": {
-    "city": "Providence",
-    "state": "Rhode Island",
-    "stop": 15000,
-    "lat": 41.4925,
-    "long": -71.2520
-  }
-}, {
-  "school_name": "Columbia",
-  "team_name": "Lions",
-  "team_abbreviation": "CLMB",
-  "division_name": "",
-  "conference_name": "Ivy League",
-  "team_color_primary_hex": "99caea",
-  "team_color_secondary_hex": "183863",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 15,
-    "fan_support": 1,
-    "academic_quality": 19,
-    "facilities": 2,
-    "program_history": 4,
-    "team_competitiveness": 2,
-    "brand": 1,
-    "pro_pipeline": 1
-  },
-  "location": {
-    "city": "New York",
-    "state": "New York",
-    "stop": 1500000,
-    "lat": 40.4246,
-    "long": -74.0022
-  }
-}, {
-  "school_name": "Cornell",
-  "team_name": "Big Red",
-  "team_abbreviation": "CRN",
-  "division_name": "",
-  "conference_name": "Ivy League",
-  "team_color_primary_hex": "b31b1b",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 3,
-    "fan_support": 1,
-    "academic_quality": 19,
-    "facilities": 2,
-    "program_history": 3,
-    "team_competitiveness": 1,
-    "brand": 1,
-    "pro_pipeline": 1
-  },
-  "location": {
-    "city": "Ithaca",
-    "state": "New York",
-    "stop": 15000,
-    "lat": 42.2636,
-    "long": -76.3000
-  }
-}, {
-  "school_name": "Harvard",
-  "team_name": "Crimson",
-  "team_abbreviation": "HARV",
-  "division_name": "",
-  "conference_name": "Ivy League",
-  "team_color_primary_hex": "931e2f",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 11,
-    "fan_support": 3,
-    "academic_quality": 20,
-    "facilities": 4,
-    "program_history": 6,
-    "team_competitiveness": 3,
-    "brand": 5,
-    "pro_pipeline": 2
-  },
-  "location": {
-    "city": "Cambridge",
-    "state": "Massachusetts",
-    "stop": 150000,
-    "lat": 42.2225,
-    "long": -71.0638
-  }
-}, {
-  "school_name": "Penn",
-  "team_name": "Quakers",
-  "team_abbreviation": "PENN",
-  "division_name": "",
-  "conference_name": "Ivy League",
-  "team_color_primary_hex": "011f5b",
-  "team_color_secondary_hex": "990000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 10,
-    "fan_support": 2,
-    "academic_quality": 19,
-    "facilities": 2,
-    "program_history": 3,
-    "team_competitiveness": 1,
-    "brand": 1,
-    "pro_pipeline": 1
-  },
-  "location": {
-    "city": "Philadelphia",
-    "state": "Pennsylvania",
-    "stop": 150000,
-    "lat": 39.5710,
-    "long": -75.0949
-  }
-}, {
-  "school_name": "Princeton",
-  "team_name": "Tigers",
-  "team_abbreviation": "PRINC",
-  "division_name": "",
-  "conference_name": "Ivy League",
-  "team_color_primary_hex": "FF6000",
-  "team_color_secondary_hex": "000000",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 8,
-    "fan_support": 1,
-    "academic_quality": 20,
-    "facilities": 2,
-    "program_history": 2,
-    "team_competitiveness": 1,
-    "brand": 1,
-    "pro_pipeline": 1
-  },
-  "location": {
-    "city": "Princeton",
-    "state": "New Jersey",
-    "stop": 15000,
-    "lat": 40.3582,
-    "long": -74.6667
-  }
-}, {
-  "school_name": "Yale",
-  "team_name": "Bulldogs",
-  "team_abbreviation": "YALE",
-  "division_name": "",
-  "conference_name": "Ivy League",
-  "team_color_primary_hex": "00356b",
-  "team_color_secondary_hex": "FFFFFF",
-  "jersey": {
-    "invert": false,
-    "teamColors": null,
-    "id": null
-  },
-  "team_ratings": {
-    "location": 5,
-    "fan_support": 3,
-    "academic_quality": 20,
-    "facilities": 2,
-    "program_history": 3,
-    "team_competitiveness": 2,
-    "brand": 2,
-    "pro_pipeline": 1
-  },
-  "location": {
-    "city": "New Haven",
-    "state": "Connecticut",
-    "stop": 15000,
-    "lat": 41.1836,
-    "long": -72.5525
-  }
-}]
+[
+  {
+    "school_name": "UConn",
+    "team_name": "Huskies",
+    "team_abbreviation": "UCONN",
+    "team_color_primary_hex": "0A1D5A",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 12,
+      "academic_quality": 8,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Storrs",
+      "state": "Connecticut",
+      "stop": 47555,
+      "lat": 41.3112,
+      "long": -72.9245
+    }
+  },
+  {
+    "school_name": "USF",
+    "team_name": "Bulls",
+    "team_abbreviation": "USF",
+    "team_color_primary_hex": "004A36",
+    "team_color_secondary_hex": "A08B4D",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 12,
+      "academic_quality": 6,
+      "facilities": 8,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 6,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Tampa",
+      "state": "Florida",
+      "stop": 15740,
+      "lat": 27.9937,
+      "long": -82.4454
+    }
+  },
+  {
+    "school_name": "UCF",
+    "team_name": "Knights",
+    "team_abbreviation": "UCF",
+    "team_color_primary_hex": "B4985A",
+    "team_color_secondary_hex": "231F20",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 12,
+      "academic_quality": 4,
+      "facilities": 2,
+      "program_history": 12,
+      "team_competitiveness": 12,
+      "brand": 9,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Orlando",
+      "state": "Florida",
+      "stop": 14380,
+      "lat": 28.4788,
+      "long": -81.342
+    }
+  },
+  {
+    "school_name": "Tulane",
+    "team_name": "Green Wave",
+    "team_abbreviation": "TUL",
+    "team_color_primary_hex": "11472A",
+    "team_color_secondary_hex": "1890CC",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 14,
+      "academic_quality": 14,
+      "facilities": 4,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 4,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "New Orleans",
+      "state": "Louisiana",
+      "stop": 24268,
+      "lat": 30.0687,
+      "long": -89.9288
+    }
+  },
+  {
+    "school_name": "Navy",
+    "team_name": "Midshipmen",
+    "team_abbreviation": "NAVY",
+    "team_color_primary_hex": "00205B",
+    "team_color_secondary_hex": "C5B783",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 1,
+      "academic_quality": 18,
+      "facilities": 4,
+      "program_history": 12,
+      "team_competitiveness": 8,
+      "brand": 6,
+      "pro_pipeline": 0
+    },
+    "location": {
+      "city": "Annapolis",
+      "state": "Maryland",
+      "stop": 24613,
+      "lat": 38.9706,
+      "long": -76.5047
+    }
+  },
+  {
+    "school_name": "East Carolina",
+    "team_name": "Pirates",
+    "team_abbreviation": "ECU",
+    "team_color_primary_hex": "4A1F68",
+    "team_color_secondary_hex": "FFCE28",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 12,
+      "academic_quality": 2,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Greenville",
+      "state": "North Carolina",
+      "stop": 30849,
+      "lat": 35.5957,
+      "long": -77.3764
+    }
+  },
+  {
+    "school_name": "Cincinnati",
+    "team_name": "Bearcats",
+    "team_abbreviation": "CIN",
+    "team_color_primary_hex": "000000",
+    "team_color_secondary_hex": "E00122",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 6,
+      "academic_quality": 8,
+      "facilities": 10,
+      "program_history": 10,
+      "team_competitiveness": 14,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Cincinnati",
+      "state": "Ohio",
+      "stop": 32134,
+      "lat": 39.1412,
+      "long": -84.5059
+    }
+  },
+  {
+    "school_name": "Tulsa",
+    "team_name": "Golden Hurricane",
+    "team_abbreviation": "TUL",
+    "team_color_primary_hex": "0E387C",
+    "team_color_secondary_hex": "C8102E",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 4,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Tulsa",
+      "state": "Oklahoma",
+      "stop": 34603,
+      "lat": 36.1284,
+      "long": -95.9042
+    }
+  },
+  {
+    "school_name": "Temple",
+    "team_name": "Owls",
+    "team_abbreviation": "TEM",
+    "team_color_primary_hex": "A80532",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 8,
+      "academic_quality": 2,
+      "facilities": 6,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 4,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Philadelphia",
+      "state": "Pennsylvania",
+      "stop": 35660,
+      "lat": 40.0076,
+      "long": -75.134
+    }
+  },
+  {
+    "school_name": "Memphis",
+    "team_name": "Tigers",
+    "team_abbreviation": "MEM",
+    "team_color_primary_hex": "092D6D",
+    "team_color_secondary_hex": "8B8E91",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 8,
+      "academic_quality": 4,
+      "facilities": 8,
+      "program_history": 6,
+      "team_competitiveness": 10,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Memphis",
+      "state": "Tennessee",
+      "stop": 37677,
+      "lat": 35.1047,
+      "long": -89.9773
+    }
+  },
+  {
+    "school_name": "Houston",
+    "team_name": "Cougars",
+    "team_abbreviation": "HOU",
+    "team_color_primary_hex": "C90822",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 8,
+      "academic_quality": 8,
+      "facilities": 10,
+      "program_history": 9,
+      "team_competitiveness": 9,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Houston",
+      "state": "Texas",
+      "stop": 41928,
+      "lat": 29.7868,
+      "long": -95.3905
+    }
+  },
+  {
+    "school_name": "SMU",
+    "team_name": "Mustangs",
+    "team_abbreviation": "SMU",
+    "team_color_primary_hex": "C2032C",
+    "team_color_secondary_hex": "27388F",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 7,
+      "academic_quality": 13,
+      "facilities": 8,
+      "program_history": 13,
+      "team_competitiveness": 6,
+      "brand": 8,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "University Park",
+      "state": "Texas",
+      "stop": 44770,
+      "lat": 32.8506,
+      "long": -96.7937
+    }
+  },
+  {
+    "school_name": "Florida State",
+    "team_name": "Seminoles",
+    "team_abbreviation": "FSU",
+    "team_color_primary_hex": "642132",
+    "team_color_secondary_hex": "A8936B",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 16,
+      "academic_quality": 8,
+      "facilities": 14,
+      "program_history": 17,
+      "team_competitiveness": 14,
+      "brand": 15,
+      "pro_pipeline": 20
+    },
+    "location": {
+      "city": "Tallahassee",
+      "state": "Florida",
+      "stop": 15382,
+      "lat": 30.455,
+      "long": -84.2526
+    }
+  },
+  {
+    "school_name": "Miami",
+    "team_name": "Hurricanes",
+    "team_abbreviation": "MIA",
+    "team_color_primary_hex": "F47321",
+    "team_color_secondary_hex": "204F33",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 18,
+      "fan_support": 11,
+      "academic_quality": 13,
+      "facilities": 14,
+      "program_history": 15,
+      "team_competitiveness": 12,
+      "brand": 16,
+      "pro_pipeline": 18
+    },
+    "location": {
+      "city": "Coral Gables",
+      "state": "Florida",
+      "stop": 10732,
+      "lat": 25.7037,
+      "long": -80.2715
+    }
+  },
+  {
+    "school_name": "Georgia Tech",
+    "team_name": "Yellow Jackets",
+    "team_abbreviation": "GT",
+    "team_color_primary_hex": "B3A369",
+    "team_color_secondary_hex": "091D3A",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 3,
+      "academic_quality": 18,
+      "facilities": 8,
+      "program_history": 11,
+      "team_competitiveness": 7,
+      "brand": 8,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Atlanta",
+      "state": "Georgia",
+      "stop": 16547,
+      "lat": 33.7626,
+      "long": -84.4228
+    }
+  },
+  {
+    "school_name": "Louisville",
+    "team_name": "Cardinals",
+    "team_abbreviation": "U of L",
+    "team_color_primary_hex": "CA001A",
+    "team_color_secondary_hex": "070707",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 14,
+      "academic_quality": 6,
+      "facilities": 12,
+      "program_history": 8,
+      "team_competitiveness": 11,
+      "brand": 8,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Louisville",
+      "state": "Kentucky",
+      "stop": 23038,
+      "lat": 38.1662,
+      "long": -85.6488
+    }
+  },
+  {
+    "school_name": "Boston College",
+    "team_name": "Eagles",
+    "team_abbreviation": "BC",
+    "team_color_primary_hex": "821E1E",
+    "team_color_secondary_hex": "DBCCA4",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 6,
+      "academic_quality": 15,
+      "facilities": 2,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 6,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Chestnut Hill",
+      "state": "Massachusetts",
+      "stop": 47554,
+      "lat": 42.3188,
+      "long": -71.0846
+    }
+  },
+  {
+    "school_name": "Syracuse",
+    "team_name": "Orange",
+    "team_abbreviation": "SYR",
+    "team_color_primary_hex": "C82F04",
+    "team_color_secondary_hex": "06162E",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 3,
+      "fan_support": 12,
+      "academic_quality": 8,
+      "facilities": 2,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Syracuse",
+      "state": "New York",
+      "stop": 30171,
+      "lat": 43.0409,
+      "long": -76.1438
+    }
+  },
+  {
+    "school_name": "Duke",
+    "team_name": "Blue Devils",
+    "team_abbreviation": "DUKE",
+    "team_color_primary_hex": "013088",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 6,
+      "academic_quality": 20,
+      "facilities": 8,
+      "program_history": 6,
+      "team_competitiveness": 4,
+      "brand": 8,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Durham",
+      "state": "North Carolina",
+      "stop": 30663,
+      "lat": 35.9797,
+      "long": -78.9037
+    }
+  },
+  {
+    "school_name": "NC State",
+    "team_name": "Wolfpack",
+    "team_abbreviation": "NCST",
+    "team_color_primary_hex": "CC0000",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 12,
+      "academic_quality": 12,
+      "facilities": 6,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Raleigh",
+      "state": "North Carolina",
+      "stop": 31236,
+      "lat": 35.8323,
+      "long": -78.6439
+    }
+  },
+  {
+    "school_name": "North Carolina",
+    "team_name": "Tar Heels",
+    "team_abbreviation": "UNC",
+    "team_color_primary_hex": "7BAFD4",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 11,
+      "academic_quality": 16,
+      "facilities": 14,
+      "program_history": 10,
+      "team_competitiveness": 14,
+      "brand": 8,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Chapel Hill",
+      "state": "North Carolina",
+      "stop": 30300,
+      "lat": 35.9269,
+      "long": -79.039
+    }
+  },
+  {
+    "school_name": "Wake Forest",
+    "team_name": "Demon Deacons",
+    "team_abbreviation": "WAKE",
+    "team_color_primary_hex": "A67F31",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 4,
+      "academic_quality": 17,
+      "facilities": 4,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 6,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Winston-Salem",
+      "state": "North Carolina",
+      "stop": 31490,
+      "lat": 36.1029,
+      "long": -80.261
+    }
+  },
+  {
+    "school_name": "Pittsburgh",
+    "team_name": "Panthers",
+    "team_abbreviation": "PITT",
+    "team_color_primary_hex": "0B3390",
+    "team_color_secondary_hex": "FEB01D",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 6,
+      "academic_quality": 14,
+      "facilities": 2,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Pittsburgh",
+      "state": "Pennsylvania",
+      "stop": 35851,
+      "lat": 40.4396,
+      "long": -79.9763
+    }
+  },
+  {
+    "school_name": "Clemson",
+    "team_name": "Tigers",
+    "team_abbreviation": "CLEM",
+    "team_color_primary_hex": "F06014",
+    "team_color_secondary_hex": "441F6F",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 17,
+      "academic_quality": 6,
+      "facilities": 20,
+      "program_history": 17,
+      "team_competitiveness": 20,
+      "brand": 20,
+      "pro_pipeline": 18
+    },
+    "location": {
+      "city": "Clemson",
+      "state": "South Carolina",
+      "stop": 36243,
+      "lat": 34.6838,
+      "long": -82.8124
+    }
+  },
+  {
+    "school_name": "Virginia",
+    "team_name": "Cavaliers",
+    "team_abbreviation": "UVA",
+    "team_color_primary_hex": "232d4b",
+    "team_color_secondary_hex": "f84c1e",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 3,
+      "fan_support": 6,
+      "academic_quality": 18,
+      "facilities": 8,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 6,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Charlottesville",
+      "state": "Virginia",
+      "stop": 45595,
+      "lat": 38.0375,
+      "long": -78.4855
+    }
+  },
+  {
+    "school_name": "Virginia Tech",
+    "team_name": "Hokies",
+    "team_abbreviation": "VT",
+    "team_color_primary_hex": "630031",
+    "team_color_secondary_hex": "CF4420",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 15,
+      "academic_quality": 16,
+      "facilities": 14,
+      "program_history": 10,
+      "team_competitiveness": 11,
+      "brand": 8,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Blacksburg",
+      "state": "Virginia",
+      "stop": 45584,
+      "lat": 37.23,
+      "long": -80.428
+    }
+  },
+  {
+    "school_name": "Iowa State",
+    "team_name": "Cyclones",
+    "team_abbreviation": "ISU",
+    "team_color_primary_hex": "840A2C",
+    "team_color_secondary_hex": "FEC938",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 6,
+      "fan_support": 8,
+      "academic_quality": 4,
+      "facilities": 10,
+      "program_history": 8,
+      "team_competitiveness": 13,
+      "brand": 8,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Ames",
+      "state": "Iowa",
+      "stop": 21727,
+      "lat": 42.0261,
+      "long": -93.6279
+    }
+  },
+  {
+    "school_name": "Kansas",
+    "team_name": "Jayhawks",
+    "team_abbreviation": "KU",
+    "team_color_primary_hex": "0051BA",
+    "team_color_secondary_hex": "E8000D",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 5,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 6,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 6,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Lawrence",
+      "state": "Kansas",
+      "stop": 22590,
+      "lat": 38.9597,
+      "long": -95.2641
+    }
+  },
+  {
+    "school_name": "Kansas State",
+    "team_name": "Wildcats",
+    "team_abbreviation": "KSU",
+    "team_color_primary_hex": "633194",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 6,
+      "fan_support": 6,
+      "academic_quality": 4,
+      "facilities": 8,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Manhattan",
+      "state": "Kansas",
+      "stop": 22608,
+      "lat": 39.1882,
+      "long": -96.6053
+    }
+  },
+  {
+    "school_name": "Oklahoma",
+    "team_name": "Sooners",
+    "team_abbreviation": "OU",
+    "team_color_primary_hex": "841617",
+    "team_color_secondary_hex": "ffffff",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 6,
+      "fan_support": 8,
+      "academic_quality": 8,
+      "facilities": 18,
+      "program_history": 18,
+      "team_competitiveness": 18,
+      "brand": 20,
+      "pro_pipeline": 18
+    },
+    "location": {
+      "city": "Norman",
+      "state": "Oklahoma",
+      "stop": 34285,
+      "lat": 35.2335,
+      "long": -97.3471
+    }
+  },
+  {
+    "school_name": "Oklahoma State",
+    "team_name": "Cowboys",
+    "team_abbreviation": "OKST",
+    "team_color_primary_hex": "EF641A",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 8,
+      "academic_quality": 4,
+      "facilities": 12,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Stillwater",
+      "state": "Oklahoma",
+      "stop": 34459,
+      "lat": 36.1315,
+      "long": -97.0739
+    }
+  },
+  {
+    "school_name": "Baylor",
+    "team_name": "Bears",
+    "team_abbreviation": "BAY",
+    "team_color_primary_hex": "118353",
+    "team_color_secondary_hex": "FCB212",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 3,
+      "academic_quality": 12,
+      "facilities": 14,
+      "program_history": 6,
+      "team_competitiveness": 10,
+      "brand": 12,
+      "pro_pipeline": 10
+    },
+    "location": {
+      "city": "Waco",
+      "state": "Texas",
+      "stop": 44853,
+      "lat": 31.5597,
+      "long": -97.1883
+    }
+  },
+  {
+    "school_name": "TCU",
+    "team_name": "Horned Frogs",
+    "team_abbreviation": "TCU",
+    "team_color_primary_hex": "3D156F",
+    "team_color_secondary_hex": "A3A9AC",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 13,
+      "academic_quality": 12,
+      "facilities": 14,
+      "program_history": 12,
+      "team_competitiveness": 12,
+      "brand": 14,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Fort Worth",
+      "state": "Texas",
+      "stop": 40775,
+      "lat": 32.7814,
+      "long": -97.3473
+    }
+  },
+  {
+    "school_name": "Texas",
+    "team_name": "Longhorns",
+    "team_abbreviation": "UT",
+    "team_color_primary_hex": "D65918",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 17,
+      "fan_support": 16,
+      "academic_quality": 18,
+      "facilities": 18,
+      "program_history": 19,
+      "team_competitiveness": 16,
+      "brand": 20,
+      "pro_pipeline": 16
+    },
+    "location": {
+      "city": "Austin",
+      "state": "Texas",
+      "stop": 38762,
+      "lat": 30.3006,
+      "long": -97.7517
+    }
+  },
+  {
+    "school_name": "Texas Tech",
+    "team_name": "Red Raiders",
+    "team_abbreviation": "TTU",
+    "team_color_primary_hex": "CC0000",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 6,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 14,
+      "program_history": 12,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Lubbock",
+      "state": "Texas",
+      "stop": 42731,
+      "lat": 33.5643,
+      "long": -101.8871
+    }
+  },
+  {
+    "school_name": "West Virginia",
+    "team_name": "Mountaineers",
+    "team_abbreviation": "WVU",
+    "team_color_primary_hex": "134B9B",
+    "team_color_secondary_hex": "EAAA00",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 6,
+      "fan_support": 13,
+      "academic_quality": 4,
+      "facilities": 12,
+      "program_history": 8,
+      "team_competitiveness": 12,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Morgantown",
+      "state": "West Virginia",
+      "stop": 47145,
+      "lat": 39.638,
+      "long": -79.9468
+    }
+  },
+  {
+    "school_name": "Illinois",
+    "team_name": "Fighting Illini",
+    "team_abbreviation": "ILL",
+    "team_color_primary_hex": "E1311B",
+    "team_color_secondary_hex": "0A1A39",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 8,
+      "academic_quality": 15,
+      "facilities": 9,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Urbana",
+      "state": "Illinois",
+      "stop": 20973,
+      "lat": 40.1106,
+      "long": -88.1972
+    }
+  },
+  {
+    "school_name": "Northwestern",
+    "team_name": "Wildcats",
+    "team_abbreviation": "NU",
+    "team_color_primary_hex": "4E2A84",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 13,
+      "fan_support": 6,
+      "academic_quality": 19,
+      "facilities": 14,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 6,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Evanston",
+      "state": "Illinois",
+      "stop": 20318,
+      "lat": 42.0463,
+      "long": -87.6942
+    }
+  },
+  {
+    "school_name": "Indiana",
+    "team_name": "Hoosiers",
+    "team_abbreviation": "IU",
+    "team_color_primary_hex": "860001",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 11,
+      "academic_quality": 14,
+      "facilities": 8,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 6,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Bloomington",
+      "state": "Indiana",
+      "stop": 21072,
+      "lat": 39.1637,
+      "long": -86.5256
+    }
+  },
+  {
+    "school_name": "Purdue",
+    "team_name": "Boilermakers",
+    "team_abbreviation": "PUR",
+    "team_color_primary_hex": "cfb991",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 8,
+      "academic_quality": 15,
+      "facilities": 12,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "West Lafayette",
+      "state": "Indiana",
+      "stop": 21704,
+      "lat": 40.4432,
+      "long": -86.9239
+    }
+  },
+  {
+    "school_name": "Iowa",
+    "team_name": "Hawkeyes",
+    "team_abbreviation": "IOWA",
+    "team_color_primary_hex": "000000",
+    "team_color_secondary_hex": "FFD700",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 7,
+      "academic_quality": 11,
+      "facilities": 11,
+      "program_history": 11,
+      "team_competitiveness": 12,
+      "brand": 9,
+      "pro_pipeline": 7
+    },
+    "location": {
+      "city": "Iowa City",
+      "state": "Iowa",
+      "stop": 21881,
+      "lat": 41.6559,
+      "long": -91.5304
+    }
+  },
+  {
+    "school_name": "Maryland",
+    "team_name": "Terrapins",
+    "team_abbreviation": "UM",
+    "team_color_primary_hex": "D5002B",
+    "team_color_secondary_hex": "FEC619",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 8,
+      "academic_quality": 14,
+      "facilities": 2,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "College Park",
+      "state": "Maryland",
+      "stop": 48369,
+      "lat": 38.9897,
+      "long": -76.9378
+    }
+  },
+  {
+    "school_name": "Michigan",
+    "team_name": "Wolverines",
+    "team_abbreviation": "MICH",
+    "team_color_primary_hex": "00274C",
+    "team_color_secondary_hex": "FFCB05",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 19,
+      "academic_quality": 15,
+      "facilities": 16,
+      "program_history": 19,
+      "team_competitiveness": 16,
+      "brand": 18,
+      "pro_pipeline": 16
+    },
+    "location": {
+      "city": "Ann Arbor",
+      "state": "Michigan",
+      "stop": 25097,
+      "lat": 42.2755,
+      "long": -83.7312
+    }
+  },
+  {
+    "school_name": "Michigan State",
+    "team_name": "Spartans",
+    "team_abbreviation": "MSU",
+    "team_color_primary_hex": "1C453A",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 10,
+      "academic_quality": 14,
+      "facilities": 14,
+      "program_history": 14,
+      "team_competitiveness": 14,
+      "brand": 12,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "East Lansing",
+      "state": "Michigan",
+      "stop": 25462,
+      "lat": 42.748,
+      "long": -84.4835
+    }
+  },
+  {
+    "school_name": "Minnesota",
+    "team_name": "Golden Gophers",
+    "team_abbreviation": "MINN",
+    "team_color_primary_hex": "7A0019",
+    "team_color_secondary_hex": "FBB246",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 10,
+      "academic_quality": 14,
+      "facilities": 12,
+      "program_history": 8,
+      "team_competitiveness": 7,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Minneapolis",
+      "state": "Minnesota",
+      "stop": 26390,
+      "lat": 44.9635,
+      "long": -93.2678
+    }
+  },
+  {
+    "school_name": "Nebraska",
+    "team_name": "Cornhuskers",
+    "team_abbreviation": "NEB",
+    "team_color_primary_hex": "DC0029",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 6,
+      "fan_support": 7,
+      "academic_quality": 7,
+      "facilities": 14,
+      "program_history": 17,
+      "team_competitiveness": 10,
+      "brand": 14,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Lincoln",
+      "state": "Nebraska",
+      "stop": 28591,
+      "lat": 40.8098,
+      "long": -96.6802
+    }
+  },
+  {
+    "school_name": "Rutgers",
+    "team_name": "Scarlet Knights",
+    "team_abbreviation": "RUT",
+    "team_color_primary_hex": "CC0033",
+    "team_color_secondary_hex": "5F6A72",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 9,
+      "academic_quality": 14,
+      "facilities": 6,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 6,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "New Brunswick",
+      "state": "New Jersey",
+      "stop": 29330,
+      "lat": 40.487,
+      "long": -74.445
+    }
+  },
+  {
+    "school_name": "Ohio State",
+    "team_name": "Buckeyes",
+    "team_abbreviation": "OSU",
+    "team_color_primary_hex": "CE0F3D",
+    "team_color_secondary_hex": "b0b7bc",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 18,
+      "academic_quality": 13,
+      "facilities": 20,
+      "program_history": 18,
+      "team_competitiveness": 18,
+      "brand": 20,
+      "pro_pipeline": 20
+    },
+    "location": {
+      "city": "Columbus",
+      "state": "Ohio",
+      "stop": 32548,
+      "lat": 39.986,
+      "long": -82.9852
+    }
+  },
+  {
+    "school_name": "Penn State",
+    "team_name": "Nittany Lions",
+    "team_abbreviation": "PSU",
+    "team_color_primary_hex": "151F49",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 7,
+      "fan_support": 19,
+      "academic_quality": 14,
+      "facilities": 14,
+      "program_history": 16,
+      "team_competitiveness": 16,
+      "brand": 16,
+      "pro_pipeline": 14
+    },
+    "location": {
+      "city": "State College",
+      "state": "Pennsylvania",
+      "stop": 35993,
+      "lat": 40.7909,
+      "long": -77.8568
+    }
+  },
+  {
+    "school_name": "Wisconsin",
+    "team_name": "Badgers",
+    "team_abbreviation": "WIS",
+    "team_color_primary_hex": "B70021",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 17,
+      "academic_quality": 14,
+      "facilities": 12,
+      "program_history": 16,
+      "team_competitiveness": 16,
+      "brand": 14,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Madison",
+      "state": "Wisconsin",
+      "stop": 47330,
+      "lat": 43.0808,
+      "long": -89.3922
+    }
+  },
+  {
+    "school_name": "UAB",
+    "team_name": "Blazers",
+    "team_abbreviation": "UAB",
+    "team_color_primary_hex": "0C5F3A",
+    "team_color_secondary_hex": "BEB66A",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Birmingham",
+      "state": "Alabama",
+      "stop": 335,
+      "lat": 33.5276,
+      "long": -86.7988
+    }
+  },
+  {
+    "school_name": "Florida Atlantic",
+    "team_name": "Owls",
+    "team_abbreviation": "FAU",
+    "team_color_primary_hex": "004B85",
+    "team_color_secondary_hex": "CD1041",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 13,
+      "academic_quality": 4,
+      "facilities": 3,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Boca Raton",
+      "state": "Florida",
+      "stop": 10387,
+      "lat": 26.3749,
+      "long": -80.1077
+    }
+  },
+  {
+    "school_name": "FIU",
+    "team_name": "Panthers",
+    "team_abbreviation": "FIU",
+    "team_color_primary_hex": "002D62",
+    "team_color_secondary_hex": "C5960B",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 15,
+      "fan_support": 13,
+      "academic_quality": 2,
+      "facilities": 2,
+      "program_history": 1,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Miami",
+      "state": "Florida",
+      "stop": 13720,
+      "lat": 25.784,
+      "long": -80.2102
+    }
+  },
+  {
+    "school_name": "Western Kentucky",
+    "team_name": "Hilltoppers",
+    "team_abbreviation": "WKU",
+    "team_color_primary_hex": "9F0B1C",
+    "team_color_secondary_hex": "010000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 2,
+      "team_competitiveness": 2,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Bowling Green",
+      "state": "Kentucky",
+      "stop": 22800,
+      "lat": 36.9721,
+      "long": -86.4367
+    }
+  },
+  {
+    "school_name": "Louisiana Tech",
+    "team_name": "Bulldogs",
+    "team_abbreviation": "LTU",
+    "team_color_primary_hex": "001B75",
+    "team_color_secondary_hex": "BF1B2B",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 6,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 4,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Ruston",
+      "state": "Louisiana",
+      "stop": 24354,
+      "lat": 32.5329,
+      "long": -92.6364
+    }
+  },
+  {
+    "school_name": "Southern Miss",
+    "team_name": "Golden Eagles",
+    "team_abbreviation": "USM",
+    "team_color_primary_hex": "F7C237",
+    "team_color_secondary_hex": "010000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 6,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Hattiesburg",
+      "state": "Mississippi",
+      "stop": 27085,
+      "lat": 31.3072,
+      "long": -89.3168
+    }
+  },
+  {
+    "school_name": "Charlotte",
+    "team_name": "49ers",
+    "team_abbreviation": "UNCC",
+    "team_color_primary_hex": "0A4631",
+    "team_color_secondary_hex": "897637",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Charlotte",
+      "state": "North Carolina",
+      "stop": 30533,
+      "lat": 35.2079,
+      "long": -80.8303
+    }
+  },
+  {
+    "school_name": "Middle Tennessee",
+    "team_name": "Blue Raiders",
+    "team_abbreviation": "MT",
+    "team_color_primary_hex": "094FC1",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 2,
+      "team_competitiveness": 2,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Murfreesboro",
+      "state": "Tennessee",
+      "stop": 37764,
+      "lat": 35.8493,
+      "long": -86.4098
+    }
+  },
+  {
+    "school_name": "North Texas",
+    "team_name": "Mean Green",
+    "team_abbreviation": "UNT",
+    "team_color_primary_hex": "117430",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 5,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 4,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Denton",
+      "state": "Texas",
+      "stop": 40258,
+      "lat": 33.2176,
+      "long": -97.1421
+    }
+  },
+  {
+    "school_name": "Rice",
+    "team_name": "Owls",
+    "team_abbreviation": "RICE",
+    "team_color_primary_hex": "011648",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 19,
+      "facilities": 4,
+      "program_history": 2,
+      "team_competitiveness": 2,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Houston",
+      "state": "Texas",
+      "stop": 41928,
+      "lat": 29.7868,
+      "long": -95.3905
+    }
+  },
+  {
+    "school_name": "UTEP",
+    "team_name": "Miners",
+    "team_abbreviation": "UTEP",
+    "team_color_primary_hex": "061633",
+    "team_color_secondary_hex": "FD6D07",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "El Paso",
+      "state": "Texas",
+      "stop": 40494,
+      "lat": 31.8479,
+      "long": -106.4309
+    }
+  },
+  {
+    "school_name": "UTSA",
+    "team_name": "Roadrunners",
+    "team_abbreviation": "UTSA",
+    "team_color_primary_hex": "021D4A",
+    "team_color_secondary_hex": "EE5C1A",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 3,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "San Antonio",
+      "state": "Texas",
+      "stop": 44208,
+      "lat": 29.4722,
+      "long": -98.5247
+    }
+  },
+  {
+    "school_name": "Old Dominion",
+    "team_name": "Monarchs",
+    "team_abbreviation": "ODU",
+    "team_color_primary_hex": "042549",
+    "team_color_secondary_hex": "858A8D",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 2,
+      "team_competitiveness": 2,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Norfolk",
+      "state": "Virginia",
+      "stop": 46128,
+      "lat": 36.8945,
+      "long": -76.259
+    }
+  },
+  {
+    "school_name": "Marshall",
+    "team_name": "Thundering Herd",
+    "team_abbreviation": "MARSH",
+    "team_color_primary_hex": "17A82F",
+    "team_color_secondary_hex": "1B1718",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 11,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 2,
+      "team_competitiveness": 2,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Huntington",
+      "state": "West Virginia",
+      "stop": 47115,
+      "lat": 38.4109,
+      "long": -82.4344
+    }
+  },
+  {
+    "school_name": "Notre Dame",
+    "team_name": "Fighting Irish",
+    "team_abbreviation": "ND",
+    "team_color_primary_hex": "0C2340",
+    "team_color_secondary_hex": "C99700",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 15,
+      "academic_quality": 14,
+      "facilities": 16,
+      "program_history": 19,
+      "team_competitiveness": 18,
+      "brand": 18,
+      "pro_pipeline": 16
+    },
+    "location": {
+      "city": "South Bend",
+      "state": "Indiana",
+      "stop": 21683,
+      "lat": 41.6771,
+      "long": -86.2692
+    }
+  },
+  {
+    "school_name": "UMass",
+    "team_name": "Minutemen",
+    "team_abbreviation": "UMASS",
+    "team_color_primary_hex": "830D24",
+    "team_color_secondary_hex": "7E8081",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 8,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 3,
+      "team_competitiveness": 3,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Amherst",
+      "state": "Massachusetts",
+      "stop": 24996,
+      "lat": 42.3732,
+      "long": -72.5199
+    }
+  },
+  {
+    "school_name": "New Mexico State",
+    "team_name": "Aggies",
+    "team_abbreviation": "NMSU",
+    
+    "team_color_primary_hex": "750312",
+    "team_color_secondary_hex": "777777",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 3,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 2,
+      "program_history": 2,
+      "team_competitiveness": 2,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Las Cruces",
+      "state": "New Mexico",
+      "stop": 29702,
+      "lat": 32.3265,
+      "long": -106.7893
+    }
+  },
+  {
+    "school_name": "Army",
+    "team_name": "Black Knights",
+    "team_abbreviation": "ARMY",
+    "team_color_primary_hex": "000000",
+    "team_color_secondary_hex": "C9A06C",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 0,
+      "academic_quality": 19,
+      "facilities": 6,
+      "program_history": 8,
+      "team_competitiveness": 4,
+      "brand": 8,
+      "pro_pipeline": 0
+    },
+    "location": {
+      "city": "West Point",
+      "state": "New York",
+      "stop": 29770,
+      "lat": 41.3915,
+      "long": -73.956
+    }
+  },
+  {
+    "school_name": "BYU",
+    "team_name": "Cougars",
+    "team_abbreviation": "BYU",
+    "team_color_primary_hex": "001843",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 6,
+      "fan_support": 1,
+      "academic_quality": 6,
+      "facilities": 8,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Provo",
+      "state": "Utah",
+      "stop": 45270,
+      "lat": 40.2458,
+      "long": -111.6457
+    }
+  },
+  {
+    "school_name": "Liberty",
+    "team_name": "Flames",
+    "team_abbreviation": "LIB",
+    "team_color_primary_hex": "0A1B3D",
+    "team_color_secondary_hex": "850003",
+    "jersey": {
+      "invert": true,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 3,
+      "fan_support": 1,
+      "academic_quality": 4,
+      "facilities": 2,
+      "program_history": 2,
+      "team_competitiveness": 2,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Lynchburg",
+      "state": "Virginia",
+      "stop": 46039,
+      "lat": 37.4003,
+      "long": -79.1908
+    }
+  },
+  {
+    "school_name": "Northern Illinois",
+    "team_name": "Huskies",
+    "team_abbreviation": "NIU",
+    "team_color_primary_hex": "ba0c2f",
+    "team_color_secondary_hex": "9ea2a2",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "DeKalb",
+      "state": "Illinois",
+      "stop": 20222,
+      "lat": 41.9312,
+      "long": -88.7483
+    }
+  },
+  {
+    "school_name": "Ball State",
+    "team_name": "Cardinals",
+    "team_abbreviation": "BALL",
+    "team_color_primary_hex": "ba0c2f",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Muncie",
+      "state": "Indiana",
+      "stop": 21619,
+      "lat": 40.1989,
+      "long": -85.395
+    }
+  },
+  {
+    "school_name": "Central Michigan",
+    "team_name": "Chippewas",
+    "team_abbreviation": "CMU",
+    "team_color_primary_hex": "6a0032",
+    "team_color_secondary_hex": "ffc82e",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Mount Pleasant",
+      "state": "Michigan",
+      "stop": 25809,
+      "lat": 43.5966,
+      "long": -84.7759
+    }
+  },
+  {
+    "school_name": "Eastern Michigan",
+    "team_name": "Eagles",
+    "team_abbreviation": "EMU",
+    "team_color_primary_hex": "0B5F24",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Ypsilanti",
+      "state": "Michigan",
+      "stop": 26147,
+      "lat": 42.2437,
+      "long": -83.6205
+    }
+  },
+  {
+    "school_name": "Western Michigan",
+    "team_name": "Broncos",
+    "team_abbreviation": "WMU",
+    "team_color_primary_hex": "6c4023",
+    "team_color_secondary_hex": "b5a268",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Kalamazoo",
+      "state": "Michigan",
+      "stop": 25726,
+      "lat": 42.2749,
+      "long": -85.5881
+    }
+  },
+  {
+    "school_name": "Buffalo",
+    "team_name": "Bulls",
+    "team_abbreviation": "BUF",
+    "team_color_primary_hex": "0064A2",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Buffalo",
+      "state": "New York",
+      "stop": 29950,
+      "lat": 42.9017,
+      "long": -78.8487
+    }
+  },
+  {
+    "school_name": "Akron",
+    "team_name": "Zips",
+    "team_abbreviation": "AKR",
+    "team_color_primary_hex": "041e42",
+    "team_color_secondary_hex": "a89968",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Akron",
+      "state": "Ohio",
+      "stop": 31606,
+      "lat": 41.0802,
+      "long": -81.5219
+    }
+  },
+  {
+    "school_name": "Bowling Green",
+    "team_name": "Falcons",
+    "team_abbreviation": "BG",
+    "team_color_primary_hex": "fe5000",
+    "team_color_secondary_hex": "4f2c1d",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Bowling Green",
+      "state": "Ohio",
+      "stop": 49478,
+      "lat": 41.3748,
+      "long": -83.6513
+    }
+  },
+  {
+    "school_name": "Kent State",
+    "team_name": "Golden Flashes",
+    "team_abbreviation": "KENT",
+    "team_color_primary_hex": "003875",
+    "team_color_secondary_hex": "efab00",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Kent",
+      "state": "Ohio",
+      "stop": 32942,
+      "lat": 41.149,
+      "long": -81.361
+    }
+  },
+  {
+    "school_name": "Miami (OH)",
+    "team_name": "Redhawks",
+    "team_abbreviation": "MIA",
+    "team_color_primary_hex": "b61e2e",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Oxford",
+      "state": "Ohio",
+      "stop": 33293,
+      "lat": 39.5062,
+      "long": -84.7434
+    }
+  },
+  {
+    "school_name": "Ohio",
+    "team_name": "Bobcats",
+    "team_abbreviation": "OHIO",
+    "team_color_primary_hex": "00694e",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Athens",
+      "state": "Ohio",
+      "stop": 31621,
+      "lat": 39.3269,
+      "long": -82.0988
+    }
+  },
+  {
+    "school_name": "Toledo",
+    "team_name": "Rockets",
+    "team_abbreviation": "TOL",
+    "team_color_primary_hex": "15397F",
+    "team_color_secondary_hex": "FFDA00",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Toledo",
+      "state": "Ohio",
+      "stop": 33621,
+      "lat": 41.6639,
+      "long": -83.5822
+    }
+  },
+  {
+    "school_name": "Fresno State",
+    "team_name": "Bulldogs",
+    "team_abbreviation": "FRES",
+    "team_color_primary_hex": "c03",
+    "team_color_secondary_hex": "00235d",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 7,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 6,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 4,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Fresno",
+      "state": "California",
+      "stop": 4644,
+      "lat": 36.7834,
+      "long": -119.7941
+    }
+  },
+  {
+    "school_name": "San Diego State",
+    "team_name": "Aztecs",
+    "team_abbreviation": "SDST",
+    "team_color_primary_hex": "c41230",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 17,
+      "fan_support": 14,
+      "academic_quality": 6,
+      "facilities": 8,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 6,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "San Diego",
+      "state": "California",
+      "stop": 8020,
+      "lat": 32.8312,
+      "long": -117.1226
+    }
+  },
+  {
+    "school_name": "San Jose State",
+    "team_name": "Spartans",
+    "team_abbreviation": "SJSU",
+    "team_color_primary_hex": "134B9B",
+    "team_color_secondary_hex": "FBD016",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "San Jose",
+      "state": "California",
+      "stop": 8256,
+      "lat": 37.3018,
+      "long": -121.8485
+    }
+  },
+  {
+    "school_name": "Air Force",
+    "team_name": "Falcons",
+    "team_abbreviation": "AFA",
+    "team_color_primary_hex": "00458C",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 1,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 6,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Colorado Springs",
+      "state": "Colorado",
+      "stop": 9548,
+      "lat": 38.8674,
+      "long": -104.7606
+    }
+  },
+  {
+    "school_name": "Colorado State",
+    "team_name": "Rams",
+    "team_abbreviation": "CSU",
+    "team_color_primary_hex": "1e4d2b",
+    "team_color_secondary_hex": "c8c372",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 4,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Fort Collins",
+      "state": "Colorado",
+      "stop": 9685,
+      "lat": 40.5479,
+      "long": -105.0658
+    }
+  },
+  {
+    "school_name": "Boise State",
+    "team_name": "Broncos",
+    "team_abbreviation": "BSU",
+    "team_color_primary_hex": "0033a0",
+    "team_color_secondary_hex": "FA4616",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 5,
+      "fan_support": 8,
+      "academic_quality": 6,
+      "facilities": 12,
+      "program_history": 9,
+      "team_competitiveness": 11,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Boise",
+      "state": "Idaho",
+      "stop": 19694,
+      "lat": 43.6006,
+      "long": -116.2316
+    }
+  },
+  {
+    "school_name": "Nevada",
+    "team_name": "Wolf Pack",
+    "team_abbreviation": "NEV",
+    "team_color_primary_hex": "011e41",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 6,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 4,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Reno",
+      "state": "Nevada",
+      "stop": 28975,
+      "lat": 39.5497,
+      "long": -119.8483
+    }
+  },
+  {
+    "school_name": "UNLV",
+    "team_name": "Rebels",
+    "team_abbreviation": "UNLV",
+    "team_color_primary_hex": "cf0a2c",
+    "team_color_secondary_hex": "C6C8C9",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 10,
+      "fan_support": 10,
+      "academic_quality": 6,
+      "facilities": 6,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 4,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Las Vegas",
+      "state": "Nevada",
+      "stop": 28920,
+      "lat": 36.2291,
+      "long": -115.2607
+    }
+  },
+  {
+    "school_name": "New Mexico",
+    "team_name": "Lobos",
+    "team_abbreviation": "NM",
+    "team_color_primary_hex": "ba0c2f",
+    "team_color_secondary_hex": "9fa0a2",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 7,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Albuquerque",
+      "state": "New Mexico",
+      "stop": 29672,
+      "lat": 35.1053,
+      "long": -106.6464
+    }
+  },
+  {
+    "school_name": "Utah State",
+    "team_name": "Aggies",
+    "team_abbreviation": "USU",
+    "team_color_primary_hex": "00263A",
+    "team_color_secondary_hex": "8A8D8F",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 3,
+      "fan_support": 3,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Logan",
+      "state": "Utah",
+      "stop": 45177,
+      "lat": 41.7402,
+      "long": -111.8419
+    }
+  },
+  {
+    "school_name": "Wyoming",
+    "team_name": "Cowboys",
+    "team_abbreviation": "WYO",
+    "team_color_primary_hex": "492f24",
+    "team_color_secondary_hex": "ffc425",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 2,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Laramie",
+      "state": "Wyoming",
+      "stop": 47550,
+      "lat": 41.3099,
+      "long": -105.6086
+    }
+  },
+  {
+    "school_name": "Arizona",
+    "team_name": "Wildcats",
+    "team_abbreviation": "ZONA",
+    "team_color_primary_hex": "00205C",
+    "team_color_secondary_hex": "C10230",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 18,
+      "academic_quality": 4,
+      "facilities": 10,
+      "program_history": 9,
+      "team_competitiveness": 9,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Tucson",
+      "state": "Arizona",
+      "stop": 2523,
+      "lat": 32.1546,
+      "long": -110.8782
+    }
+  },
+  {
+    "school_name": "Arizona State",
+    "team_name": "Sun Devils",
+    "team_abbreviation": "ASU",
+    "team_color_primary_hex": "96203D",
+    "team_color_secondary_hex": "FEC927",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 13,
+      "fan_support": 18,
+      "academic_quality": 4,
+      "facilities": 12,
+      "program_history": 11,
+      "team_competitiveness": 11,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Tempe",
+      "state": "Arizona",
+      "stop": 2402,
+      "lat": 33.3881,
+      "long": -111.9318
+    }
+  },
+  {
+    "school_name": "California",
+    "team_name": "Golden Bears",
+    "team_abbreviation": "CAL",
+    "team_color_primary_hex": "1D2161",
+    "team_color_secondary_hex": "E29819",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 13,
+      "fan_support": 12,
+      "academic_quality": 16,
+      "facilities": 6,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 6,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Berkeley",
+      "state": "California",
+      "stop": 3403,
+      "lat": 37.8723,
+      "long": -122.276
+    }
+  },
+  {
+    "school_name": "Stanford",
+    "team_name": "Cardinal",
+    "team_abbreviation": "STAN",
+    "team_color_primary_hex": "950026",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 13,
+      "fan_support": 4,
+      "academic_quality": 20,
+      "facilities": 12,
+      "program_history": 12,
+      "team_competitiveness": 12,
+      "brand": 9,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Palo Alto",
+      "state": "California",
+      "stop": 6931,
+      "lat": 37.3913,
+      "long": -122.1467
+    }
+  },
+  {
+    "school_name": "UCLA",
+    "team_name": "Bruins",
+    "team_abbreviation": "UCLA",
+    "team_color_primary_hex": "2D68C4",
+    "team_color_secondary_hex": "F2A900",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 20,
+      "fan_support": 12,
+      "academic_quality": 14,
+      "facilities": 10,
+      "program_history": 12,
+      "team_competitiveness": 12,
+      "brand": 10,
+      "pro_pipeline": 9
+    },
+    "location": {
+      "city": "Los Angeles",
+      "state": "California",
+      "stop": 6020,
+      "lat": 34.1139,
+      "long": -118.4068
+    }
+  },
+  {
+    "school_name": "USC",
+    "team_name": "Trojans",
+    "team_abbreviation": "USC",
+    "team_color_primary_hex": "990000",
+    "team_color_secondary_hex": "FFC72C",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 20,
+      "fan_support": 16,
+      "academic_quality": 16,
+      "facilities": 14,
+      "program_history": 16,
+      "team_competitiveness": 16,
+      "brand": 18,
+      "pro_pipeline": 20
+    },
+    "location": {
+      "city": "Los Angeles",
+      "state": "California",
+      "stop": 6020,
+      "lat": 34.1139,
+      "long": -118.4068
+    }
+  },
+  {
+    "school_name": "Colorado",
+    "team_name": "Buffaloes",
+    "team_abbreviation": "CU",
+    "team_color_primary_hex": "000000",
+    "team_color_secondary_hex": "C4AB68",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 16,
+      "academic_quality": 12,
+      "facilities": 8,
+      "program_history": 13,
+      "team_competitiveness": 8,
+      "brand": 6,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Boulder",
+      "state": "Colorado",
+      "stop": 9495,
+      "lat": 40.0249,
+      "long": -105.2523
+    }
+  },
+  {
+    "school_name": "Oregon",
+    "team_name": "Ducks",
+    "team_abbreviation": "ORE",
+    "team_color_primary_hex": "0C643F",
+    "team_color_secondary_hex": "FEE123",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 16,
+      "academic_quality": 7,
+      "facilities": 20,
+      "program_history": 14,
+      "team_competitiveness": 14,
+      "brand": 17,
+      "pro_pipeline": 15
+    },
+    "location": {
+      "city": "Eugene",
+      "state": "Oregon",
+      "stop": 34700,
+      "lat": 44.0563,
+      "long": -123.1173
+    }
+  },
+  {
+    "school_name": "Oregon State",
+    "team_name": "Beavers",
+    "team_abbreviation": "OSU",
+    "team_color_primary_hex": "DC4405",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 13,
+      "fan_support": 6,
+      "academic_quality": 8,
+      "facilities": 2,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 6,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Corvallis",
+      "state": "Oregon",
+      "stop": 34670,
+      "lat": 44.5697,
+      "long": -123.278
+    }
+  },
+  {
+    "school_name": "Utah",
+    "team_name": "Utes",
+    "team_abbreviation": "UTAH",
+    "team_color_primary_hex": "CC0000",
+    "team_color_secondary_hex": "808080",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 4,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 12,
+      "team_competitiveness": 12,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Salt Lake City",
+      "state": "Utah",
+      "stop": 45448,
+      "lat": 40.7774,
+      "long": -111.9301
+    }
+  },
+  {
+    "school_name": "Washington",
+    "team_name": "Huskies",
+    "team_abbreviation": "UW",
+    "team_color_primary_hex": "306",
+    "team_color_secondary_hex": "e8d3a2",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 7,
+      "fan_support": 12,
+      "academic_quality": 15,
+      "facilities": 12,
+      "program_history": 14,
+      "team_competitiveness": 14,
+      "brand": 12,
+      "pro_pipeline": 14
+    },
+    "location": {
+      "city": "Seattle",
+      "state": "Washington",
+      "stop": 46917,
+      "lat": 47.6211,
+      "long": -122.3244
+    }
+  },
+  {
+    "school_name": "Washington State",
+    "team_name": "Cougars",
+    "team_abbreviation": "WSU",
+    "team_color_primary_hex": "951A30",
+    "team_color_secondary_hex": "5E6A71",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 7,
+      "fan_support": 4,
+      "academic_quality": 4,
+      "facilities": 8,
+      "program_history": 2,
+      "team_competitiveness": 2,
+      "brand": 6,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Pullman",
+      "state": "Washington",
+      "stop": 46767,
+      "lat": 46.7342,
+      "long": -117.1661
+    }
+  },
+  {
+    "school_name": "Eastern Catholic",
+    "team_name": "Hedgehogs",
+    "team_abbreviation": "ECC",
+    "team_color_primary_hex": "A0000B",
+    "team_color_secondary_hex": "FEE123",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 16,
+      "academic_quality": 8,
+      "facilities": 6,
+      "program_history": 8,
+      "team_competitiveness": 12,
+      "brand": 2,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Baltimore",
+      "state": "Maryland",
+      "stop": 24724,
+      "lat": 39.3051,
+      "long": -76.6144
+    }
+  },
+  {
+    "school_name": "Sun Belt",
+    "team_name": "Eels",
+    "team_abbreviation": "SBU",
+    "team_color_primary_hex": "005700",
+    "team_color_secondary_hex": "ECDF28",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 6,
+      "fan_support": 6,
+      "academic_quality": 11,
+      "facilities": 14,
+      "program_history": 16,
+      "team_competitiveness": 16,
+      "brand": 18,
+      "pro_pipeline": 16
+    },
+    "location": {
+      "city": "Jackson",
+      "state": "Mississippi",
+      "stop": 27164,
+      "lat": 32.3163,
+      "long": -90.2124
+    }
+  },
+  {
+    "school_name": "Texas Poly",
+    "team_name": "Colonels",
+    "team_abbreviation": "TPU",
+    "team_color_primary_hex": "5A2D81",
+    "team_color_secondary_hex": "63727A",
+    "jersey": {
+      "invert": true,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 8,
+      "academic_quality": 8,
+      "facilities": 2,
+      "program_history": 9,
+      "team_competitiveness": 7,
+      "brand": 14,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "San Antonio",
+      "state": "Texas",
+      "stop": 44208,
+      "lat": 29.4722,
+      "long": -98.5247
+    }
+  },
+  {
+    "school_name": "Northern California",
+    "team_name": "Gunners",
+    "team_abbreviation": "NCU",
+    "team_color_primary_hex": "C5A566",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 14,
+      "academic_quality": 12,
+      "facilities": 18,
+      "program_history": 12,
+      "team_competitiveness": 14,
+      "brand": 14,
+      "pro_pipeline": 16
+    },
+    "location": {
+      "city": "Oakland",
+      "state": "California",
+      "stop": 6650,
+      "lat": 37.7903,
+      "long": -122.2165
+    }
+  },
+  {
+    "school_name": "Northern",
+    "team_name": "Yetis",
+    "team_abbreviation": "NU",
+    "team_color_primary_hex": "D65918",
+    "team_color_secondary_hex": "B7A57A",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 6,
+      "fan_support": 2,
+      "academic_quality": 18,
+      "facilities": 8,
+      "program_history": 4,
+      "team_competitiveness": 8,
+      "brand": 7,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Minneapolis",
+      "state": "Minnesota",
+      "stop": 26390,
+      "lat": 44.9635,
+      "long": -93.2678
+    }
+  },
+  {
+    "school_name": "West College",
+    "team_name": "Miners",
+    "team_abbreviation": "WC",
+    "team_color_primary_hex": "00274C",
+    "team_color_secondary_hex": "FF4208",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 17,
+      "fan_support": 3,
+      "academic_quality": 12,
+      "facilities": 16,
+      "program_history": 14,
+      "team_competitiveness": 4,
+      "brand": 3,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Las Vegas",
+      "state": "Nevada",
+      "stop": 28920,
+      "lat": 36.2291,
+      "long": -115.2607
+    }
+  },
+  {
+    "school_name": "Alabama",
+    "team_name": "Crimson Tide",
+    "team_abbreviation": "BAMA",
+    "team_color_primary_hex": "A80532",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 20,
+      "program_history": 20,
+      "team_competitiveness": 20,
+      "brand": 20,
+      "pro_pipeline": 20
+    },
+    "location": {
+      "city": "Tuscaloosa",
+      "state": "Alabama",
+      "stop": 1583,
+      "lat": 33.2349,
+      "long": -87.5267
+    }
+  },
+  {
+    "school_name": "Auburn",
+    "team_name": "Tigers",
+    "team_abbreviation": "AUB",
+    "team_color_primary_hex": "172240",
+    "team_color_secondary_hex": "E26D35",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 16,
+      "program_history": 12,
+      "team_competitiveness": 12,
+      "brand": 14,
+      "pro_pipeline": 18
+    },
+    "location": {
+      "city": "Auburn",
+      "state": "Alabama",
+      "stop": 135,
+      "lat": 32.6084,
+      "long": -85.4897
+    }
+  },
+  {
+    "school_name": "Arkansas",
+    "team_name": "Razorbacks",
+    "team_abbreviation": "ARK",
+    "team_color_primary_hex": "8B0D26",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 7,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 12,
+      "program_history": 13,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Fayetteville",
+      "state": "Arkansas",
+      "stop": 2709,
+      "lat": 36.0713,
+      "long": -94.166
+    }
+  },
+  {
+    "school_name": "Florida",
+    "team_name": "Gators",
+    "team_abbreviation": "UF",
+    "team_color_primary_hex": "2139CE",
+    "team_color_secondary_hex": "FF4208",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 14,
+      "program_history": 14,
+      "team_competitiveness": 14,
+      "brand": 14,
+      "pro_pipeline": 18
+    },
+    "location": {
+      "city": "Gainesville",
+      "state": "Florida",
+      "stop": 11789,
+      "lat": 29.6808,
+      "long": -82.3455
+    }
+  },
+  {
+    "school_name": "Georgia",
+    "team_name": "Bulldogs",
+    "team_abbreviation": "UGA",
+    "team_color_primary_hex": "BC032B",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 16,
+      "program_history": 18,
+      "team_competitiveness": 18,
+      "brand": 19,
+      "pro_pipeline": 20
+    },
+    "location": {
+      "city": "Athens",
+      "state": "Georgia",
+      "stop": 16202,
+      "lat": 33.9508,
+      "long": -83.3689
+    }
+  },
+  {
+    "school_name": "Kentucky",
+    "team_name": "Wildcats",
+    "team_abbreviation": "UK",
+    "team_color_primary_hex": "08329B",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 16,
+      "program_history": 9,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 8
+    },
+    "location": {
+      "city": "Lexington",
+      "state": "Kentucky",
+      "stop": 22913,
+      "lat": 38.0423,
+      "long": -84.4587
+    }
+  },
+  {
+    "school_name": "LSU",
+    "team_name": "Tigers",
+    "team_abbreviation": "LSU",
+    "team_color_primary_hex": "33297B",
+    "team_color_secondary_hex": "FDB827",
+    "jersey": {
+      "invert": true,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 13,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 18,
+      "program_history": 16,
+      "team_competitiveness": 16,
+      "brand": 18,
+      "pro_pipeline": 20
+    },
+    "location": {
+      "city": "Baton Rouge",
+      "state": "Louisiana",
+      "stop": 23378,
+      "lat": 30.4423,
+      "long": -91.1314
+    }
+  },
+  {
+    "school_name": "Mississippi State",
+    "team_name": "Bulldogs",
+    "team_abbreviation": "MSST",
+    "team_color_primary_hex": "660000",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 9,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 12,
+      "program_history": 9,
+      "team_competitiveness": 9,
+      "brand": 8,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Starkville",
+      "state": "Mississippi",
+      "stop": 27733,
+      "lat": 33.4608,
+      "long": -88.8297
+    }
+  },
+  {
+    "school_name": "Ole Miss",
+    "team_name": "Rebels",
+    "team_abbreviation": "MISS",
+    "team_color_primary_hex": "13223F",
+    "team_color_secondary_hex": "CE1026",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 12,
+      "program_history": 13,
+      "team_competitiveness": 10,
+      "brand": 12,
+      "pro_pipeline": 14
+    },
+    "location": {
+      "city": "Oxford",
+      "state": "Mississippi",
+      "stop": 27459,
+      "lat": 34.3609,
+      "long": -89.5286
+    }
+  },
+  {
+    "school_name": "Missouri",
+    "team_name": "Tigers",
+    "team_abbreviation": "MIZZOU",
+    "team_color_primary_hex": "000000",
+    "team_color_secondary_hex": "F1B82D",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 5,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 12,
+      "program_history": 10,
+      "team_competitiveness": 10,
+      "brand": 8,
+      "pro_pipeline": 13
+    },
+    "location": {
+      "city": "Columbia",
+      "state": "Missouri",
+      "stop": 28026,
+      "lat": 38.9478,
+      "long": -92.3258
+    }
+  },
+  {
+    "school_name": "South Carolina",
+    "team_name": "Gamecocks",
+    "team_abbreviation": "SCAR",
+    "team_color_primary_hex": "73000A",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 18,
+      "program_history": 12,
+      "team_competitiveness": 9,
+      "brand": 8,
+      "pro_pipeline": 14
+    },
+    "location": {
+      "city": "Columbia",
+      "state": "South Carolina",
+      "stop": 36312,
+      "lat": 34.037,
+      "long": -80.9042
+    }
+  },
+  {
+    "school_name": "Tennessee",
+    "team_name": "Volunteers",
+    "team_abbreviation": "TENN",
+    "team_color_primary_hex": "FF8200",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 18,
+      "program_history": 15,
+      "team_competitiveness": 12,
+      "brand": 2,
+      "pro_pipeline": 12
+    },
+    "location": {
+      "city": "Knoxville",
+      "state": "Tennessee",
+      "stop": 37336,
+      "lat": 35.9692,
+      "long": -83.9495
+    }
+  },
+  {
+    "school_name": "Vanderbilt",
+    "team_name": "Commodores",
+    "team_abbreviation": "VANDY",
+    "team_color_primary_hex": "866D4B",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 14,
+      "fan_support": 9,
+      "academic_quality": 19,
+      "facilities": 8,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 8,
+      "pro_pipeline": 6
+    },
+    "location": {
+      "city": "Nashville",
+      "state": "Tennessee",
+      "stop": 37961,
+      "lat": 36.1714,
+      "long": -86.7844
+    }
+  },
+  {
+    "school_name": "Texas A&M",
+    "team_name": "Aggies",
+    "team_abbreviation": "TAMU",
+    "team_color_primary_hex": "500000",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 2,
+      "fan_support": 11,
+      "academic_quality": 8,
+      "facilities": 19,
+      "program_history": 14,
+      "team_competitiveness": 14,
+      "brand": 14,
+      "pro_pipeline": 14
+    },
+    "location": {
+      "city": "College Station",
+      "state": "Texas",
+      "stop": 39411,
+      "lat": 30.5852,
+      "long": -96.296
+    }
+  },
+  {
+    "school_name": "South Alabama",
+    "team_name": "Jaguars",
+    "team_abbreviation": "USA",
+    "team_color_primary_hex": "BA002F",
+    "team_color_secondary_hex": "0E1944",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Mobile",
+      "state": "Alabama",
+      "stop": 1066,
+      "lat": 30.6783,
+      "long": -88.1162
+    }
+  },
+  {
+    "school_name": "Troy",
+    "team_name": "Trojans",
+    "team_abbreviation": "TROY",
+    "team_color_primary_hex": "960026",
+    "team_color_secondary_hex": "7E7F7E",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Troy",
+      "state": "Alabama",
+      "stop": 1527,
+      "lat": 31.8021,
+      "long": -85.9665
+    }
+  },
+  {
+    "school_name": "Arkansas State",
+    "team_name": "Red Wolves",
+    "team_abbreviation": "ARST",
+    "team_color_primary_hex": "cc092f",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Jonesboro",
+      "state": "Arkansas",
+      "stop": 2775,
+      "lat": 35.8212,
+      "long": -90.6795
+    }
+  },
+  {
+    "school_name": "Arkansas-Little Rock",
+    "team_name": "Trojans",
+    "team_abbreviation": "UALR",
+    "team_color_primary_hex": "6e2639",
+    "team_color_secondary_hex": "a7a9ac",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Little Rock",
+      "state": "Arkansas",
+      "stop": 2859,
+      "lat": 34.7255,
+      "long": -92.3581
+    }
+  },
+  {
+    "school_name": "Georgia Southern",
+    "team_name": "Eagles",
+    "team_abbreviation": "GSU",
+    "team_color_primary_hex": "011e41",
+    "team_color_secondary_hex": "9ba1a6",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 6,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Statesboro",
+      "state": "Georgia",
+      "stop": 18864,
+      "lat": 32.4376,
+      "long": -81.775
+    }
+  },
+  {
+    "school_name": "Georgia State",
+    "team_name": "Panthers",
+    "team_abbreviation": "GSU",
+    "team_color_primary_hex": "0039a6",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 6,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Atlanta",
+      "state": "Georgia",
+      "stop": 16547,
+      "lat": 33.7626,
+      "long": -84.4228
+    }
+  },
+  {
+    "school_name": "Louisiana",
+    "team_name": "Ragin' Cajuns",
+    "team_abbreviation": "UL",
+    "team_color_primary_hex": "ce181e",
+    "team_color_secondary_hex": "0a0203",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Lafayette",
+      "state": "Louisiana",
+      "stop": 23689,
+      "lat": 30.2083,
+      "long": -92.0322
+    }
+  },
+  {
+    "school_name": "Louisiana-Monroe",
+    "team_name": "Warhawks",
+    "team_abbreviation": "ULM",
+    "team_color_primary_hex": "840029",
+    "team_color_secondary_hex": "fdb913",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Monroe",
+      "state": "Louisiana",
+      "stop": 23885,
+      "lat": 32.5184,
+      "long": -92.0774
+    }
+  },
+  {
+    "school_name": "Appalachian State",
+    "team_name": "Mountaineers",
+    "team_abbreviation": "APP",
+    "team_color_primary_hex": "fc0",
+    "team_color_secondary_hex": "222",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 6,
+      "facilities": 6,
+      "program_history": 8,
+      "team_competitiveness": 8,
+      "brand": 4,
+      "pro_pipeline": 4
+    },
+    "location": {
+      "city": "Boone",
+      "state": "North Carolina",
+      "stop": 30269,
+      "lat": 36.2111,
+      "long": -81.6669
+    }
+  },
+  {
+    "school_name": "Coastal Carolina",
+    "team_name": "Chanticleers",
+    "team_abbreviation": "CCU",
+    "team_color_primary_hex": "006f71",
+    "team_color_secondary_hex": "a27752",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 11,
+      "academic_quality": 2,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Conway",
+      "state": "South Carolina",
+      "stop": 36323,
+      "lat": 33.8404,
+      "long": -79.0419
+    }
+  },
+  {
+    "school_name": "Texas State",
+    "team_name": "Bobcats",
+    "team_abbreviation": "TEXST",
+    "team_color_primary_hex": "501214",
+    "team_color_secondary_hex": "8d734a",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 4,
+      "fan_support": 6,
+      "academic_quality": 2,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 4,
+      "brand": 2,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "San Marcos",
+      "state": "Texas",
+      "stop": 44210,
+      "lat": 29.8734,
+      "long": -97.9382
+    }
+  },
+  {
+    "school_name": "Dartmouth",
+    "team_name": "Big Green",
+    "team_abbreviation": "DART",
+    "team_color_primary_hex": "00693e",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 12,
+      "fan_support": 3,
+      "academic_quality": 19,
+      "facilities": 4,
+      "program_history": 12,
+      "team_competitiveness": 3,
+      "brand": 3,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Hanover",
+      "state": "New Hampshire",
+      "stop": 15000,
+      "lat": 43.4208,
+      "long": -72.1722
+    }
+  },
+  {
+    "school_name": "Brown",
+    "team_name": "Bears",
+    "team_abbreviation": "BROWN",
+    "team_color_primary_hex": "54301a",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 10,
+      "fan_support": 2,
+      "academic_quality": 19,
+      "facilities": 2,
+      "program_history": 5,
+      "team_competitiveness": 2,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Providence",
+      "state": "Rhode Island",
+      "stop": 15000,
+      "lat": 41.4925,
+      "long": -71.252
+    }
+  },
+  {
+    "school_name": "Columbia",
+    "team_name": "Lions",
+    "team_abbreviation": "CLMB",
+    "team_color_primary_hex": "99caea",
+    "team_color_secondary_hex": "183863",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 15,
+      "fan_support": 1,
+      "academic_quality": 19,
+      "facilities": 2,
+      "program_history": 4,
+      "team_competitiveness": 2,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "New York",
+      "state": "New York",
+      "stop": 1500000,
+      "lat": 40.4246,
+      "long": -74.0022
+    }
+  },
+  {
+    "school_name": "Cornell",
+    "team_name": "Big Red",
+    "team_abbreviation": "CRN",
+    "team_color_primary_hex": "b31b1b",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 3,
+      "fan_support": 1,
+      "academic_quality": 19,
+      "facilities": 2,
+      "program_history": 3,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Ithaca",
+      "state": "New York",
+      "stop": 15000,
+      "lat": 42.2636,
+      "long": -76.3
+    }
+  },
+  {
+    "school_name": "Harvard",
+    "team_name": "Crimson",
+    "team_abbreviation": "HARV",
+    "team_color_primary_hex": "931e2f",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 11,
+      "fan_support": 3,
+      "academic_quality": 20,
+      "facilities": 4,
+      "program_history": 6,
+      "team_competitiveness": 3,
+      "brand": 5,
+      "pro_pipeline": 2
+    },
+    "location": {
+      "city": "Cambridge",
+      "state": "Massachusetts",
+      "stop": 150000,
+      "lat": 42.2225,
+      "long": -71.0638
+    }
+  },
+  {
+    "school_name": "Penn",
+    "team_name": "Quakers",
+    "team_abbreviation": "PENN",
+    "team_color_primary_hex": "011f5b",
+    "team_color_secondary_hex": "990000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 10,
+      "fan_support": 2,
+      "academic_quality": 19,
+      "facilities": 2,
+      "program_history": 3,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Philadelphia",
+      "state": "Pennsylvania",
+      "stop": 150000,
+      "lat": 39.571,
+      "long": -75.0949
+    }
+  },
+  {
+    "school_name": "Princeton",
+    "team_name": "Tigers",
+    "team_abbreviation": "PRINC",
+    "team_color_primary_hex": "FF6000",
+    "team_color_secondary_hex": "000000",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 8,
+      "fan_support": 1,
+      "academic_quality": 20,
+      "facilities": 2,
+      "program_history": 2,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Princeton",
+      "state": "New Jersey",
+      "stop": 15000,
+      "lat": 40.3582,
+      "long": -74.6667
+    }
+  },
+  {
+    "school_name": "Yale",
+    "team_name": "Bulldogs",
+    "team_abbreviation": "YALE",
+    "team_color_primary_hex": "00356b",
+    "team_color_secondary_hex": "FFFFFF",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 5,
+      "fan_support": 3,
+      "academic_quality": 20,
+      "facilities": 2,
+      "program_history": 3,
+      "team_competitiveness": 2,
+      "brand": 2,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "New Haven",
+      "state": "Connecticut",
+      "stop": 15000,
+      "lat": 41.1836,
+      "long": -72.5525
+    }
+  },
+  {
+    "school_name": "Hawaii",
+    "team_name": "Rainbow Warriors",
+    "team_abbreviation": "HAW",
+    "team_color_primary_hex": "024731",
+    "team_color_secondary_hex": "CCCCCC",
+    "jersey": {
+      "invert": false,
+      "teamColors": null,
+      "id": null
+    },
+    "team_ratings": {
+      "location": 16,
+      "fan_support": 4,
+      "academic_quality": 6,
+      "facilities": 4,
+      "program_history": 6,
+      "team_competitiveness": 5,
+      "brand": 6,
+      "pro_pipeline": 3
+    },
+    "location": {
+      "city": "Honolulu",
+      "state": "Hawaii",
+      "stop": 15000,
+      "lat": 21.297,
+      "long": -157.817
+    }
+  }
+]

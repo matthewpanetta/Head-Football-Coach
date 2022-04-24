@@ -522,7 +522,7 @@ class team {
 			var path = folder_prefix + this.school_name + '_' + this.team_name + size_suffix + '.png';
 		}
 
-    path = path.toLowerCase().replaceAll(' ', '_').replaceAll('&', '_').replaceAll("'", '');
+    path = path.toLowerCase().replaceAll(' ', '_').replaceAll('&', '_').replaceAll("'", '').replaceAll("-", '_');
 
     return path;
   }
@@ -2169,7 +2169,7 @@ const create_schedule = async (data) => {
 
 	var games_to_create = [],team_games_to_create = [],team_games_to_create_ids = [];
 	var team_season_schedule_tracker = {}
-	const games_per_team = 12;
+	const games_per_team = 8;
 	const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 	team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
@@ -3214,46 +3214,33 @@ const get_rivalries = async(teams) => {
 
 }
 
-const get_teams = async (filters) => {
+const get_teams = async () => {
 
   var url = '/static/data/import_json/Team.json'
   var data = await fetch(url);
-  var team_dimension = await data.json();
+  var teams = await data.json();
 
-  if ('conference' in filters){
-    var conference_list = filters.conference;
-    team_dimension = team_dimension.filter(T => conference_list.includes(T.conference_name));
-  }
-
-  return team_dimension;
+  return teams;
 }
 
-const get_conferences = async (filters) => {
+const get_conferences = async (conference_version) => {
 
-  var url = '/static/data/import_json/Conference.json'
+	conference_version = conference_version || '';
+
+  var url = `/static/data/import_json/Conference${conference_version}.json`
   var data = await fetch(url);
-  var ConferenceDimension = await data.json();
+  var conferences = await data.json();
 
-  if ('conference' in filters){
-    var conference_list = filters.conference;
-    ConferenceDimension = ConferenceDimension.filter(C => conference_list.includes(C.conference_name));
-  }
-
-  return ConferenceDimension;
+  return conferences;
 }
 
-const get_divisions = async (filters) => {
+const get_divisions = async () => {
 
   var url = '/static/data/import_json/Division.json'
   var data = await fetch(url);
-  var DivisionDimension = await data.json();
+  var divisions = await data.json();
 
-  if ('conference' in filters){
-    var conference_list = filters.conference;
-    DivisionDimension = DivisionDimension.filter(D => conference_list.includes(D.conference_name));
-  }
-
-  return DivisionDimension;
+  return divisions;
 }
 
 const index_group_sync = (query_list, query_type, key) => {

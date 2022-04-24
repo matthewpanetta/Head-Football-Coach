@@ -1,0 +1,306 @@
+[
+  {
+    "conference_name": "Appalachian Conference",
+    "conference_abbreviation": "APP",
+    "prestige": 8,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/Atlantic_Coast_Conference.png",
+    "original_teams": [
+      "Appalachian State",
+      "Clemson",
+      "Georgia",
+      "Liberty",
+      "Tennessee",
+      "Virginia",
+      "Virginia Tech",
+      "Wake Forest"
+    ]
+  },
+  {
+    "conference_name": "Bayou Conference",
+    "conference_abbreviation": "BAYC",
+    "prestige": 5,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "",
+    "original_teams": [
+      "Louisiana",
+      "Louisiana Tech",
+      "Louisiana-Monroe",
+      "LSU",
+      "South Alabama",
+      "Southern Miss",
+      "Troy",
+      "Tulane"
+    ]
+  },
+  {
+    "conference_name": "Central Conference",
+    "conference_abbreviation": "CC",
+    "prestige": 6,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/American_Athletic_Conference.png",
+    "original_teams": [
+      "Arkansas State",
+      "Cincinnati",
+      "Kentucky",
+      "Louisville",
+      "Marshall",
+      "Middle Tennessee",
+      "Vanderbilt",
+      "Western Kentucky"
+    ]
+  },
+  {
+    "conference_name": "Coastal Conference",
+    "conference_abbreviation": "COAST",
+    "prestige": 6,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/Big_12_Conference.png",
+    "original_teams": [
+      "Charlotte",
+      "Coastal Carolina",
+      "Duke",
+      "East Carolina",
+      "NC State",
+      "North Carolina",
+      "Old Dominion",
+      "South Carolina"
+    ]
+  },
+  {
+    "conference_name": "Floridian Conference",
+    "conference_abbreviation": "FLA",
+    "prestige": 9,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/Big_Ten_Conference.png",
+    "original_teams": [
+      "FIU",
+      "Florida",
+      "Florida Atlantic",
+      "Florida State",
+      "Georgia Southern",
+      "Miami",
+      "USF",
+      "UCF"
+    ]
+  },
+  {
+    "conference_name": "Golden State Conference",
+    "conference_abbreviation": "GSC",
+    "prestige": 7,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/Southeastern_Conference.png",
+    "original_teams": [
+      "California",
+      "Fresno State",
+      "Nevada",
+      "San Diego State",
+      "San Jose State",
+      "Stanford",
+      "UCLA",
+      "USC"
+    ]
+  },
+  {
+    "conference_name": "Great Lakes Conference",
+    "conference_abbreviation": "GLC",
+    "prestige": 6,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/Mountain_West_Conference.png",
+    "original_teams": [
+      "Ball State",
+      "Illinois",
+      "Indiana",
+      "Miami (OH)",
+      "Northern Illinois",
+      "Northwestern",
+      "Notre Dame",
+      "Purdue"
+    ]
+  },
+  {
+    "conference_name": "Keystone Conference",
+    "conference_abbreviation": "KEY",
+    "prestige": 6,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/C_USA_Conference.png",
+    "original_teams": [
+      "Akron",
+      "Kent State",
+      "Maryland",
+      "Ohio",
+      "Penn State",
+      "Pittsburgh",
+      "Temple",
+      "West Virginia"
+    ]
+  },
+  {
+    "conference_name": "Lone Star Conference",
+    "conference_abbreviation": "LSC",
+    "prestige": 10,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/PAC-12_Conference.png",
+    "original_teams": [
+      "Houston",
+      "Rice",
+      "Texas",
+      "Texas A&M",
+      "Texas State",
+      "Texas Tech",
+      "UTEP",
+      "UTSA"
+    ]
+  },
+  {
+    "conference_name": "Midwest Conference",
+    "conference_abbreviation": "MWC",
+    "prestige": 8,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/Sun_Belt_Conference.png",
+    "original_teams": [
+      "Bowling Green",
+      "Central Michigan",
+      "Eastern Michigan",
+      "Michigan",
+      "Michigan State",
+      "Ohio State",
+      "Toledo",
+      "Western Michigan"
+    ]
+  },
+  {
+    "conference_name": "Northeast Conference",
+    "conference_abbreviation": "NEC",
+    "prestige": 5,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/MAC_Conference.png",
+    "original_teams": [
+      "Army",
+      "Boston College",
+      "Buffalo",
+      "Navy",
+      "Rutgers",
+      "Syracuse",
+      "UConn",
+      "UMass"
+    ]
+  },
+  {
+    "conference_name": "Northwest Conference",
+    "conference_abbreviation": "NWC",
+    "prestige": 7,
+    "is_independent": 1,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 0,
+    "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png",
+    "original_teams": [
+      "Boise State",
+      "BYU",
+      "Oregon",
+      "Oregon State",
+      "Utah",
+      "Utah State",
+      "Washington",
+      "Washington State"
+    ]
+  },
+  {
+    "conference_name": "Plains Conference",
+    "conference_abbreviation": "PC",
+    "prestige": 8,
+    "is_independent": 1,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 0,
+    "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png",
+    "original_teams": [
+      "Iowa",
+      "Iowa State",
+      "Kansas",
+      "Kansas State",
+      "Minnesota",
+      "Missouri",
+      "Nebraska",
+      "Wisconsin"
+    ]
+  },
+  {
+    "conference_name": "Red River Conference",
+    "conference_abbreviation": "RRC",
+    "prestige": 9,
+    "is_independent": 1,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 0,
+    "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png",
+    "original_teams": [
+      "Arkansas",
+      "Baylor",
+      "North Texas",
+      "Oklahoma",
+      "Oklahoma State",
+      "SMU",
+      "TCU",
+      "Tulsa"
+    ]
+  },
+  {
+    "conference_name": "South Conference",
+    "conference_abbreviation": "SC",
+    "prestige": 10,
+    "is_independent": 1,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 0,
+    "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png",
+    "original_teams": [
+      "Alabama",
+      "Auburn",
+      "Georgia State",
+      "Georgia Tech",
+      "Memphis",
+      "Mississippi State",
+      "Ole Miss",
+      "UAB"
+    ]
+  },
+  {
+    "conference_name": "Southwest Conference",
+    "conference_abbreviation": "SWC",
+    "prestige": 6,
+    "is_independent": 1,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 0,
+    "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png",
+    "original_teams": [
+      "Arizona",
+      "Arizona State",
+      "Colorado",
+      "Colorado State",
+      "New Mexico",
+      "New Mexico State",
+      "UNLV",
+      "Wyoming"
+    ]
+  }
+]
