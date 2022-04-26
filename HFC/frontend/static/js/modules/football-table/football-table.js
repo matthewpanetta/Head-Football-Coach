@@ -2,17 +2,23 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
   var data = [];
   const table = $(table_id);
 
+  console.log({th: $(table_id).find("th"),aaa: $(table_id).find("tr:not(.football-table-column-groups) th")})
+
   $(table_id)
-    .find("th")
+    .find("tr:not(.football-table-column-groups) th")
     .on("click", function (event) {
       var clicked_th = $(event.target);
-      var sort_direction = clicked_th.attr("sort-direction") || "sort-desc";
+      if (clicked_th.hasClass('no-sort')){
+          return true;
+      }
+      
+      var sort_direction = clicked_th.attr("sort-order") || "sort-desc";
       if ($(clicked_th).hasClass("sort-desc")) {
         sort_direction = "sort-asc";
       } else if ($(clicked_th).hasClass("sort-asc")) {
         sort_direction = "sort-desc";
       }
-      
+
       var sort_direction_multiplier = -1;
       if (sort_direction == "sort-desc") {
         sort_direction_multiplier = 1;
@@ -23,6 +29,7 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
       clicked_th.addClass(sort_direction);
 
       const th_index = clicked_th.index();
+      console.log({clicked_th:clicked_th, sort_direction:sort_direction, th_index:th_index})
 
       var data_rows = $(table_id).find("tbody tr").toArray();
       data = data_rows.map((tr) => ({

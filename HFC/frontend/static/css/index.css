@@ -2331,7 +2331,7 @@ table tr td.padding-left-8 {
   height: 100%;
 }
 
-.football-table-column-headers th {
+.football-table-column-headers th:not(.no-sort) {
   cursor: pointer;
 }
 
@@ -2350,7 +2350,7 @@ table tr td.padding-left-8 {
   -webkit-filter: brightness(90%);
 }
 
-.football-table-column-headers > th:hover {
+.football-table-column-headers > th:not(.no-sort):hover {
   -webkit-filter: brightness(80%);
     -webkit-transition: all .5s ease;
     -moz-transition: all .5s ease;

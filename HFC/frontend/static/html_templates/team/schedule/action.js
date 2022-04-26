@@ -186,9 +186,17 @@
           table_dom_selector:  "#TeamSchedule",
         }
       };
+
+      var url = '/static/html_templates/team/schedule/team_schedule_table_template.njk'
+      var html = await fetch(url);
+      html = await html.text();
     
-      const create_table = await initialize_football_table;
-      var football_table = create_table(common, table_config);
+      var renderedHtml = await common.nunjucks_env.renderString(html, {page: common.page,data: games})
+    
+      $('#TeamSchedule').empty()
+      $('#TeamSchedule').html(renderedHtml)
+
+      init_basic_table_sorting(common, '#TeamSchedule', 0)
     
     }
 

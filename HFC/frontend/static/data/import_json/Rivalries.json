@@ -1,1412 +1,1549 @@
 [
- {
-   "team_name_1": "Air Force",
-   "team_name_2": "Army",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Air Force",
-   "team_name_2": "Colorado State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Air Force",
-   "team_name_2": "Hawai'i",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Air Force",
-   "team_name_2": "Navy",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Akron",
-   "team_name_2": "Kent State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Alabama",
-   "team_name_2": "Auburn",
-   "rivalry_name": "Iron Bowl",
-   "preferred_week_number": 15
- },
- {
-   "team_name_1": "Alabama",
-   "team_name_2": "Florida",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Alabama",
-   "team_name_2": "LSU",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Alabama",
-   "team_name_2": "Mississippi State",
-   "rivalry_name": "Battle for Highway 82",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Alabama",
-   "team_name_2": "Ole Miss",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Alabama",
-   "team_name_2": "Tennessee",
-   "rivalry_name": "Third Saturday in October",
-   "preferred_week_number": 8
- },
- {
-   "team_name_1": "Arizona",
-   "team_name_2": "Arizona State",
-   "rivalry_name": "Duel in the Desert",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Arizona",
-   "team_name_2": "New Mexico",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Arkansas",
-   "team_name_2": "LSU",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Arkansas",
-   "team_name_2": "Ole Miss",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Arkansas",
-   "team_name_2": "Texas",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Arkansas",
-   "team_name_2": "Texas A&M",
-   "rivalry_name": "Southwest Classic",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Arkansas State",
-   "team_name_2": "North Texas",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Arkansas State",
-   "team_name_2": "ULM",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Arkansas State",
-   "team_name_2": "Memphis",
-   "rivalry_name": "Paint Bucket Bowl",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Army",
-   "team_name_2": "Navy",
-   "rivalry_name": "Army - Navy Game",
-   "preferred_week_number": 15
- },
- {
-   "team_name_1": "Army",
-   "team_name_2": "Rutgers",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Army",
-   "team_name_2": "Notre Dame",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Auburn",
-   "team_name_2": "Georgia",
-   "rivalry_name": "Deep South's Oldest Rivalry",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Auburn",
-   "team_name_2": "LSU",
-   "rivalry_name": "Tiger Bowl",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Ball State",
-   "team_name_2": "Northern Illinois",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Baylor",
-   "team_name_2": "TCU",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Baylor",
-   "team_name_2": "Texas",
-   "rivalry_name": "",
-   "preferred_week_number": 14
- },
- {
-   "team_name_1": "Baylor",
-   "team_name_2": "Texas A&M",
-   "rivalry_name": "Battle of the Brazos",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Baylor",
-   "team_name_2": "Texas Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Baylor",
-   "team_name_2": "TCU",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "BYU",
-   "team_name_2": "Boise State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "BYU",
-   "team_name_2": "Hawai'i",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "BYU",
-   "team_name_2": "San Diego State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "BYU",
-   "team_name_2": "Utah",
-   "rivalry_name": "Holy War",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "BYU",
-   "team_name_2": "Utah State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boise State",
-   "team_name_2": "Fresno State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boise State",
-   "team_name_2": "Hawai'i",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boise State",
-   "team_name_2": "Idaho",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boise State",
-   "team_name_2": "Nevada",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boise State",
-   "team_name_2": "TCU",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boston College",
-   "team_name_2": "Clemson",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boston College",
-   "team_name_2": "Miami",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boston College",
-   "team_name_2": "Notre Dame",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boston College",
-   "team_name_2": "Syracuse",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boston College",
-   "team_name_2": "UMass",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Boston College",
-   "team_name_2": "Virginia Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Bowling Green",
-   "team_name_2": "Kent State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Bowling Green",
-   "team_name_2": "Toledo",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Buffalo",
-   "team_name_2": "Syracuse",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Buffalo",
-   "team_name_2": "Temple",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "California",
-   "team_name_2": "Stanford",
-   "rivalry_name": "Big Game",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "California",
-   "team_name_2": "UCLA",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "California",
-   "team_name_2": "USC",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Central Michigan",
-   "team_name_2": "Eastern Michigan",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Central Michigan",
-   "team_name_2": "Western Michigan",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Cincinnati",
-   "team_name_2": "Louisville",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Cincinnati",
-   "team_name_2": "Miami (OH)",
-   "rivalry_name": "Battle for the Bell",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Cincinnati",
-   "team_name_2": "Pittsburgh",
-   "rivalry_name": "River City Rivalry",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Clemson",
-   "team_name_2": "Florida State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Clemson",
-   "team_name_2": "Georgia",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Clemson",
-   "team_name_2": "Georgia Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Clemson",
-   "team_name_2": "NC State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Clemson",
-   "team_name_2": "South Carolina",
-   "rivalry_name": "Palmetto Bowl",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Clemson",
-   "team_name_2": "North Carolina State",
-   "rivalry_name": "Textile Bowl",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Colorado",
-   "team_name_2": "Colorado State",
-   "rivalry_name": "Rocky Mountain Showdown",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Colorado",
-   "team_name_2": "Nebraska",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Colorado",
-   "team_name_2": "Utah",
-   "rivalry_name": "Rumble in the Rockies",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Colorado State",
-   "team_name_2": "Wyoming",
-   "rivalry_name": "Border War",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Connecticut",
-   "team_name_2": "Rutgers",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Connecticut",
-   "team_name_2": "Syracuse",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Connecticut",
-   "team_name_2": "UMass",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Duke",
-   "team_name_2": "Maryland",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Duke",
-   "team_name_2": "NC State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Duke",
-   "team_name_2": "North Carolina",
-   "rivalry_name": "Carolina - Duke",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Duke",
-   "team_name_2": "Wake Forest",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Duke",
-   "team_name_2": "North Carolina State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "East Carolina",
-   "team_name_2": "Marshall",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "East Carolina",
-   "team_name_2": "NC State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "East Carolina",
-   "team_name_2": "Southern Miss",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "East Carolina",
-   "team_name_2": "UCF",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Appalachian State",
-   "team_name_2": "East Carolina",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Appalachian State",
-   "team_name_2": "Georgia Southern",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Appalachian State",
-   "team_name_2": "Georgia State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Appalachian State",
-   "team_name_2": "Wake Forest",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Eastern Michigan",
-   "team_name_2": "Western Michigan",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Florida",
-   "team_name_2": "Florida State",
-   "rivalry_name": "Sunshine Showdown",
-   "preferred_week_number": 2
- },
- {
-   "team_name_1": "Florida",
-   "team_name_2": "Georgia",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Florida",
-   "team_name_2": "LSU",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Florida",
-   "team_name_2": "Miami",
-   "rivalry_name": "",
-   "preferred_week_number": 1
- },
- {
-   "team_name_1": "Florida",
-   "team_name_2": "South Carolina",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Florida",
-   "team_name_2": "Tennessee",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Florida International",
-   "team_name_2": "Florida Atlantic",
-   "rivalry_name": "Shula Bowl",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Florida Atlantic",
-   "team_name_2": "Troy",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "FAU",
-   "team_name_2": "Florida International",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Florida State",
-   "team_name_2": "Miami",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Florida State",
-   "team_name_2": "Virginia",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Fresno State",
-   "team_name_2": "Hawai'i",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Fresno State",
-   "team_name_2": "Louisiana Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Fresno State",
-   "team_name_2": "San Diego State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Fresno State",
-   "team_name_2": "San Jose State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Georgia",
-   "team_name_2": "Georgia Tech",
-   "rivalry_name": "Clean Old-Fashioned Hate",
-   "preferred_week_number": 15
- },
- {
-   "team_name_1": "Georgia",
-   "team_name_2": "South Carolina",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Georgia State",
-   "team_name_2": "Georgia Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Georgia Southern",
-   "team_name_2": "Georgia State",
-   "rivalry_name": "Modern Day Hate",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Georgia Tech",
-   "team_name_2": "Virginia Tech",
-   "rivalry_name": "Techmo Bowl",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Georgia Tech",
-   "team_name_2": "Vanderbilt",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Hawai'i",
-   "team_name_2": "Wyoming",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Houston",
-   "team_name_2": "Rice",
-   "rivalry_name": "Bayou Bucket Classic",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Houston",
-   "team_name_2": "SMU",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Houston",
-   "team_name_2": "Tulsa",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Idaho",
-   "team_name_2": "Washington State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Illinois",
-   "team_name_2": "Indiana",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Illinois",
-   "team_name_2": "Missouri",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Illinois",
-   "team_name_2": "Northwestern",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Illinois",
-   "team_name_2": "Ohio State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Illinois",
-   "team_name_2": "Purdue",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Indiana",
-   "team_name_2": "Michigan State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Indiana",
-   "team_name_2": "Purdue",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Iowa",
-   "team_name_2": "Iowa State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Iowa",
-   "team_name_2": "Minnesota",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Iowa",
-   "team_name_2": "Nebraska",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Iowa",
-   "team_name_2": "Purdue",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Iowa",
-   "team_name_2": "Wisconsin",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Iowa State",
-   "team_name_2": "Kansas State",
-   "rivalry_name": "Farmageddon",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Iowa State",
-   "team_name_2": "Missouri",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Kansas",
-   "team_name_2": "Kansas State",
-   "rivalry_name": "Sunflower Showdown",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Kansas",
-   "team_name_2": "Missouri",
-   "rivalry_name": "Border War",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Kentucky",
-   "team_name_2": "Louisville",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Kentucky",
-   "team_name_2": "Mississippi State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Kentucky",
-   "team_name_2": "Tennessee",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Louisiana",
-   "team_name_2": "Louisiana Tech",
-   "rivalry_name": "Battle for the Bayou",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Louisiana",
-   "team_name_2": "ULM",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Louisiana Tech",
-   "team_name_2": "Southern Miss",
-   "rivalry_name": "Rivalry in Dixie",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Louisiana Tech",
-   "team_name_2": "ULM",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Louisville",
-   "team_name_2": "Memphis",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Louisville",
-   "team_name_2": "West Virginia",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "LSU",
-   "team_name_2": "Ole Miss",
-   "rivalry_name": "Magnolia Bowl",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "LSU",
-   "team_name_2": "Tulane",
-   "rivalry_name": "Battle for the Rag",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "ECU",
-   "team_name_2": "Marshall",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "ECU",
-   "team_name_2": "North Carolina State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "ECU",
-   "team_name_2": "Southern Miss",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "ECU",
-   "team_name_2": "UCF",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Marshall",
-   "team_name_2": "Ohio",
-   "rivalry_name": "Battle for the Bell",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Marshall",
-   "team_name_2": "West Virginia",
-   "rivalry_name": "Friends of Coal Bowl",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Maryland",
-   "team_name_2": "Navy",
-   "rivalry_name": "Crab Bowl Classic",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Maryland",
-   "team_name_2": "NC State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Maryland",
-   "team_name_2": "Virginia",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Maryland",
-   "team_name_2": "West Virginia",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Maryland",
-   "team_name_2": "North Carolina State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Memphis",
-   "team_name_2": "Ole Miss",
-   "rivalry_name": "Mid-South Rivalry",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Memphis",
-   "team_name_2": "Southern Miss",
-   "rivalry_name": "Black and Blue Bowl",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Memphis",
-   "team_name_2": "UAB",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Miami",
-   "team_name_2": "Virginia Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Miami (OH)",
-   "team_name_2": "Ohio",
-   "rivalry_name": "Battle of the Bricks",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Michigan",
-   "team_name_2": "Michigan State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Michigan",
-   "team_name_2": "Minnesota",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Michigan",
-   "team_name_2": "Notre Dame",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Michigan",
-   "team_name_2": "Ohio State",
-   "rivalry_name": "The Game",
-   "preferred_week_number": 15
- },
- {
-   "team_name_1": "Michigan State",
-   "team_name_2": "Notre Dame",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Michigan State",
-   "team_name_2": "Penn State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Mid Tennessee State",
-   "team_name_2": "North Texas",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Mid Tennessee State",
-   "team_name_2": "Troy",
-   "rivalry_name": "Battle for the Palladium",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Mid Tennessee State",
-   "team_name_2": "Western Kentucky",
-   "rivalry_name": "100 Miles of Hate",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Minnesota",
-   "team_name_2": "Penn State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Minnesota",
-   "team_name_2": "Wisconsin",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Mississippi State",
-   "team_name_2": "Ole Miss",
-   "rivalry_name": "Egg Bowl",
-   "preferred_week_number": 14
- },
- {
-   "team_name_1": "Missouri",
-   "team_name_2": "Nebraska",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Missouri",
-   "team_name_2": "Oklahoma",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Missouri",
-   "team_name_2": "Texas A&M",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Navy",
-   "team_name_2": "Notre Dame",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Navy",
-   "team_name_2": "Rutgers",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Navy",
-   "team_name_2": "SMU",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Nebraska",
-   "team_name_2": "Oklahoma",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Nebraska",
-   "team_name_2": "Penn State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Nevada",
-   "team_name_2": "UNLV",
-   "rivalry_name": "Battle for Nevada",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "New Mexico",
-   "team_name_2": "New Mexico State",
-   "rivalry_name": "Rio Grande Rivalry",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "New Mexico",
-   "team_name_2": "UTEP",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "New Mexico State",
-   "team_name_2": "UTEP",
-   "rivalry_name": "Battle for I-10",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "NC State",
-   "team_name_2": "North Carolina",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "NC State",
-   "team_name_2": "Wake Forest",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "North Carolina",
-   "team_name_2": "Virginia",
-   "rivalry_name": "South's Oldest Rivalry",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "North Carolina",
-   "team_name_2": "Wake Forest",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "North Carolina",
-   "team_name_2": "North Carolina State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "North Carolina State",
-   "team_name_2": "Wake Forest",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Mid Tenn State",
-   "team_name_2": "North Texas",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Mid Tenn State",
-   "team_name_2": "Troy",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Mid Tenn State",
-   "team_name_2": "Western Kentucky",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "North Texas",
-   "team_name_2": "SMU",
-   "rivalry_name": "Safeway Bowl",
-   "preferred_week_number": 1
- },
- {
-   "team_name_1": "Northern Illinois",
-   "team_name_2": "Toledo",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Notre Dame",
-   "team_name_2": "Pittsburgh",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Notre Dame",
-   "team_name_2": "Purdue",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Notre Dame",
-   "team_name_2": "Stanford",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Notre Dame",
-   "team_name_2": "USC",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Ohio State",
-   "team_name_2": "Penn State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Oklahoma",
-   "team_name_2": "Oklahoma State",
-   "rivalry_name": "Bedlam",
-   "preferred_week_number": 8
- },
- {
-   "team_name_1": "Oklahoma",
-   "team_name_2": "Texas",
-   "rivalry_name": "Red River Shootout",
-   "preferred_week_number": 5
- },
- {
-   "team_name_1": "Oklahoma State",
-   "team_name_2": "Tulsa",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Old Dominion",
-   "team_name_2": "Virginia",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Old Dominion",
-   "team_name_2": "Virginia Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Ole Miss",
-   "team_name_2": "Vanderbilt",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Oregon",
-   "team_name_2": "Oregon State",
-   "rivalry_name": "Civil War",
-   "preferred_week_number": 10
- },
- {
-   "team_name_1": "Oregon",
-   "team_name_2": "Washington",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Oregon State",
-   "team_name_2": "Washington",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Oregon State",
-   "team_name_2": "Washington State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Penn State",
-   "team_name_2": "Pittsburgh",
-   "rivalry_name": "Keystone Classic",
-   "preferred_week_number": 1
- },
- {
-   "team_name_1": "Penn State",
-   "team_name_2": "Temple",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Pittsburgh",
-   "team_name_2": "Syracuse",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Pittsburgh",
-   "team_name_2": "Temple",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Pittsburgh",
-   "team_name_2": "West Virginia",
-   "rivalry_name": "Backyard Brawl",
-   "preferred_week_number": 15
- },
- {
-   "team_name_1": "Rice",
-   "team_name_2": "SMU",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Rice",
-   "team_name_2": "Tulsa",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "San Diego State",
-   "team_name_2": "San Jose State",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "San Jose State",
-   "team_name_2": "Stanford",
-   "rivalry_name": "Bill Walsh Legacy Game",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "SMU",
-   "team_name_2": "TCU",
-   "rivalry_name": "Battle for the Iron Skillet",
-   "preferred_week_number": 3
- },
- {
-   "team_name_1": "South Alabama",
-   "team_name_2": "Troy",
-   "rivalry_name": "Battle for the Belt",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Southern Miss",
-   "team_name_2": "Tulane",
-   "rivalry_name": "Battle for the Bell",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Southern Miss",
-   "team_name_2": "UAB",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Stanford",
-   "team_name_2": "USC",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Syracuse",
-   "team_name_2": "West Virginia",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Tennessee",
-   "team_name_2": "Vanderbilt",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Texas",
-   "team_name_2": "Texas A&M",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Texas",
-   "team_name_2": "Texas Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Texas A&M",
-   "team_name_2": "Texas Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Texas State",
-   "team_name_2": "UTSA",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Tulsa",
-   "team_name_2": "UCF",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Tulsa",
-   "team_name_2": "UTEP",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "UCF",
-   "team_name_2": "USF",
-   "rivalry_name": "War on I-4",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "UCLA",
-   "team_name_2": "USC",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Utah",
-   "team_name_2": "Utah State",
-   "rivalry_name": "Battle of the Brothers",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Utah State",
-   "team_name_2": "Wyoming",
-   "rivalry_name": "Bridger's Battle",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Virginia",
-   "team_name_2": "Virginia Tech",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Virginia Tech",
-   "team_name_2": "West Virginia",
-   "rivalry_name": "",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Washington",
-   "team_name_2": "Washington State",
-   "rivalry_name": "Apple Cup",
-   "preferred_week_number": null
- },
- {
-   "team_name_1": "Coastal Carolina",
-   "team_name_2": "Liberty",
-   "rivalry_name": "",
-   "preferred_week_number": null
- }
+  {
+    "team_name_1": "Air Force",
+    "team_name_2": "Army",
+    "rivalry_relevance":16,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Air Force",
+    "team_name_2": "Colorado State",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Air Force",
+    "team_name_2": "Hawaii",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Air Force",
+    "team_name_2": "Navy",
+    "rivalry_relevance":17,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Akron",
+    "team_name_2": "Kent State",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Alabama",
+    "team_name_2": "Auburn",
+    "rivalry_relevance":19,
+    "rivalry_name": "Iron Bowl",
+    "preferred_week_number": 15
+  },
+  {
+    "team_name_1": "Alabama",
+    "team_name_2": "Florida",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Alabama",
+    "team_name_2": "LSU",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Alabama",
+    "team_name_2": "Mississippi State",
+    "rivalry_relevance":13,
+    "rivalry_name": "Battle for Highway 82",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Alabama",
+    "team_name_2": "Ole Miss",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Alabama",
+    "team_name_2": "Tennessee",
+    "rivalry_relevance":18,
+    "rivalry_name": "Third Saturday in October",
+    "preferred_week_number": 8
+  },
+  {
+    "team_name_1": "Arizona",
+    "team_name_2": "Arizona State",
+    "rivalry_relevance":17,
+    "rivalry_name": "Duel in the Desert",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Arizona",
+    "team_name_2": "New Mexico",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Arkansas",
+    "team_name_2": "LSU",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Arkansas",
+    "team_name_2": "Ole Miss",
+    "rivalry_relevance":11,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Arkansas",
+    "team_name_2": "Texas",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Arkansas",
+    "team_name_2": "Texas A&M",
+    "rivalry_relevance":7,
+    "rivalry_name": "Southwest Classic",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Arkansas State",
+    "team_name_2": "North Texas",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Arkansas State",
+    "team_name_2": "Louisiana-Monroe",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Arkansas State",
+    "team_name_2": "Memphis",
+    "rivalry_relevance":10,
+    "rivalry_name": "Paint Bucket Bowl",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Army",
+    "team_name_2": "Navy",
+    "rivalry_relevance":19,
+    "rivalry_name": "Army - Navy Game",
+    "preferred_week_number": 15
+  },
+  {
+    "team_name_1": "Army",
+    "team_name_2": "Rutgers",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Army",
+    "team_name_2": "Notre Dame",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Auburn",
+    "team_name_2": "Georgia",
+    "rivalry_relevance":18,
+    "rivalry_name": "Deep South's Oldest Rivalry",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Auburn",
+    "team_name_2": "LSU",
+    "rivalry_relevance":13,
+    "rivalry_name": "Tiger Bowl",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Ball State",
+    "team_name_2": "Northern Illinois",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Baylor",
+    "team_name_2": "TCU",
+    "rivalry_relevance":16,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Baylor",
+    "team_name_2": "Texas",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": 14
+  },
+  {
+    "team_name_1": "Baylor",
+    "team_name_2": "Texas A&M",
+    "rivalry_relevance":13,
+    "rivalry_name": "Battle of the Brazos",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Baylor",
+    "team_name_2": "Texas Tech",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "BYU",
+    "team_name_2": "Boise State",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "BYU",
+    "team_name_2": "Hawaii",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "BYU",
+    "team_name_2": "San Diego State",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "BYU",
+    "team_name_2": "Utah",
+    "rivalry_relevance":18,
+    "rivalry_name": "Holy War",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "BYU",
+    "team_name_2": "Utah State",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boise State",
+    "team_name_2": "Fresno State",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boise State",
+    "team_name_2": "Hawaii",
+    "rivalry_relevance":4,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boise State",
+    "team_name_2": "Idaho",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boise State",
+    "team_name_2": "Nevada",
+    "rivalry_relevance":11,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boise State",
+    "team_name_2": "TCU",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boston College",
+    "team_name_2": "Clemson",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boston College",
+    "team_name_2": "Miami",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boston College",
+    "team_name_2": "Notre Dame",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boston College",
+    "team_name_2": "Syracuse",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boston College",
+    "team_name_2": "UMass",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boston College",
+    "team_name_2": "Virginia Tech",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Bowling Green",
+    "team_name_2": "Kent State",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Bowling Green",
+    "team_name_2": "Toledo",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Buffalo",
+    "team_name_2": "Syracuse",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Buffalo",
+    "team_name_2": "Temple",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "California",
+    "team_name_2": "Stanford",
+    "rivalry_relevance":15,
+    "rivalry_name": "Big Game",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "California",
+    "team_name_2": "UCLA",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "California",
+    "team_name_2": "USC",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Central Michigan",
+    "team_name_2": "Eastern Michigan",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Central Michigan",
+    "team_name_2": "Western Michigan",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Cincinnati",
+    "team_name_2": "Louisville",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Cincinnati",
+    "team_name_2": "Miami (OH)",
+    "rivalry_relevance":8,
+    "rivalry_name": "Battle for the Bell",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Cincinnati",
+    "team_name_2": "Pittsburgh",
+    "rivalry_relevance":7,
+    "rivalry_name": "River City Rivalry",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Clemson",
+    "team_name_2": "Florida State",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Clemson",
+    "team_name_2": "Georgia",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Clemson",
+    "team_name_2": "Georgia Tech",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Clemson",
+    "team_name_2": "NC State",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Clemson",
+    "team_name_2": "South Carolina",
+    "rivalry_relevance":16,
+    "rivalry_name": "Palmetto Bowl",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Colorado",
+    "team_name_2": "Colorado State",
+    "rivalry_relevance":9,
+    "rivalry_name": "Rocky Mountain Showdown",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Colorado",
+    "team_name_2": "Nebraska",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Colorado",
+    "team_name_2": "Utah",
+    "rivalry_relevance":11,
+    "rivalry_name": "Rumble in the Rockies",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Colorado State",
+    "team_name_2": "Wyoming",
+    "rivalry_relevance":6,
+    "rivalry_name": "Border War",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "UConn",
+    "team_name_2": "Rutgers",
+    "rivalry_relevance":3,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "UConn",
+    "team_name_2": "Syracuse",
+    "rivalry_relevance":4,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "UConn",
+    "team_name_2": "UMass",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Duke",
+    "team_name_2": "Maryland",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Duke",
+    "team_name_2": "NC State",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Duke",
+    "team_name_2": "North Carolina",
+    "rivalry_relevance":16,
+    "rivalry_name": "Carolina - Duke",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Duke",
+    "team_name_2": "Wake Forest",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "East Carolina",
+    "team_name_2": "Marshall",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "East Carolina",
+    "team_name_2": "NC State",
+    "rivalry_relevance":4,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "East Carolina",
+    "team_name_2": "Southern Miss",
+    "rivalry_relevance":4,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "East Carolina",
+    "team_name_2": "UCF",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Appalachian State",
+    "team_name_2": "East Carolina",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Appalachian State",
+    "team_name_2": "Georgia Southern",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Appalachian State",
+    "team_name_2": "Georgia State",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Appalachian State",
+    "team_name_2": "Wake Forest",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Eastern Michigan",
+    "team_name_2": "Western Michigan",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Florida",
+    "team_name_2": "Florida State",
+    "rivalry_relevance":16,
+    "rivalry_name": "Sunshine Showdown",
+    "preferred_week_number": 2
+  },
+  {
+    "team_name_1": "Florida",
+    "team_name_2": "Georgia",
+    "rivalry_relevance":17,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Florida",
+    "team_name_2": "LSU",
+    "rivalry_relevance":14,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Florida",
+    "team_name_2": "Miami",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": 1
+  },
+  {
+    "team_name_1": "Florida",
+    "team_name_2": "South Carolina",
+    "rivalry_relevance":9,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Florida",
+    "team_name_2": "Tennessee",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "FIU",
+    "team_name_2": "Florida Atlantic",
+    "rivalry_relevance":13,
+    "rivalry_name": "Shula Bowl",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Florida Atlantic",
+    "team_name_2": "Troy",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Florida State",
+    "team_name_2": "Miami",
+    "rivalry_relevance":16,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Florida State",
+    "team_name_2": "Virginia",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Fresno State",
+    "team_name_2": "Hawaii",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Fresno State",
+    "team_name_2": "Louisiana Tech",
+    "rivalry_relevance":2,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Fresno State",
+    "team_name_2": "San Diego State",
+    "rivalry_relevance":4,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Fresno State",
+    "team_name_2": "San Jose State",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Georgia",
+    "team_name_2": "Georgia Tech",
+    "rivalry_relevance":14,
+    "rivalry_name": "Clean Old-Fashioned Hate",
+    "preferred_week_number": 15
+  },
+  {
+    "team_name_1": "Georgia",
+    "team_name_2": "South Carolina",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Georgia State",
+    "team_name_2": "Georgia Tech",
+    "rivalry_relevance":9,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Georgia Southern",
+    "team_name_2": "Georgia State",
+    "rivalry_relevance":9,
+    "rivalry_name": "Modern Day Hate",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Georgia Tech",
+    "team_name_2": "Virginia Tech",
+    "rivalry_relevance":7,
+    "rivalry_name": "Techmo Bowl",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Georgia Tech",
+    "team_name_2": "Vanderbilt",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Hawaii",
+    "team_name_2": "Wyoming",
+    "rivalry_relevance":3,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Houston",
+    "team_name_2": "Rice",
+    "rivalry_relevance":5,
+    "rivalry_name": "Bayou Bucket Classic",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Houston",
+    "team_name_2": "SMU",
+    "rivalry_relevance":9,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Houston",
+    "team_name_2": "Tulsa",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Idaho",
+    "team_name_2": "Washington State",
+    "rivalry_relevance":5,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Illinois",
+    "team_name_2": "Indiana",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Illinois",
+    "team_name_2": "Missouri",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Illinois",
+    "team_name_2": "Northwestern",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Illinois",
+    "team_name_2": "Ohio State",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Illinois",
+    "team_name_2": "Purdue",
+    "rivalry_relevance":9,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Indiana",
+    "team_name_2": "Michigan State",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Indiana",
+    "team_name_2": "Purdue",
+    "rivalry_relevance":11,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Iowa",
+    "team_name_2": "Iowa State",
+    "rivalry_relevance":17,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Iowa",
+    "team_name_2": "Minnesota",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Iowa",
+    "team_name_2": "Nebraska",
+    "rivalry_relevance":11,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Iowa",
+    "team_name_2": "Purdue",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Iowa",
+    "team_name_2": "Wisconsin",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Iowa State",
+    "team_name_2": "Kansas State",
+    "rivalry_relevance":11,
+    "rivalry_name": "Farmageddon",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Iowa State",
+    "team_name_2": "Missouri",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Kansas",
+    "team_name_2": "Kansas State",
+    "rivalry_relevance":17,
+    "rivalry_name": "Sunflower Showdown",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Kansas",
+    "team_name_2": "Missouri",
+    "rivalry_relevance":17,
+    "rivalry_name": "Border War",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Kentucky",
+    "team_name_2": "Louisville",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Kentucky",
+    "team_name_2": "Mississippi State",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Kentucky",
+    "team_name_2": "Tennessee",
+    "rivalry_relevance":14,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Louisiana",
+    "team_name_2": "Louisiana Tech",
+    "rivalry_relevance":10,
+    "rivalry_name": "Battle for the Bayou",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Louisiana",
+    "team_name_2": "Louisiana-Monroe",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Louisiana Tech",
+    "team_name_2": "Southern Miss",
+    "rivalry_relevance":9,
+    "rivalry_name": "Rivalry in Dixie",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Louisiana Tech",
+    "team_name_2": "Louisiana-Monroe",
+    "rivalry_relevance":11,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Louisville",
+    "team_name_2": "Memphis",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Louisville",
+    "team_name_2": "West Virginia",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "LSU",
+    "team_name_2": "Ole Miss",
+    "rivalry_relevance":15,
+    "rivalry_name": "Magnolia Bowl",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "LSU",
+    "team_name_2": "Tulane",
+    "rivalry_relevance":7,
+    "rivalry_name": "Battle for the Rag",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Marshall",
+    "team_name_2": "Ohio",
+    "rivalry_relevance":4,
+    "rivalry_name": "Battle for the Bell",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Marshall",
+    "team_name_2": "West Virginia",
+    "rivalry_relevance":8,
+    "rivalry_name": "Friends of Coal Bowl",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Maryland",
+    "team_name_2": "Navy",
+    "rivalry_relevance":10,
+    "rivalry_name": "Crab Bowl Classic",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Maryland",
+    "team_name_2": "Virginia",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Maryland",
+    "team_name_2": "West Virginia",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Maryland",
+    "team_name_2": "NC State",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Memphis",
+    "team_name_2": "Ole Miss",
+    "rivalry_relevance":12,
+    "rivalry_name": "Mid-South Rivalry",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Memphis",
+    "team_name_2": "Southern Miss",
+    "rivalry_relevance":10,
+    "rivalry_name": "Black and Blue Bowl",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Memphis",
+    "team_name_2": "UAB",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Miami",
+    "team_name_2": "Virginia Tech",
+    "rivalry_relevance":9,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Miami (OH)",
+    "team_name_2": "Ohio",
+    "rivalry_relevance":13,
+    "rivalry_name": "Battle of the Bricks",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Michigan",
+    "team_name_2": "Michigan State",
+    "rivalry_relevance":18,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Michigan",
+    "team_name_2": "Minnesota",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Michigan",
+    "team_name_2": "Notre Dame",
+    "rivalry_relevance":17,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Michigan",
+    "team_name_2": "Ohio State",
+    "rivalry_relevance":20,
+    "rivalry_name": "The Game",
+    "preferred_week_number": 15
+  },
+  {
+    "team_name_1": "Michigan State",
+    "team_name_2": "Notre Dame",
+    "rivalry_relevance":16,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Michigan State",
+    "team_name_2": "Penn State",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Middle Tennessee",
+    "team_name_2": "North Texas",
+    "rivalry_relevance":9,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Middle Tennessee",
+    "team_name_2": "Troy",
+    "rivalry_relevance":7,
+    "rivalry_name": "Battle for the Palladium",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Middle Tennessee",
+    "team_name_2": "Western Kentucky",
+    "rivalry_relevance":9,
+    "rivalry_name": "100 Miles of Hate",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Minnesota",
+    "team_name_2": "Penn State",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Minnesota",
+    "team_name_2": "Wisconsin",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Mississippi State",
+    "team_name_2": "Ole Miss",
+    "rivalry_relevance":17,
+    "rivalry_name": "Egg Bowl",
+    "preferred_week_number": 14
+  },
+  {
+    "team_name_1": "Missouri",
+    "team_name_2": "Nebraska",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Missouri",
+    "team_name_2": "Oklahoma",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Missouri",
+    "team_name_2": "Texas A&M",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Navy",
+    "team_name_2": "Notre Dame",
+    "rivalry_relevance":16,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Navy",
+    "team_name_2": "Rutgers",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Navy",
+    "team_name_2": "SMU",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Nebraska",
+    "team_name_2": "Oklahoma",
+    "rivalry_relevance":11,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Nebraska",
+    "team_name_2": "Penn State",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Nevada",
+    "team_name_2": "UNLV",
+    "rivalry_relevance":13,
+    "rivalry_name": "Battle for Nevada",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "New Mexico",
+    "team_name_2": "New Mexico State",
+    "rivalry_relevance":13,
+    "rivalry_name": "Rio Grande Rivalry",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "New Mexico",
+    "team_name_2": "UTEP",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "New Mexico State",
+    "team_name_2": "UTEP",
+    "rivalry_relevance":8,
+    "rivalry_name": "Battle for I-10",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "NC State",
+    "team_name_2": "North Carolina",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "North Carolina",
+    "team_name_2": "Virginia",
+    "rivalry_relevance":11,
+    "rivalry_name": "South's Oldest Rivalry",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "North Carolina",
+    "team_name_2": "Wake Forest",
+    "rivalry_relevance":9,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "NC State",
+    "team_name_2": "Wake Forest",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "North Texas",
+    "team_name_2": "SMU",
+    "rivalry_relevance":11,
+    "rivalry_name": "Safeway Bowl",
+    "preferred_week_number": 1
+  },
+  {
+    "team_name_1": "Northern Illinois",
+    "team_name_2": "Toledo",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Notre Dame",
+    "team_name_2": "Pittsburgh",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Notre Dame",
+    "team_name_2": "Purdue",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Notre Dame",
+    "team_name_2": "Stanford",
+    "rivalry_relevance":11,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Notre Dame",
+    "team_name_2": "USC",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Ohio State",
+    "team_name_2": "Penn State",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Oklahoma",
+    "team_name_2": "Oklahoma State",
+    "rivalry_relevance":19,
+    "rivalry_name": "Bedlam",
+    "preferred_week_number": 8
+  },
+  {
+    "team_name_1": "Oklahoma",
+    "team_name_2": "Texas",
+    "rivalry_relevance":20,
+    "rivalry_name": "Red River Shootout",
+    "preferred_week_number": 5
+  },
+  {
+    "team_name_1": "Oklahoma State",
+    "team_name_2": "Tulsa",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Old Dominion",
+    "team_name_2": "Virginia",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Old Dominion",
+    "team_name_2": "Virginia Tech",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Ole Miss",
+    "team_name_2": "Vanderbilt",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Oregon",
+    "team_name_2": "Oregon State",
+    "rivalry_relevance":15,
+    "rivalry_name": "Civil War",
+    "preferred_week_number": 10
+  },
+  {
+    "team_name_1": "Oregon",
+    "team_name_2": "Washington",
+    "rivalry_relevance":16,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Oregon State",
+    "team_name_2": "Washington",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Oregon State",
+    "team_name_2": "Washington State",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Penn State",
+    "team_name_2": "Pittsburgh",
+    "rivalry_relevance":13,
+    "rivalry_name": "Keystone Classic",
+    "preferred_week_number": 1
+  },
+  {
+    "team_name_1": "Penn State",
+    "team_name_2": "Temple",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Pittsburgh",
+    "team_name_2": "Syracuse",
+    "rivalry_relevance":8,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Pittsburgh",
+    "team_name_2": "Temple",
+    "rivalry_relevance":10,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Pittsburgh",
+    "team_name_2": "West Virginia",
+    "rivalry_relevance":18,
+    "rivalry_name": "Backyard Brawl",
+    "preferred_week_number": 15
+  },
+  {
+    "team_name_1": "Rice",
+    "team_name_2": "SMU",
+    "rivalry_relevance":7,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Rice",
+    "team_name_2": "Tulsa",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "San Diego State",
+    "team_name_2": "San Jose State",
+    "rivalry_relevance":9,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "San Jose State",
+    "team_name_2": "Stanford",
+    "rivalry_relevance":6,
+    "rivalry_name": "Bill Walsh Legacy Game",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "SMU",
+    "team_name_2": "TCU",
+    "rivalry_relevance":16,
+    "rivalry_name": "Battle for the Iron Skillet",
+    "preferred_week_number": 3
+  },
+  {
+    "team_name_1": "South Alabama",
+    "team_name_2": "Troy",
+    "rivalry_relevance":13,
+    "rivalry_name": "Battle for the Belt",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Southern Miss",
+    "team_name_2": "Tulane",
+    "rivalry_relevance":11,
+    "rivalry_name": "Battle for the Bell",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Southern Miss",
+    "team_name_2": "UAB",
+    "rivalry_relevance":11,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Stanford",
+    "team_name_2": "USC",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Syracuse",
+    "team_name_2": "West Virginia",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Tennessee",
+    "team_name_2": "Vanderbilt",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Texas",
+    "team_name_2": "Texas A&M",
+    "rivalry_relevance":18,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Texas",
+    "team_name_2": "Texas Tech",
+    "rivalry_relevance":14,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Texas A&M",
+    "team_name_2": "Texas Tech",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Texas State",
+    "team_name_2": "UTSA",
+    "rivalry_relevance":11,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Tulsa",
+    "team_name_2": "UCF",
+    "rivalry_relevance":6,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Tulsa",
+    "team_name_2": "UTEP",
+    "rivalry_relevance":4,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "UCF",
+    "team_name_2": "USF",
+    "rivalry_relevance":14,
+    "rivalry_name": "War on I-4",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "UCLA",
+    "team_name_2": "USC",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Utah",
+    "team_name_2": "Utah State",
+    "rivalry_relevance":15,
+    "rivalry_name": "Battle of the Brothers",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Utah State",
+    "team_name_2": "Wyoming",
+    "rivalry_relevance":10,
+    "rivalry_name": "Bridger's Battle",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Virginia",
+    "team_name_2": "Virginia Tech",
+    "rivalry_relevance":15,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Virginia Tech",
+    "team_name_2": "West Virginia",
+    "rivalry_relevance":13,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Washington",
+    "team_name_2": "Washington State",
+    "rivalry_relevance":16,
+    "rivalry_name": "Apple Cup",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Coastal Carolina",
+    "team_name_2": "Liberty",
+    "rivalry_relevance":12,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  }
 ]

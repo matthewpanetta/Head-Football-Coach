@@ -56,20 +56,8 @@ function DrawPlayerSeasonStats(data){
 
   $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Season Stats</div>').appendTo(SeasonStatCard);
   Table.appendTo(SeasonStatCard);
-  var DataTable = $(Table).DataTable( {
-    data: data.SeasonStats,
-    columns: columns,
-    "paging": false,
-    'searching': false,
-    'info': false,
-  });
+  console.log({'data.SeasonStats': data.SeasonStats})
 
-  var Counter = 0;
-  DataTable.columns().every( function () {
-      // ... do something with data(), or this.nodes(), etc
-      $(this.footer()).html(data.CareerStats[Counter])
-      Counter +=1;
-  } );
 
   SeasonStatCard.appendTo(Parent);
 
@@ -100,23 +88,7 @@ function DrawPlayerCareerHighs(data){
 
   $('<div class="w3-bar team-primary-background-bar">'+data.StatGroupName+' Career Highs</div>').appendTo(CareerHighCard);
   CareerHighTable.appendTo(CareerHighCard);
-  var CareerHighDataTable = $(CareerHighTable).DataTable({
-    "data": data.CareerHighs,
-    'paging': false,
-    'searching': false,
-    'info': false,
-    'ordering': false,
-    "columns": [
-       {"data": "Field", "sortable": false, 'visible': true, 'className': 'left-text'},
-        {"data": "Value", "sortable": false, 'visible': true},
-        {"data": "Week", "sortable": false, 'searchable': true, 'className': 'left-text', "fnCreatedCell": function (td, StringValue, DataObject, iRow, iCol) {
-            $(td).html("<span>vs. <img class='worldTeamStatLogo padding-right' src='"+DataObject['OpposingTeamLogo']+"'/></span><span><a href='"+DataObject['GameHref']+"'>"+StringValue+"</a></span>");
-          //  $(td).attr('style', 'border-left-color: #' + DataObject['TeamColor_Primary_HEX']);
-          //  $(td).addClass('teamTableBorder');
-        }},
-
-    ],
-  });
+  console.log({'data.CareerHighs': data.CareerHighs})
 
   CareerHighCard.appendTo(Parent);
   $(CareerHighTable).find('th').addClass('teamColorBorder');
@@ -135,38 +107,36 @@ const populate_player_stats = async (common) => {
 
     var player_team_games = await db.player_team_game.where({player_team_season_id: current_player_team_season.player_team_season_id}).toArray();
     const team_game_ids = player_team_games.map(ptg => ptg.team_game_id);
-    const team_games = await db.team_game.bulkGet(team_game_ids);
+    var team_games = await db.team_game.bulkGet(team_game_ids);
 
     const game_ids = team_games.map(tg => tg.game_id);
-    const games = await db.game.bulkGet(game_ids);
-
-    const team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id');
-    const games_by_game_id = index_group_sync(games, 'index', 'game_id');
+    var games = await db.game.bulkGet(game_ids);
 
     var team_seasons = await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
-    var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
 
     const teams = await db.team.where('team_id').above(0).toArray();
     const teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
 
-    for (var player_team_game of player_team_games){
-      player_team_game.team_game = team_games_by_team_game_id[player_team_game.team_game_id];
-      player_team_game.team_game.game = games_by_game_id[player_team_game.team_game.game_id];
+    games = nest_children(games, weeks_by_week_id, 'week_id', 'week');
+    const games_by_game_id = index_group_sync(games, 'index', 'game_id');
 
-      player_team_game.team_game.game.week = weeks_by_week_id[player_team_game.team_game.game.week_id];
+    team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
+    var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
 
-      player_team_game.team_game.team_season = team_seasons_by_team_season_id[player_team_game.team_game.team_season_id];
-      player_team_game.team_game.opponent_team_season = team_seasons_by_team_season_id[player_team_game.team_game.opponent_team_season_id];
+    team_games = nest_children(team_games, games_by_game_id, 'game_id', 'game');
+    team_games = nest_children(team_games, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+    team_games = nest_children(team_games, team_seasons_by_team_season_id, 'opponent_team_season_id', 'opponent_team_season');
+    const team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id');
 
-      player_team_game.team_game.team_season.team = teams_by_team_id[player_team_game.team_game.team_season.team_id];
-      player_team_game.team_game.opponent_team_season.team = teams_by_team_id[player_team_game.team_game.opponent_team_season.team_id];
-    }
+    player_team_games = nest_children(player_team_games, team_games_by_team_game_id, 'team_game_id', 'team_game');
+
+    console.log({player_team_games:player_team_games})
 
     player_team_games = player_team_games.sort((ptg_a, ptg_b) => ptg_a.team_game.game.week_id - ptg_b.team_game.game.week_id);
 
     const recent_game_stats_data = player_team_games.slice(-5);
 
-    console.log('populate_player_stats', {player:player, player_team_games:player_team_games, recent_game_stats_data:recent_game_stats_data})
+    console.log({player:player, player_team_games:player_team_games, recent_game_stats_data:recent_game_stats_data})
 
     const player_stats_show = {'Passing': false,
                       'Rushing': false,
@@ -211,234 +181,50 @@ const populate_player_stats = async (common) => {
           player_stats_show['Kicking'] = true
     }
 
+    console.log({player_stats_show:player_stats_show, })
 
 
-  console.log('GameStatDate, RecentGameStatData', {player_season_stat:player_season_stat, player_stats_show:player_stats_show});
-  var desc_first = ["desc", 'asc'];
+    var url = '/static/html_templates/player/player/player_stats_recent_games_table_template.njk'
+    var html = await fetch(url);
+    html = await html.text();
+  
+    var renderedHtml = await common.nunjucks_env.renderString(html, {page: common.page, player_team_season:current_player_team_season, player_stats_show:player_stats_show, recent_game_stats_data:recent_game_stats_data})
+  
+    $('#player-stats-recent-games-div').empty()
+    $('#player-stats-recent-games-div').html(renderedHtml)
+
+    init_basic_table_sorting(common, '#player-stats-recent-games-table', 0)
 
 
-    var col_categories = {
-      'Base': 3,
-      'Passing': 8,
-      'Rushing': 7,
-      'Receiving': 6,
-      'Blocking': 2,
-      'Defense': 7,
-      'Kicking': 4,
-    }
+    var url = '/static/html_templates/player/player/player_stats_game_log_table_template.njk'
+    var html = await fetch(url);
+    html = await html.text();
+  
+    var renderedHtml = await common.nunjucks_env.renderString(html, {page: common.page, player_team_season:current_player_team_season, player_stats_show:player_stats_show, player_team_games:player_team_games})
+  
+    $('#player-stats-game-log-div').empty()
+    $('#player-stats-game-log-div').html(renderedHtml)
 
-    var show_column_map = {}
-    var col_counter = 0;
-    $.each(col_categories, function(key, val){
-      show_column_map[key] = []
-      for(var i = col_counter; i < col_counter+val; i++){
-        show_column_map[key].push(i);
-      }
-      col_counter = col_counter + val;
-    })
-
-    var full_column_list = [];
-    var hide_column_map = {}
-    $.each(show_column_map, function(key, col_list){
-      $.each(col_list, function(ind, col_num){
-        if ((($.inArray( col_num,  show_column_map['Base'])) == -1)){
-          full_column_list.push(col_num);
-        }
-      })
-    });
+    init_basic_table_sorting(common, '#player-stats-game-log-div', 0)
 
 
-    $.each(show_column_map, function(key, col_list){
-       var cols = $.grep( full_column_list, function( val, ind ) {
-          return $.inArray( val,  col_list) == -1
-        });
-        hide_column_map[key] = cols;
-    });
+    var url = '/static/html_templates/player/player/player_stats_season_stats_table_template.njk'
+    var html = await fetch(url);
+    html = await html.text();
+  
+    var renderedHtml = await common.nunjucks_env.renderString(html, {page: common.page, player_team_season:current_player_team_season, player_stats_show:player_stats_show, player_team_games:player_team_games})
+  
+    $('#player-stats-game-log-div').empty()
+    $('#player-stats-game-log-div').html(renderedHtml)
 
-    console.log({full_column_list: full_column_list, show_column_map:show_column_map, hide_column_map:hide_column_map})
-    var button_list = []
+    init_basic_table_sorting(common, '#player-stats-game-log-div', 0)
 
-    var initial_button_to_click = undefined;
-    $.each(col_categories, function(key, val){
-      if (key == 'Base'){
-        return true;
-      }
-
-      if (player_stats_show[key] == false){
-        return true;
-      }
-
-      var button_obj = {extend: 'colvisGroup',
-                        text: key,
-                        show: show_column_map[key],
-                        hide: hide_column_map[key],
-                        className: 'stats-button-'+key,
-                        action: function( e, dt, node, config){
-                          console.log('config', e, dt, node, config)
-                          dt.columns(config.show).visible(true);
-                          dt.columns(config.hide).visible(false);
-
-                          $(node).parent().find('button').removeClass("active");
-
-                         //$(".dt-buttons").find("button").removeClass("active");
-                         node.addClass("active");
-
-                   }}
-      button_list.push(button_obj)
-    });
-
-    console.log('button_list', button_list);
-
-//playerteamseasonid='{{Player.PlayerTeamSeasonID}}' position='{{Player.PositionID__PositionAbbreviation}}'
-  var recent_game_stats = $('#RecentGameStats').DataTable({
-      dom: 'Brt',
-      'buttons':button_list,
-      'ordering': true,
-      'sorting': false,
-      "filter": true,
-      'paging': false,
-      //scrollX: true,
-      'data': recent_game_stats_data,
-      autoWidth: true,
-      columns: [
-        {"data": "team_game.game.week.week_name", "sortable": true, 'className': 'left-text width15','visible': true, 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
-            $(td).html(player_team_game.team_game.game.week.week_name);
-            //$(td).addClass('bold');
-            $(td).attr('style', `color: white; background-color: #${player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}`);
-        }},
-        {"data": "team_game.opponent_team_season.team.full_name", "sortable": true, 'searchable': true, 'className': 'column-shrink left-text',"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
-            $(td).html(`<a href='${player_team_game.team_game.opponent_team_season.team.team_href}'><img class='worldTeamStatLogo' src='${player_team_game.team_game.opponent_team_season.team.team_logo}'/></a>`);
-            $(td).attr('style', `background-color: #${player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}`);
-            $(td).parent().attr('PlayerID', player.player_id);
-        }},
-        {"data": "team_game.game_outcome_letter", "sortable": true, 'visible': true, 'className': 'column-med col-group left-text', 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
-            $(td).html(`<span class='W-L-Badge ${player_team_game.team_game.game_outcome_letter}'> ${player_team_game.team_game.game_outcome_letter} </span><span><a href='${player_team_game.team_game.game.game_href}'> ${player_team_game.team_game.game.score_display}</a></span>`);
-        }},
-        {"data": "game_stats.passing.completions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.passing.attempts", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "completion_percentage", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.passing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "passing_yards_per_attempt", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.passing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.passing.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.passing.sacks", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-        {"data": "game_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.rushing.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-        {"data": "game_stats.receiving.targets", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.receiving.receptions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.receiving.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "receiving_yards_per_catch", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.receiving.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.receiving.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-        {"data": "game_stats.blocking.pancakes", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.blocking.sacks_allowed", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-        {"data": "game_stats.defense.tackles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.defense.tackles_for_loss", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.defense.sacks", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.defense.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.defense.deflections", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.fumbles.forced", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.fumbles.recovered", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-        {"data": "game_stats.kicking.fgm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.kicking.fga", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.kicking.xpm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-        {"data": "game_stats.kicking.xpa", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-      ],
-      'info': false,
-      //'order': [[ 1, "asc" ]],
-      'initComplete': function(){
-        $('.stats-button-'+primary_stat_show).click();
-      }
-  });
 
   var FullGameStats = undefined;
   $('#nav-game-log-tab').on('click', function(){
     if (!(FullGameStats == undefined)){
       return false;
     }
-
-    FullGameStats = $('#FullGameStats').DataTable({
-        dom: 'Brt',
-        'buttons':button_list,
-        'ordering': true,
-        'sorting': false,
-        "filter": true,
-        'paging': false,
-        //scrollX: true,
-        'data': player_team_games,
-        autoWidth: true,
-        columns: [
-          {"data": "team_game.game.week.week_name", "sortable": true, 'className': 'left-text width15','visible': true, 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
-              $(td).html(player_team_game.team_game.game.week.week_name);
-              //$(td).addClass('bold');
-              $(td).attr('style', `color: white; background-color: #${player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}`);
-          }},
-          {"data": "team_game.opponent_team_season.team.full_name", "sortable": true, 'searchable': true, 'className': 'column-shrink left-text',"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
-              $(td).html(`<a href='${player_team_game.team_game.opponent_team_season.team.team_href}'><img class='worldTeamStatLogo' src='${player_team_game.team_game.opponent_team_season.team.team_logo}'/></a>`);
-              $(td).attr('style', `background-color: #${player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}`);
-              $(td).parent().attr('PlayerID', player.player_id);
-          }},
-          {"data": "team_game.game_outcome_letter", "sortable": true, 'visible': true, 'className': 'column-med col-group left-text', 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_game, iRow, iCol) {
-              $(td).html(`<span class='W-L-Badge ${player_team_game.team_game.game_outcome_letter}'> ${player_team_game.team_game.game_outcome_letter} </span><span><a href='${player_team_game.team_game.game.game_href}'> ${player_team_game.team_game.game.score_display}</a></span>`);
-          }},
-          {"data": "game_stats.passing.completions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.passing.attempts", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "completion_percentage", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.passing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "passing_yards_per_attempt", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.passing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.passing.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.passing.sacks", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-          {"data": "game_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.rushing.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-          {"data": "game_stats.receiving.targets", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.receiving.receptions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.receiving.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "receiving_yards_per_catch", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.receiving.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.receiving.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-          {"data": "game_stats.blocking.pancakes", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.blocking.sacks_allowed", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-          {"data": "game_stats.defense.tackles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.defense.tackles_for_loss", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.defense.sacks", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.defense.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.defense.deflections", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.fumbles.forced", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.fumbles.recovered", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-          {"data": "game_stats.kicking.fgm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.kicking.fga", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.kicking.xpm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-          {"data": "game_stats.kicking.xpa", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
-
-        ],
-        'info': false,
-        //'order': [[ 1, "asc" ]],
-        'initComplete': function(){
-          $('.stats-button-'+primary_stat_show).click();
-        }
-    });
   })
 
 
@@ -465,77 +251,75 @@ const populate_player_stats = async (common) => {
 
         console.log('season_stats_table', season_stats_table)
 
-        var season_stats = $(season_stats_table).DataTable({
-            dom: 't',
-            data: player.player_team_seasons,
-            columns: [
-              {"data": "season", "sortable": true, 'className': 'left-text column-shrink ','visible': true, 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_season, iRow, iCol) {
-                  $(td).html(StringValue);
-                  //$(td).addClass('bold');
-                  $(td).attr('style', `color: white; background-color: #${player_team_season.team_season.team.team_color_primary_hex}`);
-              }},
-              {"data": "team_season.team.full_name", "sortable": true, 'searchable': true, 'className': 'column-shrink left-text',"fnCreatedCell": function (td, StringValue, player_team_season, iRow, iCol) {
-                  $(td).html(`<a href='${player_team_season.team_season.team.team_href}'><img class='worldTeamStatLogo' src='${player_team_season.team_season.team.team_logo}'/></a>`);
-                  $(td).attr('style', `background-color: #${player_team_season.team_season.team.team_color_primary_hex}`);
-                  $(td).parent().attr('PlayerID', player.player_id);
-              }},
+        // var season_stats = $(season_stats_table).DataTable({
+        //     dom: 't',
+        //     data: player.player_team_seasons,
+        //     columns: [
+        //       {"data": "season", "sortable": true, 'className': 'left-text column-shrink ','visible': true, 'orderSequence':desc_first,"fnCreatedCell": function (td, StringValue, player_team_season, iRow, iCol) {
+        //           $(td).html(StringValue);
+        //           //$(td).addClass('bold');
+        //           $(td).attr('style', `color: white; background-color: #${player_team_season.team_season.team.team_color_primary_hex}`);
+        //       }},
+        //       {"data": "team_season.team.full_name", "sortable": true, 'searchable': true, 'className': 'column-shrink left-text',"fnCreatedCell": function (td, StringValue, player_team_season, iRow, iCol) {
+        //           $(td).html(`<a href='${player_team_season.team_season.team.team_href}'><img class='worldTeamStatLogo' src='${player_team_season.team_season.team.team_logo}'/></a>`);
+        //           $(td).attr('style', `background-color: #${player_team_season.team_season.team.team_color_primary_hex}`);
+        //           $(td).parent().attr('PlayerID', player.player_id);
+        //       }},
 
-              {"data": "class.class_name", "sortable": false, 'visible': true, 'orderSequence':desc_first},
-              {"data": "season_stats.passing.completions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.passing.attempts", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "completion_percentage", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.passing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "passing_yards_per_attempt", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.passing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.passing.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.passing.sacks", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+        //       {"data": "class.class_name", "sortable": false, 'visible': true, 'orderSequence':desc_first},
+        //       {"data": "season_stats.passing.completions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.passing.attempts", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "completion_percentage", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.passing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "passing_yards_per_attempt", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.passing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.passing.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.passing.sacks", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
 
-              {"data": "season_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.rushing.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+        //       {"data": "season_stats.rushing.carries", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.rushing.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "rushing_yards_per_carry", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.rushing.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.fumbles.fumbles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.rushing.over_20", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.rushing.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
 
-              {"data": "season_stats.receiving.targets", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.receiving.receptions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.receiving.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "receiving_yards_per_catch", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.receiving.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.receiving.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+        //       {"data": "season_stats.receiving.targets", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.receiving.receptions", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.receiving.yards", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "receiving_yards_per_catch", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.receiving.tds", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.receiving.lng", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
 
-              {"data": "season_stats.blocking.pancakes", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.blocking.sacks_allowed", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+        //       {"data": "season_stats.blocking.pancakes", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.blocking.sacks_allowed", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
 
-              {"data": "season_stats.defense.tackles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.defense.tackles_for_loss", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.defense.sacks", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.defense.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.defense.deflections", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.fumbles.forced", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.fumbles.recovered", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+        //       {"data": "season_stats.defense.tackles", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.defense.tackles_for_loss", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.defense.sacks", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.defense.ints", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.defense.deflections", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.fumbles.forced", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.fumbles.recovered", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
 
-              {"data": "season_stats.kicking.fgm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.kicking.fga", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.kicking.xpm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
-              {"data": "season_stats.kicking.xpa", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
+        //       {"data": "season_stats.kicking.fgm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.kicking.fga", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.kicking.xpm", "sortable": false, 'visible': false, 'orderSequence':desc_first},
+        //       {"data": "season_stats.kicking.xpa", "sortable": false, 'visible': false, 'className': 'col-group center-text', 'orderSequence':desc_first},
 
-            ],
-            //'order': [[ 1, "asc" ]],
-            'initComplete': function(settings, json){
-              var api = this.api();
-              for (var column_index of show_column_map[player_stat_group]){
-                console.log('column_index', column_index);
-                api.columns(column_index).visible(true);
-              }
-              console.log('show_column_map', {settings:settings, 'this': this, show_column_map:show_column_map, player_stat_group:player_stat_group,'show_column_map[player_stat_group]':show_column_map[player_stat_group]});
+        //     ],
+        //     //'order': [[ 1, "asc" ]],
+        //     'initComplete': function(settings, json){
+        //       var api = this.api();
+        //       for (var column_index of show_column_map[player_stat_group]){
+        //         console.log('column_index', column_index);
+        //         api.columns(column_index).visible(true);
+        //       }
+        //       console.log('show_column_map', {settings:settings, 'this': this, show_column_map:show_column_map, player_stat_group:player_stat_group,'show_column_map[player_stat_group]':show_column_map[player_stat_group]});
 
 
-            }
-        });
-
-        console.log('season_stats', season_stats)
+        //     }
+        // });
 
       }
 

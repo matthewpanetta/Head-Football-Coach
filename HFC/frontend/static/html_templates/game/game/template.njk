@@ -629,7 +629,7 @@
                 <table id='{{team_game_obj.home_or_away}}-box-score-{{stat_grouping.stat_group_name}}' class='w3-table-all no-border width100'>
                   <thead>
                     <tr class='center-text-row  football-table-column-headers {{team_game_obj.home_or_away}}-team-secondary-row'>
-                      <th class='left-text' sort-direction='sort-asc' style='width: auto;'>Player</th>
+                      <th class='left-text' sort-order='sort-asc' style='width: auto;'>Player</th>
                       {% for column in stat_grouping.columns%}
                       <th value-key='{{column.data}}' style='width: auto;'>{{column.title}}</th>
                       {% endfor %}

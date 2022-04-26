@@ -11,13 +11,13 @@
             <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
                 <tr class='football-table-column-headers unselectable' style=' height: 30px; '>
                     <!-- BASELINE -->
-                    <th style='max-width: 40px;' class='center-text' value-key='game.week.week_id'>Week</th>
-                    <th style='max-width: 40px;' class='center-text' value-key='game.opponent_team_game.team_season.team.team_name' sort-order='sort-asc'>Team</th>
-                    <th style='min-width: 70px;' class='left-text' value-key='game.opponent_team_game.team_season.team.full_name' sort-order='sort-asc'></th>
-                    <th class='center-text' value-key='player_team_season.position_sort_order' sort-order='sort-asc'>Result</th>
-                    <th  class='center-text' value-key='player_team_season.class_sort_order'>Record</th>
-                    <th value-key='body.height_inches'>Top Players</th>
-                    <th class='col-group' value-key='body.weight'>Opponent Top Players</th>
+                    <th style='max-width: 40px;' class='center-text' sort-order='sort-asc'>Week</th>
+                    <th style='max-width: 40px;' class='center-text' sort-order='sort-asc'>Team</th>
+                    <th style='min-width: 70px;' class='left-text' sort-order='sort-asc'></th>
+                    <th class='center-text' sort-order='sort-asc'>Result</th>
+                    <th  class='center-text no-sort'>Record</th>
+                    <th class='no-sort'>Top Players</th>
+                    <th class='col-group no-sort'>Opponent Top Players</th>
                     
                 </tr> 
             </thead>
@@ -30,20 +30,20 @@
                 {% for game in data%}
                 <tr class='football-table-row  ' style='height: 30px;' game_id='{{game.game_id}}'>
                     <!-- BASELINE -->
-                    <td style='color: white; width: 70px; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
+                    <td value='{{game.week.week_id}}' style='color: white; width: 70px; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
                       <span>{{game.week.week_name}}</span>
                     </td>
-                    <td style='color: white; width: 10px; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
+                    <td value='{{game.opponent_team_game.team_season.team.school_name}}' style='color: white; width: 10px; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
                       <a href='{{game.opponent_team_game.team_season.team.team_href}}'>
                         <img class='worldTeamLogo' src='{{game.opponent_team_game.team_season.team.team_logo}}'/>
                       </a>
                     </td>
-                    <td class='column-med'>
+                    <td value='{{game.opponent_team_game.team_season.team.school_name}}' class='column-med'>
                       <span class='font10'>{{game.opponent_team_game.team_season.national_rank_display}}</span>
                       <a href='{{game.opponent_team_game.team_season.team.team_href}}'>{{game.opponent_team_game.team_season.team.school_name}}</a>
                       <span class="font10">{{game.opponent_team_game.team_season.record_display}}</span>
                     </td>
-                    <td class='center-text' >
+                    <td value='{{game.team_game.game_outcome_letter}},{{game.game_display}}' class='center-text' >
                       {% if game.was_played%}
                       <span class='{{game.team_game.game_outcome_letter}} W-L-badge'>{{game.team_game.game_outcome_letter}}</span>
                       {% endif %}
