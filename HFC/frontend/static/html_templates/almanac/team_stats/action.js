@@ -541,16 +541,16 @@
               {"data": "kicking_field_goal_percentage", "sortable": true, 'visible': false, 'className': 'center-text', 'orderSequence':desc_first},
               {"data": "season_stats.kicking.lng", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
               {"data": "season_stats.kicking.fgm_29", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                  $(td).html(`<span>${team_season.stats.season_stats.kicking.fgm_29}/${team_season.stats.season_stats.kicking.fga_29}</span>`);
+                  $(td).html(`<span>${team_season.stats.kicking.fgm_29}/${team_season.stats.kicking.fga_29}</span>`);
               }},
               {"data": "season_stats.kicking.fgm_39", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                $(td).html(`<span>${team_season.stats.season_stats.kicking.fgm_39}/${team_season.stats.season_stats.kicking.fga_39}</span>`);
+                $(td).html(`<span>${team_season.stats.kicking.fgm_39}/${team_season.stats.kicking.fga_39}</span>`);
               }},
               {"data": "season_stats.kicking.fgm_49", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                $(td).html(`<span>${team_season.stats.season_stats.kicking.fgm_49}/${team_season.stats.season_stats.kicking.fga_49}</span>`);
+                $(td).html(`<span>${team_season.stats.kicking.fgm_49}/${team_season.stats.kicking.fga_49}</span>`);
               }},
               {"data": "season_stats.kicking.fgm_50", "sortable": true, 'visible': false, 'className': 'col-group center-text','orderSequence':desc_first, "fnCreatedCell": function (td, StringValue, team_season, iRow, iCol) {
-                $(td).html(`<span>${team_season.stats.season_stats.kicking.fgm_50}/${team_season.stats.season_stats.kicking.fga_50}</span>`);
+                $(td).html(`<span>${team_season.stats.kicking.fgm_50}/${team_season.stats.kicking.fga_50}</span>`);
               }},
               {"data": "season_stats.kicking.xpm", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},
               {"data": "season_stats.kicking.xpa", "sortable": true, 'visible': false, 'className': 'center-text','orderSequence':desc_first},

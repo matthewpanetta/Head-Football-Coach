@@ -102,7 +102,7 @@
           <div class='w3-row-padding'>
             <div class='w3-col l5 m12 playerOverviewRatingBox'>
               <div class="w3-card margin-bottom-24">
-                <table class='width100 w3-table-all'>
+                <table class='width100 w3-table-all no-border'>
                     {% for skill_group in skills%}
                     {% if skill_group.top_show%}
                     <thead>
@@ -292,78 +292,10 @@
       <div class="tab-content" style='display:none;' id="nav-stats" >
         <div class='w3-container w3-margin-bottom'>
             <div class='w3-row-padding'>
-              <div class='w3-col l10 m12'>
-
-                <div id="PlayerSeasonStatDivClone" class='w3-hide w3-card margin-bottom-24'>
-                  <div class='w3-bar team-primary-background-bar'>
-
-                  </div>
-                  <table id="PlayerSeasonStatTableClone" class='w3-hide w3-table-all width100 no-border center-text-row' style=''>
-                    <thead>
-                      <tr >
-                        <!-- Game -->
-                        <th class='' scope="col">Season</th>
-                        <th class='initialSortColumn' data-defaultsort="asc">Team</th>
-                        <th>Class</th>
-
-                        <!-- Passing Stats -->
-                        <th>CMP</th>
-                        <th>ATT</th>
-                        <th>CMP %</th>
-                        <th>YRDs</th>
-                        <th>YPA</th>
-                        <th>TDs</th>
-                        <th>INTs</th>
-                        <th>Sacks</th>
-
-                        <!-- Rushing Stats -->
-                        <th>CAR</th>
-                        <th>YRDs</th>
-                        <th>YPC</th>
-                        <th>TDs</th>
-                        <th>FUM</th>
-                        <th>20+</th>
-                        <th>LNG</th>
-
-                        <!-- Receiving Stats -->
-                        <th>TGT</th>
-                        <th>REC</th>
-                        <th>YRDs</th>
-                        <th>YPC</th>
-                        <th>TD</th>
-                        <th>LNG</th>
-
-                        <!-- Blocking Stats -->
-                        <th>PNC</th>
-                        <th>SCK</th>
-
-                        <!-- Defense Stats -->
-                        <th>TCK</th>
-                        <th>TFL</th>
-                        <th>SACK</th>
-                        <th>INT</th>
-                        <th>DEF</th>
-                        <th>FF</th>
-                        <th>FR</th>
-
-                        <!-- Kicking Stats -->
-                        <th>FGM</th>
-                        <th>FGA</th>
-                        <th>XPM</th>
-                        <th>XPA</th>
-
-                      </tr>
-                    </thead>
-                    <tfoot>
-                      <tr>
-                      </tr>
-                    </tfoot>
-                   </table>
-                </div>
+              <div class='w3-col l10 m12' id='player-stats-season-stat-div'>
 
               </div>
             </div>
-
         </div>
       </div>
       <div class="tab-content" style='display:none;' id="nav-game-log" >
@@ -429,13 +361,14 @@
           <div class='w3-row-padding'>
             <div class='w3-col l12 mw1000'>
               <div class="w3-card margin-bottom-24">
-                <table class='width100 w3-table-all'>
+                <table class='width100 w3-table-all no-border'>
                     {% for skill_group in skills%}
                     <thead>
                     <tr class='team-primary-background'>
                       <th colspan="3">{{skill_group.rating_group}}</th>
                       <th class=" text-center">Avg {{player.Position}} Starter</th>
-                      <th class=" text-center">Avg {{CurrentPlayerTeamSeason.TeamSeasonID.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceAbbreviation}} {{player.Position}} Starter</th>
+                      {# TODO Fix conference name from action #}
+                      <th class=" text-center">Avg {{current_player_team_season.team_season.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceAbbreviation}} {{player.Position}} Starter</th>
                     </tr>
                     </thead>
 

@@ -174,7 +174,7 @@
                     <th value-key='player_team_season.season_stats.passing.yards'>Yards</th>
                     <th value-key='player_team_season.season_stats.passing.attempts'>Att</th>
                     <th value-key='player_team_season.season_stats.passing.completions'>Cmp</th>
-                    <th value-key='player_team_season.passing_completion_percentage'>Cmp%</th>
+                    <th value-key='player_team_season.season_stats.passing_completion_percentage'>Cmp%</th>
                     <th value-key='player_team_season.season_stats.passing.tds'>TDs</th>
                     <th class='col-group' value-key='player_team_season.season_stats.passing.ints'>Ints</th>
                     {% endif %}
@@ -183,7 +183,7 @@
                     <!-- RUSHING -->
                     <th value-key='player_team_season.season_stats.rushing.yards'>Yards</th>
                     <th value-key='player_team_season.season_stats.rushing.carries'>Car</th>
-                    <th value-key='player_team_season.rushing_yards_per_carry'>YPC</th>
+                    <th value-key='player_team_season.season_stats.rushing_yards_per_carry'>YPC</th>
                     <th value-key='player_team_season.season_stats.rushing.broken_tackles'>Brk</th>
                     <th class='col-group' value-key='player_team_season.season_stats.rushing.tds'>TDs</th>
                     {% endif %}
@@ -192,7 +192,7 @@
                     <!-- RECEIVING -->
                     <th value-key='player_team_season.season_stats.receiving.yards'>Yards</th>
                     <th value-key='player_team_season.season_stats.receiving.receptions'>Rec</th>
-                    <th value-key='player_team_season.receiving_yards_per_catch'>YPC</th>
+                    <th value-key='player_team_season.season_stats.receiving_yards_per_catch'>YPC</th>
                     <th value-key='player_team_season.season_stats.receiving.targets'>Tgt</th>
                     <th  class='col-group' value-key='player_team_season.season_stats.receiving.tds'>TDs</th>
                     {% endif %}
@@ -210,8 +210,8 @@
                     <th value-key='player_team_season.season_stats.defense.sacks'>Sacks</th>
                     <th value-key='player_team_season.season_stats.defense.ints'>Ints</th>
                     <th value-key='player_team_season.season_stats.defense.deflections'>Defl</th>
-                    <th value-key='player_team_season.season_stats.fumbles.forces'>FF</th>
-                    <th class='col-group' value-key='player_team_season.season_stats.fumbles.recovered'>FR</th>     
+                    <th value-key='player_team_season.fumbles.forces'>FF</th>
+                    <th class='col-group' value-key='player_team_season.fumbles.recovered'>FR</th>     
                     {% endif %}
 
                     {% if column_controls.Stats.kicking.shown %}
@@ -308,8 +308,8 @@
                   <td>{{player.player_team_season.season_stats.defense.sacks|OrZero}}</td>
                   <td>{{player.player_team_season.season_stats.defense.ints|OrZero}}</td>
                   <td>{{player.player_team_season.season_stats.defense.deflections|OrZero}}</td>
-                  <td>{{player.player_team_season.season_stats.fumbles.forced|OrZero}}</td>
-                  <td class='col-group'>{{player.player_team_season.season_stats.fumbles.recovered|OrZero}}</td>
+                  <td>{{player.player_team_season.fumbles.forced|OrZero}}</td>
+                  <td class='col-group'>{{player.player_team_season.fumbles.recovered|OrZero}}</td>
                   {% endif %}
 
                   {% if column_controls.Stats.kicking.shown %}

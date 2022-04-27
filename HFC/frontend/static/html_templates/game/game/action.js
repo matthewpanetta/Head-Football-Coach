@@ -404,8 +404,8 @@ const getHtml = async (common) => {
     }
 
     if (
-      game.home_team_game.team_season.stats.season_stats.games.games_played +
-        game.away_team_game.team_season.stats.season_stats.games.games_played ==
+      game.home_team_game.team_season.stats.games.games_played +
+        game.away_team_game.team_season.stats.games.games_played ==
       0
     ) {
       season_stats = [];
