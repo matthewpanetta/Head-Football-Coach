@@ -173,22 +173,9 @@ const action = async (common) => {
     );
     var conferences = await db.conference.toArray();
 
-    console.log({
-      conferences: conferences,
-      school_names_to_include: school_names_to_include,
-      teams_from_json: teams_from_json,
-      conference_name_by_school_name:conference_name_by_school_name
-    });
-
     teams_from_json = teams_from_json.filter((t) =>
     school_names_to_include.includes(t.school_name)
     );
-
-    console.log({
-      conferences: conferences,
-      school_names_to_include: school_names_to_include,
-      teams_from_json: teams_from_json,
-    });
 
     common.season = season;
 

@@ -2309,6 +2309,10 @@ table tr td.padding-left-8 {
   background-color: #efefef;
 }
 
+.football-table-row:nth-child(odd) {
+  background-color: #ffffff;
+}
+
 
 .football-table-row {
   margin: 0px;
@@ -2506,4 +2510,10 @@ table {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
+}
+
+.sticky-column {
+  position: sticky;
+  background-color: inherit;
+  z-index: 3;
 }

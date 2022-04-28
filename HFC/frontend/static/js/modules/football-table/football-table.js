@@ -2,16 +2,19 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
   var data = [];
   const table = $(table_id);
 
-  console.log({th: $(table_id).find("th"),aaa: $(table_id).find("tr:not(.football-table-column-groups) th")})
+  console.log({
+    th: $(table_id).find("th"),
+    aaa: $(table_id).find("tr:not(.football-table-column-groups) th"),
+  });
 
   $(table_id)
     .find("tr:not(.football-table-column-groups) th")
     .on("click", function (event) {
       var clicked_th = $(event.target);
-      if (clicked_th.hasClass('no-sort')){
-          return true;
+      if (clicked_th.hasClass("no-sort")) {
+        return true;
       }
-      
+
       var sort_direction = clicked_th.attr("sort-order") || "sort-desc";
       if ($(clicked_th).hasClass("sort-desc")) {
         sort_direction = "sort-asc";
@@ -29,7 +32,11 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
       clicked_th.addClass(sort_direction);
 
       const th_index = clicked_th.index();
-      console.log({clicked_th:clicked_th, sort_direction:sort_direction, th_index:th_index})
+      console.log({
+        clicked_th: clicked_th,
+        sort_direction: sort_direction,
+        th_index: th_index,
+      });
 
       var data_rows = $(table_id).find("tbody tr").toArray();
       data = data_rows.map((tr) => ({
@@ -57,7 +64,7 @@ const get_initial_column_controls = (subject) => {
   if (subject == "player stats") {
     return {
       Stats: {
-        games: { shown: true, display: "Games" },
+        games: { shown: false, display: "Games" },
         passing: { shown: false, display: "Passing" },
         rushing: { shown: false, display: "Rushing" },
         receiving: { shown: false, display: "Receiving" },
@@ -66,6 +73,7 @@ const get_initial_column_controls = (subject) => {
         kicking: { shown: false, display: "Kicking" },
       },
       Ratings: {
+        overall: { shown: true, display: "Overall" },
         athleticism: { shown: false, display: "Athleticsm" },
         passing: { shown: false, display: "Throwing" },
         rushing: { shown: false, display: "Running" },
@@ -76,7 +84,6 @@ const get_initial_column_controls = (subject) => {
       },
       Personal: {
         personal: { shown: false, display: "Personal" },
-        awards: { shown: false, display: "Awards" },
       },
     };
   }
@@ -85,7 +92,12 @@ const get_initial_column_controls = (subject) => {
 
 const get_initial_sorted_columns = (subject) => {
   if (subject == "player stats") {
-    return [{ key: "player_id", sort_direction: "sort-asc" }];
+    return [
+      {
+        key: "player_team_season.ratings.overall.overall",
+        sort_direction: "sort-desc",
+      },
+    ];
   }
 
   return [];
@@ -269,6 +281,7 @@ async function create_football_table(common, table_config) {
     table_template_html_text,
     {
       column_controls: table_config.column_control.column_controls,
+      display_team: table_config.display_team || false,
       pagination: table_config.pagination,
       page: common.page,
       data: table_config.display_data,

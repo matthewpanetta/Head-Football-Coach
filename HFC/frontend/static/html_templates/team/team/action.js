@@ -745,7 +745,7 @@ const action = async (common) => {
       all_team_seasons,
       team_season_stats_by_team_season_id,
       "team_season_id",
-      "season_stats"
+      "stats"
     );
 
     var tier_map = {
@@ -758,7 +758,9 @@ const action = async (common) => {
       7: "terrible",
     };
 
-    console.log("team_stats", team_stats);
+    console.log("team_stats", {team_stats:team_stats, all_team_seasons:all_team_seasons});
+    all_team_seasons = all_team_seasons.filter(ts => ts.stats.season_stats.games.games_played > 0);
+
     for (var stat_group of team_stats) {
       console.log("stat_group", stat_group);
       for (var stat_detail_key in stat_group.stats) {
@@ -774,7 +776,8 @@ const action = async (common) => {
         stat_detail.team_value =
           team.team_season.season_stats[stat_detail.stat];
 
-        all_team_season_stat_value = all_team_seasons.map(ts => ts.season_stats[stat_detail.stat]).sort(function (
+        console.log({all_team_seasons:all_team_seasons, stat_detail:stat_detail})
+        all_team_season_stat_value = all_team_seasons.map(ts => ts.stats[stat_detail.stat]).sort(function (
             value_a,
             value_b
           ) {

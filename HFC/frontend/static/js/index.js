@@ -2179,7 +2179,7 @@ const create_schedule = async (data) => {
 
 	var games_to_create = [],team_games_to_create = [],team_games_to_create_ids = [];
 	var team_season_schedule_tracker = {}
-	const games_per_team = 8;
+	const games_per_team = 12;
 	const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 	team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
@@ -2816,7 +2816,6 @@ const create_player_team_seasons = async (data) => {
 		player_team_season_id_counter = last_player_team_season.player_team_season_id + 1;
 	}
 
-
 	var team_position_options = [
 		{QB: 6, RB: 5, FB:1, WR:8 , TE:4, OT:5, IOL:8, EDGE:6, DL:7, LB: 7 , CB:7, S:4, K:1, P:2},
 		{QB: 4, RB: 5, FB:1, WR:8 , TE:4, OT:4, IOL:8, EDGE:6, DL:5, LB: 12, CB:6, S:5, K:1, P:2},
@@ -2929,7 +2928,6 @@ const create_player_team_seasons = async (data) => {
 
 			player_team_seasons_tocreate.push(new_pts);
 			player_team_season_id_counter +=1;
-
 	}
 
 	var goal_overall_max = 99;
@@ -2938,7 +2936,6 @@ const create_player_team_seasons = async (data) => {
 
 	for (const player_team_season of player_team_seasons_tocreate){
 		player_team_season.ratings.overall.overall = Math.floor((((player_team_season.ratings.overall.overall - position_overall_min[player_team_season.position]) * goal_overall_range) / (position_overall_max[player_team_season.position] - position_overall_min[player_team_season.position])) + goal_overall_min)
-
 	}
 
 	const player_team_seasons_by_position = index_group_sync(player_team_seasons_tocreate, 'group', 'position');
@@ -2958,8 +2955,8 @@ const create_player_team_seasons = async (data) => {
 		for (const team_season_id of position_team_season_ids){
 
 			var team_season = team_seasons_by_team_season_id[team_season_id];
-			var team_prestige = team_season.team.team_ratings.program_history
-			var prestige_slice_ratio = 1 - ((team_prestige ** 1.5) / (20 ** 1.5));
+			var team_prestige = (((3 * team_season.team.team_ratings.program_history) + (3 * team_season.team.team_ratings.brand) + (3 * team_season.team.team_ratings.team_competitiveness)+ (3 * team_season.team.team_ratings.pro_pipeline)+ team_season.team.team_ratings.location) / 13)
+			var prestige_slice_ratio = 1 - ((team_prestige ** 2) / (20 ** 2));
 			var prestige_slice_bound = player_team_seasons.length * prestige_slice_ratio;
 
 			var player_team_season_index = Math.floor(Math.random() * prestige_slice_bound);
@@ -3014,7 +3011,6 @@ const create_player_team_seasons = async (data) => {
 
 		position_overall_max[player_team_season.position] = Math.max(position_overall_max[player_team_season.position], player_team_season.ratings.overall.overall)
 		position_overall_min[player_team_season.position] = Math.min(position_overall_min[player_team_season.position], player_team_season.ratings.overall.overall)
-
 	}
 
 	for (const player_team_season of player_team_seasons_tocreate){
@@ -3143,7 +3139,7 @@ const create_week = async (phases, common, season) => {
 											// {week_name:'Summer Week 3', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
 											// {week_name:'Summer Week 4', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
 
-													{week_name:'Pre-Season', is_current: false, phase_id: phases['Pre-Season']['phase_id'], schedule_week_number: null},
+						{week_name:'Pre-Season', is_current: false, phase_id: phases['Pre-Season']['phase_id'], schedule_week_number: null},
 
                           {week_name:'Week 1',  is_current: false,  phase_id: phases['Regular Season']['phase_id'], schedule_week_number: 1},
                           {week_name:'Week 2',  is_current: false, phase_id: phases['Regular Season']['phase_id'], schedule_week_number: 2},
@@ -7696,20 +7692,109 @@ const inches_to_height = (all_inches) => {
 }
 
 const body_from_position = (position) => {
-  const position_measurables = {"QB":{"height_avg":74.91,"height_std":1.79,"weight_avg":212.94,"weight_std":10.64},"RB":{"height_avg":70.24,"height_std":1.83,"weight_avg":212.94,"weight_std":13.65},"FB":{"height_avg":70,"height_std":2,"weight_avg":220,"weight_std":13.65},"WR":{"height_avg":72.7,"height_std":2.36,"weight_avg":202.91,"weight_std":15.36},"TE":{"height_avg":76.2,"height_std":1.34,"weight_avg":251.48,"weight_std":8.7},"OT":{"height_avg":77.61,"height_std":1.12,"weight_avg":313.74,"weight_std":10.95},"IOL":{"height_avg":76.07,"height_std":1.16,"weight_avg":314.75,"weight_std":11.76},"EDGE":{"height_avg":75.83,"height_std":1.44,"weight_avg":260,"weight_std":14.81},"DL":{"height_avg":74.92,"height_std":1.43,"weight_avg":307.49,"weight_std":15.8},"LB":{"height_avg":73.22,"height_std":1.27,"weight_avg":240.96,"weight_std":6.6},"CB":{"height_avg":71.35,"height_std":1.59,"weight_avg":193.42,"weight_std":8.76},"S":{"height_avg":72.15,"height_std":1.5,"weight_avg":206.38,"weight_std":9.08},"K":{"height_avg":71.89,"height_std":2,"weight_avg":195,"weight_std":17},"P":{"height_avg":74.31,"height_std":1.89,"weight_avg":213,"weight_std":14.6}}
+  const position_measurables = {
+    QB: {
+      height_avg: 74.91,
+      height_std: 1.79,
+      weight_avg: 212.94,
+      weight_std: 10.64,
+    },
+    RB: {
+      height_avg: 70.24,
+      height_std: 1.83,
+      weight_avg: 212.94,
+      weight_std: 13.65,
+    },
+    FB: { height_avg: 70, height_std: 2, weight_avg: 220, weight_std: 13.65 },
+    WR: {
+      height_avg: 72.7,
+      height_std: 2.36,
+      weight_avg: 202.91,
+      weight_std: 15.36,
+    },
+    TE: {
+      height_avg: 76.2,
+      height_std: 1.34,
+      weight_avg: 251.48,
+      weight_std: 8.7,
+    },
+    OT: {
+      height_avg: 77.61,
+      height_std: 1.12,
+      weight_avg: 313.74,
+      weight_std: 10.95,
+    },
+    IOL: {
+      height_avg: 76.07,
+      height_std: 1.16,
+      weight_avg: 314.75,
+      weight_std: 11.76,
+    },
+    EDGE: {
+      height_avg: 75.83,
+      height_std: 1.44,
+      weight_avg: 260,
+      weight_std: 14.81,
+    },
+    DL: {
+      height_avg: 74.92,
+      height_std: 1.43,
+      weight_avg: 307.49,
+      weight_std: 15.8,
+    },
+    LB: {
+      height_avg: 73.22,
+      height_std: 1.27,
+      weight_avg: 240.96,
+      weight_std: 6.6,
+    },
+    CB: {
+      height_avg: 71.35,
+      height_std: 1.59,
+      weight_avg: 193.42,
+      weight_std: 8.76,
+    },
+    S: {
+      height_avg: 72.15,
+      height_std: 1.5,
+      weight_avg: 206.38,
+      weight_std: 9.08,
+    },
+    K: { height_avg: 71.89, height_std: 2, weight_avg: 195, weight_std: 17 },
+    P: {
+      height_avg: 74.31,
+      height_std: 1.89,
+      weight_avg: 213,
+      weight_std: 14.6,
+    },
+  };
 
-	var height_inches = Math.floor(normal_trunc( position_measurables[position]['height_avg'],position_measurables[position]['height_std'], 66, 81));
-	var body = {height_inches:height_inches};
+  var height_inches = Math.floor(
+    normal_trunc(
+      position_measurables[position]["height_avg"],
+      position_measurables[position]["height_std"],
+      66,
+      81
+    )
+  );
+  var body = { height_inches: height_inches };
 
-	var height_variations = 0//(height_inches - position_measurables[position]['height_avg']) / position_measurables[position]['height_std'];
-	var weight = Math.floor(normal_trunc( position_measurables[position]['weight_avg'] * (1 + (height_variations/4)),position_measurables[position]['weight_std'] * .8, 150, 390))
+  var height_variations = 0; //(height_inches - position_measurables[position]['height_avg']) / position_measurables[position]['height_std'];
+  var weight = Math.floor(
+    normal_trunc(
+      position_measurables[position]["weight_avg"] *
+        (1 + height_variations / 4),
+      position_measurables[position]["weight_std"] * 0.8,
+      150,
+      390
+    )
+  );
 
-	body.weight = weight;
+  body.weight = weight;
   body.height = inches_to_height(body.height_inches);
 
   return body;
-
-}
+};
 
 
 const initialize_scoreboard = () => {
