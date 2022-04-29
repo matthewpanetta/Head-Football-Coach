@@ -27,7 +27,7 @@ const getHtml = async (common) => {
 
   for (const search_keyword of search_keywords){
     player_results = player_results.filter(p => p.name.last.toLowerCase().includes(search_keyword.toLowerCase()) || p.name.first.toLowerCase().includes(search_keyword.toLowerCase()))
-    team_results = team_results.filter(t =>  t.school_name.toLowerCase().includes(search_keyword.toLowerCase()) || t.team_name.toLowerCase().includes(search_keyword.toLowerCase()));
+    team_results = team_results.filter(t =>  t.location.city.toLowerCase().includes(search_keyword.toLowerCase()) || t.location.state.toLowerCase().includes(search_keyword.toLowerCase()) || t.school_name.toLowerCase().includes(search_keyword.toLowerCase()) || t.team_name.toLowerCase().includes(search_keyword.toLowerCase()));
   }
 
   var player_ids = player_results.map(p => p.player_id);
@@ -77,28 +77,7 @@ const getHtml = async (common) => {
 }
 
     const action = async (common) => {
-
-      var player_table = $('#player-search-table').DataTable({
-          "filter": false,
-          "ordering": true,
-          "lengthChange" : false,
-          "pageLength": 10,
-          "pagingType": "full_numbers",
-          "paginationType": "full_numbers",
-          "paging": true,
-          'order': [[ 5, "desc" ], [ 6, "desc" ]],
-      })
-
-      var team_table = $('#team-search-table').DataTable({
-          "filter": false,
-          "ordering": true,
-          "lengthChange" : false,
-          "pageLength": 10,
-          "pagingType": "full_numbers",
-          "paginationType": "full_numbers",
-          "paging": true,
-          'order': [[ 1, "asc" ]],
-      })
+      return 0;
 
     }
 

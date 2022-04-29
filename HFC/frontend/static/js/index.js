@@ -1932,79 +1932,146 @@ const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(
 
 
 const initialize_new_season = async (this_week, common) => {
+  const db = common.db;
+  const current_season = this_week.season;
+  var current_league_season = await db.league_season
+    .where({ season: current_season })
+    .toArray();
+  current_league_season = current_league_season[0];
 
-	const db = common.db;
-	const current_season = this_week.season;
-	var current_league_season = await db.league_season.where({season:current_season}).toArray();
-	current_league_season = current_league_season[0]
+  const new_season = current_season + 1;
+  await db.team_season.where({ season: new_season }).delete();
+  await db.league_season.where({ season: new_season }).delete();
+  await db.player_team_season.where({ season: new_season }).delete();
+  common.season = new_season;
+  const world_id = common.world_id;
 
-	const new_season = current_season + 1;
-	await db.team_season.where({season: new_season}).delete();
-	await db.league_season.where({season: new_season}).delete();
-	await db.player_team_season.where({season: new_season}).delete();
-	common.season = new_season;
-	const world_id= common.world_id;
+  const teams = await db.team.where("team_id").above(0).toArray();
 
-	const teams = await db.team.where('team_id').above(0).toArray();
+  const num_teams = teams.length;
 
-	const num_teams = teams.length;
+  const new_season_data = {
+    season: new_season,
+    world_id: world_id,
+    captains_per_team: 3,
+    players_per_team: 70,
+    num_teams: num_teams,
+	league_style: 'regional' // traditional, regional
+  };
+  const new_season_obj = new league_season(
+    new_season_data,
+    current_league_season
+  );
 
-	const new_season_data = {season: new_season, world_id: world_id, captains_per_team: 3, players_per_team: 70,  num_teams: num_teams}
-	const new_season_obj = new league_season(new_season_data, current_league_season)
+  // await db.league_season.delete(new_season);
+  // await db.phase.where({season: new_season}).delete();
+  // await db.week.where({season: new_season}).delete();
+  // await db.team_season.where({season: new_season}).delete();
+  // await db.player_team_season.where({season: new_season}).delete();
 
-	// await db.league_season.delete(new_season);
-	// await db.phase.where({season: new_season}).delete();
-	// await db.week.where({season: new_season}).delete();
-	// await db.team_season.where({season: new_season}).delete();
-	// await db.player_team_season.where({season: new_season}).delete();
+  console.log({ new_season_obj: new_season_obj });
+  await db.league_season.add(new_season_obj);
+  // current_league_season.is_current_season = false;
+  // await db.league_season.put(current_league_season);
 
+  const phases_created = await common.create_phase(new_season, common);
+  await common.create_week(phases_created, common, new_season);
 
-	console.log({new_season_obj:new_season_obj})
-	await db.league_season.add(new_season_obj);
-	// current_league_season.is_current_season = false;
-	// await db.league_season.put(current_league_season);
+  var conferences = await db.conference.toArray();
+  await common.create_conference_seasons({
+    common: common,
+    conferences: conferences,
+    season: new_season,
+    world_id: world_id,
+  });
+  var conference_seasons = index_group_sync(
+    await db.conference_season.where({ season: new_season }).toArray(),
+    "index",
+    "conference_id"
+  );
 
+  conferences = nest_children(
+    conferences,
+    conference_seasons,
+    "conference_id",
+    "conference_season"
+  );
+  var conference_by_conference_name = index_group_sync(
+    conferences,
+    "index",
+    "conference_name"
+  );
 
-	const phases_created = await common.create_phase(new_season, common);
-	await common.create_week(phases_created, common, new_season);
+  await common.create_team_season({
+    common: common,
+    season: new_season,
+    world_id: world_id,
+    conferences_by_conference_name: conference_by_conference_name,
+  });
 
-	var conferences =  await db.conference.toArray();
-	await common.create_conference_seasons({common:common, conferences:conferences, season:new_season, world_id:world_id})
-	var conference_seasons =  index_group_sync(await db.conference_season.where({season:new_season}).toArray(), 'index','conference_id');
+  const all_weeks = await db.week.where({ season: new_season }).toArray();
+  const next_week = all_weeks[0];
 
-	conferences = nest_children(conferences, conference_seasons, 'conference_id', 'conference_season');
-	var conference_by_conference_name = index_group_sync(conferences, 'index', 'conference_name')
+  next_week.phase = await db.phase.get({ phase_id: this_week.phase_id });
+  next_week.phase.season = new_season;
 
-	await common.create_team_season({common: common, season:new_season, world_id: world_id, conferences_by_conference_name:conference_by_conference_name});
+  console.log("this_week", next_week, all_weeks, common);
 
+  var team_seasons = await db.team_season
+    .where({ season: new_season })
+    .and((ts) => ts.team_id > 0)
+    .toArray();
+  const teams_by_team_id = await index_group(
+    await db.team.where("team_id").above(0).toArray(),
+    "index",
+    "team_id"
+  );
 
-	const all_weeks = await db.week.where({season: new_season}).toArray();
-	const next_week = all_weeks[0];
+  var players = await db.player.toArray(); //TODO - I'll regret this once players graduate & start fresh
+  const previous_team_seasons = await db.team_season
+    .where({ season: current_season })
+    .and((ts) => ts.team_id > 0)
+    .toArray();
+  const previous_player_team_seasons = await db.player_team_season
+    .where({ season: current_season })
+    .toArray();
+  const previous_player_team_seasons_by_player_id = index_group_sync(
+    previous_player_team_seasons,
+    "index",
+    "player_id"
+  );
+  players = nest_children(
+    players,
+    previous_player_team_seasons_by_player_id,
+    "player_id",
+    "previous_player_team_season"
+  );
+  players = players.filter(
+    (p) =>
+      p.previous_player_team_season != undefined &&
+      p.previous_player_team_season.team_season_id > 0
+  );
 
-	next_week.phase = await db.phase.get({phase_id: this_week.phase_id});
-	next_week.phase.season = new_season;
+  await common.create_new_player_team_seasons({
+    common: common,
+    players: players,
+    previous_team_seasons: previous_team_seasons,
+    team_seasons: team_seasons,
+    world_id: world_id,
+    season: new_season,
+  });
+  await common.populate_all_depth_charts(common);
 
-	console.log('this_week',next_week, all_weeks, common)
+  await common.calculate_team_overalls(common);
+  await common.calculate_national_rankings(next_week, all_weeks, common);
+  await common.calculate_conference_rankings(next_week, all_weeks, common);
 
-	var team_seasons = await db.team_season.where({season: new_season}).and(ts => ts.team_id > 0).toArray();
-	const teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id')
-
-	var players = await db.player.toArray(); //TODO - I'll regret this once players graduate & start fresh
-	const previous_team_seasons = await db.team_season.where({season: current_season}).and(ts => ts.team_id > 0).toArray();
-	const previous_player_team_seasons = await db.player_team_season.where({season: current_season}).toArray();
-	const previous_player_team_seasons_by_player_id = index_group_sync(previous_player_team_seasons, 'index', 'player_id')
-	players = nest_children(players, previous_player_team_seasons_by_player_id, 'player_id', 'previous_player_team_season');
-	players = players.filter(p => p.previous_player_team_season != undefined && p.previous_player_team_season.team_season_id > 0);
-
-	await common.create_new_player_team_seasons({common: common, players:players, previous_team_seasons:previous_team_seasons, team_seasons:team_seasons, world_id:world_id, season:new_season})
-	await common.populate_all_depth_charts(common);
-
-	await common.calculate_team_overalls(common);
-	await common.calculate_national_rankings(next_week, all_weeks, common)
-	await common.calculate_conference_rankings(next_week, all_weeks, common)
-
-	await common.create_schedule({common: common, season:new_season, world_id:world_id});
-}
+  await common.create_schedule({
+    common: common,
+    season: new_season,
+    world_id: world_id,
+  });
+};
 
 const create_team_season = async (data) => {
 

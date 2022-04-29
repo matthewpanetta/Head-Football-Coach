@@ -52,7 +52,7 @@ const getHtml = async (common) => {
   };
 
   const NavBarLinks = await common.nav_bar_links({
-    path: "PlayerStats",
+    path: "Player Stats",
     group_name: "Almanac",
     db: db,
   });
