@@ -35,8 +35,9 @@ function AddBoxScoreListeners() {
 
   var SelectedTeamID = $(InitialBoxScore).attr("TeamID");
 
-  $(".boxscore-tab").on("click", function (event, target) {
-    var ClickedTab = $(event.target);
+  $("button.boxscore-tab").on("click", function (event, target) {
+    console.log({target: $(event.currentTarget), event:event, SelectedTeamID:SelectedTeamID, InitialBoxScore:InitialBoxScore})
+    var ClickedTab = $(event.currentTarget);
     var ClickedTabParent = ClickedTab.closest(".boxscore-bar").attr("id");
     var SelectedTeamID = ClickedTab.attr("TeamID");
     var SelectedGameID = ClickedTab.attr("GameID");

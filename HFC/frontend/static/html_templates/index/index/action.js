@@ -143,7 +143,8 @@ const action = async (common) => {
       "conference_name"
     );
 
-    var conferences_from_json = await common.get_conferences('-regional');
+    // var conferences_from_json = await common.get_conferences('-regional');
+    var conferences_from_json = await common.get_conferences('');
     console.log({conferences_from_json:conferences_from_json})
 
     var school_names_to_include = [];

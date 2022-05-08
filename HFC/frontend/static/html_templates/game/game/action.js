@@ -403,9 +403,12 @@ const getHtml = async (common) => {
         teams_by_team_id[game.outcome.winning_team.team_id];
     }
 
+    console.log({game:game});
+    debugger;
+
     if (
-      game.home_team_game.team_season.stats.games.games_played +
-        game.away_team_game.team_season.stats.games.games_played ==
+      game.home_team_game.team_season.stats.season_stats.games.games_played +
+        game.away_team_game.team_season.stats.season_stats.games.games_played ==
       0
     ) {
       season_stats = [];
@@ -464,11 +467,11 @@ const getHtml = async (common) => {
 
     for (const season_stat of season_stats) {
       season_stat.home_team_value = get(
-        game.home_team_game.team_season,
+        game.home_team_game.team_season.stats,
         season_stat.attribute
       );
       season_stat.away_team_value = get(
-        game.away_team_game.team_season,
+        game.away_team_game.team_season.stats,
         season_stat.attribute
       );
       season_stat.max_val = Math.max(

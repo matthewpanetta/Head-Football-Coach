@@ -25,25 +25,6 @@
     ]
   },
   {
-    "conference_name": "Ivy League",
-    "conference_abbreviation": "Ivy",
-    "prestige": 1,
-    "is_independent": 0,
-    "number_conference_games": 7,
-    "hold_conference_championship_game": 1,
-    "conference_logo_url": "",
-    "original_teams": [
-      "Dartmouth",
-      "Harvard",
-      "Yale",
-      "Columbia",
-      "Princeton",
-      "Cornell",
-      "Penn",
-      "Brown"
-    ]
-  },
-  {
     "conference_name": "American Athletic Conference",
     "conference_abbreviation": "AAC",
     "prestige": 5,

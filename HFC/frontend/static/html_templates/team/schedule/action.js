@@ -196,7 +196,7 @@
       $('#TeamSchedule').empty()
       $('#TeamSchedule').html(renderedHtml)
 
-      init_basic_table_sorting(common, '#TeamSchedule', 0)
+      init_basic_table_sorting(common, '#TeamSchedule', null)
     
     }
 

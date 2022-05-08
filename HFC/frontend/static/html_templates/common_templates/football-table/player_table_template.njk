@@ -13,7 +13,7 @@
         {% endif %}
 
       <!-- BASELINE -->
-      <col style='width:  20px;'>
+      <col style='width:  30px;'>
       <col style='width: 150px;'>
       <col>
       <col>
@@ -151,7 +151,7 @@
         <tr class='football-table-column-groups team-primary-background-bar' style=' height: 30px;'>
           <!-- BASELINE -->
           {% if display_team %}
-          <th colspan='2' style='width: 140px;' class='center-text col-group'>Team</th>
+          <th colspan='2' style='width: 150px;' class='center-text col-group'>Team</th>
           {% endif %}
 
           <th colspan='6' style='width: 410px;' class='center-text col-group'>Player</th>
@@ -240,12 +240,12 @@
         <tr class='football-table-column-headers unselectable' style=' height: 30px; '>
           {% if display_team %}
           <th style='width: 50px; left: 0px;' class='sticky-column' value-key='player_team_season.team_season.team.full_name' sort-order='sort-asc'></th>
-          <th style='width: 90px; left: 20px;' class='left-text sticky-column' value-key='player_team_season.team_season.team.school_name' sort-order='sort-asc'>Team</th>
+          <th style='width: 90px; left: 30px;' class='left-text sticky-column' value-key='player_team_season.team_season.team.school_name' sort-order='sort-asc'>Team</th>
           {% endif %}
 
           <!-- BASELINE -->
-          <th style='width: 20px; left: 0px;' class='sticky-column'></th>
-          <th style='width: 150px; left: 20px;' class='left-text sticky-column' value-key='full_name' sort-order='sort-asc'>Name</th>
+          <th style='width: 30px; left: 0px;' class='sticky-column'></th>
+          <th style='width: 150px; left: 30px;' class='left-text sticky-column' value-key='full_name' sort-order='sort-asc'>Name</th>
           <th value-key='player_team_season.position_sort_order' sort-order='sort-asc'>Pos</th>
           <th value-key='player_team_season.class_sort_order'>Class</th>
           <th value-key='body.height_inches'>Ht</th>
@@ -408,17 +408,17 @@
                 <img class='worldTeamStatLogo' src='{{player.player_team_season.team_season.team.team_logo}}' />
               </a>
             </td>
-            <td style='width: 90px; left: 20px; color:white; background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}};' class='left-text sticky-column'>
+            <td style='width: 90px; left: 30px; color:white; background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}};' class='left-text sticky-column'>
               <a href='{{player.player_team_season.team_season.team.team_href}}'>
                 {{player.player_team_season.team_season.team.school_name}}
               </a>
             </td>
             {% endif %}
             <!-- BASELINE -->
-            <td class='sticky-column' style='width:  20px; left: 0px; background-color: inherit;' >
+            <td class='sticky-column' style='width:  30px; left: 0px; background-color: inherit;' >
               <i class="fa fa-address-card player-profile-popup-icon"></i>
             </td>
-            <td style='width: 150px; left: 20px;'class='left-text sticky-column'>
+            <td style='width: 150px; left: 30px;'class='left-text sticky-column'>
               <a href="{{player.player_href}}">{{player.full_name}}</a>
             </td>
             <td>{{player.position}}</td>

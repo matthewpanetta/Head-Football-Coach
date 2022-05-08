@@ -152,25 +152,6 @@
     ]
   },
   {
-    "conference_name": "Lone Star Conference",
-    "conference_abbreviation": "LSC",
-    "prestige": 10,
-    "is_independent": 0,
-    "number_conference_games": 7,
-    "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/PAC-12_Conference.png",
-    "original_teams": [
-      "Houston",
-      "Rice",
-      "Texas",
-      "Texas A&M",
-      "Texas State",
-      "Texas Tech",
-      "UTEP",
-      "UTSA"
-    ]
-  },
-  {
     "conference_name": "Midwest Conference",
     "conference_abbreviation": "MWC",
     "prestige": 8,
@@ -256,13 +237,32 @@
     "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png",
     "original_teams": [
       "Arkansas",
-      "Baylor",
-      "North Texas",
       "Oklahoma",
       "Oklahoma State",
+      "Texas State",
+      "Tulsa",
+      "Texas",
+      "Texas Tech",
+      "UTSA"
+    ]
+  },
+  {
+    "conference_name": "Lone Star Conference",
+    "conference_abbreviation": "LSC",
+    "prestige": 10,
+    "is_independent": 0,
+    "number_conference_games": 7,
+    "hold_conference_championship_game": 1,
+    "conference_logo_url": "/static/img/ConferenceLogos/PAC-12_Conference.png",
+    "original_teams": [
+      "Houston",
+      "Rice",
+      "Texas A&M",
+      "Baylor",
+      "North Texas",
+      "UTEP",
       "SMU",
-      "TCU",
-      "Tulsa"
+      "TCU"
     ]
   },
   {

@@ -1180,6 +1180,10 @@ class team_season {
       return `${this.record.wins} - ${this.record.losses} `
     }
 
+    get net_wins(){
+      return this.record.wins - this.record.losses;
+    }
+
     get conference_record_display(){
       return `${this.record.conference_wins} - ${this.record.conference_losses} `
     }
@@ -1956,7 +1960,7 @@ const initialize_new_season = async (this_week, common) => {
     captains_per_team: 3,
     players_per_team: 70,
     num_teams: num_teams,
-	league_style: 'regional' // traditional, regional
+	league_style: 'traditional' // traditional, regional
   };
   const new_season_obj = new league_season(
     new_season_data,
@@ -2235,6 +2239,10 @@ const create_conference_seasons = async (data) => {
 	const conference_seasons_added = await db.conference_season.bulkAdd(conference_seasons_to_create);
 }
 
+const zip = (a, b) => {
+	return a.map((k, i) => [k, b[i]]);
+}
+
 const create_schedule = async (data) => {
 	const common = data.common;
 	const db = common.db;
@@ -2247,7 +2255,6 @@ const create_schedule = async (data) => {
 	var games_to_create = [],team_games_to_create = [],team_games_to_create_ids = [];
 	var team_season_schedule_tracker = {}
 	const games_per_team = 12;
-	const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 	team_seasons = await db.team_season.where({season: season}).and(ts => ts.team_id > 0).toArray();
 	const team_seasons_by_team_id = index_group_sync(team_seasons, 'index', 'team_id')
@@ -4297,7 +4304,8 @@ const seconds_to_time = (seconds) => {
 }
 
 const sim_game = (game_dict, common) => {
-  console.log('Simming game', game_dict)
+	common.stopwatch(common, `Stopwatch game ${game_dict.game.game_id}`);
+//   console.log('Simming game', game_dict)
   var team_games = game_dict.game.team_games;
 
   if (game_dict.game.was_played){
@@ -4324,7 +4332,6 @@ const sim_game = (game_dict, common) => {
     drives: []
   }
 
-  var score_possibilities = {0: 85, 3: 50, 7: 50}
 	var down_efficiency_map = {
 		1: .5,
 		2: .7,
@@ -4474,7 +4481,7 @@ const sim_game = (game_dict, common) => {
 
 				var r = Math.random() / ((offensive_player_average_overall / defensive_player_average_overall) ** 1.25);
 
-        if (r < .62){
+        if (r < .65){
           //completion
           yards_this_play = Math.floor(Math.random() * 22);
 
@@ -4488,7 +4495,7 @@ const sim_game = (game_dict, common) => {
           chosen_players.Pass_Catcher.player_team_game.game_stats.receiving.yards += yards_this_play;
 					chosen_players.Pass_Catcher.player_team_game.game_stats.receiving.lng = Math.max(chosen_players.Pass_Catcher.player_team_game.game_stats.receiving.lng, yards_this_play);
         }
-				else if (r < .67) {
+				else if (r < .70) {
 					//sack
 					chosen_players.QB.player_team_game.game_stats.passing.sacks +=1;
 
@@ -4497,7 +4504,7 @@ const sim_game = (game_dict, common) => {
 
 					yards_this_play = Math.floor(Math.random() * 7) - 8;
 				}
-				else if (r < .70) {
+				else if (r < .73) {
 					//interception
 					chosen_players.QB.player_team_game.game_stats.passing.ints +=1;
 
@@ -4542,7 +4549,7 @@ const sim_game = (game_dict, common) => {
 
       }
       else if (play_choice == 'run') {
-        yards_this_play = Math.floor(Math.random() * (5 * ((offensive_player_average_overall / defensive_player_average_overall) ** 1.75))) + 2;
+        yards_this_play = Math.floor(Math.random() * (5.2 * ((offensive_player_average_overall / defensive_player_average_overall) ** 1.75))) + 2;
 
 
 				if (Math.random() < .92){
@@ -4770,10 +4777,10 @@ const sim_game = (game_dict, common) => {
       }
 
       if (clock_running){
-        seconds_this_play = Math.floor(Math.random() * 30) + 15
+        seconds_this_play = Math.floor(Math.random() * 30) + 12
       }
       else {
-        seconds_this_play = Math.floor(Math.random() * 4) + 2
+        seconds_this_play = Math.floor(Math.random() * 4) + 1
       }
 
 			seconds_this_play = Math.min(seconds_this_play, seconds_left_in_period)
@@ -4903,7 +4910,7 @@ const sim_game = (game_dict, common) => {
 
 
 
-  console.log('Done simming!',scoring, `${game_dict.teams[offensive_team_index].school_name} vs ${game_dict.teams[defensive_team_index].school_name}`)
+//   console.log('Done simming!',scoring, `${game_dict.teams[offensive_team_index].school_name} vs ${game_dict.teams[defensive_team_index].school_name}`)
 
   game_dict.game.was_played = true;
   game_dict.game.scoring = scoring;
@@ -5027,8 +5034,8 @@ const sim_game = (game_dict, common) => {
 
     opponent_team_game.opponent_game_stats = deep_copy(team_game.game_stats);
 
-	console.log({'team_game': team_game, 'team_season': team_season})
-	console.log({'team_game.game_stats': team_game.game_stats, 'team_season.stats.season_stats': team_season.stats.season_stats})
+	// console.log({'team_game': team_game, 'team_season': team_season})
+	// console.log({'team_game.game_stats': team_game.game_stats, 'team_season.stats.season_stats': team_season.stats.season_stats})
     increment_parent(team_game.game_stats, team_season.stats.season_stats);
     increment_parent(team_game.game_stats, opponent_team_season.stats.opponent_season_stats);
 
@@ -5090,110 +5097,190 @@ const sim_game = (game_dict, common) => {
   return game_dict;
 }
 
-const sim_week_games = async(this_week, common) => {
-
+const sim_week_games = async (this_week, common) => {
   const db = await common.db;
+  var startTime = performance.now();
+  common.startTime = startTime;
 
-  var team_games_this_week = await db.team_game.where({week_id: this_week.week_id}).toArray();
-  team_games_by_game_id = await index_group( team_games_this_week, 'group', 'game_id');
+  var team_games_this_week = await db.team_game
+    .where({ week_id: this_week.week_id })
+    .toArray();
+  team_games_by_game_id = await index_group(
+    team_games_this_week,
+    "group",
+    "game_id"
+  );
 
-  var team_season_ids_playing_this_week = team_games_this_week.map(tg => tg.team_season_id);
-  var team_seasons = await db.team_season.bulkGet(team_season_ids_playing_this_week);
+  var team_season_ids_playing_this_week = team_games_this_week.map(
+    (tg) => tg.team_season_id
+  );
+  var team_seasons = await db.team_season.bulkGet(
+    team_season_ids_playing_this_week
+  );
 
-  var team_season_stats = await db.team_season_stats.bulkGet(team_season_ids_playing_this_week);
-  const team_season_stats_by_team_season_id = index_group_sync(team_season_stats, 'index', 'team_season_id');
-  team_seasons = nest_children(team_seasons, team_season_stats_by_team_season_id, 'team_season_id', 'stats')
+  var team_season_stats = await db.team_season_stats.bulkGet(
+    team_season_ids_playing_this_week
+  );
+  const team_season_stats_by_team_season_id = index_group_sync(
+    team_season_stats,
+    "index",
+    "team_season_id"
+  );
+  team_seasons = nest_children(
+    team_seasons,
+    team_season_stats_by_team_season_id,
+    "team_season_id",
+    "stats"
+  );
 
-  var team_seasons_by_team_season_id = await index_group(team_seasons, 'index', 'team_season_id');
-  var teams_by_team_id = await index_group(await db.team.where('team_id').above(0).toArray(), 'index', 'team_id');
+  var team_seasons_by_team_season_id = await index_group(team_seasons,"index", "team_season_id");
+  var teams = await db.team.where("team_id").above(0).toArray();
+  var teams_by_team_id = index_group_sync(teams,"index","team_id");
 
-  var player_team_seasons = await db.player_team_season.where('team_season_id').anyOf(team_season_ids_playing_this_week).toArray();
-  var player_team_seasons_by_team_season_id = await index_group(player_team_seasons, 'group', 'team_season_id');
+  var player_team_seasons = await db.player_team_season
+    .where("team_season_id")
+    .anyOf(team_season_ids_playing_this_week)
+    .toArray();
+  var player_team_seasons_by_team_season_id = await index_group(
+    player_team_seasons,
+    "group",
+    "team_season_id"
+  );
 
-  var player_ids = player_team_seasons.map(pts => pts.player_id)
-  var player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id)
+  var player_ids = player_team_seasons.map((pts) => pts.player_id);
+  var player_team_season_ids = player_team_seasons.map(
+    (pts) => pts.player_team_season_id
+  );
 
-  const player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
-  const player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id');
+  const player_team_season_stats = await db.player_team_season_stats.bulkGet(
+    player_team_season_ids
+  );
+  const player_team_season_stats_by_player_team_season_id = index_group_sync(
+    player_team_season_stats,
+    "index",
+    "player_team_season_id"
+  );
 
-  player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats')
+  player_team_seasons = nest_children(
+    player_team_seasons,
+    player_team_season_stats_by_player_team_season_id,
+    "player_team_season_id",
+    "season_stats"
+  );
 
-  const players_by_player_id = await index_group(await db.player.bulkGet(player_ids), 'index', 'player_id');
+  const players_by_player_id = await index_group(
+    await db.player.bulkGet(player_ids),
+    "index",
+    "player_id"
+  );
 
-  games_this_week = await db.game.where({week_id: this_week.week_id}).toArray();
-  games_this_week = games_this_week.filter(g => g.was_played == false);
+  games_this_week = await db.game
+    .where({ week_id: this_week.week_id })
+    .toArray();
+  games_this_week = games_this_week.filter((g) => g.was_played == false);
   //games_this_week = games_this_week.filter(g => g.was_played == false);
 
-	games_this_week = games_this_week.sort(function(game_a, game_b){
-		var game_a_total_rank = team_seasons_by_team_season_id[game_a.home_team_season_id] + team_seasons_by_team_season_id[game_a.away_team_season_id] + Math.min(team_seasons_by_team_season_id[game_a.home_team_season_id], team_seasons_by_team_season_id[game_a.away_team_season_id]);
-		var game_b_total_rank = team_seasons_by_team_season_id[game_b.home_team_season_id] + team_seasons_by_team_season_id[game_b.away_team_season_id] + Math.min(team_seasons_by_team_season_id[game_b.home_team_season_id], team_seasons_by_team_season_id[game_b.away_team_season_id]);
-		return game_a_total_rank - game_b_total_rank;
-	})
+  games_this_week = games_this_week.sort(function (game_a, game_b) {
+    var game_a_total_rank =
+      team_seasons_by_team_season_id[game_a.home_team_season_id] +
+      team_seasons_by_team_season_id[game_a.away_team_season_id] +
+      Math.min(
+        team_seasons_by_team_season_id[game_a.home_team_season_id],
+        team_seasons_by_team_season_id[game_a.away_team_season_id]
+      );
+    var game_b_total_rank =
+      team_seasons_by_team_season_id[game_b.home_team_season_id] +
+      team_seasons_by_team_season_id[game_b.away_team_season_id] +
+      Math.min(
+        team_seasons_by_team_season_id[game_b.home_team_season_id],
+        team_seasons_by_team_season_id[game_b.away_team_season_id]
+      );
+    return game_a_total_rank - game_b_total_rank;
+  });
 
-	console.log({games_this_week:games_this_week, team_seasons_by_team_season_id:team_seasons_by_team_season_id});
+  console.log({
+    games_this_week: games_this_week,
+    team_seasons_by_team_season_id: team_seasons_by_team_season_id,
+  });
 
   var game_dicts_this_week = [];
 
-  const last_player_team_game = await db.player_team_game.orderBy('player_team_game_id').last();
+  const last_player_team_game = await db.player_team_game
+    .orderBy("player_team_game_id")
+    .last();
 
   var player_team_game_id_counter = 1;
   if (last_player_team_game != undefined) {
     player_team_game_id_counter = last_player_team_game.player_team_game_id + 1;
   }
 
-	const last_headline = await db.headline.orderBy('headline_id').last();
+  const last_headline = await db.headline.orderBy("headline_id").last();
 
   var headline_id_counter = 1;
   if (last_headline != undefined) {
     headline_id_counter = last_headline.headline_id + 1;
   }
 
-	common.headline_id_counter = headline_id_counter;
+  common.headline_id_counter = headline_id_counter;
 
-	for (const game of games_this_week){
-		game_dict = {game: game};
-    team_games = team_games_by_game_id[game.game_id].sort(function(a, b) {
-        if (a.is_home_team) return 1;
-        if (b.is_home_team) return -1;
-        return 0;
-      });
+  for (const game of games_this_week) {
+    game_dict = { game: game };
+    team_games = team_games_by_game_id[game.game_id].sort(function (a, b) {
+      if (a.is_home_team) return 1;
+      if (b.is_home_team) return -1;
+      return 0;
+    });
 
     team_seasons = [];
     teams = [];
     var player_team_seasons = [];
-    var players = [], players_list = [], player_team_games = {};
+    var players = [],
+      players_list = [],
+      player_team_games = {};
 
-		for (let tg of team_games){
-			team_seasons.push(team_seasons_by_team_season_id[tg.team_season_id]);
-		}
+    for (let tg of team_games) {
+      team_seasons.push(team_seasons_by_team_season_id[tg.team_season_id]);
+    }
 
-		for (let ts of team_seasons){
-			teams.push(teams_by_team_id[ts.team_id]);
-		}
+    for (let ts of team_seasons) {
+      teams.push(teams_by_team_id[ts.team_id]);
+    }
 
-		var ind = 0;
-		for (let team_season of team_seasons){
-			var player_team_seasons_to_add = index_group_sync(player_team_seasons_by_team_season_id[team_season.team_season_id], 'index', 'player_team_season_id')
-      player_team_seasons = {...player_team_seasons, ...player_team_seasons_to_add};
+    var ind = 0;
+    for (let team_season of team_seasons) {
+      var player_team_seasons_to_add = index_group_sync(
+        player_team_seasons_by_team_season_id[team_season.team_season_id],
+        "index",
+        "player_team_season_id"
+      );
+      player_team_seasons = {
+        ...player_team_seasons,
+        ...player_team_seasons_to_add,
+      };
 
-      for (let player_team_season_id in player_team_seasons_to_add){
+      for (let player_team_season_id in player_team_seasons_to_add) {
         pts = player_team_seasons_to_add[player_team_season_id];
         pts.games_played += 1;
         pts.team_games_played += 1;
-        new_player_team_game = new player_team_game(player_team_game_id_counter, team_games[ind].team_game_id, pts.player_team_season_id);
+        new_player_team_game = new player_team_game(
+          player_team_game_id_counter,
+          team_games[ind].team_game_id,
+          pts.player_team_season_id
+        );
 
-        player_team_games[player_team_season_id] = new_player_team_game
+        player_team_games[player_team_season_id] = new_player_team_game;
 
-        player_team_game_id_counter +=1;
-
+        player_team_game_id_counter += 1;
       }
 
-      players_list = player_team_seasons_by_team_season_id[team_season.team_season_id].map(pts => players_by_player_id[pts.player_id]);
+      players_list = player_team_seasons_by_team_season_id[
+        team_season.team_season_id
+      ].map((pts) => players_by_player_id[pts.player_id]);
 
-      var players_to_add = index_group_sync(players_list, 'index', 'player_id')
-      players = {...players, ...players_to_add};
-			ind +=1;
-		}
+      var players_to_add = index_group_sync(players_list, "index", "player_id");
+      players = { ...players, ...players_to_add };
+      ind += 1;
+    }
 
     game_dict.team_games = team_games;
     game_dict.team_seasons = team_seasons;
@@ -5201,19 +5288,20 @@ const sim_week_games = async(this_week, common) => {
     game_dict.player_team_seasons = player_team_seasons;
     game_dict.players = players;
     game_dict.player_team_games = player_team_games;
-		game_dict.headlines = [];
+    game_dict.headlines = [];
 
     game_dicts_this_week.push(game_dict);
-	}
+  }
 
+  var completed_games = [],
+    completed_game = undefined;
 
-
-  var completed_games = [], completed_game = undefined;
-
-	for (const game_dict of game_dicts_this_week){
-    completed_game = sim_game(game_dict, common)
+  for (const game_dict of game_dicts_this_week) {
+    completed_game = sim_game(game_dict, common);
     completed_games.push(completed_game);
-	}
+  }
+
+  common.stopwatch(common, "Done simming games");
 
   var game_ids_to_save = [];
   var games_to_save = [];
@@ -5226,51 +5314,63 @@ const sim_week_games = async(this_week, common) => {
   var player_team_games_to_save = [];
   var player_team_seasons_to_save = [];
   var player_team_season_stats_to_save = [];
-	var headlines_to_save = [];
+  var headlines_to_save = [];
 
   for (completed_game of completed_games) {
-	  console.log({completed_game:completed_game})
-		game_ids_to_save.push(completed_game.game_id);
-		games_to_save.push(completed_game.game);
+    game_ids_to_save.push(completed_game.game_id);
+    games_to_save.push(completed_game.game);
 
-		for (let tg of completed_game.team_games) {
-			team_game_ids_to_save.push(tg.team_game_id);
-			team_games_to_save.push(tg);
-		}
+    for (let tg of completed_game.team_games) {
+      team_game_ids_to_save.push(tg.team_game_id);
+      team_games_to_save.push(tg);
+    }
 
-		for (let ts of completed_game.team_seasons){
-			team_season_stats_to_save.push(ts.stats);
-			delete ts.stats;
-			delete ts.team_games;
-			team_seasons_to_save.push(ts);
-		}
+    for (let ts of completed_game.team_seasons) {
+      team_season_stats_to_save.push(ts.stats);
+      delete ts.stats;
+      delete ts.team_games;
+      team_seasons_to_save.push(ts);
+    }
 
-		for ([player_team_game_id, ptg] of Object.entries(completed_game.player_team_games)){
-			if (ptg.game_stats.games.games_played > 0){
-				player_team_games_to_save.push(ptg);
-			}
-		}
+    for ([player_team_game_id, ptg] of Object.entries(
+      completed_game.player_team_games
+    )) {
+      if (ptg.game_stats.games.games_played > 0) {
+        player_team_games_to_save.push(ptg);
+      }
+    }
 
-		for ([player_team_season_id, pts] of Object.entries(completed_game.player_team_seasons)){
-			player_team_season_stats_to_save.push(pts.season_stats);
-			delete pts.season_stats;
-			player_team_seasons_to_save.push(pts);
-		}
+    for ([player_team_season_id, pts] of Object.entries(
+      completed_game.player_team_seasons
+    )) {
+      player_team_season_stats_to_save.push(pts.season_stats);
+      delete pts.season_stats;
+      player_team_seasons_to_save.push(pts);
+    }
 
-		for (hdl of completed_game.headlines) {
-			headlines_to_save.push(hdl);
-		}
-	}
+    for (hdl of completed_game.headlines) {
+      headlines_to_save.push(hdl);
+    }
+  }
+
+  common.stopwatch(common, "Done compiling stats");
 
   const updated_games = await db.game.bulkPut(games_to_save);
-  const updated_team_games = await db.team_game.bulkPut(team_games_to_save, );
-  const updated_team_seasons = await db.team_season.bulkPut(team_seasons_to_save );
-  const updated_team_season_stats = await db.team_season_stats.bulkPut(team_season_stats_to_save );
-  const updated_player_team_season_stats = await db.player_team_season_stats.bulkPut(player_team_season_stats_to_save );
-  const updated_player_team_seasons = await db.player_team_season.bulkPut(player_team_seasons_to_save );
-  const saved_player_team_games = await db.player_team_game.bulkAdd(player_team_games_to_save );
-	const saved_headlines = await db.headline.bulkAdd(headlines_to_save );
-}
+  const updated_team_games = await db.team_game.bulkPut(team_games_to_save);
+  const updated_team_seasons = await db.team_season.bulkPut(team_seasons_to_save);
+  const updated_team_season_stats = await db.team_season_stats.bulkPut(team_season_stats_to_save);
+  const updated_player_team_season_stats = await db.player_team_season_stats.bulkPut(player_team_season_stats_to_save);
+  const updated_player_team_seasons = await db.player_team_season.bulkPut(player_team_seasons_to_save);
+  const saved_player_team_games = await db.player_team_game.bulkAdd(player_team_games_to_save);
+  const saved_headlines = await db.headline.bulkAdd(headlines_to_save);
+
+  console.log({updated_games:updated_games})
+  
+  common.stopwatch(common, "Done compiling stats");
+
+  var endTime = performance.now();
+  console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms`);
+};
 
 
 const calculate_team_needs = async(common) => {
@@ -6197,7 +6297,7 @@ const choose_all_americans = async (this_week, common) => {
 	const player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
 	const player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id');
 	player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats')
-	player_team_seasons = player_team_seasons.filter(pts => pts.games.weighted_game_score > 0);
+	player_team_seasons = player_team_seasons.filter(pts => pts.season_stats.games.weighted_game_score > 0);
 	player_team_seasons = player_team_seasons.sort((pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating)
 
 	const player_ids = player_team_seasons.map(pts => pts.player_id);
@@ -6396,10 +6496,10 @@ const sim_action = async(duration, common) => {
 			await choose_preseason_all_americans(common);
 		}
 
-     await choose_players_of_the_week(this_week, common);
-     await weekly_recruiting(common);
-		 await populate_all_depth_charts(common);
-		 await calculate_team_needs(common);
+     //await choose_players_of_the_week(this_week, common);
+     //await weekly_recruiting(common);
+		 //await populate_all_depth_charts(common);
+		 //await calculate_team_needs(common);
 
      await advance_to_next_week(this_week, common);
 		 console.log('Ready to refresh_page')
@@ -7330,8 +7430,10 @@ const create_player_face = async (many_or_single, player_ids, db) => {
   }
   else {
     const player_id = player_ids;
+	console.log({player_id:player_id, player_ids:player_ids})
 
     const player = await db.player.get({player_id: player_id});
+	console.log({player: player})
 
     player.player_face = generate_face(player.ethnicity, player.body.weight);
 

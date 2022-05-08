@@ -230,7 +230,72 @@ const GetPlayerStats = async (common) => {
 
   const create_table = await initialize_football_table;
   var football_table = create_table(common, table_config);
+
+  var leader_tab_clicked = false;
+  $('#nav-leaders-tab').on('click', function(event){
+    if (!(leader_tab_clicked)){
+      draw_player_leaders(common, players);
+    }
+
+    leader_tab_clicked = true;
+  })
 };
+
+const draw_player_leaders = async (common, players) => {
+  const db = common.db; 
+  const get_from_dict = common.get_from_dict;
+
+    var stat_categories = [
+      {category_name: 'Passing Yards', field: 'player_team_season.season_stats.passing.yards'},
+      {category_name: 'Passing TDs', field: 'player_team_season.season_stats.passing.tds'},
+      {category_name: 'Passing Ints', field: 'player_team_season.season_stats.passing.ints'},
+
+      {category_name: 'Rushing Yards', field: 'player_team_season.season_stats.rushing.yards'},
+      {category_name: 'Rushing TDs', field: 'player_team_season.season_stats.rushing.tds'},
+      {category_name: 'Rushing YPC', field: 'player_team_season.season_stats.rushing_yards_per_carry'},
+      
+      {category_name: 'Receiving Yards', field: 'player_team_season.season_stats.receiving.yards'},
+      {category_name: 'Receiving TDs', field: 'player_team_season.season_stats.receiving.tds'},
+      {category_name: 'Receiving Targets', field: 'player_team_season.season_stats.receiving.targets'},
+      
+      {category_name: 'Tackles', field: 'player_team_season.season_stats.defense.tackles'},
+      {category_name: 'Sacks', field: 'player_team_season.season_stats.defense.sacks'},
+      {category_name: 'INTs', field: 'player_team_season.season_stats.defense.ints'},
+    ]
+
+    var url = "/static/html_templates/almanac/player_stats/player_stat_leader_template.njk";
+    var html_template = await fetch(url);
+    html_template = await html_template.text();
+
+    var stat_category_index = 0;
+    for (var stat_category of stat_categories){
+      var stat_category_players = players;
+      stat_category_players = stat_category_players.filter(p => get_from_dict(p, stat_category.field) > 0);
+      stat_category_players = stat_category_players.sort((p_a, p_b) => get_from_dict(p_b, stat_category.field) - get_from_dict(p_a, stat_category.field))
+      stat_category_players = stat_category_players.slice(0,5);
+
+      stat_category.stat_category_index = stat_category_index;
+      stat_category.players = stat_category_players.map(p => ({player: p, value: get_from_dict(p, stat_category.field)}));
+      stat_category.players = stat_category.players.map((p_obj, ind) => Object.assign(p_obj, {value_rank: ind + 1}));
+
+      var renderedHtml = await common.nunjucks_env.renderString(
+        html_template,
+        {stat_category:stat_category}
+      );
+    
+      $("#player-stat-leader-container").append(renderedHtml);
+
+      var player_to_draw = stat_category.players[0].player;
+      console.log({player_to_draw:player_to_draw})
+      if (player_to_draw.player_face == undefined){
+        player_to_draw.player_face = await common.create_player_face('single', player_to_draw.player_id, db);
+      }
+      console.log({player_to_draw:player_to_draw})
+
+      common.display_player_face(player_to_draw.player_face, {jersey: player_to_draw.player_team_season.team_season.team.jersey, teamColors: player_to_draw.player_team_season.team_season.team.jersey.teamColors}, `player-stat-leaders-face-${player_to_draw.player_id}-${stat_category_index}-1`);
+      stat_category_index +=1;
+    }
+}
 
 const action = async (common) => {
   await GetPlayerStats(common);

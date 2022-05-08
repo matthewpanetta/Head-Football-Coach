@@ -22,6 +22,8 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
         sort_direction = "sort-desc";
       }
 
+      console.log({clicked_th:clicked_th, so: clicked_th.attr("sort-order"), sort_direction:sort_direction})
+
       var sort_direction_multiplier = -1;
       if (sort_direction == "sort-desc") {
         sort_direction_multiplier = 1;

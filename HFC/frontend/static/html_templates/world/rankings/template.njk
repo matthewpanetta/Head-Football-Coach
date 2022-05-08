@@ -5,11 +5,14 @@
   #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
     border-bottom: 2px solid black;
   }
+
+      .football-table-column-headers th {
+        background-color: #{{page.PrimaryColor}};
+    }
 </style>
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 {% include "../../static/html_templates/ext_TeamColoring.njk" %}
-
 
 <body>
   <div class="PageContent">
@@ -19,7 +22,7 @@
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
-            <i class="fas fa-bars"></i>
+          <i class="fas fa-bars"></i>
         </button>
         <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Top 25</button>
         <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-playoff-picture-tab">Playoff Picture</button>
@@ -30,14 +33,14 @@
         <div class='w3-display-container' >
           <div class='w3-row-padding'>
             <div class='w3-col l10'>
-              <div class="w3-card ">
+              <div class="w3-card w3-margin-bottom">
 
-                <table class="w3-table w3-table-all no-border" id='Top25Table'  style="width:100%">
-                  <thead>
-                    <tr class='team-primary-background-bar'>
-                      <th class=''>Rank</th>
-                      <th></th>
-                      <th>Team</th>
+                <table class="w3-table w3-table-all no-border football-table-content" id='Top25Table'  style="width:100%">
+                  <thead class='football-table-header'>
+                    <tr class='football-table-column-headers team-primary-background-bar'>
+                      <th class='' sort-order='sort-asc'>Rank</th>
+                      <th sort-order='sort-asc'></th>
+                      <th sort-order='sort-asc'>Team</th>
                       <th class="center-text">Trend</th>
                       <th class="center-text">Record</th>
                       <th>Last Week</th>
@@ -46,15 +49,15 @@
                   </thead>
                   <tbody id="Top25Table-body">
                     {% for i in range(5)%}
-                    <tr>
-                      <td class="moving-gradient"></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+                      <tr>
+                        <td class="moving-gradient"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
                     {% endfor %}
                   </tbody>
                 </table>
@@ -63,96 +66,97 @@
                   <tr>
                     <td>Others receiving votes:
                       {% for team_season in bubble_teams%}
-                      <span><a href="{{team_season.team.team_href}}">{{team_season.team.school_name}}</a>{% if loop.last %} {% else %}, {% endif%}</span>
-                      {% endfor %}</td>
-                  </tr>
-                  {%if dropped_teams%}
-                  <tr>
-                    <td>Teams dropped from rankings:
-                      {% for team_season in dropped_teams%}
-                      <span><a href="{{team_season.team.team_href}}">{{team_season.team.school_name}}</a> ({{team_season.rankings.national_rank[1]}}) {% if loop.last %} {% else %}, {% endif%}</span>
-                      {% endfor %}</td>
-                  </tr>
-                  {%endif%}
-                </table>
-
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-      </div>
-      <div class="tab-content" style="display:none;"  id="nav-playoff-picture">
-        <div class='w3-display-container'>
-          <div class='w3-row-padding' id='worldLeagueLeaderRow'>
-            <div class="width100">
-              <div class="equal-sized-item-container centered-item">
-                {% for playoff_round in playoffs.playoff_rounds %}
-                  <div class="equal-sized-item centered-item mw300">
-                    <div class="">
-                      {{playoff_round.round_name}}
-                    </div>
-                    <div class="">
-                      {{playoff_round.week_name}}
-                    </div>
-                  </div>
-                {% endfor %}
-              </div>
-
-              <div class="equal-sized-item-container centered-item height100">
-                {% for playoff_round in playoffs.playoff_rounds %}
-                <div class="equal-sized-item equal-sized-item-container column-flex height100 mw300" style='width: 200px; justify-content: space-evenly;'>
-
-                  {% for playoff_game in playoff_round.playoff_games%}
-                  <div class="equal-sized-item w3-card width80 height100 w3-margin-bottom" style=' flex: 0 1 0%; '>
-                      <table class='w3-table-all width100 text-left no-border'>
-                        <thead>
-                          {% if playoff_game.game_id%}
-                          <tr>
-                            <th colspan='4'>
-                              <a href="{{playoff_game.game.game_href}}">
-                              {% if playoff_game.game.was_played%}
-                              Box Score
-                              {% else %}
-                              Preview
-                              {% endif %}
-                              </a>
-
-                            </th>
-                          </tr>
-                          {% endif %}
-                        </thead>
-                        {% for team_obj in playoff_game.team_objs%}
-                        <tr>
-                          {% if team_obj.team_season != null%}
-                          <td class='white-text font20 column-shrink' style='background-color: #{{team_obj.team_season.team.team_color_primary_hex}}'>{{team_obj.seed}}</td>
-                          <td class='column-shrink' style='background-color: #{{team_obj.team_season.team.team_color_primary_hex}}'>
-                            <img class='logo-30' src="{{team_obj.team_season.team.team_logo_100}}" alt="">
-                          </td>
-                          <td class='white-text font16' style='background-color: #{{team_obj.team_season.team.team_color_primary_hex}}'>
-                            <a href="{{team_obj.team_season.team.team_href}}">
-                              <span>{{team_obj.team_season.team.school_name}}</span>
-                            </a>
-                          </td>
-                          <td class='center-text'>{{team_obj.team_game.points}}</td>
-                          {% else %}
-                          <td class='center-text' colspan='5'>BYE</td>
-                          {% endif%}
-                        </tr>
+                        <span>
+                          <a href="{{team_season.team.team_href}}">{{team_season.team.school_name}}</a>
+                          {% if loop.last %}
+                          {% else %}, {% endif%}</span>
                         {% endfor %}
+                      </td>
+                    </tr>
+                    {%if dropped_teams%}
+                      <tr>
+                        <td>Teams dropped from rankings:
+                      {% for team_season in dropped_teams%}
+                            <span>
+                              <a href="{{team_season.team.team_href}}">{{team_season.team.school_name}}</a> ({{team_season.rankings.national_rank[1]}}) {% if loop.last %}
+                              {% else %}, {% endif%}</span>
+                            {% endfor %}
+                          </td>
+                        </tr>
+                        {%endif%}
+                        <tr>
+                          <td></td>
+                        </tr>
                       </table>
 
+                    </div>
+
                   </div>
-                  {% endfor %}
+
                 </div>
-                {% endfor %}
               </div>
             </div>
+            <div class="tab-content" style="display:none;"  id="nav-playoff-picture">
+              <div class='w3-display-container'>
+                <div class='w3-row-padding' id='worldLeagueLeaderRow'>
+                  <div class="width100">
+                    <div class="equal-sized-item-container centered-item">
+                      {% for playoff_round in playoffs.playoff_rounds %}
+                        <div class="equal-sized-item centered-item mw300">
+                          <div class="">
+                            {{playoff_round.round_name}}
+                          </div>
+                          <div class="">
+                            {{playoff_round.week_name}}
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
 
+                    <div class="equal-sized-item-container centered-item height100 bracket">
+                      {% for playoff_round in playoffs.playoff_rounds %}
+                        <div class="equal-sized-item equal-sized-item-container column-flex height100 mw300 round-of-{{playoff_round.round_of}} padding-left-8" style='width: 200px; justify-content: space-around;'>
+
+                          {% for playoff_game in playoff_round.playoff_games%}
+                            <div class="equal-sized-item width100 height100 w3-margin-bottom " style=' flex: 0 1 0%; '>
+                              <div style='border: 1px solid black; border-left-width: 0;' class='game width100 text-left'>
+                                <table class='w3-table'>
+                                {% for team_obj in playoff_game.team_objs%}
+                                  
+                                    <tr class='center-text-row'>
+                                      <td class='font16 white-text padding-10' style='width: 10%; background-color: #{{team_obj.team_season.team.team_color_primary_hex}}'>
+                                        {{team_obj.seed}}
+                                      </td>
+                                      <td class=' padding-10' style='width: 50px; background-color: #{{team_obj.team_season.team.team_color_primary_hex}}'>
+                                        <a href="{{team_obj.team_season.team.team_href}}">
+                                          <img class='logo-30' src="{{team_obj.team_season.team.team_logo_100}}" alt="">
+                                        </a>
+                                      </td>
+                                      <td class='width: 50%; inline-block font16 left-text'>
+                                        <a href="{{team_obj.team_season.team.team_href}}">
+                                         {{team_obj.team_season.team.school_name}}
+                                        </a>
+                                      </td>
+                                      <td class='inline-block right-text'>{{team_obj.team_game.points}}</td>
+                                    </tr>
+                                    <tr>
+                                    </tr>
+                                
+                                 
+                                  {% endfor %}
+                                   </table>
+                                </div>
+
+                              </div>
+                            {% endfor %}
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
+        </body>

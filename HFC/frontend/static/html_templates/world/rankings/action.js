@@ -68,6 +68,20 @@
           }
         }
       }
+      else {
+        var projected_playoff_teams = team_seasons.slice(0, playoffs.number_playoff_teams);
+        console.log({playoffs:playoffs, projected_playoff_teams:projected_playoff_teams, number_playoff_teams:playoffs.number_playoff_teams})
+        for (var playoff_round of playoffs.playoff_rounds){
+          console.log({playoff_round:playoff_round})
+          playoff_round.round_of = 2 * playoff_round.playoff_games.length;
+          for (var playoff_game of playoff_round.playoff_games){
+            for (var team_obj of playoff_game.team_objs){
+              team_obj.team_season = projected_playoff_teams[team_obj.seed - 1];
+              console.log({team_obj:team_obj, playoff_game:playoff_game,playoff_round:playoff_round })
+            }
+          }
+        }
+      }
 
       var render_content = {page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks},
                             team_list: [],
@@ -202,6 +216,9 @@
       console.log({renderedHtml:renderedHtml, top_25_team_seasons:top_25_team_seasons})
       $('#Top25Table-body').empty();
       $('#Top25Table-body').append(renderedHtml);
+
+      init_basic_table_sorting(common, '#Top25Table', null)
+
 
     }
 

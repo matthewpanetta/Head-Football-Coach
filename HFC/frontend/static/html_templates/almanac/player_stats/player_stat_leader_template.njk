@@ -1,0 +1,82 @@
+{{stat_category|log}}
+<div class="w3-card margin-bottom-24" style='width: 380px; margin-left: 20px;'>
+    <div class='team-primary-background-bar'>
+        {{stat_category.category_name}}
+    </div>
+
+    <table class='w3-table-all no-border'>
+        <tbody class="">
+            <tr>
+                <td class="center-text bold font20" style='background-color: #{{stat_category.players[0].player.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+                        1
+                      </td>
+                <td class="" style='background-color: #{{stat_category.players[0].player.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+                    <a href="{{stat_category.players[0].player.player_team_season.team_season.team.team_href}}">
+                        <img src="{{stat_category.players[0].player.player_team_season.team_season.team.team_logo}}" alt="" class='logo-50'>
+                    </a>
+                </td>
+                <td class="">
+                    <div class="inline-block">
+                        <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{stat_category.players[0].player.player_id}}' style='border-color:#{{stat_category.players[0].player.player_team_season.team_season.team.team_color_primary_hex}};' id="player-stat-leaders-face-{{stat_category.players[0].player.player_id}}-{{stat_category.stat_category_index}}-{{stat_category.players[0].value_rank}}"  ></div>
+                    </div>
+
+                </td>
+                <td>
+                    <div class="inline-block">
+                        <div class="font16">
+                            <a href="{{stat_category.players[0].player.player_href}}">
+                                {{stat_category.players[0].player.full_name}}
+                            </a>
+                        </div>
+                        <div class="font10">
+                            <span>{{stat_category.players[0].player.player_team_season.team_season.team.team_abbreviation}}</span>
+                            &#183;
+                            <span>{{stat_category.players[0].player.player_team_season.position}}</span>
+                            &#183;
+                            <span>{{stat_category.players[0].player.player_team_season.class.class_name}}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="center-text">
+                    <div class="font20">
+                        {{stat_category.players[0].value|toLocaleString}}
+                    </div>
+                    <div class="font10">
+                        {{stat_category.category_abbr}}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th class='center-text'>Rank</th>
+                <th colspan='2'>Team</th>
+                <th>Player</th>
+                <th class='center-text'>{{stat_category.category_abbr}}</th>
+            </tr>
+            {% for player in stat_category.players.slice(1,5)%}
+                <tr>
+                    <td class='center-text bold' style='background-color: #{{player.player.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+                        {{loop.index + 1}}
+                    </td>
+                    <td style='background-color: #{{player.player.player_team_season.team_season.team.team_color_primary_hex}}' class='center-text'>
+                        <a href="{{player.player.player_team_season.team_season.team.team_href}}">
+                            <img src="{{player.player.player_team_season.team_season.team.team_logo}}" alt="" class='logo-30'>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{player.player.player_team_season.team_season.team.team_href}}">
+                            {{player.player.player_team_season.team_season.team.team_abbreviation}}
+                        </a>
+                    </td>
+                    <td>
+                        <span>
+                            <a href="{{player.player.player_href}}">{{player.player.full_name}}</a>
+                        </span>
+                        <span class='font10'>{{player.player.player_team_season.position}}</span>
+
+                    </td>
+                    <td class='center-text'>{{player.value|toLocaleString}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
