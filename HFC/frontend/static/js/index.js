@@ -230,6 +230,23 @@ class player_team_game {
 	    return round_decimal(this.game_stats.passing.completions * 100 / this.game_stats.passing.attempts,1);
 	  }
 
+
+		get is_qualified_passer(){
+			if (this.game_stats.games.games_played > 0 && this.game_stats.passing.attempts / this.game_stats.games.games_played > 10){
+				return true;
+			}
+			return false;
+		}
+
+		get completion_percentage_qualified() {
+		  if (this.is_qualified_passer){
+			return 0
+		  }
+		  return this.completion_percentage;
+		}
+
+
+
 		get passing_yards_per_attempt(){
 	    if (this.game_stats.passing.attempts == 0){
 	      return 0
@@ -1482,6 +1499,20 @@ class player_team_season_stats {
 		}
 	
 			return round_decimal((((8.4 * this.passing.yards) + (330 * this.passing.tds) + (100 * this.passing.completions) - (200 * this.passing.ints)) / this.passing.attempts), 1)
+		}
+
+		get is_qualified_passer(){
+			if (this.games.games_played > 0 && (this.passing.attempts / this.games.games_played) > 10){
+				return true;
+			}
+			return false;
+		}
+
+		get completion_percentage_qualified() {
+		  if (this.is_qualified_passer){
+			return this.completion_percentage
+		  }
+		  return 0;
 		}
 	
 	
@@ -3030,7 +3061,7 @@ const create_player_team_seasons = async (data) => {
 
 			var team_season = team_seasons_by_team_season_id[team_season_id];
 			var team_prestige = (((3 * team_season.team.team_ratings.program_history) + (3 * team_season.team.team_ratings.brand) + (3 * team_season.team.team_ratings.team_competitiveness)+ (3 * team_season.team.team_ratings.pro_pipeline)+ team_season.team.team_ratings.location) / 13)
-			var prestige_slice_ratio = 1 - ((team_prestige ** 2) / (20 ** 2));
+			var prestige_slice_ratio = 1 - ((team_prestige ** 2.5) / (20 ** 2.5));
 			var prestige_slice_bound = player_team_seasons.length * prestige_slice_ratio;
 
 			var player_team_season_index = Math.floor(Math.random() * prestige_slice_bound);

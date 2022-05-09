@@ -248,15 +248,15 @@ const draw_player_leaders = async (common, players) => {
     var stat_categories = [
       {category_name: 'Passing Yards', field: 'player_team_season.season_stats.passing.yards'},
       {category_name: 'Passing TDs', field: 'player_team_season.season_stats.passing.tds'},
-      {category_name: 'Passing Ints', field: 'player_team_season.season_stats.passing.ints'},
+      {category_name: 'Completion %', field: 'player_team_season.season_stats.completion_percentage_qualified'},
 
       {category_name: 'Rushing Yards', field: 'player_team_season.season_stats.rushing.yards'},
       {category_name: 'Rushing TDs', field: 'player_team_season.season_stats.rushing.tds'},
-      {category_name: 'Rushing YPC', field: 'player_team_season.season_stats.rushing_yards_per_carry'},
+      {category_name: 'Rushing YPC', field: 'player_team_season.season_stats.rushing_yards_per_carry_qualified'},
       
       {category_name: 'Receiving Yards', field: 'player_team_season.season_stats.receiving.yards'},
       {category_name: 'Receiving TDs', field: 'player_team_season.season_stats.receiving.tds'},
-      {category_name: 'Receiving Targets', field: 'player_team_season.season_stats.receiving.targets'},
+      {category_name: 'Receptions', field: 'player_team_season.season_stats.receiving.receptions'},
       
       {category_name: 'Tackles', field: 'player_team_season.season_stats.defense.tackles'},
       {category_name: 'Sacks', field: 'player_team_season.season_stats.defense.sacks'},
@@ -295,6 +295,10 @@ const draw_player_leaders = async (common, players) => {
       common.display_player_face(player_to_draw.player_face, {jersey: player_to_draw.player_team_season.team_season.team.jersey, teamColors: player_to_draw.player_team_season.team_season.team.jersey.teamColors}, `player-stat-leaders-face-${player_to_draw.player_id}-${stat_category_index}-1`);
       stat_category_index +=1;
     }
+
+    $(".player-profile-popup-icon").on("click", async function () {
+      await common.populate_player_modal(common, this);
+    });
 }
 
 const action = async (common) => {

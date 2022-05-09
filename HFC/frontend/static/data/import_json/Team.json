@@ -584,7 +584,7 @@
     "team_name": "Tar Heels",
     "team_abbreviation": "UNC",
     "team_color_primary_hex": "7BAFD4",
-    "team_color_secondary_hex": "FFFFFF",
+    "team_color_secondary_hex": "13294B",
     "jersey": {
       "invert": false,
       "teamColors": null,
@@ -646,7 +646,7 @@
     "jersey": {
       "invert": false,
       "teamColors": null,
-      "id": null
+      "id": "football"
     },
     "team_ratings": {
       "location": 9,
@@ -675,7 +675,7 @@
     "jersey": {
       "invert": false,
       "teamColors": null,
-      "id": null
+      "id": "football"
     },
     "team_ratings": {
       "location": 8,
@@ -704,7 +704,7 @@
     "jersey": {
       "invert": false,
       "teamColors": null,
-      "id": null
+      "id": "football"
     },
     "team_ratings": {
       "location": 3,
@@ -1023,7 +1023,7 @@
     "jersey": {
       "invert": false,
       "teamColors": null,
-      "id": null
+      "id": "football2"
     },
     "team_ratings": {
       "location": 6,
@@ -2822,7 +2822,7 @@
     "jersey": {
       "invert": false,
       "teamColors": null,
-      "id": null
+      "id": "football3"
     },
     "team_ratings": {
       "location": 20,
@@ -2851,7 +2851,7 @@
     "jersey": {
       "invert": false,
       "teamColors": null,
-      "id": null
+      "id": "football4"
     },
     "team_ratings": {
       "location": 20,
@@ -2904,8 +2904,8 @@
     "school_name": "Oregon",
     "team_name": "Ducks",
     "team_abbreviation": "ORE",
-    "team_color_primary_hex": "0C643F",
-    "team_color_secondary_hex": "FEE123",
+    "team_color_primary_hex": "1E3D2B",
+    "team_color_secondary_hex": "FEE11A",
     "jersey": {
       "invert": false,
       "teamColors": null,

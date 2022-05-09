@@ -48,7 +48,7 @@
 
                       </div>
                       <div class="equal-sized-item-container" >
-                        <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team.team_logo}}' />
+                        <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team.team_logo_100}}' />
                       </div>
 
                       <div class="width100 white-text" style='color: white;'>
@@ -149,11 +149,11 @@
                             {% endif %}                        
                           </div>
                           <button style='max-width: 25%;' TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab w3-button tab selected-boxscore-tab" id="boxscore-hometeam-tab">
-                            <img class='small-logo unselectable' src='{{game.team.team_logo}}'  />
+                            <img class='small-logo unselectable' src='{{game.team.team_logo_100}}'  />
                             {# {{game.team.team_abbreviation}} #}
                           </button>
                           <button style='max-width: 25%;' TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab w3-button tab" id="boxscore-awayteam-tab">
-                            <img class='small-logo unselectable' src='{{game.opponent_team.team_logo}}'  />
+                            <img class='small-logo unselectable' src='{{game.opponent_team.team_logo_100}}'  />
                             {# {{game.opponent_team.team_abbreviation}} #}
                           </button>
                         </div>
@@ -250,7 +250,7 @@
                                     {{headline|log}}
 
                                     {% for team_season in headline.team_seasons%}
-                                      <img src="{{team_season.team.team_logo}}" alt="" class='logo-30'>
+                                      <img src="{{team_season.team.team_logo_100}}" alt="" class='logo-30'>
                                     {%endfor%}
 
                                     <div class="team-header-color-right align-middle hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
