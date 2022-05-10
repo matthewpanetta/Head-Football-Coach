@@ -63,7 +63,7 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
 };
 
 const get_initial_column_controls = (subject) => {
-  if (subject == "player stats") {
+  if (subject == "player stats" || subject == "world player stats") {
     return {
       Stats: {
         games: { shown: false, display: "Games" },
@@ -93,7 +93,7 @@ const get_initial_column_controls = (subject) => {
 };
 
 const get_initial_sorted_columns = (subject) => {
-  if (subject == "player stats") {
+  if (subject == "player stats" || subject == "world player stats") {
     return [
       {
         key: "player_team_season.ratings.overall.overall",
@@ -105,8 +105,10 @@ const get_initial_sorted_columns = (subject) => {
   return [];
 };
 
-const get_initial_filter_options = (subject) => {
-  if (subject == "player stats") {
+const get_initial_filter_options = (subject, table_config, common) => {
+  console.log({table_config:table_config})
+  debugger;
+  if (subject == "player stats" || subject == "world player stats" ) {
     var table_filters = {
       "player_team_season.position": {
         count: 0,
@@ -140,26 +142,39 @@ const get_initial_filter_options = (subject) => {
       },
     };
 
-    for (table_filter_key in table_filters) {
-      table_filters[table_filter_key].options = [];
-      for (table_filter_option of table_filters[table_filter_key].raw_options) {
-        table_filters[table_filter_key].options.push({
-          display: table_filter_option,
-          count: 0,
-        });
+    if (subject == "world player stats"){
+      table_filters['player_team_season.team_season.conference_season.conference.conference_abbreviation'] = {
+        count: 0,
+        display: "Conference",
+        raw_options: common.distinct(table_config.original_data.map(p => common.get_from_dict(p, 'player_team_season.team_season.conference_season.conference.conference_abbreviation')).sort())
+      }
+
+      table_filters['player_team_season.team_season.team.school_name'] = {
+        count: 0,
+        display: "Team",
+        raw_options: common.distinct(table_config.original_data.map(p => common.get_from_dict(p, 'player_team_season.team_season.team.school_name')).sort())
       }
     }
-    return table_filters;
   }
 
-  return [];
+  for (table_filter_key in table_filters) {
+    table_filters[table_filter_key].options = [];
+    for (table_filter_option of table_filters[table_filter_key].raw_options) {
+      table_filters[table_filter_key].options.push({
+        display: table_filter_option,
+        count: 0,
+      });
+    }
+  }
+  return table_filters;
+
 };
 
 async function create_football_filters(common, table_config) {
   table_config.filters = table_config.filters || {};
   table_config.filters.filter_options =
     table_config.filters.filter_options ||
-    get_initial_filter_options(table_config.subject);
+    get_initial_filter_options(table_config.subject, table_config, common);
   table_config.filters.filtered_columns =
     table_config.filters.filtered_columns || [];
 

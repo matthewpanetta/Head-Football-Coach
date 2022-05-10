@@ -63,8 +63,6 @@ const getHtml = async (common) => {
   game.away_team_game.team_season =
     team_seasons_by_team_season_id[game.away_team_game.team_season_id];
 
-  console.log("team_seasons_by_team_season_id", team_seasons_by_team_season_id);
-
   game.game_headline_display = "";
   if (game.bowl != null) {
     game.game_headline_display = game.bowl.bowl_name;
@@ -163,7 +161,6 @@ const getHtml = async (common) => {
 
     for (const period of game.scoring.periods) {
       for (const drive of period.drives) {
-        console.log({ drive: drive, game: game });
         drive.drive_end.display_team =
           teams_by_team_id[drive.drive_end.display_team_id];
         if (
@@ -403,9 +400,6 @@ const getHtml = async (common) => {
         teams_by_team_id[game.outcome.winning_team.team_id];
     }
 
-    console.log({game:game});
-    debugger;
-
     if (
       game.home_team_game.team_season.stats.season_stats.games.games_played +
         game.away_team_game.team_season.stats.season_stats.games.games_played ==
@@ -578,8 +572,6 @@ const getHtml = async (common) => {
     },
   ];
 
-  console.log("conference_standings", conference_standings);
-
   common.page = {
     PrimaryColor: "1763B2",
     SecondaryColor: "000000",
@@ -673,6 +665,31 @@ const action = async (common) => {
       .reduce((acc, val) => Math.max(acc, val), 0);
     max_points = Math.ceil((max_points + 0.01) / 5) * 5;
 
+    for (var team_index in [0,1]){
+      scoring_data[team_index].drives.unshift({
+        seconds_in_to_game: 0,
+        points: 0,
+        team:  scoring_data[team_index].drives[0].team
+      });
+
+      var previous_points = 0;
+      var drive_index = 0;
+      var drives_to_add = []
+      for (var drive of scoring_data[team_index].drives) {
+        if (!(previous_points == drive.points)){
+          drives_to_add.push( {
+            seconds_in_to_game: drive.seconds_in_to_game,
+            points: previous_points,
+            team: drive.team
+          })
+        }
+
+        previous_points = drive.points;
+      }
+      scoring_data[team_index].drives = scoring_data[team_index].drives.concat(drives_to_add)
+      scoring_data[team_index].drives = scoring_data[team_index].drives.sort((d_a, d_b) => d_a.seconds_in_to_game - d_b.seconds_in_to_game || d_a.points - d_b.points)
+    }
+
     console.log({
       scoring_data: scoring_data,
       drives: drives,
@@ -694,10 +711,12 @@ const action = async (common) => {
       const y = d3.scaleLinear().domain([0, max_points]).range([height, 0]);
       const line = d3
         .line()
-        .x(function (d) {
+        .x(function (d, ind) {
           return x(d.seconds_in_to_game);
         })
-        .y((d) => y(d.points));
+        .y(function(d, ind){
+          return y(d.points);
+        });
 
       const chart = d3
         .select("#GameFlowChart")
@@ -904,13 +923,10 @@ function AddScoringSummaryListeners() {
 const draw_box_score = (common) => {
   const game = common.render_content.game;
 
-  console.log({ "home_team_game.player_team_games": common.render_content });
-
   const desc_first = ["desc", "asc"];
 
   var box_score_clicked = false;
   $("#nav-boxscore-tab").on("click", function () {
-    console.log("CLICKED ON #nav-boxscore-tab");
     if (box_score_clicked == true) {
       return false;
     }
@@ -953,7 +969,6 @@ const draw_box_score = (common) => {
 
     for (const stat_grouping of common.render_content
       .box_score_stat_groupings) {
-      console.log({ stat_grouping: stat_grouping });
 
       var stat_grouping_config = deep_copy(base_datatable_config);
 
@@ -965,10 +980,6 @@ const draw_box_score = (common) => {
         stat_grouping_config.columns.push(stat_column_config);
       }
 
-      console.log({
-        stat_grouping_config: stat_grouping_config,
-        stat_column_config: stat_column_config,
-      });
       var home_base_datatable_config = deep_copy(stat_grouping_config);
       var away_base_datatable_config = deep_copy(stat_grouping_config);
 
@@ -983,11 +994,6 @@ const draw_box_score = (common) => {
 
       home_base_datatable_config.order = stat_grouping.order;
       away_base_datatable_config.order = stat_grouping.order;
-
-      console.log({
-        home_base_datatable_config: home_base_datatable_config,
-        away_base_datatable_config: away_base_datatable_config,
-      });
 
       init_basic_table_sorting(common, `#home-box-score-${stat_grouping.stat_group_name}`, 1)
       init_basic_table_sorting(common, `#away-box-score-${stat_grouping.stat_group_name}`, 1)

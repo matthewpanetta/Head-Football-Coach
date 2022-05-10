@@ -237,7 +237,7 @@ const action = async (common) => {
       rivals_team_2 = [];
     var jersey_colors = [],
       jersey_lettering = {};
-    const jersey_options = ["football", "football2", "football3", "football4"];
+    const jersey_options = ["football", "football2", "football3", "football4", "football5"];
 
     var team_id_counter = 1;
     $.each(teams_from_json, function (ind, team) {

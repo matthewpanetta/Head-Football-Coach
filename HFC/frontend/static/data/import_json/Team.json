@@ -733,7 +733,7 @@
     "jersey": {
       "invert": false,
       "teamColors": null,
-      "id": null
+      "id": "football2"
     },
     "team_ratings": {
       "location": 8,
@@ -762,7 +762,7 @@
     "jersey": {
       "invert": false,
       "teamColors": null,
-      "id": null
+      "id": "football5"
     },
     "team_ratings": {
       "location": 6,
@@ -2904,7 +2904,7 @@
     "school_name": "Oregon",
     "team_name": "Ducks",
     "team_abbreviation": "ORE",
-    "team_color_primary_hex": "1E3D2B",
+    "team_color_primary_hex": "004F39",
     "team_color_secondary_hex": "FEE11A",
     "jersey": {
       "invert": false,

@@ -69,12 +69,25 @@ const getHtml = async (common) => {
   });
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
+  var conference_seasons = await db.conference_season.where({ season: season }).toArray();
+  var conferences = await db.conference.toArray();
+
+  var conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
+  var conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference');
+  var conference_seasons_by_conference_season_id = index_group_sync(conference_seasons, 'index', 'conference_season_id')
+
   var team_seasons = await db.team_season.where({ season: season }).toArray();
   team_seasons = nest_children(
     team_seasons,
     teams_by_team_id,
     "team_id",
     "team"
+  );
+  team_seasons = nest_children(
+    team_seasons,
+    conference_seasons_by_conference_season_id,
+    "conference_season_id",
+    "conference_season"
   );
   const team_seasons_by_team_season_id = index_group_sync(
     team_seasons,
@@ -92,7 +105,7 @@ const getHtml = async (common) => {
     "team_season_id",
     "team_season"
   );
-  console.log({ player_team_seasons: player_team_seasons });
+  console.log({team_seasons_by_team_season_id:team_seasons_by_team_season_id, player_team_seasons: player_team_seasons,conference_seasons:conference_seasons, conferences:conferences,  conference_seasons_by_conference_season_id:conference_seasons_by_conference_season_id, conferences_by_conference_id:conferences_by_conference_id});
   // const player_team_seasons = await db.player_team_season.toArray();
   const player_team_season_ids = player_team_seasons.map(
     (pts) => pts.player_team_season_id
@@ -211,7 +224,7 @@ const GetPlayerStats = async (common) => {
 
   var table_config = {
     original_data: players,
-    subject: "player stats",
+    subject: "world player stats",
     display_team: true,
     templates: {
       table_template_url:
