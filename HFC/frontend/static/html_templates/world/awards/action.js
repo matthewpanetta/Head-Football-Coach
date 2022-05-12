@@ -402,7 +402,6 @@
       await getHtml(common);
       await action(common);
       await common.add_listeners(common);
-      await common.initialize_scoreboard();
       await last_action(common);
 
       var endTime = performance.now()

@@ -323,7 +323,6 @@
       await getHtml(common);
       await action(common);
       await common.add_listeners(common);
-      await common.initialize_scoreboard();
       await draw_faces(common);
       console.log('nav-game-records', $('#nav-game-records'))
       await $('#nav-game-records').css('display', 'none');

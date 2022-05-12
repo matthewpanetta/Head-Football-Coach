@@ -235,8 +235,6 @@
       common.stopwatch(common, 'Done action');
       await common.add_listeners(common);
       common.stopwatch(common, 'Done listeners');
-      await common.initialize_scoreboard();
-      common.stopwatch(common, 'Done scoreboard');
 
       var endTime = performance.now()
       console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );

@@ -623,7 +623,6 @@
       await getHtml(common);
       await action(common);
       await common.add_listeners(common);
-      await common.initialize_scoreboard();
       await draw_team_stats(common)
 
       var endTime = performance.now()

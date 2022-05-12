@@ -63,6 +63,7 @@
         team_season.final_national_rank = team_season.rankings.national_rank[0];
         team_season.first_national_rank = team_season.rankings.national_rank[team_season.rankings.national_rank.length - 1];
         team_season.best_national_rank = team_season.rankings.national_rank.reduce((acc, val) => Math.min(acc,val), 999);
+        team_season.worst_national_rank = team_season.rankings.national_rank.reduce((acc, val) => Math.max(acc,val), 1);
 
         if (team_season.conference_season.conference.conference_id != previous_conference_id){
           ts_cs_list.push(ts_index)

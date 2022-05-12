@@ -284,8 +284,6 @@ $(document).ready(async function(){
   common.stopwatch(common, 'Time after action');
   await common.add_listeners(common);
   common.stopwatch(common, 'Time after listeners');
-  await common.initialize_scoreboard();
-  common.stopwatch(common, 'Time after scoreboard');
 
   console.log({common: common});
 

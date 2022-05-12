@@ -254,7 +254,7 @@
                   {% else %}
                   {% if season_stats|length > 0%}
                   <div class="">
-                    <table class='w3-table-all'>
+                    <table class='w3-table-all no-border'>
                       {% for season_stat in season_stats %}
                         <tr class='center-text-row' style='background-color: #{{page.SecondaryColor}}; color: white;'>
                           <th colspan='5'>{{season_stat.display}}</th>
@@ -292,12 +292,12 @@
                   <div class="w3-bar team-primary-background-bar">
                     <span>Past Meetings</span>
                   </div>
-                  <table class='w3-table-all'>
+                  <table class='w3-table-all no-border'>
                     <thead>
-                      <tr>
+                      <tr class='team-secondary-table-row'>
                         <th>Week</th>
-                        <th>Winner</th>
-                        <th>Score</th>
+                        <th class='center-text'>Winner</th>
+                        <th class='center-text'>Score</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -310,7 +310,7 @@
                             <img class='logo-30' src="{{game.outcome.winning_team.team.team_logo}}" alt="">
                           </a>
                         </td>
-                        <td>
+                        <td class='center-text'>
                           <a href="{{game.game_href}}" class='nowrap'>
                             {{game.score_display}}
                           </a>

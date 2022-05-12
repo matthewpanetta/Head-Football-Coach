@@ -22,7 +22,7 @@
             <i class="fas fa-bars"></i>
         </button>
         {% for week in weeks%}
-        <button id="nav-week-schedule-tab-{{week.week_id}}" weekid="{{week.week_id}}" class="w3-bar-item w3-button tab nav-tab-button week-schedule font10-plain {%if week.selected_week%}selected-tab{%endif%}" {%if week.selected_week%} style="background-color: #{{page.SecondaryColor}};" {%endif%}>
+        <button id="nav-week-schedule-tab-{{week.week_id}}" weekid="{{week.week_id}}" class="w3-bar-item w3-button tab nav-tab-button week-schedule font10-plain {%if week.selected_week%} selected-tab {%endif%}" {%if week.selected_week%} style="background-color: #{{page.SecondaryColor}};" {%endif%}>
           {{week.week_name}}
         </button>
         {%endfor%}
