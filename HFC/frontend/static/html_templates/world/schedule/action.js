@@ -68,20 +68,17 @@
 
         week.nav_clicked = false;
 
-        if (week.is_current ){
+        if (week.games.length > 0 && week.is_current ){
           week.selected_week = true;
           any_week_selected = true;
         }
       }
 
+      weeks = weeks.filter(w => w.games.length > 0);
       if (!any_week_selected){
         weeks[weeks.length - 1].selected_week = true;
       }
       common.stopwatch(common, 'getHtml 1.4')
-
-      console.log({weeks:weeks})
-
-      weeks = weeks.filter(w => w.games.length > 0);
 
       const weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id')
 
