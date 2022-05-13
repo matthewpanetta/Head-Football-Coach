@@ -172,8 +172,13 @@ const getHtml = async (common) => {
           drive.home_or_away = "away";
         }
 
-        var seconds_left_in_period =
-          15 * 60 - (drive.drive_end.seconds_in_to_game % (15 * 60));
+        if ((drive.drive_end.seconds_in_to_game % (15 * 60) == 0) && drive.drive_end.seconds_in_to_game > 0){
+          var seconds_left_in_period = 0;
+        }
+        else {
+          var seconds_left_in_period = 15 * 60 - (drive.drive_end.seconds_in_to_game % (15 * 60));
+        }
+        
         var display_time = seconds_to_time(seconds_left_in_period);
         drive.drive_end.display_time = display_time;
       }
@@ -594,8 +599,6 @@ const getHtml = async (common) => {
 
   common.render_content = render_content;
 
-  await console.log("render_content", render_content);
-
   var url = "/static/html_templates/game/game/template.njk";
   var html = await fetch(url);
   html = await html.text();
@@ -899,7 +902,6 @@ function AddScoringSummaryListeners() {
 
   $(".drive-event-bar button").on("click", function (event, target) {
     var ClickedTab = $(event.target);
-    console.log("ClickedTab", ClickedTab);
     var ClickedTabParent = ClickedTab.attr("id");
     var SelectedEventSelection = ClickedTabParent.replace("-tab", "");
 

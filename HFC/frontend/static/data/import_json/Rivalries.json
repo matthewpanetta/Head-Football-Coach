@@ -1545,5 +1545,26 @@
     "rivalry_relevance":12,
     "rivalry_name": "",
     "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Texas State",
+    "team_name_2": "Sam Houston State",
+    "rivalry_relevance":4,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "James Madison",
+    "team_name_2": "Old Dominion",
+    "rivalry_relevance":4,
+    "rivalry_name": "",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Jacksonville State",
+    "team_name_2": "Troy",
+    "rivalry_relevance":7,
+    "rivalry_name": "Battle for the Ol' School Bell",
+    "preferred_week_number": null
   }
 ]

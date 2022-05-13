@@ -52,8 +52,9 @@
           game.home_team_game.bold = 'bold';
         }
 
-        var min_national_rank = Math.min(game.team_games[0].team_season.national_rank,  game.team_games[1].team_season.national_rank)
-        game.summed_national_rank =  game.team_games[0].team_season.national_rank + game.team_games[1].team_season.national_rank + min_national_rank;
+        var min_national_rank = Math.min(game.team_games[0].national_rank,  game.team_games[1].national_rank)
+        var max_national_rank = Math.max(game.team_games[0].national_rank,  game.team_games[1].national_rank)
+        game.summed_national_rank =  game.team_games[0].national_rank + game.team_games[1].national_rank + max_national_rank;
 
       }
       common.stopwatch(common, 'getHtml 1.4')
