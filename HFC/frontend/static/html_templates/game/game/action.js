@@ -705,7 +705,7 @@ const action = async (common) => {
 
     function drawChart() {
       // Define margins, dimensions, and some line colors
-      const margin = { top: 40, right: 0, bottom: 30, left: 40 };
+      const margin = { top: 20, right: 0, bottom: 30, left: 40 };
       const width = $("#GameFlowChart").width() - margin.left - margin.right;
       const height = 400 - margin.top - margin.bottom;
 
@@ -745,13 +745,6 @@ const action = async (common) => {
         .append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
-      chart
-        .append("text")
-        .html(
-          `${game.away_team_game.team_season.team.school_name} @ ${game.home_team_game.team_season.team.school_name}`
-        )
-        .attr("text-anchor", "middle")
-        .attr("x", "50%");
 
       chart
         .selectAll()
