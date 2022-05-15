@@ -321,7 +321,7 @@ body {
 }
 
 .teamGameCell:hover {
-  background-color: grey;
+  background-color: #ccc;
 }
 
 .x_axis path {
@@ -822,7 +822,7 @@ input[type=password] {
 
 .scheduleGameTable {
   margin-top: -40px;
-  margin-left: 50px;
+  margin-left: 60px;
   margin-bottom: 10px;
 }
 
@@ -832,7 +832,7 @@ input[type=password] {
   margin-bottom: 20px;
   transform: rotate(-52deg);
   left: -59px;
-  z-index: 10;
+  z-index: 4;
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoTop {
@@ -847,7 +847,7 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
   width: 40px;
   left: 55px;
   top: -10px;
-  z-index: 50;
+  z-index: 3;
   transform: rotate(52deg);
 }
 
@@ -1466,7 +1466,7 @@ td.WorldLeagueLeaderRowCell.NameCell {
 }
 
 .bottom-border {
-  border-bottom: 1px solid #888;
+  border-bottom: 1px solid #ccc;
 }
 
 .all-border {
@@ -1693,7 +1693,7 @@ tfoot td {
   margin-left: -100px;
   height: inherit;
   position: absolute;
-  z-index: 1;
+  z-index: 4;
   transform: skewX(-45deg);
   border-right: 30px solid;
 }
@@ -2164,11 +2164,11 @@ div.dt-buttons {
 
 
 .col-group {
-  border-right: 1px solid grey;
+  border-right: 1px solid #ccc;
 }
 
 .col-group-left {
-  border-left: 1px solid grey;
+  border-left: 1px solid #ccc;
 }
 
 .is-starter {

@@ -427,7 +427,7 @@ const action = async (common) => {
     $(par).append("<div>Creating recruiting class</div>");
     $("#modal-progress").css("width", "0%");
     await common.calculate_team_needs(common);
-    await common.create_recruiting_class(common);
+    //await common.create_recruiting_class(common);
 
     $(par).append("<div>Ranking teams</div>");
     $("#modal-progress").css("width", "0%");

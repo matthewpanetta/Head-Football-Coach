@@ -270,9 +270,17 @@
 
     }
 
+    const add_table_functionality = (common) => {
+      $('.conference-standings-table').each(function(ind, elem){
+        var table_id = '#'+$(elem).attr('id')
+        init_basic_table_sorting(common, table_id, null)
+        console.log({elem:elem})
+      })
+    }
+
     const action = async (common) => {
       const db = common.db;
-
+      add_table_functionality(common);
       //add_trend_charts(common);
     }
 
