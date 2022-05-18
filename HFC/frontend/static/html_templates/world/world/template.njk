@@ -48,7 +48,7 @@
                       <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaGreen'>&#8593;{{team.NationalRankDeltaAbs}}</div>
                       {% endif %}
                     </td>
-                    <td style='background-color:  #{{team.team_color_primary_hex}}; color: white;' class=''>
+                    <td style='background-color:  #{{team.team_color_primary_hex}}; color: white;' class='center-text'>
                       <a  class='' href="{{team.team_href}}">
                         <img class='worldTeamLogo'  loading="lazy" src='{{team.team_logo_100}}' alt="">
                       </a>
@@ -155,7 +155,7 @@
                     </thead>
                     {% for team_game in game.team_games %}
                     <tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
-                      <td class=' hide-small' colspan='2' style='background-color: #{{team_game.team_season.team.team_color_primary_hex}}; width: 1%;'>
+                      <td class='center-text hide-small' colspan='2' style='background-color: #{{team_game.team_season.team.team_color_primary_hex}}; width: 1%;'>
                           <img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="{{team_game.team_season.team.team_logo_50}}" alt="">
                       </td>
                       <td class='worldUpcomingGameCell padding-left-8' colspan='4'>

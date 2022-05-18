@@ -2,7 +2,8 @@
   {% include "../../static/html_templates/ext_NavBar.njk" %}
 </div>
 <style>
-  #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
+
+    #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
     border-bottom: 2px solid black;
   }
 
@@ -20,8 +21,6 @@
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 {% include "../../static/html_templates/ext_TeamColoring.njk" %}
 
-
-
 <body>
   <div class="PageContent">
     <div class='worldHeader w3-row background-eee'>
@@ -30,96 +29,96 @@
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
-            <i class="fas fa-bars"></i>
+          <i class="fas fa-bars"></i>
         </button>
 
         {% for display_item in display_items%}
-        <button class="w3-bar-item w3-button tab nav-tab-button {{display_item.classes}}" id="nav-{{display_item.div_id}}-tab"  {{display_item.other_attrs|safe}}>{{display_item.display}}</button>
+          <button class="w3-bar-item w3-button tab nav-tab-button {{display_item.classes}}" id="nav-{{display_item.div_id}}-tab"  {{display_item.other_attrs|safe}}>{{display_item.display}}</button>
         {% endfor %}
 
         <div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
           <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-dropdown">Seasons</button>
           <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
             {% for Season in Seasons %}
-            <a href="{{Season.SeasonStatsHref}}" class="w3-bar-item w3-button">{{Season.SeasonStartYear}}</a>
+              <a href="{{Season.SeasonStatsHref}}" class="w3-bar-item w3-button">{{Season.SeasonStartYear}}</a>
             {% endfor %}
           </div>
         </div>
       </div>
     </nav>
     <div id="nav-tabContent">
-      <div class="tab-content" style='display:{{display_options["heisman_race"].display}};' id="nav-heisman-race">
-      </div>
+      <div class="tab-content" style='display:{{display_options["heisman_race"].display}};' id="nav-heisman-race"></div>
       <div class="tab-content" style='display:{{display_options["preseason"].display}};' id="nav-preseason">
         <div class="w3-display-container">
           <div class="w3-row-padding">
             <div class="w3-col s10">
-            <div class="w3-card">
+              <div class="w3-card">
 
-            <table class='w3-table-all width100'>
+                <table class='w3-table-all width100'>
 
-            {% for conference_season in conference_seasons%}
-            {% set conference_loop = loop %}
-            <tr class='team-primary-background-bar'>
-              <th colspan="10">{{conference_season.conference.conference_name}}</th>
-            </tr>
-                  <tr class='team-secondary-background-bar'>
-                    <th class='column-shrink'>POS</th>
-                    <th class='column-shrink' colspan="1">Team</th>
-                    <th colspan="2">Player</th>
-                    <th class='center-text'>OVR</th>
+                  {% for conference_season in conference_seasons%}
+                    {% set conference_loop = loop %}
+                    <tr class='team-primary-background-bar'>
+                      <th colspan="10">{{conference_season.conference.conference_name}}</th>
+                    </tr>
+                    <tr class='team-secondary-table-row'>
+                      <th class='column-shrink'>POS</th>
+                      <th class='column-shrink' colspan="1">Team</th>
+                      <th colspan="2">Player</th>
+                      <th class='center-text'>OVR</th>
 
-                    <th class='column-shrink'>POS</th>
-                    <th class='column-shrink' colspan="1">Team</th>
-                    <th colspan="2">Player</th>
-                    <th class='center-text'>OVR</th>
-                  </tr>
+                      <th class='column-shrink'>POS</th>
+                      <th class='column-shrink' colspan="1">Team</th>
+                      <th colspan="2">Player</th>
+                      <th class='center-text'>OVR</th>
+                    </tr>
 
-                  {% for award_group in conference_season.preseason_awards %}
-                  {% set award_loop = loop %}
-                  <tr class='{{Conf.ShowConference}}'>
-                    {% for position_group, award in award_group%}
-                    {% set position_loop = loop %}
-                    <td class='font16 white-text column-shrink' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
-                      {{award.player_team_season.position}}
-                    </td>
-                    <td class='column-shrink' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
-                      <a href="{{award.player_team_season.team_season.team.team_href}}">
-                        <img class='logo-50' src="{{award.player_team_season.team_season.team.team_logo}} " alt="">
+                    {% for award_group in conference_season.preseason_awards %}
+                      {% set award_loop = loop %}
+                      <tr class='{{Conf.ShowConference}}'>
+                        {% for position_group, award in award_group%}
+                          {% set position_loop = loop %}
+                          <td class='font16 white-text column-shrink' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
+                            {{award.player_team_season.position}}
+                          </td>
+                          <td class='column-shrink' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
+                            <a href="{{award.player_team_season.team_season.team.team_href}}">
+                              <img class='logo-50' src="{{award.player_team_season.team_season.team.team_logo}} " alt="">
 
-                      </a>
-                    </td>
-                    <td class='center-text' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'  id="preseason-all-americans-PlayerFaceDiv-{{conference_loop.index}}-{{award_loop.index}}-{{position_loop.index}}">
-                      <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{award.player_team_season.player.player_id}}' style='border-color:#{{award.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="preseason-all-americans-PlayerFace-{{conference_loop.index}}-{{position_loop.index}}-{{award_loop.index}}" face_drawn='false' >
-                      </div>
-                    </td>
-                    <td>
-                      <div class="">
-                        <a class='font14' href="{{award.player_team_season.player.player_href}}"> {{award.player_team_season.player.full_name}} </a>
-                      </div>
-                      <div class="font10">
-                        <span class='{{award.team_game.game_outcome_letter}} bold'>{{award.team_game.game_outcome_letter}} </span>
-                      </div>
-                    </td>
-                    <td class='center-text'>
-                      <div class="font16">
-                        {{award.player_team_season.ratings.overall.overall}}
-                      </div>
-                      <div class="font10">
+                            </a>
+                          </td>
+                          <td class='center-text' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'  id="preseason-all-americans-PlayerFaceDiv-{{conference_loop.index}}-{{award_loop.index}}-{{position_loop.index}}">
+                            <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{award.player_team_season.player.player_id}}' style='border-color:#{{award.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="preseason-all-americans-PlayerFace-{{conference_loop.index}}-{{position_loop.index}}-{{award_loop.index}}" face_drawn='false' ></div>
+                          </td>
+                          <td>
+                            <div class="">
+                              <a class='font14' href="{{award.player_team_season.player.player_href}}">
+                                {{award.player_team_season.player.full_name}}
+                              </a>
+                            </div>
+                            <div class="font10">
+                              <span class='{{award.team_game.game_outcome_letter}} bold'>{{award.team_game.game_outcome_letter}}
+                              </span>
+                            </div>
+                          </td>
+                          <td class='center-text'>
+                            <div class="font16">
+                              {{award.player_team_season.ratings.overall.overall}}
+                            </div>
+                            <div class="font10">
                         Overall
                       </div>
-                    </td>
+                          </td>
+
+                        {% endfor %}
+                      </tr>
 
                     {% endfor %}
-                  </tr>
 
                   {% endfor %}
-
-
-            {% endfor %}
-          </table>
-        </div>
-        </div>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -127,81 +126,139 @@
         <div class="w3-display-container">
           <div class="w3-row-padding">
             <div class="w3-col s11">
-            <div class="w3-card">
+              <div class="w3-card">
 
-            <table class='w3-table-all width100'>
+                <table class='w3-table-all width100'>
 
-            {% for conference_season in conference_seasons%}
-            {% set conference_loop = loop %}
-            <tr class='team-primary-background-bar'>
-              <th colspan="12">{{conference_season.conference.conference_name}}</th>
-            </tr>
-                  <tr class='team-secondary-background-bar'>
-                    <th class='column-shrink'>POS</th>
-                    <th class='column-shrink' colspan="1">Team</th>
-                    <th colspan="3">Player</th>
-                    <th class='center-text'>OVR</th>
+                  {% for conference_season in conference_seasons%}
+                    {% set conference_loop = loop %}
+                    <tr class='team-primary-background-bar'>
+                      <th colspan="12">{{conference_season.conference.conference_name}}</th>
+                    </tr>
+                    <tr class='team-secondary-background-bar'>
+                      <th class='column-shrink'>POS</th>
+                      <th class='column-shrink' colspan="1">Team</th>
+                      <th colspan="3">First Team Player</th>
+                      <th class='center-text'>OVR</th>
 
-                    <th class='column-shrink'>POS</th>
-                    <th class='column-shrink' colspan="1">Team</th>
-                    <th colspan="3">Player</th>
-                    <th class='center-text'>OVR</th>
-                  </tr>
+                      <th class='column-shrink'>POS</th>
+                      <th class='column-shrink' colspan="1">Team</th>
+                      <th colspan="3">First Team Player</th>
+                      <th class='center-text'>OVR</th>
+                    </tr>
 
-                  {% for award_group in conference_season.regular_season_all_american_awards %}
-                  {% set award_loop = loop %}
-                  <tr class='{{Conf.ShowConference}}'>
-                    {% for position_group, award in award_group%}
-                    {% set position_loop = loop %}
-                    <td class='font16 white-text column-shrink' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
-                      {{award.player_team_season.position}}
-                    </td>
-                    <td class='column-shrink' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
-                      <a href="{{award.player_team_season.team_season.team.team_href}}">
-                        <img class='logo-50' src="{{award.player_team_season.team_season.team.team_logo}} " alt="">
+                    {% for award_group in conference_season.regular_season_first_team_all_american_awards %}
+                      {% set award_loop = loop %}
+                      <tr class='{{Conf.ShowConference}}'>
+                        {% for position_group, award in award_group%}
+                          {% set position_loop = loop %}
+                          <td class='font16 white-text column-shrink' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
+                            {{award.player_team_season.position}}
+                          </td>
+                          <td class='column-shrink' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
+                            <a href="{{award.player_team_season.team_season.team.team_href}}">
+                              <img class='logo-50' src="{{award.player_team_season.team_season.team.team_logo}} " alt="">
 
-                      </a>
-                    </td>
-                    <td class='center-text' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'  id="all-americans-PlayerFaceDiv-{{conference_loop.index}}-{{award_loop.index}}-{{position_loop.index}}">
-                      <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{award.player_team_season.player.player_id}}' style='border-color:#{{award.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="all-americans-PlayerFace-{{conference_loop.index}}-{{position_loop.index}}-{{award_loop.index}}" face_drawn='false' >
-                      </div>
-                    </td>
-                    <td>
-                      <div class="">
-                        <a class='font14' href="{{award.player_team_season.player.player_href}}"> {{award.player_team_season.player.full_name}} </a>
-                      </div>
-                      <div class="font10">
-                        <span>{{award.player_team_season.class.class_name}} </span>
-                      </div>
-                    </td>
-                    <td>
-                      <ul class='no-list-style'>
-                        {% for top_stat in award.player_team_season.top_stats%}
-                        <li class='nowrap'>
-                          {{top_stat.display}}
-                        </li>
-                        {% endfor %}
-                      </ul>
-                    </td>
-                    <td class='center-text'>
-                      <div class="font16">
-                        {{award.player_team_season.ratings.overall.overall}}
-                      </div>
-                      <div class="font10">
+                            </a>
+                          </td>
+                          <td class='center-text' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'  id="all-americans-PlayerFaceDiv-{{conference_loop.index}}-{{award_loop.index}}-{{position_loop.index}}">
+                            <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{award.player_team_season.player.player_id}}' style='border-color:#{{award.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="all-americans-PlayerFace-{{conference_loop.index}}-{{position_loop.index}}-{{award_loop.index}}" face_drawn='false' ></div>
+                          </td>
+                          <td player_id='{{award.player_team_season.player_id}}'>
+                            <div class="">
+                              
+                              <a class='font14' href="{{award.player_team_season.player.player_href}}">
+                                {{award.player_team_season.player.full_name}}
+                              </a>
+                            </div>
+                            <div class="font10">
+                              <i class="fa fa-address-card player-profile-popup-icon"></i>
+                               &#183;
+                              <span>{{award.player_team_season.class.class_name}}
+                              </span>
+                            </div>
+                          </td>
+                          <td>
+                            <ul class='no-list-style'>
+                              {% for top_stat in award.player_team_season.top_stats%}
+                                <li class='nowrap'>
+                                  {{top_stat.display}}
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          </td>
+                          <td class='center-text'>
+                            <div class="font16">
+                              {{award.player_team_season.ratings.overall.overall}}
+                            </div>
+                            <div class="font10">
                         Overall
                       </div>
-                    </td>
+                          </td>
+
+                        {% endfor %}
+                      </tr>
 
                     {% endfor %}
-                  </tr>
+
+                    <tr class='team-secondary-background-bar'>
+                      <th class='column-shrink'>POS</th>
+                      <th class='column-shrink' colspan="2">Team</th>
+                      <th colspan="2">Second Team Player</th>
+                      <th class='center-text'>OVR</th>
+
+                      <th class='column-shrink'>POS</th>
+                      <th class='column-shrink' colspan="2">Team</th>
+                      <th colspan="2">Freshman Player</th>
+                      <th class='center-text'>OVR</th>
+                    </tr>
+
+                    {% for award_group in conference_season.regular_season_other_team_all_american_awards %}
+                      {% set award_loop = loop %}
+                      <tr class='{{Conf.ShowConference}}' >
+                        {% for position_group, award in award_group%}
+                          {% set position_loop = loop %}
+                          <td class='font12 white-text column-shrink' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
+                            {{award.player_team_season.position}}
+                          </td>
+                          <td colspan='2' class='font12 column-shrink white-text' style='background-color: #{{award.player_team_season.team_season.team.team_color_primary_hex}}'>
+                            <a href="{{award.player_team_season.team_season.team.team_href}}">
+                             {{award.player_team_season.team_season.team.school_name}}
+                            </a>
+                          </td>
+                          <td colspan='1' player_id='{{award.player_team_season.player_id}}'>
+                            <i class="fa fa-address-card player-profile-popup-icon"></i>
+                              <a class='' href="{{award.player_team_season.player.player_href}}">
+                                {{award.player_team_season.player.full_name}}
+                              </a>
+
+                          </td>
+                          <td>
+                            <ul class='no-list-style'>
+                              {% if award %}
+                              {% for top_stat in award.player_team_season.top_stats.slice(0,1)%}
+                                <li class='nowrap'>
+                                  {{top_stat.display}}
+                                </li>
+                              {% endfor %}
+                              {%endif%}
+                            </ul>
+                          </td>
+                          <td class='center-text'>
+                              {{award.player_team_season.ratings.overall.overall}} OVR
+
+                          </td>
+
+                        {% endfor %}
+                      </tr>
+
+                    {% endfor %}
+
 
                   {% endfor %}
-
-
-            {% endfor %}
-          </table>
-        </div>
-        </div>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -222,8 +279,7 @@
                       </div>
                       <div class='w3-col l3 m4 s12' >
                         <div class='center-text inline-block'  id="heisman-winner-PlayerFaceDiv">
-                          <div class="PlayerFace-200 PlayerFace-Headshot inline-block" player_id='{{heisman_winner.player_team_season.player.player_id}}' style='border-color:#{{heisman_winner.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="heisman-winner-PlayerFace" face_drawn='false' >
-                          </div>
+                          <div class="PlayerFace-200 PlayerFace-Headshot inline-block" player_id='{{heisman_winner.player_team_season.player.player_id}}' style='border-color:#{{heisman_winner.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="heisman-winner-PlayerFace" face_drawn='false' ></div>
                         </div>
                       </div>
                       <div class='w3-col l4 m4 s12 vertical-align-middle' style='width: 370px;'>
@@ -243,7 +299,8 @@
                               | #<span data-field="JerseyNumber">{{heisman_winner.player_team_season.player.jersey_number}}</span> | <span data-field="Position">{{heisman_winner.player_team_season.position}}</span>
                             </div>
                             <div class='playerOverviewInfo italic player-captain'>
-                              <span html-field="TeamCaptainIcon"></span><span data-field="TeamCaptain"></span>
+                              <span html-field="TeamCaptainIcon"></span>
+                              <span data-field="TeamCaptain"></span>
                             </div>
 
                           </div>
@@ -251,26 +308,30 @@
                             <li class='playerHeaderClass'>
                               <div class='playerHeaderBioDescription'>CLASS</div>
                               <div class="player-class">
-                                <span>{{heisman_winner.player_team_season.class.class_name}}</span><span  html-field="RedshirtIcon"></span>
+                                <span>{{heisman_winner.player_team_season.class.class_name}}</span>
+                                <span  html-field="RedshirtIcon"></span>
                               </div>
                             </li>
                             <li class='playerHeaderHtWt'>
                               <div class='playerHeaderBioDescription'>HT/WT</div>
-                              <div><span>{{heisman_winner.player_team_season.player.body.height}}</span>, <span>{{heisman_winner.player_team_season.player.body.weight}}</span></div>
+                              <div>
+                                <span>{{heisman_winner.player_team_season.player.body.height}}</span>, <span>{{heisman_winner.player_team_season.player.body.weight}}</span></div>
                             </li>
                             <li class='playerHeaderHometown'>
                               <div class='playerHeaderBioDescription'>HOMETOWN</div>
-                              <div><span>{{heisman_winner.player_team_season.player.hometown.city}}, {{heisman_winner.player_team_season.player.hometown.state}}</span></div>
+                              <div>
+                                <span>{{heisman_winner.player_team_season.player.hometown.city}}, {{heisman_winner.player_team_season.player.hometown.state}}</span></div>
                             </li>
                             <li class='playerHeaderHometown'>
                               <div class='playerHeaderBioDescription'>OVR</div>
-                              <div><span>{{heisman_winner.player_team_season.ratings.overall.overall}}</span></div>
+                              <div>
+                                <span>{{heisman_winner.player_team_season.ratings.overall.overall}}</span></div>
                             </li>
                           </ul>
 
                         </div>
                       </div>
-                      </div>
+                    </div>
                   </td>
                 </tr>
               </table>
@@ -285,13 +346,13 @@
             <div class="w3-col w3-display-container">
               <div class="w3-card">
 
-              <table class='w3-table-all'>
+                <table class='w3-table-all'>
 
-              {% for conference_season in conference_seasons%}
-              {% set conference_loop = loop %}
-              <tr class='team-primary-background-bar'>
-                <th colspan="9">{{conference_season.conference.conference_name}}</th>
-              </tr>
+                  {% for conference_season in conference_seasons%}
+                    {% set conference_loop = loop %}
+                    <tr class='team-primary-background-bar'>
+                      <th colspan="9">{{conference_season.conference.conference_name}} Players of the Week</th>
+                    </tr>
                     <tr class='team-secondary-background-bar'>
                       <th>Week</th>
                       <th colspan="4">Offensive Player</th>
@@ -299,61 +360,68 @@
                     </tr>
 
                     {% for week in conference_season.weekly_awards %}
-                    {% set week_loop = loop %}
-                    <tr class='{{Conf.ShowConference}}'>
-                      <td>
-                        <a href="{{Week.GameHref}}">{{week.week_name}}</a>
-                      </td>
-                      {% for award in week.awards.slice(0,2)  %}
-                      {% set award_loop = loop %}
-                      <td class='column-shrink' style='background-color: #{{award.player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'>
-                        <a href="{{award.player_team_game.player_team_season.team_season.team.team_href}}">
-                          <img class='logo-50' src="{{award.player_team_game.player_team_season.team_season.team.team_logo}} " alt="">
+                      {% set week_loop = loop %}
+                      <tr class='{{Conf.ShowConference}}'>
+                        <td>
+                          <a href="{{Week.GameHref}}">{{week.week_name}}</a>
+                        </td>
+                        {% for award in week
+                          .awards
+                          .slice(0, 2) %}
+                          {% set award_loop = loop %}
+                          <td class='column-shrink' style='background-color: #{{award.player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'>
+                            <a href="{{award.player_team_game.player_team_season.team_season.team.team_href}}">
+                              <img class='logo-50' src="{{award.player_team_game.player_team_season.team_season.team.team_logo}} " alt="">
 
-                        </a>
-                      </td>
-                      <td class='center-text' style='background-color: #{{award.player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{conference_loop.index}}-{{week_loop.index}}-{{award_loop.index}}">
-                        <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{award.player_team_game.player_team_season.player.player_id}}' style='border-color:#{{award.player_team_game.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="teamTeamLeaderBoxPlayerFace-{{conference_loop.index}}-{{week_loop.index}}-{{award_loop.index}}" face_drawn='false' >
-                        </div>
-                      </td>
-                      <td>
-                        <div class="">
-                          <a class='font14' href="{{award.player_team_game.player_team_season.player.player_href}}"> {{award.player_team_game.player_team_season.player.full_name}} </a>
-                          <span class='font10'>{{award.player_team_game.player_team_season.position}} </span>
-                        </div>
-                        <div class="font10">
-                          <span class='{{award.player_team_game.team_game.game_outcome_letter}} bold'>{{award.player_team_game.team_game.game_outcome_letter}} </span>
-                          <a href='{{award.player_team_game.team_game.game.game_href}}'>{{award.player_team_game.team_game.game_stats.team.points}}-{{award.player_team_game.team_game.opponent_game_stats.team.points}} </a>
+                            </a>
+                          </td>
+                          <td class='center-text' style='background-color: #{{award.player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{conference_loop.index}}-{{week_loop.index}}-{{award_loop.index}}">
+                            <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{award.player_team_game.player_team_season.player.player_id}}' style='border-color:#{{award.player_team_game.player_team_season.team_season.team.team_color_secondary_hex}}; background-color: white;' id="teamTeamLeaderBoxPlayerFace-{{conference_loop.index}}-{{week_loop.index}}-{{award_loop.index}}" face_drawn='false' ></div>
+                          </td>
+                          <td>
+                            <div class="">
+                              <a class='font14' href="{{award.player_team_game.player_team_season.player.player_href}}">
+                                {{award.player_team_game.player_team_season.player.full_name}}
+                              </a>
+                              <span class='font10'>{{award.player_team_game.player_team_season.position}}
+                              </span>
+                            </div>
+                            <div class="font10">
+                              <span class='{{award.player_team_game.team_game.game_outcome_letter}} bold'>{{award.player_team_game.team_game.game_outcome_letter}}
+                              </span>
+                              <a href='{{award.player_team_game.team_game.game.game_href}}'>{{award.player_team_game.team_game.game_stats.team.points}}-{{award.player_team_game.team_game.opponent_game_stats.team.points}}
+                              </a>
                           vs.
                           <a href='{{award.player_team_game.team_game.opponent_team_season.team.team_href}}'>{{award.player_team_game.team_game.opponent_team_season.team.team_abbreviation}}</a>
-                        </div>
+                            </div>
 
+                          </td>
+                          <td>
+                            <div class="">
+                              <ul class='no-list-style'>
+                                {% for stat in award
+                                  .player_team_game
+                                  .top_stats
+                                  .slice(0, 3) %}
+                                  <li>{{stat.display}}</li>
+                                {% endfor %}
+                              </ul>
+                            </div>
+                          </td>
+                          {%endfor%}
 
-                      </td>
-                      <td>
-                        <div class="">
-                          <ul class='no-list-style'>
-                            {% for stat in award.player_team_game.top_stats.slice(0,3) %}
-                            <li>{{stat.display}}</li>
-                            {% endfor %}
-                          </ul>
-                        </div>
-                      </td>
-                      {%endfor%}
+                        </tr>
+                      {% endfor %}
 
-                    </tr>
                     {% endfor %}
+                  </table>
+                </div>
 
-
-              {% endfor %}
-            </table>
-          </div>
-
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
-  </div>
-</body>
+  </body>

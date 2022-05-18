@@ -143,7 +143,7 @@ const action = async (common) => {
       "conference_name"
     );
 
-    var conferences_from_json = await common.get_conferences('-2023');
+    var conferences_from_json = await common.get_conferences('');
     //var conferences_from_json = await common.get_conferences('');
     console.log({conferences_from_json:conferences_from_json})
 
@@ -201,7 +201,7 @@ const action = async (common) => {
       season: season,
       world_id: world_id,
     });
-    var conference_seasons = await index_group(
+    var conference_seasons = index_group_sync(
       await db.conference_season.toArray(),
       "index",
       "conference_id"
@@ -361,7 +361,7 @@ const action = async (common) => {
       conference: {},
     });
 
-    const teams_by_team_name = await index_group(teams, "index", "school_name");
+    const teams_by_team_name = index_group_sync(teams, "index", "school_name");
 
     $.each(teams, function (ind, team) {
       $.each(team.rivals, function (ind, rival) {
@@ -386,7 +386,7 @@ const action = async (common) => {
       .where({ season: season })
       .and((ts) => ts.team_id > 0)
       .toArray();
-    const teams_by_team_id = await index_group(
+    const teams_by_team_id = index_group_sync(
       await db.team.where("team_id").above(0).toArray(),
       "index",
       "team_id"

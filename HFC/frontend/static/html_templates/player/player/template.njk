@@ -332,12 +332,14 @@
                   Awards
                 </div>
               <table class='w3-table-all'>
-                {% for award_name, awards in award_set%}
+                {{award_set|log}}
+                {% for award_obj in award_list%}
+                {{award_obj|log}}
                 <tr>
-                  <td class='font16 bold'>{{award_name}}</td>
+                  <td class='font16 bold'>{{award_obj.award_key}}</td>
                   <td>
                     <ul class='no-list-style'>
-                      {% for award in awards%}
+                      {% for award in award_obj.awards%}
                       <li>
                         {% if award.award_href|length > 0%}
                           <a href="{{award.award_href}}">{{award.award_name}}</a>

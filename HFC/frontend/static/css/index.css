@@ -271,7 +271,7 @@ body {
   margin-left: 20px;
   margin-right: 20px;
   vertical-align: top;
-  z-index: 2;
+  z-index: 3;
   position: relative;
 }
 
@@ -1693,7 +1693,7 @@ tfoot td {
   margin-left: -100px;
   height: inherit;
   position: absolute;
-  z-index: 4;
+  z-index: 3;
   transform: skewX(-45deg);
   border-right: 30px solid;
 }
@@ -2426,8 +2426,7 @@ table tr td.padding-left-8 {
   width: 1%;
 }
 
-.nowrap {
-
+.nowrap, .no-wrap {
   white-space: nowrap;
 }
 

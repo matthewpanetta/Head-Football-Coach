@@ -4,6 +4,8 @@
       nunjucks.configure({ autoescape: true });
       var index_group = common.index_group;
 
+      common.stopwatch(common, 'awards - start of gethtml');
+
       var world_obj = {};
 
       var position_order_map = {
@@ -47,13 +49,38 @@
         group_name: 'World',
         db: db
       });
+      var player_team_season_ids = [];
+      common.stopwatch(common, 'awards - after navbarlinks');
 
       const awards = await db.award.where({season: common.season}).toArray();
+      common.stopwatch(common, 'awards - after award fetch');
 
       var weekly_awards = awards.filter(a => a.award_timeframe == 'week' && a.player_team_game_id != null);
       var preseason_awards = awards.filter(a => a.award_timeframe == 'pre-season');
-      var regular_season_all_american_awards = awards.filter(a => a.award_timeframe == 'regular season' &&  a.award_group == 'position');
-      var heisman_winner = awards.filter(a => a.award_group_type == 'Heisman')[0];
+      var regular_season_first_team_all_american_awards = awards.filter(a => a.award_timeframe == 'regular season' && a.award_team == 'First' &&  a.award_group == 'position');
+      var regular_season_second_team_all_american_awards = awards.filter(a => a.award_timeframe == 'regular season' && a.award_team == 'Second' &&  a.award_group == 'position');
+      var regular_season_freshman_team_all_american_awards = awards.filter(a => a.award_timeframe == 'regular season' && a.award_team == 'Freshman' &&  a.award_group == 'position');
+      var heisman_winner = awards.find(a => a.award_group_type == 'Heisman');
+
+      player_team_season_ids = player_team_season_ids.concat(
+        weekly_awards.map(a => a.player_team_season_id)
+      )
+      player_team_season_ids = player_team_season_ids.concat(
+        preseason_awards.map(a => a.player_team_season_id)
+      )
+      player_team_season_ids = player_team_season_ids.concat(
+        regular_season_first_team_all_american_awards.map(a => a.player_team_season_id)
+      )
+      player_team_season_ids = player_team_season_ids.concat(
+        regular_season_second_team_all_american_awards.map(a => a.player_team_season_id)
+      )
+      player_team_season_ids = player_team_season_ids.concat(
+        regular_season_freshman_team_all_american_awards.map(a => a.player_team_season_id)
+      )
+      if (heisman_winner){
+        player_team_season_ids.push(heisman_winner.player_team_season_id)
+      }
+
 
       const player_team_game_ids = weekly_awards.map(a => a.player_team_game_id);
 
@@ -64,19 +91,30 @@
       const conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id')
       conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference');
 
+      common.stopwatch(common, 'awards - after cinferences');
+
       var weeks = await db.week.where({season: common.season}).toArray();
       const weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
 
       weekly_awards = nest_children(weekly_awards, weeks_by_week_id, 'week_id', 'week')
 
+      common.stopwatch(common, 'awards - weeks');
+
       var player_team_games = await db.player_team_game.bulkGet(player_team_game_ids);
-      const team_game_ids = player_team_games.map(ptg => ptg.team_game_id)
+      var team_game_ids = player_team_games.map(ptg => ptg.team_game_id)
+      team_game_ids = common.distinct(team_game_ids)
       var team_games = await db.team_game.bulkGet(team_game_ids);
-      const game_ids = team_games.map(tg => tg.game_id);
+
+      common.stopwatch(common, 'awards - after player team games');
+      
+      var game_ids = team_games.map(tg => tg.game_id);
+      game_ids = common.distinct(game_ids)
       const games = await db.game.bulkGet(game_ids);
       console.log({games:games, game_ids:game_ids, team_games:team_games, team_game_ids:team_game_ids, player_team_games:player_team_games})
       const games_by_game_id = index_group_sync(games, 'index', 'game_id')
       team_games = nest_children(team_games, games_by_game_id, 'game_id', 'game');
+
+      common.stopwatch(common, 'awards - after games');
 
       var team_seasons = await db.team_season.where({season: common.season}).and(ts=>ts.team_id>0).toArray();
 
@@ -92,34 +130,46 @@
         return team_game;
       })
 
+      common.stopwatch(common, 'awards - after teamgames');
+
       team_games_by_team_game_id = index_group_sync(team_games, 'index', 'team_game_id')
       player_team_games = nest_children(player_team_games, team_games_by_team_game_id, 'team_game_id', 'team_game');
 
-    	var player_team_seasons = await db.player_team_season.where({season: common.season}).toArray();
-      console.log({player_team_seasons:player_team_seasons})
-      player_team_seasons = player_team_seasons.filter(pts => pts.is_recruit == false);
-      const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
+      //300 1000 800
+      player_team_season_ids = common.distinct(player_team_season_ids)
+    	var player_team_seasons = await db.player_team_season.bulkGet(player_team_season_ids)//.toArray();
+      //player_team_seasons = player_team_seasons.filter(pts => pts.is_recruit == false);
+      //const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
       var previous_player_team_seasons = await db.player_team_season.where({season: common.season - 1}).toArray();
 
+      common.stopwatch(common, 'awards - after pts');
+      
       const player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
-      console.log({player_team_seasons:player_team_seasons, player_team_season_stats:player_team_season_stats})
       const player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id')
 
+      common.stopwatch(common, 'awards - after pts_stat');
+      
     	const player_ids = player_team_seasons.map(pts => pts.player_id);
     	var players = await db.player.bulkGet(player_ids);
     	const players_by_player_id = index_group_sync(players, 'index', 'player_id');
       const previous_player_team_seasons_by_player_id = index_group_sync(previous_player_team_seasons, 'index', 'player_id');
 
+      common.stopwatch(common, 'awards - after player fetch');
+      
     	player_team_seasons = nest_children(player_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
     	player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
       player_team_seasons = nest_children(player_team_seasons, previous_player_team_seasons_by_player_id, 'player_id', 'previous_player_team_season')
       player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats')
 
+      common.stopwatch(common, 'awards - after nest');
+      
       const player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id');
     	player_team_games = nest_children(player_team_games, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
       player_team_games = nest_children(player_team_games, team_games_by_team_game_id, 'team_game_id', 'team_game');
       const player_team_games_by_player_team_game_id = index_group_sync(player_team_games, 'index', 'player_team_game_id')
 
+      common.stopwatch(common, 'awards - after pts index');
+      
       weekly_awards = nest_children(weekly_awards, player_team_games_by_player_team_game_id, 'player_team_game_id', 'player_team_game' )
 
       weekly_awards = index_group_sync(weekly_awards, 'group', 'conference_season_id');
@@ -127,10 +177,16 @@
       preseason_awards = nest_children(preseason_awards, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
       preseason_awards_by_conference_season_id = index_group_sync(preseason_awards, 'group', 'conference_season_id');
 
-      regular_season_all_american_awards = nest_children(regular_season_all_american_awards, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
-      regular_season_all_american_awards_by_conference_season_id = index_group_sync(regular_season_all_american_awards, 'group', 'conference_season_id');
+      regular_season_first_team_all_american_awards = nest_children(regular_season_first_team_all_american_awards, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
+      regular_season_first_team_all_american_awards_by_conference_season_id = index_group_sync(regular_season_first_team_all_american_awards, 'group', 'conference_season_id');
 
-      console.log({player_team_seasons:player_team_seasons, player_team_seasons_by_player_team_season_id:player_team_seasons_by_player_team_season_id, regular_season_all_american_awards:regular_season_all_american_awards, preseason_awards:preseason_awards, weekly_awards:weekly_awards})
+      regular_season_second_team_all_american_awards = nest_children(regular_season_second_team_all_american_awards, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
+      regular_season_second_team_all_american_awards_by_conference_season_id = index_group_sync(regular_season_second_team_all_american_awards, 'group', 'conference_season_id');
+
+      regular_season_freshman_team_all_american_awards = nest_children(regular_season_freshman_team_all_american_awards, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
+      regular_season_freshman_team_all_american_awards_by_conference_season_id = index_group_sync(regular_season_freshman_team_all_american_awards, 'group', 'conference_season_id');
+
+      // console.log({player_team_seasons:player_team_seasons, player_team_seasons_by_player_team_season_id:player_team_seasons_by_player_team_season_id, regular_season_all_american_awards:regular_season_all_american_awards, preseason_awards:preseason_awards, weekly_awards:weekly_awards})
 
       if (heisman_winner != undefined){
         heisman_winner.player_team_season = player_team_seasons_by_player_team_season_id[heisman_winner.player_team_season_id];
@@ -168,31 +224,40 @@
           })
         }
 
-        conference_season.regular_season_all_american_awards = []
-        if (conference_season.conference_season_id in regular_season_all_american_awards_by_conference_season_id){
-          var this_conference_regular_season_all_american_awards = regular_season_all_american_awards_by_conference_season_id[conference_season.conference_season_id].sort((award_a, award_b) => position_order_map[award_a.award_group_type] - position_order_map[award_b.award_group_type])
-          this_conference_regular_season_all_american_awards = this_conference_regular_season_all_american_awards.map(function(award){
+        conference_season.regular_season_first_team_all_american_awards = []
+        conference_season.regular_season_other_team_all_american_awards = []
+        if (conference_season.conference_season_id in regular_season_first_team_all_american_awards_by_conference_season_id){
+          var this_conference_regular_season_first_team_all_american_awards = regular_season_first_team_all_american_awards_by_conference_season_id[conference_season.conference_season_id].sort((award_a, award_b) => position_order_map[award_a.award_group_type] - position_order_map[award_b.award_group_type])
+          this_conference_regular_season_first_team_all_american_awards = this_conference_regular_season_first_team_all_american_awards.map(function(award){
             award.position_group = position_group_map[award.player_team_season.position]
             return award;
           });
-          var this_conference_regular_season_all_american_awards_by_position_group = index_group_sync(this_conference_regular_season_all_american_awards, 'group', 'position_group');
+          var this_conference_regular_season_first_team_all_american_awards_by_position_group = index_group_sync(this_conference_regular_season_first_team_all_american_awards, 'group', 'position_group');
+
+          for (var i = 0; i < this_conference_regular_season_first_team_all_american_awards_by_position_group.Offense.length; i++){
+            conference_season.regular_season_first_team_all_american_awards.push({
+              Offense: this_conference_regular_season_first_team_all_american_awards_by_position_group.Offense[i],
+              Defense: this_conference_regular_season_first_team_all_american_awards_by_position_group.Defense[i],
+            })
+          }
+
+          var this_conference_regular_season_second_team_all_american_awards = regular_season_second_team_all_american_awards_by_conference_season_id[conference_season.conference_season_id].sort((award_a, award_b) => position_order_map[award_a.award_group_type] - position_order_map[award_b.award_group_type])
+          var this_conference_regular_season_freshman_team_all_american_awards = regular_season_freshman_team_all_american_awards_by_conference_season_id[conference_season.conference_season_id].sort((award_a, award_b) => position_order_map[award_a.award_group_type] - position_order_map[award_b.award_group_type])
 
 
-
-
-          for (var i = 0; i < this_conference_regular_season_all_american_awards_by_position_group.Offense.length; i++){
-            conference_season.regular_season_all_american_awards.push({
-              Offense: this_conference_regular_season_all_american_awards_by_position_group.Offense[i],
-              Defense: this_conference_regular_season_all_american_awards_by_position_group.Defense[i],
+          for (var i = 0; i < this_conference_regular_season_second_team_all_american_awards.length; i++){
+            conference_season.regular_season_other_team_all_american_awards.push({
+              Second: this_conference_regular_season_second_team_all_american_awards[i],
+              Freshman: this_conference_regular_season_freshman_team_all_american_awards[i],
             })
           }
         }
 
-
+        console.log({conference_season:conference_season})
         return conference_season;
       });
 
-      console.log({weekly_awards:weekly_awards, conference_seasons:conference_seasons})
+      console.log({weekly_awards:weekly_awards, conference_seasons:conference_seasons, heisman_winner:heisman_winner})
 
       var heisman_race = player_team_seasons.sort((pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating);
 
@@ -287,6 +352,10 @@
 
     const action = async (common) => {
       const db = common.db;
+
+      $(".player-profile-popup-icon").on("click", async function () {
+        await common.populate_player_modal(common, this);
+      });
 
     }
 
@@ -398,6 +467,13 @@
 
       const common = await common_functions('/World/:world_id/Ranking/');
       common.startTime = startTime;
+
+      // const db = common.db;
+      // await db.award.where({week_id: 22}).delete();
+      // await db.award.where({week_id: 23}).delete();
+
+      // const this_week = await db.week.filter(w => w.is_current).first();
+      // await common.choose_all_americans(this_week, common)
 
       await getHtml(common);
       await action(common);

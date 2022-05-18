@@ -486,51 +486,7 @@ const getHtml = async (common) => {
 
 
       for (const award of player_awards){
-        var award_group_name = '';
-        var award_name = '';
-        var award_href = '';
         console.log({award:award})
-
-        if (award.award_team_set == 'conference'){
-          if (award.award_timeframe == 'week'){
-            award_group_name = `${award.conference_season.conference.conference_abbreviation} ${award.award_group_type} Player of the Week`
-            award_name = `${award.week.week_name}, ${award.week.season}`;
-            award.award_href = award.player_team_game.team_game.game.game_href;
-          }
-          else if (award.award_timeframe == 'regular season') {
-            award_group_name = `${award.conference_season.conference.conference_abbreviation} All-Conference ${award.award_group_type}`
-            award_name = `${award.season}`;
-          }
-          else if (award.award_timeframe == 'pre-season') {
-            award_group_name = `${award.conference_season.conference.conference_abbreviation} Preseason All-Conference ${award.award_group_type}`
-            award_name = `${award.season}`;
-          }
-        }
-        else {
-          if (award.award_timeframe == 'week'){
-            award_group_name = `National ${award.award_group_type} Player of the Week`
-            award_name = `${award.week.week_name}, ${award.week.season}`;
-            award.award_href = award.player_team_game.team_game.game.game_href;
-          }
-          else if (award.award_timeframe == 'regular season') {
-            if (award.award_group_type == 'Heisman'){
-              award_group_name = 'Heisman'
-              award_name = `${award.season}`;
-            }
-            else{
-              award_group_name = `All-American ${award.award_group_type}`
-              award_name = `${award.season}`;
-            }
-          }
-          else if (award.award_timeframe == 'pre-season') {
-            award_group_name = `Preseason All-American ${award.award_group_type}`
-          }
-        }
-
-
-        award.award_group_name = award_group_name
-        award.award_name = award_name
-
         if (!(award.award_group_name in award_set)){
           award_set[award.award_group_name] = []
         }
@@ -539,7 +495,14 @@ const getHtml = async (common) => {
     }
   }
 
+  var award_list = []
+  for (const [award_key, awards] of Object.entries(award_set)){
+    award_list.push({award_key:award_key,awards:awards })
+  }
 
+  award_list = award_list.sort(function(award_obj_a, award_obj_b){
+    return award_obj_a.awards[0].award_id - award_obj_b.awards[0].award_id
+  });
 
   const position_skill_set_map ={'QB': ['overall','athleticism', 'passing', 'rushing'],
                        'RB': ['overall','athleticism', 'rushing'],
@@ -640,7 +603,7 @@ const getHtml = async (common) => {
                         skills: skills,
                         player_team_games: player_team_games,
                         player_awards:player_awards,
-                        award_set:award_set,
+                        award_list:award_list,
                         recruit_team_seasons:recruit_team_seasons
 
                       }

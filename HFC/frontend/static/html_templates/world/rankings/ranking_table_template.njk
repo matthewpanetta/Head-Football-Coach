@@ -49,7 +49,7 @@
     <td class="center-text hide-small" value='{{team_season.net_wins}}'>
       <div class="font14">{{team_season.record_display}}</div>
     </td>
-    <td class="column-med no-sort">
+    <td class="column-med no-sort no-wrap">
       {% if team_season.last_week_team_game == null %}
       BYE
       {% else %}
@@ -62,12 +62,13 @@
             {{team_season.last_week_team_game.game_location_char}}
           </span
         >
-          <a class="hide-small" href="{{team_season.last_week_team_game.opponent_team.team_href}}">{{team_season.last_week_team_game.opponent_team_game.national_rank_display}}
+          <span class='font10'>{{team_season.last_week_team_game.opponent_team_game.national_rank_display}}</span>
+          <a class="hide-small" href="{{team_season.last_week_team_game.opponent_team.team_href}}">
             {{team_season.last_week_team_game.opponent_team.school_name}}</a>
         </div>
       {% endif %}
     </td>
-    <td class="hide-small column-med">
+    <td class="hide-small column-med no-wrap">
       {% if team_season.this_week_team_game == null%}
       BYE
       {% else %}
