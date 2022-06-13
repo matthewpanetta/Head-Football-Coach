@@ -60,7 +60,7 @@
       var regular_season_first_team_all_american_awards = awards.filter(a => a.award_timeframe == 'regular season' && a.award_team == 'First' &&  a.award_group == 'position');
       var regular_season_second_team_all_american_awards = awards.filter(a => a.award_timeframe == 'regular season' && a.award_team == 'Second' &&  a.award_group == 'position');
       var regular_season_freshman_team_all_american_awards = awards.filter(a => a.award_timeframe == 'regular season' && a.award_team == 'Freshman' &&  a.award_group == 'position');
-      var heisman_winner = awards.find(a => a.award_group_type == 'Heisman');
+      var trophies = awards.filter(a => a.award_group == 'individual');
 
       player_team_season_ids = player_team_season_ids.concat(
         weekly_awards.map(a => a.player_team_season_id)
@@ -77,8 +77,10 @@
       player_team_season_ids = player_team_season_ids.concat(
         regular_season_freshman_team_all_american_awards.map(a => a.player_team_season_id)
       )
-      if (heisman_winner){
-        player_team_season_ids.push(heisman_winner.player_team_season_id)
+      if (trophies.length > 0){
+        player_team_season_ids.concat(
+          trophies.map(a => a.player_team_season_id)
+        )
       }
 
 
@@ -188,9 +190,7 @@
 
       // console.log({player_team_seasons:player_team_seasons, player_team_seasons_by_player_team_season_id:player_team_seasons_by_player_team_season_id, regular_season_all_american_awards:regular_season_all_american_awards, preseason_awards:preseason_awards, weekly_awards:weekly_awards})
 
-      if (heisman_winner != undefined){
-        heisman_winner.player_team_season = player_team_seasons_by_player_team_season_id[heisman_winner.player_team_season_id];
-      }
+      trophies = nest_children(trophies, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
 
       console.log({weekly_awards:weekly_awards, conference_seasons:conference_seasons, preseason_awards:preseason_awards});
 
@@ -257,7 +257,7 @@
         return conference_season;
       });
 
-      console.log({weekly_awards:weekly_awards, conference_seasons:conference_seasons, heisman_winner:heisman_winner})
+      console.log({weekly_awards:weekly_awards, conference_seasons:conference_seasons, trophies:trophies})
 
       var heisman_race = player_team_seasons.sort((pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating);
 
@@ -269,7 +269,7 @@
 
       var display_options = {
         preseason: {display: 'none'},
-        heisman: {display: 'none'},
+        trophies: {display: 'none'},
         heisman_race: {display: 'none'},
         potw: {display: 'none'},
         season: {display: 'none'},
@@ -286,15 +286,15 @@
 
         display_options.preseason.display = 'block';
       }
-      else if (heisman_winner != undefined) {
+      else if (trophies.length > 0) {
         display_items = [
-          {div_id: 'heisman-winner', display: 'Heisman Winner', classes: ' selected-tab', other_attrs: `style='background-color: #${page.SecondaryColor}'`},
+          {div_id: 'trophies', display: 'Award Winners', classes: ' selected-tab', other_attrs: `style='background-color: #${page.SecondaryColor}'`},
           {div_id: 'all-americans', display: 'All Americans', classes: '', other_attrs: ''},
           {div_id: 'weekly', display: 'POTW', classes: '', other_attrs: ''},
           {div_id: 'preseason', display: 'Preseason AAs', classes: '', other_attrs: ``},
         ]
 
-        display_options.heisman.display = 'block';
+        display_options.trophies.display = 'block';
       }
       else {
         display_items = [
@@ -317,7 +317,7 @@
                             recent_games: recent_games,
                             conference_seasons: conference_seasons,
                             heisman_race: heisman_race,
-                            heisman_winner:heisman_winner,
+                            trophies:trophies,
                             display_items:display_items,
                             display_options:display_options
 

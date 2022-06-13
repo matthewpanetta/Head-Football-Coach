@@ -62,7 +62,7 @@ body {
 
 .teamHeaderInfo {
   display: inline-block;
-  padding-top: 40px;
+  padding-top: 36px;
 }
 
 .playerFirstName,
@@ -161,8 +161,8 @@ body {
 .playerHeaderStatsBox,
 .teamHeaderRankBox {
   display: inline-block;
-  vertical-align: top;
-  margin-top: 20px;
+  vertical-align: middle;
+  /* margin-top: 20px; */
 }
 
 .coachHeaderStatsHeaderRow,
@@ -231,7 +231,9 @@ body {
 .coachHeaderBio {
   border-left: 1px solid black;
   padding-left: 8px;
-  margin: 20px;
+  padding-right: 8px;
+  margin-left:8px;
+  /* margin: 20px; */
   font-size: 12px;
 }
 
@@ -248,7 +250,7 @@ body {
 .playerHeaderBioDescription,
 .coachHeaderBioDescription {
   color: #6c6d6f;
-  padding: 0 12px 12px 0;
+  padding: 4px 12px 4px 0;
 }
 
 .worldHeaderStatsBox .playerHeaderStatsValueRow,
@@ -1099,8 +1101,18 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
   border-radius: 250px;
 }
 
+.PlayerFace-150 {
+  width: 150px;
+  height: 150px;
+  border-radius: 250px;
+}
+
 .PlayerFace-Headshot.PlayerFace-200 {
   border: 6px solid;
+}
+
+.PlayerFace-Headshot.PlayerFace-150 {
+  border: 5px solid;
 }
 
 .PlayerFace-Headshot.PlayerFace-90 {
@@ -1360,10 +1372,10 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
 
 .bar-total {
   display: inline-block;
-  height: 8px;
+  height: 10px;
   overflow: hidden;
   padding: 0;
-  width: calc(100% - 40px);
+  width: 100%;
   background-color: #dcdddf;
 }
 

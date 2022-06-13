@@ -18,7 +18,8 @@
       <div class="PlayerFace" id='PlayerFace'>
         {{player.PlayerFaceSVG|safe}}
       </div>
-      <div class='playerHeaderInfo'>
+      <div class='inline-block' style='vertical-align: middle;'>
+        <div class='playerHeaderInfo'>
         <span class='playerFirstName'>
           {{player.name.first}}
         </span>
@@ -43,7 +44,7 @@
           {% endif %}
         </div>
       </div>
-      <ul class='playerHeaderBio' style='border-color:{{page.PrimaryColor}}'>
+      <ul class='playerHeaderBio' style='border-color:#{{page.PrimaryColor}}; margin-bottom: 0;'>
         <li class='playerHeaderClass'>
           <div class='playerHeaderBioDescription'>CLASS</div>
           <div class='player-class'>{{player.current_player_team_season.class.class_name}}
@@ -61,7 +62,7 @@
           <div>{{player.hometown_and_state}}</div>
         </li>
       </ul>
-      <div class="font32 inline-block bold w3-display-container" style="height: 80px; width:100px; border: 1px solid black; vertical-align: top; margin: 20px 20px 20px 40px;">
+      <div class="font32 inline-block bold w3-display-container" style="height: 80px; width:100px; border: 1px solid black; vertical-align: top;">
         <div class="team-primary-background font12 center-text" style=" color: white;">
           Overall
         </div>
@@ -72,6 +73,11 @@
           <div class="w3-container  {{player.player_team_seasons[0].ratings.overall.overall|NumberToGradeClass}}-Fill" style="width:{{player.player_team_seasons[0].ratings.overall.overall}}%; height: 8px;"></div>
         </div>
       </div>
+
+      </div>
+      
+      
+      
       <div class="team-header-color-right hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
 
     </div>

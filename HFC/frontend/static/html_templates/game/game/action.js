@@ -240,6 +240,7 @@ const getHtml = async (common) => {
       },
       {
         special_format: true,
+        max_value: 60 * 60,
         display_name: "Time of Possession",
         away_value: game.away_team_game.game_stats.team.time_of_possession,
         home_value: game.home_team_game.game_stats.team.time_of_possession,
@@ -266,7 +267,8 @@ const getHtml = async (common) => {
       },
       {
         special_format: true,
-        display_name: "Third Down Percentage",
+        max_value: 100,
+        display_name: "Third Down %",
         away_value: game.away_team_game.third_down_conversion_percentage,
         away_display_value: `${game.away_team_game.third_down_conversion_percentage}%`,
         home_value: game.home_team_game.third_down_conversion_percentage,
@@ -280,10 +282,29 @@ const getHtml = async (common) => {
       },
     ];
 
+    let base_alpha_float = .5;
+
     for (const stat of team_stat_box) {
-      stat.max_value = Math.max(stat.away_value, stat.home_value);
+      console.log({stat:stat})
+      if (!(stat.special_format)){
+        stat.max_value = Math.max(stat.away_value, stat.home_value);
+      }
+      
       stat.home_ratio = (stat.home_value / stat.max_value) * 100;
       stat.away_ratio = (stat.away_value / stat.max_value) * 100;
+
+      stat.home_end_alpha_float = Math.floor((((stat.home_value / stat.max_value) * (1 - base_alpha_float)) + base_alpha_float) * 255);
+      stat.away_end_alpha_float = Math.floor((((stat.away_value / stat.max_value) * (1 - base_alpha_float)) + base_alpha_float) * 255);
+
+      stat.home_end_alpha = stat.home_end_alpha_float.toString(16);
+      stat.away_end_alpha = stat.away_end_alpha_float.toString(16);
+
+      console.log({
+        'stat.home_end_alpha_float': stat.home_end_alpha_float, 
+        ' stat.away_end_alpha_float': stat.away_end_alpha_float,
+        'stat.home_end_alpha': stat.home_end_alpha,
+        ' stat.away_end_alpha': stat.away_end_alpha
+      })
 
       if (!stat.special_format) {
         stat.home_display_value = stat.home_value;

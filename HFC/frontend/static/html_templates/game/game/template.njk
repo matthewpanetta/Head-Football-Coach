@@ -234,23 +234,51 @@
                   </div>
 
                   {% if game.was_played%}
-                  <div class='equal-sized-item-container wrap'>
-                    {% for stat in team_stat_box %}
-                    <div class='w3-padding-4 s6 ellipsis equal-sized-item inline-block w3-border-top game-recap-stat-box w3-border-gray'>
-                      <span class='bold font12 '>{{stat.display_name}}</span>
-                      <div class='gameTeamStatAbbreviation'>{{game.away_team_game.team_season.team.team_abbreviation}}</div>
-                      <div class="">
-                        <span style="background-color:#f2f2f2;" class="bar-total"><span style="background-color:#{{game.away_team_game.team_season.team.team_color_primary_hex}} !important; height: 8px; width:{{stat.away_ratio}}%" class=" bar-percentage"></span></span>
-                        <span class='font12'>{{stat.away_display_value}}</span>
-                      </div>
-                      <div class="">
-                        <span style="background-color:#f2f2f2;" class="bar-total"><span style="background-color:#{{game.home_team_game.team_season.team.team_color_primary_hex}} !important; height: 8px; width:{{stat.home_ratio}}%" class=" bar-percentage"></span></span>
-                        <span class='font12'>{{stat.home_display_value}}</span>
-                      </div>
-                      <div class='gameTeamStatAbbreviation'>{{game.home_team_game.team_season.team.team_abbreviation}}</div>
-                    </div>
-                    {% endfor %}
-                  </div>
+                  {{game|log}}
+                  <table class='width100 w3-table-all no-border'>
+                    <thead>
+                      <tr class='center-text-row white-text'>
+                        <th></th>
+                        <th style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}};'>
+                          <a href='{{game.away_team_game.team_season.team.team_href}}'>
+                          {# <img class='logo-30' src='{{game.away_team_game.team_season.team.team_logo}}'/> #}
+                          {{game.away_team_game.team_season.team.team_abbreviation}}
+                          </a>
+                        </th>
+                        <th style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}};'>
+                          <a href='{{game.home_team_game.team_season.team.team_href}}'>
+                          {# <img class='logo-30' src='{{game.home_team_game.team_season.team.team_logo}}'/> #}
+                          {{game.home_team_game.team_season.team.team_abbreviation}}
+                          </a>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for stat in team_stat_box %}
+                      <tr class='center-text-row'>
+                        <td class='left-text'>{{stat.display_name}}</td>
+                        <td>{{stat.away_display_value}}</td>
+                        <td>{{stat.home_display_value}}</td>
+                      </tr>
+                      {# <tr class='center-text-row'>
+                        <td>
+                          <span style="background-color:#f2f2f2;" class="bar-total">
+                            <span style="background:linear-gradient(45deg, #{{game.away_team_game.team_season.team.team_color_primary_hex}}80, #{{game.away_team_game.team_season.team.team_color_primary_hex}}{{stat.away_end_alpha}}); height: 10px; width:{{stat.away_ratio}}%" class=" bar-percentage">
+                            </span>
+                          </span>
+                        </td>
+                      </tr>
+                      <tr class='center-text-row'>
+                        <td>
+                          <span style="background-color:#f2f2f2;" class="bar-total">
+                            <span style="background:linear-gradient(45deg, #{{game.home_team_game.team_season.team.team_color_primary_hex}}80, #{{game.home_team_game.team_season.team.team_color_primary_hex}}{{stat.home_end_alpha}}); height: 10px; width:{{stat.home_ratio}}%" class=" bar-percentage">
+                            </span>
+                          </span>
+                        </td>
+                      </tr> #}
+                      {% endfor %}
+                    </tbody>
+                  </table>
                   {% else %}
                   {% if season_stats|length > 0%}
                   <div class="">

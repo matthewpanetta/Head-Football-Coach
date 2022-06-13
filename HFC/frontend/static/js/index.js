@@ -111,8 +111,8 @@ class award {
       if (this.award_timeframe == "week") {
         award_name = `${this.week.week_name}, ${this.week.season}`;
       } else if (this.award_timeframe == "regular season") {
-        if (this.award_group_type == "Heisman") {
-          award_name = `${this.season}`;
+        if (this.award_group == "individual") {
+          award_name = `${this.season} ${this.award_group_type}`;
         } else {
           award_name = `${this.season}`;
         }

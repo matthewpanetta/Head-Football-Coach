@@ -6,9 +6,7 @@
     "team_color_primary_hex": "0A1D5A",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -22,10 +20,7 @@
     },
     "location": {
       "city": "Storrs",
-      "state": "Connecticut",
-      "stop": 47555,
-      "lat": 41.3112,
-      "long": -72.9245
+      "state": "Connecticut"
     }
   },
   {
@@ -35,9 +30,7 @@
     "team_color_primary_hex": "004A36",
     "team_color_secondary_hex": "A08B4D",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -51,10 +44,7 @@
     },
     "location": {
       "city": "Tampa",
-      "state": "Florida",
-      "stop": 15740,
-      "lat": 27.9937,
-      "long": -82.4454
+      "state": "Florida"
     }
   },
   {
@@ -64,9 +54,7 @@
     "team_color_primary_hex": "B4985A",
     "team_color_secondary_hex": "231F20",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -80,10 +68,7 @@
     },
     "location": {
       "city": "Orlando",
-      "state": "Florida",
-      "stop": 14380,
-      "lat": 28.4788,
-      "long": -81.342
+      "state": "Florida"
     }
   },
   {
@@ -93,9 +78,7 @@
     "team_color_primary_hex": "11472A",
     "team_color_secondary_hex": "1890CC",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -109,10 +92,7 @@
     },
     "location": {
       "city": "New Orleans",
-      "state": "Louisiana",
-      "stop": 24268,
-      "lat": 30.0687,
-      "long": -89.9288
+      "state": "Louisiana"
     }
   },
   {
@@ -122,9 +102,7 @@
     "team_color_primary_hex": "00205B",
     "team_color_secondary_hex": "C5B783",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -138,10 +116,7 @@
     },
     "location": {
       "city": "Annapolis",
-      "state": "Maryland",
-      "stop": 24613,
-      "lat": 38.9706,
-      "long": -76.5047
+      "state": "Maryland"
     }
   },
   {
@@ -151,9 +126,7 @@
     "team_color_primary_hex": "4A1F68",
     "team_color_secondary_hex": "FFCE28",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -167,10 +140,7 @@
     },
     "location": {
       "city": "Greenville",
-      "state": "North Carolina",
-      "stop": 30849,
-      "lat": 35.5957,
-      "long": -77.3764
+      "state": "North Carolina"
     }
   },
   {
@@ -180,9 +150,7 @@
     "team_color_primary_hex": "000000",
     "team_color_secondary_hex": "E00122",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -196,10 +164,7 @@
     },
     "location": {
       "city": "Cincinnati",
-      "state": "Ohio",
-      "stop": 32134,
-      "lat": 39.1412,
-      "long": -84.5059
+      "state": "Ohio"
     }
   },
   {
@@ -209,9 +174,7 @@
     "team_color_primary_hex": "0E387C",
     "team_color_secondary_hex": "C8102E",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -225,10 +188,7 @@
     },
     "location": {
       "city": "Tulsa",
-      "state": "Oklahoma",
-      "stop": 34603,
-      "lat": 36.1284,
-      "long": -95.9042
+      "state": "Oklahoma"
     }
   },
   {
@@ -238,9 +198,7 @@
     "team_color_primary_hex": "A80532",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 12,
@@ -254,10 +212,7 @@
     },
     "location": {
       "city": "Philadelphia",
-      "state": "Pennsylvania",
-      "stop": 35660,
-      "lat": 40.0076,
-      "long": -75.134
+      "state": "Pennsylvania"
     }
   },
   {
@@ -267,9 +222,7 @@
     "team_color_primary_hex": "092D6D",
     "team_color_secondary_hex": "8B8E91",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 12,
@@ -283,10 +236,7 @@
     },
     "location": {
       "city": "Memphis",
-      "state": "Tennessee",
-      "stop": 37677,
-      "lat": 35.1047,
-      "long": -89.9773
+      "state": "Tennessee"
     }
   },
   {
@@ -296,9 +246,7 @@
     "team_color_primary_hex": "C90822",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 12,
@@ -312,10 +260,7 @@
     },
     "location": {
       "city": "Houston",
-      "state": "Texas",
-      "stop": 41928,
-      "lat": 29.7868,
-      "long": -95.3905
+      "state": "Texas"
     }
   },
   {
@@ -325,9 +270,7 @@
     "team_color_primary_hex": "C2032C",
     "team_color_secondary_hex": "27388F",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -341,10 +284,7 @@
     },
     "location": {
       "city": "University Park",
-      "state": "Texas",
-      "stop": 44770,
-      "lat": 32.8506,
-      "long": -96.7937
+      "state": "Texas"
     }
   },
   {
@@ -354,9 +294,7 @@
     "team_color_primary_hex": "642132",
     "team_color_secondary_hex": "A8936B",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 12,
@@ -370,10 +308,7 @@
     },
     "location": {
       "city": "Tallahassee",
-      "state": "Florida",
-      "stop": 15382,
-      "lat": 30.455,
-      "long": -84.2526
+      "state": "Florida"
     }
   },
   {
@@ -383,9 +318,7 @@
     "team_color_primary_hex": "F47321",
     "team_color_secondary_hex": "204F33",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 18,
@@ -399,10 +332,7 @@
     },
     "location": {
       "city": "Coral Gables",
-      "state": "Florida",
-      "stop": 10732,
-      "lat": 25.7037,
-      "long": -80.2715
+      "state": "Florida"
     }
   },
   {
@@ -412,9 +342,7 @@
     "team_color_primary_hex": "B3A369",
     "team_color_secondary_hex": "091D3A",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -428,10 +356,7 @@
     },
     "location": {
       "city": "Atlanta",
-      "state": "Georgia",
-      "stop": 16547,
-      "lat": 33.7626,
-      "long": -84.4228
+      "state": "Georgia"
     }
   },
   {
@@ -441,9 +366,7 @@
     "team_color_primary_hex": "CA001A",
     "team_color_secondary_hex": "070707",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -457,10 +380,7 @@
     },
     "location": {
       "city": "Louisville",
-      "state": "Kentucky",
-      "stop": 23038,
-      "lat": 38.1662,
-      "long": -85.6488
+      "state": "Kentucky"
     }
   },
   {
@@ -470,9 +390,7 @@
     "team_color_primary_hex": "821E1E",
     "team_color_secondary_hex": "DBCCA4",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -486,10 +404,7 @@
     },
     "location": {
       "city": "Chestnut Hill",
-      "state": "Massachusetts",
-      "stop": 47554,
-      "lat": 42.3188,
-      "long": -71.0846
+      "state": "Massachusetts"
     }
   },
   {
@@ -499,9 +414,7 @@
     "team_color_primary_hex": "C82F04",
     "team_color_secondary_hex": "06162E",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 3,
@@ -515,10 +428,7 @@
     },
     "location": {
       "city": "Syracuse",
-      "state": "New York",
-      "stop": 30171,
-      "lat": 43.0409,
-      "long": -76.1438
+      "state": "New York"
     }
   },
   {
@@ -528,9 +438,7 @@
     "team_color_primary_hex": "013088",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 12,
@@ -544,10 +452,7 @@
     },
     "location": {
       "city": "Durham",
-      "state": "North Carolina",
-      "stop": 30663,
-      "lat": 35.9797,
-      "long": -78.9037
+      "state": "North Carolina"
     }
   },
   {
@@ -557,9 +462,7 @@
     "team_color_primary_hex": "CC0000",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 11,
@@ -573,10 +476,7 @@
     },
     "location": {
       "city": "Raleigh",
-      "state": "North Carolina",
-      "stop": 31236,
-      "lat": 35.8323,
-      "long": -78.6439
+      "state": "North Carolina"
     }
   },
   {
@@ -586,9 +486,7 @@
     "team_color_primary_hex": "7BAFD4",
     "team_color_secondary_hex": "13294B",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 12,
@@ -602,10 +500,7 @@
     },
     "location": {
       "city": "Chapel Hill",
-      "state": "North Carolina",
-      "stop": 30300,
-      "lat": 35.9269,
-      "long": -79.039
+      "state": "North Carolina"
     }
   },
   {
@@ -615,9 +510,7 @@
     "team_color_primary_hex": "A67F31",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 11,
@@ -631,10 +524,7 @@
     },
     "location": {
       "city": "Winston-Salem",
-      "state": "North Carolina",
-      "stop": 31490,
-      "lat": 36.1029,
-      "long": -80.261
+      "state": "North Carolina"
     }
   },
   {
@@ -645,7 +535,6 @@
     "team_color_secondary_hex": "FEB01D",
     "jersey": {
       "invert": false,
-      "teamColors": null,
       "id": "football"
     },
     "team_ratings": {
@@ -660,10 +549,7 @@
     },
     "location": {
       "city": "Pittsburgh",
-      "state": "Pennsylvania",
-      "stop": 35851,
-      "lat": 40.4396,
-      "long": -79.9763
+      "state": "Pennsylvania"
     }
   },
   {
@@ -674,7 +560,6 @@
     "team_color_secondary_hex": "441F6F",
     "jersey": {
       "invert": false,
-      "teamColors": null,
       "id": "football"
     },
     "team_ratings": {
@@ -689,10 +574,7 @@
     },
     "location": {
       "city": "Clemson",
-      "state": "South Carolina",
-      "stop": 36243,
-      "lat": 34.6838,
-      "long": -82.8124
+      "state": "South Carolina"
     }
   },
   {
@@ -703,7 +585,6 @@
     "team_color_secondary_hex": "f84c1e",
     "jersey": {
       "invert": false,
-      "teamColors": null,
       "id": "football"
     },
     "team_ratings": {
@@ -718,10 +599,7 @@
     },
     "location": {
       "city": "Charlottesville",
-      "state": "Virginia",
-      "stop": 45595,
-      "lat": 38.0375,
-      "long": -78.4855
+      "state": "Virginia"
     }
   },
   {
@@ -732,7 +610,6 @@
     "team_color_secondary_hex": "CF4420",
     "jersey": {
       "invert": false,
-      "teamColors": null,
       "id": "football2"
     },
     "team_ratings": {
@@ -747,10 +624,7 @@
     },
     "location": {
       "city": "Blacksburg",
-      "state": "Virginia",
-      "stop": 45584,
-      "lat": 37.23,
-      "long": -80.428
+      "state": "Virginia"
     }
   },
   {
@@ -761,7 +635,6 @@
     "team_color_secondary_hex": "FEC938",
     "jersey": {
       "invert": false,
-      "teamColors": null,
       "id": "football5"
     },
     "team_ratings": {
@@ -776,10 +649,7 @@
     },
     "location": {
       "city": "Ames",
-      "state": "Iowa",
-      "stop": 21727,
-      "lat": 42.0261,
-      "long": -93.6279
+      "state": "Iowa"
     }
   },
   {
@@ -789,9 +659,7 @@
     "team_color_primary_hex": "0051BA",
     "team_color_secondary_hex": "E8000D",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 5,
@@ -805,10 +673,7 @@
     },
     "location": {
       "city": "Lawrence",
-      "state": "Kansas",
-      "stop": 22590,
-      "lat": 38.9597,
-      "long": -95.2641
+      "state": "Kansas"
     }
   },
   {
@@ -818,9 +683,7 @@
     "team_color_primary_hex": "633194",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 6,
@@ -834,10 +697,7 @@
     },
     "location": {
       "city": "Manhattan",
-      "state": "Kansas",
-      "stop": 22608,
-      "lat": 39.1882,
-      "long": -96.6053
+      "state": "Kansas"
     }
   },
   {
@@ -847,9 +707,7 @@
     "team_color_primary_hex": "841617",
     "team_color_secondary_hex": "ffffff",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 6,
@@ -863,10 +721,7 @@
     },
     "location": {
       "city": "Norman",
-      "state": "Oklahoma",
-      "stop": 34285,
-      "lat": 35.2335,
-      "long": -97.3471
+      "state": "Oklahoma"
     }
   },
   {
@@ -876,9 +731,7 @@
     "team_color_primary_hex": "EF641A",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -892,10 +745,7 @@
     },
     "location": {
       "city": "Stillwater",
-      "state": "Oklahoma",
-      "stop": 34459,
-      "lat": 36.1315,
-      "long": -97.0739
+      "state": "Oklahoma"
     }
   },
   {
@@ -905,9 +755,7 @@
     "team_color_primary_hex": "118353",
     "team_color_secondary_hex": "FCB212",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -921,10 +769,7 @@
     },
     "location": {
       "city": "Waco",
-      "state": "Texas",
-      "stop": 44853,
-      "lat": 31.5597,
-      "long": -97.1883
+      "state": "Texas"
     }
   },
   {
@@ -934,9 +779,7 @@
     "team_color_primary_hex": "3D156F",
     "team_color_secondary_hex": "A3A9AC",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 12,
@@ -950,10 +793,7 @@
     },
     "location": {
       "city": "Fort Worth",
-      "state": "Texas",
-      "stop": 40775,
-      "lat": 32.7814,
-      "long": -97.3473
+      "state": "Texas"
     }
   },
   {
@@ -963,9 +803,7 @@
     "team_color_primary_hex": "D65918",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 17,
@@ -979,10 +817,7 @@
     },
     "location": {
       "city": "Austin",
-      "state": "Texas",
-      "stop": 38762,
-      "lat": 30.3006,
-      "long": -97.7517
+      "state": "Texas"
     }
   },
   {
@@ -992,9 +827,7 @@
     "team_color_primary_hex": "CC0000",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 6,
@@ -1008,10 +841,7 @@
     },
     "location": {
       "city": "Lubbock",
-      "state": "Texas",
-      "stop": 42731,
-      "lat": 33.5643,
-      "long": -101.8871
+      "state": "Texas"
     }
   },
   {
@@ -1022,7 +852,6 @@
     "team_color_secondary_hex": "EAAA00",
     "jersey": {
       "invert": false,
-      "teamColors": null,
       "id": "football2"
     },
     "team_ratings": {
@@ -1037,10 +866,7 @@
     },
     "location": {
       "city": "Morgantown",
-      "state": "West Virginia",
-      "stop": 47145,
-      "lat": 39.638,
-      "long": -79.9468
+      "state": "West Virginia"
     }
   },
   {
@@ -1050,9 +876,7 @@
     "team_color_primary_hex": "E1311B",
     "team_color_secondary_hex": "0A1A39",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -1066,10 +890,7 @@
     },
     "location": {
       "city": "Urbana",
-      "state": "Illinois",
-      "stop": 20973,
-      "lat": 40.1106,
-      "long": -88.1972
+      "state": "Illinois"
     }
   },
   {
@@ -1079,9 +900,7 @@
     "team_color_primary_hex": "4E2A84",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 13,
@@ -1095,10 +914,7 @@
     },
     "location": {
       "city": "Evanston",
-      "state": "Illinois",
-      "stop": 20318,
-      "lat": 42.0463,
-      "long": -87.6942
+      "state": "Illinois"
     }
   },
   {
@@ -1108,9 +924,7 @@
     "team_color_primary_hex": "860001",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -1124,10 +938,7 @@
     },
     "location": {
       "city": "Bloomington",
-      "state": "Indiana",
-      "stop": 21072,
-      "lat": 39.1637,
-      "long": -86.5256
+      "state": "Indiana"
     }
   },
   {
@@ -1137,9 +948,7 @@
     "team_color_primary_hex": "cfb991",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -1153,10 +962,7 @@
     },
     "location": {
       "city": "West Lafayette",
-      "state": "Indiana",
-      "stop": 21704,
-      "lat": 40.4432,
-      "long": -86.9239
+      "state": "Indiana"
     }
   },
   {
@@ -1166,9 +972,7 @@
     "team_color_primary_hex": "000000",
     "team_color_secondary_hex": "FFD700",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -1182,10 +986,7 @@
     },
     "location": {
       "city": "Iowa City",
-      "state": "Iowa",
-      "stop": 21881,
-      "lat": 41.6559,
-      "long": -91.5304
+      "state": "Iowa"
     }
   },
   {
@@ -1195,9 +996,7 @@
     "team_color_primary_hex": "D5002B",
     "team_color_secondary_hex": "FEC619",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 11,
@@ -1211,10 +1010,7 @@
     },
     "location": {
       "city": "College Park",
-      "state": "Maryland",
-      "stop": 48369,
-      "lat": 38.9897,
-      "long": -76.9378
+      "state": "Maryland"
     }
   },
   {
@@ -1224,9 +1020,7 @@
     "team_color_primary_hex": "00274C",
     "team_color_secondary_hex": "FFCB05",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 11,
@@ -1240,10 +1034,7 @@
     },
     "location": {
       "city": "Ann Arbor",
-      "state": "Michigan",
-      "stop": 25097,
-      "lat": 42.2755,
-      "long": -83.7312
+      "state": "Michigan"
     }
   },
   {
@@ -1253,9 +1044,7 @@
     "team_color_primary_hex": "1C453A",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -1269,10 +1058,7 @@
     },
     "location": {
       "city": "East Lansing",
-      "state": "Michigan",
-      "stop": 25462,
-      "lat": 42.748,
-      "long": -84.4835
+      "state": "Michigan"
     }
   },
   {
@@ -1282,9 +1068,7 @@
     "team_color_primary_hex": "7A0019",
     "team_color_secondary_hex": "FBB246",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -1298,10 +1082,7 @@
     },
     "location": {
       "city": "Minneapolis",
-      "state": "Minnesota",
-      "stop": 26390,
-      "lat": 44.9635,
-      "long": -93.2678
+      "state": "Minnesota"
     }
   },
   {
@@ -1311,9 +1092,7 @@
     "team_color_primary_hex": "DC0029",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 6,
@@ -1327,10 +1106,7 @@
     },
     "location": {
       "city": "Lincoln",
-      "state": "Nebraska",
-      "stop": 28591,
-      "lat": 40.8098,
-      "long": -96.6802
+      "state": "Nebraska"
     }
   },
   {
@@ -1340,9 +1116,7 @@
     "team_color_primary_hex": "CC0033",
     "team_color_secondary_hex": "5F6A72",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -1356,10 +1130,7 @@
     },
     "location": {
       "city": "New Brunswick",
-      "state": "New Jersey",
-      "stop": 29330,
-      "lat": 40.487,
-      "long": -74.445
+      "state": "New Jersey"
     }
   },
   {
@@ -1369,9 +1140,7 @@
     "team_color_primary_hex": "CE0F3D",
     "team_color_secondary_hex": "b0b7bc",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 11,
@@ -1385,10 +1154,7 @@
     },
     "location": {
       "city": "Columbus",
-      "state": "Ohio",
-      "stop": 32548,
-      "lat": 39.986,
-      "long": -82.9852
+      "state": "Ohio"
     }
   },
   {
@@ -1398,9 +1164,7 @@
     "team_color_primary_hex": "151F49",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 7,
@@ -1414,10 +1178,7 @@
     },
     "location": {
       "city": "State College",
-      "state": "Pennsylvania",
-      "stop": 35993,
-      "lat": 40.7909,
-      "long": -77.8568
+      "state": "Pennsylvania"
     }
   },
   {
@@ -1427,9 +1188,7 @@
     "team_color_primary_hex": "B70021",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -1443,10 +1202,7 @@
     },
     "location": {
       "city": "Madison",
-      "state": "Wisconsin",
-      "stop": 47330,
-      "lat": 43.0808,
-      "long": -89.3922
+      "state": "Wisconsin"
     }
   },
   {
@@ -1456,9 +1212,7 @@
     "team_color_primary_hex": "0C5F3A",
     "team_color_secondary_hex": "BEB66A",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1472,10 +1226,7 @@
     },
     "location": {
       "city": "Birmingham",
-      "state": "Alabama",
-      "stop": 335,
-      "lat": 33.5276,
-      "long": -86.7988
+      "state": "Alabama"
     }
   },
   {
@@ -1485,9 +1236,7 @@
     "team_color_primary_hex": "004B85",
     "team_color_secondary_hex": "CD1041",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -1501,10 +1250,7 @@
     },
     "location": {
       "city": "Boca Raton",
-      "state": "Florida",
-      "stop": 10387,
-      "lat": 26.3749,
-      "long": -80.1077
+      "state": "Florida"
     }
   },
   {
@@ -1514,9 +1260,7 @@
     "team_color_primary_hex": "081E3F",
     "team_color_secondary_hex": "B6862C",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 15,
@@ -1530,10 +1274,7 @@
     },
     "location": {
       "city": "Miami",
-      "state": "Florida",
-      "stop": 13720,
-      "lat": 25.784,
-      "long": -80.2102
+      "state": "Florida"
     }
   },
   {
@@ -1543,9 +1284,7 @@
     "team_color_primary_hex": "9F0B1C",
     "team_color_secondary_hex": "010000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1559,10 +1298,7 @@
     },
     "location": {
       "city": "Bowling Green",
-      "state": "Kentucky",
-      "stop": 22800,
-      "lat": 36.9721,
-      "long": -86.4367
+      "state": "Kentucky"
     }
   },
   {
@@ -1572,9 +1308,7 @@
     "team_color_primary_hex": "001B75",
     "team_color_secondary_hex": "BF1B2B",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1588,10 +1322,7 @@
     },
     "location": {
       "city": "Ruston",
-      "state": "Louisiana",
-      "stop": 24354,
-      "lat": 32.5329,
-      "long": -92.6364
+      "state": "Louisiana"
     }
   },
   {
@@ -1601,9 +1332,7 @@
     "team_color_primary_hex": "F7C237",
     "team_color_secondary_hex": "010000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1617,10 +1346,7 @@
     },
     "location": {
       "city": "Hattiesburg",
-      "state": "Mississippi",
-      "stop": 27085,
-      "lat": 31.3072,
-      "long": -89.3168
+      "state": "Mississippi"
     }
   },
   {
@@ -1630,9 +1356,7 @@
     "team_color_primary_hex": "0A4631",
     "team_color_secondary_hex": "897637",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1646,10 +1370,7 @@
     },
     "location": {
       "city": "Charlotte",
-      "state": "North Carolina",
-      "stop": 30533,
-      "lat": 35.2079,
-      "long": -80.8303
+      "state": "North Carolina"
     }
   },
   {
@@ -1659,9 +1380,7 @@
     "team_color_primary_hex": "094FC1",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1675,10 +1394,7 @@
     },
     "location": {
       "city": "Murfreesboro",
-      "state": "Tennessee",
-      "stop": 37764,
-      "lat": 35.8493,
-      "long": -86.4098
+      "state": "Tennessee"
     }
   },
   {
@@ -1688,9 +1404,7 @@
     "team_color_primary_hex": "117430",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1704,10 +1418,7 @@
     },
     "location": {
       "city": "Denton",
-      "state": "Texas",
-      "stop": 40258,
-      "lat": 33.2176,
-      "long": -97.1421
+      "state": "Texas"
     }
   },
   {
@@ -1717,9 +1428,7 @@
     "team_color_primary_hex": "011648",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1733,10 +1442,7 @@
     },
     "location": {
       "city": "Houston",
-      "state": "Texas",
-      "stop": 41928,
-      "lat": 29.7868,
-      "long": -95.3905
+      "state": "Texas"
     }
   },
   {
@@ -1746,9 +1452,7 @@
     "team_color_primary_hex": "061633",
     "team_color_secondary_hex": "FD6D07",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 1,
@@ -1762,10 +1466,7 @@
     },
     "location": {
       "city": "El Paso",
-      "state": "Texas",
-      "stop": 40494,
-      "lat": 31.8479,
-      "long": -106.4309
+      "state": "Texas"
     }
   },
   {
@@ -1775,9 +1476,7 @@
     "team_color_primary_hex": "021D4A",
     "team_color_secondary_hex": "EE5C1A",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -1791,10 +1490,7 @@
     },
     "location": {
       "city": "San Antonio",
-      "state": "Texas",
-      "stop": 44208,
-      "lat": 29.4722,
-      "long": -98.5247
+      "state": "Texas"
     }
   },
   {
@@ -1804,9 +1500,7 @@
     "team_color_primary_hex": "042549",
     "team_color_secondary_hex": "858A8D",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1820,10 +1514,7 @@
     },
     "location": {
       "city": "Norfolk",
-      "state": "Virginia",
-      "stop": 46128,
-      "lat": 36.8945,
-      "long": -76.259
+      "state": "Virginia"
     }
   },
   {
@@ -1833,9 +1524,7 @@
     "team_color_primary_hex": "17A82F",
     "team_color_secondary_hex": "1B1718",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -1849,10 +1538,7 @@
     },
     "location": {
       "city": "Huntington",
-      "state": "West Virginia",
-      "stop": 47115,
-      "lat": 38.4109,
-      "long": -82.4344
+      "state": "West Virginia"
     }
   },
   {
@@ -1862,9 +1548,7 @@
     "team_color_primary_hex": "0C2340",
     "team_color_secondary_hex": "C99700",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -1878,10 +1562,7 @@
     },
     "location": {
       "city": "South Bend",
-      "state": "Indiana",
-      "stop": 21683,
-      "lat": 41.6771,
-      "long": -86.2692
+      "state": "Indiana"
     }
   },
   {
@@ -1891,9 +1572,7 @@
     "team_color_primary_hex": "830D24",
     "team_color_secondary_hex": "7E8081",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -1907,10 +1586,7 @@
     },
     "location": {
       "city": "Amherst",
-      "state": "Massachusetts",
-      "stop": 24996,
-      "lat": 42.3732,
-      "long": -72.5199
+      "state": "Massachusetts"
     }
   },
   {
@@ -1921,9 +1597,7 @@
     "team_color_primary_hex": "750312",
     "team_color_secondary_hex": "777777",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 3,
@@ -1937,10 +1611,7 @@
     },
     "location": {
       "city": "Las Cruces",
-      "state": "New Mexico",
-      "stop": 29702,
-      "lat": 32.3265,
-      "long": -106.7893
+      "state": "New Mexico"
     }
   },
   {
@@ -1950,9 +1621,7 @@
     "team_color_primary_hex": "000000",
     "team_color_secondary_hex": "C9A06C",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -1966,10 +1635,7 @@
     },
     "location": {
       "city": "West Point",
-      "state": "New York",
-      "stop": 29770,
-      "lat": 41.3915,
-      "long": -73.956
+      "state": "New York"
     }
   },
   {
@@ -1979,9 +1645,7 @@
     "team_color_primary_hex": "001843",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 6,
@@ -1995,10 +1659,7 @@
     },
     "location": {
       "city": "Provo",
-      "state": "Utah",
-      "stop": 45270,
-      "lat": 40.2458,
-      "long": -111.6457
+      "state": "Utah"
     }
   },
   {
@@ -2008,9 +1669,7 @@
     "team_color_primary_hex": "0A1B3D",
     "team_color_secondary_hex": "850003",
     "jersey": {
-      "invert": true,
-      "teamColors": null,
-      "id": null
+      "invert": true
     },
     "team_ratings": {
       "location": 3,
@@ -2024,10 +1683,7 @@
     },
     "location": {
       "city": "Lynchburg",
-      "state": "Virginia",
-      "stop": 46039,
-      "lat": 37.4003,
-      "long": -79.1908
+      "state": "Virginia"
     }
   },
   {
@@ -2037,9 +1693,7 @@
     "team_color_primary_hex": "ba0c2f",
     "team_color_secondary_hex": "9ea2a2",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2053,10 +1707,7 @@
     },
     "location": {
       "city": "DeKalb",
-      "state": "Illinois",
-      "stop": 20222,
-      "lat": 41.9312,
-      "long": -88.7483
+      "state": "Illinois"
     }
   },
   {
@@ -2066,9 +1717,7 @@
     "team_color_primary_hex": "ba0c2f",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2082,10 +1731,7 @@
     },
     "location": {
       "city": "Muncie",
-      "state": "Indiana",
-      "stop": 21619,
-      "lat": 40.1989,
-      "long": -85.395
+      "state": "Indiana"
     }
   },
   {
@@ -2095,9 +1741,7 @@
     "team_color_primary_hex": "6a0032",
     "team_color_secondary_hex": "ffc82e",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2111,10 +1755,7 @@
     },
     "location": {
       "city": "Mount Pleasant",
-      "state": "Michigan",
-      "stop": 25809,
-      "lat": 43.5966,
-      "long": -84.7759
+      "state": "Michigan"
     }
   },
   {
@@ -2124,9 +1765,7 @@
     "team_color_primary_hex": "0B5F24",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2140,10 +1779,7 @@
     },
     "location": {
       "city": "Ypsilanti",
-      "state": "Michigan",
-      "stop": 26147,
-      "lat": 42.2437,
-      "long": -83.6205
+      "state": "Michigan"
     }
   },
   {
@@ -2153,9 +1789,7 @@
     "team_color_primary_hex": "6c4023",
     "team_color_secondary_hex": "b5a268",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2169,10 +1803,7 @@
     },
     "location": {
       "city": "Kalamazoo",
-      "state": "Michigan",
-      "stop": 25726,
-      "lat": 42.2749,
-      "long": -85.5881
+      "state": "Michigan"
     }
   },
   {
@@ -2182,9 +1813,7 @@
     "team_color_primary_hex": "0064A2",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2198,10 +1827,7 @@
     },
     "location": {
       "city": "Buffalo",
-      "state": "New York",
-      "stop": 29950,
-      "lat": 42.9017,
-      "long": -78.8487
+      "state": "New York"
     }
   },
   {
@@ -2211,9 +1837,7 @@
     "team_color_primary_hex": "041e42",
     "team_color_secondary_hex": "a89968",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2227,10 +1851,7 @@
     },
     "location": {
       "city": "Akron",
-      "state": "Ohio",
-      "stop": 31606,
-      "lat": 41.0802,
-      "long": -81.5219
+      "state": "Ohio"
     }
   },
   {
@@ -2240,9 +1861,7 @@
     "team_color_primary_hex": "fe5000",
     "team_color_secondary_hex": "4f2c1d",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2256,10 +1875,7 @@
     },
     "location": {
       "city": "Bowling Green",
-      "state": "Ohio",
-      "stop": 49478,
-      "lat": 41.3748,
-      "long": -83.6513
+      "state": "Ohio"
     }
   },
   {
@@ -2269,9 +1885,7 @@
     "team_color_primary_hex": "003875",
     "team_color_secondary_hex": "efab00",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2285,10 +1899,7 @@
     },
     "location": {
       "city": "Kent",
-      "state": "Ohio",
-      "stop": 32942,
-      "lat": 41.149,
-      "long": -81.361
+      "state": "Ohio"
     }
   },
   {
@@ -2298,9 +1909,7 @@
     "team_color_primary_hex": "b61e2e",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2314,10 +1923,7 @@
     },
     "location": {
       "city": "Oxford",
-      "state": "Ohio",
-      "stop": 33293,
-      "lat": 39.5062,
-      "long": -84.7434
+      "state": "Ohio"
     }
   },
   {
@@ -2327,9 +1933,7 @@
     "team_color_primary_hex": "00694e",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2343,10 +1947,7 @@
     },
     "location": {
       "city": "Athens",
-      "state": "Ohio",
-      "stop": 31621,
-      "lat": 39.3269,
-      "long": -82.0988
+      "state": "Ohio"
     }
   },
   {
@@ -2356,9 +1957,7 @@
     "team_color_primary_hex": "15397F",
     "team_color_secondary_hex": "FFDA00",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2372,10 +1971,7 @@
     },
     "location": {
       "city": "Toledo",
-      "state": "Ohio",
-      "stop": 33621,
-      "lat": 41.6639,
-      "long": -83.5822
+      "state": "Ohio"
     }
   },
   {
@@ -2385,9 +1981,7 @@
     "team_color_primary_hex": "c03",
     "team_color_secondary_hex": "00235d",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 7,
@@ -2401,10 +1995,7 @@
     },
     "location": {
       "city": "Fresno",
-      "state": "California",
-      "stop": 4644,
-      "lat": 36.7834,
-      "long": -119.7941
+      "state": "California"
     }
   },
   {
@@ -2414,9 +2005,7 @@
     "team_color_primary_hex": "c41230",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 17,
@@ -2430,10 +2019,7 @@
     },
     "location": {
       "city": "San Diego",
-      "state": "California",
-      "stop": 8020,
-      "lat": 32.8312,
-      "long": -117.1226
+      "state": "California"
     }
   },
   {
@@ -2443,9 +2029,7 @@
     "team_color_primary_hex": "134B9B",
     "team_color_secondary_hex": "FBD016",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 11,
@@ -2459,10 +2043,7 @@
     },
     "location": {
       "city": "San Jose",
-      "state": "California",
-      "stop": 8256,
-      "lat": 37.3018,
-      "long": -121.8485
+      "state": "California"
     }
   },
   {
@@ -2472,9 +2053,7 @@
     "team_color_primary_hex": "00458C",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -2488,10 +2067,7 @@
     },
     "location": {
       "city": "Colorado Springs",
-      "state": "Colorado",
-      "stop": 9548,
-      "lat": 38.8674,
-      "long": -104.7606
+      "state": "Colorado"
     }
   },
   {
@@ -2501,9 +2077,7 @@
     "team_color_primary_hex": "1e4d2b",
     "team_color_secondary_hex": "c8c372",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 11,
@@ -2517,10 +2091,7 @@
     },
     "location": {
       "city": "Fort Collins",
-      "state": "Colorado",
-      "stop": 9685,
-      "lat": 40.5479,
-      "long": -105.0658
+      "state": "Colorado"
     }
   },
   {
@@ -2530,9 +2101,7 @@
     "team_color_primary_hex": "0033a0",
     "team_color_secondary_hex": "FA4616",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 5,
@@ -2546,10 +2115,7 @@
     },
     "location": {
       "city": "Boise",
-      "state": "Idaho",
-      "stop": 19694,
-      "lat": 43.6006,
-      "long": -116.2316
+      "state": "Idaho"
     }
   },
   {
@@ -2559,9 +2125,7 @@
     "team_color_primary_hex": "011e41",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -2575,10 +2139,7 @@
     },
     "location": {
       "city": "Reno",
-      "state": "Nevada",
-      "stop": 28975,
-      "lat": 39.5497,
-      "long": -119.8483
+      "state": "Nevada"
     }
   },
   {
@@ -2588,9 +2149,7 @@
     "team_color_primary_hex": "cf0a2c",
     "team_color_secondary_hex": "C6C8C9",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 10,
@@ -2604,10 +2163,7 @@
     },
     "location": {
       "city": "Las Vegas",
-      "state": "Nevada",
-      "stop": 28920,
-      "lat": 36.2291,
-      "long": -115.2607
+      "state": "Nevada"
     }
   },
   {
@@ -2617,9 +2173,7 @@
     "team_color_primary_hex": "ba0c2f",
     "team_color_secondary_hex": "9fa0a2",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 7,
@@ -2633,10 +2187,7 @@
     },
     "location": {
       "city": "Albuquerque",
-      "state": "New Mexico",
-      "stop": 29672,
-      "lat": 35.1053,
-      "long": -106.6464
+      "state": "New Mexico"
     }
   },
   {
@@ -2646,9 +2197,7 @@
     "team_color_primary_hex": "00263A",
     "team_color_secondary_hex": "8A8D8F",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 3,
@@ -2662,10 +2211,7 @@
     },
     "location": {
       "city": "Logan",
-      "state": "Utah",
-      "stop": 45177,
-      "lat": 41.7402,
-      "long": -111.8419
+      "state": "Utah"
     }
   },
   {
@@ -2675,9 +2221,7 @@
     "team_color_primary_hex": "492f24",
     "team_color_secondary_hex": "ffc425",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -2691,10 +2235,7 @@
     },
     "location": {
       "city": "Laramie",
-      "state": "Wyoming",
-      "stop": 47550,
-      "lat": 41.3099,
-      "long": -105.6086
+      "state": "Wyoming"
     }
   },
   {
@@ -2704,9 +2245,7 @@
     "team_color_primary_hex": "00205C",
     "team_color_secondary_hex": "C10230",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -2720,10 +2259,7 @@
     },
     "location": {
       "city": "Tucson",
-      "state": "Arizona",
-      "stop": 2523,
-      "lat": 32.1546,
-      "long": -110.8782
+      "state": "Arizona"
     }
   },
   {
@@ -2733,9 +2269,7 @@
     "team_color_primary_hex": "96203D",
     "team_color_secondary_hex": "FEC927",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 13,
@@ -2749,10 +2283,7 @@
     },
     "location": {
       "city": "Tempe",
-      "state": "Arizona",
-      "stop": 2402,
-      "lat": 33.3881,
-      "long": -111.9318
+      "state": "Arizona"
     }
   },
   {
@@ -2762,9 +2293,7 @@
     "team_color_primary_hex": "1D2161",
     "team_color_secondary_hex": "E29819",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 13,
@@ -2778,10 +2307,7 @@
     },
     "location": {
       "city": "Berkeley",
-      "state": "California",
-      "stop": 3403,
-      "lat": 37.8723,
-      "long": -122.276
+      "state": "California"
     }
   },
   {
@@ -2791,9 +2317,7 @@
     "team_color_primary_hex": "950026",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 13,
@@ -2807,10 +2331,7 @@
     },
     "location": {
       "city": "Palo Alto",
-      "state": "California",
-      "stop": 6931,
-      "lat": 37.3913,
-      "long": -122.1467
+      "state": "California"
     }
   },
   {
@@ -2821,7 +2342,6 @@
     "team_color_secondary_hex": "F2A900",
     "jersey": {
       "invert": false,
-      "teamColors": null,
       "id": "football3"
     },
     "team_ratings": {
@@ -2836,10 +2356,7 @@
     },
     "location": {
       "city": "Los Angeles",
-      "state": "California",
-      "stop": 6020,
-      "lat": 34.1139,
-      "long": -118.4068
+      "state": "California"
     }
   },
   {
@@ -2850,7 +2367,6 @@
     "team_color_secondary_hex": "FFC72C",
     "jersey": {
       "invert": false,
-      "teamColors": null,
       "id": "football4"
     },
     "team_ratings": {
@@ -2865,10 +2381,7 @@
     },
     "location": {
       "city": "Los Angeles",
-      "state": "California",
-      "stop": 6020,
-      "lat": 34.1139,
-      "long": -118.4068
+      "state": "California"
     }
   },
   {
@@ -2878,9 +2391,7 @@
     "team_color_primary_hex": "000000",
     "team_color_secondary_hex": "C4AB68",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -2894,10 +2405,7 @@
     },
     "location": {
       "city": "Boulder",
-      "state": "Colorado",
-      "stop": 9495,
-      "lat": 40.0249,
-      "long": -105.2523
+      "state": "Colorado"
     }
   },
   {
@@ -2907,9 +2415,7 @@
     "team_color_primary_hex": "004F39",
     "team_color_secondary_hex": "FEE11A",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 12,
@@ -2923,10 +2429,7 @@
     },
     "location": {
       "city": "Eugene",
-      "state": "Oregon",
-      "stop": 34700,
-      "lat": 44.0563,
-      "long": -123.1173
+      "state": "Oregon"
     }
   },
   {
@@ -2936,9 +2439,7 @@
     "team_color_primary_hex": "DC4405",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 13,
@@ -2952,10 +2453,7 @@
     },
     "location": {
       "city": "Corvallis",
-      "state": "Oregon",
-      "stop": 34670,
-      "lat": 44.5697,
-      "long": -123.278
+      "state": "Oregon"
     }
   },
   {
@@ -2965,9 +2463,7 @@
     "team_color_primary_hex": "CC0000",
     "team_color_secondary_hex": "808080",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -2981,10 +2477,7 @@
     },
     "location": {
       "city": "Salt Lake City",
-      "state": "Utah",
-      "stop": 45448,
-      "lat": 40.7774,
-      "long": -111.9301
+      "state": "Utah"
     }
   },
   {
@@ -2994,9 +2487,7 @@
     "team_color_primary_hex": "306",
     "team_color_secondary_hex": "e8d3a2",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 7,
@@ -3010,10 +2501,7 @@
     },
     "location": {
       "city": "Seattle",
-      "state": "Washington",
-      "stop": 46917,
-      "lat": 47.6211,
-      "long": -122.3244
+      "state": "Washington"
     }
   },
   {
@@ -3023,9 +2511,7 @@
     "team_color_primary_hex": "951A30",
     "team_color_secondary_hex": "5E6A71",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 7,
@@ -3039,10 +2525,7 @@
     },
     "location": {
       "city": "Pullman",
-      "state": "Washington",
-      "stop": 46767,
-      "lat": 46.7342,
-      "long": -117.1661
+      "state": "Washington"
     }
   },
   {
@@ -3052,9 +2535,7 @@
     "team_color_primary_hex": "A80532",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -3068,10 +2549,7 @@
     },
     "location": {
       "city": "Tuscaloosa",
-      "state": "Alabama",
-      "stop": 1583,
-      "lat": 33.2349,
-      "long": -87.5267
+      "state": "Alabama"
     }
   },
   {
@@ -3081,9 +2559,7 @@
     "team_color_primary_hex": "172240",
     "team_color_secondary_hex": "E26D35",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -3097,10 +2573,7 @@
     },
     "location": {
       "city": "Auburn",
-      "state": "Alabama",
-      "stop": 135,
-      "lat": 32.6084,
-      "long": -85.4897
+      "state": "Alabama"
     }
   },
   {
@@ -3110,9 +2583,7 @@
     "team_color_primary_hex": "8B0D26",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 7,
@@ -3126,10 +2597,7 @@
     },
     "location": {
       "city": "Fayetteville",
-      "state": "Arkansas",
-      "stop": 2709,
-      "lat": 36.0713,
-      "long": -94.166
+      "state": "Arkansas"
     }
   },
   {
@@ -3139,9 +2607,7 @@
     "team_color_primary_hex": "2139CE",
     "team_color_secondary_hex": "FF4208",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -3155,10 +2621,7 @@
     },
     "location": {
       "city": "Gainesville",
-      "state": "Florida",
-      "stop": 11789,
-      "lat": 29.6808,
-      "long": -82.3455
+      "state": "Florida"
     }
   },
   {
@@ -3168,9 +2631,7 @@
     "team_color_primary_hex": "BC032B",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 11,
@@ -3184,10 +2645,7 @@
     },
     "location": {
       "city": "Athens",
-      "state": "Georgia",
-      "stop": 16202,
-      "lat": 33.9508,
-      "long": -83.3689
+      "state": "Georgia"
     }
   },
   {
@@ -3197,9 +2655,7 @@
     "team_color_primary_hex": "08329B",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -3213,10 +2669,7 @@
     },
     "location": {
       "city": "Lexington",
-      "state": "Kentucky",
-      "stop": 22913,
-      "lat": 38.0423,
-      "long": -84.4587
+      "state": "Kentucky"
     }
   },
   {
@@ -3226,9 +2679,7 @@
     "team_color_primary_hex": "33297B",
     "team_color_secondary_hex": "FDB827",
     "jersey": {
-      "invert": true,
-      "teamColors": null,
-      "id": null
+      "invert": true
     },
     "team_ratings": {
       "location": 13,
@@ -3242,10 +2693,7 @@
     },
     "location": {
       "city": "Baton Rouge",
-      "state": "Louisiana",
-      "stop": 23378,
-      "lat": 30.4423,
-      "long": -91.1314
+      "state": "Louisiana"
     }
   },
   {
@@ -3255,9 +2703,7 @@
     "team_color_primary_hex": "660000",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 9,
@@ -3271,10 +2717,7 @@
     },
     "location": {
       "city": "Starkville",
-      "state": "Mississippi",
-      "stop": 27733,
-      "lat": 33.4608,
-      "long": -88.8297
+      "state": "Mississippi"
     }
   },
   {
@@ -3284,9 +2727,7 @@
     "team_color_primary_hex": "13223F",
     "team_color_secondary_hex": "CE1026",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -3300,10 +2741,7 @@
     },
     "location": {
       "city": "Oxford",
-      "state": "Mississippi",
-      "stop": 27459,
-      "lat": 34.3609,
-      "long": -89.5286
+      "state": "Mississippi"
     }
   },
   {
@@ -3313,9 +2751,7 @@
     "team_color_primary_hex": "000000",
     "team_color_secondary_hex": "F1B82D",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 5,
@@ -3329,10 +2765,7 @@
     },
     "location": {
       "city": "Columbia",
-      "state": "Missouri",
-      "stop": 28026,
-      "lat": 38.9478,
-      "long": -92.3258
+      "state": "Missouri"
     }
   },
   {
@@ -3342,9 +2775,7 @@
     "team_color_primary_hex": "73000A",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -3358,10 +2789,7 @@
     },
     "location": {
       "city": "Columbia",
-      "state": "South Carolina",
-      "stop": 36312,
-      "lat": 34.037,
-      "long": -80.9042
+      "state": "South Carolina"
     }
   },
   {
@@ -3371,9 +2799,7 @@
     "team_color_primary_hex": "FF8200",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 8,
@@ -3387,10 +2813,7 @@
     },
     "location": {
       "city": "Knoxville",
-      "state": "Tennessee",
-      "stop": 37336,
-      "lat": 35.9692,
-      "long": -83.9495
+      "state": "Tennessee"
     }
   },
   {
@@ -3400,9 +2823,7 @@
     "team_color_primary_hex": "866D4B",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 14,
@@ -3416,10 +2837,7 @@
     },
     "location": {
       "city": "Nashville",
-      "state": "Tennessee",
-      "stop": 37961,
-      "lat": 36.1714,
-      "long": -86.7844
+      "state": "Tennessee"
     }
   },
   {
@@ -3429,9 +2847,7 @@
     "team_color_primary_hex": "500000",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 2,
@@ -3445,10 +2861,7 @@
     },
     "location": {
       "city": "College Station",
-      "state": "Texas",
-      "stop": 39411,
-      "lat": 30.5852,
-      "long": -96.296
+      "state": "Texas"
     }
   },
   {
@@ -3458,9 +2871,7 @@
     "team_color_primary_hex": "BA002F",
     "team_color_secondary_hex": "0E1944",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3474,10 +2885,7 @@
     },
     "location": {
       "city": "Mobile",
-      "state": "Alabama",
-      "stop": 1066,
-      "lat": 30.6783,
-      "long": -88.1162
+      "state": "Alabama"
     }
   },
   {
@@ -3487,9 +2895,7 @@
     "team_color_primary_hex": "960026",
     "team_color_secondary_hex": "7E7F7E",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3503,10 +2909,7 @@
     },
     "location": {
       "city": "Troy",
-      "state": "Alabama",
-      "stop": 1527,
-      "lat": 31.8021,
-      "long": -85.9665
+      "state": "Alabama"
     }
   },
   {
@@ -3516,9 +2919,7 @@
     "team_color_primary_hex": "cc092f",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3532,10 +2933,7 @@
     },
     "location": {
       "city": "Jonesboro",
-      "state": "Arkansas",
-      "stop": 2775,
-      "lat": 35.8212,
-      "long": -90.6795
+      "state": "Arkansas"
     }
   },
   {
@@ -3545,9 +2943,7 @@
     "team_color_primary_hex": "6e2639",
     "team_color_secondary_hex": "a7a9ac",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3561,10 +2957,7 @@
     },
     "location": {
       "city": "Little Rock",
-      "state": "Arkansas",
-      "stop": 2859,
-      "lat": 34.7255,
-      "long": -92.3581
+      "state": "Arkansas"
     }
   },
   {
@@ -3574,9 +2967,7 @@
     "team_color_primary_hex": "011e41",
     "team_color_secondary_hex": "9ba1a6",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3590,10 +2981,7 @@
     },
     "location": {
       "city": "Statesboro",
-      "state": "Georgia",
-      "stop": 18864,
-      "lat": 32.4376,
-      "long": -81.775
+      "state": "Georgia"
     }
   },
   {
@@ -3603,9 +2991,7 @@
     "team_color_primary_hex": "0039a6",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3619,10 +3005,7 @@
     },
     "location": {
       "city": "Atlanta",
-      "state": "Georgia",
-      "stop": 16547,
-      "lat": 33.7626,
-      "long": -84.4228
+      "state": "Georgia"
     }
   },
   {
@@ -3632,9 +3015,7 @@
     "team_color_primary_hex": "ce181e",
     "team_color_secondary_hex": "0a0203",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3648,10 +3029,7 @@
     },
     "location": {
       "city": "Lafayette",
-      "state": "Louisiana",
-      "stop": 23689,
-      "lat": 30.2083,
-      "long": -92.0322
+      "state": "Louisiana"
     }
   },
   {
@@ -3661,9 +3039,7 @@
     "team_color_primary_hex": "840029",
     "team_color_secondary_hex": "fdb913",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3677,10 +3053,7 @@
     },
     "location": {
       "city": "Monroe",
-      "state": "Louisiana",
-      "stop": 23885,
-      "lat": 32.5184,
-      "long": -92.0774
+      "state": "Louisiana"
     }
   },
   {
@@ -3690,9 +3063,7 @@
     "team_color_primary_hex": "fc0",
     "team_color_secondary_hex": "222",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3706,10 +3077,7 @@
     },
     "location": {
       "city": "Boone",
-      "state": "North Carolina",
-      "stop": 30269,
-      "lat": 36.2111,
-      "long": -81.6669
+      "state": "North Carolina"
     }
   },
   {
@@ -3719,9 +3087,7 @@
     "team_color_primary_hex": "006f71",
     "team_color_secondary_hex": "a27752",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 11,
@@ -3735,10 +3101,7 @@
     },
     "location": {
       "city": "Conway",
-      "state": "South Carolina",
-      "stop": 36323,
-      "lat": 33.8404,
-      "long": -79.0419
+      "state": "South Carolina"
     }
   },
   {
@@ -3748,9 +3111,7 @@
     "team_color_primary_hex": "501214",
     "team_color_secondary_hex": "8d734a",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3764,10 +3125,7 @@
     },
     "location": {
       "city": "San Marcos",
-      "state": "Texas",
-      "stop": 44210,
-      "lat": 29.8734,
-      "long": -97.9382
+      "state": "Texas"
     }
   },
   {
@@ -3777,9 +3135,7 @@
     "team_color_primary_hex": "024731",
     "team_color_secondary_hex": "CCCCCC",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 16,
@@ -3793,10 +3149,7 @@
     },
     "location": {
       "city": "Honolulu",
-      "state": "Hawaii",
-      "stop": 15000,
-      "lat": 21.297,
-      "long": -157.817
+      "state": "Hawaii"
     }
   },
   {
@@ -3806,9 +3159,7 @@
     "team_color_primary_hex": "cb2027",
     "team_color_secondary_hex": "000000",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 3,
@@ -3822,10 +3173,7 @@
     },
     "location": {
       "city": "Jacksonville",
-      "state": "Alabama",
-      "stop": 15000,
-      "lat": 33.8088,
-      "long": -85.7544
+      "state": "Alabama"
     }
   },
   {
@@ -3835,9 +3183,7 @@
     "team_color_primary_hex": "450084",
     "team_color_secondary_hex": "b5a36a",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 5,
@@ -3851,10 +3197,7 @@
     },
     "location": {
       "city": "Harrisonburg",
-      "state": "Virginia",
-      "stop": 15000,
-      "lat": 38.4362,
-      "long": -78.8735
+      "state": "Virginia"
     }
   },
   {
@@ -3864,9 +3207,7 @@
     "team_color_primary_hex": "F56423",
     "team_color_secondary_hex": "FFFFFF",
     "jersey": {
-      "invert": false,
-      "teamColors": null,
-      "id": null
+      "invert": false
     },
     "team_ratings": {
       "location": 4,
@@ -3880,10 +3221,7 @@
     },
     "location": {
       "city": "Huntsville",
-      "state": "Texas",
-      "stop": 15000,
-      "lat": 30.705,
-      "long": -95.5545
+      "state": "Texas"
     }
   }
 ]
