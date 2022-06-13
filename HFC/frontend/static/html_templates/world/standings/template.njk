@@ -33,14 +33,15 @@
             {% endif %}
             <div class="w3-display-container">
               <div class="w3-row-padding">
-                <div class='mw1000'>
+                <div class='mw1100'>
                   <div class="w3-card w3-margin-bottom ">
                     <table class='w3-table-all no-border conference-standings-table' id='teamOverviewConferenceStandings-{{conference_season.conference.conference_id}}'>
                       <thead>
                         <tr class='center-text-row' style='background-color: #{{page.PrimaryColor}};border-top: 3px solid black; color: white;'>
                           <th colspan="3" class='col-group left-text'>{{conference_season.conference.conference_name}}</th>
                           <th colspan="5" class='col-group'>Conference</th>
-                          <th colspan="6">Overall</th>
+                          <th colspan="5" class='col-group'>Overall</th>
+                          <th colspan="2">Trends</th>
                         </tr>
                         <tr class='team-secondary-table-row center-text-row football-table-column-headers' style='background-color: #{{page.SecondaryColor}}; color: white;'>
                           <th>Rank</th>
@@ -55,7 +56,9 @@
                           <th>PPG</th>
                           <th>PAPG</th>
                           <th>MOV</th>
-                          <th>Streak</th>
+                          <th class='col-group'>Streak</th>
+                          <th sort-order='sort-asc' class='no-wrap'>Rank Pred.</th>
+                          <th sort-order='sort-asc'>Change</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -70,7 +73,7 @@
                                 <img class='worldTeamLogo' src="{{team_season.team.team_logo}}"/>
                               </a>
                             </td>
-                            <td value='{{team_season.team.school_name }}' class='col-group'>
+                            <td value='{{team_season.team.school_name }}' class='col-group no-wrap'>
                               <a href="{{ team_season.team.team_href }}">
                                 <span class='font10'>{{team_season.national_rank_display}}</span>
                                 <span class='font14 nowrap'>{{team_season.team.school_name }}</span>
@@ -92,31 +95,35 @@
                             <td value='{{team_season.overall_outcomes.ppg}}' class='center-text'>{{team_season.overall_outcomes.ppg}}</td>
                             <td value='{{team_season.overall_outcomes.papg}}' class='center-text'>{{team_season.overall_outcomes.papg}}</td>
                             <td value='{{team_season.overall_outcomes.mov}}' class='center-text {{team_season.overall_outcomes.color}}'>{{team_season.overall_outcomes.mov}}</td>
-                            <td value='{{team_season.record.win_streak}}' class='center-text '>
+                            <td value='{{team_season.record.win_streak}}' class='center-text col-group '>
                               <span class='{{team_season.win_streak_color}} W-L-Badge' style='float:none;'>{{team_season.win_streak_string}}</span>
+                            </td>
+
+                            <td value='{{team_season.first_conference_rank}}' class='center-text'>{{team_season.first_conference_rank}}</td>
+                            <td value='{{team_season.delta_conference_rank}}' class='center-text'>
+                              {% if team_season.delta_conference_rank < 0 %}
+                              <div class="font14 W">
+                                <span>
+                                  <i class="fas fa-angle-up"></i>
+                                </span>
+                                {{team_season.delta_conference_rank_abs}}
+                              </div>
+                              {% elseif team_season.delta_conference_rank > 0%}
+                                <div class="font14 L">
+                                  <span>
+                                    <i class="fas fa-angle-down"></i>
+                                  </span>
+                                  {{team_season.delta_conference_rank_abs}}
+                                </div>
+                                {# <div class='font10'>Prev: <span class='bold'>{{team_season.rankings.national_rank[1]}}</span></div> #}
+                              {% else %}
+                              -
+                              {% endif %}
                             </td>
                           </tr>
                         {% endfor %}
                       </tbody>
                     </table>
-                  </div>
-                  <div class="w3-card">
-                    <div class="w3-bar team-primary-background-bar">
-                    Conference Standings Trend
-                  </div>
-                    <div class="standings-trend-chart" conference_id='{{conference_season.conference_id}}' id='standings-trend-chart-{{conference_season.conference_id}}'>
-                      <svg width='500' height='50'>
-                        <g transform='translate(30,30)'>
-                          <circle r='8' fill='none' stroke='grey'></circle>
-                          <text transform='translate(10,4)'> = start of season rank</text>
-                        </g>
-                        <g transform='translate(200,30)'>
-                          <circle r='8' fill='gray'></circle>
-                          <text transform='translate(10,4)'> = end of season / current rank</text>
-                        </g>
-
-                      </svg>
-                    </div>
                   </div>
                 </div>
               </div>

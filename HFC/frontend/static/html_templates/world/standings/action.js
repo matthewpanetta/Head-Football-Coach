@@ -44,6 +44,8 @@
 
         team_season.first_conference_rank = team_season.rankings.division_rank[team_season.rankings.division_rank.length - 1];
         team_season.final_conference_rank = team_season.rankings.division_rank[0];
+        team_season.delta_conference_rank = team_season.final_conference_rank - team_season.first_conference_rank;
+        team_season.delta_conference_rank_abs = Math.abs( team_season.delta_conference_rank);
 
         for (tg of team_season.team_games){
           tg.opponent_team_game = team_games_by_team_game_id[tg.opponent_team_game_id]
