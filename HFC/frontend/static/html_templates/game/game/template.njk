@@ -89,7 +89,11 @@
                 {{game.away_team_game.team_season.team.team_name}}
               </div>
               <div class="gameHeaderTeamContainerRecord">
+                {% if game.was_played%}
+                {{game.away_team_game.record_display}}
+                {% else %}
                 {{game.away_team_game.team_season.record_display}}
+                {%endif%}
               </div>
             </div>
           </div>
@@ -195,7 +199,11 @@
                 {{game.home_team_game.team_season.team.team_name}}
               </div>
               <div class="gameHeaderTeamContainerRecord">
+                {% if game.was_played%}
+                {{game.home_team_game.record_display}}
+                {% else %}
                 {{game.home_team_game.team_season.record_display}}
+                {%endif%}
               </div>
             </div>
           </div>

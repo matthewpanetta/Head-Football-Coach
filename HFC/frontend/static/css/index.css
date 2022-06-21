@@ -2378,6 +2378,11 @@ thead tr {
 }
 
 
+.align-middle {
+  vertical-align: middle;
+}
+
+
 .align-bottom {
   vertical-align: bottom !important;
 }

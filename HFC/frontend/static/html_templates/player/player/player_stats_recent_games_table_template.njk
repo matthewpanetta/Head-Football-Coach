@@ -232,7 +232,7 @@
             <td value='{{player_team_game.game_stats.passing.yards|toLocaleString|OrZero}}'>{{player_team_game.game_stats.passing.yards|toLocaleString|OrZero}}</td>
             <td value='{{player_team_game.game_stats.passing.attempts|OrZero}}'>{{player_team_game.game_stats.passing.attempts|OrZero}}</td>
             <td value='{{player_team_game.game_stats.passing.completions|OrZero}}'>{{player_team_game.game_stats.passing.completions|OrZero}}</td>
-            <td value='{{player_team_game.game_stats.passing_completion_percentage}}'>{{player_team_game.game_stats.passing_completion_percentage}}</td>
+            <td value='{{player_team_game.passing_completion_percentage}}'>{{player_team_game.passing_completion_percentage}}</td>
             <td value='{{player_team_game.game_stats.passing.tds|OrZero}}'>{{player_team_game.game_stats.passing.tds|OrZero}}</td>
             <td value='{{player_team_game.game_stats.passing.ints|OrZero}}'  class='col-group'>{{player_team_game.game_stats.passing.ints|OrZero}}</td>
           {% endif %}
@@ -241,7 +241,7 @@
             <!-- RUSHING -->
             <td value='{{player_team_game.game_stats.rushing.yards|toLocaleString|OrZero}}'>{{player_team_game.game_stats.rushing.yards|toLocaleString|OrZero}}</td>
             <td value='{{player_team_game.game_stats.rushing.carries|OrZero}}'>{{player_team_game.game_stats.rushing.carries|OrZero}}</td>
-            <td value='{{player_team_game.game_stats.rushing_yards_per_carry}}'>{{player_team_game.game_stats.rushing_yards_per_carry}}</td>
+            <td value='{{player_team_game.rushing_yards_per_carry}}'>{{player_team_game.rushing_yards_per_carry}}</td>
             <td value='{{player_team_game.game_stats.rushing.broken_tackles|OrZero}}'>{{player_team_game.game_stats.rushing.broken_tackles|OrZero}}</td>
             <td value='{{player_team_game.game_stats.rushing.tds|OrZero}}' class='col-group'>{{player_team_game.game_stats.rushing.tds|OrZero}}</td>
           {% endif %}
@@ -250,7 +250,7 @@
             <!-- RECEIVING -->
             <td value='{{player_team_game.game_stats.receiving.yards|toLocaleString|OrZero}}'>{{player_team_game.game_stats.receiving.yards|toLocaleString|OrZero}}</td>
             <td value='{{player_team_game.game_stats.receiving.receptions|OrZero}}'>{{player_team_game.game_stats.receiving.receptions|OrZero}}</td>
-            <td value='{{player_team_game.game_stats.receiving_yards_per_catch}}'>{{player_team_game.game_stats.receiving_yards_per_catch}}</td>
+            <td value='{{player_team_game.receiving_yards_per_catch}}'>{{player_team_game.receiving_yards_per_catch}}</td>
             <td value='{{player_team_game.game_stats.receiving.targets|OrZero}}'>{{player_team_game.game_stats.receiving.targets|OrZero}}</td>
             <td value='{{player_team_game.game_stats.receiving.tds|OrZero}}' class='col-group'>{{player_team_game.game_stats.receiving.tds|OrZero}}</td>
           {% endif %}

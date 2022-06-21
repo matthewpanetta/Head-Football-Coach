@@ -572,6 +572,10 @@ class team_game {
     this.opponent_game_stats = deep_copy(this.game_stats);
   }
 
+  get record_display(){
+    return `${this.record.wins} - ${this.record.losses}`
+  }
+
   get time_of_possession_formatted() {
     return `${Math.floor(
       this.game_stats.team.time_of_possession / 60

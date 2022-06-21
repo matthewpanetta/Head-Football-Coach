@@ -285,7 +285,6 @@ const getHtml = async (common) => {
     let base_alpha_float = .5;
 
     for (const stat of team_stat_box) {
-      console.log({stat:stat})
       if (!(stat.special_format)){
         stat.max_value = Math.max(stat.away_value, stat.home_value);
       }
@@ -298,13 +297,6 @@ const getHtml = async (common) => {
 
       stat.home_end_alpha = stat.home_end_alpha_float.toString(16);
       stat.away_end_alpha = stat.away_end_alpha_float.toString(16);
-
-      console.log({
-        'stat.home_end_alpha_float': stat.home_end_alpha_float, 
-        ' stat.away_end_alpha_float': stat.away_end_alpha_float,
-        'stat.home_end_alpha': stat.home_end_alpha,
-        ' stat.away_end_alpha': stat.away_end_alpha
-      })
 
       if (!stat.special_format) {
         stat.home_display_value = stat.home_value;
@@ -513,15 +505,6 @@ const getHtml = async (common) => {
       }
     }
 
-    console.log({
-      season_stats: season_stats,
-      last_team_meetings_week_ids: last_team_meetings_week_ids,
-      last_team_meetings_weeks_by_week_id: last_team_meetings_weeks_by_week_id,
-      last_team_meetings: last_team_meetings,
-      past_game_ids: past_game_ids,
-      all_home_team_games: all_home_team_games,
-      all_away_team_games: all_away_team_games,
-    });
   }
 
   const NavBarLinks = await common.nav_bar_links({
@@ -619,6 +602,7 @@ const getHtml = async (common) => {
   };
 
   common.render_content = render_content;
+  console.log(render_content)
 
   var url = "/static/html_templates/game/game/template.njk";
   var html = await fetch(url);
@@ -713,13 +697,6 @@ const action = async (common) => {
       scoring_data[team_index].drives = scoring_data[team_index].drives.concat(drives_to_add)
       scoring_data[team_index].drives = scoring_data[team_index].drives.sort((d_a, d_b) => d_a.seconds_in_to_game - d_b.seconds_in_to_game || d_a.points - d_b.points)
     }
-
-    console.log({
-      scoring_data: scoring_data,
-      drives: drives,
-      max_time: max_time,
-      max_points: max_points,
-    });
 
     var quarters = [1, 2, 3, 4];
     quarters = quarters.map((q) => q * 15 * 60);
