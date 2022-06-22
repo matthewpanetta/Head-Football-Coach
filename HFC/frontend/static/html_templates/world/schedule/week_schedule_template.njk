@@ -34,6 +34,7 @@
                 <tr class='bottom-border center-text-row'>
                   {% if game.was_played %}
                     <th class='left-text'>
+                      <span>{{game.week.week_name}}</span>
                       <a href="{{game.game_href}}" class='font10'>Box Score</a>
                       {% if game.rivalry %}
                       <div class='font10'>{{game.rivalry.rivalry_name or 'Rivalry Game'}}</div>
@@ -45,6 +46,7 @@
                     <th class='col-group-left'>F</th>
                     {% else%}
                     <th class='left-text'>
+                      <span>{{game.week.week_name}}</span>
                       <a href="{{game.game_href}}" class='font10'>Preview</a>
                       {% if game.rivalry %}
                       <div class='font10'>{{game.rivalry.rivalry_name or 'Rivalry Game'}}</div>
@@ -62,7 +64,7 @@
                   </td>
                   {% if game.was_played %}
                     {% for period in game.scoring.periods%}
-                      <td>{{ period.points[0]   }}</td>
+                      <td>{{ period.points[1]   }}</td>
                     {% endfor %}
                     {{game|log}}
                     <td class='col-group-left {{game.away_team_game.bold}}'>{{game.away_team_game.points}}</td>
@@ -76,7 +78,7 @@
                   </td>
                   {% if game.was_played %}
                     {% for period in game.scoring.periods%}
-                      <td>{{ period.points[1]   }}</td>
+                      <td>{{ period.points[0]   }}</td>
                     {% endfor %}
                     <td class='col-group-left {{game.home_team_game.bold}}'>{{game.home_team_game.points}}</td>
                   {% endif %}

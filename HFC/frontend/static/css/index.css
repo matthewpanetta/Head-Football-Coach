@@ -1556,6 +1556,10 @@ th.left-text {
   background-color: #eee;
 }
 
+.background-f1f1f1 {
+  background-color: #f1f1f1;
+}
+
 tfoot td {
   border-bottom: 1px solid black;
 }

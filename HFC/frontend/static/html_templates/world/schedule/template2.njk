@@ -1,0 +1,71 @@
+<div class='ext_NavBar'>
+  {% include "../../static/html_templates/ext_NavBar.njk" %}
+</div>
+<style></style>
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
+{% include "../../static/html_templates/ext_TeamColoring.njk" %}
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "../../static/html_templates/Scoreboard.njk" %}
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+          <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-player-stats">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding'>
+            <div class='w3-card w3-margin-bottom football-table-filter-bar mw1200'>
+              <div class="w3-bar team-primary-background-bar">
+                <span class='hide-small'>Filters</span>
+                <span class="details-control" id="filter-dropdown-button">
+                  <i class="fa fa-angle-down" style="padding: 0px 10px; font-size: 15px;"></i>
+                </span>
+              </div>
+              <div style="max-height: 250px; overflow-y: scroll;">
+                <table id="football-table-filter-table" class="w3-table-all hidden" style="table-layout: fixed; width: 100%; max-width: 100%;">
+                  {{filter_options|log}}
+                  {% for table_filter_group_name, table_filter_group in filter_options %}
+                    {{table_filter_group_name|log}}
+                    {{table_filter_group|log}}
+                    <tr class='football-table-filter-row' filter_option="{{table_filter_group_name}}">
+                      <td style="width: 150px;" class="bold football-table-filter-display">{{table_filter_group.display}}</td>
+                      <td style="width: 100px;">
+                        <button class="w3-button football-table-filter-option {%if table_filter_group.all_default_option%}selected{%endif%}" filter_value="All">
+                          <div class="bold">All</div>
+                        </button>
+                      </td>
+                      <td  style='display: block; '>
+                        <div style='  margin: 0;  padding: 0; overflow: auto; white-space: nowrap;'>
+                          {% for table_filter_option in table_filter_group.options%}
+                            {{table_filter_option|log}}
+                            <button class="w3-button football-table-filter-option {{table_filter_option.selected}}" count_value="{{table_filter_option.count}}" filter_value="{{table_filter_option.display}}">
+                              <div class="bold">{{table_filter_option.display}}</div>
+                            </button>
+                          {% endfor %}
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
+
+          </div>
+          <div class='w3-row-padding'>
+          <div class='w3-card mw1200'>
+            <div class='w3-row-padding background-f1f1f1' id='schedule-box-score-container'></div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>

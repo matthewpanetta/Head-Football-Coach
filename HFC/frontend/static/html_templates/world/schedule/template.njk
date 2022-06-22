@@ -1,15 +1,10 @@
 <div class='ext_NavBar'>
   {% include "../../static/html_templates/ext_NavBar.njk" %}
 </div>
-<style>
-  #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
-    border-bottom: 2px solid black;
-  }
-</style>
+<style></style>
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
 {% include "../../static/html_templates/ext_TeamColoring.njk" %}
-
 
 <body>
   <div class="PageContent">
@@ -17,19 +12,61 @@
       {% include "../../static/html_templates/Scoreboard.njk" %}
     </div>
     <nav>
-      <div class="w3-bar team-bar w3-row-padding" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
-            <i class="fas fa-bars"></i>
+          <i class="fas fa-bars"></i>
         </button>
-        {% for week in weeks%}
-        <button id="nav-week-schedule-tab-{{week.week_id}}" weekid="{{week.week_id}}" class="w3-bar-item w3-button tab nav-tab-button week-schedule font10-plain {%if week.selected_week%} selected-tab {%endif%}" {%if week.selected_week%} style="background-color: #{{page.SecondaryColor}};" {%endif%}>
-          {{week.week_name}}
-        </button>
-        {%endfor%}
+        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
       </div>
     </nav>
     <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-player-stats">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding'>
+            <div class='w3-card width100'>
+              <div class='w3-bar team-primary-background-bar' >
+                Filters
+              </div>
+              <div class='w3-row-padding background-eee'>
+                <div class='inline-block background-white'>
+                  <select class='w3-select schedule-select' filter='week'>
+                    <option value='all'>All</option>
+                    {% for week in filter_groups.Week%}
+                      <option value='{{week.week_name}}' {%if week.selected_week%}selected{%endif%}>{{week.week_name}}</option>
+                      {%endfor%}
+                    </select>
+                  </div>
+                  <div class='inline-block background-white'>
+                    <select class='w3-select schedule-select' filter='conference'>
+                      <option value='all' selected>All Conferences</option>
+                      {% for conference_season in filter_groups.Conference%}
+                        <option value='{{conference_season.conference_season_id}}'>{{conference_season.conference.conference_name}}</option>
+                        {%endfor%}
+                      </select>
+                    </div>
+                    <div class='inline-block background-white'>
+                      <span></span>
+                      <select class='w3-select schedule-select' filter='scope'>
+                        <option value='all' selected>All Games</option>
+                        <option value='in conference'>In Conference</option>
+                        <option value='out of conference'>Out of Conference</option>
+                      </select>
+                    </div>
+                    <div class='inline-block background-white'>
+                      <span></span>
+                      <select class='w3-select schedule-select' filter='priority'>
+                        <option value='all' selected>All</option>
+                        <option value='national tv'>National TV</option>
+                        <option value='top 25'>Top 25</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class='w3-row-padding' id='schedule-box-score-container'>
 
-      </div>
-  </div>
-</body>
+                </div>
+              </div>
+            </div>
+          </div>
+        </body>

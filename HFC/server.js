@@ -11,7 +11,6 @@ const routes = [
   {route: "/World/:world_id/Standings/", path: 'world/standings/base.html'},
   {route: "/World/:world_id/Standings/Conference/:conference_id", path: 'world/standings/base.html'},
   {route: "/World/:world_id/Schedule/", path: 'world/schedule/base.html'},
-  {route: "/World/:world_id/Schedule2/", path: 'world/schedule2/base.html'},
   {route: "/World/:world_id/Awards/", path: 'world/awards/base.html'},
 
   {route: "/World/:world_id/Recruiting/", path: 'world/recruiting/base.html'},
