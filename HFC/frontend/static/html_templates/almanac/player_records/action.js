@@ -17,29 +17,26 @@
 
       var team_seasons =  await db.team_season.where('team_id').above(0).toArray();
       var distinct_team_seasons = [];
+      team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team')
+      var team_seasons_by_team_season_id =  index_group_sync(team_seasons, 'index','team_season_id');
 
-      var sum_career = false;
+      var sum_career = true;
       if (team_seasons.length > teams.length){
         sum_career = true;
       }
 
-      const player_team_seasons = await db.player_team_season.toArray();
-      const player_team_season_ids = player_team_seasons.map(pts => pts.player_team_season_id);
+      let player_team_seasons = await db.player_team_season.toArray();
 
-      const player_ids = player_team_seasons.map(pts => pts.player_id);
-      var players = await db.player.where('player_id').anyOf(player_ids).toArray();
+      const player_team_season_stats = await db.player_team_season_stats.toArray();
+      player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id')
+
+      var players = await db.player.toArray();
       const players_by_player_id = index_group_sync(players, 'index', 'player_id');
 
-      for (const team_season of team_seasons){
-        team_season.team = teams_by_team_id[team_season.team_id];
-      }
-      var team_seasons_by_team_season_id =  index_group_sync(team_seasons, 'index','team_season_id');
+      player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats')
+      player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
+      player_team_seasons = nest_children(player_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season')
 
-      var player_counter = 0;
-      for (const player_team_season of player_team_seasons){
-        player_team_season.player = players_by_player_id[player_team_season.player_id];
-        player_team_season.team_season = team_seasons_by_team_season_id[player_team_season.team_season_id];
-      }
       const player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id')
 
       const player_leader_categories = [
@@ -49,30 +46,30 @@
 
         {category_name: 'Passing Completions', category_abbr: 'COMP', stat: 'timeframe.passing.completions'},
         {category_name: 'Passing Attempts', category_abbr: 'ATT', stat: 'timeframe.passing.attempts'},
-        {category_name: 'Passing Yards Per Attempt', category_abbr: 'YPA', stat: 'passing_yards_per_attempt'},
+        {category_name: 'Passing Yards Per Attempt', category_abbr: 'YPA', stat: 'timeframe.passing_yards_per_attempt'},
 
-        {category_name: 'Passing Completion Percentage', category_abbr: 'CMP%', stat: 'completion_percentage'},
-        {category_name: 'Passer Rating', category_abbr: 'RAT', stat: 'passer_rating'},
-        {category_name: 'Passing Yards Per Game', category_abbr: 'YPG', stat: 'passing_yards_per_game'},
+        {category_name: 'Passing Completion Percentage', category_abbr: 'CMP%', stat: 'timeframe.completion_percentage'},
+        {category_name: 'Passer Rating', category_abbr: 'RAT', stat: 'timeframe.passer_rating'},
+        {category_name: 'Passing Yards Per Game', category_abbr: 'YPG', stat: 'timeframe.passing_yards_per_game'},
 
         {category_name: 'Rushing Yards', category_abbr: 'YRD', stat: 'timeframe.rushing.yards'},
         {category_name: 'Rushing Touchdowns', category_abbr: 'TDs', stat: 'timeframe.rushing.tds'},
-        {category_name: 'Rushing Yards Per Carry', category_abbr: 'YPC', stat: 'rushing_yards_per_carry_qualified'},
+        {category_name: 'Rushing Yards Per Carry', category_abbr: 'YPC', stat: 'timeframe.rushing_yards_per_carry_qualified'},
 
         {category_name: 'Rushing Carries', category_abbr: 'CAR', stat: 'timeframe.rushing.carries'},
-        {category_name: 'Rushing Yards Per Game', category_abbr: 'YPG', stat: 'rushing_yards_per_game'},
+        {category_name: 'Rushing Yards Per Game', category_abbr: 'YPG', stat: 'timeframe.rushing_yards_per_game'},
         {category_name: 'Rushes for 20+ Yards', category_abbr: '20+', stat: 'timeframe.rushing.over_20'},
 
         {category_name: 'Receiving Yards', category_abbr: 'YRD', stat: 'timeframe.receiving.yards'},
         {category_name: 'Receiving Touchdowns', category_abbr: 'TDs', stat: 'timeframe.receiving.tds'},
         {category_name: 'Receptions', category_abbr: 'RECs', stat: 'timeframe.receiving.receptions'},
 
-        {category_name: 'Receiving Yards Per Catch', category_abbr: 'YPC', stat: 'receiving_yards_per_catch_qualified'},
-        {category_name: 'Receiving Yards Per Game', category_abbr: 'YPG', stat: 'receiving_yards_per_game'},
+        {category_name: 'Receiving Yards Per Catch', category_abbr: 'YPC', stat: 'timeframe.receiving_yards_per_catch_qualified'},
+        {category_name: 'Receiving Yards Per Game', category_abbr: 'YPG', stat: 'timeframe.receiving_yards_per_game'},
         {category_name: 'Receiving Targets', category_abbr: 'TARG', stat: 'timeframe.receiving.targets'},
 
         {category_name: 'Points Scored', category_abbr: 'Points', stat: 'timeframe.games.points'},
-        {category_name: 'Yards From Scrimmage', category_abbr: 'YRD', stat: 'yards_from_scrimmage'},
+        {category_name: 'Yards From Scrimmage', category_abbr: 'YRD', stat: 'timeframe.yards_from_scrimmage'},
         {category_name: 'Games Played', category_abbr: 'GP', stat: 'timeframe.games.games_played'},
 
         {category_name: 'Tackles', category_abbr: 'Tackles', stat: 'timeframe.defense.tackles'},
@@ -268,6 +265,7 @@
           return true;
         }
         var player_id = parseInt($(elem).attr('player_id'));
+        console.log({player_id:player_id, elem:$(elem) })
         if (isNaN(player_id)){
           return true;
         }
@@ -284,6 +282,8 @@
       const players = await db.player.where('player_id').anyOf(player_ids).toArray();
       var player_team_seasons = await db.player_team_season.where('player_id').anyOf(player_ids).toArray();
       const player_team_seasons_by_player_id = index_group_sync(player_team_seasons, 'index', 'player_id')
+
+      console.log({player_team_seasons_by_player_id:player_team_seasons_by_player_id, face_div_by_player_id:face_div_by_player_id})
 
 
       const team_season_ids = player_team_seasons.map(pts => pts.team_season_id);
