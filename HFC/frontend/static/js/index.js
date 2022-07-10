@@ -117,7 +117,7 @@ class award {
           award_name = `${this.season}`;
         }
       } else if (this.award_timeframe == "pre-season") {
-        award_group_name = `Preseason All-American ${this.award_group_type}`;
+        award_name = `${this.season}`;
       }
     }
 
@@ -1041,8 +1041,6 @@ class team_season_stats {
       return 0;
     }
 
-    console.log({ this: this });
-
     return round_decimal(
       this.season_stats.team.points / this.season_stats.games.games_played,
       1
@@ -1122,6 +1120,16 @@ class team_season_stats {
     );
   }
 
+  get passing_yards_per_completion() {
+    if (this.season_stats.passing.completions == 0) {
+      return 0;
+    }
+    return round_decimal(
+      this.season_stats.passing.yards / this.season_stats.passing.completions,
+      1
+    );
+  }
+
   get opponent_passing_yards_per_attempt() {
     if (this.season_stats.passing.attempts == 0) {
       return 0;
@@ -1182,6 +1190,18 @@ class team_season_stats {
     );
   }
 
+  get sack_dropback_percent(){
+    if (this.season_stats.passing.attempts == 0) {
+      return 0;
+    }
+
+    return round_decimal(
+      this.season_stats.passing.sacks *100 /
+        this.season_stats.passing.attempts,
+      1
+    );
+  }
+
   get passing_yards_per_game() {
     if (this.season_stats.games.games_played == 0) {
       return 0;
@@ -1203,6 +1223,37 @@ class team_season_stats {
       1
     );
   }
+
+  get rushing_carries_per_game() {
+    if (this.season_stats.games.games_played == 0) {
+      return 0;
+    }
+
+    return round_decimal(
+      this.season_stats.rushing.carries / this.season_stats.games.games_played,
+      1
+    );
+  }
+
+  get play_call_percent_rush(){
+    if (this.plays == 0) {
+      return 0;
+    }
+
+    return round_decimal(
+      this.season_stats.rushing.carries * 100 / this.plays,
+       1
+    );  }
+
+    get play_call_percent_pass(){
+      if (this.plays == 0) {
+        return 0;
+      }
+  
+      return round_decimal(
+        this.season_stats.passing.attempts * 100 / this.plays,
+         1
+      );  }
 
   get receiving_yards_per_game() {
     if (this.season_stats.games.games_played == 0) {
@@ -1324,6 +1375,38 @@ class team_season_stats {
     return this.season_stats.passing.yards + this.season_stats.rushing.yards;
   }
 
+  get plays() {
+    return this.season_stats.passing.attempts + this.season_stats.rushing.carries;
+  }
+
+  get yards_per_play() {
+    if (this.plays == 0) {
+      return 0;
+    }
+    return round_decimal(this.yards / this.plays,1);
+  }
+
+  get yards_per_drive() {
+    if (this.season_stats.team.field_position.total_drives == 0) {
+      return 0;
+    }
+    return round_decimal(this.yards / this.season_stats.team.field_position.total_drives,1);
+  }
+
+  get points_per_drive() {
+    if (this.season_stats.team.field_position.total_drives == 0) {
+      return 0;
+    }
+    return round_decimal(this.season_stats.team.points / this.season_stats.team.field_position.total_drives,1);
+  }
+
+  get drive_turnover_percent() {
+    if (this.season_stats.team.field_position.total_drives == 0) {
+      return 0;
+    }
+    return round_decimal(this.turnovers * 100 / this.season_stats.team.field_position.total_drives,1);
+  }
+
   get yards_per_game() {
     return round_decimal(
       this.passing_yards_per_game + this.rushing_yards_per_game,
@@ -1443,6 +1526,30 @@ class team_season_stats {
     );
   }
 
+  get drives_within_40_per_game() {
+    if (this.season_stats.games.games_played == 0) {
+      return 0;
+    }
+
+    return round_decimal(
+      this.season_stats.team.drive_efficiency[40].total_trips /
+        this.season_stats.games.games_played,
+      1
+    );
+  }
+
+  get drives_within_20_per_game() {
+    if (this.season_stats.games.games_played == 0) {
+      return 0;
+    }
+
+    return round_decimal(
+      this.season_stats.team.drive_efficiency[20].total_trips /
+        this.season_stats.games.games_played,
+      1
+    );
+  }
+
   get points_per_drive_within_20() {
     if (this.season_stats.team.drive_efficiency[20].total_trips == 0) {
       return 0;
@@ -1463,6 +1570,42 @@ class team_season_stats {
     return round_decimal(
       (this.season_stats.team.down_efficiency.all.success * 100) /
         this.season_stats.team.down_efficiency.all.total,
+      1
+    );
+  }
+
+  get down_efficiency_3rd() {
+    if (this.season_stats.team.down_efficiency[3].total == 0) {
+      return 0;
+    }
+
+    return round_decimal(
+      (this.season_stats.team.down_efficiency[3].success * 100) /
+        this.season_stats.team.down_efficiency[3].total,
+      1
+    );
+  }
+
+  get down_efficiency_2nd() {
+    if (this.season_stats.team.down_efficiency[2].total == 0) {
+      return 0;
+    }
+
+    return round_decimal(
+      (this.season_stats.team.down_efficiency[2].success * 100) /
+        this.season_stats.team.down_efficiency[2].total,
+      1
+    );
+  }
+
+  get down_efficiency_1st() {
+    if (this.season_stats.team.down_efficiency[1].total == 0) {
+      return 0;
+    }
+
+    return round_decimal(
+      (this.season_stats.team.down_efficiency[1].success * 100) /
+        this.season_stats.team.down_efficiency[1].total,
       1
     );
   }
@@ -1525,6 +1668,18 @@ class team_season {
 
   get team_season_href() {
     return `/World/${this.world_id}/Team/${this.team_id}/Season/${this.season}`;
+  }
+
+  get best_rank() {
+    return Math.min(...this.rankings.national_rank);
+  }
+
+  get worst_rank() {
+    return Math.max(...this.rankings.national_rank);
+  }
+
+  get first_rank() {
+    return this.rankings.national_rank[this.rankings.national_rank.length - 1];
   }
 
   get weeks_ranked_1() {
@@ -1706,6 +1861,16 @@ class player {
     }
     return round_decimal(
       this.career_stats.passing.yards / this.career_stats.passing.attempts,
+      1
+    );
+  }
+
+  get passing_yards_per_completion() {
+    if (this.career_stats.passing.completions < 50) {
+      return 0;
+    }
+    return round_decimal(
+      this.career_stats.passing.yards / this.career_stats.passing.completions,
       1
     );
   }
@@ -4980,6 +5145,9 @@ const populate_names = async (ddb) => {
   var data = await fetch(url);
   var name_dimension = await data.json();
 
+  await ddb.first_names.clear();
+  await ddb.last_names.clear();
+
   var first_names_to_add = [],
     last_names_to_add = [],
     first_name_start = 0,
@@ -5000,6 +5168,8 @@ const populate_names = async (ddb) => {
       last_name_start += name_obj.occurance;
     }
   });
+
+  console.log({ddb:ddb, first_names_to_add:first_names_to_add, last_names_to_add:last_names_to_add})
 
   await ddb.first_names.bulkAdd(first_names_to_add);
   await ddb.last_names.bulkAdd(last_names_to_add);
@@ -5164,7 +5334,7 @@ const driver_db = async (world_obj) => {
 
   ddb = await new Dexie(dbname);
 
-  await ddb.version(6).stores({
+  await ddb.version(7).stores({
     world: "++world_id",
     setting: "",
     first_names: "stop",
@@ -9514,20 +9684,22 @@ const choose_all_americans = async (this_week, common) => {
           player_team_season: player_team_season,
           conference_season_id: conference_season_id,
         });
-        var a = new award(
-          player_team_season.player_team_season_id,
-          null,
-          this_week.week_id,
-          this_week.season,
-          "position",
-          position,
-          "conference",
-          "regular season",
-          parseInt(conference_season_id),
-          "Freshman"
-        );
+        if (player_team_season){
+          var a = new award(
+            player_team_season.player_team_season_id,
+            null,
+            this_week.week_id,
+            this_week.season,
+            "position",
+            position,
+            "conference",
+            "regular season",
+            parseInt(conference_season_id),
+            "Freshman"
+          );
+  
+          awards_to_save.push(a);        }
 
-        awards_to_save.push(a);
       }
     }
   }

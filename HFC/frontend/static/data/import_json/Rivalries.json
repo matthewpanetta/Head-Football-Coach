@@ -274,13 +274,6 @@
     "preferred_week_number": null
   },
   {
-    "team_name_1": "Boise State",
-    "team_name_2": "TCU",
-    "rivalry_relevance":7,
-    "rivalry_name": "",
-    "preferred_week_number": null
-  },
-  {
     "team_name_1": "Boston College",
     "team_name_2": "Clemson",
     "rivalry_relevance":5,
@@ -1256,7 +1249,7 @@
   {
     "team_name_1": "Notre Dame",
     "team_name_2": "USC",
-    "rivalry_relevance":15,
+    "rivalry_relevance":18,
     "rivalry_name": "",
     "preferred_week_number": null
   },

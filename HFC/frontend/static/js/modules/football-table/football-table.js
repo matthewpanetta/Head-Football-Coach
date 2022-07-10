@@ -89,6 +89,42 @@ const get_initial_column_controls = (subject) => {
       },
     };
   }
+  else if (subject == "world team stats"){
+    return {"Team": {
+      games: {shown: false, display: 'Games'},
+      point_margin: {shown: false, display: 'Point Margin'},
+    },
+    "Offense": {
+      totals: {shown: false, display: 'Totals'},
+      passing: {shown: false, display: 'Passing'},
+      rushing: {shown: false, display: 'Rushing'},
+      points: {shown: false, display: 'Points'},
+      downs: {shown: false, display: 'Downs'},
+    },
+    //TODO add defense & ST
+    // "Defense": {
+    //   totals: {shown: false, display: 'Totals'},
+    //   passing: {shown: false, display: 'Passing'},
+    //   rushing: {shown: false, display: 'Rushing'},
+    //   points: {shown: false, display: 'Points'},
+    //   downs: {shown: false, display: 'Downs'},
+    // },
+
+    // "ST": {
+    //   kicking: {shown: false, display: 'Kicking'},
+    //   punting: {shown: false, display: 'Punting'},
+    //   returning: {shown: false, display: 'Returning'},
+    // },
+
+    "Performance": {
+      rankings: {shown: true, display: 'Rankings'},
+      vs_top_25: {shown: false, display: 'Vs Top 25'},
+      awards: {shown: false, display: 'Awards'},
+      bowls: {shown: false, display: 'Bowls'},
+    }
+  
+  }
+  }
   return {};
 };
 
@@ -101,13 +137,20 @@ const get_initial_sorted_columns = (subject) => {
       },
     ];
   }
+  else if (subject == "world team stats"){
+    return [
+      {
+        key: "team.team_season.national_rank",
+        sort_direction: "sort-desc",
+      },
+    ];
+  }
 
   return [];
 };
 
 const get_initial_filter_options = (subject, table_config, common) => {
   console.log({table_config:table_config})
-  debugger;
   if (subject == "player stats" || subject == "world player stats" ) {
     var table_filters = {
       "player_team_season.position": {
@@ -156,6 +199,19 @@ const get_initial_filter_options = (subject, table_config, common) => {
       }
     }
   }
+  else if (subject == "world team stats" ){
+    var table_filters = {
+      'conference_season.conference.conference_abbreviation':{
+        count: 0,
+        display: "Conference",
+        raw_options: common.distinct(table_config.original_data.map(ts => common.get_from_dict(ts, 'conference_season.conference.conference_abbreviation')).sort())
+      }
+      
+    };
+    console.log({table_filters:table_filters, original_data:table_config.original_data})
+  }
+
+  console.log({table_filters:table_filters})
 
   for (table_filter_key in table_filters) {
     table_filters[table_filter_key].options = [];
@@ -497,7 +553,9 @@ const adjust_button_text = async (common, table_config) => {
 
 const find_filtered_columns = (clicked_button, table_config) => {
   var filtered_columns = [];
-  $("#player-stats-table-filter .football-table-filter-row").each(function () {
+  let selected_options = [];
+  let all_children = [];
+  $(table_config.dom.filter_dom_selector + " .football-table-filter-row").each(function () {
     var all_named_button = $(this)
       .find('.football-table-filter-option[filter_value="All"]')
       .first();
@@ -535,6 +593,8 @@ const find_filtered_columns = (clicked_button, table_config) => {
     }
   });
 
+  console.log({filtered_columns:filtered_columns, s:table_config.dom.filter_dom_selector, selected_options:selected_options, all_children:all_children})
+
   return filtered_columns;
 };
 
@@ -542,7 +602,7 @@ const find_column_controls = (common, clicked_button, table_config) => {
   var column_controls = table_config.column_control.column_controls;
 
   $(
-    "#player-stats-table-column-control .football-table-column-control-row"
+    table_config.dom.column_control_dom_selector + " .football-table-column-control-row"
   ).each(function (ind, row) {
     var all_named_button = $(row)
       .find('.football-table-column-control-option[column_control_group="All"]')

@@ -90,7 +90,7 @@
                   <th class='center-text'>{{stat_category.category_abbr}}</th>
                 </tr>
                 {% for player in stat_category.player_team_seasons.slice(1,5)%}
-                  <tr player_id='{{player.player.player_id}}'>
+                  <tr player_id='{{player.player_team_season.player_id}}'>
                     <td class='center-text bold' style='background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
                       {{loop.index + 1}}
                     </td>
@@ -135,7 +135,64 @@
           </div>
         {% endfor %}
       </div>
-      <div class="tab-content" style="display:none;"  id="nav-game-records" ></div>
+      <div class="tab-content" style="display:none;"  id="nav-game-records" >
+        {% for stat_category in player_leader_categories%}
+          <div class="w3-card margin-bottom-24 inline-block" style='width: 380px; margin-left: 20px;'>
+            <div class='team-primary-background-bar'>
+              {{stat_category.category_name}}
+            </div>
+            <table class='w3-table-all no-border'>
+              <tbody class="">
+                <tr >
+                  <td class="moving-gradient center-text bold font20" style=' color:white;'>
+                        1
+                      </td>
+                  <td class="">
+                    <div class="inline-block">
+                    </div>
+
+                  </td>
+                  <td>
+                    <div class="inline-block">
+                      <div class="font10">
+                      </div>
+                    </div>
+                  </td>
+                  <td class="center-text">
+                    <div class="font20">
+                    </div>
+                    <div class="font10">
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th class='center-text'>Rank</th>
+                  <th colspan='1'>Team</th>
+                  <th>Player</th>
+                  <th class='center-text'>{{stat_category.category_abbr}}</th>
+                </tr>
+                {% for player in range(1,5)%}
+                  <tr >
+                    <td class='moving-gradient center-text bold' style='color:white;'>
+                      {{loop.index + 1}}
+                    </td>
+                    <td colspan='2' style='padding-left: 24px;'>
+                      <div>
+                      </div>
+                      
+                      
+
+                    </td>
+                    <td class='center-text'></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% endfor %}
+
+      </div>
+
       <div class="tab-content" style="display:none;"  id="nav-career-records" ></div>
     </div>
   </div>

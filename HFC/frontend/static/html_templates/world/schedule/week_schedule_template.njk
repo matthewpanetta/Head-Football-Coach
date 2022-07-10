@@ -4,7 +4,7 @@
 
     <div class="w3-row-padding {{Week.Week.ShowWeekClass}} weekScheduleDisplayContainer"  WeekID="{{Week.Week.WeekID}}">
       {% for game in week.games%}
-        <div  class='w3-card w3-col hidden-overflow w3-margin-bottom w3-margin-top' style='background-color: white; padding: 0px; {% if game.was_played %}max-width: 500px; min-width: 300px;{%else%}max-width: 300px; min-width: 300px;{%endif%}'>
+        <div  class='w3-card w3-col hidden-overflow w3-margin-bottom margin-right-8 w3-margin-top' style='background-color: white; padding: 0px; {% if game.was_played %}max-width: 500px; min-width: 300px;{%else%}max-width: 300px; min-width: 300px;{%endif%}'>
           <div class="w3-container">
             <div class="scheduleGameDashboardGameTeamDisplayContainer w3-display-container">
               <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.team_games[0].team_season.team.team_color_primary_hex}}'></div>

@@ -142,7 +142,7 @@
         const weeks = await db.week.toArray();
         const weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
 
-        let player_team_games = await db.player_team_game.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
+        let player_team_games = await db.player_team_game.toArray();
         player_team_games = player_team_games.filter(ptg => ptg.game_stats.games.games_played > 0);
 
         for (const player_team_game of player_team_games){
@@ -174,6 +174,8 @@
         }
 
 
+        console.log({player_leader_categories:player_leader_categories})
+
         console.log('CLICKED ON tab')
         var url = '/static/html_templates/almanac/player_records/game_records.njk'
         var html = await fetch(url);
@@ -184,6 +186,9 @@
         $('#nav-game-records').html(renderedHtml);
 
         draw_faces(common)
+        $(".player-profile-popup-icon").on("click", async function () {
+          await common.populate_player_modal(common, this);
+        });
       })
 
 
@@ -244,6 +249,9 @@
         $('#nav-career-records').html(renderedHtml);
 
         draw_faces(common)
+        $(".player-profile-popup-icon").on("click", async function () {
+          await common.populate_player_modal(common, this);
+        });
       })
 
     }
@@ -324,8 +332,9 @@
       await action(common);
       await common.add_listeners(common);
       await draw_faces(common);
-      console.log('nav-game-records', $('#nav-game-records'))
-      await $('#nav-game-records').css('display', 'none');
+      $(".player-profile-popup-icon").on("click", async function () {
+        await common.populate_player_modal(common, this);
+      });
 
       var endTime = performance.now()
       console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms` );
