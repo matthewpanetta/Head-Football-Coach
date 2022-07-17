@@ -2714,3 +2714,11 @@ table {
   animation-timing-function: linear;
   animation-fill-mode: forwards;
 }
+
+.indent {
+  text-indent: 12px;
+}
+
+.children-align-middle > * {
+  vertical-align: middle;
+}

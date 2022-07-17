@@ -577,9 +577,10 @@ class team_game {
   }
 
   get time_of_possession_formatted() {
-    return `${Math.floor(
-      this.game_stats.team.time_of_possession / 60
-    )}:${Math.floor(this.game_stats.team.time_of_possession % 60)}`;
+    let minutes = Math.floor(this.game_stats.team.time_of_possession / 60);
+    let seconds = Math.floor(this.game_stats.team.time_of_possession % 60);
+    let seconds_display = seconds < 10 ? `0${seconds}` : seconds;
+    return `${minutes}:${seconds_display}`;
   }
 
   get total_yards() {
@@ -646,6 +647,17 @@ class team_game {
     }
 
     return 0;
+  }
+
+  get plays() {
+    return this.game_stats.passing.attempts + this.game_stats.rushing.carries;
+  }
+
+  get yards_per_play() {
+    if (this.plays == 0) {
+      return 0;
+    }
+    return round_decimal(this.total_yards / this.plays,1);
   }
 
   get passer_rating() {

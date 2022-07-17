@@ -172,13 +172,16 @@ const getHtml = async (common) => {
           drive.home_or_away = "away";
         }
 
-        if ((drive.drive_end.seconds_in_to_game % (15 * 60) == 0) && drive.drive_end.seconds_in_to_game > 0){
+        if (
+          drive.drive_end.seconds_in_to_game % (15 * 60) == 0 &&
+          drive.drive_end.seconds_in_to_game > 0
+        ) {
           var seconds_left_in_period = 0;
+        } else {
+          var seconds_left_in_period =
+            15 * 60 - (drive.drive_end.seconds_in_to_game % (15 * 60));
         }
-        else {
-          var seconds_left_in_period = 15 * 60 - (drive.drive_end.seconds_in_to_game % (15 * 60));
-        }
-        
+
         var display_time = seconds_to_time(seconds_left_in_period);
         drive.drive_end.display_time = display_time;
       }
@@ -228,15 +231,67 @@ const getHtml = async (common) => {
     team_stat_box = [
       {
         special_format: false,
+        display_name: "Points",
+        away_value: game.away_team_game.points,
+        home_value: game.home_team_game.points,
+      },     
+      {
+        special_format: false,
+        indent: 'indent',
+        display_name: "Biggest Lead",
+        away_value: game.away_team_game.game_stats.team.biggest_lead,
+        home_value: game.home_team_game.game_stats.team.biggest_lead,
+      },
+      {
+        special_format: false,
         display_name: "Total Yards",
         away_value: game.away_team_game.total_yards,
         home_value: game.home_team_game.total_yards,
       },
       {
         special_format: false,
+        indent: 'indent',
+        display_name: "Pass Yards",
+        away_value: game.away_team_game.game_stats.passing.yards,
+        home_value: game.home_team_game.game_stats.passing.yards,
+      },
+      {
+        special_format: false,
+        indent: 'indent',
+        display_name: "Rush Yards",
+        away_value: game.away_team_game.game_stats.rushing.yards,
+        home_value: game.home_team_game.game_stats.rushing.yards,
+      },
+      {
+        special_format: false,
+        indent: 'indent',
+        display_name: "Yards / Play",
+        away_value: game.away_team_game.yards_per_play,
+        home_value: game.home_team_game.yards_per_play,
+      },
+      {
+        special_format: false,
         display_name: "First Downs",
         away_value: game.away_team_game.game_stats.team.downs.first_downs.total,
         home_value: game.home_team_game.game_stats.team.downs.first_downs.total,
+      },
+      {
+        special_format: true,
+        max_value: 100,
+        indent: 'indent',
+        display_name: "Third Down %",
+        away_value: game.away_team_game.third_down_conversion_percentage,
+        away_display_value: `${game.away_team_game.third_down_conversion_percentage}%`,
+        home_value: game.home_team_game.third_down_conversion_percentage,
+        home_display_value: `${game.home_team_game.third_down_conversion_percentage}%`,
+      },
+      {
+        special_format: false,
+        low_good: true,
+        indent: 'indent',
+        display_name: "Punts",
+        away_value: game.away_team_game.game_stats.punting.punts,
+        home_value: game.home_team_game.game_stats.punting.punts,
       },
       {
         special_format: true,
@@ -249,6 +304,7 @@ const getHtml = async (common) => {
       },
       {
         special_format: false,
+        low_good: true,
         display_name: "Turnovers",
         away_value: game.away_team_game.game_stats.team.turnovers,
         home_value: game.home_team_game.game_stats.team.turnovers,
@@ -259,44 +315,37 @@ const getHtml = async (common) => {
         away_value: game.away_team_game.game_stats.defense.sacks,
         home_value: game.home_team_game.game_stats.defense.sacks,
       },
-      {
-        special_format: false,
-        display_name: "Punts",
-        away_value: game.away_team_game.game_stats.punting.punts,
-        home_value: game.home_team_game.game_stats.punting.punts,
-      },
-      {
-        special_format: true,
-        max_value: 100,
-        display_name: "Third Down %",
-        away_value: game.away_team_game.third_down_conversion_percentage,
-        away_display_value: `${game.away_team_game.third_down_conversion_percentage}%`,
-        home_value: game.home_team_game.third_down_conversion_percentage,
-        home_display_value: `${game.home_team_game.third_down_conversion_percentage}%`,
-      },
-      {
-        special_format: false,
-        display_name: "Biggest Lead",
-        away_value: game.away_team_game.game_stats.team.biggest_lead,
-        home_value: game.home_team_game.game_stats.team.biggest_lead,
-      },
     ];
 
-    let base_alpha_float = .5;
+    let base_alpha_float = 0.5;
 
     for (const stat of team_stat_box) {
-      if (!(stat.special_format)){
-        stat.max_value = Math.max(stat.away_value, stat.home_value);
+      // if (!(stat.special_format)){
+      //   stat.max_value = Math.max(stat.away_value, stat.home_value);
+      // }
+
+      // stat.home_ratio = (stat.home_value / stat.max_value) * 100;
+      // stat.away_ratio = (stat.away_value / stat.max_value) * 100;
+
+      // stat.home_end_alpha_float = Math.floor((((stat.home_value / stat.max_value) * (1 - base_alpha_float)) + base_alpha_float) * 255);
+      // stat.away_end_alpha_float = Math.floor((((stat.away_value / stat.max_value) * (1 - base_alpha_float)) + base_alpha_float) * 255);
+
+      // stat.home_end_alpha = stat.home_end_alpha_float.toString(16);
+      // stat.away_end_alpha = stat.away_end_alpha_float.toString(16);
+
+      if (stat.low_good || false) {
+        stat.home_bold = stat.home_value < stat.away_value ? "bold" : "";
+        stat.away_bold = stat.away_value < stat.home_value ? "bold" : "";
+
+        stat.home_background_color = stat.home_value < stat.away_value ? `${game.home_team_game.team_season.team.team_color_primary_hex}` : "inherit";
+        stat.away_background_color = stat.away_value < stat.home_value ? `${game.away_team_game.team_season.team.team_color_primary_hex}` : "inherit";
+      } else {
+        stat.home_bold = stat.home_value > stat.away_value ? "bold" : "";
+        stat.away_bold = stat.away_value > stat.home_value ? "bold" : "";
+
+        stat.home_background_color = stat.home_value > stat.away_value ? `${game.home_team_game.team_season.team.team_color_primary_hex}` : "inherit";
+        stat.away_background_color = stat.away_value > stat.home_value ? `${game.away_team_game.team_season.team.team_color_primary_hex}` : "inherit";
       }
-      
-      stat.home_ratio = (stat.home_value / stat.max_value) * 100;
-      stat.away_ratio = (stat.away_value / stat.max_value) * 100;
-
-      stat.home_end_alpha_float = Math.floor((((stat.home_value / stat.max_value) * (1 - base_alpha_float)) + base_alpha_float) * 255);
-      stat.away_end_alpha_float = Math.floor((((stat.away_value / stat.max_value) * (1 - base_alpha_float)) + base_alpha_float) * 255);
-
-      stat.home_end_alpha = stat.home_end_alpha_float.toString(16);
-      stat.away_end_alpha = stat.away_end_alpha_float.toString(16);
 
       if (!stat.special_format) {
         stat.home_display_value = stat.home_value;
@@ -504,7 +553,6 @@ const getHtml = async (common) => {
         season_stat.right_arrow = '<i class="fas fa-angle-right"></i>';
       }
     }
-
   }
 
   const NavBarLinks = await common.nav_bar_links({
@@ -585,7 +633,7 @@ const getHtml = async (common) => {
     PrimaryColor: "1763B2",
     SecondaryColor: "000000",
     NavBarLinks: NavBarLinks,
-    page_title: `${game.away_team_game.team_season.team.team_abbreviation} @ ${game.home_team_game.team_season.team.team_abbreviation}`
+    page_title: `${game.away_team_game.team_season.team.team_abbreviation} @ ${game.home_team_game.team_season.team.team_abbreviation}`,
   };
   var render_content = {
     page: common.page,
@@ -599,11 +647,11 @@ const getHtml = async (common) => {
     last_team_meetings: last_team_meetings,
     season_stats: season_stats,
     player_stat_box: player_stat_box,
-    common: common
+    common: common,
   };
 
   common.render_content = render_content;
-  console.log(render_content)
+  console.log(render_content);
 
   var url = "/static/html_templates/game/game/template.njk";
   var html = await fetch(url);
@@ -674,29 +722,34 @@ const action = async (common) => {
       .reduce((acc, val) => Math.max(acc, val), 0);
     max_points = Math.ceil((max_points + 0.01) / 5) * 5;
 
-    for (var team_index in [0,1]){
+    for (var team_index in [0, 1]) {
       scoring_data[team_index].drives.unshift({
         seconds_in_to_game: 0,
         points: 0,
-        team:  scoring_data[team_index].drives[0].team
+        team: scoring_data[team_index].drives[0].team,
       });
 
       var previous_points = 0;
       var drive_index = 0;
-      var drives_to_add = []
+      var drives_to_add = [];
       for (var drive of scoring_data[team_index].drives) {
-        if (!(previous_points == drive.points)){
-          drives_to_add.push( {
+        if (!(previous_points == drive.points)) {
+          drives_to_add.push({
             seconds_in_to_game: drive.seconds_in_to_game,
             points: previous_points,
-            team: drive.team
-          })
+            team: drive.team,
+          });
         }
 
         previous_points = drive.points;
       }
-      scoring_data[team_index].drives = scoring_data[team_index].drives.concat(drives_to_add)
-      scoring_data[team_index].drives = scoring_data[team_index].drives.sort((d_a, d_b) => d_a.seconds_in_to_game - d_b.seconds_in_to_game || d_a.points - d_b.points)
+      scoring_data[team_index].drives =
+        scoring_data[team_index].drives.concat(drives_to_add);
+      scoring_data[team_index].drives = scoring_data[team_index].drives.sort(
+        (d_a, d_b) =>
+          d_a.seconds_in_to_game - d_b.seconds_in_to_game ||
+          d_a.points - d_b.points
+      );
     }
 
     var quarters = [1, 2, 3, 4];
@@ -716,7 +769,7 @@ const action = async (common) => {
         .x(function (d, ind) {
           return x(d.seconds_in_to_game);
         })
-        .y(function(d, ind){
+        .y(function (d, ind) {
           return y(d.points);
         });
 
@@ -808,14 +861,14 @@ const action = async (common) => {
       }
 
       function drawTooltip(mouse_event) {
-        var xPosition = x.invert(mouse_event.layerX - margin.left);
+        var xPosition = x.invert(mouse_event.offsetX - margin.left);
+        let tooltip_parent = $("#tooltip").parent();
 
         var sorted_drives = drives.sort((drive_a, drive_b) => {
           return (
             Math.abs(drive_a.drive_end.seconds_in_to_game - xPosition) -
             Math.abs(drive_b.drive_end.seconds_in_to_game - xPosition)
           );
-          //return b.drives.find(d => d.seconds_in_to_game == seconds_in_to_game).points - a.drives.find(d => d.seconds_in_to_game == seconds_in_to_game).points;
         });
 
         var highlighted_drive = sorted_drives[0];
@@ -833,8 +886,8 @@ const action = async (common) => {
             `<span class='bold'>Quarter ${highlighted_drive.drive_end.period}</span> - <span>${highlighted_drive.drive_end.display_time}</span>`
           )
           .style("display", "block")
-          .style("left", mouse_event.x - 150)
-          .style("top", mouse_event.y + 350)
+          .style("left", $(tooltip_parent).position().left)
+          .style("top", $(tooltip_parent).position().top)
           .selectAll()
           .data(highlighted_drive.drive_end.team_drives)
           .enter()
@@ -844,6 +897,8 @@ const action = async (common) => {
             (d) =>
               `<i class="fas fa-square" style='margin-right: 4px; color: #${d.team.team_color_primary_hex};'></i>${d.team.school_name} - ${d.points}`
           );
+
+        // console.log({xPosition:xPosition, mouse_event:mouse_event, tooltip:tooltip, tooltipLine:tooltipLine, highlighted_drive:highlighted_drive, drives:drives})
       }
     }
     drawChart();
@@ -914,94 +969,6 @@ function AddScoringSummaryListeners() {
   });
 }
 
-const draw_box_score = (common) => {
-  const game = common.render_content.game;
-
-  const desc_first = ["desc", "asc"];
-
-  var box_score_clicked = false;
-  $("#nav-boxscore-tab").on("click", function () {
-    if (box_score_clicked == true) {
-      return false;
-    }
-    box_score_clicked = true;
-
-    var base_column_config = {
-      sortable: true,
-      className: "center-text ",
-      visible: true,
-      orderSequence: desc_first,
-    };
-
-    var base_datatable_config = {
-      dom: "t",
-      ordering: true,
-      columns: [
-        {
-          title: "Name",
-          data: "player_team_season.player.full_name",
-          sortable: true,
-          className: "left-text ",
-          visible: true,
-          orderSequence: desc_first,
-          fnCreatedCell: function (
-            td,
-            full_name,
-            player_team_game,
-            iRow,
-            iCol
-          ) {
-            $(td)
-              .html(`<a href='${player_team_game.player_team_season.player.player_href}'>
-              <span>${full_name}<span>
-              <span class='font10'>${player_team_game.player_team_season.position}<span>
-            </a>`);
-          },
-        },
-      ],
-    };
-
-    for (const stat_grouping of common.render_content
-      .box_score_stat_groupings) {
-
-      var stat_grouping_config = deep_copy(base_datatable_config);
-
-      for (const stat of stat_grouping.columns) {
-        var stat_column_config = deep_copy(base_column_config);
-        stat_column_config.title = stat.title;
-        stat_column_config.data = stat.data;
-
-        stat_grouping_config.columns.push(stat_column_config);
-      }
-
-      var home_base_datatable_config = deep_copy(stat_grouping_config);
-      var away_base_datatable_config = deep_copy(stat_grouping_config);
-
-      home_base_datatable_config.data =
-        game.home_team_game.player_team_games.filter(
-          (ptg) => get(ptg, stat_grouping.filter_key) > 0
-        );
-      away_base_datatable_config.data =
-        game.away_team_game.player_team_games.filter(
-          (ptg) => get(ptg, stat_grouping.filter_key) > 0
-        );
-
-      home_base_datatable_config.order = stat_grouping.order;
-      away_base_datatable_config.order = stat_grouping.order;
-
-      init_basic_table_sorting(common, `#home-box-score-${stat_grouping.stat_group_name}`, 1)
-      init_basic_table_sorting(common, `#away-box-score-${stat_grouping.stat_group_name}`, 1)
-
-      // $(`#home-box-score-${stat_grouping.stat_group_name}`).DataTable(
-      //   home_base_datatable_config
-      // );
-      // $(`#away-box-score-${stat_grouping.stat_group_name}`).DataTable(
-      //   away_base_datatable_config
-      // );
-    }
-  });
-};
-
 $(document).ready(async function () {
   var startTime = performance.now();
 
@@ -1011,7 +978,6 @@ $(document).ready(async function () {
   await getHtml(common);
   await action(common);
   await common.add_listeners(common);
-  await draw_box_score(common);
   await AddScoringSummaryListeners();
 
   var endTime = performance.now();

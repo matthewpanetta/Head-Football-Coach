@@ -118,3 +118,6 @@
 .fa-search:before {
   content: "\f002";
 }
+
+.fa-square:before {
+  content: "\f0c8"; }

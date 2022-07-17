@@ -264,9 +264,21 @@
                     <tbody>
                       {% for stat in team_stat_box %}
                       <tr class='center-text-row'>
-                        <td class='left-text'>{{stat.display_name}}</td>
-                        <td>{{stat.away_display_value}}</td>
-                        <td>{{stat.home_display_value}}</td>
+                        <td class='left-text {{stat.indent}}'>{{stat.display_name}}</td>
+                        {# <td class='{{stat.away_bold}}' style='background-color: #{{stat.away_background_color}}'>{{stat.away_display_value}}</td>
+                        <td class='{{stat.home_bold}}' style='background-color: #{{stat.home_background_color}}'>{{stat.home_display_value}}</td> #}
+                        <td class='{{stat.away_bold}} children-align-middle'>
+                          <span>{{stat.away_display_value}} </span>
+                          {%if stat.away_bold%}
+                          <i class="fas fa-angle-left font16" style='color: #{{stat.away_background_color}}'></i>
+                          {%endif%}
+                        </td>
+                        <td class='{{stat.home_bold}} children-align-middle' >
+                          {%if stat.home_bold%}
+                          <i class="fas fa-angle-right font16" style='color: #{{stat.home_background_color}}'></i>
+                          {%endif%}
+                          <span>{{stat.home_display_value}}</span>
+                        </td>
                       </tr>
                       {# <tr class='center-text-row'>
                         <td>
@@ -479,7 +491,7 @@
 
                   </div>
                   <div class="" style='height: 400px;'>
-                    <div id='tooltip' class='w3-card' style='position:absolute;padding:5px; background-color: white;'></div>
+                    <div id='tooltip' class='w3-card' style='min-width: 16%;display:none; position:absolute;padding:5px; background-color: white;'></div>
                     <svg width='550' height='550' id="GameFlowChart">
 
                     </svg>
