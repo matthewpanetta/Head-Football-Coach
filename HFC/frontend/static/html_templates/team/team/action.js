@@ -188,7 +188,7 @@ const getHtml = async (common) => {
 
   const games = await db.game.bulkGet(game_ids);
 
-  //console.log('team_games', team_games)
+  console.log('team_games', team_games)
 
   const opponent_team_game_ids = team_games.map(
     (team_game) => team_game.opponent_team_game_id
@@ -820,7 +820,7 @@ const action = async (common) => {
     });
     console.log({ renderedHtml: renderedHtml });
 
-    $("#conference_standings_tbody").append(renderedHtml);
+    $("#conference_standings_div").append(renderedHtml);
 
     var url = "/static/html_templates/team/team/team_leaders_div_template.njk";
     var html = await fetch(url);

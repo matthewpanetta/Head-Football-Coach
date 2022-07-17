@@ -1,22 +1,45 @@
-{% for standing_team in conference_standings.conference_standings %}
-<tr class='center-text-row {{standing_team.bold}}'>
-  <td class=' white-text padding-left-8' style='background-color: #{{standing_team.team.team_color_primary_hex}};'>
-    {{standing_team.rankings.division_rank[0]}}
-  </td>
-  <td style=' width: 10px; padding: 8px; background-color: #{{standing_team.team.team_color_primary_hex}}' >
-      <a href="{{standing_team.team.team_href}}">
-        <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_100}}" />
-      </a>
-  </td>
-  <td class='left-text'>
-    <a href="{{standing_team.team.team_href}}">
+<table id='' class='w3-table-all width100 no-border'>
+  {% for division in conference_standings.divisions%}
+  <thead>
+    <tr class='team-secondary-table-row'>
+      {% if division.division_name %}
+        <th colspan='2'>{{division.division_name}}</th>
+      {% else %}
+        <th class='padding-left-8'>#</th>
+        {%endif%}
+        <th colspan="1">Team</th>
+        <th class='center-text'>Conf</th>
+        <th class='hide-small center-text'>GB</th>
+        <th class='center-text'>Record</th>
+      </tr>
+    </thead>
+    <tbody id='conference_standings_tbody'>
+      {% for team_season in division.division_standings %}
+        <tr class='center-text-row {{team_season.bold}}'>
+          <td class=' white-text padding-left-8' style='background-color: #{{team_season.team.team_color_primary_hex}};'>
+            {{team_season.rankings.division_rank[0]}}
+          </td>
+          <td style=' width: 10px; padding: 8px; background-color: #{{team_season.team.team_color_primary_hex}}' >
+            <a href="{{team_season.team.team_href}}">
+              <img class='teamOverviewConferenceStandingsTeamLogo' src="{{team_season.team.team_logo_100}}"/>
+            </a>
+          </td>
+          <td class='left-text'>
+            <a href="{{team_season.team.team_href}}">
 
-      <span  class='hide-small font10'>{{standing_team.national_rank_display}} </span>
-      <span  class='hide-small'>{{standing_team.team.school_name }}</span>
-    </a>
-  </td>
-  <td>{{standing_team.conference_record_display}}</td>
-  <td class='hide-small'> {{standing_team.record.conference_gb}}</td>
-  <td>{{standing_team.record_display}}</td>
-</tr>
-{% endfor %}
+              <span  class='hide-small font10'>{{team_season.national_rank_display}}
+              </span>
+              <span  class='hide-small'>{{team_season.team.school_name }}</span>
+            </a>
+          </td>
+          <td>{{team_season.conference_record_display}}</td>
+          <td class='hide-small'>
+            {{team_season.record.conference_gb}}</td>
+          <td>{{team_season.record_display}}</td>
+        </tr>
+      {% endfor %}
+
+    </tbody>
+    {% endfor %}
+
+  </table>

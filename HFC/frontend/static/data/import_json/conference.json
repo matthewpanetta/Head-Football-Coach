@@ -4,24 +4,52 @@
     "conference_abbreviation": "ACC",
     "prestige": 7,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/Atlantic_Coast_Conference.png",
-    "original_teams": [
-      "Clemson",
-      "Boston College",
-      "Duke",
-      "Florida State",
-      "Georgia Tech",
-      "Louisville",
-      "Miami",
-      "NC State",
-      "North Carolina",
-      "Pittsburgh",
-      "Syracuse",
-      "Virginia",
-      "Virginia Tech",
-      "Wake Forest"
+    "schedule_format": {
+      "number_conference_games": 8,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "division winners",
+      "fixed_matchups": [
+        ["Boston College", "Virginia Tech"],
+        ["Clemson", "Georgia Tech"],
+        ["Florida State", "Miami"],
+        ["Louisville", "Virginia"],
+        ["NC State", "North Carolina"],
+        ["Syracuse", "Pittsburgh"],
+        ["Duke", "Wake Forest"]
+      ],
+      "schedule_pattern": {
+        "division": { "number_teams": 6 },
+        "fixed": { "number_teams": 1 },
+        "cycle": { "number_teams": 6, "teams_per_year": 1 }
+      }
+    },
+    "divisions": [
+      {
+        "division_name": "Atlantic",
+        "teams": [
+          "Clemson",
+          "Boston College",
+          "Florida State",
+          "Louisville",
+          "NC State",
+          "Syracuse",
+          "Wake Forest"
+        ]
+      },
+      {
+        "division_name": "Coastal",
+        "teams": [
+          "Duke",
+          "Georgia Tech",
+          "Miami",
+          "North Carolina",
+          "Pittsburgh",
+          "Virginia",
+          "Virginia Tech"
+        ]
+      }
     ]
   },
   {
@@ -29,21 +57,47 @@
     "conference_abbreviation": "AAC",
     "prestige": 5,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/American_Athletic_Conference.png",
-    "original_teams": [
-      "Cincinnati",
-      "East Carolina",
-      "Houston",
-      "Memphis",
-      "Navy",
-      "SMU",
-      "USF",
-      "Temple",
-      "Tulane",
-      "Tulsa",
-      "UCF"
+    "schedule_format": {
+      "number_conference_games": 8,
+      "round_robin_in_division": false,
+      "conference_championship_selection_method": "top 2",
+      "schedule_pattern": {
+        "fixed": { "number_of_teams": 2 },
+        "cycle": { "number_of_teams": 8, "teams_per_year": 6 }
+      },
+      "fixed_matchups": [
+        ["SMU", "Houston"],
+        ["Navy", "SMU"],
+        ["Houston", "Tulane"],
+        ["Tulsa", "Memphis"],
+        ["Cincinnati", "Temple"],
+        ["Temple", "Navy"],
+        ["East Carolina", "Tulsa"],
+        ["Tulane", "USF"],
+        ["USF", "UCF"],
+        ["UCF", "East Carolina"],
+        ["Memphis", "Cincinnati"]
+      ]
+    },
+    "divisions": [
+      {
+        "division_name": "All",
+        "teams": [
+          "Cincinnati",
+          "East Carolina",
+          "Houston",
+          "Memphis",
+          "Navy",
+          "SMU",
+          "USF",
+          "Temple",
+          "Tulane",
+          "Tulsa",
+          "UCF"
+        ]
+      }
     ]
   },
   {
@@ -51,20 +105,33 @@
     "conference_abbreviation": "B12",
     "prestige": 7,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/Big_12_Conference.png",
-    "original_teams": [
-      "Baylor",
-      "Iowa State",
-      "Kansas",
-      "Kansas State",
-      "Oklahoma",
-      "Oklahoma State",
-      "TCU",
-      "Texas",
-      "Texas Tech",
-      "West Virginia"
+    "schedule_format": {
+      "number_conference_games": 9,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "top 2",
+      "schedule_pattern": {
+        "fixed": { "number_of_teams": 9 }
+      },
+      "fixed_matchups": []
+    },
+    "divisions": [
+      {
+        "division_name": "All",
+        "teams": [
+          "Baylor",
+          "Iowa State",
+          "Kansas",
+          "Kansas State",
+          "Oklahoma",
+          "Oklahoma State",
+          "TCU",
+          "Texas",
+          "Texas Tech",
+          "West Virginia"
+        ]
+      }
     ]
   },
   {
@@ -72,24 +139,43 @@
     "conference_abbreviation": "B10",
     "prestige": 8,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/Big_Ten_Conference.png",
-    "original_teams": [
-      "Illinois",
-      "Indiana",
-      "Iowa",
-      "Maryland",
-      "Michigan",
-      "Michigan State",
-      "Minnesota",
-      "Nebraska",
-      "Northwestern",
-      "Ohio State",
-      "Penn State",
-      "Purdue",
-      "Rutgers",
-      "Wisconsin"
+    "schedule_format": {
+      "number_conference_games": 8,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "top 2",
+      "schedule_pattern": {
+        "division": { "number_of_teams": 6 },
+        "cycle": { "number_of_teams": 7, "teams_per_year": 2 }
+      },
+      "fixed_matchups": []
+    },
+    "divisions": [
+      {
+        "division_name": "East",
+        "teams": [
+          "Maryland",
+          "Michigan",
+          "Michigan State",
+          "Ohio State",
+          "Penn State",
+          "Rutgers",
+          "Indiana"
+        ]
+      },
+      {
+        "division_name": "West",
+        "teams": [
+          "Purdue",
+          "Illinois",
+          "Iowa",
+          "Minnesota",
+          "Nebraska",
+          "Northwestern",
+          "Wisconsin"
+        ]
+      }
     ]
   },
   {
@@ -97,24 +183,52 @@
     "conference_abbreviation": "SEC",
     "prestige": 10,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/Southeastern_Conference.png",
-    "original_teams": [
-      "Alabama",
-      "Arkansas",
-      "Auburn",
-      "Florida",
-      "Georgia",
-      "Kentucky",
-      "LSU",
-      "Mississippi State",
-      "Missouri",
-      "Ole Miss",
-      "South Carolina",
-      "Tennessee",
-      "Texas A&M",
-      "Vanderbilt"
+    "schedule_format": {
+      "number_conference_games": 8,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "division winners",
+      "schedule_pattern": {
+        "division": { "number_of_teams": 6 },
+        "fixed": { "number_of_teams": 1 },
+        "cycle": { "number_of_teams": 6, "teams_per_year": 1 }
+      },
+      "fixed_matchups": [
+        ["Auburn", "Georgia"],
+        ["Alabama", "Tennessee"],
+        ["LSU", "Florida"],
+        ["Mississippi State", "Kentucky"],
+        ["Ole Miss", "Vanderbilt"],
+        ["Texas A&M", "South Carolina"],
+        ["Arkansas", "Missouri"]
+      ]
+    },
+    "divisions": [
+      {
+        "division_name": "East",
+        "teams": [
+          "Florida",
+          "Georgia",
+          "Kentucky",
+          "Missouri",
+          "South Carolina",
+          "Tennessee",
+          "Vanderbilt"
+        ]
+      },
+      {
+        "division_name": "West",
+        "teams": [
+          "Alabama",
+          "Arkansas",
+          "Auburn",
+          "LSU",
+          "Mississippi State",
+          "Ole Miss",
+          "Texas A&M"
+        ]
+      }
     ]
   },
   {
@@ -122,22 +236,55 @@
     "conference_abbreviation": "MWC",
     "prestige": 5,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/Mountain_West_Conference.png",
-    "original_teams": [
-      "Air Force",
-      "Boise State",
-      "Colorado State",
-      "Fresno State",
-      "Hawaii",
-      "Nevada",
-      "New Mexico",
-      "San Diego State",
-      "San Jose State",
-      "UNLV",
-      "Utah State",
-      "Wyoming"
+    "schedule_format": {
+      "number_conference_games": 8,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "division winners",
+      "schedule_pattern": {
+        "division": { "number_of_teams": 5 },
+        "fixed": { "number_of_teams": 2 },
+        "cycle": { "number_of_teams": 4, "teams_per_year": 1 }
+      },
+      "fixed_matchups": [
+        ["Air Force", "Colorado State"],
+        ["Air Force", "Wyoming"],
+        ["Boise State", "New Mexico"],
+        ["Boise State", "Utah State"],
+        ["Colorado State", "Wyoming"],
+        ["Fresno State", "Nevada"],
+        ["Fresno State", "San Jose State"],
+        ["Hawaii", "San Diego State"],
+        ["Hawaii", "UNLV"],
+        ["Nevada", "UNLV"],
+        ["New Mexico", "San Jose State"],
+        ["San Diego State", "Utah State"]
+      ]
+    },
+    "divisions": [
+      {
+        "division_name": "Mountain",
+        "teams": [
+          "Air Force",
+          "Boise State",
+          "Colorado State",
+          "New Mexico",
+          "Utah State",
+          "Wyoming"
+        ]
+      },
+      {
+        "division_name": "West",
+        "teams": [
+          "Fresno State",
+          "Hawaii",
+          "Nevada",
+          "San Diego State",
+          "San Jose State",
+          "UNLV"
+        ]
+      }
     ]
   },
   {
@@ -145,21 +292,52 @@
     "conference_abbreviation": "C-USA",
     "prestige": 3,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/C_USA_Conference.png",
-    "original_teams": [
-      "Charlotte",
-      "FIU",
-      "Florida Atlantic",
-      "Louisiana Tech",
-      "Middle Tennessee",
-      "North Texas",
-      "Rice",
-      "UAB",
-      "UTEP",
-      "UTSA",
-      "Western Kentucky"
+    "schedule_format": {
+      "number_conference_games": 8,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "division winners",
+      "schedule_pattern": {
+        "division": { "number_of_teams": 6 },
+        "fixed": { "number_of_teams": 1 },
+        "cycle": { "number_of_teams": 6, "teams_per_year": 1 }
+      },
+      "fixed_matchups": [
+        ["Charlotte", "UAB"],
+        ["FIU", "Southern Miss"],
+        ["Florida Atlantic", "Louisiana Tech"],
+        ["Old Dominion", "Rice"],
+        ["Western Kentucky", "UTEP"],
+        ["Marshall", "UTSA"],
+        ["Middle Tennessee", "North Texas"]
+      ]
+    },
+    "divisions": [
+      {
+        "division_name": "East",
+        "teams": [
+          "Charlotte",
+          "FIU",
+          "Florida Atlantic",
+          "Old Dominion",
+          "Western Kentucky",
+          "Marshall",
+          "Middle Tennessee"
+        ]
+      },
+      {
+        "division_name": "West",
+        "teams": [
+          "UTEP",
+          "UTSA",
+          "Rice",
+          "Louisiana Tech",
+          "North Texas",
+          "UAB",
+          "Southern Miss"
+        ]
+      }
     ]
   },
   {
@@ -167,22 +345,34 @@
     "conference_abbreviation": "PAC-12",
     "prestige": 7,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/PAC-12_Conference.png",
-    "original_teams": [
-      "Arizona",
-      "Arizona State",
-      "California",
-      "Colorado",
-      "Oregon",
-      "Oregon State",
-      "Stanford",
-      "UCLA",
-      "USC",
-      "Utah",
-      "Washington",
-      "Washington State"
+    "schedule_format": {
+      "number_conference_games": 8,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "division winners",
+      "schedule_pattern": {
+        "division": { "number_of_teams": 5 },
+        "cycle": { "number_of_teams": 6, "teams_per_year": 3 }
+      },
+      "fixed_matchups": []
+    },
+    "divisions": [
+      {
+        "division_name": "North",
+        "teams": [
+          "Washington",
+          "Washington State",
+          "California",
+          "Stanford",
+          "Oregon",
+          "Oregon State"
+        ]
+      },
+      {
+        "division_name": "South",
+        "teams": ["Arizona", "Arizona State", "Colorado", "UCLA", "USC", "Utah"]
+      }
     ]
   },
   {
@@ -190,23 +380,33 @@
     "conference_abbreviation": "SBC",
     "prestige": 1,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/Sun_Belt_Conference.png",
-    "original_teams": [
-      "Appalachian State",
-      "Arkansas State",
-      "Coastal Carolina",
-      "Georgia Southern",
-      "Georgia State",
-      "Louisiana",
-      "Louisiana-Monroe",
-      "Marshall",
-      "Old Dominion",
-      "South Alabama",
-      "Southern Miss",
-      "Texas State",
-      "Troy"
+    "schedule_format": {
+      "number_conference_games": 9,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "top 2",
+      "schedule_pattern": {
+        "division": { "number_of_teams": 9 }
+      },
+      "fixed_matchups": []
+    },
+    "divisions": [
+      {
+        "division_name": "All",
+        "teams": [
+          "Appalachian State",
+          "Georgia State",
+          "Georgia Southern",
+          "Coastal Carolina",
+          "Troy",
+          "Arkansas State",
+          "Louisiana",
+          "Louisiana-Monroe",
+          "South Alabama",
+          "Texas State"
+        ]
+      }
     ]
   },
   {
@@ -214,22 +414,41 @@
     "conference_abbreviation": "MAC",
     "prestige": 1,
     "is_independent": 0,
-    "number_conference_games": 8,
     "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/ConferenceLogos/MAC_Conference.png",
-    "original_teams": [
-      "Akron",
-      "Ball State",
-      "Bowling Green",
-      "Buffalo",
-      "Central Michigan",
-      "Eastern Michigan",
-      "Kent State",
-      "Miami (OH)",
-      "Northern Illinois",
-      "Ohio",
-      "Toledo",
-      "Western Michigan"
+    "schedule_format": {
+      "number_conference_games": 8,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "top 2",
+      "schedule_pattern": {
+        "division": { "number_of_teams": 5 },
+        "cycle": { "number_of_teams": 6, "teams_per_year": 3 }
+      },
+      "fixed_matchups": []
+    },
+    "divisions": [
+      {
+        "division_name": "West",
+        "teams": [
+          "Northern Illinois",
+          "Toledo",
+          "Central Michigan",
+          "Eastern Michigan",
+          "Western Michigan",
+          "Ball State"
+        ]
+      },
+      {
+        "division_name": "East",
+        "teams": [
+          "Akron",
+          "Bowling Green",
+          "Buffalo",
+          "Kent State",
+          "Miami (OH)",
+          "Ohio"
+        ]
+      }
     ]
   },
   {
@@ -237,17 +456,28 @@
     "conference_abbreviation": "Ind",
     "prestige": 1,
     "is_independent": 1,
-    "number_conference_games": 1,
     "hold_conference_championship_game": 0,
     "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png",
-    "original_teams": [
-      "Notre Dame",
-      "New Mexico State",
-      "Liberty",
-      "Army",
-      "BYU",
-      "UConn",
-      "UMass"
+    "schedule_format": {
+      "number_conference_games": 0,
+      "round_robin_in_division": false,
+      "conference_championship_selection_method": "none",
+      "schedule_pattern": {},
+      "fixed_matchups": []
+    },
+    "divisions": [
+      {
+        "division_name": "All",
+        "teams": [
+          "Notre Dame",
+          "New Mexico State",
+          "Liberty",
+          "Army",
+          "BYU",
+          "UConn",
+          "UMass"
+        ]
+      }
     ]
   }
 ]

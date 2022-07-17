@@ -114,7 +114,7 @@
 
       const recent_games = await common.recent_games(common);
 
-      var render_content = {page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks},
+      var render_content = {page: {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks, page_title: 'History'},
                             team_list: [],
                             world_id: common.params['world_id'],
                             teams: teams,

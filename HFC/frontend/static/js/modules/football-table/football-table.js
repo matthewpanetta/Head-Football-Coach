@@ -118,9 +118,9 @@ const get_initial_column_controls = (subject) => {
 
     "Performance": {
       rankings: {shown: true, display: 'Rankings'},
-      vs_top_25: {shown: false, display: 'Vs Top 25'},
-      awards: {shown: false, display: 'Awards'},
-      bowls: {shown: false, display: 'Bowls'},
+      // vs_top_25: {shown: false, display: 'Vs Top 25'},
+      // awards: {shown: false, display: 'Awards'},
+      // bowls: {shown: false, display: 'Bowls'},
     }
   
   }

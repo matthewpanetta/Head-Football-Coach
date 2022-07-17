@@ -477,26 +477,8 @@
               <div class="w3-bar team-primary-background-bar">
                 {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Standings</span>
               </div>
-              <table id='teamOverviewConferenceStandings' class='w3-table-all width100 no-border'>
-
-                <thead>
-                  <tr class='team-secondary-table-row'>
-                    {% if Division.DivisionName %}
-                    <th>{{Division.DivisionName}}</th>
-                    {% else %}
-                    <th class='padding-left-8'>#</th>
-                    <th colspan="2">Team</th>
-                    {%endif%}
-                    <th>Conf</th>
-                    <th class='hide-small'>GB</th>
-                    <th>Record</th>
-                  </tr>
-                </thead>
-                <tbody id='conference_standings_tbody'>
-
-                </tbody>
-
-              </table>
+              <div id='conference_standings_div'></div>
+              
             </div>
             <div class='w3-card'>
               <div class="w3-bar team-primary-background-bar">

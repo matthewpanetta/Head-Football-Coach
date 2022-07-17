@@ -136,37 +136,24 @@ const action = async (common) => {
     var teams_from_json = await common.get_teams();
     const num_teams = teams_from_json.length;
 
-    const divisions_from_json = await common.get_divisions();
-    const divisions = await index_group(
-      divisions_from_json,
-      "group",
-      "conference_name"
-    );
-
-    var conferences_from_json = await common.get_conferences('');
+    var conferences_from_json = await common.get_conferences('_small');
     //var conferences_from_json = await common.get_conferences('');
     console.log({conferences_from_json:conferences_from_json})
 
     var school_names_to_include = [];
     const conference_name_by_school_name = {};
 
-
     $.each(conferences_from_json, function (ind, conference) {
       conference.world_id = world_id;
-      conference.divisions = {};
-      school_names_to_include = school_names_to_include.concat(conference.original_teams);
 
-      console.log({'conference.original_teams': conference.original_teams})
+      let school_names = conference.divisions.map(d => d.teams);
+      school_names = school_names.flat();
+      school_names_to_include = school_names_to_include.concat(school_names);
           
-      for (var school_name of conference.original_teams) {
+      for (var school_name of school_names) {
         conference_name_by_school_name[school_name] = conference.conference_name;
       }
 
-      delete conference.original_teams;
-
-      $.each(divisions[conference.conference_name], function (ind, division) {
-        conference.divisions[division.division_name] = division;
-      });
     });
 
     const conferences_added = await db.conference.bulkAdd(
@@ -459,6 +446,7 @@ const action = async (common) => {
     const user_team = await db.team.get({
       team_id: current_league_season.user_team_id,
     });
+    console.log({user_team:user_team, current_league_season:current_league_season})
 
     world.user_team.team_name = user_team.team_name;
     world.user_team.school_name = user_team.school_name;

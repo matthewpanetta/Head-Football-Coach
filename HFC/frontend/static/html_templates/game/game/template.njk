@@ -617,37 +617,39 @@
                 {% endif %}
               </div>
               <div class='w3-col l3 m6'>
-                {% for conference in conference_standings %}
+                {% for conference_season in conference_standings %}
                 <div class="w3-card margin-bottom-12">
                   <div class="w3-bar team-primary-background-bar">
-                    <span>{{conference.conference_name}} Standings</span>
+                    <span>{{conference_season.conference.conference_name}} Standings</span>
                   </div>
                   <table class='w3-table-all no-border' id='teamOverviewConferenceStandings'>
+                    {% for division in conference_season.divisions%}
                     <thead>
                       <tr class='team-secondary-table-row white-text'>
-                        <th colspan='2'>Team</th>
+                        <th colspan='2'>{{division.division_name}}</th>
                         <th>Conf</th>
                         <th>GB</th>
                         <th>Record</th>
                       </tr>      
                     </thead>
-                    {% for standing_team in conference.conference_standings %}
-                    <tr class='{{standing_team.bold}}'>
-                      <td class='column-shrink padding-left-8' style='background-color: #{{standing_team.team.team_color_primary_hex}}'>
-                        <a href="{{standing_team.team.team_href}}">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{standing_team.team.team_logo_50}}" />
+                    {% for team_season in division.division_standings %}
+                    <tr class='{{team_season.bold}}'>
+                      <td class='column-shrink padding-left-8' style='background-color: #{{team_season.team.team_color_primary_hex}}'>
+                        <a href="{{team_season.team.team_href}}">
+                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{team_season.team.team_logo_50}}" />
                         </a>
                       </td>
                       <td>
-                        <a href="{{standing_team.team.team_href}}">
-                          <span class='font10'>{{standing_team.national_rank_display}} </span>
-                          <span>{{standing_team.team.team_abbreviation }}</span>
+                        <a href="{{team_season.team.team_href}}">
+                          <span class='font10'>{{team_season.national_rank_display}} </span>
+                          <span>{{team_season.team.team_abbreviation }}</span>
                         </a>
                       </td>
-                      <td>{{standing_team.conference_record_display}}</td>
-                      <td>{{standing_team.record.conference_gb}}</td>
-                      <td>{{standing_team.record_display}}</td>
+                      <td>{{team_season.conference_record_display}}</td>
+                      <td>{{team_season.record.conference_gb}}</td>
+                      <td>{{team_season.record_display}}</td>
                     </tr>
+                    {% endfor %}
                     {% endfor %}
                   </table>
                 </div>

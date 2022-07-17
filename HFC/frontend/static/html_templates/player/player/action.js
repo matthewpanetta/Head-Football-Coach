@@ -593,7 +593,7 @@ const getHtml = async (common) => {
   console.log('all_player_team_seasons', {player:player, current_team:current_team, skills:skills, all_conference_player_team_season_starters_at_position:all_conference_player_team_season_starters_at_position, all_player_team_season_starters_at_position:all_player_team_season_starters_at_position, all_team_seasons:all_team_seasons, all_conference_player_team_season_ids_starters_at_position: all_conference_player_team_season_ids_starters_at_position, 'all_player_team_season_ids_starters_at_position': all_player_team_season_ids_starters_at_position, 'player.current_player_team_season.team_season': player.current_player_team_season.team_season, all_team_seasons_in_conference: all_team_seasons_in_conference, player_position:player_position, all_player_team_season_ids_starters_at_position:all_player_team_season_ids_starters_at_position})
 
   //var player_team_games = await db.player_team_game.where({player_team_season_id: player.current_player_team_season.player_team_season_id}).toArray()
-  common.page = {PrimaryColor: current_team.team_color_primary_hex, SecondaryColor: current_team.secondary_color_display, NavBarLinks: NavBarLinks, page_title: player.full_name};
+  common.page = {PrimaryColor: current_team.team_color_primary_hex, SecondaryColor: current_team.secondary_color_display, NavBarLinks: NavBarLinks, page_title: 'Player Profile - ' + player.full_name, page_icon: current_team.team_logo};
   var render_content = {
                         page:     common.page,
                         world_id: common.params.world_id,
