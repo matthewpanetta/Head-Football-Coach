@@ -3349,7 +3349,7 @@ const create_schedule = async (data) => {
       }
       return 1;
     });
-    debugger;
+
     $.each(zipped_set, function (ind, team_set) {
       //check if confernece, pass to next
       [team_a, team_b, rival_obj] = team_set;
@@ -3468,7 +3468,7 @@ const create_schedule = async (data) => {
     team_obj.non_conference.games_to_schedule +=
       team_obj.conference.games_to_schedule;
   });
-  debugger;
+
   scheduling_teams = true;
   attempt_counter = 1;
   //Scheduling non_conference
@@ -3574,7 +3574,6 @@ const create_schedule = async (data) => {
     }
 
     console.log({ team_set_a: team_set_a, team_set_b: team_set_b });
-    debugger;
 
     zipped_set = zip(team_set_a, team_set_b);
     console.log("zipped_set", zipped_set);
@@ -3631,7 +3630,6 @@ const create_schedule = async (data) => {
       console.log("couldnt schedule", { team_season_obj: team_season_obj });
     }
   }
-  debugger;
 
   team_seasons_to_update = Object.values(team_seasons);
 
@@ -5763,7 +5761,6 @@ const conference_standings = async (
   }
   conference_season.conference = conference
   console.log({conference:conference, conference_season:conference_season})
-  // debugger;
   return conference_season;
 };
 
@@ -10969,8 +10966,6 @@ const schedule_game = (
       scheduling_dict.team_season_schedule_tracker[team_b].available_week_ids
     );
     available_weeks = [...available_weeks];
-    // console.log({available_weeks:available_weeks, scheduling_dict:scheduling_dict, team_a:team_a, team_b:team_b, 'scheduling_dict.team_season_schedule_tracker[team_a].available_week_ids': scheduling_dict.team_season_schedule_tracker[team_a].available_week_ids, 'scheduling_dict.team_season_schedule_tracker[team_b].available_week_ids': scheduling_dict.team_season_schedule_tracker[team_b].available_week_ids})
-    // debugger;
     if (available_weeks.length > 0) {
       if (is_conference_game) {
         if (

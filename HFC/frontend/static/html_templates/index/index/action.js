@@ -134,11 +134,10 @@ const action = async (common) => {
     const season = new_season_info.current_season;
 
     var teams_from_json = await common.get_teams();
-    const num_teams = teams_from_json.length;
 
-    var conferences_from_json = await common.get_conferences('_small');
+    var conferences_from_json = await common.get_conferences("_small");
     //var conferences_from_json = await common.get_conferences('');
-    console.log({conferences_from_json:conferences_from_json})
+    console.log({ conferences_from_json: conferences_from_json });
 
     var school_names_to_include = [];
     const conference_name_by_school_name = {};
@@ -146,14 +145,14 @@ const action = async (common) => {
     $.each(conferences_from_json, function (ind, conference) {
       conference.world_id = world_id;
 
-      let school_names = conference.divisions.map(d => d.teams);
+      let school_names = conference.divisions.map((d) => d.teams);
       school_names = school_names.flat();
       school_names_to_include = school_names_to_include.concat(school_names);
-          
-      for (var school_name of school_names) {
-        conference_name_by_school_name[school_name] = conference.conference_name;
-      }
 
+      for (var school_name of school_names) {
+        conference_name_by_school_name[school_name] =
+          conference.conference_name;
+      }
     });
 
     const conferences_added = await db.conference.bulkAdd(
@@ -162,8 +161,9 @@ const action = async (common) => {
     var conferences = await db.conference.toArray();
 
     teams_from_json = teams_from_json.filter((t) =>
-    school_names_to_include.includes(t.school_name)
+      school_names_to_include.includes(t.school_name)
     );
+    const num_teams = teams_from_json.length;
 
     common.season = season;
 
@@ -211,12 +211,19 @@ const action = async (common) => {
       conference_name_by_school_name
     )) {
       conferences_by_school_name[school_name] =
-      conferences_by_conference_name[conference_name_by_school_name[school_name]];
-      console.log({school_name:school_name, conference_name:conference_name})
-      
+        conferences_by_conference_name[
+          conference_name_by_school_name[school_name]
+        ];
+      console.log({
+        school_name: school_name,
+        conference_name: conference_name,
+      });
     }
 
-    console.log({conferences_by_school_name:conferences_by_school_name, conference_name_by_school_name:conference_name_by_school_name})
+    console.log({
+      conferences_by_school_name: conferences_by_school_name,
+      conference_name_by_school_name: conference_name_by_school_name,
+    });
 
     var teams = [],
       rivals = [],
@@ -224,7 +231,13 @@ const action = async (common) => {
       rivals_team_2 = [];
     var jersey_colors = [],
       jersey_lettering = {};
-    const jersey_options = ["football", "football2", "football3", "football4", "football5"];
+    const jersey_options = [
+      "football",
+      "football2",
+      "football3",
+      "football4",
+      "football5",
+    ];
 
     var team_id_counter = 1;
     $.each(teams_from_json, function (ind, team) {
@@ -277,7 +290,10 @@ const action = async (common) => {
 
       rivals = rivals_team_1.concat(rivals_team_2);
 
-      console.log({conferences_by_school_name:conferences_by_school_name, team:team})
+      console.log({
+        conferences_by_school_name: conferences_by_school_name,
+        team: team,
+      });
 
       teams.push({
         team_id: team_id_counter,
@@ -446,7 +462,10 @@ const action = async (common) => {
     const user_team = await db.team.get({
       team_id: current_league_season.user_team_id,
     });
-    console.log({user_team:user_team, current_league_season:current_league_season})
+    console.log({
+      user_team: user_team,
+      current_league_season: current_league_season,
+    });
 
     world.user_team.team_name = user_team.team_name;
     world.user_team.school_name = user_team.school_name;
