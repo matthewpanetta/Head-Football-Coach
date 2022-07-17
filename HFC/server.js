@@ -50,10 +50,10 @@ routes.forEach(function(route) {
     var url = req.url.split('?')[0];
 
     if (route.path == 'url') {
-      res.sendFile( __dirname + "/frontend" + url);
+      res.sendFile( __dirname + "/frontend" + url.toLowerCase());
     }
     else {
-      res.sendFile(__dirname + "/frontend/static/html_templates/"+route.path);
+      res.sendFile(__dirname + "/frontend/static/html_templates/"+route.path.toLowerCase());
     }
 
   });

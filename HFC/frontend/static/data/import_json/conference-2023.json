@@ -6,7 +6,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Atlantic_Coast_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Atlantic_Coast_Conference.png",
     "original_teams": [
       "Clemson",
       "Boston College",
@@ -31,7 +31,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/American_Athletic_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/American_Athletic_Conference.png",
     "original_teams": [
       "East Carolina",
       "Memphis",
@@ -56,7 +56,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Big_12_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Big_12_Conference.png",
     "original_teams": [
       "Cincinnati",
       "BYU",
@@ -79,7 +79,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Big_Ten_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Big_Ten_Conference.png",
     "original_teams": [
       "Illinois",
       "Indiana",
@@ -104,7 +104,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Southeastern_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Southeastern_Conference.png",
     "original_teams": [
       "Texas",
       "Oklahoma",
@@ -131,7 +131,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Mountain_West_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Mountain_West_Conference.png",
     "original_teams": [
       "Air Force",
       "Boise State",
@@ -154,7 +154,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/C_USA_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/C_USA_Conference.png",
     "original_teams": [
       "FIU",
       "Jacksonville State",
@@ -175,7 +175,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/PAC-12_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/PAC-12_Conference.png",
     "original_teams": [
       "Arizona",
       "Arizona State",
@@ -198,7 +198,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Sun_Belt_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Sun_Belt_Conference.png",
     "original_teams": [
       "Appalachian State",
       "Arkansas State",
@@ -223,7 +223,7 @@
     "is_independent": 0,
     "number_conference_games": 8,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/MAC_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/MAC_Conference.png",
     "original_teams": [
       "Akron",
       "Ball State",
@@ -246,7 +246,7 @@
     "is_independent": 1,
     "number_conference_games": 1,
     "hold_conference_championship_game": 0,
-    "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png",
+    "conference_logo_url": "/static/img/conference_logos/FBS_Independents.png",
     "original_teams": [
       "Notre Dame",
       "Army",

@@ -5,7 +5,7 @@
     "prestige": 7,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Atlantic_Coast_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Atlantic_Coast_Conference.png",
     "schedule_format": {
       "number_conference_games": 8,
       "round_robin_in_division": true,
@@ -58,7 +58,7 @@
     "prestige": 5,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/American_Athletic_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/American_Athletic_Conference.png",
     "schedule_format": {
       "number_conference_games": 8,
       "round_robin_in_division": false,
@@ -106,7 +106,7 @@
     "prestige": 7,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Big_12_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Big_12_Conference.png",
     "schedule_format": {
       "number_conference_games": 9,
       "round_robin_in_division": true,
@@ -140,7 +140,7 @@
     "prestige": 8,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Big_Ten_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Big_Ten_Conference.png",
     "schedule_format": {
       "number_conference_games": 8,
       "round_robin_in_division": true,
@@ -184,7 +184,7 @@
     "prestige": 10,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Southeastern_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Southeastern_Conference.png",
     "schedule_format": {
       "number_conference_games": 8,
       "round_robin_in_division": true,
@@ -237,7 +237,7 @@
     "prestige": 5,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Mountain_West_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Mountain_West_Conference.png",
     "schedule_format": {
       "number_conference_games": 8,
       "round_robin_in_division": true,
@@ -293,7 +293,7 @@
     "prestige": 3,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/C_USA_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/C_USA_Conference.png",
     "schedule_format": {
       "number_conference_games": 8,
       "round_robin_in_division": true,
@@ -346,7 +346,7 @@
     "prestige": 7,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/PAC-12_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/PAC-12_Conference.png",
     "schedule_format": {
       "number_conference_games": 8,
       "round_robin_in_division": true,
@@ -381,7 +381,7 @@
     "prestige": 1,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/Sun_Belt_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/Sun_Belt_Conference.png",
     "schedule_format": {
       "number_conference_games": 9,
       "round_robin_in_division": true,
@@ -415,7 +415,7 @@
     "prestige": 1,
     "is_independent": 0,
     "hold_conference_championship_game": 1,
-    "conference_logo_url": "/static/img/ConferenceLogos/MAC_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/MAC_Conference.png",
     "schedule_format": {
       "number_conference_games": 8,
       "round_robin_in_division": true,
@@ -457,7 +457,7 @@
     "prestige": 1,
     "is_independent": 1,
     "hold_conference_championship_game": 0,
-    "conference_logo_url": "/static/img/ConferenceLogos/FBS_Independents.png",
+    "conference_logo_url": "/static/img/conference_logos/FBS_Independents.png",
     "schedule_format": {
       "number_conference_games": 0,
       "round_robin_in_division": false,

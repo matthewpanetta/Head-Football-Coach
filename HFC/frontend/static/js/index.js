@@ -666,7 +666,7 @@ class team_game {
 
 class team {
   build_team_logo(size_obj) {
-    var folder_prefix = "/static/img/TeamLogos/";
+    var folder_prefix = "/static/img/team_logos/";
     var size_suffix = "";
     if ("img_size" in size_obj) {
       size_suffix = "_" + size_obj["img_size"];
@@ -2516,7 +2516,7 @@ const nav_bar_links = async (params) => {
     {
       GroupName: "World",
       GroupDisplay:
-        '<img src="/static/img/TeamLogos/ncaa-text.png" class="" alt="">',
+        '<img src="/static/img/team_logos/ncaa-text.png" class="" alt="">',
       GroupLinks: [
         {
           LinkDisplay: "Overview",
@@ -5090,9 +5090,11 @@ const get_teams = async () => {
 const get_conferences = async (conference_version) => {
   conference_version = conference_version || "";
 
-  var url = `/static/data/import_json/Conference${conference_version}.json`;
+  var url = `/static/data/import_json/conference${conference_version}.json`;
+  console.log({url:url})
   var data = await fetch(url);
   var conferences = await data.json();
+  console.log({conferences:conferences})
 
   return conferences;
 };
