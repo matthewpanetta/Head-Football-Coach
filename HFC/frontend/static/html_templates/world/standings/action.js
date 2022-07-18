@@ -161,21 +161,24 @@ const getHtml = async (common) => {
 
   for (var conference_season of conference_seasons) {
     conference_season.conference =
-      conferences_by_conference_id[conference_season.conference_id];
-    conference_season.team_seasons =
-      team_seasons_by_conference_season_id[
+        conferences_by_conference_id[conference_season.conference_id];
+
+    for (let division of conference_season.divisions) {
+      division.team_seasons = team_seasons_by_conference_season_id[
         conference_season.conference_season_id
       ];
-
-    console.log({ conference_season: conference_season });
-    conference_season.team_seasons = conference_season.team_seasons.sort(
-      function (a, b) {
-        if (a.rankings.division_rank[0] < b.rankings.division_rank[0])
-          return -1;
-        if (a.rankings.division_rank[0] > b.rankings.division_rank[0]) return 1;
-        return 0;
-      }
-    );
+      
+      division.team_seasons = division.team_seasons.filter(ts => ts.division_name == division.division_name);
+      division.team_seasons = division.team_seasons.sort(
+        function (a, b) {
+          if (a.rankings.division_rank[0] < b.rankings.division_rank[0])
+            return -1;
+          if (a.rankings.division_rank[0] > b.rankings.division_rank[0])
+            return 1;
+          return 0;
+        }
+      );
+    }
   }
 
   conference_seasons = conference_seasons.sort(function (

@@ -2905,6 +2905,7 @@ const initialize_new_season = async (this_week, common) => {
   await common.calculate_team_overalls(common);
   await common.calculate_national_rankings(next_week, all_weeks, common);
   await common.calculate_conference_rankings(next_week, all_weeks, common);
+  await common.calculate_primetime_games(next_week, all_weeks, common);
 
   await common.create_schedule({
     common: common,
@@ -8021,6 +8022,70 @@ const calculate_team_overalls = async (common) => {
   await db.team_season.bulkPut(team_seasons);
 };
 
+const calculate_primetime_games = async (this_week, all_weeks, common) => {
+  const db = common.db;
+  const season = common.season;
+
+  let teams = await db.team.toArray();
+  let teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
+
+  let team_seasons = await db.team_season.where({season:season}).toArray();
+  team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
+
+  let team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+  let next_week = await db.week.get({week_id: this_week.week_id + 1})
+
+  let games = await db.game.where({week_id: next_week.week_id}).toArray()
+
+  console.log({this_week:this_week, next_week:next_week, games:games, team_seasons_by_team_season_id:team_seasons_by_team_season_id})
+
+  games.forEach(function(g){
+    g.home_team_season = team_seasons_by_team_season_id[g.home_team_season_id]
+    g.away_team_season = team_seasons_by_team_season_id[g.away_team_season_id]
+
+    let min_national_rank = Math.min(g.home_team_season.national_rank, g.away_team_season.national_rank)
+    g.summed_national_rank = g.home_team_season.national_rank + g.away_team_season.national_rank;
+
+    g.summed_national_rank -= Math.floor(g.home_team_season.team.team_ratings.brand / 4);
+    g.summed_national_rank -= Math.floor(g.away_team_season.team.team_ratings.brand / 4);
+
+    if ((g.home_team_season.conference_season_id == g.away_team_season.conference_season_id)){
+      if (next_week.schedule_week_number >= 13 ){
+        if (g.home_team_season.record.conference_gb <= 0.5 && g.away_team_season.record.conference_gb <= 0.5){
+          g.summed_national_rank -= 14;
+        }
+        else if (g.home_team_season.record.conference_gb <= 1.5 && g.away_team_season.record.conference_gb <= 1.5){
+          g.summed_national_rank -= 7;
+        }
+      }
+      else if (next_week.schedule_week_number >= 8 ){
+        if (g.home_team_season.record.conference_gb <= 0.5 && g.away_team_season.record.conference_gb <= 0.5){
+          g.summed_national_rank -= 7;
+        }
+        else if (g.home_team_season.record.conference_gb <= 1.5 && g.away_team_season.record.conference_gb <= 1.5){
+          g.summed_national_rank -= 3;
+        }
+      }
+    }
+
+    if (g.rivalry_game){
+      g.summed_national_rank -= min_national_rank;
+    }
+  })
+
+  games = games.sort((g_a, g_b) => g_a.summed_national_rank - g_b.summed_national_rank);
+  let primetime_games = games.slice(0,6);
+
+  primetime_games.forEach(g => g.is_primetime_game = true);
+
+  await db.game.bulkPut(games);
+
+  console.log('calculate_primetime_games', {primetime_games:primetime_games, next_week:next_week, this_week:this_week, all_weeks:all_weeks, common:common})
+  debugger;
+
+}
+
 const calculate_national_rankings = async (this_week, all_weeks, common) => {
   const db = await common.db;
   const all_weeks_by_week_id = await index_group(all_weeks, "index", "week_id");
@@ -9898,6 +9963,7 @@ const sim_action = async (duration, common) => {
     }
 
     await choose_players_of_the_week(this_week, common);
+    await calculate_primetime_games(this_week, all_weeks, common);
     //await weekly_recruiting(common);
     //await populate_all_depth_charts(common);
     //await calculate_team_needs(common);

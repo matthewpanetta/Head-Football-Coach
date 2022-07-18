@@ -33,7 +33,7 @@
             {% endif %}
             <div class="w3-display-container">
               <div class="w3-row-padding">
-                <div class='mw1200'>
+                <div class='mw1200 width100'>
                   <div class="w3-card w3-margin-bottom ">
                     <table class='w3-table-all width100 no-border conference-standings-table' id='teamOverviewConferenceStandings-{{conference_season.conference.conference_id}}'>
                       <thead>
@@ -43,10 +43,18 @@
                           <th colspan="5" class='col-group'>Overall</th>
                           <th colspan="2">Trends</th>
                         </tr>
+                        </thead>
+
+                      {% for division in conference_season.divisions%}
+                      <thead>
                         <tr class='team-secondary-table-row center-text-row ' style='background-color: #{{page.SecondaryColor}}; color: white;'>
+                          {% if division.division_name == 'All'%}
                           <th>Rank</th>
                           <th>Team</th>
                           <th class='col-group'></th>
+                          {% else %}
+                          <th class='left-text' colspan='3'>{{division.division_name}} Division</th>
+                          {% endif %}
                           <th  class='center-text'>W-L</th>
                           <th class='center-text'>GB</th>
                           <th>PPG</th>
@@ -63,9 +71,9 @@
                       </thead>
                       <tbody>
                         <tr></tr>
-                        {% for team_season in conference_season.team_seasons%}
+                        {% for team_season in division.team_seasons%}
                           <tr class='{{team_season.BoldTeam}} ' style=''>
-                            <td value='{{loop.index}}' style='background-color: #{{team_season.team.team_color_primary_hex}}; color: white;' class='Top25RankNumber center-text no-width'>
+                            <td value='{{loop.index}}' style='background-color: #{{team_season.team.team_color_primary_hex}}; color: white; min-width: 60px;' class='Top25RankNumber center-text no-width'>
                               {{loop.index}}
                             </td>
                             <td value='{{team_season.team.school_name }}' style='background-color: #{{team_season.team.team_color_primary_hex}}' class='no-width'>
@@ -123,6 +131,7 @@
                           </tr>
                         {% endfor %}
                       </tbody>
+                      {% endfor %}
                     </table>
                   </div>
                 </div>

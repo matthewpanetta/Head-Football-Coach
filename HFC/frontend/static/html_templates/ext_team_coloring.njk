@@ -6,6 +6,7 @@
       border-bottom: 5px solid #{{page.PrimaryColor}} !important;
       background-color: white !important;
     }
+    
     .dt-buttons button.dt-button:focus {
       outline: none;
       background-color: transparent;
@@ -13,6 +14,7 @@
       border-bottom: 5px solid #{{page.PrimaryColor}} !important;
       box-shadow: none;
     }
+
     .dt-buttons button.dt-button.active {
       color: #{{page.PrimaryColor|TeamBackgroundFontColorBlack}} !important;
       background-color: white;
@@ -21,7 +23,7 @@
       box-shadow: none;
     }
 
-    button.w3-bar-item.w3-button:hover {
+    button.w3-bar-item.w3-button:not(.no-hover):hover {
       background-color: white !important;
       color: #{{page.PrimaryColor|TeamBackgroundFontColorBlack}} !important;
     }
@@ -46,8 +48,6 @@
       font-weight: bold;
       padding: 8px 16px;
     }
-
-
 
     .team-secondary-table-row {
       background-color: #{{page.SecondaryColor}} !important;
