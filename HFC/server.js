@@ -48,7 +48,6 @@ routes.forEach(function(route) {
     console.log('routing to ', route.route, req.url);
 
     var url = req.url.split('?')[0];
-
     if (route.path == 'url') {
       res.sendFile( __dirname + "/frontend" + url.toLowerCase());
     }

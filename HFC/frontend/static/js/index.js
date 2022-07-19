@@ -4412,7 +4412,7 @@ const create_player_team_seasons = async (data) => {
     SR: "SR",
   };
 
-  var url = "/static/data/import_json/Player_Archetype.json";
+  var url = "/static/data/import_json/player_archetype.json";
   var json_data = await fetch(url);
   var position_archetypes = await json_data.json();
   console.log({
@@ -5069,7 +5069,7 @@ const create_week = async (phases, common, season) => {
 const get_rivalries = async (teams) => {
   const team_names = teams.map((t) => t.school_name);
 
-  var url = "/static/data/import_json/Rivalries.json";
+  var url = "/static/data/import_json/rivalries.json";
   var data = await fetch(url);
   var rival_dimension = await data.json();
 
@@ -5152,7 +5152,7 @@ const query_to_dict = async (query_list, query_type, key) => {
 };
 
 const populate_names = async (ddb) => {
-  var url = "/static/data/import_json/Names.json";
+  var url = "/static/data/import_json/names.json";
   var data = await fetch(url);
   var name_dimension = await data.json();
 
@@ -5187,15 +5187,15 @@ const populate_names = async (ddb) => {
 };
 
 const populate_cities = async (ddb) => {
-  var url = "/static/data/import_json/Cities.json";
+  var url = "/static/data/import_json/cities.json";
   var data = await fetch(url);
   const city_dimension = await data.json();
 
-  var url = "/static/data/import_json/Cities_2.json";
+  var url = "/static/data/import_json/cities_2.json";
   var data = await fetch(url);
   const city_dimension_2 = await data.json();
 
-  var url = "/static/data/import_json/States.json";
+  var url = "/static/data/import_json/states.json";
   var data = await fetch(url);
   const state_dimension = await data.json();
 
