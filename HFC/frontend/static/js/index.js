@@ -5091,7 +5091,7 @@ const get_rivalries = async (teams) => {
 };
 
 const get_teams = async () => {
-  var url = "/static/data/import_json/Team.json";
+  var url = "/static/data/import_json/team.json";
   var data = await fetch(url);
   var teams = await data.json();
 
