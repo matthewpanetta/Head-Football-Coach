@@ -22,7 +22,7 @@ jobs:
 
     - uses: 'google-github-actions/auth@v0'
       with:
-        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+        credentials_json: '${{ secrets.GCP_CREDENTIAL_JSON }}'
 
     - id: 'deploy'
       name: 'deploy'
