@@ -1,0 +1,32 @@
+name: 'hfc-deploy'
+
+on:
+  push:
+    branches:
+    - 'main'
+    - 'master'
+  pull_request:
+    branches:
+    - 'main'
+    - 'master'
+
+jobs:
+  deploy:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    runs-on: 'ubuntu-latest'
+    steps:
+    - uses: 'actions/checkout@v3'
+
+    - uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - id: 'deploy'
+      name: 'deploy'
+      uses: 'google-github-actions/deploy-appengine@v0'
+      with:
+        deliverables: 'HFC/app.yaml'
+        project_id: '${{ secrets.GCP_PROJECT }}'
