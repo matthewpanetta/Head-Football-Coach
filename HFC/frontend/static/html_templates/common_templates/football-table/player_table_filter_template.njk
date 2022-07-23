@@ -1,31 +1,80 @@
 <div class='w3-card w3-margin-bottom football-table-filter-bar'>
   <div class="w3-bar team-primary-background-bar">
     <span class='hide-small'>Filters</span>
-    <span class="details-control" id="filter-dropdown-button"><i class="fa fa-angle-down" style="padding: 0px 10px; font-size: 15px;"></i></span>
-  </div>          
+    <span class="details-control" id="filter-dropdown-button">
+      <i class="fa fa-angle-down" style="padding: 0px 10px; font-size: 15px;"></i>
+    </span>
+  </div>
   <div style="max-height: 250px; overflow-y: scroll;">
     <table id="football-table-filter-table" class="w3-table-all hidden" style="table-layout: fixed; width: 100%; max-width: 100%;">
       {% for table_filter_group_name, table_filter_group in filter_options %}
-      <tr class='football-table-filter-row' filter_option="{{table_filter_group_name}}">
-        <td style="width: 150px;" class="bold">{{table_filter_group.display}}</td>
-        <td style="width: 100px;">
-          <button class="w3-button football-table-filter-option selected" filter_value="All">
-            <div class="bold">All</div>
-            <div class="font10 football-table-filter-option-value">{{table_filter_group.count.toLocaleString("en-US")}}</div>
-          </button>
-        </td>
-        <td  style='display: block; '>
-          <div style='  margin: 0;  padding: 0; overflow: auto; white-space: nowrap;'>
-            {% for table_filter_option in table_filter_group.options%}
-            <button class="w3-button football-table-filter-option" count_value="{{table_filter_option.count}}" filter_value="{{table_filter_option.display}}">
-              <div class="bold">{{table_filter_option.display}}</div>
-              <div class="font10 football-table-filter-option-value">{{table_filter_option.count.toLocaleString("en-US")}}</div>
+        <tr class='football-table-filter-row' filter_option="{{table_filter_group_name}}">
+          <td style="width: 150px;" class="bold">{{table_filter_group.display}}</td>
+          <td style="width: 100px;">
+            <button class="w3-button football-table-filter-option selected" filter_value="All">
+              <div class="bold">All</div>
+              <div class="font10 football-table-filter-option-value">{{table_filter_group.count.toLocaleString("en-US")}}</div>
             </button>
-            {% endfor %}
-          </div>
-        </td>
-      </tr>
+          </td>
+          <td  style='display: block; '>
+            <div style='  margin: 0;  padding: 0; overflow: auto; white-space: nowrap;'>
+              {% for table_filter_option in table_filter_group.options%}
+                <button class="w3-button football-table-filter-option" count_value="{{table_filter_option.count}}" filter_value="{{table_filter_option.display}}">
+                  <div class="bold">{{table_filter_option.display}}</div>
+                  <div class="font10 football-table-filter-option-value">{{table_filter_option.count.toLocaleString("en-US")}}</div>
+                </button>
+              {% endfor %}
+            </div>
+          </td>
+        </tr>
       {% endfor %}
     </table>
-  </div>  
+  </div>
+</div>
+
+<div class='w3-card w3-margin-bottom football-table-filter-bar'>
+
+  <div class='w3-left'></div>
+  <div class='w3-left'>
+    <button class="w3-button football-table-filter-option" id='football-table-filter-show-button'>
+      <i class="fa fa-filter" style='vertical-align:middle; '></i>
+      <span class='no-wrap' style='vertical-align:middle; '>More Filters</span>
+    </button>
+    <button class="w3-button football-table-filter-option">
+      <i class="fa fa-eye" style='vertical-align:middle; '></i>
+      <span class='no-wrap' style='vertical-align:middle; '>Column Select</span>
+    </button>
+  </div>
+
+  <input class="w3-right football-filter-select" type="text" placeholder='Search for players or teams' style='width: 25%; min-width: 250px;'></input>
+
+</div>
+
+<div class='football-table-alter-modal' id='football-table-filter-modal'>
+  <div class="w3-card modal-content ">
+    <div class="w3-bar team-primary-background-bar player-primary-background-bar">
+      <span class='hide-small'>Table Filters</span>
+    </div>
+    <div style='overflow-y: scroll;'>
+      {% for table_filter_group_name, table_filter_group in filter_options %}
+      <div class='football-table-filter-option-group-container unselectable' style='border-bottom: 1px solid black;'>
+        <div class='football-table-filter-row' filter_option="{{table_filter_group_name}}">
+          <span>
+            <i class='fa fa-angle-right '/>
+          </span>
+          <span>{{table_filter_group.display}}</span>
+        </div>
+        <div class='w3-hide football-table-filter-option-group'>
+          {% for table_filter_option in table_filter_group.options%}
+          <div class='football-table-filter-option'>
+            <span>{{table_filter_option.display}}</span>
+            <span>{{table_filter_option.count.toLocaleString("en-US")}}</span>
+          </div>
+        {% endfor %}
+        </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
 </div>

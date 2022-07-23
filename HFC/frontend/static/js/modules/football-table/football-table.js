@@ -417,6 +417,13 @@ const add_filter_listeners = async (common, table_config) => {
     await adjust_button_text(common, table_config);
   });
 
+  $('.football-table-filter-row').on('click', function(){
+    let group_container = $(this).closest('.football-table-filter-option-group-container');
+    let option_group = group_container.find('.football-table-filter-option-group');
+    $(option_group).toggleClass('w3-hide')
+  })
+  
+
   $("#filter-dropdown-button").on("click", async function () {
     $(this).find("i").toggleClass("fa-angle-down");
     $(this).find("i").toggleClass("fa-angle-up");
@@ -424,6 +431,16 @@ const add_filter_listeners = async (common, table_config) => {
 
     $("#football-table-filter-table").toggleClass("hidden");
     await adjust_button_text(common, table_config);
+  });
+
+  $('#football-table-filter-show-button').on('click', function(){
+    $('#football-table-filter-modal').addClass('shown');
+  });
+
+  $(window).on("click", function (event) {
+    if ($(event.target)[0] == $("#football-table-filter-modal")[0]) {
+      $("#football-table-filter-modal").removeClass("shown");
+    }
   });
 };
 
