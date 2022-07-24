@@ -4,7 +4,7 @@
     }
 </style>
 
-<div class='w3-card '>
+<div class='card '>
   <div style='max-width: 100%; width:100%; overflow-x: scroll;'>
     <table class='football-table-content font14' style='table-layout: fixed; max-width: 100%; width:100%; '>
         {% if display_team %}
@@ -148,7 +148,7 @@
       {% endif %}
 
       <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
-        <tr class='football-table-column-groups team-primary-background-bar' style=' height: 30px;'>
+        <tr class='football-table-column-groups team-primary-background-bar card-header' style=' height: 30px;'>
           <!-- BASELINE -->
           {% if display_team %}
           <th colspan='2' style='width: 150px;' class='center-text col-group'>Team</th>
@@ -240,7 +240,7 @@
         <tr class='football-table-column-headers unselectable' style=' height: 30px; '>
           {% if display_team %}
           <th style='width: 50px; left: 0px;' class='sticky-column' value-key='player_team_season.team_season.team.full_name' sort-order='sort-asc'></th>
-          <th style='width: 90px; left: 30px;' class='left-text sticky-column' value-key='player_team_season.team_season.team.school_name' sort-order='sort-asc'>Team</th>
+          <th style='width: 90px; left: 30px;' class='left-text sticky-column col-group' value-key='player_team_season.team_season.team.school_name' sort-order='sort-asc'>Team</th>
           {% endif %}
 
           <!-- BASELINE -->
@@ -400,7 +400,6 @@
         {% endif %}
 
         {% for player in data%}
-        {{player|log}}
           <tr class='football-table-row  ' style='height: 30px;' player_id='{{player.player_id}}'>
             {% if display_team %}
             <td style='width: 50px; left: 0px; background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}};' class='sticky-column'>
@@ -570,33 +569,34 @@
         {% endfor %}
       </tbody>
     </table>
-    {% if pagination.max_pages > 1%}
-      <div class="football-table-pagination" style="float: right;">
+    
+  </div>
+  {% if pagination.max_pages > 1%}
+      <div class="football-table-pagination card-footer" style="float: right;">
         {% if pagination.current_page > 1%}
-          <button class='w3-button football-table-pagination-button font12' pagination-action="1">
+          <button class='btn btn-light football-table-pagination-button font12' pagination-action="1">
             First
           </button>
-          <button class='w3-button football-table-pagination-button font12 margin-right-12' pagination-action="{{pagination.current_page - 1}}">
+          <button class='btn btn-light football-table-pagination-button font12 margin-right-12' pagination-action="{{pagination.current_page - 1}}">
             Prev
           </button>
         {% endif %}
         {% for page_number in pagination.available_page_navigation%}
-          <button class='w3-button football-table-pagination-button font12 
+          <button class='btn btn-light football-table-pagination-button font12 
                         {% if page_number == pagination.current_page %} selected {% endif %}' 
                   pagination-action="{{page_number}}">
             {{page_number}}
           </button>
         {% endfor %}
         {% if pagination.current_page < pagination.max_pages%}
-          <button class='w3-button football-table-pagination-button font12 margin-left-12' pagination-action="{{pagination.current_page + 1}}">
+          <button class='btn btn-light football-table-pagination-button font12 margin-left-12' pagination-action="{{pagination.current_page + 1}}">
             Next
           </button>
-          <button class='w3-button football-table-pagination-button font12' pagination-action="{{pagination.max_pages}}">
+          <button class='btn btn-light football-table-pagination-button font12' pagination-action="{{pagination.max_pages}}">
             Last 
             <span class="font10">({{pagination.max_pages}})</span>
           </button>
         {% endif %}
       </div>
     {% endif %}
-  </div>
 </div>

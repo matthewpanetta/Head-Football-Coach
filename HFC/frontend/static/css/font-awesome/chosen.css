@@ -82,7 +82,8 @@
 .fa-angle-up:before {
   content: "\f106";
 }
-
+.fa-ban:before {
+  content: "\f05e"; }
 .fa-bars:before {
   content: "\f0c9";
 }
@@ -133,4 +134,36 @@
 
 .fa-eye-slash:before {
   content: "\f070";
+}
+
+.fa-window-close:before {
+  content: "\f410";
+}
+
+.fa-window-maximize:before {
+  content: "\f2d0";
+}
+
+.fa-window-minimize:before {
+  content: "\f2d1";
+}
+
+.fa-window-restore:before {
+  content: "\f2d2";
+}
+
+.fa-windows:before {
+  content: "\f17a";
+}
+
+.fa-search:before {
+  content: "\f002";
+}
+
+.fa-sort-alpha-down:before {
+  content: "\f15d";
+}
+
+.fa-sort-numeric-down:before {
+  content: "\f162";
 }
