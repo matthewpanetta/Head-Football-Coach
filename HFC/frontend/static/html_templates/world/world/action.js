@@ -356,7 +356,7 @@ const action = async (common) => {
   $(".upcoming-gameview-tab").on("click", function (event, target) {
     console.log("clicked this", event, target);
 
-    $(".upcoming-gameview-tab").removeClass("selected-upcoming-gameview-tab");
+    $(".upcoming-gameview-tab").removeClass("selected-bar-button");
     let clicked_tab = $(event.target);
     let clicked_tab_parent = clicked_tab.closest(".boxscore-bar").attr("id");
     let selected_game_filter_selection = clicked_tab.attr("GameFilterSelection");
@@ -368,7 +368,7 @@ const action = async (common) => {
       "w3-hide"
     );
 
-    $(clicked_tab).addClass("selected-upcoming-gameview-tab");
+    $(clicked_tab).addClass("selected-bar-button");
   });
 };
 

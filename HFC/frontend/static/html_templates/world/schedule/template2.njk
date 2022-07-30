@@ -13,10 +13,10 @@
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
-        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
           <i class="fas fa-bars"></i>
         </button>
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
       </div>
     </nav>
     <div id="nav-tabContent">
@@ -31,7 +31,7 @@
                 </span>
               </div>
               <div style="max-height: 250px; overflow-y: scroll;">
-                <table id="football-table-filter-table" class="w3-table-all hidden" style="table-layout: fixed; width: 100%; max-width: 100%;">
+                <table id="football-table-filter-table" class="table table-striped table-hover hidden" style="table-layout: fixed; width: 100%; max-width: 100%;">
                   {{filter_options|log}}
                   {% for table_filter_group_name, table_filter_group in filter_options %}
                     {{table_filter_group_name|log}}
@@ -39,7 +39,7 @@
                     <tr class='football-table-filter-row' filter_option="{{table_filter_group_name}}">
                       <td style="width: 150px;" class="bold football-table-filter-display">{{table_filter_group.display}}</td>
                       <td style="width: 100px;">
-                        <button class="w3-button football-table-filter-option {%if table_filter_group.all_default_option%}selected{%endif%}" filter_value="All">
+                        <button class="btn football-table-filter-option {%if table_filter_group.all_default_option%}selected{%endif%}" filter_value="All">
                           <div class="bold">All</div>
                         </button>
                       </td>
@@ -47,7 +47,7 @@
                         <div style='  margin: 0;  padding: 0; overflow: auto; white-space: nowrap;'>
                           {% for table_filter_option in table_filter_group.options%}
                             {{table_filter_option|log}}
-                            <button class="w3-button football-table-filter-option {{table_filter_option.selected}}" count_value="{{table_filter_option.count}}" filter_value="{{table_filter_option.display}}">
+                            <button class="btn football-table-filter-option {{table_filter_option.selected}}" count_value="{{table_filter_option.count}}" filter_value="{{table_filter_option.display}}">
                               <div class="bold">{{table_filter_option.display}}</div>
                             </button>
                           {% endfor %}

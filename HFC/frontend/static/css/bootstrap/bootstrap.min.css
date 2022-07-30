@@ -2093,12 +2093,12 @@ progress {
 
 .table-striped>tbody>tr:nth-of-type(odd)>* {
     --bs-table-accent-bg: var(--bs-table-striped-bg);
-    color: var(--bs-table-striped-color)
+    /* color: var(--bs-table-striped-color) */
 }
 
 .table-striped-columns>:not(caption)>tr>:nth-child(2n) {
     --bs-table-accent-bg: var(--bs-table-striped-bg);
-    color: var(--bs-table-striped-color)
+    /* color: var(--bs-table-striped-color) */
 }
 
 .table-active {
@@ -2108,7 +2108,7 @@ progress {
 
 .table-hover>tbody>tr:hover>* {
     --bs-table-accent-bg: var(--bs-table-hover-bg);
-    color: var(--bs-table-hover-color)
+    /* color: var(--bs-table-hover-color) */
 }
 
 .table-primary {
@@ -3250,7 +3250,7 @@ textarea.form-control.is-invalid {
     --bs-btn-font-size: 1rem;
     --bs-btn-font-weight: 400;
     --bs-btn-line-height: 1.5;
-    --bs-btn-color: #212529;
+    --bs-btn-color: #fff;
     --bs-btn-bg: transparent;
     --bs-btn-border-width: 1px;
     --bs-btn-border-color: transparent;

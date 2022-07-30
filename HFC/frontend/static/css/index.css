@@ -301,7 +301,7 @@ body {
   border-left: 1px solid black;
   padding-left: 8px;
   padding-right: 8px;
-  margin-left:8px;
+  margin-left: 8px;
   /* margin: 20px; */
   font-size: 12px;
 }
@@ -362,11 +362,6 @@ body {
 
 .table {
   font-size: 14px !important;
-}
-
-.table td,
-.table th {
-  padding: .45rem !important;
 }
 
 .teamSchoolName,
@@ -1028,7 +1023,6 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
 
 .selected-boxscore-tab,
 .selected-highlight-tab,
-.selected-upcoming-gameview-tab,
 .selected-recent-gameview-tab,
 .selected-roster-tab,
 .selected-award-team-tab,
@@ -1036,9 +1030,11 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
 .selected-preseason-award-team-tab,
 .selected-season-award-conference-tab,
 .selected-season-award-team-tab,
-.selected-drive-event-tab,
-.selected-team-record-tab {
+.selected-team-record-tab,
+div button.w3-bar-item.btn.selected-bar-button {
   border-bottom: 3px solid #111 !important;
+  transition: border-bottom .5s ease-in-out;
+
 }
 
 .teamOverviewConferenceStandingsTeamLogo,
@@ -1095,7 +1091,7 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
   margin: 8px 6px;
 }
 
-.boxscore-bar .w3-button {
+.boxscore-bar .btn {
   padding: 8px 8px;
 }
 
@@ -1108,6 +1104,7 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
 .w3-row-padding.no-flex-wrap {
   flex-wrap: nowrap;
 }
+
 .w3-row-padding.flex-start {
   justify-content: flex-start;
 }
@@ -2134,6 +2131,14 @@ img.teamTeamLogo {
   padding: 6px 6px;
 }
 
+.w3-bar button {
+  border-radius: 0px !important;
+}
+
+.w3-sidebar ul li a {
+  border-radius: 0px !important;
+}
+
 .tiny {
   font-size: 10px !important;
 }
@@ -2188,66 +2193,7 @@ img.teamTeamLogo {
   overflow: visible;
 }
 
-button.dt-button.active:not(.disabled) {
-  background-color: white;
-  border-bottom: 5px solid black;
-  background-image: none;
-}
-
-div.dt-buttons {
-  justify-content: flex-start;
-  display: flex;
-  background: white;
-  overflow: visible;
-  width: 100%;
-  flex-wrap: wrap;
-}
-
-
-
-.dt-buttons button.dt-button {
-  font-size: 12px;
-  border: none;
-  height: 32px;
-  padding: 0px 2px;
-  background-color: transparent;
-  background-image: none;
-  overflow: visible;
-  box-shadow: none;
-  color: black;
-  flex-grow: 1;
-
-}
-
-.dt-buttons button.dt-button:hover,
-.dt-buttons button.dt-button.active:hover:not(.disabled) {
-  color: black;
-  background-color: transparent;
-  background-image: none;
-  border: none;
-  border-bottom: 5px solid maroon;
-  box-shadow: none;
-
-}
-
-.dt-buttons button.dt-button:focus {
-  outline: none;
-  background-color: transparent;
-  background-image: none;
-  border-bottom: 5px solid maroon;
-  box-shadow: none;
-}
-
-.dt-buttons button.dt-button.active {
-  color: maroon;
-  background-color: white;
-  border-bottom: 5px solid black;
-  background-image: none;
-  box-shadow: none;
-}
-
-
-.col-group:not(:last-child)  {
+.col-group:not(:last-child) {
   /* border-right: 1px solid var(--bs-card-border-color); */
   border-right: 1px solid #ccc;
   /* box-shadow: 4px 0px 4px 0px rgb(0 0 0 / 16%); */
@@ -2447,7 +2393,7 @@ thead tr {
   background-color: white;
 }
 
-.no-border {
+. {
   border: none !important;
 }
 
@@ -2522,7 +2468,8 @@ table tr td.padding-left-8 {
   width: 1%;
 }
 
-.nowrap, .no-wrap {
+.nowrap,
+.no-wrap {
   white-space: nowrap;
 }
 
@@ -2622,7 +2569,6 @@ a i.fa:hover {
 button.football-table-filter-option,
 button.football-table-column-control-option {
   margin: 2px;
-  border-radius: 10px;
   border: 1.5px solid #ccc;
   min-width: 70px;
 
@@ -2655,7 +2601,7 @@ button.football-table-pagination-button.selected {
 
 tr.football-table-filter-option.selected,
 tr.football-table-column-control-option.selected {
-  background-color: rgb(13,110,253) !important;
+  background-color: rgb(13, 110, 253) !important;
 }
 
 tr.football-table-filter-option.selected *,
@@ -2795,10 +2741,14 @@ table {
 }
 
 @-webkit-keyframes moving-gradient {
-  0% { background-position: -250px 0; }
-  100% { background-position: 250px 0; }
-}
+  0% {
+    background-position: -250px 0;
+  }
 
+  100% {
+    background-position: 250px 0;
+  }
+}
 
 .moving-gradient {
   background: linear-gradient(to right, #eee 20%, #ddd 50%, #eee 80%);
@@ -2814,7 +2764,7 @@ table {
   text-indent: 12px;
 }
 
-.children-align-middle > * {
+.children-align-middle>* {
   vertical-align: middle;
 }
 
@@ -2823,12 +2773,61 @@ button.no-hover:hover {
   color: inherit !important;
 }
 
+.w3-button:hover {
+  color: #000 !important;
+  background-color: #ccc !important
+}
 
-.football-filter-select:hover{
+.football-filter-select:hover {
   background-color: #eee;
   transition: 0.3s;
 }
 
 .team-primary-background-bar.card-header {
   border-bottom: none;
+}
+
+
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  vertical-align: middle;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  background-color: inherit;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap
+}
+
+.btn {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none
+}
+
+.btn:hover {
+  color: #000 !important;
+  background-color: #ccc !important
+}
+
+.square-border {
+  border-radius: 0px !important;
+}
+
+
+.card .table {
+  margin-bottom: 0px !important;
+}
+
+.table td,
+.table th {
+  padding: 8px 8px;
+  display: table-cell;
+  text-align: left;
+  vertical-align: top
 }

@@ -83,21 +83,21 @@
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: {{page.PrimaryColor|TeamBackgroundFontColor}}; ">
-        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-ratings-tab">Ratings</button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        <button class="w3-bar-item btn tab nav-tab-button"  id="nav-ratings-tab">Ratings</button>
         {% if player.current_player_team_season.is_recruit %}
-        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-recruiting-tab">Recruiting</button>
+        <button class="w3-bar-item btn tab nav-tab-button"  id="nav-recruiting-tab">Recruiting</button>
         {% else %}
           {% if player_team_games|length > 0%}
-          <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-stats-tab">Stats</button>
-          <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-game-log-tab">Game Log</button>
+          <button class="w3-bar-item btn tab nav-tab-button"  id="nav-stats-tab">Stats</button>
+          <button class="w3-bar-item btn tab nav-tab-button"  id="nav-game-log-tab">Game Log</button>
           {% endif %}
         {% endif %}
         {% if player_awards|length > 0 %}
-        <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-awards-tab">Awards</button>
+        <button class="w3-bar-item btn tab nav-tab-button"  id="nav-awards-tab">Awards</button>
         {%endif%}
         <button> PLAYER LIST </button>
       </div>
@@ -108,7 +108,7 @@
           <div class='w3-row-padding'>
             <div class='w3-col l5 m12 playerOverviewRatingBox'>
               <div class="card margin-bottom-24">
-                <table class='width100 w3-table-all no-border'>
+                <table class='width100 table table-striped table-hover '>
                     {% for skill_group in skills%}
                     {% if skill_group.top_show%}
                     <thead>
@@ -144,11 +144,11 @@
                 <div class="w3-bar team-primary-background-bar">
                   Actions
                 </div>
-                <table class=' w3-table-all' style='width: 50%;'>
+                <table class=' table table-striped table-hover' style='width: 50%;'>
                   {% for Action in Actions%}
                   <tr>
                     <td style='width:10%;'>{{Action.Icon|safe}}</td>
-                    <td confirm-info='{{Action.ConfirmInfo}}' response-type='refresh' background-ajax='{{Action.AjaxLink}}' class="w3-button {{Action.Class}} text-left"> {{Action.Display}} </td>
+                    <td confirm-info='{{Action.ConfirmInfo}}' response-type='refresh' background-ajax='{{Action.AjaxLink}}' class="btn {{Action.Class}} text-left"> {{Action.Display}} </td>
                   </tr>
                   {% endfor %}
                 </table>
@@ -172,7 +172,7 @@
               <div class="w3-bar team-primary-background-bar">
                 Recruiting Status
               </div>
-              <table class="w3-table-all width100 center-text-row" id='recruit_team_seasons' style='width: 100%;'>
+              <table class="table table-striped table-hover width100 center-text-row" id='recruit_team_seasons' style='width: 100%;'>
                 <thead>
                   <tr  >
                     <th colspan="2" class='center-text col-group'>TEAM</th>
@@ -223,7 +223,7 @@
         <div class='w3-container w3-margin-bottom'>
           <div class='w3-row'>
             <div class='w3-col l12'>
-              <table class="w3-table-all center-text-row" id='playerRecruitingTeamTable'>
+              <table class="table table-striped table-hover center-text-row" id='playerRecruitingTeamTable'>
                 <thead>
                   <tr  class='team-secondary-table-row'>
                     <th class='teamColorBorder' scope="col">Rank</th>
@@ -337,7 +337,7 @@
                 <div class='w3-bar team-primary-background-bar'>
                   Awards
                 </div>
-              <table class='w3-table-all'>
+              <table class='table table-striped table-hover'>
                 {{award_list|log}}
                 {% for award_obj in award_list%}
                 {{award_obj|log}}
@@ -369,7 +369,7 @@
           <div class='w3-row-padding'>
             <div class='w3-col l12 mw1000'>
               <div class="card margin-bottom-24">
-                <table class='width100 w3-table-all no-border'>
+                <table class='width100 table table-striped table-hover '>
                     {% for skill_group in skills%}
                     <thead>
                     <tr class='team-primary-background'>

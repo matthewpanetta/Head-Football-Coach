@@ -21,12 +21,12 @@
     {% include "../../static/html_templates/ext_team_header.njk" %}
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
-        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-info-tab">Team Info</button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-info-tab">Team Info</button>
         {% include "../../static/html_templates/ext_team_list.njk" %}
       </div>
     </nav>
@@ -148,11 +148,11 @@
                             <div class=''>Season stats</div>
                             {% endif %}                        
                           </div>
-                          <button style='max-width: 25%;' TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab w3-button tab selected-boxscore-tab" id="boxscore-hometeam-tab">
+                          <button style='max-width: 25%;' TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab btn tab selected-boxscore-tab" id="boxscore-hometeam-tab">
                             <img class='small-logo unselectable' src='{{game.team.team_logo_100}}'  />
                             {# {{game.team.team_abbreviation}} #}
                           </button>
-                          <button style='max-width: 25%;' TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab w3-button tab" id="boxscore-awayteam-tab">
+                          <button style='max-width: 25%;' TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab btn tab" id="boxscore-awayteam-tab">
                             <img class='small-logo unselectable' src='{{game.opponent_team.team_logo_100}}'  />
                             {# {{game.opponent_team.team_abbreviation}} #}
                           </button>
@@ -294,7 +294,7 @@
                     <div class="w3-bar team-primary-background-bar">
                       Signed Recruits
                     </div>
-                      <table class='width100 w3-table-all no-border'>
+                      <table class='width100 table table-striped table-hover '>
                         <thead class='center-text-row'>
                           <tr class='team-secondary-table-row'>
                             <th class='left-text'>Player</th>
@@ -352,7 +352,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     {{team.TeamName}} Signed Recruits
                   </div>
-                  <table  class='w3-table-all no-border' id='teamOverviewConferenceStandings'>
+                  <table  class='table table-striped table-hover ' id='teamOverviewConferenceStandings'>
                     <thead>
                       <tr class='team-secondary-table-row'>
                         <th class='teamColorBorder'>Player</th>
@@ -396,7 +396,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     Recruits Here
                   </div>
-                  <table id='teamOverviewConferenceStandings' class='w3-table'>
+                  <table id='teamOverviewConferenceStandings' class='table table-striped table-hover'>
                     <thead>
                       <th class='teamColorBorder'>Player</th>
                       <th class='teamColorBorder'>Pos</th>
@@ -433,7 +433,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     Top Players Returning
                   </div>
-                  <table class='w3-table' id='teamOverviewConferenceStandings'>
+                  <table class='table table-striped table-hover' id='teamOverviewConferenceStandings'>
                     <thead>
                       <th>Pos</th>
                       <th>Player</th>

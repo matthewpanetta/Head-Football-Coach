@@ -952,11 +952,11 @@ function AddScoringSummaryListeners() {
     var ClickedTabParent = ClickedTab.attr("id");
     var SelectedEventSelection = ClickedTabParent.replace("-tab", "");
 
-    if (!$(ClickedTab).hasClass("selected-drive-event-tab")) {
-      $(".selected-drive-event-tab").each(function (ind, obj) {
-        $(obj).removeClass("selected-drive-event-tab");
+    if (!$(ClickedTab).hasClass("selected-bar-button")) {
+      $(".selected-bar-button").each(function (ind, obj) {
+        $(obj).removeClass("selected-bar-button");
       });
-      $(ClickedTab).addClass("selected-drive-event-tab");
+      $(ClickedTab).addClass("selected-bar-button");
     }
 
     $(".DriveEndingEvent-All").each(function (ind, obj) {

@@ -16,6 +16,20 @@ function get_nunjucks_env() {
     return BackgroundColor;
   });
 
+  env.addFilter('DefaultIfTooLight', function(first_color, second_color){
+    var R = parseInt(first_color.slice(0, 2), 16);
+    var G = parseInt(first_color.slice(2, 4), 16);
+    var B = parseInt(first_color.slice(4, 6), 16);
+
+    var Luma = (0.299 * R ** 2 + 0.587 * G ** 2 + 0.114 * B ** 2) ** 0.5;
+    console.log({first_color:first_color, second_color:second_color, Luma:Luma})
+    if (Luma > 200) {
+      return second_color;
+    }
+    
+    return first_color;
+  });
+
   env.addFilter("TeamBackgroundFontColor", function (BackgroundColor) {
     if (BackgroundColor == undefined) {
       BackgroundColor = "FFFFFF";

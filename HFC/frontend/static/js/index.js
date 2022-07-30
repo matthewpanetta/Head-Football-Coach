@@ -1799,6 +1799,10 @@ class player {
     return `${feet}'${inches}"`;
   }
 
+  get bmi() {
+    return 703.0 * this.weight / (this.height ** 2);
+  }
+
   get passer_rating() {
     if (this.career_stats.passing.attempts == 0) {
       return 0;

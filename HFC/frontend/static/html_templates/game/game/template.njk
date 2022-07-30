@@ -53,7 +53,7 @@
       border-top: 4px solid #{{page.SecondaryColor|TeamSecondaryColor}} !important;
     }
 
-    .drive-event-bar button.w3-bar-item.w3-button:hover {
+    .drive-event-bar button.w3-bar-item.btn:hover {
       background-color: inherit !important;
       color: #FFF !important;
     }
@@ -119,7 +119,7 @@
                 </tr>
               </tbody>
             </table>
-            <table class='gameBoxScoreTable w3-table-all all-border'>
+            <table class='gameBoxScoreTable table table-striped table-hover all-border'>
               <thead>
                 <tr class='center-text-row'>
                   <th></th>
@@ -171,18 +171,6 @@
           {% endif %}
 
         </div>
-
-        <!--
-        <div class="w3-col s2 text-center height100">
-          <div class="w3-row-padding height80 centered-item">
-            <div class="w3-col s10 centered-item">
-                <span class='font20 bold'>FINAL</span>
-            </div>
-
-          </div>
-        </div>
-        -->
-
         <div class="w3-col s3 w3-row-padding gameHeaderTeamContent home align-middle height100">
           <div class="gameHeaderScoreContainer gameOutcome{{game.home_outcome_letter}}">
             {% if game.was_played == 1 %}
@@ -219,12 +207,12 @@
 
       <nav>
         <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
-          <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+          <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
               <i class="fas fa-bars"></i>
           </button>
-          <button class="w3-bar-item w3-button tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+          <button class="w3-bar-item btn tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
           {% if game.was_played %}
-          <button class="w3-bar-item w3-button tab nav-tab-button"  id="nav-boxscore-tab">Box Score</button>
+          <button class="w3-bar-item btn tab nav-tab-button"  id="nav-boxscore-tab">Box Score</button>
           {% endif %}
         </div>
       </nav>
@@ -243,7 +231,7 @@
 
                   {% if game.was_played%}
                   {{game|log}}
-                  <table class='width100 w3-table-all no-border'>
+                  <table class='width100 table table-striped table-hover '>
                     <thead>
                       <tr class='center-text-row white-text'>
                         <th></th>
@@ -302,7 +290,7 @@
                   {% else %}
                   {% if season_stats|length > 0%}
                   <div class="">
-                    <table class='w3-table-all no-border'>
+                    <table class='table table-striped table-hover '>
                       {% for season_stat in season_stats %}
                         <tr class='center-text-row' style='background-color: #{{page.SecondaryColor}}; color: white;'>
                           <th colspan='5'>{{season_stat.display}}</th>
@@ -340,7 +328,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     <span>Past Meetings</span>
                   </div>
-                  <table class='w3-table-all no-border'>
+                  <table class='table table-striped table-hover '>
                     <thead>
                       <tr class='team-secondary-table-row'>
                         <th>Week</th>
@@ -375,7 +363,7 @@
                     <span>Team Leaders</span>
                   </div>
                   <div class="">
-                    <table class='w3-table-all' style='width: 100%;' id='team-leaders-table'>
+                    <table class='table table-striped table-hover' style='width: 100%;' id='team-leaders-table'>
                       {% for stat in player_stat_box%}
                       <tr class='center-text-row w3-border-top team-secondary-table-row white-text'>
                         <td colspan='4' class='padding-top-8 bold'>{{stat.display}}</td>
@@ -443,10 +431,10 @@
                   <div class="">
                     <div class="w3-bar team-primary-background-bar drive-event-bar">
                       <div class='w3-bar-item  margin-right-12 no-padding'>Scoring Summary</div>
-                      <button class="w3-bar-item margin-right-12 w3-button tab no-padding selected-drive-event-tab" id="DriveEndingEvent-Score-tab">Scoring Drives</button>
-                      <button class="w3-bar-item margin-right-12 w3-button tab no-padding " id="DriveEndingEvent-All-tab">All Drives</button>
+                      <button class="w3-bar-item margin-right-12 btn tab no-padding selected-bar-button" id="DriveEndingEvent-Score-tab">Scoring Drives</button>
+                      <button class="w3-bar-item margin-right-12 btn tab no-padding " id="DriveEndingEvent-All-tab">All Drives</button>
                     </div>
-                    <table class='no-border w3-table-all all-border' style='width: 100%;'>
+                    <table class=' table table-hover' style='width: 100%;'>
                       <tbody>
                         {% for period in game.scoring.periods %}
                           <tr class='team-secondary-table-row white-text' style='border-bottom: 2px solid black; border-right: 2px solid black; '>
@@ -566,7 +554,7 @@
                 </div>
 
                 <div class="card w3-margin-bottom">
-                  <table class='w3-table w3-striped'>
+                  <table class='table table-striped table-hover'>
                     <thead>
                       <tr class=' team-primary-background-bar'>
                         <th class='right-text '>OVR</th>
@@ -634,7 +622,7 @@
                   <div class="w3-bar team-primary-background-bar">
                     <span>{{conference_season.conference.conference_name}} Standings</span>
                   </div>
-                  <table class='w3-table-all no-border' id='teamOverviewConferenceStandings'>
+                  <table class='table table-striped table-hover ' id='teamOverviewConferenceStandings'>
                     {% for division in conference_season.divisions%}
                     <thead>
                       <tr class='team-secondary-table-row white-text'>
@@ -680,7 +668,7 @@
                 <div class="w3-bar {{team_game_obj.home_or_away}}-team-primary-background-bar">
                   <span>{{team_game_obj.team_game.team_season.team.school_name}} {{stat_grouping.stat_group_name}}</span>
                 </div>
-                <table id='{{team_game_obj.home_or_away}}-box-score-{{stat_grouping.stat_group_name}}' class='w3-table-all no-border width100'>
+                <table id='{{team_game_obj.home_or_away}}-box-score-{{stat_grouping.stat_group_name}}' class='table table-striped table-hover  width100'>
                   <thead>
                     <tr class='center-text-row  football-table-column-headers {{team_game_obj.home_or_away}}-team-secondary-row'>
                       <th class='left-text' sort-order='sort-asc' style='width: auto;'>Player</th>
