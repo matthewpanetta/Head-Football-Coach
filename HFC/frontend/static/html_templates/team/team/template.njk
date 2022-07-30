@@ -38,7 +38,7 @@
           <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-col m12">
               <div class="">
-                <div class="w3-card w3-light-grey w3-col s12">
+                <div class="card w3-light-grey w3-col s12">
 
                   <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
                     {% for game in games %}
@@ -230,7 +230,7 @@
             <div class=" w3-margin-bottom">
               <div class="w3-row-padding w3-margin-bottom">
                 <div class="w3-col s8">
-                  <div class="w3-card w3-light-grey w3-col s12">
+                  <div class="card w3-light-grey w3-col s12">
                     <div class="w3-bar team-primary-background-bar">
                       Headlines
                     </div>
@@ -290,7 +290,7 @@
                   </div>
                 </div>
                 <div class="w3-col s4">
-                  <div class="w3-card w3-light-grey w3-col s12">
+                  <div class="card w3-light-grey w3-col s12">
                     <div class="w3-bar team-primary-background-bar">
                       Signed Recruits
                     </div>
@@ -348,7 +348,7 @@
 
 
                 {% if SignedRecruits|length > 0 %}
-                <div class="w3-card">
+                <div class="card">
                   <div class="w3-bar team-primary-background-bar">
                     {{team.TeamName}} Signed Recruits
                   </div>
@@ -392,7 +392,7 @@
           <div class="w3-row-padding">
             <div class="w3-col l6 m12 w3-display-container">
               <div class="w3-row">
-                <div class="w3-card w3-col s12">
+                <div class="card w3-col s12">
                   <div class="w3-bar team-primary-background-bar">
                     Recruits Here
                   </div>
@@ -429,7 +429,7 @@
               <div class="w3-row">
 
 
-                <div class="w3-card">
+                <div class="card">
                   <div class="w3-bar team-primary-background-bar">
                     Top Players Returning
                   </div>
@@ -473,14 +473,14 @@
           <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-col s4">
 
-            <div class="w3-card w3-margin-bottom">
+            <div class="card w3-margin-bottom">
               <div class="w3-bar team-primary-background-bar">
                 {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Standings</span>
               </div>
               <div id='conference_standings_div'></div>
               
             </div>
-            <div class='w3-card'>
+            <div class='card'>
               <div class="w3-bar team-primary-background-bar">
                 <span>Ranking Trend</span>
               </div>
@@ -492,7 +492,7 @@
           </div>
 
             <div class="w3-col s4">
-              <div class="w3-card w3-margin-bottom">
+              <div class="card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
                   {{team.team_season.conference_season.conference.conference_name}}<span class='hide-small'> Bar Chart</span>
                 </div>
@@ -503,7 +503,7 @@
 
                 </div>
               </div>
-              <div class="w3-card" id='team_leaders'>
+              <div class="card" id='team_leaders'>
 
               </div>
 
@@ -512,7 +512,7 @@
 
 
             <div class="w3-col s4" >
-              <div class="w3-card w3-margin-bottom" id='team_stats'>
+              <div class="card w3-margin-bottom" id='team_stats'>
 
               </div>
             </div>

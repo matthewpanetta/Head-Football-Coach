@@ -28,7 +28,7 @@
         <div class="w3-display-container">
           <div class="w3-row-padding">
             <div class="w3-col l4 m6 s12">
-              <div class="w3-card w3-margin-bottom">
+              <div class="card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
                   <div class="">Top 25</div>
                 </div>
@@ -83,7 +83,7 @@
               </div>
             </div>
             <!-- <div class="w3-col l4 m6 s12">
-              <div class="w3-card w3-margin-bottom">
+              <div class="card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
                   <div class="">New Top 25</div>
                 </div>
@@ -123,7 +123,7 @@
             </div> -->
             <div class="w3-col  l4 m6 s12">
               {% if  this_week_games|length > 0 %}
-              <div class="w3-card background-eee">
+              <div class="card background-eee">
                 <div class="w3-bar team-primary-background-bar">
                   <div class='w3-bar-item  margin-right-12 no-padding'>Games This Week</div>
                   <button GameFilterSelection="primetimegame" class="no-hover w3-bar-item margin-right-12 w3-button tab no-padding selected-upcoming-gameview-tab upcoming-gameview-tab" id="upcoming-gameview-nationalgame-tab" >Primetime</button>
@@ -181,7 +181,7 @@
                 </div>
               </div>
               {% elif CurrentWeek.PhaseID.PhaseName == 'Preseason' %}
-              <div class="w3-card">
+              <div class="card">
                 <div class="w3-bar team-primary-background-bar">
                   <div class="">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
                 </div>
@@ -221,7 +221,7 @@
                 </div>
               </div>
               {% elif CurrentWeek.PhaseID.PhaseName == 'Season Recap' %}
-              <div class="w3-card">
+              <div class="card">
                 <div class="w3-bar team-primary-background-bar">
                   <div class="">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
                 </div>
@@ -266,7 +266,7 @@
               {% endif %}
             </div>
             <div class='w3-col l3 m6 s12'>
-              <div class="w3-card">
+              <div class="card">
                 <span class='table_title'>Headlines</span>
                 <ul class='margin-right-4'>
                     {% for Headline in Headlines%}

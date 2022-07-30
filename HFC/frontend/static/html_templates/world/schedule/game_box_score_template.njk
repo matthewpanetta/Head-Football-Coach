@@ -1,5 +1,5 @@
 {% for game in games%}
-    <div  class='w3-card hidden-overflow w3-margin-bottom margin-right-8 w3-margin-top' style='background-color: white; padding: 0px; {% if game.was_played %}max-width: 500px; min-width: 300px;{%else%}width: 350px;{%endif%}'>
+    <div  class='card hidden-overflow w3-margin-bottom margin-right-8 w3-margin-top' style='background-color: white; padding: 0px; {% if game.was_played %}max-width: 500px; min-width: 300px;{%else%}width: 350px;{%endif%}'>
         <div class="w3-container">
             <div class="scheduleGameDashboardGameTeamDisplayContainer w3-display-container" {% if game.team_games[0].game_outcome_letter == 'L'%}style='opacity:.5;'{%endif%}>
                 <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.team_games[0].team_season.team.team_color_primary_hex}}'></div>

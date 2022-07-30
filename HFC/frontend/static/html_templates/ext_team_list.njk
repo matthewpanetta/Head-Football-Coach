@@ -3,7 +3,7 @@
     Teams
   </button>
 
-  <div class="w3-dropdown-content w3-card w3-animate-opacity"  style="right: 20px; max-height: 70vh;" >
+  <div class="w3-dropdown-content card w3-animate-opacity"  style="right: 20px; max-height: 70vh;" >
     <div>
       <span>Select a team to navigate to</span>
       
@@ -41,7 +41,7 @@
   <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-season-dropdown" >
     Seasons
   </button>
-  <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right: 20px; max-height: 70vh; overflow-y: scroll" >
+  <div class="w3-dropdown-content w3-bar-block card-4" style="right: 20px; max-height: 70vh; overflow-y: scroll" >
     {% for season in page.TeamHeaderLinks.seasons%} {{season|log}}
     <a href="{{season.season_href}}" class="w3-bar-item w3-button" >{{season.season}}</a>
     {% endfor %}

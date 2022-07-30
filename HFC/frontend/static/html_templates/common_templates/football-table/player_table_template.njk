@@ -253,7 +253,9 @@
 
           {% if column_controls.Personal.personal.shown %}
             <!-- PERSONAL -->
-            <th style='width:  120px;' class='col-group' value-key='hometown_and_state'>Hometown</th>
+            <th style='width:  120px;' class='col-group' value-key='hometown_and_state'>
+              Hometown
+            </th>
           {% endif %}
 
           {% if column_controls.Stats.games.shown %}
@@ -427,7 +429,10 @@
 
             {% if column_controls.Personal.personal.shown %}
               <!-- PERSONAL -->
-              <td style='width:  120px;' class="col-group">{{player.hometown_and_state}}</td>
+              <td style='width:  120px;' class="col-group">
+                <i class="fa fa-map-marker" style='padding-right: 8px;'></i>
+                <span>{{player.hometown_and_state}}</span>
+              </td>
             {% endif %}
 
             {% if column_controls.Stats.games.shown %}

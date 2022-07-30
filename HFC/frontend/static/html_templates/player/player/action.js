@@ -45,7 +45,7 @@ function DrawPlayerSeasonStats(data){
   });
 
   var Parent = $('#PlayerSeasonStatTableClone').parent();
-  var SeasonStatCard = $('<div></div>').addClass('w3-card').addClass('w3-margin-top');
+  var SeasonStatCard = $('<div></div>').addClass('card').addClass('w3-margin-top');
   var Table = $('#PlayerSeasonStatTableClone').clone().addClass('w3-table-all').removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerSeasonStatTable-'+data.StatGroupName).css('width', '100%');
 
   if (data.CareerStats.length > 0){
@@ -76,7 +76,7 @@ function DrawPlayerCareerHighs(data){
   });
   var Parent = $('#PlayerSeasonStatTableClone').parent();
 
-  var CareerHighCard = $('<div></div>').addClass('w3-card').addClass('w3-margin-top');
+  var CareerHighCard = $('<div></div>').addClass('card').addClass('w3-margin-top');
 
   var CareerHighTable = $('#PlayerCareerHighTableClone').clone().addClass('w3-table-all').removeClass('w3-hide').removeAttr('id').attr('id', 'PlayerCareerHighTable-'+data.StatGroupName).css('width', '100%');
 

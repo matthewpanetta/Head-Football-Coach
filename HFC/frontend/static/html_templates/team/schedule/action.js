@@ -183,7 +183,7 @@
           table_template_url: '/static/html_templates/team/schedule/team_schedule_table_template.njk',
         },
         dom: {
-          table_dom_selector:  "#TeamSchedule",
+          table_dom_selector:  "#team-schedule-container",
         }
       };
 
@@ -193,10 +193,10 @@
     
       var renderedHtml = await common.nunjucks_env.renderString(html, {page: common.page,data: games})
     
-      $('#TeamSchedule').empty()
-      $('#TeamSchedule').html(renderedHtml)
+      $('#team-schedule-container').empty()
+      $('#team-schedule-container').html(renderedHtml)
 
-      init_basic_table_sorting(common, '#TeamSchedule', null)
+      init_basic_table_sorting(common, '#team-schedule-container', null)
     
     }
 

@@ -80,7 +80,7 @@ const get_initial_column_controls = (subject) => {
       },
       Ratings: {
         overall: { shown: true, display: "Overall" },
-        athleticism: { shown: false, display: "Athleticsm" },
+        athleticism: { shown: false, display: "Athleticism" },
         passing: { shown: false, display: "Throwing" },
         rushing: { shown: false, display: "Running" },
         receiving: { shown: false, display: "Receiving" },
@@ -288,6 +288,12 @@ async function create_football_filters(common, table_config) {
   table_config.templates.filter_template_url =
     table_config.templates.filter_template_url;
 
+  table_config.column_control = table_config.column_control || {};
+
+  table_config.column_control.column_controls =
+    table_config.column_control.column_controls ||
+    get_initial_column_controls(table_config.subject);
+
   if (!table_config.templates.filter_template_url) {
     return 0;
   }
@@ -298,7 +304,10 @@ async function create_football_filters(common, table_config) {
   var filter_template_html_text = await filter_template_html.text();
   var renderedHtml = await common.nunjucks_env.renderString(
     filter_template_html_text,
-    { filter_options: table_config.filters.filter_options }
+    {
+      filter_options: table_config.filters.filter_options,
+      column_controls: table_config.column_control.column_controls,
+    }
   );
   table_config.dom.filter_dom_selector =
     table_config.dom.filter_dom_selector || "#player-stats-table-filter";
@@ -308,36 +317,6 @@ async function create_football_filters(common, table_config) {
   add_filter_listeners(common, table_config);
 }
 
-async function create_football_controls(common, table_config) {
-  table_config.column_control = table_config.column_control || {};
-
-  table_config.column_control.column_controls =
-    table_config.column_control.column_controls ||
-    get_initial_column_controls(table_config.subject);
-
-  table_config.templates.column_control_template_url =
-    table_config.templates.column_control_template_url;
-
-  if (!table_config.templates.column_control_template_url) {
-    return 0;
-  }
-
-  var column_control_html = await fetch(
-    table_config.templates.column_control_template_url
-  );
-  column_control_html_text = await column_control_html.text();
-  var renderedHtml = await common.nunjucks_env.renderString(
-    column_control_html_text,
-    { column_controls: table_config.column_control.column_controls }
-  );
-  table_config.dom.column_control_dom_selector =
-    table_config.dom.column_control_dom_selector ||
-    "#player-stats-table-column-control";
-  $(table_config.dom.column_control_dom_selector).empty();
-  $(table_config.dom.column_control_dom_selector).html(renderedHtml);
-
-  add_column_control_listeners(common, table_config);
-}
 
 async function create_football_table(common, table_config) {
   table_config.data = table_config.original_data;
@@ -444,20 +423,18 @@ async function initialize_football_table(common, table_config) {
   const get_from_dict = common.get_from_dict;
 
   await create_football_filters(common, table_config);
-  await create_football_controls(common, table_config);
+  // await create_football_controls(common, table_config);
   await create_football_table(common, table_config);
 }
 
-const refresh_table = async(common, table_config) => {
-  table_config.filters.filtered_columns = find_filtered_columns(
-    table_config
-  );
+const refresh_table = async (common, table_config) => {
+  table_config.filters.filtered_columns = find_filtered_columns(table_config);
 
   table_config.pagination.current_page = 1;
 
   await create_football_table(common, table_config);
   await adjust_button_text(common, table_config);
-}
+};
 
 const add_filter_listeners = async (common, table_config) => {
   $(".football-table-filter-button").on("click", function () {
@@ -469,7 +446,7 @@ const add_filter_listeners = async (common, table_config) => {
     var clicked_button = $(this);
     $(this).toggleClass("selected");
 
-    await refresh_table(common, table_config)
+    await refresh_table(common, table_config);
   });
 
   $(".football-filter-clear-row").on("click", async function () {
@@ -479,8 +456,7 @@ const add_filter_listeners = async (common, table_config) => {
       .find(".selected")
       .removeClass("selected");
 
-      await refresh_table(common, table_config)
-
+    await refresh_table(common, table_config);
   });
 
   $(".football-filter-collapse").on("click", async function () {
@@ -495,52 +471,80 @@ const add_filter_listeners = async (common, table_config) => {
   $("#football-table-filter-show-button").on("click", function () {
     $("#football-table-filter-modal").addClass("shown");
     adjust_button_text(common, table_config);
+
+    $(window).on("click", function (event) {
+      if ($(event.target)[0] == $("#football-table-filter-modal")[0]) {
+        $("#football-table-filter-modal").removeClass("shown");
+      }
+    });
   });
 
-  $('.football-table-search-text-button').on('click', async function(){
-    table_config.filters.search_filters.search_text = $('.football-table-search-text').val()
-    console.log({'table_config.filters.search_filters.search_text': table_config.filters.search_filters.search_text, "$('.football-table-search-text')": $('.football-table-search-text'), t: $('.football-table-search-text').text()})
-    await refresh_table(common, table_config)
-  })
+  $("#football-table-column-show-button").on("click", function () {
+    $("#football-table-column-modal").addClass("shown");
 
-  $('.football-table-search-clear-button').on('click', async function(){
-    $('.football-table-search-text').val('')
-    table_config.filters.search_filters.search_text = '';
-    await refresh_table(common, table_config)
-  })
+    $(window).on("click", function (event) {
+      if ($(event.target)[0] == $("#football-table-column-modal")[0]) {
+        $("#football-table-column-modal").removeClass("shown");
+      }
+    });
+  });
 
-  $(window).on("click", function (event) {
-    if ($(event.target)[0] == $("#football-table-filter-modal")[0]) {
-      $("#football-table-filter-modal").removeClass("shown");
+  $(".football-table-search-text-button").on("click", async function () {
+    table_config.filters.search_filters.search_text = $(
+      ".football-table-search-text"
+    ).val();
+    await refresh_table(common, table_config);
+  });
+
+  $(".football-table-search-text").on("keypress", async function (e) {
+    if (e.which === 13) {
+      table_config.filters.search_filters.search_text = $(
+        ".football-table-search-text"
+      ).val();
+      await refresh_table(common, table_config);
     }
   });
-};
 
-const add_column_control_listeners = async (common, table_config) => {
-  $(".football-table-column-control-button").on("click", function () {
-    let table_column_control_content = $(this).next();
-    $(table_column_control_content).toggleClass("hidden");
+  $(".football-table-search-clear-button").on("click", async function () {
+    $(".football-table-search-text").val("");
+    table_config.filters.search_filters.search_text = "";
+    await refresh_table(common, table_config);
   });
 
   $(".football-table-column-control-option").on("click", async function () {
     var clicked_button = $(this);
     $(this).toggleClass("selected");
 
-    table_config.column_controls = find_column_controls(
+    console.log({clicked_button:clicked_button})
+
+    table_config.column_control.column_controls = find_column_controls(
       common,
       clicked_button,
       table_config
     );
 
+    console.log({ table_config: table_config });
+
     await create_football_table(common, table_config);
   });
 
-  $("#column-control-dropdown-button").on("click", function () {
-    $(this).find("i").toggleClass("fa-angle-down");
-    $(this).find("i").toggleClass("fa-angle-up");
-    $(this).toggleClass("shown");
+  $(".football-column-clear-row").on("click", async function () {
+    var clicked_button = $(this);
+    $(this)
+      .closest(".football-table-column-option-group")
+      .find(".selected")
+      .removeClass("selected");
 
-    $("#football-table-column-control-table").toggleClass("hidden");
+    await refresh_table(common, table_config);
+  });
+
+  $(".football-column-collapse").on("click", async function () {
+    $(this)
+      .closest(".football-table-column-option-group")
+      .find(".football-column-option-list")
+      .toggleClass("collapse");
+    $(this).find("i").toggleClass("fa-angle-up");
+    $(this).find("i").toggleClass("fa-angle-down");
   });
 };
 
@@ -660,66 +664,49 @@ const find_filtered_columns = (table_config) => {
 const find_column_controls = (common, clicked_button, table_config) => {
   var column_controls = table_config.column_control.column_controls;
 
+  //football-table-column-control-option
+  //football-table-column-option-group
+
   $(
     table_config.dom.column_control_dom_selector +
-      " .football-table-column-control-row"
-  ).each(function (ind, row) {
-    var all_named_button = $(row)
-      .find('.football-table-column-control-option[column_control_group="All"]')
-      .first();
-
-    var all_children = $(row)
-      .find(
-        '.football-table-column-control-option:not([column_control_group="All"])'
-      )
+      " .football-table-column-option-group"
+  ).each(function (ind, column_option_group) {
+    var selected_options = $(column_option_group)
+      .find(".football-table-column-control-option.selected")
       .toArray();
-    var selected_options = $(row)
-      .find(
-        '.football-table-column-control-option.selected:not([column_control_group="All"])'
-      )
+    var all_children = $(column_option_group)
+      .find(".football-table-column-control-option")
       .toArray();
 
-    if ($(clicked_button).is(all_named_button)) {
-      if (all_children.length == selected_options.length) {
-        $(row)
-          .find(
-            '.football-table-column-control-option.selected:not([column_control_group="All"])'
-          )
-          .removeClass("selected");
-      } else {
-        $(row)
-          .find(
-            '.football-table-column-control-option:not([column_control_group="All"])'
-          )
-          .addClass("selected");
-      }
-    } else {
-      if (all_children.length == selected_options.length) {
-        $(all_named_button).addClass("selected");
-      } else {
-        $(all_named_button).removeClass("selected");
-      }
-    }
-
-    var selected_options = $(row)
-      .find(
-        '.football-table-column-control-option.selected:not([column_control_group="All"])'
-      )
-      .toArray();
-    $.each(all_children, function (ind, button) {
-      var column_control_group = $(button).attr("column_control_group");
-      common.get_from_dict(column_controls, column_control_group).shown =
-        $(button).hasClass("selected");
+    console.log({
+      selected_options: selected_options,
+      column_option_group: column_option_group,
+      all_children:all_children
     });
 
-    if (selected_options.length > 0) {
-    } else {
-      $(row)
-        .find(
-          '.football-table-column-control-option[column_control_group="All"]'
-        )
-        .removeClass("selected");
-    }
+    $.each(all_children, function (ind, button) {
+      var column_control_group = $(button).closest('.football-table-column-option-group').attr("column_control_group");
+
+      console.log({
+        // shown: common.get_from_dict(column_controls[column_control_group], $(button).attr('filter_value'))
+        //   .shown,
+        should_be_shown:$(button).hasClass("selected"),
+        'column_controls[column_control_group]': column_controls[column_control_group],
+        filter_value: $(button).attr('table_columnn_control_option'),
+        column_control_group: column_control_group,
+        column_controls:column_controls,
+        button: button,
+      });
+
+      common.get_from_dict(column_controls[column_control_group],  $(button).attr('table_columnn_control_option')).shown =
+        $(button).hasClass("selected");
+
+
+    });
+  });
+
+  console.log({
+    column_controls: column_controls,
   });
 
   return column_controls;
@@ -738,13 +725,15 @@ const data_filterer = (common, table_config) => {
 
   if (table_config.filters.search_filters.search_text.length > 0) {
     data = data.filter(function (elem) {
-      return table_config.filters.search_filters.search_filter_fields.some(function (
-        field
-      ) {
-        return get_from_dict(elem, field).toLowerCase().includes(
-          table_config.filters.search_filters.search_text.toLowerCase()
-        );
-      });
+      return table_config.filters.search_filters.search_filter_fields.some(
+        function (field) {
+          return get_from_dict(elem, field)
+            .toLowerCase()
+            .includes(
+              table_config.filters.search_filters.search_text.toLowerCase()
+            );
+        }
+      );
     });
   }
 
