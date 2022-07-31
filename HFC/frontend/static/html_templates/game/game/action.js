@@ -672,6 +672,12 @@ const action = async (common) => {
     await common.populate_player_modal(common, this);
   });
 
+  $('.gamePlayerBoxStats table').each(function(){
+    var table_id = $(this).attr('id');
+    init_basic_table_sorting(common, '#'+table_id, 1)
+
+  })
+
   if (common.render_content.game.was_played) {
     var drives = common.render_content.game.scoring.drives;
 

@@ -2673,6 +2673,12 @@ const nav_bar_links = async (params) => {
           ClassName: "",
         },
         {
+          LinkDisplay: "Amazing Stats",
+          id: "",
+          Href: `/World/${world_id}/AmazingStats`,
+          ClassName: "",
+        },
+        {
           LinkDisplay: "Coach Stats",
           id: "",
           Href: `/World/${world_id}/Coaches`,
@@ -6692,11 +6698,11 @@ const sim_game = (game_dict, common) => {
         yards_this_play =
           Math.floor(
             Math.random() *
-              (5.2 *
+              (9.2 *
                 (offensive_player_average_overall /
                   defensive_player_average_overall) **
                   1.75)
-          ) + 2;
+          ) - 2;
 
         if (Math.random() < 0.92) {
           chosen_players = {

@@ -6,30 +6,25 @@
     <div class="MultiCarousel">
       <div class="MultiCarousel-inner">
         {% for game in recent_games%}
-        <div class="inline-block table-cell scoreboard-carousel-item">
-          <table style='width: 135px;' BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class="all-border background-white height-70">
-            <colgroup>
-              <col span="2">
-              <col span="2">
-              <col span="2">
-            </colgroup>
+        <div class="inline-block table-cell scoreboard-carousel-item card">
+          <table style='width: 135px;' BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class=" background-white height-70">
             <thead>
-              <th class="" colspan="6">
+              <th class="" colspan="2">
                 <span class='font10'></span>
               </th>
-              <th class="" colspan="2">
+              <th class="center-text" colspan="1">
                 <span class='font10'><a href="{{game.game_href}}">Recap</a></span>
               </th>
             </thead>
             {% for team_game in game.team_games %}
             <tr class="{{team_game.TeamWinningGameBold}}">
-              <td colspan='2'>
+              <td class='center-text'>
                 <img class="small-logo margin-right-4" src="{{team_game.team_season.team.team_logo}}" alt="">
               </td>
-              <td class='min-width-50 left-text' colspan='4'>
+              <td class='min-width-50 left-text'>
                 <div class='margin0'><span class='font10'>{{team_game.national_rank_display}}</span> <a href="{{team_game.team_season.team.team_href}}" class='font14'>{{team_game.team_season.team.team_abbreviation}}</a></div>
               </td>
-              <td class='center-text font14 w3-padding-4' colspan='2'>
+              <td class='center-text font14 w3-padding-4'>
                 {{team_game.points}}
               </td>
             </tr>

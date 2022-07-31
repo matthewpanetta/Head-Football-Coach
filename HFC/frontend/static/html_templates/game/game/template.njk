@@ -664,7 +664,7 @@
 
             <div class='w3-row-padding'>
               {% for team_game_obj in [ {'home_or_away': 'away', 'team_game': game.away_team_game}, {'home_or_away': 'home', 'team_game': game.home_team_game}]%}
-              <div class='w3-col s5 gamePlayerBoxStats card {{team_game_obj.home_or_away}}-drop-shadow margin-bottom-12 height100 no-padding'>
+              <div class='w3-col s5 gamePlayerBoxStats card margin-bottom-12 height100 no-padding'>
                 <div class="w3-bar {{team_game_obj.home_or_away}}-team-primary-background-bar">
                   <span>{{team_game_obj.team_game.team_season.team.school_name}} {{stat_grouping.stat_group_name}}</span>
                 </div>
