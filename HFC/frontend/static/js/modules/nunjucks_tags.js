@@ -30,6 +30,10 @@ function get_nunjucks_env() {
     return first_color;
   });
 
+  env.addFilter('get', function(obj, key){
+    return get(obj, key)
+  });
+
   env.addFilter("TeamBackgroundFontColor", function (BackgroundColor) {
     if (BackgroundColor == undefined) {
       BackgroundColor = "FFFFFF";

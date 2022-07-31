@@ -135,8 +135,8 @@ const action = async (common) => {
 
     var teams_from_json = await common.get_teams();
 
-    var conferences_from_json = await common.get_conferences("_small");
-    //var conferences_from_json = await common.get_conferences('');
+    // var conferences_from_json = await common.get_conferences("_small");
+    var conferences_from_json = await common.get_conferences('');
     console.log({ conferences_from_json: conferences_from_json });
 
     var school_names_to_include = [];
