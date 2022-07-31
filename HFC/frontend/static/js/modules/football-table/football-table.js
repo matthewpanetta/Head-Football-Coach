@@ -157,6 +157,7 @@ const get_initial_search_filters = (subject) => {
   if (subject == "player stats" || subject == "world player stats") {
     search_filters.search_filter_fields = [
       "player_team_season.team_season.team.full_name",
+      // "hometown_and_state",
       "full_name",
     ];
   } else if (subject == "world team stats") {
@@ -314,7 +315,7 @@ async function create_football_filters(common, table_config) {
   $(table_config.dom.filter_dom_selector).empty();
   $(table_config.dom.filter_dom_selector).html(renderedHtml);
 
-  add_filter_listeners(common, table_config);
+  await add_filter_listeners(common, table_config);
 }
 
 
@@ -416,7 +417,7 @@ async function create_football_table(common, table_config) {
     column_counter += 1;
   });
 
-  add_table_listeners(common, table_config);
+  await add_table_listeners(common, table_config);
 }
 
 async function initialize_football_table(common, table_config) {
@@ -560,7 +561,7 @@ const add_table_listeners = async (common, table_config) => {
 
   $(
     table_config.dom.table_dom_selector + " .football-table-column-headers th"
-  ).on("click", function (e) {
+  ).on("click", async function (e) {
     table_config.pagination.current_page = 1;
     let target_new_class = $(e.target).attr("sort-order") || "sort-desc";
     if ($(e.target).hasClass("sort-desc")) {
@@ -588,15 +589,19 @@ const add_table_listeners = async (common, table_config) => {
       sort_direction: sort_direction,
     });
 
-    create_football_table(common, table_config);
+    await create_football_table(common, table_config);
+
   });
+
+  await common.geo_marker_action(common);
+
 
   $(
     table_config.dom.table_dom_selector + " .football-table-pagination button"
-  ).on("click", function () {
+  ).on("click", async function () {
     var page_destination = $(this).attr("pagination-action");
     table_config.pagination.current_page = parseInt(page_destination);
-    create_football_table(common, table_config);
+    await create_football_table(common, table_config);
   });
 
   $(".player-profile-popup-icon").on("click", async function () {
@@ -664,9 +669,6 @@ const find_filtered_columns = (table_config) => {
 const find_column_controls = (common, clicked_button, table_config) => {
   var column_controls = table_config.column_control.column_controls;
 
-  //football-table-column-control-option
-  //football-table-column-option-group
-
   $(
     table_config.dom.column_control_dom_selector +
       " .football-table-column-option-group"
@@ -678,42 +680,18 @@ const find_column_controls = (common, clicked_button, table_config) => {
       .find(".football-table-column-control-option")
       .toArray();
 
-    console.log({
-      selected_options: selected_options,
-      column_option_group: column_option_group,
-      all_children:all_children
-    });
-
     $.each(all_children, function (ind, button) {
       var column_control_group = $(button).closest('.football-table-column-option-group').attr("column_control_group");
 
-      console.log({
-        // shown: common.get_from_dict(column_controls[column_control_group], $(button).attr('filter_value'))
-        //   .shown,
-        should_be_shown:$(button).hasClass("selected"),
-        'column_controls[column_control_group]': column_controls[column_control_group],
-        filter_value: $(button).attr('table_columnn_control_option'),
-        column_control_group: column_control_group,
-        column_controls:column_controls,
-        button: button,
-      });
-
       common.get_from_dict(column_controls[column_control_group],  $(button).attr('table_columnn_control_option')).shown =
         $(button).hasClass("selected");
-
-
     });
-  });
-
-  console.log({
-    column_controls: column_controls,
   });
 
   return column_controls;
 };
 
 const data_filterer = (common, table_config) => {
-  console.log({ table_config: table_config });
   var data = table_config.original_data;
   for (var filtered_column of table_config.filters.filtered_columns) {
     data = data.filter((elem) =>

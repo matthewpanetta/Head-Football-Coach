@@ -186,3 +186,6 @@
 .fa-map-marker:before {
   content: "\f041";
 }
+
+.fa-map-marker-alt:before {
+  content: "\f3c5"; }

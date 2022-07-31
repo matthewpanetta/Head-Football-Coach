@@ -127,7 +127,6 @@
     <div class="" style="background-color: white; overflow-y: scroll;">
       <div class="w3-row-padding flex-start" id='football-table-column-control'>
         {% for column_control_group_name, column_control_group in column_controls %}
-        {{column_control_group|log}}
           <div class="col-4 padding-10 football-table-column-option-group"  column_control_group="{{column_control_group_name}}">
             <div class="w3-row-padding no-flex-wrap space-between no-padding">
               <div>
@@ -156,7 +155,6 @@
                       </thead> #}
                       <tbody>
                         {% for table_columnn_control_option, table_columnn_control_object in column_control_group%}
-                        {{table_columnn_control_object|log}}
                           <tr class="football-table-column-control-option" table_columnn_control_option="{{table_columnn_control_option}}">
                             <td>
                               <div class='w3-row-padding space-between'>

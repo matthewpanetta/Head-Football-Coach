@@ -206,6 +206,8 @@
 
       const query_to_dict = common.query_to_dict;
       await PopulateTeamSchedule(common);
+      await common.geo_marker_action(common);
+
     }
 
 

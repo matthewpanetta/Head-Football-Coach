@@ -587,6 +587,7 @@ const action = async (common) => {
   DrawSchedule();
 
   initialize_headlines();
+  await common.geo_marker_action(common);
 
   var stats_first_click = false;
   $("#nav-team-stats-tab").on("click", async function () {

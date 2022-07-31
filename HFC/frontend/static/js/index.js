@@ -5337,7 +5337,8 @@ const random_name = async (ddb, num_names) => {
 };
 
 const random_city = async (ddb, num_cities) => {
-  const city_list = await ddb.cities.toArray();
+  let city_list = await ddb.cities.toArray();
+  city_list = city_list.sort((c_a, c_b) => c_a.stop - c_b.stop);
   final_city_obj = city_list[city_list.length - 1];
 
   for (var i = 0; i <= num_cities; i++) {
@@ -5701,6 +5702,7 @@ const common_functions = async (route_pattern) => {
     weekly_recruiting: weekly_recruiting,
     calculate_team_needs: calculate_team_needs,
     populate_player_modal: populate_player_modal,
+    geo_marker_action: geo_marker_action,
     team_season: team_season,
     tier_placement: tier_placement,
 
@@ -12964,3 +12966,49 @@ const ordinal = (num) => {
     v = num % 100;
   return num + (s[(v - 20) % 10] || s[v] || s[0]);
 };
+
+
+const geo_marker_action = async(common) => {
+  console.log('Adding geo_marker_action')
+  const db = common.ddb;
+  $(".geo-marker").on("click", async function () {
+
+    let city = $(this).attr('city');
+    let state = $(this).attr('state');
+
+    let location = await ddb.cities.get({city: city, state:state})
+
+    const icon = L.divIcon({
+      html: `<i class="fa fa-map-marker-alt" style="font-size: 40px; color: #${common.page.PrimaryColor};"></i>`,
+      iconSize: [40,40],
+      iconAnchor: [15, 40],
+  });
+
+    var modal_url = "/static/html_templates/geography_modal_template.njk";
+    var html = await fetch(modal_url);
+    html = await html.text();
+    let page = common.page;
+    var renderedHtml = await common.nunjucks_env.renderString(html, {
+      page: page,
+      location:location
+    });
+    console.log({ renderedHtml: renderedHtml });
+    $("#geography-modal").html(renderedHtml);
+    $("#geography-modal").addClass("shown");
+
+    let map = L.map('map-body').setView([location.lat, location.long], 5);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+    let marker = L.marker([location.lat, location.long], {icon: icon}).addTo(map);
+
+
+    $(window).on("click", function (event) {
+      if ($(event.target)[0] == $("#geography-modal")[0]) {
+        $("#geography-modal").removeClass("shown");
+        $(window).unbind();
+      }
+    });
+  });
+}

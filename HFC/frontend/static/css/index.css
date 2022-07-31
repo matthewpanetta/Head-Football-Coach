@@ -2623,7 +2623,7 @@ table {
 }
 
 
-#player-info-modal {
+#player-info-modal, #geography-modal {
   display: none;
   position: fixed;
   z-index: 2000;
@@ -2636,7 +2636,7 @@ table {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-#player-info-modal.shown {
+#player-info-modal.shown, #geography-modal.shown {
   display: block;
 }
 
@@ -2645,6 +2645,12 @@ table {
   background-color: #fefefe;
   margin: 15% auto;
   width: 50%;
+}
+
+#geography-modal .modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  width: 70%;
 }
 
 .close {

@@ -118,6 +118,7 @@
 
 
     const action = async (common) => {
+      await common.geo_marker_action(common);
 
     }
 

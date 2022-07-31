@@ -1,3 +1,4 @@
+
 <div class='TeamHeader' style='height: 150px;'>
   <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
   <img class='teamTeamLogo' src='{{team.team_logo}}' alt="My image">
@@ -15,7 +16,7 @@
       {{team.team_season.record_display}}
     </span>
     <div class='teamOverviewInfo'>
-      {{team.location.city}}, {{team.location.state}} | {{team.team_season.rankings.division_rank[0]|ordinal}} <span class='font10'>in</span> <a href="{{team.team_season.conference_season.conference.conference_href}}">{{team.team_season.conference_season.conference.conference_name}}</a>
+      <i class="fa fa-map-marker-alt geo-marker" city='{{team.location.city}}' state='{{team.location.state}}'></i> {{team.location.city}}, {{team.location.state}} | {{team.team_season.rankings.division_rank[0]|ordinal}} <span class='font10'>in</span> <a href="{{team.team_season.conference_season.conference.conference_href}}">{{team.team_season.conference_season.conference.conference_name}}</a>
     </div>
     <div class='teamOverviewInfo'>
       {% for Link in page.TeamHeaderLinks.link_paths%}

@@ -247,6 +247,8 @@ const GetPlayerStats = async (common) => {
 
 const action = async (common) => {
   await GetPlayerStats(common);
+  await common.geo_marker_action(common);
+
 };
 
 $(async function () {

@@ -430,7 +430,7 @@
             {% if column_controls.Personal.personal.shown %}
               <!-- PERSONAL -->
               <td style='width:  120px;' class="col-group">
-                <i class="fa fa-map-marker" style='padding-right: 8px;'></i>
+                <i class="fa fa-map-marker-alt geo-marker" style='padding-right: 8px;' city='{{player.hometown.city}}' state='{{player.hometown.state}}'></i>
                 <span>{{player.hometown_and_state}}</span>
               </td>
             {% endif %}
