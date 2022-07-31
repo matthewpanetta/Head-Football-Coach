@@ -135,7 +135,11 @@ const getHtml = async (common) => {
       game.summed_national_rank -= min_national_rank;
     }
   }
-  games = games.sort((g_a, g_b) => g_a.week_id - g_b.week_id || g_a.summed_national_rank - g_b.summed_national_rank)
+  games = games.sort(
+    (g_a, g_b) =>
+      g_a.week_id - g_b.week_id ||
+      g_a.summed_national_rank - g_b.summed_national_rank
+  );
   common.stopwatch(common, "getHtml 1.4");
 
   const games_by_week_id = index_group_sync(games, "group", "week_id");
@@ -153,7 +157,7 @@ const getHtml = async (common) => {
 
     if (week.games.length > 0 && week.is_current) {
       week.selected_week = true;
-      week.selected = 'selected';
+      week.selected = "selected";
       any_week_selected = true;
     }
   }
@@ -161,28 +165,45 @@ const getHtml = async (common) => {
   weeks = weeks.filter((w) => w.games.length > 0);
   if (!any_week_selected) {
     weeks[weeks.length - 1].selected_week = true;
-    weeks[weeks.length - 1].selected = 'selected';
+    weeks[weeks.length - 1].selected = "selected";
   }
 
   let priority_options = [
-    {priority_name: 'Top 25'},
-    {priority_name: 'National TV'},
-  ]
-  let scope_options = [
-    {scope_name: 'In Conference'},
-    {scope_name: 'Out of Conference'},
-  ]  
+    { priority_name: "Top 25" },
+    { priority_name: "National TV" },
+  ];
 
   let filter_options = {
-    'week_name': {all_default_option: false, count: 0, display: 'Week', raw_options: weeks, options: weeks},
-    'conference.conference_abbreviation': {all_default_option: true, count: 0, display: 'Conference', raw_options: conference_seasons, options: conference_seasons} ,
-    'priority_name': {all_default_option: true, count: 0, display: 'Game Priority', raw_options: priority_options, options: priority_options} ,
-    'scope_name': {all_default_option: true, count: 0, display: 'Conference Scope', raw_options: scope_options, options: scope_options} ,
+    week_name: {
+      all_default_option: false,
+      count: 0,
+      display: "Week",
+      raw_options: weeks,
+      options: weeks,
+    },
+    "conference.conference_abbreviation": {
+      all_default_option: true,
+      count: 0,
+      display: "Conference",
+      raw_options: conference_seasons,
+      options: conference_seasons,
+    },
+    priority_name: {
+      all_default_option: true,
+      count: 0,
+      display: "Game Priority",
+      raw_options: priority_options,
+      options: priority_options,
+    },
   };
 
-  for (let filter_group_name in filter_options){
-    for (let filter_option of filter_options[filter_group_name].options){
-      filter_option.display = get(filter_option, filter_group_name)
+  for (let filter_group_name in filter_options) {
+    for (let filter_option of filter_options[filter_group_name].options) {
+      filter_option.display = get(filter_option, filter_group_name);
+
+      if (filter_group_name == 'week_name' && filter_option.selected == 'selected'){
+        filter_option.display += ' (Current Week)'
+      }
     }
   }
 
@@ -269,13 +290,27 @@ const getHtml = async (common) => {
 
   $(".football-table-filter-option").on("click", async function () {
     var clicked_button = $(this);
-    $(clicked_button).closest('tr').find('.selected').removeClass('selected');
-    $(clicked_button).addClass('selected')
+    $(clicked_button).toggleClass("selected");
 
+    var option_group = $(clicked_button).closest('.football-table-filter-option-group');
+
+    if ($(option_group).find('.selected').toArray().length > 0){
+      $(option_group).find('.football-filter-clear-row').removeClass('disabled');
+    }
+    else {
+      $(option_group).find('.football-filter-clear-row').addClass('disabled');
+    }
     await draw_box_scores(common);
   });
-};
 
+  $('.football-filter-clear-row').on('click', async function(){
+    $(this).addClass('disabled')
+    var option_group = $(this).closest('.football-table-filter-option-group');
+    $(option_group).find('.selected').removeClass('selected');
+    await draw_box_scores(common);
+
+  })
+};
 
 const draw_box_scores = async (common) => {
   const db = common.db;
@@ -283,59 +318,59 @@ const draw_box_scores = async (common) => {
   let games = common.games;
 
   let filter_values = {};
-  $(".football-table-filter-row").each(function () {
-    let filter_category = $(this).find('.football-table-filter-display').text();
-    filter_values[filter_category] = $(this).find('.selected').toArray().map( function(elem){
-      return $(elem).text().trim()
-    });
+  $(".football-table-filter-option-group").each(function () {
+    let filter_category = $(this).attr('filter_option');
+    console.log({this:this, filter_category:filter_category})
+    filter_values[filter_category] = $(this)
+      .find(".selected")
+      .toArray()
+      .map(function (elem) {
+        return $(elem).attr('filter_value');
+      });
   });
   console.log({ filter_values: filter_values, games: games });
 
   //Filter by week id
   games = games.filter(function (g) {
-    if (filter_values["Week"].includes( "All")) {
-      return true;
-    } else {
-      return filter_values["Week"].includes( g.week.week_name);
+    if (filter_values["week_name"].length > 0) {
+      return filter_values["week_name"].includes(g.week.display);
     }
+    return true;
   });
+  console.log({ filter_values: filter_values, games: games });
+
   //Filter by conference ID (either team is in conference)
   games = games.filter(function (g) {
-    if (filter_values["Conference"] == "All") {
-      return true;
-    } else {
+    if (filter_values["conference.conference_abbreviation"].length > 0) {
       return (
-          filter_values["Conference"].includes(g.team_games[0].team_season.conference_season.conference.conference_abbreviation) ||
-          filter_values["Conference"].includes(g.team_games[1].team_season.conference_season.conference.conference_abbreviation)
+        filter_values["conference.conference_abbreviation"].includes(
+          g.team_games[0].team_season.conference_season.display
+        ) ||
+        filter_values["conference.conference_abbreviation"].includes(
+          g.team_games[1].team_season.conference_season.display
+        )
       );
     }
+    return true;
   });
+  console.log({ filter_values: filter_values, games: games });
+
 
   games = games.filter(function (g) {
-    if (filter_values["Conference Scope"] == "All") {
-      return true;
-    } else if (filter_values["Conference Scope"].includes("In Conference")) {
-      return (
-        g.team_games[0].team_season.conference_season_id ==
-        g.team_games[1].team_season.conference_season_id
-      );
-    } else {
-      return !(
-        g.team_games[0].team_season.conference_season_id ==
-        g.team_games[1].team_season.conference_season_id
-      );
+    if (filter_values["priority_name"].length > 0) {
+      if (filter_values["priority_name"].includes("Top 25")) {
+        return (
+          (g.team_games[0].national_rank ||
+            g.team_games[0].team_season.rankings.national_rank[0]) <= 25 ||
+          (g.team_games[1].national_rank ||
+            g.team_games[1].team_season.rankings.national_rank[0]) <= 25
+        );
+      }
     }
+    return true;
+
   });
-  games = games.filter(function (g) {
-    if (filter_values["Game Priority"] == "All") {
-      return true;
-    } else if (filter_values["Game Priority"].includes("Top 25")) {
-      return (
-        ((g.team_games[0].national_rank || g.team_games[0].team_season.rankings.national_rank[0]) <= 25) ||
-        ((g.team_games[1].national_rank || g.team_games[1].team_season.rankings.national_rank[0]) <= 25)
-      );
-    }
-  });
+
   console.log({
     filter_values: filter_values,
     games: games,
