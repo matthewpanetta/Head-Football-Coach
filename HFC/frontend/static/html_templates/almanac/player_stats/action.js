@@ -237,7 +237,7 @@ const GetPlayerStats = async (common) => {
     },
     dom: {
       filter_dom_selector: "#player-stats-table-filter",
-      column_control_dom_selector: "#player-stats-table-column-control",
+      column_control_dom_selector: "#football-table-column-control",
       table_dom_selector: "#player-stats-table-container",
     },
   };

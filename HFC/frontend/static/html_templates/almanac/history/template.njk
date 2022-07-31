@@ -16,12 +16,12 @@
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
-        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" id="nav-ncaa-history" style="background-color: #{{page.SecondaryColor}};">NCAA History</button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-ncaa-history" style="background-color: #{{page.SecondaryColor}};">NCAA History</button>
         {% for conference in conferences%}
-        <button class="w3-bar-item w3-button tab nav-tab-button" id="nav-game-records-tab">{{conference.conference_abbreviation}}</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-game-records-tab">{{conference.conference_abbreviation}}</button>
         {%endfor%}
       </div>
     </nav>
@@ -30,11 +30,11 @@
         <div class='w3-display-container' >
           <div class="w3-row-padding">
             <div class="w3-col s10">
-              <div class="w3-card">
+              <div class="card">
                 <div class="w3-bar team-primary-background-bar">
                 <span class='hide-small'>Yearly Results</span>
               </div>
-                <table class='w3-table-all'>
+                <table class='table table-striped table-hover'>
                   <thead>
                     <tr class='team-secondary-table-row'>
                       <th>Season</th>
@@ -50,7 +50,7 @@
                     <tr>
                       {% if season.national_champion%}
                       <td class='font16' style='color:white; background-color: #{{season.national_champion.team.team_color_primary_hex}}'>{{season.season}}</td>
-                      <td class='colgroup-border-right' style='background-color: #{{season.national_champion.team.team_color_primary_hex}}'>
+                      <td class='col-group' style='background-color: #{{season.national_champion.team.team_color_primary_hex}}'>
                         <a href="{{season.national_champion.team.team_href}}">
                           <img src="{{season.national_champion.team.team_logo}}" alt="" class='logo-50'>
                         </a>
@@ -73,7 +73,7 @@
                       <td></td>
                       {% endif %}
                       {% endfor %}
-                      <td class='center-text colgroup-border-right colgroup-border-left'  style='background-color: #{{season.preseason_number_1.team.team_color_primary_hex}}'>
+                      <td class='center-text col-group colgroup-border-left'  style='background-color: #{{season.preseason_number_1.team.team_color_primary_hex}}'>
                         <a href="{{season.preseason_number_1.team.team_href}}">
                           <img src="{{season.preseason_number_1.team.team_logo}}" alt="" class='logo-50'>
                         </a>
@@ -89,7 +89,7 @@
                         <div id='heisman-face-{{loop.index}}-{{season.heisman_winner.player_team_season.player.player_id}}' player_id='{{season.heisman_winner.player_team_season.player.player_id}}'  class='PlayerFace-60 PlayerFace-Headshot' style='background-color: white; border-color: #{{season.heisman_winner.player_team_season.team_season.team.team_color_secondary_hex}}'>
                         </div>
                       </td>
-                      <td class=' colgroup-border-right'>
+                      <td class=' col-group'>
                         <div class="font16 bold font-black">
                           <a href="{{season.heisman_winner.player_team_season.player.player_href}}">
                             {{season.heisman_winner.player_team_season.player.full_name}}

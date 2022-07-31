@@ -2,8 +2,8 @@
 
 <div class="w3-row-padding ">
   <div class=" w3-col s10 w3-padding">
-    <div class="w3-card">
-      <table class='w3-table-all width100'>
+    <div class="card">
+      <table class='table table-striped table-hover width100'>
         <thead>
           <tr>
             <th>Dynasty Name</th>
@@ -56,12 +56,12 @@
               </div>
             </td>
             <td>
-              <div class="w3-button w3-blue" style='border-radius: 5px;'>
+              <div class="btn w3-blue" style='border-radius: 5px;'>
                 <a class='no-link-link' href="/World/{{World.world_id}}">Continue</a>
               </div>
             </td>
             <td>
-              <div id='headfootballcoach{{World.world_id}}' class="w3-button w3-blue width100 idb-export" style='border-radius: 5px;'>
+              <div id='headfootballcoach{{World.world_id}}' class="btn w3-blue width100 idb-export" style='border-radius: 5px;'>
                 Export
               </div>
             </td>
@@ -72,7 +72,7 @@
           <tr>
             <td colspan='6'>Create new game!</td>
             <td colspan='2'>
-              <div id='create-world-row' class="w3-button w3-blue width100" style='border-radius: 5px;'>
+              <div id='create-world-row' class="btn w3-blue width100" style='border-radius: 5px;'>
                 New Game
               </div>
             </td>
@@ -80,7 +80,7 @@
           <tr>
             <td colspan='6'>Delete existing leagues</td>
             <td colspan='2'>
-              <div id='truncate-world-row' class="w3-button w3-red width100" style='border-radius: 5px;'>
+              <div id='truncate-world-row' class="btn w3-red width100" style='border-radius: 5px;'>
                 DELETE ALL
               </div>
             </td>
@@ -98,12 +98,12 @@
   <div class="w3-modal-content w3-animate-zoom">
     <header class="w3-container w3-blue-grey">
       <span onclick="document.getElementById('id01').style.display='none'"
-      class="w3-button w3-display-topright">&times;</span>
+      class="btn w3-display-topright">&times;</span>
       <h2>Brand New College Football World</h2>
     </header>
     <div class="w3-container">
       <span id='indexCreateWorldModalCloseButton'
-      class="w3-button w3-display-topright">&times;</span>
+      class="btn w3-display-topright">&times;</span>
       <div class="">
         Conferences to include
         {% for Conference in PossibleConferences %}
@@ -112,7 +112,7 @@
         </label>
         {% endfor %}
       </div>
-      <button type="button" name="button" class='w3-button' id='indexCreateWorldModalContinueButton' >
+      <button type="button" name="button" class='btn' id='indexCreateWorldModalContinueButton' >
           Continue
       </button>
     </div>
@@ -131,16 +131,16 @@
   <div class="w3-modal-content">
     <header class="w3-container w3-blue-grey">
       <span onclick="document.getElementById('id01').style.display='none'"
-      class="w3-button w3-display-topright">&times;</span>
+      class="btn w3-display-topright">&times;</span>
       <h2>New Head Coaching Dynasty - Choose your team!</h2>
     </header>
     <div class="w3-container">
       <span id='indexChooseTeamModalCloseButton'
-      class="w3-button w3-display-topright">&times;</span>
+      class="btn w3-display-topright">&times;</span>
       <div class="" id='indexChooseTeamModalTeamList'>
         Team List
       </div>
-      <button type="button" name="button" class='w3-button'  id='indexChooseTeamModalContinueButton' >
+      <button type="button" name="button" class='btn'  id='indexChooseTeamModalContinueButton' >
           Continue
       </button>
     </div>

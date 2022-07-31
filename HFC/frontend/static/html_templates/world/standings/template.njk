@@ -12,14 +12,14 @@
     <div class='TeamHeader'></div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
-        <button class='w3-bar-item w3-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
           <i class="fas fa-bars"></i>
         </button>
         {% for conference_season in conference_seasons%}
           {% if loop.index == 1%}
-            <button class="w3-bar-item w3-button tab nav-tab-button selected-tab" conference_id='{{conference_season.conference.conference_id}}' id="nav-{{conference_season.conference.conference_id}}-tab" style="background-color: #{{page.SecondaryColor}};">{{conference_season.conference.conference_abbreviation}}</button>
+            <button class="w3-bar-item btn tab nav-tab-button selected-tab" conference_id='{{conference_season.conference.conference_id}}' id="nav-{{conference_season.conference.conference_id}}-tab" style="background-color: #{{page.SecondaryColor}};">{{conference_season.conference.conference_abbreviation}}</button>
           {% else %}
-            <button class="w3-bar-item w3-button tab nav-tab-button" conference_id='{{conference_season.conference.conference_id}}' id="nav-{{conference_season.conference.conference_id}}-tab">{{conference_season.conference.conference_abbreviation}}</button>
+            <button class="w3-bar-item btn tab nav-tab-button" conference_id='{{conference_season.conference.conference_id}}' id="nav-{{conference_season.conference.conference_id}}-tab">{{conference_season.conference.conference_abbreviation}}</button>
           {% endif %}
         {% endfor %}
       </div>
@@ -34,8 +34,8 @@
             <div class="w3-display-container">
               <div class="w3-row-padding">
                 <div class='mw1200 width100'>
-                  <div class="w3-card w3-margin-bottom ">
-                    <table class='w3-table-all width100 no-border conference-standings-table' id='teamOverviewConferenceStandings-{{conference_season.conference.conference_id}}'>
+                  <div class="card w3-margin-bottom ">
+                    <table class='table table-striped width100 conference-standings-table' id='teamOverviewConferenceStandings-{{conference_season.conference.conference_id}}'>
                       <thead>
                         <tr class='center-text-row' style='background-color: #{{page.PrimaryColor}};border-top: 3px solid black; color: white;'>
                           <th colspan="3" class='col-group left-text'>{{conference_season.conference.conference_name}}</th>

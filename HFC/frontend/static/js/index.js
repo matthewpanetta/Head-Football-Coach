@@ -1799,6 +1799,10 @@ class player {
     return `${feet}'${inches}"`;
   }
 
+  get bmi() {
+    return 703.0 * this.weight / (this.height ** 2);
+  }
+
   get passer_rating() {
     if (this.career_stats.passing.attempts == 0) {
       return 0;
@@ -2666,6 +2670,12 @@ const nav_bar_links = async (params) => {
           LinkDisplay: "Hall of Fame",
           id: "",
           Href: `/World/${world_id}/HallOfFame`,
+          ClassName: "",
+        },
+        {
+          LinkDisplay: "Amazing Stats",
+          id: "",
+          Href: `/World/${world_id}/AmazingStats`,
           ClassName: "",
         },
         {
@@ -6688,11 +6698,11 @@ const sim_game = (game_dict, common) => {
         yards_this_play =
           Math.floor(
             Math.random() *
-              (5.2 *
+              (9.2 *
                 (offensive_player_average_overall /
                   defensive_player_average_overall) **
                   1.75)
-          ) + 2;
+          ) - 2;
 
         if (Math.random() < 0.92) {
           chosen_players = {
