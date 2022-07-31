@@ -212,6 +212,7 @@ const getHtml = async (common) => {
 
   const headline_ids = team.team_season.headlines;
   var headlines = await db.headline.bulkGet(headline_ids);
+  let headlines_by_game_id = index_group_sync(headlines, 'group', 'game_id')
 
   headlines = headlines.sort((h_a, h_b) => h_b.week_id - h_a.week_id);
 
@@ -320,9 +321,9 @@ const getHtml = async (common) => {
 
     game.week = weeks_by_week_id[game.week_id];
 
-    game.game_headline = game.week.week_name;
-    if (game.week.week_name == "Conference Championships") {
-      game.game_headline =
+    game.week_name = game.week.week_name;
+    if (game.week_name == "Conference Championships") {
+      game.week_name =
         team.team_season.conference_season.conference.conference_abbreviation +
         " Champ";
     }
@@ -330,6 +331,8 @@ const getHtml = async (common) => {
     game.opponent_team_game = opponent_team_games[counter_games];
     game.opponent_team = opponent_teams[counter_games];
     game.opponent_team_season = opponent_team_seasons[counter_games];
+
+    game.headlines = headlines_by_game_id[game.game_id]
 
     for (var stat_detail of game.opponent_team_game.top_stats.concat(
       game.team_game.top_stats
@@ -366,8 +369,10 @@ const getHtml = async (common) => {
       game.game_location_char = "vs.";
       game.home_team = team;
       game.home_team_season = team_season;
+      game.home_team_game = game.team_game;
       game.away_team = game.opponent_team;
       game.away_team_season = game.opponent_team_season;
+      game.away_team_game = game.opponent_team_game;
 
       if (game.game_result_letter == "W") {
         game.home_team_winning_game_bold = "bold";
@@ -377,8 +382,10 @@ const getHtml = async (common) => {
       game.game_location_char = "@";
       game.away_team = team;
       game.away_team_season = team_season;
+      game.away_team_game = game.team_game;
       game.home_team = game.opponent_team;
       game.home_team_season = game.opponent_team_season;
+      game.home_team_game = game.opponent_team_game;
 
       if (game.game_result_letter == "W") {
         game.away_team_winning_game_bold = "bold";

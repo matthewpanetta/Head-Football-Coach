@@ -5190,8 +5190,6 @@ const populate_names = async (ddb) => {
     }
   });
 
-  console.log({ddb:ddb, first_names_to_add:first_names_to_add, last_names_to_add:last_names_to_add})
-
   await ddb.first_names.bulkAdd(first_names_to_add);
   await ddb.last_names.bulkAdd(last_names_to_add);
 };

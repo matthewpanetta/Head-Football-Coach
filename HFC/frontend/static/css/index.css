@@ -427,7 +427,7 @@ body {
 }
 
 .w3-dropdown-content {
-  z-world: 100;
+  z-index: 100;
 }
 
 .SideNavItem {
@@ -2276,22 +2276,6 @@ img.teamTeamLogo {
   max-width: 1200px;
 }
 
-.details-control {
-  cursor: pointer;
-  opacity: 80%;
-}
-
-.details-control:hover {
-  -webkit-filter: brightness(90%) !important;
-  background-color: inherit !important;
-}
-
-.shown.details-control {
-  background: url('../img/Icons/dropdown-up.png') no-repeat center center;
-  background-size: 30%;
-  opacity: 50%;
-}
-
 .column-flex {
   display: flex;
   flex-direction: column;
@@ -2392,11 +2376,6 @@ select {
 thead tr {
   background-color: white;
 }
-
-. {
-  border: none !important;
-}
-
 
 .align-top {
   vertical-align: top;
@@ -2514,16 +2493,19 @@ table tr td.padding-left-8 {
   -webkit-box-shadow: inset 0 -3px 0px -1px #ccc;
   box-shadow: inset 0 -3px 0px -1px #ccc;
   -webkit-filter: brightness(90%);
+  filter: brightness(90%);
 }
 
 .football-table-column-headers th.sort-asc {
   -webkit-box-shadow: inset 0 2px 0px 0px white;
   box-shadow: inset 0 2px 0px 0px white;
   -webkit-filter: brightness(90%);
+  filter: brightness(90%);
 }
 
 .football-table-column-headers>th:not(.no-sort):hover {
   -webkit-filter: brightness(80%);
+  filter: brightness(80%);
   -webkit-transition: all .5s ease;
   -moz-transition: all .5s ease;
   -o-transition: all .5s ease;
@@ -2547,6 +2529,7 @@ button.football-table-column-control-option:hover,
 button.football-table-pagination-button:hover {
 
   -webkit-filter: brightness(80%);
+  filter: brightness(80%);
   -webkit-transition: all .5s ease;
   -moz-transition: all .5s ease;
   -o-transition: all .5s ease;
@@ -2703,6 +2686,16 @@ table {
   max-height: 85%;
 }
 
+
+@keyframes moving-gradient {
+  0% {
+    background-position: -250px 0;
+  }
+
+  100% {
+    background-position: 250px 0;
+  }
+}
 
 @-webkit-keyframes moving-gradient {
   0% {

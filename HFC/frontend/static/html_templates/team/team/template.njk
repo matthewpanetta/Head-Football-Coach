@@ -44,7 +44,7 @@
                     {% for game in games %}
                     <div BoxScoreGameID="{{game.game_id}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.selected_game_box}}" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>
                       <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>
-                        <span class='ellipsis'>{{game.game_headline}}</span>
+                        <span class='ellipsis'>{{game.week_name}}</span>
 
                       </div>
                       <div class="equal-sized-item-container" >
@@ -70,8 +70,8 @@
                   </div>
                   <div class="w3-row teamScheduleGameDashboard w3-display-container w3-light-grey">
                     {% for game in games%}
-                    <div BoxScoreGameID="{{game.game_id}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col l12 mw600 w3-display-container w3-white w3-border w3-border-grey w3-hide">
-                      <div class="w3-col l7 m12 s12 height100 w3-display-container">
+                    <div BoxScoreGameID="{{game.game_id}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col l12 mw400 w3-display-container w3-white w3-border w3-border-grey w3-hide">
+                      <div class="w3-col l12 height100 w3-display-container">
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.away_team.team_color_primary_hex}}'></div>
                           <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
@@ -82,30 +82,22 @@
                           <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
                           <img class='teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo_50}}' />
                         </div>
-                        <div class="teamScheduleGameDashboardGameDisplayTeams w3-col w3-hide s12 w3-display-container w3-display-topmiddle">
-                          <div class=" w3-display-container">
-                            <span class='w3-display-right font10 padBottom20'>{{game.week_id}}</span>
-                          </div>
-                          <div class=" w3-display-container">
-                            <span class='font10'>{{game.away_team_season.national_rank_display}}</span>
-                            <span class='font17 {{game.away_team_winning_game_bold}}'><a href="{{game.away_team.team_href}}">{{game.away_team.team_name}}</a></span>
-                            <span class='font10'>{{game.away_team_season.record_display}}</span>
-                            <span class='w3-display-right {{game.away_team_winning_game_bold}}'>{{game.scoring.final[0]}}</span>
-                          </div>
-                          <div class=" w3-display-container">
-                            <span class='font10'>{{game.home_team_season.national_rank_display}}</span>
-                            <span class='font17 {{game.home_team_winning_game_bold}}'><a href="{{game.home_team.team_href}}">{{game.home_team.team_name}}</a></span>
-                            <span class='font10'>{{game.HomeTeamRecord}}</span>
-                            <span class='w3-display-right {{game.home_team_winning_game_bold}}'>{{game.scoring.final[1]}}</span>
-
-                          </div>
-                        </div>
                         <div class="teamScheduleGameDashboardGameDisplayTeams w3-col s12 w3-display-container w3-display-topmiddle">
                           <table class='width100 left-text'>
                             <tbody>
                               <tr>
                                 <td colspan="1" ></td>
-                                <td colspan="3" class='font10'>{{game.game_headline}}</td>
+                                <td colspan="3" class='font10'>
+                                  {{game.week_name}}
+                                  &#183;
+                                  <a href="{{game.game_href}}">
+                                    {% if game.was_played%}
+                                    Box Score
+                                    {%else%}
+                                    Preview
+                                    {%endif%}
+                                  </a>
+                                </td>
                               </tr>
                               <tr>
                                 <td class='font10 no-width align-bottom'><span>{{game.away_team_season.national_rank_display}}</span></td>
@@ -113,7 +105,13 @@
                                   <a href="{{game.away_team.team_href}}">
                                     {{game.away_team.school_name}}
                                   </a>
-                                  <span class='font10'>{{game.away_team_season.record_display}}</span>
+                                  <span class='font10'>
+                                    {% if game.was_played%}
+                                    {{game.away_team_game.record_display}}
+                                    {%else%}
+                                    {{game.away_team_season.record_display}}
+                                    {%endif%}
+                                  </span>
                                 </td>
                                 <td class='{{game.away_team_winning_game_bold}} font16'>{{game.scoring.final[0]}}</td>
                               </tr>
@@ -123,100 +121,29 @@
                                   <a href="{{game.home_team.team_href}}" class='font17 {{game.HomeTeamWinningGameBold}}'>
                                     {{game.home_team.school_name}}
                                   </a>
-                                  <span class='font10'>{{game.home_team_season.record_display}}</span>
+                                  <span class='font10'>
+                                    {% if game.was_played%}
+                                    {{game.home_team_game.record_display}}
+                                    {%else%}
+                                    {{game.home_team_season.record_display}}
+                                    {%endif%}
+                                  </span>
                                 </td>
+                                {% for period in game.periods%}
+                                {{period.score}}
+                                {%endfor%}
                                 <td class='{{game.home_team_winning_game_bold}} font16'>{{game.scoring.final[1]}}</td>
                               </tr>
                             </tbody>
                           </table>
 
                         </div>
-
-                        <div class="w3-display-bottomleft teamScheduleGameDashboardGameDisplayBoxScoreText">
-                          <a href="{{game.game_href}}">
-                            Box Score
-                          </a>
-                        </div>
-                      </div>
-                      <div class="w3-col w3-display-container l5 m12 height100">
-                        
-                        <div class="w3-bar boxscore-bar" id="nav-tab-{{game.game_id}}">
-                          <div class='w3-bar-item' style='max-width: 50%;'>
-                            {% if game.was_played%}
-                            <div class=''>Game stats</div>
-                            {% else %}
-                            <div class=''>Season stats</div>
-                            {% endif %}                        
-                          </div>
-                          <button style='max-width: 25%;' TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab btn tab selected-boxscore-tab" id="boxscore-hometeam-tab">
-                            <img class='small-logo unselectable' src='{{game.team.team_logo_100}}'  />
-                            {# {{game.team.team_abbreviation}} #}
-                          </button>
-                          <button style='max-width: 25%;' TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-bar-item boxscore-tab btn tab" id="boxscore-awayteam-tab">
-                            <img class='small-logo unselectable' src='{{game.opponent_team.team_logo_100}}'  />
-                            {# {{game.opponent_team.team_abbreviation}} #}
-                          </button>
-                        </div>
-                        <div class="w3-display-container">
-                          {% if game.was_played%}
-                          <div TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
-                            {% for player_stat in game.team_game.top_stats.slice(0,3) %}
-                            <div class="">
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_game.player_team_season.player.player_href}}">{{player_stat.player_team_game.player_team_season.player.full_name}}</a></span>
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_game.player_team_season.position}}</span>
-                              </div>
-                              <div class="padding-left-16 font-black" style='font-size: 10px;'>
-                                <span class=''>{{player_stat.top_stats[0].display}}</span>
-                                {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
-                              </div>
+                        <div class="teamScheduleGameDashboardGameDisplayTeams w3-col s12 w3-display-container font12">
+                            {%for headline in game.headlines%}
+                            <div>
+                              {{headline.headline_text}}
                             </div>
-                            {% endfor %}
-                          </div>
-                          <div TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
-                            {% for player_stat in game.opponent_team_game.top_stats.slice(0,3) %}
-                            <div class="">
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_game.player_team_season.player.player_href}}">{{player_stat.player_team_game.player_team_season.player.full_name}}</a></span>
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_game.player_team_season.position}}</span>
-                              </div>
-                              <div class="padding-left-16 font-black" style='font-size: 10px;'>
-                                <span class=''>{{player_stat.top_stats[0].display}}</span>
-                                {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
-                              </div>
-                            </div>
-                            {% endfor %}
-                          </div>
-                          {% else %}
-                          <div TeamID="{{game.team.team_id}}" GameID="{{game.game_id}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
-                            {% for player_stat in game.team_season.top_stats.slice(0,3) %}
-                            <div class="">
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_season.player.player_href}}">{{player_stat.player_team_season.player.full_name}}</a></span>
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_season.position}}</span>
-                              </div>
-                              <div class="padding-left-16 font-black" style='font-size: 10px;'>
-                                <span class=''>{{player_stat.top_stats[0].display}}</span>
-                                {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
-                              </div>
-                            </div>
-                            {% endfor %}
-                          </div>
-                          <div TeamID="{{game.opponent_team.team_id}}" GameID="{{game.game_id}}" class="w3-display-container team-highlights w3-light-grey height100 selected-boxscore">
-                            {% for player_stat in game.opponent_team_season.top_stats.slice(0,3) %}
-                            <div class="">
-                              <div class="">
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerName'><a href="{{player_stat.player_team_season.player.player_href}}">{{player_stat.player_team_season.player.full_name}}</a></span>
-                                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{player_stat.player_team_season.position}}</span>
-                              </div>
-                              <div class="padding-left-16 font-black" style='font-size: 10px;'>
-                                <span class=''>{{player_stat.top_stats[0].display}}</span>
-                                {%if player_stat.top_stats[1] %}and <span class=''>{{player_stat.top_stats[1].display}}</span>{% endif %}
-                              </div>
-                            </div>
-                            {% endfor %}
-                          </div>
-                          {% endif %}
+                            {%endfor%}
                         </div>
                       </div>
                     </div>
