@@ -1,4 +1,4 @@
-{% include "../../static/html_templates/ext_nav_bar.njk" %}
+{% include "../../static/html_templates/common_templates/ext_nav_bar.njk" %}
 
 <div WorldID="{{page.WorldID}}" TeamJerseyInvert="{{page.TeamJerseyInvert}}" TeamJerseyStyle="{{page.TeamJerseyStyle}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}"  SecondaryJerseyColor="{{page.SecondaryJerseyColor}}" TeamID="{{ThisTeamSeason.TeamID.TeamID}}" style='display:none;'
   id='PageDataPassthru'></div>
@@ -13,12 +13,12 @@
   </style>
 </head>
 
-{% include "../../static/html_templates/ext_team_coloring.njk" %}
+{% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
 
 
 <body>
   <div class="PageContent">
-    {% include "../../static/html_templates/ext_team_header.njk" %}
+    {% include "../../static/html_templates/common_templates/ext_team_header.njk" %}
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
         <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
@@ -27,7 +27,7 @@
         <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
         <button class="w3-bar-item btn tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
         <button class="w3-bar-item btn tab nav-tab-button" id="nav-info-tab">Team Info</button>
-        {% include "../../static/html_templates/ext_team_list.njk" %}
+        {% include "../../static/html_templates/common_templates/ext_team_list.njk" %}
       </div>
     </nav>
     <div id="nav-tabContent">

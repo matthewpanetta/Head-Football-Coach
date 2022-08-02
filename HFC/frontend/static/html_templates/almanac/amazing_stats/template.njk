@@ -1,15 +1,15 @@
 <div class='ext_nav_bar'>
-  {% include "../../static/html_templates/ext_nav_bar.njk" %}
+  {% include "../../static/html_templates/common_templates/ext_nav_bar.njk" %}
 </div>
 <style></style>
 
 <div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" TeamID="{{team.TeamID}}" style='display:none;' id='PageDataPassthru'></div>
-{% include "../../static/html_templates/ext_team_coloring.njk" %}
+{% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
 
 <body>
   <div class="PageContent">
     <div class='worldHeader w3-row background-eee'>
-      {% include "../../static/html_templates/scoreboard.njk" %}
+      {% include "../../static/html_templates/common_templates/scoreboard.njk" %}
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
@@ -39,9 +39,11 @@
                         <th class='' >Season</th>
                         <th class='col-group'>Week</th>
                         <th class='col-group'>{{stat_category.th}}</th>
-                        <th class='col-group left-text' colspan="2">Winning Team</th>
-                        <th class='col-group'>Score</th>
-                        <th class='col-group left-text' colspan="2">Losing Team</th>
+                        <th class='left-text' style="width: 50px;"></th>
+                        <th class='col-group left-text' style="width: calc(30% - 50px);">Winning Team</th>
+                        <th class='col-group' style="width: 10%;">Score</th>
+                        <th class='left-text' style="width: 50px;"></th>
+                        <th class='col-group left-text' style="width: calc(30% - 50px);">Losing Team</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -50,13 +52,13 @@
                         <tr class='center-text-row'>
                           <td class='' >{{game.week.season.season}}</td>
                           <td>{{game.week.week_name}}</td>
-                          <td class='' >{{game|get(stat_category.key)}}</td>
-                          <td class='' style='background-color: #{{game.winning_team_game.team_season.team.team_color_primary_hex}};'>
+                          <td class='' >{{game|get(stat_category.key)|toLocaleString}}</td>
+                          <td class='' style='width: 50px; background-color: #{{game.winning_team_game.team_season.team.team_color_primary_hex}};'>
                             <a href='{{game.winning_team_game.team_season.team.team_href}}'>
                               <img class='logo-30' src='{{game.winning_team_game.team_season.team.team_logo}}'/>
                             </a>
                           </td>
-                          <td class='left-text' style='color: white; background-color: #{{game.winning_team_game.team_season.team.team_color_primary_hex}};'>
+                          <td class='left-text' style='width: calc(30% - 50px); color: white; background-color: #{{game.winning_team_game.team_season.team.team_color_primary_hex}};'>
                             <a href='{{game.winning_team_game.team_season.team.team_href}}'>
                               <span class='font10'>
                                 {{game.winning_team_game.national_rank}}
@@ -66,17 +68,17 @@
                               </span>
                             </a>
                           </td>
-                          <td class='' >
+                          <td class='' style='width: 10%;' >
                             <a href='{{game.game_href}}'>
                               <span class='bold'>{{game.winning_team_game.points}}</span> - {{game.losing_team_game.points}}
                             </a>
                           </td>
-                          <td class='' style='background-color: #{{game.losing_team_game.team_season.team.team_color_primary_hex}};'>
+                          <td class='' style='width: 50px; background-color: #{{game.losing_team_game.team_season.team.team_color_primary_hex}};'>
                             <a href='{{game.losing_team_game.team_season.team.team_href}}'>
                               <img class='logo-30' src='{{game.losing_team_game.team_season.team.team_logo}}'/>
                             </a>
                           </td>
-                          <td class='left-text' style='color: white; background-color: #{{game.losing_team_game.team_season.team.team_color_primary_hex}};'>
+                          <td class='left-text' style='width: calc(30% - 50px);color: white; background-color: #{{game.losing_team_game.team_season.team.team_color_primary_hex}};'>
                             <a href='{{game.losing_team_game.team_season.team.team_href}}'>
                               <span class='font10'>
                                 {{game.losing_team_game.national_rank}}

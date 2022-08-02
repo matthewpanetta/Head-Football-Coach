@@ -159,6 +159,8 @@ const getHtml = async (common) => {
       game.outcome_left_arrow = '<i class="fas fa-angle-left"></i>';
     }
 
+    let overtime_periods = game.scoring.periods.filter(p => p.period_number > 4);
+
     for (const period of game.scoring.periods) {
       for (const drive of period.drives) {
         drive.drive_end.display_team =

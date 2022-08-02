@@ -38,10 +38,18 @@
                         <img class='worldTeamLogo' src='{{game.opponent_team_game.team_season.team.team_logo}}'/>
                       </a>
                     </td>
-                    <td value='{{game.opponent_team_game.team_season.team.school_name}}' class='column-med'>
+                    <td value='{{game.opponent_team_game.team_season.team.school_name}}' class='column-med left-text'>
                       <span class='font10'>{{game.opponent_team_game.team_season.national_rank_display}}</span>
-                      <a href='{{game.opponent_team_game.team_season.team.team_href}}'>{{game.opponent_team_game.team_season.team.school_name}}</a>
-                      <span class="font10">{{game.opponent_team_game.team_season.record_display}}</span>
+                      <a href='{{game.opponent_team_game.team_season.team.team_href}}'>
+                        {{game.opponent_team_game.team_season.team.school_name}}
+                      </a>
+                      <span class="font10">
+                        {% if game.was_played%}
+                        {{game.opponent_team_game.record_display}}
+                        {%else%}
+                        {{game.opponent_team_game.team_season.record_display}}
+                        {%endif%}
+                      </span>
                     </td>
                     <td value='{{game.team_game.game_outcome_letter}},{{game.game_display}}' class='center-text' >
                       {% if game.was_played%}
@@ -63,9 +71,8 @@
                       <a href='{{game.team_game.top_stats[0].player_team_game.player_team_season.player.player_href}}'>
                        {{game.team_game.top_stats[0].player_team_game.player_team_season.player.full_name}}
                       </a>
-                      <span> - {{game.team_game.team_season.team.team_abbreviation}}</span>
-                      <ul class='no-list-style'>
-
+                      {# <span> - {{game.team_game.team_season.team.team_abbreviation}}</span> #}
+                      <ul class='no-list-style font12'>
                        <li>{{game.team_game.top_stats[0].top_stats[0].display}}</li>
                        <li>{{game.team_game.top_stats[0].top_stats[1].display}}</li>
                      </ul>
@@ -77,7 +84,7 @@
                       <a href='{{game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.player_href}}'>
                        {{game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.full_name}}
                       </a>
-                      <span> - {{game.opponent_team_game.team_season.team.team_abbreviation}}</span>
+                      {# <span> - {{game.opponent_team_game.team_season.team.team_abbreviation}}</span> #}
                       <ul class='no-list-style'>
 
                        <li>{{game.opponent_team_game.top_stats[0].top_stats[0].display}}</li>

@@ -6676,10 +6676,10 @@ const sim_game = (game_dict, common) => {
           ].game_stats.team.turnovers += 1;
 
           play_details.yards = 0;
-          play_details.description = `${chosen_players.QB.player.full_name} intercepted by ${chosen_players.Interceptor.player.full_name}`;
+          play_details.description = `<a href="${chosen_players.QB.player.player_href}">${chosen_players.QB.player.full_name}</a> intercepted by <a href="${chosen_players.Interceptor.player.player_href}">${chosen_players.Interceptor.player.full_name}</a>`;
 
           drive_summary.drive_end.play_type = "INT";
-          drive_summary.drive_end.play_description = `${chosen_players.QB.player.full_name} intercepted by ${chosen_players.Interceptor.player.full_name}`;
+          drive_summary.drive_end.play_description = `<a href="${chosen_players.QB.player.player_href}">${chosen_players.QB.player.full_name}</a> intercepted by <a href="${chosen_players.Interceptor.player.player_href}">${chosen_players.Interceptor.player.full_name}</a>`;
 
           drive_end = true;
           yards_this_play = 0;
@@ -6693,7 +6693,7 @@ const sim_game = (game_dict, common) => {
         }
 
         play_details.yards = yards_this_play;
-        play_details.description = `${chosen_players.QB.player.full_name} ${yards_this_play} yard pass to ${chosen_players.Pass_Catcher.player.full_name}`;
+        play_details.description = `<a href="${chosen_players.QB.player.player_href}">${chosen_players.QB.player.full_name}</a> ${yards_this_play} yard pass to <a href="${chosen_players.Pass_Catcher.player.player_href}">${chosen_players.Pass_Catcher.player.full_name}</a>`;
       } else if (play_choice == "run") {
         yards_this_play =
           Math.floor(
@@ -6722,7 +6722,7 @@ const sim_game = (game_dict, common) => {
         }
 
         play_details.yards = yards_this_play;
-        play_details.description = `${chosen_players.Runner.player.full_name} ${yards_this_play} yard run`;
+        play_details.description = `<a href="${chosen_players.Runner.player.player_href}">${chosen_players.Runner.player.full_name}</a> ${yards_this_play} yard run`;
 
         chosen_players.Runner.player_team_game.game_stats.rushing.carries += 1;
         chosen_players.Runner.player_team_game.game_stats.rushing.yards +=
@@ -6776,7 +6776,7 @@ const sim_game = (game_dict, common) => {
         play_details.description = `${kick_distance} yard field goal MISSED`;
 
         drive_summary.drive_end.play_type = "FG MISS";
-        drive_summary.drive_end.play_description = `Hernandez MISSED ${kick_distance} yard field goal`;
+        drive_summary.drive_end.play_description = `<a href="${chosen_players.K.player.player_href}">${chosen_players.K.player.full_name}</a> MISSED ${kick_distance} yard field goal`;
 
         kick_made = false;
         if (Math.random() < kick_odds) {
@@ -6786,7 +6786,7 @@ const sim_game = (game_dict, common) => {
           play_details.description = `${kick_distance} yard field goal MADE`;
 
           drive_summary.drive_end.play_type = "FG MADE";
-          drive_summary.drive_end.play_description = `Hernandez MADE ${kick_distance} yard field goal`;
+          drive_summary.drive_end.play_description = `<a href="${chosen_players.K.player.player_href}">${chosen_players.K.player.full_name}</a> MADE ${kick_distance} yard field goal`;
 
           chosen_players.K.player_team_game.game_stats.kicking.fgm += 1;
           chosen_players.K.player_team_game.game_stats.kicking[
@@ -6821,7 +6821,7 @@ const sim_game = (game_dict, common) => {
         play_details.description = `${punt_distance} yard punt`;
 
         drive_summary.drive_end.play_type = "PUNT";
-        drive_summary.drive_end.play_description = `Hernandez ${punt_distance} yard punt`;
+        drive_summary.drive_end.play_description = `<a href="${chosen_players.P.player.player_href}">${chosen_players.P.player.full_name}</a> ${punt_distance} yard punt`;
       }
 
       if (down <= 3) {
@@ -6996,7 +6996,7 @@ const sim_game = (game_dict, common) => {
 
           if (points_this_drive == 3) {
             drive_summary.drive_end.play_type = "FG";
-            drive_summary.drive_end.play_description = `Feeler makes ${kick_distance} yard field goal`;
+            drive_summary.drive_end.play_description = `<a href="${chosen_players.K.player.player_href}">${chosen_players.K.player.full_name}</a> makes ${kick_distance} yard field goal`;
           } else {
             drive_summary.drive_end.play_type = "TD";
             drive_summary.drive_end.drive_description += " - Extra point good";
@@ -10041,7 +10041,7 @@ const populate_player_modal = async (common, target) => {
   };
   console.log({ player: player, target: target, player_id: player_id });
 
-  var modal_url = "/static/html_templates/player_info_modal_template.njk";
+  var modal_url = "/static/html_templates/common_templates/player_info_modal_template.njk";
   var html = await fetch(modal_url);
   html = await html.text();
   var renderedHtml = await common.nunjucks_env.renderString(html, {
@@ -12984,7 +12984,7 @@ const geo_marker_action = async(common) => {
       iconAnchor: [15, 40],
   });
 
-    var modal_url = "/static/html_templates/geography_modal_template.njk";
+    var modal_url = "/static/html_templates/common_templates/geography_modal_template.njk";
     var html = await fetch(modal_url);
     html = await html.text();
     let page = common.page;

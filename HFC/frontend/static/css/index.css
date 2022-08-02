@@ -711,8 +711,11 @@ article>header {
 }
 
 .teamScheduleGameBox {
-  border: 1px solid #dcdcdc;
   cursor: pointer;
+}
+
+.teamScheduleGameBox + .teamScheduleGameBox {
+  border-left: 1px solid #dcdcdc;
 }
 
 .weekScheduleBox {

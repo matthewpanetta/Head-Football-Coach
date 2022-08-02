@@ -1,5 +1,5 @@
-{% include "../../static/html_templates/ext_nav_bar.njk" %}
-{% include "../../static/html_templates/ext_team_coloring.njk" %}
+{% include "../../static/html_templates/common_templates/ext_nav_bar.njk" %}
+{% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
 
 <head>
 
@@ -458,7 +458,7 @@
                             </td>
                             <td class="ScoringSummaryDrive">
                               <div class="">
-                                {{drive.drive_end.play_description}}
+                                {{drive.drive_end.play_description|safe}}
                               </div>
                               <div class="ScoringSummaryDriveDescription">
                                 {{drive.drive_end.drive_description}}
