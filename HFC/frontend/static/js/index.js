@@ -5711,6 +5711,8 @@ const common_functions = async (route_pattern) => {
     deep_copy: deep_copy,
 
     choose_all_americans: choose_all_americans,
+    primary_color: '1763B2',
+    secondary_color: '333333'
   };
 };
 
@@ -6695,20 +6697,38 @@ const sim_game = (game_dict, common) => {
         play_details.yards = yards_this_play;
         play_details.description = `<a href="${chosen_players.QB.player.player_href}">${chosen_players.QB.player.full_name}</a> ${yards_this_play} yard pass to <a href="${chosen_players.Pass_Catcher.player.player_href}">${chosen_players.Pass_Catcher.player.full_name}</a>`;
       } else if (play_choice == "run") {
+
+        console.log({defensive_team_players:defensive_team_players, offensive_team_players:offensive_team_players})
+
+        offensive_front_7_average_overall = average(
+          offensive_team_players.by_position["OT"].concat(offensive_team_players.by_position["IOL"]).concat(offensive_team_players.by_position["RB"]).concat(offensive_team_players.by_position["TE"]).map(
+            (player_obj) =>
+              player_obj.player_team_season.ratings.overall.overall
+          )
+        );
+        defensive_front_7_average_overall = average(
+          defensive_team_players.by_position["DL"].concat(defensive_team_players.by_position["EDGE"]).concat(defensive_team_players.by_position["LB"]).map(
+            (player_obj) =>
+              player_obj.player_team_season.ratings.overall.overall
+          )
+        );
+
         yards_this_play =
           Math.floor(
             Math.random() *
-              (9.2 *
-                (offensive_player_average_overall /
-                  defensive_player_average_overall) **
+              (12.5 *
+                (offensive_front_7_average_overall /
+                defensive_front_7_average_overall) **
                   1.75)
           ) - 2;
 
-        if (Math.random() < 0.92) {
+        let runner_random = Math.random();
+
+        if (runner_random < 0.92) {
           chosen_players = {
             Runner: offensive_team_players.by_position["RB"][0],
           };
-        } else if (Math.random() < 0.5) {
+        } else if (runner_random < 0.97) {
           chosen_players = {
             Runner: offensive_team_players.by_position["QB"][0],
           };
@@ -8050,7 +8070,7 @@ const calculate_primetime_games = async (this_week, all_weeks, common) => {
 
   console.log({this_week:this_week, next_week:next_week, games:games, team_seasons_by_team_season_id:team_seasons_by_team_season_id})
 
-  games.forEach(function(g){
+  games.filter(g => g.home_team_season_id > 0).forEach(function(g){
     g.home_team_season = team_seasons_by_team_season_id[g.home_team_season_id]
     g.away_team_season = team_seasons_by_team_season_id[g.away_team_season_id]
 

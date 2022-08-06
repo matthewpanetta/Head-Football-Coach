@@ -714,6 +714,10 @@ article>header {
   cursor: pointer;
 }
 
+.geo-marker{
+  cursor: pointer;
+}
+
 .teamScheduleGameBox + .teamScheduleGameBox {
   border-left: 1px solid #dcdcdc;
 }

@@ -265,7 +265,7 @@
 
       const recent_games = await common.recent_games(common);
 
-      var page = {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks}
+      var page = {PrimaryColor: common.primary_color, SecondaryColor: common.secondary_color, NavBarLinks: NavBarLinks}
 
       var display_options = {
         preseason: {display: 'none'},

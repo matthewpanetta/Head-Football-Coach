@@ -632,8 +632,8 @@ const getHtml = async (common) => {
   ];
 
   common.page = {
-    PrimaryColor: "1763B2",
-    SecondaryColor: "000000",
+    PrimaryColor: common.primary_color,
+    SecondaryColor: common.secondary_color,
     NavBarLinks: NavBarLinks,
     page_title: `${game.away_team_game.team_season.team.team_abbreviation} @ ${game.home_team_game.team_season.team.team_abbreviation}`,
   };

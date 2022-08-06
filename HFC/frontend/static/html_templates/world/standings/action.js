@@ -200,8 +200,8 @@ const getHtml = async (common) => {
 
   var render_content = {
     page: {
-      PrimaryColor: "1763B2",
-      SecondaryColor: "000000",
+      PrimaryColor: common.primary_color,
+      SecondaryColor: common.secondary_color,
       NavBarLinks: NavBarLinks,
     },
     world_id: common.params["world_id"],

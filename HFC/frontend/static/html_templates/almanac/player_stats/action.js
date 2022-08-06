@@ -188,8 +188,8 @@ const getHtml = async (common) => {
   }
 
   common.page = {
-    PrimaryColor: "1763B2",
-    SecondaryColor: "333",
+    PrimaryColor: common.primary_color,
+    SecondaryColor: common.secondary_color,
     NavBarLinks: NavBarLinks,
     page_title: 'Player Stats'
   };

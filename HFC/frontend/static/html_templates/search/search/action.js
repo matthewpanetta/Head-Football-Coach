@@ -52,7 +52,7 @@ const getHtml = async (common) => {
     Teams: team_results
   }
 
-  common.page = {PrimaryColor: '1763B2', SecondaryColor: '000000', NavBarLinks: NavBarLinks};
+  common.page = {PrimaryColor: common.primary_color, SecondaryColor: common.secondary_color, NavBarLinks: NavBarLinks};
   var render_content = {
                         page:     common.page,
                         world_id: common.params.world_id,

@@ -290,8 +290,8 @@ const getHtml = async (common) => {
   });
   common.stopwatch(common, "Time after this_week_games");
   const page = {
-    PrimaryColor: "1763B2",
-    SecondaryColor: "000000",
+    PrimaryColor: common.primary_color,
+    SecondaryColor: common.secondary_color,
     NavBarLinks: NavBarLinks,
   };
   var render_content = {
