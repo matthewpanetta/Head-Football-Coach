@@ -97,6 +97,19 @@ const getHtml = async (common) => {
       th: "Punts",
       games: [],
     },
+    // {
+    //   display: "Furthest Distance",
+    //   key: "school_distance",
+    //   th: "Miles",
+    //   games: [],
+    // },
+    // {
+    //   display: "Closest Distance",
+    //   key: "school_distance",
+    //   sort: "asc",
+    //   th: "Miles",
+    //   games: [],
+    // },
   ];
 
   //TODO allow for season filtering
@@ -179,6 +192,9 @@ const getHtml = async (common) => {
       g.winning_team_game.game_stats.punting.punts +
       g.losing_team_game.game_stats.punting.punts;
 
+    // g.school_distance = common.distance_between_cities(g.winning_team_game.team_season.team.location, g.losing_team_game.team_season.team.location );
+
+    console.log({g:g})
     return g;
   });
 

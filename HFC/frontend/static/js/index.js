@@ -5695,6 +5695,7 @@ const common_functions = async (route_pattern) => {
     all_seasons: all_seasons,
     initialize_scoreboard: initialize_scoreboard,
     round_decimal: round_decimal,
+    distance_between_cities:distance_between_cities,
     calculate_national_rankings: calculate_national_rankings,
     calculate_conference_rankings: calculate_conference_rankings,
     schedule_bowl_season: schedule_bowl_season,
@@ -5930,10 +5931,44 @@ const pick_players_on_field = (
   player_team_seasons,
   players,
   player_team_games,
-  side_of_ball
+  side_of_ball,
+  period,
+  seconds_left_in_period,
+  point_differential
 ) => {
-  var player_list = { all_players: [], by_position: {} };
+  var player_list = { all_players: [], by_position: {}, bench_players: [] };
   var p = null;
+  let players_on_field_set = new Set()
+
+  let abs_point_differential = Math.abs(point_differential);
+  if (point_differential < -8){
+    abs_point_differential = Math.abs(point_differential + 7);
+  }
+
+  let depth_chart_skip = 0;
+  if (abs_point_differential >= 48){
+    depth_chart_skip = 3;
+  }
+  else if (abs_point_differential >= 40){
+    depth_chart_skip = 2;
+  }
+  else if (abs_point_differential >= 35){
+    depth_chart_skip = 1;
+    if (period == 4){
+      depth_chart_skip = 2;
+    }
+  }
+  else if(abs_point_differential >= 29){
+    if(period == 4){
+      depth_chart_skip = 2;
+    }
+    if (period == 3){
+      depth_chart_skip = 1;
+    }
+  }
+  else if((period == 4) && (abs_point_differential >= 24) && (seconds_left_in_period < (10 * 60))){
+    depth_chart_skip = 1;
+  }
 
   if (side_of_ball == "offense") {
     var position_list = {
@@ -5975,22 +6010,66 @@ const pick_players_on_field = (
   }
 
   var player_obj = {};
-  $.each(position_list, function (pos, count) {
+  for (let pos in position_list){
+    let count = position_list[pos];
     player_list.by_position[pos] = [];
-    for (var ind = 0; ind < count; ind++) {
+    let ind = 0;
+    if (depth_chart[pos].length > depth_chart_skip){
+      ind = depth_chart_skip;
+    }
+    
+    let energy_threshold = .7;
+    while (player_list.by_position[pos].length < count){
       player_obj = {};
 
       player_obj.player_team_season_id = depth_chart[pos][ind];
+      // console.log({'player_obj.player_team_season_id':player_obj.player_team_season_id, player_obj:player_obj, ind:ind, depth_chart:depth_chart, pos:pos})
       player_obj.player_team_season =
         player_team_seasons[player_obj.player_team_season_id];
       player_obj.player_team_game =
         player_team_games[player_obj.player_team_season_id];
       player_obj.player = players[player_obj.player_team_season.player_id];
 
-      player_list.all_players.push(player_obj);
-      player_list.by_position[pos].push(player_obj);
+      ind += 1;
+
+      if (!(players_on_field_set.has(player_obj.player_team_season.player_id))){
+        if (player_obj.player_team_game.game_attrs.energy >= energy_threshold){
+          player_list.all_players.push(player_obj);
+          player_list.by_position[pos].push(player_obj);    
+  
+          players_on_field_set.add(player_obj.player_team_season.player_id)
+        }
+        else {
+          energy_threshold -= .075
+        }
+      }
+
+      if (ind >= depth_chart[pos].length && player_list.by_position[pos].length < count){
+        energy_threshold -= .1;
+        depth_chart_skip -= 1;
+        depth_chart_skip = Math.max(0, depth_chart_skip)
+        ind = depth_chart_skip;
+      }
     }
-  });
+  }
+
+  for (let pos in depth_chart){
+    for (var i = 0; i < depth_chart[pos].length; i++){
+      player_obj = {};
+
+      player_obj.player_team_season_id = depth_chart[pos][i];
+      player_obj.player_team_season =
+        player_team_seasons[player_obj.player_team_season_id];
+      player_obj.player_team_game =
+        player_team_games[player_obj.player_team_season_id];
+      player_obj.player = players[player_obj.player_team_season.player_id];
+
+      if (!(players_on_field_set.has(player_obj.player_team_season.player_id))){
+        player_list.bench_players.push(player_obj)
+      }
+    }
+  }
+  
 
   return player_list;
 };
@@ -6364,6 +6443,159 @@ const seconds_to_time = (seconds) => {
   return `${Math.floor(seconds / 60)}:${seconds_left}`;
 };
 
+const game_sim_determine_go_for_two = (offensive_point_differential, period, seconds_left_in_period, coach) => {
+  let aggression = coach.fourth_down_aggressiveness
+  if (period <= 2){
+    return Math.random() < (0 + aggression)
+  }
+  else if (offensive_point_differential > 20){
+    return false;
+  }
+  else {
+    if ([-18, -13, -10, -5, -2, 1, 4, 5, 12, 15, 19].includes(offensive_point_differential)){
+      return true;
+    }
+    else if ([-22, -17, -15, -12, -9, -8, -7, -4, -1, 0, 2, 3, 6, 8, 9, 16].includes(offensive_point_differential)){
+      return false;
+    }
+    else {
+      return Math.random() < (0.1 + aggression);
+    }
+  }
+}
+
+const game_sim_play_call_options = (down, yards_to_go, ball_spot, period, offensive_point_differential, seconds_left_in_period, is_close_game, is_late_game, half_end_period, final_period) => {
+    let playclock_urgency = 4
+    let play_choice_options = {'run': 45,'pass': 55,'punt': 0,'field goal': 0}
+
+    if (period == 4){
+      if (offensive_point_differential > 0){
+        playclock_urgency = 1;
+      }
+      else {
+        playclock_urgency = 7;
+      }
+    }
+
+
+    if (down == 4){
+      if (period <= 3) {
+        //inside own 40
+        if (ball_spot < 40){
+          play_choice_options = {'punt': 100};
+        }
+        //outside opp. 40
+        else if (ball_spot < 60){
+          if (yards_to_go >= 3){
+            play_choice_options = {'punt': 100};
+          }
+          else {
+            play_choice_options = {'punt': 60, 'pass': 20, 'run': 20};
+          }
+        }
+        // inside 30
+        else if (ball_spot > 70){
+          if (yards_to_go >= 8){
+            play_choice_options = {'field goal': 100};
+          }
+          else if (yards_to_go >= 4){
+            play_choice_options = {'field goal': 92, 'pass': 8};
+          }
+          else if (yards_to_go == 1){
+            play_choice_options = {'field goal': 45, 'pass': 10, 'run': 45};
+          }
+          // 2 or 3 yards to go
+          else {
+            play_choice_options = {'field goal': 70, 'pass': 20, 'run': 10};
+          }
+        }
+        //between 30 and 40
+        else {
+          if (yards_to_go >= 4){
+            play_choice_options = {'field goal': 100};
+          }
+          else {
+            play_choice_options = {'field goal': 60, 'pass': 20, 'run': 20};
+          }
+        }
+      }
+      else if (period == 4){
+        //FG makes a difference
+        if (ball_spot >= 70){
+          if ([-19, -18, -17, -11, -10, -9].includes(offensive_point_differential) || offensive_point_differential >= -3){
+            play_choice_options = {'field goal': 100};
+          }
+          else if ([-16, -15, -14, -13, -12, -8, -7, -6, -5, -4].includes(offensive_point_differential)){
+            if (yards_to_go <= 3){
+              play_choice_options = {'run': 70, 'pass': 30, };
+            }
+            else {
+              play_choice_options = {'pass': 30, };
+            }
+          }
+          else {
+            if (yards_to_go <= 4) {
+              play_choice_options = {'field goal': 50, 'pass': 50, 'run': 50};
+            }
+            else {
+              play_choice_options = {'field goal': 50};
+            }
+          }
+        }
+        else if (ball_spot >= 40){
+          play_choice_options = {'pass': 55, 'run': 45,};
+        }
+        else {
+          play_choice_options = {'pass': 55, 'run': 45,};
+        }
+      }
+      else {
+        play_choice_options = {'pass': 55, 'run': 45,};
+      }
+    }
+    else {
+      play_choice_options = {'pass': 55, 'run': 45,};
+    }
+
+    return {'playclock_urgency': playclock_urgency, 'play_choice_options': play_choice_options}
+}
+
+const update_player_energy = (game_dict, players_on_field, bench_players, plays_since_last_sub) => {
+
+  let position_fatigue_rate_map = {
+    QB: .005,
+    RB: .02,
+    FB: .025,
+    WR: .015,
+    TE: .015,
+    OT: .005,
+    IOL: .005,
+    DL: .015,
+    EDGE: .02,
+    LB: .015,
+    CB: .01,
+    S: .01,
+    K: .001,
+    P: .001
+  }
+
+
+  for (let player_obj of players_on_field){
+    player_obj.player_team_game.game_attrs.energy -= (position_fatigue_rate_map[player_obj.player.position] * plays_since_last_sub);
+    player_obj.player_team_game.game_attrs.energy = Math.max(player_obj.player_team_game.game_attrs.energy, 0.0)
+
+  }
+  for (let player_obj of bench_players){
+    player_obj.player_team_game.game_attrs.energy += (.01 * plays_since_last_sub);
+    player_obj.player_team_game.game_attrs.energy = Math.min(player_obj.player_team_game.game_attrs.energy , 1.0)
+  }
+
+  players_on_field.forEach(player_obj => player_obj.player_team_game.game_attrs.adjusted_overall = ((player_obj.player_team_game.game_attrs.energy ** .25) * player_obj.player_team_season.ratings.overall.overall))
+  bench_players.forEach(player_obj => player_obj.player_team_game.game_attrs.adjusted_overall = ((player_obj.player_team_game.game_attrs.energy ** .25) * player_obj.player_team_season.ratings.overall.overall))
+
+  console.log({bench_players:bench_players, players_on_field:players_on_field})
+}
+
 const sim_game = (game_dict, common) => {
   common.stopwatch(common, `Stopwatch game ${game_dict.game.game_id}`);
   //   console.log('Simming game', game_dict)
@@ -6415,6 +6647,7 @@ const sim_game = (game_dict, common) => {
   var periods = [1, 2, 3, 4];
   var seconds_this_play = 60 * 3;
   var offense_point_differential = 0;
+  var plays_since_last_sub = 0;
   var field_position = 20,
     first_down = true,
     drive_end = false,
@@ -6432,19 +6665,23 @@ const sim_game = (game_dict, common) => {
     plays: [],
   };
 
+  Object.entries(game_dict.player_team_games).forEach(([player_team_season_id, ptg]) => ptg.game_attrs = {energy: 1.0});
+
   home_team_players = pick_players_on_field(
     game_info[offensive_team_index].depth_chart,
     game_dict.player_team_seasons,
     game_dict.players,
     game_dict.player_team_games,
-    "all"
+    "all",
+    1,(60*15),0
   );
   away_team_players = pick_players_on_field(
     game_info[defensive_team_index].depth_chart,
     game_dict.player_team_seasons,
     game_dict.players,
     game_dict.player_team_games,
-    "all"
+    "all",
+    1,(60*15),0
   );
 
   var all_players_both_teams = home_team_players.all_players.concat(
@@ -6453,6 +6690,8 @@ const sim_game = (game_dict, common) => {
   for (var player_obj of all_players_both_teams) {
     player_obj.player_team_game.game_stats.games.games_started = 1;
   }
+
+  
 
   for (const period of periods) {
     scoring_period = { period_number: period, points: [0, 0], drives: [] };
@@ -6480,19 +6719,23 @@ const sim_game = (game_dict, common) => {
         yards_to_go = 10;
         down = 1;
 
+        offense_point_differential =
+        scoring.final[offensive_team_index] -
+        scoring.final[defensive_team_index];
+
         offensive_team_players = pick_players_on_field(
           game_info[offensive_team_index].depth_chart,
           game_dict.player_team_seasons,
           game_dict.players,
           game_dict.player_team_games,
-          "offense"
+          "offense", period, seconds_left_in_period, offense_point_differential
         );
         defensive_team_players = pick_players_on_field(
           game_info[defensive_team_index].depth_chart,
           game_dict.player_team_seasons,
           game_dict.players,
           game_dict.player_team_games,
-          "defense"
+          "defense", period, seconds_left_in_period, -1 * offense_point_differential
         );
 
         all_players_both_teams = offensive_team_players.all_players.concat(
@@ -6502,16 +6745,19 @@ const sim_game = (game_dict, common) => {
           player_obj.player_team_game.game_stats.games.games_played = 1;
         }
 
+        update_player_energy(game_dict, offensive_team_players.all_players, offensive_team_players.bench_players, plays_since_last_sub);
+        update_player_energy(game_dict, defensive_team_players.all_players, defensive_team_players.bench_players, plays_since_last_sub);
+
         offensive_player_average_overall = average(
           offensive_team_players.all_players.map(
             (player_obj) =>
-              player_obj.player_team_season.ratings.overall.overall
+              player_obj.player_team_game.game_attrs.adjusted_overall
           )
         );
         defensive_player_average_overall = average(
           defensive_team_players.all_players.map(
             (player_obj) =>
-              player_obj.player_team_season.ratings.overall.overall
+              player_obj.player_team_game.game_attrs.adjusted_overall
           )
         );
 
@@ -6519,65 +6765,24 @@ const sim_game = (game_dict, common) => {
           offensive_player_average_overall - defensive_player_average_overall
         );
 
-        offense_point_differential =
-          scoring.final[offensive_team_index] -
-          scoring.final[defensive_team_index];
+        plays_since_last_sub = 0;
       }
+
 
       first_down = false;
       clock_running = true;
       yards_this_play = 0;
       points_this_drive = 0;
+      plays_since_last_sub += 1;
       play_details = { yards: null, description: null };
+      playcall_obj = game_sim_play_call_options(down, yards_to_go, field_position, period, offense_point_differential, seconds_left_in_period, false, false, false, false)
 
-      if (down <= 3) {
-        play_choice_options = { pass: 60, run: 40 };
-
-        if (offense_point_differential < 0 && period > 3) {
-          if (seconds_left_in_period < 300) {
-            play_choice_options = { pass: 95, run: 5 };
-          } else {
-            play_choice_options = { pass: 80, run: 20 };
-          }
-        } else if (
-          offense_point_differential > 0 &&
-          period > 3 &&
-          seconds_left_in_period < 300
-        ) {
-          play_choice_options = { pass: 20, run: 80 };
-        }
-      } else {
-        if (
-          period == 4 &&
-          seconds_left_in_period < 300 &&
-          offense_point_differential < 0
-        ) {
-          play_choice_options = { pass: 70, run: 30 };
-        } else if (yards_to_go <= 1) {
-          if (field_position > 80) {
-            play_choice_options = { run: 20, "field goal": 80 };
-          } else if (field_position > 60) {
-            play_choice_options = { run: 70, "field goal": 30 };
-          } else if (field_position > 40) {
-            play_choice_options = { run: 50, "field goal": 50 };
-          } else {
-            play_choice_options = { punt: 999 };
-          }
-        } else {
-          if (field_position > 75) {
-            play_choice_options = { "field goal": 95, punt: 5 };
-          } else if (field_position > 66) {
-            play_choice_options = { "field goal": 60, punt: 40 };
-          } else if (field_position > 60) {
-            play_choice_options = { "field goal": 5, punt: 95 };
-          } else {
-            play_choice_options = { "field goal": 1, punt: 999 };
-          }
-        }
-      }
+      play_choice_options = playcall_obj.play_choice_options;
+      playclock_urgency = playcall_obj.playclock_urgency;
       play_choice = weighted_random_choice(play_choice_options);
 
       play_details.play_choice = play_choice;
+
 
       if (play_choice == "pass") {
         chosen_qb_index = 0;
@@ -6595,7 +6800,7 @@ const sim_game = (game_dict, common) => {
         var valid_pass_catchers_weights = valid_pass_catchers.map(function (
           player_obj
         ) {
-          var odds = player_obj.player_team_season.ratings.overall.overall ** 3;
+          var odds = player_obj.player_team_game.game_attrs.adjusted_overall ** 3;
           if (player_obj.player_team_season.position == "TE") {
             odds *= 0.9;
           } else if (player_obj.player_team_season.position != "WR") {
@@ -6613,9 +6818,9 @@ const sim_game = (game_dict, common) => {
 
         var r =
           Math.random() /
-          (offensive_player_average_overall /
+          ((offensive_player_average_overall /
             defensive_player_average_overall) **
-            1.25;
+            1.25);
 
         if (r < 0.65) {
           //completion
@@ -6659,7 +6864,7 @@ const sim_game = (game_dict, common) => {
             player_obj
           ) {
             var odds =
-              player_obj.player_team_season.ratings.overall.overall ** 3;
+              player_obj.player_team_game.game_attrs.adjusted_overall ** 3;
             if (player_obj.player_team_season.position == "S") {
               odds *= 0.8;
             } else if (player_obj.player_team_season.position != "CB") {
@@ -6703,13 +6908,13 @@ const sim_game = (game_dict, common) => {
         offensive_front_7_average_overall = average(
           offensive_team_players.by_position["OT"].concat(offensive_team_players.by_position["IOL"]).concat(offensive_team_players.by_position["RB"]).concat(offensive_team_players.by_position["TE"]).map(
             (player_obj) =>
-              player_obj.player_team_season.ratings.overall.overall
+              player_obj.player_team_game.game_attrs.adjusted_overall
           )
         );
         defensive_front_7_average_overall = average(
           defensive_team_players.by_position["DL"].concat(defensive_team_players.by_position["EDGE"]).concat(defensive_team_players.by_position["LB"]).map(
             (player_obj) =>
-              player_obj.player_team_season.ratings.overall.overall
+              player_obj.player_team_game.game_attrs.adjusted_overall
           )
         );
 
@@ -6977,7 +7182,7 @@ const sim_game = (game_dict, common) => {
       }
 
       if (clock_running) {
-        seconds_this_play = Math.floor(Math.random() * 30) + 12;
+        seconds_this_play = Math.floor(Math.random() * 10) + (33 - (playclock_urgency * 4));
       } else {
         seconds_this_play = Math.floor(Math.random() * 4) + 1;
       }
@@ -7604,6 +7809,7 @@ const sim_week_games = async (this_week, common) => {
     completed_game = undefined;
 
   for (const game_dict of game_dicts_this_week) {
+    console.log({game_dict:game_dict})
     completed_game = sim_game(game_dict, common);
     completed_games.push(completed_game);
   }
@@ -10262,11 +10468,16 @@ const schedule_conference_championships = async (
   console.log({ team_game: team_game });
   const db = await common.db;
 
+  let conferences = await db.conference.toArray();
+  let conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
+
   var conference_seasons = await db.conference_season
     .where({ season: this_week.phase.season })
     .toArray();
-  //conference_seasons = conference_seasons.filter(cs => cs.hold_conference_championship);
-  conference_seasons = conference_seasons.filter((cs) => true);
+  
+  conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference')
+  
+  conference_seasons = conference_seasons.filter(cs => cs.conference.hold_conference_championship_game == 1);
 
   var team_seasons = await db.team_season
     .where({ season: this_week.phase.season })
@@ -10306,6 +10517,14 @@ const schedule_conference_championships = async (
       team_seasons_by_conference_season_id[
         conference_season.conference_season_id
       ];
+
+    if (conference_season.conference.schedule_format.conference_championship_selection_method == 'top 2'){
+      championship_teams = championship_teams.sort((ts_a, ts_b) => ts_a.rankings.division_rank[0] - ts_b.rankings.division_rank[0])
+      championship_teams = championship_teams.slice(0,2)
+    }
+    else if (conference_season.conference.schedule_format.conference_championship_selection_method == 'division winners'){
+      championship_teams = championship_teams.filter(ts => ts.rankings.division_rank[0] == 1);
+    }
 
     championship_teams = championship_teams.map((ts) => ts.team_season_id);
     [team_a, team_b] = championship_teams;
