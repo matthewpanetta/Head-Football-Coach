@@ -1134,7 +1134,7 @@ div button.w3-bar-item.btn.selected-bar-button {
   margin-left: 4px;
 }
 
-.PlayerFace {
+.PlayerFace, .CoachFace {
   width: 100px;
   height: 150px;
   display: inline-block;
@@ -1143,69 +1143,69 @@ div button.w3-bar-item.btn.selected-bar-button {
   z-index: 3;
 }
 
-.PlayerFace-90 {
+.PlayerFace-90, .CoachFace-90 {
   width: 60px;
   height: 90px;
 }
 
-.PlayerFace-120 {
+.PlayerFace-120, .CoachFace-120 {
   width: 80px;
   height: 120px;
   margin-left: -60px;
 }
 
-.PlayerFace-60 {
+.PlayerFace-60, .CoachFace-60 {
   height: 60px;
   width: 40px;
 }
 
-.PlayerFace-45 {
+.PlayerFace-45, .CoachFace-45 {
   height: 45px;
   width: 30px;
 }
 
-.PlayerFace-Headshot {
+.PlayerFace-Headshot, .CoachFace-Headshot {
   border-radius: 100px;
 
   overflow: hidden;
 }
 
-.PlayerFace-200 {
+.PlayerFace-200, .CoachFace-200 {
   width: 240px;
   height: 240px;
   border-radius: 250px;
 }
 
-.PlayerFace-150 {
+.PlayerFace-150, .CoachFace-150 {
   width: 150px;
   height: 150px;
   border-radius: 250px;
 }
 
-.PlayerFace-Headshot.PlayerFace-200 {
+.PlayerFace-Headshot.PlayerFace-200, .CoachFace-Headshot.CoachFace-200 {
   border: 6px solid;
 }
 
-.PlayerFace-Headshot.PlayerFace-150 {
+.PlayerFace-Headshot.PlayerFace-150, .CoachFace-Headshot.CoachFace-150 {
   border: 5px solid;
 }
 
-.PlayerFace-Headshot.PlayerFace-90 {
+.PlayerFace-Headshot.PlayerFace-90, .CoachFace-Headshot.CoachFace-90 {
   border: 3px solid;
   width: 90px;
 }
 
-.PlayerFace-Headshot.PlayerFace-60 {
+.PlayerFace-Headshot.PlayerFace-60, .CoachFace-Headshot.CoachFace-60 {
   border: 2.5px solid;
   width: 60px;
 }
 
-.PlayerFace-Headshot.PlayerFace-45 {
+.PlayerFace-Headshot.PlayerFace-45, .CoachFace-Headshot.CoachFace-45 {
   border: 2px solid;
   width: 45px;
 }
 
-.PlayerFace-Headshot svg {
+.PlayerFace-Headshot svg, .CoachFace-Headshot svg {
   margin-left: 17.5%;
 }
 

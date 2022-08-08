@@ -1,0 +1,288 @@
+<style>
+    .football-table-column-headers th {
+        background-color: #{{page.SecondaryColor}};
+    }
+
+    .football-table-column-headers.primary-color-row th {
+        background-color: #{{page.PrimaryColor}};
+    }
+</style>
+
+<div  style='max-width: 100%; width:100%; overflow-x: scroll;'>
+  <table class='football-table-content font14' id='player-stats-recent-games-table' style='table-layout: fixed; max-width: 100%; width:100%; '>
+
+    <col style='width: 120px;'>
+    <col>
+    <col style='width: 100px;'>
+
+    {% if player_stats_show.games %}
+      <!-- GAMES STATS -->
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+    {% endif %}
+
+    {% if player_stats_show.Passing %}
+      <!-- PASSING STATS -->
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+    {% endif %}
+
+    {% if player_stats_show.Rushing %}
+      <!-- RUSHING STATS -->
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+    {% endif %}
+
+    {% if player_stats_show.Receiving %}
+      <!-- RECEIVING STATS -->
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+    {% endif %}
+
+    {% if player_stats_show.Blocking %}
+      <!-- BLOCKING STATS -->
+      <col>
+      <col>
+    {% endif %}
+
+    {% if player_stats_show.Defense %}
+      <!-- DEFENSE STATS -->
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+    {% endif %}
+
+    {% if player_stats_show.Kicking %}
+      <!-- KICKING STATS -->
+      <col>
+      <col>
+      <col>
+      <col>
+    {% endif %}
+
+    <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
+      <tr class='football-table-column-groups team-secondary-table-row' style=' height: 30px;'>
+
+        <th colspan='3' style='width: 260px;' class=' col-group'>Game</th>
+
+        {% if player_stats_show.Games %}
+          <!-- GAMES STATS -->
+          <th colspan='6' style='width: 360px;' class=' col-group'>Game Stats</th>
+        {% endif %}
+
+        {% if player_stats_show.Passing %}
+          <!-- PASSING -->
+          <th colspan='6' style='width: 360px;' class=' col-group'>Passing Stats</th>
+        {% endif %}
+
+        {% if player_stats_show.Rushing %}
+          <!-- RUSHING -->
+          <th colspan='5' style='width: 300px;' class=' col-group'>Rushing Stats</th>
+        {% endif %}
+
+        {% if player_stats_show.Receiving %}
+          <!-- RECEIVING -->
+          <th colspan='5'  style='width: 300px;' class=' col-group'>Receiving Stats</th>
+        {% endif %}
+
+        {% if player_stats_show.Blocking %}
+          <!-- BLOCKING STATS -->
+          <th colspan='2'  style='width: 120px;' class=' col-group'>Blocking Stats</th>
+        {% endif %}
+
+        {% if player_stats_show.Defense %}
+          <!-- DEFENSE STATS -->
+          <th colspan='7'  style='width: 420px;' class='col-group '>Defensive Stats</th>
+        {% endif %}
+
+        {% if player_stats_show.Kicking %}
+          <!-- KICKING STATS -->
+          <th colspan='4'  style='width: 240px;' class='col-group '>Kicking Stats</th>
+        {% endif %}
+
+      </tr>
+      <tr class='football-table-column-headers unselectable primary-color-row' style=' height: 30px; '>
+        <th style='width: 120px;' sort-order='sort-asc'>Week</th>
+        <th>Opp</th>
+        <th style='width: 100px;' class='col-group'>
+            Result
+          </th>
+
+        {% if player_stats_show.Games %}
+          <!-- GAMES STATS -->
+          <th>Played</th>
+          <th>Started</th>
+          <th>Snaps</th>
+          <th>Points</th>
+          <th>WGS</th>
+          <th class='col-group'>GS</th>
+        {% endif %}
+
+        {% if player_stats_show.Passing %}
+          <!-- PASSING -->
+          <th>Yards</th>
+          <th>Att</th>
+          <th>Cmp</th>
+          <th>Cmp%</th>
+          <th>TDs</th>
+          <th class='col-group'>Ints</th>
+        {% endif %}
+
+        {% if player_stats_show.Rushing %}
+          <!-- RUSHING -->
+          <th>Yards</th>
+          <th>Car</th>
+          <th>YPC</th>
+          <th>Brk</th>
+          <th class='col-group'>TDs</th>
+        {% endif %}
+
+        {% if player_stats_show.Receiving %}
+          <!-- RECEIVING -->
+          <th>Yards</th>
+          <th>Rec</th>
+          <th>YPC</th>
+          <th>Tgt</th>
+          <th  class='col-group'>TDs</th>
+        {% endif %}
+
+        {% if player_stats_show.Blocking %}
+          <!-- BLOCKING STATS -->
+          <th>PAN</th>
+          <th  class='col-group'>Sacks</th>
+        {% endif %}
+
+        {% if player_stats_show.Defense %}
+          <!-- DEFENSE STATS -->
+          <th>Tackles</th>
+          <th>TFL</th>
+          <th>Sacks</th>
+          <th>Ints</th>
+          <th>Defl</th>
+          <th>FF</th>
+          <th class='col-group'>FR</th>
+        {% endif %}
+
+        {% if player_stats_show.Kicking %}
+          <!-- KICKING STATS -->
+          <th>FGM</th>
+          <th>FGA</th>
+          <th>Punts</th>
+          <th class='col-group'> W20 </th>
+        {% endif %}
+
+      </tr>
+    </thead>
+    <tbody class='football-table-body center-text vertical-align-middle' style=' min-height: 100%; width: 100%; max-width: 100%;'>
+      {% if recent_game_stats_data|length == 0%}
+        <tr class='football-table-row left-text vertical-align-middle' style='height: 50px;'>
+          <td colspan="2">No games to display</td>
+        </tr>
+      {% endif %}
+      {% for player_team_game in recent_game_stats_data%}
+        <tr class='football-table-row  ' style='height: 50px;' player_id='{{player.player_id}}'>
+
+          <td style='width: 120px; color: white; background-color: #{{player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}}' value='{{player_team_game.team_game.game.week.week_id}}'>
+            {{player_team_game.team_game.game.week.week_name}}
+          </td>
+          <td style='color: white; background-color: #{{player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}}' value='{{player_team_game.team_game.opponent_team_season.team.school_name}}'>
+            <a href='{{player_team_game.team_game.opponent_team_season.team.team_href}}'>
+              <img class='worldTeamStatLogo' src='{{player_team_game.team_game.opponent_team_season.team.team_logo}}'/>
+            </a>
+          </td>
+          <td style='width: 100px; ' class='col-group left-text' value='{{player_team_game.team_game.game_outcome_letter}},{{player_team_game.team_game.game.score_display}}'>
+            <span class='W-L-Badge {{player_team_game.team_game.game_outcome_letter}}'>{{player_team_game.team_game.game_outcome_letter}}</span>
+            <span>
+              <a href='{{player_team_game.team_game.game.game_href}}'>
+                {{player_team_game.team_game.game.score_display}}
+              </a>
+            </span>
+          </td>
+
+          {% if player_stats_show.Games %}
+            <!-- GAMES STATS -->
+            <td value='{{player_team_game.game_stats.games.games_played|toLocaleString|OrZero}}'>{{player_team_game.game_stats.games.games_played|toLocaleString|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.games.games_started|OrZero}}'>{{player_team_game.game_stats.games.games_started|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.games.plays_on_field|OrZero}}'>{{player_team_game.game_stats.games.plays_on_field|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.games.points|OrZero}}'>{{player_team_game.game_stats.games.points|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.games.weighted_game_score|RoundDown}}'>{{player_team_game.game_stats.games.weighted_game_score|RoundDown}}</td>
+            <td value='{{player_team_game.game_stats.games.game_score|RoundDown}}'  class='col-group'>{{player_team_game.game_stats.games.game_score|RoundDown}}</td>
+          {% endif %}
+
+          {% if player_stats_show.Passing %}
+            <!-- PASSING -->
+            <td value='{{player_team_game.game_stats.passing.yards|toLocaleString|OrZero}}'>{{player_team_game.game_stats.passing.yards|toLocaleString|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.passing.attempts|OrZero}}'>{{player_team_game.game_stats.passing.attempts|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.passing.completions|OrZero}}'>{{player_team_game.game_stats.passing.completions|OrZero}}</td>
+            <td value='{{player_team_game.passing_completion_percentage}}'>{{player_team_game.passing_completion_percentage}}</td>
+            <td value='{{player_team_game.game_stats.passing.tds|OrZero}}'>{{player_team_game.game_stats.passing.tds|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.passing.ints|OrZero}}'  class='col-group'>{{player_team_game.game_stats.passing.ints|OrZero}}</td>
+          {% endif %}
+
+          {% if player_stats_show.Rushing %}
+            <!-- RUSHING -->
+            <td value='{{player_team_game.game_stats.rushing.yards|toLocaleString|OrZero}}'>{{player_team_game.game_stats.rushing.yards|toLocaleString|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.rushing.carries|OrZero}}'>{{player_team_game.game_stats.rushing.carries|OrZero}}</td>
+            <td value='{{player_team_game.rushing_yards_per_carry}}'>{{player_team_game.rushing_yards_per_carry}}</td>
+            <td value='{{player_team_game.game_stats.rushing.broken_tackles|OrZero}}'>{{player_team_game.game_stats.rushing.broken_tackles|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.rushing.tds|OrZero}}' class='col-group'>{{player_team_game.game_stats.rushing.tds|OrZero}}</td>
+          {% endif %}
+
+          {% if player_stats_show.Receiving %}
+            <!-- RECEIVING -->
+            <td value='{{player_team_game.game_stats.receiving.yards|toLocaleString|OrZero}}'>{{player_team_game.game_stats.receiving.yards|toLocaleString|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.receiving.receptions|OrZero}}'>{{player_team_game.game_stats.receiving.receptions|OrZero}}</td>
+            <td value='{{player_team_game.receiving_yards_per_catch}}'>{{player_team_game.receiving_yards_per_catch}}</td>
+            <td value='{{player_team_game.game_stats.receiving.targets|OrZero}}'>{{player_team_game.game_stats.receiving.targets|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.receiving.tds|OrZero}}' class='col-group'>{{player_team_game.game_stats.receiving.tds|OrZero}}</td>
+          {% endif %}
+
+          {% if player_stats_show.Blocking %}
+            <!-- BLOCKING STATS -->
+            <td value='{{player_team_game.game_stats.blocking.pancakes|OrZero}}'>{{player_team_game.game_stats.blocking.pancakes|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.blocking.sacks_allowed|OrZero}}' class='col-group'>{{player_team_game.game_stats.blocking.sacks_allowed|OrZero}}</td>
+          {% endif %}
+
+          {% if player_stats_show.Defense %}
+            <!-- DEFENSE STATS -->
+            <td value='{{player_team_game.game_stats.defense.tackles|OrZero}}'>{{player_team_game.game_stats.defense.tackles|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.defense.tackles_for_loss|OrZero}}'>{{player_team_game.game_stats.defense.tackles_for_loss|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.defense.sacks|OrZero}}'>{{player_team_game.game_stats.defense.sacks|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.defense.ints|OrZero}}'>{{player_team_game.game_stats.defense.ints|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.defense.deflections|OrZero}}'>{{player_team_game.game_stats.defense.deflections|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.fumbles.forced|OrZero}}'>{{player_team_game.game_stats.fumbles.forced|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.fumbles.recovered|OrZero}}' class='col-group'>{{player_team_game.game_stats.fumbles.recovered|OrZero}}</td>
+          {% endif %}
+
+          {% if player_stats_show.Kicking %}
+            <!-- KICKING STATS -->
+            <td value='{{player_team_game.game_stats.kicking.fgm|OrZero}}'>{{player_team_game.game_stats.kicking.fgm|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.kicking.fga|OrZero}}'>{{player_team_game.game_stats.kicking.fga|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.punting.punts|OrZero}}'>{{player_team_game.game_stats.punting.punts|OrZero}}</td>
+            <td value='{{player_team_game.game_stats.punting.within_20|OrZero}}' class='col-group'>{{player_team_game.game_stats.punting.within_20|OrZero}}</td>
+          {% endif %}
+
+        </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

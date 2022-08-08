@@ -106,8 +106,14 @@
                       {% endif %}
                       <td>{{team_season.conference_record_display}}</td>
                       <td class=' col-group'>
-                        {%if team_season.league_season.is_season_complete and team_season.final_conference_rank == 1 %}
-                            <span style='color: darkgoldenrod;' class='bold opacity-1'>{{team_season.final_conference_rank|ordinal}}</span>
+                        {%if team_season.league_season.is_season_complete and team_season.results.conference_champion %}
+                            <span style='color: darkgoldenrod;' class='bold opacity-1'>
+                              {{team_season.conference_season.conference.conference_abbreviation}} Champs
+                            </span>
+                        {%elif team_season.results.division_champion%}
+                            <span class='bold opacity-1'>
+                              {{team_season.conference_season.conference.conference_abbreviation}} {{team_season.division_name}} Champs
+                            </span>                        
                         {%else%}
                             {{team_season.final_conference_rank|ordinal}}
                         {% endif %}

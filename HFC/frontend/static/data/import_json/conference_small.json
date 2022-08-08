@@ -4,9 +4,9 @@
     "conference_abbreviation": "ACC",
     "prestige": 7,
     "is_independent": 0,
-    "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/conference_logos/Atlantic_Coast_Conference.png",
     "schedule_format": {
+      "hold_conference_championship_game": 1,
       "number_conference_games": 8,
       "round_robin_in_division": true,
       "conference_championship_selection_method": "division winners",
@@ -57,12 +57,12 @@
     "conference_abbreviation": "B10",
     "prestige": 8,
     "is_independent": 0,
-    "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/conference_logos/Big_Ten_Conference.png",
     "schedule_format": {
+      "hold_conference_championship_game": 1,
       "number_conference_games": 8,
       "round_robin_in_division": true,
-      "conference_championship_selection_method": "top 2",
+      "conference_championship_selection_method": "division winners",
       "schedule_pattern": {
         "division": { "number_of_teams": 6 },
         "cycle": { "number_of_teams": 7, "teams_per_year": 2 }
@@ -101,9 +101,9 @@
     "conference_abbreviation": "MWC",
     "prestige": 5,
     "is_independent": 0,
-    "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/conference_logos/Mountain_West_Conference.png",
     "schedule_format": {
+      "hold_conference_championship_game": 1,
       "number_conference_games": 8,
       "round_robin_in_division": true,
       "conference_championship_selection_method": "division winners",
@@ -157,9 +157,9 @@
     "conference_abbreviation": "C-USA",
     "prestige": 3,
     "is_independent": 0,
-    "hold_conference_championship_game": 1,
     "conference_logo_url": "/static/img/conference_logos/C_USA_Conference.png",
     "schedule_format": {
+      "hold_conference_championship_game": 1,
       "number_conference_games": 8,
       "round_robin_in_division": true,
       "conference_championship_selection_method": "division winners",
@@ -210,9 +210,9 @@
     "conference_abbreviation": "Ind",
     "prestige": 1,
     "is_independent": 1,
-    "hold_conference_championship_game": 0,
     "conference_logo_url": "/static/img/conference_logos/FBS_Independents.png",
     "schedule_format": {
+      "hold_conference_championship_game": 0,
       "number_conference_games": 0,
       "round_robin_in_division": false,
       "conference_championship_selection_method": "none",

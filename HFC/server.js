@@ -33,6 +33,7 @@ const routes = [
   {route: "/World/:world_id/Team/:team_id/History",   path: 'team/history/base.html'},
 
   {route: "/World/:world_id/Player/:player_id/",     path: 'player/player/base.html'},
+  {route: "/World/:world_id/Coach/:coach_id/",     path: 'coach/coach/base.html'},
 
   {route: "/World/:world_id/Game/:game_id/",     path: 'game/game/base.html'},
 
