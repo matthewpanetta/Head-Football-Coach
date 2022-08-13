@@ -2972,6 +2972,8 @@ const create_team_season = async (data) => {
   const db = common.db;
   const season = common.season;
 
+  let league_season = await db.league_season.where({season:season}).first();
+
   var teams = await db.team.toArray();
   var team_seasons_tocreate = [];
   var team_season_recruiting_tocreate = [];
@@ -3004,12 +3006,15 @@ const create_team_season = async (data) => {
         season: data.season,
         conference_name: null,
         conference_season_id: null,
+        is_user_team: false
       });
 
       team_seasons_tocreate.push(new_team_season);
     } else {
       let division_name = data.conferences_by_conference_name[team.conference.conference_name]
       .conference_season.divisions.find(d => d.teams.includes(team.school_name)).division_name;
+
+      let is_user_team = league_season.user_team_id == team.team_id;
 
       var new_team_season = new team_season({
         team_season_id: team_season_id,
@@ -3020,7 +3025,8 @@ const create_team_season = async (data) => {
         conference_season_id:
           data.conferences_by_conference_name[team.conference.conference_name]
             .conference_season.conference_season_id,
-        division_name: division_name
+        division_name: division_name,
+        is_user_team: is_user_team
       });
 
       var new_team_season_recruiting = new team_season_recruiting(
@@ -3059,32 +3065,57 @@ const create_team_season = async (data) => {
   });
 };
 
-const populate_all_depth_charts = async (common) => {
+const populate_all_depth_charts = async (common, team_season_ids) => {
   const db = common.db;
   const season = common.season;
 
-  console.log({ season: season, db: db });
-  var team_seasons = await db.team_season
-    .where({ season: season })
-    .and((ts) => ts.team_id > 0)
-    .toArray();
-  console.log({ season: season, db: db, team_seasons: team_seasons });
+  if (team_season_ids) {
+    var team_seasons = await db.team_season
+      .where({ season: season })
+      .and((ts) => team_season_ids.includes(ts.team_season_id))
+      .toArray();
+    console.log({ season: season, db: db, team_seasons: team_seasons });
 
-  var team_seasons_to_update = [];
-  var team_seasons_by_team_season_id = await index_group(
-    team_seasons,
-    "index",
-    "team_season_id"
-  );
-  var player_team_seasons = await db.player_team_season
-    .where({ season: season })
-    .and((pts) => pts.team_season_id > 0)
-    .toArray();
-  var player_team_seasons_by_team_season_id = await index_group(
-    player_team_seasons,
-    "group",
-    "team_season_id"
-  );
+    var team_seasons_to_update = [];
+    var team_seasons_by_team_season_id = await index_group(
+      team_seasons,
+      "index",
+      "team_season_id"
+    );
+    var player_team_seasons = await db.player_team_season
+      .where({ season: season })
+      .and((pts) => team_season_ids.includes(pts.team_season_id))
+      .toArray();
+    var player_team_seasons_by_team_season_id = await index_group(
+      player_team_seasons,
+      "group",
+      "team_season_id"
+    );
+  } else {
+    var team_seasons = await db.team_season
+      .where({ season: season })
+      .and((ts) => ts.team_id > 0)
+      .toArray();
+    console.log({ season: season, db: db, team_seasons: team_seasons });
+
+    var team_seasons_to_update = [];
+    var team_seasons_by_team_season_id = await index_group(
+      team_seasons,
+      "index",
+      "team_season_id"
+    );
+    var player_team_seasons = await db.player_team_season
+      .where({ season: season })
+      .and((pts) => pts.team_season_id > 0)
+      .toArray();
+    var player_team_seasons_by_team_season_id = await index_group(
+      player_team_seasons,
+      "group",
+      "team_season_id"
+    );
+  }
+
+  console.log({ season: season, db: db });
 
   //TODO fix this shit
   var signed_recruit_team_seasons = []; //await db.recruit_team_season.filter(rts => rts.signed).toArray();
@@ -4504,10 +4535,10 @@ const create_player_team_seasons = async (data) => {
       init_data.ratings[rating_group_key] = {};
       for (const rating_key in rating_group) {
         var rating_obj = rating_group[rating_key];
-        var rating_mean = rating_obj.rating_mean;
+        var rating_mean = rating_obj.rating_mean / 5;
 
         var rating_value = round_decimal(
-          normal_trunc(rating_mean, rating_mean / 10, 1, 100),
+          normal_trunc(rating_mean, rating_mean / 10, 1, 20),
           0
         );
 
@@ -4527,9 +4558,9 @@ const create_player_team_seasons = async (data) => {
       init_data.ratings["passing"]["throwing_power"] = round_decimal(
         normal_trunc(
           rating_tracker["throwing_power"].rating_mean * strength_modifier,
-          5,
+          2,
           1,
-          100
+          20
         ),
         0
       );
@@ -4540,18 +4571,18 @@ const create_player_team_seasons = async (data) => {
       init_data.ratings["athleticism"]["acceleration"] = round_decimal(
         normal_trunc(
           rating_tracker["acceleration"].rating_mean * speed_modifier,
-          5,
+          2,
           1,
-          100
+          20
         ),
         0
       );
       init_data.ratings["athleticism"]["agility"] = round_decimal(
         normal_trunc(
           rating_tracker["agility"].rating_mean * speed_modifier,
-          5,
+          2,
           1,
-          100
+          20
         ),
         0
       );
@@ -4565,9 +4596,9 @@ const create_player_team_seasons = async (data) => {
         normal_trunc(
           rating_tracker["deep_throw_accuracy"].rating_mean *
             deep_throw_accuracy_modifier,
-          5,
+          2,
           1,
-          100
+          20
         ),
         0
       );
@@ -4576,9 +4607,9 @@ const create_player_team_seasons = async (data) => {
       init_data.ratings["passing"]["throw_on_run"] = round_decimal(
         normal_trunc(
           rating_tracker["throw_on_run"].rating_mean * throw_on_run_modifier,
-          5,
+          2,
           1,
-          100
+          20
         ),
         0
       );
@@ -13342,102 +13373,43 @@ const change_archetypes = () => {
   }
 };
 
-function NumberToGrade(NumberValue) {
-  var returnVal = "NA";
-
-  var GradeValueMap = [
-    { LetterGrade: "A+", LowerBound: 91, UpperBound: 1000 },
-    { LetterGrade: "A", LowerBound: 86, UpperBound: 90 },
-    { LetterGrade: "A-", LowerBound: 81, UpperBound: 85 },
-    { LetterGrade: "B+", LowerBound: 76, UpperBound: 80 },
-    { LetterGrade: "B", LowerBound: 71, UpperBound: 75 },
-    { LetterGrade: "B-", LowerBound: 66, UpperBound: 70 },
-    { LetterGrade: "C+", LowerBound: 61, UpperBound: 65 },
-    { LetterGrade: "C", LowerBound: 56, UpperBound: 60 },
-    { LetterGrade: "C-", LowerBound: 51, UpperBound: 55 },
-    { LetterGrade: "D+", LowerBound: 46, UpperBound: 50 },
-    { LetterGrade: "D", LowerBound: 41, UpperBound: 45 },
-    { LetterGrade: "D-", LowerBound: 36, UpperBound: 40 },
-    { LetterGrade: "F", LowerBound: 31, UpperBound: 35 },
-    { LetterGrade: "F-", LowerBound: -1000, UpperBound: 30 },
-  ];
-
-  $.each(GradeValueMap, function (ind, GradeObj) {
-    if (
-      NumberValue >= GradeObj["LowerBound"] &&
-      NumberValue <= GradeObj["UpperBound"]
-    ) {
-      GradeObj["GradeClass"] = returnVal = GradeObj["LetterGrade"];
+function NumberToGrade(number_value, scale) {
+  if (!(scale)){
+    if (number_value > 20){
+      scale = 100
     }
-  });
-
-  return returnVal;
-}
-
-function NumberToGradeClass(NumberValue) {
-  return NumberToGrade(NumberValue)
-    .replace("-", "-Minus")
-    .replace("+", "-Plus");
-}
-
-function NumberToGrade_True(NumberValue) {
-  var GradeValueMap = [
-    {
-      LetterGrade: "A+",
-      GradeClass: "A-Plus",
-      LowerBound: 91,
-      UpperBound: 1000,
-    },
-    { LetterGrade: "A", GradeClass: "A", LowerBound: 86, UpperBound: 90 },
-    {
-      LetterGrade: "A-",
-      GradeClass: "A-Minus",
-      LowerBound: 81,
-      UpperBound: 85,
-    },
-    { LetterGrade: "B+", GradeClass: "B-Plus", LowerBound: 76, UpperBound: 80 },
-    { LetterGrade: "B", GradeClass: "B", LowerBound: 71, UpperBound: 75 },
-    {
-      LetterGrade: "B-",
-      GradeClass: "B-Minus",
-      LowerBound: 66,
-      UpperBound: 70,
-    },
-    { LetterGrade: "C+", GradeClass: "C-Plus", LowerBound: 61, UpperBound: 65 },
-    { LetterGrade: "C", GradeClass: "C", LowerBound: 56, UpperBound: 60 },
-    {
-      LetterGrade: "C-",
-      GradeClass: "D-Minus",
-      LowerBound: 51,
-      UpperBound: 55,
-    },
-    { LetterGrade: "D+", GradeClass: "D-Plus", LowerBound: 46, UpperBound: 50 },
-    { LetterGrade: "D", GradeClass: "D", LowerBound: 41, UpperBound: 45 },
-    {
-      LetterGrade: "D-",
-      GradeClass: "D-Minus",
-      LowerBound: 36,
-      UpperBound: 40,
-    },
-    { LetterGrade: "F", GradeClass: "F", LowerBound: 31, UpperBound: 35 },
-    {
-      LetterGrade: "F-",
-      GradeClass: "F-Minus",
-      LowerBound: -1000,
-      UpperBound: 30,
-    },
-  ];
-
-  var GradeReturn = $.grep(GradeValueMap, function (d) {
-    return NumberValue >= d.LowerBound && NumberValue <= d.UpperBound;
-  });
-
-  if (GradeReturn.length > 0) {
-    return GradeReturn[0];
+    else {
+      scale = scale || 20;
+    }
   }
 
-  return { LetterGrade: "F-", GradeClass: "F-Minus" };
+  let adj_number_value = Math.floor(number_value / ((scale) / 20));
+  let grade_value_map = {
+    20: 'Genr.',
+    19: 'Elt',
+    18: 'A+',
+    17: 'A',
+    16: 'A-',
+    15: 'B+',
+    14: 'B',
+    13: 'B-',
+    12: 'C+',
+    11: 'C',
+    10: 'C-',
+    9: 'D+',
+    8: 'D',
+    7: 'D-',
+    6: 'F',
+    5: 'F',
+    4: 'F-',
+    3: 'F-',
+    2: 'F--',
+    1: 'F--',
+  }
+
+  return grade_value_map[adj_number_value];
 }
+
 
 const ordinal = (num) => {
   var s = ["th", "st", "nd", "rd"],

@@ -40,23 +40,34 @@
     <div id="nav-tabContent">
       <div class="tab-content" style="display:block;"  id="nav-schedule">
         <div class='w3-display-container' >
+          {% if team.team_season.is_user_team %}
+          <div class='w3-row-padding w3-margin-bottom'>
+            <div class='w3-col'>
+              <button class='btn disabled depth-chart-save-button'>Save</button>
+              <button class='btn disabled depth-chart-reset-button'>Reset</button> 
+              <button class='btn depth-chart-ask-button'>Ask Assistant</button> 
+            </div>
+          </div>
+          {% endif %}
           {% for position_obj in position_depth_chart %}
           <div class='w3-row-padding w3-margin-bottom'>
             <div class='w3-col'>
-              <div class="card ">
-                <div class="w3-bar team-primary-background-bar">
-                  {{position_obj.position}}
-                </div>
+              <div class="card "   style="width:100%;">
 
-                <table class="table table-striped table-hover" id='depth-chart-{{position_obj.position}}'  style="width:100%">
+                <table class="table table-striped table-hover football-table depth-chart-position-table" position='{{position_obj.position}}' num-starters='{{position_obj.starter_count}}' id='depth-chart-{{position_obj.position}}'>
                   <thead>
-                    <tr class='team-secondary-table-row center-text-row'>
-                      <th colspan='8' class=' col-group'>Player</th>
-
-                      <th colspan='{{position_obj.stat_list|length}}' class='col-group'>Stats</th>
-                      <th colspan='{{position_obj.rating_list|length}}' class='col-group'>Ratings</th>
+                    <tr class='team-primary-background-bar center-text-row'>
+                      <th colspan='{{7 + position_obj.rating_list|length + 1 + position_obj.stat_list|length + all_pos_stat_list|length}}' class='left-text'>
+                        {% if team.team_season.is_user_team %}Set{%endif%} {{position_obj.position}} Depth Chart 
+                        <span class='font10'> {{position_obj.starter_count}} {{'starter'|pluralize(position_obj.starter_count)|upper}}</span>
+                      </th>
                     </tr>
-                    <tr class='team-primary-table-row center-text-row'>
+                    <tr class='team-secondary-table-row center-text-row'>
+                      <th colspan='7' class=' col-group'>Player</th>
+                      <th colspan='{{position_obj.rating_list|length + 1}}' class='col-group'>Ratings</th>
+                      <th colspan='{{position_obj.stat_list|length + all_pos_stat_list|length}}' class='col-group'>Stats</th>
+                    </tr>
+                    <tr class='team-primary-table-row center-text-row'  style='white-space: nowrap;'>
                       <th></th>
                       <th></th>
                       <th class='left-text'>Player</th>
@@ -66,25 +77,38 @@
                       <th class=''>Ht</th>
                       <th class='col-group'>Wt</th>
 
-                      <th class=''>Overall</th>
+                      <th>Ovr</th>
+                      {# {% for stat in all_pos_rating_list%}
+                      <th class='{%if loop.last%}col-group{%endif%}'>{{stat.display}}</th>
+                      {% endfor %} #}
+
+                      {% for rating in position_obj.rating_list%}
+                      <th class='{%if loop.last%}col-group{%endif%}'>{{rating.display}}</th>
+                      {% endfor %}
+
+                      {% for stat in all_pos_stat_list%}
+                      <th class='{%if loop.last%}col-group{%endif%}'>{{stat.display}}</th>
+                      {% endfor %}
 
                       {% for stat in position_obj.stat_list%}
                       <th class='{%if loop.last%}col-group{%endif%}'>{{stat.display}}</th>
                       {% endfor %}
 
-                      {% for rating in position_obj.rating_list%}
-                      <th>{{rating.display}}</th>
-                      {% endfor %}
                     </tr>
-
                   </thead>
-                  <tbody>
-                    {%for pts in position_obj.player_team_seasons.slice(0, position_obj.starter_count * 3)%}
-                    <tr class='center-text-row' player_id='{{pts.player_id}}'>
-                      <td>{{loop.index}}</td>
+                  <tbody style='height: 100%;'>
+                    {# .slice(0, position_obj.starter_count * 3) #}
+                    {%for pts in position_obj.player_team_seasons%}
+                    <tr class='center-text-row player-depth-chart-row' player_id='{{pts.player_id}}' player_team_season_id='{{pts.player_team_season_id}}' style='white-space: nowrap;' original-index='{{loop.index}}' index='{{loop.index}}'>
+                      <td class='row-index-td left-text {%if loop.index <= position_obj.starter_count%} bold team-color-font {% endif %}'>
+                        <span class='row-index-span '>{{loop.index}}</span>
+                        {# <span class='row-change-span font10'></span> #}
+                      </td>
                       <td class='font16'>
+                        {% if team.team_season.is_user_team %}
                         <i class="fa fa-arrow-alt-circle-up depth-chart-reorder-icon"></i>
                         <i class="fa fa-arrow-alt-circle-down depth-chart-reorder-icon"></i>
+                        {% endif %}
                       </td>
                       <td class='left-text'>
                         <i class="fa fa-address-card player-profile-popup-icon"></i>
@@ -96,16 +120,30 @@
                       <td>{{pts.player.body.height}}</td>
                       <td class='col-group'>{{pts.player.body.weight}} lbs</td>
 
-                      <td>{{pts.ratings.overall.overall}}</td>
+                      <td style='font-weight: {{pts|get("ratings.overall.overall") * 10}};'>
+                        {{pts|get('ratings.overall.overall')}}
+                      </td>
 
+                      {# {% for rating in all_pos_rating_list%}
+                      <td  class='{%if loop.last%}col-group{%endif%}' style='font-weight: {{pts|get(rating.key) * 50}};'>
+                        {{pts|get(rating.key)|NumberToGradeBadge(20)|safe}}
+                      </td>
+                      {% endfor %} #}
+
+                      {% for rating in position_obj.rating_list%}
+                      <td class='{%if loop.last%}col-group{%endif%}' style='font-weight: {{pts|get(rating.key) * 50}};'>
+                        {{pts|get(rating.key)|NumberToGradeBadge(20)|safe}}
+                      </td>
+                      {% endfor %}
+
+
+                      {% for stat in all_pos_stat_list%}
+                      <td  class='{%if loop.last%}col-group{%endif%}'>{{pts|get(stat.key)|clean_number}}</td>
+                      {% endfor %}
+                      
                       {% for stat in position_obj.stat_list%}
                       <td  class='{%if loop.last%}col-group{%endif%}'>{{pts|get(stat.key)}}</td>
                       {% endfor %}
-
-                      {% for rating in position_obj.rating_list%}
-                      <td>{{pts|get(rating.key)}}</td>
-                      {% endfor %}
-
                     </tr>
                     {%endfor%}
                   </tbody>

@@ -5956,7 +5956,7 @@ fieldset:disabled .btn {
     --bs-toast-header-color: #6c757d;
     --bs-toast-header-bg: rgba(255, 255, 255, 0.85);
     --bs-toast-header-border-color: rgba(0, 0, 0, 0.05);
-    width: var(--bs-toast-max-width);
+    /* width: var(--bs-toast-max-width); */
     max-width: 100%;
     font-size: var(--bs-toast-font-size);
     color: var(--bs-toast-color);

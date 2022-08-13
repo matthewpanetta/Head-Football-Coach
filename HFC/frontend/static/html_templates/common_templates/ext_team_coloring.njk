@@ -30,6 +30,10 @@
       border: none !important;
     }
 
+    .team-color-font{
+      color: #{{page.PrimaryColor|DefaultIfTooLight(page.SecondaryColor)|DefaultIfTooLight('000')}} !important;
+    }
+
     .team-primary-background {
       background-color: #{{page.PrimaryColor}} !important;
       color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;

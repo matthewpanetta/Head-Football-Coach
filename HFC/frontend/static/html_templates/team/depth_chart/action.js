@@ -36,12 +36,14 @@ const getHtml = async (common) => {
   };
 
   let all_pos_stat_list = [
-    "player_team_season.season_stats.games.games_played",
-    "player_team_season.season_stats.games.games_started",
-    "player_team_season.season_stats.games.plays_on_field",
-    "player_team_season.season_stats.games.weighted_game_score",
+    { display: "GP", key: "season_stats.games.games_played" },
+    { display: "GS", key: "season_stats.games.games_started" },
+    { display: "Plays", key: "season_stats.games.plays_on_field" },
+    { display: "GS", key: "season_stats.games.weighted_game_score" },
   ];
+
   let all_pos_rating_list = [
+    { display: "Awr", key: "ratings.overall.awareness" },
     { display: "Spd", key: "ratings.athleticism.speed" },
     { display: "Acc", key: "ratings.athleticism.acceleration" },
     { display: "Agi", key: "ratings.athleticism.agility" },
@@ -64,6 +66,10 @@ const getHtml = async (common) => {
         { display: "Ints", key: "season_stats.passing.ints" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Spd", key: "ratings.athleticism.speed" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
         { display: "Thr Pw", key: "ratings.passing.throwing_power" },
         { display: "S Acc", key: "ratings.passing.short_throw_accuracy" },
         { display: "M Acc", key: "ratings.passing.medium_throw_accuracy" },
@@ -85,6 +91,11 @@ const getHtml = async (common) => {
         { display: "Brkn Tck", key: "season_stats.rushing.broken_tackles" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Spd", key: "ratings.athleticism.speed" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Str", key: "ratings.athleticism.strength" },
         { display: "Car", key: "ratings.rushing.carrying" },
         { display: "Elu", key: "ratings.rushing.elusiveness" },
         { display: "Brk Tck", key: "ratings.rushing.break_tackle" },
@@ -103,6 +114,11 @@ const getHtml = async (common) => {
         { display: "TDs", key: "season_stats.receiving.tds" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Spd", key: "ratings.athleticism.speed" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Jump", key: "ratings.athleticism.jumping" },
         { display: "Catch", key: "ratings.receiving.catching" },
         { display: "Route", key: "ratings.receiving.route_running" },
         { display: "CiT", key: "ratings.receiving.catch_in_traffic" },
@@ -121,6 +137,12 @@ const getHtml = async (common) => {
         { display: "TDs", key: "season_stats.receiving.tds" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Spd", key: "ratings.athleticism.speed" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Jump", key: "ratings.athleticism.jumping" },
+        { display: "Str", key: "ratings.athleticism.strength" },
         { display: "Catch", key: "ratings.receiving.catching" },
         { display: "Route", key: "ratings.receiving.route_running" },
         { display: "CiT", key: "ratings.receiving.catch_in_traffic" },
@@ -139,6 +161,10 @@ const getHtml = async (common) => {
         { display: "Sack Allowed", key: "season_stats.blocking.sacks_allowed" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Str", key: "ratings.athleticism.strength" },
         { display: "P Blc", key: "ratings.blocking.pass_block" },
         { display: "R Blc", key: "ratings.blocking.run_block" },
         { display: "Imp Blc", key: "ratings.blocking.impact_block" },
@@ -153,6 +179,10 @@ const getHtml = async (common) => {
         { display: "Sack Allowed", key: "season_stats.blocking.sacks_allowed" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Str", key: "ratings.athleticism.strength" },
         { display: "P Blc", key: "ratings.blocking.pass_block" },
         { display: "R Blc", key: "ratings.blocking.run_block" },
         { display: "Imp Blc", key: "ratings.blocking.impact_block" },
@@ -168,6 +198,11 @@ const getHtml = async (common) => {
         { display: "Sacks", key: "season_stats.defense.sacks" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Spd", key: "ratings.athleticism.speed" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Str", key: "ratings.athleticism.strength" },
         { display: "Tckl", key: "ratings.defense.tackle" },
         { display: "Hit Pow", key: "ratings.defense.hit_power" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
@@ -186,6 +221,11 @@ const getHtml = async (common) => {
         { display: "Sacks", key: "season_stats.defense.sacks" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Spd", key: "ratings.athleticism.speed" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Str", key: "ratings.athleticism.strength" },
         { display: "Tckl", key: "ratings.defense.tackle" },
         { display: "Hit Pow", key: "ratings.defense.hit_power" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
@@ -206,6 +246,12 @@ const getHtml = async (common) => {
         { display: "Defl", key: "season_stats.defense.deflections" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Spd", key: "ratings.athleticism.speed" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Jump", key: "ratings.athleticism.jumping" },
+        { display: "Str", key: "ratings.athleticism.strength" },
         { display: "Tckl", key: "ratings.defense.tackle" },
         { display: "Hit Pow", key: "ratings.defense.hit_power" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
@@ -226,6 +272,11 @@ const getHtml = async (common) => {
         { display: "Defl", key: "season_stats.defense.deflections" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Spd", key: "ratings.athleticism.speed" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Jump", key: "ratings.athleticism.jumping" },
         { display: "Tckl", key: "ratings.defense.tackle" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
         { display: "Purs", key: "ratings.defense.pursuit" },
@@ -245,6 +296,12 @@ const getHtml = async (common) => {
         { display: "Defl", key: "season_stats.defense.deflections" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Spd", key: "ratings.athleticism.speed" },
+        { display: "Acc", key: "ratings.athleticism.acceleration" },
+        { display: "Agi", key: "ratings.athleticism.agility" },
+        { display: "Jump", key: "ratings.athleticism.jumping" },
+        { display: "Str", key: "ratings.athleticism.strength" },
         { display: "Tckl", key: "ratings.defense.tackle" },
         { display: "Hit Pow", key: "ratings.defense.hit_power" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
@@ -264,6 +321,7 @@ const getHtml = async (common) => {
         { display: "FGA", key: "season_stats.kicking.fga" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
         { display: "Kick Pow", key: "ratings.kicking.kick_power" },
         { display: "Kick Acc", key: "ratings.kicking.kick_accuracy" },
       ],
@@ -277,6 +335,7 @@ const getHtml = async (common) => {
         { display: "Within 20", key: "season_stats.punting.within_20" },
       ],
       rating_list: [
+        { display: "Awr", key: "ratings.overall.awareness" },
         { display: "Kick Pow", key: "ratings.kicking.kick_power" },
         { display: "Kick Acc", key: "ratings.kicking.kick_accuracy" },
       ],
@@ -393,6 +452,8 @@ const getHtml = async (common) => {
     season: common.season,
     all_teams: await common.all_teams(common, "/DepthChart/"),
     position_depth_chart: position_depth_chart,
+    all_pos_rating_list:all_pos_rating_list,
+    all_pos_stat_list:all_pos_stat_list
   };
 
   common.render_content = render_content;
@@ -411,12 +472,111 @@ const getHtml = async (common) => {
   $("#body").html(renderedHtml);
 };
 
+const reorder_animation = async(common)=> {
+  const db = common.db;
+
+  $('.depth-chart-ask-button').on('click', async function(){
+    if (confirm("Are you sure you want your assistant to set the depth chart?") == true) {
+      window.onbeforeunload = function() {}
+      await common.populate_all_depth_charts(common, [common.render_content.team.team_season.team_season_id]);
+      location.reload();
+    }
+  });
+
+  $('.depth-chart-reset-button').on('click', async function(){
+    location.reload();
+  });
+
+  $('.depth-chart-reorder-icon').click(function(){
+    let tbody = $(this).closest('tbody');
+    let tr = $(this).closest('tr');
+    let tr_index = parseInt($(tr).attr('index'));
+    let tr_original_index = parseInt($(tr).attr('original-index'));
+    let tr_index_neighbor = 0;
+
+    if ($(this).hasClass('fa-arrow-alt-circle-up')){
+      tr_index_neighbor = tr_index-1;
+      $(tr).prev().before(tr);
+    }
+    else {
+      tr_index_neighbor = tr_index+1;
+      $(tr).next().after(tr);
+    }
+
+    let tr_neighbor = $(tbody).find('[index="'+tr_index_neighbor+'"]');
+    let tr_neighbor_original_index = parseInt(tr_neighbor.attr('original-index'));
+
+    $(tr).attr('index', tr_index_neighbor);
+    $(tr).find('.row-index-td .row-index-span').text(tr_index_neighbor)
+    
+    $(tr_neighbor).attr('index', tr_index);
+    $(tr_neighbor).find('.row-index-td .row-index-span').text(tr_index)
+
+    console.log({this:this, tr_index_neighbor:tr_index_neighbor,tr_index:tr_index, tbody:tbody, tr:tr, tr_neighbor:tr_neighbor })
+
+    let cumulative_change = 0;
+    
+    $('tr[original-index]').each(function(ind, elem){
+      cumulative_change += Math.abs(parseInt($(elem).attr('original-index')) - parseInt($(elem).attr('index')));
+      let num_starters = parseInt($(elem).closest('[num-starters]').attr('num-starters'));
+      console.log({num_starters:num_starters, "$(elem).attr('index')": $(elem).attr('index')})
+      if($(elem).attr('index') <= num_starters){
+        $(elem).find('.row-index-td').addClass('bold team-color-font');
+      }
+      else {
+        $(elem).find('.row-index-td').removeClass('bold').removeClass('team-color-font');
+      }
+    })
+    if (cumulative_change > 0){
+      $('.depth-chart-save-button').removeClass('disabled');
+      $('.depth-chart-reset-button').removeClass('disabled');
+    }
+    else {
+      $('.depth-chart-save-button').addClass('disabled');
+      $('.depth-chart-reset-button').addClass('disabled');
+    }
+
+    window.onbeforeunload = function() {
+      if (cumulative_change > 0){
+        return "Depth chart changes not saved. Are you sure?";
+      }
+      else {}
+    };
+  })
+
+  $('.depth-chart-save-button').on('click', async function(){
+    let pos_depth_chart = {};
+    let team_season = common.render_content.team.team_season;
+    $('.depth-chart-position-table').each(async function(ind, table){
+      console.log({table:table})
+      let position = $(table).attr('position');
+      let player_rows = $(table).find('.player-depth-chart-row').toArray();
+      pos_depth_chart[position] = player_rows.map(elem => $(elem).attr('player_team_season_id'));
+    })
+    team_season.depth_chart = pos_depth_chart;
+    delete team_season.conference_season;
+    await db.team_season.put(team_season);
+
+    const toast_template = $('#toast-template');
+    const toast_copy = toast_template.clone();
+    $(toast_copy).appendTo(toast_template.parent());
+    $(toast_copy).attr('id', 'save-toast-'+Date.now())
+    $(toast_copy).addClass('bg-success text-white')
+    $(toast_copy).find('.toast-body').text('Depth chart saved!')
+    const save_complete_toast = new bootstrap.Toast(toast_copy)
+    save_complete_toast.show()
+    window.onbeforeunload = function() {};
+  })
+}
+
 const action = async (common) => {
   await common.geo_marker_action(common);
 
   $(".player-profile-popup-icon").on("click", async function () {
     await common.populate_player_modal(common, this);
   });
+
+  await reorder_animation(common);
 };
 
 $(document).ready(async function () {

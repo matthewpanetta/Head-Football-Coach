@@ -387,7 +387,7 @@ body {
 }
 
 .teamGameCell:hover {
-  background-color: #ccc;
+  background-color: rgba(0, 0, 0, 0.175);
 }
 
 .x_axis path {
@@ -714,11 +714,11 @@ article>header {
   cursor: pointer;
 }
 
-.geo-marker{
+.geo-marker {
   cursor: pointer;
 }
 
-.teamScheduleGameBox + .teamScheduleGameBox {
+.teamScheduleGameBox+.teamScheduleGameBox {
   border-left: 1px solid #dcdcdc;
 }
 
@@ -1134,7 +1134,8 @@ div button.w3-bar-item.btn.selected-bar-button {
   margin-left: 4px;
 }
 
-.PlayerFace, .CoachFace {
+.PlayerFace,
+.CoachFace {
   width: 100px;
   height: 150px;
   display: inline-block;
@@ -1143,69 +1144,82 @@ div button.w3-bar-item.btn.selected-bar-button {
   z-index: 3;
 }
 
-.PlayerFace-90, .CoachFace-90 {
+.PlayerFace-90,
+.CoachFace-90 {
   width: 60px;
   height: 90px;
 }
 
-.PlayerFace-120, .CoachFace-120 {
+.PlayerFace-120,
+.CoachFace-120 {
   width: 80px;
   height: 120px;
   margin-left: -60px;
 }
 
-.PlayerFace-60, .CoachFace-60 {
+.PlayerFace-60,
+.CoachFace-60 {
   height: 60px;
   width: 40px;
 }
 
-.PlayerFace-45, .CoachFace-45 {
+.PlayerFace-45,
+.CoachFace-45 {
   height: 45px;
   width: 30px;
 }
 
-.PlayerFace-Headshot, .CoachFace-Headshot {
+.PlayerFace-Headshot,
+.CoachFace-Headshot {
   border-radius: 100px;
 
   overflow: hidden;
 }
 
-.PlayerFace-200, .CoachFace-200 {
+.PlayerFace-200,
+.CoachFace-200 {
   width: 240px;
   height: 240px;
   border-radius: 250px;
 }
 
-.PlayerFace-150, .CoachFace-150 {
+.PlayerFace-150,
+.CoachFace-150 {
   width: 150px;
   height: 150px;
   border-radius: 250px;
 }
 
-.PlayerFace-Headshot.PlayerFace-200, .CoachFace-Headshot.CoachFace-200 {
+.PlayerFace-Headshot.PlayerFace-200,
+.CoachFace-Headshot.CoachFace-200 {
   border: 6px solid;
 }
 
-.PlayerFace-Headshot.PlayerFace-150, .CoachFace-Headshot.CoachFace-150 {
+.PlayerFace-Headshot.PlayerFace-150,
+.CoachFace-Headshot.CoachFace-150 {
   border: 5px solid;
 }
 
-.PlayerFace-Headshot.PlayerFace-90, .CoachFace-Headshot.CoachFace-90 {
+.PlayerFace-Headshot.PlayerFace-90,
+.CoachFace-Headshot.CoachFace-90 {
   border: 3px solid;
   width: 90px;
 }
 
-.PlayerFace-Headshot.PlayerFace-60, .CoachFace-Headshot.CoachFace-60 {
+.PlayerFace-Headshot.PlayerFace-60,
+.CoachFace-Headshot.CoachFace-60 {
   border: 2.5px solid;
   width: 60px;
 }
 
-.PlayerFace-Headshot.PlayerFace-45, .CoachFace-Headshot.CoachFace-45 {
+.PlayerFace-Headshot.PlayerFace-45,
+.CoachFace-Headshot.CoachFace-45 {
   border: 2px solid;
   width: 45px;
 }
 
-.PlayerFace-Headshot svg, .CoachFace-Headshot svg {
+.PlayerFace-Headshot svg,
+.CoachFace-Headshot svg {
   margin-left: 17.5%;
 }
 
@@ -1485,7 +1499,7 @@ div button.w3-bar-item.btn.selected-bar-button {
 
 
 .colgroup-border-left {
-  border-left: 1px solid #cccccc;
+  border-left: 1px solid rgba(0, 0, 0, 0.175);
 }
 
 td,
@@ -1550,11 +1564,11 @@ td.WorldLeagueLeaderRowCell.NameCell {
 }
 
 .bottom-border {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.175);
 }
 
 .all-border {
-  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.175);
 }
 
 .gamePlayerBoxStats {
@@ -2006,6 +2020,100 @@ img.teamTeamLogo {
 }
 
 
+.rating-tag {
+  /* border-radius: 6px; */
+  /* font-weight: 600; */
+  /* color: white; */
+  padding: 4px 8px;
+}
+
+.rating-tag.rating-tag-20 {
+  color: #174ea6;
+  box-shadow: 0px 0px 5px #174ea6;
+}
+
+.rating-tag.rating-tag-19 {
+  color: #5B90B3;
+  box-shadow: 0px 0px 5px #5B90B3;
+}
+
+.rating-tag.rating-tag-18 {
+  color: #0B5001;
+}
+
+.rating-tag.rating-tag-17 {
+  color: #386616;
+}
+
+.rating-tag.rating-tag-16 {
+  color: #597827;
+}
+
+.rating-tag.rating-tag-15 {
+  color: #748533;
+}
+
+.rating-tag.rating-tag-14 {
+  color: #8b8e3c;
+}
+
+.rating-tag.rating-tag-13 {
+  color: #9e9141;
+}
+
+.rating-tag.rating-tag-12 {
+  color: #ab8f43;
+}
+
+.rating-tag.rating-tag-11 {
+  color: #b48940;
+}
+
+.rating-tag.rating-tag-10 {
+  color: #b87d3a;
+}
+
+.rating-tag.rating-tag-9 {
+  color: #b66c31;
+}
+
+.rating-tag.rating-tag-8 {
+  color: #af5624;
+}
+
+.rating-tag.rating-tag-7 {
+  color: #a23914;
+}
+
+.rating-tag.rating-tag-6 {
+  color: #8f0600;
+}
+
+.rating-tag.rating-tag-5 {
+  color: #8f0600;
+}
+
+.rating-tag.rating-tag-4 {
+  color: #8f0600;
+}
+
+.rating-tag.rating-tag-3 {
+  color: #8f0600;
+}
+
+.rating-tag.rating-tag-2 {
+  color: #8f0600;
+}
+
+.rating-tag.rating-tag-1 {
+  color: #8f0600;
+}
+
+.rating-tag.rating-tag-0 {
+  color: #8f0600;
+}
+
+
 .A-Plus,
 .Rating-Most {
   color: #0B5001;
@@ -2202,12 +2310,22 @@ img.teamTeamLogo {
 
 .col-group:not(:last-child) {
   /* border-right: 1px solid var(--bs-card-border-color); */
-  border-right: 1px solid #ccc;
+  border-right: 1px solid rgba(0, 0, 0, 0.175);
   /* box-shadow: 4px 0px 4px 0px rgb(0 0 0 / 16%); */
 }
 
 .col-group-left {
-  border-left: 1px solid #ccc;
+  border-left: 1px solid rgba(0, 0, 0, 0.175);
+}
+
+table.table tr:last-child {
+  /* border-right: 1px solid var(--bs-card-border-color); */
+  border-bottom-style: hidden;
+  /* box-shadow: 4px 0px 4px 0px rgb(0 0 0 / 16%); */
+}
+
+table.table tr {
+  border-color: rgba(0, 0, 0, 0.175);
 }
 
 .is-starter {
@@ -2497,8 +2615,8 @@ table tr td.padding-left-8 {
 
 
 .football-table-column-headers th.sort-desc {
-  -webkit-box-shadow: inset 0 -3px 0px -1px #ccc;
-  box-shadow: inset 0 -3px 0px -1px #ccc;
+  -webkit-box-shadow: inset 0 -3px 0px -1px rgba(0, 0, 0, 0.175);
+  box-shadow: inset 0 -3px 0px -1px rgba(0, 0, 0, 0.175);
   -webkit-filter: brightness(90%);
   filter: brightness(90%);
 }
@@ -2559,7 +2677,7 @@ a i.fa:hover {
 button.football-table-filter-option,
 button.football-table-column-control-option {
   margin: 2px;
-  border: 1.5px solid #ccc;
+  border: 1.5px solid rgba(0, 0, 0, 0.175);
   min-width: 70px;
 
   -webkit-transition: all .5s ease;
@@ -2573,12 +2691,12 @@ button.football-table-column-control-option {
 button.football-table-pagination-button {
   margin: 2px;
   border-radius: 10px;
-  border: 1.5px solid #ccc;
+  border: 1.5px solid rgba(0, 0, 0, 0.175);
   min-width: 40px;
 }
 
 button.football-table-pagination-button.selected {
-  background-color: #ccc !important;
+  background-color: rgba(0, 0, 0, 0.175) !important;
   border: 1.5px solid black;
   color: black !important;
 
@@ -2619,7 +2737,8 @@ table {
   border-collapse: collapse;
 }
 
-.player-profile-popup-icon:hover, .depth-chart-reorder-icon:hover {
+.player-profile-popup-icon:hover,
+.depth-chart-reorder-icon:hover {
   color: black;
 
   -webkit-transition: all .5s ease;
@@ -2630,7 +2749,8 @@ table {
 }
 
 
-#player-info-modal, #geography-modal {
+#player-info-modal,
+#geography-modal {
   display: none;
   position: fixed;
   z-index: 2000;
@@ -2643,7 +2763,8 @@ table {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-#player-info-modal.shown, #geography-modal.shown {
+#player-info-modal.shown,
+#geography-modal.shown {
   display: block;
 }
 
@@ -2781,11 +2902,11 @@ button.no-hover:hover {
 
 .w3-button:hover {
   color: #000 !important;
-  background-color: #ccc !important
+  background-color: rgba(0, 0, 0, 0.175) !important
 }
 
 .football-filter-select:hover {
-  background-color: #eee;
+  background-color: rgba(0, 0, 0, 0.175);
   transition: 0.3s;
 }
 
@@ -2818,7 +2939,7 @@ button.no-hover:hover {
 
 .btn:hover {
   color: #000 !important;
-  background-color: #ccc !important
+  background-color: rgba(0, 0, 0, 0.175) !important
 }
 
 .square-border {
@@ -2836,4 +2957,10 @@ button.no-hover:hover {
   display: table-cell;
   text-align: left;
   vertical-align: top
+}
+
+table tr:first-child .fa-arrow-alt-circle-up.depth-chart-reorder-icon,
+table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
+  pointer-events: none;
+  opacity: .5;
 }
