@@ -31,6 +31,7 @@ function get_nunjucks_env() {
   });
 
   env.addFilter('get', function(obj, key){
+    console.log({get:get, obj:obj, key:key})
     return get(obj, key)
   });
 

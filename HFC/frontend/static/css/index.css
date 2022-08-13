@@ -2619,7 +2619,7 @@ table {
   border-collapse: collapse;
 }
 
-.player-profile-popup-icon:hover {
+.player-profile-popup-icon:hover, .depth-chart-reorder-icon:hover {
   color: black;
 
   -webkit-transition: all .5s ease;

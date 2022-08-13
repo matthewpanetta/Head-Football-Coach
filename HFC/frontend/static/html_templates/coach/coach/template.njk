@@ -3,17 +3,12 @@
 
 {% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
 
-
 <body>
   <div class='PageContent'>
     <div class='CoachHeader'>
       <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
       <a href='{{coach.current_coach_team_season.team_season.team.team_href}}' {% if not coach.current_coach_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 180px;' {% endif %}{% endif %}>
-        {% if coach.current_coach_team_season.team_season.team.team_logo %}
         <img class='coachTeamLogo' src='{{coach.current_coach_team_season.team_season.team.team_logo}}' alt="My image">
-        {%elif SignedTeam.LogoURL%}
-        <img class='coachTeamLogo' src='{{SignedTeam.LogoURL}}' alt="My image">
-        {% endif %}
       </a>
       <div class="CoachFace" id='CoachFace'>
         {{coach.CoachFaceSVG|safe}}
@@ -27,38 +22,23 @@
           {{coach.name.last}}
         </span>
         <div class='coachOverviewInfo'>
-          {% if coach.current_coach_team_season.is_recruit %}
-            {%if SignedTeam.LogoURL%}
-              <a href="/World/{{page.WorldID}}/Recruiting">{{coach.RecruitingStars}}* Recruit, Signed</a>
-            {% else %}
-              <a href="/World/{{page.WorldID}}/Recruiting">{{coach.RecruitingStars}}* Recruit</a>
-            {% endif %}
-          {% else %}
           <a href="{{current_team.team_href}}">{{current_team.school_name}} {{current_team.team_name}}</a>
-          {% endif %}
-          | #{{coach.jersey_number}} | {{coach.position}}
-        </div>
-        <div  class='coachOverviewInfo coach-captain'>
-          {% if TeamCaptain%}
-          <i class="fas fa-crown w3-text-green"></i><span class='italic'>Team Captain</span>
-          {% endif %}
+          | {{coach.current_coach_team_season.coaching_position}}
         </div>
       </div>
       <ul class='coachHeaderBio' style='border-color:#{{page.PrimaryColor}}; margin-bottom: 0;'>
         <li class='coachHeaderClass'>
-          <div class='coachHeaderBioDescription'>CLASS</div>
-          <div class='coach-class'>{{coach.current_coach_team_season.class.class_name}}
-            {% if coach.redshirt.current %}
-              <i class="fas fa-tshirt coach-class-icon" style="color: red; margin-left: 4px;"></i>
-            {% endif %}
+          <div class='coachHeaderBioDescription'>AGE</div>
+          <div class='coach-class'>
+            {{coach.current_coach_team_season.age}}
           </div>
-        </li>
-        <li class='coachHeaderHtWt'>
-          <div class='coachHeaderBioDescription'>HT/WT</div>
-          <div>{{coach.body.height}}, {{coach.body.weight}} lbs</div>
         </li>
         <li class='coachHeaderHometown'>
           <div class='coachHeaderBioDescription'>HOMETOWN</div>
+          <div>{{coach.hometown_and_state}}</div>
+        </li>
+        <li class='coachHeaderHometown'>
+          <div class='coachHeaderBioDescription'>ALMA MATER</div>
           <div>{{coach.hometown_and_state}}</div>
         </li>
       </ul>
@@ -224,66 +204,6 @@
           <div class='w3-row'>
             <div class='w3-col l12'>
               <table class="table table-striped table-hover center-text-row" id='coachRecruitingTeamTable'>
-                <thead>
-                  <tr  class='team-secondary-table-row'>
-                    <th class='teamColorBorder' scope="col">Rank</th>
-                    <th class='teamColorBorder' scope="col">Team</th>
-                    <th class='teamColorBorder' scope="col">Signed?</th>
-                    <th class='teamColorBorder' scope="col">Match</th>
-                    <th class='teamColorBorder' scope="col">Scholarship Offered?</th>
-                    <th class='teamColorBorder' scope="col">Interest Level</th>
-                    <th class='teamColorBorder' scope="col">Actively Recruiting?</th>
-                    <th class='teamColorBorder' scope="col">Team Prestige Rating</th>
-                    <th class='teamColorBorder' scope="col">Distance Match</th>
-                    <th class='teamColorBorder' scope="col">Match 1</th>
-                    <th class='teamColorBorder' scope="col">Match 2</th>
-                    <th class='teamColorBorder' scope="col">Match 3</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for RecruitTeamSeason in RecruitTeamSeasons %}
-                  <tr>
-                    <td>{{forloop.counter}}</td>
-                    <td>
-                      <a href="/World/{{page.WorldID}}/Team/{{ RecruitTeamSeason.TeamSeasonID.TeamID.TeamID }}/">
-                        <img class='indexConferenceStandingTeamLogo' src='{{RecruitTeamSeason.TeamSeasonID.TeamID.LogoURL}}' alt="My image">
-                        {{ RecruitTeamSeason.TeamSeasonID.TeamID.Name }}
-                      </a>
-                    </td>
-                    <td>
-                        {{ RecruitTeamSeason.Signed }}
-                    </td>
-                    <td>
-                        {{ RecruitTeamSeason.match_rating }}
-                    </td>
-                    <td>
-                        {{ RecruitTeamSeason.OfferMade }}
-                    </td>
-                    <td>
-                        {{ RecruitTeamSeason.InterestLevel }}
-                    </td>
-                    <td>
-                        {{ RecruitTeamSeason.IsActivelyRecruiting }}
-                    </td>
-                    <td>
-                        {{ RecruitTeamSeason.TeamPrestigeRating }}
-                    </td>
-                    <td>
-                        {{ RecruitTeamSeason.DistanceMatchRating }}
-                    </td>
-                    <td>
-                        {{RecruitTeamSeason.Preference1MatchRating}} - {{RecruitTeamSeason.Preference1Name}}
-                    </td>
-                    <td>
-                        {{RecruitTeamSeason.Preference2MatchRating}} - {{RecruitTeamSeason.Preference2Name}}
-                    </td>
-                    <td>
-                        {{RecruitTeamSeason.Preference3MatchRating}} - {{RecruitTeamSeason.Preference3Name}}
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
             </div>
 
           </div>
@@ -370,37 +290,7 @@
             <div class='w3-col l12 mw1000'>
               <div class="card margin-bottom-24">
                 <table class='width100 table table-striped table-hover '>
-                    {% for skill_group in skills%}
-                    <thead>
-                    <tr class='team-primary-background'>
-                      <th colspan="3">{{skill_group.rating_group}}</th>
-                      <th class=" text-center">Avg {{coach.Position}} Starter</th>
-                      {# TODO Fix conference name from action #}
-                      <th class=" text-center">Avg {{current_coach_team_season.team_season.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceAbbreviation}} {{coach.Position}} Starter</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {% for rating in skill_group.ratings%}
-                    <tr>
-                      <td class='bold'>{{rating.rating}}</td>
-                      <td style='width:55%'>
-                        <div class="w3-border w3-round-xlarge statBar" style='width: 100%; background-color: inherit;'>
-                          <div class="w3-container w3-round-xlarge {{rating.bar_width|NumberToGradeClass}}-Fill" style="width:{{rating.bar_width}}%; height: 8px;"></div>
-                        </div>
-                      </td>
-                      <td class='font20 text-center'>{{rating.coach_value}}</td>
-                      <td class="font20 text-center">
-                        {{rating.all_coachs.value}}
-                      </td>
-                      <td class="font20 text-center">
-                        {{rating.conference_coachs.value}}
-                      </td>
-                    </tr>
-
-                    {% endfor %}
-                  </tbody>
-                    {% endfor %}
+                    
                 </table>
 
               </div>

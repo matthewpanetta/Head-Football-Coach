@@ -6103,14 +6103,11 @@ const pick_players_on_field = (
 
   let abs_point_differential = Math.abs(point_differential);
   if (point_differential < -8){
-    abs_point_differential = Math.abs(point_differential + 7);
+    abs_point_differential = Math.abs(point_differential + 10);
   }
 
   let depth_chart_skip = 0;
-  if (abs_point_differential >= 48){
-    depth_chart_skip = 3;
-  }
-  else if (abs_point_differential >= 40){
+  if (abs_point_differential >= 40){
     depth_chart_skip = 2;
   }
   else if (abs_point_differential >= 35){
@@ -6129,6 +6126,10 @@ const pick_players_on_field = (
   }
   else if((period == 4) && (abs_point_differential >= 24) && (seconds_left_in_period < (10 * 60))){
     depth_chart_skip = 1;
+  }
+
+  if (point_differential < 0){
+    depth_chart_skip = Math.min(1, depth_chart_skip)
   }
 
   if (side_of_ball == "offense") {
@@ -6175,11 +6176,12 @@ const pick_players_on_field = (
     let count = position_list[pos];
     player_list.by_position[pos] = [];
     let ind = 0;
-    if (depth_chart[pos].length > depth_chart_skip){
-      ind = depth_chart_skip;
+    let pos_depth_chart_skip = depth_chart_skip;
+    if (depth_chart[pos].length > pos_depth_chart_skip){
+      ind = pos_depth_chart_skip;
     }
     
-    let energy_threshold = .7;
+    let energy_threshold = .7 - (.15 * pos_depth_chart_skip);
     while (player_list.by_position[pos].length < count){
       player_obj = {};
 
@@ -6201,15 +6203,15 @@ const pick_players_on_field = (
           players_on_field_set.add(player_obj.player_team_season.player_id)
         }
         else {
-          energy_threshold -= .075
+          energy_threshold -= .15
         }
       }
 
       if (ind >= depth_chart[pos].length && player_list.by_position[pos].length < count){
         energy_threshold -= .1;
-        depth_chart_skip -= 1;
-        depth_chart_skip = Math.max(0, depth_chart_skip)
-        ind = depth_chart_skip;
+        pos_depth_chart_skip -= 1;
+        pos_depth_chart_skip = Math.max(0, pos_depth_chart_skip)
+        ind = pos_depth_chart_skip;
       }
     }
   }

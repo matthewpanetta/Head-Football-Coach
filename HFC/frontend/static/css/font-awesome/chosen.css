@@ -33,14 +33,17 @@
 
 .far {
   font-family: 'Font Awesome 5 Free';
-  font-weight: 400; }
+  font-weight: 400;
+}
+
 @font-face {
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 900;
   font-display: auto;
   src: url("webfonts/fa-solid-900.eot");
-  src: url("webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("webfonts/fa-solid-900.woff2") format("woff2"), url("webfonts/fa-solid-900.woff") format("woff"), url("webfonts/fa-solid-900.ttf") format("truetype"), url("webfonts/fa-solid-900.svg#fontawesome") format("svg"); }
+  src: url("webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("webfonts/fa-solid-900.woff2") format("woff2"), url("webfonts/fa-solid-900.woff") format("woff"), url("webfonts/fa-solid-900.ttf") format("truetype"), url("webfonts/fa-solid-900.svg#fontawesome") format("svg");
+}
 
 
 @font-face {
@@ -188,4 +191,21 @@
 }
 
 .fa-map-marker-alt:before {
-  content: "\f3c5"; }
+  content: "\f3c5";
+}
+
+.fa-arrow-alt-circle-down:before {
+  content: "\f358";
+}
+
+.fa-arrow-alt-circle-left:before {
+  content: "\f359";
+}
+
+.fa-arrow-alt-circle-right:before {
+  content: "\f35a";
+}
+
+.fa-arrow-alt-circle-up:before {
+  content: "\f35b";
+}
