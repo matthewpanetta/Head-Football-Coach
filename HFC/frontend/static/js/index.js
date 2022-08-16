@@ -4736,10 +4736,15 @@ const create_player_team_seasons = async (data) => {
         prestige_slice_lower_bound + r * prestige_slice_gap
       );
 
-      var chosen_player_team_season = player_team_seasons.splice(
-        player_team_season_index,
-        1
-      );
+      var available_player_team_seasons = player_team_seasons.splice(
+        prestige_slice_lower_bound,
+        prestige_slice_gap
+      )
+
+      // var chosen_player_team_season = player_team_seasons.splice(
+      //   player_team_season_index,
+      //   1
+      // );
       chosen_player_team_season = chosen_player_team_season[0];
       if (chosen_player_team_season != undefined) {
         chosen_player_team_season.team_season_id = team_season_id;

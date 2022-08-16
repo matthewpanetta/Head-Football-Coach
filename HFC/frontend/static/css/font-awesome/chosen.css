@@ -209,3 +209,6 @@
 .fa-arrow-alt-circle-up:before {
   content: "\f35b";
 }
+
+.fa-circle:before {
+  content: "\f111"; }

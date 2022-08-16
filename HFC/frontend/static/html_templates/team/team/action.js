@@ -36,7 +36,12 @@ function AddBoxScoreListeners() {
   var SelectedTeamID = $(InitialBoxScore).attr("TeamID");
 
   $("button.boxscore-tab").on("click", function (event, target) {
-    console.log({target: $(event.currentTarget), event:event, SelectedTeamID:SelectedTeamID, InitialBoxScore:InitialBoxScore})
+    console.log({
+      target: $(event.currentTarget),
+      event: event,
+      SelectedTeamID: SelectedTeamID,
+      InitialBoxScore: InitialBoxScore,
+    });
     var ClickedTab = $(event.currentTarget);
     var ClickedTabParent = ClickedTab.closest(".boxscore-bar").attr("id");
     var SelectedTeamID = ClickedTab.attr("TeamID");
@@ -188,7 +193,7 @@ const getHtml = async (common) => {
 
   const games = await db.game.bulkGet(game_ids);
 
-  console.log('team_games', team_games)
+  console.log("team_games", team_games);
 
   const opponent_team_game_ids = team_games.map(
     (team_game) => team_game.opponent_team_game_id
@@ -212,7 +217,7 @@ const getHtml = async (common) => {
 
   const headline_ids = team.team_season.headlines;
   var headlines = await db.headline.bulkGet(headline_ids);
-  let headlines_by_game_id = index_group_sync(headlines, 'group', 'game_id')
+  let headlines_by_game_id = index_group_sync(headlines, "group", "game_id");
 
   headlines = headlines.sort((h_a, h_b) => h_b.week_id - h_a.week_id);
 
@@ -332,7 +337,7 @@ const getHtml = async (common) => {
     game.opponent_team = opponent_teams[counter_games];
     game.opponent_team_season = opponent_team_seasons[counter_games];
 
-    game.headlines = headlines_by_game_id[game.game_id]
+    game.headlines = headlines_by_game_id[game.game_id];
 
     for (var stat_detail of game.opponent_team_game.top_stats.concat(
       game.team_game.top_stats
@@ -673,7 +678,6 @@ const action = async (common) => {
       { stat_group: "defense", stat: "tackles", display: "Leading Tackler" },
       { stat_group: "defense", stat: "ints", display: "Leading Pass Defender" },
     ];
-    console.log({ team_leaders_raw: team_leaders_raw });
     for (var stat_detail of team_leaders_raw) {
       console.log({ stat_detail: stat_detail });
       player_team_seasons = player_team_seasons.sort(function (pts_a, pts_b) {
@@ -684,8 +688,6 @@ const action = async (common) => {
         );
       });
 
-      //console.log('stat_detail', stat_detail, player_team_seasons[0])
-
       if (
         player_team_seasons[0].season_stats[stat_detail.stat_group][
           stat_detail.stat
@@ -695,8 +697,6 @@ const action = async (common) => {
         team_leaders.push(stat_detail);
       }
     }
-
-    //console.log('team_leaders', team_leaders)
 
     const team_stats = [
       {
@@ -767,8 +767,13 @@ const action = async (common) => {
       7: "terrible",
     };
 
-    console.log("team_stats", {team_stats:team_stats, all_team_seasons:all_team_seasons});
-    all_team_seasons = all_team_seasons.filter(ts => ts.stats.season_stats.games.games_played > 0);
+    console.log("team_stats", {
+      team_stats: team_stats,
+      all_team_seasons: all_team_seasons,
+    });
+    all_team_seasons = all_team_seasons.filter(
+      (ts) => ts.stats.season_stats.games.games_played > 0
+    );
 
     for (var stat_group of team_stats) {
       console.log("stat_group", stat_group);
@@ -785,11 +790,13 @@ const action = async (common) => {
         stat_detail.team_value =
           team.team_season.season_stats[stat_detail.stat];
 
-        console.log({all_team_seasons:all_team_seasons, stat_detail:stat_detail})
-        all_team_season_stat_value = all_team_seasons.map(ts => ts.stats[stat_detail.stat]).sort(function (
-            value_a,
-            value_b
-          ) {
+        console.log({
+          all_team_seasons: all_team_seasons,
+          stat_detail: stat_detail,
+        });
+        all_team_season_stat_value = all_team_seasons
+          .map((ts) => ts.stats[stat_detail.stat])
+          .sort(function (value_a, value_b) {
             if (stat_detail.sort == "desc") {
               return value_b - value_a;
             } else {
@@ -857,7 +864,10 @@ const action = async (common) => {
 
     await draw_faces(common);
 
-    console.log({'conference_standings.conference_standings,': conference_standings.conference_standings})
+    console.log({
+      "conference_standings.conference_standings,":
+        conference_standings.conference_standings,
+    });
 
     if (team_leaders.length > 0) {
       conference_bar_chart(conference_standings.conference_standings, common);
@@ -926,6 +936,7 @@ const action = async (common) => {
     console.log({ renderedHtml: renderedHtml });
 
     $("#nav-info").append(renderedHtml);
+    await draw_map(common);
   });
 };
 
@@ -1065,7 +1076,7 @@ function rankings_trend_chart(team, common) {
 function conference_bar_chart(raw_data, common) {
   console.log(common.render_content);
 
-  const get_from_dict = common.get_from_dict
+  const get_from_dict = common.get_from_dict;
 
   var data_type = "team",
     team_id = common.render_content.team_id,
@@ -1795,7 +1806,7 @@ function conference_bar_chart(raw_data, common) {
         col +
         '">' +
         col
-          .replace('season_stats.', '')
+          .replace("season_stats.", "")
           .replace(/_/g, " ")
           .replace(/per game/g, "(Per Game)")
           .replace(/per attempt/g, "(Per Attempt)")
@@ -1855,6 +1866,96 @@ function conference_bar_chart(raw_data, common) {
 
   function set_iframe_height() {}
 }
+
+const draw_map = async (common) => {
+  const db = common.db;
+  const ddb = common.ddb;
+
+  const season = common.season;
+  const team = await db.team.get(common.render_content.team_id);
+  const team_id = team.team_id;
+
+  const team_season = await db.team_season
+    .where({ team_id: team_id, season: season })
+    .first();
+  const team_season_id = team_season.team_season_id;
+
+  const player_team_seasons = await db.player_team_season
+    .where({ team_season_id: team_season_id })
+    .toArray();
+  const player_ids = player_team_seasons.map((pts) => pts.player_id);
+
+  const players = await db.player
+    .where("player_id")
+    .anyOf(player_ids)
+    .toArray();
+  console.log({ players: players });
+  players.forEach(p => p.city_state = `${p.hometown.city}, ${p.hometown.state}`);
+  let players_by_city_state = index_group_sync(players, 'group', 'city_state')
+  const city_states = players.map((p) => [p.hometown.city, p.hometown.state]);
+
+  let cities = await ddb.cities
+    .where("[city+state]")
+    .anyOf(city_states)
+    .toArray();
+
+  cities.forEach(c => c.city_state = `${c.city}, ${c.state}`)
+  cities = nest_children(cities, players_by_city_state, 'city_state', 'players')
+
+  const school_location = await ddb.cities
+    .where({ city: team.location.city, state: team.location.state })
+    .first();
+
+  const school_icon = L.divIcon({
+    html: `<i class="fa fa-map-marker-alt" style="font-size: 40px; color: #${common.page.PrimaryColor};"></i>`,
+    iconSize: [40, 40],
+    iconAnchor: [15, 40],
+  });
+  const player_icon = L.divIcon({
+    html: `<i class="fa fa-circle" data-bs-toggle="tooltip" data-bs-title="Default tooltip" style="font-size: 8px; color: #${common.page.PrimaryColor};"></i>`,
+    iconSize: [8, 8],
+    iconAnchor: [4, 4],
+  });
+
+  console.log({ "map-body": $("#map-body") });
+  let map = L.map("map-body").setView([40.8098, -96.6802], 4);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "© OpenStreetMap",
+  }).addTo(map);
+
+  let marker = L.marker([school_location.lat, school_location.long], {
+    icon: school_icon,
+  }).addTo(map);
+
+  var markers = L.markerClusterGroup();
+
+  let tooltip_template = `
+    <div>{{city.city_state}}</div>
+    <ul>
+    {% for player in city.players%}
+      <li>
+      {{player.full_name}}, {{player.position}}
+      </li>
+    {%endfor%}
+    </ul>
+  `;
+
+  cities.forEach(async function (city) {
+    var renderedHtml = await common.nunjucks_env.renderString(
+      tooltip_template,
+      {city: city}
+    );
+    renderedHtml = renderedHtml.replace('\n','')
+    let marker = L.marker([city.lat, city.long], { icon: player_icon }).bindTooltip(renderedHtml).openTooltip();
+    markers
+      .addLayer(marker)
+      .addTo(map);
+    console.log({marker:marker, markers:markers})
+    });
+
+  console.log({ cities: cities, map: map, school_location: school_location });
+};
 
 $(document).ready(async function () {
   var startTime = performance.now();
