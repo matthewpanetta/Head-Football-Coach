@@ -328,13 +328,24 @@ body {
   font-size: 12px !important;
 }
 
+.page-header-logo-div{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+  width: 150px;
+  margin-left: 100px;
+  vertical-align: top;
+}
+
 .playerTeamLogo,
 .coachTeamLogo,
 .teamTeamLogo {
-  height: 150px;
-  margin-left: 20px;
-  margin-right: 20px;
-  vertical-align: top;
+  max-height: 150px;
+  max-width: 150px;
+  /* margin-left: 20px;
+  margin-right: 20px; */
+  vertical-align: middle;
 }
 
 .player-modal-team-logo {
@@ -1810,9 +1821,6 @@ tfoot td {
   float: right;
 }
 
-img.teamTeamLogo {
-  margin-left: 100px;
-}
 
 .skew-45 {
   transform: skewX(45deg);
@@ -2260,6 +2268,11 @@ img.teamTeamLogo {
 
 .small-logo {
   height: 20px;
+}
+
+
+.logo-12 {
+  height: 12px;
 }
 
 

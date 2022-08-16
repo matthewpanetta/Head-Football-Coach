@@ -4,7 +4,8 @@
     "conference_abbreviation": "ACC",
     "prestige": 7,
     "is_independent": 0,
-    "conference_logo_url": "/static/img/conference_logos/Atlantic_Coast_Conference.png",
+    "conference_color_primary_hex": "012596",
+    "conference_color_secondary_hex": "9A9A9B",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 8,
@@ -57,7 +58,9 @@
     "conference_abbreviation": "AAC",
     "prestige": 5,
     "is_independent": 0,
-    "conference_logo_url": "/static/img/conference_logos/American_Athletic_Conference.png",
+    "conference_logo_url": "/static/img/conference_logos/american_athletic_conference.png",
+    "conference_color_primary_hex": "021130",
+    "conference_color_secondary_hex": "D90012",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 8,
@@ -106,6 +109,8 @@
     "prestige": 7,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/Big_12_Conference.png",
+    "conference_color_primary_hex": "FC2929",
+    "conference_color_secondary_hex": "B6BABE",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 9,
@@ -140,6 +145,8 @@
     "prestige": 8,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/Big_Ten_Conference.png",
+    "conference_color_primary_hex": "1074C5",
+    "conference_color_secondary_hex": "000000",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 8,
@@ -184,6 +191,8 @@
     "prestige": 10,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/Southeastern_Conference.png",
+    "conference_color_primary_hex": "08367C",
+    "conference_color_secondary_hex": "FFC936",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 8,
@@ -237,6 +246,8 @@
     "prestige": 5,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/Mountain_West_Conference.png",
+    "conference_color_primary_hex": "3C196C",
+    "conference_color_secondary_hex": "A2A2A2",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 8,
@@ -293,6 +304,8 @@
     "prestige": 3,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/C_USA_Conference.png",
+    "conference_color_primary_hex": "042652",
+    "conference_color_secondary_hex": "960020",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 8,
@@ -346,6 +359,8 @@
     "prestige": 7,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/PAC-12_Conference.png",
+    "conference_color_primary_hex": "01152E",
+    "conference_color_secondary_hex": "154B8E",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 8,
@@ -381,6 +396,8 @@
     "prestige": 1,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/Sun_Belt_Conference.png",
+    "conference_color_primary_hex": "0D162A",
+    "conference_color_secondary_hex": "EF900D",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 9,
@@ -415,6 +432,8 @@
     "prestige": 1,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/MAC_Conference.png",
+    "conference_color_primary_hex": "081836",
+    "conference_color_secondary_hex": "14954D",
     "schedule_format": {
       "hold_conference_championship_game": true,
       "number_conference_games": 8,
@@ -457,6 +476,8 @@
     "prestige": 1,
     "is_independent": 1,
     "conference_logo_url": "/static/img/conference_logos/FBS_Independents.png",
+    "conference_color_primary_hex": "094C86",
+    "conference_color_secondary_hex": "FFFFFF",
     "schedule_format": {
       "hold_conference_championship_game": false,
       "number_conference_games": 0,

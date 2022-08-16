@@ -2307,7 +2307,29 @@ class game {
 
 class conference {
   get conference_href() {
-    return `/World/${this.world_id}/Standings/Conference/${this.conference_id}`;
+    return `/World/${this.world_id}/Conference/${this.conference_id}`;
+  }
+
+  get conference_logo() {
+    var folder_prefix = "/static/img/conference_logos/";
+
+    if (this.conference_id < 0) {
+      var path = folder_prefix + "ncaa.png";
+    } else {
+      var path =
+        folder_prefix +
+        this.conference_name +
+        ".png";
+    }
+
+    path = path
+      .toLowerCase()
+      .replaceAll(" ", "_")
+      .replaceAll("&", "_")
+      .replaceAll("'", "")
+      .replaceAll("-", "_");
+
+    return path;
   }
 }
 
@@ -3068,8 +3090,10 @@ const create_team_season = async (data) => {
 const populate_all_depth_charts = async (common, team_season_ids) => {
   const db = common.db;
   const season = common.season;
+  console.log('populate_all_depth_charts', {team_season_ids:team_season_ids})
 
   if (team_season_ids) {
+    console.log('hit first if')
     var team_seasons = await db.team_season
       .where({ season: season })
       .and((ts) => team_season_ids.includes(ts.team_season_id))
@@ -3115,7 +3139,7 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     );
   }
 
-  console.log({ season: season, db: db });
+  console.log({ season: season, db: db, player_team_seasons:player_team_seasons,team_seasons:team_seasons  });
 
   //TODO fix this shit
   var signed_recruit_team_seasons = []; //await db.recruit_team_season.filter(rts => rts.signed).toArray();
@@ -4736,15 +4760,15 @@ const create_player_team_seasons = async (data) => {
         prestige_slice_lower_bound + r * prestige_slice_gap
       );
 
-      var available_player_team_seasons = player_team_seasons.splice(
-        prestige_slice_lower_bound,
-        prestige_slice_gap
-      )
+      // var available_player_team_seasons = player_team_seasons.splice(
+      //   prestige_slice_lower_bound,
+      //   prestige_slice_gap
+      // )
 
-      // var chosen_player_team_season = player_team_seasons.splice(
-      //   player_team_season_index,
-      //   1
-      // );
+      var chosen_player_team_season = player_team_seasons.splice(
+        player_team_season_index,
+        1
+      );
       chosen_player_team_season = chosen_player_team_season[0];
       if (chosen_player_team_season != undefined) {
         chosen_player_team_season.team_season_id = team_season_id;
@@ -8269,6 +8293,7 @@ const calculate_team_overalls = async (common) => {
     }
   }
 
+  console.log({team_seasons:team_seasons})
   var player_team_season_ids = team_seasons
     .map((ts) =>
       Object.entries(ts.depth_chart)
