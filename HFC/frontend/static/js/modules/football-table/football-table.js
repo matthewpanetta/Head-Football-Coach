@@ -63,7 +63,8 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
         $(table_id).find("tbody").append(elem.tr);
       }
     });
-  $(table_id).find(`th:eq(${initial_sort_index})`).click();
+  console.log({table_id:table_id, "$(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`)": $(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`), initial_sort_index:initial_sort_index, 'tr:not(.football-table-column-groups) th:eq(${initial_sort_index})':`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`})
+  $(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`).click();
 };
 
 const get_initial_column_controls = (subject) => {

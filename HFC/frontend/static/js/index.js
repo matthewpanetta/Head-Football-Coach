@@ -2331,6 +2331,26 @@ class conference {
 
     return path;
   }
+
+  luma(color) {
+    var R = color.slice(0, 2);
+    var G = color.slice(2, 4);
+    var B = color.slice(4, 6);
+
+    const luma =
+      (0.299 * parseInt(R, 16) ** 2 +
+        0.587 * parseInt(G, 16) ** 2 +
+        0.114 * parseInt(B, 16) ** 2) **
+      0.5;
+    return luma;
+  }
+
+  get secondary_color_display() {
+    if (this.luma(this.conference_color_secondary_hex) < 230) {
+      return this.conference_color_secondary_hex;
+    }
+    return "000000";
+  }
 }
 
 const intersect = (a, b) => {
