@@ -9,30 +9,15 @@
       
     </div>
     <div style='display: flex;'>
-      <div class='w3-bar-block ' style='border-right: 1px solid grey; max-height: 65vh; overflow-y: scroll;'>
-        <button href="" class="conference-button w3-bar-item btn" conference-button-val='All'>
-          <img src="/static/img/TeamLogos/ncaa-text.png" alt="" class="small-logo">
-          <span class='padding-left-8'>All</span>
-        </button>
-        {% for conference in all_teams.conferences%}
-        <button href="" class="conference-button w3-bar-item btn" conference-button-val='{{conference.conference_id}}'>
-          <img src="{{conference.conference_logo_url}}" class="small-logo" alt="">
-          <span class='padding-left-8'>{{conference.conference_abbreviation}}</span>
-        </button>
-        {% endfor %}
-      </div>
       <div class='w3-bar-block ' style='max-height: 65vh; overflow-y: scroll'>
         {% for team in all_teams.all_teams %}
-        <a href="{{team.adjusted_team_href}}" class="team-link w3-bar-item btn" conference-button-val='{{team.conference.conference_id}}'>
+        <a href="{{team.adjusted_team_href}}" class="team-link w3-bar-item">
           <img src="{{team.team_logo_100}}" class="small-logo" alt="" />
           <span class='padding-left-8'>{{team.full_name}}</span>
         </a>
         {% endfor %}
       </div>
     </div>
-
-    
-    
   </div>
 </div>
 

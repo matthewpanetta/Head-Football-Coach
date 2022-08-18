@@ -132,6 +132,7 @@ body {
 .teamHeaderInfo {
   display: inline-block;
   padding-top: 36px;
+  margin-left: 20px;
 }
 
 .playerFirstName,
@@ -2266,9 +2267,6 @@ tfoot td {
   font-size: 10px !important;
 }
 
-.small-logo {
-  height: 20px;
-}
 
 
 .logo-12 {

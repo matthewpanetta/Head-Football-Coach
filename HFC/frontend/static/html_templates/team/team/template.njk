@@ -25,7 +25,9 @@
             <i class="fas fa-bars"></i>
         </button>
         <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        {% if games_played > 0%}
         <button class="w3-bar-item btn tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
+        {% endif %}
         <button class="w3-bar-item btn tab nav-tab-button" id="nav-info-tab">Team Info</button>
         {% include "../../static/html_templates/common_templates/ext_team_list.njk" %}
       </div>

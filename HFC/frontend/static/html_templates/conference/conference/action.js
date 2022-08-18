@@ -8,7 +8,8 @@ const getHtml = async (common) => {
   const query_to_dict = common.query_to_dict;
   const index_group = common.index_group;
 
-  let conference = await db.conference.get(conference_id);
+  let all_conferences = await db.conference.toArray();
+  let conference = all_conferences.find(c => c.conference_id == conference_id);
   let conference_seasons = await db.conference_season
     .where({ conference_id: conference_id })
     .toArray();
@@ -174,6 +175,7 @@ const getHtml = async (common) => {
     common: common,
     conference: conference,
     conference_standings: conference_standings,
+    all_conferences:all_conferences
   };
 
   common.render_content = render_content;

@@ -32,6 +32,27 @@
             </button>
             <button class="w3-bar-item btn tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
             <button class="w3-bar-item btn tab nav-tab-button"  id="nav-history-tab">History</button>
+            <div class="w3-dropdown-hover w3-right" style="margin-right: 20px" id='nav-team-dropdown-container'>
+              <button class="w3-bar-item btn tab nav-tab-button"  id="nav-team-dropdown" >
+              Conferences
+            </button>
+
+              <div class="w3-dropdown-content card w3-animate-opacity"  style="right: 20px; max-height: 70vh;" >
+                <div>
+                  <span>Select a conference to view</span>
+                </div>
+                <div style='display: flex;'>
+                  <div class='w3-bar-block ' style='max-height: 65vh; overflow-y: scroll'>
+                    {% for conference in all_conferences %}
+                      <a href="{{conference.conference_href}}" class="w3-bar-item ">
+                        <img src="{{conference.conference_logo}}" class="small-logo"/>
+                        <span class='padding-left-8'>{{conference.conference_name}}</span>
+                      </a>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </nav>
         <div class="" id="nav-tabContent">

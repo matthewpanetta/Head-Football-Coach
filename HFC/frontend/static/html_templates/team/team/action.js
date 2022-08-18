@@ -481,6 +481,7 @@ const getHtml = async (common) => {
     //team_stats: team_stats,
     player_team_seasons: player_team_seasons,
     headlines: headlines,
+    games_played:games_played
   };
 
   common.render_content = render_content;
@@ -1917,7 +1918,8 @@ const draw_map = async (common) => {
     iconAnchor: [4, 4],
   });
 
-  console.log({ "map-body": $("#map-body") });
+
+  if (map != undefined) { map.remove(); } 
   let map = L.map("map-body").setView([40.8098, -96.6802], 4);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
