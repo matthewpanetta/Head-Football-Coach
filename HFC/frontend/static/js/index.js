@@ -74,6 +74,7 @@ class headline {
 
 class award {
   constructor(
+    award_id,
     player_team_season_id,
     player_team_game_id,
     week_id,
@@ -85,6 +86,7 @@ class award {
     conference_season_id,
     award_team
   ) {
+    this.award_id = award_id;
     this.week_id = week_id;
     this.player_team_season_id = player_team_season_id;
     this.player_team_game_id = player_team_game_id;
@@ -860,16 +862,12 @@ class league_season {
       user_set_depth_chart: false,
     };
 
-    console.log({init_obj:init_obj})
-
     if (previous_season == undefined) {
       this.is_current_season = true;
-      this.user_team_id = Math.ceil(Math.random() * init_obj.num_teams);
       this.captains_per_team = init_obj.captains_per_team;
       this.players_per_team = init_obj.players_per_team;
     } else {
       this.is_current_season = false;
-      this.user_team_id = previous_season.user_team_id;
       this.captains_per_team = previous_season.captains_per_team;
       this.players_per_team = previous_season.players_per_team;
     }
@@ -3266,12 +3264,17 @@ const create_conference_seasons = async (data) => {
   const season = data.season;
   const world_id = data.world_id;
 
+  var last_conference_season = await db.conference_season.orderBy("conference_season_id").last();
+  let conference_season_id = last_conference_season ? last_conference_season.conference_season_id : 0;
+
   var conference_seasons_to_create = [];
 
   for (const conference of data.conferences) {
+    conference_season_id = conference_season_id + 1;
     var new_conference_season = {
       world_id: world_id,
       conference_id: conference.conference_id,
+      conference_season_id: conference_season_id,
       season: season,
       divisions: conference.divisions,
       conference_champion_team_season_id: null,
@@ -5114,6 +5117,13 @@ const create_phase = async (season, common) => {
     { season: season, phase_name: "Off-Season Recruiting", is_current: false },
     { season: season, phase_name: "Summer Camp", is_current: false },
   ];
+
+  let last_phase = await db.phase.orderBy('phase_id').last();
+  let phase_id = last_phase ? last_phase.phase_id + 1 : 1;
+  for (let phase of phases_to_create){
+    phase.phase_id = phase_id;
+    phase_id +=1;
+  }
   const phases_to_create_added = await db.phase.bulkAdd(phases_to_create);
   const phases = index_group_sync(
     await db.phase.where({ season: season }).toArray(),
@@ -5292,16 +5302,23 @@ const create_week = async (phases, common, season) => {
       schedule_week_number: null,
     },
   ];
-  $.each(weeks_to_create, function (ind, week) {
+
+  let last_week = await db.week.orderBy('week_id').last();
+  let week_id = last_week ? last_week.week_id + 1 : 1;
+
+  for (let week of weeks_to_create){
     week.week_updates = [];
     week.season = season;
+    week.week_id = week_id;
     week.user_actions = {
       recruiting_actions_used: 0,
     };
-  });
+
+    week_id +=1;
+  }
 
   if (season == 2022) {
-    weeks_to_create[1].is_current = true;
+    weeks_to_create[0].is_current = true;
   }
   var weeks_to_create_added = await db.week.bulkAdd(weeks_to_create);
   return await db.week.toArray();
@@ -5621,7 +5638,7 @@ const get_db = async (world_obj) => {
 
   var new_db = await new Dexie(dbname);
 
-  await new_db.version(15).stores({
+  await new_db.version(16).stores({
     league_season: "season",
     team: "team_id",
     team_season: "team_season_id, team_id, season",
@@ -5635,16 +5652,16 @@ const get_db = async (world_obj) => {
       "player_team_season_id, player_id, team_season_id, season",
     player_team_season_recruiting: "player_team_season_id",
     player_team_season_stats: "player_team_season_id",
-    conference: "++conference_id, conference_name",
+    conference: "conference_id, conference_name",
     conference_season:
-      "++conference_season_id, conference_id, season, [conference_id+season]",
-    phase: "++phase_id, season",
-    week: "++week_id, season, [phase_id+season]",
+      "conference_season_id, conference_id, season, [conference_id+season]",
+    phase: "phase_id, season",
+    week: "week_id, season, [phase_id+season]",
     team_game: "team_game_id, game_id, team_season_id, week_id",
     player_team_game:
       "player_team_game_id, team_game_id, player_team_season_id",
     game: "game_id, week_id",
-    award: "++award_id, player_team_season_id, week_id, season",
+    award: "award_id, player_team_season_id, week_id, season",
     headline: "headline_id, week_id",
     world: "",
   });
@@ -8234,7 +8251,7 @@ const calculate_team_needs = async (common) => {
             overall_index = year_position_player_overalls.length;
           }
           let overall_playtime_modifier =
-            position_starters_map[position][overall_index] ?? 0;
+            position_starters_map[position][overall_index] || 0;
           overall_obj.playing_time_val += overall_playtime_modifier;
         }
         overall_obj.playing_time_val = Math.ceil(
@@ -9419,11 +9436,15 @@ const choose_players_of_the_week = async (this_week, common) => {
 
   var awards_to_save = [];
 
+  let last_award = await db.award.orderBy('award_id').last();
+  let award_id = last_award ? last_award.award_id + 1 : 1;
+
   for (const position_group in player_team_games_by_position_group) {
     var position_group_player_team_games =
       player_team_games_by_position_group[position_group];
     var player_team_game = position_group_player_team_games[0];
     var a = new award(
+      award_id,
       player_team_game.player_team_season_id,
       player_team_game.player_team_game_id,
       this_week.week_id,
@@ -9435,6 +9456,7 @@ const choose_players_of_the_week = async (this_week, common) => {
       null
     );
     awards_to_save.push(a);
+    award_id +=1;
   }
 
   for (const conference_season_id in player_team_games_by_conference_season_id) {
@@ -9452,6 +9474,7 @@ const choose_players_of_the_week = async (this_week, common) => {
         player_team_games_by_position_group[position_group];
       var player_team_game = position_group_player_team_games[0];
       var a = new award(
+        award_id,
         player_team_game.player_team_season_id,
         player_team_game.player_team_game_id,
         this_week.week_id,
@@ -9463,6 +9486,7 @@ const choose_players_of_the_week = async (this_week, common) => {
         conference_season_id
       );
       awards_to_save.push(a);
+      award_id +=1;
     }
   }
 
@@ -9541,6 +9565,9 @@ const choose_preseason_all_americans = async (common) => {
   const team_ids = team_seasons.map((ts) => ts.team_id);
   var teams = await db.team.bulkGet(team_ids);
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
+
+  let last_award = await db.award.orderBy('award_id').last()
+  let award_id = last_award ? last_award.award_id + 1 : 1;
 
   team_seasons = nest_children(
     team_seasons,
@@ -9633,6 +9660,7 @@ const choose_preseason_all_americans = async (common) => {
     for (var i = 0; i < position_count_map[position]; i++) {
       player_team_season = position_player_team_seasons[i];
       var a = new award(
+        award_id,
         player_team_season.player_team_season_id,
         null,
         this_week.week_id,
@@ -9645,6 +9673,7 @@ const choose_preseason_all_americans = async (common) => {
         "First"
       );
       awards_to_save.push(a);
+      award_id +=1;
     }
   }
 
@@ -9711,6 +9740,7 @@ const choose_preseason_all_americans = async (common) => {
       for (var i = 0; i < position_count_map[position]; i++) {
         player_team_season = position_player_team_seasons[i];
         var a = new award(
+          award_id,
           player_team_season.player_team_season_id,
           null,
           this_week.week_id,
@@ -9724,6 +9754,7 @@ const choose_preseason_all_americans = async (common) => {
         );
 
         awards_to_save.push(a);
+        award_id +=1;
       }
     }
   }
@@ -9733,8 +9764,6 @@ const choose_preseason_all_americans = async (common) => {
 
 const choose_all_americans = async (this_week, common) => {
   const db = common.db;
-
-  // await db.award.where({week_id: this_week.week_id}).delete();
 
   const position_count_map = {
     QB: 1,
@@ -9792,6 +9821,9 @@ const choose_all_americans = async (this_week, common) => {
   var teams = await db.team.bulkGet(team_ids);
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
+  let last_award = await db.award.orderBy("award_id").last();
+  let award_id = last_award ? last_award.award_id + 1 : 1;
+
   team_seasons = nest_children(
     team_seasons,
     teams_by_team_id,
@@ -9837,6 +9869,7 @@ const choose_all_americans = async (this_week, common) => {
 
   const heisman_player_team_season = player_team_seasons[0];
   var a = new award(
+    award_id,
     heisman_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -9849,6 +9882,7 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   var r = Math.random();
   var maxwell_player_team_season_index = 0;
@@ -9862,6 +9896,7 @@ const choose_all_americans = async (this_week, common) => {
   const maxwell_player_team_season =
     player_team_seasons[maxwell_player_team_season_index];
   var a = new award(
+    award_id,
     maxwell_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -9874,12 +9909,14 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   var r = Math.random();
   const camp_player_team_season_index = Math.floor(5 * r);
   const camp_player_team_season =
     player_team_seasons[camp_player_team_season_index];
   var a = new award(
+    award_id,
     camp_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -9892,12 +9929,14 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   const rimington_player_team_seasons = player_team_seasons.filter(
     (pts) => pts.position == "IOL"
   );
   const rimington_player_team_season = rimington_player_team_seasons[0];
   var a = new award(
+    award_id,
     rimington_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -9910,12 +9949,14 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   const outland_player_team_seasons = player_team_seasons.filter(
     (pts) => pts.position == "IOL" || pts.position == "DL"
   );
   const outland_player_team_season = outland_player_team_seasons[0];
   var a = new award(
+    award_id,
     outland_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -9928,12 +9969,14 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   const thorpe_player_team_seasons = player_team_seasons.filter(
     (pts) => pts.position == "CB" || pts.position == "S"
   );
   const thorpe_player_team_season = thorpe_player_team_seasons[0];
   var a = new award(
+    award_id,
     thorpe_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -9946,6 +9989,7 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   //TODO  - include punters
   // const guy_player_team_seasons = player_team_seasons.filter(pts => pts.position == 'P');
@@ -9958,6 +10002,7 @@ const choose_all_americans = async (this_week, common) => {
   );
   const groza_player_team_season = groza_player_team_seasons[0];
   var a = new award(
+    award_id,
     groza_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -9970,12 +10015,14 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   const mackey_player_team_seasons = player_team_seasons.filter(
     (pts) => pts.position == "TE"
   );
   const mackey_player_team_season = mackey_player_team_seasons[0];
   var a = new award(
+    award_id,
     mackey_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -9988,12 +10035,14 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   const biletnikoff_player_team_seasons = player_team_seasons.filter(
     (pts) => pts.position == "WR"
   );
   const biletnikoff_player_team_season = biletnikoff_player_team_seasons[0];
   var a = new award(
+    award_id,
     biletnikoff_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -10006,12 +10055,14 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   const walker_player_team_seasons = player_team_seasons.filter(
     (pts) => pts.position == "RB"
   );
   const walker_player_team_season = walker_player_team_seasons[0];
   var a = new award(
+    award_id,
     walker_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -10024,12 +10075,14 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   const butkus_player_team_seasons = player_team_seasons.filter(
     (pts) => pts.position == "LB"
   );
   const butkus_player_team_season = butkus_player_team_seasons[0];
   var a = new award(
+    award_id,
     butkus_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -10042,12 +10095,14 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   const obrien_player_team_seasons = player_team_seasons.filter(
     (pts) => pts.position == "QB"
   );
   const obrien_player_team_season = obrien_player_team_seasons[0];
   var a = new award(
+    award_id,
     obrien_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -10060,6 +10115,7 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   var r = Math.random();
   const nagurski_player_team_seasons = player_team_seasons.filter(
@@ -10073,6 +10129,7 @@ const choose_all_americans = async (this_week, common) => {
   const nagurski_player_team_season =
     nagurski_player_team_seasons[Math.floor(4 * r)];
   var a = new award(
+    award_id,
     nagurski_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -10085,6 +10142,7 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   var r = Math.random();
   const bednarik_player_team_seasons = player_team_seasons.filter(
@@ -10098,6 +10156,7 @@ const choose_all_americans = async (this_week, common) => {
   const bednarik_player_team_season =
     bednarik_player_team_seasons[Math.floor(4 * r)];
   var a = new award(
+    award_id,
     bednarik_player_team_season.player_team_season_id,
     null,
     this_week.week_id,
@@ -10110,6 +10169,7 @@ const choose_all_americans = async (this_week, common) => {
     "National"
   );
   awards_to_save.push(a);
+  award_id += 1;
 
   //AWARDS TODO:
   //  Burlsworth Trophy - former walk-on
@@ -10128,6 +10188,7 @@ const choose_all_americans = async (this_week, common) => {
     for (var i = 0; i < position_count_map[position]; i++) {
       player_team_season = position_player_team_seasons[i];
       var a = new award(
+        award_id,
         player_team_season.player_team_season_id,
         null,
         this_week.week_id,
@@ -10140,6 +10201,7 @@ const choose_all_americans = async (this_week, common) => {
         "First"
       );
       awards_to_save.push(a);
+      award_id += 1;
     }
 
     for (
@@ -10149,6 +10211,7 @@ const choose_all_americans = async (this_week, common) => {
     ) {
       player_team_season = position_player_team_seasons[i];
       var a = new award(
+        award_id,
         player_team_season.player_team_season_id,
         null,
         this_week.week_id,
@@ -10161,6 +10224,7 @@ const choose_all_americans = async (this_week, common) => {
         "Second"
       );
       awards_to_save.push(a);
+      award_id += 1;
     }
 
     position_player_team_seasons = position_player_team_seasons.filter(
@@ -10169,6 +10233,7 @@ const choose_all_americans = async (this_week, common) => {
     for (var i = 0; i < position_count_map[position]; i++) {
       player_team_season = position_player_team_seasons[i];
       var a = new award(
+        award_id,
         player_team_season.player_team_season_id,
         null,
         this_week.week_id,
@@ -10181,6 +10246,7 @@ const choose_all_americans = async (this_week, common) => {
         "Freshman"
       );
       awards_to_save.push(a);
+      award_id += 1;
     }
   }
 
@@ -10200,6 +10266,7 @@ const choose_all_americans = async (this_week, common) => {
       for (var i = 0; i < position_count_map[position]; i++) {
         player_team_season = position_player_team_seasons[i];
         var a = new award(
+          award_id,
           player_team_season.player_team_season_id,
           null,
           this_week.week_id,
@@ -10213,6 +10280,7 @@ const choose_all_americans = async (this_week, common) => {
         );
 
         awards_to_save.push(a);
+        award_id += 1;
       }
 
       for (
@@ -10222,6 +10290,7 @@ const choose_all_americans = async (this_week, common) => {
       ) {
         player_team_season = position_player_team_seasons[i];
         var a = new award(
+          award_id,
           player_team_season.player_team_season_id,
           null,
           this_week.week_id,
@@ -10235,6 +10304,7 @@ const choose_all_americans = async (this_week, common) => {
         );
 
         awards_to_save.push(a);
+        award_id += 1;
       }
 
       position_player_team_seasons = position_player_team_seasons.filter(
@@ -10249,8 +10319,9 @@ const choose_all_americans = async (this_week, common) => {
           player_team_season: player_team_season,
           conference_season_id: conference_season_id,
         });
-        if (player_team_season){
+        if (player_team_season) {
           var a = new award(
+            award_id,
             player_team_season.player_team_season_id,
             null,
             this_week.week_id,
@@ -10262,9 +10333,10 @@ const choose_all_americans = async (this_week, common) => {
             parseInt(conference_season_id),
             "Freshman"
           );
-  
-          awards_to_save.push(a);        }
 
+          awards_to_save.push(a);
+          award_id += 1;
+        }
       }
     }
   }
@@ -13513,7 +13585,7 @@ const geo_marker_action = async(common) => {
   });
 }
 
-const new_world_action = async (common) => {
+const new_world_action = async (common, database_suffix) => {
   var par = $("#indexCreateWorldModalCloseButton").parent();
   $(par).empty();
   $(par).append("<div>Creating new world!</div>");
@@ -13532,7 +13604,7 @@ const new_world_action = async (common) => {
 
   var teams_from_json = await get_teams();
 
-  var conferences_from_json = await get_conferences("");
+  var conferences_from_json = await get_conferences(database_suffix);
   console.log({ conferences_from_json: conferences_from_json });
 
   var school_names_to_include = [];
@@ -13540,6 +13612,7 @@ const new_world_action = async (common) => {
 
   $.each(conferences_from_json, function (ind, conference) {
     conference.world_id = world_id;
+    conference.conference_id = ind + 1;
 
     let school_names = conference.divisions.map((d) => d.teams);
     school_names = school_names.flat();

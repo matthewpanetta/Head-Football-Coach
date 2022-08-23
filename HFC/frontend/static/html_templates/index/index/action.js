@@ -2,15 +2,21 @@ const getHtml = async (common) => {
   nunjucks.configure({ autoescape: true });
   const nunjucks_env = await get_nunjucks_env();
 
-  var db = null;
-  var world_obj = {};
   const db_list = await common.get_databases_references();
-  var render_content = { world_list: [] };
+  let world_list = [];
+  for (let db of db_list){
+    world_list.push(db);
+  }
 
-  $.each(db_list, function (ind, db) {
-    world_obj = db;
-    render_content["world_list"].push(world_obj);
-  });
+  let world_options = [
+    {display: 'Full Modern World', description: 'All conferences and teams as of 2022', database_suffix: ''},
+    {display: 'Small Modern World', description: 'Conferences and teams as of 2022, including SEC, Pac-12, AAC, MAC, and Independents', database_suffix: '_small'},
+    {display: 'Full World - 2024', description: 'All conferences and teams as of 2024, including notable upcoming conference changes', database_suffix: '_2024'},
+    {display: 'Full World - 2010', description: 'All conferences and teams, as they existed in 2010', database_suffix: '_2010'},
+  ]
+
+
+  var render_content = { world_list: world_list, world_options: world_options };
 
   console.log("render_content", render_content);
 
@@ -25,25 +31,6 @@ const getHtml = async (common) => {
 
 const action = async (common) => {
   const ddb = await common.driver_db();
-
-  //Show initial 'new world' modal
-  $("#create-world-row").on("click", function () {
-    $("#indexCreateWorldModal").css({ display: "block" });
-
-    //Close modal if clicking outside modal
-    $(window).on("click", function (event) {
-      if ($(event.target)[0] == $("#indexCreateWorldModal")[0]) {
-        $("#indexCreateWorldModal").css({ display: "none" });
-        $(window).unbind();
-      }
-    });
-
-    //Function to close modal
-    $("#indexCreateWorldModalCloseButton").on("click", function () {
-      $("#indexCreateWorldModal").css({ display: "none" });
-      $(window).unbind();
-    });
-  });
 
   $(".idb-export").on("click", async function () {
     console.log("idb export click", $(this).attr("id"));
@@ -116,9 +103,11 @@ const action = async (common) => {
   });
 
   //Create new db if clicked 'continue'
-  $("#indexCreateWorldModalContinueButton").on("click", async function () {
-
-    await common.new_world_action(common);
+  $(".create-world-play-button").on("click", async function () {
+    let database_suffix = $(this).attr('database-suffix');
+    console.log({this: $(this), database_suffix:database_suffix})
+    debugger;
+    await common.new_world_action(common, database_suffix);
     
   });
 };

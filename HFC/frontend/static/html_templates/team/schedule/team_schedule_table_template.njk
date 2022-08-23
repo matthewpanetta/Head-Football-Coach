@@ -16,8 +16,8 @@
                     <th style='min-width: 70px;' class='left-text' sort-order='sort-asc'></th>
                     <th class='center-text' sort-order='sort-asc'>Result</th>
                     <th  class='center-text no-sort'>Record</th>
-                    <th class='no-sort'>Top Player</th>
-                    <th class='col-group no-sort'>Opponent Top Player</th>
+                    <th class='no-sort left-text'>Top Player</th>
+                    <th class='col-group no-sort left-text'>Opponent Top Player</th>
                     
                 </tr> 
             </thead>
@@ -65,7 +65,7 @@
                       <span>{{game.team_game.record.wins}} - {{game.team_game.record.losses}} ({{game.team_game.record.conference_wins}} - {{game.team_game.record.conference_losses}})</span>
                       {% endif %}
                     </td>
-                    <td>
+                    <td class='left-text'>
                       {% if game.was_played%}
                       <span class='font10'>{{game.team_game.top_stats[0].player_team_game.player_team_season.position}}</span>
                       <a href='{{game.team_game.top_stats[0].player_team_game.player_team_season.player.player_href}}'>
@@ -78,7 +78,7 @@
                      </ul>
                       {% endif %}                      
                     </td>
-                    <td class='col-group'>
+                    <td class='col-group left-text'>
                       {% if game.was_played%}
                       <span class='font10'>{{game.opponent_team_game.top_stats[0].player_team_game.player_team_season.position}}</span>
                       <a href='{{game.opponent_team_game.top_stats[0].player_team_game.player_team_season.player.player_href}}'>
