@@ -15,8 +15,21 @@ const getHtml = async (common) => {
     {display: 'Full World - 2010', description: 'All conferences and teams, as they existed in 2010', database_suffix: '_2010'},
   ]
 
+  let progress_table_rows = [
+    {stage: 'Creating new world', stage_row_id: 'create-world-table-new-world'},
+    {stage: 'Create teams', stage_row_id: 'create-world-table-create-teams'},
+    {stage: 'Creating coaches', stage_row_id: 'create-world-table-create-coaches'},
+    {stage: 'Add coaches to teams', stage_row_id: 'create-world-table-assign-coaches'},
+    {stage: 'Creating players', stage_row_id: 'create-world-table-create-players'},
+    {stage: 'Add players to teams', stage_row_id: 'create-world-table-assign-players'},
+    {stage: 'Populate depth charts', stage_row_id: 'create-world-table-depth-charts'},
+    {stage: 'Evaluate team talent', stage_row_id: 'create-world-table-team-talent'},
+    {stage: 'Creating recruits', stage_row_id: 'create-world-table-recruiting-class'},
+    {stage: 'Creating rankings', stage_row_id: 'create-world-table-rankings'},
+    {stage: 'Creating schedule', stage_row_id: 'create-world-table-create-schedule'},
+  ]
 
-  var render_content = { world_list: world_list, world_options: world_options };
+  var render_content = { world_list: world_list, world_options: world_options, progress_table_rows:progress_table_rows };
 
   console.log("render_content", render_content);
 

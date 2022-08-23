@@ -866,10 +866,12 @@ class league_season {
       this.is_current_season = true;
       this.captains_per_team = init_obj.captains_per_team;
       this.players_per_team = init_obj.players_per_team;
+      this.user_team_id = Math.ceil(Math.random() * init_obj.num_teams);
     } else {
       this.is_current_season = false;
       this.captains_per_team = previous_season.captains_per_team;
       this.players_per_team = previous_season.players_per_team;
+      this.user_team_id = previous_season.user_team_id;
     }
   }
 }
@@ -13539,7 +13541,6 @@ const ordinal = (num) => {
   return num + (s[(v - 20) % 10] || s[v] || s[0]);
 };
 
-
 const geo_marker_action = async(common) => {
   console.log('Adding geo_marker_action')
   const db = common.ddb;
@@ -13585,10 +13586,18 @@ const geo_marker_action = async(common) => {
   });
 }
 
+const update_create_world_modal = async (completed_stage_id, started_stage_id) => {
+  $('#' + completed_stage_id).html('<i class="fa fa-check-circle" style="color:green; font-size: 20px;"></i>');
+  $('#' + started_stage_id).html('<div class="spinner-border spinner-border-sm" role="status"></div>');
+
+  //debugger;
+}
+
 const new_world_action = async (common, database_suffix) => {
-  var par = $("#indexCreateWorldModalCloseButton").parent();
-  $(par).empty();
-  $(par).append("<div>Creating new world!</div>");
+  $('.conference-select-table').addClass('w3-hide');
+  $('.create-progress-table').removeClass('w3-hide');
+
+  await update_create_world_modal(null, 'create-world-table-new-world')
 
   const new_db = await create_new_db();
 
@@ -13838,9 +13847,9 @@ const new_world_action = async (common, database_suffix) => {
   });
 
   var teams_added = await db.team.bulkAdd(teams);
-  $(par).append("<div>Adding Team Seasons</div>");
-  $("#modal-progress-parent").removeClass("w3-hide");
-  $("#modal-progress").css("width", "0%");
+
+
+  await update_create_world_modal('create-world-table-new-world', 'create-world-table-create-teams')
 
   await create_team_season({
     common: common,
@@ -13859,10 +13868,7 @@ const new_world_action = async (common, database_suffix) => {
     "team_id"
   );
 
-
-
-  $(par).append("<div>Adding Coaches</div>");
-  $("#modal-progress").css("width", "5%");
+  await update_create_world_modal('create-world-table-create-teams', 'create-world-table-create-coaches')
 
   await create_coaches({
     common: common,
@@ -13871,9 +13877,9 @@ const new_world_action = async (common, database_suffix) => {
     world_id: world_id,
     season: season,
   });
+  
+  await update_create_world_modal('create-world-table-create-coaches', 'create-world-table-assign-coaches')
 
-  $(par).append("<div>Assigning coaches to teams</div>");
-  $("#modal-progress").css("width", "10%");
   var coaches = await db.coach.toArray();
   await create_coach_team_seasons({
     common: common,
@@ -13883,8 +13889,7 @@ const new_world_action = async (common, database_suffix) => {
     season: season,
   });
 
-  $(par).append("<div>Adding Players</div>");
-  $("#modal-progress").css("width", "20%");
+  await update_create_world_modal('create-world-table-assign-coaches', 'create-world-table-create-players')
 
   await create_players({
     common: common,
@@ -13894,8 +13899,7 @@ const new_world_action = async (common, database_suffix) => {
     season: season,
   });
 
-  $(par).append("<div>Assigning players to teams</div>");
-  $("#modal-progress").css("width", "30%");
+  await update_create_world_modal('create-world-table-create-players', 'create-world-table-assign-players')
   var players = await db.player.toArray();
   await create_player_team_seasons({
     common: common,
@@ -13905,21 +13909,22 @@ const new_world_action = async (common, database_suffix) => {
     season: season,
   });
 
-  $(par).append("<div>Populating depth charts</div>");
-  $("#modal-progress").css("width", "40%");
-  await populate_all_depth_charts(common);
 
-  $(par).append("<div>Evaluating team talent</div>");
-  $("#modal-progress").css("width", "50%");
+  let a = [  
+    {stage: 'Creating schedule', stage_row_id: 'create-world-table-create-schedule'},]
+
+
+    await update_create_world_modal('create-world-table-assign-players', 'create-world-table-depth-charts')
+    await populate_all_depth_charts(common);
+
+    await update_create_world_modal('create-world-table-depth-charts', 'create-world-table-team-talent')
   await calculate_team_overalls(common);
 
-  $(par).append("<div>Creating recruiting class</div>");
-  $("#modal-progress").css("width", "60%");
+  await update_create_world_modal('create-world-table-team-talent', 'create-world-table-recruiting-class')
   await calculate_team_needs(common);
   //await common.create_recruiting_class(common);
 
-  $(par).append("<div>Ranking teams</div>");
-  $("#modal-progress").css("width", "70%");
+  await update_create_world_modal('create-world-table-recruiting-class', 'create-world-table-rankings')
   const all_weeks = await db.week.where({ season: season }).toArray();
   const this_week = all_weeks.filter((w) => w.is_current)[0];
 
@@ -13931,15 +13936,17 @@ const new_world_action = async (common, database_suffix) => {
   await calculate_national_rankings(this_week, all_weeks, common);
   await calculate_conference_rankings(this_week, all_weeks, common);
 
-  $(par).append("<div>Creating season schedule</div>");
-  $("#modal-progress").css("width", "90%");
-  await create_schedule({
+    await update_create_world_modal('create-world-table-rankings', 'create-world-table-create-schedule')
+    await create_schedule({
     common: common,
     season: season,
     world_id: world_id,
   });
 
   await choose_preseason_all_americans(common);
+
+  await update_create_world_modal('create-world-table-create-schedule', null)
+
 
   const current_league_season = await db.league_season
     .where({ season: season })

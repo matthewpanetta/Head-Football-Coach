@@ -212,3 +212,6 @@
 
 .fa-circle:before {
   content: "\f111"; }
+
+  .fa-check-circle:before {
+    content: "\f058"; }

@@ -106,7 +106,7 @@
         <span class="modal-title" id="indexCreateWorldModalLabel">Create new college football world</span>
       </div>
       <div class="modal-body">
-        <table class='table'>
+        <table class='table conference-select-table'>
         {% for option in world_options %}
         <tr class=''>
           <td>
@@ -118,6 +118,26 @@
           </td>
         </tr>
         {% endfor %}
+        </table>
+        <table class='table create-progress-table w3-hide'>
+          <thead>
+            <th>Stage</th>
+            <th class='center-text'>Progress</th>
+          </thead>
+          <tbody>
+            {% for row in progress_table_rows%}
+            <tr>
+              <td>{{row.stage}}</td>
+              <td class='center-text' id='{{row.stage_row_id}}'>
+                {% if loop.count == 1%} 
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                {%endif%}
+              </td>
+            </tr>
+            {%endfor%}
+          </tbody>
         </table>
       </div>
       {# <div class="modal-footer">
