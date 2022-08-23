@@ -13589,8 +13589,6 @@ const geo_marker_action = async(common) => {
 const update_create_world_modal = async (completed_stage_id, started_stage_id) => {
   $('#' + completed_stage_id).html('<i class="fa fa-check-circle" style="color:green; font-size: 20px;"></i>');
   $('#' + started_stage_id).html('<div class="spinner-border spinner-border-sm" role="status"></div>');
-
-  //debugger;
 }
 
 const new_world_action = async (common, database_suffix) => {
@@ -13948,25 +13946,73 @@ const new_world_action = async (common, database_suffix) => {
   await update_create_world_modal('create-world-table-create-schedule', null)
 
 
+  conferences = await db.conference.toArray();
+  teams = await db.team.filter(t => t.team_id > 0).toArray();
+  console.log({teams:teams});
+  teams.sort(function(t_a, t_b){
+    if (t_b.conference.conference_name > t_a.conference.conference_name){
+      return -1;
+    }
+    else if (t_b.conference.conference_name < t_a.conference.conference_name){
+      return 1;
+    }
+    else {
+      if (t_b.school_name > t_a.school_name){
+        return -1;
+      }
+      else if (t_b.school_name < t_a.school_name){
+        return 1;
+      }
+    }
+    return 0;
+  })
+  console.log({teams:teams})
+  var url = "/static/html_templates/index/index/choose_team_table_template.njk";
+  var html = await fetch(url);
+  html = await html.text();
+
+  let render_content = {
+    teams: teams
+  };
+
+  const renderedHtml = common.nunjucks_env.renderString(html, render_content);
+
+  $(".choose-team-table").html(renderedHtml);
+  $('.create-progress-table').addClass('w3-hide');
+  $('.choose-team-table').removeClass('w3-hide');
+
   const current_league_season = await db.league_season
     .where({ season: season })
     .first();
   const world = await ddb.world.get({ world_id: world_id });
-  const user_team = await db.team.get({
-    team_id: current_league_season.user_team_id,
-  });
-  console.log({
-    user_team: user_team,
-    current_league_season: current_league_season,
-  });
 
-  world.user_team.team_name = user_team.team_name;
-  world.user_team.school_name = user_team.school_name;
-  world.user_team.team_logo_url = user_team.team_logo;
-  world.user_team.team_record = "0-0";
-  world.user_team.team_id = user_team.team_id;
+  $('.choose-team-table button').on('click', async function(){
+    let team_id = parseInt($(this).closest('[team-id]').attr('team-id'));
+    const user_team = await db.team.get({
+      team_id: team_id,
+    });
 
-  await ddb.world.put(world);
+    console.log({
+      user_team: user_team,
+      current_league_season: current_league_season,
+      team_id:team_id, 
+      teams:teams,
+      this: $(this)
+    });
 
-  window.location.href = `/World/${world_id}`;
+    current_league_season.user_team_id = team_id;
+
+    world.user_team.team_name = user_team.team_name;
+    world.user_team.school_name = user_team.school_name;
+    world.user_team.team_logo_url = user_team.team_logo;
+    world.user_team.team_record = "0-0";
+    world.user_team.team_id = user_team.team_id;
+  
+    await ddb.world.put(world);
+    await db.league_season.put(current_league_season);
+  
+    window.location.href = `/World/${world_id}`;
+  })
+
+
 };

@@ -2,10 +2,19 @@ const getHtml = async (common) => {
   nunjucks.configure({ autoescape: true });
   const nunjucks_env = await get_nunjucks_env();
 
+  let ddb = await common.driver_db();
+
   const db_list = await common.get_databases_references();
   let world_list = [];
+  console.log({db_list:db_list, ddb:ddb, common:common})
   for (let db of db_list){
-    world_list.push(db);
+    if (db.user_team.team_name == null){
+      await Dexie.delete(db.database_name);
+      await ddb.world.where({world_id: db.world_id}).delete();
+    }
+    else {
+      world_list.push(db);
+    }
   }
 
   let world_options = [
@@ -119,7 +128,6 @@ const action = async (common) => {
   $(".create-world-play-button").on("click", async function () {
     let database_suffix = $(this).attr('database-suffix');
     console.log({this: $(this), database_suffix:database_suffix})
-    debugger;
     await common.new_world_action(common, database_suffix);
     
   });

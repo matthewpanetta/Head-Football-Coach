@@ -65,9 +65,7 @@
               </div>
             </td>
             <td>
-              <div class="btn default-coloring width100" style='border-radius: 5px;'>
-                <a class='no-link-link' href="/World/{{World.world_id}}">Continue</a>
-              </div>
+              <a class='no-link-link btn default-coloring width100' href="/World/{{World.world_id}}">Continue</a>
             </td>
             <td>
               <div id='headfootballcoach{{World.world_id}}' class="btn default-coloring width100 idb-export" style='border-radius: 5px;'>
@@ -139,6 +137,9 @@
             {%endfor%}
           </tbody>
         </table>
+        <table class='table table-striped choose-team-table w3-hide'>
+
+        </table>
       </div>
       {# <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -146,33 +147,4 @@
       </div> #}
     </div>
   </div>
-</div>
-
-
-<div id="indexChooseTeamModal" class="w3-modal">
-  <div class="w3-modal-content">
-    <header class="w3-container w3-blue-grey">
-      <span onclick="document.getElementById('id01').style.display='none'"
-      class="btn w3-display-topright">&times;</span>
-      <h2>New Head Coaching Dynasty - Choose your team!</h2>
-    </header>
-    <div class="w3-container">
-      <span id='indexChooseTeamModalCloseButton'
-      class="btn w3-display-topright">&times;</span>
-      <div class="" id='indexChooseTeamModalTeamList'>
-        Team List
-      </div>
-      <button type="button" name="button" class='btn'  id='indexChooseTeamModalContinueButton' >
-          Continue
-      </button>
-    </div>
-  </div>
-</div>
-
-<div class="CloneContainer hidden">
-  <div class="indexChooseTeamModalTeamListTeamDiv hidden" id='indexChooseTeamModalTeamListTeamDivClone'>
-    <img class="indexChooseTeamModalTeamListTeamLogo" src=""/>
-    <span class="indexChooseTeamModalTeamListTeamName"></span>
-  </div>
-
 </div>
