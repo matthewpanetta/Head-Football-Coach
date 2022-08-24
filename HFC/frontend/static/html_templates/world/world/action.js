@@ -273,14 +273,13 @@ const getHtml = async (common) => {
       game.world_page_filter_attributes += "Top25Game=0 ";
     }
 
-    if (game.is_primetime_game){
-        game.world_page_filter_attributes += "primetimegame=1 ";
-        game.classes = ''
-      } else {
-        game.world_page_filter_attributes += "primetimegame=0 ";
-        game.classes = 'w3-hide';
-      }
-
+    if (game.is_primetime_game) {
+      game.world_page_filter_attributes += "primetimegame=1 ";
+      game.classes = "";
+    } else {
+      game.world_page_filter_attributes += "primetimegame=0 ";
+      game.classes = "w3-hide";
+    }
   });
 
   this_week_games = this_week_games.sort(function (a, b) {
@@ -288,6 +287,134 @@ const getHtml = async (common) => {
     if (a.summed_national_rank > b.summed_national_rank) return 1;
     return 0;
   });
+
+  let preseason_info = {};
+  if (current_week.week_name == "Pre-Season") {
+    // TODO filter out backups
+    preseason_info.conference_favorites = [];
+
+    var team_seasons = await db.team_season
+      .where({ season: common.season })
+      .and((ts) => ts.team_id > 0)
+      .toArray();
+    var all_teams = await db.team.toArray();
+    const teams_by_team_id = index_group_sync(all_teams, "index", "team_id");
+
+    team_seasons = nest_children(
+      team_seasons,
+      teams_by_team_id,
+      "team_id",
+      "team"
+    );
+
+    const team_seasons_by_team_season_id = index_group_sync(
+      team_seasons,
+      "index",
+      "team_season_id"
+    );
+
+    var player_team_seasons = await db.player_team_season
+      .where({ season: common.season })
+      .toArray();
+    player_team_seasons = player_team_seasons.filter(
+      (pts) => pts.team_season_id > 0
+    );
+    let player_team_season_ids = player_team_seasons.map(
+      (pts) => pts.player_team_season_id
+    );
+
+    const player_team_season_stats = await db.player_team_season_stats.bulkGet(
+      player_team_season_ids
+    );
+    const player_team_season_stats_by_player_team_season_id = index_group_sync(
+      player_team_season_stats,
+      "index",
+      "player_team_season_id"
+    );
+
+    const player_ids = player_team_seasons.map((pts) => pts.player_id);
+    var players = await db.player.bulkGet(player_ids);
+    const players_by_player_id = index_group_sync(
+      players,
+      "index",
+      "player_id"
+    );
+
+    player_team_seasons = nest_children(
+      player_team_seasons,
+      player_team_season_stats_by_player_team_season_id,
+      "player_team_season_id",
+      "season_stats"
+    );
+    player_team_seasons = nest_children(
+      player_team_seasons,
+      team_seasons_by_team_season_id,
+      "team_season_id",
+      "team_season"
+    );
+    player_team_seasons = nest_children(
+      player_team_seasons,
+      players_by_player_id,
+      "player_id",
+      "player"
+    );
+
+    var heisman_race = player_team_seasons.filter(
+      (pts) => pts.depth_chart_rank == 1
+    );
+    heisman_race = heisman_race.sort(
+      (pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating
+    );
+    preseason_info.heisman_hopefuls = heisman_race.slice(0, 5);
+
+    let conferences = await db.conference.toArray();
+    let conferences_by_conference_id = index_group_sync(
+      conferences,
+      "index",
+      "conference_id"
+    );
+    let conference_seasons = await db.conference_season
+      .where({ season: season })
+      .toArray();
+    conference_seasons = nest_children(
+      conference_seasons,
+      conferences_by_conference_id,
+      "conference_id",
+      "conference"
+    );
+    const team_seasons_by_conference_season_id = index_group_sync(
+      team_seasons,
+      "group",
+      "conference_season_id"
+    );
+
+    for (let conference_season of conference_seasons) {
+      let team_seasons_for_conference =
+        team_seasons_by_conference_season_id[
+          conference_season.conference_season_id
+        ];
+      team_seasons_for_conference = team_seasons_for_conference.sort(function (
+        ts_a,
+        ts_b
+      ) {
+        return (
+          ts_a.rankings.division_rank[0] - ts_b.rankings.division_rank[0] ||
+          ts_a.national_rank - ts_b.national_rank
+        );
+      });
+
+      conference_season.team_seasons = team_seasons_for_conference;
+
+      // console.log({conference_season:conference_season, team_seasons_for_conference:team_seasons_for_conference})
+    }
+
+    conference_seasons = conference_seasons.sort(
+      (cs_a, cs_b) => cs_b.conference.prestige - cs_a.conference.prestige
+    );
+
+    preseason_info.conference_favorites = conference_seasons;
+  }
+
   common.stopwatch(common, "Time after this_week_games");
   const page = {
     PrimaryColor: common.primary_color,
@@ -301,6 +428,8 @@ const getHtml = async (common) => {
     teams: teams,
     this_week_games: this_week_games,
     recent_games: recent_games,
+    current_week: current_week,
+    preseason_info: preseason_info,
   };
 
   common.render_content = render_content;
@@ -359,17 +488,103 @@ const action = async (common) => {
     $(".upcoming-gameview-tab").removeClass("selected-bar-button");
     let clicked_tab = $(event.target);
     let clicked_tab_parent = clicked_tab.closest(".boxscore-bar").attr("id");
-    let selected_game_filter_selection = clicked_tab.attr("GameFilterSelection");
+    let selected_game_filter_selection = clicked_tab.attr(
+      "GameFilterSelection"
+    );
 
     $(
       ".worldUpcomingTable[" + selected_game_filter_selection + '="1"]'
     ).removeClass("w3-hide");
-    $(".worldUpcomingTable[" + selected_game_filter_selection + '="0"]').addClass(
-      "w3-hide"
-    );
+    $(
+      ".worldUpcomingTable[" + selected_game_filter_selection + '="0"]'
+    ).addClass("w3-hide");
 
     $(clicked_tab).addClass("selected-bar-button");
   });
+
+  await draw_faces(common);
+  $(".player-profile-popup-icon").on("click", async function () {
+    await common.populate_player_modal(common, this);
+  });
+};
+
+const draw_faces = async (common) => {
+  const db = common.db;
+  const season = common.season;
+  const index_group_sync = common.index_group_sync;
+
+  const player_ids = [];
+  const face_div_by_player_id = {};
+
+  $(".PlayerFace-Headshot").each(function (ind, elem) {
+    if ($(elem).find("svg").length > 0) {
+      return true;
+    }
+
+    if (!(parseInt($(elem).attr("player_id")) in face_div_by_player_id)) {
+      face_div_by_player_id[parseInt($(elem).attr("player_id"))] = [];
+
+      player_ids.push(parseInt($(elem).attr("player_id")));
+    }
+
+    face_div_by_player_id[parseInt($(elem).attr("player_id"))].push(elem);
+  });
+
+  const players = await db.player.bulkGet(player_ids);
+  var player_team_seasons = await db.player_team_season
+    .where("player_id")
+    .anyOf(player_ids)
+    .toArray();
+  player_team_seasons = player_team_seasons.filter(
+    (pts) => pts.season == season
+  );
+  const player_team_seasons_by_player_id = index_group_sync(
+    player_team_seasons,
+    "index",
+    "player_id"
+  );
+
+  const team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
+  const team_seasons = await db.team_season.bulkGet(team_season_ids);
+  const team_seasons_by_team_season_id = index_group_sync(
+    team_seasons,
+    "index",
+    "team_season_id"
+  );
+
+  const team_ids = team_seasons.map((ts) => ts.team_id);
+  const teams = await db.team.bulkGet(team_ids);
+  const teams_by_team_id = index_group_sync(teams, "index", "team_id");
+
+  console.log({ players: players });
+
+  for (var player of players) {
+    var elems = face_div_by_player_id[player.player_id];
+    player.player_team_season =
+      player_team_seasons_by_player_id[player.player_id];
+    player.team_season =
+      team_seasons_by_team_season_id[player.player_team_season.team_season_id];
+    player.team = teams_by_team_id[player.team_season.team_id];
+
+    if (player.player_face == undefined) {
+      player.player_face = await common.create_player_face(
+        "single",
+        player.player_id,
+        db
+      );
+    }
+
+    for (var elem of elems) {
+      common.display_player_face(
+        player.player_face,
+        {
+          jersey: player.team.jersey,
+          teamColors: player.team.jersey.teamColors,
+        },
+        $(elem).attr("id")
+      );
+    }
+  }
 };
 
 $(document).ready(async function () {

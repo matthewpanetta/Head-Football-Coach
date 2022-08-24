@@ -2287,9 +2287,28 @@ class player_team_season {
   }
 
   get player_award_rating() {
+    let position_overall_map = {
+      QB: 0,
+      RB: -5,
+      FB: -30,
+      WR: -15,
+      TE: -30,
+      OT: -300,
+      IOL: -300,
+      EDGE: -25,
+      DL: -25,
+      LB: -25,
+      CB: -25,
+      S: -25,
+      K: -30,
+      P: -30,
+    }
     return (
-      10 * this.season_stats.average_weighted_game_score +
-      1 * this.ratings.overall.overall
+      (10 * this.season_stats.average_weighted_game_score) +
+      (1 * this.ratings.overall.overall) + 
+      (1 * (position_overall_map[this.position])) +
+      (0.5 * this.team_season.team.team_ratings.brand) +
+      (-1 * this.team_season.national_rank)
     );
   }
 }
@@ -3110,13 +3129,11 @@ const create_team_season = async (data) => {
 const populate_all_depth_charts = async (common, team_season_ids) => {
   const db = common.db;
   const season = common.season;
-  console.log('populate_all_depth_charts', {team_season_ids:team_season_ids})
 
   if (team_season_ids) {
-    console.log('hit first if')
     var team_seasons = await db.team_season
       .where({ season: season })
-      .and((ts) => team_season_ids.includes(ts.team_season_id))
+      .and((ts) => team_season_ids.has(ts.team_season_id))
       .toArray();
     console.log({ season: season, db: db, team_seasons: team_seasons });
 
@@ -3128,7 +3145,7 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     );
     var player_team_seasons = await db.player_team_season
       .where({ season: season })
-      .and((pts) => team_season_ids.includes(pts.team_season_id))
+      .and((pts) => team_season_ids.has(pts.team_season_id))
       .toArray();
     var player_team_seasons_by_team_season_id = await index_group(
       player_team_seasons,
@@ -3200,6 +3217,7 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
   );
 
   var team_season = null;
+  let player_team_seasons_to_update = [];
 
   for (var team_season_id in player_team_seasons_by_team_season_id) {
     var player_team_season_list =
@@ -3237,6 +3255,8 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     for (var position in position_player_team_season_obj) {
       var position_player_team_season_list =
         position_player_team_season_obj[position];
+      position_player_team_season_list.forEach((pts, ind) => pts.depth_chart_rank = ind+1);
+      player_team_seasons_to_update = player_team_seasons_to_update.concat(position_player_team_season_list)
       team_season.depth_chart[position] = position_player_team_season_list.map(
         (pts) => pts.player_team_season_id
       );
@@ -3254,10 +3274,8 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     team_seasons_to_update.push(team_season);
   }
 
-  console.log({ team_seasons_to_update: team_seasons_to_update });
-  //debugger;
-
-  var tsu = await db.team_season.bulkPut(team_seasons_to_update);
+  await db.team_season.bulkPut(team_seasons_to_update);
+  await db.player_team_season.bulkPut(player_team_seasons_to_update);
 };
 
 const create_conference_seasons = async (data) => {

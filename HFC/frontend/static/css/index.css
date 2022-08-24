@@ -2286,6 +2286,8 @@ tfoot td {
 
 .logo-50 {
   height: 50px;
+  width: 50px;
+  object-fit: scale-down;
 }
 
 

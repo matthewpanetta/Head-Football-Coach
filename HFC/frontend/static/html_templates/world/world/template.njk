@@ -1,10 +1,6 @@
-
-
 <div class='ext_nav_bar'>
   {% include "../../static/html_templates/common_templates/ext_nav_bar.njk" %}
 </div>
-
-
 
 {% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
 
@@ -180,43 +176,88 @@
                   {% endfor %}
                 </div>
               </div>
-              {% elif CurrentWeek.PhaseID.PhaseName == 'Preseason' %}
+              {% elif current_week.week_name == 'Pre-Season' %}
+              <div class="card margin-bottom-12">
+                <div class="w3-bar team-primary-background-bar">
+                  <span class="">Heisman Hopefuls</span>
+                </div>
+                <div>
+                  <table class='table table-striped table-hover' id='HeismanRaceTable'>
+                    <tbody>
+                      {% for player_team_season in preseason_info.heisman_hopefuls%}
+                      <tr player_id='{{player_team_season.player_id}}'>
+                        <td  class='center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">
+                          <a href="{{player_team_season.team_season.team.team_href}}">
+                            <img src="{{player_team_season.team_season.team.team_logo_100}}" class='logo-50' alt="">
+                          </a>
+                        </td>
+                        <td class='column-shrink center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">
+                          <div id='heisman-face-{{loop.index}}-{{player_team_season.player_id}}' player_id='{{player_team_season.player_id}}'  class='PlayerFace-45 PlayerFace-Headshot' style='background-color: white; border-color: #{{player_team_season.team_season.team.team_color_secondary_hex}}'>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="font16">
+                            <a href="{{player_team_season.player.player_href}}">
+                              {{player_team_season.player.full_name}}
+                            </a>
+                          </div>
+                          <div class="font10">
+                            <a href="{{player_team_season.team_season.team.team_href}}">
+                              {{player_team_season.team_season.team.full_name}}
+                            </a>
+                          </div>
+                          <div class="font10">
+                            <i class="fa fa-address-card player-profile-popup-icon"></i>
+                            &#183;
+                            <span>{{player_team_season.position}}</span>
+                            &#183;
+                            <span>{{player_team_season.class.class_name}}</span>
+                          </div>
+                        </td>
+                        <td>
+                            <ul class='no-list-style'>
+                              {% for stat in player_team_season.top_stats%}
+                              <li>{{stat.display}}</li>
+                              {% endfor %}
+                            </ul>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
               <div class="card">
                 <div class="w3-bar team-primary-background-bar">
-                  <div class="">{{CurrentWeek.PhaseID.LeagueSeasonID.SeasonStartYear}} All-Americans</div>
+                  <span class="">Conference Favorites</span>
                 </div>
-                <div class="w3-bar preseason-allamerican-team-bar" id="nav-tab-preseason-allamerican-team">
-                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab btn tab selected-preseason-award-team-tab" id="preseason-allamerican-team-firstteam-tab">1st Team</button>
-                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab btn tab" id="preseason-allamerican-team-secondteam-tab">2nd Team</button>
-                </div>
-                <div class="w3-bar preseason-allamerican-conference-bar w3-margin-bottom" id="nav-tab-preseason-allamerican-conference">
-                  {% for Conf in PreseasonAllAmericans%}
-                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab btn tab {{Conf.ConferenceSelected}}" id="preseason-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
-                  {% endfor %}
-                </div>
-                <div class="list-group list-group-flush">
-                  <table id='teamOverviewConferenceStandings' class=' table table-striped table-hover '>
-                    <thead class=''>
-                      <th>Pos</th>
-                      <th>Team</th>
-                      <th>Player</th>
-                    </thead>
-                    {% for Conf in PreseasonAllAmericans%}
-                    {% for AwardTeam in Conf.Teams %}
-                    {% for Award in AwardTeam.Team %}
-                    <tr class='{{Conf.ShowConference}} {{AwardTeam.ShowTeam}} pre-season-allamarican-row preseason-allamerican-conference-{{Conf.Conference.ConferenceID}} preseason-allamerican-team-{{AwardTeam.TeamName}}'>
-                      <td>{{Award.PositionID.PositionAbbreviation}}</td>
-                      <td>
-                        <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
-                          <img class='teamOverviewConferenceStandingsTeamLogo'  loading="lazy" src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamLogoURL_50}}" />
-                           {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
-                        </a>
-                      </td>
-                      <td><a href="/World/{{page.WorldID}}/Player/{{ Award.PlayerTeamSeasonID.PlayerID_id }}/">{{Award.PlayerTeamSeasonID.PlayerID.FullName}}</a>, {{Award.PlayerTeamSeasonID.ClassID.ClassAbbreviation}}</td>
-                    </tr>
-                    {% endfor %}
-                    {% endfor %}
-                    {% endfor %}
+                <div>
+                  <table class='table table-striped table-hover' id=''>
+                    <tbody>
+                      {% for conference_season in preseason_info.conference_favorites%}
+                      <tr playerid='{{player_team_season.player.player_id}}'>
+                        <td class='center-text' style="background-color: #{{conference_season.conference.conference_color_primary_hex}}">
+                          <a href="{{conference_season.conference.conference_href}}">
+                            <img src="{{conference_season.conference.conference_logo}}" class='logo-50' alt="">
+                          </a>
+                        </td>
+                        <td>
+                          <div>
+                            <span class=''>{{conference_season.conference.conference_abbreviation}}</span>
+                             Favorites
+                          </div>
+                          {% for team_season in conference_season.team_seasons.slice(0,3)%}
+                          <div class="{%if loop.index==1%}{%else%}font10{%endif%}">
+                            {{loop.index}}
+                            <a href="{{team_season.team.team_href}}">
+                              {{team_season.team.full_name}}
+                            </a>
+                          </div>
+                          {%endfor%}
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
                   </table>
                 </div>
               </div>
