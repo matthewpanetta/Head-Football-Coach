@@ -742,15 +742,34 @@ class team {
   }
 
   get team_logo() {
-    return this.build_team_logo({});
-  }
+    if (false && this.team_logo_url && this.team_logo_url.length > 0){
+      return this.team_logo_url;
+    }
+    else {
+      var folder_prefix = "/static/img/team_logos/";
+      var size_suffix = "";
 
-  get team_logo_50() {
-    return this.build_team_logo({ img_size: 50 });
-  }
+      if (this.team_id < 0) {
+        var path = folder_prefix + "ncaa.png";
+      } else {
+        var path =
+          folder_prefix +
+          this.school_name +
+          "_" +
+          this.team_name +
+          size_suffix +
+          ".png";
+      }
 
-  get team_logo_100() {
-    return this.build_team_logo({ img_size: 100 });
+      path = path
+        .toLowerCase()
+        .replaceAll(" ", "_")
+        .replaceAll("&", "_")
+        .replaceAll("'", "")
+        .replaceAll("-", "_");
+
+      return path;
+      }
   }
 
   luma(color) {
@@ -6373,7 +6392,7 @@ const calculate_game_score = (
     {
       stat_group: "rushing",
       stat: "carries",
-      point_to_stat_ratio: -1.0 / 6,
+      point_to_stat_ratio: -1.0 / 10,
       display: " carries",
     },
     {
@@ -6386,7 +6405,7 @@ const calculate_game_score = (
     {
       stat_group: "passing",
       stat: "yards",
-      point_to_stat_ratio: 1.0 / 10,
+      point_to_stat_ratio: 1.0 / 15,
       display: " pass yards",
     },
     {
@@ -6410,7 +6429,7 @@ const calculate_game_score = (
     {
       stat_group: "passing",
       stat: "ints",
-      point_to_stat_ratio: -6.0 / 1,
+      point_to_stat_ratio: -10.0 / 1,
       display: " picks",
     },
     {
@@ -6840,7 +6859,7 @@ const game_sim_play_call_options = (down, yards_to_go, ball_spot, period, offens
     return {'playclock_urgency': playclock_urgency, 'play_choice_options': play_choice_options}
 }
 
-const update_player_energy = (game_dict, players_on_field, bench_players, plays_since_last_sub) => {
+const update_player_energy = (game_dict, players_on_field, bench_players, plays_since_last_sub, is_home_team) => {
 
   let position_fatigue_rate_map = {
     QB: .005,
@@ -6859,6 +6878,12 @@ const update_player_energy = (game_dict, players_on_field, bench_players, plays_
     P: .001
   }
 
+  let home_field_advantage_modifier = game_dict.home_field_advantage_modifier;
+
+  if (!(is_home_team)){
+    home_field_advantage_modifier = 1 / home_field_advantage_modifier; 
+  }
+
 
   for (let player_obj of players_on_field){
     player_obj.player_team_game.game_attrs.energy -= (position_fatigue_rate_map[player_obj.player.position] * plays_since_last_sub);
@@ -6870,10 +6895,10 @@ const update_player_energy = (game_dict, players_on_field, bench_players, plays_
     player_obj.player_team_game.game_attrs.energy = Math.min(player_obj.player_team_game.game_attrs.energy , 1.0)
   }
 
-  players_on_field.forEach(player_obj => player_obj.player_team_game.game_attrs.adjusted_overall = ((player_obj.player_team_game.game_attrs.energy ** .25) * player_obj.player_team_season.ratings.overall.overall))
-  bench_players.forEach(player_obj => player_obj.player_team_game.game_attrs.adjusted_overall = ((player_obj.player_team_game.game_attrs.energy ** .25) * player_obj.player_team_season.ratings.overall.overall))
+  players_on_field.forEach(player_obj => player_obj.player_team_game.game_attrs.adjusted_overall = ((player_obj.player_team_game.game_attrs.energy ** .25) * home_field_advantage_modifier * player_obj.player_team_season.ratings.overall.overall))
+  bench_players.forEach(player_obj => player_obj.player_team_game.game_attrs.adjusted_overall = ((player_obj.player_team_game.game_attrs.energy ** .25) * home_field_advantage_modifier * player_obj.player_team_season.ratings.overall.overall))
 
-  console.log({bench_players:bench_players, players_on_field:players_on_field})
+  // console.log({bench_players:bench_players, players_on_field:players_on_field})
 }
 
 const sim_game = (game_dict, common) => {
@@ -6918,6 +6943,8 @@ const sim_game = (game_dict, common) => {
     scoring_period = {},
     possession_count = 0,
     adjusted_score_possibilities = {};
+
+  game_dict.home_field_advantage_modifier = 1.01;
 
   var drive_within_20 = false;
   var drive_within_40 = false;
@@ -7025,8 +7052,8 @@ const sim_game = (game_dict, common) => {
           player_obj.player_team_game.game_stats.games.games_played = 1;
         }
 
-        update_player_energy(game_dict, offensive_team_players.all_players, offensive_team_players.bench_players, plays_since_last_sub);
-        update_player_energy(game_dict, defensive_team_players.all_players, defensive_team_players.bench_players, plays_since_last_sub);
+        update_player_energy(game_dict, offensive_team_players.all_players, offensive_team_players.bench_players, plays_since_last_sub, offensive_team_index);
+        update_player_energy(game_dict, defensive_team_players.all_players, defensive_team_players.bench_players, plays_since_last_sub, defensive_team_index);
 
         offensive_player_average_overall = average(
           offensive_team_players.all_players.map(
@@ -7837,7 +7864,7 @@ const sim_game = (game_dict, common) => {
 			</thead>
 			<tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
 				<td class=' hide-small'style='background-color: #${game_dict.teams[winning_team_index].team_color_primary_hex}; width: 1%;'>
-						<img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="${game_dict.teams[winning_team_index].team_logo_50}" alt="">
+						<img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="${game_dict.teams[winning_team_index].team_logo}" alt="">
 				</td>
 				<td class='worldUpcomingGameCell padding-left-8' >
 					<div class='margin0'>
@@ -7854,7 +7881,7 @@ const sim_game = (game_dict, common) => {
 			</tr>
 			<tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
 				<td class=' hide-small'  style='background-color: #${game_dict.teams[losing_team_index].team_color_primary_hex}; width: 1%;'>
-						<img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="${game_dict.teams[losing_team_index].team_logo_50}" alt="">
+						<img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="${game_dict.teams[losing_team_index].team_logo}" alt="">
 				</td>
 				<td class='worldUpcomingGameCell padding-left-8'>
 					<div class='margin0'>
@@ -9826,9 +9853,7 @@ const choose_all_americans = async (this_week, common) => {
     "season_stats"
   );
   //player_team_seasons = player_team_seasons.filter(pts => pts.season_stats.games.weighted_game_score > 0);
-  player_team_seasons = player_team_seasons.sort(
-    (pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating
-  );
+
 
   const player_ids = player_team_seasons.map((pts) => pts.player_id);
   var players = await db.player.bulkGet(player_ids);
@@ -9869,6 +9894,9 @@ const choose_all_americans = async (this_week, common) => {
     "player"
   );
 
+  player_team_seasons = player_team_seasons.sort(
+    (pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating
+  );
   console.log({ player_team_seasons: player_team_seasons });
   const conference_season_ids = player_team_seasons.map((pts) =>
     get(pts, "team_season.conference_season_id")
@@ -10953,6 +10981,7 @@ const schedule_conference_championships = async (
       },
       rivalry: null,
       bowl: null,
+      is_neutral_site_game: true,
       broadcast: { regional_broadcast: false, national_broadcast: false },
       world_id: common.world_id,
     });
@@ -11521,6 +11550,7 @@ const schedule_bowl_season = async (all_weeks, common) => {
           losing_team_season_id: null,
         },
         rivalry: null,
+        is_neutral_site_game: true,
         bowl: { bowl_name: playoff_round.round_name, is_playoff: true },
         broadcast: { regional_broadcast: false, national_broadcast: false },
         world_id: common.world_id,
@@ -12210,10 +12240,8 @@ const create_player_face = async (many_or_single, player_ids, db) => {
     return players;
   } else {
     const player_id = player_ids;
-    console.log({ player_id: player_id, player_ids: player_ids });
 
     const player = await db.player.get({ player_id: player_id });
-    console.log({ player: player });
 
     player.player_face = generate_face(player.ethnicity, player.body.weight);
 
@@ -12236,13 +12264,10 @@ const create_coach_face = async (many_or_single, coach_ids, db) => {
     return coaches;
   } else {
     const coach_id = coach_ids;
-    console.log({ coach_id: coach_id, coach_ids: coach_ids });
 
     const coach = await db.coach.get({ coach_id: coach_id });
-    console.log({ coach: coach });
 
     coach.coach_face = generate_face(coach.ethnicity, coach.body.weight);
-    console.log({coach:coach})
     debugger;
 
     await db.coach.put(coach, coach.coach_id);
@@ -13790,6 +13815,7 @@ const new_world_action = async (common, database_suffix) => {
       school_name: team.school_name,
       team_name: team.team_name,
       world_id: world_id,
+      team_logo_url: team.team_logo_url,
       team_abbreviation: team.team_abbreviation,
       team_color_primary_hex: team.team_color_primary_hex,
       team_color_secondary_hex: team.team_color_secondary_hex,

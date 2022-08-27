@@ -113,7 +113,6 @@ body {
   color: red;
 }
 
-.worldTeamLogo,
 .searchResultTeamLogo {
   width: 50px;
 }
@@ -362,10 +361,6 @@ body {
   width: 150px;
 }
 
-.worldTeamLogoCell {
-  color: inherit;
-}
-
 .table td.fit,
 .table th.fit {
   white-space: nowrap;
@@ -540,8 +535,9 @@ body {
 
 .teamScheduleOpponentLogo {
   width: 50%;
+  aspect-ratio: 1 / 1;
   margin-top: 4px;
-  margin-left: 25%;
+  object-fit: scale-down;
 }
 
 .arc>path {
@@ -1056,7 +1052,6 @@ div button.w3-bar-item.btn.selected-bar-button {
 
 }
 
-.teamOverviewConferenceStandingsTeamLogo,
 .recruitingCommitTeamLogo,
 .awardConferenceWeeklyAwardTeamLogo {
   height: 30px;
@@ -1379,10 +1374,6 @@ div button.w3-bar-item.btn.selected-bar-button {
 
 .gameHeaderTeamContainerRecord {
   font-size: 10px;
-}
-
-.ScoringSummaryTeamLogo img {
-  width: 28px;
 }
 
 .table-row {
@@ -2268,31 +2259,34 @@ tfoot td {
 }
 
 
+.logo {
+  aspect-ratio: 1 / 1;
+  object-fit: scale-down;
 
+  /* filter: drop-shadow(1px 0px 0 white) drop-shadow(0px -1px 0 white) drop-shadow(-1px 0px 0 white) drop-shadow(0px 1px 0 white); */
+}
 .logo-12 {
   height: 12px;
 }
-
 
 .logo-24 {
   height: 24px;
 }
 
-
 .logo-30 {
   height: 30px;
 }
 
-
 .logo-50 {
   height: 50px;
-  width: 50px;
-  object-fit: scale-down;
 }
-
 
 .logo-90 {
   height: 90px;
+}
+
+.logo-150 {
+  height: 150px;
 }
 
 .light-padding-top {

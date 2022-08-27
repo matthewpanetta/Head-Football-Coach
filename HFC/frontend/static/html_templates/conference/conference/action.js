@@ -219,7 +219,7 @@ const draw_map = async (common) => {
     attribution: "© OpenStreetMap",
   }).addTo(map);
 
-  let icon_html_template = `<a href="{{team.team_href}}"><img class='logo-30' src="{{team.team_logo}}"/></a>`;
+  let icon_html_template = `<a href="{{team.team_href}}"><img class='logo logo-30' src="{{team.team_logo}}"/></a>`;
 
   let marker_list = [];
   await cities.forEach(async function (city) {

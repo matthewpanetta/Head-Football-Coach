@@ -461,7 +461,7 @@ const getHtml = async (common) => {
   //console.log('games', games)
   common.page = {
     page_title: team.full_name,
-    page_icon: team.team_logo_50,
+    page_icon: team.team_logo,
     PrimaryColor: team.team_color_primary_hex,
     SecondaryColor: team.secondary_color_display,
     NavBarLinks: NavBarLinks,
@@ -1123,7 +1123,7 @@ function conference_bar_chart(raw_data, common) {
           highlight: team_season.team_id === team_id,
           color: "#" + team_season.team.team_color_primary_hex,
           team_id: team_season.team_id,
-          logo: team_season.team.team_logo_50,
+          logo: team_season.team.team_logo,
         });
       }
     } else if (data_type === "player") {

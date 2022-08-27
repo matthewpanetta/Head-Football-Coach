@@ -7,7 +7,7 @@
     {% for team in teams%}
     <tr team-id="{{team.team_id}}">
         <td style='background-color: #{{team.team_color_primary_hex}}; color: white;'>
-            <img class='logo-30' src='{{team.team_logo}}'/>
+            <img class='logo logo-30' src='{{team.team_logo}}'/>
         </td>
         <td style='background-color: #{{team.team_color_primary_hex}}; color: white;'>{{team.full_name}}</td>
         <td>{{team.conference.conference_name}}</td>

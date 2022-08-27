@@ -46,7 +46,7 @@
                     </td>
                     <td style='background-color:  #{{team.team_color_primary_hex}}; color: white;' class='center-text'>
                       <a  class='' href="{{team.team_href}}">
-                        <img class='worldTeamLogo'  loading="lazy" src='{{team.team_logo_100}}' alt="">
+                        <img class='logo logo-50'  loading="lazy" src='{{team.team_logo}}' alt="">
                       </a>
                     </td>
                     <td class='worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
@@ -60,15 +60,26 @@
                         <li class='font10 bold opacity-1' style='color: darkgoldenrod;'>National Champions</li>
                         {% endif %}
                         {% if  team.team_season.results.conference_champion %}
-                        <li class='font10 bold opacity-1'>{{team.team_season.conference_season.conference.conference_abbreviation}} Champions</li>
+                        <li class='font10 bold opacity-1'>
+                          <a href='{{team.team_season.conference_season.conference.conference_href}}'>{{team.team_season.conference_season.conference.conference_abbreviation}} </a>
+                          Champions
+                        </li>
                         {% else %}
-                        <li class='font10'>{{team.team_season.rankings.division_rank[0]|ordinal}} in {{team.team_season.conference_season.conference.conference_abbreviation}}</li>
+                        <li class='font10'>
+                          {{team.team_season.rankings.division_rank[0]|ordinal}} in 
+                          <a href='{{team.team_season.conference_season.conference.conference_href}}'>
+                            {{team.team_season.conference_season.conference.conference_abbreviation}}
+                          </a>
+                          {% if team.team_season.division_name != 'All'%}
+                          {{team.team_season.division_name}}
+                          {%endif %}
+                        </li>
                         {% endif %}
                       </ul>
                     </td>
                     <td>
-                      <img class='worldTeamLogo w3-hide {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
-                      <img class='worldTeamLogo  w3-hide {{team.AdditionalDisplayLogo2Class}}' src='{{team.AdditionalDisplayLogo2}}' alt="">
+                      <img class='logo logo-50 w3-hide {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
+                      <img class='logo logo-50  w3-hide {{team.AdditionalDisplayLogo2Class}}' src='{{team.AdditionalDisplayLogo2}}' alt="">
                     </td>
                     <td class='worldOverviewTop25TeamLineRecord w3-cell  center-text'>
                       <span class=''>{{team.team_season.record.wins}} - {{team.team_season.record.losses}}</span>
@@ -88,7 +99,7 @@
                     <div>
                       <div class="inline-block" style="border-radius: 100px; box-shadow: 0 0 5px 0.1px rgb(0 0 0 / 50%); padding: 10px; position: relative; background-color: white;">
                         <a  class='' href="{{team.team_href}}">
-                          <img class='worldTeamLogo' style="width: 40px;"  loading="lazy" src='{{team.team_logo_100}}' alt="">
+                          <img class='logo logo-50' style="width: 40px;"  loading="lazy" src='{{team.team_logo}}' alt="">
                         </a>
                       </div>
                       <div class="inline-block" style="height: 30px; margin-left: -20px; box-shadow: 0 0 5px 0.1px rgb(0 0 0 / 50%); ">
@@ -150,7 +161,7 @@
                     {% for team_game in game.team_games %}
                     <tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
                       <td class='center-text hide-small' colspan='2' style='background-color: #{{team_game.team_season.team.team_color_primary_hex}}; width: 1%;'>
-                          <img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="{{team_game.team_season.team.team_logo_50}}" alt="">
+                          <img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="{{team_game.team_season.team.team_logo}}" alt="">
                       </td>
                       <td class='worldUpcomingGameCell padding-left-8' colspan='4'>
                         <div class='margin0'><span class='font10'>{{team_game.team_season.national_rank_display}}</span> <a href="{{team_game.team_season.team.team_href}}" class='font16'>{{team_game.team_season.team.school_name}}</a></div>
@@ -188,7 +199,7 @@
                       <tr player_id='{{player_team_season.player_id}}'>
                         <td  class='center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">
                           <a href="{{player_team_season.team_season.team.team_href}}">
-                            <img src="{{player_team_season.team_season.team.team_logo_100}}" class='logo-50' alt="">
+                            <img src="{{player_team_season.team_season.team.team_logo}}" class='logo logo-50' alt="">
                           </a>
                         </td>
                         <td class='column-shrink center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">
@@ -238,7 +249,7 @@
                       <tr playerid='{{player_team_season.player.player_id}}'>
                         <td class='center-text' style="background-color: #{{conference_season.conference.conference_color_primary_hex}}">
                           <a href="{{conference_season.conference.conference_href}}">
-                            <img src="{{conference_season.conference.conference_logo}}" class='logo-50' alt="">
+                            <img src="{{conference_season.conference.conference_logo}}" class='logo logo-50' alt="">
                           </a>
                         </td>
                         <td>
@@ -291,7 +302,7 @@
                       <td>{{Award.PositionID.PositionAbbreviation}}</td>
                       <td>
                         <a href="/World/{{page.WorldID}}/Team/{{ Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamID }}/">
-                          <img class='teamOverviewConferenceStandingsTeamLogo'  loading="lazy" src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamLogoURL_50}}" />
+                          <img class='logo logo-30'  loading="lazy" src="{{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamLogoURL_50}}" />
                            {{Award.PlayerTeamSeasonID.TeamSeasonID.TeamID.TeamName }}
                         </a>
                       </td>

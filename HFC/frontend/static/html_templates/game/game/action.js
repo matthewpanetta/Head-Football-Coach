@@ -382,7 +382,7 @@ const getHtml = async (common) => {
           position_count.home_player_team_season.advantage_color =
             position_count.home_player_team_season.team_season.team.team_color_primary_hex;
           position_count.home_player_team_season.advantage_logo_url =
-            position_count.home_player_team_season.team_season.team.team_logo_50;
+            position_count.home_player_team_season.team_season.team.team_logo;
           if (
             position_count.home_player_team_season.ratings.overall.overall >
             position_count.away_player_team_season.ratings.overall.overall * 1.1
@@ -399,7 +399,7 @@ const getHtml = async (common) => {
           position_count.away_player_team_season.advantage_color =
             position_count.away_player_team_season.team_season.team.team_color_primary_hex;
           position_count.away_player_team_season.advantage_logo_url =
-            position_count.away_player_team_season.team_season.team.team_logo_50;
+            position_count.away_player_team_season.team_season.team.team_logo;
           if (
             position_count.home_player_team_season.ratings.overall.overall <
             position_count.away_player_team_season.ratings.overall.overall * 0.9

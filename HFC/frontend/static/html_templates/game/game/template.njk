@@ -77,13 +77,22 @@
       </div>
       <div class='w3-row height-150'>
         <div class='w3-col s2 text-left skew-45' style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}; border-right: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; border-left: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; '>
-          <a href="{{game.away_team_game.team_season.team.team_href}}"><img class='gameTeamLogo skew-neg-45' src='{{game.away_team_game.team_season.team.team_logo}}' alt="My image"></a>
+          <a href="{{game.away_team_game.team_season.team.team_href}}">
+            <img class='logo logo-150 skew-neg-45' src='{{game.away_team_game.team_season.team.team_logo}}'>
+          </a>
         </div>
         <div class="w3-col s3 gameHeaderTeamContent away w3-row-padding height100 align-middle">
           <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
             <div class="gameHeaderTeamContainerInfo">
               <div class="gameHeaderTeamContainerName">
-                {{game.away_team_game.team_season.national_rank_display}} <span class='bold'>{{game.away_team_game.team_season.team.school_name}}</span>
+                <span>
+                  {% if game.was_played%}
+                  {{game.away_team_game.national_rank_display}}
+                  {%else%}
+                  {{game.away_team_game.team_season.national_rank_display}}
+                  {%endif%}
+                </span>
+                <span class='bold'>{{game.away_team_game.team_season.team.school_name}}</span>
               </div>
               <div class="gameHeaderTeamContainerName">
                 {{game.away_team_game.team_season.team.team_name}}
@@ -181,7 +190,14 @@
           <div class="gameHeaderTeamContainer gameSchoolName gameTeamName">
             <div class="gameHeaderTeamContainerInfo">
               <div class="gameHeaderTeamContainerName">
-                {{game.home_team_game.team_season.national_rank_display}} <span class='bold'>{{game.home_team_game.team_season.team.school_name}}</span>
+                  <span>
+                  {% if game.was_played%}
+                  {{game.home_team_game.national_rank_display}}
+                  {%else%}
+                  {{game.home_team_game.team_season.national_rank_display}}
+                  {%endif%}
+                </span> 
+                <span class='bold'>{{game.home_team_game.team_season.team.school_name}}</span>
               </div>
               <div class="gameHeaderTeamContainerName">
                 {{game.home_team_game.team_season.team.team_name}}
@@ -199,7 +215,9 @@
         </div>
 
         <div class='w3-col s2 text-right skew-neg-45' style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}; border-left: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}};  border-right: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; '>
-          <a href="{{game.home_team_game.team_season.team.team_href}}"><img class='gameTeamLogo skew-45' src='{{game.home_team_game.team_season.team.team_logo}}' alt="My image"></a>
+          <a href="{{game.home_team_game.team_season.team.team_href}}">
+            <img class='logo logo-150 skew-45' src='{{game.home_team_game.team_season.team.team_logo}}'>
+          </a>
         </div>
 
       </div>
@@ -237,13 +255,13 @@
                         <th></th>
                         <th style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}};'>
                           <a href='{{game.away_team_game.team_season.team.team_href}}'>
-                          {# <img class='logo-30' src='{{game.away_team_game.team_season.team.team_logo}}'/> #}
+                          {# <img class='logo logo-30' src='{{game.away_team_game.team_season.team.team_logo}}'/> #}
                           {{game.away_team_game.team_season.team.team_abbreviation}}
                           </a>
                         </th>
                         <th style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}};'>
                           <a href='{{game.home_team_game.team_season.team.team_href}}'>
-                          {# <img class='logo-30' src='{{game.home_team_game.team_season.team.team_logo}}'/> #}
+                          {# <img class='logo logo-30' src='{{game.home_team_game.team_season.team.team_logo}}'/> #}
                           {{game.home_team_game.team_season.team.team_abbreviation}}
                           </a>
                         </th>
@@ -303,7 +321,7 @@
                           </td>
                           <td class=' column-shrink' style='background-color: #{{season_stat.better_team_for_stat.team_color_primary_hex}};'>
                             <a href='{{season_stat.better_team_for_stat.team_href}}'>
-                             <img class='logo-30' src="{{season_stat.better_team_for_stat.team_logo}}" alt="">
+                             <img class='logo logo-30' src="{{season_stat.better_team_for_stat.team_logo}}" alt="">
                             </a>
                           </td>
                           <td class='white-text font24 column-shrink' style='background-color: #{{season_stat.better_team_for_stat.team_color_primary_hex}};'>
@@ -343,7 +361,7 @@
 
                         <td class='bold center-text' style='background-color: #{{game.outcome.winning_team.team.team_color_primary_hex}};'>
                           <a href='{{game.outcome.winning_team.team.team_href}}'>
-                            <img class='logo-30' src="{{game.outcome.winning_team.team.team_logo}}" alt="">
+                            <img class='logo logo-30' src="{{game.outcome.winning_team.team.team_logo}}" alt="">
                           </a>
                         </td>
                         <td class='center-text'>
@@ -371,7 +389,7 @@
                       <tr class='center-text-row'>
                         <td style='background-color: #{{stat.home_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  >
                           <a href='{{stat.home_player_team_game.player_team_season.team_season.team.team_href}}'>
-                           <img class='logo-50' src="{{stat.home_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
+                           <img class='logo logo-50' src="{{stat.home_player_team_game.player_team_season.team_season.team.team_logo}}" alt="">
                           </a>
                         </td>
                         <td class='center-text' style='background-color: #{{stat.home_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{loop.index}}-{{stat.home_player_team_game.player_team_season.player_id}}">
@@ -395,7 +413,7 @@
                       <tr class='center-text-row'>
                         <td style='background-color: #{{stat.away_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  >
                           <a href='{{stat.away_player_team_game.player_team_season.team_season.team.team_href}}'>
-                            <img class='logo-50' src="{{stat.away_player_team_game.player_team_season.team_season.team.team_logo_50}}" alt="">
+                            <img class='logo logo-50' src="{{stat.away_player_team_game.player_team_season.team_season.team.team_logo}}" alt="">
                           </a>
                         </td>
                         <td class='center-text' style='background-color: #{{stat.away_player_team_game.player_team_season.team_season.team.team_color_primary_hex}}'  id="teamTeamLeaderBoxPlayerFaceDiv-{{loop.index}}-{{stat.away_player_team_game.player_team_season.player_id}}">
@@ -447,7 +465,7 @@
                           <tr class='ScoringSummaryScoreRow {{drive.drive_end.drive_event_class}}' style='border-bottom: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; border-right: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; background-color: white;'>
                             <td class='ScoringSummaryTeamLogo column-shrink' style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
                                 <a href='{{drive.drive_end.display_team.team_href}}'>
-                                  <img src="{{drive.drive_end.display_team.team_logo}}" alt="">
+                                  <img class='logo logo logo-30' src="{{drive.drive_end.display_team.team_logo}}" alt="">
                                 </a>
                             </td>
                             <td class="white-text font16"  style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
@@ -585,7 +603,7 @@
                           <span>{{players.away_player_team_season.advantage_icon|safe}}</span>
                           {% if players.away_player_team_season.advantage_logo_url%}
                           <a href='{{players.away_player_team_season.team_season.team.team_href}}'> 
-                            <img src="{{players.away_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
+                            <img src="{{players.away_player_team_season.advantage_logo_url}}" class='logo logo-30' alt="">
                           </a>
                           {% endif %}
                         </td>
@@ -593,7 +611,7 @@
                         <td style='font-size: 24px; color:white; background-color:#{{players.home_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
                           {% if players.home_player_team_season.advantage_logo_url%}
                           <a href='{{players.home_player_team_season.team_season.team.team_href}}'>
-                            <img src="{{players.home_player_team_season.advantage_logo_url}}" class='logo-30' alt="">
+                            <img src="{{players.home_player_team_season.advantage_logo_url}}" class='logo logo-30' alt="">
                           </a>
                           {% endif %}
                           <span>{{players.home_player_team_season.advantage_icon|safe}}</span>
@@ -636,7 +654,7 @@
                     <tr class='{{team_season.bold}}'>
                       <td class='column-shrink padding-left-8' style='background-color: #{{team_season.team.team_color_primary_hex}}'>
                         <a href="{{team_season.team.team_href}}">
-                          <img class='teamOverviewConferenceStandingsTeamLogo' src="{{team_season.team.team_logo_50}}" />
+                          <img class='logo logo-30' src="{{team_season.team.team_logo}}" />
                         </a>
                       </td>
                       <td>

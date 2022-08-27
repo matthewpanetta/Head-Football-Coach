@@ -49,8 +49,8 @@
                         <span class='ellipsis'>{{game.week_name}}</span>
 
                       </div>
-                      <div class="equal-sized-item-container" >
-                        <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team.team_logo_100}}' />
+                      <div class="equal-sized-item-container centered-item" >
+                        <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team.team_logo}}' />
                       </div>
 
                       <div class="width100 white-text" style='color: white;'>
@@ -77,12 +77,12 @@
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.away_team.team_color_primary_hex}}'></div>
                           <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
-                          <img class='teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.away_team.team_logo_50}}' />
+                          <img class='logo teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.away_team.team_logo}}' />
                         </div>
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.home_team.team_color_primary_hex}}'></div>
                           <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
-                          <img class='teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo_50}}' />
+                          <img class='logo teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo}}' />
                         </div>
                         <div class="teamScheduleGameDashboardGameDisplayTeams w3-col s12 w3-display-container w3-display-topmiddle">
                           <table class='width100 left-text'>
@@ -179,7 +179,7 @@
                                     {{headline|log}}
 
                                     {% for team_season in headline.team_seasons%}
-                                      <img src="{{team_season.team.team_logo_100}}" alt="" class='logo-30'>
+                                      <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-30'>
                                     {%endfor%}
 
                                     <div class="team-header-color-right align-middle hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>

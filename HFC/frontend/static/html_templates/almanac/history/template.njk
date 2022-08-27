@@ -52,7 +52,7 @@
                       <td class='font16' style='color:white; background-color: #{{season.national_champion.team.team_color_primary_hex}}'>{{season.season}}</td>
                       <td class='col-group' style='background-color: #{{season.national_champion.team.team_color_primary_hex}}'>
                         <a href="{{season.national_champion.team.team_href}}">
-                          <img src="{{season.national_champion.team.team_logo}}" alt="" class='logo-50'>
+                          <img src="{{season.national_champion.team.team_logo}}" alt="" class='logo logo-50'>
                         </a>
                         <a href="{{season.national_champion.team.team_href}}" class='font20 white-text'>
                           {{season.national_champion.team.full_name}}
@@ -66,7 +66,7 @@
                       {% if team_season%}
                       <td class='center-text' style='background-color: #{{team_season.team.team_color_primary_hex}}'>
                           <a href="{{team_season.team.team_href}}">
-                            <img src="{{team_season.team.team_logo}}" alt="" class='logo-50'>
+                            <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-50'>
                           </a>
                       </td>
                       {% else%}
@@ -75,14 +75,14 @@
                       {% endfor %}
                       <td class='center-text col-group colgroup-border-left'  style='background-color: #{{season.preseason_number_1.team.team_color_primary_hex}}'>
                         <a href="{{season.preseason_number_1.team.team_href}}">
-                          <img src="{{season.preseason_number_1.team.team_logo}}" alt="" class='logo-50'>
+                          <img src="{{season.preseason_number_1.team.team_logo}}" alt="" class='logo logo-50'>
                         </a>
                       </td>
 
                       {% if season.heisman_winner%}
                       <td  class='center-text' style="background-color: #{{season.heisman_winner.player_team_season.team_season.team.team_color_primary_hex}}">
                         <a href="{{season.heisman_winner.player_team_season.player.player_href}}">
-                          <img src="{{season.heisman_winner.player_team_season.team_season.team.team_logo_100}}" class='logo-50' alt="">
+                          <img src="{{season.heisman_winner.player_team_season.team_season.team.team_logo}}" class='logo logo-50' alt="">
                         </a>
                       </td>
                       <td class='column-shrink center-text' style="background-color: #{{season.heisman_winner.player_team_season.team_season.team.team_color_primary_hex}}">

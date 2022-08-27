@@ -43,7 +43,7 @@
                           {% for player in search_results.Players%}
                             <tr class='center-text-row'>
                               <td class='column-shrink' style='background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}};'>
-                                <img class='logo-50' src="{{player.player_team_season.team_season.team.team_logo}}" alt="">
+                                <img class='logo logo-50' src="{{player.player_team_season.team_season.team.team_logo}}" alt="">
                               </td>
                               <td class='left-text column-shrink nowrap' style='background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
                                 <a href="{{player.player_team_season.team_season.team.team_href}}">{{player.player_team_season.team_season.team.full_name}}</a>
@@ -84,7 +84,7 @@
                     {% for team in search_results.Teams%}
                       <tr class='center-text-row'>
                         <td class='column-shrink' style='background-color: #{{team.team_color_primary_hex}};'>
-                          <img class='logo-50' src="{{team.team_logo}}" alt="">
+                          <img class='logo logo-50' src="{{team.team_logo}}" alt="">
                         </td>
                         <td class='nowrap' style='background-color: #{{team.team_color_primary_hex}}; color:white;'>
                           <a href="{{team.team_href}}">{{team.full_name}}</a>

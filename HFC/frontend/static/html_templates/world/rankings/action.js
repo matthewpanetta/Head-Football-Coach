@@ -174,8 +174,8 @@
             team_season.this_week_team_game.game_location_char = 'vs.'
           }
           else {
-            team_season.this_week_team_game.game_location = 'home'
-            team_season.this_week_team_game.game_location_char = 'vs.'
+            team_season.this_week_team_game.game_location = 'away'
+            team_season.this_week_team_game.game_location_char = '@'
           }
         }
         else {
