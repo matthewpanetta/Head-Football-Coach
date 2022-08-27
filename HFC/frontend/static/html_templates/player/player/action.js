@@ -306,8 +306,7 @@ const getHtml = async (common) => {
 
   player.player_team_seasons = player_team_seasons;
   player.current_player_team_season = player.player_team_seasons.filter(pts => pts.season == season)[0];
-  var current_team = player.current_player_team_season.team_season.team;
-
+  var current_team = player.current_player_team_season.team_season.team;  
 
 
   console.log({current_team:current_team,current_player_team_season:player.current_player_team_season, player_team_seasons:player.player_team_seasons})
@@ -359,7 +358,6 @@ const getHtml = async (common) => {
     })
 
     recruit_team_seasons = recruit_team_seasons.sort((rts_a, rts_b) => rts_b.match_rating - rts_a.match_rating);
-
 
   }
   else {
@@ -589,6 +587,33 @@ const getHtml = async (common) => {
     }
   }
 
+  let position_sort_map = {
+    QB: 1,
+    RB: 2,
+    FB: 3,
+    WR: 4,
+    TE: 5,
+    OT: 6,
+    IOL: 7,
+    DL: 8,
+    EDGE: 9,
+    LB: 10,
+    CB: 11,
+    S: 12,
+    K: 13,
+    P: 14,
+  }
+
+  let current_team_season = player.current_player_team_season.team_season;
+  let all_player_team_seasons = await db.player_team_season.where({team_season_id: current_team_season.team_season_id}).toArray();
+  let player_team_seasons_by_player_id = index_group_sync(all_player_team_seasons, 'index', 'player_id')
+  let player_ids = all_player_team_seasons.map(pts => pts.player_id);
+  let players = await db.player.bulkGet(player_ids);
+
+  players = nest_children(players, player_team_seasons_by_player_id, 'player_id', 'player_team_season')
+  players = players.sort(function(player_a, player_b){
+    return position_sort_map[player_a.player_team_season.position] - position_sort_map[player_b.player_team_season.position] || player_b.player_team_season.ratings.overall.overall -  player_a.player_team_season.ratings.overall.overall;
+  });
 
   console.log('all_player_team_seasons', {player:player, current_team:current_team, skills:skills, all_conference_player_team_season_starters_at_position:all_conference_player_team_season_starters_at_position, all_player_team_season_starters_at_position:all_player_team_season_starters_at_position, all_team_seasons:all_team_seasons, all_conference_player_team_season_ids_starters_at_position: all_conference_player_team_season_ids_starters_at_position, 'all_player_team_season_ids_starters_at_position': all_player_team_season_ids_starters_at_position, 'player.current_player_team_season.team_season': player.current_player_team_season.team_season, all_team_seasons_in_conference: all_team_seasons_in_conference, player_position:player_position, all_player_team_season_ids_starters_at_position:all_player_team_season_ids_starters_at_position})
 
@@ -604,8 +629,8 @@ const getHtml = async (common) => {
                         player_team_games: player_team_games,
                         player_awards:player_awards,
                         award_list:award_list,
-                        recruit_team_seasons:recruit_team_seasons
-
+                        recruit_team_seasons:recruit_team_seasons,
+                        players: players
                       }
 
   common.render_content = render_content;

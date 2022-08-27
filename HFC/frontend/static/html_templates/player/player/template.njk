@@ -99,7 +99,35 @@
         {% if player_awards | length > 0 %}
           <button class="w3-bar-item btn tab nav-tab-button"  id="nav-awards-tab">Awards</button>
           {%endif%}
-          <button> PLAYER LIST </button>
+          <div class="w3-dropdown-hover w3-right" style="margin-right: 20px" id='nav-team-dropdown-container'>
+            <button class="w3-bar-item btn tab nav-tab-button"  id="nav-team-dropdown" >
+              Players
+            </button>
+
+            <div class="w3-dropdown-content card w3-animate-opacity"  style="right: 20px; max-height: 70vh;" >
+              <div style='display: flex;'>
+                <div class='w3-bar-block width100' style='max-height: 65vh; overflow-y: scroll'>
+                  <table class='table width100'>
+                  {% for player in players %}
+                  <tr>
+                    <td class='padding-left-8'>
+                      <div>
+                        <a href="{{player.player_href}}" class="">
+                          {# <img src="{{team.team_logo}}" class="small-logo" alt="" /> #}
+                          <span>{{player.full_name}}</span>
+                        </a>
+                      </div>
+                      <div class='font10'>
+                        <span>{{player.player_team_season.class.class_name}} &#183 {{player.player_team_season.position}} &#183 {{player.player_team_season.ratings.overall.overall}} OVR</span>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </nav>
       <div  id="nav-tabContent">
