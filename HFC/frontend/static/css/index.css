@@ -2963,12 +2963,18 @@ button.no-hover:hover {
   margin-bottom: 0px !important;
 }
 
-.table td,
+.table td {
+  padding: 8px 8px;
+  display: table-cell;
+  text-align: left;
+  vertical-align: top;
+}
+
 .table th {
   padding: 8px 8px;
   display: table-cell;
   text-align: left;
-  vertical-align: top
+  vertical-align: middle;
 }
 
 table tr:first-child .fa-arrow-alt-circle-up.depth-chart-reorder-icon,

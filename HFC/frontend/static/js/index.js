@@ -5933,6 +5933,7 @@ const common_functions = async (route_pattern) => {
 
   return {
     create_new_db: create_new_db,
+    get_db: get_db,
     get_teams: get_teams,
     get_rivalries: get_rivalries,
     get_conferences: get_conferences,
