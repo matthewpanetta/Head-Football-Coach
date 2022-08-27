@@ -18,7 +18,6 @@ def nested_pixel_array(im, width, height):
 
 team_logo_dir_path = '/Users/tom/Code/Head-Football-Coach/HFC/frontend/static/img/team_logos'
 file_list = os.listdir(team_logo_dir_path)
-random.shuffle(file_list)
 
 for file_name in file_list:
     if file_name == '.DS_Store':
@@ -42,3 +41,4 @@ for file_name in file_list:
     
     im1 = im.crop((min_y, min_x, max_y, max_x))
     im1 = im1.save(file_path)
+    print('Saved ', file_path)
