@@ -1,3 +1,26 @@
+function complex_get(val) {
+  let html = ''
+  if (Array.isArray(val)) {
+    html += '<table class="table">'
+    for (let row of val){
+      html += '<tr class="children-align-middle"><td class="left-text">'+complex_get(row)+'</td></tr>'
+    }
+    html += '</table>'
+  } 
+  else if (typeof val === "object" && !Array.isArray(val) && val !== null) {
+    html += '<table class="table children-align-middle">'
+    for (let [field, value] of Object.entries(val)){
+      html += '<tr class="children-align-middle"><th class="left-text">'+field+'</th><td class="left-text">'+complex_get(value)+'</td></tr>'
+    }
+    html += '</table>'
+  }
+  else {
+    html = val;
+  }
+  console.log('complex_get', {val:val, html:html})
+  return html;
+}
+
 function get_nunjucks_env() {
   var env = new nunjucks.Environment();
 
@@ -34,6 +57,11 @@ function get_nunjucks_env() {
     return get(obj, key);
   });
 
+  env.addFilter("complex_get", function (obj, key) {
+    console.log('filter', {obj:obj, key:key})
+    return complex_get(get(obj, key));
+  });
+
   env.addFilter("TeamBackgroundFontColor", function (BackgroundColor) {
     if (BackgroundColor == undefined) {
       BackgroundColor = "FFFFFF";
@@ -58,12 +86,11 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("pluralize", function (word, val) {
-    if (val != 1){
-      return word + 's'
+    if (val != 1) {
+      return word + "s";
     }
     return word;
   });
-
 
   env.addFilter("NumberToGradeBadge", function (NumberValue, scale) {
     let grade_letter = NumberToGrade(NumberValue, scale);
@@ -74,7 +101,6 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("NumberToGradeClass", function (NumberValue, scale) {
-
     return NumberToGrade(NumberValue, scale)
       .replace("-", "-Minus")
       .replace("+", "-Plus");
@@ -113,7 +139,6 @@ function get_nunjucks_env() {
         1: "F--",
       };
 
-      
       return grade_value_map[number_value];
     } else {
       const grade_value_map = [

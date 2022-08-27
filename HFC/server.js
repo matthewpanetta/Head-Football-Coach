@@ -6,6 +6,10 @@ const app = express();
 const routes = [
   {route: "/", path: 'index/index/base.html'},
 
+  {route: "/admin", path: 'admin/admin/base.html'},
+  {route: "/admin/Database/:database", path: 'admin/database/base.html'},
+  {route: "/admin/Database/:database/Table/:table", path: 'admin/table/base.html'},
+
   {route: "/World/:world_id/",          path: 'world/world/base.html'},
   {route: "/World/:world_id/Rankings/", path: 'world/rankings/base.html'},
   {route: "/World/:world_id/Standings/", path: 'world/standings/base.html'},
