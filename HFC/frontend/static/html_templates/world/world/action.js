@@ -442,7 +442,9 @@ const getHtml = async (common) => {
 
   const renderedHtml = common.nunjucks_env.renderString(html, render_content);
 
-  $("#body").html(renderedHtml);
+  $("#body").append(renderedHtml);
+  // $('#body .show.active').css('display', 'block');
+
 };
 
 const action = async (common) => {

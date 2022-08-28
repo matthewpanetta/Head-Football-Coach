@@ -161,7 +161,7 @@
                     {% for team_game in game.team_games %}
                     <tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
                       <td class='center-text hide-small' colspan='2' style='background-color: #{{team_game.team_season.team.team_color_primary_hex}}; width: 1%;'>
-                          <img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="{{team_game.team_season.team.team_logo}}" alt="">
+                          <img class="logo logo-30"  loading="lazy" src="{{team_game.team_season.team.team_logo}}" alt="">
                       </td>
                       <td class='worldUpcomingGameCell padding-left-8' colspan='4'>
                         <div class='margin0'><span class='font10'>{{team_game.team_season.national_rank_display}}</span> <a href="{{team_game.team_season.team.team_href}}" class='font16'>{{team_game.team_season.team.school_name}}</a></div>

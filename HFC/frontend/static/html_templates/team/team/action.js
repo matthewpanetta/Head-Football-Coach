@@ -481,7 +481,7 @@ const getHtml = async (common) => {
     //team_stats: team_stats,
     player_team_seasons: player_team_seasons,
     headlines: headlines,
-    games_played:games_played
+    games_played: games_played,
   };
 
   common.render_content = render_content;
@@ -938,6 +938,247 @@ const action = async (common) => {
 
     $("#nav-info").append(renderedHtml);
     await draw_map(common);
+  });
+
+  var rivals_first_click = false;
+  $("#nav-rivals-tab").on("click", async function () {
+    if (rivals_first_click) {
+      return false;
+    }
+    rivals_first_click = true;
+
+    var db = common.db;
+    var season = common.season;
+
+    var team = common.render_content.team;
+    let rivals = team.rivals;
+    let rival_team_ids = new Set(rivals.map((r) => r.opponent_team_id));
+
+    let team_seasons = await db.team_season
+      .where({ team_id: team.team_id })
+      .toArray();
+    let team_season_ids = team_seasons.map((ts) => ts.team_season_id);
+    team_season_ids = new Set(team_season_ids);
+
+    var rival_teams = await db.team.where("team_id").above(0).toArray();
+    let rival_teams_by_team_id = index_group_sync(
+      rival_teams,
+      "index",
+      "team_id"
+    );
+
+    let rival_team_seasons = await db.team_season
+      .where("team_id")
+      .anyOf(rival_team_ids)
+      .toArray();
+
+    let rival_team_seasons_by_team_id = index_group_sync(
+      rival_team_seasons,
+      "group",
+      "team_id"
+    );
+
+    let rival_team_season_ids = new Set(
+      rival_team_seasons.map((ts) => ts.team_season_id)
+    );
+
+    let weeks = await db.week.toArray();
+    let weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
+
+    let all_team_season_ids = Array.from(team_season_ids).concat(
+      Array.from(rival_team_season_ids)
+    );
+    let all_games = await db.game.toArray();
+    all_games = nest_children(all_games, weeks_by_week_id, "week_id", "week");
+    let all_games_by_game_id = index_group_sync(all_games, "index", "game_id");
+
+    let team_games = await db.team_game
+      .where("team_season_id")
+      .anyOf(all_team_season_ids)
+      .toArray();
+    let team_games_by_team_game_id = index_group_sync(
+      team_games,
+      "index",
+      "team_game_id"
+    );
+
+    for (let rivalry of rivals) {
+      rivalry.team = rival_teams_by_team_id[rivalry.opponent_team_id];
+      rivalry.team_seasons =
+        rival_team_seasons_by_team_id[rivalry.opponent_team_id];
+
+      rivalry.team_season_ids = new Set(
+        rivalry.team_seasons.map((ts) => ts.team_season_id)
+      );
+
+      rivalry.team_games = team_games.filter(
+        (tg) =>
+          rivalry.team_season_ids.has(tg.team_season_id) &&
+          team_season_ids.has(tg.opponent_team_season_id)
+      );
+
+      rivalry.team_games = nest_children(
+        rivalry.team_games,
+        all_games_by_game_id,
+        "game_id",
+        "game"
+      );
+      rivalry.team_games.forEach(function (tg) {
+        tg.opponent_team_game =
+          team_games_by_team_game_id[tg.opponent_team_game_id];
+
+        if (tg.game.was_played) {
+          if (tg.is_winning_team) {
+            tg.game.winning_team = rivalry.team;
+          } else {
+            tg.game.winning_team = team;
+          }
+
+          tg.game.score_display = `${tg.game.outcome.winning_team.points} - ${tg.game.outcome.losing_team.points}`;
+        }
+      });
+
+      rivalry.team_games = rivalry.team_games.sort(
+        (tg_a, tg_b) => tg_a.week_id - tg_b.week_id
+      );
+
+      rivalry.played_team_games = rivalry.team_games.filter(
+        (tg) => tg.game.was_played
+      );
+
+      rivalry.first_team_game = rivalry.played_team_games[0];
+      rivalry.last_team_game =
+        rivalry.played_team_games[rivalry.played_team_games.length - 1];
+
+      rivalry.record = {
+        wins: 0,
+        losses: 0,
+        games_played: 0,
+        scheduled_games: 0,
+        points_scored: 0,
+        points_allowed: 0,
+      };
+
+      let streak_list = [];
+      rivalry.team_games.forEach(function (tg) {
+        console.log({tg:tg})
+        if (tg.game.was_played) {
+          rivalry.record.games_played += 1;
+          rivalry.record.points_scored += tg.points;
+          rivalry.record.points_allowed += tg.opponent_team_game.points;
+          if (tg.is_winning_team) {
+            rivalry.record.wins += 1;
+          } else {
+            rivalry.record.losses += 1;
+          }
+        } else {
+          rivalry.record.scheduled_games += 1;
+        }
+
+        if (tg.game.was_played) {
+          if (streak_list.length == 0) {
+            streak_list.push({
+              team: tg.game.winning_team,
+              count: 1,
+              first_season: tg.game.week.season,
+              last_season: tg.game.week.season,
+            });
+          } else {
+            let latest_streak_obj = streak_list[streak_list.length - 1];
+            if (
+              tg.game.winning_team.team_id == latest_streak_obj.team.team_id
+            ) {
+              latest_streak_obj.count += 1;
+              latest_streak_obj.last_season = tg.game.week.season;
+            } else {
+              streak_list.push({
+                team: tg.game.winning_team,
+                count: 1,
+                first_season: tg.game.week.season,
+                last_season: tg.game.week.season,
+              });
+            }
+          }
+        }
+      });
+
+      rivalry.latest_streak = streak_list[streak_list.length - 1];
+      streak_list = streak_list.sort(
+        (str_a, str_b) => str_b.count - str_a.count
+      );
+      rivalry.longest_streak = streak_list[0];
+
+      let all_time_series = {
+        leader: null,
+        wins: rivalry.record.wins,
+        losses: rivalry.record.losses,
+      };
+      if (rivalry.record.wins > rivalry.record.losses) {
+        all_time_series = {
+          leader: rivalry.team,
+          wins: rivalry.record.wins,
+          losses: rivalry.record.losses,
+        };
+      } else if (rivalry.record.wins < rivalry.record.losses) {
+        all_time_series = {
+          leader: team,
+          wins: rivalry.record.losses,
+          losses: rivalry.record.wins,
+        };
+      }
+
+      let all_time_points = {
+        leader: null,
+        points_for: rivalry.record.points_scored,
+        points_allowed: rivalry.record.points_allowed,
+      };
+      if (rivalry.record.points_scored > rivalry.record.points_allowed) {
+        all_time_points = {
+          leader: rivalry.team,
+          points_for: rivalry.record.points_scored,
+          points_allowed: rivalry.record.points_allowed,
+        };
+      } else if (rivalry.record.points_scored < rivalry.record.points_allowed) {
+        all_time_points = {
+          leader: team,
+          points_for: rivalry.record.points_allowed,
+          points_allowed: rivalry.record.points_scored,
+        };
+      }
+
+      rivalry.all_time_series = all_time_series;
+      rivalry.all_time_points = all_time_points;
+    }
+
+    rivals = rivals.sort(
+      (r_a, r_b) =>
+        r_b.record.games_played - r_a.record.games_played ||
+        r_b.record.scheduled_games - r_a.record.scheduled_games
+    );
+
+    console.log({
+      team: team,
+      rivals: rivals,
+      rival_team_ids: rival_team_ids,
+      team_seasons: team_seasons,
+      team_games: team_games,
+      season: season,
+      rival_teams: rival_teams,
+      rival_teams_by_team_id: rival_teams_by_team_id,
+      rival_team_seasons: rival_team_seasons,
+    });
+
+    var url = "/static/html_templates/team/team/team_rivals_div_template.njk";
+    var html = await fetch(url);
+    html = await html.text();
+
+    var renderedHtml = await common.nunjucks_env.renderString(html, {
+      rivals: rivals,
+      team: team,
+    });
+    console.log({ renderedHtml: renderedHtml });
+
+    $("#nav-rivals").append(renderedHtml);
   });
 };
 
@@ -1891,8 +2132,10 @@ const draw_map = async (common) => {
     .anyOf(player_ids)
     .toArray();
   console.log({ players: players });
-  players.forEach(p => p.city_state = `${p.hometown.city}, ${p.hometown.state}`);
-  let players_by_city_state = index_group_sync(players, 'group', 'city_state')
+  players.forEach(
+    (p) => (p.city_state = `${p.hometown.city}, ${p.hometown.state}`)
+  );
+  let players_by_city_state = index_group_sync(players, "group", "city_state");
   const city_states = players.map((p) => [p.hometown.city, p.hometown.state]);
 
   let cities = await ddb.cities
@@ -1900,8 +2143,13 @@ const draw_map = async (common) => {
     .anyOf(city_states)
     .toArray();
 
-  cities.forEach(c => c.city_state = `${c.city}, ${c.state}`)
-  cities = nest_children(cities, players_by_city_state, 'city_state', 'players')
+  cities.forEach((c) => (c.city_state = `${c.city}, ${c.state}`));
+  cities = nest_children(
+    cities,
+    players_by_city_state,
+    "city_state",
+    "players"
+  );
 
   const school_location = await ddb.cities
     .where({ city: team.location.city, state: team.location.state })
@@ -1918,8 +2166,7 @@ const draw_map = async (common) => {
     iconAnchor: [4, 4],
   });
 
-
-  if (map != undefined) { map.remove(); } 
+  //if (map != undefined) { map.remove(); }
   let map = L.map("map-body").setView([40.8098, -96.6802], 4);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -1934,27 +2181,27 @@ const draw_map = async (common) => {
 
   let tooltip_template = `
     <div>{{city.city_state}}</div>
-    <ul>
+    <div>
     {% for player in city.players%}
-      <li>
+      <div class='padding-left-8'>
       {{player.full_name}}, {{player.position}}
-      </li>
+      </div>
     {%endfor%}
-    </ul>
+    </div>
   `;
 
   cities.forEach(async function (city) {
     var renderedHtml = await common.nunjucks_env.renderString(
       tooltip_template,
-      {city: city}
+      { city: city }
     );
-    renderedHtml = renderedHtml.replace('\n','')
-    let marker = L.marker([city.lat, city.long], { icon: player_icon }).bindTooltip(renderedHtml).openTooltip();
-    markers
-      .addLayer(marker)
-      .addTo(map);
-    console.log({marker:marker, markers:markers})
-    });
+    renderedHtml = renderedHtml.replace("\n", "");
+    let marker = L.marker([city.lat, city.long], { icon: player_icon })
+      .bindTooltip(renderedHtml)
+      .openTooltip();
+    markers.addLayer(marker).addTo(map);
+    console.log({ marker: marker, markers: markers });
+  });
 
   console.log({ cities: cities, map: map, school_location: school_location });
 };

@@ -2655,7 +2655,7 @@ const nav_bar_links = async (params) => {
     {
       GroupName: "World",
       GroupDisplay:
-        '<img src="/static/img/team_logos/ncaa-text.png" class="" alt="">',
+        '<img src="/static/img/team_logos/ncaa-text.png" class="logo logo-60" alt="">',
       GroupLinks: [
         {
           LinkDisplay: "Overview",
@@ -2703,7 +2703,7 @@ const nav_bar_links = async (params) => {
     },
     {
       GroupName: "Team",
-      GroupDisplay: `<img src="${user_team_logo}" class="" alt="">`,
+      GroupDisplay: `<img src="${user_team_logo}" class="logo logo-60" alt="">`,
       GroupLinks: [
         {
           LinkDisplay: "Overview",
@@ -3392,10 +3392,13 @@ const create_schedule = async (data) => {
 
   const weeks_by_week_name = index_group_sync(weeks, "index", "week_name");
 
-  $.each(team_seasons, function (ind, team_season) {
+  let num_teams = team_seasons.length;
+  let team_quadrant_cutoffs = [1,2,3,4].map(num => ({quadrant: num, max_national_rank: Math.floor(num * num_teams / 4.0)}))
+
+  for (let team_season of team_seasons){
     team_season_rivals =
       team_rivalries_by_team_season_id[team_season.team_season_id].rivals;
-    $.each(team_season_rivals, function (ind, rival_obj) {
+    for (let rival_obj of team_season_rivals){
       rival_obj.preferred_week_id = undefined;
       if (rival_obj.preferred_week_number != null) {
         rival_obj.preferred_week_id =
@@ -3413,7 +3416,7 @@ const create_schedule = async (data) => {
         team_seasons_by_team_id[
           rival_obj.opponent_team_id.toString()
         ].team_season_id;
-    });
+    }
     team_conference =
       conferences_by_conference_id[
         conference_seasons_by_conference_season_id[
@@ -3436,15 +3439,23 @@ const create_schedule = async (data) => {
         home_games: 0,
         away_games: 0,
         net_home_games: 0,
+        schedule_team_quadrants: {
+          1:0,2:0,3:0,4:0
+        }
       },
       weeks_scheduled: new Set(),
       available_week_ids: new Set(all_week_ids),
       opponents_scheduled: new Set(),
       conference_season_id: team_season.conference_season_id,
+      division_name: team_season.division_name,
       rivals: team_season_rivals,
       team: teams_by_team_id[team_season.team_id],
+      team_quadrant: team_quadrant_cutoffs.find(quadrant => team_season.national_rank <= quadrant.max_national_rank).quadrant
     };
-  });
+
+    console.log({team_season: team_season, team_season_schedule_tracker:team_season_schedule_tracker, team_quadrant_cutoffs:team_quadrant_cutoffs});
+    debugger;
+  }
 
   var scheduling_teams = true;
   var team_season_id_list = [],
@@ -7865,7 +7876,7 @@ const sim_game = (game_dict, common) => {
 			</thead>
 			<tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
 				<td class=' hide-small'style='background-color: #${game_dict.teams[winning_team_index].team_color_primary_hex}; width: 1%;'>
-						<img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="${game_dict.teams[winning_team_index].team_logo}" alt="">
+						<img class="logo logo-30 margin-8"  loading="lazy" src="${game_dict.teams[winning_team_index].team_logo}" alt="">
 				</td>
 				<td class='worldUpcomingGameCell padding-left-8' >
 					<div class='margin0'>
@@ -7882,7 +7893,7 @@ const sim_game = (game_dict, common) => {
 			</tr>
 			<tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
 				<td class=' hide-small'  style='background-color: #${game_dict.teams[losing_team_index].team_color_primary_hex}; width: 1%;'>
-						<img class="overviewRecentGameDisplayTeamLogo"  loading="lazy" src="${game_dict.teams[losing_team_index].team_logo}" alt="">
+						<img class="logo logo-30 margin-8"  loading="lazy" src="${game_dict.teams[losing_team_index].team_logo}" alt="">
 				</td>
 				<td class='worldUpcomingGameCell padding-left-8'>
 					<div class='margin0'>
@@ -13755,8 +13766,10 @@ const new_world_action = async (common, database_suffix) => {
     "football5",
   ];
 
+  teams_from_json = teams_from_json.sort((t_a, t_b) => t_a.school_name > t_b.school_name ? 1 : -1)
+
   var team_id_counter = 1;
-  $.each(teams_from_json, function (ind, team) {
+  for (let team of teams_from_json){
     if (team.jersey.invert) {
       team.jersey.teamColors = [
         "#FFFFFF",
@@ -13833,7 +13846,7 @@ const new_world_action = async (common, database_suffix) => {
     });
 
     team_id_counter += 1;
-  });
+  }
 
   teams.push({
     team_id: -1,

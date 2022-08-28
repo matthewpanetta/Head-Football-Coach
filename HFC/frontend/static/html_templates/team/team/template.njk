@@ -29,6 +29,7 @@
         <button class="w3-bar-item btn tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
         {% endif %}
         <button class="w3-bar-item btn tab nav-tab-button" id="nav-info-tab">Team Info</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-rivals-tab">Rivalries</button>
         {% include "../../static/html_templates/common_templates/ext_team_list.njk" %}
       </div>
     </nav>
@@ -77,12 +78,12 @@
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.away_team.team_color_primary_hex}}'></div>
                           <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
-                          <img class='logo teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.away_team.team_logo}}' />
+                          <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.away_team.team_logo}}' />
                         </div>
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.home_team.team_color_primary_hex}}'></div>
                           <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
-                          <img class='logo teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo}}' />
+                          <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo}}' />
                         </div>
                         <div class="teamScheduleGameDashboardGameDisplayTeams w3-col s12 w3-display-container w3-display-topmiddle">
                           <table class='width100 left-text'>
@@ -450,6 +451,9 @@
         </div>
     </div>
       <div class="tab-content" style='display:none;' id="nav-info">
+
+    </div>
+    <div class="tab-content" style='display:none;' id="nav-rivals">
 
     </div>
   </div>

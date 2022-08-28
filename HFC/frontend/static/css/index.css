@@ -887,6 +887,15 @@ article>header {
   z-index: 1;
 }
 
+.rivalScheduleGameDashboardGameTeamDisplayContainer {
+  height: 18px;
+  width: 180px;
+  margin-bottom: 20px;
+  transform: rotate(-52deg);
+  left: -45px;
+  z-index: 1;
+}
+
 .hidden-overflow {
   overflow: hidden;
 }
@@ -907,7 +916,6 @@ article>header {
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoTop {
-  width: 40px;
   left: 40px;
   top: -20px;
   z-index: 50;
@@ -915,7 +923,20 @@ img.teamScheduleGameDashboardGameTeamDisplayLogoTop {
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
-  width: 40px;
+  left: 55px;
+  top: -10px;
+  z-index: 3;
+  transform: rotate(52deg);
+}
+
+img.rivalScheduleGameDashboardGameTeamDisplayLogoTop {
+  left: 45px;
+  top: -20px;
+  z-index: 50;
+  transform: rotate(52deg);
+}
+
+img.rivalScheduleGameDashboardGameTeamDisplayLogoBottom {
   left: 55px;
   top: -10px;
   z-index: 3;
@@ -2260,33 +2281,47 @@ tfoot td {
 
 
 .logo {
-  aspect-ratio: 1 / 1;
   object-fit: scale-down;
-
   /* filter: drop-shadow(1px 0px 0 white) drop-shadow(0px -1px 0 white) drop-shadow(-1px 0px 0 white) drop-shadow(0px 1px 0 white); */
 }
 .logo-12 {
   height: 12px;
+  width: 12px;
 }
 
 .logo-24 {
   height: 24px;
+  width: 24px;
 }
 
 .logo-30 {
   height: 30px;
+  width: 30px;
+}
+
+.logo-40 {
+  height: 40px;
+  width: 40px;
 }
 
 .logo-50 {
   height: 50px;
+  width: 50px;
+}
+
+.logo-60 {
+  height: 60px;
+  width: 60px;
 }
 
 .logo-90 {
   height: 90px;
+  width: 90px;
 }
 
 .logo-150 {
   height: 150px;
+  width: 150px;
 }
 
 .light-padding-top {
@@ -2360,6 +2395,10 @@ table.table tr {
 
 .s6 {
   width: 49.5%;
+}
+
+.s5 {
+  width: 40%;
 }
 
 
@@ -2453,6 +2492,18 @@ table.table tr {
 @media screen and (min-width: 1050px) {
   .show-small {
     display: none !important;
+  }
+}
+
+@media (min-width: 1100px) {
+  .card-columns {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 1100px) {
+  .card-columns {
+    column-count: 1;
   }
 }
 
