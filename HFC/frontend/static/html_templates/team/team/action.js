@@ -988,19 +988,25 @@ const action = async (common) => {
     let all_team_season_ids = Array.from(team_season_ids).concat(
       Array.from(rival_team_season_ids)
     );
-    let all_games = await db.game.toArray();
-    all_games = nest_children(all_games, weeks_by_week_id, "week_id", "week");
-    let all_games_by_game_id = index_group_sync(all_games, "index", "game_id");
+
+    let all_team_season_id_set = new Set(all_team_season_ids);
 
     let team_games = await db.team_game
-      .where("team_season_id")
-      .anyOf(all_team_season_ids)
-      .toArray();
+    .where("team_season_id")
+    .anyOf(all_team_season_ids)
+    .filter(tg => all_team_season_id_set.has(tg.team_season_id) && all_team_season_id_set.has(tg.opponent_team_season_id))
+    .toArray();
     let team_games_by_team_game_id = index_group_sync(
       team_games,
       "index",
       "team_game_id"
     );
+
+    let game_ids = team_games.map(tg => tg.game_id);
+
+    let all_games = await db.game.bulkGet(game_ids);
+    all_games = nest_children(all_games, weeks_by_week_id, "week_id", "week");
+    let all_games_by_game_id = index_group_sync(all_games, "index", "game_id");
 
     for (let rivalry of rivals) {
       rivalry.team = rival_teams_by_team_id[rivalry.opponent_team_id];
@@ -1156,17 +1162,6 @@ const action = async (common) => {
         r_b.record.scheduled_games - r_a.record.scheduled_games
     );
 
-    console.log({
-      team: team,
-      rivals: rivals,
-      rival_team_ids: rival_team_ids,
-      team_seasons: team_seasons,
-      team_games: team_games,
-      season: season,
-      rival_teams: rival_teams,
-      rival_teams_by_team_id: rival_teams_by_team_id,
-      rival_team_seasons: rival_team_seasons,
-    });
 
     var url = "/static/html_templates/team/team/team_rivals_div_template.njk";
     var html = await fetch(url);
