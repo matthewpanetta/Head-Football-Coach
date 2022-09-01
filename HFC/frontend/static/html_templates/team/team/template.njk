@@ -137,16 +137,18 @@
                                 {%endfor%}
                                 <td class='{{game.home_team_winning_game_bold}} font16'>{{game.scoring.final[1]}}</td>
                               </tr>
+                              <tr>
+                                <td></td>
+                                <td colspan='4'>
+                                  {%for headline in game.headlines%}
+                                  <div>
+                                    {{headline.headline_text}}
+                                  </div>
+                                  {%endfor%}
+                                </td>
+                              </tr>
                             </tbody>
                           </table>
-
-                        </div>
-                        <div class="teamScheduleGameDashboardGameDisplayTeams w3-col s12 w3-display-container font12">
-                            {%for headline in game.headlines%}
-                            <div>
-                              {{headline.headline_text}}
-                            </div>
-                            {%endfor%}
                         </div>
                       </div>
                     </div>

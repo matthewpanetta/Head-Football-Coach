@@ -9,6 +9,7 @@ const getHtml = async (common) => {
   const index_group = common.index_group;
 
   let all_conferences = await db.conference.toArray();
+  all_conferences = all_conferences.sort((c_a, c_b) => c_a.conference_name > c_b.conference_name ? 1 : -1);
   let conference = all_conferences.find(c => c.conference_id == conference_id);
   let conference_seasons = await db.conference_season
     .where({ conference_id: conference_id })
@@ -67,6 +68,9 @@ const getHtml = async (common) => {
       cs.record.conference_wins += ts.record.conference_wins;
       cs.record.conference_losses += ts.record.conference_losses;
     });
+
+    cs.conference_champion = cs.team_seasons.find(ts => ts.results.conference_champion)
+    cs.runner_up = cs.team_seasons.find(ts => !ts.results.conference_champion && !ts.results.division_champion)
 
     cs.record.out_of_conference_wins =
       cs.record.wins - cs.record.conference_wins;

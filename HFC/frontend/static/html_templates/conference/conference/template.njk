@@ -144,9 +144,9 @@
                             <th class='center-text' colspan='2'>Overall Record</th>
                             <th class='center-text' colspan='2'>OOC Record</th>
                             <th class='center-text'>Top 25 Teams</th>
-                            <th class='center-text'>Champion</th>
-                            <th class='center-text'>Runner Ups</th>
-                            <th class='center-text'>POTY</th>
+                            <th class='left-text'>Champion</th>
+                            <th class='left-text'>Runner Ups</th>
+                            <th class='left-text'>POTY</th>
                           </tr>
                         </thead>
                         <tbody id='conference_standings_tbody'>
@@ -162,6 +162,23 @@
                               <td>{{conference_season.record.winning_percentage}}%</td>
                               <td>{{conference_season.record.out_of_conference_wins}} - {{conference_season.record.out_of_conference_losses}}</td>
                               <td>{{conference_season.record.out_of_conference_winning_percentage}}%</td>
+                              <td></td>
+                              <td class='left-text white-text no-wrap' style='background-color: #{{conference_season.conference_champion.team.team_color_primary_hex}};'>
+                                <a>
+                                  <img class='logo logo-24' src='{{conference_season.conference_champion.team.team_logo}}'/>
+                                </a>
+                                <a class='margin-left-12' href='{{conference_season.conference_champion.team.team_href}}'>
+                                  {{conference_season.conference_champion.team.full_name}}
+                                </a>
+                              </td>
+                              <td class='left-text white-text no-wrap' style='background-color: #{{conference_season.runner_up.team.team_color_primary_hex}};'>
+                                <a>
+                                  <img class='logo logo-24' src='{{conference_season.runner_up.team.team_logo}}'/>
+                                </a>
+                                <a class='margin-left-12' href='{{conference_season.runner_up.team.team_href}}'>
+                                  {{conference_season.runner_up.team.full_name}}
+                                </a>
+                              </td>
                               <td></td>
                             </tr>
                           {% endfor %}

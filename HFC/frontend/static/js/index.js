@@ -2029,6 +2029,7 @@ class player_team_season_stats {
       points: 0,
     };
     this.top_stats = [];
+    this.top_12_weighted_game_scores = [];
     this.passing = {
       completions: 0,
       attempts: 0,
@@ -2243,11 +2244,11 @@ class player_team_season_stats {
   }
 
   get average_weighted_game_score() {
-    if (!this.games || this.games.games_played == 0) {
+    if (!this.games || this.top_12_weighted_game_scores.length == 0) {
       return 0;
     }
     return round_decimal(
-      this.games.weighted_game_score / this.games.games_played,
+      sum(this.top_12_weighted_game_scores.slice(0, 12)) / this.top_12_weighted_game_scores.slice(0, 12).length,
       1
     );
   }
@@ -6655,6 +6656,13 @@ const calculate_game_score = (
 
   player_team_season.season_stats.games.weighted_game_score +=
     player_team_game.game_stats.games.weighted_game_score;
+  player_team_season.season_stats.top_12_weighted_game_scores.push(
+    player_team_game.game_stats.games.weighted_game_score
+  );
+  player_team_season.season_stats.top_12_weighted_game_scores =
+    player_team_season.season_stats.top_12_weighted_game_scores
+      .sort((wgs_a, wgs_b) => wgs_b - wgs_a)
+      .slice(0, 12);
 
   player_team_game.top_stats = player_team_game.top_stats
     .filter((s) => s.abs_game_score_value != 0)
