@@ -133,9 +133,9 @@
               <div class="card background-eee">
                 <div class="w3-bar team-primary-background-bar">
                   <div class='w3-bar-item  margin-right-12 no-padding'>Games This Week</div>
-                  <button GameFilterSelection="primetimegame" class="no-hover w3-bar-item margin-right-12 btn tab no-padding selected-bar-button upcoming-gameview-tab" id="upcoming-gameview-nationalgame-tab" >Primetime</button>
-                  <button GameFilterSelection="top25game" class="no-hover w3-bar-item margin-right-12 btn tab no-padding upcoming-gameview-tab" id="upcoming-gameview-top25game-tab">Top 25</button>
-                  <button GameFilterSelection="allgame" class="no-hover w3-bar-item margin-right-12 btn tab no-padding upcoming-gameview-tab" id="upcoming-gameview-allgame-tab">All</button>
+                  <button GameFilterSelection="primetimegame" class="no-hover w3-bar-item margin-right-12 btn team-color-button tab no-padding selected-bar-button upcoming-gameview-tab" id="upcoming-gameview-nationalgame-tab" >Primetime</button>
+                  <button GameFilterSelection="top25game" class="no-hover w3-bar-item margin-right-12 btn team-color-button tab no-padding upcoming-gameview-tab" id="upcoming-gameview-top25game-tab">Top 25</button>
+                  <button GameFilterSelection="allgame" class="no-hover w3-bar-item margin-right-12 btn team-color-button tab no-padding upcoming-gameview-tab" id="upcoming-gameview-allgame-tab">All</button>
                 </div>
                 <div class="" style='max-height: 1675px; overflow-y: scroll;'>
                   {% for game in this_week_games%}
@@ -279,13 +279,13 @@
                 </div>
                 <div class="w3-bar season-allamerican-team-bar" id="nav-tab-season-allamerican-team">
 
-                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab btn tab selected-season-award-team-tab" id="season-allamerican-team-firstteam-tab">1st Team</button>
-                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab btn tab" id="season-allamerican-team-secondteam-tab">2nd Team</button>
-                  <button TeamSelection='Freshman Team' class="w3-bar-item award-team-tab btn tab" id="season-allamerican-team-freshman-tab">Freshmen</button>
+                  <button TeamSelection='First Team' class="w3-bar-item award-team-tab btn team-color-button tab selected-season-award-team-tab" id="season-allamerican-team-firstteam-tab">1st Team</button>
+                  <button TeamSelection='Second Team' class="w3-bar-item award-team-tab btn team-color-button tab" id="season-allamerican-team-secondteam-tab">2nd Team</button>
+                  <button TeamSelection='Freshman Team' class="w3-bar-item award-team-tab btn team-color-button tab" id="season-allamerican-team-freshman-tab">Freshmen</button>
                 </div>
                 <div class="w3-bar season-allamerican-conference-bar w3-margin-bottom" id="nav-tab-season-allamerican-conference">
                   {% for Conf in SeasonAllAmericans%}
-                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab btn tab {{Conf.ConferenceSelected}}" id="season-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
+                  <button ConferenceSelection="{{Conf.Conference.ConferenceID}}" class="w3-bar-item award-conference-tab btn team-color-button tab {{Conf.ConferenceSelected}}" id="season-allamerican-conference-{{Conf.Conference.ConferenceID}}-tab">{{Conf.Conference.ConferenceAbbreviation}}</button>
                   {% endfor %}
                 </div>
                 <div class="list-group list-group-flush">

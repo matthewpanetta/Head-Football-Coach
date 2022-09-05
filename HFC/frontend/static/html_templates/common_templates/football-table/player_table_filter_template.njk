@@ -1,29 +1,96 @@
-{# <div class='w3-margin-bottom football-table-filter-bar'>
-
-  <div class='w3-row-padding flex-start no-flex-wrap'>
-    <div class='col-3'>
-      <button class="btn btn-sm football-table-show-button" id='football-table-filter-show-button'>
-        <i class="fa fa-filter" style='vertical-align:middle; '></i>
-        <span class='no-wrap' style='vertical-align:middle; '>Filters</span>
-      </button>
-      <button class="btn btn-sm football-table-show-button">
-        <i class="fa fa-eye" style='vertical-align:middle; '></i>
-        <span class='no-wrap' style='vertical-align:middle; '>Column Select</span>
-      </button>
-    </div>
-  </div>
-</div> #}
-
 <div class='w3-margin-bottom football-table-column-control-bar'>
-  <div class="">
-    <button class="btn btn-sm btn-outline-secondary football-table-show-button" id='football-table-filter-show-button'>
-      <i class="fa fa-filter" style='vertical-align:middle; '></i>
-      <span class='no-wrap' style='vertical-align:middle; '>Filters</span>
-    </button>
-    <button class="btn btn-sm btn-outline-secondary football-table-show-button" id='football-table-column-show-button'>
-      <i class="fa fa-eye" style='vertical-align:middle; '></i>
-      <span class='no-wrap' style='vertical-align:middle; '>Column Control</span>
-    </button>
+  <div class="card width100 w3-light-gray" style='overflow: visible;'>
+    <div class='equal-sized-item-container py-2'>
+      <div class="input-group mx-2" style='flex: 3 1;'>
+        <input type="text" class="form-control football-table-search-text" autocomplete="off" placeholder='Player Name'>
+        <button class='btn team-color-button football-table-search-text-button'>
+          <i class='fa fa-search'/>
+        </button>
+      </div>
+      {% for filter_option_group in filter_options %}
+        <div class="dropdown hierarchy-select mx-2" id="example-one" style='flex: 1 1;'>
+          <button type="button" class="btn team-color-button-white left-text btn-secondary dropdown-toggle width100" id="example-one-button" data-toggle="dropdown" data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{filter_option_group.display}}
+          </button>
+          <div class="dropdown-menu " aria-labelledby="example-one-button" style='max-height: 60vh; overflow-y: scroll;'>
+            <div class="hs-menu-inner football-table-filter-option-group">
+              {% for filter_option in filter_option_group.options%}
+                <div class="clickable dropdown-item ps-3 football-table-filter-option" filter-field="{{filter_option.field}}" filter-value="{{filter_option.display}}" {% if filter_option.options%}include-in-filter="0"{%else%}include-in-filter="1"{%endif%}>
+                  <span class='football-table-filter-option-value'>{{filter_option.display}}</span>
+                </div>
+                {% for filter_option_2 in filter_option.options%}
+                  <div class="clickable dropdown-item ps-5 football-table-filter-option" filter-field="{{filter_option_2.field}}" parent-filter-field="{{filter_option.field}}" parent-filter-value="{{filter_option.display}}" filter-value="{{filter_option_2.display}}" include-in-filter="1">
+                    <span class='football-table-filter-option-value'>{{filter_option_2.display}}</span>
+                  </div>
+                {% endfor %}
+              {% endfor %}
+            </div>
+          </div>
+          {# <input class="d-none" name="example_one" readonly="readonly" aria-hidden="true" type="text"/> #}
+        </div>
+      {% endfor %}
+      <div class="dropdown hierarchy-select mx-2" id="example-one" style='flex: 1 1;'>
+        <button type="button" class="btn team-color-button-white left-text btn-secondary dropdown-toggle width100" id="example-one-button" data-toggle="dropdown" data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class='fa fa-columns'></i>
+            Columns
+        </button>
+        <div class="dropdown-menu " aria-labelledby="example-one-button" style='max-height: 60vh; overflow-y: scroll;'>
+          <div class="hs-menu-inner football-table-column-control">
+            {% for column_control_group_name, column_control_group in column_controls %}
+              <div class="col-4 padding-10 football-table-column-option-group"  column_control_group="{{column_control_group_name}}">
+                <div class="w3-row-padding no-flex-wrap space-between no-padding">
+                  <div>
+                    {{column_control_group_name}}
+                  </div>
+                  {% for table_columnn_control_option, table_columnn_control_object in column_control_group%}
+                    <tr class="football-table-column-control-option" table_columnn_control_option="{{table_columnn_control_option}}">
+                      <td>
+                        <div class='w3-row-padding space-between'>
+                          <span title="{{table_columnn_control_object.display}}">
+                            {{table_columnn_control_object.display}}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        {# <input class="d-none" name="example_one" readonly="readonly" aria-hidden="true" type="text"/> #}
+      </div>
+      <button class="btn team-color-button-white btn-sm btn-outline-secondary football-table-show-button mx-2" id='football-table-column-show-button'>
+        <span class='no-wrap' style='vertical-align:middle; '>Starters</span>
+      </button>
+      {# <button class="btn team-color-button btn-sm btn-outline-secondary football-table-show-button mx-2 px-5" id='football-table-column-show-button'>
+        <i class="fa fa-search" style='vertical-align:middle; '></i>
+        <span class='no-wrap' style='vertical-align:middle; '>Search</span>
+      </button> #}
+    </div>
+    <div class='equal-sized-item-container w3-row-padding space-between py-2' style='border-top: 1px solid rgba(0,0,0,0.175);'>
+      <div class='badge-container w3-row-padding' style='flex: 2 1 min-content; justify-content: flex-start;'>
+        <div id='filter-badge-template' class='filter-badge badge hidden clickable team-color-button-white team-color-font mx-1' style='background-color: white;'>
+          <span class='filter-value'></span>
+          <i class='fa fa-times-circle'></i>
+        </div>
+      </div>
+      <div class='w3-row-padding' style='flex: 0 1 auto;'>
+        <div class='football-table-clear-filters badge clickable team-color-button-white team-color-font mx-1' style='background-color: white; height: fit-content;'>
+          <i class='fa fa-times-circle'></i>
+          <span>CLEAR FILTERS</span>
+
+        </div>
+        <div class='badge clickable team-color-button-white team-color-font mx-1' style='background-color: white; height: fit-content;'>
+          <i class='fa fa-filter'></i>
+          <span>ALL FILTERS</span>
+        </div>
+        <div class='badge clickable team-color-button-white team-color-font mx-1' style='background-color: white; height: fit-content;'>
+          <i class='fa fa-columns'></i>
+          <span>COLUMNS</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -40,10 +107,10 @@
         <div class='col-4 m-3'>
           <div class='input-group'>
             <input class="form-control search football-table-search-text" type="text" placeholder='Search for players or teams' style=''></input>
-            <button type="button" class=" btn btn-outline-secondary football-table-search-clear-button">
+            <button type="button" class=" btn team-color-button btn-outline-secondary football-table-search-clear-button">
               <i class="fa fa-ban"></i>
             </button>
-            <button type="button" class=" btn btn-outline-secondary football-table-search-text-button">
+            <button type="button" class=" btn team-color-button btn-outline-secondary football-table-search-text-button">
               <i class="fa fa-search"></i>
             </button>
           </div>
@@ -59,7 +126,7 @@
               </div>
               <div class="">
                 <div class="btn-group">
-                  <button type="button" class="disabled btn btn-light football-filter-clear-row">
+                  <button type="button" class="disabled btn team-color-button btn-light football-filter-clear-row">
                     <i class="fa fa-ban"></i>
                   </button>
                   {# <button type="button" class="btn btn-light football-filter-alpha-sort">
@@ -68,7 +135,7 @@
                   <button type="button" class="btn btn-light football-filter-count-sort">
                     <i class="fa fa-sort-numeric-down"></i>
                   </button> #}
-                  <button type="button" class="btn btn-light football-filter-collapse">
+                  <button type="button" class="btn team-color-button btn-light football-filter-collapse">
                     <i class="fa fa-angle-up"></i>
                   </div>
                 </div>
@@ -115,7 +182,6 @@
   </div>
 </div>
 
-
 <div class='football-table-alter-modal' id='football-table-column-modal'>
   <div class="card modal-content" aria-modal="true" role="dialog" style="width: 75%; left: 0px;">
     <div class='card-header team-primary-background-bar'>
@@ -134,10 +200,10 @@
               </div>
               <div class="">
                 <div class="btn-group">
-                  <button type="button" class="disabled btn btn-light football-filter-clear-row">
+                  <button type="button" class="disabled btn team-color-button btn-light football-filter-clear-row">
                     <i class="fa fa-ban"></i>
                   </button>
-                  <button type="button" class="btn btn-light football-filter-collapse">
+                  <button type="button" class="btn team-color-button btn-light football-filter-collapse">
                     <i class="fa fa-angle-up"></i>
                   </div>
                 </div>

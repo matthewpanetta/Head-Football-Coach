@@ -2,34 +2,44 @@
   <button class="w3-bar-item btn tab nav-tab-button"  id="nav-team-dropdown" >
     Teams
   </button>
-
   <div class="w3-dropdown-content card w3-animate-opacity"  style="right: 20px; max-height: 70vh;" >
     <div>
       <span>Select a team to navigate to</span>
-      
     </div>
     <div style='display: flex;'>
-      <div class='w3-bar-block ' style='max-height: 65vh; overflow-y: scroll'>
-        {% for team in all_teams.all_teams %}
-        <a href="{{team.adjusted_team_href}}" class="team-link w3-bar-item">
-          <img src="{{team.team_logo}}" class="small-logo" alt="" />
-          <span class='padding-left-8'>{{team.full_name}}</span>
-        </a>
-        {% endfor %}
+      <div class='' style='max-height: 65vh; overflow-y: scroll'>
+        <table class='table'>
+          {% for team in all_teams.all_teams %}
+            <tr class=''>
+              <td style='background-color: #{{team.team_color_primary_hex}};'>
+                <a href="{{team.adjusted_team_href}}" class="team-link">
+                  <img src="{{team.team_logo}}" class="small-logo" alt=""/>
+                </a>
+              </td>
+              <td>
+                <a href="{{team.adjusted_team_href}}" class="team-link">
+
+                  <span class='padding-left-8'>{{team.full_name}}</span>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </table
+      </div>
       </div>
     </div>
   </div>
-</div>
 
-{% if page.TeamHeaderLinks.seasons|length > 1 %}
-<div class="w3-dropdown-click w3-right" style="margin-right: 20px">
-  <button class="w3-bar-item btn tab nav-tab-button" id="nav-season-dropdown" >
+  {% if page.TeamHeaderLinks.seasons | length > 1 %}
+    <div class="w3-dropdown-click w3-right" style="margin-right: 20px">
+      <button class="w3-bar-item btn tab nav-tab-button" id="nav-season-dropdown" >
     Seasons
   </button>
-  <div class="w3-dropdown-content w3-bar-block card-4" style="right: 20px; max-height: 70vh; overflow-y: scroll" >
-    {% for season in page.TeamHeaderLinks.seasons%} {{season|log}}
-    <a href="{{season.season_href}}" class="w3-bar-item btn" >{{season.season}}</a>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
+      <div class="w3-dropdown-content w3-bar-block card-4" style="right: 20px; max-height: 70vh; overflow-y: scroll" >
+        {% for season in page.TeamHeaderLinks.seasons%}
+          {{season|log}}
+          <a href="{{season.season_href}}" class="w3-bar-item btn team-color-button" >{{season.season}}</a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}

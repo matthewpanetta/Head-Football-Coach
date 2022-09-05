@@ -63,8 +63,18 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
         $(table_id).find("tbody").append(elem.tr);
       }
     });
-  console.log({table_id:table_id, "$(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`)": $(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`), initial_sort_index:initial_sort_index, 'tr:not(.football-table-column-groups) th:eq(${initial_sort_index})':`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`})
-  $(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`).click();
+  console.log({
+    table_id: table_id,
+    "$(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`)":
+      $(table_id).find(
+        `tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`
+      ),
+    initial_sort_index: initial_sort_index,
+    "tr:not(.football-table-column-groups) th:eq(${initial_sort_index})": `tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`,
+  });
+  $(table_id)
+    .find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`)
+    .click();
 };
 
 const get_initial_column_controls = (subject) => {
@@ -173,38 +183,56 @@ const get_initial_search_filters = (subject) => {
 const get_initial_filter_options = (subject, table_config, common) => {
   console.log({ table_config: table_config });
   if (subject == "player stats" || subject == "world player stats") {
-    var table_filters = {
-      "player_team_season.position_group": {
-        count: 0,
-        display: "Position Group",
-        raw_options: ["Offense", "Defense", "Special Teams"],
-      },
-      "player_team_season.position": {
+    var table_filters = [
+      {
         count: 0,
         display: "Position",
-        raw_options: [
-          "QB",
-          "RB",
-          "FB",
-          "WR",
-          "TE",
-          "OT",
-          "IOL",
-          "DL",
-          "EDGE",
-          "LB",
-          "CB",
-          "S",
-          "K",
-          "P",
+        options: [
+          {
+            display: "Offense",
+            field: "player_team_season.position_group",
+            options: [
+              { display: "QB", field: "player_team_season.position" },
+              { display: "RB", field: "player_team_season.position" },
+              { display: "FB", field: "player_team_season.position" },
+              { display: "WR", field: "player_team_season.position" },
+              { display: "TE", field: "player_team_season.position" },
+              { display: "OT", field: "player_team_season.position" },
+              { display: "IOL", field: "player_team_season.position" },
+            ],
+          },
+          {
+            display: "Defense",
+            field: "player_team_season.position_group",
+            options: [
+              { display: "DL", field: "player_team_season.position" },
+              { display: "EDGE", field: "player_team_season.position" },
+              { display: "LB", field: "player_team_season.position" },
+              { display: "CB", field: "player_team_season.position" },
+              { display: "S", field: "player_team_season.position" },
+            ],
+          },
+          {
+            display: "Special Teams",
+            field: "player_team_season.position_group",
+            options: [
+              { display: "K", field: "player_team_season.position" },
+              { display: "P", field: "player_team_season.position" },
+            ],
+          },
         ],
       },
-      "player_team_season.class.class_name": {
+      {
         count: 0,
         display: "Class",
-        raw_options: ["FR", "SO", "JR", "SR"],
+        options: [
+          { display: "FR", field: "player_team_season.class.class_name" },
+          { display: "SO", field: "player_team_season.class.class_name" },
+          { display: "JR", field: "player_team_season.class.class_name" },
+          { display: "SR", field: "player_team_season.class.class_name" },
+        ],
       },
-    };
+    ];
 
     if (subject == "world player stats") {
       table_filters[
@@ -212,7 +240,7 @@ const get_initial_filter_options = (subject, table_config, common) => {
       ] = {
         count: 0,
         display: "Conference",
-        raw_options: common.distinct(
+        options: common.distinct(
           table_config.original_data
             .map((p) =>
               common.get_from_dict(
@@ -227,7 +255,7 @@ const get_initial_filter_options = (subject, table_config, common) => {
       table_filters["player_team_season.team_season.team.school_name"] = {
         count: 0,
         display: "Team",
-        raw_options: common.distinct(
+        options: common.distinct(
           table_config.original_data
             .map((p) =>
               common.get_from_dict(
@@ -244,7 +272,7 @@ const get_initial_filter_options = (subject, table_config, common) => {
       "conference_season.conference.conference_abbreviation": {
         count: 0,
         display: "Conference",
-        raw_options: common.distinct(
+        options: common.distinct(
           table_config.original_data
             .map((ts) =>
               common.get_from_dict(
@@ -264,15 +292,6 @@ const get_initial_filter_options = (subject, table_config, common) => {
 
   console.log({ table_filters: table_filters });
 
-  for (table_filter_key in table_filters) {
-    table_filters[table_filter_key].options = [];
-    for (table_filter_option of table_filters[table_filter_key].raw_options) {
-      table_filters[table_filter_key].options.push({
-        display: table_filter_option,
-        count: 0,
-      });
-    }
-  }
   return table_filters;
 };
 
@@ -300,16 +319,19 @@ async function create_football_filters(common, table_config) {
     return 0;
   }
 
+  let render_content = {
+    filter_options: table_config.filters.filter_options,
+    column_controls: table_config.column_control.column_controls,
+  };
+  console.log("filter_render_content", render_content);
+
   var filter_template_html = await fetch(
     table_config.templates.filter_template_url
   );
   var filter_template_html_text = await filter_template_html.text();
   var renderedHtml = await common.nunjucks_env.renderString(
     filter_template_html_text,
-    {
-      filter_options: table_config.filters.filter_options,
-      column_controls: table_config.column_control.column_controls,
-    }
+    render_content
   );
   table_config.dom.filter_dom_selector =
     table_config.dom.filter_dom_selector || "#player-stats-table-filter";
@@ -318,7 +340,6 @@ async function create_football_filters(common, table_config) {
 
   await add_filter_listeners(common, table_config);
 }
-
 
 async function create_football_table(common, table_config) {
   table_config.data = table_config.original_data;
@@ -446,10 +467,95 @@ const add_filter_listeners = async (common, table_config) => {
 
   $(".football-table-filter-option").on("click", async function () {
     var clicked_button = $(this);
-    $(this).toggleClass("selected");
+
+    let added_filters = [];
+    let removed_filters = [];
+
+    let filter_value = $(this).attr("filter-value");
+    let parent_filter_value = $(this).attr("parent-filter-value");
+
+    if (!$(this).hasClass("selected")) {
+      console.log("ADDING SELECTED");
+      added_filters = added_filters.concat([this]);
+      added_filters = added_filters.concat(
+        $(
+          `.football-table-filter-option[parent-filter-value="${filter_value}"]:not(.selected)`
+        ).toArray()
+      );
+
+      $(this).addClass("selected");
+      $(
+        `.football-table-filter-option[parent-filter-value="${filter_value}"]`
+      ).addClass("selected");
+    } else {
+      removed_filters = removed_filters.concat([this]);
+      removed_filters = removed_filters.concat(
+        $(
+          `.football-table-filter-option[parent-filter-value="${filter_value}"].selected`
+        ).toArray()
+      );
+      // removed_filters.concat($( `.football-table-filter-option[filter-value="${parent_filter_value}"]`))
+      $(this).removeClass("selected");
+      $(
+        `.football-table-filter-option[parent-filter-value="${filter_value}"]`
+      ).removeClass("selected");
+
+      $(
+        `.football-table-filter-option[filter-value="${parent_filter_value}"]`
+      ).removeClass("selected");
+    }
+
+    for (let add_elem of added_filters) {
+      if (parseInt($(add_elem).attr("include-in-filter"))) {
+        let filter_badge = $("#filter-badge-template").clone();
+        filter_badge.removeClass("hidden");
+        filter_badge.attr('id', '')
+        filter_badge.attr("filter-value", $(add_elem).attr("filter-value"));
+        filter_badge.attr("filter-field", $(add_elem).attr("filter-field"));
+        filter_badge
+          .find(".filter-value")
+          .text($(add_elem).attr("filter-value"));
+        $("#filter-badge-template").parent().append(filter_badge);
+        console.log({ add_elem: add_elem, filter_badge: filter_badge });
+      }
+    }
+
+    for (let remove_elem of removed_filters) {
+      let filter_value = $(remove_elem).attr("filter-value");
+      $('.filter-badge[filter-value="' + filter_value + '"]').remove();
+    }
+
+    console.log({
+      added_filters: added_filters,
+      removed_filters: removed_filters,
+      t: $(this),
+    });
 
     await refresh_table(common, table_config);
   });
+
+  $(".football-table-clear-filters").on("click", async function () {
+    $(`.football-table-filter-option.selected`).removeClass("selected");
+    $('.filter-badge:not(.hidden)').remove();
+    $('.football-table-search-text').val('')
+    table_config.filters.search_filters.search_text = ''
+
+    await refresh_table(common, table_config);
+  });
+
+  $('.badge-container').on('click', '.filter-badge', async function(){
+    let filter_value = $(this).attr('filter-value');
+    $('.football-table-filter-option.selected[filter-value="'+filter_value+'"]').removeClass('selected')
+    $('.football-table-filter-option[filter-value="'+filter_value+'"]').each(function(ind, elem){
+      let parent_filter_value = $(elem).attr('parent-filter-value');
+      $('.football-table-filter-option[filter-value="'+parent_filter_value+'"]').removeClass('selected')
+    })
+    $(this).remove()
+
+    console.log({this:this, filter_value:filter_value})
+    
+    await refresh_table(common, table_config);
+  })
 
   $(".football-filter-clear-row").on("click", async function () {
     var clicked_button = $(this);
@@ -517,7 +623,7 @@ const add_filter_listeners = async (common, table_config) => {
     var clicked_button = $(this);
     $(this).toggleClass("selected");
 
-    console.log({clicked_button:clicked_button})
+    console.log({ clicked_button: clicked_button });
 
     table_config.column_control.column_controls = find_column_controls(
       common,
@@ -591,11 +697,9 @@ const add_table_listeners = async (common, table_config) => {
     });
 
     await create_football_table(common, table_config);
-
   });
 
   await common.geo_marker_action(common);
-
 
   $(
     table_config.dom.table_dom_selector + " .football-table-pagination button"
@@ -618,7 +722,7 @@ const adjust_button_text = async (common, table_config) => {
       table_config.filters.filter_options[table_filter_field];
 
     var filter_group_count = 0;
-    for (filter_option of table_filter_obj.raw_options) {
+    for (filter_option of table_filter_obj.options) {
       var count_value = table_config.data.filter(
         (elem) => get_from_dict(elem, table_filter_field) == filter_option
       ).length;
@@ -639,30 +743,35 @@ const find_filtered_columns = (table_config) => {
   let filtered_columns = [];
   let all_children = [];
   let values = [];
+  let value_map = [];
 
   let total_selected_options = 0;
 
-  $(".football-table-filter-option-group").each(function (ind, option_group) {
-    let selected_options = $(option_group)
-      .find(".football-table-filter-option.selected")
-      .toArray();
-    var filter_option = $(option_group).attr("filter_option");
+  $(".football-table-filter-option.selected").each(function (
+    ind,
+    filter_option
+  ) {
+    let filter_field = $(filter_option).attr("filter-field");
+    let filter_value = $(filter_option).attr("filter-value");
 
-    total_selected_options += selected_options.length;
-
-    if (selected_options.length > 0) {
-      values = selected_options.map((so) => $(so).attr("filter_value"));
-      filtered_columns.push({ field: filter_option, values: values });
-
-      $(option_group)
-        .find(".football-filter-clear-row")
-        .removeClass("disabled");
-    } else {
-      $(option_group).find(".football-filter-clear-row").addClass("disabled");
-    }
+    values.push({ field: filter_field, value: filter_value });
   });
 
-  $(".football-table-filters-active-count").text(total_selected_options);
+  let filtered_columns_obj = index_group_sync(values, "group", "field");
+  for (let filter_field in filtered_columns_obj) {
+    filtered_columns.push({
+      field: filter_field,
+      values: filtered_columns_obj[filter_field].map((elem) => elem.value),
+    });
+  }
+
+  console.log({
+    filtered_columns_obj: filtered_columns_obj,
+    filtered_columns: filtered_columns,
+    values: values,
+  });
+
+  // $(".football-table-filters-active-count").text(total_selected_options);
 
   return filtered_columns;
 };
@@ -682,10 +791,14 @@ const find_column_controls = (common, clicked_button, table_config) => {
       .toArray();
 
     $.each(all_children, function (ind, button) {
-      var column_control_group = $(button).closest('.football-table-column-option-group').attr("column_control_group");
+      var column_control_group = $(button)
+        .closest(".football-table-column-option-group")
+        .attr("column_control_group");
 
-      common.get_from_dict(column_controls[column_control_group],  $(button).attr('table_columnn_control_option')).shown =
-        $(button).hasClass("selected");
+      common.get_from_dict(
+        column_controls[column_control_group],
+        $(button).attr("table_columnn_control_option")
+      ).shown = $(button).hasClass("selected");
     });
   });
 

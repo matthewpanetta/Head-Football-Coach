@@ -2,11 +2,23 @@
   <style id="addedTeamStyle">
 
 
-    button.btn {
+    .team-color-button-white {
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      border: 2px solid white;
+    } 
+    
+    button.btn.team-color-button {
       background-color: #{{page.PrimaryColor}} !important;
       color: white !important;
       border: 2px solid #{{page.PrimaryColor}} !important;
     } 
+
+    {# button.btn {
+      background-color: #{{page.PrimaryColor}} !important;
+      color: white !important;
+      border: 2px solid #{{page.PrimaryColor}} !important;
+    }  #}
 
     button.btn.selected-tab {
       background-color: #{{page.SecondaryColor}} !important;
@@ -14,7 +26,23 @@
       border: 2px solid #{{page.PrimaryColor}} ;
     } 
 
-    button.btn:not(.no-hover):hover {
+    button.btn.team-color-button:not(.no-hover):hover {
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      border: 2px solid #{{page.PrimaryColor}} ;
+
+      transition: all .25s ease;
+    }
+
+    .team-color-button-white:not(.no-hover):hover {
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      border: 2px solid #{{page.PrimaryColor}} ;
+
+      transition: all .25s ease;
+    }
+
+    nav button.btn:not(.no-hover):hover {
       background-color: white !important;
       color: #{{page.PrimaryColor}} !important;
       border: 2px solid #{{page.PrimaryColor}} ;
@@ -32,6 +60,10 @@
 
     .team-color-font{
       color: #{{page.PrimaryColor|DefaultIfTooLight(page.SecondaryColor)|DefaultIfTooLight('000')}} !important;
+    }
+
+    .team-color-border{
+      border: 1px solid #{{page.PrimaryColor|DefaultIfTooLight(page.SecondaryColor)|DefaultIfTooLight('000')}} !important;
     }
 
     .team-primary-background {

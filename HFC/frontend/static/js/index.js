@@ -2385,6 +2385,7 @@ class conference {
   }
 
   get secondary_color_display() {
+    console.log({this: this, conference_color_secondary_hex: this.conference_color_secondary_hex})
     if (this.luma(this.conference_color_secondary_hex) < 230) {
       return this.conference_color_secondary_hex;
     }

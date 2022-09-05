@@ -17,9 +17,9 @@
     <div class="team-modal-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
     <a href='{{player.current_player_team_season.team_season.team.team_href}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 180px;' {% endif %}{% endif %}>
       {% if player.current_player_team_season.team_season.team.team_logo %}
-        <img class='player-modal-team-logo' src='{{player.current_player_team_season.team_season.team.team_logo}}' alt="My image">
+        <img class='player-modal-team-logo logo logo-120' src='{{player.current_player_team_season.team_season.team.team_logo}}' alt="My image">
       {%elif SignedTeam.LogoURL%}
-        <img class='player-modal-team-logo' src='{{SignedTeam.LogoURL}}' alt="My image">
+        <img class='player-modal-team-logo logo logo-120' src='{{SignedTeam.LogoURL}}' alt="My image">
       {% endif %}
     </a>
     <div class="PlayerFace PlayerFace-120" id='player-modal-player-face'>

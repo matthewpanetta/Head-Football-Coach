@@ -349,7 +349,7 @@ body {
 }
 
 .player-modal-team-logo {
-  height: 120px;
+  /* height: 120px; */
   margin-left: 20px;
   margin-right: 20px;
   vertical-align: top;
@@ -2319,6 +2319,11 @@ tfoot td {
   width: 90px;
 }
 
+.logo-120 {
+  height: 120px;
+  width: 120px;
+}
+
 .logo-150 {
   height: 150px;
   width: 150px;
@@ -2770,13 +2775,13 @@ button.football-table-pagination-button.selected {
   transition: all .5s ease;
 }
 
-tr.football-table-filter-option.selected,
-tr.football-table-column-control-option.selected {
+div.football-table-filter-option.selected,
+div.football-table-column-control-option.selected {
   background-color: rgb(13, 110, 253) !important;
 }
 
-tr.football-table-filter-option.selected *,
-tr.football-table-column-control-option.selected * {
+div.football-table-filter-option.selected *,
+div.football-table-column-control-option.selected * {
   color: white !important;
 }
 
@@ -3003,6 +3008,11 @@ button.no-hover:hover {
 .btn:hover {
   color: #000 !important;
   background-color: rgba(0, 0, 0, 0.175) !important
+}
+
+.clickable {
+  cursor: pointer;
+  user-select: none
 }
 
 .square-border {

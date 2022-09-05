@@ -21,10 +21,10 @@
     {% if Link.id == 'nav-search'%}
     <li>
       <input worldid="{{Link.world_id}}" type="text" class='w3-input' name="" value="" id='nav-search-input' placeholder="Search" style='padding:8px; width: 90%;'>
-      <button type="submit" id='{{Link.id}}' class='btn' style='width: 30px; margin-left: -40px; vertical-align: baseline; padding: 8px; margin-right: 0px;'><i class="fa fa-search"></i></button>
+      <button type="submit" id='{{Link.id}}' class='btn team-color-button' style='width: 30px; margin-left: -40px; vertical-align: baseline; padding: 8px; margin-right: 0px;'><i class="fa fa-search"></i></button>
     </li>
     {% else %}
-    <li><a href="{{Link.Href}}" id='{{Link.id}}' class="w3-bar-item btn SideNavItem w3-padding-small {{Link.ClassName}}">{{Link.LinkDisplay}}</a></li>
+    <li><a href="{{Link.Href}}" id='{{Link.id}}' class="w3-bar-item btn team-color-button SideNavItem w3-padding-small {{Link.ClassName}}">{{Link.LinkDisplay}}</a></li>
     {% endif %}
     {% endfor %}
   </ul>

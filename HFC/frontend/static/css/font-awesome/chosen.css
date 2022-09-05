@@ -211,7 +211,20 @@
 }
 
 .fa-circle:before {
-  content: "\f111"; }
+  content: "\f111";
+}
 
-  .fa-check-circle:before {
-    content: "\f058"; }
+.fa-check-circle:before {
+  content: "\f058";
+}
+
+.fa-times:before {
+  content: "\f00d";
+}
+
+.fa-times-circle:before {
+  content: "\f057";
+}
+
+.fa-columns:before {
+  content: "\f0db"; }

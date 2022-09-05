@@ -128,7 +128,7 @@
                   {% for Action in Actions%}
                   <tr>
                     <td style='width:10%;'>{{Action.Icon|safe}}</td>
-                    <td confirm-info='{{Action.ConfirmInfo}}' response-type='refresh' background-ajax='{{Action.AjaxLink}}' class="btn {{Action.Class}} text-left"> {{Action.Display}} </td>
+                    <td confirm-info='{{Action.ConfirmInfo}}' response-type='refresh' background-ajax='{{Action.AjaxLink}}' class="btn team-color-button {{Action.Class}} text-left"> {{Action.Display}} </td>
                   </tr>
                   {% endfor %}
                 </table>
