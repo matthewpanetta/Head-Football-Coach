@@ -69,8 +69,11 @@ const getHtml = async (common) => {
       cs.record.conference_losses += ts.record.conference_losses;
     });
 
+
     cs.conference_champion = cs.team_seasons.find(ts => ts.results.conference_champion)
-    cs.runner_up = cs.team_seasons.find(ts => !ts.results.conference_champion && !ts.results.division_champion)
+    if (cs.conference_champion){
+      cs.runner_up = cs.team_seasons.find(ts => !ts.results.conference_champion && !ts.results.division_champion)
+    }
 
     cs.record.out_of_conference_wins =
       cs.record.wins - cs.record.conference_wins;

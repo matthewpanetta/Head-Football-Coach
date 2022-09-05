@@ -163,6 +163,7 @@
                               <td>{{conference_season.record.out_of_conference_wins}} - {{conference_season.record.out_of_conference_losses}}</td>
                               <td>{{conference_season.record.out_of_conference_winning_percentage}}%</td>
                               <td></td>
+                              {% if conference_season.conference_champion%}
                               <td class='left-text white-text no-wrap' style='background-color: #{{conference_season.conference_champion.team.team_color_primary_hex}};'>
                                 <a>
                                   <img class='logo logo-24' src='{{conference_season.conference_champion.team.team_logo}}'/>
@@ -171,6 +172,10 @@
                                   {{conference_season.conference_champion.team.full_name}}
                                 </a>
                               </td>
+                              {%else%}
+                              <td></td>
+                              {%endif%}
+                              {% if conference_season.runner_up%}
                               <td class='left-text white-text no-wrap' style='background-color: #{{conference_season.runner_up.team.team_color_primary_hex}};'>
                                 <a>
                                   <img class='logo logo-24' src='{{conference_season.runner_up.team.team_logo}}'/>
@@ -179,6 +184,9 @@
                                   {{conference_season.runner_up.team.full_name}}
                                 </a>
                               </td>
+                              {%else%}
+                              <td></td>
+                              {%endif%}
                               <td></td>
                             </tr>
                           {% endfor %}

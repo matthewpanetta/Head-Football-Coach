@@ -409,6 +409,13 @@ async function create_football_table(common, table_config) {
     table_config.pagination.current_page,
   ];
 
+  // The ideal pagination button display is to always display 5 buttons, the current button in the middle, with the preceding 2 and trailing 2 behind.
+  // For Page 1, it would be [*1*, 2, 3, 4, 5] , with stars indicating selected page
+  // For Page 2, [1, *2*, 3, 4, 5]
+  // For Page 3, [1, 2, *3*, 4, 5]
+  // For Page N-1, [N-4, N-3, N-2, *N-1*, N]
+  // For Page N, [N-4, N-3, N-2, N-1, *N*]
+  // This code walks through surrounding numbers, identifies valid surrounding values, and picks which should be included
   for (var step = 1; step <= 4; step++) {
     if (table_config.pagination.available_page_navigation.length < 5) {
       if (table_config.pagination.current_page - step > 0) {

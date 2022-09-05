@@ -456,7 +456,8 @@ body {
 }
 
 .SideNavGroup img {
-  width: 60px;
+  max-width: 60px;
+  max-height: 60px;
 }
 
 .SideNavGroup {
@@ -1957,87 +1958,108 @@ tfoot td {
 .rating-badge.rating-badge-20 {
   background-color: #174ea6;
   box-shadow: 0px 0px 5px #174ea6;
+  font-weight: 900;
 }
 
 .rating-badge.rating-badge-19 {
   background-color: #5B90B3;
   box-shadow: 0px 0px 5px #5B90B3;
+  font-weight: 850;
 }
 
 .rating-badge.rating-badge-18 {
   background-color: #0B5001;
+  font-weight: 800;
 }
 
 .rating-badge.rating-badge-17 {
   background-color: #386616;
+  font-weight: 750;
 }
 
 .rating-badge.rating-badge-16 {
   background-color: #597827;
+  font-weight: 700;
 }
 
 .rating-badge.rating-badge-15 {
   background-color: #748533;
+  font-weight: 650;
 }
 
 .rating-badge.rating-badge-14 {
   background-color: #8b8e3c;
+  font-weight: 600;
 }
 
 .rating-badge.rating-badge-13 {
   background-color: #9e9141;
+  font-weight: 550;
 }
 
 .rating-badge.rating-badge-12 {
   background-color: #ab8f43;
+  font-weight: 500;
 }
 
 .rating-badge.rating-badge-11 {
   background-color: #b48940;
+  font-weight: 450;
 }
 
 .rating-badge.rating-badge-10 {
   background-color: #b87d3a;
+  font-weight: 400;
 }
 
 .rating-badge.rating-badge-9 {
   background-color: #b66c31;
+  font-weight: 350;
 }
 
 .rating-badge.rating-badge-8 {
   background-color: #af5624;
+  font-weight: 300;
 }
 
 .rating-badge.rating-badge-7 {
   background-color: #a23914;
+  font-weight: 250;
 }
 
 .rating-badge.rating-badge-6 {
   background-color: #8f0600;
+  font-weight: 200;
 }
 
 .rating-badge.rating-badge-5 {
   background-color: #8f0600;
+  font-weight: 150;
 }
 
 .rating-badge.rating-badge-4 {
   background-color: #8f0600;
+  font-weight: 100;
 }
 
 .rating-badge.rating-badge-3 {
   background-color: #8f0600;
+  font-weight: 100;
 }
 
 .rating-badge.rating-badge-2 {
   background-color: #8f0600;
+  font-weight: 100;
 }
 
 .rating-badge.rating-badge-1 {
   background-color: #8f0600;
+  font-weight: 100;
 }
 
 .rating-badge.rating-badge-0 {
   background-color: #8f0600;
+  font-weight: 100;
 }
 
 
@@ -2045,93 +2067,116 @@ tfoot td {
   /* border-radius: 6px; */
   /* font-weight: 600; */
   /* color: white; */
-  padding: 4px 8px;
+  padding: 2px 4px;
 }
 
 .rating-tag.rating-tag-20 {
   color: #174ea6;
-  box-shadow: 0px 0px 5px #174ea6;
+  border: 2px solid #174ea6;
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .rating-tag.rating-tag-19 {
   color: #5B90B3;
-  box-shadow: 0px 0px 5px #5B90B3;
+  border: 1px solid #5B90B3;
+  font-weight: 850;
+  white-space: nowrap;
 }
 
 .rating-tag.rating-tag-18 {
   color: #0B5001;
+  font-weight: 800;
 }
 
 .rating-tag.rating-tag-17 {
   color: #386616;
+  font-weight: 750;
 }
 
 .rating-tag.rating-tag-16 {
   color: #597827;
+  font-weight: 700;
 }
 
 .rating-tag.rating-tag-15 {
   color: #748533;
+  font-weight: 650;
 }
 
 .rating-tag.rating-tag-14 {
   color: #8b8e3c;
+  font-weight: 600;
 }
 
 .rating-tag.rating-tag-13 {
   color: #9e9141;
+  font-weight: 550;
 }
 
 .rating-tag.rating-tag-12 {
   color: #ab8f43;
+  font-weight: 500;
 }
 
 .rating-tag.rating-tag-11 {
   color: #b48940;
+  font-weight: 450;
 }
 
 .rating-tag.rating-tag-10 {
   color: #b87d3a;
+  font-weight: 400;
 }
 
 .rating-tag.rating-tag-9 {
   color: #b66c31;
+  font-weight: 350;
 }
 
 .rating-tag.rating-tag-8 {
   color: #af5624;
+  font-weight: 300;
 }
 
 .rating-tag.rating-tag-7 {
   color: #a23914;
+  font-weight: 250;
 }
 
 .rating-tag.rating-tag-6 {
   color: #8f0600;
+  font-weight: 200;
 }
 
 .rating-tag.rating-tag-5 {
   color: #8f0600;
+  font-weight: 150;
 }
 
 .rating-tag.rating-tag-4 {
   color: #8f0600;
+  font-weight: 100;
 }
 
 .rating-tag.rating-tag-3 {
   color: #8f0600;
+  font-weight: 100;
 }
 
 .rating-tag.rating-tag-2 {
   color: #8f0600;
+  font-weight: 100;
 }
 
 .rating-tag.rating-tag-1 {
   color: #8f0600;
+  font-weight: 100;
 }
 
 .rating-tag.rating-tag-0 {
   color: #8f0600;
+  font-weight: 100;
 }
 
 
@@ -2500,15 +2545,29 @@ table.table tr {
   }
 }
 
+
+
 @media (min-width: 1100px) {
   .card-columns {
     column-count: 2;
+  }
+
+  .grid-item {
+    width: 47%;
+  }
+
+  .gutter-sizer {
+    width: 4%
   }
 }
 
 @media (max-width: 1100px) {
   .card-columns {
     column-count: 1;
+  }
+
+  .grid-item {
+    width: 95%;
   }
 }
 

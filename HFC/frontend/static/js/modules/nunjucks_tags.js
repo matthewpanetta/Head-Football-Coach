@@ -93,11 +93,12 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("NumberToGradeBadge", function (NumberValue, scale) {
-    let grade_letter = NumberToGrade(NumberValue, scale);
+    NumberValue = Math.floor(NumberValue / (scale / 20));
+    let grade_letter = NumberToGrade(NumberValue);
     let badge_class = grade_letter.replace("-", "-Minus").replace("+", "-Plus");
 
     return `<span class='rating-tag rating-tag-${NumberValue}'>${grade_letter}</span>`;
-    return `<span class='rating-badge rating-badge-${NumberValue}'>${grade_letter}</span>`;
+    // return `<span class='rating-badge rating-badge-${NumberValue}'>${grade_letter}</span>`;
   });
 
   env.addFilter("NumberToGradeClass", function (NumberValue, scale) {
@@ -117,8 +118,8 @@ function get_nunjucks_env() {
   env.addFilter("NumberToGrade", function (number_value, scale) {
     if ((scale || 20) == 20) {
       let grade_value_map = {
-        20: "Perf",
-        19: "Elt",
+        20: "Elite",
+        19: "A++",
         18: "A+",
         17: "A",
         16: "A-",

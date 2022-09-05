@@ -1,6 +1,8 @@
-<div class='card-columns p-2'>
+<div class='grid p-2'>
+    <div class="grid-sizer grid-item"></div>
+    <div class='gutter-sizer'></div>
     {% for rival in rivals%}
-        <div class="card margin-bottom-24 inline-block width100">
+        <div class="card grid-item margin-bottom-24 inline-block width100">
             <div class="w3-bar team-primary-background-bar left-text" style='background-color: #{{rival.team.team_color_primary_hex}} !important; border-top-color: #{{rival.team.team_color_secondary_hex|TeamSecondaryColor}} !important; '>
                 <a href='{{rival.team.team_href}}'>{{rival.team.full_name}}</a>
                 {% if rival.rivalry_name%}

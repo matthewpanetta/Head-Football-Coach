@@ -2657,7 +2657,7 @@ const nav_bar_links = async (params) => {
     {
       GroupName: "World",
       GroupDisplay:
-        '<img src="/static/img/team_logos/ncaa-text.png" class="logo logo-60" alt="">',
+        '<img src="/static/img/team_logos/ncaa-text.png" class="" alt="">',
       GroupLinks: [
         {
           LinkDisplay: "Overview",
@@ -2705,7 +2705,7 @@ const nav_bar_links = async (params) => {
     },
     {
       GroupName: "Team",
-      GroupDisplay: `<img src="${user_team_logo}" class="logo logo-60" alt="">`,
+      GroupDisplay: `<img src="${user_team_logo}" class="" alt="">`,
       GroupLinks: [
         {
           LinkDisplay: "Overview",
@@ -3096,8 +3096,6 @@ const create_team_season = async (data) => {
       let division_name = data.conferences_by_conference_name[team.conference.conference_name]
       .conference_season.divisions.find(d => d.teams.includes(team.school_name)).division_name;
 
-      let is_user_team = league_season.user_team_id == team.team_id;
-
       var new_team_season = new team_season({
         team_season_id: team_season_id,
         team_id: team.team_id,
@@ -3108,7 +3106,7 @@ const create_team_season = async (data) => {
           data.conferences_by_conference_name[team.conference.conference_name]
             .conference_season.conference_season_id,
         division_name: division_name,
-        is_user_team: is_user_team
+        is_user_team: false
       });
 
       var new_team_season_recruiting = new team_season_recruiting(
@@ -3151,7 +3149,9 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
   const db = common.db;
   const season = common.season;
 
+  console.log({team_season_ids})
   if (team_season_ids) {
+    team_season_ids = new Set(team_season_ids);
     var team_seasons = await db.team_season
       .where({ season: season })
       .and((ts) => team_season_ids.has(ts.team_season_id))
@@ -3935,8 +3935,8 @@ const create_new_player_team_seasons = async (data) => {
     player_team_season_id_counter += 1;
   }
 
-  var goal_overall_max = 99;
-  var goal_overall_min = 40;
+  var goal_overall_max = 100;
+  var goal_overall_min = 5;
   var goal_overall_range = goal_overall_max - goal_overall_min;
 
   for (const player_team_season of player_team_seasons_tocreate) {
@@ -6866,7 +6866,12 @@ const game_sim_play_call_options = (down, yards_to_go, ball_spot, period, offens
           play_choice_options = {'pass': 55, 'run': 45,};
         }
         else {
-          play_choice_options = {'pass': 55, 'run': 45,};
+          if (down == 4){
+            play_choice_options = {'punt': 2};
+          }
+          else {
+            play_choice_options = {'pass': 55, 'run': 45,};
+          }
         }
       }
       else {
@@ -7076,12 +7081,21 @@ const sim_game = (game_dict, common) => {
         update_player_energy(game_dict, offensive_team_players.all_players, offensive_team_players.bench_players, plays_since_last_sub, offensive_team_index);
         update_player_energy(game_dict, defensive_team_players.all_players, defensive_team_players.bench_players, plays_since_last_sub, defensive_team_index);
 
+        let qb_ovrs_to_add = [];
+        for (let i = 0; i<=4; i++){
+          qb_ovrs_to_add.push(offensive_team_players.by_position.QB[0].player_team_game.game_attrs.adjusted_overall)
+        }
+        let offense_players_ovrs = offensive_team_players.all_players.map(
+          (player_obj) =>
+            player_obj.player_team_game.game_attrs.adjusted_overall
+        ).concat(
+          qb_ovrs_to_add
+        )
+
         offensive_player_average_overall = average(
-          offensive_team_players.all_players.map(
-            (player_obj) =>
-              player_obj.player_team_game.game_attrs.adjusted_overall
-          )
+          offense_players_ovrs
         );
+        console.log({qb_ovrs_to_add:qb_ovrs_to_add, offense_players_ovrs:offense_players_ovrs, offensive_player_average_overall:offensive_player_average_overall})
         defensive_player_average_overall = average(
           defensive_team_players.all_players.map(
             (player_obj) =>
@@ -8640,9 +8654,10 @@ const calculate_primetime_games = async (this_week, all_weeks, common) => {
   })
 
   games = games.sort((g_a, g_b) => g_a.summed_national_rank - g_b.summed_national_rank);
-  let primetime_games = games.slice(0,6);
+  let primetime_games = games.slice(0,5);
 
   primetime_games.forEach(g => g.is_primetime_game = true);
+  primetime_games[0].is_game_of_the_week = true;
 
   await db.game.bulkPut(games);
 
@@ -13573,8 +13588,8 @@ function NumberToGrade(number_value, scale) {
 
   let adj_number_value = Math.floor(number_value / ((scale) / 20));
   let grade_value_map = {
-    20: 'Genr.',
-    19: 'Elt',
+    20: 'Elite',
+    19: 'A++',
     18: 'A+',
     17: 'A',
     16: 'A-',
@@ -14059,15 +14074,23 @@ const new_world_action = async (common, database_suffix) => {
       team_id: team_id,
     });
 
+    const user_team_season = await db.team_season.get({
+      team_id: team_id,
+      season: current_league_season.season
+    });
+
     console.log({
       user_team: user_team,
+      user_team_season:user_team_season,
       current_league_season: current_league_season,
       team_id:team_id, 
       teams:teams,
       this: $(this)
     });
+    debugger;
 
     current_league_season.user_team_id = team_id;
+    user_team_season.is_user_team = true;
 
     world.user_team.team_name = user_team.team_name;
     world.user_team.school_name = user_team.school_name;
@@ -14077,6 +14100,7 @@ const new_world_action = async (common, database_suffix) => {
   
     await ddb.world.put(world);
     await db.league_season.put(current_league_season);
+    await db.team_season.put(user_team_season);
   
     window.location.href = `/World/${world_id}`;
   })

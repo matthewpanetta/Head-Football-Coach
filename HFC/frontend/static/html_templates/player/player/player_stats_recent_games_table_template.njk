@@ -139,8 +139,8 @@
         {% if player_stats_show.Passing %}
           <!-- PASSING -->
           <th>Yards</th>
-          <th>Att</th>
           <th>Cmp</th>
+          <th>Att</th>
           <th>Cmp%</th>
           <th>TDs</th>
           <th class='col-group'>Ints</th>
@@ -230,9 +230,9 @@
           {% if player_stats_show.Passing %}
             <!-- PASSING -->
             <td value='{{player_team_game.game_stats.passing.yards|toLocaleString|OrZero}}'>{{player_team_game.game_stats.passing.yards|toLocaleString|OrZero}}</td>
-            <td value='{{player_team_game.game_stats.passing.attempts|OrZero}}'>{{player_team_game.game_stats.passing.attempts|OrZero}}</td>
             <td value='{{player_team_game.game_stats.passing.completions|OrZero}}'>{{player_team_game.game_stats.passing.completions|OrZero}}</td>
-            <td value='{{player_team_game.passing_completion_percentage}}'>{{player_team_game.passing_completion_percentage}}</td>
+            <td value='{{player_team_game.game_stats.passing.attempts|OrZero}}'>{{player_team_game.game_stats.passing.attempts|OrZero}}</td>
+            <td value='{{player_team_game.completion_percentage}}'>{{player_team_game.completion_percentage}}</td>
             <td value='{{player_team_game.game_stats.passing.tds|OrZero}}'>{{player_team_game.game_stats.passing.tds|OrZero}}</td>
             <td value='{{player_team_game.game_stats.passing.ints|OrZero}}'  class='col-group'>{{player_team_game.game_stats.passing.ints|OrZero}}</td>
           {% endif %}

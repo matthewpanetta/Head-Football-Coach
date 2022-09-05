@@ -992,17 +992,21 @@ const action = async (common) => {
     let all_team_season_id_set = new Set(all_team_season_ids);
 
     let team_games = await db.team_game
-    .where("team_season_id")
-    .anyOf(all_team_season_ids)
-    .filter(tg => all_team_season_id_set.has(tg.team_season_id) && all_team_season_id_set.has(tg.opponent_team_season_id))
-    .toArray();
+      .where("team_season_id")
+      .anyOf(all_team_season_ids)
+      .filter(
+        (tg) =>
+          all_team_season_id_set.has(tg.team_season_id) &&
+          all_team_season_id_set.has(tg.opponent_team_season_id)
+      )
+      .toArray();
     let team_games_by_team_game_id = index_group_sync(
       team_games,
       "index",
       "team_game_id"
     );
 
-    let game_ids = team_games.map(tg => tg.game_id);
+    let game_ids = team_games.map((tg) => tg.game_id);
 
     let all_games = await db.game.bulkGet(game_ids);
     all_games = nest_children(all_games, weeks_by_week_id, "week_id", "week");
@@ -1067,7 +1071,7 @@ const action = async (common) => {
 
       let streak_list = [];
       rivalry.team_games.forEach(function (tg) {
-        console.log({tg:tg})
+        console.log({ tg: tg });
         if (tg.game.was_played) {
           rivalry.record.games_played += 1;
           rivalry.record.points_scored += tg.points;
@@ -1162,7 +1166,6 @@ const action = async (common) => {
         r_b.record.scheduled_games - r_a.record.scheduled_games
     );
 
-
     var url = "/static/html_templates/team/team/team_rivals_div_template.njk";
     var html = await fetch(url);
     html = await html.text();
@@ -1174,6 +1177,14 @@ const action = async (common) => {
     console.log({ renderedHtml: renderedHtml });
 
     $("#nav-rivals").append(renderedHtml);
+    let mason = $(".grid").masonry({
+      // options
+      itemSelector: ".grid-item",
+      columnWidth: ".grid-sizer",
+      percentPosition: true,
+      gutter: '.gutter-sizer',
+    });
+    console.log({ mason: mason });
   });
 };
 

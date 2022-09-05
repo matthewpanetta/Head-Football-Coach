@@ -32,14 +32,14 @@
         <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
-        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
-        <button class="w3-bar-item btn tab nav-tab-button" id="nav-league-leaders-tab">Other</button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Depth Chart</button>
         {% include "../../static/html_templates/common_templates/ext_team_list.njk" %}
       </div>
     </nav>
     <div id="nav-tabContent">
       <div class="tab-content" style="display:block;"  id="nav-schedule">
         <div class='w3-display-container' >
+          {{team|log}}
           {% if team.team_season.is_user_team %}
           <div class='w3-row-padding w3-margin-bottom'>
             <div class='w3-col'>
