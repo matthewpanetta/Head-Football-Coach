@@ -235,37 +235,69 @@ const get_initial_filter_options = (subject, table_config, common) => {
     ];
 
     if (subject == "world player stats") {
-      table_filters[
-        "player_team_season.team_season.conference_season.conference.conference_abbreviation"
-      ] = {
-        count: 0,
-        display: "Conference",
-        options: common.distinct(
-          table_config.original_data
-            .map((p) =>
-              common.get_from_dict(
-                p,
-                "player_team_season.team_season.conference_season.conference.conference_abbreviation"
-              )
-            )
-            .sort()
-        ),
-      };
+      let teams = common.distinct(
+        table_config.original_data.map(
+          (p) => p.player_team_season.team_season.team
+        )
+      );
+      let teams_by_team_name = index_group_sync(teams, "index", "school_name");
 
-      table_filters["player_team_season.team_season.team.school_name"] = {
+      console.log({
+        teams: teams,
+        teams_by_team_name: teams_by_team_name,
+        od: table_config.original_data,
+      });
+
+      let conference_obj_list = [];
+      let conferences = common.distinct(
+        table_config.original_data
+          .map((p) =>
+            common.get_from_dict(
+              p,
+              "player_team_season.team_season.conference_season.conference.conference_abbreviation"
+            )
+          )
+          .sort()
+      );
+      conferences.forEach(function (conference) {
+        let conference_obj = {
+          display: conference,
+          field:
+            "player_team_season.team_season.conference_season.conference.conference_abbreviation",
+          options: [],
+        };
+
+        let conference_teams = common
+          .distinct(
+            table_config.original_data
+              .filter(
+                (p) =>
+                  p.player_team_season.team_season.conference_season.conference
+                    .conference_abbreviation == conference
+              )
+              .map((p) =>
+                common.get_from_dict(
+                  p,
+                  "player_team_season.team_season.team.school_name"
+                )
+              )
+          )
+          .sort();
+
+        conference_obj.options = conference_teams.map((ct) => ({
+          display: ct,
+          field: "player_team_season.team_season.team.school_name",
+          logo_url: teams_by_team_name[ct].team_logo,
+        }));
+        conference_obj_list.push(conference_obj);
+        console.log({ conference_obj: conference_obj });
+      });
+
+      table_filters.unshift({
         count: 0,
         display: "Team",
-        options: common.distinct(
-          table_config.original_data
-            .map((p) =>
-              common.get_from_dict(
-                p,
-                "player_team_season.team_season.team.school_name"
-              )
-            )
-            .sort()
-        ),
-      };
+        options: conference_obj_list,
+      });
     }
   } else if (subject == "world team stats") {
     var table_filters = {
@@ -509,7 +541,7 @@ const add_filter_listeners = async (common, table_config) => {
       if (parseInt($(add_elem).attr("include-in-filter"))) {
         let filter_badge = $("#filter-badge-template").clone();
         filter_badge.removeClass("hidden");
-        filter_badge.attr('id', '')
+        filter_badge.attr("id", "");
         filter_badge.attr("filter-value", $(add_elem).attr("filter-value"));
         filter_badge.attr("filter-field", $(add_elem).attr("filter-field"));
         filter_badge
@@ -536,26 +568,42 @@ const add_filter_listeners = async (common, table_config) => {
 
   $(".football-table-clear-filters").on("click", async function () {
     $(`.football-table-filter-option.selected`).removeClass("selected");
-    $('.filter-badge:not(.hidden)').remove();
-    $('.football-table-search-text').val('')
-    table_config.filters.search_filters.search_text = ''
+    $(".filter-badge:not(.hidden)").remove();
+    $(".football-table-search-text").val("");
+    table_config.filters.search_filters.search_text = "";
 
     await refresh_table(common, table_config);
   });
 
-  $('.badge-container').on('click', '.filter-badge', async function(){
-    let filter_value = $(this).attr('filter-value');
-    $('.football-table-filter-option.selected[filter-value="'+filter_value+'"]').removeClass('selected')
-    $('.football-table-filter-option[filter-value="'+filter_value+'"]').each(function(ind, elem){
-      let parent_filter_value = $(elem).attr('parent-filter-value');
-      $('.football-table-filter-option[filter-value="'+parent_filter_value+'"]').removeClass('selected')
-    })
-    $(this).remove()
+  $(".badge-container").on("click", ".filter-badge", async function () {
+    let filter_value = $(this).attr("filter-value");
+    $(
+      '.football-table-filter-option.selected[filter-value="' +
+        filter_value +
+        '"]'
+    ).removeClass("selected");
+    $(
+      '.football-table-filter-option[filter-value="' + filter_value + '"]'
+    ).each(function (ind, elem) {
+      let parent_filter_value = $(elem).attr("parent-filter-value");
+      $(
+        '.football-table-filter-option[filter-value="' +
+          parent_filter_value +
+          '"]'
+      ).removeClass("selected");
+    });
 
-    console.log({this:this, filter_value:filter_value})
-    
+    if ($(this).attr("filter-field") == "name-search") {
+      $(".football-table-search-text").val("");
+      table_config.filters.search_filters.search_text = "";
+    }
+
+    $(this).remove();
+
+    console.log({ this: this, filter_value: filter_value });
+
     await refresh_table(common, table_config);
-  })
+  });
 
   $(".football-filter-clear-row").on("click", async function () {
     var clicked_button = $(this);
@@ -601,6 +649,22 @@ const add_filter_listeners = async (common, table_config) => {
     table_config.filters.search_filters.search_text = $(
       ".football-table-search-text"
     ).val();
+
+    $('.filter-badge[filter-field="name-search"]').remove();
+
+    let filter_badge = $("#filter-badge-template").clone();
+    filter_badge.removeClass("hidden");
+    filter_badge.attr("id", "");
+    filter_badge.attr(
+      "filter-value",
+      table_config.filters.search_filters.search_text
+    );
+    filter_badge.attr("filter-field", "name-search");
+    filter_badge
+      .find(".filter-value")
+      .text("Name: " + table_config.filters.search_filters.search_text);
+    $("#filter-badge-template").parent().append(filter_badge);
+
     await refresh_table(common, table_config);
   });
 
@@ -609,6 +673,21 @@ const add_filter_listeners = async (common, table_config) => {
       table_config.filters.search_filters.search_text = $(
         ".football-table-search-text"
       ).val();
+      $('.filter-badge[filter-field="name-search"]').remove();
+
+      let filter_badge = $("#filter-badge-template").clone();
+      filter_badge.removeClass("hidden");
+      filter_badge.attr("id", "");
+      filter_badge.attr(
+        "filter-value",
+        table_config.filters.search_filters.search_text
+      );
+      filter_badge.attr("filter-field", "name-search");
+      filter_badge
+        .find(".filter-value")
+        .text("Name: " + table_config.filters.search_filters.search_text);
+      $("#filter-badge-template").parent().append(filter_badge);
+
       await refresh_table(common, table_config);
     }
   });
@@ -621,7 +700,27 @@ const add_filter_listeners = async (common, table_config) => {
 
   $(".football-table-column-control-option").on("click", async function () {
     var clicked_button = $(this);
-    $(this).toggleClass("selected");
+    // $(this).toggleClass("selected");
+
+    let filter_value = $(this).attr("table_columnn_control_option");
+    let parent_filter_value = $(this).attr("parent_table_columnn_control_option");
+
+    if (!$(this).hasClass("selected")) {
+
+      $(this).addClass("selected");
+      $(
+        `.football-table-column-control-option[parent_table_columnn_control_option="${filter_value}"]`
+      ).addClass("selected");
+    } else {
+      $(this).removeClass("selected");
+      $(
+        `.football-table-column-control-option[parent_table_columnn_control_option="${filter_value}"]`
+      ).removeClass("selected");
+
+      $(
+        `.football-table-column-control-option[table_columnn_control_option="${parent_filter_value}"]`
+      ).removeClass("selected");
+    }
 
     console.log({ clicked_button: clicked_button });
 
@@ -754,7 +853,9 @@ const find_filtered_columns = (table_config) => {
     let filter_field = $(filter_option).attr("filter-field");
     let filter_value = $(filter_option).attr("filter-value");
 
-    values.push({ field: filter_field, value: filter_value });
+    if (parseInt($(filter_option).attr("include-in-filter"))) {
+      values.push({ field: filter_field, value: filter_value });
+    }
   });
 
   let filtered_columns_obj = index_group_sync(values, "group", "field");
@@ -779,27 +880,35 @@ const find_filtered_columns = (table_config) => {
 const find_column_controls = (common, clicked_button, table_config) => {
   var column_controls = table_config.column_control.column_controls;
 
-  $(
-    table_config.dom.column_control_dom_selector +
-      " .football-table-column-option-group"
-  ).each(function (ind, column_option_group) {
-    var selected_options = $(column_option_group)
-      .find(".football-table-column-control-option.selected")
-      .toArray();
-    var all_children = $(column_option_group)
-      .find(".football-table-column-control-option")
-      .toArray();
-
-    $.each(all_children, function (ind, button) {
-      var column_control_group = $(button)
-        .closest(".football-table-column-option-group")
-        .attr("column_control_group");
-
-      common.get_from_dict(
-        column_controls[column_control_group],
-        $(button).attr("table_columnn_control_option")
-      ).shown = $(button).hasClass("selected");
+  console.log({
+    "table_config.dom.column_control_dom_selector":
+      table_config.dom.column_control_dom_selector,
+    s: $(".football-table-column-control-option"),
+  });
+  $(".football-table-column-control-option").each(function (
+    ind,
+    column_option
+  ) {
+    console.log({
+      b: $(column_option),
+      a: $(column_option).attr("table_columnn_control_option"),
+      column_controls: column_controls,
+      gd: common.get_from_dict(
+        column_controls,
+        $(column_option).attr("table_columnn_control_option")
+      ),
     });
+    common.get_from_dict(
+      // column_controls[column_control_group],
+      column_controls,
+      $(column_option).attr("table_columnn_control_option")
+    ).shown = $(column_option).hasClass("selected");
+  });
+
+  console.log({
+    column_controls: column_controls,
+    clicked_button: clicked_button,
+    table_config: table_config,
   });
 
   return column_controls;

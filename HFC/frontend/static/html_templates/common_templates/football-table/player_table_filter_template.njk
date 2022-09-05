@@ -20,6 +20,9 @@
                 </div>
                 {% for filter_option_2 in filter_option.options%}
                   <div class="clickable dropdown-item ps-5 football-table-filter-option" filter-field="{{filter_option_2.field}}" parent-filter-field="{{filter_option.field}}" parent-filter-value="{{filter_option.display}}" filter-value="{{filter_option_2.display}}" include-in-filter="1">
+                    {% if filter_option_2.logo_url %}
+                      <img class='logo logo-24' src='{{filter_option_2.logo_url}}'/>
+                    {% endif %}
                     <span class='football-table-filter-option-value'>{{filter_option_2.display}}</span>
                   </div>
                 {% endfor %}
@@ -37,32 +40,22 @@
         <div class="dropdown-menu " aria-labelledby="example-one-button" style='max-height: 60vh; overflow-y: scroll;'>
           <div class="hs-menu-inner football-table-column-control">
             {% for column_control_group_name, column_control_group in column_controls %}
-              <div class="col-4 padding-10 football-table-column-option-group"  column_control_group="{{column_control_group_name}}">
-                <div class="w3-row-padding no-flex-wrap space-between no-padding">
-                  <div>
-                    {{column_control_group_name}}
-                  </div>
-                  {% for table_columnn_control_option, table_columnn_control_object in column_control_group%}
-                    <tr class="football-table-column-control-option" table_columnn_control_option="{{table_columnn_control_option}}">
-                      <td>
-                        <div class='w3-row-padding space-between'>
-                          <span title="{{table_columnn_control_object.display}}">
-                            {{table_columnn_control_object.display}}
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </div>
+              <div class="clickable dropdown-item ps-3 football-table-column-control-option"  column_control_group="{{column_control_group_name}}" table_columnn_control_option="{{column_control_group_name}}">
+                <span class='football-table-column-option-value'>{{column_control_group_name}}</span>
               </div>
+              {% for table_columnn_control_option, table_columnn_control_object in column_control_group%}
+                <div class="clickable dropdown-item ps-5 football-table-column-control-option {% if table_columnn_control_object.shown%}selected{%endif%}" column-field="{{table_columnn_control_object.field}}" parent_table_columnn_control_option="{{column_control_group_name}}" table_columnn_control_option="{{column_control_group_name}}.{{table_columnn_control_option}}">
+                  <span class='football-table-column-option-value'>{{table_columnn_control_object.display}}</span>
+                </div>
+              {% endfor %}
             {% endfor %}
           </div>
         </div>
         {# <input class="d-none" name="example_one" readonly="readonly" aria-hidden="true" type="text"/> #}
       </div>
-      <button class="btn team-color-button-white btn-sm btn-outline-secondary football-table-show-button mx-2" id='football-table-column-show-button'>
+      {# <button class="btn team-color-button-white btn-sm btn-outline-secondary football-table-show-button mx-2" id='football-table-column-show-button'>
         <span class='no-wrap' style='vertical-align:middle; '>Starters</span>
-      </button>
+      </button> #}
       {# <button class="btn team-color-button btn-sm btn-outline-secondary football-table-show-button mx-2 px-5" id='football-table-column-show-button'>
         <i class="fa fa-search" style='vertical-align:middle; '></i>
         <span class='no-wrap' style='vertical-align:middle; '>Search</span>
@@ -81,14 +74,10 @@
           <span>CLEAR FILTERS</span>
 
         </div>
-        <div class='badge clickable team-color-button-white team-color-font mx-1' style='background-color: white; height: fit-content;'>
+        {# <div class='badge clickable team-color-button-white team-color-font mx-1' style='background-color: white; height: fit-content;'>
           <i class='fa fa-filter'></i>
           <span>ALL FILTERS</span>
-        </div>
-        <div class='badge clickable team-color-button-white team-color-font mx-1' style='background-color: white; height: fit-content;'>
-          <i class='fa fa-columns'></i>
-          <span>COLUMNS</span>
-        </div>
+        </div> #}
       </div>
     </div>
   </div>
@@ -190,7 +179,7 @@
         <i class="fa fa-window-close"></i>
       </span> #}
     </div>
-    <div class="" style="background-color: white; overflow-y: scroll;">
+    {# <div class="" style="background-color: white; overflow-y: scroll;">
       <div class="w3-row-padding flex-start" id='football-table-column-control'>
         {% for column_control_group_name, column_control_group in column_controls %}
           <div class="col-4 padding-10 football-table-column-option-group"  column_control_group="{{column_control_group_name}}">
@@ -212,13 +201,7 @@
                 <div class="">
                   <div class="" style="position: relative; overflow: auto; max-height: 200px; height: 200px; width: 100%;">
                     <table id="" class="no-footer table table-sm table-borderless" style="width: 100%;">
-                      {# <thead>
-                        <tr style="height: 0px;">
-                          <th class="sorting" aria-controls="" rowspan="1" colspan="1" style="width: 100%; padding-top: 0px; padding-bottom: 0px; border-top-width: 0px; border-bottom-width: 0px; height: 0px;" aria-label=": activate to sort column ascending">
-                            <div class="" style="height: 0px; overflow: hidden;"></div>
-                          </th>
-                        </tr>
-                      </thead> #}
+                     
                       <tbody>
                         {% for table_columnn_control_option, table_columnn_control_object in column_control_group%}
                           <tr class="football-table-column-control-option" table_columnn_control_option="{{table_columnn_control_option}}">
@@ -240,6 +223,6 @@
           {% endfor %}
         </div>
       </div>
-    </div>
+    </div> #}
   </div>
 </div>

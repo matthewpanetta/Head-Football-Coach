@@ -2719,7 +2719,7 @@ tr.no-wrap-row td, tr.no-wrap-row th{
 
 button.football-table-filter-option:hover,
 button.football-table-column-control-option:hover,
-button.football-table-pagination-button:hover {
+button.btn.football-table-pagination-button:hover {
 
   -webkit-filter: brightness(80%);
   filter: brightness(80%);
@@ -2756,16 +2756,16 @@ button.football-table-column-control-option {
   /* width: 160px !important; */
 }
 
-button.football-table-pagination-button {
+button.btn.football-table-pagination-button {
   margin: 2px;
   border-radius: 10px;
-  border: 1.5px solid rgba(0, 0, 0, 0.175);
+  border: 1.5px solid rgba(0, 0, 0, 0.175) !important;
   min-width: 40px;
 }
 
-button.football-table-pagination-button.selected {
+button.btn.football-table-pagination-button.selected {
   background-color: rgba(0, 0, 0, 0.175) !important;
-  border: 1.5px solid black;
+  border: 1.5px solid black !important;
   color: black !important;
 
   -webkit-transition: all .5s ease;
@@ -2777,8 +2777,10 @@ button.football-table-pagination-button.selected {
 
 div.football-table-filter-option.selected,
 div.football-table-column-control-option.selected {
-  background-color: rgb(13, 110, 253) !important;
+  background-color: #1763B2 !important;
 }
+
+/* rgb(13, 110, 253) */
 
 div.football-table-filter-option.selected *,
 div.football-table-column-control-option.selected * {

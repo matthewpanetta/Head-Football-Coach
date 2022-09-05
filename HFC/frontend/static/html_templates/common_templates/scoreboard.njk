@@ -19,7 +19,7 @@
             {% for team_game in game.team_games %}
             <tr class="{{team_game.TeamWinningGameBold}}">
               <td class='center-text'>
-                <img class="small-logo margin-right-4" src="{{team_game.team_season.team.team_logo}}" alt="">
+                <img class="logo logo-24 margin-right-4" src="{{team_game.team_season.team.team_logo}}" alt="">
               </td>
               <td class='min-width-50 left-text'>
                 <div class='margin0'><span class='font10'>{{team_game.national_rank_display}}</span> <a href="{{team_game.team_season.team.team_href}}" class='font14'>{{team_game.team_season.team.team_abbreviation}}</a></div>
