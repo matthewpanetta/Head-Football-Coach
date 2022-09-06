@@ -5649,7 +5649,7 @@ const random_city = async (ddb, num_cities) => {
   return city_list;
 };
 
-const driver_db = async (world_obj) => {
+const driver_db = async () => {
   var dbname = "driver";
 
   ddb = await new Dexie(dbname);
@@ -13024,7 +13024,8 @@ function download(filename, text, type = "text/json") {
   document.body.appendChild(a);
 
   // Set the HREF to a Blob representation of the data to be downloaded
-  a.href = window.URL.createObjectURL(new Blob([text], { type }));
+  a.href = window.URL.createObjectURL(new Blob([text], {type: type }));
+  
 
   // Use download attribute to set set desired file name
   a.setAttribute("download", filename);
@@ -14091,6 +14092,7 @@ const new_world_action = async (common, database_suffix) => {
 
     current_league_season.user_team_id = team_id;
     user_team_season.is_user_team = true;
+    user_team.is_user_team = true;
 
     world.user_team.team_name = user_team.team_name;
     world.user_team.school_name = user_team.school_name;
@@ -14101,6 +14103,7 @@ const new_world_action = async (common, database_suffix) => {
     await ddb.world.put(world);
     await db.league_season.put(current_league_season);
     await db.team_season.put(user_team_season);
+    await db.team.put(user_team);
   
     window.location.href = `/World/${world_id}`;
   })
