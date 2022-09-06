@@ -9,8 +9,8 @@ const getHtml = async (common) => {
   console.log({ db_list: db_list, ddb: ddb, common: common });
   for (let db of db_list) {
     if (db.user_team.team_name == null) {
-      // await Dexie.delete(db.database_name);
-      // await ddb.world.where({ world_id: db.world_id }).delete();
+      await Dexie.delete(db.database_name);
+      await ddb.world.where({ world_id: db.world_id }).delete();
     } else {
       world_list.push(db);
     }
@@ -202,6 +202,7 @@ const action = async (common) => {
       const ddb = await common.driver_db();
 
       for (let [table, rows] of Object.entries(world_obj)) {
+        rows.forEach(r => r.world_id = new_db.new_season_info.world_id);
         await db[table].bulkPut(rows);
       }
 
