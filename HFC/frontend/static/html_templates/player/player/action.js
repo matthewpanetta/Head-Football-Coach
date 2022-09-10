@@ -176,7 +176,7 @@ const populate_player_stats = async (common) => {
           player_stats_show['Receiving'] = true
       if (player_team_season.season_stats.blocking.blocks > 0)
           player_stats_show['Blocking'] = true
-      if ((player_team_season.season_stats.defense.tackles + player_team_season.season_stats.defense.ints + player_team_season.season_stats.fumbles.forced + player_team_season.season_stats.defense.deflections) > 0)
+      if (((player_team_season.season_stats.defense.tackles || 0) + (player_team_season.season_stats.defense.ints || 0) + (player_team_season.season_stats.fumbles.forced || 0) + (player_team_season.season_stats.defense.deflections || 0)) > 0)
           player_stats_show['Defense'] = true
       if (player_team_season.season_stats.kicking.fga > 0)
           player_stats_show['Kicking'] = true
@@ -406,7 +406,7 @@ const getHtml = async (common) => {
                 'StatGroupName': 'Defense',
                 'Stats': [
                     {'FieldName': 'GamesPlayed', 'DisplayName': 'Games', 'DisplayColumn': true, 'DisplayOrder': 1, 'SeasonAggregateValue': true, 'SmallDisplay': false},
-                    {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tackles', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': true},
+                    {'FieldName': 'DEF_Tackles', 'DisplayName': 'Tckl', 'DisplayColumn': true, 'DisplayOrder': 2, 'SeasonAggregateValue': false, 'SmallDisplay': true},
                     {'FieldName': 'DEF_Sacks', 'DisplayName': 'Sacks', 'DisplayColumn': true, 'DisplayOrder': 3, 'SeasonAggregateValue': false, 'SmallDisplay': true},
                     {'FieldName': 'DEF_INT', 'DisplayName': 'INTs', 'DisplayColumn': true, 'DisplayOrder': 4, 'SeasonAggregateValue': false, 'SmallDisplay': true},
                     {'FieldName': 'DEF_TacklesForLoss', 'DisplayName': 'TFL', 'DisplayColumn': true, 'DisplayOrder': 5, 'SeasonAggregateValue': false, 'SmallDisplay': false},

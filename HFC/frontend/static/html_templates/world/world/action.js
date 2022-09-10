@@ -449,7 +449,7 @@ const getHtml = async (common) => {
 
 const action = async (common) => {
   const packaged_functions = common;
-  const db = this.db;
+  const db = common.db;
 
   //Show initial 'new world' modal
   $("#create-world-row").on("click", function () {
@@ -508,6 +508,26 @@ const action = async (common) => {
   $(".player-profile-popup-icon").on("click", async function () {
     await common.populate_player_modal(common, this);
   });
+
+  console.log({db:db, idbdb: db.idbdb.objectStoreNames});
+  let table_lengths = []
+  let requests = Object.entries(db.idbdb.objectStoreNames).forEach(async function(l, ind){
+    console.log({l:l, ind:ind, 'db.idbdb.objectStoreNames.length': db.idbdb.objectStoreNames.length})
+    let table_name = l[1]
+    let rows = await db[table_name].toArray();
+    let strigified_rows = JSON.stringify(rows);
+    let characters_per_row = strigified_rows.length / rows.length
+
+    console.log(
+      {table_name:table_name, row_count: rows.length, str_count: strigified_rows.length , characters_per_row:characters_per_row}
+    )
+
+  })
+
+
+  
+  //debugger;
+
 };
 
 const draw_faces = async (common) => {

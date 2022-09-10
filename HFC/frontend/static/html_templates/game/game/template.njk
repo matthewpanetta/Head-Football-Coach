@@ -274,7 +274,7 @@
                         {# <td class='{{stat.away_bold}}' style='background-color: #{{stat.away_background_color}}'>{{stat.away_display_value}}</td>
                         <td class='{{stat.home_bold}}' style='background-color: #{{stat.home_background_color}}'>{{stat.home_display_value}}</td> #}
                         <td class='{{stat.away_bold}} children-align-middle'>
-                          <span>{{stat.away_display_value}} </span>
+                          <span>{{stat.away_display_value|OrZero}} </span>
                           {%if stat.away_bold%}
                           <i class="fas fa-angle-left font16" style='color: #{{stat.away_background_color}}'></i>
                           {%endif%}
@@ -283,7 +283,7 @@
                           {%if stat.home_bold%}
                           <i class="fas fa-angle-right font16" style='color: #{{stat.home_background_color}}'></i>
                           {%endif%}
-                          <span>{{stat.home_display_value}}</span>
+                          <span>{{stat.home_display_value|OrZero}}</span>
                         </td>
                       </tr>
                       {# <tr class='center-text-row'>
@@ -314,7 +314,7 @@
                           <th colspan='5'>{{season_stat.display}}</th>
                         </tr>
                         <tr class='center-text-row '>
-                          <td class='font16 bold' style='color: #{{game.home_team_game.team_season.team.team_color_primary_hex}};'>{{season_stat.home_team_value}}</td>
+                          <td class='font16 bold' style='color: #{{game.home_team_game.team_season.team.team_color_primary_hex}};'>{{season_stat.home_team_value|OrZero}}</td>
 
                           <td class='white-text font24 column-shrink' style='background-color: #{{season_stat.better_team_for_stat.team_color_primary_hex}};'>
                             {{season_stat.left_arrow|safe}}
@@ -327,7 +327,7 @@
                           <td class='white-text font24 column-shrink' style='background-color: #{{season_stat.better_team_for_stat.team_color_primary_hex}};'>
                             {{season_stat.right_arrow|safe}}
                           </td>
-                          <td class='font16 bold' style='color: #{{game.away_team_game.team_season.team.team_color_primary_hex}};'>{{season_stat.away_team_value}}</td>
+                          <td class='font16 bold' style='color: #{{game.away_team_game.team_season.team.team_color_primary_hex}};'>{{season_stat.away_team_value|OrZero}}</td>
                         </tr>
 
                       {% endfor %}
@@ -454,15 +454,15 @@
                     </div>
                     <table class=' table table-hover' style='width: 100%;'>
                       <tbody>
-                        {% for period in game.scoring.periods %}
+                        {% for period, drives in period_scoring %}
                           <tr class='team-secondary-table-row white-text' style='border-bottom: 2px solid black; border-right: 2px solid black; '>
-                            <th class='padding-top-8 bold' colspan='4'>Quarter {{period.period_number}}</th>
+                            <th class='padding-top-8 bold' colspan='4'>Quarter {{period}}</th>
                             <th class='ScoringSummaryTeamScore center-text'>{{game.home_team_game.team_season.team.team_abbreviation}}</th>
                             <th class='ScoringSummaryTeamScore center-text'>{{game.away_team_game.team_season.team.team_abbreviation}}</th>
                           </tr>
-                          {% for drive in period.drives %}
+                          {% for drive in drives %}
                           
-                          <tr class='ScoringSummaryScoreRow {{drive.drive_end.drive_event_class}}' style='border-bottom: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; border-right: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; background-color: white;'>
+                          <tr class='ScoringSummaryScoreRow DriveEndingEvent-All {% if drive.drive_end.is_scoring_drive %}DriveEndingEvent-Score{%else%}hidden{%endif%}' style='border-bottom: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; border-right: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; background-color: white;'>
                             <td class='ScoringSummaryTeamLogo column-shrink' style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
                                 <a href='{{drive.drive_end.display_team.team_href}}'>
                                   <img class='logo logo logo-30' src="{{drive.drive_end.display_team.team_logo}}" alt="">
@@ -708,7 +708,7 @@
                         </td>
                         {% for column in stat_grouping.columns%}
                         {% set value = common.get_from_dict(player_team_game, column.data)%}
-                        <td value='{{value}}'>{{value}}</td>
+                        <td value='{{value|OrZero}}'>{{value|OrZero}}</td>
                         {% endfor %}
 
                       </tr>
