@@ -53,24 +53,33 @@
           {% endif %}
         </div>
       </div>
-      <ul class='playerHeaderBio' style='border-color:{{page.PrimaryColor}}'>
-        <li class='playerHeaderClass'>
-          <div class='playerHeaderBioDescription'>CLASS</div>
-          <div class='player-class'>{{player.current_player_team_season.class.class_name}}
-            {% if player.redshirt.current %}
-              <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>
-            {% endif %}
-          </div>
-        </li>
-        <li class='playerHeaderHtWt'>
-          <div class='playerHeaderBioDescription'>HT/WT</div>
-          <div>{{player.body.height}}, {{player.body.weight}} lbs</div>
-        </li>
-        <li class='playerHeaderHometown'>
-          <div class='playerHeaderBioDescription'>HOMETOWN</div>
-          <div>{{player.hometown_and_state}}</div>
-        </li>
-      </ul>
+      <table class='playerHeaderBio mx-3' style='border-color:#{{page.PrimaryColor}}; margin-bottom: 0;'>
+          <tr>
+            <td>
+            <div>
+              {{player.hometown_and_state}}
+            </div>
+            <div class='font10'>HOMETOWN</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <div>{{player.body.height}}, {{player.body.weight}} lbs</div>
+            <div class='font10'>HT/WT</div>
+            </td>
+          </tr>          
+          <tr>
+            <td>
+            <div>
+              {{player.current_player_team_season.class.class_name}}
+              {% if player.redshirt.current %}
+                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>
+              {% endif %}
+            </div>
+            <div class='font10'>CLASS</div>
+            </td>
+          </tr>
+        </table>
     </div>
   </div>
 </div>

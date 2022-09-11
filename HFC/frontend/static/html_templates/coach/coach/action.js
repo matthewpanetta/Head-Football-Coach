@@ -1,12 +1,4 @@
-const clean_rating_string = (str) => {
-  return str
-    .replace(/_/g, " ")
-    .split(" ")
-    .map(function (word) {
-      return word[0].toUpperCase() + word.substr(1);
-    })
-    .join(" ");
-};
+
 
 const populate_coach_stats = async (common) => {
   const db = await common.db;
@@ -281,7 +273,6 @@ const getHtml = async (common) => {
   const coaching_position = coach.current_coach_team_season.coaching_position;
 
 
-
   console.log("all_coach_team_seasons", {
     coach: coach,
     current_team: current_team,
@@ -298,7 +289,6 @@ const getHtml = async (common) => {
   var render_content = {
     page: common.page,
     world_id: common.params.world_id,
-    all_teams: all_teams,
     coach: coach,
     current_team: current_team,
   };
@@ -310,6 +300,8 @@ const getHtml = async (common) => {
   var url = "/static/html_templates/coach/coach/template.njk";
   var html = await fetch(url);
   html = await html.text();
+
+  console.log({html:html})
 
   var renderedHtml = await common.nunjucks_env.renderString(
     html,

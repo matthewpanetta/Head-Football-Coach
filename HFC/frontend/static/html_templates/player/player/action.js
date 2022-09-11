@@ -651,7 +651,7 @@ const getHtml = async (common) => {
 
       common.display_player_face(common.render_content.player.player_face, {jersey: common.render_content.player.current_player_team_season.team_season.team.jersey, teamColors: common.render_content.player.current_player_team_season.team_season.team.jersey.teamColors}, 'PlayerFace');
       await populate_player_stats(common)
-
+      await common.geo_marker_action(common);
     }
 
 

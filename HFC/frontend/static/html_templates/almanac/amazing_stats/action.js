@@ -42,8 +42,8 @@ const getHtml = async (common) => {
     },
     {
       display: "Biggest Upset",
-      key: "rank_difference",
-      th: "Rank Diff",
+      key: "upset_value",
+      th: "Upset Points",
       games: [],
     },
     {
@@ -114,9 +114,9 @@ const getHtml = async (common) => {
 
   //TODO allow for season filtering
   var seasons = await db.league_season.toArray();
-  var seasons_by_season_id = index_group_sync(seasons, "index", "season_id");
+  var seasons_by_season = index_group_sync(seasons, "index", "season");
   var weeks = await db.week.toArray();
-  weeks = nest_children(weeks, seasons_by_season_id, "season_id", "season");
+  weeks = nest_children(weeks, seasons_by_season, "season", "season");
   var weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
 
   var teams = await db.team.where("team_id").above(0).toArray();
@@ -173,7 +173,10 @@ const getHtml = async (common) => {
     g.losing_team_largest_lead =
       g.losing_team_game.game_stats.team.biggest_lead;
     g.rank_difference =
-      g.winning_team_game.national_rank - g.losing_team_game.national_rank;
+      (g.winning_team_game.national_rank) - g.losing_team_game.national_rank;
+    
+    g.upset_value =
+      Math.floor((((g.winning_team_game.national_rank + 5) ** 2) / ((g.losing_team_game.national_rank + 5) ** 2)) + ((g.winning_team_game.national_rank) - (g.losing_team_game.national_rank)));
 
     g.total_yards =
       g.winning_team_game.total_yards + g.losing_team_game.total_yards;

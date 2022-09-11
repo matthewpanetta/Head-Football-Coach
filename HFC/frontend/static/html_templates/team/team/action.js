@@ -940,6 +940,32 @@ const action = async (common) => {
     await draw_map(common);
   });
 
+
+  var coaches_first_click = false;
+  $("#nav-coaches-tab").on("click", async function () {
+    if (coaches_first_click) {
+      return false;
+    }
+    coaches_first_click = true;
+
+    var team = common.render_content.team;
+    var db = common.db;
+    var season = common.season;
+
+
+    var url = "/static/html_templates/team/team/team_coaches_div_template.njk";
+    var html = await fetch(url);
+    html = await html.text();
+
+    var renderedHtml = await common.nunjucks_env.renderString(html, {
+      team: team,
+    });
+    console.log({ renderedHtml: renderedHtml });
+
+    $("#nav-coaches").append(renderedHtml);
+    await draw_map(common);
+  });
+
   var rivals_first_click = false;
   $("#nav-rivals-tab").on("click", async function () {
     if (rivals_first_click) {

@@ -7008,7 +7008,9 @@ const sim_game = (game_dict, common) => {
     possession_count = 0,
     adjusted_score_possibilities = {};
 
-  game_dict.home_field_advantage_modifier = 1.03;
+  if (!game_dict.game.is_neutral_site_game){
+    game_dict.home_field_advantage_modifier = 1.03;
+  }
 
   var drive_within_20 = false;
   var drive_within_40 = false;
@@ -12841,15 +12843,15 @@ const svgs = {
     soul: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">\t<path id="soul_stache" class="facialHair-shp0-$[player_id]" d="M188 458C190 456 210 456 212 458C214 460 204 474 200 474C196 474 186 460 188 458Z" fill="$[hairColor]" stroke="#000" stroke-width="1"/></svg>',
   },
   jersey: {
-    football:
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">\t<g id="football-standard">\t\t<path id="footballPrimary" class="footballPrimary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580.41 5 550.41C9.93 520.82 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="$[primary]" stroke="#000000" stroke-width="6" />\t\t<path id="collarSecondary" class="collarSecondary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505L295 495C300 555 240 540 200 570C160 540 100 555 105 495L120 505Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t<path id="footballStroke" class="footballStroke" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580 5 550C9.93 520.41 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="none" stroke="#000000" stroke-width="6"/>\t\t<path id="shoulderpads" class="shp3" d="M19.5 570C19.5 570 92 567.89 101 550 M381 570C381 570 310 567.89 301 550" fill="none" stroke="#000000" stroke-width="2" />\t</g><g><text text-anchor="middle" alignment-baseline="central" x="200" y="590" style="font-family:\'SoccerLeague-Regular\', \'Soccer League\';font-size:24px;fill:$[jersey-lettering-color];letter-spacing: 2px;">$[jersey-lettering-text]</text></g></svg>',
-    football2:
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">\t<g id="football-ponies">\t\t<path id="footballPrimary" class="footballPrimary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580.41 5 550.41C9.93 520.82 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="$[primary]" stroke="#000000" stroke-width="6" />\t\t<path id="collarSecondary" class="collarSecondary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505L295 495C300 555 240 540 200 570C160 540 100 555 105 495L120 505Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t<g id="Sparta">\t\t\t<path id="Sparta" class="Sparta" d="M20 500L35 580L40 491.2L30 494.27L20 500ZM380 500L365 580L360 491.2L370 494.27L380 500Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t</g>\t\t<path id="footballStroke" class="footballStroke" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580 5 550C9.93 520.41 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="none" stroke="#000000" stroke-width="6"/>\t\t<path id="shoulderpads" class="shp3" d="M19.5 570C19.5 570 92 567.89 101 550 M381 570C381 570 310 567.89 301 550" fill="none" stroke="#000000" stroke-width="2" />\t</g><g><text text-anchor="middle" alignment-baseline="central" x="200" y="590" style="font-family:\'SoccerLeague-Regular\', \'Soccer League\';font-size:24px;fill:$[jersey-lettering-color];letter-spacing: 2px;">$[jersey-lettering-text]</text></g></svg>',
-    football3:
+    "football-standard":
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">\t<g id="football-standard">\t\t<path id="footballPrimary" class="footballPrimary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580.41 5 550.41C9.93 520.82 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="$[primary]" stroke="#000000" stroke-width="6" />\t\t<path id="collarSecondary" class="collarSecondary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505L295 495C300 555 240 540 200 570C160 540 100 555 105 495L120 505Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t<path id="footballStroke" class="footballStroke" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580 5 550C9.93 520.41 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="none" stroke="#000000" stroke-width="6"/>\t\t<path id="shoulderpads" class="shp3" d="M19.5 570C19.5 570 92 567.89 101 550 M381 570C381 570 310 567.89 301 550" fill="none" stroke="#000000" stroke-width="2" />\t</g><g><text text-anchor="middle" alignment-baseline="top" x="200" y="$[font-y-pos]" style="font-family:\'SoccerLeague-Regular\', \'Soccer League\';font-size:$[font-size]px;fill:#$[jersey-lettering-color];letter-spacing: 2px;">$[jersey-lettering-text]</text></g></svg>',
+    "football-sparta":
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">\t<g id="football-sparta">\t\t<path id="footballPrimary" class="footballPrimary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580.41 5 550.41C9.93 520.82 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="$[primary]" stroke="#000000" stroke-width="6" />\t\t<path id="collarSecondary" class="collarSecondary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505L295 495C300 555 240 540 200 570C160 540 100 555 105 495L120 505Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t<g id="Sparta">\t\t\t<path id="Sparta" class="Sparta" d="M20 500L35 580L40 491.2L30 494.27L20 500ZM380 500L365 580L360 491.2L370 494.27L380 500Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t</g>\t\t<path id="footballStroke" class="footballStroke" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580 5 550C9.93 520.41 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="none" stroke="#000000" stroke-width="6"/>\t\t<path id="shoulderpads" class="shp3" d="M19.5 570C19.5 570 92 567.89 101 550 M381 570C381 570 310 567.89 301 550" fill="none" stroke="#000000" stroke-width="2" />\t</g><g><text text-anchor="middle" alignment-baseline="top" x="200" y="$[font-y-pos]" style="font-family:\'SoccerLeague-Regular\', \'Soccer League\';font-size:$[font-size]px;fill:#$[jersey-lettering-color];letter-spacing: 2px;">$[jersey-lettering-text]</text></g></svg>',
+    "football-three-stripe":
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">\t<g id="football-three-stripe">\t\t<path id="footballPrimary" class="footballPrimary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580.41 5 550.41C9.93 520.82 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="$[primary]" stroke="#000000" stroke-width="6" />\t\t<path id="collarSecondary" class="collarSecondary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505L295 495C300 555 240 540 200 570C160 540 100 555 105 495L120 505Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t<g id="Verticle Stripes">\t\t\t<path id="vStripes1" class="vStripes1" d="M55 490L30 495L20 500L20 580L55 580L55 490ZM345 490L370 495L380 500L380 580L345 580L345 490Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t\t<path id="vStripes2" class="vStripes2" d="M30 495L45 491.86L45 580L30 580L30 495ZM370 495L355 491.86L355 580L370 580L370 495Z" fill="$[accent]" stroke="#000000" stroke-width="2"/>\t\t</g>\t\t<path id="footballStroke" class="footballStroke" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580 5 550C9.93 520.41 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="none" stroke="#000000" stroke-width="6"/>\t\t<path id="shoulderpads" class="shp3" d="M19.5 570C19.5 570 92 567.89 101 550 M381 570C381 570 310 567.89 301 550" fill="none" stroke="#000000" stroke-width="2" />\t</g></svg>',
-    football4:
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">\t<g id="football-sparta">\t\t<path id="footballPrimary" class="footballPrimary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580.41 5 550.41C9.93 520.82 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="$[primary]" stroke="#000000" stroke-width="6" />\t\t<path id="collarSecondary" class="collarSecondary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505L295 495C300 555 240 540 200 570C160 540 100 555 105 495L120 505Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t<g id="Stallion">\t\t\t<path id="Stallion" class="Stallion" d="M120 540C80 566.67 60 620 60 620L100 620C100 620 100 566.67 120 540ZM280 540C320 566.67 340 620 340 620L300 620C300 620 300 566.67 280 540Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t</g>\t\t<path id="footballStroke" class="footballStroke" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580 5 550C9.93 520.41 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="none" stroke="#000000" stroke-width="6"/>\t\t<path id="shoulderpads" class="shp3" d="M19.5 570C19.5 570 92 567.89 101 550 M381 570C381 570 310 567.89 301 550" fill="none" stroke="#000000" stroke-width="2" />\t</g><g><text text-anchor="middle" alignment-baseline="central" x="200" y="590" style="font-family:\'SoccerLeague-Regular\', \'Soccer League\';font-size:24px;fill:$[jersey-lettering-color];letter-spacing: 2px;">$[jersey-lettering-text]</text></g></svg>',
-    football5:
+    "football-ponies":
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">\t<g id="football-ponies">\t\t<path id="footballPrimary" class="footballPrimary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580.41 5 550.41C9.93 520.82 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="$[primary]" stroke="#000000" stroke-width="6" />\t\t<path id="collarSecondary" class="collarSecondary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505L295 495C300 555 240 540 200 570C160 540 100 555 105 495L120 505Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t<g id="Stallion">\t\t\t<path id="Stallion" class="Stallion" d="M120 540C80 566.67 60 620 60 620L100 620C100 620 100 566.67 120 540ZM280 540C320 566.67 340 620 340 620L300 620C300 620 300 566.67 280 540Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t</g>\t\t<path id="footballStroke" class="footballStroke" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580 5 550C9.93 520.41 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="none" stroke="#000000" stroke-width="6"/>\t\t<path id="shoulderpads" class="shp3" d="M19.5 570C19.5 570 92 567.89 101 550 M381 570C381 570 310 567.89 301 550" fill="none" stroke="#000000" stroke-width="2" />\t</g><g><text text-anchor="middle" alignment-baseline="top" x="200" y="$[font-y-pos]" style="font-family:\'SoccerLeague-Regular\', \'Soccer League\';font-size:$[font-size]px;fill:#$[jersey-lettering-color];letter-spacing: 2px;">$[jersey-lettering-text]</text></g></svg>',
+    "football-two-stripe":
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">\t<g id="football-three-stripe">\t\t<path id="footballPrimary" class="footballPrimary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580.41 5 550.41C9.93 520.82 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="$[primary]" stroke="#000000" stroke-width="6" />\t\t<path id="collarSecondary" class="collarSecondary" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505L295 495C300 555 240 540 200 570C160 540 100 555 105 495L120 505Z" fill="$[secondary]" stroke="#000000" stroke-width="2"/>\t\t<g id="Verticle Stripes">\t\t\t<path id="vStripes1" d="M30,580L20,580L20,500L30,495L30,580ZM355,492L355,580L345,580L345,490L355,492ZM380,500L380,580L370,580L370,495L380,500ZM45,492L55,490L55,580L45,580L45,492Z" style="fill:$[secondary];fill-rule:nonzero;stroke:black;stroke-width:2px;"/>\t\t</g>\t\t<path id="footballStroke" class="footballStroke" d="M120 505C120 540 170 530 200 550C230 530 280 540 280 505C310 480 370 490 380 500C390 510 390.07 520.41 395 550C400 580 400 570 400 610L0 610C0 570 0 580 5 550C9.93 520.41 10 511.03 20 500C29.5 489.52 90 480 120 505Z" fill="none" stroke="#000000" stroke-width="6"/>\t\t<path id="shoulderpads" class="shp3" d="M19.5 570C19.5 570 92 567.89 101 550 M381 570C381 570 310 567.89 301 550" fill="none" stroke="#000000" stroke-width="2" />\t</g></svg>',
     suit: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">    <g >        <g id="Apparel">            <path id="Shirt" d="M10,600C10,600 10,550 70,530C77.392,527.536 84.025,524.92 89.977,522.218C89.977,522.218 113.72,507.873 119.12,504.312C120.038,509.976 111.076,508.897 125.931,521.518C137.439,531.295 167.631,551 200,551C243.448,551 266.521,524.459 275.782,510.725C282.326,501.02 280.325,508.919 281,504.756C286.644,508.456 302.123,518.639 310.023,522.218L310.583,522.471C316.39,525.083 322.839,527.613 330,530C390,550 390,600 390,600L10,600Z" style="fill:white;stroke:black;stroke-width:6px;"/>            <g transform="matrix(1.53846,0,0,1.41245,-107.692,-235.987)">                <g transform="matrix(1.5,0,0,1.5,-100,-284.519)">                    <path d="M190,564.4L200.033,563.038L210,564.371L206.5,577L193.5,576.985L190,564.4Z" style="fill:$[primary];stroke:black;stroke-width:1.35px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>                </g>                <g transform="matrix(1.5,0,0,1.5,-100,-279.993)">                    <path d="M193.5,573.985L187,597.362L200,657.5L213,598.237L206.5,574L193.5,573.985Z" style="fill:$[primary];stroke:black;stroke-width:1.35px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>                </g>            </g>            <g id="Collar">                <g transform="matrix(1,0,0,1,0.457375,0)">                    <path d="M279.339,504.354C277.635,505.046 200,550 200,550L232.485,581.939C232.485,581.939 267.391,549.65 282.175,527.05C292.087,511.898 281.044,503.662 279.339,504.354Z" style="fill:white;stroke:black;stroke-width:4px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>                </g>                <g transform="matrix(-1,0,0,1,400,0)">                    <path d="M279.339,504.354C277.635,505.046 200,550 200,550L232.485,581.939C232.485,581.939 267.391,549.65 282.175,527.05C292.087,511.898 281.044,503.662 279.339,504.354Z" style="fill:white;stroke:black;stroke-width:4px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>                </g>            </g>            <g>                <path d="M10,600C10,600 10,550 70,530C77.392,527.536 84.025,524.92 89.977,522.218C89.977,522.218 98.137,518.738 105.915,513.971C111.965,510.263 117.638,505.286 120,503.728C121.629,513.781 126.44,651.317 200.592,651.317C274.744,651.317 278.371,514.269 280,504.216C282.739,506.011 288.028,510.108 293.651,513.592C299.616,517.288 305.956,520.375 310.023,522.218L310.583,522.471C316.39,525.083 322.839,527.613 330,530C390,550 390,600 390,600L10,600Z" style="fill:rgb(51,51,51);stroke:black;stroke-width:6px;"/>            </g>            <g transform="matrix(1.04986,0,0,1.04986,-9.97355,-23.9766)">                <path d="M306.649,520.978L314.327,553.707L293.092,570.684L311.588,579.277L284.725,634.469" style="fill:none;stroke:black;stroke-width:3.81px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>                <g transform="matrix(-1,0,0,1,400.052,0)">                    <path d="M306.649,520.978L314.327,553.707L293.092,570.684L311.588,579.277L284.725,634.469" style="fill:none;stroke:black;stroke-width:3.81px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;"/>                </g>            </g>        </g>    </g></svg>',
   },
@@ -12906,16 +12908,28 @@ const drawFeature = async (svg, face, info) => {
     /\$\[accent\]/g,
     face.teamColors[2]
   );
-  if (face.jersey.lettering){
+  featureSVGString = featureSVGString.replace(
+    /\$\[jersey-lettering-text\]/g,
+    face.jersey.lettering || ''
+  );
+  featureSVGString = featureSVGString.replace(
+    /\$\[jersey-lettering-color\]/g,
+    face.jersey.lettering_color
+  );
+  if ( face.jersey.lettering) {
+    let font_size = Math.floor(80 - (5 * face.jersey.lettering.length))
     featureSVGString = featureSVGString.replace(
-      /\$\[jersey-lettering-text\]/g,
-      face.jersey.lettering.text
-    );
+      /\$\[font-size\]/g,
+      font_size
+    );  
+
+    let font_y_pos = Math.floor(645 - (5 * face.jersey.lettering.length));
     featureSVGString = featureSVGString.replace(
-      /\$\[jersey-lettering-color\]/g,
-      face.jersey.lettering.text_color
-    );
+      /\$\[font-y-pos\]/g,
+      font_y_pos
+    );  
   }
+
 
 
   //console.log('featureSVGString', info, feature, featureSVGString)
@@ -13861,11 +13875,11 @@ const new_world_action = async (common, database_suffix) => {
   var jersey_colors = [],
     jersey_lettering = {};
   const jersey_options = [
-    "football",
-    "football2",
-    "football3",
-    "football4",
-    "football5",
+    "football-standard",
+    "football-ponies",
+    "football-sparta",
+    "football-three-stripe",
+    "football-two-stripe",
   ];
 
   teams_from_json = teams_from_json.sort((t_a, t_b) => t_a.school_name > t_b.school_name ? 1 : -1)
@@ -13878,7 +13892,15 @@ const new_world_action = async (common, database_suffix) => {
         `#${team.team_color_primary_hex}`,
         `#${team.team_color_secondary_hex}`,
       ];
-    } else {
+    }
+    else if (team.jersey.flip_primaries){
+      team.jersey.teamColors = [
+        `#${team.team_color_secondary_hex}`,
+        `#${team.team_color_primary_hex}`,
+        "#FFFFFF",
+      ];
+    }
+    else {
       team.jersey.teamColors = [
         `#${team.team_color_primary_hex}`,
         `#${team.team_color_secondary_hex}`,
@@ -13886,12 +13908,8 @@ const new_world_action = async (common, database_suffix) => {
       ];
     }
 
-    team.jersey.lettering = { text_color: "#FFFFFF", text: "" };
-
-    if (Math.random() < 0.2) {
-      team.jersey.lettering.text = team.team_name;
-    } else if (Math.random() < 0.1) {
-      team.jersey.lettering.text = team.school_name;
+    if (team.jersey.lettering){
+      team.jersey.lettering_color = team.jersey.lettering_color || 'FFFFFF';
     }
 
     team.jersey.id =
@@ -13961,9 +13979,8 @@ const new_world_action = async (common, database_suffix) => {
     rivals: [],
     jersey: {
       invert: false,
-      id: "football",
-      teamColors: ["#1763B2", "#000000", "#FFFFFF"],
-      lettering: { text_color: "#FFFFFF", text: "" },
+      id: "football-standard",
+      teamColors: ["#1763B2", "#000000", "#FFFFFF"]
     },
     team_ratings: {},
     location: {
@@ -13984,9 +14001,8 @@ const new_world_action = async (common, database_suffix) => {
     rivals: [],
     jersey: {
       invert: false,
-      id: "football",
-      teamColors: ["#1763B2", "#000000", "#FFFFFF"],
-      lettering: { text_color: "#FFFFFF", text: "" },
+      id: "football-standard",
+      teamColors: ["#1763B2", "#000000", "#FFFFFF"]
     },
     team_ratings: {},
     location: {

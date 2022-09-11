@@ -1,308 +1,153 @@
 {% include "../../static/html_templates/common_templates/ext_nav_bar.njk" %}
 
-
 {% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
 
 <body>
   <div class='PageContent'>
     <div class='CoachHeader'>
       <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
-      <a href='{{coach.current_coach_team_season.team_season.team.team_href}}' {% if not coach.current_coach_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 180px;' {% endif %}{% endif %}>
-        <img class='coachTeamLogo' src='{{coach.current_coach_team_season.team_season.team.team_logo}}' alt="My image">
+      <a href='{{coach.current_coach_team_season.team_season.team.team_href}}'>
+        <div class='page-header-logo-div'>
+          <img class='coachTeamLogo' src='{{coach.current_coach_team_season.team_season.team.team_logo}}'  alt="My image">
+        </div>
       </a>
       <div class="CoachFace" id='CoachFace'>
         {{coach.CoachFaceSVG|safe}}
       </div>
       <div class='inline-block' style='vertical-align: middle;'>
         <div class='coachHeaderInfo'>
-        <span class='coachFirstName'>
-          {{coach.name.first}}
-        </span>
-        <span class='coachLastName'>
-          {{coach.name.last}}
-        </span>
-        <div class='coachOverviewInfo'>
-          <a href="{{current_team.team_href}}">{{current_team.school_name}} {{current_team.team_name}}</a>
+          <span class='coachFirstName'>
+            {{coach.name.first}}
+          </span>
+          <span class='coachLastName'>
+            {{coach.name.last}}
+          </span>
+          <div class='coachOverviewInfo'>
+            <a href="{{current_team.team_href}}">{{current_team.school_name}}
+              {{current_team.team_name}}</a>
           | {{coach.current_coach_team_season.coaching_position}}
-        </div>
-      </div>
-      <ul class='coachHeaderBio' style='border-color:#{{page.PrimaryColor}}; margin-bottom: 0;'>
-        <li class='coachHeaderClass'>
-          <div class='coachHeaderBioDescription'>AGE</div>
-          <div class='coach-class'>
-            {{coach.current_coach_team_season.age}}
           </div>
-        </li>
-        <li class='coachHeaderHometown'>
-          <div class='coachHeaderBioDescription'>HOMETOWN</div>
-          <div>{{coach.hometown_and_state}}</div>
-        </li>
-        <li class='coachHeaderHometown'>
-          <div class='coachHeaderBioDescription'>ALMA MATER</div>
-          <div>{{coach.hometown_and_state}}</div>
-        </li>
-      </ul>
-      <div class="font32 inline-block bold w3-display-container" style="height: 80px; width:100px; border: 1px solid black; vertical-align: top;">
-        <div class="team-primary-background font12 center-text" style=" color: white;">
-          Overall
         </div>
-        <div class=" center-text">
-          {{coach.coach_team_seasons[0].ratings.overall.overall}}
-        </div>
-        <div class="w3-display-bottommiddle statBar" style='width: 100%; background-color: inherit;'>
-          <div class="w3-container  {{coach.coach_team_seasons[0].ratings.overall.overall|NumberToGradeClass(100)}}-Fill" style="width:{{coach.coach_team_seasons[0].ratings.overall.overall}}%; height: 8px;"></div>
-        </div>
+        <ul class='coachHeaderBio' style='border-color:#{{page.PrimaryColor}}; margin-bottom: 0;'>
+          <li class='coachHeaderClass'>
+            <div class='coachHeaderBioDescription'>AGE</div>
+            <div class='coach-class'>
+              {{coach.current_coach_team_season.age}}
+            </div>
+          </li>
+          <li class='coachHeaderHometown'>
+            <div class='coachHeaderBioDescription'>HOMETOWN</div>
+            <div>{{coach.hometown_and_state}}</div>
+          </li>
+          <li class='coachHeaderHometown'>
+            <div class='coachHeaderBioDescription'>ALMA MATER</div>
+            <div>{{coach.hometown_and_state}}</div>
+          </li>
+        </ul>
       </div>
 
-      </div>
-      
-      
-      
       <div class="team-header-color-right hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
 
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: {{page.PrimaryColor|TeamBackgroundFontColor}}; ">
         <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
-            <i class="fas fa-bars"></i>
+          <i class="fas fa-bars"></i>
         </button>
         <button class="w3-bar-item btn tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
-        <button class="w3-bar-item btn tab nav-tab-button"  id="nav-ratings-tab">Ratings</button>
-        {% if coach.current_coach_team_season.is_recruit %}
-        <button class="w3-bar-item btn tab nav-tab-button"  id="nav-recruiting-tab">Recruiting</button>
-        {% else %}
-          {% if coach_team_games|length > 0%}
+        {% if coach_team_games|length > 0%}
           <button class="w3-bar-item btn tab nav-tab-button"  id="nav-stats-tab">Stats</button>
-          <button class="w3-bar-item btn tab nav-tab-button"  id="nav-game-log-tab">Game Log</button>
-          {% endif %}
         {% endif %}
-        {% if coach_awards|length > 0 %}
-        <button class="w3-bar-item btn tab nav-tab-button"  id="nav-awards-tab">Awards</button>
-        {%endif%}
-        <button> PLAYER LIST </button>
-      </div>
-    </nav>
-    <div  id="nav-tabContent">
-      <div class="tab-content" style='display:block;' id="nav-overview" >
-        <div class='w3-container'>
-          <div class='w3-row-padding'>
-            <div class='w3-col l5 m12 coachOverviewRatingBox'>
-              <div class="card margin-bottom-24">
-                <table class='width100 table table-striped table-hover '>
-                    {% for skill_group in skills%}
-                    {% if skill_group.top_show%}
-                    <thead>
-                    <tr  class='team-primary-background'>
-                      <th colspan="3">{{skill_group.rating_group}}</th>
-                    </tr>
-                    </thead>
+        {% if coach_awards | length > 0 %}
+          <button class="w3-bar-item btn tab nav-tab-button"  id="nav-awards-tab">Awards</button>
+          {%endif%}
+        </div>
+      </nav>
+      <div  id="nav-tabContent">
+        <div class="tab-content" style='display:block;' id="nav-overview" >
+          <div class='w3-container'>
+            <div class='w3-row-padding'>
+              <div class='w3-col l5 m12 coachOverviewRatingBox'>
+                <div class="card margin-bottom-24">
+                  <table class='width100 table table-striped table-hover '></table>
 
-                    <tbody>
-                    {% for skill in skill_group.ratings%}
-                    <tr>
-                      <td style='width:20%' class='bold'>{{skill.rating}}</td>
-                      <td style='width:60%'>
-                        <div class="w3-border w3-round-xlarge statBar" style='width: 80%; margin-left: 10%; background-color: inherit;'>
-                          <div class="w3-container w3-round-xlarge {{(skill.bar_width)|NumberToGradeClass(100)}}-Fill" style="width:{{skill.bar_width}}%; height: 8px;"></div>
-                        </div>
-                      </td>
-                      <td style='width:20%' class='font20 center-text'>{{skill.coach_value}}</td>
-                    </tr>
-
-                    {% endfor %}
-                  </tbody>
-                    {% endif %}
-                    {% endfor %}
-                </table>
-
-              </div>
-            </div>
-            <div class='w3-col l7 m12'>
-              {% if coachTeam.IsUserTeam%}
-              {% if Actions%}
-              <div class="card w3-margin-bottom">
-                <div class="w3-bar team-primary-background-bar">
-                  Actions
                 </div>
-                <table class=' table table-striped table-hover' style='width: 50%;'>
-                  {% for Action in Actions%}
-                  <tr>
-                    <td style='width:10%;'>{{Action.Icon|safe}}</td>
-                    <td confirm-info='{{Action.ConfirmInfo}}' response-type='refresh' background-ajax='{{Action.AjaxLink}}' class="btn team-color-button {{Action.Class}} text-left"> {{Action.Display}} </td>
-                  </tr>
-                  {% endfor %}
-                </table>
+              </div>
+              <div class='w3-col l7 m12'>
 
-            </div>
-              {% endif %}
-              {% endif %}
-
-              {%if coach_team_games|length > 0%}
-              <div class="card w3-margin-bottom">
-                <div class="w3-bar team-primary-background-bar">
+                {%if coach_team_games|length > 0%}
+                  <div class="card w3-margin-bottom">
+                    <div class="w3-bar team-primary-background-bar">
                   Recent Game Stats
                 </div>
-                <div id='coach-stats-recent-games-div'>
+                    <div id='coach-stats-recent-games-div'></div>
 
-                </div>
-                
-            </div>
-            {% elseif coach.current_coach_team_season.is_recruit %}
-            <div class="card w3-margin-bottom">
-              <div class="w3-bar team-primary-background-bar">
-                Recruiting Status
+                  </div>
+                {% endif %}
               </div>
-              <table class="table table-striped table-hover width100 center-text-row" id='recruit_team_seasons' style='width: 100%;'>
-                <thead>
-                  <tr  >
-                    <th colspan="2" class='center-text col-group'>TEAM</th>
-                    <th>SIGNED</th>
-                    <th>MATCH</th>
-                    {% for interest_key in coach.current_coach_team_season.recruiting.top_coach_interest_entries%}
-                    <th>{{interest_key.display}}</th>
-                    {% endfor %}
-
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for recruit_team_season in recruit_team_seasons.slice(0,10)%}
-                  <tr>
-                    <td class='white-text column-shrink' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>
-                      <a href="{{recruit_team_season.team_season.team.team_href}}">
-                        <img class='logo logo-30' src="{{recruit_team_season.team_season.team.team_logo}}" alt="">
-                      </a>
-                    </td>
-                    <td class='white-text column-shrink left-text nowrap' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>
-                      <a href="{{recruit_team_season.team_season.team.team_href}}">
-                        {{recruit_team_season.team_season.team.school_name}}
-                      </a>
-                    </td>
-                    <td>{{recruit_team_season.signed}}</td>
-                    <td>{{recruit_team_season.match_rating}}</td>
-                    
-                    {% for interest_obj in recruit_team_season.coach_interest_entries%}
-                    <td>
-                      {{interest_obj|log}}
-                      <span class='rating-badge rating-badge-{{interest_obj}}'>
-                        {{interest_obj}}
-                      </span>
-                    </td>
-                    {% endfor %}
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-          </div>
-            {% endif %}
             </div>
           </div>
         </div>
-      </div>
-      {% if coach.IsRecruit %}
-      <div class="tab-content"  style='display:none;' id="nav-recruiting" >
-        <div class='w3-container w3-margin-bottom'>
-          <div class='w3-row'>
-            <div class='w3-col l12'>
-              <table class="table table-striped table-hover center-text-row" id='coachRecruitingTeamTable'>
-            </div>
 
-          </div>
-          <div class="w3-row">
-            <div class="" id='RecruitingContainer' style='width: 100%; height: 400px;'>
-
-            </div>
-          </div>
-        </div>
-      </div>
-      {% else %}
-      <div class="tab-content" style='display:none;' id="nav-stats" >
-        <div class='w3-container w3-margin-bottom'>
+        <div class="tab-content" style='display:none;' id="nav-stats" >
+          <div class='w3-container w3-margin-bottom'>
             <div class='w3-row-padding'>
-              <div class='w3-col l10 m12' id='coach-stats-season-stat-div'>
-
-              </div>
+              <div class='w3-col l10 m12' id='coach-stats-season-stat-div'></div>
             </div>
+          </div>
         </div>
-      </div>
-      <div class="tab-content" style='display:none;' id="nav-game-log" >
-        <div class='w3-container'>
-          <div class='w3-row-padding '>
+        <div class="tab-content" style='display:none;' id="nav-game-log" >
+          <div class='w3-container'>
+            <div class='w3-row-padding '>
               <div class="w3-col l10 m12">
                 <div class="card w3-margin-bottom">
 
-                <div class="w3-bar team-primary-background-bar">Game Stats</div>
-                <div id='coach-stats-game-log-div'>
+                  <div class="w3-bar team-primary-background-bar">Game Stats</div>
+                  <div id='coach-stats-game-log-div'></div>
 
                 </div>
-                
               </div>
-              </div>
-          </div>
-          <div class='w3-row-padding'>
+            </div>
+            <div class='w3-row-padding'></div>
 
           </div>
-
         </div>
-      </div>
-      <div class="tab-content" style='display:none;' id="nav-analytics" >
-      </div>
-      {% endif %}
-      <div class="tab-content" style='display:none;' id="nav-awards" >
-        <div class='w3-container'>
-          <div class='w3-row-padding'>
-            <div class='w3-col l6 m12'>
-              <div class="card w3-margin-bottom">
+        <div class="tab-content" style='display:none;' id="nav-analytics" ></div>
+        <div class="tab-content" style='display:none;' id="nav-awards" >
+          <div class='w3-container'>
+            <div class='w3-row-padding'>
+              <div class='w3-col l6 m12'>
+                <div class="card w3-margin-bottom">
 
-
-                <div class='w3-bar team-primary-background-bar'>
+                  <div class='w3-bar team-primary-background-bar'>
                   Awards
                 </div>
-              <table class='table table-striped table-hover'>
-                {{award_list|log}}
-                {% for award_obj in award_list%}
-                {{award_obj|log}}
-                <tr>
-                  <td class='font16 bold'>{{award_obj.award_key}}</td>
-                  <td>
-                    <ul class='no-list-style'>
-                      {% for award in award_obj.awards%}
-                      <li>
-                        {% if award.award_href|length > 0%}
-                          <a href="{{award.award_href}}">{{award.award_name}}</a>
-                        {% else %}
-                          {{award.award_name}}
-                        {%endif%}
-                      </li>
-                      {% endfor %}
-                    </ul>
-                  </td>
-                </tr>
-                {%endfor%}
-              </table>
+                  <table class='table table-striped table-hover'>
+                    {% for award_obj in award_list%}
+                      <tr>
+                        <td class='font16 bold'>{{award_obj.award_key}}</td>
+                        <td>
+                          <ul class='no-list-style'>
+                            {% for award in award_obj.awards%}
+                              <li>
+                                {% if award.award_href|length > 0%}
+                                  <a href="{{award.award_href}}">{{award.award_name}}</a>
+                                {% else %}
+                                  {{award.award_name}}
+                                  {%endif%}
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          </td>
+                        </tr>
+                        {%endfor%}
+                      </table>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="tab-content" style='display:none;' id="nav-ratings" >
-        <div class='w3-container'>
-          <div class='w3-row-padding'>
-            <div class='w3-col l12 mw1000'>
-              <div class="card margin-bottom-24">
-                <table class='width100 table table-striped table-hover '>
-                    
-                </table>
-
-              </div>
-
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="" id='face'>
-
-  </div>
-</body>
+        <div class="" id='face'></div>
+      </body>

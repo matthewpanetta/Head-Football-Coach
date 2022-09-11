@@ -7,7 +7,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/b/b0/Connecticut_Huskies_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 9,
@@ -37,7 +38,8 @@
     "team_color_secondary_hex": "A08B4D",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/c/c1/South_Florida_Bulls_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 14,
@@ -67,7 +69,8 @@
     "team_color_secondary_hex": "231F20",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/UCF_Knights_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 14,
@@ -97,7 +100,9 @@
     "team_color_secondary_hex": "1890CC",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/2/28/Tulane_Green_Wave_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "TULANE"
     },
     "team_ratings": {
       "location": 14,
@@ -127,7 +132,10 @@
     "team_color_secondary_hex": "C5B783",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Navy_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "NAVY",
+      "lettering_color": "C5B783"
     },
     "team_ratings": {
       "location": 9,
@@ -157,7 +165,10 @@
     "team_color_secondary_hex": "FFCE28",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/c/c7/East_Carolina_Pirates_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "ECU",
+      "lettering_color": "FFCE28"
     },
     "team_ratings": {
       "location": 9,
@@ -187,7 +198,9 @@
     "team_color_secondary_hex": "E00122",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Cincinnati_Bearcats_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "CINCINNATI"
     },
     "team_ratings": {
       "location": 8,
@@ -217,7 +230,9 @@
     "team_color_secondary_hex": "C8102E",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Tulsa_Golden_Hurricane_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "TULSA"
     },
     "team_ratings": {
       "location": 2,
@@ -247,7 +262,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Temple_T_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "TEMPLE"
     },
     "team_ratings": {
       "location": 12,
@@ -277,7 +294,9 @@
     "team_color_secondary_hex": "8B8E91",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/4/45/Memphis_Tigers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "MEMPHIS"
     },
     "team_ratings": {
       "location": 12,
@@ -307,7 +326,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Houston_Cougars_primary_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "HOUSTON"
     },
     "team_ratings": {
       "location": 12,
@@ -337,7 +358,9 @@
     "team_color_secondary_hex": "27388F",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/33/SMU_Mustang_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "DALLAS"
     },
     "team_ratings": {
       "location": 14,
@@ -367,7 +390,8 @@
     "team_color_secondary_hex": "A8936B",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/d/d5/Florida_State_Seminoles_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 12,
@@ -397,7 +421,8 @@
     "team_color_secondary_hex": "204F33",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Miami_Hurricanes_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-ponies"
     },
     "team_ratings": {
       "location": 18,
@@ -427,7 +452,8 @@
     "team_color_secondary_hex": "091D3A",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Georgia_Tech_Yellow_Jackets_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 14,
@@ -457,7 +483,9 @@
     "team_color_secondary_hex": "070707",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/5/59/Louisville_Cardinals_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "LOUISVILLE"
     },
     "team_ratings": {
       "location": 9,
@@ -487,7 +515,8 @@
     "team_color_secondary_hex": "DBCCA4",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/9/96/Boston_College_Eagles_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-ponies"
     },
     "team_ratings": {
       "location": 14,
@@ -517,7 +546,11 @@
     "team_color_secondary_hex": "06162E",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Syracuse_Orange_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "ORANGE",
+      "lettering_color": "C82F04",
+      "flip_primaries": true
     },
     "team_ratings": {
       "location": 3,
@@ -547,7 +580,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Duke_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-two-stripe",
+      "lettering": "DUKE"
     },
     "team_ratings": {
       "location": 12,
@@ -577,7 +612,10 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e1/North_Carolina_State_University_Athletic_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "NC STATE",
+      "todo": "three stipes"
     },
     "team_ratings": {
       "location": 11,
@@ -607,7 +645,8 @@
     "team_color_secondary_hex": "13294B",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/North_Carolina_Tar_Heels_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 12,
@@ -637,7 +676,9 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Wake_Forest_University_Athletic_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "flip_primaries": true
     },
     "team_ratings": {
       "location": 11,
@@ -668,7 +709,7 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/4/44/Pitt_Panthers_wordmark.svg",
     "jersey": {
       "invert": false,
-      "id": "football"
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 9,
@@ -699,7 +740,7 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/7/72/Clemson_Tigers_logo.svg",
     "jersey": {
       "invert": false,
-      "id": "football"
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 8,
@@ -730,7 +771,7 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/1/1e/Virginia_Cavaliers_logo.svg",
     "jersey": {
       "invert": false,
-      "id": "football"
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 3,
@@ -761,7 +802,7 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/6/60/Virginia_Tech_Hokies_logo.svg",
     "jersey": {
       "invert": false,
-      "id": "football2"
+      "id": "football-ponies"
     },
     "team_ratings": {
       "location": 8,
@@ -792,7 +833,7 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Iowa_State_Cyclones_logo.svg",
     "jersey": {
       "invert": false,
-      "id": "football5"
+      "id": "football-three-stripe"
     },
     "team_ratings": {
       "location": 6,
@@ -822,7 +863,9 @@
     "team_color_secondary_hex": "E8000D",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/f/f4/Kansas_Jayhawks_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "KANSAS"
     },
     "team_ratings": {
       "location": 5,
@@ -852,7 +895,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/e/e5/Kansas_State_Wildcats_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 6,
@@ -882,7 +926,9 @@
     "team_color_secondary_hex": "ffffff",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/6/61/Oklahoma_Sooners_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "OKLAHOMA"
     },
     "team_ratings": {
       "location": 6,
@@ -912,7 +958,9 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Oklahoma_State_University_system_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "flip_primaries": true
     },
     "team_ratings": {
       "location": 8,
@@ -942,7 +990,8 @@
     "team_color_secondary_hex": "FCB212",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Baylor_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 2,
@@ -972,7 +1021,8 @@
     "team_color_secondary_hex": "A3A9AC",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/1/15/TCU_Horned_Frogs_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 12,
@@ -1002,7 +1052,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Texas_Longhorns_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "TEXAS"
     },
     "team_ratings": {
       "location": 17,
@@ -1032,7 +1084,10 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Texas_Tech_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering_color": "TEXAS TECH",
+      "flip_primaries": true
     },
     "team_ratings": {
       "location": 6,
@@ -1063,7 +1118,7 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e8/West_Virginia_Mountaineers_logo.svg",
     "jersey": {
       "invert": false,
-      "id": "football2"
+      "id": "football-ponies"
     },
     "team_ratings": {
       "location": 6,
@@ -1093,7 +1148,8 @@
     "team_color_secondary_hex": "0A1A39",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/9/91/Illinois_Fighting_Illini_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 9,
@@ -1123,7 +1179,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Northwestern_Wildcats_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "NORTHWESTERN"
     },
     "team_ratings": {
       "location": 13,
@@ -1153,7 +1211,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/4/47/Indiana_Hoosiers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "INDIANA"
     },
     "team_ratings": {
       "location": 9,
@@ -1183,7 +1243,9 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/35/Purdue_Boilermakers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "flip_primaries": true
     },
     "team_ratings": {
       "location": 9,
@@ -1213,7 +1275,8 @@
     "team_color_secondary_hex": "FFD700",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/7/7b/Iowa_Hawkeyes_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 8,
@@ -1243,7 +1306,9 @@
     "team_color_secondary_hex": "FEC619",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Maryland_Terrapins_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "MARYLAND"
     },
     "team_ratings": {
       "location": 11,
@@ -1273,7 +1338,8 @@
     "team_color_secondary_hex": "FFCB05",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Michigan_Wolverines_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 11,
@@ -1303,7 +1369,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/a/a7/Michigan_State_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "MICHIGAN STATE"
     },
     "team_ratings": {
       "location": 2,
@@ -1333,7 +1401,8 @@
     "team_color_secondary_hex": "FBB246",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Minnesota_Golden_Gophers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 9,
@@ -1363,7 +1432,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Nebraska_Cornhuskers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 6,
@@ -1393,7 +1463,9 @@
     "team_color_secondary_hex": "5F6A72",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Rutgers_Scarlet_Knights_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "RUTGERS"
     },
     "team_ratings": {
       "location": 9,
@@ -1423,7 +1495,8 @@
     "team_color_secondary_hex": "b0b7bc",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Ohio_State_Buckeyes_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 11,
@@ -1453,7 +1526,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/3/3a/Penn_State_Nittany_Lions_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 7,
@@ -1483,7 +1557,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Wisconsin_Badgers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 9,
@@ -1513,7 +1588,9 @@
     "team_color_secondary_hex": "BEB66A",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/f/ff/UAB_Blazers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "UAB"
     },
     "team_ratings": {
       "location": 4,
@@ -1543,7 +1620,8 @@
     "team_color_secondary_hex": "CD1041",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/4/40/Florida_Atlantic_Owls_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 14,
@@ -1573,7 +1651,10 @@
     "team_color_secondary_hex": "B6862C",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/1/1d/FIU_Panthers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "PANTHERS",
+      "lettering_color": "B6862C"
     },
     "team_ratings": {
       "location": 15,
@@ -1603,7 +1684,8 @@
     "team_color_secondary_hex": "010000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/1/1d/WKU_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-ponies"
     },
     "team_ratings": {
       "location": 4,
@@ -1633,7 +1715,9 @@
     "team_color_secondary_hex": "BF1B2B",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/8/86/Louisiana_Tech_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-three-stripe",
+      "todo": "white secondary white"
     },
     "team_ratings": {
       "location": 4,
@@ -1663,7 +1747,10 @@
     "team_color_secondary_hex": "010000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/5/5d/Southern_Miss_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "SOUTHERN MISS",
+      "lettering_color": "F7C237"
     },
     "team_ratings": {
       "location": 4,
@@ -1693,7 +1780,9 @@
     "team_color_secondary_hex": "897637",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/33/Charlotte_49ers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-three-stripe",
+      "todo": "white gold white"
     },
     "team_ratings": {
       "location": 4,
@@ -1718,12 +1807,13 @@
   {
     "school_name": "Middle Tennessee",
     "team_name": "Blue Raiders",
-    "team_abbreviation": "MT",
+    "team_abbreviation": "MTSU",
     "team_color_primary_hex": "094FC1",
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Middle_Tennessee_MT_Logomark.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 4,
@@ -1753,7 +1843,9 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/a/a2/North_Texas_Mean_Green_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "MEAN GREEN"
     },
     "team_ratings": {
       "location": 4,
@@ -1780,10 +1872,12 @@
     "team_name": "Owls",
     "team_abbreviation": "RICE",
     "team_color_primary_hex": "011648",
-    "team_color_secondary_hex": "000000",
+    "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Rice_Owls_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "RICE"
     },
     "team_ratings": {
       "location": 4,
@@ -1813,7 +1907,9 @@
     "team_color_secondary_hex": "FD6D07",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/0/06/UTEP_Miners_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "UTEP"
     },
     "team_ratings": {
       "location": 1,
@@ -1843,7 +1939,10 @@
     "team_color_secondary_hex": "EE5C1A",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/8/84/UTSA_Roadrunners_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "UTSA",
+      "lettering_color": "EE5C1A"
     },
     "team_ratings": {
       "location": 2,
@@ -1873,7 +1972,9 @@
     "team_color_secondary_hex": "858A8D",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/b/b4/Old_Dominion_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "OLD DOMINION"
     },
     "team_ratings": {
       "location": 4,
@@ -1903,7 +2004,9 @@
     "team_color_secondary_hex": "1B1718",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Marshall_Thundering_Herd_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "THE HERD"
     },
     "team_ratings": {
       "location": 4,
@@ -1933,7 +2036,8 @@
     "team_color_secondary_hex": "C99700",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/f/f5/Notre_Dame_Fighting_Irish_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 8,
@@ -1963,7 +2067,9 @@
     "team_color_secondary_hex": "7E8081",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/2/23/UMass_Amherst_athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "MASSACHUSETTS"
     },
     "team_ratings": {
       "location": 8,
@@ -1993,7 +2099,9 @@
     "team_color_secondary_hex": "777777",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/c/c8/New_Mexico_State_Aggies_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "NEW MEXICO STATE"
     },
     "team_ratings": {
       "location": 3,
@@ -2023,7 +2131,8 @@
     "team_color_secondary_hex": "C9A06C",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Army_West_Point_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 2,
@@ -2053,7 +2162,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/9/95/BYU_Cougars_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "todo": "logo on collar"
     },
     "team_ratings": {
       "location": 6,
@@ -2083,7 +2194,8 @@
     "team_color_secondary_hex": "850003",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/8/80/Liberty_Flames_logo.svg",
     "jersey": {
-      "invert": true
+      "invert": true,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 3,
@@ -2113,7 +2225,9 @@
     "team_color_secondary_hex": "9ea2a2",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/8/87/Northern_Illinois_Huskies_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "NIU"
     },
     "team_ratings": {
       "location": 2,
@@ -2143,7 +2257,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/e/e4/Ball_State_Cardinals_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-three-stripe",
+      "lettering": "BALL STATE"
     },
     "team_ratings": {
       "location": 2,
@@ -2173,7 +2289,10 @@
     "team_color_secondary_hex": "ffc82e",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Central_Michigan_Chippewas_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "CHIPPEWAS",
+      "lettering_color": "ffc82e"
     },
     "team_ratings": {
       "location": 2,
@@ -2203,7 +2322,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Eastern_Michigan_Eagles_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 2,
@@ -2233,7 +2353,10 @@
     "team_color_secondary_hex": "b5a268",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Western_Michigan_Broncos_%282021%29_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "BRONCOS",
+      "lettering_color": "b5a268"
     },
     "team_ratings": {
       "location": 2,
@@ -2263,7 +2386,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/5/5e/Buffalo_Bulls_Athletic_Logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "BUFFALO"
     },
     "team_ratings": {
       "location": 2,
@@ -2293,7 +2418,10 @@
     "team_color_secondary_hex": "a89968",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Akron_Zips_logo_2022.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "AKRON",
+      "lettering_color": "a89968"
     },
     "team_ratings": {
       "location": 2,
@@ -2323,7 +2451,10 @@
     "team_color_secondary_hex": "4f2c1d",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/2/2b/Bowling_Green_Falcons_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "BOWLING GREEN",
+      "lettering_color": "4f2c1d"
     },
     "team_ratings": {
       "location": 2,
@@ -2353,7 +2484,10 @@
     "team_color_secondary_hex": "efab00",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/a/a6/Kent_State_athletic_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "GOLDEN FLASHES",
+      "lettering_color": "efab00"
     },
     "team_ratings": {
       "location": 2,
@@ -2383,7 +2517,10 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Miami_Redhawks_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "MIAMI",
+      "todo": "shoulder stripes"
     },
     "team_ratings": {
       "location": 2,
@@ -2413,7 +2550,9 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/7/78/Ohio_Bobcats_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "OHIO"
     },
     "team_ratings": {
       "location": 2,
@@ -2443,7 +2582,8 @@
     "team_color_secondary_hex": "FFDA00",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/f/fa/Toledo_Rockets_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 2,
@@ -2473,7 +2613,9 @@
     "team_color_secondary_hex": "00235d",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/7/7c/Fresno_State_Bulldogs_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "FRESNO"
     },
     "team_ratings": {
       "location": 7,
@@ -2503,7 +2645,11 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/San_Diego_State_Aztecs_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-three-stripe",
+      "lettering": "SAN DIEGO STATE",
+      "lettering_color": "000",
+      "flip_primaries": true
     },
     "team_ratings": {
       "location": 17,
@@ -2533,7 +2679,10 @@
     "team_color_secondary_hex": "FBD016",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/e/ec/San_Jose_State_Spartans_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "SAN JOSE STATE",
+      "lettering_color": "FBD016"
     },
     "team_ratings": {
       "location": 11,
@@ -2560,10 +2709,13 @@
     "team_name": "Falcons",
     "team_abbreviation": "AFA",
     "team_color_primary_hex": "00458C",
-    "team_color_secondary_hex": "FFFFFF",
+    "team_color_secondary_hex": "B2B4B2",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Air_Force_Falcons_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "AIR FORCE",
+      "lettering_color": "B2B4B2"
     },
     "team_ratings": {
       "location": 8,
@@ -2593,7 +2745,9 @@
     "team_color_secondary_hex": "c8c372",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/1/14/Colorado_State_Rams_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "COLORADO STATE"
     },
     "team_ratings": {
       "location": 11,
@@ -2623,7 +2777,9 @@
     "team_color_secondary_hex": "FA4616",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/9/94/Primary_Boise_State_Broncos_Athletics_Logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "BOISE STATE"
     },
     "team_ratings": {
       "location": 5,
@@ -2653,7 +2809,9 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/2/21/Nevada_Wolf_Pack_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "NEVADA"
     },
     "team_ratings": {
       "location": 8,
@@ -2683,7 +2841,9 @@
     "team_color_secondary_hex": "C6C8C9",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/UNLV_Rebels_wordmark.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "REBELS"
     },
     "team_ratings": {
       "location": 10,
@@ -2713,7 +2873,9 @@
     "team_color_secondary_hex": "9fa0a2",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/4/45/New_Mexico_Lobos_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "NEW MEXICO"
     },
     "team_ratings": {
       "location": 7,
@@ -2743,7 +2905,10 @@
     "team_color_secondary_hex": "8A8D8F",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/5/59/Utah_State_Aggies_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "UTAH STATE",
+      "lettering_color": "8A8D8F"
     },
     "team_ratings": {
       "location": 3,
@@ -2773,7 +2938,10 @@
     "team_color_secondary_hex": "ffc425",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/9/91/Wyoming_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "WYOMING",
+      "lettering_color": "ffc425"
     },
     "team_ratings": {
       "location": 2,
@@ -2803,7 +2971,8 @@
     "team_color_secondary_hex": "C10230",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Arizona_Wildcats_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 14,
@@ -2833,7 +3002,8 @@
     "team_color_secondary_hex": "FEC927",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/0/0a/Arizona_State_Sun_Devils_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 13,
@@ -2863,7 +3033,8 @@
     "team_color_secondary_hex": "E29819",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/8/8b/California_Golden_Bears_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-sparta"
     },
     "team_ratings": {
       "location": 13,
@@ -2893,7 +3064,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Stanford_Cardinal_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 13,
@@ -2924,7 +3096,7 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/ed/UCLA_Bruins_script.svg",
     "jersey": {
       "invert": false,
-      "id": "football3"
+      "id": "football-three-stripe"
     },
     "team_ratings": {
       "location": 20,
@@ -2955,7 +3127,7 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/9/94/USC_Trojans_logo.svg",
     "jersey": {
       "invert": false,
-      "id": "football4"
+      "id": "football-sparta"
     },
     "team_ratings": {
       "location": 20,
@@ -2985,7 +3157,9 @@
     "team_color_secondary_hex": "C4AB68",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/d/d3/Colorado_Buffaloes_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "COLRADO"
     },
     "team_ratings": {
       "location": 14,
@@ -3015,7 +3189,8 @@
     "team_color_secondary_hex": "FEE11A",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Oregon_Ducks_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 12,
@@ -3045,7 +3220,9 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/1/1b/Oregon_State_Beavers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "Beavs"
     },
     "team_ratings": {
       "location": 13,
@@ -3075,7 +3252,9 @@
     "team_color_secondary_hex": "808080",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/b/be/Utah_Utes_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "UTAH"
     },
     "team_ratings": {
       "location": 9,
@@ -3105,7 +3284,8 @@
     "team_color_secondary_hex": "e8d3a2",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Washington_Huskies_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 7,
@@ -3135,7 +3315,8 @@
     "team_color_secondary_hex": "5E6A71",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/0/07/Washington_State_Cougars_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 7,
@@ -3165,7 +3346,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/1/12/Alabama_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 8,
@@ -3195,7 +3377,9 @@
     "team_color_secondary_hex": "E26D35",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/1/15/Auburn_Tigers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "AUBURN"
     },
     "team_ratings": {
       "location": 8,
@@ -3225,7 +3409,9 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/8/81/Arkansas_Razorbacks_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "ARKANSAS"
     },
     "team_ratings": {
       "location": 7,
@@ -3255,7 +3441,8 @@
     "team_color_secondary_hex": "FF4208",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/1/14/Florida_Gators_gator_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 2,
@@ -3285,7 +3472,8 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/8/80/Georgia_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 11,
@@ -3315,7 +3503,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Kentucky_Wildcats_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "KENTUCKY"
     },
     "team_ratings": {
       "location": 8,
@@ -3345,7 +3535,10 @@
     "team_color_secondary_hex": "FDB827",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/LSU_Athletics_logo.svg",
     "jersey": {
-      "invert": true
+      "invert": true,
+      "id": "football-three-stripe",
+      "lettering": "LSU",
+      "lettering_color": "FDB827"
     },
     "team_ratings": {
       "location": 13,
@@ -3375,7 +3568,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/36/Mississippi_State_Bulldogs_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 9,
@@ -3405,7 +3599,9 @@
     "team_color_secondary_hex": "CE1026",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Ole_Miss_Rebels_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-two-stripe",
+      "lettering": "Ole Miss"
     },
     "team_ratings": {
       "location": 8,
@@ -3435,7 +3631,8 @@
     "team_color_secondary_hex": "F1B82D",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/2/2c/Missouri_Tigers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 5,
@@ -3465,7 +3662,9 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/9/94/South_Carolina_Gamecocks_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-two-stripe",
+      "lettering": "CAROLINA"
     },
     "team_ratings": {
       "location": 8,
@@ -3495,7 +3694,8 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Tennessee_Volunteers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 8,
@@ -3525,7 +3725,11 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": null,
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "COMMODORES",
+      "lettering_color": "866D4B",
+      "flip_primaries": true
     },
     "team_ratings": {
       "location": 14,
@@ -3555,7 +3759,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Texas_A%26M_University_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "TEXAS A&M"
     },
     "team_ratings": {
       "location": 2,
@@ -3585,7 +3791,9 @@
     "team_color_secondary_hex": "0E1944",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/South_Alabama_Jaguars_wordmark.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "JAGUARS"
     },
     "team_ratings": {
       "location": 4,
@@ -3615,7 +3823,9 @@
     "team_color_secondary_hex": "7E7F7E",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Troy_Trojans_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "TROY"
     },
     "team_ratings": {
       "location": 4,
@@ -3645,7 +3855,10 @@
     "team_color_secondary_hex": "000000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/3/36/Arkansas_State_Red_Wolves_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "ARKANSAS STATE",
+      "lettering_color": "000000"
     },
     "team_ratings": {
       "location": 4,
@@ -3705,7 +3918,8 @@
     "team_color_secondary_hex": "9ba1a6",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/2/2a/Georgia_Southern_Eagles_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 4,
@@ -3735,7 +3949,9 @@
     "team_color_secondary_hex": "FFFFFF",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/3/3b/Georgia_State_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "GEORGIA STATE"
     },
     "team_ratings": {
       "location": 4,
@@ -3765,7 +3981,9 @@
     "team_color_secondary_hex": "0a0203",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/0/06/Ragin_Cajuns_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "LOUISIANA"
     },
     "team_ratings": {
       "location": 4,
@@ -3795,7 +4013,10 @@
     "team_color_secondary_hex": "fdb913",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/c/c9/Louisiana-Monroe_Warhawks_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "WARHAWKS",
+      "lettering_color": "fdb913"
     },
     "team_ratings": {
       "location": 4,
@@ -3821,11 +4042,12 @@
     "school_name": "Appalachian State",
     "team_name": "Mountaineers",
     "team_abbreviation": "APP",
-    "team_color_primary_hex": "fc0",
-    "team_color_secondary_hex": "222",
+    "team_color_primary_hex": "222",
+    "team_color_secondary_hex": "fc0",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Appalachian_State_Mountaineers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 4,
@@ -3855,7 +4077,10 @@
     "team_color_secondary_hex": "a27752",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/e/ef/Coastal_Carolina_Chanticleers_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "COASTAL",
+      "lettering_color": "000"
     },
     "team_ratings": {
       "location": 11,
@@ -3885,7 +4110,10 @@
     "team_color_secondary_hex": "8d734a",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/9/97/Texas_State_Bobcats_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "BOBCATS",
+      "lettering_color": "8d734a"
     },
     "team_ratings": {
       "location": 4,
@@ -3915,7 +4143,8 @@
     "team_color_secondary_hex": "CCCCCC",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/d/de/Hawaii_Warriors_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard"
     },
     "team_ratings": {
       "location": 16,
@@ -3975,7 +4204,10 @@
     "team_color_secondary_hex": "b5a36a",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/6/6d/James_Madison_University_Athletics_logo.svg",
     "jersey": {
-      "invert": false
+      "invert": false,
+      "id": "football-standard",
+      "lettering": "JAMES MADISON",
+      "lettering_color": "b5a36a"
     },
     "team_ratings": {
       "location": 5,
