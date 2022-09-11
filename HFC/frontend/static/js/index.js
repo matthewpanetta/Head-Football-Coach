@@ -7008,7 +7008,7 @@ const sim_game = (game_dict, common) => {
     possession_count = 0,
     adjusted_score_possibilities = {};
 
-  game_dict.home_field_advantage_modifier = 1.01;
+  game_dict.home_field_advantage_modifier = 1.03;
 
   var drive_within_20 = false;
   var drive_within_40 = false;
@@ -7929,57 +7929,26 @@ const sim_game = (game_dict, common) => {
     4
   );
 
-  var results_rows_html = `
-	<table  class="bottom-border width100 worldUpcomingTable" style='width: 33%'>
-			<thead>
-				<th class="bottom-border left-text hide-small" colspan="3">
-					<span class='font10 padBottom20 margin-8'>Final</span>
-				</th>
-			</thead>
-			<tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
-				<td class=' hide-small'style='background-color: #${game_dict.teams[winning_team_index].team_color_primary_hex}; width: 1%;'>
-						<img class="logo logo-30 margin-8"  loading="lazy" src="${game_dict.teams[winning_team_index].team_logo}" alt="">
-				</td>
-				<td class='worldUpcomingGameCell padding-left-8' >
-					<div class='margin0'>
-						<span>${game_dict.team_seasons[winning_team_index].national_rank_display}</span>
-						<span class='bold'>${game_dict.teams[winning_team_index].school_name}</span>
-					</div>
-					<div class="">
-						<span class='font10'>(${game_dict.team_seasons[winning_team_index].record_display})</span>
-					</div>
-				</td>
-				<td class='bold'>
-					${scoring.final[winning_team_index]}
-				</td>
-			</tr>
-			<tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
-				<td class=' hide-small'  style='background-color: #${game_dict.teams[losing_team_index].team_color_primary_hex}; width: 1%;'>
-						<img class="logo logo-30 margin-8"  loading="lazy" src="${game_dict.teams[losing_team_index].team_logo}" alt="">
-				</td>
-				<td class='worldUpcomingGameCell padding-left-8'>
-					<div class='margin0'>
-						<span>${game_dict.team_seasons[losing_team_index].national_rank_display}</span>
-						<span class=''>${game_dict.teams[losing_team_index].school_name}</span>
-					</div>
-					<div class="">
-						<span class='font10'>(${game_dict.team_seasons[losing_team_index].record_display})</span>
-					</div>
-				</td>
-				<td>
-					${scoring.final[losing_team_index]}
-				</td>
-			</tr>
-		</table>
+  $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-final-span`).text('Final')
+  $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-home-score`).text(scoring.final[1])
+  $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-away-score`).text(scoring.final[0])
 
-`;
+  let modal_winning_team_suffix = game_dict.team_games[winning_team_index].is_home_team ? 'home' : 'away';
 
-  var resulting_rows = $(results_rows_html);
-  $(".modal-body").append(resulting_rows);
+  $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-${modal_winning_team_suffix}-team-name`).addClass('bold');
+  $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-${modal_winning_team_suffix}-score`).addClass('bold');
+
   return game_dict;
 };
 
 const sim_week_games = async (this_week, common) => {
+  $('.modal-body').empty();
+  $('.modal-body').append(`<div class='width100 left-text'>Simulating <span class=''>${this_week.week_name}</span></div>`);
+
+  var url = "/static/html_templates/common_templates/sim_game_modal_result_table.njk";
+  var html = await fetch(url);
+  html = await html.text();
+
   const db = await common.db;
   var startTime = performance.now();
   common.startTime = startTime;
@@ -8064,6 +8033,7 @@ const sim_week_games = async (this_week, common) => {
     .where({ week_id: this_week.week_id })
     .toArray();
   games_this_week = games_this_week.filter((g) => g.was_played == false);
+  games_this_week = games_this_week.sort((g_a, g_b) => g_a.summed_national_rank - g_b.summed_national_rank);
   //games_this_week = games_this_week.filter((g) => g.home_team_season_id > 0 && g.away_team_season_id > 0);
   //games_this_week = games_this_week.filter(g => g.was_played == false);
 
@@ -8185,6 +8155,12 @@ const sim_week_games = async (this_week, common) => {
     game_dict.headlines = [];
 
     game_dicts_this_week.push(game_dict);
+
+    console.log({game_dict:game_dict})
+
+    let renderedHtml = common.nunjucks_env.renderString(html, game_dict);
+    $(".modal-body").append(renderedHtml);
+  
   }
 
   var completed_games = [],
@@ -10409,21 +10385,24 @@ const choose_all_americans = async (this_week, common) => {
     );
     for (var i = 0; i < position_count_map[position]; i++) {
       player_team_season = position_player_team_seasons[i];
-      var a = new award(
-        award_id,
-        player_team_season.player_team_season_id,
-        null,
-        this_week.week_id,
-        this_week.season,
-        "position",
-        position,
-        "national",
-        "regular season",
-        null,
-        "Freshman"
-      );
-      awards_to_save.push(a);
-      award_id += 1;
+      if (player_team_season) {
+        var a = new award(
+          award_id,
+          player_team_season.player_team_season_id,
+          null,
+          this_week.week_id,
+          this_week.season,
+          "position",
+          position,
+          "national",
+          "regular season",
+          null,
+          "Freshman"
+        );
+        awards_to_save.push(a);
+        award_id += 1;
+      }
+      
     }
   }
 
@@ -10982,7 +10961,7 @@ const assign_conference_champions = async (this_week, common) => {
   losing_team_seasons.forEach(function (ts) {
     let conference_season =
       conference_seasons_by_conference_season_id[ts.conference_season_id];
-    conference_season.conference_champion_team_season_id = ts.team_season_id;
+    // conference_season.conference_champion_team_season_id = ts.team_season_id;
 
     if (conference_season.conference.divisions.length == 2){
       ts.results.division_champion = true;

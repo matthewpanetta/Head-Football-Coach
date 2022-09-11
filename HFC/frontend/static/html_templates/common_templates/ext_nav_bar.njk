@@ -31,13 +31,13 @@
   {% endfor %}
 </div>
 
-<div class="w3-modal" tabindex="-1" role="dialog" id='SimDayModal'>
+<div class="w3-modal" tabindex="-1" role="dialog" id='SimDayModal' style='padding-top: 10px;'>
   <div class="s8">
-    <div class="w3-modal-content w3-container">
-      <div class="modal-body w3-row-padding">
+    <div class="card w3-modal-content">
+      <div class="w3-bar team-primary-background-bar-generic" style='background-color: #{{page.PrimaryColor}}; color:white; border-top: 4px solid #{{page.SecondaryColor}};'>
+        <span class='hide-small'>Simulating...</span>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <div class="modal-body w3-row-padding flex-start">
       </div>
     </div>
   </div>

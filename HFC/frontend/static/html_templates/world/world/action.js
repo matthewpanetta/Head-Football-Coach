@@ -95,6 +95,23 @@ const refresh_playoffs = async (common) => {
   console.log("done");
 };
 
+const check_db_size = async (common, db) => {
+  console.log({db:db, idbdb: db.idbdb.objectStoreNames});
+  let table_lengths = []
+  let requests = Object.entries(db.idbdb.objectStoreNames).forEach(async function(l, ind){
+    console.log({l:l, ind:ind, 'db.idbdb.objectStoreNames.length': db.idbdb.objectStoreNames.length})
+    let table_name = l[1]
+    let rows = await db[table_name].toArray();
+    let strigified_rows = JSON.stringify(rows);
+    let characters_per_row = strigified_rows.length / rows.length
+
+    console.log(
+      {table_name:table_name, row_count: rows.length, str_count: strigified_rows.length , characters_per_row:characters_per_row}
+    )
+
+  })
+}
+
 const refresh_bowls = async (common) => {
   const db = common.db;
   const season = common.season;
@@ -509,24 +526,8 @@ const action = async (common) => {
     await common.populate_player_modal(common, this);
   });
 
-  console.log({db:db, idbdb: db.idbdb.objectStoreNames});
-  let table_lengths = []
-  let requests = Object.entries(db.idbdb.objectStoreNames).forEach(async function(l, ind){
-    console.log({l:l, ind:ind, 'db.idbdb.objectStoreNames.length': db.idbdb.objectStoreNames.length})
-    let table_name = l[1]
-    let rows = await db[table_name].toArray();
-    let strigified_rows = JSON.stringify(rows);
-    let characters_per_row = strigified_rows.length / rows.length
-
-    console.log(
-      {table_name:table_name, row_count: rows.length, str_count: strigified_rows.length , characters_per_row:characters_per_row}
-    )
-
-  })
 
 
-  
-  //debugger;
 
 };
 

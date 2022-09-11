@@ -1,0 +1,41 @@
+<table id='game-modal-result-table-{{game.game_id}}' class="bottom-border width100 worldUpcomingTable" style='width: 33%'>
+  <thead>
+    <th class="bottom-border left-text hide-small" colspan="3">
+      <span class='font10 padBottom20 margin-8 game-modal-result-table-final-span'></span>
+    </th>
+  </thead>
+  <tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
+    <td class=' hide-small'style='background-color: #{{teams[0].team_color_primary_hex}}; width: 1%;'>
+      <img class="logo logo-30 margin-8"  loading="lazy" src="{{teams[0].team_logo}}" alt="">
+    </td>
+    <td class='worldUpcomingGameCell padding-left-8' >
+      <div class='margin0'>
+        <span>{{team_seasons[0].national_rank_display}}</span>
+        <span class='game-modal-result-table-away-team-name'>{{teams[0].school_name}}</span>
+      </div>
+      <div class="">
+        <span class='font10'>({{team_seasons[0].record_display}})</span>
+      </div>
+    </td>
+    <td class='game-modal-result-table-away-score'>
+      {# {{scoring.final[0]}} #}
+    </td>
+  </tr>
+  <tr class=" w3-margin" style='border-bottom: 1px solid #ddd;'>
+    <td class=' hide-small'  style='background-color: #{{teams[1].team_color_primary_hex}}; width: 1%;'>
+      <img class="logo logo-30 margin-8"  loading="lazy" src="{{teams[1].team_logo}}" alt="">
+    </td>
+    <td class='worldUpcomingGameCell padding-left-8'>
+      <div class='margin0'>
+        <span>{{team_seasons[1].national_rank_display}}</span>
+        <span class='game-modal-result-table-home-team-name'>{{teams[1].school_name}}</span>
+      </div>
+      <div class="">
+        <span class='font10'>({{team_seasons[1].record_display}})</span>
+      </div>
+    </td>
+    <td class='game-modal-result-table-home-score'>
+					{# {{scoring.final[1]}} #}
+				</td>
+  </tr>
+</table>
