@@ -5725,15 +5725,15 @@ const populate_cities = async (ddb) => {
     new_city_obj = states[city_obj.state][city_obj.city];
     if (!(new_city_obj.player_count == undefined)) {
       new_city_obj.occurance = new_city_obj.player_count;
-      new_city_obj.stop = city_start + new_city_obj.occurance - 1;
-      cities_to_add.push({
-        city: new_city_obj.city,
-        state: new_city_obj.state,
-        stop: new_city_obj.stop,
-        lat: new_city_obj.lat,
-        long: new_city_obj.long,
-      });
-      city_start += new_city_obj.player_count;
+      if (new_city_obj.occurance > 0){
+        cities_to_add.push({
+          city: new_city_obj.city,
+          state: new_city_obj.state,
+          lat: new_city_obj.lat,
+          long: new_city_obj.long,
+          occurance: new_city_obj.occurance,
+        });
+      }  
     }
   });
 
@@ -5781,15 +5781,19 @@ const random_name = async (ddb, num_names) => {
 
 const random_city = async (ddb, num_cities) => {
   let city_list = await ddb.cities.toArray();
-  city_list = city_list.sort((c_a, c_b) => c_a.stop - c_b.stop);
-  final_city_obj = city_list[city_list.length - 1];
+  let chosen_city_list = []
+
+  let total_occurance = sum(city_list.map(c => c.occurance));
 
   for (var i = 0; i <= num_cities; i++) {
-    const r_city = Math.floor(Math.random() * final_city_obj.stop);
-    const chosen_city = city_list.find((city_obj) => city_obj.stop > r_city);
-    city_list.push(chosen_city);
+    let r_city = Math.floor(Math.random() * total_occurance);
+    let chosen_city = city_list.find(function(city_obj){
+      r_city -= city_obj.occurance;
+      return r_city <= 0;
+    });
+    chosen_city_list.push(chosen_city);
   }
-  return city_list;
+  return chosen_city_list;
 };
 
 const driver_db = async () => {
@@ -5797,12 +5801,12 @@ const driver_db = async () => {
 
   ddb = await new Dexie(dbname);
 
-  await ddb.version(7).stores({
+  await ddb.version(8).stores({
     world: "++world_id",
     setting: "",
     first_names: "stop",
     last_names: "stop",
-    cities: "[city+state], stop",
+    cities: "[city+state]",
   });
 
   // Open the database
