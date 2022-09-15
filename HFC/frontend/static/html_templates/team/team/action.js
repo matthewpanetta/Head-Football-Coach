@@ -127,6 +127,8 @@ const getHtml = async (common) => {
     "week_id"
   );
 
+  common.stopwatch(common, "Time after fetching weeks");
+
   const NavBarLinks = await common.nav_bar_links({
     path: "Overview",
     group_name: "Team",
@@ -138,6 +140,8 @@ const getHtml = async (common) => {
     season: common.params.season,
     db: db,
   });
+
+  common.stopwatch(common, "Time after fetching navbar links");
 
   var teams = await db.team.where("team_id").above(0).toArray();
   teams = teams.sort(function (teamA, teamB) {
@@ -162,6 +166,8 @@ const getHtml = async (common) => {
   team_season.season_stats = team_season_stats;
   common.current_team_season = team_season;
 
+  common.stopwatch(common, "Time after fetching teams");
+
   const conference_seasons_by_conference_season_id = await index_group(
     await db.conference_season.where({ season: season }).toArray(),
     "index",
@@ -172,6 +178,9 @@ const getHtml = async (common) => {
     "index",
     "conference_id"
   );
+
+  common.stopwatch(common, "Time after fetching conferences");
+
 
   team.team_season = team_season;
   team.team_season.conference_season =
@@ -192,6 +201,8 @@ const getHtml = async (common) => {
   const game_ids = team_games.map((game) => parseInt(game.game_id));
 
   const games = await db.game.bulkGet(game_ids);
+
+  common.stopwatch(common, "Time after fetching games");
 
   console.log("team_games", team_games);
 
@@ -221,6 +232,8 @@ const getHtml = async (common) => {
 
   headlines = headlines.sort((h_a, h_b) => h_b.week_id - h_a.week_id);
 
+  common.stopwatch(common, "Time after fetching headlines");
+
   var team_seasons = await db.team_season
     .where({ season: season })
     .and((ts) => ts.team_id > 0)
@@ -240,6 +253,9 @@ const getHtml = async (common) => {
     "index",
     "team_season_id"
   );
+
+  common.stopwatch(common, "Time after fetching opp teams");
+
 
   for (var headline of headlines) {
     headline.team_seasons = [];
@@ -269,10 +285,12 @@ const getHtml = async (common) => {
   var team_game_ids = opponent_team_game_ids.concat(
     team_games.map((tg) => tg.team_game_id)
   );
-  const player_team_games = await db.player_team_game
+  let player_team_games = await db.player_team_game
     .where("team_game_id")
     .anyOf(team_game_ids)
     .toArray();
+
+    common.stopwatch(common, "Time after fetching player team games");
 
   const player_team_season_ids = player_team_games.map(
     (ptg) => ptg.player_team_season_id
@@ -281,14 +299,16 @@ const getHtml = async (common) => {
     .where({ season: season })
     .toArray();
 
+  common.stopwatch(common, "Time after fetching player team seasons");
+
   const player_ids = player_team_seasons.map((pts) => pts.player_id);
   const players = await db.player.bulkGet(player_ids);
   const players_by_player_id = index_group_sync(players, "index", "player_id");
 
-  for (var player_team_season of player_team_seasons) {
-    player_team_season.player =
-      players_by_player_id[player_team_season.player_id];
-  }
+  common.stopwatch(common, "Time after fetching players bulkget");
+  console.log({players:players})
+
+  player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
 
   var player_team_seasons_by_player_team_season_id = index_group_sync(
     player_team_seasons,
@@ -296,18 +316,15 @@ const getHtml = async (common) => {
     "player_team_season_id"
   );
 
-  for (var player_team_game of player_team_games) {
-    player_team_game.player_team_season =
-      player_team_seasons_by_player_team_season_id[
-        player_team_game.player_team_season_id
-      ];
-  }
+  player_team_games = nest_children(player_team_games, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season')
 
   const player_team_game_by_player_team_game_id = index_group_sync(
     player_team_games,
     "index",
     "player_team_game_id"
   );
+
+  common.stopwatch(common, "Time after fetching players");
 
   const pop_games = await $.each(games, async function (ind, game) {
     if (!selected_game_chosen && !game.was_played) {
@@ -586,6 +603,95 @@ const draw_faces = async (common) => {
   }
 };
 
+
+const draw_coach_faces = async (common) => {
+  const db = common.db;
+  const season = common.season;
+  const index_group_sync = common.index_group_sync;
+  //console.log('coachFace-Headshot', $('.coachFace-Headshot'));
+
+  const coach_ids = [];
+  const face_div_by_coach_id = {};
+
+  $(".PlayerFace-Headshot").each(function (ind, elem) {
+    if ($(elem).find("svg").length > 0) {
+      return true;
+    }
+    //console.log('ind, elem', ind, elem)
+    coach_ids.push(parseInt($(elem).attr("coach_id")));
+    if (!(parseInt($(elem).attr("coach_id")) in face_div_by_coach_id)) {
+      face_div_by_coach_id[parseInt($(elem).attr("coach_id"))] = [];
+    }
+
+    face_div_by_coach_id[parseInt($(elem).attr("coach_id"))].push(elem);
+  });
+
+  console.log({ face_div_by_coach_id: face_div_by_coach_id });
+
+  const coaches = await db.coach.bulkGet(coach_ids);
+  var coach_team_seasons = await db.coach_team_season
+    .where("coach_id")
+    .anyOf(coach_ids)
+    .toArray();
+  coach_team_seasons = coach_team_seasons.filter(
+    (pts) => pts.season == season
+  );
+  const coach_team_seasons_by_coach_id = index_group_sync(
+    coach_team_seasons,
+    "index",
+    "coach_id"
+  );
+
+  console.log({
+    coach_team_seasons_by_coach_id: coach_team_seasons_by_coach_id,
+  });
+
+  const team_season_ids = coach_team_seasons.map((pts) => pts.team_season_id);
+  const team_seasons = await db.team_season.bulkGet(team_season_ids);
+  const team_seasons_by_team_season_id = index_group_sync(
+    team_seasons,
+    "index",
+    "team_season_id"
+  );
+
+  const team_ids = team_seasons.map((ts) => ts.team_id);
+  const teams = await db.team.bulkGet(team_ids);
+  const teams_by_team_id = index_group_sync(teams, "index", "team_id");
+
+  //console.log('coach_ids', coach_ids, 'coaches', coaches, 'coach_team_seasons_by_coach_id', coach_team_seasons_by_coach_id, 'team_seasons_by_team_season_id', team_seasons_by_team_season_id, 'teams_by_team_id', teams_by_team_id)
+
+  for (var coach of coaches) {
+    var elems = face_div_by_coach_id[coach.coach_id];
+    coach.coach_team_season =
+      coach_team_seasons_by_coach_id[coach.coach_id];
+    coach.team_season =
+      team_seasons_by_team_season_id[coach.coach_team_season.team_season_id];
+    coach.team = teams_by_team_id[coach.team_season.team_id];
+
+    if (coach.coach_face == undefined) {
+      coach.coach_face = await common.create_coach_face(
+        "single",
+        coach.coach_id,
+        db
+      );
+    }
+
+    //console.log( $(elem).attr('id'))
+
+    for (var elem of elems) {
+      common.display_player_face(
+        coach.coach_face,
+        {
+          jersey: {id:'suit'},
+          teamColors: coach.team.jersey.teamColors,
+        },
+        $(elem).attr("id")
+      );
+    }
+  }
+};
+
+
 const action = async (common) => {
   AddScheduleListeners();
   AddBoxScoreListeners();
@@ -680,9 +786,7 @@ const action = async (common) => {
       { stat_group: "defense", stat: "ints", display: "Leading Pass Defender" },
     ];
     for (var stat_detail of team_leaders_raw) {
-      console.log({ stat_detail: stat_detail });
       player_team_seasons = player_team_seasons.sort(function (pts_a, pts_b) {
-        console.log({ pts_b: pts_b });
         return (
           pts_b.season_stats[stat_detail.stat_group][stat_detail.stat] -
           pts_a.season_stats[stat_detail.stat_group][stat_detail.stat]
@@ -948,22 +1052,38 @@ const action = async (common) => {
     }
     coaches_first_click = true;
 
-    var team = common.render_content.team;
-    var db = common.db;
-    var season = common.season;
+    let coaching_position_info = {
+      HC: {coaching_position: 'HC', order:1, full_name: 'Head Coach'},
+      OC: {coaching_position: 'OC', order:2, full_name: 'Offensive Coordinator'},
+      DC: {coaching_position: 'DC', order:3, full_name: 'Defensive Coordinator'},
+      ST: {coaching_position: 'ST', order:4, full_name: 'Special Teams Coordinator'},
+    }
 
+    let team = common.render_content.team;
+    let team_season = team.team_season;
+    let db = common.db;
+    let season = common.season;
+
+    let coach_team_seasons = await db.coach_team_season.where({team_season_id:team_season.team_season_id}).toArray();
+    let coach_ids = coach_team_seasons.map(cts => cts.coach_id);
+    let coaches = await db.coach.bulkGet(coach_ids);
+    let coaches_by_coach_id = index_group_sync(coaches, 'index', 'coach_id');
+
+    coach_team_seasons = nest_children(coach_team_seasons, coaches_by_coach_id, 'coach_id', 'coach')
+    coach_team_seasons = nest_children(coach_team_seasons, coaching_position_info, 'coaching_position', 'coaching_position_info')
+    coach_team_seasons = coach_team_seasons.sort((cts_a, cts_b) => cts_a.coaching_position_info.order - cts_b.coaching_position_info.order)
+
+    let render_content = {team:team, coach_team_seasons:coach_team_seasons, page: common.render_content.page}
 
     var url = "/static/html_templates/team/team/team_coaches_div_template.njk";
     var html = await fetch(url);
     html = await html.text();
 
-    var renderedHtml = await common.nunjucks_env.renderString(html, {
-      team: team,
-    });
-    console.log({ renderedHtml: renderedHtml });
+    var renderedHtml = await common.nunjucks_env.renderString(html, render_content);
+    console.log({ renderedHtml: renderedHtml, render_content:render_content });
 
     $("#nav-coaches").append(renderedHtml);
-    await draw_map(common);
+    await draw_coach_faces(common);
   });
 
   var rivals_first_click = false;
@@ -979,6 +1099,9 @@ const action = async (common) => {
     var team = common.render_content.team;
     let rivals = team.rivals;
     let rival_team_ids = new Set(rivals.map((r) => r.opponent_team_id));
+
+    console.log({rivals:rivals, rival_team_ids:rival_team_ids})
+    debugger;
 
     let team_seasons = await db.team_season
       .where({ team_id: team.team_id })

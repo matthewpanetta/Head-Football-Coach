@@ -31,6 +31,12 @@ const getHtml = async (common) => {
       database_suffix: "_small",
     },
     {
+      display: "Super Small Modern World",
+      description:
+        "Conferences and teams as of 2022, including SEC, B10",
+      database_suffix: "_super_small",
+    },
+    {
       display: "Full World - 2024",
       description:
         "All conferences and teams as of 2024, including notable upcoming conference changes",

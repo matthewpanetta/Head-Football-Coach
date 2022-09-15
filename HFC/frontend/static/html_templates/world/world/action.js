@@ -96,21 +96,29 @@ const refresh_playoffs = async (common) => {
 };
 
 const check_db_size = async (common, db) => {
-  console.log({db:db, idbdb: db.idbdb.objectStoreNames});
-  let table_lengths = []
-  let requests = Object.entries(db.idbdb.objectStoreNames).forEach(async function(l, ind){
-    console.log({l:l, ind:ind, 'db.idbdb.objectStoreNames.length': db.idbdb.objectStoreNames.length})
-    let table_name = l[1]
-    let rows = await db[table_name].toArray();
-    let strigified_rows = JSON.stringify(rows);
-    let characters_per_row = strigified_rows.length / rows.length
+  console.log({ db: db, idbdb: db.idbdb.objectStoreNames });
+  let table_lengths = [];
+  let requests = Object.entries(db.idbdb.objectStoreNames).forEach(
+    async function (l, ind) {
+      console.log({
+        l: l,
+        ind: ind,
+        "db.idbdb.objectStoreNames.length": db.idbdb.objectStoreNames.length,
+      });
+      let table_name = l[1];
+      let rows = await db[table_name].toArray();
+      let strigified_rows = JSON.stringify(rows);
+      let characters_per_row = strigified_rows.length / rows.length;
 
-    console.log(
-      {table_name:table_name, row_count: rows.length, str_count: strigified_rows.length , characters_per_row:characters_per_row}
-    )
-
-  })
-}
+      console.log({
+        table_name: table_name,
+        row_count: rows.length,
+        str_count: strigified_rows.length,
+        characters_per_row: characters_per_row,
+      });
+    }
+  );
+};
 
 const refresh_bowls = async (common) => {
   const db = common.db;
@@ -170,36 +178,53 @@ const getHtml = async (common) => {
     .where({ season: season })
     .and((ts) => ts.team_id > 0)
     .toArray();
-  var conferences = await index_group(
-    await db.conference.toArray(),
+
+  let conferences = await db.conference.toArray();
+  var conferences_by_conference_id = index_group_sync(
+    conferences,
     "index",
     "conference_id"
   );
-  var conference_seasons = await index_group(
-    await db.conference_season.where({ season: season }).toArray(),
+
+  let conference_seasons = await db.conference_season
+    .where({ season: season })
+    .toArray();
+  var conference_seasons_by_conference_season_id = index_group_sync(
+    conference_seasons,
     "index",
     "conference_season_id"
   );
-  var team_seasons_by_team_season_id = await index_group(
+  var team_seasons_by_team_season_id = index_group_sync(
     team_seasons,
     "index",
     "team_season_id"
   );
-  var team_seasons_by_team_id = await index_group(
+  var team_seasons_by_team_id = index_group_sync(
     team_seasons,
     "index",
     "team_id"
   );
-  var teams_by_team_id = await index_group(teams, "index", "team_id");
+  var teams_by_team_id = index_group_sync(teams, "index", "team_id");
   var distinct_team_seasons = [];
   common.stopwatch(common, "Time after selecting teams");
+
+  console.log({
+    team_seasons: team_seasons,
+    teams: teams,
+    conference_seasons: conference_seasons,
+  });
+  // debugger;
 
   $.each(teams, async function (ind, team) {
     team.team_season = team_seasons_by_team_id[team.team_id];
     team.team_season.conference_season =
-      conference_seasons[team.team_season.conference_season_id];
+      conference_seasons_by_conference_season_id[
+        team.team_season.conference_season_id
+      ];
     team.team_season.conference_season.conference =
-      conferences[team.team_season.conference_season.conference_id];
+      conferences_by_conference_id[
+        team.team_season.conference_season.conference_id
+      ];
 
     team.conference_position_display = `${team.team_season.rankings.division_rank[0]} in ${team.team_season.conference_season.conference.conference_abbreviation}`;
     if (team.team_season.results.conference_champion) {
@@ -225,14 +250,24 @@ const getHtml = async (common) => {
     return 0;
   });
 
-  var this_week_team_games = await index_group(
-    await db.team_game.where({ week_id: current_week.week_id }).toArray(),
+  common.stopwatch(common, "Time after sorting team seasons");
+
+  let this_week_team_games = await db.team_game
+    .where({ week_id: current_week.week_id })
+    .toArray();
+  var this_week_team_games_by_team_game_id = index_group_sync(
+    this_week_team_games,
     "index",
     "team_game_id"
   );
+
+  common.stopwatch(common, "Time after fetching team games");
+  
   var this_week_games = await db.game
     .where({ week_id: current_week.week_id })
     .toArray();
+
+  common.stopwatch(common, "Time after fetching games");
 
   var min_national_rank = 0;
   $.each(this_week_games, function (ind, game) {
@@ -247,8 +282,10 @@ const getHtml = async (common) => {
       }
     }
 
-    game.home_team_game = this_week_team_games[game.home_team_game_id];
-    game.away_team_game = this_week_team_games[game.away_team_game_id];
+    game.home_team_game =
+      this_week_team_games_by_team_game_id[game.home_team_game_id];
+    game.away_team_game =
+      this_week_team_games_by_team_game_id[game.away_team_game_id];
 
     game.home_team_game.team_season =
       team_seasons_by_team_season_id[game.home_team_game.team_season_id];
@@ -306,6 +343,7 @@ const getHtml = async (common) => {
   });
 
   let preseason_info = {};
+  common.stopwatch(common, "Time before pre-season");
   if (current_week.week_name == "Pre-Season") {
     // TODO filter out backups
     preseason_info.conference_favorites = [];
@@ -330,6 +368,8 @@ const getHtml = async (common) => {
       "team_season_id"
     );
 
+    common.stopwatch(common, "Time after fetching pre season team_seasons");
+
     var player_team_seasons = await db.player_team_season
       .where({ season: common.season })
       .toArray();
@@ -340,6 +380,9 @@ const getHtml = async (common) => {
       (pts) => pts.player_team_season_id
     );
 
+    console.log({player_team_seasons:player_team_seasons, len: player_team_seasons.length})
+    common.stopwatch(common, "Time after fetching pre season pts");
+
     const player_team_season_stats = await db.player_team_season_stats.bulkGet(
       player_team_season_ids
     );
@@ -348,6 +391,8 @@ const getHtml = async (common) => {
       "index",
       "player_team_season_id"
     );
+    console.log({player_team_season_stats:player_team_season_stats, len: player_team_season_stats.length})
+    common.stopwatch(common, "Time after fetching pre season ptss");
 
     const player_ids = player_team_seasons.map((pts) => pts.player_id);
     var players = await db.player.bulkGet(player_ids);
@@ -376,6 +421,8 @@ const getHtml = async (common) => {
       "player"
     );
 
+    common.stopwatch(common, "Time after fetching pre season players");
+
     var heisman_race = player_team_seasons.filter(
       (pts) => pts.depth_chart_rank == 1
     );
@@ -383,6 +430,8 @@ const getHtml = async (common) => {
       (pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating
     );
     preseason_info.heisman_hopefuls = heisman_race.slice(0, 5);
+
+    common.stopwatch(common, "Time after sorting pre season pts");
 
     let conferences = await db.conference.toArray();
     let conferences_by_conference_id = index_group_sync(
@@ -404,6 +453,8 @@ const getHtml = async (common) => {
       "group",
       "conference_season_id"
     );
+
+    common.stopwatch(common, "Time after fetching pre season conferences");
 
     for (let conference_season of conference_seasons) {
       let team_seasons_for_conference =
@@ -461,12 +512,13 @@ const getHtml = async (common) => {
 
   $("#body").append(renderedHtml);
   // $('#body .show.active').css('display', 'block');
-
 };
 
 const action = async (common) => {
   const packaged_functions = common;
   const db = common.db;
+
+  // await check_db_size(common, db)
 
   //Show initial 'new world' modal
   $("#create-world-row").on("click", function () {
@@ -525,10 +577,6 @@ const action = async (common) => {
   $(".player-profile-popup-icon").on("click", async function () {
     await common.populate_player_modal(common, this);
   });
-
-
-
-
 };
 
 const draw_faces = async (common) => {

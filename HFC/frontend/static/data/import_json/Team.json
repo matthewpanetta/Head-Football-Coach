@@ -360,7 +360,8 @@
     "jersey": {
       "invert": false,
       "id": "football-standard",
-      "lettering": "DALLAS"
+      "lettering": "DALLAS",
+      "flip_primaries": true
     },
     "team_ratings": {
       "location": 14,

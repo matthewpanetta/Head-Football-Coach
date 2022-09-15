@@ -415,6 +415,23 @@ class player_team_game {
   }
 }
 
+class week {
+  constructor(){
+
+  }
+}
+class phase {
+  constructor(){
+
+  }
+}
+
+class world {
+  constructor(){
+
+  }
+}
+
 class team_game {
   constructor(team_game_options) {
     //this = team_game_options;
@@ -1819,6 +1836,14 @@ class coach {
   get hometown_and_state() {
     return `${this.hometown.city}, ${this.hometown.state}`;
   }
+
+  get full_name() {
+    return `${this.name.first} ${this.name.last}`;
+  }
+
+  get coach_href() {
+    return `/World/${this.world_id}/Coach/${this.coach_id}`;
+  }
 }
 
 class coach_team_season {
@@ -2359,6 +2384,8 @@ class game {
     return points;
   }
 }
+
+class conference_season{}
 
 class conference {
   get conference_href() {
@@ -3367,6 +3394,7 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
   }
 
   await db.team_season.bulkPut(team_seasons_to_update);
+  console.log('Updating player_team_seasons in create_team_seasons', player_team_seasons_to_update)
   await db.player_team_season.bulkPut(player_team_seasons_to_update);
 };
 
@@ -3523,7 +3551,7 @@ const create_schedule = async (data) => {
       division_name: team_season.division_name,
       rivals: team_season_rivals,
       team: teams_by_team_id[team_season.team_id],
-      team_quadrant: team_quadrant_cutoffs.find(quadrant => team_season.national_rank <= quadrant.max_national_rank).quadrant
+     // team_quadrant: team_quadrant_cutoffs.find(quadrant => team_season.national_rank <= quadrant.max_national_rank).quadrant
     };
 
     console.log({team_season: team_season, team_season_schedule_tracker:team_season_schedule_tracker, team_quadrant_cutoffs:team_quadrant_cutoffs});
@@ -4028,6 +4056,7 @@ const create_new_player_team_seasons = async (data) => {
     player_team_season_stats_tocreate: player_team_season_stats_tocreate,
   });
 
+  console.log('Updating player_team_seasons in create_new_player_team_seasons', player_team_seasons_tocreate)
   var player_team_seasons_tocreate_added = await db.player_team_season.bulkPut(
     player_team_seasons_tocreate
   );
@@ -4583,6 +4612,7 @@ const create_recruiting_class = async (common) => {
     team_season_recruitings_to_save: team_season_recruitings_to_save,
   });
 
+  console.log('Updating player_team_seasons in creating_recruiting_class', player_team_seasons)
   await db.player_team_season.bulkPut(player_team_seasons);
   await db.player_team_season_recruiting.bulkPut(
     player_team_season_recruitings_to_put
@@ -5821,6 +5851,60 @@ const driver_db = async () => {
   return ddb;
 };
 
+function hashCode(s) {
+  let h;
+  for(let i = 0; i < s.length; i++) 
+        h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+
+  return h;
+}
+
+function compress_object(obj, dx_trans){
+
+  let table_name = dx_trans.storeNames[0];
+  let keys = new Set(... [[dx_trans.schema[table_name].primKey.keyPath].concat(dx_trans.schema[table_name].indexes.map(i => i.keyPath).flat())]);
+
+  let stringified_json = JSON.stringify(obj)
+  // let compressed_string = LZString.compressToUTF16(stringified_json);
+  // let compressed_string = LZString.compress(stringified_json);
+  let compressed_string = fflate.compressSync(fflate.strToU8(stringified_json), { level: 6, mem: 12 });
+
+  for (let key of Object.keys(obj)){
+    if (!(keys.has(key))){
+      delete obj[key]
+    }
+  }
+  obj.data = compressed_string;
+
+  return obj;
+}
+
+function uncompress_object(obj, dx_trans){
+
+  let compressed_string = obj.data;
+  let stringified_json = LZString.decompress(compressed_string);
+  let data = JSON.parse(stringified_json);
+
+  return data;
+
+}
+
+const rename_keys = (obj, key_map) => {
+  for (let old_key in obj){
+    if (old_key in key_map){
+      let new_key = key_map[old_key];
+      let val = obj[old_key];
+      if (typeof val === 'object'){
+        val = rename_keys(val, key_map);
+      }
+      obj[new_key] = val;
+      delete obj[old_key]
+    }
+  }
+
+  return obj;
+}
+
 const get_db = async (world_obj) => {
   var dbname = "";
   if ("database_id" in world_obj) {
@@ -5890,9 +5974,54 @@ const get_db = async (world_obj) => {
   await new_db.coach_team_season.mapToClass(coach_team_season);
 
   await new_db.award.mapToClass(award);
+  await new_db.headline.mapToClass(headline);
 
   await new_db.conference.mapToClass(conference);
   await new_db.league_season.mapToClass(league_season);
+  await new_db.week.mapToClass(week);
+  await new_db.phase.mapToClass(phase);
+  await new_db.world.mapToClass(world);
+  await new_db.conference_season.mapToClass(conference_season);
+
+  for (let [table_name, table_obj] of Object.entries(new_db._allTables)){
+    continue;
+    console.log({table_obj:table_obj})
+    //Probably a better way of doing this
+    let keys = new Set(... [[table_obj.schema.primKey.keyPath].concat(table_obj.schema.indexes.map(i => i.keyPath).flat())]);
+
+    new_db[table_name].hook('creating', function serialize_creating_hook(primKey, obj, transaction) {
+
+      let stringified_json = JSON.stringify(obj)
+      // let compressed_string = LZString.compress(stringified_json);
+      let compressed_string = fflate.compressSync(fflate.strToU8(stringified_json), { level: 6, mem: 12 });
+
+      for (let key of Object.keys(obj)){
+        if (!(keys.has(key))){
+          delete obj[key]
+        }
+      }
+      obj.data = compressed_string;
+    });
+
+    new_db[table_name].hook('reading', function serialize_reading_hook(obj) {
+
+      let compressed_string = obj.data;
+      // let stringified_json = LZString.decompress(compressed_string);
+      const stringified_json = fflate.strFromU8(fflate.decompressSync(compressed_string));
+      
+      let data = JSON.parse(stringified_json);
+
+      // console.log({table_obj:table_obj, obj:obj})
+      var res = Object.create(table_obj.schema.mappedClass.prototype);
+
+      for (var key in data) {
+        res[key] = data[key]
+      }
+
+      return res;
+    });  
+    
+  }
 
   return new_db;
 };
@@ -6102,6 +6231,7 @@ const common_functions = async (route_pattern) => {
     query_to_dict: query_to_dict,
     get_from_dict: get_from_dict,
     create_phase: create_phase,
+    hashCode: hashCode,
     create_week: create_week,
     create_coaches:create_coaches,
     create_players: create_players,
@@ -8389,7 +8519,8 @@ const sim_week_games = async (this_week, common) => {
   );
   const updated_player_team_season_stats =
     await db.player_team_season_stats.bulkPut(player_team_season_stats_to_save);
-  const updated_player_team_seasons = await db.player_team_season.bulkPut(
+    console.log('Updating player_team_seasons in sim_week_games', player_team_seasons_to_save)
+    const updated_player_team_seasons = await db.player_team_season.bulkPut(
     player_team_seasons_to_save
   );
   const saved_player_team_games = await db.player_team_game.bulkAdd(
@@ -9518,6 +9649,7 @@ const weekly_recruiting = async (common) => {
   player_team_seasons.forEach((pts) => delete pts.recruiting);
   player_team_seasons.forEach((pts) => delete pts.player);
 
+  console.log('Updating player_team_seasons in weekly_recruiting', player_team_seasons)
   await db.player_team_season.bulkPut(player_team_seasons);
   await db.player_team_season_recruiting.bulkPut(
     player_team_season_recruitings_to_put
@@ -13002,7 +13134,7 @@ const drawFeature = async (svg, face, info) => {
     featureSVGString = featureSVGString.replace("$[headShave]", feature.shave);
   }
 
-  const player_id = $(svg).parent().attr("player_id");
+  const player_id = $(svg).parent().attr("player_id") || $(svg).parent().attr("coach_id");
 
   featureSVGString = featureSVGString.replaceAll(
     "$[player_id]",
@@ -13919,6 +14051,7 @@ const new_world_action = async (common, database_suffix) => {
     }
   });
 
+  console.log('adding',{db:db,'db.conference':db.conference, conferences_from_json})
   const conferences_added = await db.conference.bulkAdd(conferences_from_json);
   var conferences = await db.conference.toArray();
 
