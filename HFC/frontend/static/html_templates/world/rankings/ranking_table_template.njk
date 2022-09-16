@@ -22,7 +22,16 @@
               <span class="hide-small">{{team_season.team.team_name}}</span></span>
           </a>
         </li>
-        <li class="font10">{{team_season.rankings.division_rank[0]|ordinal}} in {{team_season.conference.conference_abbreviation}}</li>
+          {% if  team_season.results.conference_champion %}
+          <li class="font10 bold opacity-1">
+            <a class='' href='{{team_season.conference.conference_href}}'>{{team_season.conference.conference_abbreviation}} </a> Champions
+          </li>
+          {% else %}
+          <li class="font10">
+            {{team_season.rankings.division_rank[0]|ordinal}} in <a href='{{team_season.conference.conference_href}}'>{{team_season.conference.conference_abbreviation}}</a> {{team_season.division_name}}
+          </li>
+          {% endif %}
+        </li>
       </ul>
     </td>
     <td class="center-text hide-small"  value='{{team_season.rankings.national_rank_delta}}'>

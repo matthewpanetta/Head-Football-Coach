@@ -116,8 +116,17 @@
 
                           {% for playoff_game in playoff_round.playoff_games%}
                             <div class="equal-sized-item width100 height100 w3-margin-bottom " style=' flex: 0 1 0%; '>
-                              <div style='' class='card game width100 text-left'>
-                                <table class='table table-striped table-hover'>
+                              <div class='font10 left-text'>
+                                <a href='{{playoff_game.game.game_href}}'>
+                                {% if playoff_game.game.was_played%}
+                                  Box Score
+                                {% elif playoff_game.game %}
+                                  Preview
+                                {%endif%}
+                                </a>
+                              </div>
+                              <div style='' class=' game width100 text-left'>
+                                <table class='table' style='margin-bottom: 0px;'>
                                 {% for team_obj in playoff_game.team_objs%}
                                     <tr class='center-text-row'>
                                       <td class='font16 white-text padding-10' style='width: 10%; background-color: #{{team_obj.team_season.team.team_color_primary_hex}}'>
@@ -128,15 +137,14 @@
                                           <img class='logo logo-30' src="{{team_obj.team_season.team.team_logo}}" alt="">
                                         </a>
                                       </td>
-                                      <td class='width: 50%; inline-block font16 left-text'>
+                                      <td class='width: 50%; inline-block font16 left-text {%if team_obj.team_game.is_winning_team%}bold{%endif%}'>
                                         <a href="{{team_obj.team_season.team.team_href}}">
                                          {{team_obj.team_season.team.school_name}}
                                         </a>
                                       </td>
-                                      <td class='inline-block right-text'>
-                                        <a href='{{playoff_game.game.game_href}}'>
+                                      
+                                      <td class='inline-block right-text {%if team_obj.team_game.is_winning_team%}bold{%endif%}'>
                                           {{team_obj.team_game.points}}
-                                        </a>
                                       </td>
                                     </tr>
                                     <tr>

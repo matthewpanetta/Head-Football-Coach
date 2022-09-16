@@ -6133,22 +6133,22 @@ const get_db = async (world_obj) => {
   await new_db.world.mapToClass(world);
   await new_db.conference_season.mapToClass(conference_season);
 
-  for (let [table_name, table_obj] of Object.entries(new_db._allTables)){
-    new_db[table_name].hook('creating', function serialize_creating_hook(primKey, obj, transaction) {
-      window.table_key_map = window.table_key_map || serialize_key_map()
-      obj = rename_keys(obj, window.table_key_map);
-    });
+  // for (let [table_name, table_obj] of Object.entries(new_db._allTables)){
+  //   new_db[table_name].hook('creating', function serialize_creating_hook(primKey, obj, transaction) {
+  //     window.table_key_map = window.table_key_map || serialize_key_map()
+  //     obj = rename_keys(obj, window.table_key_map);
+  //   });
 
-    new_db[table_name].hook('reading', function serialize_reading_hook(obj) {
-      window.table_key_map = window.table_key_map || serialize_key_map()
-      let data = rename_keys(obj, window.reverse_table_key_map);
-      var res = Object.create(table_obj.schema.mappedClass.prototype);
-      for (var key in data){
-        res[key] = data[key]
-      }
-      return res;
-    });  
-  }
+  //   new_db[table_name].hook('reading', function serialize_reading_hook(obj) {
+  //     window.table_key_map = window.table_key_map || serialize_key_map()
+  //     let data = rename_keys(obj, window.reverse_table_key_map);
+  //     var res = Object.create(table_obj.schema.mappedClass.prototype);
+  //     for (var key in data){
+  //       res[key] = data[key]
+  //     }
+  //     return res;
+  //   });  
+  // }
 
   return new_db;
 };
@@ -9098,6 +9098,7 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
   const db = await common.db;
   const all_weeks_by_week_id = await index_group(all_weeks, "index", "week_id");
 
+  let ls = await db.league_season.get(common.season);
   next_week = all_weeks_by_week_id[this_week.week_id + 1];
   var team_seasons = await db.team_season
     .where({ season: this_week.phase.season })
@@ -9162,19 +9163,24 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
       );
     }
 
+    if (ls.playoffs.playoffs_started && !ls.playoffs.playoffs_complete){
+      if ((ts_a.playoff.seed || 130) < (ts_b.playoff.seed || 130)) return -1;
+      if ((ts_a.playoff.seed || 130) > (ts_b.playoff.seed || 130)) return 1;
+    }
+
     var a_value = 0,
       b_value = 0;
 
     a_value =
       ts_a.rating.overall +
-      ts_a.team.team_ratings.program_history -
-      15 * ts_a.record.losses +
-      10 * ts_a.record.wins;
+      ts_a.team.team_ratings.program_history +
+      (-15 * ts_a.record.losses) +
+      (10 * ts_a.record.wins);
     b_value =
       ts_b.rating.overall +
-      ts_b.team.team_ratings.program_history -
-      15 * ts_b.record.losses +
-      10 * ts_b.record.wins;
+      ts_b.team.team_ratings.program_history +
+      (-15 * ts_b.record.losses )+
+      (10 * ts_b.record.wins);
 
     if (a_value < b_value) return 1;
     if (a_value > b_value) return -1;
@@ -11560,6 +11566,7 @@ const process_bowl_results = async (common) => {
 
     if (game.bowl.bowl_name == "National Championship") {
       winning_team_season.results.national_champion = true;
+      current_league_season.playoffs.playoffs_complete = true;
     }
 
     team_seasons_to_save.push(winning_team_season);
