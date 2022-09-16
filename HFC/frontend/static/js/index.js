@@ -829,8 +829,8 @@ class league_season {
     this.playoffs = {
       playoffs_started: false,
       playoffs_complete: false,
-      number_playoff_rounds: 3,
-      number_playoff_teams: 6,
+      number_playoff_rounds: 4,
+      number_playoff_teams: 12,
       playoff_rounds: [
         {
           playoff_round_number: 1,
@@ -850,8 +850,25 @@ class league_season {
             },
             {
               team_objs: [
+                { seed: 8, team_game_id: null, team_season_id: null },
+                { seed: 9, team_game_id: null, team_season_id: null },
+              ],
+              bye_game: false,
+              seeds_set: true,
+              game_id: null,
+            },
+            {
+              team_objs: [
                 { seed: 4, team_game_id: null, team_season_id: null },
+              ],
+              bye_game: true,
+              seeds_set: true,
+              game_id: null,
+            },
+            {
+              team_objs: [
                 { seed: 5, team_game_id: null, team_season_id: null },
+                { seed: 12, team_game_id: null, team_season_id: null },
               ],
               bye_game: false,
               seeds_set: true,
@@ -867,8 +884,25 @@ class league_season {
             },
             {
               team_objs: [
+                { seed: 7, team_game_id: null, team_season_id: null },
+                { seed: 10, team_game_id: null, team_season_id: null },
+              ],
+              bye_game: false,
+              seeds_set: true,
+              game_id: null,
+            },
+            {
+              team_objs: [
                 { seed: 3, team_game_id: null, team_season_id: null },
+              ],
+              bye_game: true,
+              seeds_set: true,
+              game_id: null,
+            },
+            {
+              team_objs: [
                 { seed: 6, team_game_id: null, team_season_id: null },
+                { seed: 11, team_game_id: null, team_season_id: null },
               ],
               bye_game: false,
               seeds_set: true,
@@ -882,6 +916,40 @@ class league_season {
           is_championship: false,
           week_name: "Bowl Week 2",
           next_week_name: "Bowl Week 3",
+          round_name: "National Quarterfinals",
+          playoff_games: [
+            {
+              team_objs: [],
+              bye_game: false,
+              seeds_set: false,
+              game_id: null,
+            },
+            {
+              team_objs: [],
+              bye_game: false,
+              seeds_set: false,
+              game_id: null,
+            },
+            {
+              team_objs: [],
+              bye_game: false,
+              seeds_set: false,
+              game_id: null,
+            },
+            {
+              team_objs: [],
+              bye_game: false,
+              seeds_set: false,
+              game_id: null,
+            },
+          ],
+        },
+        {
+          playoff_round_number: 3,
+          is_current_round: false,
+          is_championship: false,
+          week_name: "Bowl Week 3",
+          next_week_name: "Bowl Week 4",
           round_name: "National Semifinals",
           playoff_games: [
             { team_objs: [], bye_game: false, seeds_set: false, game_id: null },
@@ -889,10 +957,10 @@ class league_season {
           ],
         },
         {
-          playoff_round_number: 3,
+          playoff_round_number: 4,
           is_current_round: false,
           is_championship: true,
-          week_name: "Bowl Week 3",
+          week_name: "Bowl Week 4",
           next_week_name: null,
           round_name: "National Championship",
           playoff_games: [
@@ -5502,6 +5570,12 @@ const create_week = async (phases, common, season) => {
       phase_id: phases["Bowl Season"]["phase_id"],
       schedule_week_number: null,
     },
+    {
+      week_name: "Bowl Week 4",
+      is_current: false,
+      phase_id: phases["Bowl Season"]["phase_id"],
+      schedule_week_number: null,
+    },
 
     {
       week_name: "Season Recap",
@@ -5858,24 +5932,94 @@ function hashCode(s) {
 
   return h;
 }
+window.table_key_list = [
+  "award_group","award_team_set","award_group_type","award_timeframe","award_team","name",
+  "first","last","hometown","city","state","long","occurance","coaching_position","ethnicity","body",
+  "height_inches","weight","height","tendencies","pass","playclock_urgency","personality","leadership",
+  "work_ethic","desire_for_winner","loyalty","desire_for_playtime","post_season_movement","ratings",
+  "conference_abbreviation","prestige","is_independent","conference_logo_url","conference_color_primary_hex",
+  "conference_color_secondary_hex","schedule_format","hold_conference_championship_game",
+  "number_conference_games","round_robin_in_division","conference_championship_selection_method",
+  "schedule_pattern","division","number_of_teams","cycle","teams_per_year","fixed_matchups","divisions",
+  "conference_name","game_time","was_played","outcome","home_team_score","away_team_score","rivalry",
+  "opponent_name","preferred_week_number","rivalry_name","bowl","is_conference_game","broadcast",
+  "regional_broadcast","national_broadcast","headline_text","href","is_season_complete","playoffs",
+  "playoffs_started","playoffs_complete","number_playoff_rounds","number_playoff_teams","playoff_rounds",
+  "preseason_tasks","user_cut_players","user_set_gameplan","user_set_depth_chart","is_current_season",
+  "captains_per_team","players_per_team","phase_name","is_current","position","redshirt","previous",
+  "current","jersey_number","game_stats","games","game_score","weighted_game_score","games_played",
+  "team_games_played","points","passing","rushing","carries","yards","receiving","targets","receptions",
+  "blocking","defense","fumbles","kicking","punting","returning","top_stats","is_recruit","is_captain",
+  "athleticism","strength","agility","speed","acceleration","stamina","jumping","injury","throwing_power",
+  "short_throw_accuracy","medium_throw_accuracy","deep_throw_accuracy","throw_on_run","throw_under_pressure",
+  "play_action","elusiveness","ball_carrier_vision","break_tackle","carrying","catching","catch_in_traffic",
+  "route_running","release","hit_power","tackle","pass_rush","block_shedding","pursuit","play_recognition",
+  "man_coverage","zone_coverage","press","pass_block","run_block","impact_block","kick_power","kick_accuracy",
+  "overall","awareness","class","class_name","redshirted","depth_chart_rank","stars","signed","stage","rank",
+  "national","position_rank","weeks","recruit_team_seasons","interests","location","fan_support",
+  "academic_quality","facilities","program_history","team_competitiveness","brand","pro_pipeline",
+  "program_stability","playing_time","close_to_home","games_started","plays_on_field",
+  "top_12_weighted_game_scores","completions","attempts","ints","sacks","sack_yards","over_20",
+  "broken_tackles","yards_after_contact","yards_after_catch","drops","sacks_allowed","pancakes","blocks",
+  "lost","recovered","forced","return_yards","return_tds","fga_29","fgm_29","fga_39","fgm_39","fga_49",
+  "fgm_49","fga_50","fgm_50","kickoffs","touchbacks","punts","within_20","kr_returns","kr_yards","kr_tds",
+  "kr_lng","pr_returns","pr_yards","pr_tds","pr_lng","tackles","solo_tackles","tackles_for_loss","deflections",
+  "qb_hits","int_yards","int_tds","safeties","school_name","team_name","team_abbreviation",
+  "team_color_primary_hex","team_color_secondary_hex","rivals","jersey","invert","teamColors","team_ratings",
+  "conference","is_home_team","is_winning_team","team","time_of_possession","possessions","turnovers",
+  "biggest_lead","down_efficiency","total","field_position","total_drives","total_start_yard",
+  "drive_efficiency","total_trips","scores","total_points","downs","first_downs","penalty","third_downs",
+  "conversions","fourth_downs","two_points","net_yards","opponent_game_stats","record","wins","losses",
+  "conference_wins","conference_losses","national_rank","is_user_team","scholarships_to_offer",
+  "recruiting_class_rank","points_per_week","class_points","signed_player_stars","stars_1","stars_2","stars_3",
+  "stars_4","stars_5","position_needs","EDGE","season_stats","opponent_season_stats","week_name",
+  "schedule_week_number","week_updates","user_actions","recruiting_actions_used","phase", "lettering", 
+  "lettering_color", "team_logo_url", "headlines", "depth_chart", "depth_chart_with_recruits", "division_name",
+  "playoff", "rankings", "division_rank", "national_rank_delta", "national_rank_delta_abs", "stat_rankings",
+  "offense", "defense", "results", "conference_champion", "final_four", "national_champion",
+  "teams", "fixed", "winning_team", "losing_team", "is_primetime_game", "scoring",
+  "drives", "final", "periods", "drive_end", "plays", "away_team_points", "drive_description", "home_team_points",
+  "is_scoring_drive", "period", "play_description", "play_type", "seconds_in_to_game", "period_number", 
+  "summed_national_rank", "player_face", "accessories", "ear", "eye", "eyeLine", "eyebrow", "facialHair",
+  "fatness", "glasses", "hair", "color", "flip", "shave", "head", "miscLine", "mouth", "nose", "smileLine",
+  "display", "abs_game_score_value", "game_score_value", "abs_season_score_value", "season_score_value",
+  "game_outcome_letter", "success",  "conference_net_wins", "conference_gb", "defeated_teams", "net_wins",
+  "win_streak", "division_champion", "by_position_group", "by_position", "by_position_unit", "playing_time_val",
+]
+window.table_key_map = null;
+window.reverse_table_key_map = null;
+
+function index_to_char(ind){
+  let first_ind = Math.floor(ind / 26);
+  let second_ind = ind % 26;
+  let s = (first_ind + 10).toString(36) + (second_ind + 10).toString(36)
+  if (s == 'id'){
+    s = 'idid'
+  }
+  return s;
+}
+
+function serialize_key_map(){
+  window.table_key_map = {};
+  window.reverse_table_key_map = {};
+  window.table_key_list.forEach(function(key, ind) { 
+    let ind_char = index_to_char(ind)
+    window.table_key_map[key] = ind_char
+    window.reverse_table_key_map[ind_char] = key
+  });
+
+  console.log({
+    'window.table_key_map': window.table_key_map,
+    'window.reverse_table_key_map': window.reverse_table_key_map,
+  })
+
+  return window.table_key_map;
+}
 
 function compress_object(obj, dx_trans){
 
-  let table_name = dx_trans.storeNames[0];
-  let keys = new Set(... [[dx_trans.schema[table_name].primKey.keyPath].concat(dx_trans.schema[table_name].indexes.map(i => i.keyPath).flat())]);
-
-  let stringified_json = JSON.stringify(obj)
-  // let compressed_string = LZString.compressToUTF16(stringified_json);
-  // let compressed_string = LZString.compress(stringified_json);
-  let compressed_string = fflate.compressSync(fflate.strToU8(stringified_json), { level: 6, mem: 12 });
-
-  for (let key of Object.keys(obj)){
-    if (!(keys.has(key))){
-      delete obj[key]
-    }
-  }
-  obj.data = compressed_string;
-
+  window.table_key_map = window.table_key_map || serialize_key_map()
+  obj = rename_keys(obj, window.table_key_map);
   return obj;
 }
 
@@ -5890,12 +6034,18 @@ function uncompress_object(obj, dx_trans){
 }
 
 const rename_keys = (obj, key_map) => {
+
   for (let old_key in obj){
     if (old_key in key_map){
       let new_key = key_map[old_key];
       let val = obj[old_key];
-      if (typeof val === 'object'){
+      if (typeof val === 'object' && !(Array.isArray(val))){
         val = rename_keys(val, key_map);
+      }
+      else if (Array.isArray(val)){
+        for (let iter_val of val){
+          iter_val = rename_keys(iter_val, key_map )
+        }
       }
       obj[new_key] = val;
       delete obj[old_key]
@@ -5921,7 +6071,7 @@ const get_db = async (world_obj) => {
 
   var new_db = await new Dexie(dbname);
 
-  await new_db.version(16).stores({
+  await new_db.version(17).stores({
     league_season: "season",
     team: "team_id",
     team_season: "team_season_id, team_id, season",
@@ -5934,7 +6084,7 @@ const get_db = async (world_obj) => {
       "player_team_season_id, player_id, team_season_id, season",
     player_team_season_recruiting: "player_team_season_id",
     player_team_season_stats: "player_team_season_id",
-    conference: "conference_id, conference_name",
+    conference: "conference_id",
     conference_season:
       "conference_season_id, conference_id, season, [conference_id+season]",
     phase: "phase_id, season",
@@ -5984,43 +6134,20 @@ const get_db = async (world_obj) => {
   await new_db.conference_season.mapToClass(conference_season);
 
   for (let [table_name, table_obj] of Object.entries(new_db._allTables)){
-    continue;
-    console.log({table_obj:table_obj})
-    //Probably a better way of doing this
-    let keys = new Set(... [[table_obj.schema.primKey.keyPath].concat(table_obj.schema.indexes.map(i => i.keyPath).flat())]);
-
     new_db[table_name].hook('creating', function serialize_creating_hook(primKey, obj, transaction) {
-
-      let stringified_json = JSON.stringify(obj)
-      // let compressed_string = LZString.compress(stringified_json);
-      let compressed_string = fflate.compressSync(fflate.strToU8(stringified_json), { level: 6, mem: 12 });
-
-      for (let key of Object.keys(obj)){
-        if (!(keys.has(key))){
-          delete obj[key]
-        }
-      }
-      obj.data = compressed_string;
+      window.table_key_map = window.table_key_map || serialize_key_map()
+      obj = rename_keys(obj, window.table_key_map);
     });
 
     new_db[table_name].hook('reading', function serialize_reading_hook(obj) {
-
-      let compressed_string = obj.data;
-      // let stringified_json = LZString.decompress(compressed_string);
-      const stringified_json = fflate.strFromU8(fflate.decompressSync(compressed_string));
-      
-      let data = JSON.parse(stringified_json);
-
-      // console.log({table_obj:table_obj, obj:obj})
+      window.table_key_map = window.table_key_map || serialize_key_map()
+      let data = rename_keys(obj, window.reverse_table_key_map);
       var res = Object.create(table_obj.schema.mappedClass.prototype);
-
-      for (var key in data) {
+      for (var key in data){
         res[key] = data[key]
       }
-
       return res;
     });  
-    
   }
 
   return new_db;
@@ -10901,7 +11028,7 @@ const sim_action = async (duration, common) => {
       await calculate_national_rankings(this_week, all_weeks, common);
     }
 
-    if (this_week.week_name == "Bowl Week 3") {
+    if (this_week.week_name == "Bowl Week 4") {
       await choose_all_americans(this_week, common);
       await close_out_season(this_week, common);
     }
@@ -11502,8 +11629,8 @@ const process_bowl_results = async (common) => {
 
     team_seasons_advancing = team_seasons_advancing.sort(
       (ts_a, ts_b) =>
-        ts_b.team_season.rankings.national_rank[0] -
-        ts_a.team_season.rankings.national_rank[0]
+        ts_b.team_season.playoff.seed -
+        ts_a.team_season.playoff.seed
     );
 
     console.log({ team_seasons_advancing: team_seasons_advancing });
@@ -11766,13 +11893,39 @@ const schedule_bowl_season = async (all_weeks, common) => {
     return 0;
   });
 
-  var playoff_bound_team_seasons = team_seasons.filter(
-    (ts) => ts.rankings.national_rank[0] <= number_playoff_teams
-  );
+  
+
+  let number_guaranteed_conference_champions_in_playoff = 6;
+  let top_playoff_seeds_saved_for_conference_champions = 4;
+  let conference_champions_in_playoff = team_seasons.filter((ts) => ts.results.conference_champion).slice(0,number_guaranteed_conference_champions_in_playoff);
+  let top_seeded_conference_champions_in_playoff = conference_champions_in_playoff.slice(0,top_playoff_seeds_saved_for_conference_champions);
+  
+  let playoff_team_season_ids = new Set(conference_champions_in_playoff.map(ts => ts.team_season_id));
+  let top_seeded_playoff_team_season_ids = new Set(top_seeded_conference_champions_in_playoff.map(ts => ts.team_season_id));
+
+  let ts_ind = 0;
+  while (playoff_team_season_ids.size < number_playoff_teams){
+    let ts = team_seasons[ts_ind];
+    if (!(playoff_team_season_ids.has(ts.team_season_id))){
+      playoff_team_season_ids.add(ts.team_season_id)
+    }
+    ts_ind +=1;
+  }
+
+  var playoff_bound_team_seasons = top_seeded_conference_champions_in_playoff.concat(
+    team_seasons.filter(
+      (ts) => !(top_seeded_playoff_team_season_ids.has(ts.team_season_id)) && (playoff_team_season_ids.has(ts.team_season_id))
+    )
+  )
+  playoff_bound_team_seasons.forEach((ts, ind) => ts.playoff.seed = (ind + 1));
+
+  
+  console.log({playoff_bound_team_seasons:playoff_bound_team_seasons})
+
   var bowl_bound_team_seasons = team_seasons.filter(
     (ts) =>
-      ts.rankings.national_rank[0] > number_playoff_teams &&
-      ts.rankings.national_rank[0] <= bowls.length * 2 + 12
+      !(playoff_team_season_ids.has(ts.team_season_id)) &&
+      ts.rankings.national_rank[0] <= ((bowls.length * 2) + number_playoff_teams)
   );
 
   var bowl_weeks = index_group_sync(
@@ -11995,6 +12148,8 @@ const schedule_bowl_season = async (all_weeks, common) => {
   const games_created = await db.game.bulkAdd(games_to_create);
   const team_games_created = await db.team_game.bulkAdd(team_games_to_create);
   await db.league_season.put(current_league_season);
+  await db.team_season.bulkPut(playoff_bound_team_seasons);
+
 };
 
 const schedule_game = (
@@ -14068,6 +14223,8 @@ const new_world_action = async (common, database_suffix) => {
     num_teams: num_teams,
   };
   const new_season = new league_season(season_data, undefined);
+  console.log({new_season:new_season})
+  debugger;
   await db.league_season.add(new_season);
 
   console.log({season:season, common:common, db:db, new_season_info:new_season_info})
@@ -14117,6 +14274,7 @@ const new_world_action = async (common, database_suffix) => {
   console.log({
     conferences_by_school_name: conferences_by_school_name,
     conference_name_by_school_name: conference_name_by_school_name,
+    conferences_by_conference_name:conferences_by_conference_name
   });
 
   var teams = [],

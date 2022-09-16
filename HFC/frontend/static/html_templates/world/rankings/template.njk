@@ -116,10 +116,9 @@
 
                           {% for playoff_game in playoff_round.playoff_games%}
                             <div class="equal-sized-item width100 height100 w3-margin-bottom " style=' flex: 0 1 0%; '>
-                              <div style='border: 1px solid black; border-left-width: 0;' class='game width100 text-left'>
+                              <div style='' class='card game width100 text-left'>
                                 <table class='table table-striped table-hover'>
                                 {% for team_obj in playoff_game.team_objs%}
-                                  
                                     <tr class='center-text-row'>
                                       <td class='font16 white-text padding-10' style='width: 10%; background-color: #{{team_obj.team_season.team.team_color_primary_hex}}'>
                                         {{team_obj.seed}}
@@ -134,7 +133,11 @@
                                          {{team_obj.team_season.team.school_name}}
                                         </a>
                                       </td>
-                                      <td class='inline-block right-text'>{{team_obj.team_game.points}}</td>
+                                      <td class='inline-block right-text'>
+                                        <a href='{{playoff_game.game.game_href}}'>
+                                          {{team_obj.team_game.points}}
+                                        </a>
+                                      </td>
                                     </tr>
                                     <tr>
                                     </tr>

@@ -1479,11 +1479,11 @@ var Table =               (function () {
             return res;
         };
         //TODO flip off when archiving
-        if (this.schema.readHook) {
-            this.hook.reading.unsubscribe(this.schema.readHook);
-        }
-        this.schema.readHook = readHook;
-        this.hook("reading", readHook);
+        // if (this.schema.readHook) {
+        //     this.hook.reading.unsubscribe(this.schema.readHook);
+        // }
+        // this.schema.readHook = readHook;
+        // this.hook("reading", readHook);
         return constructor;
     };
     Table.prototype.defineClass = function () {
@@ -3972,7 +3972,7 @@ var hooksMiddleware = {
                                 }
                                 else {
                                     //TODO use this to compress
-                                    // req.values[i] = compress_object(req.values[i], dxTrans)
+                                    req.values[i] = compress_object(req.values[i], dxTrans)
                                     var objectDiff = getObjectDiff(existingValue, req.values[i]);
                                     var additionalChanges_1 = updating.fire.call(ctx, objectDiff, key, existingValue, dxTrans);
                                     if (additionalChanges_1) {

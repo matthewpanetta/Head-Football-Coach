@@ -95,29 +95,69 @@ const refresh_playoffs = async (common) => {
   console.log("done");
 };
 
+const get_all_keys = (obj) => {
+  let all_keys = new Set();
+
+  if (Array.isArray(obj)) {
+    for (let val of obj) {
+      get_all_keys(val).forEach(function (i) {
+        if (!(i.includes('id')) && i.length > 3){
+          all_keys.add(i);
+        }
+      });
+    }
+  } else if (typeof obj === "object") {
+    for (let [key, val] of Object.entries(obj)) {
+      if (!key.includes("id") && key.length > 3) {
+        all_keys.add(key);
+      }
+      // console.log({key:key, val:val, all_keys:all_keys})
+      // debugger;
+      if (typeof val === "object" && !Array.isArray(val) && !(val === null)) {
+        // console.log({all_keys:all_keys, val:val})
+        // debugger;
+        get_all_keys(val).forEach(function (i) {
+          if (!(i.includes('id')) && i.length > 3){
+            all_keys.add(i);
+          }
+        });
+      }
+    }
+  }
+
+  return all_keys;
+};
+
 const check_db_size = async (common, db) => {
   console.log({ db: db, idbdb: db.idbdb.objectStoreNames });
   let table_lengths = [];
-  let requests = Object.entries(db.idbdb.objectStoreNames).forEach(
-    async function (l, ind) {
-      console.log({
-        l: l,
-        ind: ind,
-        "db.idbdb.objectStoreNames.length": db.idbdb.objectStoreNames.length,
-      });
-      let table_name = l[1];
-      let rows = await db[table_name].toArray();
-      let strigified_rows = JSON.stringify(rows);
-      let characters_per_row = strigified_rows.length / rows.length;
+  let all_keys = new Set();
+  Object.entries(db.idbdb.objectStoreNames).forEach(async function (l, ind) {
+    console.log({
+      l: l,
+      ind: ind,
+      "db.idbdb.objectStoreNames.length": db.idbdb.objectStoreNames.length,
+    });
+    let table_name = l[1];
+    let rows = await db[table_name].toArray();
+    let strigified_rows = JSON.stringify(rows);
+    let characters_per_row = strigified_rows.length / rows.length;
 
-      console.log({
-        table_name: table_name,
-        row_count: rows.length,
-        str_count: strigified_rows.length,
-        characters_per_row: characters_per_row,
-      });
+    if (rows) {
+      get_all_keys(rows[0]).forEach((elem) => all_keys.add(elem));
+      console.log(JSON.stringify([...all_keys]));
     }
-  );
+
+    console.log({
+      table_name: table_name,
+      row_count: rows.length,
+      str_count: strigified_rows.length,
+      characters_per_row: characters_per_row,
+    });
+  });
+
+  console.log({ all_keys: all_keys, table_lengths: table_lengths });
+  debugger;
 };
 
 const refresh_bowls = async (common) => {
@@ -262,7 +302,7 @@ const getHtml = async (common) => {
   );
 
   common.stopwatch(common, "Time after fetching team games");
-  
+
   var this_week_games = await db.game
     .where({ week_id: current_week.week_id })
     .toArray();
@@ -380,7 +420,10 @@ const getHtml = async (common) => {
       (pts) => pts.player_team_season_id
     );
 
-    console.log({player_team_seasons:player_team_seasons, len: player_team_seasons.length})
+    console.log({
+      player_team_seasons: player_team_seasons,
+      len: player_team_seasons.length,
+    });
     common.stopwatch(common, "Time after fetching pre season pts");
 
     const player_team_season_stats = await db.player_team_season_stats.bulkGet(
@@ -391,7 +434,10 @@ const getHtml = async (common) => {
       "index",
       "player_team_season_id"
     );
-    console.log({player_team_season_stats:player_team_season_stats, len: player_team_season_stats.length})
+    console.log({
+      player_team_season_stats: player_team_season_stats,
+      len: player_team_season_stats.length,
+    });
     common.stopwatch(common, "Time after fetching pre season ptss");
 
     const player_ids = player_team_seasons.map((pts) => pts.player_id);
@@ -518,7 +564,7 @@ const action = async (common) => {
   const packaged_functions = common;
   const db = common.db;
 
-  // await check_db_size(common, db)
+  //await check_db_size(common, db);
 
   //Show initial 'new world' modal
   $("#create-world-row").on("click", function () {
@@ -626,8 +672,6 @@ const draw_faces = async (common) => {
   const team_ids = team_seasons.map((ts) => ts.team_id);
   const teams = await db.team.bulkGet(team_ids);
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
-
-  console.log({ players: players });
 
   for (var player of players) {
     var elems = face_div_by_player_id[player.player_id];

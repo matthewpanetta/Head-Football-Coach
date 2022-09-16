@@ -116,21 +116,20 @@ const action = async (common) => {
 
     const db = await new Dexie(db_name);
 
-    await db.version(16).stores({
+    await db.version(17).stores({
       league_season: "season",
       team: "team_id",
       team_season: "team_season_id, team_id, season",
       team_season_stats: "team_season_id, team_id, season",
       team_season_recruiting: "team_season_id",
       coach: "coach_id",
-      coach_team_season:
-        "coach_team_season_id, coach_id, team_season_id, season",
+      coach_team_season: "coach_team_season_id, coach_id, team_season_id, season",
       player: "player_id",
       player_team_season:
         "player_team_season_id, player_id, team_season_id, season",
       player_team_season_recruiting: "player_team_season_id",
       player_team_season_stats: "player_team_season_id",
-      conference: "conference_id, conference_name",
+      conference: "conference_id",
       conference_season:
         "conference_season_id, conference_id, season, [conference_id+season]",
       phase: "phase_id, season",
