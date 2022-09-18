@@ -1948,6 +1948,59 @@ tfoot td {
   background-color: #0B5001;
 }
 
+.position-badge {
+  border-radius: 6px;
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+  padding: 4px 8px;
+  width: 50px;
+}
+
+.position-badge.position-badge-QB {
+  background-color: #d9534f; 
+  background-color: #cc181e;
+
+  background-color: #ffbaba;
+  color: #a70000;
+}
+
+.position-badge.position-badge-RB, .position-badge.position-badge-LB {
+  background-color: #ffcd94;
+  color: #cc3300;
+}
+
+.position-badge.position-badge-WR, .position-badge.position-badge-CB {
+  background-color: #f8b014;
+
+  background-color: #f9d889;
+  color: #a57d00;
+}
+
+.position-badge.position-badge-TE, .position-badge.position-badge-S {
+  color: #234d20;
+  background-color: #b8d8be;
+}
+
+.position-badge.position-badge-OT, .position-badge.position-badge-EDGE {
+  background-color: #1e85f7; 
+  background-color: #0057e7;
+
+  background-color: 	#bac2ff;
+  color: 	#00059f;
+}
+
+.position-badge.position-badge-IOL, .position-badge.position-badge-DL {
+  background-color: #b8a7ea; 
+  background-color: #4d1b7b;
+
+  color: #493267;
+  background-color: #c9c9ff;
+}
+
+.position-badge.position-badge-P, .position-badge.position-badge-K, .position-badge.position-badge-FB {
+  background-color: #444;
+}
+
 .rating-badge {
   border-radius: 6px;
   font-weight: 600;

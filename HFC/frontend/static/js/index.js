@@ -54,11 +54,11 @@ const increment_parent = (child, parent) => {
       increment_parent(child[key], parent[key]);
     } else {
       if (key == "lng") {
-        parent[key] = Math.max(parent[key], child[key]);
+        parent[key] = Math.max((parent[key] || 0), (child[key] || 0));
       } else if (key == "games_played" || key == "team_games_played") {
-        parent[key] += 1;
+        parent[key] = (parent[key] || 0) + 1;
       } else {
-        parent[key] += child[key];
+        parent[key] = (parent[key] || 0) + (child[key] || 0);
       }
     }
   }
@@ -1767,7 +1767,8 @@ class team_season {
       };
       this.rankings = {
         division_rank: [],
-        national_rank: [],
+        national_rank: [],        
+        srs_ratings: [],
         national_rank_delta: 0,
         national_rank_delta_abs: 0,
         stat_rankings: { offense: [], defense: [], overall: [] },
@@ -1838,7 +1839,7 @@ class team_season {
   }
 
   get record_display() {
-    return `${this.record.wins} - ${this.record.losses} `;
+    return `${this.record.wins} - ${this.record.losses}`;
   }
 
   get net_wins() {
@@ -2418,26 +2419,28 @@ class player_team_season {
   get player_award_rating() {
     let position_overall_map = {
       QB: 0,
-      RB: -5,
-      FB: -30,
-      WR: -15,
-      TE: -30,
-      OT: -300,
-      IOL: -300,
-      EDGE: -25,
-      DL: -25,
-      LB: -25,
-      CB: -25,
-      S: -25,
-      K: -30,
-      P: -30,
+      RB: -.05,
+      FB: -.5,
+      WR: -.1,
+      TE: -.2,
+      OT: -.3,
+      IOL: -.3,
+      EDGE: -.2,
+      DL: -.2,
+      LB: -.25,
+      CB: -.25,
+      S: -.25,
+      K: -.5,
+      P: -.5,
     }
     return (
-      (10 * this.season_stats.average_weighted_game_score) +
-      (1 * this.ratings.overall.overall) + 
-      (1 * (position_overall_map[this.position])) +
-      (0.5 * this.team_season.team.team_ratings.brand) +
-      (-1 * this.team_season.national_rank)
+      ((10 * this.season_stats.average_weighted_game_score) +
+      (1 * this.ratings.overall.overall) +      
+      (0.5 * this.team_season.team.team_ratings.brand)) *
+      ((1 / this.team_season.national_rank) ** .1) *
+      ((1 / (this.team_season_average_weighted_game_score_rank || 1)) ** .1) *
+      ((1 / (this.team_season_overall_rank || 1)) ** .1) *
+      (1 + (position_overall_map[this.position]))
     );
   }
 }
@@ -6345,6 +6348,7 @@ const common_functions = async (route_pattern) => {
   });
 
   var db = await resolve_db({ database_id: world_id });
+  window.db = db;
 
   return {
     create_new_db: create_new_db,
@@ -6967,7 +6971,7 @@ const calculate_game_score = (
     game_score_value = 0;
     season_score_value = 0;
     if (
-      player_team_game.game_stats[stat_detail.stat_group][stat_detail.stat] == 0
+      !player_team_game.game_stats[stat_detail.stat_group][stat_detail.stat]
     ) {
     } else {
       game_score_value = round_decimal(
@@ -6991,9 +6995,9 @@ const calculate_game_score = (
     }
 
     if (
-      player_team_season.season_stats[stat_detail.stat_group][
+     !player_team_season.season_stats[stat_detail.stat_group][
         stat_detail.stat
-      ] == 0
+      ]
     ) {
     } else {
       season_score_value = round_decimal(
@@ -7015,6 +7019,16 @@ const calculate_game_score = (
         season_score_value: season_score_value,
         abs_season_score_value: Math.abs(season_score_value),
       });
+      // console.log('player_team_season.top_stats', {
+      //   player_team_season:player_team_season, 'player_team_season.top_stats': player_team_season.top_stats,
+      //   season_score_value: season_score_value,
+      //   abs_season_score_value: Math.abs(season_score_value), 'stat_detail.display': stat_detail.display,
+      //   'stat_detail.stat_group': stat_detail.stat_group, 'stat_detail.stat': stat_detail.stat, 'player_team_season.season_stats[stat_detail.stat_group][stat_detail.stat]': player_team_season.season_stats[stat_detail.stat_group][
+      //     stat_detail.stat
+      //   ]
+      // })
+      // debugger;
+
     }
   }
 
@@ -7384,6 +7398,12 @@ const sim_game = (game_dict, common) => {
     adjusted_score_possibilities = {};
 
   game_dict.home_field_advantage_modifier = game_dict.game.is_neutral_site_game ? 1.0 : 1.03;
+  if (game_dict.teams[1].school_name == 'SMU'){
+    game_dict.home_field_advantage_modifier = 1.05
+  }
+  else if (game_dict.teams[0].school_name == 'SMU'){
+    game_dict.home_field_advantage_modifier = 0.95
+  }
 
   var drive_within_20 = false;
   var drive_within_40 = false;
@@ -8501,7 +8521,6 @@ const sim_week_games = async (this_week, common) => {
         pts = player_team_seasons_to_add[player_team_season_id];
         pts.games_played += 1;
         pts.team_games_played += 1;
-        console.log({player_team_game:player_team_game})
         let new_player_team_game = new player_team_game(
           player_team_game_id_counter,
           team_games[ind].team_game_id,
@@ -8575,14 +8594,14 @@ const sim_week_games = async (this_week, common) => {
       team_game_ids_to_save.push(tg.team_game_id);
       for (let [game_stat_group_name, game_stat_group] of Object.entries(tg.game_stats)){
         for (let [stat_name, stat_value] of Object.entries(game_stat_group)){
-          if (stat_value == 0){
+          if (!stat_value){
             delete tg.game_stats[game_stat_group_name][stat_name];
           }
         }
       }
       for (let [game_stat_group_name, game_stat_group] of Object.entries(tg.opponent_game_stats)){
         for (let [stat_name, stat_value] of Object.entries(game_stat_group)){
-          if (stat_value == 0){
+          if (!stat_value){
             delete tg.opponent_game_stats[game_stat_group_name][stat_name];
           }
         }
@@ -8604,7 +8623,10 @@ const sim_week_games = async (this_week, common) => {
         delete ptg.game_attrs;
         for (let [game_stat_group_name, game_stat_group] of Object.entries(ptg.game_stats)){
           for (let [stat_name, stat_value] of Object.entries(game_stat_group)){
-            if (stat_value == 0){
+            if (!stat_value){
+              // console.log({
+              //   game_stat_group_name:game_stat_group_name, stat_name:stat_name, ptg:ptg, 'ptg.game_stats': ptg.game_stats
+              // })
               delete ptg.game_stats[game_stat_group_name][stat_name];
             }
           }
@@ -8618,7 +8640,7 @@ const sim_week_games = async (this_week, common) => {
     )) {
       for (let [game_stat_group_name, game_stat_group] of Object.entries(pts.season_stats)){
         for (let [stat_name, stat_value] of Object.entries(game_stat_group)){
-          if (stat_value == 0){
+          if (!stat_value){
             delete pts.season_stats[game_stat_group_name][stat_name];
           }
         }
@@ -9095,38 +9117,40 @@ const calculate_primetime_games = async (this_week, all_weeks, common) => {
 }
 
 const calculate_national_rankings = async (this_week, all_weeks, common) => {
-  const db = await common.db;
-  const all_weeks_by_week_id = await index_group(all_weeks, "index", "week_id");
+  const db = common.db;
 
-  let ls = await db.league_season.get(common.season);
-  next_week = all_weeks_by_week_id[this_week.week_id + 1];
-  var team_seasons = await db.team_season
-    .where({ season: this_week.phase.season })
-    .and((ts) => ts.team_id > 0)
+  let ls = await db.league_season.get({season: common.season});
+  let teams = await db.team.toArray();
+  let team_seasons = await db.team_season
+    .where({ season: common.season })
     .toArray();
-  const team_season_ids = team_seasons.map((ts) => ts.team_season_id);
-  const team_season_stats = await db.team_season_stats.bulkGet(team_season_ids);
-  const team_season_stats_by_team_season_id = index_group_sync(
-    team_season_stats,
-    "index",
-    "team_season_id"
-  );
+  let team_season_ids = team_seasons.map((ts) => ts.team_season_id);
 
-  const teams_by_team_id = index_group_sync(
-    await db.team.where("team_id").above(0).toArray(),
-    "index",
-    "team_id"
-  );
+  let weeks = await db.week.where({season: common.season}).toArray();
+  let weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
 
-  const team_games = await db.team_season
-    .where({ season: this_week.phase.season })
+  console.log(weeks)
+
+  let team_games = await db.team_game
+    .where("team_season_id")
+    .anyOf(team_season_ids)
     .toArray();
-  const team_games_by_team_season_id = index_group_sync(
+  let game_ids = team_games.map((tg) => tg.game_id);
+  let games = await db.game.bulkGet(game_ids);
+  games = nest_children(games, weeks_by_week_id, 'week_id', 'week')
+
+  let games_by_game_id = index_group_sync(games, "index", "game_id");
+
+  team_games = nest_children(team_games, games_by_game_id, "game_id", "game");
+  team_games = team_games.filter((tg) => tg.game.was_played);
+  // team_games = team_games.filter((tg) => (tg.game.week.schedule_week_number || 2000) <= 1999);
+  let team_games_by_team_season_id = index_group_sync(
     team_games,
     "group",
     "team_season_id"
   );
 
+  let teams_by_team_id = index_group_sync(teams, "index", "team_id");
   team_seasons = nest_children(
     team_seasons,
     teams_by_team_id,
@@ -9135,22 +9159,82 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
   );
   team_seasons = nest_children(
     team_seasons,
-    team_season_stats_by_team_season_id,
-    "team_season_id",
-    "stats"
-  );
-  team_seasons = nest_children(
-    team_seasons,
     team_games_by_team_season_id,
     "team_season_id",
     "team_games"
   );
+  team_seasons = team_seasons.filter((ts) => ts.team_id > 0);
+  console.log({ team_seasons: team_seasons });
 
-  var rank_counter = 0,
-    sorted_team_seasons = [],
-    team_seasons_to_save = [];
+  let overall_power_modifier = 3;
 
-  sorted_team_seasons = team_seasons.sort(function (ts_a, ts_b) {
+  for (let ts of team_seasons) {
+    ts.srs = {
+      loops: 0,
+      overall_rating: Math.ceil((ts.rating.overall ** overall_power_modifier)  / (99 ** (overall_power_modifier - 1))),
+      brand: Math.ceil((ts.team.team_ratings.brand ** overall_power_modifier) / (20 ** (overall_power_modifier - 1))),
+      wins:0,
+      losses:0,
+      games_played:0
+    };
+
+    ts.team_games = ts.team_games || []
+
+    for (let tg of ts.team_games) {
+      ts.srs.wins += (tg.is_winning_team ? 1 : 0);
+      ts.srs.losses += (tg.is_winning_team ? 0 : 1);
+      ts.srs.games_played += 1
+    }
+
+    ts.srs.net_win_count = ts.srs.wins - ts.srs.losses;
+    ts.srs.net_win_value = Math.ceil((ts.srs.net_win_count ** overall_power_modifier) / (ts.srs.net_win_count / Math.abs(ts.srs.net_win_count)))
+    ts.srs.rating = ts.srs.overall_rating + ts.srs.brand + ts.srs.net_win_count;
+
+  }
+
+  let overall_list = team_seasons.map(ts => ts.srs.rating);
+  let average_overall = Math.ceil(average(overall_list))
+
+  let team_seasons_by_team_season_id = index_group_sync(
+    team_seasons,
+    "index",
+    "team_season_id"
+  );
+
+  console.log({ team_seasons: team_seasons, average_overall:average_overall, overall_list:overall_list });
+
+  for (let iter_ind = 0; iter_ind <= 1000; iter_ind++) {
+    for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
+      let total_opponent_rating = 0;
+      for (let tg of ts.team_games) {
+        total_opponent_rating +=
+          team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating;
+      }
+      ts.srs.schedule_factor = Math.round(
+        (total_opponent_rating + (ts.srs.net_win_count * average_overall)) / (ts.srs.games_played || 1)
+      );
+    }
+
+    for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
+      if (ts.srs.games_played < 5){
+        ts.srs.rating = 0;
+        ts.srs.rating += ts.srs.schedule_factor * (ts.srs.games_played / 5)
+        ts.srs.rating += ts.srs.overall_rating * ((5 - ts.srs.games_played) / 5)
+      }
+      else {
+        ts.srs.rating = (ts.srs.schedule_factor || ts.srs.rating);
+      }
+    }
+  }
+
+  for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
+    ts.srs.rating = Math.round((ts.srs.rating + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 2);
+  }
+
+
+
+  let sorted_team_seasons = team_seasons.sort(function(ts_a, ts_b){
+    
     if (ts_a.results.national_champion) return -1;
     if (ts_b.results.national_champion) return 1;
 
@@ -9164,28 +9248,14 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     }
 
     if (ls.playoffs.playoffs_started && !ls.playoffs.playoffs_complete){
-      if ((ts_a.playoff.seed || 130) < (ts_b.playoff.seed || 130)) return -1;
-      if ((ts_a.playoff.seed || 130) > (ts_b.playoff.seed || 130)) return 1;
+      if ((ts_a.playoff.seed || 200) < (ts_b.playoff.seed || 200)) return -1;
+      if ((ts_a.playoff.seed || 200) > (ts_b.playoff.seed || 200)) return 1;
     }
 
-    var a_value = 0,
-      b_value = 0;
+    if (ts_a.srs.rating < ts_b.srs.rating) return 1;
+    if (ts_a.srs.rating > ts_b.srs.rating) return -1;
 
-    a_value =
-      ts_a.rating.overall +
-      ts_a.team.team_ratings.program_history +
-      (-15 * ts_a.record.losses) +
-      (10 * ts_a.record.wins);
-    b_value =
-      ts_b.rating.overall +
-      ts_b.team.team_ratings.program_history +
-      (-15 * ts_b.record.losses )+
-      (10 * ts_b.record.wins);
-
-    if (a_value < b_value) return 1;
-    if (a_value > b_value) return -1;
-
-    if (ts_a.record.defeated_teams.includes(ts_b.team_season_id)) return -1;
+    if (ts_a.record.defeated_teams.includes(ts_b.team_season_id) && !ts_b.record.defeated_teams.includes(ts_a.team_season_id)) return -1;
     if (ts_b.record.defeated_teams.includes(ts_a.team_season_id)) return 1;
 
     if (ts_a.record.losses < ts_b.record.losses) return -1;
@@ -9212,7 +9282,9 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
 
   for (var team_season of sorted_team_seasons) {
     team_season.rankings.national_rank.unshift(rank_counter);
+    team_season.rankings.srs_ratings.unshift(team_season.srs.rating)
     rank_counter += 1;
+
 
     if (team_season.rankings.national_rank.length > 1) {
       team_season.rankings.national_rank_delta =
@@ -9259,6 +9331,7 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     delete team_season.team;
     delete team_season.stats;
     delete team_season.team_games;
+    delete team_season.srs;
   }
   console.log({ sorted_team_seasons: sorted_team_seasons });
   //debugger;
@@ -10144,6 +10217,21 @@ const choose_preseason_all_americans = async (common) => {
     "position"
   );
 
+  let player_team_seasons_by_team_season_id = index_group_sync(
+    player_team_seasons,
+    "group",
+    "team_season_id"
+  );
+
+  for (let [team_season_id, ts_player_team_seasons] of Object.entries(player_team_seasons_by_team_season_id)){
+    ts_player_team_seasons = ts_player_team_seasons.sort((pts_a, pts_b) => pts_b.average_weighted_game_score - pts_a.average_weighted_game_score);
+    ts_player_team_seasons.forEach((pts, ind) => pts.team_season_average_weighted_game_score_rank = (ind + 1));
+
+    ts_player_team_seasons = ts_player_team_seasons.sort((pts_a, pts_b) => pts_b.ratings.overall - pts_a.ratings.overall);
+    ts_player_team_seasons.forEach((pts, ind) => pts.team_season_overall_rank = (ind + 1));
+  }
+  
+
   var awards_to_save = [];
 
   for (const position in player_team_seasons_by_position) {
@@ -10382,6 +10470,17 @@ const choose_all_americans = async (this_week, common) => {
     "player_id",
     "player"
   );
+
+  let player_team_seasons_by_team_season_id = index_group_sync(
+    player_team_seasons,
+    "group",
+    "team_season_id"
+  );
+
+  for (let [team_season_id, ts_player_team_seasons] of Object.entries(player_team_seasons_by_team_season_id)){
+    ts_player_team_seasons = ts_player_team_seasons.sort((pts_a, pts_b) => pts_b.average_weighted_game_score - pts_a.average_weighted_game_score);
+    ts_player_team_seasons.forEach((pts, ind) => pts.team_season_average_weighted_game_score_rank = (ind + 1));
+  }
 
   player_team_seasons = player_team_seasons.sort(
     (pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating
@@ -11029,7 +11128,8 @@ const sim_action = async (duration, common) => {
 
     if (
       this_week.week_name != "Bowl Week 1" &&
-      this_week.week_name != "Bowl Week 2"
+      this_week.week_name != "Bowl Week 2" &&
+      this_week.week_name != "Bowl Week 3"
     ) {
       await calculate_national_rankings(this_week, all_weeks, common);
     }
@@ -13338,6 +13438,12 @@ const drawFeature = async (svg, face, info) => {
     featureSVGString = featureSVGString.replace(
       /\$\[font-y-pos\]/g,
       font_y_pos
+    );  
+  }
+  else {
+    featureSVGString = featureSVGString.replace(
+      /\$\[font-y-pos\]/g,
+      0
     );  
   }
 

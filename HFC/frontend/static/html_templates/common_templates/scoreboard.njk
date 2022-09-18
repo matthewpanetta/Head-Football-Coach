@@ -9,22 +9,27 @@
         <div class="inline-block table-cell scoreboard-carousel-item card">
           <table style='width: 135px;' BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class=" background-white height-70">
             <thead>
-              <th class="" colspan="2">
+              <th class="" colspan="1">
                 <span class='font10'></span>
               </th>
-              <th class="center-text" colspan="1">
-                <span class='font10'><a href="{{game.game_href}}">Recap</a></span>
+              <th class="right-text" colspan="2">
+                <span class='font10 px-1'><a href="{{game.game_href}}">Recap</a></span>
               </th>
             </thead>
-            {% for team_game in game.team_games %}
+            {% for team_game in game.team_games.reverse() %}
             <tr class="{{team_game.TeamWinningGameBold}}">
               <td class='center-text'>
                 <img class="logo logo-24 margin-right-4" src="{{team_game.team_season.team.team_logo}}" alt="">
               </td>
-              <td class='min-width-50 left-text'>
-                <div class='margin0'><span class='font10'>{{team_game.national_rank_display}}</span> <a href="{{team_game.team_season.team.team_href}}" class='font14'>{{team_game.team_season.team.team_abbreviation}}</a></div>
+              <td class='min-width-50 left-text '>
+                <div class='margin0'>
+                  <span class='font10'>{{team_game.national_rank_display}}</span> 
+                  <a href="{{team_game.team_season.team.team_href}}" class='font14 {%if team_game.is_winning_team%} bold {% endif%}'>
+                    {{team_game.team_season.team.team_abbreviation}}
+                  </a>
+                </div>
               </td>
-              <td class='center-text font14 w3-padding-4'>
+              <td class='right-text font14 p-1 {%if team_game.is_winning_team%} bold {% endif%}'>
                 {{team_game.points}}
               </td>
             </tr>

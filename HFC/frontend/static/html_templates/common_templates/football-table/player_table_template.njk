@@ -422,7 +422,11 @@
             <td style='width: 150px; left: 30px;'class='left-text sticky-column'>
               <a href="{{player.player_href}}">{{player.full_name}}</a>
             </td>
-            <td>{{player.position}}</td>
+            <td>
+              <div class='position-badge position-badge-{{player.position}} inline-block'>
+                {{player.position}}
+              </div>
+            </td>
             <td>{{player.player_team_season.class.class_name}}</td>
             <td>{{player.body.height}}</td>
             <td class='col-group'>{{player.body.weight}}</td>

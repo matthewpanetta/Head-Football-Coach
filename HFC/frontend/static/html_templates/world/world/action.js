@@ -95,13 +95,130 @@ const refresh_playoffs = async (common) => {
   console.log("done");
 };
 
+const test_srs = async (common) => {
+  const db = common.db;
+
+  let teams = await db.team.toArray();
+  let team_seasons = await db.team_season
+    .where({ season: common.season })
+    .toArray();
+  let team_season_ids = team_seasons.map((ts) => ts.team_season_id);
+
+  let weeks = await db.week.where({season: common.season}).toArray();
+  let weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
+
+  console.log(weeks)
+
+  let team_games = await db.team_game
+    .where("team_season_id")
+    .anyOf(team_season_ids)
+    .toArray();
+  let game_ids = team_games.map((tg) => tg.game_id);
+  let games = await db.game.bulkGet(game_ids);
+  games = nest_children(games, weeks_by_week_id, 'week_id', 'week')
+
+  let games_by_game_id = index_group_sync(games, "index", "game_id");
+
+  team_games = nest_children(team_games, games_by_game_id, "game_id", "game");
+  team_games = team_games.filter((tg) => tg.game.was_played);
+  // team_games = team_games.filter((tg) => (tg.game.week.schedule_week_number || 2000) <= 1999);
+  let team_games_by_team_season_id = index_group_sync(
+    team_games,
+    "group",
+    "team_season_id"
+  );
+
+  let teams_by_team_id = index_group_sync(teams, "index", "team_id");
+  team_seasons = nest_children(
+    team_seasons,
+    teams_by_team_id,
+    "team_id",
+    "team"
+  );
+  team_seasons = nest_children(
+    team_seasons,
+    team_games_by_team_season_id,
+    "team_season_id",
+    "team_games"
+  );
+  team_seasons = team_seasons.filter((ts) => ts.team_id > 0);
+  console.log({ team_seasons: team_seasons });
+
+  let overall_power_modifier = 2;
+  let max_overall = Math.max(...team_seasons.map(ts => ts.rating.overall));
+  let overall_list = team_seasons.map(ts => (ts.rating.overall ** overall_power_modifier) / (max_overall ** (overall_power_modifier - 1)));
+  overall_list = overall_list.map(ovr => Math.ceil((ovr )))
+  let average_overall = Math.ceil(average(overall_list))
+
+  for (let ts of team_seasons) {
+    ts.srs = {
+      loops: 0,
+      rating: Math.ceil((ts.rating.overall ** overall_power_modifier)  / (max_overall ** (overall_power_modifier - 1))),
+      wins:0,
+      losses:0,
+      games_played:0
+    };
+
+    for (let tg of ts.team_games) {
+      ts.srs.wins += (tg.is_winning_team ? 1 : 0);
+      ts.srs.losses += (tg.is_winning_team ? 0 : 1);
+      ts.srs.games_played += 1
+    }
+
+    ts.srs.net_win_count = ts.srs.wins - ts.srs.losses;
+  }
+
+
+  let team_seasons_by_team_season_id = index_group_sync(
+    team_seasons,
+    "index",
+    "team_season_id"
+  );
+
+  console.log({ team_seasons: team_seasons, average_overall:average_overall, overall_list:overall_list });
+
+  for (let iter_ind = 0; iter_ind <= 500; iter_ind++) {
+    for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
+      let total_opponent_rating = 0;
+      for (let tg of ts.team_games) {
+        total_opponent_rating +=
+          team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating;
+      }
+      ts.srs.schedule_factor = Math.round(
+        (total_opponent_rating + ((ts.srs.net_win_count * average_overall)) + ts.srs.net_win_count) / (ts.srs.games_played || 1)
+      );
+    }
+
+    for (let ts of team_seasons) {
+      ts.srs.rating = ts.srs.schedule_factor;
+    }
+  }
+
+  team_seasons = team_seasons.sort(
+    (ts_a, ts_b) => ts_b.srs.rating - ts_a.srs.rating || ts_b.srs.net_win_count - ts_a.srs.net_win_count
+  );
+  console.log({ team_seasons: team_seasons.map(ts => ({team: ts.team.school_name, record: `${ts.srs.wins}-${ts.srs.losses}`, srs: ts.srs.rating})) });
+
+  // def rateTeams(self, array, dict):
+
+  //   for i in range(self.ITERATION_CONSTANT):
+
+  //       for team in range(len(array)):
+  //           performance = array[team].head.getPerformance()
+  //           scheduleFactor = array[team].head.getScheduleFactor()
+  //           newRating = performance + scheduleFactor
+  //           array[team].head.setRating(newRating)
+
+  //   return array
+};
+
 const get_all_keys = (obj) => {
   let all_keys = new Set();
 
   if (Array.isArray(obj)) {
     for (let val of obj) {
       get_all_keys(val).forEach(function (i) {
-        if (!(i.includes('id')) && i.length > 3){
+        if (!i.includes("id") && i.length > 3) {
           all_keys.add(i);
         }
       });
@@ -117,7 +234,7 @@ const get_all_keys = (obj) => {
         // console.log({all_keys:all_keys, val:val})
         // debugger;
         get_all_keys(val).forEach(function (i) {
-          if (!(i.includes('id')) && i.length > 3){
+          if (!i.includes("id") && i.length > 3) {
             all_keys.add(i);
           }
         });
@@ -565,6 +682,7 @@ const action = async (common) => {
   const db = common.db;
 
   //await check_db_size(common, db);
+  // await test_srs(common);
 
   //Show initial 'new world' modal
   $("#create-world-row").on("click", function () {
