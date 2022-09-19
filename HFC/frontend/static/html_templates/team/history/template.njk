@@ -83,6 +83,7 @@
                       </td>
                       <td>{{team_season.record_display}}</td>
                       <td class=' col-group'>
+                        {{team_season|log}}
                         {%if team_season.league_season.is_season_complete%}
                           {% if team_season.results.national_champion%}
                           <span style='color: darkgoldenrod;' class='bold opacity-1'>National Champions</span>
@@ -106,7 +107,7 @@
                       {% endif %}
                       <td>{{team_season.conference_record_display}}</td>
                       <td class=' col-group'>
-                        {%if team_season.league_season.is_season_complete and team_season.results.conference_champion %}
+                        {%if team_season.results.conference_champion %}
                             <span style='color: darkgoldenrod;' class='bold opacity-1'>
                               {{team_season.conference_season.conference.conference_abbreviation}} Champs
                             </span>

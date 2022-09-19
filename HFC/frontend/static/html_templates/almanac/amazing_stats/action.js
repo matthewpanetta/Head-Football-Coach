@@ -166,38 +166,45 @@ const getHtml = async (common) => {
     }
 
     g.margin_of_victory =
-      g.outcome.winning_team.points - g.outcome.losing_team.points;
+      (g.outcome.winning_team.points || 0) -
+      (g.outcome.losing_team.points || 0);
     g.total_game_points =
-      g.outcome.winning_team.points + g.outcome.losing_team.points;
-    g.winning_team_points = g.outcome.winning_team.points;
+      (g.outcome.winning_team.points || 0) +
+      (g.outcome.losing_team.points || 0);
+    g.winning_team_points = g.outcome.winning_team.points || 0;
     g.losing_team_largest_lead =
-      g.losing_team_game.game_stats.team.biggest_lead;
+      g.losing_team_game.game_stats.team.biggest_lead || 0;
     g.rank_difference =
-      (g.winning_team_game.national_rank) - g.losing_team_game.national_rank;
-    
-    g.upset_value =
-      Math.floor((((g.winning_team_game.national_rank + 5) ** 2) / ((g.losing_team_game.national_rank + 5) ** 2)) + ((g.winning_team_game.national_rank) - (g.losing_team_game.national_rank)));
+      g.winning_team_game.national_rank - g.losing_team_game.national_rank;
+
+    g.upset_value = Math.floor(
+      (g.winning_team_game.national_rank + 5) ** 2 /
+        (g.losing_team_game.national_rank + 5) ** 2 +
+        (g.winning_team_game.national_rank - g.losing_team_game.national_rank)
+    );
 
     g.total_yards =
-      g.winning_team_game.total_yards + g.losing_team_game.total_yards;
-    g.winning_team_yards = g.winning_team_game.total_yards;
+      (g.winning_team_game.total_yards || 0) +
+      (g.losing_team_game.total_yards || 0);
+    g.winning_team_yards = g.winning_team_game.total_yards || 0;
 
     g.total_passing_attempts =
-      g.winning_team_game.game_stats.passing.attempts +
-      g.losing_team_game.game_stats.passing.attempts;
+      (g.winning_team_game.game_stats.passing.attempts || 0) +
+      (g.losing_team_game.game_stats.passing.attempts || 0);
 
-    g.winning_team_turnovers = g.winning_team_game.game_stats.team.turnovers;
+    g.winning_team_turnovers =
+      g.winning_team_game.game_stats.team.turnovers || 0;
     g.total_turnovers =
-      g.winning_team_game.game_stats.team.turnovers +
-      g.losing_team_game.game_stats.team.turnovers;
+      (g.winning_team_game.game_stats.team.turnovers || 0) +
+      (g.losing_team_game.game_stats.team.turnovers || 0);
 
     g.total_punts =
-      g.winning_team_game.game_stats.punting.punts +
-      g.losing_team_game.game_stats.punting.punts;
+      (g.winning_team_game.game_stats.punting.punts || 0) +
+      (g.losing_team_game.game_stats.punting.punts || 0);
 
     // g.school_distance = common.distance_between_cities(g.winning_team_game.team_season.team.location, g.losing_team_game.team_season.team.location );
 
-    console.log({g:g})
+    console.log({ g: g });
     return g;
   });
 

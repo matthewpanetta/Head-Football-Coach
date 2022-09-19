@@ -24,12 +24,12 @@
               <td class='min-width-50 left-text '>
                 <div class='margin0'>
                   <span class='font10'>{{team_game.national_rank_display}}</span> 
-                  <a href="{{team_game.team_season.team.team_href}}" class='font14 {%if team_game.is_winning_team%} bold {% endif%}'>
+                  <a href="{{team_game.team_season.team.team_href}}" class='font14'>
                     {{team_game.team_season.team.team_abbreviation}}
                   </a>
                 </div>
               </td>
-              <td class='right-text font14 p-1 {%if team_game.is_winning_team%} bold {% endif%}'>
+              <td class='right-text font14 p-1 {%if team_game.is_winning_team%} bold W{% endif%}'>
                 {{team_game.points}}
               </td>
             </tr>

@@ -3622,11 +3622,10 @@ const create_schedule = async (data) => {
       division_name: team_season.division_name,
       rivals: team_season_rivals,
       team: teams_by_team_id[team_season.team_id],
-     // team_quadrant: team_quadrant_cutoffs.find(quadrant => team_season.national_rank <= quadrant.max_national_rank).quadrant
+      team_quadrant: team_quadrant_cutoffs.find(quadrant => team_season.national_rank <= quadrant.max_national_rank).quadrant
     };
 
     console.log({team_season: team_season, team_season_schedule_tracker:team_season_schedule_tracker, team_quadrant_cutoffs:team_quadrant_cutoffs});
-    debugger;
   }
 
   var scheduling_teams = true;
@@ -3835,6 +3834,115 @@ const create_schedule = async (data) => {
       team_obj.conference.games_to_schedule;
   });
 
+  let quadrant_pairings = [
+    [[1,1], [2,2], [3,3], [4,4]],
+    [[1,2], [3,4]],
+    [[1,3], [2,4]],
+    [[1,4], [2,3]],
+  ]
+  let team_season_ids_by_quadrant = {
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+  }
+
+  Object.entries(team_season_schedule_tracker).forEach(function([team_season_id, tracker_obj]){
+    team_season_ids_by_quadrant[tracker_obj.team_quadrant].push(team_season_id)
+    console.log({tracker_obj:tracker_obj, team_season_id:team_season_id, team_season_ids_by_quadrant:team_season_ids_by_quadrant})
+  });
+  
+  console.log({team_season_ids_by_quadrant:team_season_ids_by_quadrant, team_season_ids_by_quadrant:team_season_ids_by_quadrant, team_season_schedule_tracker:team_season_schedule_tracker})
+
+  //scheduling quadrants
+  for (let iter_ind = 0; iter_ind<=20; iter_ind++){
+    team_season_id_list = Object.keys(team_season_schedule_tracker);
+    team_season_id_list = team_season_id_list.filter(
+      (team_id) =>
+        team_season_schedule_tracker[team_id].non_conference.games_to_schedule >
+        0
+    );
+    var max_games_to_schedule =
+      Math.max(
+        ...team_season_id_list.map(
+          (team_id) =>
+            team_season_schedule_tracker[team_id].non_conference
+              .games_to_schedule
+        )
+      ) - Math.floor(attempt_counter / 5);
+
+    max_games_to_schedule = Math.max(0, max_games_to_schedule);
+
+    let quadrant_pairing = quadrant_pairings[iter_ind % 4];
+    console.log({quadrant_pairing:quadrant_pairing, max_games_to_schedule:max_games_to_schedule, team_season_id_list:team_season_id_list})
+
+    for (let pair of quadrant_pairing){
+      let quadrant_a = pair[0];
+      let quadrant_b = pair[1];
+      console.log({pair:pair, quadrant_a:quadrant_a, quadrant_b:quadrant_b})
+
+      if (quadrant_a != quadrant_b){
+        var quadrant_a_teams = team_season_ids_by_quadrant[quadrant_a];
+        var quadrant_b_teams = team_season_ids_by_quadrant[quadrant_b];
+  
+        quadrant_a_teams = quadrant_a_teams.filter(ts_id => team_season_schedule_tracker[ts_id].non_conference.schedule_team_quadrants[quadrant_b] == 0);
+        quadrant_b_teams = quadrant_b_teams.filter(ts_id => team_season_schedule_tracker[ts_id].non_conference.schedule_team_quadrants[quadrant_a] == 0);
+        
+        quadrant_a_teams = common.shuffle(quadrant_a_teams);
+        quadrant_b_teams = common.shuffle(quadrant_b_teams);
+        console.log({quadrant_a_teams:quadrant_a_teams, quadrant_b_teams:quadrant_b_teams})
+
+      }
+      else {
+        let quadrant_all_teams = team_season_ids_by_quadrant[quadrant_a];
+        quadrant_all_teams = common.shuffle(quadrant_all_teams);
+        quadrant_all_teams = quadrant_all_teams.filter(ts_id => team_season_schedule_tracker[ts_id].non_conference.schedule_team_quadrants[quadrant_a] == 0)
+
+        console.log({quadrant_all_teams:quadrant_all_teams})
+        var middle_index = Math.floor(quadrant_all_teams.length / 2);
+        var quadrant_a_teams = quadrant_all_teams.slice(0, middle_index);
+        var quadrant_b_teams = quadrant_all_teams.slice(middle_index);
+
+      }
+
+      console.log({quadrant_a_teams:quadrant_a_teams, quadrant_b_teams:quadrant_b_teams})
+
+
+      zipped_set = zip(quadrant_a_teams, quadrant_b_teams);
+      console.log("zipped_set", zipped_set);
+      debugger;
+
+      $.each(zipped_set, function (ind, team_set) {
+        if (
+          team_season_schedule_tracker[team_set[0]].non_conference
+            .games_to_schedule < max_games_to_schedule &&
+          team_season_schedule_tracker[team_set[1]].non_conference
+            .games_to_schedule < max_games_to_schedule
+        ) {
+          console.log("throwing out game", {
+            team_set: team_set,
+            "team_season_schedule_tracker[team_set[0]].non_conference.games_to_schedule":
+              team_season_schedule_tracker[team_set[0]].non_conference
+                .games_to_schedule,
+            "team_season_schedule_tracker[team_set[1]].non_conference.games_to_schedule":
+              team_season_schedule_tracker[team_set[1]].non_conference
+                .games_to_schedule,
+            max_games_to_schedule: max_games_to_schedule,
+          });
+          return true;
+        }
+        common.schedule_game(
+          common,
+          scheduling_dict,
+          team_set,
+          "non_conference",
+          null
+        );
+      });
+    }
+
+  }
+
   scheduling_teams = true;
   attempt_counter = 1;
   //Scheduling non_conference
@@ -3862,6 +3970,7 @@ const create_schedule = async (data) => {
       );
     }
 
+    //One out of ten times, or any attempt past #50, just go wild & full random
     if (attempt_counter % 10 == 9 || attempt_counter > 50) {
       team_season_id_list = common.shuffle(team_season_id_list);
       $.each(team_season_id_list, function (ind, obj) {
@@ -3872,6 +3981,7 @@ const create_schedule = async (data) => {
         }
       });
     } else if (attempt_counter % 10 >= 7) {
+      // 3 out of 10 times, sort by # of opps needed, but flip second half. Sort of a non-perfect match scenario
       team_season_id_list = team_season_id_list.sort(function (
         team_id_a,
         team_id_b
@@ -3888,6 +3998,7 @@ const create_schedule = async (data) => {
       team_set_b = team_season_id_list.slice(middle_index);
       team_set_b = team_set_b.reverse();
     } else if (attempt_counter % 10 >= 5) {
+      // 2 out of 10 times, sort by max week scheduled?
       team_season_id_list = team_season_id_list.sort(function (
         team_id_a,
         team_id_b
@@ -3977,7 +4088,7 @@ const create_schedule = async (data) => {
         0
     );
 
-    scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 150;
+    scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 500;
 
     attempt_counter += 1;
     team_set_a = [];
@@ -6452,10 +6563,10 @@ const conference_standings = async (
   common
 ) => {
   const db = common.db;
-  const season = common.season;
   var conference_season = await db.conference_season.get({
     conference_season_id: conference_season_id,
   });
+  const season = conference_season.season;
   var conference = await db.conference.get({
     conference_id: conference_season.conference_id,
   });
@@ -7807,7 +7918,7 @@ const sim_game = (game_dict, common) => {
         drive_end = true;
         yards_this_play = 0;
 
-        punt_distance = Math.floor(Math.random() * 20) + 20;
+        punt_distance = Math.floor(Math.random() * 40) + 20;
 
         var chosen_p_index = 0;
         chosen_players = {
@@ -9126,10 +9237,11 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     .toArray();
   let team_season_ids = team_seasons.map((ts) => ts.team_season_id);
 
-  let weeks = await db.week.where({season: common.season}).toArray();
+  let weeks = await db.week.where('season').between(common.season-1, common.season+1, true, true).toArray();
   let weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
+  let current_week = weeks.find(w => w.is_current);
 
-  console.log(weeks)
+  console.log({weeks: weeks, current_week:current_week})
 
   let team_games = await db.team_game
     .where("team_season_id")
@@ -9166,7 +9278,19 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
   team_seasons = team_seasons.filter((ts) => ts.team_id > 0);
   console.log({ team_seasons: team_seasons });
 
-  let overall_power_modifier = 3;
+  let overall_power_modifier = 1;
+  if (current_week.week_name == 'Pre-Season'){
+    overall_power_modifier = 5;
+  }
+  else if (current_week.schedule_week_number <= 4){
+    overall_power_modifier = 4;
+  }
+  else if (current_week.schedule_week_number <= 8){
+    overall_power_modifier = 3;
+  }
+  else if (current_week.schedule_week_number <= 12){
+    overall_power_modifier = 2;
+  }
 
   for (let ts of team_seasons) {
     ts.srs = {
@@ -9175,21 +9299,34 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
       brand: Math.ceil((ts.team.team_ratings.brand ** overall_power_modifier) / (20 ** (overall_power_modifier - 1))),
       wins:0,
       losses:0,
-      games_played:0
+      games_played:0,
+      fractional_wins:0,
+      fractional_losses:0,
+      fractional_games_played:0
     };
 
     ts.team_games = ts.team_games || []
+    ts.team_games = ts.team_games.sort((tg_a, tg_b) => tg_a.game.week_id - tg_b.game.week_id);
+    ts.srs.games_played = ts.team_games.length;
 
+    let game_index = 0;
     for (let tg of ts.team_games) {
       ts.srs.wins += (tg.is_winning_team ? 1 : 0);
       ts.srs.losses += (tg.is_winning_team ? 0 : 1);
-      ts.srs.games_played += 1
+
+      tg.game_fractional_share = ((1.0 / (ts.srs.games_played - game_index)) ** .2)
+      
+      ts.srs.fractional_wins += ((tg.is_winning_team ? 1.0 : 0) * tg.game_fractional_share);
+      ts.srs.fractional_losses += ((tg.is_winning_team ? 0 : 1.0) * tg.game_fractional_share);
+
+      ts.srs.fractional_games_played += tg.game_fractional_share
+      game_index += 1;
     }
-
     ts.srs.net_win_count = ts.srs.wins - ts.srs.losses;
-    ts.srs.net_win_value = Math.ceil((ts.srs.net_win_count ** overall_power_modifier) / (ts.srs.net_win_count / Math.abs(ts.srs.net_win_count)))
-    ts.srs.rating = ts.srs.overall_rating + ts.srs.brand + ts.srs.net_win_count;
-
+    ts.srs.fractional_net_win_count = ts.srs.fractional_wins - ts.srs.fractional_losses;
+    ts.srs.rating = ts.srs.overall_rating + ts.srs.brand + ts.srs.fractional_net_win_count;
+    ts.srs.original_rating = ts.srs.rating;
+    ts.srs.rating_list = [ts.srs.rating];
   }
 
   let overall_list = team_seasons.map(ts => ts.srs.rating);
@@ -9203,49 +9340,60 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
 
   console.log({ team_seasons: team_seasons, average_overall:average_overall, overall_list:overall_list });
 
-  for (let iter_ind = 0; iter_ind <= 1000; iter_ind++) {
-    for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
+  for (let iter_ind = 1; iter_ind <= 20; iter_ind++) {
+    for (let ts of Object.values(team_seasons_by_team_season_id)) {
       let total_opponent_rating = 0;
+      let fractional_opponent_rating = 0;
       for (let tg of ts.team_games) {
         total_opponent_rating +=
           team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating;
+        fractional_opponent_rating +=
+          (team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating * tg.game_fractional_share);
+
+        if (ts.team.school_name == 'Southern Miss' || ts.team.school_name == 'LSU'){
+          console.log({team: ts.team.school_name,'tg.opponent_team_season_id': tg.opponent_team_season_id, 'team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating': team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating, fractional_opponent_rating:fractional_opponent_rating, game_fractional_share: tg.game_fractional_share})
+        }
       }
       ts.srs.schedule_factor = Math.round(
-        (total_opponent_rating + (ts.srs.net_win_count * average_overall)) / (ts.srs.games_played || 1)
+        (fractional_opponent_rating + (ts.srs.fractional_net_win_count * (average_overall))) / (ts.srs.fractional_games_played || 1)
       );
+
+      if (ts.team.school_name == 'Southern Miss' || ts.team.school_name == 'LSU'){
+        console.log({team: ts.team.school_name,'ts.srs.schedule_factor':ts.srs.schedule_factor,fractional_opponent_rating:fractional_opponent_rating, 'ts.srs.fractional_net_win_count': ts.srs.fractional_net_win_count, 'ts.srs.fractional_games_played': ts.srs.fractional_games_played})
+      }
     }
 
-    for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
-      if (ts.srs.games_played < 5){
-        ts.srs.rating = 0;
-        ts.srs.rating += ts.srs.schedule_factor * (ts.srs.games_played / 5)
-        ts.srs.rating += ts.srs.overall_rating * ((5 - ts.srs.games_played) / 5)
-      }
-      else {
-        ts.srs.rating = (ts.srs.schedule_factor || ts.srs.rating);
-      }
+    for (let ts of Object.values(team_seasons_by_team_season_id)) {
+        // ts.srs.rating = (ts.srs.original_rating + ts.srs.schedule_factor) / 2;
+        ts.srs.rating = ((ts.srs.rating * iter_ind) + ts.srs.schedule_factor) / (iter_ind + 1);
+        ts.srs.rating_list.unshift(ts.srs.rating)
     }
   }
 
   for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
-    ts.srs.rating = Math.round((ts.srs.rating + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 2);
+    // ts.srs.rating = Math.round(((ts.srs.rating * 1) + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 2);
+    if (ts.srs.games_played <= 5){
+      ts.srs.rating *= ts.srs.games_played;
+      ts.srs.rating += ((5 - ts.srs.games_played) * ts.srs.original_rating);
+      ts.srs.rating /= 5;
+    }
+    ts.srs.rating = Math.round(((ts.srs.rating * 2) + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 3);
   }
 
+  team_seasons = team_seasons.sort(function(ts_a, ts_b){
+    if (ts_a.srs.rating < ts_b.srs.rating) return 1;
+    if (ts_a.srs.rating > ts_b.srs.rating) return -1;
+    return 0;
+  })
 
+  // for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
+  //   ts.srs.rating = Math.round((ts.srs.rating + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 2);
+  // }
 
   let sorted_team_seasons = team_seasons.sort(function(ts_a, ts_b){
     
     if (ts_a.results.national_champion) return -1;
     if (ts_b.results.national_champion) return 1;
-
-    if (ts_a.record.games_played == 0 || ts_b.record.games_played == 0) {
-      return (
-        ts_b.rating.overall +
-        Math.floor(ts_b.team.team_ratings.program_history) -
-        (ts_a.rating.overall +
-          Math.floor(ts_a.team.team_ratings.program_history))
-      );
-    }
 
     if (ls.playoffs.playoffs_started && !ls.playoffs.playoffs_complete){
       if ((ts_a.playoff.seed || 200) < (ts_b.playoff.seed || 200)) return -1;
@@ -10249,7 +10397,6 @@ const choose_preseason_all_americans = async (common) => {
       pts_a,
       pts_b
     ) {
-      console.log({'pts_b.previous_player_team_season': pts_b.previous_player_team_season, 'pts_a.previous_player_team_season': pts_a.previous_player_team_season, pts_a:pts_a, pts_b: pts_b})
       if (
         pts_b.previous_player_team_season == undefined &&
         pts_a.previous_player_team_season == undefined
@@ -11057,10 +11204,15 @@ const advance_to_next_week = async (this_week, common) => {
 };
 
 const refresh_page = () => {
+  window.onbeforeunload = function() {};
   window.location.reload();
 };
 
 const sim_action = async (duration, common) => {
+  window.onbeforeunload = function() {
+    return "Week is currently simming. Realoading may PERMANENTLY corrupt your save. Are you sure?";
+  };
+
   const db = common.db;
 
   const season = common.world_object.current_season;
@@ -11645,15 +11797,15 @@ const process_bowl_results = async (common) => {
     playoff_teams_advancing = [];
 
   $.each(games_this_week, function (ind, game) {
-    winning_team_season =
+    let winning_team_season =
       team_seasons_by_team_season_id[game.outcome.winning_team.team_season_id];
-    losing_team_season =
+    let losing_team_season =
       team_seasons_by_team_season_id[game.outcome.losing_team.team_season_id];
 
-    winning_team_season.results.bowl = game.bowl;
+    winning_team_season.results.bowl = deep_copy(game.bowl);
     winning_team_season.results.bowl.is_winning_team = true;
 
-    losing_team_season.results.bowl = game.bowl;
+    losing_team_season.results.bowl = deep_copy(game.bowl);
     losing_team_season.results.bowl.is_winning_team = false;
 
     winning_team_season.results.bowl.game_id = game.game_id;
@@ -11671,6 +11823,11 @@ const process_bowl_results = async (common) => {
 
     team_seasons_to_save.push(winning_team_season);
     team_seasons_to_save.push(losing_team_season);
+    console.log({
+      winning_team_season:winning_team_season, losing_team_season:losing_team_season,
+      team_seasons_to_save:team_seasons_to_save, game:game, bowl: game.bowl
+    })
+    debugger;
   });
 
   var team_a = 0,
@@ -12344,9 +12501,9 @@ const schedule_game = (
         });
         dict_for_random = Object.fromEntries(dict_for_random);
         chosen_home_team = common.weighted_random_choice(dict_for_random);
-        chosen_away_team = [team_a, team_b].filter(
+        chosen_away_team = [team_a, team_b].find(
           (team_id) => team_id != chosen_home_team
-        )[0];
+        );
 
         team_a = chosen_home_team;
         team_b = chosen_away_team;
@@ -12417,6 +12574,14 @@ const schedule_game = (
       scheduling_dict.team_season_schedule_tracker[
         team_b
       ].opponents_scheduled.add(team_a);
+
+      if (!is_conference_game){
+        scheduling_dict.team_season_schedule_tracker[team_b].non_conference.schedule_team_quadrants[scheduling_dict.team_season_schedule_tracker[team_a].team_quadrant] += 1;
+        scheduling_dict.team_season_schedule_tracker[team_a].non_conference.schedule_team_quadrants[scheduling_dict.team_season_schedule_tracker[team_b].team_quadrant] += 1;
+        // console.log({scheduling_dict:scheduling_dict, team_a:team_a, team_b:team_b, 'scheduling_dict.team_season_schedule_tracker[team_b]': scheduling_dict.team_season_schedule_tracker[team_b]})
+      }
+
+      // console.log({scheduling_dict:scheduling_dict, team_a:team_a, team_b:team_b, 'scheduling_dict.team_season_schedule_tracker[team_b]': scheduling_dict.team_season_schedule_tracker[team_b]})
 
       var team_game_a = new team_game({
         world_id: scheduling_dict.world_id,
@@ -14337,7 +14502,6 @@ const new_world_action = async (common, database_suffix) => {
   };
   const new_season = new league_season(season_data, undefined);
   console.log({new_season:new_season})
-  debugger;
   await db.league_season.add(new_season);
 
   console.log({season:season, common:common, db:db, new_season_info:new_season_info})

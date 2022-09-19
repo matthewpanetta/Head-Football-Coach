@@ -98,6 +98,7 @@ const refresh_playoffs = async (common) => {
 const test_srs = async (common) => {
   const db = common.db;
 
+  let ls = await db.league_season.get({season: common.season});
   let teams = await db.team.toArray();
   let team_seasons = await db.team_season
     .where({ season: common.season })
@@ -107,7 +108,8 @@ const test_srs = async (common) => {
   let weeks = await db.week.where({season: common.season}).toArray();
   let weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
 
-  console.log(weeks)
+  let current_week = weeks.find(w => w.is_current)
+  console.log(current_week)
 
   let team_games = await db.team_game
     .where("team_season_id")
@@ -144,30 +146,59 @@ const test_srs = async (common) => {
   team_seasons = team_seasons.filter((ts) => ts.team_id > 0);
   console.log({ team_seasons: team_seasons });
 
-  let overall_power_modifier = 2;
-  let max_overall = Math.max(...team_seasons.map(ts => ts.rating.overall));
-  let overall_list = team_seasons.map(ts => (ts.rating.overall ** overall_power_modifier) / (max_overall ** (overall_power_modifier - 1)));
-  overall_list = overall_list.map(ovr => Math.ceil((ovr )))
-  let average_overall = Math.ceil(average(overall_list))
+  let overall_power_modifier = 1;
+  if (current_week.week_name == 'Pre-Season'){
+    overall_power_modifier = 5;
+  }
+  else if (current_week.schedule_week_number <= 4){
+    overall_power_modifier = 4;
+  }
+  else if (current_week.schedule_week_number <= 8){
+    overall_power_modifier = 3;
+  }
+  else if (current_week.schedule_week_number <= 12){
+    overall_power_modifier = 2;
+  }
 
   for (let ts of team_seasons) {
     ts.srs = {
       loops: 0,
-      rating: Math.ceil((ts.rating.overall ** overall_power_modifier)  / (max_overall ** (overall_power_modifier - 1))),
+      overall_rating: Math.ceil((ts.rating.overall ** overall_power_modifier)  / (99 ** (overall_power_modifier - 1))),
+      brand: Math.ceil((ts.team.team_ratings.brand ** overall_power_modifier) / (20 ** (overall_power_modifier - 1))),
       wins:0,
       losses:0,
-      games_played:0
+      games_played:0,
+      fractional_wins:0,
+      fractional_losses:0,
+      fractional_games_played:0
     };
 
+    ts.team_games = ts.team_games || []
+    ts.team_games = ts.team_games.sort((tg_a, tg_b) => tg_a.game.week_id - tg_b.game.week_id);
+    ts.srs.games_played = ts.team_games.length;
+
+    let game_index = 0;
     for (let tg of ts.team_games) {
       ts.srs.wins += (tg.is_winning_team ? 1 : 0);
       ts.srs.losses += (tg.is_winning_team ? 0 : 1);
-      ts.srs.games_played += 1
-    }
 
+      tg.game_fractional_share = ((1.0 / (ts.srs.games_played - game_index)) ** .2)
+      
+      ts.srs.fractional_wins += ((tg.is_winning_team ? 1.0 : 0) * tg.game_fractional_share);
+      ts.srs.fractional_losses += ((tg.is_winning_team ? 0 : 1.0) * tg.game_fractional_share);
+
+      ts.srs.fractional_games_played += tg.game_fractional_share
+      game_index += 1;
+    }
     ts.srs.net_win_count = ts.srs.wins - ts.srs.losses;
+    ts.srs.fractional_net_win_count = ts.srs.fractional_wins - ts.srs.fractional_losses;
+    ts.srs.rating = ts.srs.overall_rating + ts.srs.brand + ts.srs.fractional_net_win_count;
+    ts.srs.original_rating = ts.srs.rating;
+    ts.srs.rating_list = [ts.srs.rating];
   }
 
+  let overall_list = team_seasons.map(ts => ts.srs.rating);
+  let average_overall = Math.ceil(average(overall_list))
 
   let team_seasons_by_team_season_id = index_group_sync(
     team_seasons,
@@ -177,27 +208,51 @@ const test_srs = async (common) => {
 
   console.log({ team_seasons: team_seasons, average_overall:average_overall, overall_list:overall_list });
 
-  for (let iter_ind = 0; iter_ind <= 500; iter_ind++) {
-    for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
+  for (let iter_ind = 1; iter_ind <= 20; iter_ind++) {
+    for (let ts of Object.values(team_seasons_by_team_season_id)) {
       let total_opponent_rating = 0;
+      let fractional_opponent_rating = 0;
       for (let tg of ts.team_games) {
         total_opponent_rating +=
           team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating;
+        fractional_opponent_rating +=
+          (team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating * tg.game_fractional_share);
+
+        if (ts.team.school_name == 'Southern Miss' || ts.team.school_name == 'LSU'){
+          console.log({team: ts.team.school_name,'tg.opponent_team_season_id': tg.opponent_team_season_id, 'team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating': team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating, fractional_opponent_rating:fractional_opponent_rating, game_fractional_share: tg.game_fractional_share})
+        }
       }
       ts.srs.schedule_factor = Math.round(
-        (total_opponent_rating + ((ts.srs.net_win_count * average_overall)) + ts.srs.net_win_count) / (ts.srs.games_played || 1)
+        (fractional_opponent_rating + (ts.srs.fractional_net_win_count * (average_overall))) / (ts.srs.fractional_games_played || 1)
       );
+
+      if (ts.team.school_name == 'Southern Miss' || ts.team.school_name == 'LSU'){
+        console.log({team: ts.team.school_name,'ts.srs.schedule_factor':ts.srs.schedule_factor,fractional_opponent_rating:fractional_opponent_rating, 'ts.srs.fractional_net_win_count': ts.srs.fractional_net_win_count, 'ts.srs.fractional_games_played': ts.srs.fractional_games_played})
+      }
     }
 
-    for (let ts of team_seasons) {
-      ts.srs.rating = ts.srs.schedule_factor;
+    for (let ts of Object.values(team_seasons_by_team_season_id)) {
+        // ts.srs.rating = (ts.srs.original_rating + ts.srs.schedule_factor) / 2;
+        ts.srs.rating = ((ts.srs.rating * iter_ind) + ts.srs.schedule_factor) / (iter_ind + 1);
+        ts.srs.rating_list.unshift(ts.srs.rating)
     }
   }
 
-  team_seasons = team_seasons.sort(
+  for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
+    // ts.srs.rating = Math.round(((ts.srs.rating * 1) + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 2);
+    if (ts.srs.games_played <= 5){
+      ts.srs.rating *= ts.srs.games_played;
+      ts.srs.rating += ((5 - ts.srs.games_played) * ts.srs.original_rating);
+      ts.srs.rating /= 5;
+    }
+    ts.srs.rating = Math.round(((ts.srs.rating * 2) + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 3);
+
+  }
+
+  team_seasons = Object.values(team_seasons).sort(
     (ts_a, ts_b) => ts_b.srs.rating - ts_a.srs.rating || ts_b.srs.net_win_count - ts_a.srs.net_win_count
   );
-  console.log({ team_seasons: team_seasons.map(ts => ({team: ts.team.school_name, record: `${ts.srs.wins}-${ts.srs.losses}`, srs: ts.srs.rating})) });
+  console.log({ team_seasons: team_seasons.map(ts => ({team: ts.team.school_name, record: `${ts.srs.wins}-${ts.srs.losses}`, srs: ts.srs.rating,orig_srs: ts.srs.original_rating, steps: ts.srs.rating_list})) });
 
   // def rateTeams(self, array, dict):
 
@@ -682,7 +737,7 @@ const action = async (common) => {
   const db = common.db;
 
   //await check_db_size(common, db);
-  // await test_srs(common);
+  await test_srs(common);
 
   //Show initial 'new world' modal
   $("#create-world-row").on("click", function () {
