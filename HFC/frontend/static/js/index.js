@@ -65,10 +65,12 @@ const increment_parent = (child, parent) => {
 };
 
 class headline {
-  constructor(headline_id, week_id, headline_text) {
+  constructor(headline_id, week_id, headline_text, headline_type, headline_relevance) {
     this.headline_id = headline_id;
     this.week_id = week_id;
     this.headline_text = headline_text;
+    this.headline_type = headline_type;
+    this.headline_relevance = headline_relevance;
   }
 }
 
@@ -1011,7 +1013,7 @@ class team_season_recruiting {
 }
 
 class team_season_stats {
-  constructor(team_season_id, self_or_opponent) {
+  constructor(team_season_id) {
     this.team_season_id = team_season_id;
     this.season_stats = {
       team: {
@@ -7297,10 +7299,9 @@ const calculate_game_score = (
 };
 
 const generate_headlines = (game_dict, common) => {
-  game_headlines = [
-    "{{winning_team.school_name}} beats out {{losing_team.school_name}}",
-    "{{winning_team.team_name}} blast {{losing_team.team_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
-  ];
+  game_headlines = []
+
+  let score_difference = Math.abs(game_dict.game.scoring.final[0] - game_dict.game.scoring.final[1])
 
   game_dict.winning_team = game_dict.teams[game_dict.winning_team_index];
   game_dict.losing_team = game_dict.teams[game_dict.losing_team_index];
@@ -7310,6 +7311,42 @@ const generate_headlines = (game_dict, common) => {
   game_dict.losing_team_game =
     game_dict.team_games[game_dict.losing_team_index];
 
+  game_dict.winning_team_season =
+    game_dict.team_seasons[game_dict.winning_team_index];
+  game_dict.losing_team_season =
+    game_dict.team_seasons[game_dict.losing_team_index];
+
+  if (score_difference <= 4){
+    game_headlines = game_headlines.concat([
+      "Time runs out for {{losing_team.school_name}}, falling to {{winning_team.school_name}}",
+      "{{winning_team.school_name}} sneaks by {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+    ])
+  }
+  else if (score_difference > 19){
+    game_headlines = game_headlines.concat([
+      "{{winning_team.school_name}} blasts {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      "{{winning_team.school_name}} OBLITERATES {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      "{{winning_team.school_name}} cold clocks {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      "{{winning_team.school_name}} banishes {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+    ])
+  }
+  else {
+    game_headlines = game_headlines.concat([
+      "{{winning_team.school_name}} over {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      "{{winning_team.school_name}} overcomes {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      "{{winning_team.school_name}} beats {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      "{{winning_team.school_name}} outlasts {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      "{{winning_team.school_name}} overpowers {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+    ])
+  }
+
+  if (game_dict.losing_team.location.unique_city_name){
+    game_headlines = game_headlines.concat([
+      "{{winning_team.school_name}} wins in {{losing_team.location.city}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      "{{winning_team.school_name}} leaves {{losing_team.location.city}} with a win, {{winning_team_game.points}}-{{losing_team_game.points}}",
+    ])
+  }
+
   game_headline =
     game_headlines[Math.floor(Math.random() * game_headlines.length)];
 
@@ -7318,10 +7355,29 @@ const generate_headlines = (game_dict, common) => {
     game_dict
   );
 
+  let headline_relevance = 0;
+  if (game_dict.losing_team_season.national_rank < 10){
+    headline_relevance = 10;
+  }
+  else if (game_dict.losing_team_season.national_rank < 20){
+    headline_relevance = 8;
+  }
+  else if (game_dict.losing_team_season.national_rank < 40){
+    headline_relevance = 6;
+  }
+  else if (game_dict.losing_team_season.national_rank < 80){
+    headline_relevance = 4;
+  }
+  else {
+    headline_relevance = 1;
+  }
+
   const headline_obj = new headline(
     common.headline_id_counter,
     game_dict.game.week_id,
-    headline_text
+    headline_text,
+    'game',
+    headline_relevance
   );
 
   headline_obj.href = game_dict.game.game_href;
@@ -9284,6 +9340,7 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
   let teams = await db.team.toArray();
   let team_seasons = await db.team_season
     .where({ season: common.season })
+    .filter(ts => ts.team_id > 0)
     .toArray();
   let team_season_ids = team_seasons.map((ts) => ts.team_season_id);
 
@@ -9292,6 +9349,19 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
   let current_week = weeks.find(w => w.is_current);
 
   console.log({weeks: weeks, current_week:current_week})
+
+  let team_season_stats = await db.team_season_stats.bulkGet(team_season_ids);
+  const team_season_stats_by_team_season_id = index_group_sync(
+    team_season_stats,
+    "index",
+    "team_season_id"
+  );
+  team_seasons = nest_children(
+    team_seasons,
+    team_season_stats_by_team_season_id,
+    "team_season_id",
+    "stats"
+  );
 
   let team_games = await db.team_game
     .where("team_season_id")
@@ -9497,8 +9567,10 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     }
   }
 
+  console.log({sorted_team_seasons:sorted_team_seasons})
+  debugger;
   sorted_team_seasons = sorted_team_seasons.sort(function (ts_a, ts_b) {
-    return ts_b.points_per_game - ts_a.points_per_game;
+    return ts_b.stats.points_per_game - ts_a.stats.points_per_game;
   });
   rank_counter = 1;
   for (var team_season of sorted_team_seasons) {
@@ -9507,7 +9579,7 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
   }
 
   sorted_team_seasons = sorted_team_seasons.sort(function (ts_a, ts_b) {
-    return ts_a.points_allowed_per_game - ts_b.points_allowed_per_game;
+    return ts_a.stats.points_allowed_per_game - ts_b.stats.points_allowed_per_game;
   });
   rank_counter = 1;
   for (var team_season of sorted_team_seasons) {
@@ -9516,7 +9588,7 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
   }
 
   sorted_team_seasons = sorted_team_seasons.sort(function (ts_a, ts_b) {
-    return ts_b.point_differential_per_game - ts_a.point_differential_per_game;
+    return ts_b.stats.point_differential_per_game - ts_a.stats.point_differential_per_game;
   });
   rank_counter = 1;
   for (var team_season of sorted_team_seasons) {
@@ -9525,9 +9597,10 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
   }
 
   console.log({ sorted_team_seasons: sorted_team_seasons });
+  debugger;
   for (team_season of sorted_team_seasons) {
     delete team_season.team;
-    delete team_season.stats;
+    delete team_season.season_stats;
     delete team_season.team_games;
     delete team_season.srs;
   }
@@ -14759,11 +14832,21 @@ const new_world_action = async (common, database_suffix) => {
 
   const teams_by_team_name = index_group_sync(teams, "index", "school_name");
 
+  let city_names = {}
   $.each(teams, function (ind, team) {
     $.each(team.rivals, function (ind, rival) {
       rival.opponent_team_id = teams_by_team_name[rival.opponent_name].team_id;
     });
+
+    city_names[team.location.city] =  (city_names[team.location.city] || 0) + 1
   });
+
+  for (let team of teams){
+    team.location.unique_city_name = (city_names[team.location.city] == 1)
+  }
+
+  console.log({teams:teams, city_names:city_names})
+  debugger;
 
   var teams_added = await db.team.bulkAdd(teams);
 

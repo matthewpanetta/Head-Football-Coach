@@ -155,7 +155,7 @@
                         <span class='font10'>{{game.game_headline_display}}</span>
                       </th>
                       <th class="bottom-border hide-medium right-text" colspan="4">
-                        <span class='font10 padBottom20'>{{game.game_time}}</span>
+                        <span class='font10 pb-3 me-2'>{{game.game_time}}</span>
                       </th>
                     </thead>
                     {% for team_game in game.team_games %}
@@ -318,15 +318,32 @@
               {% endif %}
             </div>
             <div class='w3-col l3 m6 s12'>
-              <div class="card">
-                <span class='table_title'>Headlines</span>
-                <ul class='margin-right-4'>
-                    {% for Headline in Headlines%}
-                    <li class='left-text gray-text'>
-                      <a href="{{Headline.HeadlineHref}}" class='charcoal-text font12'>{{Headline.HeadlineText}}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
+              <div class="card w3-margin-bottom">
+                <div class="w3-bar team-primary-background-bar">
+                  <div class="">Headlines</div>
+                </div>
+                <table class='table table-striped'>
+                   <tr class='team-secondary-table-row'>
+                    <td>
+                    Last Week
+                    </td>
+                  </tr>
+                  {% for headline in headlines.slice(0,6) %}
+
+                  <tr>
+                    <td>
+                      <a href='{{headline.href}}'>
+                        {{headline.headline_text}}
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  <tr class='team-secondary-table-row'>
+                    <td>
+                    Last Week
+                    </td>
+                  </tr>
+                </table>
               </div>
             </div>
           </div>

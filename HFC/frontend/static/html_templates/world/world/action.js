@@ -1,271 +1,3 @@
-const refresh_playoffs = async (common) => {
-  const db = common.db;
-  const season = common.season;
-
-  const all_league_seasons = await db.league_season.toArray();
-  const current_league_season = all_league_seasons[0];
-
-  current_league_season.playoffs = {
-    playoffs_started: false,
-    playoffs_complete: false,
-    number_playoff_rounds: 3,
-    number_playoff_teams: 6,
-    playoff_rounds: [
-      {
-        playoff_round_number: 1,
-        is_current_round: false,
-        is_championship: false,
-        week_name: "Bowl Week 1",
-        next_week_name: "Bowl Week 2",
-        round_name: "National Quarterfinals",
-        playoff_games: [
-          {
-            team_objs: [{ seed: 1, team_game_id: null, team_season_id: null }],
-            bye_game: true,
-            seeds_set: true,
-            game_id: null,
-          },
-          {
-            team_objs: [
-              { seed: 4, team_game_id: null, team_season_id: null },
-              { seed: 5, team_game_id: null, team_season_id: null },
-            ],
-            bye_game: false,
-            seeds_set: true,
-            game_id: null,
-          },
-          {
-            team_objs: [{ seed: 2, team_game_id: null, team_season_id: null }],
-            bye_game: true,
-            seeds_set: true,
-            game_id: null,
-          },
-          {
-            team_objs: [
-              { seed: 3, team_game_id: null, team_season_id: null },
-              { seed: 6, team_game_id: null, team_season_id: null },
-            ],
-            bye_game: false,
-            seeds_set: true,
-            game_id: null,
-          },
-        ],
-      },
-      {
-        playoff_round_number: 2,
-        is_current_round: false,
-        is_championship: false,
-        week_name: "Bowl Week 2",
-        next_week_name: "Bowl Week 3",
-        round_name: "National Semifinals",
-        playoff_games: [
-          { team_objs: [], bye_game: false, seeds_set: false, game_id: null },
-          { team_objs: [], bye_game: false, seeds_set: false, game_id: null },
-        ],
-      },
-      {
-        playoff_round_number: 3,
-        is_current_round: false,
-        is_championship: true,
-        week_name: "Bowl Week 3",
-        next_week_name: null,
-        round_name: "National Championship",
-        playoff_games: [
-          { team_objs: [], bye_game: false, seeds_set: false, game_id: null },
-        ],
-      },
-    ],
-  };
-
-  await db.league_season.put(current_league_season);
-
-  await db.game.where("game_id").above(241).delete();
-  await db.team_game.where("game_id").above(241).delete();
-
-  const phases = await db.phase.toArray();
-  const all_phases_by_phase_id = index_group_sync(phases, "index", "phase_id");
-  var all_weeks = await db.week.where({ season: season }).toArray();
-  all_weeks = nest_children(
-    all_weeks,
-    all_phases_by_phase_id,
-    "phase_id",
-    "phase"
-  );
-  await common.schedule_bowl_season(all_weeks, common);
-  console.log("done");
-};
-
-const test_srs = async (common) => {
-  const db = common.db;
-
-  let ls = await db.league_season.get({season: common.season});
-  let teams = await db.team.toArray();
-  let team_seasons = await db.team_season
-    .where({ season: common.season })
-    .toArray();
-  let team_season_ids = team_seasons.map((ts) => ts.team_season_id);
-
-  let weeks = await db.week.where({season: common.season}).toArray();
-  let weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
-
-  let current_week = weeks.find(w => w.is_current)
-  console.log(current_week)
-
-  let team_games = await db.team_game
-    .where("team_season_id")
-    .anyOf(team_season_ids)
-    .toArray();
-  let game_ids = team_games.map((tg) => tg.game_id);
-  let games = await db.game.bulkGet(game_ids);
-  games = nest_children(games, weeks_by_week_id, 'week_id', 'week')
-
-  let games_by_game_id = index_group_sync(games, "index", "game_id");
-
-  team_games = nest_children(team_games, games_by_game_id, "game_id", "game");
-  team_games = team_games.filter((tg) => tg.game.was_played);
-  // team_games = team_games.filter((tg) => (tg.game.week.schedule_week_number || 2000) <= 1999);
-  let team_games_by_team_season_id = index_group_sync(
-    team_games,
-    "group",
-    "team_season_id"
-  );
-
-  let teams_by_team_id = index_group_sync(teams, "index", "team_id");
-  team_seasons = nest_children(
-    team_seasons,
-    teams_by_team_id,
-    "team_id",
-    "team"
-  );
-  team_seasons = nest_children(
-    team_seasons,
-    team_games_by_team_season_id,
-    "team_season_id",
-    "team_games"
-  );
-  team_seasons = team_seasons.filter((ts) => ts.team_id > 0);
-  console.log({ team_seasons: team_seasons });
-
-  let overall_power_modifier = 1;
-  if (current_week.week_name == 'Pre-Season'){
-    overall_power_modifier = 5;
-  }
-  else if (current_week.schedule_week_number <= 4){
-    overall_power_modifier = 4;
-  }
-  else if (current_week.schedule_week_number <= 8){
-    overall_power_modifier = 3;
-  }
-  else if (current_week.schedule_week_number <= 12){
-    overall_power_modifier = 2;
-  }
-
-  for (let ts of team_seasons) {
-    ts.srs = {
-      loops: 0,
-      overall_rating: Math.ceil((ts.rating.overall ** overall_power_modifier)  / (99 ** (overall_power_modifier - 1))),
-      brand: Math.ceil((ts.team.team_ratings.brand ** overall_power_modifier) / (20 ** (overall_power_modifier - 1))),
-      wins:0,
-      losses:0,
-      games_played:0,
-      fractional_wins:0,
-      fractional_losses:0,
-      fractional_games_played:0
-    };
-
-    ts.team_games = ts.team_games || []
-    ts.team_games = ts.team_games.sort((tg_a, tg_b) => tg_a.game.week_id - tg_b.game.week_id);
-    ts.srs.games_played = ts.team_games.length;
-
-    let game_index = 0;
-    for (let tg of ts.team_games) {
-      ts.srs.wins += (tg.is_winning_team ? 1 : 0);
-      ts.srs.losses += (tg.is_winning_team ? 0 : 1);
-
-      tg.game_fractional_share = ((1.0 / (ts.srs.games_played - game_index)) ** .2)
-      
-      ts.srs.fractional_wins += ((tg.is_winning_team ? 1.0 : 0) * tg.game_fractional_share);
-      ts.srs.fractional_losses += ((tg.is_winning_team ? 0 : 1.0) * tg.game_fractional_share);
-
-      ts.srs.fractional_games_played += tg.game_fractional_share
-      game_index += 1;
-    }
-    ts.srs.net_win_count = ts.srs.wins - ts.srs.losses;
-    ts.srs.fractional_net_win_count = ts.srs.fractional_wins - ts.srs.fractional_losses;
-    ts.srs.rating = ts.srs.overall_rating + ts.srs.brand + ts.srs.fractional_net_win_count;
-    ts.srs.original_rating = ts.srs.rating;
-    ts.srs.rating_list = [ts.srs.rating];
-  }
-
-  let overall_list = team_seasons.map(ts => ts.srs.rating);
-  let average_overall = Math.ceil(average(overall_list))
-
-  let team_seasons_by_team_season_id = index_group_sync(
-    team_seasons,
-    "index",
-    "team_season_id"
-  );
-
-  console.log({ team_seasons: team_seasons, average_overall:average_overall, overall_list:overall_list });
-
-  for (let iter_ind = 1; iter_ind <= 20; iter_ind++) {
-    for (let ts of Object.values(team_seasons_by_team_season_id)) {
-      let total_opponent_rating = 0;
-      let fractional_opponent_rating = 0;
-      for (let tg of ts.team_games) {
-        total_opponent_rating +=
-          team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating;
-        fractional_opponent_rating +=
-          (team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating * tg.game_fractional_share);
-
-        if (ts.team.school_name == 'Southern Miss' || ts.team.school_name == 'LSU'){
-          console.log({team: ts.team.school_name,'tg.opponent_team_season_id': tg.opponent_team_season_id, 'team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating': team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating, fractional_opponent_rating:fractional_opponent_rating, game_fractional_share: tg.game_fractional_share})
-        }
-      }
-      ts.srs.schedule_factor = Math.round(
-        (fractional_opponent_rating + (ts.srs.fractional_net_win_count * (average_overall))) / (ts.srs.fractional_games_played || 1)
-      );
-
-      if (ts.team.school_name == 'Southern Miss' || ts.team.school_name == 'LSU'){
-        console.log({team: ts.team.school_name,'ts.srs.schedule_factor':ts.srs.schedule_factor,fractional_opponent_rating:fractional_opponent_rating, 'ts.srs.fractional_net_win_count': ts.srs.fractional_net_win_count, 'ts.srs.fractional_games_played': ts.srs.fractional_games_played})
-      }
-    }
-
-    for (let ts of Object.values(team_seasons_by_team_season_id)) {
-        // ts.srs.rating = (ts.srs.original_rating + ts.srs.schedule_factor) / 2;
-        ts.srs.rating = ((ts.srs.rating * iter_ind) + ts.srs.schedule_factor) / (iter_ind + 1);
-        ts.srs.rating_list.unshift(ts.srs.rating)
-    }
-  }
-
-  for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
-    // ts.srs.rating = Math.round(((ts.srs.rating * 1) + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 2);
-    if (ts.srs.games_played <= 5){
-      ts.srs.rating *= ts.srs.games_played;
-      ts.srs.rating += ((5 - ts.srs.games_played) * ts.srs.original_rating);
-      ts.srs.rating /= 5;
-    }
-    ts.srs.rating = Math.round(((ts.srs.rating * 2) + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 3);
-
-  }
-
-  team_seasons = Object.values(team_seasons).sort(
-    (ts_a, ts_b) => ts_b.srs.rating - ts_a.srs.rating || ts_b.srs.net_win_count - ts_a.srs.net_win_count
-  );
-  console.log({ team_seasons: team_seasons.map(ts => ({team: ts.team.school_name, record: `${ts.srs.wins}-${ts.srs.losses}`, srs: ts.srs.rating,orig_srs: ts.srs.original_rating, steps: ts.srs.rating_list})) });
-
-  // def rateTeams(self, array, dict):
-
-  //   for i in range(self.ITERATION_CONSTANT):
-
-  //       for team in range(len(array)):
-  //           performance = array[team].head.getPerformance()
-  //           scheduleFactor = array[team].head.getScheduleFactor()
-  //           newRating = performance + scheduleFactor
-  //           array[team].head.setRating(newRating)
-
-  //   return array
-};
 
 const get_all_keys = (obj) => {
   let all_keys = new Set();
@@ -332,38 +64,6 @@ const check_db_size = async (common, db) => {
   debugger;
 };
 
-const refresh_bowls = async (common) => {
-  const db = common.db;
-  const season = common.season;
-
-  //this_week, all_weeks, common
-  const current_league_season = await db.league_season
-    .where({ season: season })
-    .first();
-
-  await db.game.where("game_id").above(260).delete();
-  await db.team_game.where("game_id").above(260).delete();
-
-  var weeks = await db.week.where({ season: season }).toArray();
-  for (const week of weeks) {
-    if (week.week_name == "Bowl Week 1") {
-      week.is_current = true;
-    } else {
-      week.is_current = false;
-    }
-  }
-
-  await db.week.bulkPut(weeks);
-
-  await common.process_bowl_results(common);
-};
-
-const reset_bowls = async (common) => {
-  const db = common.db;
-
-  await db.game.where("game_id").above(262).delete();
-  await db.team_game.where("game_id").above(262).delete();
-};
 
 const getHtml = async (common) => {
   const db = common.db;
@@ -372,8 +72,8 @@ const getHtml = async (common) => {
   var index_group = common.index_group;
   const season = common.season;
 
-  var current_week = await db.week.toArray();
-  current_week = current_week.filter((w) => w.is_current)[0];
+  var current_week = await db.week.where('season').between(season-1, season+1).toArray();
+  current_week = current_week.find((w) => w.is_current);
 
   const NavBarLinks = await common.nav_bar_links({
     path: "Overview",
@@ -701,6 +401,10 @@ const getHtml = async (common) => {
     preseason_info.conference_favorites = conference_seasons;
   }
 
+  let headlines = await db.headline.where({week_id: current_week.week_id - 1}).toArray();
+  headlines = headlines.sort((h_a, h_b) => h_b.headline_relevance - h_a.headline_relevance)
+  headlines = headlines.slice(0, 20);
+
   common.stopwatch(common, "Time after this_week_games");
   const page = {
     PrimaryColor: common.primary_color,
@@ -716,6 +420,7 @@ const getHtml = async (common) => {
     recent_games: recent_games,
     current_week: current_week,
     preseason_info: preseason_info,
+    headlines:headlines
   };
 
   common.render_content = render_content;
@@ -737,7 +442,7 @@ const action = async (common) => {
   const db = common.db;
 
   //await check_db_size(common, db);
-  await test_srs(common);
+  // await test_srs(common);
 
   //Show initial 'new world' modal
   $("#create-world-row").on("click", function () {
