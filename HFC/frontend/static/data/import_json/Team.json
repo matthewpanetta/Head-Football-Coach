@@ -2610,7 +2610,7 @@
     "school_name": "Fresno State",
     "team_name": "Bulldogs",
     "team_abbreviation": "FRES",
-    "team_color_primary_hex": "c03",
+    "team_color_primary_hex": "c00030",
     "team_color_secondary_hex": "00235d",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/7/7c/Fresno_State_Bulldogs_logo.svg",
     "jersey": {
@@ -3281,7 +3281,7 @@
     "school_name": "Washington",
     "team_name": "Huskies",
     "team_abbreviation": "UW",
-    "team_color_primary_hex": "306",
+    "team_color_primary_hex": "300060",
     "team_color_secondary_hex": "e8d3a2",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Washington_Huskies_logo.svg",
     "jersey": {
@@ -4043,8 +4043,8 @@
     "school_name": "Appalachian State",
     "team_name": "Mountaineers",
     "team_abbreviation": "APP",
-    "team_color_primary_hex": "222",
-    "team_color_secondary_hex": "fc0",
+    "team_color_primary_hex": "202020",
+    "team_color_secondary_hex": "f0c000",
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Appalachian_State_Mountaineers_logo.svg",
     "jersey": {
       "invert": false,

@@ -588,45 +588,47 @@
                       {% for players in player_talent_comparison%}
                       <tr>
 
-                        <td class='right-text font16 column-shrink'>{{players.away_player_team_season.ratings.overall.overall}}</td>
-                        <td class='right-text font16'>
+                        <td class='right-text  column-shrink'>{{players.away_player_team_season.ratings.overall.overall}}</td>
+                        <td class='right-text '  player_id='{{players.away_player_team_season.player.player_id}}'>
                           <a href="{{players.away_player_team_season.player.player_href}}">
                           {{players.away_player_team_season.player.full_name}}
                           </a>
+                          <i class="fa fa-address-card player-profile-popup-icon"></i>
                           <div class="teamStarterPlayerFace inline-block" id="teamStarterPlayerFace{{forloop.counter}}" PlayerFaceJson="{{Players.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if Players.AwayPlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
                               <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
 
                               </div>
                           </div>
                         </td>
-                        <td style='font-size: 24px; color:white; background-color:#{{players.away_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
+                        <td style='font-size: 16px; color:white; background-color:#{{players.away_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
                           <span>{{players.away_player_team_season.advantage_icon|safe}}</span>
                           {% if players.away_player_team_season.advantage_logo_url%}
                           <a href='{{players.away_player_team_season.team_season.team.team_href}}'> 
-                            <img src="{{players.away_player_team_season.advantage_logo_url}}" class='logo logo-30' alt="">
+                            <img src="{{players.away_player_team_season.advantage_logo_url}}" class='logo logo-24' alt="">
                           </a>
                           {% endif %}
                         </td>
-                        <td style='' class='center-text font16'><span>{{players.position}}</span></td>
-                        <td style='font-size: 24px; color:white; background-color:#{{players.home_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
+                        <td style='' class='center-text '><span>{{players.position}}</span></td>
+                        <td style='font-size: 16px; color:white; background-color:#{{players.home_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
                           {% if players.home_player_team_season.advantage_logo_url%}
                           <a href='{{players.home_player_team_season.team_season.team.team_href}}'>
-                            <img src="{{players.home_player_team_season.advantage_logo_url}}" class='logo logo-30' alt="">
+                            <img src="{{players.home_player_team_season.advantage_logo_url}}" class='logo logo-24' alt="">
                           </a>
                           {% endif %}
                           <span>{{players.home_player_team_season.advantage_icon|safe}}</span>
                         </td>
-                        <td class='left-text font16'>
+                        <td class='left-text ' player_id='{{players.home_player_team_season.player.player_id}}'>
                           <div class="teamStarterPlayerFace inline-block" id="teamStarterPlayerFace-{{forloop.counter}}" PlayerFaceJson="{{Players.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|safe}}" HasPlayerFaceJSON="{%if Players.HomePlayer.PlayerTeamSeasonID__PlayerID__PlayerFaceJson|length > 0%}1{%else%}0{%endif%}" >
                               <div id="playerFace{{forloop.counter}}" class="PlayerFaceDisplay">
 
                               </div>
                           </div>
+                          <i class="fa fa-address-card player-profile-popup-icon"></i>
                           <a href="{{players.home_player_team_season.player.player_href}}">
                           {{players.home_player_team_season.player.full_name}}
                           </a>
                         </td>
-                        <td class='left-text font16  column-shrink'>{{players.home_player_team_season.ratings.overall.overall}}</td>
+                        <td class='left-text   column-shrink'>{{players.home_player_team_season.ratings.overall.overall}}</td>
                       </tr>
                       {% endfor %}
                     </tbody>

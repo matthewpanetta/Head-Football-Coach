@@ -1957,9 +1957,6 @@ tfoot td {
 }
 
 .position-badge.position-badge-QB {
-  background-color: #d9534f; 
-  background-color: #cc181e;
-
   background-color: #ffbaba;
   color: #a70000;
 }
@@ -1969,9 +1966,8 @@ tfoot td {
   color: #cc3300;
 }
 
-.position-badge.position-badge-WR, .position-badge.position-badge-CB {
-  background-color: #f8b014;
 
+.position-badge.position-badge-WR, .position-badge.position-badge-CB {
   background-color: #f9d889;
   color: #a57d00;
 }
@@ -1982,19 +1978,39 @@ tfoot td {
 }
 
 .position-badge.position-badge-OT, .position-badge.position-badge-EDGE {
-  background-color: #1e85f7; 
-  background-color: #0057e7;
-
   background-color: 	#bac2ff;
   color: 	#00059f;
 }
 
 .position-badge.position-badge-IOL, .position-badge.position-badge-DL {
-  background-color: #b8a7ea; 
-  background-color: #4d1b7b;
-
   color: #493267;
   background-color: #c9c9ff;
+}
+
+.position-badge.position-badge-LB {
+  color: white;
+  background-color: #cc3300;
+}
+
+
+.position-badge.position-badge-CB {
+  color: white;
+  background-color: #a57d00;
+}
+
+.position-badge.position-badge-S {
+  background-color: #234d20;
+  color: white;
+}
+
+.position-badge.position-badge-EDGE {
+  color: white;
+  background-color: 	#00059f;
+}
+
+.position-badge.position-badge-DL {
+  background-color: #493267;
+  color: white;
 }
 
 .position-badge.position-badge-P, .position-badge.position-badge-K, .position-badge.position-badge-FB {
@@ -3156,4 +3172,8 @@ table tr:first-child .fa-arrow-alt-circle-up.depth-chart-reorder-icon,
 table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
   pointer-events: none;
   opacity: .5;
+}
+
+.strikethrough {
+  text-decoration: line-through;
 }

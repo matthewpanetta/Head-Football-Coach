@@ -8,13 +8,13 @@ const getHtml = async (common) => {
   const query_to_dict = common.query_to_dict;
 
   const NavBarLinks = await common.nav_bar_links({
-    path: "Depth Chart",
+    path: "Gameplan",
     group_name: "Team",
     db: db,
   });
 
   const TeamHeaderLinks = await common.team_header_links({
-    path: "Depth Chart",
+    path: "Gameplan",
     season: common.params.season,
     db: db,
   });
@@ -450,7 +450,7 @@ const getHtml = async (common) => {
     team_id: team_id,
     team: team,
     season: common.season,
-    all_teams: await common.all_teams(common, "/DepthChart/"),
+    all_teams: await common.all_teams(common, "/Gameplan/"),
     position_depth_chart: position_depth_chart,
     all_pos_rating_list:all_pos_rating_list,
     all_pos_stat_list:all_pos_stat_list
@@ -460,7 +460,7 @@ const getHtml = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/team/depth_chart/template.njk";
+  var url = "/static/html_templates/team/gameplan/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -470,6 +470,78 @@ const getHtml = async (common) => {
   );
 
   $("#body").html(renderedHtml);
+
+  
+  let formation_subs_tab_clicked = false;
+  $('#nav-formation-subs-tab').on('click', async function(){
+    if (formation_subs_tab_clicked){
+      return true;
+    }
+    formation_subs_tab_clicked = true;
+
+    var url = "/static/html_templates/team/gameplan/div_formation_subs_template.njk";
+    var html = await fetch(url);
+    html = await html.text();
+
+    let render_content = {
+      team_season: {
+        gameplan: {
+          offense: {
+            pass_run_tendency: 80,
+            playcall_aggressiveness: 5
+          },
+        },
+      },
+    };
+  
+    var renderedHtml = await common.nunjucks_env.renderString(
+      html,
+      render_content
+    );
+  
+    $("#nav-formation-subs").html(renderedHtml);
+
+    $('#run-pass-range').on('input', function(){
+      let val = parseInt($(this).val());
+      $('.run-pass-range-span').text(`${val} Pass / ${100 - val} Run`)
+    })
+  })
+
+
+  let gameplan_tab_clicked = false;
+  $('#nav-gameplan-tab').on('click', async function(){
+    if (gameplan_tab_clicked){
+      return true;
+    }
+    gameplan_tab_clicked = true;
+
+    var url = "/static/html_templates/team/gameplan/div_gameplan_template.njk";
+    var html = await fetch(url);
+    html = await html.text();
+
+    let render_content = {
+      team_season: {
+        gameplan: {
+          offense: {
+            pass_run_tendency: 80,
+            playcall_aggressiveness: 5
+          },
+        },
+      },
+    };
+  
+    var renderedHtml = await common.nunjucks_env.renderString(
+      html,
+      render_content
+    );
+  
+    $("#nav-gameplan").html(renderedHtml);
+
+    $('#run-pass-range').on('input', function(){
+      let val = parseInt($(this).val());
+      $('.run-pass-range-span').text(`${val} Pass / ${100 - val} Run`)
+    })
+  })
 };
 
 const reorder_animation = async(common)=> {
@@ -508,9 +580,11 @@ const reorder_animation = async(common)=> {
 
     $(tr).attr('index', tr_index_neighbor);
     $(tr).find('.row-index-td .row-index-span').text(tr_index_neighbor)
+    $(tr).find('.row-index-td .row-change-span').text(tr_original_index)
     
     $(tr_neighbor).attr('index', tr_index);
     $(tr_neighbor).find('.row-index-td .row-index-span').text(tr_index)
+    $(tr_neighbor).find('.row-index-td .row-change-span').text(tr_neighbor_original_index)
 
     console.log({this:this, tr_index_neighbor:tr_index_neighbor,tr_index:tr_index, tbody:tbody, tr:tr, tr_neighbor:tr_neighbor })
 

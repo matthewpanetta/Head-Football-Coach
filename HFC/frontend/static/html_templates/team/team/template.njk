@@ -162,72 +162,71 @@
             </div>
             <div class=" w3-margin-bottom">
               <div class="w3-row-padding w3-margin-bottom">
-                <div class="w3-col s8">
+                <div class="w3-col s6">
                   <div class="card w3-light-grey w3-col s12">
                     <div class="w3-bar team-primary-background-bar">
                       Headlines
                     </div>
-                    <div class="w3-row-padding">
 
                       {% if headlines %}
-                      <div class="headline-slideshow width100">
-                        <div class="headline-slideshow-row">
-                          <div class="MultiCarousel" data-items="3,5,7,9" data-slide="1" id="MultiCarousel" data-interval="100">
-                            <div class="MultiCarousel-inner">
-                              <div class="inline-block table-cell headline-carousel-item height100">
-                              {% for headline in headlines.slice(0,1)%}
-
-                                <div class="w3-border w3-border-grey background-white height100">
-                                  <div class="height80">
-                                    <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
-                                    {{headline|log}}
-
-                                    {% for team_season in headline.team_seasons%}
-                                      <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-30'>
-                                    {%endfor%}
-
-                                    <div class="team-header-color-right align-middle hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
-                                  </div>
-                                  <h2 >
-                                    {{headline.headline_text}}
-                                  </h2>
+                      <div class=" width100"  style='max-height: 500px; overflow-y: scroll;'>
+                  
+                          {% for headline in headlines %}
+                          {{headline|log}}
+                          
+                            <div class='card m-2' style='overflow: hidden;'>
+                              <div class='m-2 left-text w3-row-padding space-between' style='height: 30px;'>
+                              {% for team_season in headline.team_seasons%}
+                              {% if loop.index == 1%}
+                              <div>
+                                <div class="" style="background-color: #{{team_season.team.team_color_primary_hex}}; height: 400px; width: 30px; transform: rotate(40deg) translate(-100px, 0px);">
+                                  <div class=" w3-white w3-display-topmiddle" style='width: 2px;height: 100%;z-index: 2;transform: translateX(-9px);'></div>           
+                                  <a href='{{team_season.team.team_href}}'>
+                                    <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-50' style='z-index: 3;transform: rotate(-40deg) translate(10px, 10px);'>
+                                </a>
                                 </div>
-                              {% endfor %}
+                                
                               </div>
-                              <div class="inline-block table-cell headline-carousel-item height100">
-                              {% for headline in headlines.slice(1,100)%}
-
-                                <div class="w3-border w3-border-grey background-white  height50p">
-                                  <h5 >
-                                    {{headline.headline_text}}
-                                  </h5>
+                              {%else%}
+                              <div>
+                                <div class="" style="background-color: #{{team_season.team.team_color_primary_hex}}; height: 400px; width: 30px; transform: rotate(-40deg) translate(100px, 0px);">
+                                  <div class=" w3-white w3-display-topmiddle" style='width: 2px;height: 100%;z-index: 2;transform: translateX(9px);'></div>           
+                                   <a href='{{team_season.team.team_href}}'>
+                                    <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-50' style='z-index: 3;transform: rotate(40deg) translate(-30px, 23px);'>
+                                  </a>
                                 </div>
-
-                                {% if loop.index % 2 == 0 and loop.index > 0 %}
-                                </div>
-                                <div class="inline-block table-cell headline-carousel-item height100">
-                                {% endif %}
-
-                              {% endfor %}
+                               
                               </div>
-                            </div>
-                            <button class="btn team-color-button btn-primary leftLst" style='background-color: #{{page.PrimaryColor}}; border-color:  #{{page.PrimaryColor}};'>
-                              </button> <button class="btn team-color-button btn-primary rightLst" style='background-color: #{{page.PrimaryColor}}; border-color:  #{{page.PrimaryColor}};'>
-                            </button>
-                          </div>
-                        </div>
+                              {%endif%}
+                                
+                              {%endfor%}
+                              </div>
+                              <div class='card m-2 p-2 left-text' style='z-index: 1000;'>
+                                <span class='font16'>
+                                  <a href='{{headline.href}}'>
+                                    {{headline.headline_text}}
+                                  </a>
+                                </span>
+                                <span class='font12'>
+                                  {{headline.headline_text}}
+                                </span>
+                                <span class='font10'>
+                                  {{headline.week.week_name}}
+                                </span>
+                              </div>
+                                                        </div>
+                          {% endfor %}
                       </div>
                       {% endif %}
 
-                    </div>
                   </div>
                 </div>
-                <div class="w3-col s4">
+                <div class="w3-col s6">
                   <div class="card w3-light-grey w3-col s12">
                     <div class="w3-bar team-primary-background-bar">
                       Signed Recruits
                     </div>
-                      <table class='width100 table table-striped table-hover '>
+                      <table class='width100 table table-striped table-hover '  style='max-height: 500px; overflow-y: scroll;'>
                         <thead class='center-text-row'>
                           <tr class='team-secondary-table-row'>
                             <th class='left-text'>Player</th>

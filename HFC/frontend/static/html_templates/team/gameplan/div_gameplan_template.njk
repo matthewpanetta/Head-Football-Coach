@@ -1,0 +1,108 @@
+<div class='w3-row-padding w3-margin-bottom'>
+    <div class='card mw800 width100'>
+        <div class='w3-bar team-primary-background-bar left-text'>Set Gameplan</div>
+        <div>
+            <table class='table table-striped'>
+                <tbody>
+                    <tr>
+                        <th>
+                            Offensive Playbook
+                        </th>
+                        <td colspan='2'>
+                            <select class="form-select form-select-sm" aria-label="Default select example" id="offense-playbook-select">
+                                <option value="spread" selected>Spread</option>
+                                <option value="power-run">Power Run</option>
+                                <option value="pro-style">Pro Style</option>
+                                <option value="west-coast">West Coast</option>
+                                <option value="triple-option">Triple Option</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Pass/Run Tendency
+                        </th>
+                        <td>
+                            <span class='run-pass-range-span'>
+                                {{team_season.gameplan.offense.pass_run_tendency}} Pass / {{100 - team_season.gameplan.offense.pass_run_tendency}} Run
+                            </span>
+                        </td>
+                        <td>
+                            <div class='font10 width100 w3-row-padding space-between p-0'>
+                                <div class='inline-block'>All Run</div>
+                                <div class='inline-block'>All Run</div>
+                                <div class='inline-block'>All Pass</div>
+                            </div>
+                            <input type="range" class="form-range" min="10" max="90" step="5" value="{{team_season.gameplan.offense.pass_run_tendency}}" id="run-pass-range">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Offensive Playcall Aggressiveness
+                        </th>
+                        <td>
+                            <span class='playcall-offense-aggressive-range-span'>
+                                {{team_season.gameplan.offense.playcall_aggressiveness}}
+                            </span>
+                        </td>
+                        <td>
+                            <div class='font10 width100 w3-row-padding space-between p-0'>
+                                <div class='inline-block'>Super Passive</div>
+                                <div class='inline-block'>Middle of the Road</div>
+                                <div class='inline-block'>Super Aggressive</div>
+                            </div>
+                            <input type="range" class="form-range" min="1" max="7" step="1" value="{{team_season.gameplan.offense.playcall_aggressiveness}}" id="playcall-offense-aggressive-range">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            Defensive Playbook
+                        </th>
+                        <td colspan='2'>
+                            <select class="form-select form-select-sm" aria-label="Default select example" id="defense-playbook-select">
+                                <option value="4-3" selected>4-3</option>
+                                <option value="3-4">3-4</option>
+                                <option value="3-3-5">3-3-5</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Blitz Tendency
+                        </th>
+                        <td>
+                            <span class='run-pass-range-span'>
+                                {{team_season.gameplan.defense.pass_run_tendency}} Blitz
+                            </span>
+                        </td>
+                        <td>
+                            <div class='font10 width100 w3-row-padding space-between p-0'>
+                                <div class='inline-block'>No Blitz</div>
+                                <div class='inline-block'>All-out</div>
+                            </div>
+                            <input type="range" class="form-range" min="10" max="90" step="5" value="{{team_season.gameplan.defense.blitz_tendency}}" id="blitz-range">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Man vs Zone
+                        </th>
+                        <td>
+                            <span class='man-vs-zone-range-span'>
+                                {{team_season.gameplan.defense.man_vs_zone}}
+                            </span>
+                        </td>
+                        <td>
+                            <div class='font10 width100 w3-row-padding space-between p-0'>
+                                <div class='inline-block'>All Zone</div>
+                                <div class='inline-block'>All Man</div>
+                            </div>
+                            <input type="range" class="form-range" min="1" max="7" step="1" value="{{team_season.gameplan.defense.man_vs_zone}}" id="man-vs-zone-range">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -105,7 +105,7 @@
   },
   {
     "conference_name": "Big 12",
-    "conference_abbreviation": "B12",
+    "conference_abbreviation": "Big 12",
     "prestige": 7,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/Big_12_Conference.png",
@@ -141,7 +141,7 @@
   },
   {
     "conference_name": "Big Ten",
-    "conference_abbreviation": "B10",
+    "conference_abbreviation": "Big Ten",
     "prestige": 8,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/Big_Ten_Conference.png",
@@ -392,7 +392,7 @@
   },
   {
     "conference_name": "Sun Belt",
-    "conference_abbreviation": "SBC",
+    "conference_abbreviation": "Sun Belt",
     "prestige": 1,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/Sun_Belt_Conference.png",
