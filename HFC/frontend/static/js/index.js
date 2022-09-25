@@ -7540,8 +7540,8 @@ const generate_headlines = (game_dict, common) => {
   headline_obj.href = game_dict.game.game_href;
   headline_obj.game_id = game_dict.game.game_id;
   headline_obj.team_season_ids = [
-    game_dict.team_seasons[0].team_season_id,
-    game_dict.team_seasons[1].team_season_id,
+    game_dict.winning_team_season.team_season_id,
+    game_dict.losing_team_season.team_season_id,
   ];
 
   game_dict.team_seasons[0].headlines.push(common.headline_id_counter);
