@@ -26,5 +26,4 @@ jobs:
       with:
         deliverables: 'HFC/app.yaml'
         project_id: '${{ secrets.GCP_PROJECT }}'
-        flags:
-          - no-cache
+        flags: no-cache
