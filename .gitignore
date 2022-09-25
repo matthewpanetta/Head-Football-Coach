@@ -20,6 +20,8 @@
 *.tar
 *.zip
 
+!raw_plays.json.zip
+
 # Logs and databases #
 ######################
 *.log
