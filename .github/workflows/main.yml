@@ -23,7 +23,8 @@ jobs:
     - id: 'deploy'
       name: 'deploy'
       uses: 'google-github-actions/deploy-appengine@v0'
-      flags: --no-cache
+      flags: 
+        - --no-cache
       with:
         deliverables: 'HFC/app.yaml'
         project_id: '${{ secrets.GCP_PROJECT }}'
