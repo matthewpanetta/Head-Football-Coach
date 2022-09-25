@@ -18,7 +18,12 @@
       <i class="fa fa-map-marker-alt geo-marker" style='color: #{{team.team_color_primary_hex}};' city='{{team.location.city}}' state='{{team.location.state}}'></i>
       {{team.location.city}}, {{team.location.state}} | {{team.team_season.rankings.division_rank[0]|ordinal}}
       <span class='font10'>in</span>
-      <a href="{{team.team_season.conference_season.conference.conference_href}}">{{team.team_season.conference_season.conference.conference_name}}</a>
+      <a href="{{team.team_season.conference_season.conference.conference_href}}">
+        {{team.team_season.conference_season.conference.conference_name}}
+      </a>
+      {% if team.team_season.division_name != 'All'%}
+      {{team.team_season.division_name}}
+      {% endif %}
     </div>
     <div class='teamOverviewInfo'>
       {% for Link in page.TeamHeaderLinks.link_paths%}

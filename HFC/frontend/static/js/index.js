@@ -7298,6 +7298,134 @@ const calculate_game_score = (
     .slice(0, 4);
 };
 
+const generate_ranking_headlines = async (common, team_seasons, this_week, headline_id_counter) => {
+  let ranking_headlines = [];
+  let conference_sums = {}
+  for (let ts of team_seasons) {
+    console.log({ts:ts, team_seasons:team_seasons})
+
+    conference_sums[ts.conference_season.conference.conference_abbreviation] =  conference_sums[ts.conference_season.conference.conference_abbreviation] || {top_5:0, top_10:0, top_15:0, conference_season: ts.conference_season}
+
+    if (ts.rankings.national_rank[0] < 15){
+      conference_sums[ts.conference_season.conference.conference_abbreviation].top_15 +=1;
+    }
+    if (ts.rankings.national_rank[0] < 10){
+      conference_sums[ts.conference_season.conference.conference_abbreviation].top_10 +=1;
+    }
+    if (ts.rankings.national_rank[0] < 5){
+      conference_sums[ts.conference_season.conference.conference_abbreviation].top_5 +=1;
+    }
+
+    let ts_headline_options = [];
+    if (
+      ts.rankings.national_rank[0] == 1 &&
+      ts.rankings.national_rank[1] == 1
+    ) {
+      ts_headline_options.push({headline_relevance:3, text: '{{team_season.team.school_name}} remains at #1'})
+    }
+    
+    if (ts.rankings.national_rank[0] == 1 &&
+      ts.rankings.national_rank[1] > 1){
+        ts_headline_options.push({headline_relevance:4, text: '{{team_season.team.school_name}} moves into #1 spot'})
+    }
+    
+    if (ts.rankings.national_rank[0] <= 25 &&
+      ts.rankings.national_rank[1] > 25){
+        ts_headline_options.push({headline_relevance:4, text: '{{team_season.team.school_name}} cracks top 25'})
+    }
+    
+    if (ts.rankings.national_rank[1] <= 25 &&
+      ts.rankings.national_rank_delta < -6){
+        ts_headline_options.push({headline_relevance:3, text: '{{team_season.team.school_name}} stumbles from {{team_season.rankings.national_rank[1]}} to {{team_season.rankings.national_rank[0]}}'})
+    }
+
+    if (ts.rankings.national_rank[1] <= 25 &&
+      ts.rankings.national_rank_delta < -12){
+        ts_headline_options.push({headline_relevance:4, text: '{{team_season.team.school_name}} stumbles from {{team_season.rankings.national_rank[1]}} to {{team_season.rankings.national_rank[0]}}'})
+    }
+
+    if (ts.rankings.national_rank[1] <= 25 &&
+      ts.rankings.national_rank_delta < -18){
+        ts_headline_options.push({headline_relevance:5, text: '{{team_season.team.school_name}} stumbles from {{team_season.rankings.national_rank[1]}} to {{team_season.rankings.national_rank[0]}}'})
+    }
+
+    if (ts_headline_options.length) {
+      let max_headline_relevance = Math.max(...ts_headline_options.map(h => h.headline_relevance));
+      ts_headline_options = ts_headline_options.filter(h => h.headline_relevance == max_headline_relevance);
+      let ts_headline =
+        ts_headline_options[
+          Math.floor(Math.random() * ts_headline_options.length)
+        ];
+
+      var headline_text = common.nunjucks_env.renderString(ts_headline.text, {
+        team_season: ts,
+      });
+
+      const headline_obj = new headline(
+        headline_id_counter,
+        this_week.week_id,
+        headline_text,
+        "ranking",
+        ts_headline.headline_relevance
+      );
+
+      headline_obj.href = ts.team.team_href;
+      headline_obj.team_season_ids = [
+        ts.team_season_id,
+      ];
+
+      headline_id_counter += 1;
+      ranking_headlines.push(headline_obj);
+    }
+  }
+
+  Object.entries(conference_sums).forEach(function(conf_obj){
+    let conference_name = conf_obj[0];
+    let conference_obj = conf_obj[1];
+    let headline_options = []
+
+    if (conference_obj.top_5 >= 3){
+      headline_options.push({headline_relevance:6, text: '{{conference_obj.conference_season.conference.conference_abbreviation}} domination - {{conference_obj.top_5}} of top 5 teams nationally'})
+    }
+    else if (conference_obj.top_10 >= 5){
+      headline_options.push({headline_relevance:5, text: '{{conference_obj.conference_season.conference.conference_abbreviation}} domination - {{conference_obj.top_10}} of top 10 teams nationally'})
+    }
+    else if (conference_obj.top_15 >= 8){
+      headline_options.push({headline_relevance:5, text: '{{conference_obj.conference_season.conference.conference_abbreviation}} domination - {{conference_obj.top_15}} of top 15 teams nationally'})
+    }
+
+    if (headline_options.length){
+      let max_headline_relevance = Math.max(...headline_options.map(h => h.headline_relevance));
+      headline_options = headline_options.filter(h => h.headline_relevance == max_headline_relevance);
+      let conf_headline =
+      headline_options[
+        Math.floor(Math.random() * headline_options.length)
+      ];
+
+      var headline_text = common.nunjucks_env.renderString(conf_headline.text, {
+        conference_obj:conference_obj
+      });
+
+      const headline_obj = new headline(
+        headline_id_counter,
+        this_week.week_id,
+        headline_text,
+        "ranking",
+        conf_headline.headline_relevance
+      );
+
+      headline_obj.href = conference_obj.conference_season.conference.conference_href;
+      headline_obj.team_season_ids = [
+      ];
+
+      headline_id_counter += 1;
+      ranking_headlines.push(headline_obj);
+    }
+  })
+
+  return ranking_headlines;
+};
+
 const generate_headlines = (game_dict, common) => {
   game_headlines = []
 
@@ -7316,68 +7444,97 @@ const generate_headlines = (game_dict, common) => {
   game_dict.losing_team_season =
     game_dict.team_seasons[game_dict.losing_team_index];
 
+  let base_headline_relevance = 0;
+  if (game_dict.losing_team_season.national_rank < 10){
+    base_headline_relevance = 10;
+  }
+  else if (game_dict.losing_team_season.national_rank < 20){
+    base_headline_relevance = 8;
+  }
+  else if (game_dict.losing_team_season.national_rank < 40){
+    base_headline_relevance = 6;
+  }
+  else if (game_dict.losing_team_season.national_rank < 80){
+    base_headline_relevance = 4;
+  }
+  
   if (score_difference <= 4){
     game_headlines = game_headlines.concat([
-      "Time runs out for {{losing_team.school_name}}, falling to {{winning_team.school_name}}",
-      "{{winning_team.school_name}} sneaks by {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      {text: "Time runs out for {{losing_team.school_name}}, falling to {{winning_team.school_name}}", headline_relevance: base_headline_relevance},
+      {text: "{{winning_team.school_name}} sneaks by {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
     ])
   }
   else if (score_difference > 19){
     game_headlines = game_headlines.concat([
-      "{{winning_team.school_name}} blasts {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
-      "{{winning_team.school_name}} OBLITERATES {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
-      "{{winning_team.school_name}} cold clocks {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
-      "{{winning_team.school_name}} banishes {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      {text: "{{winning_team.school_name}} blasts {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
+      {text: "{{winning_team.school_name}} OBLITERATES {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
+      {text: "{{winning_team.school_name}} cold clocks {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
+      {text: "{{winning_team.school_name}} banishes {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
     ])
   }
   else {
     game_headlines = game_headlines.concat([
-      "{{winning_team.school_name}} over {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
-      "{{winning_team.school_name}} overcomes {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
-      "{{winning_team.school_name}} beats {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
-      "{{winning_team.school_name}} outlasts {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
-      "{{winning_team.school_name}} overpowers {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      {text: "{{winning_team.school_name}} over {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
+      {text: "{{winning_team.school_name}} overcomes {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
+      {text: "{{winning_team.school_name}} beats {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
+      {text: "{{winning_team.school_name}} outlasts {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
+      {text: "{{winning_team.school_name}} overpowers {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
     ])
   }
 
   if (game_dict.losing_team.location.unique_city_name){
     game_headlines = game_headlines.concat([
-      "{{winning_team.school_name}} wins in {{losing_team.location.city}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
-      "{{winning_team.school_name}} leaves {{losing_team.location.city}} with a win, {{winning_team_game.points}}-{{losing_team_game.points}}",
+      {text: "{{winning_team.school_name}} wins in {{losing_team.location.city}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
+      {text: "{{winning_team.school_name}} leaves {{losing_team.location.city}} with a win, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance},
     ])
   }
 
+  if (((game_dict.winning_team_season.national_rank - game_dict.losing_team_season.national_rank) > 50) && (game_dict.losing_team_season.national_rank <= 15)){
+    game_headlines = game_headlines.concat([
+      {text: "{{winning_team.school_name}} upset {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance + 2},
+      {text: "{{winning_team.school_name}} pull off the upset over {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance + 2},
+      {text: "{{winning_team.team_name}} upset {{losing_team.team_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}", headline_relevance: base_headline_relevance + 2},
+    ])
+  }
+
+  if (game_dict.game.bowl){
+    if (game_dict.game.bowl.bowl_name == 'National Championship'){
+      game_headlines = [
+        {text: "{{winning_team.school_name}} crowned champions", headline_relevance: 20},
+        {text: "{{winning_team.school_name}} claim {{winning_team_season.season}} championship", headline_relevance: 20},
+      ]
+    }
+    else if(game_dict.game.bowl.bowl_name == 'National Semifinal'){
+      if (game_dict.winning_team_season.playoff.seed >= 9){
+        game_headlines = [
+          {text: "Cinderella {{winning_team_season.national_rank_display}} {{winning_team.team_name}} to play for a shot at the title next week", headline_relevance: 10},
+        ]
+      }
+      else {
+        game_headlines = [
+          {text: "{{winning_team.school_name}} advance to National Championship", headline_relevance: 9},
+          {text: "{{winning_team.school_name}} takes down {{losing_team.school_name}} to play for championship", headline_relevance: 9},
+        ]
+      }
+    }
+  }
+
+  let max_headline_relevance = Math.max(...game_headlines.map(h => h.headline_relevance));
+  game_headlines = game_headlines.filter(h => h.headline_relevance == max_headline_relevance);
   game_headline =
     game_headlines[Math.floor(Math.random() * game_headlines.length)];
 
   var headline_text = common.nunjucks_env.renderString(
-    game_headline,
+    game_headline.text,
     game_dict
   );
-
-  let headline_relevance = 0;
-  if (game_dict.losing_team_season.national_rank < 10){
-    headline_relevance = 10;
-  }
-  else if (game_dict.losing_team_season.national_rank < 20){
-    headline_relevance = 8;
-  }
-  else if (game_dict.losing_team_season.national_rank < 40){
-    headline_relevance = 6;
-  }
-  else if (game_dict.losing_team_season.national_rank < 80){
-    headline_relevance = 4;
-  }
-  else {
-    headline_relevance = 1;
-  }
 
   const headline_obj = new headline(
     common.headline_id_counter,
     game_dict.game.week_id,
     headline_text,
     'game',
-    headline_relevance
+    game_headline.headline_relevance
   );
 
   headline_obj.href = game_dict.game.game_href;
@@ -7441,6 +7598,17 @@ const game_sim_play_call_options = (down, yards_to_go, ball_spot, period, offens
       }
     }
 
+    if (Math.abs(offensive_point_differential) >= 40){
+      if (down == 4){
+        return {'playclock_urgency': 1, 'play_choice_options': {'punt': 5}}
+      }
+      else if (down == 3){
+        return {'playclock_urgency': 1, 'play_choice_options': {'pass': 30, 'run': 70}}
+      }
+      else {
+        return {'playclock_urgency': 1, 'play_choice_options': {'run': 70}}
+      }
+    }
 
     if (down == 4){
       if (period <= 3) {
@@ -7812,11 +7980,11 @@ const sim_game = (game_dict, common) => {
           Math.random() /
           ((offensive_player_average_overall /
             defensive_player_average_overall) **
-            1.25);
+            1.15);
 
         if (r < 0.65) {
           //completion
-          yards_this_play = Math.floor(Math.random() * 22);
+          yards_this_play = Math.floor(Math.random() * 20);
 
           chosen_players.QB.player_team_game.game_stats.passing.attempts += 1;
           chosen_players.Pass_Catcher.player_team_game.game_stats.receiving.targets += 1;
@@ -7916,9 +8084,9 @@ const sim_game = (game_dict, common) => {
           Math.floor(
             Math.random() *
               (12.5 *
-                (offensive_front_7_average_overall /
+                ((offensive_front_7_average_overall /
                 defensive_front_7_average_overall) **
-                  1.75)
+                  1.4))
           ) - 2;
 
         let runner_random = Math.random();
@@ -9344,6 +9512,15 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     .toArray();
   let team_season_ids = team_seasons.map((ts) => ts.team_season_id);
 
+  let conferences = await db.conference.toArray();
+  let conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
+
+  let conference_seasons = await db.conference_season.where({season: common.season}).toArray();
+  conference_seasons = nest_children(conference_seasons,conferences_by_conference_id, 'conference_id', 'conference' );
+  let conference_seasons_by_conference_season_id = index_group_sync(conference_seasons, 'index', 'conference_season_id');
+  
+  team_seasons = nest_children(team_seasons, conference_seasons_by_conference_season_id, 'conference_season_id', 'conference_season')
+
   let weeks = await db.week.where('season').between(common.season-1, common.season+1, true, true).toArray();
   let weeks_by_week_id = index_group_sync(weeks, 'index', 'week_id');
   let current_week = weeks.find(w => w.is_current);
@@ -9596,7 +9773,11 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     rank_counter += 1;
   }
 
-  console.log({ sorted_team_seasons: sorted_team_seasons });
+  let last_headline = await db.headline.orderBy('headline_id').last();
+  let headline_id = last_headline ? last_headline.headline_id + 1 : 1;
+  let ranking_headlines = await generate_ranking_headlines(common, sorted_team_seasons, current_week, headline_id);
+
+  console.log({ sorted_team_seasons: sorted_team_seasons, ranking_headlines:ranking_headlines });
   debugger;
   for (team_season of sorted_team_seasons) {
     delete team_season.team;
@@ -9604,9 +9785,8 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     delete team_season.team_games;
     delete team_season.srs;
   }
-  console.log({ sorted_team_seasons: sorted_team_seasons });
-  //debugger;
   await db.team_season.bulkPut(sorted_team_seasons);
+  await db.headline.bulkPut(ranking_headlines);
 };
 
 const calculate_conference_rankings = async (this_week, all_weeks, common) => {
@@ -12140,22 +12320,22 @@ const schedule_bowl_season = async (all_weeks, common) => {
     {
       bowl_name: "Rose Bowl",
       bowl_prestige: 10,
-      bowl_week_name: "Bowl Week 2",
+      bowl_week_name: "Bowl Week 3",
     },
     {
       bowl_name: "Sugar Bowl",
       bowl_prestige: 9,
-      bowl_week_name: "Bowl Week 2",
+      bowl_week_name: "Bowl Week 3",
     },
     {
       bowl_name: "Fiesta Bowl",
       bowl_prestige: 9,
-      bowl_week_name: "Bowl Week 2",
+      bowl_week_name: "Bowl Week 3",
     },
     {
       bowl_name: "Orange Bowl",
       bowl_prestige: 9,
-      bowl_week_name: "Bowl Week 2",
+      bowl_week_name: "Bowl Week 3",
     },
     {
       bowl_name: "Cotton Bowl",
@@ -12170,23 +12350,23 @@ const schedule_bowl_season = async (all_weeks, common) => {
     {
       bowl_name: "Alamo Bowl",
       bowl_prestige: 6,
-      bowl_week_name: "Bowl Week 1",
+      bowl_week_name: "Bowl Week 2",
     },
     {
       bowl_name: "Citrus Bowl",
       bowl_prestige: 6,
-      bowl_week_name: "Bowl Week 1",
+      bowl_week_name: "Bowl Week 2",
     },
     {
       bowl_name: "Gasparilla Bowl",
       bowl_prestige: 5,
-      bowl_week_name: "Bowl Week 1",
+      bowl_week_name: "Bowl Week 2",
     },
-    { bowl_name: "Sun Bowl", bowl_prestige: 5, bowl_week_name: "Bowl Week 1" },
+    { bowl_name: "Sun Bowl", bowl_prestige: 5, bowl_week_name: "Bowl Week 2" },
     {
       bowl_name: "Texas Bowl",
       bowl_prestige: 5,
-      bowl_week_name: "Bowl Week 1",
+      bowl_week_name: "Bowl Week 2",
     },
     {
       bowl_name: "Las Vegas Bowl",

@@ -92,7 +92,7 @@
       }
 
       console.log({TeamHeaderLinks:TeamHeaderLinks})
-      common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
+      common.page = {page_icon: team.team_logo,page_title: `HFC - ${team.school_name} History`, PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
                             page:     common.page,
                             world_id: common.params['world_id'],

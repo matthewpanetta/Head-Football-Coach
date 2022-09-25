@@ -429,6 +429,11 @@ body {
   height: 38px;
 }
 
+#nav-tab{
+  height: 44px;
+  overflow: visible;
+}
+
 .PageContent {
   margin-left: 200px;
 }
@@ -1276,6 +1281,10 @@ div button.w3-bar-item.btn.selected-bar-button {
   cursor: pointer;
 }
 
+.no-border{
+  border: none !important;
+}
+
 .teamTeamLeaderBoxTeamLogo {
   width: 40px;
   margin-top: 8px;
@@ -1936,8 +1945,12 @@ tfoot td {
   color: white;
   padding: 2px 5px;
   margin-right: 8px;
-  width: 16px;
+  width: 24px;
   text-align: center;
+}
+
+div.W-L-badge {
+  display: inline-block;
 }
 
 .W-L-badge.L {
@@ -2401,6 +2414,10 @@ tfoot td {
 .logo-12 {
   height: 12px;
   width: 12px;
+}
+.logo-18 {
+  height: 18px;
+  width: 18px;
 }
 
 .logo-24 {

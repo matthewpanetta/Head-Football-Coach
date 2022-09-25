@@ -228,6 +228,7 @@ const getHtml = async (common) => {
 
   const headline_ids = team.team_season.headlines;
   var headlines = await db.headline.bulkGet(headline_ids);
+  headlines = nest_children(headlines, weeks_by_week_id, 'week_id', 'week')
   let headlines_by_game_id = index_group_sync(headlines, "group", "game_id");
 
   headlines = headlines.sort((h_a, h_b) => h_b.week_id - h_a.week_id);

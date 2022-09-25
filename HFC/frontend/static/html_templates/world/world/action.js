@@ -32,6 +32,16 @@ const get_all_keys = (obj) => {
   return all_keys;
 };
 
+// const regenerate_ranking_headlines = async(common) => {
+//   let team_seasons = await db.team_season.where({season: common.season}).and(ts => ts.team_id > 0).toArray();
+//   let last_headline = await db.headline.orderBy('headline_id').last();
+//   let headline_id_counter = last_headline.headline_id + 1 || 1;
+//   let new_headlines = await generate_ranking_headlines(common, team_seasons, this_week, headline_id_counter)
+
+//   await db.headline.where({week_id: this_week.week_id}).delete()
+//   await db.headline.bulkPut(new_headlines)
+// }
+
 const check_db_size = async (common, db) => {
   console.log({ db: db, idbdb: db.idbdb.objectStoreNames });
   let table_lengths = [];
@@ -401,9 +411,18 @@ const getHtml = async (common) => {
     preseason_info.conference_favorites = conference_seasons;
   }
 
+  let headline_type_map = {
+    'game': 'Last Week Games',
+    'ranking': 'AP Top 25',
+    'recruiting': '247 Recruiting'
+  }
   let headlines = await db.headline.where({week_id: current_week.week_id - 1}).toArray();
+  headlines.forEach(function(h){
+    h.headline_type_display = headline_type_map[h.headline_type];
+    h.team_seasons = h.team_season_ids.map(ts_id => team_seasons_by_team_season_id[ts_id]);
+  });
   headlines = headlines.sort((h_a, h_b) => h_b.headline_relevance - h_a.headline_relevance)
-  headlines = headlines.slice(0, 20);
+  let headlines_by_headline_type = index_group_sync(headlines, 'group', 'headline_type_display');
 
   common.stopwatch(common, "Time after this_week_games");
   const page = {
@@ -420,7 +439,7 @@ const getHtml = async (common) => {
     recent_games: recent_games,
     current_week: current_week,
     preseason_info: preseason_info,
-    headlines:headlines
+    headlines_by_headline_type:headlines_by_headline_type
   };
 
   common.render_content = render_content;
