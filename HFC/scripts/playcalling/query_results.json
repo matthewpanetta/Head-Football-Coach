@@ -1,119 +1,139 @@
-[
-  {
-    "quarter": "q1",
-    "time_remaining": "any_time",
-    "down": "d1",
-    "yards_to_go": "10_to_13",
-    "field_pos": "inside_50",
-    "score_diff": "trailing_4_score",
-    "serial_str": "q1|any_time|d1|10_to_13|inside_50|trailing_4_score",
-    "playcalling": {
-      "total": 1,
-      "run": 100.0
-    }
+{
+  "filters": {
+    "quarter": [
+      "q1"
+    ],
+    "time_remaining": [],
+    "down": [],
+    "yards_to_go": [],
+    "field_pos": [],
+    "score_diff": [
+      "trailing_4_score"
+    ],
+    "playcalling": []
   },
-  {
-    "quarter": "q1",
-    "time_remaining": "any_time",
-    "down": "d1",
-    "yards_to_go": "10_to_13",
-    "field_pos": "own_30",
-    "score_diff": "trailing_4_score",
-    "serial_str": "q1|any_time|d1|10_to_13|own_30|trailing_4_score",
-    "playcalling": {
-      "total": 1,
-      "pass": 100.0
+  "sorting": [
+    "quarter",
+    "time_remaining",
+    "down"
+  ],
+  "data": [
+    {
+      "quarter": "q1",
+      "time_remaining": "any_time",
+      "down": "d1",
+      "yards_to_go": "10_to_13",
+      "field_pos": "inside_50",
+      "score_diff": "trailing_4_score",
+      "serial_str": "q1|any_time|d1|10_to_13|inside_50|trailing_4_score",
+      "playcalling": {
+        "total": 1,
+        "run": 100.0
+      }
+    },
+    {
+      "quarter": "q1",
+      "time_remaining": "any_time",
+      "down": "d1",
+      "yards_to_go": "10_to_13",
+      "field_pos": "own_30",
+      "score_diff": "trailing_4_score",
+      "serial_str": "q1|any_time|d1|10_to_13|own_30|trailing_4_score",
+      "playcalling": {
+        "total": 1,
+        "pass": 100.0
+      }
+    },
+    {
+      "quarter": "q1",
+      "time_remaining": "any_time",
+      "down": "d1",
+      "yards_to_go": "10_to_13",
+      "field_pos": "own_20",
+      "score_diff": "trailing_4_score",
+      "serial_str": "q1|any_time|d1|10_to_13|own_20|trailing_4_score",
+      "playcalling": {
+        "total": 2,
+        "pass": 100.0
+      }
+    },
+    {
+      "quarter": "q1",
+      "time_remaining": "any_time",
+      "down": "d1",
+      "yards_to_go": "10_to_13",
+      "field_pos": "own_10",
+      "score_diff": "trailing_4_score",
+      "serial_str": "q1|any_time|d1|10_to_13|own_10|trailing_4_score",
+      "playcalling": {
+        "total": 1,
+        "run": 100.0
+      }
+    },
+    {
+      "quarter": "q1",
+      "time_remaining": "any_time",
+      "down": "d2",
+      "yards_to_go": "6_to_9",
+      "field_pos": "inside_50",
+      "score_diff": "trailing_4_score",
+      "serial_str": "q1|any_time|d2|6_to_9|inside_50|trailing_4_score",
+      "playcalling": {
+        "total": 1,
+        "pass": 100.0
+      }
+    },
+    {
+      "quarter": "q1",
+      "time_remaining": "any_time",
+      "down": "d2",
+      "yards_to_go": "6_to_9",
+      "field_pos": "own_20",
+      "score_diff": "trailing_4_score",
+      "serial_str": "q1|any_time|d2|6_to_9|own_20|trailing_4_score",
+      "playcalling": {
+        "total": 1,
+        "pass": 100.0
+      }
+    },
+    {
+      "quarter": "q1",
+      "time_remaining": "any_time",
+      "down": "d3",
+      "yards_to_go": "6_to_9",
+      "field_pos": "inside_50",
+      "score_diff": "trailing_4_score",
+      "serial_str": "q1|any_time|d3|6_to_9|inside_50|trailing_4_score",
+      "playcalling": {
+        "total": 1,
+        "pass": 100.0
+      }
+    },
+    {
+      "quarter": "q1",
+      "time_remaining": "any_time",
+      "down": "d3",
+      "yards_to_go": "6_to_9",
+      "field_pos": "own_20",
+      "score_diff": "trailing_4_score",
+      "serial_str": "q1|any_time|d3|6_to_9|own_20|trailing_4_score",
+      "playcalling": {
+        "total": 1,
+        "pass": 100.0
+      }
+    },
+    {
+      "quarter": "q1",
+      "time_remaining": "any_time",
+      "down": "d4",
+      "yards_to_go": "6_to_9",
+      "field_pos": "own_20",
+      "score_diff": "trailing_4_score",
+      "serial_str": "q1|any_time|d4|6_to_9|own_20|trailing_4_score",
+      "playcalling": {
+        "total": 1,
+        "punt": 100.0
+      }
     }
-  },
-  {
-    "quarter": "q1",
-    "time_remaining": "any_time",
-    "down": "d1",
-    "yards_to_go": "10_to_13",
-    "field_pos": "own_20",
-    "score_diff": "trailing_4_score",
-    "serial_str": "q1|any_time|d1|10_to_13|own_20|trailing_4_score",
-    "playcalling": {
-      "total": 2,
-      "pass": 100.0
-    }
-  },
-  {
-    "quarter": "q1",
-    "time_remaining": "any_time",
-    "down": "d1",
-    "yards_to_go": "10_to_13",
-    "field_pos": "own_10",
-    "score_diff": "trailing_4_score",
-    "serial_str": "q1|any_time|d1|10_to_13|own_10|trailing_4_score",
-    "playcalling": {
-      "total": 1,
-      "run": 100.0
-    }
-  },
-  {
-    "quarter": "q1",
-    "time_remaining": "any_time",
-    "down": "d2",
-    "yards_to_go": "6_to_9",
-    "field_pos": "inside_50",
-    "score_diff": "trailing_4_score",
-    "serial_str": "q1|any_time|d2|6_to_9|inside_50|trailing_4_score",
-    "playcalling": {
-      "total": 1,
-      "pass": 100.0
-    }
-  },
-  {
-    "quarter": "q1",
-    "time_remaining": "any_time",
-    "down": "d2",
-    "yards_to_go": "6_to_9",
-    "field_pos": "own_20",
-    "score_diff": "trailing_4_score",
-    "serial_str": "q1|any_time|d2|6_to_9|own_20|trailing_4_score",
-    "playcalling": {
-      "total": 1,
-      "pass": 100.0
-    }
-  },
-  {
-    "quarter": "q1",
-    "time_remaining": "any_time",
-    "down": "d3",
-    "yards_to_go": "6_to_9",
-    "field_pos": "inside_50",
-    "score_diff": "trailing_4_score",
-    "serial_str": "q1|any_time|d3|6_to_9|inside_50|trailing_4_score",
-    "playcalling": {
-      "total": 1,
-      "pass": 100.0
-    }
-  },
-  {
-    "quarter": "q1",
-    "time_remaining": "any_time",
-    "down": "d3",
-    "yards_to_go": "6_to_9",
-    "field_pos": "own_20",
-    "score_diff": "trailing_4_score",
-    "serial_str": "q1|any_time|d3|6_to_9|own_20|trailing_4_score",
-    "playcalling": {
-      "total": 1,
-      "pass": 100.0
-    }
-  },
-  {
-    "quarter": "q1",
-    "time_remaining": "any_time",
-    "down": "d4",
-    "yards_to_go": "6_to_9",
-    "field_pos": "own_20",
-    "score_diff": "trailing_4_score",
-    "serial_str": "q1|any_time|d4|6_to_9|own_20|trailing_4_score",
-    "playcalling": {
-      "total": 1,
-      "punt": 100.0
-    }
-  }
-]
+  ]
+}
