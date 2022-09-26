@@ -3005,6 +3005,22 @@ const distance_between_cities = (city_a, city_b) => {
   return d;
 };
 
+const distance_between_coordinates = (coord_a, coord_b) => {
+  var earth_radius = 6371; // Radius of the earth in km
+  var dLat = deg2rad(coord_a[0] - coord_b[0]); // deg2rad below
+  var dLon = deg2rad(coord_a[1] - coord_b[1]);
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(coord_a[0])) *
+      Math.cos(deg2rad(coord_b[0])) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = earth_radius * c; // Distance in km
+  d = d / 1.609344;
+  return d;
+};
+
 const pathToRegex = (path) =>
   new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
@@ -6577,6 +6593,7 @@ const common_functions = async (route_pattern) => {
     initialize_scoreboard: initialize_scoreboard,
     round_decimal: round_decimal,
     distance_between_cities:distance_between_cities,
+    distance_between_coordinates:distance_between_coordinates,
     calculate_national_rankings: calculate_national_rankings,
     calculate_conference_rankings: calculate_conference_rankings,
     schedule_bowl_season: schedule_bowl_season,
