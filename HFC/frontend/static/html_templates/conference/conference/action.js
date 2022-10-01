@@ -269,11 +269,6 @@ const draw_map = async (common) => {
       marker_list.push(marker);
       marker.addTo(map);
     }
-
-    // markers
-    //   .addLayer(marker)
-    //   .addTo(map);
-    // console.log({marker:marker, markers:markers})
   });
 
   var group = new L.featureGroup(marker_list);
@@ -286,13 +281,45 @@ const table_action = async (common) => {
 }
 
 const action = async (common) => {
-  // $(".player-profile-popup-icon").on("click", async function () {
-  //   await common.populate_player_modal(common, this);
-  // });
-
-  // draw_faces(common, "#team-leaders-table");
   await draw_map(common);
   await table_action(common);
+
+  $('#team-results-football-chart-icon').on('click', function(){
+    let data = common.render_content.conference.all_teams;
+    let field_list = [
+      {display: 'Overall Wins', field: 'record.wins'},
+      {display: 'Win %', field: 'record.win_percentage', max_value: 100},
+      {display: 'Conf Wins', field: 'record.conference_wins'},
+      {display: 'Conf Win %', field: 'record.conference_win_percentage', max_value: 100},
+      {display: 'National Championships', field: 'national_championship_count'},
+      {display: 'Conference Championships', field: 'conference_championship_count'},
+      {display: 'Division Championships', field: 'division_championship_count'},
+    ]
+    let display_name_field = 'school_name';
+    let display_src_field = 'team_logo';
+    let display_href_field = 'team_href';
+    let display_color_field = 'team_color_primary_hex';
+    let chart_title = common.render_content.conference.conference_abbreviation + ' Team History'
+    initialize_football_chart(common, data, field_list, display_name_field, display_src_field, display_href_field, display_color_field, chart_title)
+  })
+
+  $('#yearly-results-football-chart-icon').on('click', function(){
+    let data = common.render_content.conference.conference_seasons;
+    data.forEach(d => d.conference_color_primary_hex = common.render_content.conference.conference_color_primary_hex);
+    let field_list = [
+      {display: 'Overall Wins', field: 'record.wins', sort: 'none'},
+      {display: 'Win %', field: 'record.winning_percentage', sort: 'none', max_value: 100},
+      {display: 'OOC Wins', field: 'record.out_of_conference_wins', sort: 'none'},
+      {display: 'OOC Win %', field: 'record.out_of_conference_winning_percentage', sort: 'none', max_value: 100},
+      {display: 'Top 25 Teams', field: 'record.top_25_teams', sort: 'none'},
+    ]
+    let display_name_field = 'season';
+    let display_src_field = '';
+    let display_href_field = '';
+    let display_color_field = 'conference_color_primary_hex';
+    let chart_title = common.render_content.conference.conference_abbreviation + ' Yearly History'
+    initialize_football_chart(common, data, field_list, display_name_field, display_src_field, display_href_field, display_color_field, chart_title)
+  })
 };
 
 $(document).ready(async function () {

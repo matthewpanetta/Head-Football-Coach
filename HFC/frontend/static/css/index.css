@@ -2975,6 +2975,7 @@ table {
 }
 
 
+#football-chart-modal,
 #player-info-modal,
 #geography-modal {
   display: none;
@@ -2989,6 +2990,7 @@ table {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
+#football-chart-modal.shown,
 #player-info-modal.shown,
 #geography-modal.shown {
   display: block;
@@ -3005,6 +3007,12 @@ table {
   background-color: #fefefe;
   margin: 5% auto;
   width: 70%;
+}
+
+#football-chart-modal .modal-content {
+  margin: 2% auto;
+  width: 70vw;
+  max-height: 90vh;
 }
 
 .close {
@@ -3204,4 +3212,14 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
 
 .strikethrough {
   text-decoration: line-through;
+}
+
+.football-chart-icon:hover {
+  opacity: .5;
+  cursor: pointer;
+}
+
+.football-chart-svg-container{
+  padding-left: 24px;
+  padding-right: 24px;
 }

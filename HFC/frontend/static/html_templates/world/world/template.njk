@@ -91,45 +91,6 @@
                 </table>
               </div>
             </div>
-            <!-- <div class="w3-col l4 m6 s12">
-              <div class="card w3-margin-bottom">
-                <div class="w3-bar team-primary-background-bar">
-                  <div class="">New Top 25</div>
-                </div>
-                <div>
-                  {% for team in teams %}
-                    <div>
-                      <div class="inline-block" style="border-radius: 100px; box-shadow: 0 0 5px 0.1px rgb(0 0 0 / 50%); padding: 10px; position: relative; background-color: white;">
-                        <a  class='' href="{{team.team_href}}">
-                          <img class='logo logo-50' style="width: 40px;"  loading="lazy" src='{{team.team_logo}}' alt="">
-                        </a>
-                      </div>
-                      <div class="inline-block" style="height: 30px; margin-left: -20px; box-shadow: 0 0 5px 0.1px rgb(0 0 0 / 50%); ">
-                        <div class="inline-block" style='height: inherit; background-color:  #{{team.team_color_primary_hex}}; color: white; padding-left: 25px;'>
-                          <a  class='font14' href="/World/{{world_id}}/Team/{{ team.team_id }}/">
-                            <span>{{ team.school_name }} <span class='hide-small'>{{ team.team_name }}</span></span>
-                          </a>
-                        </div>
-                        <div class="inline-block" style="height: inherit; background-color: white;">
-                          <span class=''>{{team.team_season.record.wins}} - {{team.team_season.record.losses}}</span>
-                        </div>
-                        <div class="inline-block">{{ team.team_season.rankings.national_rank[0] }}</div>
-                        <div class="inline-block">
-                          {% if team.NationalRankDelta < 0 %}
-                          <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaRed'>&#8595;{{team.NationalRankDeltaAbs}}</div>
-                          {% elif team.NationalRankDelta > 0 %}
-                          <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaGreen'>&#8593;{{team.NationalRankDeltaAbs}}</div>
-                          {% endif %}
-                        </div>
-                      </div>
-
-                    </div>
-
-                  {% endfor %}
-
-                </div>
-              </div>
-            </div> -->
             <div class="w3-col  l4 m6 s12">
               {% if this_week_games | length > 0 %}
                 <div class="card background-eee">
