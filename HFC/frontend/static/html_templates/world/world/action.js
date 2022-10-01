@@ -265,6 +265,7 @@ const getHtml = async (common) => {
   });
 
   let preseason_info = {};
+  let season_recap = {};
   common.stopwatch(common, "Time before pre-season");
   if (current_week.week_name == "Pre-Season") {
     // TODO filter out backups
@@ -410,6 +411,50 @@ const getHtml = async (common) => {
 
     preseason_info.conference_favorites = conference_seasons;
   }
+  else if (current_week.week_name == 'Season Recap'){
+    team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
+    let team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+    const awards = await db.award.where({ season: common.season }).toArray();
+    var heisman_award = awards.find((a) => a.award_group_type == "Heisman");
+    let conference_season_poty_awards = awards.filter(a => a.award_group == 'individual' && a.award_timeframe == 'regular season' && a.award_team_set == 'conference');
+
+    let player_team_season_ids = conference_season_poty_awards.map(a => a.player_team_season_id).concat([heisman_award.player_team_season_id]);
+    let player_team_seasons = await db.player_team_season.bulkGet(player_team_season_ids);
+    console.log({
+      player_team_seasons:player_team_seasons, player_team_season_ids:player_team_season_ids, conference_season_poty_awards:conference_season_poty_awards, heisman_award:heisman_award
+    })
+    let player_ids = player_team_seasons.map(pts => pts.player_id);
+    let players = await db.player.bulkGet(player_ids)
+    let players_by_player_id = index_group_sync(players, 'index', 'player_id')
+
+    player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player');
+    player_team_seasons = nest_children(player_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+    let player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id');
+
+    heisman_award.player_team_season = player_team_seasons_by_player_team_season_id[heisman_award.player_team_season_id];
+    conference_season_poty_awards = nest_children(conference_season_poty_awards, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
+
+    let conference_winning_team_seasons = team_seasons.filter(ts => ts.results.conference_champion);
+    let conference_winning_team_seasons_by_conference_season_id = index_group_sync(conference_winning_team_seasons, 'index', 'conference_season_id')
+    let conference_season_ids = conference_winning_team_seasons.map(ts => ts.conference_season_id);
+    let conference_seasons = await db.conference_season.bulkGet(conference_season_ids);
+    let conference_ids = conference_seasons.map(cs => cs.conference_id);
+    let conferences = await db.conference.bulkGet(conference_ids);
+    let conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
+
+    let conference_season_poty_awards_by_conference_season_id = index_group_sync(conference_season_poty_awards, 'index', 'conference_season_id')
+    
+    conference_seasons = nest_children(conference_seasons, conference_season_poty_awards_by_conference_season_id, 'conference_season_id', 'poty_award')
+    conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference')
+    // let conference_seasons_by_conference_season_id = index_group_sync(conference_seasons, 'index', 'conference_season_id')
+    conference_seasons = nest_children(conference_seasons, conference_winning_team_seasons_by_conference_season_id, 'conference_season_id', 'team_season')
+    conference_seasons = conference_seasons.sort((cs_a, cs_b) => cs_b.conference.conference_name > cs_a.conference.conference_name ? -1 : 1);
+
+    season_recap.heisman_award = heisman_award;
+    season_recap.conference_seasons = conference_seasons;
+
+  }
 
   let headline_type_map = {
     'game': 'Last Week Games',
@@ -439,7 +484,8 @@ const getHtml = async (common) => {
     recent_games: recent_games,
     current_week: current_week,
     preseason_info: preseason_info,
-    headlines_by_headline_type:headlines_by_headline_type
+    headlines_by_headline_type:headlines_by_headline_type,
+    season_recap:season_recap
   };
 
   common.render_content = render_content;

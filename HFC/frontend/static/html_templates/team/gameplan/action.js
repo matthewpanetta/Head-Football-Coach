@@ -7,18 +7,6 @@ const getHtml = async (common) => {
   const db = common.db;
   const query_to_dict = common.query_to_dict;
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Gameplan",
-    group_name: "Team",
-    db: db,
-  });
-
-  const TeamHeaderLinks = await common.team_header_links({
-    path: "Gameplan",
-    season: common.params.season,
-    db: db,
-  });
-
   var position_list = {
     QB: 1,
     RB: 1,
@@ -433,6 +421,22 @@ const getHtml = async (common) => {
     );
   });
 
+  let show_season = common.params.season && common.params.season < common.season;
+  let season_to_show = common.params.season;
+
+  const NavBarLinks = await common.nav_bar_links({
+    path: "Gameplan",
+    group_name: "Team",
+    db: db,
+  });
+
+  const TeamHeaderLinks = await common.team_header_links({
+    path: "Gameplan",
+    season: common.params.season,
+    db: db,
+    team: team
+  });
+
   console.log({
     TeamHeaderLinks: TeamHeaderLinks,
     team: team,
@@ -453,7 +457,9 @@ const getHtml = async (common) => {
     all_teams: await common.all_teams(common, "/Gameplan/"),
     position_depth_chart: position_depth_chart,
     all_pos_rating_list:all_pos_rating_list,
-    all_pos_stat_list:all_pos_stat_list
+    all_pos_stat_list:all_pos_stat_list,
+    show_season:show_season, 
+    season_to_show:season_to_show
   };
 
   common.render_content = render_content;

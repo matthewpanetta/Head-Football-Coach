@@ -8,7 +8,7 @@
     </div>
     <div style='width:100%;'>
 
-      <table class='football-table-content font14' style=' width:100%; '>
+      <table id='season-stats-passing' class='football-table-content font14' style=' width:100%; '>
         <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
           <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
             <th>Season</th>
@@ -43,6 +43,22 @@
             <td value='{{player_team_season.season_stats.passing.ints|OrZero}}'  >{{player_team_season.season_stats.passing.ints|OrZero}}</td>
           </tr>
           {% endfor %}
+          {%if player_team_seasons|length > 1%}
+          <tr class='football-table-row bold ' style='height: 50px;'>
+            <td>
+              Totals
+            </td>
+            <td></td>
+            <td>{{player_team_seasons|length}} seasons</td>
+
+            <td value='{{player.career_stats.passing.yards|toLocaleString|OrZero}}'>{{player.career_stats.passing.yards|toLocaleString|OrZero}}</td>
+            <td value='{{player.career_stats.passing.completions|toLocaleString|OrZero}}'>{{player.career_stats.passing.completions|toLocaleString|OrZero}}</td>
+            <td value='{{player.career_stats.passing.attempts|toLocaleString|OrZero}}'>{{player.career_stats.passing.attempts|toLocaleString|OrZero}}</td>
+            <td value='{{player.passing_completion_percentage}}'>{{player.passing_completion_percentage}}</td>
+            <td value='{{player.career_stats.passing.tds|OrZero}}'>{{player.career_stats.passing.tds|OrZero}}</td>
+            <td value='{{player.career_stats.passing.ints|OrZero}}'  >{{player.career_stats.passing.ints|OrZero}}</td>
+          </tr>
+          {%endif%}
         </tbody>
       </table>
     </div>
@@ -57,7 +73,7 @@
     </div>
     <div style='width:100%;'>
 
-      <table class='football-table-content font14' style=' width:100%; '>
+      <table id='season-stats-rushing' class='football-table-content font14' style=' width:100%; '>
         <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
           <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
             <th>Season</th>
@@ -99,6 +115,24 @@
             <td value='{{player_team_season.season_stats.rushing_carries_per_game|OrZero}}'>{{player_team_season.season_stats.rushing_carries_per_game|OrZero}}</td>
           </tr>
           {% endfor %}
+          {%if player_team_seasons|length > 1%}
+          <tr class='football-table-row bold ' style='height: 50px;'>
+            <td>
+              Totals
+            </td>
+            <td></td>
+            <td>{{player_team_seasons|length}} seasons</td>
+
+            <td value='{{player.career_stats.rushing.yards|toLocaleString|OrZero}}'>{{player.career_stats.rushing.yards|toLocaleString|OrZero}}</td>
+            <td value='{{player.career_stats.rushing.carries|toLocaleString|OrZero}}'>{{player.career_stats.rushing.carries|toLocaleString|OrZero}}</td>
+            <td value='{{player.rushing_yards_per_carry}}'>{{player.rushing_yards_per_carry}}</td>
+            <td value='{{player.career_stats.rushing.tds|OrZero}}'>{{player.career_stats.rushing.tds|OrZero}}</td>
+            <td value='{{player.career_stats.rushing.broken_tackles|OrZero}}'>{{player.career_stats.rushing.broken_tackles|OrZero}}</td>
+            <td value=''>0</td>
+            <td value='{{player.rushing_yards_per_game|OrZero}}'>{{player.rushing_yards_per_game|OrZero}}</td>
+            <td value='{{player.rushing_carries_per_game|OrZero}}'>{{player.rushing_carries_per_game|OrZero}}</td>
+          </tr>
+          {%endif%}
         </tbody>
       </table>
     </div>
@@ -113,7 +147,7 @@
     </div>
     <div style='width:100%;'>
 
-      <table class='football-table-content font14' style=' width:100%; '>
+      <table id='season-stats-receiving' class='football-table-content font14' style=' width:100%; '>
         <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
           <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
             <th>Season</th>
@@ -145,6 +179,21 @@
             <td value='{{player_team_season.season_stats.receiving.tds|OrZero}}' >{{player_team_season.season_stats.receiving.tds|OrZero}}</td>
           </tr>
           {% endfor %}
+          {%if player_team_seasons|length > 1%}
+          <tr class='football-table-row bold ' style='height: 50px;'>
+            <td>
+              Totals
+            </td>
+            <td></td>
+            <td>{{player_team_seasons|length}} seasons</td>
+            
+            <td value='{{player.career_stats.receiving.yards|toLocaleString|OrZero}}'>{{player.career_stats.receiving.yards|toLocaleString|OrZero}}</td>
+            <td value='{{player.career_stats.receiving.receptions|toLocaleString|OrZero}}'>{{player.career_stats.receiving.receptions|toLocaleString|OrZero}}</td>
+            <td value='{{player.receiving_yards_per_catch}}'>{{player.receiving_yards_per_catch}}</td>
+            <td value='{{player.career_stats.receiving.targets|OrZero}}'>{{player.career_stats.receiving.targets|OrZero}}</td>
+            <td value='{{player.career_stats.receiving.tds|OrZero}}' >{{player.career_stats.receiving.tds|OrZero}}</td>
+          </tr>
+          {%endif%}
         </tbody>
       </table>
     </div>
@@ -159,7 +208,7 @@
     </div>
     <div style='width:100%;'>
 
-      <table class='football-table-content font14' style=' width:100%; '>
+      <table id='season-stats-blocking' class='football-table-content font14' style=' width:100%; '>
         <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
           <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
             <th>Season</th>
@@ -185,6 +234,18 @@
             <td value='{{player_team_season.season_stats.blocking.sacks_allowed|OrZero}}' >{{player_team_season.season_stats.blocking.sacks_allowed|OrZero}}</td>
           </tr>
           {% endfor %}
+          {%if player_team_seasons|length > 1%}
+          <tr class='football-table-row bold ' style='height: 50px;'>
+            <td>
+              Totals
+            </td>
+            <td></td>
+            <td>{{player_team_seasons|length}} seasons</td>
+            
+            <td value='{{player.career_stats.blocking.pancakes|OrZero}}'>{{player.career_stats.blocking.pancakes|OrZero}}</td>
+            <td value='{{player.career_stats.blocking.sacks_allowed|OrZero}}' >{{player.career_stats.blocking.sacks_allowed|OrZero}}</td>
+          </tr>
+          {%endif%}
         </tbody>
       </table>
     </div>
@@ -199,7 +260,7 @@
     </div>
     <div style='width:100%;'>
 
-      <table class='football-table-content font14' style=' width:100%; '>
+      <table id='season-stats-defense' class='football-table-content font14' style=' width:100%; '>
         <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
           <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
             <th>Season</th>
@@ -235,6 +296,23 @@
             <td value='{{player_team_season.season_stats.fumbles.recovered|OrZero}}' >{{player_team_season.season_stats.fumbles.recovered|OrZero}}</td>
           </tr>
           {% endfor %}
+          {%if player_team_seasons|length > 1%}
+          <tr class='football-table-row bold ' style='height: 50px;'>
+            <td colspan='1'>
+              Totals
+            </td>
+            <td colspan='1'></td>
+            <td>{{player_team_seasons|length}} seasons</td>
+            
+            <td value='{{player.career_stats.defense.tackles|OrZero}}'>{{player.career_stats.defense.tackles|OrZero}}</td>
+            <td value='{{player.career_stats.defense.tackles_for_loss|OrZero}}'>{{player.career_stats.defense.tackles_for_loss|OrZero}}</td>
+            <td value='{{player.career_stats.defense.sacks|OrZero}}'>{{player.career_stats.defense.sacks|OrZero}}</td>
+            <td value='{{player.career_stats.defense.ints|OrZero}}'>{{player.career_stats.defense.ints|OrZero}}</td>
+            <td value='{{player.career_stats.defense.deflections|OrZero}}'>{{player.career_stats.defense.deflections|OrZero}}</td>
+            <td value='{{player.career_stats.fumbles.forced|OrZero}}'>{{player.career_stats.fumbles.forced|OrZero}}</td>
+            <td value='{{player.career_stats.fumbles.recovered|OrZero}}' >{{player.career_stats.fumbles.recovered|OrZero}}</td>
+          </tr>
+          {%endif%}
         </tbody>
       </table>
     </div>
@@ -249,7 +327,7 @@
     </div>
     <div style='width:100%;'>
 
-      <table class='football-table-content font14' style=' width:100%; '>
+      <table id='season-stats-kicking' class='football-table-content font14' style=' width:100%; '>
         <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
           <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
             <th>Season</th>
@@ -279,6 +357,20 @@
             <td value='{{player_team_season.season_stats.punting.within_20|OrZero}}' >{{player_team_season.season_stats.punting.within_20|OrZero}}</td>
           </tr>
           {% endfor %}
+          {%if player_team_seasons|length > 1%}
+          <tr class='football-table-row bold ' style='height: 50px;'>
+            <td colspan='1'>
+              Totals
+            </td>
+            <td colspan='1'></td>
+            <td>{{player_team_seasons|length}} seasons</td>
+            
+            <td value='{{player.career_stats.kicking.fgm|OrZero}}'>{{player.career_stats.kicking.fgm|OrZero}}</td>
+            <td value='{{player.career_stats.kicking.fga|OrZero}}'>{{player.career_stats.kicking.fga|OrZero}}</td>
+            <td value='{{player.career_stats.punting.punts|OrZero}}'>{{player.career_stats.punting.punts|OrZero}}</td>
+            <td value='{{player.career_stats.punting.within_20|OrZero}}' >{{player.career_stats.punting.within_20|OrZero}}</td>
+          </tr>
+          {%endif%}
         </tbody>
       </table>
     </div>

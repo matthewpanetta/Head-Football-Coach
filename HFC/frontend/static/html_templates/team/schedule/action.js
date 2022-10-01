@@ -8,18 +8,6 @@
       const db = common.db;
       const query_to_dict = common.query_to_dict;
 
-      const NavBarLinks = await common.nav_bar_links({
-        path: 'Schedule',
-        group_name: 'Team',
-        db: db
-      });
-
-      const TeamHeaderLinks = await common.team_header_links({
-        path: 'Schedule',
-        season: common.params.season,
-        db: db
-      });
-
       var teams = await db.team.where('team_id').above(0).toArray();
       teams = teams.sort((team_a, team_b) => team_a.school_name - team_b.school_name);
 
@@ -146,7 +134,21 @@
 
       var all_teams = await common.all_teams(common, '/Schedule/');
 
+      const NavBarLinks = await common.nav_bar_links({
+        path: 'Schedule',
+        group_name: 'Team',
+        db: db
+      });
 
+      const TeamHeaderLinks = await common.team_header_links({
+        path: 'Schedule',
+        season: common.params.season,
+        db: db,
+        team: team
+      });
+
+      let show_season = common.params.season && common.params.season < common.season;
+      let season_to_show = common.params.season;
       common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
                             page:     common.page,
@@ -157,7 +159,9 @@
                             teams: teams,
                             season: season,
                             all_teams: all_teams,
-                            conference_standings: team_seasons_in_conference
+                            conference_standings: team_seasons_in_conference,
+                            show_season:show_season, 
+                            season_to_show:season_to_show
                           }
 
       common.render_content = render_content;

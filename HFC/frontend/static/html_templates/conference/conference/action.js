@@ -61,18 +61,31 @@ const getHtml = async (common) => {
     cs.record.losses = 0;
     cs.record.conference_wins = 0;
     cs.record.conference_losses = 0;
+    cs.record.top_25_teams = 0;
 
     cs.team_seasons.forEach(function (ts) {
       cs.record.wins += ts.record.wins;
       cs.record.losses += ts.record.losses;
       cs.record.conference_wins += ts.record.conference_wins;
       cs.record.conference_losses += ts.record.conference_losses;
+      cs.record.top_25_teams += ts.national_rank <= 25 ? 1 : 0;
     });
 
 
     cs.conference_champion = cs.team_seasons.find(ts => ts.results.conference_champion)
     if (cs.conference_champion){
-      cs.runner_up = cs.team_seasons.find(ts => !ts.results.conference_champion && !ts.results.division_champion)
+      cs.runner_up = cs.team_seasons.find(ts => !ts.results.conference_champion && ts.results.division_champion)
+    }
+
+    if (cs.conference_champion && !cs.runner_up){
+      let conference_game_list = cs.team_seasons.map(ts => ts.record.conference_wins + ts.record.conference_losses);
+      let max_conf_games = Math.max(...conference_game_list)
+      cs.runner_up = cs.team_seasons.find(ts => !ts.results.conference_champion && (ts.record.conference_wins + ts.record.conference_losses) == max_conf_games);
+   
+      console.log({
+        'cs.runner_up': cs.runner_up, max_conf_games:max_conf_games, cs:cs, conference_game_list:conference_game_list
+      })
+      debugger;
     }
 
     cs.record.out_of_conference_wins =
@@ -92,6 +105,9 @@ const getHtml = async (common) => {
         0
       );
     }
+    else {
+      cs.record.winning_percentage = 0;
+    }
 
     if (cs.record.out_of_conference_games_played > 0) {
       cs.record.out_of_conference_winning_percentage = round_decimal(
@@ -100,11 +116,14 @@ const getHtml = async (common) => {
         0
       );
     }
+    else {
+      cs.record.out_of_conference_winning_percentage = 0;
+    }
   });
 
   all_teams.forEach(function (t) {
-    t.first_season = Math.min(t.team_seasons.map((ts) => ts.season));
-    t.last_season = Math.max(t.team_seasons.map((ts) => ts.season));
+    t.first_season = Math.min(...t.team_seasons.map((ts) => ts.season));
+    t.last_season = Math.max(...t.team_seasons.map((ts) => ts.season));
     t.season_count = t.team_seasons.length;
 
     t.record = {
@@ -115,9 +134,9 @@ const getHtml = async (common) => {
       games_played: 0,
       conference_games_played: 0,
     };
-    t.division_championship_count = 0;
-    t.conference_championship_count = 0;
-    t.national_championship_count = 0;
+    t.division_championship_count = t.team_seasons.filter(ts => ts.results.division_champion).length || 0;
+    t.conference_championship_count = t.team_seasons.filter(ts => ts.results.conference_champion).length || 0;
+    t.national_championship_count = t.team_seasons.filter(ts => ts.results.national_champion).length || 0;
     t.team_seasons.forEach(function (ts) {
       t.record.wins += ts.record.wins;
       t.record.losses += ts.record.losses;
@@ -136,12 +155,18 @@ const getHtml = async (common) => {
         0
       );
     }
+    else {
+      t.record.win_percentage = 0;
+    }
 
     if (t.record.conference_games_played > 0) {
       t.record.conference_win_percentage = round_decimal(
         (t.record.conference_wins * 100.0) / t.record.conference_games_played,
         0
       );
+    }
+    else {
+      t.record.conference_win_percentage = 0;
     }
   });
 

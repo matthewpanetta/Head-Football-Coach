@@ -51,10 +51,10 @@
                       {% if season.national_champion%}
                       <td class='font16' style='color:white; background-color: #{{season.national_champion.team.team_color_primary_hex}}'>{{season.season}}</td>
                       <td class='col-group' style='background-color: #{{season.national_champion.team.team_color_primary_hex}}'>
-                        <a href="{{season.national_champion.team.team_href}}">
+                        <a href="{{season.national_champion.team_season_href}}">
                           <img src="{{season.national_champion.team.team_logo}}" alt="" class='logo logo-50'>
                         </a>
-                        <a href="{{season.national_champion.team.team_href}}" class='font20 white-text'>
+                        <a href="{{season.national_champion.team_season_href}}" class='font20 white-text'>
                           {{season.national_champion.team.full_name}}
                         </a>
                       </td>
@@ -65,7 +65,7 @@
                       {% for team_season in season.final_four_runner_ups %}
                       {% if team_season%}
                       <td class='center-text' style='background-color: #{{team_season.team.team_color_primary_hex}}'>
-                          <a href="{{team_season.team.team_href}}">
+                          <a href="{{team_season.team_season_href}}">
                             <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-50'>
                           </a>
                       </td>
@@ -74,7 +74,7 @@
                       {% endif %}
                       {% endfor %}
                       <td class='center-text col-group colgroup-border-left'  style='background-color: #{{season.preseason_number_1.team.team_color_primary_hex}}'>
-                        <a href="{{season.preseason_number_1.team.team_href}}">
+                        <a href="{{season.preseason_number_1.team_season_href}}">
                           <img src="{{season.preseason_number_1.team.team_logo}}" alt="" class='logo logo-50'>
                         </a>
                       </td>
@@ -96,7 +96,7 @@
                           </a>
                         </div>
                         <div class="">
-                          <a href="{{season.heisman_winner.player_team_season.team_season.team.team_href}}">
+                          <a href="{{season.heisman_winner.player_team_season.team_season.team_season_href}}">
                             {{season.heisman_winner.player_team_season.team_season.team.full_name}}
                           </a>
                         </div>

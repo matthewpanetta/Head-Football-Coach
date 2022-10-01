@@ -8,18 +8,6 @@
       const db = common.db;
       const query_to_dict = common.query_to_dict;
 
-      const NavBarLinks = await common.nav_bar_links({
-        path: 'History',
-        group_name: 'Team',
-        db: db
-      });
-
-      const TeamHeaderLinks = await common.team_header_links({
-        path: 'History',
-        season: common.params.season,
-        db: db
-      });
-
       const league_seasons = await db.league_season.toArray();
       const league_seasons_by_season = index_group_sync(league_seasons, 'index', 'season')
 
@@ -91,6 +79,22 @@
         }
       }
 
+      const NavBarLinks = await common.nav_bar_links({
+        path: 'History',
+        group_name: 'Team',
+        db: db
+      });
+
+      const TeamHeaderLinks = await common.team_header_links({
+        path: 'History',
+        season: common.params.season,
+        db: db,
+        team: team
+      });
+
+      let show_season = common.params.season && common.params.season < common.season;
+      let season_to_show = common.params.season;
+    
       console.log({TeamHeaderLinks:TeamHeaderLinks})
       common.page = {page_icon: team.team_logo,page_title: `HFC - ${team.school_name} History`, PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
@@ -101,6 +105,8 @@
                             team_seasons: team_seasons,
                             season: common.season,
                             all_teams: await common.all_teams(common, '/History/'),
+                            show_season:show_season, 
+                            season_to_show:season_to_show
                           }
 
       common.render_content = render_content;

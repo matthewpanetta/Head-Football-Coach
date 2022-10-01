@@ -117,7 +117,7 @@ const getHtml = async (common) => {
   var world_obj = {};
   const team_id = common.params.team_id;
   const db = common.db;
-  const season = common.params.season ?? common.season;
+  const season = common.params.season || common.season;
   const index_group = common.index_group;
   const index_group_sync = common.index_group_sync;
 
@@ -128,20 +128,6 @@ const getHtml = async (common) => {
   );
 
   common.stopwatch(common, "Time after fetching weeks");
-
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Overview",
-    group_name: "Team",
-    db: db,
-  });
-
-  const TeamHeaderLinks = await common.team_header_links({
-    path: "Overview",
-    season: common.params.season,
-    db: db,
-  });
-
-  common.stopwatch(common, "Time after fetching navbar links");
 
   var teams = await db.team.where("team_id").above(0).toArray();
   teams = teams.sort(function (teamA, teamB) {
@@ -167,6 +153,23 @@ const getHtml = async (common) => {
   common.current_team_season = team_season;
 
   common.stopwatch(common, "Time after fetching teams");
+
+
+  const NavBarLinks = await common.nav_bar_links({
+    path: "Overview",
+    group_name: "Team",
+    db: db,
+  });
+
+  const TeamHeaderLinks = await common.team_header_links({
+    path: "Overview",
+    season: common.params.season,
+    db: db,
+    team: team
+  });
+
+  common.stopwatch(common, "Time after fetching navbar links");
+
 
   const conference_seasons_by_conference_season_id = await index_group(
     await db.conference_season.where({ season: season }).toArray(),
@@ -475,6 +478,9 @@ const getHtml = async (common) => {
     (pts_a, pts_b) =>
       pts_a.recruiting.rank.national - pts_b.recruiting.rank.national
   );
+
+  let show_season = common.params.season && common.params.season < common.season;
+  let season_to_show = common.params.season;
   console.log({ signed_player_team_seasons: signed_player_team_seasons });
   //console.log('games', games)
   common.page = {
@@ -500,6 +506,8 @@ const getHtml = async (common) => {
     player_team_seasons: player_team_seasons,
     headlines: headlines,
     games_played: games_played,
+    show_season:show_season, 
+    season_to_show:season_to_show
   };
 
   common.render_content = render_content;

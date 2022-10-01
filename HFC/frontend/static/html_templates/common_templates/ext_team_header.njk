@@ -2,8 +2,13 @@
   <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
   <div class='page-header-logo-div'><img class='teamTeamLogo' src='{{team.team_logo}}' alt="My image"></div>
   <div class='teamHeaderInfo'>
+
     <span class='thin-font font20'>
+    {% if show_season%}
+      {{season_to_show}}
+    {%else%}
       {{team.team_season.national_rank_display}}
+    {%endif %}
     </span>
     <span class='teamSchoolName'>
       {{ team.school_name }}
@@ -27,7 +32,7 @@
     </div>
     <div class='teamOverviewInfo'>
       {% for Link in page.TeamHeaderLinks.link_paths%}
-        <a href="{{team.team_href}}/{{Link.href_extension}}">{{Link.Display}}</a>
+        <a href="{{Link.href}}">{{Link.Display}}</a>
         {% if loop.last %}
         {% else %}  |  {% endif%}
         {% endfor %}

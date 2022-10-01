@@ -195,51 +195,149 @@
                   </div>
                 </div>
               {% elif current_week.week_name == 'Season Recap' %}
-                <div class="card margin-bottom-12">
+                <div class="card mb-3">
                   <div class="w3-bar team-primary-background-bar">
-                    <span class="">Heisman Hopefuls</span>
+                    <span class="">Conference Winners</span>
                   </div>
                   <div>
-                    <table class='table table-striped table-hover' id='HeismanRaceTable'>
+                    <table class='table' id=''>
                       <tbody>
-                        {% for player_team_season in preseason_info.heisman_hopefuls%}
-                          <tr player_id='{{player_team_season.player_id}}'>
-                            <td  class='center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">
-                              <a href="{{player_team_season.team_season.team.team_href}}">
-                                <img src="{{player_team_season.team_season.team.team_logo}}" class='logo logo-50' alt="">
+                        {% for conference_season in season_recap.conference_seasons%}
+                        {{conference_season|log}}
+                          <tr playerid='{{player_team_season.player.player_id}}'>
+                            <td rowspan='3' class='center-text' style="background-color: #{{conference_season.conference.conference_color_primary_hex}}">
+                              <a href="{{conference_season.conference.conference_href}}">
+                                <img src="{{conference_season.conference.conference_logo}}" class='logo logo-50' alt="">
                               </a>
                             </td>
-                            <td class='column-shrink center-text' style="background-color: #{{player_team_season.team_season.team.team_color_primary_hex}}">
-                              <div id='heisman-face-{{loop.index}}-{{player_team_season.player_id}}' player_id='{{player_team_season.player_id}}'  class='PlayerFace-45 PlayerFace-Headshot' style='background-color: white; border-color: #{{player_team_season.team_season.team.team_color_secondary_hex}}'></div>
+                            <td colspan='3' class='white-text' style='background-color: #{{conference_season.conference.conference_color_primary_hex}}'>
+                              <div>
+                                <span class='bold'>
+                                  <a href='{{conference_season.conference.conference_href}}'>
+                                    {{conference_season.conference.conference_name}}
+                                  </a>
+                                </span>
+                              </div>
+                            </td>
+
+                            </tr>
+                            <tr>
+                              <td class='center-text' style='background-color: #{{conference_season.team_season.team.team_color_primary_hex}};'>
+                                <a  href='{{conference_season.team_season.team.team_href}}'>
+                                <img class='logo logo-30' src='{{conference_season.team_season.team.team_logo}}'/>
+                                </a>
+                              </td>
+                              <td colspan='1'>
+                                <div>
+                                  <a href='{{conference_season.team_season.team.team_href}}'>
+                                  {{conference_season.team_season.team.full_name}}
+                                  </a>
+                                </div>
+                                <div class='font10'>
+                                  <span class=''>{{conference_season.conference.conference_abbreviation}}</span>
+                                  Champions
+                                </div>
+                              </td>
+                              <td>
+                                <div>
+                                  {{conference_season.team_season.record_display}}
+                                </div>
+                                {% if conference_season.team_season.results.national_champion%}
+                                 <div class='font10 opacity-1' style='color: darkgoldenrod;'>
+                                  National Champions
+                                </div>
+                                {%else%}
+                                 <div class='font10'>
+                                  {{conference_season.team_season.results.bowl.bowl_name}}
+                                </div>
+                                {%endif%}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td  class='center-text' style="background-color: #{{conference_season.poty_award.player_team_season.team_season.team.team_color_primary_hex}}">
+                                <div style='display: flex;'>
+                              <div class='inline-block'>
+                                <a href="{{conference_season.poty_award.player_team_season.team_season.team.team_href}}">
+                                  <img src="{{conference_season.poty_award.player_team_season.team_season.team.team_logo}}" class='logo logo-30' alt="">
+                                </a>
+                              </div>
+                              <div id='heisman-face-{{loop.index}}-{{conference_season.poty_award.player_team_season.player_id}}' player_id='{{conference_season.poty_award.player_team_season.player_id}}'  class='PlayerFace-30 PlayerFace-Headshot inline-block' style='background-color: rgba(255,255,255,0); border-color: #{{season_recap.heisman_player_team_season.team_season.team.team_color_secondary_hex}}; margin-left: -15px;'></div>
+                              </div>
+                              </td>
+                              <td playerid = '{{conference_season.poty_award.player_team_season.player_id}}'>
+                                <div class="">
+                                  <a href="{{conference_season.poty_award.player_team_season.player.player_href}}">
+                                    {{conference_season.poty_award.player_team_season.player.full_name}}
+                                  </a>
+                                </div>
+                                  <div class='font10'>
+                                    <span class=''>{{conference_season.conference.conference_abbreviation}}</span>
+                                    Player of the year
+                                </div>
+                                <div class="font10">
+                                  <i class="fa fa-address-card player-profile-popup-icon"></i>
+                              &#183;
+                              <span>{{conference_season.poty_award.player_team_season.position}}</span>
+                              &#183;
+                              <span>{{conference_season.poty_award.player_team_season.class.class_name}}</span>
+                                </div>
+                              </td>
+                              <td>
+                                <ul class='no-list-style' style='font-size: 10px; padding:0px;'>
+                                  {% for stat in conference_season.poty_award.player_team_season.top_stats.slice(0,3)%}
+                                    <li>{{stat.display}}</li>
+                                  {% endfor %}
+                                </ul>
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="card margin-bottom-12">
+                  <div class="w3-bar team-primary-background-bar">
+                    <span class="">Heisman Winner</span>
+                  </div>
+                  <div>
+                    <table class='table table-striped table-hover' id='heisman-winner-table'>
+                      <tbody>
+                          <tr player_id='{{season_recap.heisman_award.player_team_season.player_id}}'>
+                            <td  class='center-text' style="background-color: #{{season_recap.heisman_award.player_team_season.team_season.team.team_color_primary_hex}}">
+                              <a href="{{season_recap.heisman_award.player_team_season.team_season.team.team_href}}">
+                                <img src="{{season_recap.heisman_award.player_team_season.team_season.team.team_logo}}" class='logo logo-50' alt="">
+                              </a>
+                            </td>
+                            <td class='column-shrink center-text' style="background-color: #{{season_recap.heisman_award.player_team_season.team_season.team.team_color_primary_hex}}">
+                              <div id='heisman-face-{{loop.index}}-{{season_recap.heisman_award.player_team_season.player_id}}' player_id='{{season_recap.heisman_award.player_team_season.player_id}}'  class='PlayerFace-45 PlayerFace-Headshot' style='background-color: white; border-color: #{{season_recap.heisman_player_team_season.team_season.team.team_color_secondary_hex}}'></div>
                             </td>
                             <td>
                               <div class="font16">
-                                <a href="{{player_team_season.player.player_href}}">
-                                  {{player_team_season.player.full_name}}
+                                <a href="{{season_recap.heisman_award.player_team_season.player.player_href}}">
+                                  {{season_recap.heisman_award.player_team_season.player.full_name}}
                                 </a>
                               </div>
                               <div class="font10">
-                                <a href="{{player_team_season.team_season.team.team_href}}">
-                                  {{player_team_season.team_season.team.full_name}}
+                                <a href="{{season_recap.heisman_award.player_team_season.team_season.team.team_href}}">
+                                  {{season_recap.heisman_award.player_team_season.team_season.team.full_name}}
                                 </a>
                               </div>
                               <div class="font10">
                                 <i class="fa fa-address-card player-profile-popup-icon"></i>
                             &#183;
-                            <span>{{player_team_season.position}}</span>
+                            <span>{{season_recap.heisman_award.player_team_season.position}}</span>
                             &#183;
-                            <span>{{player_team_season.class.class_name}}</span>
+                            <span>{{season_recap.heisman_award.player_team_season.class.class_name}}</span>
                               </div>
                             </td>
                             <td>
-                              <ul class='no-list-style'>
-                                {% for stat in player_team_season.top_stats%}
+                              <ul class='no-list-style' style='font-size: 10px; padding:0px;'>
+                                {% for stat in season_recap.heisman_award.player_team_season.top_stats%}
                                   <li>{{stat.display}}</li>
                                 {% endfor %}
                               </ul>
                             </td>
                           </tr>
-                        {% endfor %}
                       </tbody>
                     </table>
                   </div>

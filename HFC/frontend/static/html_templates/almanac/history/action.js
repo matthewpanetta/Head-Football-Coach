@@ -41,7 +41,7 @@
       for (var team_season of team_seasons){
         team_season.results.final_four = false;
 
-        if (team_season.rankings.national_rank[1] <= 4){
+        if (team_season.results.bowl && (team_season.results.bowl.bowl_name == 'National Semifinals' || team_season.results.bowl.bowl_name == 'National Championship' ) ){
           team_season.results.final_four = true;
         }
       }
@@ -91,9 +91,9 @@
         season.national_champion = season_team_seasons.filter(ts => ts.results.national_champion)[0]
 
         season.final_four_runner_ups = season_team_seasons.filter(ts => ts.results.final_four && !(ts.results.national_champion))
-
+        season.final_four_runner_ups = season.final_four_runner_ups.sort((ts_a, ts_b) => ts_b.results.bowl.game_id - ts_a.results.bowl.game_id)
+        
         season.team_seasons = season_team_seasons;
-
 
         console.log({season: season})
       }

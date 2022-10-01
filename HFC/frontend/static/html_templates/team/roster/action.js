@@ -3,7 +3,7 @@ const getHtml = async (common) => {
 
   var world_obj = {};
   const team_id = parseInt(common.params.team_id);
-  const season = common.season;
+  const season = common.params.season || common.season;
   const db = common.db;
   const query_to_dict = common.query_to_dict;
 
@@ -51,18 +51,6 @@ const getHtml = async (common) => {
     K: "Special Teams",
     P: "Special Teams",
   };
-
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Roster",
-    group_name: "Team",
-    db: db,
-  });
-
-  const TeamHeaderLinks = await common.team_header_links({
-    path: "Roster",
-    season: common.params.season,
-    db: db,
-  });
 
   var teams = await db.team.where("team_id").above(0).toArray();
   teams = teams.sort(function (teamA, teamB) {
@@ -188,6 +176,22 @@ const getHtml = async (common) => {
     }
   }
 
+  const NavBarLinks = await common.nav_bar_links({
+    path: "Roster",
+    group_name: "Team",
+    db: db,
+  });
+
+  const TeamHeaderLinks = await common.team_header_links({
+    path: "Roster",
+    season: season,
+    db: db,
+    team: team
+  });
+
+  let show_season = common.params.season && common.params.season < common.season;
+  let season_to_show = common.params.season;
+
   common.page = {
     PrimaryColor: team.team_color_primary_hex,
     SecondaryColor: team.secondary_color_display,
@@ -203,6 +207,8 @@ const getHtml = async (common) => {
     all_teams: await common.all_teams(common, "/Roster/"),
     teams: teams,
     roster_summary: roster_summary,
+    show_season:show_season, 
+    season_to_show:season_to_show
   };
 
   common.render_content = render_content;
@@ -254,9 +260,14 @@ const action = async (common) => {
 $(async function () {
   var startTime = performance.now();
 
-  const common = await common_functions(
-    "/World/:world_id/Team/:team_id/Roster/"
-  );
+  if (location.pathname.includes("/Season/")) {
+    var common = await common_functions(
+      "/World/:world_id/Team/:team_id/Roster/Season/:season/"
+    );
+  } else {
+    var common = await common_functions("/World/:world_id/Team/:team_id/Roster/");
+  }
+
   common.startTime = startTime;
 
   await getHtml(common);

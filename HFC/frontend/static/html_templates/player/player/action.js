@@ -182,7 +182,12 @@ const populate_player_stats = async (common) => {
           player_stats_show['Kicking'] = true
     }
 
-    console.log({player_stats_show:player_stats_show, })
+    player.career_stats = {}
+    for (const pts of player.player_team_seasons){
+      increment_parent(deep_copy(pts.season_stats), player.career_stats)
+    }
+
+    console.log({player_stats_show:player_stats_show, player:player})
 
 
     var url = '/static/html_templates/player/player/player_stats_recent_games_table_template.njk'
@@ -213,7 +218,7 @@ const populate_player_stats = async (common) => {
     var html = await fetch(url);
     html = await html.text();
   
-    var renderedHtml = await common.nunjucks_env.renderString(html, {page: common.page, player_team_season:current_player_team_season, player_stats_show:player_stats_show, player_team_seasons:player.player_team_seasons})
+    var renderedHtml = await common.nunjucks_env.renderString(html, {page: common.page, player:player, player_team_season:current_player_team_season, player_stats_show:player_stats_show, player_team_seasons:player.player_team_seasons})
   
     $('#player-stats-season-stat-div').empty()
     $('#player-stats-season-stat-div').html(renderedHtml)
@@ -221,6 +226,7 @@ const populate_player_stats = async (common) => {
     $('#player-stats-season-stat-div table').each(function(ind, table){
       var id = $(table).attr('id');
       init_basic_table_sorting(common, `#${id}`, 0)
+      console.log({id:id, table:table})
     });
 
 

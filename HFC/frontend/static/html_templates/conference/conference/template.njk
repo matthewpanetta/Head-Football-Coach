@@ -33,23 +33,31 @@
             <button class="w3-bar-item btn tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
             <button class="w3-bar-item btn tab nav-tab-button"  id="nav-history-tab">History</button>
             <div class="w3-dropdown-hover w3-right" style="margin-right: 20px" id='nav-team-dropdown-container'>
-              <button class="w3-bar-item btn tab nav-tab-button"  id="nav-team-dropdown" >
-              Conferences
-            </button>
+              
 
-              <div class="w3-dropdown-content card w3-animate-opacity"  style="right: 20px; max-height: 70vh;" >
-                <div>
-                  <span>Select a conference to view</span>
-                </div>
-                <div style='display: flex;'>
-                  <div class='w3-bar-block ' style='max-height: 65vh; overflow-y: scroll'>
-                    {% for conference in all_conferences %}
-                      <a href="{{conference.conference_href}}" class="w3-bar-item ">
-                        <img src="{{conference.conference_logo}}" class="logo logo-24"/>
-                        <span class='padding-left-8'>{{conference.conference_name}}</span>
-                      </a>
-                    {% endfor %}
-                  </div>
+              <div class="dropdown float-end">
+                <button class="btn dropdown-toggle no-border w3-bar-item" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Conferences
+                </button>
+                <div class='dropdown-menu no-padding' style='min-width: 120px;'>
+                  <table class='table width100 no-padding'>
+                    <tbody>
+                    {% for conference in all_conferences%}
+                    <tr class=''>
+                      <td style='background-color: #{{conference.conference_color_primary_hex}};'>
+                        <a href='{{conference.conference_href}}'>
+                          <img class='logo logo-24' src='{{conference.conference_logo}}' />
+                        </a>
+                      </td>
+                      <td class="">
+                        <a href='{{conference.conference_href}}'>
+                          {{conference.conference_abbreviation}} 
+                        </a>
+                      </td>
+                    </tr>
+                    {%endfor%}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -162,7 +170,7 @@
                               <td>{{conference_season.record.winning_percentage}}%</td>
                               <td>{{conference_season.record.out_of_conference_wins}} - {{conference_season.record.out_of_conference_losses}}</td>
                               <td>{{conference_season.record.out_of_conference_winning_percentage}}%</td>
-                              <td></td>
+                              <td>{{conference_season.record.top_25_teams}}</td>
                               {% if conference_season.conference_champion%}
                               <td class='left-text white-text no-wrap' style='background-color: #{{conference_season.conference_champion.team.team_color_primary_hex}};'>
                                 <a>
@@ -249,9 +257,9 @@
                                 <td value='{{team.record.conference_wins}}'>{{team.record.conference_wins}} - {{team.record.conference_losses}}</td>
                                 <td value='{{team.record.conference_win_percentage}}' class='col-group'>
                                   {%if team.record.conference_games_played%}{{team.record.conference_win_percentage}}%{%endif%}</td>
-                                  <td value='{{team.division_championships}}'>{{team.division_championships}}</td>
-                                  <td value='{{team.conference_championships}}'>{{team.conference_championships}}</td>
-                                  <td value='{{team.national_championships}}' class='col-group'>{{team.national_championships}}</td>
+                                  <td value='{{team.division_championship_count}}'>{{team.division_championship_count}}</td>
+                                  <td value='{{team.conference_championship_count}}'>{{team.conference_championship_count}}</td>
+                                  <td value='{{team.national_championship_count}}' class='col-group'>{{team.national_championship_count}}</td>
                                 </tr>
                               {% endfor %}
                             </tbody>

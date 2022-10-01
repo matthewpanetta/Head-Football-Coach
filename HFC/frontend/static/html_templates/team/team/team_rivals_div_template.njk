@@ -3,7 +3,7 @@
     <div class='gutter-sizer'></div>
     {% for rival in rivals%}
         <div class="card grid-item margin-bottom-24 inline-block width100">
-            <div class="w3-bar team-primary-background-bar left-text" style='background-color: #{{rival.team.team_color_primary_hex}} !important; border-top-color: #{{rival.team.team_color_secondary_hex|TeamSecondaryColor}} !important; '>
+            <div class="w3-bar team-primary-background-bar left-text" style='color: white !important; background-color: #{{rival.team.team_color_primary_hex}} !important; border-top-color: #{{rival.team.team_color_secondary_hex|TeamSecondaryColor}} !important; '>
                 <a href='{{rival.team.team_href}}'>{{rival.team.full_name}}</a>
                 {% if rival.rivalry_name%}
                 - {{rival.rivalry_name}}

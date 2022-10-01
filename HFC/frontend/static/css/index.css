@@ -1203,6 +1203,12 @@ div button.w3-bar-item.btn.selected-bar-button {
   width: 30px;
 }
 
+.PlayerFace-30,
+.CoachFace-30 {
+  height: 30px;
+  width: 30px;
+}
+
 .PlayerFace-Headshot,
 .CoachFace-Headshot {
   border-radius: 100px;
