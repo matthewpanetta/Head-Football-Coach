@@ -3054,27 +3054,6 @@ table {
   max-height: 85%;
 }
 
-
-@keyframes moving-gradient {
-  0% {
-    background-position: -250px 0;
-  }
-
-  100% {
-    background-position: 250px 0;
-  }
-}
-
-@-webkit-keyframes moving-gradient {
-  0% {
-    background-position: -250px 0;
-  }
-
-  100% {
-    background-position: 250px 0;
-  }
-}
-
 .unselectable {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -3101,19 +3080,30 @@ table {
   margin-bottom: 25px;
 }
 
-@-webkit-keyframes moving-gradient {
+
+@keyframes moving-gradient {
   0% {
-    background-position: -250px 0;
+    background-position: -30vw 0;
   }
 
   100% {
-    background-position: 250px 0;
+    background-position: 70vw 0;
+  }
+}
+
+@-webkit-keyframes moving-gradient {
+  0% {
+    background-position: -30vw 0;
+  }
+
+  100% {
+    background-position: 70vw 0;
   }
 }
 
 .moving-gradient {
   background: linear-gradient(to right, #eee 20%, #ddd 50%, #eee 80%);
-  background-size: 500px 100px;
+  background-size: 300px 100px;
   animation-name: moving-gradient;
   animation-duration: 5s;
   animation-iteration-count: infinite;

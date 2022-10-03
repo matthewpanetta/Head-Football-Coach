@@ -49,18 +49,46 @@ const getHtml = async (common) => {
     "group",
     "conference_season_id"
   );
+
+  let team_seasons_by_team_season_id = index_group_sync(
+    team_seasons,
+    "index",
+    "team_season_id"
+  );
   conference_seasons = nest_children(
     conference_seasons,
     team_seasons_by_conference_season_id,
     "conference_season_id",
     "team_seasons"
   );
+
+  const awards = await db.award.filter(a => conference_season_id_set.has(a.conference_season_id)).toArray();
+  let conference_season_poty_awards = awards.filter(a => a.award_group == 'individual' && a.award_timeframe == 'regular season' && a.award_team_set == 'conference');
+
+  let player_team_season_ids = conference_season_poty_awards.map(a => a.player_team_season_id);
+  let player_team_seasons = await db.player_team_season.bulkGet(player_team_season_ids);
+  console.log({
+    player_team_seasons:player_team_seasons, player_team_season_ids:player_team_season_ids, conference_season_poty_awards:conference_season_poty_awards
+  })
+  let player_ids = player_team_seasons.map(pts => pts.player_id);
+  let players = await db.player.bulkGet(player_ids)
+  let players_by_player_id = index_group_sync(players, 'index', 'player_id')
+
+  player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player');
+  player_team_seasons = nest_children(player_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+  let player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id');
+  conference_season_poty_awards = nest_children(conference_season_poty_awards, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
+  let conference_season_poty_awards_by_conference_season_id = index_group_sync(conference_season_poty_awards, 'index', 'conference_season_id')
+    
+  conference_seasons = nest_children(conference_seasons, conference_season_poty_awards_by_conference_season_id, 'conference_season_id', 'poty_award')
+
   conference_seasons.forEach(function (cs) {
     cs.record = {};
     cs.record.wins = 0;
     cs.record.losses = 0;
     cs.record.conference_wins = 0;
     cs.record.conference_losses = 0;
+    cs.record.playoff_teams = 0;
     cs.record.top_25_teams = 0;
 
     cs.team_seasons.forEach(function (ts) {
@@ -68,6 +96,7 @@ const getHtml = async (common) => {
       cs.record.losses += ts.record.losses;
       cs.record.conference_wins += ts.record.conference_wins;
       cs.record.conference_losses += ts.record.conference_losses;
+      cs.record.playoff_teams += ts.playoff.seed ? 1 : 0;
       cs.record.top_25_teams += ts.national_rank <= 25 ? 1 : 0;
     });
 
@@ -134,6 +163,7 @@ const getHtml = async (common) => {
       games_played: 0,
       conference_games_played: 0,
     };
+    t.playoff_appearance_count = t.team_seasons.filter(ts => ts.playoff.seed).length || 0;
     t.division_championship_count = t.team_seasons.filter(ts => ts.results.division_champion).length || 0;
     t.conference_championship_count = t.team_seasons.filter(ts => ts.results.conference_champion).length || 0;
     t.national_championship_count = t.team_seasons.filter(ts => ts.results.national_champion).length || 0;
@@ -284,6 +314,15 @@ const action = async (common) => {
   await draw_map(common);
   await table_action(common);
 
+  let clicked_history_tab = false;
+  $('#nav-history-tab').on('click', async function(){
+    if (clicked_history_tab){
+      return true;
+    }
+    clicked_history_tab = true;
+    await draw_faces(common, 'body');
+  })
+
   $('#team-results-football-chart-icon').on('click', function(){
     let data = common.render_content.conference.all_teams;
     let field_list = [
@@ -294,6 +333,7 @@ const action = async (common) => {
       {display: 'National Championships', field: 'national_championship_count'},
       {display: 'Conference Championships', field: 'conference_championship_count'},
       {display: 'Division Championships', field: 'division_championship_count'},
+      {display: 'Playoff Appearances', field: 'playoff_appearance_count'},
     ]
     let display_name_field = 'school_name';
     let display_src_field = 'team_logo';
@@ -312,6 +352,7 @@ const action = async (common) => {
       {display: 'OOC Wins', field: 'record.out_of_conference_wins', sort: 'none'},
       {display: 'OOC Win %', field: 'record.out_of_conference_winning_percentage', sort: 'none', max_value: 100},
       {display: 'Top 25 Teams', field: 'record.top_25_teams', sort: 'none'},
+      {display: 'Playoff Teams', field: 'record.playoff_teams', sort: 'none'},
     ]
     let display_name_field = 'season';
     let display_src_field = '';

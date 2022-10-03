@@ -130,13 +130,6 @@ const getHtml = async (common) => {
   var distinct_team_seasons = [];
   common.stopwatch(common, "Time after selecting teams");
 
-  console.log({
-    team_seasons: team_seasons,
-    teams: teams,
-    conference_seasons: conference_seasons,
-  });
-  // debugger;
-
   $.each(teams, async function (ind, team) {
     team.team_season = team_seasons_by_team_id[team.team_id];
     team.team_season.conference_season =
@@ -264,6 +257,49 @@ const getHtml = async (common) => {
     return 0;
   });
 
+  let headline_type_map = {
+    'game': 'Last Week Games',
+    'ranking': 'AP Top 25',
+    'recruiting': '247 Recruiting'
+  }
+  let headlines = await db.headline.where({week_id: current_week.week_id - 1}).toArray();
+  headlines.forEach(function(h){
+    h.headline_type_display = headline_type_map[h.headline_type];
+    h.team_seasons = h.team_season_ids.map(ts_id => team_seasons_by_team_season_id[ts_id]);
+  });
+  headlines = headlines.sort((h_a, h_b) => h_b.headline_relevance - h_a.headline_relevance)
+  let headlines_by_headline_type = index_group_sync(headlines, 'group', 'headline_type_display');
+
+  common.stopwatch(common, "Time after this_week_games");
+  const page = {
+    PrimaryColor: common.primary_color,
+    SecondaryColor: common.secondary_color,
+    NavBarLinks: NavBarLinks,
+  };
+  var render_content = {
+    team_list: [],
+    page: page,
+    world_id: common.world_id,
+    teams: teams,
+    recent_games: recent_games,
+    current_week: current_week,
+    headlines_by_headline_type:headlines_by_headline_type,
+  };
+
+  common.render_content = render_content;
+
+  console.log("render_content", render_content);
+
+  let url = "/static/html_templates/world/world/template.njk";
+  let html = await fetch(url);
+  html = await html.text();
+
+  let renderedHtml = common.nunjucks_env.renderString(html, render_content);
+
+  $("#body").append(renderedHtml);
+  // $('#body .show.active').css('display', 'block');
+
+
   let preseason_info = {};
   let season_recap = {};
   common.stopwatch(common, "Time before pre-season");
@@ -272,7 +308,7 @@ const getHtml = async (common) => {
     preseason_info.conference_favorites = [];
 
     var team_seasons = await db.team_season
-      .where({ season: common.season })
+      .where('season').between(common.season - 1, common.season, true, true)
       .and((ts) => ts.team_id > 0)
       .toArray();
     var all_teams = await db.team.toArray();
@@ -294,7 +330,7 @@ const getHtml = async (common) => {
     common.stopwatch(common, "Time after fetching pre season team_seasons");
 
     var player_team_seasons = await db.player_team_season
-      .where({ season: common.season })
+      .where('season').between(common.season - 1, common.season, true, true)
       .toArray();
     player_team_seasons = player_team_seasons.filter(
       (pts) => pts.team_season_id > 0
@@ -303,10 +339,6 @@ const getHtml = async (common) => {
       (pts) => pts.player_team_season_id
     );
 
-    console.log({
-      player_team_seasons: player_team_seasons,
-      len: player_team_seasons.length,
-    });
     common.stopwatch(common, "Time after fetching pre season pts");
 
     const player_team_season_stats = await db.player_team_season_stats.bulkGet(
@@ -317,19 +349,17 @@ const getHtml = async (common) => {
       "index",
       "player_team_season_id"
     );
-    console.log({
-      player_team_season_stats: player_team_season_stats,
-      len: player_team_season_stats.length,
-    });
     common.stopwatch(common, "Time after fetching pre season ptss");
 
-    const player_ids = player_team_seasons.map((pts) => pts.player_id);
+    const player_ids = distinct(player_team_seasons.map((pts) => pts.player_id));
     var players = await db.player.bulkGet(player_ids);
     const players_by_player_id = index_group_sync(
       players,
       "index",
       "player_id"
     );
+
+    common.stopwatch(common, "Time after fetching pre season players");
 
     player_team_seasons = nest_children(
       player_team_seasons,
@@ -350,13 +380,22 @@ const getHtml = async (common) => {
       "player"
     );
 
-    common.stopwatch(common, "Time after fetching pre season players");
+    let previous_player_team_seasons = player_team_seasons.filter(pts => pts.season == common.season - 1);
+
+    player_team_seasons = player_team_seasons.filter(pts => pts.season == common.season);
+    team_seasons = team_seasons.filter(ts => ts.season == common.season);
+
+    let previous_player_team_seasons_by_player_id = index_group_sync(previous_player_team_seasons, 'index', 'player_id');
+    player_team_seasons = nest_children(player_team_seasons, previous_player_team_seasons_by_player_id, 'player_id', 'previous_player_team_season')
+    
+
+    common.stopwatch(common, "Time after indexing & filtering players & ptss");
 
     var heisman_race = player_team_seasons.filter(
       (pts) => pts.depth_chart_rank == 1
     );
     heisman_race = heisman_race.sort(
-      (pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating
+      (pts_a, pts_b) => pts_b.previous_player_team_season.player_award_rating - pts_a.previous_player_team_season.player_award_rating
     );
     preseason_info.heisman_hopefuls = heisman_race.slice(0, 5);
 
@@ -401,8 +440,6 @@ const getHtml = async (common) => {
       });
 
       conference_season.team_seasons = team_seasons_for_conference;
-
-      // console.log({conference_season:conference_season, team_seasons_for_conference:team_seasons_for_conference})
     }
 
     conference_seasons = conference_seasons.sort(
@@ -410,6 +447,8 @@ const getHtml = async (common) => {
     );
 
     preseason_info.conference_favorites = conference_seasons;
+    render_content.preseason_info = preseason_info;
+    url = "/static/html_templates/world/world/info_col_preseason.njk";
   }
   else if (current_week.week_name == 'Season Recap'){
     team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team');
@@ -421,9 +460,7 @@ const getHtml = async (common) => {
 
     let player_team_season_ids = conference_season_poty_awards.map(a => a.player_team_season_id).concat([heisman_award.player_team_season_id]);
     let player_team_seasons = await db.player_team_season.bulkGet(player_team_season_ids);
-    console.log({
-      player_team_seasons:player_team_seasons, player_team_season_ids:player_team_season_ids, conference_season_poty_awards:conference_season_poty_awards, heisman_award:heisman_award
-    })
+
     let player_ids = player_team_seasons.map(pts => pts.player_id);
     let players = await db.player.bulkGet(player_ids)
     let players_by_player_id = index_group_sync(players, 'index', 'player_id')
@@ -451,55 +488,27 @@ const getHtml = async (common) => {
     conference_seasons = nest_children(conference_seasons, conference_winning_team_seasons_by_conference_season_id, 'conference_season_id', 'team_season')
     conference_seasons = conference_seasons.sort((cs_a, cs_b) => cs_b.conference.conference_name > cs_a.conference.conference_name ? -1 : 1);
 
+    let national_champions_team_season = team_seasons.find(ts => ts.results.national_champion)
+    let champion_other_team_seasons = await db.team_season.where({team_id: national_champions_team_season.team_id}).filter(ts => ts.results.national_champion).toArray();
+    national_champions_team_season.national_championship_count = champion_other_team_seasons.length;
+    season_recap.national_champions_team_season = national_champions_team_season
     season_recap.heisman_award = heisman_award;
     season_recap.conference_seasons = conference_seasons;
 
+    render_content.season_recap = season_recap;
+    url = "/static/html_templates/world/world/info_col_season_recap.njk";
   }
-
-  let headline_type_map = {
-    'game': 'Last Week Games',
-    'ranking': 'AP Top 25',
-    'recruiting': '247 Recruiting'
-  }
-  let headlines = await db.headline.where({week_id: current_week.week_id - 1}).toArray();
-  headlines.forEach(function(h){
-    h.headline_type_display = headline_type_map[h.headline_type];
-    h.team_seasons = h.team_season_ids.map(ts_id => team_seasons_by_team_season_id[ts_id]);
-  });
-  headlines = headlines.sort((h_a, h_b) => h_b.headline_relevance - h_a.headline_relevance)
-  let headlines_by_headline_type = index_group_sync(headlines, 'group', 'headline_type_display');
-
-  common.stopwatch(common, "Time after this_week_games");
-  const page = {
-    PrimaryColor: common.primary_color,
-    SecondaryColor: common.secondary_color,
-    NavBarLinks: NavBarLinks,
-  };
-  var render_content = {
-    team_list: [],
-    page: page,
-    world_id: common.world_id,
-    teams: teams,
-    this_week_games: this_week_games,
-    recent_games: recent_games,
-    current_week: current_week,
-    preseason_info: preseason_info,
-    headlines_by_headline_type:headlines_by_headline_type,
-    season_recap:season_recap
-  };
 
   common.render_content = render_content;
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/world/world/template.njk";
-  var html = await fetch(url);
+  html = await fetch(url);
   html = await html.text();
 
-  const renderedHtml = common.nunjucks_env.renderString(html, render_content);
+  renderedHtml = common.nunjucks_env.renderString(html, render_content);
 
-  $("#body").append(renderedHtml);
-  // $('#body .show.active').css('display', 'block');
+  $("#info-col").html(renderedHtml);
 };
 
 const action = async (common) => {

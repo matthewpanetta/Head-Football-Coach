@@ -78,7 +78,7 @@ const getHtml = async (common) => {
       a.award_team == "Freshman" &&
       a.award_group == "position"
   );
-  var trophies = awards.filter((a) => a.award_group == "individual");
+  var trophies = awards.filter((a) => a.award_group == "individual" && a.award_team_set == "national");
 
   player_team_season_ids = player_team_season_ids.concat(
     weekly_awards.map((a) => a.player_team_season_id)

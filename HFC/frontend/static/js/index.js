@@ -2449,9 +2449,9 @@ class player_team_season {
       ((10 * this.season_stats.average_weighted_game_score) +
       (1 * this.ratings.overall.overall) +      
       (0.5 * this.team_season.team.team_ratings.brand)) *
-      ((1 / this.team_season.national_rank) ** .1) *
+      ((1 / this.team_season.national_rank) ** .05) *
       ((1 / (this.team_season_average_weighted_game_score_rank || 1)) ** .1) *
-      ((1 / (this.team_season_overall_rank || 1)) ** .1) *
+      ((1 / (this.team_season_overall_rank || 1)) ** .05) *
       (1 + (position_overall_map[this.position]))
     );
   }
