@@ -2565,7 +2565,16 @@ const team_header_links = async (params) => {
   for (let path_obj of all_paths){
     if (path_obj.Display == "History") {
       path_obj.href = team.team_href + '/' + path_obj.href_extension;
-    } else {
+    } 
+      else if (path_obj.Display == "Overview"){
+        if (season){
+          path_obj.href = team.team_href + `/Season/${season}/`;
+        }
+        else {
+          path_obj.href = team.team_href;
+        }
+        }
+      else {
       if (season){
         path_obj.href = team.team_href + '/' + path_obj.href_extension + `/Season/${season}/`;
       }

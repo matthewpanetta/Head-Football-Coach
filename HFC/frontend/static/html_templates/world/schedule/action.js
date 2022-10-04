@@ -68,6 +68,7 @@ const getHtml = async (common) => {
   );
 
   var weeks = await db.week.where({ season: common.season }).toArray();
+  let current_week = weeks.find(w => w.is_current)
   const week_ids = weeks.map((w) => w.week_id);
 
   var games = await db.game.where("week_id").anyOf(week_ids).toArray();
@@ -144,7 +145,6 @@ const getHtml = async (common) => {
 
   const games_by_week_id = index_group_sync(games, "group", "week_id");
 
-  var any_week_selected = false;
   for (const week of weeks) {
     week.games = games_by_week_id[week.week_id] ?? [];
 
@@ -158,14 +158,7 @@ const getHtml = async (common) => {
     if (week.games.length > 0 && week.is_current) {
       week.selected_week = true;
       week.selected = "selected";
-      any_week_selected = true;
     }
-  }
-
-  weeks = weeks.filter((w) => w.games.length > 0);
-  if (!any_week_selected) {
-    weeks[weeks.length - 1].selected_week = true;
-    weeks[weeks.length - 1].selected = "selected";
   }
 
   let priority_options = [
@@ -173,41 +166,78 @@ const getHtml = async (common) => {
     { priority_name: "National TV" },
   ];
 
-  let filter_options = {
-    week_name: {
-      all_default_option: false,
-      count: 0,
-      display: "Week",
-      raw_options: weeks,
-      options: weeks,
-    },
-    "conference.conference_abbreviation": {
-      all_default_option: true,
-      count: 0,
-      display: "Conference",
-      raw_options: conference_seasons,
-      options: conference_seasons,
-    },
-    priority_name: {
-      all_default_option: true,
-      count: 0,
-      display: "Game Priority",
-      raw_options: priority_options,
-      options: priority_options,
-    },
-  };
+  let filters = [];
+  let conference_obj_list = [];
+  let team_seasons_by_conference_id = index_group_sync(team_seasons, 'group', 'conference_season.conference.conference_id');
+  console.log({conferences: conferences, team_seasons_by_conference_id:team_seasons_by_conference_id})
+  Object.entries(team_seasons_by_conference_id).forEach(function (conference_iter) {
+    let conference_id = conference_iter[0];
+    let conference_team_seasons = conference_iter[1]
+    let conference_obj = {
+      display: conference_team_seasons[0].conference_season.conference.conference_name,
+      options: [],
+    };
+    console.log({conference_obj:conference_obj})
 
-  for (let filter_group_name in filter_options) {
-    for (let filter_option of filter_options[filter_group_name].options) {
-      filter_option.display = get(filter_option, filter_group_name);
+    let conference_teams = distinct(conference_team_seasons.map(ts => ts.team.school_name))
+      .sort();
+      console.log({conference_teams:conference_teams})
 
-      if (filter_group_name == 'week_name' && filter_option.selected == 'selected'){
-        filter_option.display += ' (Current Week)'
-      }
+    conference_obj.options = conference_team_seasons.map((ts) => ({
+      display: ts.team.school_name,
+      logo_url: ts.team.team_logo,
+    }));
+    console.log({conference_obj:conference_obj})
+
+    conference_obj_list.push(conference_obj);
+    console.log({ conference_obj: conference_obj });
+  });
+
+  filters.unshift({
+    display: "Team",
+    options: conference_obj_list,
+  });
+
+
+  let week_list = []
+  let any_week_selected = false;
+  weeks.forEach(function(w){
+    let week_obj = {
+      display: w.week_name,
+      week_id: w.week_id,
+      selected: w.is_current
+    }
+
+    if (games_by_week_id[w.week_id] && games_by_week_id[w.week_id].length){
+      any_week_selected = any_week_selected || w.is_current;
+      week_list.push(week_obj)
+    }
+  })
+
+  console.log({any_week_selected:any_week_selected})
+  if (!any_week_selected){
+    if (current_week.week_id <= week_list[0].week_id){
+      week_list[0].selected = true;
+    }
+    else {
+      week_list[week_list.length - 1].selected = true;
     }
   }
 
-  console.log({ filter_options: filter_options });
+  let selected_week = week_list.find(w => w.selected);
+
+  filters.push({
+    display: 'Week',
+    options: week_list
+  })
+
+  filters.push({
+    display: "Priority",
+    options: [
+      {display: "Top 25"},
+      {display: "In-Conference"}
+    ]
+  })
 
   common.stopwatch(common, "getHtml 1.4");
 
@@ -226,7 +256,8 @@ const getHtml = async (common) => {
     world_id: common.params["world_id"],
     weeks: weeks,
     recent_games: recent_games,
-    filter_options: filter_options,
+    filters: filters,
+    current_week:current_week
   };
   common.render_content = render_content;
   console.log("render_content", render_content);
@@ -280,6 +311,11 @@ const getHtml = async (common) => {
     await draw_box_scores(common);
   });
 
+  $(".football-table-filter-button").on("click", function () {
+    let table_filter_content = $(this).next();
+    $(table_filter_content).toggleClass("hidden");
+  });
+
   $("#filter-dropdown-button").on("click", async function () {
     $(this).find("i").toggleClass("fa-angle-down");
     $(this).find("i").toggleClass("fa-angle-up");
@@ -290,26 +326,102 @@ const getHtml = async (common) => {
 
   $(".football-table-filter-option").on("click", async function () {
     var clicked_button = $(this);
-    $(clicked_button).toggleClass("selected");
 
-    var option_group = $(clicked_button).closest('.football-table-filter-option-group');
+    let added_filters = [];
+    let removed_filters = [];
 
-    if ($(option_group).find('.selected').toArray().length > 0){
-      $(option_group).find('.football-filter-clear-row').removeClass('disabled');
+    let filter_value = $(this).attr("filter-value");
+    let parent_filter_value = $(this).attr("parent-filter-value");
+
+    if (!$(this).hasClass("selected")) {
+      console.log("ADDING SELECTED");
+      added_filters = added_filters.concat([this]);
+      added_filters = added_filters.concat(
+        $(
+          `.football-table-filter-option[parent-filter-value="${filter_value}"]:not(.selected)`
+        ).toArray()
+      );
+
+      $(this).addClass("selected");
+      $(
+        `.football-table-filter-option[parent-filter-value="${filter_value}"]`
+      ).addClass("selected");
+    } else {
+      removed_filters = removed_filters.concat([this]);
+      removed_filters = removed_filters.concat(
+        $(
+          `.football-table-filter-option[parent-filter-value="${filter_value}"].selected`
+        ).toArray()
+      );
+      // removed_filters.concat($( `.football-table-filter-option[filter-value="${parent_filter_value}"]`))
+      $(this).removeClass("selected");
+      $(
+        `.football-table-filter-option[parent-filter-value="${filter_value}"]`
+      ).removeClass("selected");
+
+      $(
+        `.football-table-filter-option[filter-value="${parent_filter_value}"]`
+      ).removeClass("selected");
     }
-    else {
-      $(option_group).find('.football-filter-clear-row').addClass('disabled');
+
+    for (let add_elem of added_filters) {
+      if (parseInt($(add_elem).attr("include-in-filter"))) {
+        let filter_badge = $("#filter-badge-template").clone();
+        filter_badge.removeClass("hidden");
+        filter_badge.attr("id", "");
+        filter_badge.attr("filter-value", $(add_elem).attr("filter-value"));
+        filter_badge.attr("filter-field", $(add_elem).attr("filter-field"));
+        filter_badge
+          .find(".filter-value")
+          .text($(add_elem).attr("filter-value"));
+        $("#filter-badge-template").parent().append(filter_badge);
+        console.log({ add_elem: add_elem, filter_badge: filter_badge });
+      }
     }
+
+    for (let remove_elem of removed_filters) {
+      let filter_value = $(remove_elem).attr("filter-value");
+      $('.filter-badge[filter-value="' + filter_value + '"]').remove();
+    }
+
+    console.log({
+      added_filters: added_filters,
+      removed_filters: removed_filters,
+      t: $(this),
+    });
+
     await draw_box_scores(common);
   });
 
-  $('.football-filter-clear-row').on('click', async function(){
-    $(this).addClass('disabled')
-    var option_group = $(this).closest('.football-table-filter-option-group');
-    $(option_group).find('.selected').removeClass('selected');
-    await draw_box_scores(common);
 
-  })
+  $(".football-table-clear-filters").on("click", async function () {
+    $(`.football-table-filter-option.selected`).removeClass("selected");
+    $(".filter-badge:not(.hidden)").remove();
+    await draw_box_scores(common);
+  });
+
+  $(".badge-container").on("click", ".filter-badge", async function () {
+    let filter_value = $(this).attr("filter-value");
+    $(
+      '.football-table-filter-option.selected[filter-value="' +
+        filter_value +
+        '"]'
+    ).removeClass("selected");
+    $(
+      '.football-table-filter-option[filter-value="' + filter_value + '"]'
+    ).each(function (ind, elem) {
+      let parent_filter_value = $(elem).attr("parent-filter-value");
+      $(
+        '.football-table-filter-option[filter-value="' +
+          parent_filter_value +
+          '"]'
+      ).removeClass("selected");
+    });
+
+    $(this).remove();
+
+    await draw_box_scores(common);
+  });
 };
 
 const draw_box_scores = async (common) => {
@@ -325,15 +437,15 @@ const draw_box_scores = async (common) => {
       .find(".selected")
       .toArray()
       .map(function (elem) {
-        return $(elem).attr('filter_value');
+        return $(elem).attr('filter-value');
       });
   });
   console.log({ filter_values: filter_values, games: games });
 
   //Filter by week id
   games = games.filter(function (g) {
-    if (filter_values["week_name"].length > 0) {
-      return filter_values["week_name"].includes(g.week.display);
+    if (filter_values["Week"].length > 0) {
+      return filter_values["Week"].includes(g.week.week_name);
     }
     return true;
   });
@@ -341,13 +453,13 @@ const draw_box_scores = async (common) => {
 
   //Filter by conference ID (either team is in conference)
   games = games.filter(function (g) {
-    if (filter_values["conference.conference_abbreviation"].length > 0) {
+    if (filter_values["Team"].length > 0) {
       return (
-        filter_values["conference.conference_abbreviation"].includes(
-          g.team_games[0].team_season.conference_season.display
+        filter_values["Team"].includes(
+          g.team_games[0].team_season.team.school_name
         ) ||
-        filter_values["conference.conference_abbreviation"].includes(
-          g.team_games[1].team_season.conference_season.display
+        filter_values["Team"].includes(
+          g.team_games[1].team_season.team.school_name
         )
       );
     }
@@ -357,8 +469,8 @@ const draw_box_scores = async (common) => {
 
 
   games = games.filter(function (g) {
-    if (filter_values["priority_name"].length > 0) {
-      if (filter_values["priority_name"].includes("Top 25")) {
+    if (filter_values["Priority"].length > 0) {
+      if (filter_values["Priority"].includes("Top 25")) {
         return (
           (g.team_games[0].national_rank ||
             g.team_games[0].team_season.rankings.national_rank[0]) <= 25 ||
@@ -366,9 +478,14 @@ const draw_box_scores = async (common) => {
             g.team_games[1].team_season.rankings.national_rank[0]) <= 25
         );
       }
+
+      if (filter_values["Priority"].includes("In-Conference")) {
+        return (
+            g.team_games[0].team_season.conference_season_id == g.team_games[1].team_season.conference_season_id
+        );
+      }
     }
     return true;
-
   });
 
   console.log({

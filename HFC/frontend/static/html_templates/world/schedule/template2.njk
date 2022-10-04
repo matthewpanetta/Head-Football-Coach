@@ -27,19 +27,20 @@
             <div class='w3-margin-bottom width100 football-table-column-control-bar'>
               <div class="card w3-light-gray" style='overflow: visible;'>
                 <div class='equal-sized-item-container py-2'>
-                  {% for filter_option_group in filter_options %}
+                  {{filters|log}}
+                  {% for filter_option_group in filters %}
                     <div class="dropdown hierarchy-select mx-2" id="example-one" style='flex: 1 1;'>
                       <button type="button" class="btn team-color-button-white left-text btn-secondary dropdown-toggle width100" id="example-one-button" data-toggle="dropdown" data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {{filter_option_group.display}}
                       </button>
                       <div class="dropdown-menu " aria-labelledby="example-one-button" style='max-height: 60vh; overflow-y: scroll;'>
-                        <div class="hs-menu-inner football-table-filter-option-group">
+                        <div class="hs-menu-inner football-table-filter-option-group" filter_option='{{filter_option_group.display}}'>
                           {% for filter_option in filter_option_group.options%}
-                            <div class="clickable dropdown-item ps-3 football-table-filter-option" filter-field="{{filter_option.field}}" filter-value="{{filter_option.display}}" {% if filter_option.options%}include-in-filter="0"{%else%}include-in-filter="1"{%endif%}>
+                            <div class="clickable dropdown-item ps-3 football-table-filter-option {%if filter_option.selected%}selected{%endif%}" filter-field="{{filter_option.field}}" filter-value="{{filter_option.display}}" {% if filter_option.options%}include-in-filter="0"{%else%}include-in-filter="1"{%endif%}>
                               <span class='football-table-filter-option-value'>{{filter_option.display}}</span>
                             </div>
                             {% for filter_option_2 in filter_option.options%}
-                              <div class="clickable dropdown-item ps-5 football-table-filter-option" filter-field="{{filter_option_2.field}}" parent-filter-field="{{filter_option.field}}" parent-filter-value="{{filter_option.display}}" filter-value="{{filter_option_2.display}}" include-in-filter="1">
+                              <div class="clickable dropdown-item ps-5 football-table-filter-option {%if filter_option_2.selected%}selected{%endif%}" filter-field="{{filter_option_2.field}}" parent-filter-field="{{filter_option.field}}" parent-filter-value="{{filter_option.display}}" filter-value="{{filter_option_2.display}}" include-in-filter="1">
                                 {% if filter_option_2.logo_url %}
                                   <img class='logo logo-24' src='{{filter_option_2.logo_url}}'/>
                                 {% endif %}
@@ -52,9 +53,6 @@
                       {# <input class="d-none" name="example_one" readonly="readonly" aria-hidden="true" type="text"/> #}
                     </div>
                   {% endfor %}
-                  {# <button class="btn team-color-button-white btn-sm btn-outline-secondary football-table-show-button mx-2" id='football-table-column-show-button'>
-                    <span class='no-wrap' style='vertical-align:middle; '>Starters</span>
-                  </button> #}
                   {# <button class="btn team-color-button btn-sm btn-outline-secondary football-table-show-button mx-2 px-5" id='football-table-column-show-button'>
                     <i class="fa fa-search" style='vertical-align:middle; '></i>
                     <span class='no-wrap' style='vertical-align:middle; '>Search</span>
@@ -66,6 +64,18 @@
                       <span class='filter-value'></span>
                       <i class='fa fa-times-circle'></i>
                     </div>
+                    {% for filter_option_group in filters %}
+                      {% for filter_option in filter_option_group.options%}
+                        {% if filter_option.selected%}
+                        <div class='filter-badge badge clickable team-color-button-white team-color-font mx-1' style='background-color: white;' filter-value='{{filter_option.display}}'>
+                          <span class='filter-value'>{{filter_option.display}}</span>
+                          <i class='fa fa-times-circle'></i>
+                        </div>
+                        {%endif%}
+                        {% for filter_option_2 in filter_option.options%}
+                        {% endfor %}
+                      {% endfor %}
+                  {% endfor %}
                   </div>
                   <div class='w3-row-padding' style='flex: 0 1 auto;'>
                     <div class='football-table-clear-filters badge clickable team-color-button-white team-color-font mx-1' style='background-color: white; height: fit-content;'>
@@ -78,52 +88,6 @@
                       <span>ALL FILTERS</span>
                     </div> #}
                   </div>
-                </div>
-              </div>
-            </div>
-
-            <div class='card w3-margin-bottom football-table-filter-bar width100'>
-              <div class="w3-bar left-text team-primary-background-bar">
-                <span class='hide-small'>Filters</span>
-                <span class="" id="filter-dropdown-button">
-                  <i class="fa fa-angle-down" style="padding: 0px 10px; font-size: 15px;"></i>
-                </span>
-              </div>
-              <div class="hidden"  id="football-table-filter-table" style="background-color: white; overflow-y: scroll;">
-                <div class="w3-row-padding flex-start">
-                  {% for table_filter_group_name, table_filter_group in filter_options %}
-                    <div class="col-4 padding-10 football-table-filter-option-group" filter_option="{{table_filter_group_name}}">
-                      <div class="w3-row-padding no-flex-wrap space-between no-padding">
-                        <div class='football-table-filter-display'>{{table_filter_group.display}}</div>
-                        <div class="btn-group">
-                          <button type="button" class="disabled btn team-color-button btn-light football-filter-clear-row">
-                            <i class="fa fa-ban"></i>
-                          </button>
-                        </div>
-                      </div>
-                      <div id="" class="football-filter-option-list no-footer border">
-                        <div class="">
-                          <div class="" style="position: relative; overflow: auto; max-height: 200px; height: 200px; width: 100%;">
-                            <table id="" class="no-footer table table-sm table-borderless" style="width: 100%;">
-                              <tbody>
-                                {% for table_filter_option in table_filter_group.options%}
-                                  <tr class="football-table-filter-option  {{table_filter_option.selected}}" filter_value="{{table_filter_option.display}}">
-                                    <td count='{{table_filter_option.count}}'>
-                                      <div class='w3-row-padding space-between'>
-                                        <span title="{{table_filter_option.display}}">
-                                          {{table_filter_option.display}}
-                                        </span>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                {% endfor %}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  {% endfor %}
                 </div>
               </div>
             </div>
