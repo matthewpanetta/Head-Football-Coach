@@ -129,6 +129,7 @@ class award {
   }
 
   get award_group_name() {
+    console.log({this:this})
     var award_group_name = "";
     var award_name = "";
     if (this.award_team_set == "conference") {

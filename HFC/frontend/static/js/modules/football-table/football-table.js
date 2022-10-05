@@ -103,7 +103,24 @@ const get_initial_column_controls = (subject) => {
         personal: { shown: false, display: "Personal" },
       },
     };
-  } else if (subject == "world team stats") {
+  } else if (subject == "recruiting") {
+    return {
+      Ratings: {
+        overall: { shown: true, display: "Overall" },
+        athleticism: { shown: false, display: "Athleticism" },
+        passing: { shown: false, display: "Throwing" },
+        rushing: { shown: false, display: "Running" },
+        receiving: { shown: false, display: "Receiving" },
+        blocking: { shown: false, display: "Blocking" },
+        defense: { shown: false, display: "Defense" },
+        kicking: { shown: false, display: "Kicking" },
+      },
+      Personal: {
+        personal: { shown: false, display: "Personal" },
+      },
+    };
+  } 
+  else if (subject == "world team stats") {
     return {
       Team: {
         games: { shown: false, display: "Games" },
@@ -150,6 +167,13 @@ const get_initial_sorted_columns = (subject) => {
         sort_direction: "sort-desc",
       },
     ];
+  } else if (subject == "recruiting") {
+    return [
+      {
+        key: "player_team_season.recruiting.national_rank",
+        sort_direction: "sort-asc",
+      },
+    ];
   } else if (subject == "world team stats") {
     return [
       {
@@ -169,6 +193,10 @@ const get_initial_search_filters = (subject) => {
     search_filters.search_filter_fields = [
       "player_team_season.team_season.team.full_name",
       // "hometown_and_state",
+      "full_name",
+    ];
+  } else if (subject == "recruiting") {
+    search_filters.search_filter_fields = [
       "full_name",
     ];
   } else if (subject == "world team stats") {
@@ -299,6 +327,60 @@ const get_initial_filter_options = (subject, table_config, common) => {
         options: conference_obj_list,
       });
     }
+  } else if (subject == 'recruiting'){
+    var table_filters = [
+      {
+        count: 0,
+        display: "Position",
+        options: [
+          {
+            display: "Offense",
+            field: "player_team_season.position_group",
+            options: [
+              { display: "QB", field: "player_team_season.position" },
+              { display: "RB", field: "player_team_season.position" },
+              { display: "FB", field: "player_team_season.position" },
+              { display: "WR", field: "player_team_season.position" },
+              { display: "TE", field: "player_team_season.position" },
+              { display: "OT", field: "player_team_season.position" },
+              { display: "IOL", field: "player_team_season.position" },
+            ],
+          },
+          {
+            display: "Defense",
+            field: "player_team_season.position_group",
+            options: [
+              { display: "DL", field: "player_team_season.position" },
+              { display: "EDGE", field: "player_team_season.position" },
+              { display: "LB", field: "player_team_season.position" },
+              { display: "CB", field: "player_team_season.position" },
+              { display: "S", field: "player_team_season.position" },
+            ],
+          },
+          {
+            display: "Special Teams",
+            field: "player_team_season.position_group",
+            options: [
+              { display: "K", field: "player_team_season.position" },
+              { display: "P", field: "player_team_season.position" },
+            ],
+          },
+        ],
+      },
+      {
+        count: 0,
+        display: "Class",
+        options: [
+          { display: "HS JR", field: "player_team_season.class.class_name" },
+          { display: "HS SR", field: "player_team_season.class.class_name" },
+          { display: "JUCO", field: "player_team_season.class.class_name" },
+          { display: "FR", field: "player_team_season.class.class_name" },
+          { display: "SO", field: "player_team_season.class.class_name" },
+          { display: "JR", field: "player_team_season.class.class_name" },
+          { display: "SR", field: "player_team_season.class.class_name" },
+        ],
+      },
+    ];
   } else if (subject == "world team stats") {
     var table_filters = {
       "conference_season.conference.conference_abbreviation": {
@@ -415,7 +497,7 @@ async function create_football_table(common, table_config) {
   // For Page 3, [1, 2, *3*, 4, 5]
   // For Page N-1, [N-4, N-3, N-2, *N-1*, N]
   // For Page N, [N-4, N-3, N-2, N-1, *N*]
-  // This code walks through surrounding numbers, identifies valid surrounding values, and picks which should be included
+  // This for loop + following sort & slice functions walks through surrounding numbers, identifies valid surrounding values, and picks which should be included
   for (var step = 1; step <= 4; step++) {
     if (table_config.pagination.available_page_navigation.length < 5) {
       if (table_config.pagination.current_page - step > 0) {

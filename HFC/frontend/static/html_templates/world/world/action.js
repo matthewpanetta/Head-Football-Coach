@@ -387,16 +387,16 @@ const getHtml = async (common) => {
 
     let previous_player_team_seasons_by_player_id = index_group_sync(previous_player_team_seasons, 'index', 'player_id');
     player_team_seasons = nest_children(player_team_seasons, previous_player_team_seasons_by_player_id, 'player_id', 'previous_player_team_season')
-    
+    player_team_seasons.forEach(pts => pts.previous_player_team_season = pts.previous_player_team_season || {player_award_rating: pts.player_award_rating})
 
     common.stopwatch(common, "Time after indexing & filtering players & ptss");
 
     var heisman_race = player_team_seasons.filter(
       (pts) => pts.depth_chart_rank == 1
     );
-    heisman_race = heisman_race.sort(
-      (pts_a, pts_b) => pts_b.previous_player_team_season.player_award_rating - pts_a.previous_player_team_season.player_award_rating
-    );
+    heisman_race = heisman_race.sort(function(pts_a, pts_b){
+      return pts_b.previous_player_team_season.player_award_rating - pts_a.previous_player_team_season.player_award_rating
+    });
     preseason_info.heisman_hopefuls = heisman_race.slice(0, 5);
 
     common.stopwatch(common, "Time after sorting pre season pts");
