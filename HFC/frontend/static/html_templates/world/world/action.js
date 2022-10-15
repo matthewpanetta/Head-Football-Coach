@@ -284,6 +284,7 @@ const getHtml = async (common) => {
     recent_games: recent_games,
     current_week: current_week,
     headlines_by_headline_type:headlines_by_headline_type,
+    this_week_games:this_week_games
   };
 
   common.render_content = render_content;
@@ -497,6 +498,9 @@ const getHtml = async (common) => {
 
     render_content.season_recap = season_recap;
     url = "/static/html_templates/world/world/info_col_season_recap.njk";
+  }
+  else {
+    url = "/static/html_templates/world/world/info_col_season.njk";
   }
 
   common.render_content = render_content;

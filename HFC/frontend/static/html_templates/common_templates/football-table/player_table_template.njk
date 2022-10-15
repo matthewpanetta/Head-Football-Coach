@@ -25,6 +25,11 @@
         <col style='width: 120px;'>
       {% endif %}
 
+      {% if column_controls.Personal.recruiting.shown %}
+        <!-- PERSONAL -->
+        <col style='width: 120px;'>
+      {% endif %}
+
       {% if column_controls.Stats.games.shown %}
         <!-- GAMES STATS -->
         <col>
@@ -158,7 +163,12 @@
 
           {% if column_controls.Personal.personal.shown %}
             <!-- PERSONAL -->
-            <th colspan='1' style='width:  120px;' class='left-text col-group'>Personal Info</th>
+            <th colspan='1' style='width:  120px;' class='center-text col-group'>Personal Info</th>
+          {% endif %}
+
+          {% if column_controls.Personal.recruiting.shown %}
+            <!-- PERSONAL -->
+            <th colspan='2' style='width:  120px;' class='col-group'>Recruiting</th>
           {% endif %}
 
           {% if column_controls.Stats.games.shown %}
@@ -255,6 +265,16 @@
             <!-- PERSONAL -->
             <th style='width:  120px;' class='col-group left-text' value-key='hometown_and_state'>
               Hometown
+            </th>
+          {% endif %}
+
+          {% if column_controls.Personal.recruiting.shown %}
+            <!-- PERSONAL -->
+            <th style='width:  60px;' class='' value-key='recruiting.national_rank'>
+              Rank
+            </th>
+            <th style='width:  60px;' class='col-group' value-key='recruiting.national_rank'>
+              Other
             </th>
           {% endif %}
 
@@ -436,6 +456,16 @@
               <td style='width:  120px;' class="col-group left-text">
                 <i class="fa fa-map-marker-alt geo-marker" style='padding-right: 8px;' city='{{player.hometown.city}}' state='{{player.hometown.state}}'></i>
                 <span>{{player.hometown_and_state}}</span>
+              </td>
+            {% endif %}
+
+            {% if column_controls.Personal.recruiting.shown %}
+              <!-- PERSONAL -->
+              <td style='width:  60px;' class="">
+                {{player.recruiting.national_rank}}
+              </td>
+              <td style='width:  60px;' class="col-group">
+                Other
               </td>
             {% endif %}
 

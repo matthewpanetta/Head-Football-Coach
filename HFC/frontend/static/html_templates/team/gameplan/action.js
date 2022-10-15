@@ -1,3 +1,14 @@
+const make_toast = (message) => {
+  const toast_template = $('#toast-template');
+  const toast_copy = toast_template.clone();
+  $(toast_copy).appendTo(toast_template.parent());
+  $(toast_copy).attr('id', 'save-toast-'+Date.now())
+  $(toast_copy).addClass('bg-success text-white')
+  $(toast_copy).find('.toast-body').text(message)
+  const save_complete_toast = new bootstrap.Toast(toast_copy)
+  save_complete_toast.show()
+}
+
 const getHtml = async (common) => {
   nunjucks.configure({ autoescape: true });
 
@@ -489,16 +500,13 @@ const getHtml = async (common) => {
     var html = await fetch(url);
     html = await html.text();
 
-    let render_content = {
-      team_season: {
-        gameplan: {
-          offense: {
-            pass_run_tendency: 80,
-            playcall_aggressiveness: 5
-          },
-        },
+    let render_content = common.render_content;
+    render_content.team.team_season.gameplan = {
+      offense: {
+        pass_run_tendency: 70,
+        playcall_aggressiveness: 5
       },
-    };
+    }
   
     var renderedHtml = await common.nunjucks_env.renderString(
       html,
@@ -521,34 +529,151 @@ const getHtml = async (common) => {
     }
     gameplan_tab_clicked = true;
 
+    let available_offensive_playbooks = [
+      {playbook_name: 'Spread'},
+      {playbook_name: 'Power Run'},
+      {playbook_name: 'Pro Style'},
+      {playbook_name: 'West Coast'},
+      {playbook_name: 'Triple Option'},
+      {playbook_name: 'Air Raid'},
+    ]
+
+    available_offensive_playbooks.forEach(pb => pb.selected = pb.playbook_name == team.team_season.gameplan.offense.playbook);
+
+    let available_defensive_playbooks = [
+      {playbook_name: '4-3'},
+      {playbook_name: '3-4'},
+      {playbook_name: '3-3-5'},
+    ]
+
+    available_defensive_playbooks.forEach(pb => pb.selected = pb.playbook_name == team.team_season.gameplan.defense.playbook);
+
+    let man_zone_map = {
+      1: 'All Zone',
+      2: 'Heavy Zone',
+      3: 'Favor Zone',
+      4: 'Balanced',
+      5: 'Favor Man',
+      6: 'Heavy Man',
+      7: 'All Man',
+    }
+
+    let blitz_tendency_map = {
+      1: 'Never Blitz',
+      2: 'Rarely Blitz',
+      3: 'Only Some Blitz',
+      4: 'Balanced',
+      5: 'Likes Blitz',
+      6: 'Heavy Blitz',
+      7: 'All-out Blitz',
+    }
+
+    let run_pass_map = {
+      1: 'All Run',
+      2: 'Heavy Run',
+      3: 'Favor Run',
+      4: 'Balanced',
+      5: 'Favor Pass',
+      6: 'Heavy Pass',
+      7: 'All Pass',
+    }
+
+    let offense_playcall_aggressiveness_map = {
+      1: 'Super Passive',
+      2: 'Fairly Passive',
+      3: 'A bit timid',
+      4: 'Balanced',
+      5: 'Bold',
+      6: 'Questinably Aggressive',
+      7: 'Super Aggressive',
+    }
+
     var url = "/static/html_templates/team/gameplan/div_gameplan_template.njk";
     var html = await fetch(url);
     html = await html.text();
 
-    let render_content = {
-      team_season: {
-        gameplan: {
-          offense: {
-            pass_run_tendency: 80,
-            playcall_aggressiveness: 5
-          },
-        },
-      },
-    };
-  
+    let render_content = common.render_content;
+    render_content.available_offensive_playbooks = available_offensive_playbooks;
+    render_content.available_defensive_playbooks = available_defensive_playbooks;
+    render_content.man_zone_map = man_zone_map;
+    render_content.blitz_tendency_map = blitz_tendency_map;
+    render_content.offense_playcall_aggressiveness_map = offense_playcall_aggressiveness_map;
+
     var renderedHtml = await common.nunjucks_env.renderString(
       html,
       render_content
     );
   
     $("#nav-gameplan").html(renderedHtml);
-
-    $('#run-pass-range').on('input', function(){
-      let val = parseInt($(this).val());
-      $('.run-pass-range-span').text(`${val} Pass / ${100 - val} Run`)
-    })
+    await gameplan_animation(common);
   })
 };
+
+const gameplan_animation = async (common) => {
+
+  let render_content = common.render_content;
+  let team = common.render_content.team;
+  let db = common.db;
+
+  function gameplan_changes(){
+    window.onbeforeunload = function() {
+      return "Gameplan changes not saved. Are you sure?";
+    };
+    $('.gameplan-save-button, .gameplan-reset-button').removeClass('disabled');
+  }
+
+  $('#run-pass-range').on('input', function(){
+    let val = parseInt($(this).val());
+    $('.run-pass-range-span').text(`${val} Pass / ${100 - val} Run`)
+    gameplan_changes()
+  })
+
+  $('#man-vs-zone-range').on('input', function(){
+    let val = parseInt($(this).val());
+    $('.man-vs-zone-range-span').text(render_content.man_zone_map[val])
+    gameplan_changes()
+  })
+
+  $('#blitz-range').on('input', function(){
+    let val = parseInt($(this).val());
+    $('.blitz-range-span').text(render_content.blitz_tendency_map[val])
+    gameplan_changes()
+  })
+
+  $('#playcall-offense-aggressive-range').on('input', function(){
+    let val = parseInt($(this).val());
+    $('.playcall-offense-aggressive-range-span').text(render_content.offense_playcall_aggressiveness_map[val])
+    gameplan_changes()
+  })
+
+  $('#defense-playbook-select, #offense-playbook-select').on('change', function(){
+    gameplan_changes()
+  })
+
+  $('.gameplan-save-button').on('click', async function(){
+    window.onbeforeunload = function() {};
+    $('.gameplan-save-button, .gameplan-reset-button').addClass('disabled');
+
+    team.team_season.gameplan.offense.playbook = $('#offense-playbook-select').val();
+    team.team_season.gameplan.defense.playbook = $('#defense-playbook-select').val();
+
+    team.team_season.gameplan.offense.pass_tendency = $('#run-pass-range').val();
+    team.team_season.gameplan.offense.playcall_aggressiveness = $('#playcall-offense-aggressive-range').val();
+
+    team.team_season.gameplan.defense.blitz_tendency = $('#blitz-range').val();
+    team.team_season.gameplan.defense.man_coverage_tendency = $('#man-vs-zone-range').val();
+
+    delete team.team_season.stats;
+    delete team.team_season.conference_season;
+    await db.team_season.put(team.team_season);
+
+    make_toast('Gameplan saved!')
+  })
+
+  $('.gameplan-reset-button').on('click', async function(){
+    location.reload();
+  });
+}
 
 const reorder_animation = async(common)=> {
   const db = common.db;
@@ -637,14 +762,8 @@ const reorder_animation = async(common)=> {
     delete team_season.conference_season;
     await db.team_season.put(team_season);
 
-    const toast_template = $('#toast-template');
-    const toast_copy = toast_template.clone();
-    $(toast_copy).appendTo(toast_template.parent());
-    $(toast_copy).attr('id', 'save-toast-'+Date.now())
-    $(toast_copy).addClass('bg-success text-white')
-    $(toast_copy).find('.toast-body').text('Depth chart saved!')
-    const save_complete_toast = new bootstrap.Toast(toast_copy)
-    save_complete_toast.show()
+    make_toast('Depth chart saved!')
+
     window.onbeforeunload = function() {};
   })
 }

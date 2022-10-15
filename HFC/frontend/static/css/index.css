@@ -3213,3 +3213,42 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
   padding-left: 24px;
   padding-right: 24px;
 }
+
+.float-right {
+  float: right;
+}
+
+
+.css-1re92qu {
+  background: rgb(190, 20, 21);
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.css-1cjjjow .DenseOutcome-content .DenseOutcome-logo {
+  border-bottom-left-radius: 9999px;
+  border-top-left-radius: 9999px;
+  width: 120px;
+}
+
+.css-1cjjjow.DenseOutcome--confidence .DenseOutcome-content .DenseOutcome-logo {
+  width: 72px !important;
+}
+
+.css-1re92qu .OutcomeLogo-overlayGradient {
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(21, 22, 23, 0.4));
+  inset: 0px;
+  position: absolute;
+}
+
+.css-1re92qu .OutcomeLogo-overlayAngles {
+  -webkit-box-align: center;
+  align-items: center;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.5) 0px, rgba(255, 255, 255, 0.5) 18%, rgba(255, 255, 255, 0.3) 18%, rgba(255, 255, 255, 0.3) 28%, rgba(255, 255, 255, 0) 28%, rgba(255, 255, 255, 0) 77%, rgba(0, 0, 0, 0.3) 77%, rgba(0, 0, 0, 0.3) 87%, rgba(0, 0, 0, 0.5) 87%, rgba(0, 0, 0, 0.5) 100%);
+  inset: 0px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  position: absolute;
+}

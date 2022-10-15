@@ -10,6 +10,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 9,
       "fan_support": 12,
@@ -40,6 +53,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 14,
@@ -72,6 +98,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 14,
       "fan_support": 12,
@@ -103,6 +142,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "TULANE"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 14,
@@ -137,6 +189,19 @@
       "lettering": "NAVY",
       "lettering_color": "C5B783"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 2,
+        "pass_tendency": 19,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 9,
       "fan_support": 1,
@@ -170,6 +235,19 @@
       "lettering": "ECU",
       "lettering_color": "FFCE28"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 9,
       "fan_support": 12,
@@ -201,6 +279,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "CINCINNATI"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 8,
@@ -234,6 +325,19 @@
       "id": "football-standard",
       "lettering": "TULSA"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 4,
@@ -265,6 +369,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "TEMPLE"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 12,
@@ -298,6 +415,19 @@
       "id": "football-standard",
       "lettering": "MEMPHIS"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 12,
       "fan_support": 8,
@@ -329,6 +459,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "HOUSTON"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 12,
@@ -363,6 +506,19 @@
       "lettering": "DALLAS",
       "flip_primaries": true
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 6,
+        "pass_tendency": 60,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 14,
       "fan_support": 7,
@@ -393,6 +549,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 12,
@@ -425,6 +594,19 @@
       "invert": false,
       "id": "football-ponies"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 55,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 18,
       "fan_support": 11,
@@ -455,6 +637,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 14,
@@ -488,6 +683,19 @@
       "id": "football-standard",
       "lettering": "LOUISVILLE"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 9,
       "fan_support": 14,
@@ -518,6 +726,19 @@
     "jersey": {
       "invert": false,
       "id": "football-ponies"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 14,
@@ -553,6 +774,19 @@
       "lettering_color": "C82F04",
       "flip_primaries": true
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 3,
       "fan_support": 12,
@@ -584,6 +818,19 @@
       "invert": false,
       "id": "football-two-stripe",
       "lettering": "DUKE"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 12,
@@ -618,6 +865,19 @@
       "lettering": "NC STATE",
       "todo": "three stipes"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 11,
       "fan_support": 12,
@@ -648,6 +908,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 12,
@@ -681,6 +954,19 @@
       "id": "football-standard",
       "flip_primaries": true
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 11,
       "fan_support": 4,
@@ -711,6 +997,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 9,
@@ -743,6 +1042,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 8,
       "fan_support": 17,
@@ -773,6 +1085,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 3,
@@ -805,6 +1130,19 @@
       "invert": false,
       "id": "football-ponies"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 8,
       "fan_support": 15,
@@ -835,6 +1173,19 @@
     "jersey": {
       "invert": false,
       "id": "football-three-stripe"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 6,
@@ -868,6 +1219,19 @@
       "id": "football-standard",
       "lettering": "KANSAS"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 40,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 5,
       "fan_support": 4,
@@ -898,6 +1262,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 6,
@@ -931,6 +1308,19 @@
       "id": "football-standard",
       "lettering": "OKLAHOMA"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 5,
+        "pass_tendency": 43,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 6,
       "fan_support": 8,
@@ -963,6 +1353,19 @@
       "id": "football-standard",
       "flip_primaries": true
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 8,
       "fan_support": 8,
@@ -993,6 +1396,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 7
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 2,
@@ -1025,6 +1441,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 6,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 12,
       "fan_support": 13,
@@ -1056,6 +1485,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "TEXAS"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 17,
@@ -1090,6 +1532,19 @@
       "lettering_color": "TEXAS TECH",
       "flip_primaries": true
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 60,
+        "playcall_aggressiveness": 7
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 6,
       "fan_support": 4,
@@ -1121,6 +1576,19 @@
       "invert": false,
       "id": "football-ponies"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 6,
       "fan_support": 13,
@@ -1151,6 +1619,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 43,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 9,
@@ -1184,6 +1665,19 @@
       "id": "football-standard",
       "lettering": "NORTHWESTERN"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 13,
       "fan_support": 6,
@@ -1215,6 +1709,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "INDIANA"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 7,
+        "pass_tendency": 65,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 9,
@@ -1248,6 +1755,19 @@
       "id": "football-standard",
       "flip_primaries": true
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 62,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 9,
       "fan_support": 8,
@@ -1278,6 +1798,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 8,
@@ -1311,6 +1844,19 @@
       "id": "football-standard",
       "lettering": "MARYLAND"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 11,
       "fan_support": 8,
@@ -1341,6 +1887,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 11,
@@ -1374,6 +1933,19 @@
       "id": "football-standard",
       "lettering": "MICHIGAN STATE"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 10,
@@ -1405,6 +1977,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 2,
+        "pass_tendency": 41,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 9,
       "fan_support": 10,
@@ -1435,6 +2020,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 6,
@@ -1468,6 +2066,19 @@
       "id": "football-standard",
       "lettering": "RUTGERS"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 9,
       "fan_support": 9,
@@ -1498,6 +2109,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 11,
@@ -1530,6 +2154,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 7,
       "fan_support": 19,
@@ -1560,6 +2197,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 47,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 9,
@@ -1593,6 +2243,19 @@
       "id": "football-standard",
       "lettering": "UAB"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 2,
+        "pass_tendency": 43,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 6,
@@ -1623,6 +2286,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 14,
@@ -1657,6 +2333,19 @@
       "lettering": "PANTHERS",
       "lettering_color": "B6862C"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 15,
       "fan_support": 13,
@@ -1687,6 +2376,19 @@
     "jersey": {
       "invert": false,
       "id": "football-ponies"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 61,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,
@@ -1719,6 +2421,19 @@
       "invert": false,
       "id": "football-three-stripe",
       "todo": "white secondary white"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,
@@ -1753,6 +2468,19 @@
       "lettering": "SOUTHERN MISS",
       "lettering_color": "F7C237"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 6,
@@ -1785,6 +2513,19 @@
       "id": "football-three-stripe",
       "todo": "white gold white"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 6,
@@ -1815,6 +2556,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,
@@ -1848,6 +2602,19 @@
       "id": "football-standard",
       "lettering": "MEAN GREEN"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 5,
@@ -1880,6 +2647,19 @@
       "id": "football-standard",
       "lettering": "RICE"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 6,
@@ -1911,6 +2691,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "UTEP"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 7
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 1,
@@ -1945,6 +2738,19 @@
       "lettering": "UTSA",
       "lettering_color": "EE5C1A"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 3,
@@ -1976,6 +2782,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "OLD DOMINION"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,
@@ -2009,6 +2828,19 @@
       "id": "football-standard",
       "lettering": "THE HERD"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 11,
@@ -2039,6 +2871,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 43,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 8,
@@ -2072,6 +2917,19 @@
       "id": "football-standard",
       "lettering": "MASSACHUSETTS"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 35,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 8,
       "fan_support": 8,
@@ -2104,6 +2962,19 @@
       "id": "football-standard",
       "lettering": "NEW MEXICO STATE"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 3,
       "fan_support": 4,
@@ -2134,6 +3005,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 21,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 2,
@@ -2167,6 +3051,19 @@
       "id": "football-standard",
       "todo": "logo on collar"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 6,
       "fan_support": 1,
@@ -2197,6 +3094,19 @@
     "jersey": {
       "invert": true,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 3,
@@ -2230,6 +3140,19 @@
       "id": "football-standard",
       "lettering": "NIU"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 4,
@@ -2261,6 +3184,19 @@
       "invert": false,
       "id": "football-three-stripe",
       "lettering": "BALL STATE"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 2,
@@ -2295,6 +3231,19 @@
       "lettering": "CHIPPEWAS",
       "lettering_color": "ffc82e"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 4,
@@ -2325,6 +3274,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 2,
@@ -2359,6 +3321,19 @@
       "lettering": "BRONCOS",
       "lettering_color": "b5a268"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 4,
@@ -2390,6 +3365,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "BUFFALO"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 2,
@@ -2424,6 +3412,19 @@
       "lettering": "AKRON",
       "lettering_color": "a89968"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 62,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 4,
@@ -2456,6 +3457,19 @@
       "id": "football-standard",
       "lettering": "BOWLING GREEN",
       "lettering_color": "4f2c1d"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 2,
@@ -2490,6 +3504,19 @@
       "lettering": "GOLDEN FLASHES",
       "lettering_color": "efab00"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 4,
@@ -2523,6 +3550,19 @@
       "lettering": "MIAMI",
       "todo": "shoulder stripes"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 4,
@@ -2555,6 +3595,19 @@
       "id": "football-standard",
       "lettering": "OHIO"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 4,
@@ -2585,6 +3638,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 2,
@@ -2617,6 +3683,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "FRESNO"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 7,
@@ -2652,6 +3731,19 @@
       "lettering_color": "000",
       "flip_primaries": true
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 40,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 17,
       "fan_support": 14,
@@ -2684,6 +3776,19 @@
       "id": "football-standard",
       "lettering": "SAN JOSE STATE",
       "lettering_color": "FBD016"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 11,
@@ -2718,6 +3823,19 @@
       "lettering": "AIR FORCE",
       "lettering_color": "B2B4B2"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 1,
+        "pass_tendency": 14,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 8,
       "fan_support": 1,
@@ -2749,6 +3867,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "COLORADO STATE"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 11,
@@ -2782,6 +3913,19 @@
       "id": "football-standard",
       "lettering": "BOISE STATE"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 5,
       "fan_support": 8,
@@ -2813,6 +3957,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "NEVADA"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 8,
@@ -2846,6 +4003,19 @@
       "id": "football-standard",
       "lettering": "REBELS"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 10,
       "fan_support": 10,
@@ -2877,6 +4047,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "NEW MEXICO"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 7,
@@ -2911,6 +4094,19 @@
       "lettering": "UTAH STATE",
       "lettering_color": "8A8D8F"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 3,
       "fan_support": 3,
@@ -2944,6 +4140,19 @@
       "lettering": "WYOMING",
       "lettering_color": "ffc425"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 2,
       "fan_support": 6,
@@ -2974,6 +4183,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 14,
@@ -3006,6 +4228,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 13,
       "fan_support": 18,
@@ -3036,6 +4271,19 @@
     "jersey": {
       "invert": false,
       "id": "football-sparta"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 13,
@@ -3068,6 +4316,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 13,
       "fan_support": 4,
@@ -3099,6 +4360,19 @@
       "invert": false,
       "id": "football-three-stripe"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 20,
       "fan_support": 12,
@@ -3129,6 +4403,19 @@
     "jersey": {
       "invert": false,
       "id": "football-sparta"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 20,
@@ -3162,6 +4449,19 @@
       "id": "football-standard",
       "lettering": "COLRADO"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 14,
       "fan_support": 16,
@@ -3192,6 +4492,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 12,
@@ -3225,6 +4538,19 @@
       "id": "football-standard",
       "lettering": "Beavs"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 13,
       "fan_support": 6,
@@ -3257,6 +4583,19 @@
       "id": "football-standard",
       "lettering": "UTAH"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 9,
       "fan_support": 4,
@@ -3287,6 +4626,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 7,
@@ -3319,6 +4671,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 60,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 7,
       "fan_support": 4,
@@ -3349,6 +4714,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 8,
@@ -3382,6 +4760,19 @@
       "id": "football-standard",
       "lettering": "AUBURN"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 8,
       "fan_support": 11,
@@ -3414,6 +4805,19 @@
       "id": "football-standard",
       "lettering": "ARKANSAS"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 34,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 7,
       "fan_support": 11,
@@ -3444,6 +4848,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 6
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 2,
@@ -3476,6 +4893,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 11,
       "fan_support": 11,
@@ -3507,6 +4937,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "KENTUCKY"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 2,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 8,
@@ -3541,6 +4984,19 @@
       "lettering": "LSU",
       "lettering_color": "FDB827"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 13,
       "fan_support": 11,
@@ -3571,6 +5027,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 6,
+        "pass_tendency": 68,
+        "playcall_aggressiveness": 6
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 9,
@@ -3604,6 +5073,19 @@
       "id": "football-two-stripe",
       "lettering": "Ole Miss"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 7,
+        "pass_tendency": 55,
+        "playcall_aggressiveness": 6
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 8,
       "fan_support": 11,
@@ -3634,6 +5116,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 5,
@@ -3667,6 +5162,19 @@
       "id": "football-two-stripe",
       "lettering": "CAROLINA"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 8,
       "fan_support": 11,
@@ -3697,6 +5205,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 6,
+        "pass_tendency": 54,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 8,
@@ -3732,6 +5253,19 @@
       "lettering_color": "866D4B",
       "flip_primaries": true
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 14,
       "fan_support": 9,
@@ -3763,6 +5297,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "TEXAS A&M"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 2,
@@ -3796,6 +5343,19 @@
       "id": "football-standard",
       "lettering": "JAGUARS"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 6,
@@ -3827,6 +5387,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "TROY"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,
@@ -3861,6 +5434,19 @@
       "lettering": "ARKANSAS STATE",
       "lettering_color": "000000"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 6,
@@ -3890,6 +5476,19 @@
     "team_logo_url": "svg_link",
     "jersey": {
       "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,
@@ -3921,6 +5520,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 6,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,
@@ -3954,6 +5566,19 @@
       "id": "football-standard",
       "lettering": "GEORGIA STATE"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 35,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 6,
@@ -3985,6 +5610,19 @@
       "invert": false,
       "id": "football-standard",
       "lettering": "LOUISIANA"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,
@@ -4019,6 +5657,19 @@
       "lettering": "WARHAWKS",
       "lettering_color": "fdb913"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 6,
@@ -4049,6 +5700,19 @@
     "jersey": {
       "invert": false,
       "id": "football-standard"
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,
@@ -4083,6 +5747,19 @@
       "lettering": "COASTAL",
       "lettering_color": "000"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 11,
       "fan_support": 11,
@@ -4116,6 +5793,19 @@
       "lettering": "BOBCATS",
       "lettering_color": "8d734a"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 4,
       "fan_support": 6,
@@ -4147,6 +5837,19 @@
       "invert": false,
       "id": "football-standard"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 16,
       "fan_support": 4,
@@ -4176,6 +5879,19 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/commons/7/77/Jacksonville_State_Gamecocks_wordmark.svg",
     "jersey": {
       "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 3,
@@ -4210,6 +5926,19 @@
       "lettering": "JAMES MADISON",
       "lettering_color": "b5a36a"
     },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
     "team_ratings": {
       "location": 5,
       "fan_support": 6,
@@ -4239,6 +5968,19 @@
     "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/d/de/SHSU_athletics_logo.svg",
     "jersey": {
       "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
     },
     "team_ratings": {
       "location": 4,

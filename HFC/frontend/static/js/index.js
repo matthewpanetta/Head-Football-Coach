@@ -745,7 +745,6 @@ class team {
   }
 
   get team_field_a_text() {
-    console.log({ team_field_a_text: "here" });
     if (this.school_name.length > 12) {
       if (this.team_name.length > 10) {
         return this.team_abbreviation;
@@ -756,7 +755,6 @@ class team {
   }
 
   get team_field_b_text() {
-    console.log({ team_field_b_text: "here" });
     if (this.team_name.length > 12) {
       if (this.school_name.length > 10) {
         return this.team_abbreviation;
@@ -1788,7 +1786,6 @@ class team_season {
         national_broadcast: 0,
         regional_broadcast: 0,
       };
-
       this.results = {
         conference_champion: false,
         national_champion: false,
@@ -3274,6 +3271,9 @@ const create_team_season = async (data) => {
   var team_season_recruiting_tocreate = [];
   var team_season_stats_tocreate = [];
 
+  let previous_team_seasons = await db.team_season.where({season: season-1}).toArray();
+  let previous_team_seasons_by_team_id = index_group_sync(previous_team_seasons, 'index', 'team_id');
+
   var last_team_season = await db.team_season
     .orderBy("team_season_id")
     .desc()
@@ -3285,7 +3285,6 @@ const create_team_season = async (data) => {
   }
 
   var team_count = 0;
-  console.log({ team_season: team_season });
   $.each(teams, function (ind, team) {
     var team_season_id = last_team_season_id;
     if (team.team_id < 0) {
@@ -3309,6 +3308,25 @@ const create_team_season = async (data) => {
       let division_name = data.conferences_by_conference_name[team.conference.conference_name]
       .conference_season.divisions.find(d => d.teams.includes(team.school_name)).division_name;
 
+      let previous_team_season = previous_team_seasons_by_team_id[team.team_id] || {};
+
+      let gameplan = team.starting_tendencies || 
+                      previous_team_season.gameplan ||
+                      {
+                          offense: {
+                            playbook: 'Spread',
+                            pass_tendency: 51,
+                            playcall_aggressiveness: 4,
+                            playclock_urgency: 4
+                          },
+                          defense: {
+                            playbook: '4-3',
+                            blitz_tendency: 5,
+                            man_coverage_tendency: 5,
+                          }
+                        }
+                     
+
       var new_team_season = new team_season({
         team_season_id: team_season_id,
         team_id: team.team_id,
@@ -3319,7 +3337,8 @@ const create_team_season = async (data) => {
           data.conferences_by_conference_name[team.conference.conference_name]
             .conference_season.conference_season_id,
         division_name: division_name,
-        is_user_team: false
+        is_user_team: team.is_user_team || false,
+        gameplan: gameplan
       });
 
       var new_team_season_recruiting = new team_season_recruiting(
@@ -3342,20 +3361,10 @@ const create_team_season = async (data) => {
     team_season_stats_tocreate: team_season_stats_tocreate,
   });
 
-  var team_seasons_tocreate_added = await db.team_season.bulkPut(
-    team_seasons_tocreate
-  );
-  var team_seasons_recruiting_tocreate_added =
-    await db.team_season_recruiting.bulkPut(team_season_recruiting_tocreate);
-  var team_seasons_stats_tocreate_added = await db.team_season_stats.bulkPut(
-    team_season_stats_tocreate
-  );
-  console.log({
-    team_seasons_tocreate_added: team_seasons_tocreate_added,
-    team_seasons_recruiting_tocreate_added:
-      team_seasons_recruiting_tocreate_added,
-    team_seasons_stats_tocreate_added: team_seasons_stats_tocreate_added,
-  });
+  await db.team_season.bulkPut(team_seasons_tocreate);
+  await db.team_season_recruiting.bulkPut(team_season_recruiting_tocreate);
+  await db.team_season_stats.bulkPut(team_season_stats_tocreate);
+
 };
 
 const populate_all_depth_charts = async (common, team_season_ids) => {
@@ -6577,7 +6586,6 @@ const common_functions = async (route_pattern) => {
     populate_all_depth_charts: populate_all_depth_charts,
     choose_preseason_all_americans: choose_preseason_all_americans,
     create_schedule: create_schedule,
-    create_team_season: create_team_season,
     create_conference_seasons: create_conference_seasons,
     calculate_team_overalls: calculate_team_overalls,
     create_new_player_team_seasons: create_new_player_team_seasons,
@@ -7995,6 +8003,8 @@ const sim_game = (game_dict, common) => {
       playcall_obj = game_sim_play_call_options(down, yards_to_go, field_position, period, offense_point_differential, seconds_left_in_period, false, false, false, false)
 
       play_choice_options = playcall_obj.play_choice_options;
+      play_choice_options.pass = parseInt((play_choice_options.pass || 0) * (game_dict.team_seasons[offensive_team_index].gameplan.offense.pass_tendency / 50.0));
+      play_choice_options.run = parseInt((play_choice_options.run || 0) * ((100 - game_dict.team_seasons[offensive_team_index].gameplan.offense.pass_tendency) / 50.0));
       playclock_urgency = playcall_obj.playclock_urgency;
       play_choice = weighted_random_choice(play_choice_options);
 
@@ -8033,15 +8043,21 @@ const sim_game = (game_dict, common) => {
           PTS.player_team_game.game_stats.blocking.blocks += 1;
         }
 
-        var r =
-          Math.random() /
+        var r = -1;
+        while (r < 0 || r > 1){
+          r = Math.random() /
           ((offensive_player_average_overall /
             defensive_player_average_overall) **
-            1.15);
+            1.175);
+        }
 
-        if (r < 0.65) {
+        if (r < 0.67) {
           //completion
           yards_this_play = Math.min((Math.floor(Math.random() * 20)), 100 - field_position);
+
+          if (r < 0.04){
+            yards_this_play = 100 - field_position;
+          }
 
           chosen_players.QB.player_team_game.game_stats.passing.attempts += 1;
           chosen_players.Pass_Catcher.player_team_game.game_stats.receiving.targets += 1;
@@ -8059,7 +8075,15 @@ const sim_game = (game_dict, common) => {
                 .lng,
               yards_this_play
             );
-        } else if (r < 0.7) {
+        } else if (r < 0.93) {
+          //incomplete
+          // console.log({chosen_players:chosen_players, valid_pass_catchers:valid_pass_catchers, valid_pass_catchers_weights: valid_pass_catchers_weights, offensive_team_players:offensive_team_players})
+          chosen_players.QB.player_team_game.game_stats.passing.attempts += 1;
+          chosen_players.Pass_Catcher.player_team_game.game_stats.receiving.targets += 1;
+
+          yards_this_play = 0;
+          clock_running = false;
+        } else if (r < 0.98) {
           //sack
           chosen_players.QB.player_team_game.game_stats.passing.sacks += 1;
 
@@ -8070,7 +8094,7 @@ const sim_game = (game_dict, common) => {
           chosen_players.OL_Sack_Allowed.player_team_game.game_stats.blocking.sacks_allowed += 1;
 
           yards_this_play = Math.floor(Math.random() * 7) - 8;
-        } else if (r < 0.73) {
+        } else {
           //interception
           chosen_players.QB.player_team_game.game_stats.passing.ints += 1;
 
@@ -8109,14 +8133,6 @@ const sim_game = (game_dict, common) => {
 
           drive_end = true;
           yards_this_play = 0;
-        } else {
-          //incomplete
-          // console.log({chosen_players:chosen_players, valid_pass_catchers:valid_pass_catchers, valid_pass_catchers_weights: valid_pass_catchers_weights, offensive_team_players:offensive_team_players})
-          chosen_players.QB.player_team_game.game_stats.passing.attempts += 1;
-          chosen_players.Pass_Catcher.player_team_game.game_stats.receiving.targets += 1;
-
-          yards_this_play = 0;
-          clock_running = false;
         }
 
         play_details.yards = yards_this_play;
@@ -8719,7 +8735,7 @@ const sim_game = (game_dict, common) => {
             );
           } else {
             tg.game_stats[stat_group][stat] = (tg.game_stats[stat_group][stat] || 0) + (stat_value || 0);
-            pts.season_stats[stat_group][stat] = (pts.season_stats[stat_group][stat] || 0) (stat_value || 0);
+            pts.season_stats[stat_group][stat] = (pts.season_stats[stat_group][stat] || 0) + (stat_value || 0);
           }
         }
       }
@@ -15144,6 +15160,7 @@ const new_world_action = async (common, database_suffix) => {
       jersey: team.jersey,
       team_ratings: team.team_ratings,
       location: team.location,
+      starting_tendencies: team.starting_tendencies,
       conference: {
         conference_id:
           conferences_by_school_name[team.school_name].conference_id,
@@ -15219,7 +15236,6 @@ const new_world_action = async (common, database_suffix) => {
 
   var teams_added = await db.team.bulkAdd(teams);
 
-
   await update_create_world_modal('create-world-table-new-world', 'create-world-table-create-teams')
 
   await create_team_season({
@@ -15233,8 +15249,13 @@ const new_world_action = async (common, database_suffix) => {
     .where({ season: season })
     .and((ts) => ts.team_id > 0)
     .toArray();
+
+  teams = await db.team.where("team_id").above(0).toArray();
+  // teams.forEach(t => delete t.starting_tendencies);
+  // await db.team.bulkPut(teams);
+
   const teams_by_team_id = index_group_sync(
-    await db.team.where("team_id").above(0).toArray(),
+    teams,
     "index",
     "team_id"
   );

@@ -116,7 +116,8 @@ const get_initial_column_controls = (subject) => {
         kicking: { shown: false, display: "Kicking" },
       },
       Personal: {
-        personal: { shown: false, display: "Personal" },
+        recruiting: { shown: true, display: "Recruiting" },
+        personal: { shown: true, display: "Personal" },
       },
     };
   } 
@@ -328,6 +329,7 @@ const get_initial_filter_options = (subject, table_config, common) => {
       });
     }
   } else if (subject == 'recruiting'){
+    let states = common.distinct(table_config.original_data.map(p => p.hometown.state)).sort();
     var table_filters = [
       {
         count: 0,
@@ -379,6 +381,11 @@ const get_initial_filter_options = (subject, table_config, common) => {
           { display: "JR", field: "player_team_season.class.class_name" },
           { display: "SR", field: "player_team_season.class.class_name" },
         ],
+      },
+      {
+        count: 0,
+        display: "State",
+        options: states.map(s => ({display: s, field: 'hometown.state'})),
       },
     ];
   } else if (subject == "world team stats") {
@@ -559,6 +566,10 @@ async function create_football_table(common, table_config) {
     }
     column_counter += 1;
   });
+
+  // $(table_config.dom.table_dom_selector + " .football-table-column-groups th:last-child").append(
+  //   '<span class="float-right"><i class="fa fa-chart-line football-chart-icon"></i></span>'
+  // )
 
   await add_table_listeners(common, table_config);
 }
@@ -947,12 +958,24 @@ const find_filtered_columns = (table_config) => {
     }
   });
 
+  $('.filter-button-count-span').text('')
+
   let filtered_columns_obj = index_group_sync(values, "group", "field");
   for (let filter_field in filtered_columns_obj) {
     filtered_columns.push({
       field: filter_field,
       values: filtered_columns_obj[filter_field].map((elem) => elem.value),
     });
+
+    $('[field="'+filter_field+'"] .filter-button-count-span').text(filtered_columns_obj[filter_field].length)
+
+    console.log('showing filter count', {
+      filtered_columns:filtered_columns,
+      'filtered_columns.length': filtered_columns.length,
+      filter_field:filter_field,
+      a: $('[field="'+filter_field+'"] .filter-button-count-span'),
+      q: '[field="'+filter_field+'"] .filter-button-count-span'
+    })
   }
 
   console.log({
