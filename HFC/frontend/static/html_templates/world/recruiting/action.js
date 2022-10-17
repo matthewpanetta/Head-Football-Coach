@@ -18,21 +18,6 @@ const getHtml = async (common) => {
     .and((ts) => ts.team_id > 0)
     .toArray();
   const team_season_ids = team_seasons.map((ts) => ts.team_season_id);
-  const team_season_recruitings = await db.team_season_recruiting.bulkGet(
-    team_season_ids
-  );
-  const team_season_recruitings_by_team_season_id = index_group_sync(
-    team_season_recruitings,
-    "index",
-    "team_season_id"
-  );
-
-  team_seasons = nest_children(
-    team_seasons,
-    team_season_recruitings_by_team_season_id,
-    "team_season_id",
-    "recruiting"
-  );
 
   var team_seasons_by_team_id = index_group_sync(
     team_seasons,
@@ -150,21 +135,7 @@ const action = async (common) => {
     "team"
   );
   const team_season_ids = team_seasons.map((ts) => ts.team_season_id);
-  const team_season_recruitings = await db.team_season_recruiting.bulkGet(
-    team_season_ids
-  );
-  const team_season_recruitings_by_team_season_id = index_group_sync(
-    team_season_recruitings,
-    "index",
-    "team_season_id"
-  );
 
-  team_seasons = nest_children(
-    team_seasons,
-    team_season_recruitings_by_team_season_id,
-    "team_season_id",
-    "recruiting"
-  );
   var team_seasons_by_team_season_id = index_group_sync(
     team_seasons,
     "index",
@@ -178,21 +149,7 @@ const action = async (common) => {
   const player_team_season_ids = player_team_seasons.map(
     (pts) => pts.player_team_season_id
   );
-  const player_team_season_recruitings =
-    await db.player_team_season_recruiting.bulkGet(player_team_season_ids);
-  const player_team_season_recruitings_by_player_team_season_id =
-    index_group_sync(
-      player_team_season_recruitings,
-      "index",
-      "player_team_season_id"
-    );
 
-  player_team_seasons = nest_children(
-    player_team_seasons,
-    player_team_season_recruitings_by_player_team_season_id,
-    "player_team_season_id",
-    "recruiting"
-  );
   player_team_seasons.forEach(function(pts){
       pts.class_sort_order = class_sort_order_map[pts.class.class_name];
       pts.position_sort_order = position_sort_order_map[pts.position];

@@ -254,11 +254,6 @@ const populate_player_stats = async (common) => {
           continue;
         }
       }
-
-
-
-
-
 }
 
 const getHtml = async (common) => {
@@ -283,16 +278,14 @@ const getHtml = async (common) => {
 
   console.log({player_team_season_ids:player_team_season_ids, player_team_seasons:player_team_seasons})
 
-  const player_team_season_recruitings = await db.player_team_season_recruiting.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
-  console.log({player_team_season_recruitings:player_team_season_recruitings})
-  const player_team_season_recruitings_by_player_team_season_id = index_group_sync(player_team_season_recruitings, 'index', 'player_team_season_id');
+  let recruit_team_seasons = await db.recruit_team_season.where('player_team_season_id').anyOf(player_team_season_ids).toArray();
+  const recruit_team_seasons_by_player_team_season_id = index_group_sync(recruit_team_seasons, 'group', 'player_team_season_id');
 
   const player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
   const player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id');
   
-  console.log({player_team_season_stats_by_player_team_season_id:player_team_season_stats_by_player_team_season_id, player_team_season_recruitings_by_player_team_season_id:player_team_season_recruitings_by_player_team_season_id, player_team_seasons:player_team_seasons})
   player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats')
-  player_team_seasons = nest_children(player_team_seasons, player_team_season_recruitings_by_player_team_season_id, 'player_team_season_id', 'recruiting')
+  player_team_seasons = nest_children(player_team_seasons, recruit_team_seasons_by_player_team_season_id, 'player_team_season_id', 'recruit_team_seasons')
 
   player.player_team_seasons = player_team_seasons;
   player.current_player_team_season = player_team_seasons.filter(pts => pts.season == season)[0];
@@ -321,7 +314,6 @@ const getHtml = async (common) => {
     player.player_face = await common.create_player_face('single', player.player_id, db);
   }
 
-  var recruit_team_seasons = [];
   if (player.current_player_team_season.is_recruit){
     var team_season = null;
 
@@ -333,8 +325,12 @@ const getHtml = async (common) => {
     team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team')
     var team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
 
-    var recruit_team_seasons = Object.values(player.current_player_team_season.recruiting.recruit_team_seasons);
-    recruit_team_seasons  = nest_children(recruit_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+    console.log({
+      'player.current_player_team_season.recruit_team_seasons': player.current_player_team_season.recruit_team_seasons
+    })
+    if (player.current_player_team_season.recruit_team_seasons){
+      let player_recruit_team_seasons = nest_children(player.current_player_team_season.recruit_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+    }
 
     var player_interest_entries = Object.entries(player.current_player_team_season.recruiting.interests);
     player_interest_entries = player_interest_entries.sort((interest_obj_a, interest_obj_b) => interest_obj_b[1] - interest_obj_a[1]);
@@ -359,7 +355,7 @@ const getHtml = async (common) => {
     player.current_player_team_season.recruiting.top_player_interest_entries = top_player_interest_entries.map(i => ({field_name: i[0], display: rating_display_map[i[0]]}));
 
     recruit_team_seasons = recruit_team_seasons.map(function(rts){
-      var rts_interest_entries = player.current_player_team_season.recruiting.top_player_interest_entries.map(i => team_seasons_by_team_season_id[rts.team_season_id].recruiting.recruit_team_seasons[player.current_player_team_season.player_team_season_id].match_ratings[i.field_name].team);
+      var rts_interest_entries = player.current_player_team_season.recruiting.top_player_interest_entries.map(i => rts.match_ratings[i.field_name].team);
       return Object.assign(rts, {player_interest_entries: rts_interest_entries})
     })
 
@@ -500,13 +496,16 @@ const getHtml = async (common) => {
   }
 
   var award_list = []
-  for (const [award_key, awards] of Object.entries(award_set)){
-    award_list.push({award_key:award_key,awards:awards })
+  if (award_set){
+    for (const [award_key, awards] of Object.entries(award_set)){
+      award_list.push({award_key:award_key,awards:awards })
+    }
+  
+    award_list = award_list.sort(function(award_obj_a, award_obj_b){
+      return award_obj_a.awards[0].award_id - award_obj_b.awards[0].award_id
+    });  
   }
 
-  award_list = award_list.sort(function(award_obj_a, award_obj_b){
-    return award_obj_a.awards[0].award_id - award_obj_b.awards[0].award_id
-  });
 
   const position_skill_set_map ={'QB': ['overall','athleticism', 'passing', 'rushing'],
                        'RB': ['overall','athleticism', 'rushing'],
