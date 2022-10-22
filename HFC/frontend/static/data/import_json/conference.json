@@ -471,6 +471,41 @@
     ]
   },
   {
+    "conference_name": "Ivy League",
+    "conference_abbreviation": "Ivy",
+    "prestige": 1,
+    "is_independent": 0,
+    "conference_logo_url": "/static/img/conference_logos/Ivy_League.png",
+    "conference_color_primary_hex": "09452E",
+    "conference_color_secondary_hex": "FFFFFF",
+    "schedule_format": {
+      "hold_conference_championship_game": false,
+      "number_conference_games": 7,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "division winners",
+      "schedule_pattern": {
+        "division": { "number_of_teams": 5 },
+        "cycle": { "number_of_teams": 6, "teams_per_year": 3 }
+      },
+      "fixed_matchups": []
+    },
+    "divisions": [
+      {
+        "division_name": "All",
+        "teams": [
+          "Dartmouth",
+          "Harvard",
+          "Columbia",
+          "Princeton",
+          "Cornell",
+          "Brown",
+          "Penn",
+          "Yale"
+        ]
+      }
+    ]
+  },
+  {
     "conference_name": "FBS Independents",
     "conference_abbreviation": "Ind",
     "prestige": 1,

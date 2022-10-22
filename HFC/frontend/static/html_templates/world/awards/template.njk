@@ -181,9 +181,11 @@
                           <td>
                             <ul class='no-list-style'>
                               {% for top_stat in award.player_team_season.top_stats%}
+                              {% if top_stat.season_score_value > award.player_team_season.season_stats.games.weighted_game_score * 0.03 %}
                                 <li class='nowrap'>
                                   {{top_stat.display}}
                                 </li>
+                                {% endif %}
                               {% endfor %}
                             </ul>
                           </td>

@@ -3047,10 +3047,12 @@ const initialize_new_season = async (this_week, common) => {
     .get({ season: current_season });
 
   const new_season = current_season + 1;
+
+  stopwatch(common, 'Init New Season - Starting');
+
   await db.team_season.where({ season: new_season }).delete();
   await db.league_season.where({ season: new_season }).delete();
   await db.conference_season.where({ season: new_season }).delete();
-
   await db.player_team_season.where({ season: new_season }).delete();
   common.season = new_season;
   const world_id = common.world_id;
@@ -3078,6 +3080,8 @@ const initialize_new_season = async (this_week, common) => {
   await db.team_season.where({season: new_season}).delete();
   await db.player_team_season.where({season: new_season}).delete();
 
+  stopwatch(common, 'Init New Season - Deleted existing data');
+
   console.log({ new_season_obj: new_season_obj });
   await db.league_season.add(new_season_obj);
   // current_league_season.is_current_season = false;
@@ -3085,6 +3089,8 @@ const initialize_new_season = async (this_week, common) => {
 
   const phases_created = await create_phase(new_season, common);
   await create_week(phases_created, common, new_season);
+
+  stopwatch(common, 'Init New Season - Created phases & weeks');
 
   var conferences = await db.conference.toArray();
   await common.create_conference_seasons({
@@ -3118,6 +3124,8 @@ const initialize_new_season = async (this_week, common) => {
     conferences_by_conference_name: conference_by_conference_name,
   });
 
+  stopwatch(common, 'Init New Season - Created conferences');
+
   const all_weeks = await db.week.where({ season: new_season }).toArray();
   const next_week = all_weeks[0];
 
@@ -3135,6 +3143,8 @@ const initialize_new_season = async (this_week, common) => {
     "index",
     "team_id"
   );
+
+  stopwatch(common, 'Init New Season - Fetched TSs');
 
   var players = await db.player.toArray(); //TODO - I'll regret this once players graduate & start fresh
   let previous_team_seasons = await db.team_season
@@ -3177,6 +3187,8 @@ const initialize_new_season = async (this_week, common) => {
       p.previous_player_team_season.team_season_id > 0
   );
 
+  stopwatch(common, 'Init New Season - Fetched Players');
+
   await create_new_player_team_seasons({
     common: common,
     players: players,
@@ -3186,7 +3198,45 @@ const initialize_new_season = async (this_week, common) => {
     season: new_season,
   });
 
+  stopwatch(common, 'Init New Season - Created PTSs');
 
+  var players = await db.player.toArray(); //TODO - I'll regret this once players graduate & start fresh
+  let high_school_player_team_seasons = await db.player_team_season.where({season:current_season})
+                        .and((ts) => ts.team_season_id == current_season * -1)
+                        .toArray();
+  const high_school_player_team_seasons_by_player_id = index_group_sync(
+    high_school_player_team_seasons,
+    "index",
+    "player_id"
+  );
+  players = nest_children(
+    players,
+    high_school_player_team_seasons_by_player_id,
+    "player_id",
+    "high_school_player_team_season"
+  );
+  players = players.filter(
+    (p) =>
+      p.high_school_player_team_season != undefined
+  );
+
+  console.log({
+    players:players,
+    high_school_player_team_seasons_by_player_id:high_school_player_team_seasons_by_player_id,
+    high_school_player_team_seasons:high_school_player_team_seasons,
+  })
+  debugger;
+
+  await create_new_player_team_seasons_for_high_schoolers({
+    common: common,
+    players: players,
+    team_seasons: team_seasons,
+    world_id: world_id,
+    season: new_season,
+  });
+
+  stopwatch(common, 'Init New Season - Created HS PTSs');
+  
   let coaches = await db.coach.toArray(); //TODO - I'll regret this once players graduate & start fresh
 
   let previous_coach_team_seasons = await db.coach_team_season
@@ -3221,7 +3271,12 @@ const initialize_new_season = async (this_week, common) => {
     world_id: world_id,
     season: new_season,
   });
+
+  stopwatch(common, 'Init New Season - Created coaches');
+  
   await populate_all_depth_charts(common);
+
+  stopwatch(common, 'Init New Season - Created Depth Charts');
 
   await calculate_team_overalls(common);
   await calculate_national_rankings(next_week, all_weeks, common);
@@ -3230,12 +3285,16 @@ const initialize_new_season = async (this_week, common) => {
   await calculate_team_needs(common);
   await choose_preseason_all_americans(common);
 
+  stopwatch(common, 'Init New Season - Created other info');
+
 
   await create_schedule({
     common: common,
     season: new_season,
     world_id: world_id,
   });
+
+  stopwatch(common, 'Init New Season - Created Schedule - DONE');
 };
 
 const create_team_season = async (data) => {
@@ -3342,6 +3401,40 @@ const create_team_season = async (data) => {
 const populate_all_depth_charts = async (common, team_season_ids) => {
   const db = common.db;
   const season = common.season;
+
+  let adjacent_positions = {
+    QB: ['RB', 'S', 'WR', 'LB'],
+    RB: ['FB', 'WR', 'LB'],
+    FB: ['TE', 'RB'],
+    WR: ['TE', 'RB', 'CB'],
+    TE: ['WR', 'FB', 'OT'],
+    OT: ['IOL', 'TE', 'DL', 'EDGE'],
+    IOL: ['OT', 'DL', 'EDGE'],
+    DL: ['EDGE', 'LB', 'IOL'],
+    EDGE: ['DL', 'LB'],
+    LB: ['EDGE', 'S'],
+    CB: ['S', 'LB', 'WR'],
+    S: ['CB', 'LB', 'RB', 'TE'],
+    K: ['P', 'IOL', 'CB', 'S', 'DL', 'EDGE'],
+    P: ['K', 'IOL', 'CB', 'S', 'DL', 'EDGE']
+  }
+
+  let position_minimum_count = {
+    QB: 4,
+    RB: 5,
+    FB: 2,
+    WR: 7,
+    TE: 5,
+    OT: 5,
+    IOL: 6,
+    DL: 6,
+    EDGE: 6,
+    LB: 6,
+    CB: 6,
+    S: 6,
+    K: 2,
+    P: 2
+  }
 
   console.log({team_season_ids})
   if (team_season_ids) {
@@ -3461,15 +3554,43 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
       "group",
       "position"
     );
+    Object.keys(position_minimum_count).forEach(function(pos){
+      if(!(pos in position_player_team_season_obj)){
+        position_player_team_season_obj[pos] = [];
+      }
+    })
     var position_player_team_season_with_recruits_obj = index_group_sync(
       player_team_season_list_with_recruits,
       "group",
       "position"
     );
 
+    //TODO what if this is empty
     for (var position in position_player_team_season_obj) {
       var position_player_team_season_list =
         position_player_team_season_obj[position];
+
+      if (position_player_team_season_list.length < position_minimum_count[position]){
+        // console.log({
+        //   'position_player_team_season_list': position_player_team_season_list,
+        //   position:position, 
+        //   'adjacent_positions[position]': adjacent_positions[position],
+        // })
+        adjacent_positions[position].forEach(function(pos){
+          // console.log('Pos low for team',{
+          //   position:position,
+          //   replacement_pos:pos,
+          //   team_season_id:team_season_id,
+          //   position_player_team_season_list:position_player_team_season_list,
+          //   'position_minimum_count[pos] + position_minimum_count[position] - position_player_team_season_list.length + 1': position_minimum_count[pos] + position_minimum_count[position] - position_player_team_season_list.length + 1,
+          //   'position_minimum_count[pos]': position_minimum_count[pos],
+          //   'position_player_team_season_obj[pos]': position_player_team_season_obj[pos],
+          //   'position_player_team_season_obj[pos].slice(position_minimum_count[pos], 10)': position_player_team_season_obj[pos].slice(position_minimum_count[pos], 10)
+          // })
+          position_player_team_season_list = position_player_team_season_list.concat(position_player_team_season_obj[pos].slice(position_minimum_count[pos], position_minimum_count[pos] + position_minimum_count[position] - position_player_team_season_list.length + 1));
+        })
+      }
+
       position_player_team_season_list.forEach((pts, ind) => pts.depth_chart_rank = ind+1);
       player_team_seasons_to_update = player_team_seasons_to_update.concat(position_player_team_season_list)
       team_season.depth_chart[position] = position_player_team_season_list.map(
@@ -4191,6 +4312,79 @@ const create_schedule = async (data) => {
   const team_games_created = await db.team_game.bulkAdd(team_games_to_create);
 };
 
+const create_new_player_team_seasons_for_high_schoolers = async (data) => {
+  console.log({ data: data });
+
+  const common = data.common;
+  const db = common.db;
+
+  const team_seasons = data.team_seasons;
+  const players = data.players;
+
+  const team_seasons_by_team_id = index_group_sync(
+    team_seasons,
+    "index",
+    "team_id"
+  );
+  const team_seasons_by_team_season_id = index_group_sync(
+    team_seasons,
+    "index",
+    "team_season_id"
+  );
+
+  var player_team_season_id_counter = 1;
+  var player_team_seasons_tocreate = [];
+  var player_team_season_stats_tocreate = [];
+  const last_player_team_season = await db.player_team_season
+    .orderBy("player_team_season_id")
+    .last();
+
+  if (last_player_team_season != undefined) {
+    player_team_season_id_counter =
+      last_player_team_season.player_team_season_id + 1;
+  }
+
+  for (const player of data.players) {
+
+    var team_season_id = team_seasons[player_team_season_id_counter % team_seasons.length].team_season_id;
+
+    var init_data = {
+      player_id: player.player_id,
+      player_team_season_id: player_team_season_id_counter,
+      team_season_id: team_season_id,
+      season: data.season,
+      world_id: data.world_id,
+      position: player.position,
+      class: {
+        class_name: 'FR',
+        redshirted: false,
+      },
+      ratings: deep_copy(player.high_school_player_team_season.ratings),
+    };
+
+    var new_pts = new player_team_season(init_data);
+    var new_player_team_season_stats = new player_team_season_stats(
+      new_pts.player_team_season_id
+    );
+
+    player_team_seasons_tocreate.push(new_pts);
+    player_team_season_stats_tocreate.push(new_player_team_season_stats);
+    player_team_season_id_counter += 1;
+  
+  }
+
+
+  console.log({
+    player_team_seasons_tocreate:player_team_seasons_tocreate,
+    player_team_season_stats_tocreate:player_team_season_stats_tocreate
+  })
+  debugger;
+
+  await db.player_team_season.bulkPut(player_team_seasons_tocreate);
+  await db.player_team_season_stats.bulkPut(player_team_season_stats_tocreate);
+
+}
+
 const create_new_player_team_seasons = async (data) => {
   console.log({ data: data });
 
@@ -4229,11 +4423,11 @@ const create_new_player_team_seasons = async (data) => {
       last_player_team_season.player_team_season_id + 1;
   }
 
-  const next_class = {
+  const next_class_map = {
     FR: "SO",
     SO: "JR",
     JR: "SR",
-    SR: "SR",
+    SR: "GR",
   };
 
   var position_overall_max = {};
@@ -4246,47 +4440,55 @@ const create_new_player_team_seasons = async (data) => {
       team_seasons_by_team_id[
         previous_team_seasons_by_team_season_id[previous_team_season_id].team_id
       ].team_season_id;
-    var init_data = {
-      player_id: player.player_id,
-      player_team_season_id: player_team_season_id_counter,
-      team_season_id: team_season_id,
-      season: data.season,
-      world_id: data.world_id,
-      position: player.position,
-      class: {
-        class_name:
-          next_class[player.previous_player_team_season.class.class_name],
-        redshirted: false,
-      },
-      ratings: deep_copy(player.previous_player_team_season.ratings),
-    };
 
-    if (!(player.position in position_overall_max)) {
-      position_overall_max[player.position] = init_data.ratings.overall.overall;
-      position_overall_min[player.position] = init_data.ratings.overall.overall;
+    if (
+      next_class_map[player.previous_player_team_season.class.class_name] in
+      next_class_map
+    ) {
+      var init_data = {
+        player_id: player.player_id,
+        player_team_season_id: player_team_season_id_counter,
+        team_season_id: team_season_id,
+        season: data.season,
+        world_id: data.world_id,
+        position: player.position,
+        class: {
+          class_name:
+            next_class_map[player.previous_player_team_season.class.class_name],
+          redshirted: false,
+        },
+        ratings: deep_copy(player.previous_player_team_season.ratings),
+      };
+
+      if (!(player.position in position_overall_max)) {
+        position_overall_max[player.position] =
+          init_data.ratings.overall.overall;
+        position_overall_min[player.position] =
+          init_data.ratings.overall.overall;
+      }
+
+      position_overall_max[player.position] = Math.max(
+        position_overall_max[player.position],
+        init_data.ratings.overall.overall
+      );
+      position_overall_min[player.position] = Math.min(
+        position_overall_min[player.position],
+        init_data.ratings.overall.overall
+      );
+
+      var new_pts = new player_team_season(init_data);
+      var new_player_team_season_stats = new player_team_season_stats(
+        new_pts.player_team_season_id
+      );
+
+      player_team_seasons_tocreate.push(new_pts);
+      player_team_season_stats_tocreate.push(new_player_team_season_stats);
+      player_team_season_id_counter += 1;
     }
-
-    position_overall_max[player.position] = Math.max(
-      position_overall_max[player.position],
-      init_data.ratings.overall.overall
-    );
-    position_overall_min[player.position] = Math.min(
-      position_overall_min[player.position],
-      init_data.ratings.overall.overall
-    );
-
-    var new_pts = new player_team_season(init_data);
-    var new_player_team_season_stats = new player_team_season_stats(
-      new_pts.player_team_season_id
-    );
-
-    player_team_seasons_tocreate.push(new_pts);
-    player_team_season_stats_tocreate.push(new_player_team_season_stats);
-    player_team_season_id_counter += 1;
   }
 
-  var goal_overall_max = 100;
-  var goal_overall_min = 5;
+  var goal_overall_max = 99;
+  var goal_overall_min = 30;
   var goal_overall_range = goal_overall_max - goal_overall_min;
 
   for (const player_team_season of player_team_seasons_tocreate) {
@@ -4300,19 +4502,14 @@ const create_new_player_team_seasons = async (data) => {
     );
   }
 
-  console.log({last_player_team_season:last_player_team_season,
+  console.log({
+    last_player_team_season: last_player_team_season,
     player_team_seasons_tocreate: player_team_seasons_tocreate,
     player_team_season_stats_tocreate: player_team_season_stats_tocreate,
   });
 
-  console.log('Updating player_team_seasons in create_new_player_team_seasons', player_team_seasons_tocreate)
-  var player_team_seasons_tocreate_added = await db.player_team_season.bulkPut(
-    player_team_seasons_tocreate
-  );
-  var player_team_season_stats_tocreate_added =
-    await db.player_team_season_stats.bulkPut(
-      player_team_season_stats_tocreate
-    );
+  await db.player_team_season.bulkPut(player_team_seasons_tocreate);
+  await db.player_team_season_stats.bulkPut(player_team_season_stats_tocreate);
 };
 
 
@@ -4889,7 +5086,21 @@ const create_recruiting_class = async (common) => {
   debugger;
 };
 
-const create_player_team_seasons = async (data) => {
+const class_is_in_college = (class_name) => {
+  let class_map = {
+    'HS JR': false,
+    'HS SR': false,
+    'FR': true,
+    'SO': true,
+    'JR': true,
+    'SR': true,
+    'GR': false,
+  }
+
+  return class_map[class_name] || false;
+}
+
+const assign_players_to_teams = async (common, world_id, season, team_seasons) => {
   const common = data.common;
   const db = common.db;
   const season = common.season;
@@ -4897,8 +5108,13 @@ const create_player_team_seasons = async (data) => {
   const teams = await db.team.where("team_id").above(0).toArray();
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
+  
+
+  let player_team_seasons = await db.player_team_season.where({season:season, team_season_id: 0})
+        .filter(pts => class_is_in_college(pts.class.class_name)).toArray();
+
   const team_seasons = nest_children(
-    data.team_seasons,
+    team_seasons,
     teams_by_team_id,
     "team_id",
     "team"
@@ -5018,230 +5234,6 @@ const create_player_team_seasons = async (data) => {
     );
   }
 
-  const classes = ["HS SR", "FR", "SO", "JR", "SR"];
-  const next_class = {
-    "HS SR": "FR",
-    FR: "SO",
-    SO: "JR",
-    JR: "SR",
-    SR: "SR",
-  };
-
-  var url = "/static/data/import_json/player_archetype.json";
-  var json_data = await fetch(url);
-  var position_archetypes = await json_data.json();
-  console.log({
-    url: url,
-    data: data,
-    position_archetypes: position_archetypes,
-  });
-
-  var position_overall_max = {};
-  var position_overall_min = {};
-
-  for (const player of data.players) {
-    var init_data = {
-      player_id: player.player_id,
-      player_team_season_id: player_team_season_id_counter,
-      team_season_id: -1,
-      season: data.season,
-      world_id: data.world_id,
-      position: player.position,
-      class: {
-        class_name: classes[Math.floor(Math.random() * classes.length)],
-        redshirted: false,
-      },
-    };
-
-    var rating_tracker = {};
-    init_data.ratings = {};
-    var overall_impact = 0;
-
-    const position_archetype = deep_copy(
-      position_archetypes[player.position]["Balanced"]
-    );
-    for (const rating_group_key in position_archetype) {
-      var rating_group = position_archetype[rating_group_key];
-
-      init_data.ratings[rating_group_key] = {};
-      for (const rating_key in rating_group) {
-        var rating_obj = rating_group[rating_key];
-        var rating_mean = rating_obj.rating_mean / 5;
-
-        var rating_value = round_decimal(
-          normal_trunc(rating_mean, rating_mean / 10, 1, 20),
-          0
-        );
-
-        init_data.ratings[rating_group_key][rating_key] = rating_value;
-        rating_tracker[rating_key] = {
-          rating_value: rating_value,
-          rating_mean: rating_mean,
-          rating_overall_impact: rating_obj.overall_impact,
-        };
-      }
-    }
-
-    if (player.position == "QB") {
-      var strength_modifier =
-        rating_tracker["strength"].rating_value /
-        rating_tracker["strength"].rating_mean;
-      init_data.ratings["passing"]["throwing_power"] = round_decimal(
-        normal_trunc(
-          rating_tracker["throwing_power"].rating_mean * strength_modifier,
-          2,
-          1,
-          20
-        ),
-        0
-      );
-
-      var speed_modifier =
-        rating_tracker["speed"].rating_value /
-        rating_tracker["speed"].rating_mean;
-      init_data.ratings["athleticism"]["acceleration"] = round_decimal(
-        normal_trunc(
-          rating_tracker["acceleration"].rating_mean * speed_modifier,
-          2,
-          1,
-          20
-        ),
-        0
-      );
-      init_data.ratings["athleticism"]["agility"] = round_decimal(
-        normal_trunc(
-          rating_tracker["agility"].rating_mean * speed_modifier,
-          2,
-          1,
-          20
-        ),
-        0
-      );
-
-      var accuracy_modifier =
-        rating_tracker["short_throw_accuracy"].rating_value /
-        rating_tracker["short_throw_accuracy"].rating_mean;
-      var deep_throw_accuracy_modifier =
-        (strength_modifier + accuracy_modifier) / 2;
-      init_data.ratings["passing"]["deep_throw_accuracy"] = round_decimal(
-        normal_trunc(
-          rating_tracker["deep_throw_accuracy"].rating_mean *
-            deep_throw_accuracy_modifier,
-          2,
-          1,
-          20
-        ),
-        0
-      );
-
-      var throw_on_run_modifier = (speed_modifier + accuracy_modifier) / 2;
-      init_data.ratings["passing"]["throw_on_run"] = round_decimal(
-        normal_trunc(
-          rating_tracker["throw_on_run"].rating_mean * throw_on_run_modifier,
-          2,
-          1,
-          20
-        ),
-        0
-      );
-    }
-
-    for (const rating_group_key in position_archetype) {
-      var rating_group = position_archetype[rating_group_key];
-      for (const rating_key in rating_group) {
-        var rating_obj = rating_group[rating_key];
-        var rating_mean = rating_obj.rating_mean;
-        var rating_overall_impact = rating_obj.overall_impact;
-
-        overall_impact +=
-          (init_data.ratings[rating_group_key][rating_key] - rating_mean) *
-          rating_overall_impact;
-      }
-    }
-
-    init_data.ratings.overall.overall = overall_impact;
-    if (!(player.position in position_overall_max)) {
-      position_overall_max[player.position] = init_data.ratings.overall.overall;
-      position_overall_min[player.position] = init_data.ratings.overall.overall;
-    }
-
-    position_overall_max[player.position] = Math.max(
-      position_overall_max[player.position],
-      init_data.ratings.overall.overall
-    );
-    position_overall_min[player.position] = Math.min(
-      position_overall_min[player.position],
-      init_data.ratings.overall.overall
-    );
-
-    var new_pts = new player_team_season(init_data);
-
-    var new_player_team_season_stats = new player_team_season_stats(
-      new_pts.player_team_season_id
-    );
-    player_team_season_stats_tocreate.push(new_player_team_season_stats);
-
-    if (new_pts.class.class_name == "HS SR") {
-      new_pts.is_recruit = true;
-      new_pts.recruiting = {
-        speed: 1,
-        stars: 4,
-        signed: false,
-        signed_team_season_id: null,
-        stage: null,
-        rank: {
-          national: null,
-          position_rank: null,
-          state: null,
-        },
-        // measurables: {
-        // 	fourty_yard_dash: init_data.ratings.athleticism.speed,
-        // 	bench_press_reps: init_data.ratings.athleticism.strength,
-        // 	vertical_jump: init_data.ratings.athleticism.jumping
-        // },
-        weeks: {},
-        team_season_buckets: {
-          dream: new Set(),
-          favor: new Set(),
-          indifferent: new Set(),
-          hate: new Set(),
-        },
-        interests: {
-          location: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
-          fan_support: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
-          academic_quality: round_decimal(normal_trunc_bounce(2, 10, 1, 7), 0),
-          facilities: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
-          program_history: round_decimal(normal_trunc(2.5, 1.5, 1, 7), 0),
-          team_competitiveness: round_decimal(normal_trunc(3.5, 1.5, 1, 7), 0),
-          brand: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
-          pro_pipeline: round_decimal(normal_trunc(4, 1.5, 1, 7), 0),
-
-          program_stability: round_decimal(normal_trunc(1.75, 0.1, 1, 7), 0),
-          playing_time: round_decimal(normal_trunc(1.5, 0.1, 1, 7), 0),
-          close_to_home: round_decimal(normal_trunc_bounce(4.5, 3, 1, 7), 0),
-        },
-      };
-    }
-
-    player_team_seasons_tocreate.push(new_pts);
-    player_team_season_id_counter += 1;
-  }
-
-  var goal_overall_max = 99;
-  var goal_overall_min = 40;
-  var goal_overall_range = goal_overall_max - goal_overall_min;
-
-  for (const player_team_season of player_team_seasons_tocreate) {
-    player_team_season.ratings.overall.overall = Math.floor(
-      ((player_team_season.ratings.overall.overall -
-        position_overall_min[player_team_season.position]) *
-        goal_overall_range) /
-        (position_overall_max[player_team_season.position] -
-          position_overall_min[player_team_season.position]) +
-        goal_overall_min
-    );
-  }
-
   const player_team_seasons_by_position = index_group_sync(
     player_team_seasons_tocreate,
     "group",
@@ -5254,14 +5246,11 @@ const create_player_team_seasons = async (data) => {
   player_team_seasons_tocreate = [];
 
   for (const position in player_team_seasons_by_position) {
-    var player_team_seasons = player_team_seasons_by_position[position];
-    var high_school_player_team_seasons = player_team_seasons.filter(
-      (pts) => pts.class.class_name == "HS SR"
-    );
-    player_team_seasons = player_team_seasons.filter(
+    var position_player_team_seasons = player_team_seasons_by_position[position];
+    position_player_team_seasons = position_player_team_seasons.filter(
       (pts) => pts.class.class_name != "HS SR"
     );
-    player_team_seasons = player_team_seasons.sort(
+    position_player_team_seasons = position_player_team_seasons.sort(
       (pts_a, pts_b) =>
         pts_b.ratings.overall.overall - pts_a.ratings.overall.overall
     );
@@ -5288,9 +5277,9 @@ const create_player_team_seasons = async (data) => {
       var prestige_lower_slice_ratio = 1 - team_prestige ** 0.15 / 20 ** 0.15;
       var prestige_upper_slice_ratio = 1 - team_prestige ** 2.5 / 20 ** 2.5;
       var prestige_slice_lower_bound =
-        player_team_seasons.length * prestige_lower_slice_ratio;
+        position_player_team_seasons.length * prestige_lower_slice_ratio;
       var prestige_slice_upper_bound =
-        player_team_seasons.length * prestige_upper_slice_ratio;
+        position_player_team_seasons.length * prestige_upper_slice_ratio;
 
       var prestige_slice_gap =
         prestige_slice_upper_bound - prestige_slice_lower_bound;
@@ -5304,7 +5293,7 @@ const create_player_team_seasons = async (data) => {
       //   prestige_slice_gap
       // )
 
-      var chosen_player_team_season = player_team_seasons.splice(
+      var chosen_player_team_season = position_player_team_seasons.splice(
         player_team_season_index,
         1
       );
@@ -5314,11 +5303,6 @@ const create_player_team_seasons = async (data) => {
 
         player_team_seasons_tocreate.push(chosen_player_team_season);
       }
-    }
-
-    for (const player_team_season of high_school_player_team_seasons) {
-      player_team_season.team_season_id = -1 * season;
-      player_team_seasons_tocreate.push(player_team_season);
     }
 
     console.log({
@@ -5514,31 +5498,121 @@ const create_coach_team_seasons = async (data) => {
   await db.coach_team_season.bulkAdd(coach_team_seasons_tocreate);
 };
 
-const create_players = async (data) => {
+const generate_player_ratings = async(common, world_id, season) => {
+  const db = common.db;
+
+  let player_team_seasons = await db.player_team_season.where({season: season}).toArray();
+
+  var url = "/static/data/import_json/player_archetype.json";
+  var json_data = await fetch(url);
+  var position_archetypes = await json_data.json();
+  console.log({
+    url: url,
+    data: data,
+    position_archetypes: position_archetypes,
+  });
+
+  var position_overall_max = {};
+  var position_overall_min = {};
+
+  for (let pts of player_team_seasons.filter(pts => !(pts.ratings))){
+    let position_archetype = deep_copy(
+      position_archetypes[pts.position]["Balanced"]
+    );
+    for (const rating_group_key in position_archetype) {
+      var rating_group = position_archetype[rating_group_key];
+
+      pts.ratings[rating_group_key] = {};
+      for (const rating_key in rating_group) {
+        var rating_obj = rating_group[rating_key];
+        var rating_mean = rating_obj.rating_mean / 5;
+
+        var rating_value = round_decimal(
+          normal_trunc(rating_mean, rating_mean / 10, 1, 20),
+          0
+        );
+
+        pts.ratings[rating_group_key][rating_key] = rating_value;
+      }
+    }
+  }
+
+
+  for (let pts of player_team_seasons){
+
+    let overall_impact = 0;
+    let position_archetype = deep_copy(
+      position_archetypes[pts.position]["Balanced"]
+    );
+    for (const rating_group_key in position_archetype) {
+      var rating_group = position_archetype[rating_group_key];
+      for (const rating_key in rating_group) {
+        var rating_obj = rating_group[rating_key];
+        var rating_mean = rating_obj.rating_mean;
+        var rating_overall_impact = rating_obj.overall_impact;
+
+        overall_impact +=
+          (pts.ratings[rating_group_key][rating_key] - rating_mean) *
+          rating_overall_impact;
+      }
+    }
+
+    pts.ratings.overall.overall = overall_impact;
+    if (!(pts.position in position_overall_max)) {
+      position_overall_max[pts.position] = pts.ratings.overall.overall;
+      position_overall_min[pts.position] = pts.ratings.overall.overall;
+    }
+
+    position_overall_max[pts.position] = Math.max(
+      position_overall_max[pts.position],
+      init_data.ratings.overall.overall
+    );
+    position_overall_min[pts.position] = Math.min(
+      position_overall_min[pts.position],
+      init_data.ratings.overall.overall
+    );
+
+  }  
+
+
+  var goal_overall_max = 99;
+  var goal_overall_min = 30;
+  var goal_overall_range = goal_overall_max - goal_overall_min;
+
+  for (const pts of player_team_seasons) {
+    pts.ratings.overall.overall = Math.floor(
+      ((pts.ratings.overall.overall -
+        position_overall_min[pts.position]) *
+        goal_overall_range) /
+        (position_overall_max[pts.position] -
+          position_overall_min[pts.position]) +
+        goal_overall_min
+    );
+  }
+
+
+  console.log('setting ratings', {player_team_seasons:player_team_seasons})
+  await db.player_team_season.bulkPut(player_team_seasons);
+
+}
+
+const create_new_players_and_player_team_seasons = async (
+  common,
+  world_id,
+  season,
+  team_seasons,
+  teams_by_team_id,
+  classes
+) => {
   const common = data.common;
   const db = common.db;
 
-  var players_tocreate = [];
-  var position = "";
-  var ethnicity = "";
+  const season = data.season;
 
-  const classes = ["FR", "SO", "JR", "SR"];
-  const positions = [
-    "QB",
-    "RB",
-    "FB",
-    "WR",
-    "TE",
-    "OT",
-    "IOL",
-    "EDGE",
-    "DL",
-    "LB",
-    "CB",
-    "S",
-    "K",
-    "P",
-  ];
+  let players_tocreate = [];
+  let player_team_seasons_tocreate = [];
+  let player_team_season_stats_tocreate = [];
+
   const position_ethnicity =
     //numbers normalized from https://theundefeated.com/features/the-nfls-racial-divide/
     {
@@ -5559,68 +5633,106 @@ const create_players = async (data) => {
     };
 
   var team_position_counts = {
-    QB: 7,
-    RB: 8,
-    FB: 2,
-    WR: 12,
-    TE: 6,
-    OT: 7,
-    IOL: 10,
-    EDGE: 9,
-    DL: 8,
-    LB: 12,
-    CB: 9,
-    S: 7,
-    K: 3,
-    P: 3,
+    QB: 1.25,
+    RB: 1.5,
+    FB: 0.5,
+    WR: 2,
+    TE: 1.25,
+    OT: 1.25,
+    IOL: 1.5,
+    EDGE: 1.5,
+    DL: 1.5,
+    LB: 1.5,
+    CB: 2,
+    S: 1.25,
+    K: 0.375,
+    P: 0.375,
   };
 
   const num_players_per_team = sum(Object.values(team_position_counts));
-  //const num_players_per_team = 10;
   const num_players_to_create = num_players_per_team * data.team_seasons.length;
 
   const player_names = await common.random_name(ddb, num_players_to_create);
   const player_cities = await common.random_city(ddb, num_players_to_create);
 
   const last_player = await db.player.orderBy("player_id").last();
+  const last_player_team_season = await db.player_team_season
+    .orderBy("player_team_season_id")
+    .last();
 
   var player_counter = 0;
 
-  var player_id_counter = 1,
-    player_team = null;
+  var player_id_counter = 1;
+  var player_team_season_id_counter = 1;
+
   if (last_player != undefined) {
     player_id_counter = last_player.player_id + 1;
   }
+  if (last_player_team_season != undefined) {
+    player_team_season_id_counter = last_player_team_season.player_team_season_id + 1;
+  }
 
-  $.each(data.team_seasons, function (ind, team_season) {
-    for (const position in team_position_counts) {
-      for (var i = 0; i < team_position_counts[position]; i++) {
-        body = common.body_from_position(position);
-        ethnicity = common.weighted_random_choice(position_ethnicity[position]);
-        var player_obj = {
+  for (let team_count = 0; team_count < team_seasons.length; team_count++) {
+    for (let position of team_position_counts) {
+      let players_for_position = team_position_counts[position] * classes.length;
+
+      for (let position_count = 0; position_count < players_for_position; position_count++) {
+        let body = common.body_from_position(position);
+        let ethnicity = common.weighted_random_choice(position_ethnicity[position]);
+        let player_class = classes[Math.floor(Math.random() * classes.length)];
+        let team_season_id = 0;
+        if (player_class == "HS SR") {
+          team_season_id = -1 * season;
+        }
+        else {
+          var new_player_team_season_stats = new player_team_season_stats(
+            player_team_season_id_counter
+          );
+          player_team_season_stats_tocreate.push(new_player_team_season_stats);
+        }
+
+    
+
+        var player_obj = new player({
           player_id: player_id_counter,
           name: player_names[player_counter],
-          world_id: data.world_id,
-          position: position,
+          world_id: world_id,
           hometown: player_cities[player_counter],
           ethnicity: ethnicity,
           body: body,
-        };
+          world_id: world_id,
+        });
 
-        players_tocreate.push(new player(player_obj));
+        let player_team_season_obj = new player_team_season({
+          world_id: world_id,
+          player_id: player_id_counter,
+          player_team_season_id: player_team_season_id_counter,
+          season: season,
+          class: {
+            class_name: player_class,
+            redshirted: false,
+          },
+          team_season_id: team_season_id,
+          position: position,
+        });
+
+        players_tocreate.push(player_obj);
+        player_team_seasons_tocreate.push(player_team_season_obj);
 
         player_counter += 1;
         player_id_counter += 1;
-
-        // if (i % 250 == 0){
-        // 	$('#modal-progress').css('width', `${80 + (player_counter*20/player_names.length)}%`);
-        // }
+        player_team_season_id_counter += 1;
       }
     }
-  });
+  }
 
-  console.log({ players_tocreate: players_tocreate });
-  var players_tocreate_added = await db.player.bulkAdd(players_tocreate);
+  console.log({
+    players_tocreate: players_tocreate,
+    player_team_seasons_tocreate: player_team_seasons_tocreate,
+  });
+  await db.player.bulkAdd(players_tocreate);
+  await db.player_team_season.bulkAdd(player_team_seasons_tocreate);
+  await db.player_team_season_stats.bulkAdd(player_team_season_stats_tocreate);
 };
 
 const create_phase = async (season, common) => {
@@ -6585,8 +6697,7 @@ const common_functions = async (route_pattern) => {
     create_week: create_week,
     create_coaches:create_coaches,
     create_players: create_players,
-    create_player_team_seasons: create_player_team_seasons,
-    populate_all_depth_charts: populate_all_depth_charts,
+    populate_all_depth_charts:populate_all_depth_charts,
     choose_preseason_all_americans: choose_preseason_all_americans,
     create_schedule: create_schedule,
     create_conference_seasons: create_conference_seasons,
@@ -6945,6 +7056,18 @@ const pick_players_on_field = (
       K: 1,
     };
   }
+
+  // console.log({
+  //   position_list:position_list,
+  //   depth_chart:depth_chart,
+  //   player_team_seasons:player_team_seasons,
+  //   players:players,
+  //   player_team_games:player_team_games,
+  //   side_of_ball:side_of_ball,
+  //   period:period,
+  //   seconds_left_in_period:seconds_left_in_period,
+  //   point_differential:point_differential
+  // })
 
   var player_obj = {};
   for (let pos in position_list){
@@ -9636,7 +9759,7 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     overall_power_modifier = 5;
   }
   if (current_week.schedule_week_number){
-    overall_power_modifier = 5 - (current_week.schedule_week_number * .25)
+    overall_power_modifier = 3 - (current_week.schedule_week_number * .15)
   }
 
 
@@ -9703,17 +9826,11 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
         fractional_opponent_rating +=
           (team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating * tg.game_fractional_share);
 
-        // if (ts.team.school_name == 'Southern Miss' || ts.team.school_name == 'LSU'){
-        //   console.log({team: ts.team.school_name,'tg.opponent_team_season_id': tg.opponent_team_season_id, 'team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating': team_seasons_by_team_season_id[tg.opponent_team_season_id].srs.rating, fractional_opponent_rating:fractional_opponent_rating, game_fractional_share: tg.game_fractional_share})
-        // }
       }
       ts.srs.schedule_factor = Math.round(
         (fractional_opponent_rating + (ts.srs.fractional_net_win_count * (average_overall))) / (ts.srs.fractional_games_played || 1)
       );
 
-      // if (ts.team.school_name == 'Southern Miss' || ts.team.school_name == 'LSU'){
-      //   console.log({team: ts.team.school_name,'ts.srs.schedule_factor':ts.srs.schedule_factor,fractional_opponent_rating:fractional_opponent_rating, 'ts.srs.fractional_net_win_count': ts.srs.fractional_net_win_count, 'ts.srs.fractional_games_played': ts.srs.fractional_games_played})
-      // }
     }
 
     for (let ts of Object.values(team_seasons_by_team_season_id)) {
@@ -9725,12 +9842,12 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
 
   for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
     // ts.srs.rating = Math.round(((ts.srs.rating * 1) + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 2);
-    if (ts.srs.games_played <= 5){
+    if (ts.srs.games_played <= 2){
       ts.srs.rating *= ts.srs.games_played;
-      ts.srs.rating += ((5 - ts.srs.games_played) * ts.srs.original_rating);
-      ts.srs.rating /= 5;
+      ts.srs.rating += ((2 - ts.srs.games_played) * ts.srs.original_rating);
+      ts.srs.rating /= 2;
     }
-    ts.srs.rating = Math.round(((ts.srs.rating * 4) + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 5);
+    ts.srs.rating = Math.round(((ts.srs.rating * 9) + ((ts.rankings.srs_ratings[0] || ts.srs.rating) * 1)) / 10);
   }
 
   for (let [team_season_id, ts] of Object.entries(team_seasons_by_team_season_id)) {
@@ -12060,6 +12177,7 @@ const assign_conference_champions = async (this_week, common) => {
     .map((tg) => team_seasons_by_team_season_id[tg.team_season_id]);
   //winning_team_seasons = winning_team_seasons;
 
+  let conference_seasons_to_put = []
   winning_team_seasons.forEach(function (ts) {
     ts.results.conference_champion = true;
 
@@ -12067,7 +12185,7 @@ const assign_conference_champions = async (this_week, common) => {
       conference_seasons_by_conference_season_id[ts.conference_season_id];
     conference_season.conference_champion_team_season_id = ts.team_season_id;
 
-    conference_seasons.push(conference_season);
+    conference_seasons_to_put.push(conference_season);
 
     if (conference_season.conference.divisions.length == 2){
       ts.results.division_champion = true;
@@ -12087,11 +12205,25 @@ const assign_conference_champions = async (this_week, common) => {
     }
   });
 
+  let championship_gameless_team_season_champs = [];
+  let conference_seasons_without_championship_game = conference_seasons.filter(cs => (!cs.conference.schedule_format.hold_conference_championship_game) && !(cs.conference.is_independent));
+  conference_seasons_without_championship_game.forEach(function(cs){
+    let cs_team_seasons = team_seasons.filter(ts => ts.conference_season_id == cs.conference_season_id);
+    let champ_ts = cs_team_seasons.find(ts => ts.rankings.division_rank[0] == 1);
+
+    champ_ts.results.conference_champion = true;
+    championship_gameless_team_season_champs.push(champ_ts)
+
+    cs.conference_champion_team_season_id = champ_ts.team_season_id;
+    conference_seasons_to_put.push(cs)
+  });
+
   conference_seasons.forEach(cs => delete cs.conference);
 
   await db.team_season.bulkPut(winning_team_seasons);
   await db.team_season.bulkPut(losing_team_seasons);
-  await db.conference_season.bulkPut(conference_seasons);
+  await db.team_season.bulkPut(championship_gameless_team_season_champs);
+  await db.conference_season.bulkPut(conference_seasons_to_put);
 };
 
 const schedule_conference_championships = async (
@@ -15254,33 +15386,29 @@ const new_world_action = async (common, database_suffix) => {
 
   await update_create_world_modal('create-world-table-assign-coaches', 'create-world-table-create-players')
 
-  await create_players({
-    common: common,
-    team_seasons: team_seasons,
-    teams_by_team_id: teams_by_team_id,
-    world_id: world_id,
-    season: season,
-  });
+  await create_new_players_and_player_team_seasons(
+    common,
+    world_id,
+    season,
+    team_seasons,
+    teams_by_team_id,
+    ['HS SR', 'FR', 'SO', 'JR', 'SR']
+  );
+
+  await generate_player_ratings(common, world_id, season);
 
   await update_create_world_modal('create-world-table-create-players', 'create-world-table-assign-players')
-  var players = await db.player.toArray();
-  await create_player_team_seasons({
-    common: common,
-    players: players,
-    world_id: world_id,
-    team_seasons: team_seasons,
-    season: season,
-  });
 
+  await assign_players_to_teams(common, world_id, season, team_seasons);
 
   let a = [  
     {stage: 'Creating schedule', stage_row_id: 'create-world-table-create-schedule'},]
 
 
-    await update_create_world_modal('create-world-table-assign-players', 'create-world-table-depth-charts')
-    await populate_all_depth_charts(common);
+  await update_create_world_modal('create-world-table-assign-players', 'create-world-table-depth-charts')
+  await populate_all_depth_charts(common);
 
-    await update_create_world_modal('create-world-table-depth-charts', 'create-world-table-team-talent')
+  await update_create_world_modal('create-world-table-depth-charts', 'create-world-table-team-talent')
   await calculate_team_overalls(common);
 
   await update_create_world_modal('create-world-table-team-talent', 'create-world-table-recruiting-class')

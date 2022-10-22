@@ -426,27 +426,7 @@ const getHtml = async (common) => {
     counter_games += 1;
   });
 
-  var signed_player_team_season_recruitings =
-    await db.player_team_season_recruiting
-      .filter((ptsr) => ptsr.signed)
-      .filter(
-        (ptsr) => ptsr.signed_team_season_id == team.team_season.team_season_id
-      )
-      .toArray();
-  console.log({
-    signed_player_team_season_recruitings:
-      signed_player_team_season_recruitings,
-    team: team,
-  });
-  const signed_player_team_season_recruitings_by_player_team_season_id =
-    index_group_sync(
-      signed_player_team_season_recruitings,
-      "index",
-      "player_team_season_id"
-    );
-  var signed_player_team_season_ids = signed_player_team_season_recruitings.map(
-    (ptsr) => ptsr.player_team_season_id
-  );
+  var signed_player_team_season_ids = []//TODO
   var signed_player_team_seasons = await db.player_team_season.bulkGet(
     signed_player_team_season_ids
   );
@@ -461,23 +441,7 @@ const getHtml = async (common) => {
     "index",
     "player_id"
   );
-  signed_player_team_seasons = nest_children(
-    signed_player_team_seasons,
-    signed_players_by_player_id,
-    "player_id",
-    "player"
-  );
-  signed_player_team_seasons = nest_children(
-    signed_player_team_seasons,
-    signed_player_team_season_recruitings_by_player_team_season_id,
-    "player_team_season_id",
-    "recruiting"
-  );
 
-  signed_player_team_seasons = signed_player_team_seasons.sort(
-    (pts_a, pts_b) =>
-      pts_a.recruiting.rank.national - pts_b.recruiting.rank.national
-  );
 
   let show_season = common.params.season && common.params.season < common.season;
   let season_to_show = common.params.season;
@@ -500,8 +464,6 @@ const getHtml = async (common) => {
     teams: teams,
     all_teams: await common.all_teams(common, ""),
     conference_standings: conference_standings,
-    signed_player_team_seasons: signed_player_team_seasons,
-    //team_leaders: team_leaders,
     //team_stats: team_stats,
     player_team_seasons: player_team_seasons,
     headlines: headlines,
@@ -785,6 +747,7 @@ const action = async (common) => {
     player_team_seasons = player_team_seasons.filter(
       (pts) => pts.team_season_id == team.team_season.team_season_id
     );
+    console.log({player_team_seasons:player_team_seasons})
     const team_leaders = [];
     const team_leaders_raw = [
       { stat_group: "passing", stat: "yards", display: "Leading Passer" },
@@ -797,10 +760,15 @@ const action = async (common) => {
     for (var stat_detail of team_leaders_raw) {
       player_team_seasons = player_team_seasons.sort(function (pts_a, pts_b) {
         return (
-          pts_b.season_stats[stat_detail.stat_group][stat_detail.stat] -
-          pts_a.season_stats[stat_detail.stat_group][stat_detail.stat]
+          (pts_b.season_stats[stat_detail.stat_group][stat_detail.stat] || 0) -
+          (pts_a.season_stats[stat_detail.stat_group][stat_detail.stat] || 0)
         );
       });
+
+      console.log({
+        'player_team_seasons[0]': player_team_seasons[0],
+        stat_detail:stat_detail, 'player_team_seasons[0].season_stats[stat_detail.stat_group][stat_detail.stat]': player_team_seasons[0].season_stats[stat_detail.stat_group][stat_detail.stat]
+      })
 
       if (
         player_team_seasons[0].season_stats[stat_detail.stat_group][
@@ -959,7 +927,7 @@ const action = async (common) => {
       page: common.render_content.page,
       team_leaders: team_leaders,
     });
-    console.log({ renderedHtml: renderedHtml });
+    console.log({ team_leaders:team_leaders, renderedHtml: renderedHtml });
 
     $("#team_leaders").append(renderedHtml);
 

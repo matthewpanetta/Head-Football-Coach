@@ -39,7 +39,13 @@
                       </a>
                     </td>
                     <td value='{{game.opponent_team_game.team_season.team.school_name}}' class='column-med left-text'>
-                      <span class='font10'>{{game.opponent_team_game.team_season.national_rank_display}}</span>
+                      <span class='font10'>
+                        {% if game.was_played%}
+                        {{game.opponent_team_game.national_rank_display}}
+                        {%else%}
+                        {{game.opponent_team_game.team_season.national_rank_display}}
+                        {%endif%}
+                      </span>
                       <a href='{{game.opponent_team_game.team_season.team.team_href}}'>
                         {{game.opponent_team_game.team_season.team.school_name}}
                       </a>
@@ -61,8 +67,12 @@
                             </span>
                     </td>              
                     <td class='center-text'>
+                      {{game|log}}
                       {% if game.was_played%}
-                      <span>{{game.team_game.record.wins}} - {{game.team_game.record.losses}} ({{game.team_game.record.conference_wins}} - {{game.team_game.record.conference_losses}})</span>
+                      <div>{{game.team_game.record.wins}} - {{game.team_game.record.losses}} ({{game.team_game.record.conference_wins}} - {{game.team_game.record.conference_losses}})</div>
+                      {% if game.team_game.national_rank <= 25%}
+                      <div class='font10'>Ranked {{game.team_game.national_rank|ordinal}}</div>
+                      {%endif%}
                       {% endif %}
                     </td>
                     <td class='left-text'>

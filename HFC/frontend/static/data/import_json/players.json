@@ -1,0 +1,42 @@
+[
+  {
+    "body": { "height_inches": 61, "weight": 185, "height": "5'11\"" },
+    "ethnicity": "black",
+    "hometown": {
+      "city": "Santa Ana",
+      "state": "California"
+    },
+    "jersey_number": 8,
+    "name": { "first": "Bruce", "last": "Old" },
+    "personality": {
+      "leadership": 20,
+      "work_ethic": 20,
+      "desire_for_winner": 19,
+      "loyalty": 17,
+      "desire_for_playtime": 16
+    },
+    "team_name": "Alabama",
+    "player_team_season": {
+      "ratings": {},
+      "class": { "class_name": "JR", "redshirted": false },
+      "depth_chart_rank": 1,
+      "is_captain": true,
+      "is_recruit": false,
+      "position": "QB",
+      "post_season_movement": null,
+      "season": 2022
+    },
+    "player_face": {
+      "fatness": 0.15,
+      "body": { "id": "body5", "color": "#aa816f" },
+      "ear": { "id": "ear1", "size": 0.78 },
+      "head": { "id": "head2", "shave": "rgba(0,0,0,0)" },
+      "facialHair": { "id": "goatee4-stache" },
+      "eye": { "id": "eye6", "angle": 10 },
+      "eyebrow": { "id": "eyebrow15", "angle": 10 },
+      "hair": { "id": "curlyFade1", "color": "#1c1008", "flip": true },
+      "mouth": { "id": "smile3", "flip": true },
+      "nose": { "id": "nose11", "flip": true, "size": 1.01 }
+    }
+  }
+]

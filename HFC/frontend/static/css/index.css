@@ -2946,8 +2946,9 @@ div.football-table-column-control-option.selected * {
 
 a:hover:not(.no-hover) {
   color: inherit;
-  font-weight: bolder;
-  /* text-shadow: 0px 0px 0.75px; */
+  /* font-weight: bolder; */
+  /* filter: brightness(85%); */
+  text-shadow: .25px .25px 0px;
   text-decoration: underline;
 }
 

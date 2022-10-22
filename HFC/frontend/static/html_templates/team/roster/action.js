@@ -162,8 +162,8 @@ const getHtml = async (common) => {
       roster_summary[player_class][position_group] = {
         players: player_team_seasons.filter(
           (pts) =>
-            (pts.class.class_name == player_class || player_class == "ALL") &&
-            (pts.position_group == position_group || position_group == "ALL")
+            (pts.class.class_name == player_class || player_class == "All") &&
+            (pts.position_group == position_group || position_group == "All")
         ).length,
         starters: 0,
       };

@@ -288,6 +288,7 @@ const getHtml = async (common) => {
   };
 
   common.render_content = render_content;
+  window.common = common;
 
   console.log("render_content", render_content);
 
