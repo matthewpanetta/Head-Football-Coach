@@ -1034,6 +1034,8 @@ const draw_faces = async (common, parent_div) => {
   const season = common.season;
   const index_group_sync = common.index_group_sync;
 
+  console.log({common:common})
+
   const player_ids = [];
   const face_div_by_player_id = {};
 
@@ -1057,7 +1059,7 @@ const draw_faces = async (common, parent_div) => {
     .anyOf(player_ids)
     .toArray();
   player_team_seasons = player_team_seasons.filter(
-    (pts) => pts.season == season
+    (pts) => pts.season == common.render_content.game.season
   );
   const player_team_seasons_by_player_id = index_group_sync(
     player_team_seasons,

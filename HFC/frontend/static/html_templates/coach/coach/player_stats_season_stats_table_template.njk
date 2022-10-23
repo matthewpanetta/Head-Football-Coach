@@ -32,7 +32,6 @@
         </thead>
         <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
           {% for player_team_season in player_team_seasons%}
-          {{player_team_season|log}}
           <tr class='football-table-row  ' style='height: 50px;'>
             <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>{{player_team_season.season}}</td>
             <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
@@ -83,9 +82,6 @@
         </thead>
         <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
           {% for player_team_season in player_team_seasons%}
-          {{player_team_season|log}}
-          {{player_team_season.season_stats|log}}
-          {{player_team_season.rushing|log}}
           <tr class='football-table-row  ' style='height: 50px;'>
             <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>{{player_team_season.season}}</td>
             <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>

@@ -166,7 +166,7 @@
 
       const players = await db.player.bulkGet(player_ids);
       var player_team_seasons = await db.player_team_season.where('player_id').anyOf(player_ids).toArray();
-      player_team_seasons = player_team_seasons.filter(pts => pts.season == season);
+      //player_team_seasons = player_team_seasons.filter(pts => pts.season == season);
       const player_team_seasons_by_player_id = index_group_sync(player_team_seasons, 'index', 'player_id')
 
       const team_season_ids = player_team_seasons.map(pts => pts.team_season_id);

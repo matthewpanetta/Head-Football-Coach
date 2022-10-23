@@ -24,7 +24,7 @@
                 <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{team_leader.player_team_season.position}}</span>
               </li>
               <li>
-                {%for stat in team_leader.player_team_season.top_stats%}
+                {%for stat in team_leader.player_team_season.season_stats.top_stats%}
                   {%if loop.index > 1%}, {%endif%}
                     <span class=''>{{stat.display}}</span>{%endfor%}
                   </li>

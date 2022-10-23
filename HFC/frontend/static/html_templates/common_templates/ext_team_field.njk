@@ -327,15 +327,12 @@
                   <rect id="End-Zone-Right1" serif:id="End Zone Right" x="648.5" y="143.5" width="59.2" height="320.6" style="fill:none;"/>
                   <text text-anchor="middle" alignment-baseline="central" x="306.4" y="-674.1" transform="rotate(90)" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white; stroke: #{{team.team_color_secondary_hex|TeamSecondaryColor}}; stroke-width: 1.5px;text-transform: uppercase;">
                     {{team.team_field_a_text}}
-                    {{team.team_field_a_text|log}}
                   </text>
 
 
                   <rect id="End-Zone-Left1" serif:id="End Zone Left" x="14.2" y="143.5" width="58.9" height="320.6" style="fill:none;"/>
                   <text text-anchor="middle" alignment-baseline="central" x="-306.4" y="47.7" transform="rotate(-90)" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:36px;fill:white; stroke: #{{team.team_color_secondary_hex|TeamSecondaryColor}}; stroke-width: 1.5px;text-transform: uppercase;">
                     {{team.team_field_b_text}}
-                    {{team.team_field_b_text|log}}
-
                   </text>
 
                   {% if team.school_name|length < 6 %}

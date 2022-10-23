@@ -84,6 +84,9 @@
                       <td>{{team_season.record_display}}</td>
                       <td class='no-width'>
                         {% if team_season.results.national_champion%}
+                        <div class='W-L-Badge trophy font16' style='color: darkgoldenrod;'>
+                          <i class="fa fa-trophy"></i>
+                        </div>
                         {% elseif team_season.results.bowl == undefined%}
                         {% else%}
                         <div class='W-L-badge {%if team_season.results.bowl.is_winning_team%} W {% else%} L {%endif%}'>{%if team_season.results.bowl.is_winning_team%}W{% else%}L{%endif%}</div>

@@ -66,7 +66,6 @@
                     {% for period in game.scoring.periods%}
                       <td>{{ period.points[1]   }}</td>
                     {% endfor %}
-                    {{game|log}}
                     <td class='col-group-left {{game.away_team_game.bold}}'>{{game.away_team_game.points}}</td>
                   {% endif %}
                 </tr>

@@ -63,7 +63,7 @@
                     </td>
                     <td>
                         <ul class='no-list-style' style='font-size: 10px; padding:0px;'>
-                            {% for stat in season_recap.heisman_award.player_team_season.top_stats%}
+                            {% for stat in season_recap.heisman_award.player_team_season.season_stats.top_stats%}
                                 <li>{{stat.display}}</li>
                             {% endfor %}
                         </ul>
@@ -81,7 +81,6 @@
         <table class='table' id=''>
             <tbody>
                 {% for conference_season in season_recap.conference_seasons%}
-                    {{conference_season|log}}
                     <tr playerid='{{player_team_season.player.player_id}}'>
                         <td rowspan='3' class='center-text' style="background-color: #{{conference_season.conference.conference_color_primary_hex}}">
                             <a href="{{conference_season.conference.conference_href}}">
@@ -162,7 +161,7 @@
                             </td>
                             <td>
                                 <ul class='no-list-style' style='font-size: 10px; padding:0px;'>
-                                    {% for stat in conference_season.poty_award.player_team_season.top_stats.slice(0,3)%}
+                                    {% for stat in conference_season.poty_award.player_team_season.season_stats.top_stats.slice(0,3)%}
                                         <li>{{stat.display}}</li>
                                     {% endfor %}
                                 </ul>

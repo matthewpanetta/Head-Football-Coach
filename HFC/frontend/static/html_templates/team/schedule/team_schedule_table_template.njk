@@ -67,7 +67,6 @@
                             </span>
                     </td>              
                     <td class='center-text'>
-                      {{game|log}}
                       {% if game.was_played%}
                       <div>{{game.team_game.record.wins}} - {{game.team_game.record.losses}} ({{game.team_game.record.conference_wins}} - {{game.team_game.record.conference_losses}})</div>
                       {% if game.team_game.national_rank <= 25%}

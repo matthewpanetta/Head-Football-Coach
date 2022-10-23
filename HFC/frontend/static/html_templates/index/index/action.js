@@ -68,6 +68,10 @@ const getHtml = async (common) => {
       stage_row_id: "create-world-table-create-players",
     },
     {
+      stage: "Generate player ratings",
+      stage_row_id: "create-world-table-player-ratings",
+    },
+    {
       stage: "Add players to teams",
       stage_row_id: "create-world-table-assign-players",
     },

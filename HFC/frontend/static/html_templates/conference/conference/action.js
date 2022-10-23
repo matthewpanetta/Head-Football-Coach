@@ -74,8 +74,12 @@ const getHtml = async (common) => {
   let players = await db.player.bulkGet(player_ids)
   let players_by_player_id = index_group_sync(players, 'index', 'player_id')
 
+  let player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
+  let player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id');
+
   player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player');
   player_team_seasons = nest_children(player_team_seasons, team_seasons_by_team_season_id, 'team_season_id', 'team_season');
+  player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats');
   let player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id');
   conference_season_poty_awards = nest_children(conference_season_poty_awards, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season');
   let conference_season_poty_awards_by_conference_season_id = index_group_sync(conference_season_poty_awards, 'index', 'conference_season_id')

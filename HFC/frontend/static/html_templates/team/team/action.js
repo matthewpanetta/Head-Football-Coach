@@ -118,6 +118,7 @@ const getHtml = async (common) => {
   const team_id = common.params.team_id;
   const db = common.db;
   const season = common.params.season || common.season;
+  common.season = season;
   const index_group = common.index_group;
   const index_group_sync = common.index_group_sync;
 
@@ -516,9 +517,9 @@ const draw_faces = async (common) => {
     .where("player_id")
     .anyOf(player_ids)
     .toArray();
-  player_team_seasons = player_team_seasons.filter(
-    (pts) => pts.season == season
-  );
+  // player_team_seasons = player_team_seasons.filter(
+  //   (pts) => pts.season == season
+  // );
   const player_team_seasons_by_player_id = index_group_sync(
     player_team_seasons,
     "index",

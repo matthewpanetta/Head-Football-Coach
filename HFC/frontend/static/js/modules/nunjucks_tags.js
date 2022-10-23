@@ -104,6 +104,9 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("NumberToGradeClass", function (NumberValue, scale) {
+    console.log('NumberToGradeClass',{
+      NumberValue:NumberValue, scale:scale
+    })
     return NumberToGrade(NumberValue, scale)
       .replace("-", "-Minus")
       .replace("+", "-Plus");

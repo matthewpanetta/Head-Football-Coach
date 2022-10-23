@@ -282,3 +282,6 @@
 
 .fa-chart-line::before {
   content: "\f201"; }
+
+  .fa-trophy::before {
+    content: "\f091"; }

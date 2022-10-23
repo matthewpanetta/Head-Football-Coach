@@ -32,7 +32,6 @@
           <tr>
             <td>
               <div>
-                {{coach|log}}
                 <i class="fa fa-map-marker-alt geo-marker" style="color: #{{page.PrimaryColor}};" city="{{coach.hometown.city}}" state="{{coach.hometown.state}}"></i>
                 {{coach.hometown_and_state}}
               </div>
@@ -260,7 +259,6 @@
                             <th {%if champ_name=='National Champions'%} style='color: darkgoldenrod;' {%endif%}>{{champ_list|length}} time {{champ_name}}</th>
                             <td>
                               {% for team_season in champ_list%}
-                                {{team_season|log}}
                                 <div>
                                   <a href='{{team_season.team_season_href}}'>
                                     {{team_season.season}}

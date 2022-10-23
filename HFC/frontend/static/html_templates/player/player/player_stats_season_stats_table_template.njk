@@ -25,7 +25,6 @@
         </thead>
         <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
           {% for player_team_season in player_team_seasons%}
-          {{player_team_season|log}}
           <tr class='football-table-row  ' style='height: 50px;'>
             <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>{{player_team_season.season}}</td>
             <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
@@ -33,7 +32,7 @@
                 <img class='logo logo-30' src='{{player_team_season.team_season.team.team_logo}}'/>
               </a>
             </td>
-            <td>{{player_team_season.class.class_name}}</td>
+            <td>{{player_team_season.class_name}}</td>
 
             <td value='{{player_team_season.season_stats.passing.yards|toLocaleString|OrZero}}'>{{player_team_season.season_stats.passing.yards|toLocaleString|OrZero}}</td>
             <td value='{{player_team_season.season_stats.passing.completions|OrZero}}'>{{player_team_season.season_stats.passing.completions|OrZero}}</td>
@@ -92,9 +91,6 @@
         </thead>
         <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
           {% for player_team_season in player_team_seasons%}
-          {{player_team_season|log}}
-          {{player_team_season.season_stats|log}}
-          {{player_team_season.rushing|log}}
           <tr class='football-table-row  ' style='height: 50px;'>
             <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>{{player_team_season.season}}</td>
             <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
@@ -102,7 +98,7 @@
                 <img class='logo logo-30' src='{{player_team_season.team_season.team.team_logo}}'/>
               </a>
             </td>
-            <td>{{player_team_season.class.class_name}}</td>
+            <td>{{player_team_season.class_name}}</td>
 
             <td value='{{player_team_season.season_stats.rushing.yards|toLocaleString|OrZero}}'>{{player_team_season.season_stats.rushing.yards|toLocaleString|OrZero}}</td>
             <td value='{{player_team_season.season_stats.rushing.carries|OrZero}}'>{{player_team_season.season_stats.rushing.carries|OrZero}}</td>
@@ -170,7 +166,7 @@
                 <img class='logo logo-30' src='{{player_team_season.team_season.team.team_logo}}'/>
               </a>
             </td>
-            <td>{{player_team_season.class.class_name}}</td>
+            <td>{{player_team_season.class_name}}</td>
 
             <td value='{{player_team_season.season_stats.receiving.yards|toLocaleString|OrZero}}'>{{player_team_season.season_stats.receiving.yards|toLocaleString|OrZero}}</td>
             <td value='{{player_team_season.season_stats.receiving.receptions|OrZero}}'>{{player_team_season.season_stats.receiving.receptions|OrZero}}</td>
@@ -228,7 +224,7 @@
                 <img class='logo logo-30' src='{{player_team_season.team_season.team.team_logo}}'/>
               </a>
             </td>
-            <td>{{player_team_season.class.class_name}}</td>
+            <td>{{player_team_season.class_name}}</td>
 
             <td value='{{player_team_season.season_stats.blocking.pancakes|OrZero}}'>{{player_team_season.season_stats.blocking.pancakes|OrZero}}</td>
             <td value='{{player_team_season.season_stats.blocking.sacks_allowed|OrZero}}' >{{player_team_season.season_stats.blocking.sacks_allowed|OrZero}}</td>
@@ -285,7 +281,7 @@
                 <img class='logo logo-30' src='{{player_team_season.team_season.team.team_logo}}'/>
               </a>
             </td>
-            <td>{{player_team_season.class.class_name}}</td>
+            <td>{{player_team_season.class_name}}</td>
 
             <td value='{{player_team_season.season_stats.defense.tackles|OrZero}}'>{{player_team_season.season_stats.defense.tackles|OrZero}}</td>
             <td value='{{player_team_season.season_stats.defense.tackles_for_loss|OrZero}}'>{{player_team_season.season_stats.defense.tackles_for_loss|OrZero}}</td>
@@ -349,7 +345,7 @@
                 <img class='logo logo-30' src='{{player_team_season.team_season.team.team_logo}}'/>
               </a>
             </td>
-            <td>{{player_team_season.class.class_name}}</td>
+            <td>{{player_team_season.class_name}}</td>
 
             <td value='{{player_team_season.season_stats.kicking.fgm|OrZero}}'>{{player_team_season.season_stats.kicking.fgm|OrZero}}</td>
             <td value='{{player_team_season.season_stats.kicking.fga|OrZero}}'>{{player_team_season.season_stats.kicking.fga|OrZero}}</td>

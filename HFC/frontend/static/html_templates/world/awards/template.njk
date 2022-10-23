@@ -180,7 +180,7 @@
                           </td>
                           <td>
                             <ul class='no-list-style'>
-                              {% for top_stat in award.player_team_season.top_stats%}
+                              {% for top_stat in award.player_team_season.season_stats.top_stats%}
                               {% if top_stat.season_score_value > award.player_team_season.season_stats.games.weighted_game_score * 0.03 %}
                                 <li class='nowrap'>
                                   {{top_stat.display}}
@@ -238,7 +238,7 @@
                           <td>
                             <ul class='no-list-style'>
                               {% if award %}
-                              {% for top_stat in award.player_team_season.top_stats.slice(0,1)%}
+                              {% for top_stat in award.player_team_season.season_stats.top_stats.slice(0,1)%}
                                 <li class='nowrap'>
                                   {{top_stat.display}}
                                 </li>
@@ -274,7 +274,6 @@
               </div>
               <table class='width100 table table-striped table-hover'>
                 {% for trophy in trophies%}
-                {{trophy|log}}
                 <tr>
                   <td class='column-shrink' style='background-color: #{{trophy.player_team_season.team_season.team.team_color_primary_hex}};'>
                     <a href='{{trophy.player_team_season.team_season.team.team_href}}'>
@@ -310,7 +309,7 @@
                     
                   </td>
                   <td><ul class='no-list-style'>
-                              {% for top_stat in trophy.player_team_season.top_stats%}
+                              {% for top_stat in trophy.player_team_season.season_stats.top_stats%}
                                 <li class='nowrap'>
                                   {{top_stat.display}}
                                 </li>
