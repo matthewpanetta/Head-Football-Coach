@@ -2272,7 +2272,7 @@ class player_team_season_stats {
   get is_qualified_passer() {
     if (
       this.games.games_played > 0 &&
-      this.passing.attempts / this.games.games_played > 10
+      (this.passing.attempts * 1.0 / this.games.games_played) > 10
     ) {
       return true;
     }
@@ -15535,3 +15535,33 @@ const new_world_action = async (common, database_suffix) => {
 
 
 };
+
+
+Array.prototype.add_element_sorted_list = function(elem, compare_func){
+  let insert_index = this.findIndex(e => compare_func(e, elem) >= 0);
+
+  if (insert_index == -1){
+    this.push(elem)
+  }
+  else {
+    this.splice(insert_index, 0, elem)
+  }
+}
+
+Array.prototype.top_sort = function(top_n, compare_func){
+  if (this.length == 0){
+    return []
+  }
+  let top_list = [this[0]]
+  this.forEach(function(elem){
+    if (compare_func(elem, top_list[top_list.length - 1])){
+      top_list.add_element_sorted_list(elem, compare_func);
+
+      if (top_list.length > top_n){
+        top_list.pop()
+      }
+    }
+  });
+
+  return top_list;
+}

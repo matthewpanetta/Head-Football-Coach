@@ -767,7 +767,7 @@ const action = async (common) => {
       .reduce((acc, val) => Math.max(acc, val), 0);
     max_points = Math.ceil((max_points + 0.01) / 5) * 5;
 
-    for (var team_index in [0, 1]) {
+    for (var team_index of [0, 1]) {
       scoring_data[team_index].drives.unshift({
         seconds_in_to_game: 0,
         points: 0,

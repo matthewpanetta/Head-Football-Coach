@@ -385,9 +385,7 @@ const getHtml = async (common) => {
   });
 
   player.player_team_seasons = player_team_seasons;
-  player.current_player_team_season = player.player_team_seasons.filter(
-    (pts) => pts.season == season
-  )[0];
+  player.current_player_team_season = player.player_team_seasons[player.player_team_seasons.length - 1];
   var current_team = player.current_player_team_season.team_season.team;
 
   console.log({
