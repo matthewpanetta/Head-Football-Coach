@@ -4415,6 +4415,22 @@ const advance_player_team_seasons = async (data) => {
         ratings: deep_copy(player.previous_player_team_season.ratings),
       });
 
+      for (const rating_group_key in new_pts.ratings) {
+        var rating_group = new_pts.ratings[rating_group_key];
+  
+        for (const rating_key in rating_group) {  
+          var rating_value = new_pts.ratings[rating_group_key][rating_key];
+    
+          let aged_in_rating_value = age_in_rating(
+            rating_group_key,
+            rating_key,
+            rating_value
+          );
+  
+          new_pts.ratings[rating_group_key][rating_key] = aged_in_rating_value;
+        }
+      }
+
       var new_player_team_season_stats = new player_team_season_stats(
         new_pts.player_team_season_id
       );
@@ -4543,6 +4559,7 @@ const create_new_coach_team_seasons = async (data) => {
       team_seasons_by_team_id[
         previous_team_seasons_by_team_season_id[previous_team_season_id].team_id
       ].team_season_id;
+
     var init_data = {
       coach_id: coach.coach_id,
       coach_team_season_id: coach_team_season_id_counter,
@@ -4563,6 +4580,44 @@ const create_new_coach_team_seasons = async (data) => {
     coach_team_seasons_tocreate
   );
 };
+
+const age_in_rating = (rating_group, rating, value) => {
+
+  let rating_change_probability = 0.1;
+
+  if (rating_group == "athleticism") {
+    rating_change_probability = 0.05;
+  } else if (rating_group == "passing") {
+    rating_change_probability = 0.7;
+  } else if (rating_group == "rushing") {
+    rating_change_probability = 0.2;
+  } else if (rating_group == "receiving") {
+    rating_change_probability = 0.3;
+  } else if (rating_group == "defense") {
+    rating_change_probability = 0.45;
+  } else if (rating_group == "blocking") {
+    rating_change_probability = 0.6;
+  } else {
+    rating_change_probability = 0.1;
+  }
+
+  var severe_rating_change_probability = rating_change_probability / 5;
+
+  var rand = Math.random();
+  if (rand < severe_rating_change_probability) {
+    value += 2;
+  } else if (rand < rating_change_probability) {
+    value += 1;
+  }
+  
+
+  if (value > 20) {
+    return 20;
+  }
+
+  return round_decimal(value, 0);
+}
+
 
 const age_out_rating = (rating_group, rating, value, class_name) => {
   let class_age_out_map = {
@@ -5229,11 +5284,13 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
     max_prestige = Math.max(max_prestige, team_season.team_prestige);
   }
 
+  max_prestige += 3;
+
   for (const team_season of team_seasons) {
     team_season.prestige_lower_slice_ratio =
-      1 - team_season.team_prestige ** 0.15 / max_prestige ** 0.15;
+      1 - ((team_season.team_prestige ** 0.15) / (max_prestige ** 0.15));
     team_season.prestige_upper_slice_ratio =
-      1 - team_season.team_prestige ** 2.5 / max_prestige ** 2.5;
+      1 - ((team_season.team_prestige ** 2.5) / (max_prestige ** 2.5));
   }
 
   const player_team_seasons_by_position = index_group_sync(
@@ -5409,6 +5466,17 @@ const create_coach_team_seasons = async (data) => {
     for (const team_season of team_seasons) {
       let chosen_coach_team_season = coach_team_seasons[ind];
       chosen_coach_team_season.team_season_id = team_season.team_season_id;
+
+      chosen_coach_team_season.contract = {
+        overall_years: 5,
+        years_remaining: Math.floor(Math.random() * 5) + 1,
+        compensation: 1_000_000,
+        goals: {
+          wins_per_season: {value: 6, importance: 10},
+          final_rank: {value: 25, importance: 8},
+        }
+      }
+
       coach_team_seasons_tocreate.push(chosen_coach_team_season);
 
       ind += 1;
@@ -5771,7 +5839,12 @@ const create_week = async (phases, common, season) => {
     // {week_name:'Summer Week 2', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
     // {week_name:'Summer Week 3', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
     // {week_name:'Summer Week 4', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
-
+    {
+      week_name: "Plan for Season",
+      is_current: false,
+      phase_id: phases["Summer Camp"]["phase_id"],
+      schedule_week_number: null,
+    },
     {
       week_name: "Pre-Season",
       is_current: false,
@@ -5921,22 +5994,15 @@ const create_week = async (phases, common, season) => {
       schedule_week_number: null,
     },
 
-    // {week_name:'Coach Carousel', is_current: false, phase_id: phases['Departures']['phase_id'], schedule_week_number: null},
-    // {week_name:'Draft Departures', is_current: false, phase_id: phases['Departures']['phase_id'], schedule_week_number: null},
-    // {week_name:'Transfer Announcements', is_current: false, phase_id: phases['Departures']['phase_id'], schedule_week_number: null},
-    //
-    // {week_name:'Recruiting Week 1', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    // {week_name:'Recruiting Week 2', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    // {week_name:'Recruiting Week 3', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    // {week_name:'Recruiting Week 4', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    // {week_name:'National Signing Day', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    //
-    {
-      week_name: "Plan for Season",
-      is_current: false,
-      phase_id: phases["Summer Camp"]["phase_id"],
-      schedule_week_number: null,
-    },
+    {week_name:'Team Departures', is_current: false, phase_id: phases['Departures']['phase_id'], schedule_week_number: null},
+    
+    {week_name:'Recruiting Week 1', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+    {week_name:'Recruiting Week 2', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+    {week_name:'Recruiting Week 3', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+    {week_name:'Recruiting Week 4', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+    {week_name:'National Signing Day', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
+    
+
   ];
 
   let last_week = await db.week.orderBy('week_id').last();
@@ -5954,7 +6020,7 @@ const create_week = async (phases, common, season) => {
   }
 
   if (season == 2022) {
-    weeks_to_create[0].is_current = true;
+    weeks_to_create[1].is_current = true;
   }
   var weeks_to_create_added = await db.week.bulkAdd(weeks_to_create);
   return await db.week.toArray();
@@ -7992,10 +8058,10 @@ const sim_game = (game_dict, common) => {
 
   game_dict.home_field_advantage_modifier = game_dict.game.is_neutral_site_game ? 1.0 : 1.03;
   if (game_dict.teams[1].school_name == 'SMU' || game_dict.teams[0].school_name == 'TCU'){
-    game_dict.home_field_advantage_modifier = 1.05
+    game_dict.home_field_advantage_modifier = 1.03
   }
   else if (game_dict.teams[0].school_name == 'SMU' || game_dict.teams[1].school_name == 'TCU'){
-    game_dict.home_field_advantage_modifier = 0.95
+    game_dict.home_field_advantage_modifier = 0.97
   }
 
   var drive_within_20 = false;
@@ -8196,7 +8262,7 @@ const sim_game = (game_dict, common) => {
 
         if (r < 0.6) {
           //completion
-          yards_this_play = Math.min((Math.floor(Math.random() * 20)), 100 - field_position);
+          yards_this_play = Math.min((Math.floor(Math.random() * 23)), 100 - field_position);
 
           if (r < 0.03){
             yards_this_play = 100 - field_position;

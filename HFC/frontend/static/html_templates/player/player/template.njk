@@ -97,10 +97,10 @@
           Overall
         </div>
           <div class=" center-text">
-            {{player.player_team_seasons[0].ratings.overall.overall}}
+            {{player.current_player_team_season.ratings.overall.overall}}
           </div>
           <div class="w3-display-bottommiddle statBar" style='width: 100%; background-color: inherit;'>
-            <div class="w3-container  {{player.player_team_seasons[0].ratings.overall.overall|NumberToGradeClass(100)}}-Fill" style="width:{{player.player_team_seasons[0].ratings.overall.overall}}%; height: 8px;"></div>
+            <div class="w3-container  {{player.current_player_team_season.ratings.overall.overall|NumberToGradeClass(100)}}-Fill" style="width:{{player.current_player_team_season.ratings.overall.overall}}%; height: 8px;"></div>
           </div>
         </div>
 
@@ -389,9 +389,7 @@
                   Awards
                 </div>
                   <table class='table table-striped table-hover'>
-                    {{award_list|log}}
                     {% for award_obj in award_list%}
-                      {{award_obj|log}}
                       <tr>
                         <td class='font16 bold'>{{award_obj.award_key}}</td>
                         <td>

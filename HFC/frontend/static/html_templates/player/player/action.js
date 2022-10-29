@@ -108,7 +108,9 @@ const populate_player_stats = async (common) => {
   const player = common.render_content.player;
   const current_player_team_season = player.current_player_team_season;
 
-  const weeks = await db.week.where({ season: common.season }).toArray();
+  const all_seasons = player.player_team_seasons.map(pts => pts.season);
+
+  const weeks = await db.week.where('season').anyOf(all_seasons).toArray();
   const weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
 
   var player_team_games = await db.player_team_game
@@ -121,7 +123,7 @@ const populate_player_stats = async (common) => {
   var games = await db.game.bulkGet(game_ids);
 
   var team_seasons = await db.team_season
-    .where({ season: common.season })
+    .where('season').anyOf(all_seasons)
     .and((ts) => ts.team_id > 0)
     .toArray();
 
@@ -369,7 +371,9 @@ const getHtml = async (common) => {
   );
 
   player.player_team_seasons = player_team_seasons;
-  player.current_player_team_season = player_team_seasons.filter((pts) => pts.season == season)[0];
+  player.current_player_team_season = player_team_seasons[player_team_seasons.length - 1];
+
+  let all_seasons = player.player_team_seasons.map(pts => pts.season);
 
   var team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
   var team_seasons = await db.team_season.bulkGet(team_season_ids);
@@ -402,7 +406,7 @@ const getHtml = async (common) => {
     var team_season = null;
 
     var team_seasons = await db.team_season
-      .where({ season: season })
+      .where('season').anyOf(all_seasons)
       .and((ts) => ts.team_id > 0)
       .toArray();
 

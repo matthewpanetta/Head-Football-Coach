@@ -104,9 +104,6 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("NumberToGradeClass", function (NumberValue, scale) {
-    console.log('NumberToGradeClass',{
-      NumberValue:NumberValue, scale:scale
-    })
     return NumberToGrade(NumberValue, scale)
       .replace("-", "-Minus")
       .replace("+", "-Plus");
@@ -130,19 +127,19 @@ function get_nunjucks_env() {
         16: "A-",
         15: "B+",
         14: "B",
-        13: "B-",
-        12: "C+",
-        11: "C",
-        10: "C-",
-        9: "D+",
-        8: "D",
-        7: "D-",
-        6: "F",
-        5: "F",
-        4: "F-",
-        3: "F-",
-        2: "F--",
-        1: "F--",
+        13: "B",
+        12: "B-",
+        11: "B-",
+        10: "C+",
+        9: "C+",
+        8: "C",
+        7: "C-",
+        6: "D+",
+        5: "D",
+        4: "D-",
+        3: "F",
+        2: "F-",
+        1: "F-",
       };
 
       return grade_value_map[number_value];
