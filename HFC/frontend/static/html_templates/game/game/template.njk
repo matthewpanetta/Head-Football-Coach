@@ -9,48 +9,48 @@
     }
 
      .away-drop-shadow-off {
-         box-shadow: 0 2px 4px 0 #{{game.away_team_game.team_season.team.team_color_primary_hex}}, 0 2px 8px 0 #{{game.away_team_game.team_season.team.team_color_primary_hex}}
+         box-shadow: 0 0.125rem 0.25rem 0 #{{game.away_team_game.team_season.team.team_color_primary_hex}}, 0 0.125rem 0.5rem 0 #{{game.away_team_game.team_season.team.team_color_primary_hex}}
      }
 
       .home-drop-shadow-off {
-          box-shadow: 0 2px 4px 0 #{{game.home_team_game.team_season.team.team_color_primary_hex}}, 0 2px 8px 0 #{{game.home_team_game.team_season.team.team_color_primary_hex}}
+          box-shadow: 0 0.125rem 0.25rem 0 #{{game.home_team_game.team_season.team.team_color_primary_hex}}, 0 0.125rem 0.5rem 0 #{{game.home_team_game.team_season.team.team_color_primary_hex}}
       }
   </style>
   <style media="screen">
     .away-team-primary-background-bar {
       background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}} !important;
       color: #{{game.away_team_game.team_season.team.team_color_primary_hex|TeamBackgroundFontColor}} !important;
-      font-size: 12.5px;
+      font-size: 0.7825rem;
       font-weight: bold;
-      padding: 8px 16px;
-      border-top: 4px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}} !important;
+      padding: 0.5rem 1rem;
+      border-top: 0.25rem solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}} !important;
     }
 
     .home-team-primary-background-bar {
       background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}} !important;
       color: #{{game.home_team_game.team_season.team.team_color_primary_hex|TeamBackgroundFontColor}} !important;
-      font-size: 12.5px;
+      font-size: 0.7825rem;
       font-weight: bold;
-      padding: 8px 16px;
-      border-top: 4px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}} !important;
+      padding: 0.5rem 1rem;
+      border-top: 0.25rem solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}} !important;
     }
 
     .home-team-scoring-summary-row {
-      box-shadow: inset -1px -1px 0px 1px #{{game.home_team_game.team_season.team.team_color_primary_hex}};
+      box-shadow: inset -0.0625rem -0.0625rem 0rem 0.0625rem #{{game.home_team_game.team_season.team.team_color_primary_hex}};
     }
 
     .away-team-scoring-summary-row {
-      box-shadow: inset -1px -1px 0px 1px #{{game.away_team_game.team_season.team.team_color_primary_hex}};
+      box-shadow: inset -0.0625rem -0.0625rem 0rem 0.0625rem #{{game.away_team_game.team_season.team.team_color_primary_hex}};
     }
 
 
     .team-primary-background-bar {
       background-color: #{{page.PrimaryColor}} !important;
       color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
-      font-size: 12.5px;
+      font-size: 0.7825rem;
       font-weight: bold;
-      padding: 8px 16px;
-      border-top: 4px solid #{{page.SecondaryColor|TeamSecondaryColor}} !important;
+      padding: 0.5rem 1rem;
+      border-top: 0.25rem solid #{{page.SecondaryColor|TeamSecondaryColor}} !important;
     }
 
     .drive-event-bar button.w3-bar-item.btn:hover {
@@ -76,7 +76,7 @@
         {{game.game_headline_display}}
       </div>
       <div class='w3-row height-150'>
-        <div class='w3-col s2 text-left skew-45' style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}; border-right: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; border-left: 30px solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; '>
+        <div class='w3-col s2 text-left skew-45' style='background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}; border-right: 1.875rem solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; border-left: 1.875rem solid #{{game.away_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; '>
           <a href="{{game.away_team_game.team_season.team.team_href}}">
             <img class='logo logo-150 skew-neg-45' src='{{game.away_team_game.team_season.team.team_logo}}'>
           </a>
@@ -214,7 +214,7 @@
 
         </div>
 
-        <div class='w3-col s2 text-right skew-neg-45' style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}; border-left: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}};  border-right: 30px solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; '>
+        <div class='w3-col s2 text-right skew-neg-45' style='background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}; border-left: 1.875rem solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}};  border-right: 1.875rem solid #{{game.home_team_game.team_season.team.team_color_secondary_hex|TeamSecondaryColor}}; '>
           <a href="{{game.home_team_game.team_season.team.team_href}}">
             <img class='logo logo-150 skew-45' src='{{game.home_team_game.team_season.team.team_logo}}'>
           </a>
@@ -224,7 +224,7 @@
       </div>
 
       <nav>
-        <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+        <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
           <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
               <i class="fas fa-bars"></i>
           </button>
@@ -288,7 +288,7 @@
                       {# <tr class='center-text-row'>
                         <td>
                           <span style="background-color:#f2f2f2;" class="bar-total">
-                            <span style="background:linear-gradient(45deg, #{{game.away_team_game.team_season.team.team_color_primary_hex}}80, #{{game.away_team_game.team_season.team.team_color_primary_hex}}{{stat.away_end_alpha}}); height: 10px; width:{{stat.away_ratio}}%" class=" bar-percentage">
+                            <span style="background:linear-gradient(45deg, #{{game.away_team_game.team_season.team.team_color_primary_hex}}80, #{{game.away_team_game.team_season.team.team_color_primary_hex}}{{stat.away_end_alpha}}); height: 0.625rem; width:{{stat.away_ratio}}%" class=" bar-percentage">
                             </span>
                           </span>
                         </td>
@@ -296,7 +296,7 @@
                       <tr class='center-text-row'>
                         <td>
                           <span style="background-color:#f2f2f2;" class="bar-total">
-                            <span style="background:linear-gradient(45deg, #{{game.home_team_game.team_season.team.team_color_primary_hex}}80, #{{game.home_team_game.team_season.team.team_color_primary_hex}}{{stat.home_end_alpha}}); height: 10px; width:{{stat.home_ratio}}%" class=" bar-percentage">
+                            <span style="background:linear-gradient(45deg, #{{game.home_team_game.team_season.team.team_color_primary_hex}}80, #{{game.home_team_game.team_season.team.team_color_primary_hex}}{{stat.home_end_alpha}}); height: 0.625rem; width:{{stat.home_ratio}}%" class=" bar-percentage">
                             </span>
                           </span>
                         </td>
@@ -454,14 +454,14 @@
                     <table class=' table table-hover' style='width: 100%;'>
                       <tbody>
                         {% for period, drives in period_scoring %}
-                          <tr class='team-secondary-table-row white-text' style='border-bottom: 2px solid black; border-right: 2px solid black; '>
+                          <tr class='team-secondary-table-row white-text' style='border-bottom: 0.125rem solid black; border-right: 0.125rem solid black; '>
                             <th class='padding-top-8 bold' colspan='4'>Quarter {{period}}</th>
                             <th class='ScoringSummaryTeamScore center-text'>{{game.home_team_game.team_season.team.team_abbreviation}}</th>
                             <th class='ScoringSummaryTeamScore center-text'>{{game.away_team_game.team_season.team.team_abbreviation}}</th>
                           </tr>
                           {% for drive in drives %}
                           
-                          <tr class='ScoringSummaryScoreRow DriveEndingEvent-All {% if drive.drive_end.is_scoring_drive %}DriveEndingEvent-Score{%else%}hidden{%endif%}' style='border-bottom: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; border-right: 2px solid #{{drive.drive_end.display_team.team_color_primary_hex}}; background-color: white;'>
+                          <tr class='ScoringSummaryScoreRow DriveEndingEvent-All {% if drive.drive_end.is_scoring_drive %}DriveEndingEvent-Score{%else%}hidden{%endif%}' style='border-bottom: 0.125rem solid #{{drive.drive_end.display_team.team_color_primary_hex}}; border-right: 0.125rem solid #{{drive.drive_end.display_team.team_color_primary_hex}}; background-color: white;'>
                             <td class='ScoringSummaryTeamLogo column-shrink' style='background-color: #{{drive.drive_end.display_team.team_color_primary_hex}}'>
                                 <a href='{{drive.drive_end.display_team.team_href}}'>
                                   <img class='logo logo logo-30' src="{{drive.drive_end.display_team.team_logo}}" alt="">
@@ -495,7 +495,7 @@
                     {{game.away_team_game.team_season.team.school_name}} @ {{game.home_team_game.team_season.team.school_name}}
 
                   </div>
-                  <div class="" style='height: 400px;'>
+                  <div class="" style='height: 25rem;'>
                     <div id='tooltip' class='card' style='min-width: 16%;display:none; position:absolute;padding:5px; background-color: white;'></div>
                     <svg width='550' height='550' id="GameFlowChart">
 
@@ -504,12 +504,12 @@
                 </div>
                 {% else %}
                 <div class="card w3-margin-bottom">
-                  <div class="w3-row" style='height: 400px;'>
+                  <div class="w3-row" style='height: 25rem;'>
                     <div class="w3-col s2 height100 white-text center-text" style=' background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}'>
                       <div class="font20">
                         {{game.away_team_game.team_season.team.team_abbreviation}}
                       </div>
-                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                      <div class="w3-padding" style='border-top: 0.0625rem solid white;'>
                         <div class="font16 ">
                           {{game.away_team_game.team_season.rating.overall|int}}
                         </div>
@@ -517,7 +517,7 @@
                           OVR
                         </div>
                       </div>
-                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                      <div class="w3-padding" style='border-top: 0.0625rem solid white;'>
                         <div class="font16">
                           {{game.away_team_game.team_season.rating.by_position_group.Offense|int}}
                         </div>
@@ -525,7 +525,7 @@
                           OFF
                         </div>
                       </div>
-                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                      <div class="w3-padding" style='border-top: 0.0625rem solid white;'>
                         <div class="font16">
                           {{game.away_team_game.team_season.rating.by_position_group.Defense|int}}
                         </div>
@@ -542,7 +542,7 @@
                       <div class="font20">
                         {{game.home_team_game.team_season.team.team_abbreviation}}
                       </div>
-                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                      <div class="w3-padding" style='border-top: 0.0625rem solid white;'>
                         <div class="font16 ">
                           {{game.home_team_game.team_season.rating.overall|int}}
                         </div>
@@ -550,7 +550,7 @@
                           OVR
                         </div>
                       </div>
-                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                      <div class="w3-padding" style='border-top: 0.0625rem solid white;'>
                         <div class="font16">
                           {{game.home_team_game.team_season.rating.by_position_group.Offense|int}}
                         </div>
@@ -558,7 +558,7 @@
                           OFF
                         </div>
                       </div>
-                      <div class="w3-padding" style='border-top: 1px solid white;'>
+                      <div class="w3-padding" style='border-top: 0.0625rem solid white;'>
                         <div class="font16">
                           {{game.home_team_game.team_season.rating.by_position_group.Defense|int}}
                         </div>
@@ -599,7 +599,7 @@
                               </div>
                           </div>
                         </td>
-                        <td style='font-size: 16px; color:white; background-color:#{{players.away_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
+                        <td style='font-size: 1rem; color:white; background-color:#{{players.away_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
                           <span>{{players.away_player_team_season.advantage_icon|safe}}</span>
                           {% if players.away_player_team_season.advantage_logo_url%}
                           <a href='{{players.away_player_team_season.team_season.team.team_href}}'> 
@@ -608,7 +608,7 @@
                           {% endif %}
                         </td>
                         <td style='' class='center-text '><span>{{players.position}}</span></td>
-                        <td style='font-size: 16px; color:white; background-color:#{{players.home_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
+                        <td style='font-size: 1rem; color:white; background-color:#{{players.home_player_team_season.advantage_color}}' class='center-text font24 nowrap'>
                           {% if players.home_player_team_season.advantage_logo_url%}
                           <a href='{{players.home_player_team_season.team_season.team.team_href}}'>
                             <img src="{{players.home_player_team_season.advantage_logo_url}}" class='logo logo-24' alt="">

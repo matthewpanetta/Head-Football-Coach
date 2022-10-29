@@ -11,6 +11,7 @@ const routes = [
   {route: "/admin/Database/:database/Table/:table", path: 'admin/table/base.html'},
 
   {route: "/World/:world_id/",          path: 'world/world/base.html'},
+  {route: "/World/:world_id/Week/:week_id", path: 'world/week/base.html'},
   {route: "/World/:world_id/Rankings/", path: 'world/rankings/base.html'},
   {route: "/World/:world_id/Standings/", path: 'world/standings/base.html'},
   {route: "/World/:world_id/Standings/Conference/:conference_id", path: 'world/standings/base.html'},

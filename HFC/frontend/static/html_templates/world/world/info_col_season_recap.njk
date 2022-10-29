@@ -62,7 +62,7 @@
                         </div>
                     </td>
                     <td>
-                        <ul class='no-list-style' style='font-size: 10px; padding:0px;'>
+                        <ul class='no-list-style' style='font-size: 0.625rem; padding:0px;'>
                             {% for stat in season_recap.heisman_award.player_team_season.season_stats.top_stats%}
                                 <li>{{stat.display}}</li>
                             {% endfor %}
@@ -138,7 +138,7 @@
                                             <img src="{{conference_season.poty_award.player_team_season.team_season.team.team_logo}}" class='logo logo-30' alt="">
                                         </a>
                                     </div>
-                                    <div id='heisman-face-{{loop.index}}-{{conference_season.poty_award.player_team_season.player_id}}' player_id='{{conference_season.poty_award.player_team_season.player_id}}'  class='PlayerFace-30 PlayerFace-Headshot inline-block' style='background-color: rgba(255,255,255,0); border-color: #{{season_recap.heisman_player_team_season.team_season.team.team_color_secondary_hex}}; margin-left: -15px;'></div>
+                                    <div id='heisman-face-{{loop.index}}-{{conference_season.poty_award.player_team_season.player_id}}' player_id='{{conference_season.poty_award.player_team_season.player_id}}'  class='PlayerFace-30 PlayerFace-Headshot inline-block' style='background-color: rgba(255,255,255,0); border-color: #{{season_recap.heisman_player_team_season.team_season.team.team_color_secondary_hex}}; margin-left: -0.9375rem;'></div>
                                 </div>
                             </td>
                             <td playerid = '{{conference_season.poty_award.player_team_season.player_id}}'>
@@ -160,7 +160,7 @@
                                 </div>
                             </td>
                             <td>
-                                <ul class='no-list-style' style='font-size: 10px; padding:0px;'>
+                                <ul class='no-list-style' style='font-size: 0.625rem; padding:0px;'>
                                     {% for stat in conference_season.poty_award.player_team_season.season_stats.top_stats.slice(0,3)%}
                                         <li>{{stat.display}}</li>
                                     {% endfor %}

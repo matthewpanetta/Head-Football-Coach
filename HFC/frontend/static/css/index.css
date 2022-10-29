@@ -51,7 +51,7 @@
   --bs-body-line-height: 1.5;
   --bs-body-color: #212529;
   --bs-body-bg: #fff;
-  --bs-border-width: 1px;
+  --bs-border-width: 0.0625rem;
   --bs-border-style: solid;
   --bs-border-color: #dee2e6;
   --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
@@ -68,10 +68,10 @@
 }
 
 body {
-  --nav-width: 200px;
+  --nav-width: 12.5rem;
   margin: 0 0 0 var(--nav-width);
   font-family: 'Quicksand', sans-serif;
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .nav {
@@ -85,7 +85,7 @@ body {
 
 .nav__link {
   display: block;
-  padding: 12px 18px;
+  padding: 0.75rem 1.125rem;
   text-decoration: none;
   color: #eeeeee;
   font-weight: 500;
@@ -96,7 +96,7 @@ body {
 }
 
 #app {
-  margin: 2em;
+  margin: 2rem;
   line-height: 1.5;
   font-weight: 500;
 }
@@ -114,24 +114,24 @@ body {
 }
 
 .searchResultTeamLogo {
-  width: 50px;
+  width: 3.125rem;
 }
 
 .recruitingLeadingTeamLogo {
   width: 100%;
-  max-width: 50px;
+  max-width: 3.125rem;
 }
 
 .teamSchoolName,
 .teamTeamName,
 .teamRecord {
-  font-size: 28px;
+  font-size: 1.75rem;
 }
 
 .teamHeaderInfo {
   display: inline-block;
-  padding-top: 36px;
-  margin-left: 20px;
+  padding-top: 2.25rem;
+  margin-left: 1.25rem;
 }
 
 .playerFirstName,
@@ -144,49 +144,49 @@ body {
 .playerLastName,
 .coachLastName {
   width: 100%;
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 500;
   display: block;
-  margin-top: -10px;
-  margin-bottom: -4px;
+  margin-top: -0.625rem;
+  margin-bottom: -0.25rem;
 }
 
 .coachOverviewInfo,
 .playerOverviewInfo,
 .teamOverviewInfo {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .PlayerHeader,
 .CoachHeader {
   align-items: center;
-  height: 150px;
+  height: 9.375rem;
 }
 
 .player-modal-header,
 .coach-modal-header {
   align-items: center;
-  height: 120px;
+  height: 7.5rem;
   overflow: hidden;
   position: relative;
 }
 
 .teamHeaderRankHeaderRow {
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 .teamHeaderRankValueRow {
-  font-size: 17px;
+  font-size: 1.0625rem;
 }
 
 .teamHeaderRankHeaderRowLine {
-  margin-top: 6px;
+  margin-top: 0.375rem;
 }
 
 .teamHeaderRankBox {
-  border-radius: 10px;
+  border-radius: 0.625rem;
   border-color: #aaaaaa;
-  border-width: 1px;
+  border-width: 0.0625rem;
   border-style: solid;
   text-align: center;
   margin-left: 12%;
@@ -211,7 +211,7 @@ body {
 
 .teamHeaderRank {
   padding: 0;
-  margin-bottom: 5px;
+  margin-bottom: 0.3125rem;
 }
 
 .teamHeaderRank>li {
@@ -231,59 +231,59 @@ body {
 .teamHeaderRankBox {
   display: inline-block;
   vertical-align: middle;
-  /* margin-top: 20px; */
+  /* margin-top: 1.25rem; */
 }
 
 .coachHeaderStatsHeaderRow,
 .playerHeaderStatsHeaderRow {
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 .coachHeaderStatsValueRow,
 .playerHeaderStatsValueRow {
-  font-size: 17px;
+  font-size: 1.0625rem;
 }
 
 .playerHeaderStatsHeaderRowLine,
 .coachHeaderStatsHeaderRowLine {
-  margin-top: 6px;
+  margin-top: 0.375rem;
 }
 
 .playerHeaderStatsBox,
 .coachHeaderStatsBox {
-  border-radius: 10px;
+  border-radius: 0.625rem;
   border-color: #aaaaaa;
-  border-width: 1px;
+  border-width: 0.0625rem;
   border-style: solid;
   text-align: center;
   margin-left: 12%;
   overflow: hidden;
-  width: 300px;
+  width: 18.75rem;
 }
 
 .worldHeaderStatsBox {
-  border-radius: 10px;
+  border-radius: 0.625rem;
   border-color: #aaaaaa;
-  border-width: 1px;
+  border-width: 0.0625rem;
   border-style: solid;
   text-align: center;
   overflow: hidden;
   display: inline-block;
   vertical-align: top;
-  margin-top: 20px;
+  margin-top: 1.25rem;
 }
 
 .playerHeaderStatsHeader,
 .coachHeaderStatsHeader {
   background-color: black;
   color: white;
-  padding: 0px 36px;
+  padding: 0rem 2.25rem;
 }
 
 .playerHeaderStats,
 .coachHeaderStats {
   padding: 0;
-  margin-bottom: 5px;
+  margin-bottom: 0.3125rem;
 }
 
 .playerHeaderStats>li,
@@ -298,12 +298,12 @@ body {
 
 .playerHeaderBio,
 .coachHeaderBio {
-  border-left: 1px solid black;
-  padding-left: 8px;
-  padding-right: 8px;
-  margin-left: 8px;
-  /* margin: 20px; */
-  font-size: 12px;
+  border-left: 0.0625rem solid black;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin-left: 0.5rem;
+  /* margin: 1.25rem; */
+  font-size: 0.75rem;
 }
 
 .playerHeaderBio>li,
@@ -319,46 +319,46 @@ body {
 .playerHeaderBioDescription,
 .coachHeaderBioDescription {
   color: #6c6d6f;
-  padding: 4px 12px 4px 0;
+  padding: 0.25rem 0.75rem 0.25rem 0;
 }
 
 .worldHeaderStatsBox .playerHeaderStatsValueRow,
 .worldHeaderStatsBox .coachHeaderStatsValueRow {
   /*display: table-cell;*/
-  font-size: 12px !important;
+  font-size: 0.75rem !important;
 }
 
 .page-header-logo-div{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 150px;
-  width: 150px;
-  margin-left: 100px;
+  height: 9.375rem;
+  width: 9.375rem;
+  margin-left: 6.25rem;
   vertical-align: top;
 }
 
 .playerTeamLogo,
 .coachTeamLogo,
 .teamTeamLogo {
-  max-height: 150px;
-  max-width: 150px;
-  /* margin-left: 20px;
-  margin-right: 20px; */
+  max-height: 9.375rem;
+  max-width: 9.375rem;
+  /* margin-left: 1.25rem;
+  margin-right: 1.25rem; */
   vertical-align: middle;
 }
 
 .player-modal-team-logo {
-  /* height: 120px; */
-  margin-left: 20px;
-  margin-right: 20px;
+  /* height: 7.5rem; */
+  margin-left: 1.25rem;
+  margin-right: 1.25rem;
   vertical-align: top;
   z-index: 3;
   position: relative;
 }
 
 .gameTeamLogo {
-  width: 150px;
+  width: 9.375rem;
 }
 
 .table td.fit,
@@ -368,7 +368,7 @@ body {
 }
 
 .table {
-  font-size: 14px !important;
+  font-size: 0.875rem !important;
 }
 
 .teamSchoolName,
@@ -411,31 +411,37 @@ body {
 
 #GameFlowChart,
 #GameFlowChart2 {
-  height: 400px;
+  height: 25rem;
 }
 
 .c3-line {
-  stroke-width: 4px !important;
+  stroke-width: 0.25rem !important;
 }
 
 .w3-sidebar {
   /*width: 15%;*/
   background-color: #eee !important;
   z-index: 1041 !important;
-  /*margin-top: 38px;*/
+  /*margin-top: 2.375rem;*/
+  height: 100%;
+  width: 12.5rem;
+  background-color: #fff;
+  position: fixed!important;
+  z-index: 1;
+  overflow: auto;
 }
 
 .nav-tab-button {
-  height: 38px;
+  height: 2.375rem;
 }
 
 #nav-tab{
-  height: 44px;
+  height: 2.75rem;
   overflow: visible;
 }
 
 .PageContent {
-  margin-left: 200px;
+  margin-left: 12.5rem;
 }
 
 .w3-dropdown-content {
@@ -443,15 +449,15 @@ body {
 }
 
 .SideNavItem {
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
   color: #666 !important;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .sidebar-open .SideNavItem,
 .sidebar-open .SideNavGroup {
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .SideNavItem.Selected {
@@ -461,15 +467,15 @@ body {
 }
 
 .SideNavGroup img {
-  max-width: 60px;
-  max-height: 60px;
+  max-width: 3.75rem;
+  max-height: 3.75rem;
 }
 
 .SideNavGroup {
-  font-size: 14px;
+  font-size: 0.875rem;
   text-transform: uppercase;
-  margin-top: 20px;
-  margin-bottom: 4px;
+  margin-top: 1.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .navNCAALogoLink {
@@ -477,7 +483,7 @@ body {
 }
 
 .navNCAALogo {
-  height: 20px;
+  height: 1.25rem;
 }
 
 .gameBoxScoreTable {
@@ -489,60 +495,60 @@ body {
 .coachOverviewRatingBox {
   width: 50%;
   float: left;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 10px;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  padding-left: 0.625rem;
 }
 
 .font-size-16 {
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .gameTeamStatBox>h3 {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .gameTeamStatBox>.statBar {
-  width: calc(100% - 25px);
-  margin-top: 4px;
-  margin-bottom: 4px;
-  font-size: 12px;
+  width: calc(100% - 1.5625rem);
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
 }
 
 .playerOverviewRatingBox .statBar,
 .coachOverviewRatingBox .statBar {
-  width: calc(100% - 10px);
-  margin-top: 4px;
-  margin-bottom: 4px;
-  font-size: 12px;
+  width: calc(100% - 0.625rem);
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
 }
 
 .playerOverviewRatingBoxGrouping,
 .coachOverviewRatingBoxGrouping {
   display: inline-block;
-  width: calc(50% - 20px);
+  width: calc(50% - 1.25rem);
 }
 
 .statBar>.w3-container {
-  padding: 0.05em 8px !important;
+  padding: 0.05rem 0.5rem !important;
 }
 
 .gameTeamStatAbbreviation,
 .playerOverviewRatingAbbreviation,
 .coachOverviewRatingAbbreviation {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 .gameBoxScoreTeamLogo,
 .teamScheduleTeamLogo
 {
-  height: 30px;
+  height: 1.875rem;
 }
 
 .teamScheduleOpponentLogo {
   width: 50%;
   aspect-ratio: 1 / 1;
-  margin-top: 4px;
+  margin-top: 0.25rem;
   object-fit: scale-down;
 }
 
@@ -554,15 +560,15 @@ body {
 
 article {
   background-color: #f1f1f1 !important;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  border-radius: 0.625rem;
+  margin-bottom: 1.25rem;
 }
 
 article>header {
   display: flex;
-  margin: 12px;
-  height: 44px;
-  font-size: 20px;
+  margin: 0.75rem;
+  height: 2.75rem;
+  font-size: 1.25rem;
   text-align: center;
 }
 
@@ -572,14 +578,14 @@ article>header {
 }
 
 #RecruitTable button {
-  padding: 4px 8px;
-  border-radius: 15px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.9375rem;
 }
 
 .Top25RankNumber,
 .worldOverviewTop25TeamLineRank {
-  font-size: 18px;
-  /*padding: 0px !important;*/
+  font-size: 1.125rem;
+  /*padding: 0rem !important;*/
 }
 
 .Top25RankNumber,
@@ -590,14 +596,14 @@ article>header {
 }
 
 .worldOverviewTop25TeamLineRecord {
-  font-size: 12px;
-  min-width: 50px;
+  font-size: 0.75rem;
+  min-width: 3.125rem;
 }
 
 .playerSeasonStatOpponentLogo,
 .coachSeasonStatOpponentLogo {
-  width: 30px;
-  margin-right: 8px;
+  width: 1.875rem;
+  margin-right: 0.5rem;
 }
 
 .tooltip_templates {
@@ -605,20 +611,20 @@ article>header {
 }
 
 .worldOverviewTop25TeamLineName {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .Top25Container>.row {
-  border: 1px solid rgba(0, 0, 0, .125);
-  margin-bottom: -1px;
+  border: 0.0625rem solid rgba(0, 0, 0, .125);
+  margin-bottom: -0.0625rem;
 }
 
 .worldScheduleTeamLogo {
-  width: 30px;
+  width: 1.875rem;
 }
 
 .worldScheduleGameLine {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .worldScheduleGameListItem {
@@ -626,7 +632,7 @@ article>header {
 }
 
 .RankingsAsOf {
-  font-size: 9px;
+  font-size: 0.5625rem;
 }
 
 .worldScheduleGameLineNationalBroadcast {
@@ -644,21 +650,21 @@ article>header {
 .worldScheduleGameLineNationalBroadcast,
 .worldScheduleGameLineRegionalBroadcast,
 .worldScheduleGameLineTournamentGame {
-  width: calc(100% + 4px);
+  width: calc(100% + 0.25rem);
   align-items: center;
   text-align: center;
-  font-size: 10px;
-  margin-bottom: -10px;
-  margin-top: 5px;
-  margin-left: -1px;
+  font-size: 0.625rem;
+  margin-bottom: -0.625rem;
+  margin-top: 0.3125rem;
+  margin-left: -0.0625rem;
 }
 
 .worldConferenceStandingTeamLogo {
-  width: 30px;
+  width: 1.875rem;
 }
 
 .worldOverviewTop25TeamLineRankDelta {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 .worldOverviewTop25TeamLineRankDeltaGreen {
@@ -671,7 +677,7 @@ article>header {
 
 .bold {
   font-weight: 800 !important;
-  /*font-size: 30px;*/
+  /*font-size: 1.875rem;*/
 }
 
 .thin-font {
@@ -683,7 +689,7 @@ article>header {
 }
 
 .teamHistoryPlayerLeaderRow {
-  margin-top: 10px;
+  margin-top: 0.625rem;
 }
 
 #playerShotChart {
@@ -700,7 +706,7 @@ article>header {
 }
 
 .indexChooseTeamModalTeamListTeamLogo {
-  height: 30px;
+  height: 1.875rem;
 }
 
 .hidden {
@@ -710,13 +716,13 @@ article>header {
 }
 
 .indexChooseTeamModalTeamListTeamDiv {
-  margin: 5px;
-  padding: 5px;
-  border: 1px solid black;
+  margin: 0.3125rem;
+  padding: 0.3125rem;
+  border: 0.0625rem solid black;
 }
 
 .indexChooseTeamModalTeamListTeamDiv:hover {
-  border: 2px solid red;
+  border: 0.125rem solid red;
 }
 
 .selected-tab {
@@ -733,7 +739,7 @@ article>header {
 }
 
 .teamScheduleGameBox+.teamScheduleGameBox {
-  border-left: 1px solid #dcdcdc;
+  border-left: 0.0625rem solid #dcdcdc;
 }
 
 .weekScheduleBox {
@@ -741,22 +747,22 @@ article>header {
 }
 
 .teamScheduleGameBoxVsString {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 .teamScheduleGameBoxShortDate {
   color: white;
-  font-size: 8px;
+  font-size: 0.5rem;
   width: 100%;
-  padding-left: 4px;
+  padding-left: 0.25rem;
 }
 
 .teamScheduleGameBoxResult {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 .teamScheduleGameBoxResult>div {
-  font-size: 10px;
+  font-size: 0.625rem;
   display: inline-block;
 }
 
@@ -799,7 +805,7 @@ article>header {
 }
 
 .height-70 {
-  height: 70px;
+  height: 4.375rem;
 }
 
 .SelectedGameBox,
@@ -818,46 +824,46 @@ article>header {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -15px;
+  bottom: -1rem;
   width: 0;
   height: 0;
   border-style: solid;
-  border-top-width: 15px;
-  border-bottom-width: 0px;
+  border-top-width: 0.9375rem;
+  border-bottom-width: 0rem;
   border-color: #111 transparent transparent;
 
 }
 
 .tab-content {
-  margin-top: 12px;
+  margin-top: 0.75rem;
 }
 
 .teamScheduleGameBoxFullScheduleBox {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 .teamScheduleGameBoxCalendarIcon {
-  font-size: 30px;
+  font-size: 1.875rem;
 }
 
 .teamScheduleGameDashboard {
-  height: 200px;
-  margin-top: 16px;
+  height: 12.5rem;
+  margin-top: 1rem;
 }
 
 .worldScheduleGameDashboard {
-  height: 260px;
+  height: 16.25rem;
 }
 
 .teamScheduleGameDashboardGameDisplay {
-  height: 180px;
+  height: 11.25rem;
   overflow: hidden;
 }
 
 .overviewRecentGameDisplay,
 .overviewUpcomingGameDisplay {
-  height: 80px;
-  margin-top: -1px;
+  height: 5rem;
+  margin-top: -0.0625rem;
 }
 
 .teamScheduleGameDashboardGameTeamDisplay {
@@ -866,39 +872,39 @@ article>header {
 }
 
 .teamScheduleGameDashboardGameTeamDisplayOffsetTop {
-  top: 2px !important;
+  top: 0.125rem !important;
   width: 100%;
   z-index: 2;
-  height: 2px;
+  height: 0.125rem;
 }
 
 .teamScheduleGameDashboardGameTeamDisplayOffsetBottom {
-  bottom: 2px !important;
+  bottom: 0.125rem !important;
   width: 100%;
   z-index: 2;
-  height: 2px;
+  height: 0.125rem;
 }
 
 .small-logo {
-  max-height: 20px;
-  width: 20px;
+  max-height: 1.25rem;
+  width: 1.25rem;
 }
 
 .teamScheduleGameDashboardGameTeamDisplayContainer {
-  height: 18px;
-  width: 180px;
-  margin-bottom: 20px;
+  height: 1.125rem;
+  width: 11.25rem;
+  margin-bottom: 1.25rem;
   transform: rotate(-52deg);
-  left: -45px;
+  left: -2.8125rem;
   z-index: 1;
 }
 
 .rivalScheduleGameDashboardGameTeamDisplayContainer {
-  height: 18px;
-  width: 180px;
-  margin-bottom: 20px;
+  height: 1.125rem;
+  width: 11.25rem;
+  margin-bottom: 1.25rem;
   transform: rotate(-52deg);
-  left: -45px;
+  left: -2.8125rem;
   z-index: 1;
 }
 
@@ -907,123 +913,123 @@ article>header {
 }
 
 .scheduleGameTable {
-  margin-top: -40px;
-  margin-left: 60px;
-  margin-bottom: 10px;
+  margin-top: -2.5rem;
+  margin-left: 3.75rem;
+  margin-bottom: 0.625rem;
 }
 
 .scheduleGameDashboardGameTeamDisplayContainer {
-  height: 18px;
-  width: 180px;
-  margin-bottom: 20px;
+  height: 1.125rem;
+  width: 11.25rem;
+  margin-bottom: 1.25rem;
   transform: rotate(-52deg);
-  left: -59px;
+  left: -3.6875rem;
   z-index: 4;
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoTop {
-  left: 40px;
-  top: -20px;
+  left: 2.5rem;
+  top: -1.25rem;
   z-index: 50;
   transform: rotate(52deg);
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
-  left: 55px;
-  top: -10px;
+  left: 3.4325rem;
+  top: -0.625rem;
   z-index: 3;
   transform: rotate(52deg);
 }
 
 img.rivalScheduleGameDashboardGameTeamDisplayLogoTop {
-  left: 45px;
-  top: -20px;
+  left: 2.8125rem;
+  top: -1.25rem;
   z-index: 50;
   transform: rotate(52deg);
 }
 
 img.rivalScheduleGameDashboardGameTeamDisplayLogoBottom {
-  left: 55px;
-  top: -10px;
+  left: 3.4325rem;
+  top: -0.625rem;
   z-index: 3;
   transform: rotate(52deg);
 }
 
 .font17 {
-  font-size: 17px;
+  font-size: 1.0625rem;
   text-transform: uppercase;
 }
 
 .font10 {
-  font-size: 10px;
+  font-size: 0.625rem;
   opacity: 50%;
 }
 
 
 .font10-plain {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 .font8 {
-  font-size: 8px;
+  font-size: 0.5rem;
   opacity: 50%;
 }
 
 .font12 {
-  font-size: 12px !important;
+  font-size: 0.75rem !important;
 }
 
 .font14 {
-  font-size: 14px !important;
+  font-size: 0.875rem !important;
 }
 
 .font16 {
-  font-size: 16px !important;
+  font-size: 1rem !important;
 }
 
 .font24 {
-  font-size: 24px !important;
+  font-size: 1.5rem !important;
 }
 
 .font20 {
-  font-size: 20px !important;
+  font-size: 1.25rem !important;
   font-weight: bold;
 }
 
 .width-400 {
-  width: 400px;
+  width: 25rem;
 }
 
 .min-width-100 {
-  min-width: 100px;
+  min-width: 6.25rem;
 }
 
 .min-width-75 {
-  min-width: 75px;
+  min-width: 4.6875rem;
 }
 
 .min-width-50 {
-  min-width: 50px;
+  min-width: 3.125rem;
 }
 
 .padding-4-6 {
-  padding: 4px 6px;
+  padding: 0.25rem 0.375rem;
 }
 
 .padding-20-10 {
-  padding: 20px 10px;
+  padding: 1.25rem 0.625rem;
 }
 
 .teamScheduleGameDashboardGameDisplayTeams {
-  padding-left: 70px;
-  padding-right: 10px;
-  padding-top: 40px;
+  padding-left: 4.375rem;
+  padding-right: 0.625rem;
+  padding-top: 2.5rem;
 }
 
 .teamScheduleGameDashboardGameDisplayBoxScoreText {
-  font-size: 10px;
+  font-size: 0.625rem;
   opacity: 50%;
-  padding-left: 10px;
+  padding-left: 0.625rem;
 }
 
 .TeamWinningGameBold,
@@ -1037,28 +1043,28 @@ img.rivalScheduleGameDashboardGameTeamDisplayLogoBottom {
 
 .padBottom20,
 .padBottom10 {
-  padding-bottom: 10px;
+  padding-bottom: 0.625rem;
 }
 
 .teamScheduleGameDashboardGameDisplayBoxScorePlayerName {
   font-family: "Antenna Bold", Arial;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #000;
   font-weight: 400;
-  padding-left: 8px;
+  padding-left: 0.5rem;
   /*opacity: .5;*/
 }
 
 .teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition {
   font-family: "Antenna Medium", Arial;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: #000;
   opacity: .5;
 }
 
 .teamScheduleGameDashboardGameDisplayBoxScorePlayerStats {
   font-family: "Antenna Medium", Arial;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #000;
   /*  opacity: .7;*/
 }
@@ -1074,18 +1080,18 @@ img.rivalScheduleGameDashboardGameTeamDisplayLogoBottom {
 .selected-season-award-team-tab,
 .selected-team-record-tab,
 div button.w3-bar-item.btn.selected-bar-button {
-  border-bottom: 3px solid #111 !important;
+  border-bottom: 0.1875rem solid #111 !important;
   transition: border-bottom .5s ease-in-out;
 
 }
 
 .recruitingCommitTeamLogo,
 .awardConferenceWeeklyAwardTeamLogo {
-  height: 30px;
+  height: 1.875rem;
 }
 
 .conferenceOverviewLogo {
-  width: 50px;
+  width: 3.125rem;
 }
 
 
@@ -1094,7 +1100,7 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .worldPreseasonTopRecruits td {
-  padding: 6px 10px;
+  padding: 0.375rem 0.625rem;
 }
 
 
@@ -1108,14 +1114,14 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .teamTeamLeaderBox {
-  padding: 3px;
-  border: 1px solid gray;
-  margin-top: -1px;
-  margin-left: -1px;
+  padding: 0.1875rem;
+  border: 0.0625rem solid gray;
+  margin-top: -0.0625rem;
+  margin-left: -0.0625rem;
 }
 
 .teamTeamLeaderBoxStat {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .fontweight500 {
@@ -1128,12 +1134,12 @@ div button.w3-bar-item.btn.selected-bar-button {
 
 .overviewRecentGameDisplayTeamLogo,
 .PreseasonRecruitTeamLogo img {
-  height: 30px;
-  margin: 8px 6px;
+  height: 1.875rem;
+  margin: 0.5rem 0.375rem;
 }
 
 .boxscore-bar .btn {
-  padding: 8px 8px;
+  padding: 0.5rem 0.5rem;
 }
 
 .w3-row-padding {
@@ -1161,101 +1167,101 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .WorldHistoryPlayerLeaderRow * {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .LeagueSeasonHistoryRowCell span {
-  margin-left: 4px;
+  margin-left: 0.25rem;
 }
 
 .PlayerFace,
 .CoachFace {
-  width: 100px;
-  height: 150px;
+  width: 6.25rem;
+  height: 9.375rem;
   display: inline-block;
-  margin-left: -80px;
+  margin-left: -5rem;
   position: relative;
   z-index: 3;
 }
 
 .PlayerFace-90,
 .CoachFace-90 {
-  width: 60px;
-  height: 90px;
+  width: 3.75rem;
+  height: 5.625rem;
 }
 
 .PlayerFace-120,
 .CoachFace-120 {
-  width: 80px;
-  height: 120px;
-  margin-left: -60px;
+  width: 5rem;
+  height: 7.5rem;
+  margin-left: -3.75rem;
 }
 
 .PlayerFace-60,
 .CoachFace-60 {
-  height: 60px;
-  width: 40px;
+  height: 3.75rem;
+  width: 2.5rem;
 }
 
 .PlayerFace-45,
 .CoachFace-45 {
-  height: 45px;
-  width: 30px;
+  height: 2.8125rem;
+  width: 1.875rem;
 }
 
 .PlayerFace-30,
 .CoachFace-30 {
-  height: 30px;
-  width: 30px;
+  height: 1.875rem;
+  width: 1.875rem;
 }
 
 .PlayerFace-Headshot,
 .CoachFace-Headshot {
-  border-radius: 100px;
+  border-radius: 6.25rem;
 
   overflow: hidden;
 }
 
 .PlayerFace-200,
 .CoachFace-200 {
-  width: 240px;
-  height: 240px;
-  border-radius: 250px;
+  width: 15rem;
+  height: 15rem;
+  border-radius: 15.75rem;
 }
 
 .PlayerFace-150,
 .CoachFace-150 {
-  width: 150px;
-  height: 150px;
-  border-radius: 250px;
+  width: 9.375rem;
+  height: 9.375rem;
+  border-radius: 15.75rem;
 }
 
 .PlayerFace-Headshot.PlayerFace-200,
 .CoachFace-Headshot.CoachFace-200 {
-  border: 6px solid;
+  border: 0.375rem solid;
 }
 
 .PlayerFace-Headshot.PlayerFace-150,
 .CoachFace-Headshot.CoachFace-150 {
-  border: 5px solid;
+  border: 0.3125rem solid;
 }
 
 .PlayerFace-Headshot.PlayerFace-90,
 .CoachFace-Headshot.CoachFace-90 {
-  border: 3px solid;
-  width: 90px;
+  border: 0.1875rem solid;
+  width: 5.625rem;
 }
 
 .PlayerFace-Headshot.PlayerFace-60,
 .CoachFace-Headshot.CoachFace-60 {
-  border: 2.5px solid;
-  width: 60px;
+  border: 0.15625rem solid;
+  width: 3.75rem;
 }
 
 .PlayerFace-Headshot.PlayerFace-45,
 .CoachFace-Headshot.CoachFace-45 {
-  border: 2px solid;
-  width: 45px;
+  border: 0.125rem solid;
+  width: 2.8125rem;
 }
 
 .PlayerFace-Headshot svg,
@@ -1264,25 +1270,25 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .teamTeamLeaderBoxPlayerFace {
-  height: 50px;
-  width: 40px;
+  height: 3.125rem;
+  width: 2.5rem;
 }
 
 #NavBarSearch {
-  padding: 6px;
+  padding: 0.375rem;
   border: none;
-  margin-top: 0px;
-  margin-bottom: 0px;
-  margin-right: 16px;
-  font-size: 17px;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  margin-right: 1rem;
+  font-size: 1.0625rem;
 }
 
 #NavBarSearchContainer button {
-  padding: 6px;
-  margin-top: 0px;
-  margin-right: 16px;
+  padding: 0.375rem;
+  margin-top: 0rem;
+  margin-right: 1rem;
   background: #ddd;
-  font-size: 17px;
+  font-size: 1.0625rem;
   border: none;
   cursor: pointer;
 }
@@ -1292,8 +1298,8 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .teamTeamLeaderBoxTeamLogo {
-  width: 40px;
-  margin-top: 8px;
+  width: 2.5rem;
+  margin-top: 0.5rem;
 }
 
 #navSearchInput {
@@ -1301,11 +1307,11 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 #NavBarSearchContainer {
-  width: 150px;
+  width: 9.375rem;
 }
 
 .height-150 {
-  height: 150px;
+  height: 9.375rem;
 }
 
 .inline-block {
@@ -1313,7 +1319,7 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .TeamScheduleRow {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .recruitingFullRecruitTable td {
@@ -1321,37 +1327,34 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 #recruitingFullRecruitTable {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .indexConferenceStandingTeamLogo {
-  height: 50px;
+  height: 3.125rem;
 }
 
 .teamAchievementFlag {
-  width: 180px;
+  width: 11.25rem;
   box-sizing: content-box;
-  font-size: 11px;
-  letter-spacing: 0.2em;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2rem;
   text-align: center;
-  border-left: 4px solid black;
-  border-right: 4px solid black;
-  border-top: 4px solid black;
-  border-bottom: 4px solid black;
+  border-left: 0.25rem solid black;
+  border-right: 0.25rem solid black;
+  border-top: 0.25rem solid black;
+  border-bottom: 0.25rem solid black;
   display: inline-block;
-  margin-right: 12px;
+  margin-right: 0.75rem;
 }
 
-
-
 .teamAchievementFlagYear {
-  font-size: 40px;
+  font-size: 2.5rem;
 }
 
 .teamAchievementFlagTitle {
-  font-size: 20px;
-
-  margin-top: 4px;
+  font-size: 1.25rem;
+  margin-top: 0.25rem;
 }
 
 .uppercase {
@@ -1359,12 +1362,12 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .BannerLine1 {
-  margin-bottom: 0px;
+  margin-bottom: 0rem;
 }
 
 .BannerLine2 {
-  margin-top: 0px;
-  margin-bottom: 0px;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
 }
 
 #mock-draft-board-container {
@@ -1373,11 +1376,11 @@ div button.w3-bar-item.btn.selected-bar-button {
 
 
 .w3-margin-8 {
-  margin: 8px 0px;
+  margin: 0.5rem 0rem;
 }
 
 .gameHeaderTeamContainerLogo>img {
-  height: 40px;
+  height: 2.5rem;
 }
 
 .gameHeaderTeamContent.away * {
@@ -1393,11 +1396,11 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .gameHeaderScoreContainer {
-  font-size: 32px;
+  font-size: 2rem;
 }
 
 .font32 {
-  font-size: 32px;
+  font-size: 2rem;
 }
 
 .gameHeaderTeamContainer,
@@ -1406,11 +1409,11 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .gameHeaderTeamContainerName {
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .gameHeaderTeamContainerRecord {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 
 .table-row {
@@ -1420,12 +1423,12 @@ div button.w3-bar-item.btn.selected-bar-button {
 .table-row>div {
   display: table-cell;
   float: none !important;
-  padding: 4px 2px;
+  padding: 0.25rem 0.125rem;
   vertical-align: middle;
 }
 
 .w3-padding-4 {
-  padding: 4px 4px;
+  padding: 0.25rem 0.25rem;
 }
 
 .ScoringSummaryDriveDescription {
@@ -1433,28 +1436,26 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 .player-action {
-  font-size: 16px;
+  font-size: 1rem;
 }
-
-
 
 .italic {
   font-style: italic;
 }
 
 .ScoringSummary {
-  margin-left: 6px;
-  margin-right: 0px;
+  margin-left: 0.375rem;
+  margin-right: 0rem;
 }
 
 .ScoringSummary * {
-  font-size: 14px;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  font-size: 0.875rem;
+  margin-top: 0.125rem;
+  margin-bottom: 0.125rem;
 }
 
 .ScoringSummaryDrive * {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .ScoringSummary table {
@@ -1467,41 +1468,41 @@ div button.w3-bar-item.btn.selected-bar-button {
 
 .ScoringSummaryTeamScore {
   text-align: right;
-  width: 50px;
+  width: 3.125rem;
 }
 
 .ScoringSummaryScoreRow {
-  border-top: 1px solid #dcdddf;
-  padding: 6px 0px;
+  border-top: 0.0625rem solid #dcdddf;
+  padding: 0.375rem 0rem;
 }
 
 .ScoringSummaryQuarterHeader th {
-  padding: 8px 0px;
+  padding: 0.5rem 0rem;
 }
 
 .bar-percentage {
   transition: width .4s ease;
   background-color: #d00;
-  border-radius: 5px;
+  border-radius: 0.3125rem;
   display: block;
   height: 100%;
   overflow: hidden;
   padding: 0;
-  text-indent: -9000px;
+  text-indent: -550rem;
 }
 
 .compareLineGraph .bar-total {
-  border-radius: 5px;
-  height: 10px;
+  border-radius: 0.3125rem;
+  height: 0.625rem;
   float: left;
-  margin-top: 9px;
-  margin-bottom: 9px;
-  width: calc(100% - 40px);
+  margin-top: 0.5625rem;
+  margin-bottom: 0.5625rem;
+  width: calc(100% - 2.5rem);
 }
 
 .bar-total {
   display: inline-block;
-  height: 10px;
+  height: 0.625rem;
   overflow: hidden;
   padding: 0;
   width: 100%;
@@ -1510,10 +1511,10 @@ div button.w3-bar-item.btn.selected-bar-button {
 
 .compareLineGraph .chartValue {
   float: right;
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 600;
   line-height: 1;
-  margin-top: 4.5px;
+  margin-top: 0.28125rem;
   text-align: right;
   color: #2b2c2d;
 }
@@ -1530,31 +1531,31 @@ div button.w3-bar-item.btn.selected-bar-button {
   text-align: left;
   text-transform: capitalize;
   color: #2b2c2d;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
-  line-height: 21px;
-  margin-bottom: 8px;
-  margin-top: 8px;
+  line-height: 1.3125rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 
 .colgroup-border-left {
-  border-left: 1px solid rgba(0, 0, 0, 0.175);
+  border-left: 0.0625rem solid rgba(0, 0, 0, 0.175);
 }
 
 td,
 .td-style {
   color: #6c6d6f;
-  font-size: 12.5px;
+  font-size: 0.78125rem;
   vertical-align: middle !important;
 }
 
 th {
-  font-size: 12.5px;
+  font-size: 0.78125rem;
 }
 
 .worldLeagueLeaderTeamLogo {
-  height: 24px;
+  height: 1.5rem;
 }
 
 td.WorldLeagueLeaderRowCell {
@@ -1562,7 +1563,7 @@ td.WorldLeagueLeaderRowCell {
 }
 
 td.WorldLeagueLeaderRowCell.NameCell {
-  min-width: 150px;
+  min-width: 9.375rem;
 }
 
 .GameHeadlineDisplay {
@@ -1571,20 +1572,20 @@ td.WorldLeagueLeaderRowCell.NameCell {
 }
 
 .teamTableBorder {
-  border-left: 12px solid;
+  border-left: 0.75rem solid;
 }
 
 .padding-right {
-  padding-right: 12px;
+  padding-right: 0.75rem;
 }
 
 .WorldPlayerStats-Stat,
 .WorldTeamStats-Stat {
-  padding: 2px 6px;
-  margin-bottom: 8px;
-  border: 1px solid #BBBBBB;
+  padding: 0.125rem 0.375rem;
+  margin-bottom: 0.5rem;
+  border: 0.0625rem solid #BBBBBB;
   display: inline-block;
-  width: 120px;
+  width: 7.5rem;
   text-align: center;
 }
 
@@ -1594,7 +1595,7 @@ td.WorldLeagueLeaderRowCell.NameCell {
 .WorldTeamStats-Stat:hover {
   background-color: #1763B2;
   color: white;
-  border: 1px solid white;
+  border: 0.0625rem solid white;
   font-weight: 600;
 }
 
@@ -1604,48 +1605,48 @@ td.WorldLeagueLeaderRowCell.NameCell {
 }
 
 .bottom-border {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.175);
+  border-bottom: 0.0625rem solid rgba(0, 0, 0, 0.175);
 }
 
 .all-border {
-  border: 1px solid rgba(0, 0, 0, 0.175);
+  border: 0.0625rem solid rgba(0, 0, 0, 0.175);
 }
 
 .gamePlayerBoxStats {
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 .margin-right-4 {
-  margin-right: 4px;
+  margin-right: 0.25rem;
 }
 
 .margin-right-8 {
-  margin-right: 8px;
+  margin-right: 0.5rem;
 }
 
 .margin-right-12 {
-  margin-right: 12px !important;
+  margin-right: 0.75rem !important;
 }
 
 .margin-top-24 {
-  margin-top: 24px;
+  margin-top: 1.5rem;
 }
 
 
 .margin-bottom-24 {
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 }
 
 .margin-8 {
-  margin: 8px;
+  margin: 0.5rem;
 }
 
 .margin-24 {
-  margin: 24px;
+  margin: 1.5rem;
 }
 
 .margin-4 {
-  margin: 4px;
+  margin: 0.25rem;
 }
 
 .center-text {
@@ -1670,7 +1671,7 @@ th.left-text {
 }
 
 .worldUpcomingTable {
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
   background-color: white;
 }
 
@@ -1687,39 +1688,39 @@ th.left-text {
 }
 
 tfoot td {
-  border-bottom: 1px solid black;
+  border-bottom: 0.0625rem solid black;
 }
 
 .datatable-tfoot {
   display: block;
   width: 100%;
-  height: 32px;
-  font-size: 16px;
+  height: 2rem;
+  font-size: 1rem;
   font-weight: 400;
   color: #495057;
   background-color: #fff;
   background-clip: padding-box;
-  border: 1px solid #ced4da;
+  border: 0.0625rem solid #ced4da;
   border-radius: .25rem;
   transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
 .negative-padding-right {
-  padding-right: -20px;
+  padding-right: -1.25rem;
 }
 
 .no-list-style {
   list-style-type: none;
-  padding-left: 10px;
-  margin-bottom: 0px;
+  padding-left: 0.625rem;
+  margin-bottom: 0rem;
 }
 
 .margin-bottom-12 {
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .margin-left-12 {
-  margin-left: 12px !important;
+  margin-left: 0.75rem !important;
 }
 
 .white-text {
@@ -1746,14 +1747,14 @@ tfoot td {
 .MultiCarousel {
   float: left;
   overflow: hidden;
-  padding: 8px;
+  padding: 0.5rem;
   width: 100%;
   position: relative;
 }
 
 .MultiCarousel .MultiCarousel-inner {
   transition: 1s ease all;
-  padding: 3px;
+  padding: 0.1875rem;
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
@@ -1768,21 +1769,21 @@ tfoot td {
 .MultiCarousel .MultiCarousel-inner .scoreboard-carousel-item>div,
 .MultiCarousel .MultiCarousel-inner .headline-carousel-item>div {
   text-align: center;
-  padding: 10px;
-  margin: 10px;
+  padding: 0.625rem;
+  margin: 0.625rem;
   background: #eee;
   color: white;
 }
 
 .recruiting-player-rank {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
 .dot::after {
   content: " \2022 ";
   color: #677A86;
-  padding: 0 3px;
+  padding: 0 0.1875rem;
 }
 
 .ellipsis {
@@ -1810,7 +1811,7 @@ tfoot td {
   flex-grow: 1;
   flex-shrink: 1;
   flex-basis: 0;
-  margin: 0px 0px;
+  margin: 0rem 0rem;
 }
 
 .centered-item {
@@ -1820,33 +1821,33 @@ tfoot td {
 }
 
 .team-header-color-left {
-  width: 250px;
-  margin-left: -100px;
+  width: 15.75rem;
+  margin-left: -6.25rem;
   height: inherit;
   position: absolute;
   z-index: -100;
   transform: skewX(-45deg);
-  border-right: 30px solid;
+  border-right: 1.875rem solid;
 }
 
 
 .team-modal-header-color-left {
-  width: 250px;
-  margin-left: -100px;
+  width: 15.75rem;
+  margin-left: -6.25rem;
   height: inherit;
   position: absolute;
   z-index: 3;
   transform: skewX(-45deg);
-  border-right: 30px solid;
+  border-right: 1.875rem solid;
 }
 
 .team-header-color-right {
-  width: 350px;
-  margin-right: -100px;
+  width: 21.75rem;
+  margin-right: -6.25rem;
   height: inherit;
   z-index: -100;
   transform: skewX(-45deg);
-  border-left: 30px solid;
+  border-left: 1.875rem solid;
   float: right;
 }
 
@@ -1861,13 +1862,13 @@ tfoot td {
 
 .player-highlight-pills,
 .team-highlight-pills {
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-size: 12px;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.625rem;
+  font-size: 0.75rem;
 }
 
 .team-highlight-stat-padding {
-  padding-right: 12px;
+  padding-right: 0.75rem;
 }
 
 .tiers-7 {
@@ -1878,7 +1879,7 @@ tfoot td {
 .tiers-7.elite {
   color: white;
   background-color: #5B90B3;
-  box-shadow: 0px 0px 5px #5B90B3;
+  box-shadow: 0rem 0rem 0.3125rem #5B90B3;
 }
 
 .tiers-7.great {
@@ -1921,7 +1922,7 @@ tfoot td {
 
 .elite {
   color: #174ea6;
-  box-shadow: 0px 0px 5px #174ea6;
+  box-shadow: 0rem 0rem 0.3125rem #174ea6;
   background-color: #e8f0fe;
 }
 
@@ -1947,11 +1948,11 @@ tfoot td {
 }
 
 .W-L-badge {
-  border-radius: 4px;
+  border-radius: 0.25rem;
   color: white;
-  padding: 2px 5px;
-  margin-right: 8px;
-  width: 24px;
+  padding: 0.125rem 0.3125rem;
+  margin-right: 0.5rem;
+  width: 1.5rem;
   text-align: center;
 }
 
@@ -1968,11 +1969,11 @@ div.W-L-badge {
 }
 
 .position-badge {
-  border-radius: 6px;
+  border-radius: 0.375rem;
   font-weight: 600;
   color: rgba(255,255,255,.85);
-  padding: 4px 8px;
-  width: 50px;
+  padding: 0.25rem 0.5rem;
+  width: 3.125rem;
 }
 
 .position-badge.position-badge-QB {
@@ -2037,21 +2038,21 @@ div.W-L-badge {
 }
 
 .rating-badge {
-  border-radius: 6px;
+  border-radius: 0.375rem;
   font-weight: 600;
   color: white;
-  padding: 4px 8px;
+  padding: 0.25rem 0.5rem;
 }
 
 .rating-badge.rating-badge-20 {
   background-color: #174ea6;
-  box-shadow: 0px 0px 5px #174ea6;
+  box-shadow: 0rem 0rem 0.3125rem #174ea6;
   font-weight: 900;
 }
 
 .rating-badge.rating-badge-19 {
   background-color: #5B90B3;
-  box-shadow: 0px 0px 5px #5B90B3;
+  box-shadow: 0rem 0rem 0.3125rem #5B90B3;
   font-weight: 850;
 }
 
@@ -2152,22 +2153,22 @@ div.W-L-badge {
 
 
 .rating-tag {
-  /* border-radius: 6px; */
+  /* border-radius: 0.375rem; */
   /* font-weight: 600; */
   /* color: white; */
-  padding: 2px 4px;
+  padding: 0.125rem 0.25rem;
 }
 
 .rating-tag.rating-tag-20 {
   color: #174ea6;
-  border: 2px solid #174ea6;
+  border: 0.125rem solid #174ea6;
   font-weight: 900;
   white-space: nowrap;
 }
 
 .rating-tag.rating-tag-19 {
   color: #5B90B3;
-  border: 1px solid #5B90B3;
+  border: 0.0625rem solid #5B90B3;
   font-weight: 850;
   white-space: nowrap;
 }
@@ -2396,121 +2397,120 @@ div.W-L-badge {
 }
 
 #player-highlight-info-selection-bar .w3-bar-item {
-  font-size: 14px;
-  padding: 6px 6px;
+  font-size: 0.875rem;
+  padding: 0.375rem 0.375rem;
 }
 
 .w3-bar button {
-  border-radius: 0px !important;
+  border-radius: 0rem !important;
 }
 
 .w3-sidebar ul li a {
-  border-radius: 0px !important;
+  border-radius: 0rem !important;
 }
 
 .tiny {
-  font-size: 10px !important;
+  font-size: 0.625rem !important;
 }
 
 
 .logo {
   object-fit: scale-down;
-  /* filter: drop-shadow(1px 0px 0 white) drop-shadow(0px -1px 0 white) drop-shadow(-1px 0px 0 white) drop-shadow(0px 1px 0 white); */
 }
 .logo-12 {
-  height: 12px;
-  width: 12px;
+  height: 0.75rem;
+  width: 0.75rem;
 }
 .logo-18 {
-  height: 18px;
-  width: 18px;
+  height: 1.125rem;
+  width: 1.125rem;
 }
 
 .logo-24 {
-  height: 24px;
-  width: 24px;
+  height: 1.5rem;
+  width: 1.5rem;
 }
 
 .logo-20 {
-  height: 20px;
-  width: 20px;
+  height: 1.25rem;
+  width: 1.25rem;
 }
 
 .logo-30 {
-  height: 30px;
-  width: 30px;
+  height: 1.875rem;
+  width: 1.875rem;
 }
 
 .logo-40 {
-  height: 40px;
-  width: 40px;
+  height: 2.5rem;
+  width: 2.5rem;
 }
 
 .logo-50 {
-  height: 50px;
-  width: 50px;
+  height: 3.125rem;
+  width: 3.125rem;
 }
 
 .logo-60 {
-  height: 60px;
-  width: 60px;
+  height: 3.75rem;
+  width: 3.75rem;
 }
 
 .logo-90 {
-  height: 90px;
-  width: 90px;
+  height: 5.625rem;
+  width: 5.625rem;
 }
 
 .logo-120 {
-  height: 120px;
-  width: 120px;
+  height: 7.5rem;
+  width: 7.5rem;
 }
 
 .logo-150 {
-  height: 150px;
-  width: 150px;
+  height: 9.375rem;
+  width: 9.375rem;
 }
 
 .light-padding-top {
-  padding: 2px 0px !important;
+  padding: 0.125rem 0rem !important;
 }
 
 .margin-sides-12 {
-  margin: 0px 12px;
+  margin: 0rem 0.75rem;
 }
 
 .no-padding {
-  padding: 0px 0px !important;
+  padding: 0rem 0rem !important;
 }
 
 .sideways {
   transform: rotate(90deg);
-  transform-origin: 10px 100px;
+  transform-origin: 0.625rem 6.25rem;
   position: absolute;
 }
 
 .button-active {
   background-color: white;
-  box-shadow: 0px 2px 8px;
-  border: 1px solid black;
-  border-radius: 50px;
+  box-shadow: 0rem 0.125rem 0.5rem;
+  border: 0.0625rem solid black;
+  border-radius: 3.125rem;
   overflow: visible;
 }
 
 .col-group:not(:last-child) {
-  /* border-right: 1px solid var(--bs-card-border-color); */
-  border-right: 1px solid rgba(0, 0, 0, 0.175);
-  /* box-shadow: 4px 0px 4px 0px rgb(0 0 0 / 16%); */
+  /* border-right: 0.0625rem solid var(--bs-card-border-color); */
+  border-right: 0.0625rem solid rgba(0, 0, 0, 0.175);
+  /* box-shadow: 0.25rem 0rem 0.25rem 0rem rgb(0 0 0 / 16%); */
 }
 
 .col-group-left {
-  border-left: 1px solid rgba(0, 0, 0, 0.175);
+  border-left: 0.0625rem solid rgba(0, 0, 0, 0.175);
 }
 
 table.table tr:last-child {
-  /* border-right: 1px solid var(--bs-card-border-color); */
+  /* border-right: 0.0625rem solid var(--bs-card-border-color); */
   border-bottom-style: hidden;
-  /* box-shadow: 4px 0px 4px 0px rgb(0 0 0 / 16%); */
+  /* box-shadow: 0.25rem 0rem 0.25rem 0rem rgb(0 0 0 / 16%); */
 }
 
 table.table tr {
@@ -2526,7 +2526,7 @@ table.table tr {
 }
 
 .ui-state-highlight {
-  border: 1px solid #dad55e !important;
+  border: 0.0625rem solid #dad55e !important;
   background: #fffa90 !important;
   color: #777620 !important;
 }
@@ -2559,39 +2559,39 @@ table.table tr {
 }
 
 .l12 {
-  max-width: 1100px;
+  max-width: 68.75rem;
 }
 
 .mw400 {
-  max-width: 400px;
+  max-width: 25rem;
 }
 
 .mw500 {
-  max-width: 500px;
+  max-width: 31.25rem;
 }
 
 .mw300 {
-  max-width: 300px;
+  max-width: 18.75rem;
 }
 
 .mw225 {
-  max-width: 225px;
+  max-width: 14rem;
 }
 
 .mw600 {
-  max-width: 600px;
+  max-width: 37.5rem;
 }
 
 .mw800 {
-  max-width: 800px;
+  max-width: 50rem;
 }
 
 .mw1000 {
-  max-width: 1000px;
+  max-width: 62.5rem;
 }
 
 .mw1200 {
-  max-width: 1200px;
+  max-width: 75rem;
 }
 
 .column-flex {
@@ -2608,8 +2608,14 @@ table.table tr {
   margin-bottom: auto;
 }
 
+@media screen and (min-width: 100rem) {
+  html{
+    font-size: 18px !important;
+  }
+}
 
-@media screen and (max-width: 1200px) and (min-width: 1050px) {
+
+@media screen and (max-width: 75rem) and (min-width: 65.25rem) {
   .hide-medium {
     display: none !important;
   }
@@ -2619,7 +2625,7 @@ table.table tr {
   }
 }
 
-@media screen and (max-width: 1049px) and (min-width: 500px) {
+@media screen and (max-width: 65.25rem) and (min-width: 31.25rem) {
 
   .hide-medium,
   .hide-small:not(.sidebar-open) {
@@ -2631,12 +2637,12 @@ table.table tr {
   }
 
   .PageContent {
-    margin-left: 0px;
+    margin-left: 0rem;
   }
 
 }
 
-@media screen and (min-width: 1050px) {
+@media screen and (min-width: 65.25rem) {
   .show-small {
     display: none !important;
   }
@@ -2644,7 +2650,7 @@ table.table tr {
 
 
 
-@media (min-width: 1100px) {
+@media (min-width: 68.75rem) {
   .card-columns {
     column-count: 2;
   }
@@ -2658,7 +2664,7 @@ table.table tr {
   }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 68.75rem) {
   .card-columns {
     column-count: 1;
   }
@@ -2701,15 +2707,15 @@ table.table tr {
 
 .notifyjs-list_sample-base {
   opacity: 0.85;
-  width: 200px;
-  padding: 5px;
-  border-radius: 10px;
+  width: 12.5rem;
+  padding: 0.3125rem;
+  border-radius: 0.625rem;
 }
 
 .notifyjs-list_sample-base .title {
-  width: 100px;
+  width: 6.25rem;
   float: left;
-  margin: 10px 0 0 10px;
+  margin: 0.625rem 0 0 0.625rem;
   text-align: right;
 }
 
@@ -2736,31 +2742,31 @@ thead tr {
 }
 
 .padding-10 {
-  padding: 10px !important;
+  padding: 0.625rem !important;
 }
 
 .padding-left-8 {
-  padding-left: 8px;
+  padding-left: 0.5rem;
 }
 
 .padding-left-16 {
-  padding-left: 16px;
+  padding-left: 1rem;
 }
 
 table tr td.padding-left-8 {
-  padding-left: 8px !important;
+  padding-left: 0.5rem !important;
 }
 
 .padding-top-8 {
-  padding-top: 8px;
+  padding-top: 0.5rem;
 }
 
 .padding-bottom-8 {
-  padding-bottom: 8px;
+  padding-bottom: 0.5rem;
 }
 
 .game-recap-stat-box:nth-child(even) {
-  border-left: 1px solid;
+  border-left: 0.0625rem solid;
 }
 
 .no-link-link {
@@ -2772,7 +2778,7 @@ table tr td.padding-left-8 {
 }
 
 .bevel {
-  box-shadow: inset 0.2em 0.2em 0.2em 0 rgba(255, 255, 255, 0.5), inset -0.2em -0.2em 0.2em 0 rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0.2rem 0.2rem 0.2rem 0 rgba(255, 255, 255, 0.5), inset -0.2rem -0.2rem 0.2rem 0 rgba(0, 0, 0, 0.5);
 }
 
 .column-large {
@@ -2810,23 +2816,23 @@ tr.no-wrap-row td, tr.no-wrap-row th{
 }
 
 .football-table-row:not(:last-child) {
-  margin: 0px;
+  margin: 0rem;
   height: 100%;
-  border-bottom: 1px solid var(--bs-card-border-color);
+  border-bottom: 0.0625rem solid var(--bs-card-border-color);
 }
 
 .football-table-row td,
 .football-table-header th {
   align-self: center;
-  padding: 10px;
-  width: 60px;
+  padding: 0.625rem;
+  width: 3.75rem;
   border-color: none;
 }
 
 .football-table-content col,
 .football-table-column-headers th {
-  width: 60px;
-  border-bottom-width: 0px;
+  width: 3.75rem;
+  border-bottom-width: 0rem;
 }
 
 .football-table-group {
@@ -2839,15 +2845,15 @@ tr.no-wrap-row td, tr.no-wrap-row th{
 
 
 .football-table-column-headers th.sort-desc {
-  -webkit-box-shadow: inset 0 -2px 0px 0px white;
-  box-shadow: inset 0 -2px 0px 0px white;
+  -webkit-box-shadow: inset 0 -0.125rem 0rem 0rem white;
+  box-shadow: inset 0 -0.125rem 0rem 0rem white;
   -webkit-filter: brightness(90%);
   filter: brightness(90%);
 }
 
 .football-table-column-headers th.sort-asc {
-  -webkit-box-shadow: inset 0 2px 0px 0px white;
-  box-shadow: inset 0 2px 0px 0px white;
+  -webkit-box-shadow: inset 0 0.125rem 0rem 0rem white;
+  box-shadow: inset 0 0.125rem 0rem 0rem white;
   -webkit-filter: brightness(90%);
   filter: brightness(90%);
 }
@@ -2900,28 +2906,27 @@ a i.fa:hover {
 
 button.football-table-filter-option,
 button.football-table-column-control-option {
-  margin: 2px;
-  border: 1.5px solid rgba(0, 0, 0, 0.175);
-  min-width: 70px;
+  margin: 0.125rem;
+  border: 0.1rem solid rgba(0, 0, 0, 0.175);
+  min-width: 4.375rem;
 
   -webkit-transition: all .5s ease;
   -moz-transition: all .5s ease;
   -o-transition: all .5s ease;
   -ms-transition: all .5s ease;
   transition: all .5s ease;
-  /* width: 160px !important; */
 }
 
 button.btn.football-table-pagination-button {
-  margin: 2px;
-  border-radius: 10px;
-  border: 1.5px solid rgba(0, 0, 0, 0.175) !important;
-  min-width: 40px;
+  margin: 0.125rem;
+  border-radius: 0.625rem;
+  border: 0.1rem solid rgba(0, 0, 0, 0.175) !important;
+  min-width: 2.5rem;
 }
 
 button.btn.football-table-pagination-button.selected {
   background-color: rgba(0, 0, 0, 0.175) !important;
-  border: 1.5px solid black !important;
+  border: 0.1rem solid black !important;
   color: black !important;
 
   -webkit-transition: all .5s ease;
@@ -2948,7 +2953,7 @@ a:hover:not(.no-hover) {
   color: inherit;
   /* font-weight: bolder; */
   /* filter: brightness(85%); */
-  text-shadow: .25px .25px 0px;
+  text-shadow: 0.0156rem 0.0156rem 0rem;
   text-decoration: underline;
 }
 
@@ -3019,7 +3024,7 @@ table {
 .close {
   color: #aaa;
   float: right;
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: bold;
 }
 
@@ -3050,7 +3055,7 @@ table {
 
 
 .football-table-alter-modal .modal-content {
-  margin: 30px auto;
+  margin: 1.875rem auto;
   width: 35%;
   max-height: 85%;
 }
@@ -3070,15 +3075,15 @@ table {
 
 
 .bracket .game {
-  border: 2px solid black;
-  border-left-width: 0px;
+  border: 0.125rem solid black;
+  border-left-width: 0rem;
 }
 
 
 
 .bracket .game {
-  min-height: 100px;
-  margin-bottom: 25px;
+  min-height: 6.25rem;
+  margin-bottom: 1.5625rem;
 }
 
 
@@ -3104,7 +3109,7 @@ table {
 
 .moving-gradient {
   background: linear-gradient(to right, #eee 20%, #ddd 50%, #eee 80%);
-  background-size: 300px 100px;
+  background-size: 18.75rem 6.25rem;
   animation-name: moving-gradient;
   animation-duration: 5s;
   animation-iteration-count: infinite;
@@ -3113,7 +3118,7 @@ table {
 }
 
 .indent {
-  text-indent: 12px;
+  text-indent: 0.75rem;
 }
 
 .children-align-middle>* {
@@ -3142,7 +3147,7 @@ button.no-hover:hover {
 
 .btn {
   display: inline-block;
-  /* padding: 8px 16px; */
+  /* padding: 0.5rem 1rem; */
   vertical-align: middle;
   overflow: hidden;
   text-decoration: none;
@@ -3173,23 +3178,23 @@ button.no-hover:hover {
 }
 
 .square-border {
-  border-radius: 0px !important;
+  border-radius: 0rem !important;
 }
 
 
 .card .table {
-  margin-bottom: 0px !important;
+  margin-bottom: 0rem !important;
 }
 
 .table td {
-  padding: 8px 8px;
+  padding: 0.5rem 0.5rem;
   display: table-cell;
   text-align: left;
   vertical-align: top;
 }
 
 .table th {
-  padding: 8px 8px;
+  padding: 0.5rem 0.5rem;
   display: table-cell;
   text-align: left;
   vertical-align: middle;
@@ -3211,8 +3216,8 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
 }
 
 .football-chart-svg-container{
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .float-right {
@@ -3228,26 +3233,26 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
 }
 
 .css-1cjjjow .DenseOutcome-content .DenseOutcome-logo {
-  border-bottom-left-radius: 9999px;
-  border-top-left-radius: 9999px;
-  width: 120px;
+  border-bottom-left-radius: 100rem;
+  border-top-left-radius: 100rem;
+  width: 7.5rem;
 }
 
 .css-1cjjjow.DenseOutcome--confidence .DenseOutcome-content .DenseOutcome-logo {
-  width: 72px !important;
+  width: 6rem !important;
 }
 
 .css-1re92qu .OutcomeLogo-overlayGradient {
   background: linear-gradient(rgba(0, 0, 0, 0), rgba(21, 22, 23, 0.4));
-  inset: 0px;
+  inset: 0rem;
   position: absolute;
 }
 
 .css-1re92qu .OutcomeLogo-overlayAngles {
   -webkit-box-align: center;
   align-items: center;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.5) 0px, rgba(255, 255, 255, 0.5) 18%, rgba(255, 255, 255, 0.3) 18%, rgba(255, 255, 255, 0.3) 28%, rgba(255, 255, 255, 0) 28%, rgba(255, 255, 255, 0) 77%, rgba(0, 0, 0, 0.3) 77%, rgba(0, 0, 0, 0.3) 87%, rgba(0, 0, 0, 0.5) 87%, rgba(0, 0, 0, 0.5) 100%);
-  inset: 0px;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.5) 0rem, rgba(255, 255, 255, 0.5) 18%, rgba(255, 255, 255, 0.3) 18%, rgba(255, 255, 255, 0.3) 28%, rgba(255, 255, 255, 0) 28%, rgba(255, 255, 255, 0) 77%, rgba(0, 0, 0, 0.3) 77%, rgba(0, 0, 0, 0.3) 87%, rgba(0, 0, 0, 0.5) 87%, rgba(0, 0, 0, 0.5) 100%);
+  inset: 0rem;
   display: flex;
   -webkit-box-pack: center;
   justify-content: center;

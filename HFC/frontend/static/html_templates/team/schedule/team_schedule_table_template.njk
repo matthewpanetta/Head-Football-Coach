@@ -9,11 +9,11 @@
     <div style='max-width: 100%; width:100%; overflow-x: scroll;'>
         <table class='football-table-content font14' style='table-layout: fixed; max-width: 100%; width:100%; '>
             <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
-                <tr class='football-table-column-headers unselectable' style=' height: 30px; '>
+                <tr class='football-table-column-headers unselectable' style=' height: 1.875rem; '>
                     <!-- BASELINE -->
-                    <th style='max-width: 40px;' class='center-text' sort-order='sort-asc'>Week</th>
-                    <th style='max-width: 40px;' class='center-text' sort-order='sort-asc'>Team</th>
-                    <th style='min-width: 70px;' class='left-text' sort-order='sort-asc'></th>
+                    <th style='max-width: 2.5rem;' class='center-text' sort-order='sort-asc'>Week</th>
+                    <th style='max-width: 2.5rem;' class='center-text' sort-order='sort-asc'>Team</th>
+                    <th style='min-width: 4.375rem;' class='left-text' sort-order='sort-asc'></th>
                     <th class='center-text' sort-order='sort-asc'>Result</th>
                     <th  class='center-text no-sort'>Record</th>
                     <th class='no-sort left-text'>Top Player</th>
@@ -23,17 +23,17 @@
             </thead>
             <tbody class='football-table-body center-text vertical-align-middle' style=' min-height: 100%; width: 100%; max-width: 100%;'>
                 {% if data|length == 0%}
-                <tr class='football-table-row left-text vertical-align-middle' style='height: 30px;'>
+                <tr class='football-table-row left-text vertical-align-middle' style='height: 1.875rem;'>
                   <td colspan="5">No Games To Display</td>
                 </tr>
                 {% endif %}
                 {% for game in data%}
-                <tr class='football-table-row  ' style='height: 30px;' game_id='{{game.game_id}}'>
+                <tr class='football-table-row  ' style='height: 1.875rem;' game_id='{{game.game_id}}'>
                     <!-- BASELINE -->
-                    <td value='{{game.week.week_id}}' style='color: white; width: 70px; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
+                    <td value='{{game.week.week_id}}' style='color: white; width: 4.375rem; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
                       <span>{{game.week.week_name}}</span>
                     </td>
-                    <td value='{{game.opponent_team_game.team_season.team.school_name}}' style='color: white; width: 10px; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
+                    <td value='{{game.opponent_team_game.team_season.team.school_name}}' style='color: white; width: 0.625rem; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
                       <a href='{{game.opponent_team_game.team_season.team.team_href}}'>
                         <img class='logo logo-50' src='{{game.opponent_team_game.team_season.team.team_logo}}'/>
                       </a>

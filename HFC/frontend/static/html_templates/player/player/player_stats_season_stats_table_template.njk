@@ -9,7 +9,7 @@
 
       <table id='season-stats-passing' class='football-table-content font14' style=' width:100%; '>
         <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
-          <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
+          <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 1.875rem; '>
             <th>Season</th>
             <th>Team</th>
             <th>Class</th>
@@ -24,7 +24,7 @@
         </thead>
         <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
           {% for player_team_season in player_team_seasons%}
-            <tr class='football-table-row  ' style='height: 50px;'>
+            <tr class='football-table-row  ' style='height: 3.125rem;'>
               <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
                 <a href='{{player_team_season.team_season.team_season_href}}'>
                   {{player_team_season.season}}
@@ -46,7 +46,7 @@
             </tr>
           {% endfor %}
           {%if player_team_seasons|length > 1%}
-            <tr class='football-table-row bold ' style='height: 50px;'>
+            <tr class='football-table-row bold ' style='height: 3.125rem;'>
               <td>
               Totals
             </td>
@@ -76,7 +76,7 @@
 
         <table id='season-stats-rushing' class='football-table-content font14' style=' width:100%; '>
           <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
-            <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
+            <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 1.875rem; '>
               <th>Season</th>
               <th>Team</th>
               <th>Class</th>
@@ -93,7 +93,7 @@
           </thead>
           <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
             {% for player_team_season in player_team_seasons%}
-              <tr class='football-table-row  ' style='height: 50px;'>
+              <tr class='football-table-row  ' style='height: 3.125rem;'>
                 <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
                   <a href='{{player_team_season.team_season.team_season_href}}'>
                     {{player_team_season.season}}
@@ -118,7 +118,7 @@
               </tr>
             {% endfor %}
             {%if player_team_seasons|length > 1%}
-              <tr class='football-table-row bold ' style='height: 50px;'>
+              <tr class='football-table-row bold ' style='height: 3.125rem;'>
                 <td>
               Totals
             </td>
@@ -150,7 +150,7 @@
 
           <table id='season-stats-receiving' class='football-table-content font14' style=' width:100%; '>
             <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
-              <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
+              <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 1.875rem; '>
                 <th>Season</th>
                 <th>Team</th>
                 <th>Class</th>
@@ -164,7 +164,7 @@
             </thead>
             <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
               {% for player_team_season in player_team_seasons%}
-                <tr class='football-table-row  ' style='height: 50px;'>
+                <tr class='football-table-row  ' style='height: 3.125rem;'>
                   <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
                     <a href='{{player_team_season.team_season.team_season_href}}'>
                       {{player_team_season.season}}
@@ -185,7 +185,7 @@
                 </tr>
               {% endfor %}
               {%if player_team_seasons|length > 1%}
-                <tr class='football-table-row bold ' style='height: 50px;'>
+                <tr class='football-table-row bold ' style='height: 3.125rem;'>
                   <td>
               Totals
             </td>
@@ -214,7 +214,7 @@
 
             <table id='season-stats-blocking' class='football-table-content font14' style=' width:100%; '>
               <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
-                <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
+                <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 1.875rem; '>
                   <th>Season</th>
                   <th>Team</th>
                   <th>Class</th>
@@ -225,7 +225,7 @@
               </thead>
               <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
                 {% for player_team_season in player_team_seasons%}
-                  <tr class='football-table-row  ' style='height: 50px;'>
+                  <tr class='football-table-row  ' style='height: 3.125rem;'>
                     <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
                       <a href='{{player_team_season.team_season.team_season_href}}'>
                         {{player_team_season.season}}
@@ -243,7 +243,7 @@
                   </tr>
                 {% endfor %}
                 {%if player_team_seasons|length > 1%}
-                  <tr class='football-table-row bold ' style='height: 50px;'>
+                  <tr class='football-table-row bold ' style='height: 3.125rem;'>
                     <td>
               Totals
             </td>
@@ -269,7 +269,7 @@
 
               <table id='season-stats-defense' class='football-table-content font14' style=' width:100%; '>
                 <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
-                  <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
+                  <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 1.875rem; '>
                     <th>Season</th>
                     <th>Team</th>
                     <th>Class</th>
@@ -285,7 +285,7 @@
                 </thead>
                 <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
                   {% for player_team_season in player_team_seasons%}
-                    <tr class='football-table-row  ' style='height: 50px;'>
+                    <tr class='football-table-row  ' style='height: 3.125rem;'>
                       <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
                         <a href='{{player_team_season.team_season.team_season_href}}'>
                           {{player_team_season.season}}
@@ -308,7 +308,7 @@
                     </tr>
                   {% endfor %}
                   {%if player_team_seasons|length > 1%}
-                    <tr class='football-table-row bold ' style='height: 50px;'>
+                    <tr class='football-table-row bold ' style='height: 3.125rem;'>
                       <td colspan='1'>
               Totals
             </td>
@@ -339,7 +339,7 @@
 
                 <table id='season-stats-kicking' class='football-table-content font14' style=' width:100%; '>
                   <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%;'>
-                    <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 30px; '>
+                    <tr class='football-table-column-headers unselectable team-secondary-table-row' style=' height: 1.875rem; '>
                       <th>Season</th>
                       <th>Team</th>
                       <th>Class</th>
@@ -352,7 +352,7 @@
                   </thead>
                   <tbody class='football-table-body center-text vertical-align-middle' style='width: 100%;'>
                     {% for player_team_season in player_team_seasons%}
-                      <tr class='football-table-row  ' style='height: 50px;'>
+                      <tr class='football-table-row  ' style='height: 3.125rem;'>
                         <td style='color:white; background-color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
                           <a href='{{player_team_season.team_season.team_season_href}}'>
                             {{player_team_season.season}}
@@ -372,7 +372,7 @@
                       </tr>
                     {% endfor %}
                     {%if player_team_seasons|length > 1%}
-                      <tr class='football-table-row bold ' style='height: 50px;'>
+                      <tr class='football-table-row bold ' style='height: 3.125rem;'>
                         <td colspan='1'>
               Totals
             </td>

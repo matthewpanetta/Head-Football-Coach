@@ -12,7 +12,7 @@
       {% include "../../static/html_templates/common_templates/scoreboard.njk" %}
     </div>
     <nav>
-      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
         <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
           <i class="fas fa-bars"></i>
         </button>
@@ -27,7 +27,7 @@
     <div id="nav-tabContent">
       <div class="tab-content" style="display:block;"  id="nav-season-records" >
         {% for stat_category in [1,2,3]%}
-          <div class="card margin-bottom-24 inline-block loading-card" style='width: 380px; margin-left: 20px;'>
+          <div class="card margin-bottom-24 inline-block loading-card" style='width: 23.75rem; margin-left: 1.25rem;'>
             <div class='team-primary-background-bar'>
               Loading stats...
             </div>
@@ -66,7 +66,7 @@
                     <td class='moving-gradient center-text bold' style='color:white;'>
                       {{loop.index + 1}}
                     </td>
-                    <td colspan='2' style='padding-left: 24px;'>
+                    <td colspan='2' style='padding-left: 1.5rem;'>
                       <div>
                       </div>
                       
@@ -83,7 +83,7 @@
       </div>
       <div class="tab-content" style="display:none;"  id="nav-game-records" >
         {% for stat_category in [1,2,3]%}
-          <div class="card margin-bottom-24 inline-block loading-card" style='width: 380px; margin-left: 20px;'>
+          <div class="card margin-bottom-24 inline-block loading-card" style='width: 23.75rem; margin-left: 1.25rem;'>
             <div class='team-primary-background-bar'>
               Loading stat...
             </div>
@@ -122,7 +122,7 @@
                     <td class='moving-gradient center-text bold' style='color:white;'>
                       {{loop.index + 1}}
                     </td>
-                    <td colspan='2' style='padding-left: 24px;'>
+                    <td colspan='2' style='padding-left: 1.5rem;'>
                       <div>
                       </div>
                       

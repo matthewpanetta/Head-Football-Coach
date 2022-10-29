@@ -5,31 +5,31 @@
     .team-color-button-white {
       background-color: white !important;
       color: #{{page.PrimaryColor}} !important;
-      border: 2px solid white;
+      border: 0.125rem solid white;
     } 
     
     button.btn.team-color-button {
       background-color: #{{page.PrimaryColor}} !important;
       color: white !important;
-      border: 2px solid #{{page.PrimaryColor}} !important;
+      border: 0.125rem solid #{{page.PrimaryColor}} !important;
     } 
 
     {# button.btn {
       background-color: #{{page.PrimaryColor}} !important;
       color: white !important;
-      border: 2px solid #{{page.PrimaryColor}} !important;
+      border: 0.125rem solid #{{page.PrimaryColor}} !important;
     }  #}
 
     button.btn.selected-tab {
       background-color: #{{page.SecondaryColor}} !important;
       color: white !important;
-      border: 2px solid #{{page.PrimaryColor}} ;
+      border: 0.125rem solid #{{page.PrimaryColor}} ;
     } 
 
     button.btn.team-color-button:not(.no-hover):hover {
       background-color: white !important;
       color: #{{page.PrimaryColor}} !important;
-      border: 2px solid #{{page.PrimaryColor}} ;
+      border: 0.125rem solid #{{page.PrimaryColor}} ;
 
       transition: all .25s ease;
     }
@@ -37,7 +37,7 @@
     .team-color-button-white:not(.no-hover):hover {
       background-color: white !important;
       color: #{{page.PrimaryColor}} !important;
-      border: 2px solid #{{page.PrimaryColor}} ;
+      border: 0.125rem solid #{{page.PrimaryColor}} ;
 
       transition: all .25s ease;
     }
@@ -45,7 +45,7 @@
     nav button.btn:not(.no-hover):hover {
       background-color: white !important;
       color: #{{page.PrimaryColor}} !important;
-      border: 2px solid #{{page.PrimaryColor}} ;
+      border: 0.125rem solid #{{page.PrimaryColor}} ;
 
       transition: all .25s ease;
     }
@@ -63,28 +63,28 @@
     }
 
     .team-color-border{
-      border: 1px solid #{{page.PrimaryColor|DefaultIfTooLight(page.SecondaryColor)|DefaultIfTooLight('000')}} !important;
+      border: 0.0625rem solid #{{page.PrimaryColor|DefaultIfTooLight(page.SecondaryColor)|DefaultIfTooLight('000')}} !important;
     }
 
     .team-primary-background {
       background-color: #{{page.PrimaryColor}} !important;
       color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
-      border-top: 4px solid #{{page.SecondaryColor}} !important;
+      border-top: 0.25rem solid #{{page.SecondaryColor}} !important;
     }
 
     .team-primary-background-bar {
       background-color: #{{page.PrimaryColor}} !important;
       color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
-      font-size: 12.5px;
+      font-size: 0.7825rem;
       font-weight: bold;
-      padding: 8px 16px;
-      border-top: 4px solid #{{page.SecondaryColor}} !important;
+      padding: 0.5rem 1rem;
+      border-top: 0.25rem solid #{{page.SecondaryColor}} !important;
     }
 
     .team-primary-background-bar-generic {
-      font-size: 12.5px;
+      font-size: 0.7825rem;
       font-weight: bold;
-      padding: 8px 16px;
+      padding: 0.5rem 1rem;
     }
 
     .team-secondary-table-row {
@@ -95,10 +95,10 @@
     .team-secondary-background-bar {
       background-color: #{{page.SecondaryColor}} !important;
       color: #{{page.SecondaryColor|TeamBackgroundFontColor}} !important;
-      font-size: 12.5px;
+      font-size: 0.7825rem;
       font-weight: bold;
-      padding: 8px 16px;
-      border-top: 4px solid #{{page.PrimaryColor}} !important;
+      padding: 0.5rem 1rem;
+      border-top: 0.25rem solid #{{page.PrimaryColor}} !important;
     }
 
     .team-secondary-table-row td {
@@ -128,11 +128,11 @@
       }
 
       .form-range:focus::-webkit-slider-thumb {
-          box-shadow: 0 0 0 1px #fff, 0 0 0 .25rem {{page.PrimaryColor|HexToRGBA('.25')}};
+          box-shadow: 0 0 0 0.0625rem #fff, 0 0 0 .25rem {{page.PrimaryColor|HexToRGBA('.25')}};
       }
 
       .form-range:focus::-moz-range-thumb {
-          box-shadow: 0 0 0 1px #fff, 0 0 0 .25rem {{page.PrimaryColor|HexToRGBA('.25')}};
+          box-shadow: 0 0 0 0.0625rem #fff, 0 0 0 .25rem {{page.PrimaryColor|HexToRGBA('.25')}};
       }
   </style>
 

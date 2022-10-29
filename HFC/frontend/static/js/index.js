@@ -9049,6 +9049,9 @@ const sim_week_games = async (this_week, common) => {
     "stats"
   );
 
+  let user_team_season = team_seasons.find(ts => ts.is_user_team)
+  let user_team_season_id = user_team_season ? user_team_season.team_season_id : 0;
+
   var team_seasons_by_team_season_id = await index_group(
     team_seasons,
     "index",
@@ -9094,11 +9097,19 @@ const sim_week_games = async (this_week, common) => {
     "player_id"
   );
 
-  games_this_week = await db.game
+  let games_this_week = await db.game
     .where({ week_id: this_week.week_id })
     .toArray();
   games_this_week = games_this_week.filter((g) => g.was_played == false);
-  games_this_week = games_this_week.sort((g_a, g_b) => g_a.summed_national_rank - g_b.summed_national_rank);
+  games_this_week = games_this_week.sort(function(g_a, g_b){
+    if (g_a.home_team_season_id == user_team_season_id || g_a.away_team_season_id == user_team_season_id){
+      return -1
+    }
+    else if (g_b.home_team_season_id == user_team_season_id || g_b.away_team_season_id == user_team_season_id){
+      return 1
+    }
+    else { return g_a.summed_national_rank - g_b.summed_national_rank}
+  });
   //games_this_week = games_this_week.filter((g) => g.home_team_season_id > 0 && g.away_team_season_id > 0);
   //games_this_week = games_this_week.filter(g => g.was_played == false);
 

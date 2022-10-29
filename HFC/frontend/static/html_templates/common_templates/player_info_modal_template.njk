@@ -2,7 +2,7 @@
     .player-primary-background-bar {
     background-color: #{{page.PrimaryColor}} !important;
     color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
-    border-top: 4px solid #{{page.SecondaryColor}} !important;
+    border-top: 0.25rem solid #{{page.SecondaryColor}} !important;
   }
 </style>
 
@@ -15,7 +15,7 @@
   </div>
   <div class='player-modal-header'>
     <div class="team-modal-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
-    <a href='{{player.current_player_team_season.team_season.team.team_href}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 180px;' {% endif %}{% endif %}>
+    <a href='{{player.current_player_team_season.team_season.team.team_href}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 11.25rem;' {% endif %}{% endif %}>
       {% if player.current_player_team_season.team_season.team.team_logo %}
         <img class='player-modal-team-logo logo logo-120' src='{{player.current_player_team_season.team_season.team.team_logo}}' alt="My image">
       {%elif SignedTeam.LogoURL%}
@@ -25,7 +25,7 @@
     <div class="PlayerFace PlayerFace-120" id='player-modal-player-face'>
       {{player.PlayerFaceSVG|safe}}
     </div>
-    <div class='inline-block align-bottom' style='padding-bottom: 15px;'>
+    <div class='inline-block align-bottom' style='padding-bottom: 0.9375rem;'>
       <div class='playerHeaderInfo'>
         <span class='playerFirstName'>
           {{player.name.first}}
@@ -73,7 +73,7 @@
             <div>
               {{player.current_player_team_season.class.class_name}}
               {% if player.redshirt.current %}
-                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>
+                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
               {% endif %}
             </div>
             <div class='font10'>CLASS</div>

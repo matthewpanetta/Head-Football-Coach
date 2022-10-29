@@ -8,13 +8,13 @@
   <div style='max-width: 100%; width:100%; overflow-x: scroll;'>
     <table class='football-table-content font14' style='table-layout: fixed; max-width: 100%; width:100%; '>
         {% if display_team %}
-        <col style='width:  50px;'>
-        <col style='width: 90px;'>
+        <col style='width:  3.125rem;'>
+        <col style='width: 5.625rem;'>
         {% endif %}
 
       <!-- BASELINE -->
-      <col style='width:  30px;'>
-      <col style='width: 150px;'>
+      <col style='width:  1.875rem;'>
+      <col style='width: 9.375rem;'>
       <col>
       <col>
       <col>
@@ -22,12 +22,12 @@
 
       {% if column_controls.Personal.personal.shown %}
         <!-- PERSONAL -->
-        <col style='width: 120px;'>
+        <col style='width: 7.5rem;'>
       {% endif %}
 
       {% if column_controls.Personal.recruiting.shown %}
         <!-- PERSONAL -->
-        <col style='width: 120px;'>
+        <col style='width: 7.5rem;'>
       {% endif %}
 
       {% if column_controls.Stats.games.shown %}
@@ -153,109 +153,109 @@
       {% endif %}
 
       <thead class='football-table-header  minor-bold white-text center-text' style=' width: 100%; max-width: 100%;'>
-        <tr class='football-table-column-groups team-primary-background-bar card-header' style=' height: 30px;'>
+        <tr class='football-table-column-groups team-primary-background-bar card-header' style=' height: 1.875rem;'>
           <!-- BASELINE -->
           {% if display_team %}
-          <th colspan='2' style='width: 150px;' class='center-text col-group'>Team</th>
+          <th colspan='2' style='width: 9.375rem;' class='center-text col-group'>Team</th>
           {% endif %}
 
-          <th colspan='6' style='width: 410px;' class='center-text col-group'>Player</th>
+          <th colspan='6' style='width: 25.625rem;' class='center-text col-group'>Player</th>
 
           {% if column_controls.Personal.personal.shown %}
             <!-- PERSONAL -->
-            <th colspan='1' style='width:  120px;' class='center-text col-group'>Personal Info</th>
+            <th colspan='1' style='width:  7.5rem;' class='center-text col-group'>Personal Info</th>
           {% endif %}
 
           {% if column_controls.Personal.recruiting.shown %}
             <!-- PERSONAL -->
-            <th colspan='2' style='width:  120px;' class='col-group'>Recruiting</th>
+            <th colspan='2' style='width:  7.5rem;' class='col-group'>Recruiting</th>
           {% endif %}
 
           {% if column_controls.Stats.games.shown %}
             <!-- GAMES STATS -->
-            <th colspan='6' style='width: 360px;' class=' col-group'>Game Stats</th>
+            <th colspan='6' style='width: 22.5rem;' class=' col-group'>Game Stats</th>
           {% endif %}
 
           {% if column_controls.Stats.passing.shown %}
             <!-- PASSING -->
-            <th colspan='6' style='width: 360px;' class=' col-group'>Passing Stats</th>
+            <th colspan='6' style='width: 22.5rem;' class=' col-group'>Passing Stats</th>
           {% endif %}
 
           {% if column_controls.Stats.rushing.shown %}
             <!-- RUSHING -->
-            <th colspan='5' style='width: 300px;' class=' col-group'>Rushing Stats</th>
+            <th colspan='5' style='width: 18.75rem;' class=' col-group'>Rushing Stats</th>
           {% endif %}
 
           {% if column_controls.Stats.receiving.shown %}
             <!-- RECEIVING -->
-            <th colspan='5'  style='width: 300px;' class=' col-group'>Receiving Stats</th>
+            <th colspan='5'  style='width: 18.75rem;' class=' col-group'>Receiving Stats</th>
           {% endif %}
 
           {% if column_controls.Stats.blocking.shown %}
             <!-- BLOCKING STATS -->
-            <th colspan='2'  style='width: 120px;' class=' col-group'>Blocking Stats</th>
+            <th colspan='2'  style='width: 7.5rem;' class=' col-group'>Blocking Stats</th>
           {% endif %}
 
           {% if column_controls.Stats.defense.shown %}
             <!-- DEFENSE STATS -->
-            <th colspan='7'  style='width: 420px;' class='col-group '>Defensive Stats</th>
+            <th colspan='7'  style='width: 26.25rem;' class='col-group '>Defensive Stats</th>
           {% endif %}
 
           {% if column_controls.Stats.kicking.shown %}
             <!-- KICKING STATS -->
-            <th colspan='4'  style='width: 240px;' class='col-group '>Kicking Stats</th>
+            <th colspan='4'  style='width: 15rem;' class='col-group '>Kicking Stats</th>
           {% endif %}
 
           {% if column_controls.Ratings.overall.shown %}
             <!-- AWRDAS STATS -->
-            <th colspan='2'  style='width: 120px;' class='col-group '>Overall Ratings</th>
+            <th colspan='2'  style='width: 7.5rem;' class='col-group '>Overall Ratings</th>
           {% endif %}
           
           {% if column_controls.Ratings.passing.shown %}
             <!-- AWRDAS STATS -->
-            <th colspan='7'  style='width: 420px;' class='col-group '>Throwing Ratings</th>
+            <th colspan='7'  style='width: 26.25rem;' class='col-group '>Throwing Ratings</th>
           {% endif %}
 
           {% if column_controls.Ratings.rushing.shown %}
             <!-- AWRDAS STATS -->
-            <th colspan='4'  style='width: 240px;' class='col-group '>Running Ratings</th>
+            <th colspan='4'  style='width: 15rem;' class='col-group '>Running Ratings</th>
           {% endif %}
 
           {% if column_controls.Ratings.receiving.shown %}
             <!-- AWRDAS STATS -->
-            <th colspan='4'  style='width: 180px;' class=' col-group'>Receiving Ratings</th>
+            <th colspan='4'  style='width: 11.25rem;' class=' col-group'>Receiving Ratings</th>
           {% endif %}
 
           {% if column_controls.Ratings.blocking.shown %}
             <!-- AWRDAS STATS -->
-            <th colspan='3'  style='width: 180px;' class='col-group '>Blocking Ratings</th>
+            <th colspan='3'  style='width: 11.25rem;' class='col-group '>Blocking Ratings</th>
           {% endif %}
 
           {% if column_controls.Ratings.athleticism.shown %}
             <!-- AWRDAS STATS -->
-            <th colspan='7'  style='width: 420px;' class='col-group '>Athleticism Ratings</th>
+            <th colspan='7'  style='width: 26.25rem;' class='col-group '>Athleticism Ratings</th>
           {% endif %}
 
           {% if column_controls.Ratings.defense.shown %}
             <!-- AWRDAS STATS -->
-            <th colspan='9'  style='width: 540px;' class='col-group '>Defense Ratings</th>
+            <th colspan='9'  style='width: 33.75rem;' class='col-group '>Defense Ratings</th>
           {% endif %}
 
           {% if column_controls.Ratings.kicking.shown %}
             <!-- AWRDAS STATS -->
-            <th colspan='2'  style='width: 120px;' class='col-group '>Kicking Ratings</th>
+            <th colspan='2'  style='width: 7.5rem;' class='col-group '>Kicking Ratings</th>
           {% endif %}
 
         </tr>
-        <tr class='football-table-column-headers unselectable' style=' height: 30px; '>
+        <tr class='football-table-column-headers unselectable' style=' height: 1.875rem; '>
           {% if display_team %}
-          <th style='width: 50px; left: 0px;' class='sticky-column' value-key='player_team_season.team_season.team.full_name' sort-order='sort-asc'></th>
-          <th style='width: 90px; left: 30px;' class='left-text sticky-column col-group' value-key='player_team_season.team_season.team.school_name' sort-order='sort-asc'>Team</th>
+          <th style='width: 3.125rem; left: 0rem;' class='sticky-column' value-key='player_team_season.team_season.team.full_name' sort-order='sort-asc'></th>
+          <th style='width: 5.625rem; left: 1.875rem;' class='left-text sticky-column col-group' value-key='player_team_season.team_season.team.school_name' sort-order='sort-asc'>Team</th>
           {% endif %}
 
           <!-- BASELINE -->
-          <th style='width: 30px; left: 0px;' class='sticky-column'></th>
-          <th style='width: 150px; left: 30px;' class='left-text sticky-column' value-key='full_name' sort-order='sort-asc'>Name</th>
+          <th style='width: 1.875rem; left: 0rem;' class='sticky-column'></th>
+          <th style='width: 9.375rem; left: 1.875rem;' class='left-text sticky-column' value-key='full_name' sort-order='sort-asc'>Name</th>
           <th value-key='player_team_season.position_sort_order' sort-order='sort-asc'>Pos</th>
           <th value-key='player_team_season.class_sort_order'>Class</th>
           <th value-key='body.height_inches'>Ht</th>
@@ -263,17 +263,17 @@
 
           {% if column_controls.Personal.personal.shown %}
             <!-- PERSONAL -->
-            <th style='width:  120px;' class='col-group left-text' value-key='hometown_and_state'>
+            <th style='width:  7.5rem;' class='col-group left-text' value-key='hometown_and_state'>
               Hometown
             </th>
           {% endif %}
 
           {% if column_controls.Personal.recruiting.shown %}
             <!-- PERSONAL -->
-            <th style='width:  60px;' class='' value-key='recruiting.national_rank'>
+            <th style='width:  3.75rem;' class='' value-key='recruiting.national_rank'>
               Rank
             </th>
-            <th style='width:  60px;' class='col-group' value-key='recruiting.national_rank'>
+            <th style='width:  3.75rem;' class='col-group' value-key='recruiting.national_rank'>
               Other
             </th>
           {% endif %}
@@ -416,30 +416,30 @@
       </thead>
       <tbody class='football-table-body center-text vertical-align-middle' style=' min-height: 100%; width: 100%; max-width: 100%;'>
         {% if data|length == 0%}
-          <tr class='football-table-row left-text vertical-align-middle' style='height: 30px;'>
+          <tr class='football-table-row left-text vertical-align-middle' style='height: 1.875rem;'>
             <td colspan="2">No players selected</td>
           </tr>
         {% endif %}
 
         {% for player in data%}
-          <tr class='football-table-row  ' style='height: 30px;' player_id='{{player.player_id}}'>
+          <tr class='football-table-row  ' style='height: 1.875rem;' player_id='{{player.player_id}}'>
             {% if display_team %}
-            <td style='width: 50px; left: 0px; background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}};' class='sticky-column'>
+            <td style='width: 3.125rem; left: 0rem; background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}};' class='sticky-column'>
               <a href='{{player.player_team_season.team_season.team.team_href}}'>
                 <img class='logo logo-30' src='{{player.player_team_season.team_season.team.team_logo}}' />
               </a>
             </td>
-            <td style='width: 90px; left: 30px; color:white; background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}};' class='col-group left-text sticky-column'>
+            <td style='width: 5.625rem; left: 1.875rem; color:white; background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}};' class='col-group left-text sticky-column'>
               <a href='{{player.player_team_season.team_season.team.team_href}}'>
                 {{player.player_team_season.team_season.team.school_name}}
               </a>
             </td>
             {% endif %}
             <!-- BASELINE -->
-            <td class='sticky-column' style='width:  30px; left: 0px; background-color: inherit;' >
+            <td class='sticky-column' style='width:  1.875rem; left: 0rem; background-color: inherit;' >
               <i class="fa fa-address-card player-profile-popup-icon"></i>
             </td>
-            <td style='width: 150px; left: 30px;'class='left-text sticky-column'>
+            <td style='width: 9.375rem; left: 1.875rem;'class='left-text sticky-column'>
               <a href="{{player.player_href}}">{{player.full_name}}</a>
             </td>
             <td>
@@ -453,18 +453,18 @@
 
             {% if column_controls.Personal.personal.shown %}
               <!-- PERSONAL -->
-              <td style='width:  120px;' class="col-group left-text">
-                <i class="fa fa-map-marker-alt geo-marker" style='padding-right: 8px;' city='{{player.hometown.city}}' state='{{player.hometown.state}}'></i>
+              <td style='width:  7.5rem;' class="col-group left-text">
+                <i class="fa fa-map-marker-alt geo-marker" style='padding-right: 0.5rem;' city='{{player.hometown.city}}' state='{{player.hometown.state}}'></i>
                 <span>{{player.hometown_and_state}}</span>
               </td>
             {% endif %}
 
             {% if column_controls.Personal.recruiting.shown %}
               <!-- PERSONAL -->
-              <td style='width:  60px;' class="">
+              <td style='width:  3.75rem;' class="">
                 {{player.recruiting.national_rank}}
               </td>
-              <td style='width:  60px;' class="col-group">
+              <td style='width:  3.75rem;' class="col-group">
                 Other
               </td>
             {% endif %}

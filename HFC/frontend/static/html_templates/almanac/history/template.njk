@@ -15,7 +15,7 @@
       {% include "../../static/html_templates/common_templates/scoreboard.njk" %}
     </div>
     <nav>
-      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
         <button class='w3-bar-item btn team-color-button tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
             <i class="fas fa-bars"></i>
         </button>
@@ -102,7 +102,7 @@
                         </div>
                         <div class="">
                           <span>{{season.heisman_winner.player_team_season.position}}</span>
-                          <span>{{season.heisman_winner.player_team_season.class.class_name}}</span>
+                          <span>{{season.heisman_winner.player_team_season.class_name}}</span>
                         </div>
                       </td>
                       {% else%}

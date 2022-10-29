@@ -6,7 +6,7 @@
   <div class='PageContent'>
     <div class='PlayerHeader'>
       <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
-      <a href='{{player.current_player_team_season.team_season.team.team_href}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 180px;' {% endif %}{% endif %}>
+      <a href='{{player.current_player_team_season.team_season.team.team_href}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 11.25rem;' {% endif %}{% endif %}>
         <div class='page-header-logo-div'>
           {% if player.current_player_team_season.team_season.team.team_logo %}
             <img class='playerTeamLogo' src='{{player.current_player_team_season.team_season.team.team_logo}}' alt="My image">
@@ -51,7 +51,7 @@
             <div class='playerHeaderBioDescription'>CLASS</div>
             <div class='player-class'>{{player.current_player_team_season.class.class_name}}
               {% if player.redshirt.current %}
-                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>
+                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
               {% endif %}
             </div>
           </li>
@@ -85,14 +85,14 @@
             <div>
               {{player.current_player_team_season.class.class_name}}
               {% if player.redshirt.current %}
-                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 4px;"></i>
+                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
               {% endif %}
             </div>
             <div class='font10'>CLASS</div>
             </td>
           </tr>
         </table>
-        <div class="font32 inline-block bold w3-display-container card" style="height: 80px; width:100px; border: 1px solid black; vertical-align: top;">
+        <div class="font32 inline-block bold w3-display-container card" style="height: 5rem; width:6.25rem; border: 0.0625rem solid black; vertical-align: top;">
           <div class="team-primary-background font12 center-text" style=" color: white;">
           Overall
         </div>
@@ -100,17 +100,16 @@
             {{player.current_player_team_season.ratings.overall.overall}}
           </div>
           <div class="w3-display-bottommiddle statBar" style='width: 100%; background-color: inherit;'>
-            <div class="w3-container  {{player.current_player_team_season.ratings.overall.overall|NumberToGradeClass(100)}}-Fill" style="width:{{player.current_player_team_season.ratings.overall.overall}}%; height: 8px;"></div>
+            <div class="w3-container  {{player.current_player_team_season.ratings.overall.overall|NumberToGradeClass(100)}}-Fill" style="width:{{player.current_player_team_season.ratings.overall.overall}}%; height: 0.5rem;"></div>
           </div>
         </div>
-
       </div>
 
       <div class="team-header-color-right hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
 
     </div>
     <nav>
-      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: {{page.PrimaryColor|TeamBackgroundFontColor}}; ">
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: {{page.PrimaryColor|TeamBackgroundFontColor}}; ">
         <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
           <i class="fas fa-bars"></i>
         </button>
@@ -127,12 +126,12 @@
         {% if player_awards | length > 0 %}
           <button class="w3-bar-item btn tab nav-tab-button"  id="nav-awards-tab">Awards</button>
           {%endif%}
-          <div class="w3-dropdown-hover w3-right" style="margin-right: 20px" id='nav-team-dropdown-container'>
+          <div class="w3-dropdown-hover w3-right" style="margin-right: 1.25rem" id='nav-team-dropdown-container'>
             <button class="w3-bar-item btn tab nav-tab-button"  id="nav-team-dropdown" >
               Players
             </button>
 
-            <div class="w3-dropdown-content card w3-animate-opacity"  style="right: 20px; max-height: 70vh;" >
+            <div class="w3-dropdown-content card w3-animate-opacity"  style="right: 1.25rem; max-height: 70vh;" >
               <div style='display: flex;'>
                 <div class='w3-bar-block width100' style='max-height: 65vh; overflow-y: scroll'>
                   <table class='table width100'>
@@ -181,7 +180,7 @@
                               </td>
                               <td style='width:60%'>
                                 <div class="w3-border w3-round-xlarge statBar" style='width: 80%; margin-left: 10%; background-color: inherit;'>
-                                  <div class="w3-container w3-round-xlarge {{(skill.bar_width)|NumberToGradeClass}}-Fill" style="width:{{skill.bar_width}}%; height: 8px;"></div>
+                                  <div class="w3-container w3-round-xlarge {{(skill.bar_width)|NumberToGradeClass}}-Fill" style="width:{{skill.bar_width}}%; height: 0.5rem;"></div>
                                 </div>
                               </td>
                               {% if skill.rating == 'Overall'%}
@@ -349,7 +348,7 @@
 
               </div>
               <div class="w3-row">
-                <div class="" id='RecruitingContainer' style='width: 100%; height: 400px;'></div>
+                <div class="" id='RecruitingContainer' style='width: 100%; height: 25rem;'></div>
               </div>
             </div>
           </div>
@@ -436,7 +435,7 @@
                                 <td class='bold'>{{rating.rating}}</td>
                                 <td style='width:55%'>
                                   <div class="w3-border w3-round-xlarge statBar" style='width: 100%; background-color: inherit;'>
-                                    <div class="w3-container w3-round-xlarge {{rating.bar_width|NumberToGradeClass}}-Fill" style="width:{{rating.bar_width}}%; height: 8px;"></div>
+                                    <div class="w3-container w3-round-xlarge {{rating.bar_width|NumberToGradeClass}}-Fill" style="width:{{rating.bar_width}}%; height: 0.5rem;"></div>
                                   </div>
                                 </td>
                                 <td class='font20 text-center'>{{rating.player_value}}</td>

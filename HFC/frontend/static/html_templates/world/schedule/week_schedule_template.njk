@@ -4,7 +4,7 @@
 
     <div class="w3-row-padding {{Week.Week.ShowWeekClass}} weekScheduleDisplayContainer"  WeekID="{{Week.Week.WeekID}}">
       {% for game in week.games%}
-        <div  class='card w3-col hidden-overflow w3-margin-bottom margin-right-8 w3-margin-top' style='background-color: white; padding: 0px; {% if game.was_played %}max-width: 500px; min-width: 300px;{%else%}max-width: 300px; min-width: 300px;{%endif%}'>
+        <div  class='card w3-col hidden-overflow w3-margin-bottom margin-right-8 w3-margin-top' style='background-color: white; padding: 0rem; {% if game.was_played %}max-width: 31.25rem; min-width: 18.75rem;{%else%}max-width: 18.75rem; min-width: 18.75rem;{%endif%}'>
           <div class="w3-container">
             <div class="scheduleGameDashboardGameTeamDisplayContainer w3-display-container">
               <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.team_games[0].team_season.team.team_color_primary_hex}}'></div>
@@ -20,7 +20,7 @@
                 <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.team_games[1].team_season.team.team_logo}}'/>
               </a>
             </div>
-            <table class='scheduleGameTable' style='table-layout: fixed; width: calc(100% - 80px);'>
+            <table class='scheduleGameTable' style='table-layout: fixed; width: calc(100% - 5rem);'>
               <colgroup>
                 <col span="1" style='width: 45%;'>
                 {% for period in game.scoring.periods%}

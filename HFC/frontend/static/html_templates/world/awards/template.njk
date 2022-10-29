@@ -4,7 +4,7 @@
 <style>
 
     #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
-    border-bottom: 2px solid black;
+    border-bottom: 0.125rem solid black;
   }
 
 </style>
@@ -18,7 +18,7 @@
       {% include "../../static/html_templates/common_templates/scoreboard.njk" %}
     </div>
     <nav>
-      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 3px solid #{{page.SecondaryColor}}; border-top: 3px solid #{{page.SecondaryColor}};  color: white; ">
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
         <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
           <i class="fas fa-bars"></i>
         </button>
@@ -27,7 +27,7 @@
           <button class="w3-bar-item btn tab nav-tab-button {{display_item.classes}}" id="nav-{{display_item.div_id}}-tab"  {{display_item.other_attrs|safe}}>{{display_item.display}}</button>
         {% endfor %}
 
-        <div class="w3-dropdown-hover  w3-right" style='margin-right: 20px;'>
+        <div class="w3-dropdown-hover  w3-right" style='margin-right: 1.25rem;'>
           <button class="w3-bar-item btn tab nav-tab-button" id="nav-team-dropdown">Seasons</button>
           <div class="w3-dropdown-content w3-bar-block card-4" style="right:20px; max-height: 70vh; overflow-y: scroll;">
             {% for Season in Seasons %}
