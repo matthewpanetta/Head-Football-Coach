@@ -15,23 +15,28 @@
 /></a>
     </td>
     <td class="column-med" value='{{team_season.team.school_name}}'  >
-      <ul class="no-list-style">
-        <li>
+      <div class="no-list-style">
+        <div>
+          {% if team_season.is_user_team%}
+          <span style='color: #{{team_season.team.team_color_primary_hex}};'>
+            <i class="fa fa-user"></i>
+          </span>
+          {%endif%}
           <a class="font14" href="{{team_season.team.team_href}}">
             <span>{{team_season.team.school_name}}
-              <span class="hide-small">{{team_season.team.team_name}}</span></span>
+            <span class="hide-small">{{team_season.team.team_name}}</span></span>
           </a>
-        </li>
+        </div>
           {% if  team_season.results.conference_champion %}
-          <li class="font10 bold opacity-1">
+          <div class="font10 bold opacity-1">
             <a class='' href='{{team_season.conference.conference_href}}'>{{team_season.conference.conference_abbreviation}} </a> Champions
-          </li>
+          </div>
           {% else %}
-          <li class="font10">
+          <div class="font10">
             {{team_season.rankings.division_rank[0]|ordinal}} in <a href='{{team_season.conference.conference_href}}'>{{team_season.conference.conference_abbreviation}}</a> {{team_season.division_name}}
-          </li>
+          </div>
           {% endif %}
-        </li>
+        </div>
       </ul>
     </td>
     <td class="center-text hide-small"  value='{{team_season.rankings.national_rank_delta}}'>
@@ -72,6 +77,11 @@
           </span
         >
           <span class='font10'>{{team_season.last_week_team_game.opponent_team_game.national_rank_display}}</span>
+          {% if team_season.last_week_team_game.opponent_team.is_user_team%}
+          <span style='color: #{{team_season.last_week_team_game.opponent_team.team_color_primary_hex}};'>
+            <i class="fa fa-user"></i>
+          </span>
+          {%endif%}
           <a class="hide-small" href="{{team_season.last_week_team_game.opponent_team.team_href}}">
             {{team_season.last_week_team_game.opponent_team.school_name}}</a>
         </div>
@@ -84,6 +94,11 @@
         <span class="hide-small">
           {{team_season.this_week_team_game.game_location_char}}
         </span>
+        {% if team_season.this_week_team_game.opponent_team.is_user_team%}
+          <span style='color: #{{team_season.this_week_team_game.opponent_team.team_color_primary_hex}};'>
+            <i class="fa fa-user"></i>
+          </span>
+          {%endif%}
         <a class="hide-small" href="{{team_season.this_week_team_game.opponent_team.team_href}}">{{team_season.this_week_team_game.opponent_team_season.national_rank_display}}
           {{team_season.this_week_team_game.opponent_team.school_name}}</a>
       {% endif %}

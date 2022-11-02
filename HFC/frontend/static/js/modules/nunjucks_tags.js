@@ -22,8 +22,9 @@ function complex_get(val) {
 }
 
 function get_nunjucks_env() {
-  var env = new nunjucks.Environment();
 
+  const env = new nunjucks.Environment();
+  
   env.addFilter("TeamBackgroundFontColorBlack", function (BackgroundColor) {
     if (BackgroundColor == undefined) {
       BackgroundColor = "FFFFFF";

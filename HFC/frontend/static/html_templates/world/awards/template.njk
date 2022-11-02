@@ -88,8 +88,14 @@
                               </a>
                             </div>
                             <div class="font10">
-                              <span class='{{award.team_game.game_outcome_letter}} bold'>{{award.team_game.game_outcome_letter}}
+                              {% if award.player_team_season.team_season.team.is_user_team%}
+                              <span class='opacity-1' style='color: #{{award.player_team_season.team_season.team.team_color_primary_hex}};'>
+                                  <i class="fa fa-user"></i>
                               </span>
+                              {%endif%}
+                              <a href="{{award.player_team_season.team_season.team.team_href}}">
+                                {{award.player_team_season.team_season.team.full_name}}
+                              </a>
                             </div>
                             <div class="font10" player_id='{{award.player_team_season.player.player_id}}'>
                               <i class="fa fa-address-card player-profile-popup-icon"></i>
@@ -298,14 +304,14 @@
                       {{trophy.award_name}}
                     </div>
                     <div class="font10" player_id='{{trophy.player_team_season.player.player_id}}'>
-                              <i class="fa fa-address-card player-profile-popup-icon"></i>
-                               &#183;
-                              <span>{{trophy.player_team_season.class.class_name}}
-                              </span>
-                               &#183;
-                              <span>{{trophy.player_team_season.position}}
-                              </span>
-                            </div>
+                      <i class="fa fa-address-card player-profile-popup-icon"></i>
+                        &#183;
+                      <span>{{trophy.player_team_season.class.class_name}}
+                      </span>
+                        &#183;
+                      <span>{{trophy.player_team_season.position}}
+                      </span>
+                    </div>
                     
                   </td>
                   <td><ul class='no-list-style'>
@@ -368,12 +374,25 @@
                                 {{award.player_team_game.player_team_season.player.full_name}}
                               </a>
                             </div>
+                            <div class='font10'>
+                            {% if award.player_team_game.player_team_season.team_season.team.is_user_team%}
+                              <span class='opacity-1' style='color: #{{award.player_team_game.player_team_season.team_season.team.team_color_primary_hex}};'>
+                                  <i class="fa fa-user"></i>
+                              </span>
+                              {%endif%}
+                              <a href='{{award.player_team_game.player_team_season.team_season.team.team_href}}'>{{award.player_team_game.player_team_season.team_season.team.full_name}}</a>
+                            </div>
                             <div class="font10">
                               <span class='{{award.player_team_game.team_game.game_outcome_letter}} bold'>{{award.player_team_game.team_game.game_outcome_letter}}
                               </span>
                               <a href='{{award.player_team_game.team_game.game.game_href}}'>{{award.player_team_game.team_game.game_stats.team.points}}-{{award.player_team_game.team_game.opponent_game_stats.team.points}}
                               </a>
                           vs.
+                          {% if award.player_team_game.team_game.opponent_team_season.team.is_user_team%}
+                              <span class='opacity-1' style='color: #{{award.player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}};'>
+                                  <i class="fa fa-user"></i>
+                              </span>
+                              {%endif%}
                           <a href='{{award.player_team_game.team_game.opponent_team_season.team.team_href}}'>{{award.player_team_game.team_game.opponent_team_season.team.team_abbreviation}}</a>
                             </div>
                             <div class="font10" player_id='{{award.player_team_game.player_team_season.player.player_id}}'>

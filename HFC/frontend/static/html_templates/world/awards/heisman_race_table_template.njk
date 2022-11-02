@@ -25,19 +25,29 @@
                   </a>
                 </div>
                 <div class="">
+                  {% if player_team_season.team_season.team.is_user_team%}
+                  <span style='color: #{{player_team_season.team_season.team.team_color_primary_hex}};'>
+                      <i class="fa fa-user"></i>
+                  </span>
+                  {%endif%}
                   <a href="{{player_team_season.team_season.team.team_href}}">
                     {{player_team_season.team_season.team.full_name}}
                   </a>
                 </div>
-                <div class="">
+                <div class=""  player_id='{{player_team_season.player_id}}'>
+                  <span><i class="fa fa-address-card player-profile-popup-icon"></i></span>
+                  &#183;
                   <span>{{player_team_season.position}}</span>
+                  &#183;
                   <span>{{player_team_season.class.class_name}}</span>
                 </div>
               </td>
               <td>
                   <ul class='no-list-style'>
                     {% for stat in player_team_season.season_stats.top_stats%}
+                    {%if stat.season_score_value > (player_team_season.season_stats.games.weighted_game_score * 0.05) %}
                     <li>{{stat.display}}</li>
+                    {%endif%}
                     {% endfor %}
                   </ul>
               </td>

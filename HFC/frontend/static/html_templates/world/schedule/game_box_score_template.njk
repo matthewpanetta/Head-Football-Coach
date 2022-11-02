@@ -54,6 +54,11 @@
                             <tr class=' center-text-row'>
                                 <td class='left-text'>
                                     <span class='font10'>{{game.away_team_game.national_rank_display|coalesce( game.away_team_game.team_season.national_rank_display)}}</span>
+                                    {% if game.away_team_game.team_season.team.is_user_team%}
+                                    <span style='color: #{{game.away_team_game.team_season.team.team_color_primary_hex}};'>
+                                        <i class="fa fa-user"></i>
+                                    </span>
+                                    {%endif%}
                                     <a href="{{game.away_team_game.team_season.team.team_href}}" class='{{game.away_team_game.bold}}'>{{game.away_team_game.team_season.team.school_name}}</a>
                                     <span class='font10'>{{game.away_team_game.record_display}}</span>
                                 </td>
@@ -67,6 +72,11 @@
                             <tr class=' center-text-row'>
                                 <td class='left-text '>
                                     <span class='font10'>{{game.home_team_game.national_rank_display|coalesce( game.home_team_game.team_season.national_rank_display)}}</span>
+                                    {% if game.home_team_game.team_season.team.is_user_team%}
+                                    <span style='color: #{{game.home_team_game.team_season.team.team_color_primary_hex}};'>
+                                        <i class="fa fa-user"></i>
+                                    </span>
+                                    {%endif%}
                                     <a href="{{game.home_team_game.team_season.team.team_href}}" class='{{game.home_team_game.bold}}'>{{game.home_team_game.team_season.team.school_name}}</a>
                                     <span class='font10'>{{game.home_team_game.record_display}}</span>
                                 </td>

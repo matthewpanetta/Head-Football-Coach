@@ -52,7 +52,13 @@
                       <td class='worldOverviewTop25TeamLineName  w3-cell w3-cell-middle'>
                         <ul class='no-list-style'>
                           <li>
+                            <span style='color: #{{team.team_color_primary_hex}};'>
+                                {% if team.is_user_team%}
+                                <i class="fa fa-user"></i>
+                                {%endif%}
+                              </span>
                             <a  class='font14' href="/World/{{world_id}}/Team/{{ team.team_id }}/">
+                              
                               <span>{{ team.school_name }}
                                 <span class='hide-small'>{{ team.team_name }}</span></span>
                             </a>

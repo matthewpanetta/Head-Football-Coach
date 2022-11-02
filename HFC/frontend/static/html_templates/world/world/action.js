@@ -232,28 +232,30 @@ const getHtml = async (common) => {
       game.away_team_game.team_season.national_rank +
       min_national_rank;
 
-    game.world_page_filter_attributes = "AllGame=1 ";
-    if (
-      game.away_team_game.team_season.national_rank <= 25 ||
-      game.home_team_game.team_season.national_rank <= 25
-    ) {
-      game.world_page_filter_attributes += "Top25Game=1 ";
-    } else {
-      game.world_page_filter_attributes += "Top25Game=0 ";
-    }
+    // game.world_page_filter_attributes = "AllGame=1 ";
+    // if (
+    //   game.away_team_game.team_season.national_rank <= 25 ||
+    //   game.home_team_game.team_season.national_rank <= 25
+    // ) {
+    //   game.world_page_filter_attributes += "Top25Game=1 ";
+    // } else {
+    //   game.world_page_filter_attributes += "Top25Game=0 ";
+    // }
 
-    if (game.is_primetime_game) {
-      game.world_page_filter_attributes += "primetimegame=1 ";
-      game.classes = "";
-    } else {
-      game.world_page_filter_attributes += "primetimegame=0 ";
-      game.classes = "w3-hide";
-    }
+    // if (game.is_primetime_game) {
+    //   game.world_page_filter_attributes += "primetimegame=1 ";
+    //   game.classes = "";
+    // } else {
+    //   game.world_page_filter_attributes += "primetimegame=0 ";
+    //   game.classes = "w3-hide";
+    // }
   });
 
-  this_week_games = this_week_games.sort(function (a, b) {
-    if (a.summed_national_rank < b.summed_national_rank) return -1;
-    if (a.summed_national_rank > b.summed_national_rank) return 1;
+  this_week_games = this_week_games.sort(function (g_a, g_b) {
+    if (g_a.team_games[0].team_season.is_user_team || g_a.team_games[1].team_season.is_user_team) return -1;
+    if (g_b.team_games[0].team_season.is_user_team || g_b.team_games[1].team_season.is_user_team) return 1;
+    if (g_a.summed_national_rank < g_b.summed_national_rank) return -1;
+    if (g_a.summed_national_rank > g_b.summed_national_rank) return 1;
     return 0;
   });
 
@@ -559,26 +561,26 @@ const action = async (common) => {
 
   var InitialBoxScore = $(".recent-gameview-tab")[0];
 
-  var SelectedTeamID = $(InitialBoxScore).attr("TeamID");
-  $(".upcoming-gameview-tab").on("click", function (event, target) {
-    console.log("clicked this", event, target);
+  // var SelectedTeamID = $(InitialBoxScore).attr("TeamID");
+  // $(".upcoming-gameview-tab").on("click", function (event, target) {
+  //   console.log("clicked this", event, target);
 
-    $(".upcoming-gameview-tab").removeClass("selected-bar-button");
-    let clicked_tab = $(event.target);
-    let clicked_tab_parent = clicked_tab.closest(".boxscore-bar").attr("id");
-    let selected_game_filter_selection = clicked_tab.attr(
-      "GameFilterSelection"
-    );
+  //   $(".upcoming-gameview-tab").removeClass("selected-bar-button");
+  //   let clicked_tab = $(event.target);
+  //   let clicked_tab_parent = clicked_tab.closest(".boxscore-bar").attr("id");
+  //   let selected_game_filter_selection = clicked_tab.attr(
+  //     "GameFilterSelection"
+  //   );
 
-    $(
-      ".worldUpcomingTable[" + selected_game_filter_selection + '="1"]'
-    ).removeClass("w3-hide");
-    $(
-      ".worldUpcomingTable[" + selected_game_filter_selection + '="0"]'
-    ).addClass("w3-hide");
+  //   $(
+  //     ".worldUpcomingTable[" + selected_game_filter_selection + '="1"]'
+  //   ).removeClass("w3-hide");
+  //   $(
+  //     ".worldUpcomingTable[" + selected_game_filter_selection + '="0"]'
+  //   ).addClass("w3-hide");
 
-    $(clicked_tab).addClass("selected-bar-button");
-  });
+  //   $(clicked_tab).addClass("selected-bar-button");
+  // });
 
   await draw_faces(common);
   $(".player-profile-popup-icon").on("click", async function () {

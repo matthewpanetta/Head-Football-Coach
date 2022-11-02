@@ -1,21 +1,17 @@
 <div class="card background-eee">
     <div class="w3-bar team-primary-background-bar">
         <div class='w3-bar-item  margin-right-12 no-padding'>Games This Week</div>
-        <button GameFilterSelection="primetimegame" class="no-hover w3-bar-item margin-right-12 btn team-color-button tab no-padding selected-bar-button upcoming-gameview-tab" id="upcoming-gameview-nationalgame-tab" >Primetime</button>
+        {# <button GameFilterSelection="primetimegame" class="no-hover w3-bar-item margin-right-12 btn team-color-button tab no-padding selected-bar-button upcoming-gameview-tab" id="upcoming-gameview-nationalgame-tab" >Primetime</button>
         <button GameFilterSelection="top25game" class="no-hover w3-bar-item margin-right-12 btn team-color-button tab no-padding upcoming-gameview-tab" id="upcoming-gameview-top25game-tab">Top 25</button>
-        <button GameFilterSelection="allgame" class="no-hover w3-bar-item margin-right-12 btn team-color-button tab no-padding upcoming-gameview-tab" id="upcoming-gameview-allgame-tab">All</button>
+        <button GameFilterSelection="allgame" class="no-hover w3-bar-item margin-right-12 btn team-color-button tab no-padding upcoming-gameview-tab" id="upcoming-gameview-allgame-tab">All</button> #}
     </div>
-    <div class="" style='max-height: 1675px; overflow-y: scroll;'>
+    <div class="" style='max-height: 1600px; overflow-y: scroll;'>
+        <table>
         {% for game in this_week_games%}
-            <table BoxScoreGameID="{{game.game_id}}" {{game.world_page_filter_attributes}} class="bottom-border width100 worldUpcomingTable {{game.classes}}">
-                <colgroup>
-                    <col span="2">
-                    <col span="2">
-                    <col span="2">
-                    <col span="2">
-                    <col span="2">
-                </colgroup>
-                <thead>
+            {# <tbody BoxScoreGameID="{{game.game_id}}" {{game.world_page_filter_attributes}} class="bottom-border width100 worldUpcomingTable {{game.classes}}"> #}
+            <tbody BoxScoreGameID="{{game.game_id}}" class="bottom-border width100 worldUpcomingTable {{game.classes}}">
+                
+                <tr>
                     <th class="bottom-border left-text hide-small" colspan="2">
                         <span class='font10 padBottom20 margin-8'>
                             <a href="{{game.game_href}}">Preview</a>
@@ -27,28 +23,35 @@
                     <th class="bottom-border hide-medium right-text" colspan="4">
                         <span class='font10 pb-3 me-2'>{{game.game_time}}</span>
                     </th>
-                </thead>
+                </tr>
                 {% for team_game in game.team_games %}
                     <tr class=" w3-margin" style='border-bottom: 0.0625rem solid #ddd;'>
                         <td class='center-text hide-small' colspan='2' style='background-color: #{{team_game.team_season.team.team_color_primary_hex}}; width: 1%;'>
                             <img class="logo logo-30"  loading="lazy" src="{{team_game.team_season.team.team_logo}}" alt="">
                         </td>
-                        <td class='worldUpcomingGameCell padding-left-8' colspan='4'>
+                        <td class=' padding-left-8 left-text' colspan='4'>
                             <div class='margin0'>
                                 <span class='font10'>{{team_game.team_season.national_rank_display}}</span>
-                                <a href="{{team_game.team_season.team.team_href}}" class='font16'>{{team_game.team_season.team.school_name}}</a>
+                                {% if team_game.team_season.team.is_user_team%}
+                                <span style='color: #{{team_game.team_season.team.team_color_primary_hex}};'>
+                                    <i class="fa fa-user"></i>
+                                </span>
+                                {%endif%}
+                                <a href="{{team_game.team_season.team.team_href}}" class='font16'>
+                                    {{team_game.team_season.team.school_name}}
+                                </a>
                             </div>
                             <div class="">
                                 <span class='font10'>({{team_game.team_season.record_display}})</span>
                             </div>
                         </td>
-                        <td class='center-text hide-medium' colspan='2'>
+                        <td class='center-text hide-medium no-width no-wrap' colspan='2'>
                             <h2 class='font16'>{{team_game.team_season.rankings.stat_rankings.offense[0]}}</h2>
                             <div class="">
                                 <span class='font8 margin-right-4 '>Off Rank</span>
                             </div>
                         </td>
-                        <td class='center-text hide-medium' colspan='2'>
+                        <td class='center-text hide-medium no-width no-wrap' colspan='2'>
                             <h2 class='font16'>{{team_game.team_season.rankings.stat_rankings.defense[0]}}</h2>
                             <div class="">
                                 <span class='font8 margin-right-4 '>Def Rank</span>
@@ -56,7 +59,10 @@
                         </td>
                     </tr>
                 {% endfor %}
-            </table>
+            </tbody>
+            <tr style='height: 10px'>
+                </tr>
         {% endfor %}
+        </table>
     </div>
 </div>

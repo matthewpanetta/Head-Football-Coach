@@ -2,23 +2,29 @@
   <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
   <div class='page-header-logo-div'><img class='teamTeamLogo' src='{{team.team_logo}}' alt="My image"></div>
   <div class='teamHeaderInfo'>
-
-    <span class='thin-font font20'>
-    {% if show_season%}
-      {{season_to_show}}
-    {%else%}
-      {{team.team_season.national_rank_display}}
-    {%endif %}
-    </span>
-    <span class='teamSchoolName'>
-      {{ team.school_name }}
-    </span>
-    <span class='teamTeamName'>
-      {{team.team_name}}
-    </span>
-    <span class='teamRecord hide-small'>
-      {{team.team_season.record_display}}
-    </span>
+    <div>
+      <span class='thin-font font20'>
+      {% if show_season%}
+        {{season_to_show}}
+      {%else%}
+        {{team.team_season.national_rank_display}}
+      {%endif %}
+      </span>
+      {% if team.is_user_team %}
+      <span class='font20' style='color: #{{team.team_color_primary_hex}};'>
+        <i class="fa fa-user"></i>
+      </span>
+      {% endif %}
+      <span class='teamSchoolName'>
+        {{ team.school_name }}
+      </span>
+      <span class='teamTeamName'>
+        {{team.team_name}}
+      </span>
+      <span class='teamRecord hide-small'>
+        {{team.team_season.record_display}}
+      </span>
+    </div>
     <div class='teamOverviewInfo'>
       <i class="fa fa-map-marker-alt geo-marker" style='color: #{{team.team_color_primary_hex}};' city='{{team.location.city}}' state='{{team.location.state}}'></i>
       {{team.location.city}}, {{team.location.state}} | {{team.team_season.rankings.division_rank[0]|ordinal}}

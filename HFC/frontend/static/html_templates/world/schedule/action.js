@@ -135,10 +135,14 @@ const getHtml = async (common) => {
     if (game.rivalry) {
       game.summed_national_rank -= min_national_rank;
     }
+
+    game.has_user_team = game.team_games.some(tg => tg.team_season.is_user_team);
   }
   games = games.sort(
     (g_a, g_b) =>
-      g_a.week_id - g_b.week_id ||
+      g_a.week_id - g_b.week_id || 
+      g_a.has_user_team ? -1 : 0 ||
+      g_b.has_user_team ? 1 : 0 ||
       g_a.summed_national_rank - g_b.summed_national_rank
   );
   common.stopwatch(common, "getHtml 1.4");

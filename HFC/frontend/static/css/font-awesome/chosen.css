@@ -285,3 +285,6 @@
 
   .fa-trophy::before {
     content: "\f091"; }
+
+    .fa-user::before {
+      content: "\f007"; }

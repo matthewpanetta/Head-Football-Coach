@@ -428,6 +428,10 @@ class week {
   constructor(){
 
   }
+
+  get week_href() {
+    return `/World/${this.world_id}/Week/${this.short_name}`;
+  }
 }
 class phase {
   constructor(){
@@ -3098,7 +3102,7 @@ const initialize_new_season = async (this_week, common) => {
   // await db.league_season.put(current_league_season);
 
   const phases_created = await create_phase(new_season, common);
-  await create_week(phases_created, common, new_season);
+  await create_week(phases_created, common, world_id, new_season);
 
   stopwatch(common, 'Init New Season - Created phases & weeks');
 
@@ -5811,8 +5815,8 @@ const create_phase = async (season, common) => {
     { season: season, phase_name: "End of Regular Season", is_current: false },
     { season: season, phase_name: "Bowl Season", is_current: false },
     { season: season, phase_name: "Season Recap", is_current: false },
-    // { season: season, phase_name: "Departures", is_current: false },
-    // { season: season, phase_name: "Off-Season Recruiting", is_current: false },
+    { season: season, phase_name: "Departures", is_current: false },
+    { season: season, phase_name: "Off-Season Recruiting", is_current: false },
     { season: season, phase_name: "Summer Camp", is_current: false },
   ];
 
@@ -5831,7 +5835,7 @@ const create_phase = async (season, common) => {
   return phases;
 };
 
-const create_week = async (phases, common, season) => {
+const create_week = async (phases, common, world_id, season) => {
   const db = common.db;
 
   var weeks_to_create = [
@@ -5841,12 +5845,14 @@ const create_week = async (phases, common, season) => {
     // {week_name:'Summer Week 4', is_current: false, phase_id: phases['Summer Camp']['phase_id'], schedule_week_number: null},
     {
       week_name: "Plan for Season",
+      short_name: "summer-plan",
       is_current: false,
       phase_id: phases["Summer Camp"]["phase_id"],
       schedule_week_number: null,
     },
     {
       week_name: "Pre-Season",
+      short_name: "pre-season",
       is_current: false,
       phase_id: phases["Pre-Season"]["phase_id"],
       schedule_week_number: null,
@@ -5854,90 +5860,105 @@ const create_week = async (phases, common, season) => {
 
     {
       week_name: "Week 1",
+      short_name: "week-01",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 1,
     },
     {
       week_name: "Week 2",
+      short_name: "week-02",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 2,
     },
     {
       week_name: "Week 3",
+      short_name: "week-03",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 3,
     },
     {
       week_name: "Week 4",
+      short_name: "week-04",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 4,
     },
     {
       week_name: "Week 5",
+      short_name: "week-05",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 5,
     },
     {
       week_name: "Week 6",
+      short_name: "week-06",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 6,
     },
     {
       week_name: "Week 7",
+      short_name: "week-07",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 7,
     },
     {
       week_name: "Week 8",
+      short_name: "week-08",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 8,
     },
     {
       week_name: "Week 9",
+      short_name: "week-09",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 9,
     },
     {
       week_name: "Week 10",
+      short_name: "week-10",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 10,
     },
     {
       week_name: "Week 11",
+      short_name: "week-11",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 11,
     },
     {
       week_name: "Week 12",
+      short_name: "week-12",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 12,
     },
     {
       week_name: "Week 13",
+      short_name: "week-13",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 13,
     },
     {
       week_name: "Week 14",
+      short_name: "week-14",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 14,
     },
     {
       week_name: "Week 15",
+      short_name: "week-15",
       is_current: false,
       phase_id: phases["Regular Season"]["phase_id"],
       schedule_week_number: 15,
@@ -5945,43 +5966,49 @@ const create_week = async (phases, common, season) => {
 
     {
       week_name: "Conference Championships",
+      short_name: "conference-championships",
       is_current: false,
       phase_id: phases["End of Regular Season"]["phase_id"],
       schedule_week_number: null,
     },
     {
       week_name: "Early Signing Day",
+      short_name: "early-signing-day",
       is_current: false,
       phase_id: phases["End of Regular Season"]["phase_id"],
       schedule_week_number: null,
     },
     {
       week_name: "Bowl Prep",
+      short_name: "bowl-prep",
       is_current: false,
       phase_id: phases["End of Regular Season"]["phase_id"],
       schedule_week_number: null,
     },
-
     {
       week_name: "Bowl Week 1",
+      short_name: "bowl-week-01",
       is_current: false,
       phase_id: phases["Bowl Season"]["phase_id"],
       schedule_week_number: null,
     },
     {
       week_name: "Bowl Week 2",
+      short_name: "bowl-week-02",
       is_current: false,
       phase_id: phases["Bowl Season"]["phase_id"],
       schedule_week_number: null,
     },
     {
       week_name: "Bowl Week 3",
+      short_name: "bowl-week-03",
       is_current: false,
       phase_id: phases["Bowl Season"]["phase_id"],
       schedule_week_number: null,
     },
     {
       week_name: "Bowl Week 4",
+      short_name: "bowl-week-04",
       is_current: false,
       phase_id: phases["Bowl Season"]["phase_id"],
       schedule_week_number: null,
@@ -5989,34 +6016,71 @@ const create_week = async (phases, common, season) => {
 
     {
       week_name: "Season Recap",
+      short_name: "season-recap",
       is_current: false,
       phase_id: phases["Season Recap"]["phase_id"],
       schedule_week_number: null,
     },
 
-    {week_name:'Team Departures', is_current: false, phase_id: phases['Departures']['phase_id'], schedule_week_number: null},
-    
-    {week_name:'Recruiting Week 1', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    {week_name:'Recruiting Week 2', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    {week_name:'Recruiting Week 3', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    {week_name:'Recruiting Week 4', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    {week_name:'National Signing Day', is_current: false, phase_id: phases['Off-Season Recruiting']['phase_id'], schedule_week_number: null},
-    
+    {
+      week_name: "Team Departures",
+      short_name: "departures",
+      is_current: false,
+      phase_id: phases["Departures"]["phase_id"],
+      schedule_week_number: null,
+    },
 
+    {
+      week_name: "Recruiting Week 1",
+      short_name: "recruiting-week-01",
+      is_current: false,
+      phase_id: phases["Off-Season Recruiting"]["phase_id"],
+      schedule_week_number: null,
+    },
+    {
+      week_name: "Recruiting Week 2",
+      short_name: "recruiting-week-02",
+      is_current: false,
+      phase_id: phases["Off-Season Recruiting"]["phase_id"],
+      schedule_week_number: null,
+    },
+    {
+      week_name: "Recruiting Week 3",
+      short_name: "recruiting-week-03",
+      is_current: false,
+      phase_id: phases["Off-Season Recruiting"]["phase_id"],
+      schedule_week_number: null,
+    },
+    {
+      week_name: "Recruiting Week 4",
+      short_name: "recruiting-week-04",
+      is_current: false,
+      phase_id: phases["Off-Season Recruiting"]["phase_id"],
+      schedule_week_number: null,
+    },
+    {
+      week_name: "National Signing Day",
+      short_name: "signing-day",
+      is_current: false,
+      phase_id: phases["Off-Season Recruiting"]["phase_id"],
+      schedule_week_number: null,
+    },
   ];
 
-  let last_week = await db.week.orderBy('week_id').last();
+  let last_week = await db.week.orderBy("week_id").last();
   let week_id = last_week ? last_week.week_id + 1 : 1;
 
-  for (let week of weeks_to_create){
+  for (let week of weeks_to_create) {
     week.week_updates = [];
     week.season = season;
     week.week_id = week_id;
     week.user_actions = {
       recruiting_actions_used: 0,
     };
+    week.world_id = world_id;
+    week.short_name = week.season + '-' + week.short_name
 
-    week_id +=1;
+    week_id += 1;
   }
 
   if (season == 2022) {
@@ -6742,6 +6806,7 @@ const common_functions = async (route_pattern) => {
     world_object: world_object,
     params: params,
     route_pattern: route_pattern,
+    env:  get_nunjucks_env()
   });
 
   var db = await resolve_db({ database_id: world_id });
@@ -6976,7 +7041,7 @@ const recent_games = async (common) => {
   for (var game of games_in_week) {
     game.team_games = team_games_by_game_id[game.game_id];
 
-    max_national_rank = 0;
+    let max_national_rank = 0;
 
     if (game.team_games[0].is_winning_team) {
       max_national_rank =
@@ -6988,6 +7053,8 @@ const recent_games = async (common) => {
           .national_rank;
     }
 
+    game.has_user_team = game.team_games.some(tg => tg.team_season.is_user_team);
+
     game.summed_national_rank =
       team_seasons_by_team_season_id[game.team_games[0].team_season_id]
         .national_rank +
@@ -6996,9 +7063,11 @@ const recent_games = async (common) => {
       max_national_rank;
   }
 
-  games_in_week = games_in_week.sort(function (a, b) {
-    if (a.summed_national_rank < b.summed_national_rank) return -1;
-    if (a.summed_national_rank > b.summed_national_rank) return 1;
+  games_in_week = games_in_week.sort(function (g_a, g_b) {
+    if (g_a.has_user_team) return -1;
+    if (g_b.has_user_team) return 1;
+    if (g_a.summed_national_rank < g_b.summed_national_rank) return -1;
+    if (g_a.summed_national_rank > g_b.summed_national_rank) return 1;
     return 0;
   });
 
@@ -7975,7 +8044,7 @@ const update_player_energy = (game_dict, players_on_field, bench_players, plays_
 
   let position_fatigue_rate_map = {
     QB: .005,
-    RB: .02,
+    RB: .015,
     FB: .025,
     WR: .015,
     TE: .015,
@@ -8394,7 +8463,7 @@ const sim_game = (game_dict, common) => {
         play_details.play_player_ids = [chosen_players.Runner.player.player_id]
         play_details.description = `{player_0} ${yards_this_play} yard run`;
 
-        chosen_players.Runner.player_team_game.game_attrs.energy -= .015;
+        chosen_players.Runner.player_team_game.game_attrs.energy -= .01;
 
         chosen_players.Runner.player_team_game.game_stats.rushing.carries += 1;
         chosen_players.Runner.player_team_game.game_stats.rushing.yards +=
@@ -8606,7 +8675,6 @@ const sim_game = (game_dict, common) => {
           ].game_stats.team.downs.third_downs.conversions += 1;
         }
       } else if (down == 4 && ("pass" == play_choice || "run" == play_choice)) {
-        //alert('went for it on fourth!!')
         game_dict.team_games[
           offensive_team_index
         ].game_stats.team.downs.fourth_downs.attempts += 1;
@@ -11846,39 +11914,24 @@ const advance_to_next_week = async (this_week, common) => {
 
   next_week = all_weeks_by_week_id[this_week.week_id + 1];
 
-  console.log({
-    all_weeks_by_week_id: all_weeks_by_week_id,
-    this_week: this_week,
-    next_week: next_week,
-    // this_week_s: this_week.season,
-    // next_week_s: next_week.season,
-    season: common.season,
-  });
   this_week.is_current = false;
   next_week.is_current = true;
 
   if (this_week.season != next_week.season) {
-    alert("different season!!");
     const league_seasons = await db.league_season.toArray();
 
-    const current_league_season = league_seasons.filter(
+    const current_league_season = league_seasons.find(
       (ls) => ls.season == this_week.season
-    )[0];
-    const next_league_season = league_seasons.filter(
+    );
+    const next_league_season = league_seasons.find(
       (ls) => ls.season == next_week.season
-    )[0];
+    );
 
     current_league_season.is_current_season = false;
     next_league_season.is_current_season = true;
 
     await db.league_season.put(current_league_season);
     await db.league_season.put(next_league_season);
-
-    console.log({
-      next_league_season: next_league_season,
-      current_league_season: current_league_season,
-      league_seasons: league_seasons,
-    });
 
     world.current_season = next_week.season;
   } else {
@@ -11895,11 +11948,13 @@ const advance_to_next_week = async (this_week, common) => {
   world.user_team.team_record = current_team_season.record_display;
 
   await ddb.world.put(world);
+
+  return next_week;
 };
 
-const refresh_page = () => {
+const refresh_page = async () => {
   window.onbeforeunload = function() {};
-  window.location.reload();
+  location.href = next_week.week_href;
 };
 
 const sim_action = async (duration, common) => {
@@ -11932,10 +11987,7 @@ const sim_action = async (duration, common) => {
     week.phase.season = season;
   });
 
-  const current_week = all_weeks.filter((w) => w.is_current)[0];
-  const next_week = all_weeks.filter(
-    (w) => w.week_id == current_week.week_id + 1
-  )[0];
+  const current_week = all_weeks.find((w) => w.is_current);
 
   var redirect_href = "";
 
@@ -11962,7 +12014,6 @@ const sim_action = async (duration, common) => {
     console.log({ team_game: team_game });
 
     if (this_week.week_name == "Conference Championships") {
-      alert("assign_conference_champions", assign_conference_champions);
       await assign_conference_champions(this_week, common);
     }
 
@@ -12008,12 +12059,12 @@ const sim_action = async (duration, common) => {
     //await populate_all_depth_charts(common);
     //await calculate_team_needs(common);
 
-    await advance_to_next_week(this_week, common);
+    let next_week = await advance_to_next_week(this_week, common);
     console.log("Ready to refresh_page");
     
   }
 
-  await refresh_page();
+  await refresh_page(next_week);
 };
 
 const search_input_action = () => {
@@ -12719,8 +12770,6 @@ const process_bowl_results = async (common) => {
 };
 
 const schedule_bowl_season = async (all_weeks, common) => {
-  alert("scheduling bowls");
-
   var bowls = [
     {
       bowl_name: "Rose Bowl",
@@ -15220,7 +15269,7 @@ const new_world_action = async (common, database_suffix) => {
 
   console.log({season:season, common:common, db:db, new_season_info:new_season_info})
   const phases_created = await create_phase(season, common);
-  await create_week(phases_created, common, season);
+  await create_week(phases_created, common, world_id, season);
 
   const rivalries = await get_rivalries(teams_from_json);
 

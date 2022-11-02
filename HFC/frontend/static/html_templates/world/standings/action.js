@@ -181,6 +181,7 @@ const getHtml = async (common) => {
     }
   }
 
+  console.log({conference_seasons:conference_seasons})
   conference_seasons = conference_seasons.sort(function (
     conference_season_a,
     conference_season_b
@@ -188,6 +189,8 @@ const getHtml = async (common) => {
     if (conference_season_a.conference.conference_id == conference_id)
       return -1;
     if (conference_season_b.conference.conference_id == conference_id) return 1;
+    if (conference_season_a.divisions.some(d => d.team_seasons.some(ts => ts.is_user_team))) return -1;
+    if (conference_season_b.divisions.some(d => d.team_seasons.some(ts => ts.is_user_team))) return 1;
     if (
       conference_season_a.conference.conference_name <
       conference_season_b.conference.conference_name

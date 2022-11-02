@@ -24,6 +24,11 @@
               <td class='min-width-50 left-text '>
                 <div class='margin0'>
                   <span class='font10'>{{team_game.national_rank_display}}</span> 
+                  {% if team_game.team_season.is_user_team %}
+                  <span style='color: #{{team_game.team_season.team.team_color_primary_hex}};'>
+                    <i class="fa fa-user"></i>
+                  </span> 
+                  {% endif %}
                   <a href="{{team_game.team_season.team.team_href}}" class='font14'>
                     {{team_game.team_season.team.team_abbreviation}}
                   </a>

@@ -8,9 +8,14 @@
     <td class=' hide-small'style='background-color: #{{teams[0].team_color_primary_hex}}; width: 1%;'>
       <img class="logo logo-30 margin-8"  loading="lazy" src="{{teams[0].team_logo}}" alt="">
     </td>
-    <td class='worldUpcomingGameCell padding-left-8' >
+    <td class='left-text padding-left-8' >
       <div class='margin0'>
         <span>{{team_seasons[0].national_rank_display}}</span>
+        {% if teams[0].is_user_team%}
+        <span style='color: #{{teams[0].team_color_primary_hex}};'>
+          <i class="fa fa-user"></i>
+        </span> 
+        {% endif %}
         <span class='game-modal-result-table-away-team-name'>{{teams[0].school_name}}</span>
       </div>
       <div class="">
@@ -25,9 +30,14 @@
     <td class=' hide-small'  style='background-color: #{{teams[1].team_color_primary_hex}}; width: 1%;'>
       <img class="logo logo-30 margin-8"  loading="lazy" src="{{teams[1].team_logo}}" alt="">
     </td>
-    <td class='worldUpcomingGameCell padding-left-8'>
+    <td class='left-text padding-left-8'>
       <div class='margin0'>
         <span>{{team_seasons[1].national_rank_display}}</span>
+        {% if teams[1].is_user_team%}
+        <span style='color: #{{teams[1].team_color_primary_hex}};'>
+          <i class="fa fa-user"></i>
+        </span> 
+        {% endif %}
         <span class='game-modal-result-table-home-team-name'>{{teams[1].school_name}}</span>
       </div>
       <div class="">

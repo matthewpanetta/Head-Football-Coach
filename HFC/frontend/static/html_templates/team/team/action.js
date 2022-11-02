@@ -271,7 +271,7 @@ const getHtml = async (common) => {
     }
   }
 
-  //console.log('opponent_teams', opponent_teams, opponent_team_seasons, opponent_team_games)
+  console.log('opponent_teams', {opponent_teams:opponent_teams, opponent_team_seasons:opponent_team_seasons, opponent_team_games:opponent_team_games})
   var counter_games = 0;
   var selected_game_chosen = false;
   var selected_game_id = 0;
@@ -290,44 +290,43 @@ const getHtml = async (common) => {
   var team_game_ids = opponent_team_game_ids.concat(
     team_games.map((tg) => tg.team_game_id)
   );
-  let player_team_games = await db.player_team_game
-    .where("team_game_id")
-    .anyOf(team_game_ids)
-    .toArray();
+  // let player_team_games = await db.player_team_game
+  //   .where("team_game_id")
+  //   .anyOf(team_game_ids)
+  //   .toArray();
 
     common.stopwatch(common, "Time after fetching player team games");
 
-  const player_team_season_ids = player_team_games.map(
-    (ptg) => ptg.player_team_season_id
-  );
-  var player_team_seasons = await db.player_team_season
-    .where({ season: season })
-    .toArray();
+  // const player_team_season_ids = player_team_games.map(
+  //   (ptg) => ptg.player_team_season_id
+  // );
+  // var player_team_seasons = await db.player_team_season
+  //   .where({ season: season })
+  //   .toArray();
 
   common.stopwatch(common, "Time after fetching player team seasons");
 
-  const player_ids = player_team_seasons.map((pts) => pts.player_id);
-  const players = await db.player.bulkGet(player_ids);
-  const players_by_player_id = index_group_sync(players, "index", "player_id");
+  // const player_ids = player_team_seasons.map((pts) => pts.player_id);
+  // const players = await db.player.bulkGet(player_ids);
+  // const players_by_player_id = index_group_sync(players, "index", "player_id");
 
   common.stopwatch(common, "Time after fetching players bulkget");
-  console.log({players:players})
 
-  player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
+  // player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
 
-  var player_team_seasons_by_player_team_season_id = index_group_sync(
-    player_team_seasons,
-    "index",
-    "player_team_season_id"
-  );
+  // var player_team_seasons_by_player_team_season_id = index_group_sync(
+  //   player_team_seasons,
+  //   "index",
+  //   "player_team_season_id"
+  // );
 
-  player_team_games = nest_children(player_team_games, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season')
+  // player_team_games = nest_children(player_team_games, player_team_seasons_by_player_team_season_id, 'player_team_season_id', 'player_team_season')
 
-  const player_team_game_by_player_team_game_id = index_group_sync(
-    player_team_games,
-    "index",
-    "player_team_game_id"
-  );
+  // const player_team_game_by_player_team_game_id = index_group_sync(
+  //   player_team_games,
+  //   "index",
+  //   "player_team_game_id"
+  // );
 
   common.stopwatch(common, "Time after fetching players");
 
@@ -361,23 +360,23 @@ const getHtml = async (common) => {
 
     game.headlines = headlines_by_game_id[game.game_id];
 
-    for (var stat_detail of game.opponent_team_game.top_stats.concat(
-      game.team_game.top_stats
-    )) {
-      stat_detail.player_team_game =
-        player_team_game_by_player_team_game_id[
-          stat_detail.player_team_game_id
-        ];
-    }
+    // for (var stat_detail of game.opponent_team_game.top_stats.concat(
+    //   game.team_game.top_stats
+    // )) {
+    //   stat_detail.player_team_game =
+    //     player_team_game_by_player_team_game_id[
+    //       stat_detail.player_team_game_id
+    //     ];
+    // }
 
-    for (var stat_detail of game.opponent_team_season.top_stats.concat(
-      game.team_season.top_stats
-    )) {
-      stat_detail.player_team_season =
-        player_team_seasons_by_player_team_season_id[
-          stat_detail.player_team_season_id
-        ];
-    }
+    // for (var stat_detail of game.opponent_team_season.top_stats.concat(
+    //   game.team_season.top_stats
+    // )) {
+    //   stat_detail.player_team_season =
+    //     player_team_seasons_by_player_team_season_id[
+    //       stat_detail.player_team_season_id
+    //     ];
+    // }
 
     game.game_display = "Preview";
     game.game_result_letter = "";
@@ -424,6 +423,7 @@ const getHtml = async (common) => {
       game.opponent_rank_string = game.opponent_team_game.national_rank_display;
     }
 
+    console.log({counter_games:counter_games})
     counter_games += 1;
   });
 
@@ -466,7 +466,7 @@ const getHtml = async (common) => {
     all_teams: await common.all_teams(common, ""),
     conference_standings: conference_standings,
     //team_stats: team_stats,
-    player_team_seasons: player_team_seasons,
+    // player_team_seasons: player_team_seasons,
     headlines: headlines,
     games_played: games_played,
     show_season:show_season, 

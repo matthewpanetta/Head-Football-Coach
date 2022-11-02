@@ -661,6 +661,10 @@ const getHtml = async (common) => {
     console.log({ this: this, renderedHtml: renderedHtml });
     $("#nav-heisman-race").html(renderedHtml);
 
+    $("#nav-heisman-race .player-profile-popup-icon").on("click", async function () {
+      await common.populate_player_modal(common, this);
+    });
+
     draw_faces(common, "#nav-heisman-race");
   });
 };
