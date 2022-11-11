@@ -240,7 +240,7 @@
             <div class="w3-row-padding">
               {% if show_stat_box or last_team_meetings|length > 0%}
 
-              <div class='w3-col l3 m4'>
+              <div class='flex-1 m-2'>
                 {% if show_stat_box %}
                 <div class='card w3-margin-bottom'>
                   <div class="w3-bar team-primary-background-bar">
@@ -441,7 +441,7 @@
 
               </div>
               {%endif%}
-              <div class='w3-col l6 m8'>
+              <div class='flex-2 m-2'>
                 {% if game.was_played %}
 
                 <div class="card w3-margin-bottom">
@@ -504,8 +504,8 @@
                 </div>
                 {% else %}
                 <div class="card w3-margin-bottom">
-                  <div class="w3-row" style='height: 25rem;'>
-                    <div class="w3-col s2 height100 white-text center-text" style=' background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}'>
+                  <div class="flex" style='height: 25rem;'>
+                    <div class="flex-1 height100 white-text center-text" style=' background-color: #{{game.away_team_game.team_season.team.team_color_primary_hex}}'>
                       <div class="font20">
                         {{game.away_team_game.team_season.team.team_abbreviation}}
                       </div>
@@ -534,11 +534,11 @@
                         </div>
                       </div>
                     </div>
-                    <div class="w3-col s8">
+                    <div class="flex-3 height100">
                       <div id="team-ratings-chart" class='' >
                       </div>
                     </div>
-                    <div class="w3-col s2 height100 white-text center-text" style=' background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}'>
+                    <div class="flex-1 height100 white-text center-text" style=' background-color: #{{game.home_team_game.team_season.team.team_color_primary_hex}}'>
                       <div class="font20">
                         {{game.home_team_game.team_season.team.team_abbreviation}}
                       </div>
@@ -635,7 +635,7 @@
                 </div>
                 {% endif %}
               </div>
-              <div class='w3-col l3 m6'>
+              <div class='flex-1 m-2'>
                 {% for conference_season in conference_standings %}
                 <div class="card margin-bottom-12">
                   <div class="w3-bar team-primary-background-bar">
@@ -683,7 +683,7 @@
 
             <div class='w3-row-padding'>
               {% for team_game_obj in [ {'home_or_away': 'away', 'team_game': game.away_team_game}, {'home_or_away': 'home', 'team_game': game.home_team_game}]%}
-              <div class='w3-col s5 gamePlayerBoxStats card margin-bottom-12 height100 no-padding'>
+              <div class='flex-2 gamePlayerBoxStats card margin-bottom-12 height100 no-padding'>
                 <div class="w3-bar {{team_game_obj.home_or_away}}-team-primary-background-bar">
                   <span>{{team_game_obj.team_game.team_season.team.school_name}} {{stat_grouping.stat_group_name}}</span>
                 </div>

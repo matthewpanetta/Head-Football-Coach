@@ -21,9 +21,10 @@
     </nav>
     <div id="nav-tabContent">
       <div class="tab-content show active" style="display:block;"  id="nav-overview">
-        <div class="w3-display-container">
-          <div class="w3-row-padding">
-            <div class="w3-col l4 m6 s12">
+        <div class="">
+          <div class="w3-row-padding"></div>
+          <div class="flex p-2">
+            <div class="flex-2 m-2">
               <div class="card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
                   <div class="">Top 25</div>
@@ -53,134 +54,64 @@
                         <ul class='no-list-style'>
                           <li>
                             <span style='color: #{{team.team_color_primary_hex}};'>
-                                {% if team.is_user_team%}
+                              {% if team.is_user_team%}
                                 <i class="fa fa-user"></i>
                                 {%endif%}
                               </span>
-                            <a  class='font14' href="/World/{{world_id}}/Team/{{ team.team_id }}/">
-                              
-                              <span>{{ team.school_name }}
-                                <span class='hide-small'>{{ team.team_name }}</span></span>
-                            </a>
-                          </li>
-                          {% if team.team_season.results.national_champion %}
-                            <li class='font10 bold opacity-1' style='color: darkgoldenrod;'>National Champions</li>
-                          {% endif %}
-                          {% if team.team_season.results.conference_champion %}
-                            <li class='font10 bold opacity-1'>
-                              <a href='{{team.team_season.conference_season.conference.conference_href}}'>{{team.team_season.conference_season.conference.conference_abbreviation}}
+                              <a  class='font14' href="/World/{{world_id}}/Team/{{ team.team_id }}/">
+
+                                <span>{{ team.school_name }}
+                                  <span class='hide-small'>{{ team.team_name }}</span></span>
                               </a>
+                            </li>
+                            {% if team.team_season.results.national_champion %}
+                              <li class='font10 bold opacity-1' style='color: darkgoldenrod;'>National Champions</li>
+                            {% endif %}
+                            {% if team.team_season.results.conference_champion %}
+                              <li class='font10 bold opacity-1'>
+                                <a href='{{team.team_season.conference_season.conference.conference_href}}'>{{team.team_season.conference_season.conference.conference_abbreviation}}
+                                </a>
                           Champions
                         </li>
-                          {% else %}
-                            <li class='font10'>
-                              {{team.team_season.rankings.division_rank[0]|ordinal}} in 
+                            {% else %}
+                              <li class='font10'>
+                                {{team.team_season.rankings.division_rank[0]|ordinal}} in 
                           <a href='{{team.team_season.conference_season.conference.conference_href}}'>
-                                {{team.team_season.conference_season.conference.conference_abbreviation}}
-                              </a>
-                              {% if team.team_season.division_name != 'All'%}
-                                {{team.team_season.division_name}}
-                              {%endif %}
-                            </li>
-                          {% endif %}
-                        </ul>
-                      </td>
-                      <td>
-                        <img class='logo logo-50 w3-hide {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
-                        <img class='logo logo-50  w3-hide {{team.AdditionalDisplayLogo2Class}}' src='{{team.AdditionalDisplayLogo2}}' alt="">
-                      </td>
-                      <td class='worldOverviewTop25TeamLineRecord w3-cell  center-text'>
-                        <span class=''>{{team.team_season.record.wins}} - {{team.team_season.record.losses}}</span>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </table>
+                                  {{team.team_season.conference_season.conference.conference_abbreviation}}
+                                </a>
+                                {% if team.team_season.division_name != 'All'%}
+                                  {{team.team_season.division_name}}
+                                {%endif %}
+                              </li>
+                            {% endif %}
+                          </ul>
+                        </td>
+                        <td>
+                          <img class='logo logo-50 w3-hide {{team.AdditionalDisplayLogoClass}}' src='{{team.AdditionalDisplayLogo}}' alt="">
+                          <img class='logo logo-50  w3-hide {{team.AdditionalDisplayLogo2Class}}' src='{{team.AdditionalDisplayLogo2}}' alt="">
+                        </td>
+                        <td class='worldOverviewTop25TeamLineRecord w3-cell  center-text'>
+                          <span class=''>{{team.team_season.record.wins}} - {{team.team_season.record.losses}}</span>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </table>
+                </div>
               </div>
-            </div>
-            <div class="w3-col l4 m6 s12" id='info-col'>
-              {% if this_week_games | length > 0 %}
-                {% include "../../static/html_templates/world/world/info_col_season.njk" %}
-              {% elif current_week.week_name == 'Season Recap' %}
-                <div class="card margin-bottom-12">
-                  <div class="w3-bar team-primary-background-bar">
-                    <span class="">National Champions</span>
-                  </div>
-                  <div>
-                    <table class='table table-striped table-hover' id='national-champions-table'>
-                      <tbody>
-                        <tr>
-                            <td class='column-shrink'>
-                              <div class='logo logo-50 moving-gradient'></div>
-                            </td>
-                            <td>
-                              <div class='width100 m-1 p-2 moving-gradient'></div>
-                              <div class='width100 m-1 p-1 moving-gradient'></div>
-                              <div class='width100 m-1 p-1 moving-gradient'></div>
-                            </td>
-                          </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div class="card mb-3">
-                  <div class="w3-bar team-primary-background-bar">
-                    <span class="">Heisman Winner</span>
-                  </div>
-                  <div>
-                    <table class='table table-striped table-hover' id='heisman-winner-table'>
-                      <tbody>
-                          <tr>
-                            <td class='column-shrink'>
-                              <div class='logo logo-50 moving-gradient'></div>
-                            </td>
-                            <td>
-                              <div class='width100 m-1 p-2 moving-gradient'></div>
-                              <div class='width100 m-1 p-1 moving-gradient'></div>
-                              <div class='width100 m-1 p-1 moving-gradient'></div>
-                            </td>
-                          </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div class="card mb-3">
-                  <div class="w3-bar team-primary-background-bar">
-                    <span class="">Conference Winners</span>
-                  </div>
-                  <div>
-                    <table class='table table-striped table-hover' id=''>
-                        <tbody>
-                          {% for i in range(0,4)%}
-                          <tr>
-                            <td class='column-shrink'>
-                              <div class='logo logo-50 moving-gradient'></div>
-                            </td>
-                            <td>
-                              <div class='width100 m-1 p-2 moving-gradient'></div>
-                              <div class='width100 m-1 p-1 moving-gradient'></div>
-                              <div class='width100 m-1 p-1 moving-gradient'></div>
-                            </td>
-                          </tr>
-                          {%endfor%}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                {% elif current_week.week_name == 'Pre-Season' %}
+              <div class="flex-2 m-2" id='info-col'>
+                {% if this_week_games | length > 0 %}
+                  {% include "../../static/html_templates/world/world/info_col_season.njk" %}
+                {% elif current_week.week_name == 'Season Recap' %}
                   <div class="card margin-bottom-12">
                     <div class="w3-bar team-primary-background-bar">
-                      <span class="">Heisman Hopefuls</span>
+                      <span class="">National Champions</span>
                     </div>
                     <div>
-                      <table class='table table-striped table-hover' id='HeismanRaceTable'>
+                      <table class='table table-striped table-hover' id='national-champions-table'>
                         <tbody>
-                          {% for i in range(0,3)%}
                           <tr>
                             <td class='column-shrink'>
                               <div class='logo logo-50 moving-gradient'></div>
-                            </td>
-                            <td class='column-shrink'>
-                              <div class='PlayerFace-Headshot PlayerFace-45 moving-gradient' style='width: 45px; border-radius: 3.125rem;'></div>
                             </td>
                             <td>
                               <div class='width100 m-1 p-2 moving-gradient'></div>
@@ -188,66 +119,137 @@
                               <div class='width100 m-1 p-1 moving-gradient'></div>
                             </td>
                           </tr>
-                          {%endfor%}
                         </tbody>
                       </table>
                     </div>
                   </div>
-                  <div class="card">
+                  <div class="card mb-3">
                     <div class="w3-bar team-primary-background-bar">
-                      <span class="">Conference Favorites</span>
+                      <span class="">Heisman Winner</span>
+                    </div>
+                    <div>
+                      <table class='table table-striped table-hover' id='heisman-winner-table'>
+                        <tbody>
+                          <tr>
+                            <td class='column-shrink'>
+                              <div class='logo logo-50 moving-gradient'></div>
+                            </td>
+                            <td>
+                              <div class='width100 m-1 p-2 moving-gradient'></div>
+                              <div class='width100 m-1 p-1 moving-gradient'></div>
+                              <div class='width100 m-1 p-1 moving-gradient'></div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="card mb-3">
+                    <div class="w3-bar team-primary-background-bar">
+                      <span class="">Conference Winners</span>
                     </div>
                     <div>
                       <table class='table table-striped table-hover' id=''>
                         <tbody>
-                          {% for i in range(0,5)%}
-                          <tr>
-                            <td class='column-shrink'>
-                              <div class='logo logo-50 moving-gradient'></div>
-                            </td>
-                            <td>
-                              <div class='width100 m-1 p-2 moving-gradient'></div>
-                              <div class='width100 m-1 p-1 moving-gradient'></div>
-                              <div class='width100 m-1 p-1 moving-gradient'></div>
-                            </td>
-                          </tr>
-                          {%endfor%}
+                          {% for i in range(0,4)%}
+                            <tr>
+                              <td class='column-shrink'>
+                                <div class='logo logo-50 moving-gradient'></div>
+                              </td>
+                              <td>
+                                <div class='width100 m-1 p-2 moving-gradient'></div>
+                                <div class='width100 m-1 p-1 moving-gradient'></div>
+                                <div class='width100 m-1 p-1 moving-gradient'></div>
+                              </td>
+                            </tr>
+                            {%endfor%}
                           </tbody>
                         </table>
                       </div>
                     </div>
-                  {% endif %}
-                </div>
-                <div class='w3-col l3 m6 s12'>
-                  <div class="card w3-margin-bottom">
-                    <div class="w3-bar team-primary-background-bar">
-                      <div class="">Headlines</div>
+                  {% elif current_week.week_name == 'Pre-Season' %}
+                    <div class="card margin-bottom-12">
+                      <div class="w3-bar team-primary-background-bar">
+                        <span class="">Heisman Hopefuls</span>
+                      </div>
+                      <div>
+                        <table class='table table-striped table-hover' id='HeismanRaceTable'>
+                          <tbody>
+                            {% for i in range(0,3)%}
+                              <tr>
+                                <td class='column-shrink'>
+                                  <div class='logo logo-50 moving-gradient'></div>
+                                </td>
+                                <td class='column-shrink'>
+                                  <div class='PlayerFace-Headshot PlayerFace-45 moving-gradient' style='width: 45px; border-radius: 3.125rem;'></div>
+                                </td>
+                                <td>
+                                  <div class='width100 m-1 p-2 moving-gradient'></div>
+                                  <div class='width100 m-1 p-1 moving-gradient'></div>
+                                  <div class='width100 m-1 p-1 moving-gradient'></div>
+                                </td>
+                              </tr>
+                              {%endfor%}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="card">
+                        <div class="w3-bar team-primary-background-bar">
+                          <span class="">Conference Favorites</span>
+                        </div>
+                        <div>
+                          <table class='table table-striped table-hover' id=''>
+                            <tbody>
+                              {% for i in range(0,5)%}
+                                <tr>
+                                  <td class='column-shrink'>
+                                    <div class='logo logo-50 moving-gradient'></div>
+                                  </td>
+                                  <td>
+                                    <div class='width100 m-1 p-2 moving-gradient'></div>
+                                    <div class='width100 m-1 p-1 moving-gradient'></div>
+                                    <div class='width100 m-1 p-1 moving-gradient'></div>
+                                  </td>
+                                </tr>
+                                {%endfor%}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      {% endif %}
                     </div>
-                    <table class='table table-striped'>
-                      {% for headline_type, headlines in headlines_by_headline_type%}
-                        <tr class='team-secondary-table-row'>
-                          <td colspan='1'>
-                            {{headline_type}}
-                          </td>
-                        </tr>
-                        {% for headline in headlines.slice(0, 5) %}
-                          <tr>
-                            <td>
-                              <a href='{{headline.href}}'>
-                                {{headline.headline_text}}
-                              </a>
-                            </td>
-                          </tr>
-                        {% endfor %}
-                      {% endfor %}
+                    <div class='flex-1 m-2'>
+                      <div class="card w3-margin-bottom">
+                        <div class="w3-bar team-primary-background-bar">
+                          <div class="">Headlines</div>
+                        </div>
+                        <table class='table table-striped'>
+                          {% for headline_type, headlines in headlines_by_headline_type%}
+                            <tr class='team-secondary-table-row'>
+                              <td colspan='1'>
+                                {{headline_type}}
+                              </td>
+                            </tr>
+                            {% for headline in headlines.slice(0, 5) %}
+                              <tr>
+                                <td>
+                                  <a href='{{headline.href}}'>
+                                    {{headline.headline_text}}
+                                  </a>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                          {% endfor %}
 
-                    </table>
+                        </table>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
+          </div>
         </div>
-      </div>
-    </body>
+      </body>

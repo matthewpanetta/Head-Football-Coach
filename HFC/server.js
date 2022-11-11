@@ -66,14 +66,15 @@ const routes = [
   { route: "/*", path: "url" },
 ];
 
-const cacheTime = 1000 * 60 * 60 * 24 * 30 // ~one month - 1000 ms, 60 sec, 60 mins, 24 hrs, 30 days
+const cacheTime = 1000 * 60 * 60 * 24 * 7 // ~one week - 1000 ms, 60 sec, 60 mins, 24 hrs, 30 days
 
 routes.forEach(function (route) {
   app.get(route.route, (req, res) => {
     console.log("routing to ", route.route, req.url);
 
-    if (req.url.includes('png') || req.url.includes('modules') || req.url.includes('css')){
-      res.set("Cache-Control", `public, max-age=${cacheTime}`);
+    // if (req.url.includes('png') || req.url.includes('modules') || req.url.includes('css')){
+    if (req.url.includes('png')){
+        res.set("Cache-Control", `public, max-age=${cacheTime}`);
     }
 
     var url = req.url.split("?")[0];

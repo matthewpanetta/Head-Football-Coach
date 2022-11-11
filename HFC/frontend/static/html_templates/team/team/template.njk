@@ -38,10 +38,10 @@
       <div class="tab-content" style='display:block;' id="nav-overview">
 
         {% if games|length > 0%}
-        <div class=" w3-margin-bottom">
-          <div class="w3-row-padding w3-margin-bottom">
-            <div class="w3-col m12">
-              <div class="">
+        <div class="">
+          <div class="">
+            <div class="flex p-3 width100">
+              <div class="flex-1">
                 <div class="card w3-light-grey w3-col s12">
 
                   <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
@@ -187,10 +187,10 @@
               </div>
             </div>
             </div>
-            <div class=" w3-margin-bottom">
-              <div class="w3-row-padding w3-margin-bottom">
-                <div class="w3-col s6">
-                  <div class="card w3-light-grey w3-col s12">
+            <div class="">
+              <div class="flex px-3">
+                <div class="flex-1">
+                  <div class="card w3-light-grey">
                     <div class="w3-bar team-primary-background-bar">
                       Headlines
                     </div>
@@ -246,8 +246,8 @@
 
                   </div>
                 </div>
-                <div class="w3-col s6">
-                  <div class="card w3-light-grey w3-col s12">
+                <div class="flex-1">
+                  <div class="card w3-light-grey">
                     <div class="w3-bar team-primary-background-bar">
                       Signed Recruits
                     </div>
@@ -296,12 +296,9 @@
 
               </div>
             </div>
-            <div class="w3-row-padding">
-            <div class="w3-col l4 m12 s12">
-              <div class="w3-row">
-
-                </div>
-              <div class="w3-row w3-margin-top">
+            <div class="flex">
+            <div class="flex-1">
+              <div class="">
 
 
                 {% if SignedRecruits|length > 0 %}
@@ -346,10 +343,10 @@
         {% else %}
 
         <div class="w3-display-container w3-margin-bottom">
-          <div class="w3-row-padding">
-            <div class="w3-col l6 m12 w3-display-container">
-              <div class="w3-row">
-                <div class="card w3-col s12">
+          <div class="flex">
+            <div class="flex-1">
+              <div class="">
+                <div class="card">
                   <div class="w3-bar team-primary-background-bar">
                     Recruits Here
                   </div>

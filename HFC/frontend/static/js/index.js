@@ -429,6 +429,10 @@ class week {
 
   }
 
+  get world_href() {
+    return `/World/${this.world_id}/`;
+  }
+
   get week_href() {
     return `/World/${this.world_id}/Week/${this.short_name}`;
   }
@@ -442,6 +446,10 @@ class phase {
 class world {
   constructor(){
 
+  }
+
+  get world_href(){
+    return `/World/${this.world_id}/`
   }
 }
 
@@ -11952,9 +11960,9 @@ const advance_to_next_week = async (this_week, common) => {
   return next_week;
 };
 
-const refresh_page = async () => {
+const refresh_page = async (next_week) => {
   window.onbeforeunload = function() {};
-  location.href = next_week.week_href;
+  location.href = next_week.world_href;
 };
 
 const sim_action = async (duration, common) => {
@@ -11966,6 +11974,7 @@ const sim_action = async (duration, common) => {
 
   const season = common.world_object.current_season;
   const world_id = common.world_id;
+  const world = common.world_object;
 
   const all_weeks = await db.week
     .where("season")
