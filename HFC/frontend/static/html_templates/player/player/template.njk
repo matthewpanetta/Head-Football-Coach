@@ -18,15 +18,14 @@
       <div class="PlayerFace" id='PlayerFace'>
         {{player.PlayerFaceSVG|safe}}
       </div>
-      <div class='inline-block' style='vertical-align: middle;'>
-        <div class='playerHeaderInfo'>
-          <span class='playerFirstName'>
-            {{player.name.first}}
-          </span>
-          <span class='playerLastName'>
-            {{player.name.last}}
-          </span>
-          <div class='playerOverviewInfo'>
+      <div class='inline-block ms-4' style='vertical-align: middle;'>
+        <div class='teamTeamName'>
+          <span class='font20 thin-font'>#{{player.jersey_number}}</span>
+          <span>{{player.name.first}}</span>
+          <span class='minor-bold'>{{player.name.last}}</span>
+        </div>
+        <div class='playerOverviewInfo'>
+          <span>
             {% if player.current_player_team_season.is_recruit %}
               {%if SignedTeam.LogoURL%}
                 <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit, Signed</a>
@@ -34,75 +33,40 @@
                 <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
               {% endif %}
             {% else %}
+              {% if current_team.is_user_team %}
+              <span style='color: #{{current_team.team_color_primary_hex}};'>
+                <i class="fa fa-user"></i>
+              </span>
+              {% endif %}
               <a href="{{current_team.team_href}}">{{current_team.school_name}}
-                {{current_team.team_name}}</a>
+                {{current_team.team_name}}
+              </a>
             {% endif %}
-          | #{{player.jersey_number}} | {{player.position}}
-          </div>
-          <div  class='playerOverviewInfo player-captain'>
-            {% if TeamCaptain%}
-              <i class="fas fa-crown w3-text-green"></i>
-              <span class='italic'>Team Captain</span>
-            {% endif %}
-          </div>
-        </div>
-        {# <ul class='playerHeaderBio' style='border-color:#{{page.PrimaryColor}}; margin-bottom: 0;'>
-          <li class='playerHeaderClass'>
-            <div class='playerHeaderBioDescription'>CLASS</div>
-            <div class='player-class'>{{player.current_player_team_season.class.class_name}}
+            </span>
+            |
+            <span class=''>{{player.position}}</span>
+            |
+          <span>
+            {{player.current_player_team_season.class.class_name}}
               {% if player.redshirt.current %}
                 <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
               {% endif %}
-            </div>
-          </li>
-          <li class='playerHeaderHtWt'>
-            <div class='playerHeaderBioDescription'>HT/WT</div>
-            <div>{{player.body.height}}, {{player.body.weight}} lbs</div>
-          </li>
-          <li class='playerHeaderHometown'>
-            <div class='playerHeaderBioDescription'>HOMETOWN</div>
-            <div>{{player.hometown_and_state}}</div>
-          </li>
-        </ul> #}
-        <table class='playerHeaderBio mx-3' style='border-color:#{{page.PrimaryColor}}; margin-bottom: 0;'>
-          <tr>
-            <td>
-            <div>
-              <i class="fa fa-map-marker-alt geo-marker" style="color: #{{page.PrimaryColor}};" city="{{player.hometown.city}}" state="{{player.hometown.state}}"></i>
+          </span>
+        </div>
+        <div class='playerOverviewInfo'>
+          <span>
+            <i class="fa fa-map-marker-alt geo-marker" style="color: #{{page.PrimaryColor}};" city="{{player.hometown.city}}" state="{{player.hometown.state}}"></i>
               {{player.hometown_and_state}}
-            </div>
-            <div class='font10'>HOMETOWN</div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-            <div>{{player.body.height}}, {{player.body.weight}} lbs</div>
-            <div class='font10'>HT/WT</div>
-            </td>
-          </tr>          
-          <tr>
-            <td>
-            <div>
-              {{player.current_player_team_season.class.class_name}}
-              {% if player.redshirt.current %}
-                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
-              {% endif %}
-            </div>
-            <div class='font10'>CLASS</div>
-            </td>
-          </tr>
-        </table>
-        <div class="font32 inline-block bold w3-display-container card" style="height: 5rem; width:6.25rem; border: 0.0625rem solid black; vertical-align: top;">
-          <div class="team-primary-background font12 center-text" style=" color: white;">
-          Overall
+          </span>
+          |
+          <span>
+            {{player.body.height}}, {{player.body.weight}} lbs
+          </span>
         </div>
-          <div class=" center-text">
-            {{player.current_player_team_season.ratings.overall.overall}}
-          </div>
-          <div class="w3-display-bottommiddle statBar" style='width: 100%; background-color: inherit;'>
-            <div class="w3-container  {{player.current_player_team_season.ratings.overall.overall|NumberToGradeClass(100)}}-Fill" style="width:{{player.current_player_team_season.ratings.overall.overall}}%; height: 0.5rem;"></div>
-          </div>
+        <div class='playerOverviewInfo'>
+          
         </div>
+
       </div>
 
       <div class="team-header-color-right hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
@@ -157,7 +121,7 @@
           </div>
         </div>
       </nav>
-      <div  id="nav-tabContent">
+      <div class='mt-3' id="nav-tabContent">
         <div class="tab-content" style='display:block;' id="nav-overview" >
           <div class='w3-container'>
             <div class='w3-row-padding'>

@@ -3275,3 +3275,7 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
 .flex-1 {
   flex: 1;
 }
+
+#nav-tabContent {
+  margin-top: .75rem;
+}
