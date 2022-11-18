@@ -1954,7 +1954,7 @@ class player {
     this.team_id = init_data.team_id;
 
     this.redshirt = { previous: false, current: false };
-    this.jersey_number = 21;
+    this.jersey_number = null;
 
     this.personality = {
       leadership: round_decimal(normal_trunc(10, 3, 1, 20), 0),
@@ -3220,6 +3220,10 @@ const initialize_new_season = async (this_week, common) => {
   });
 
   stopwatch(common, 'Init New Season - Created PTSs');
+
+  await assign_player_jersey_numbers(common, new_season);
+
+  stopwatch(common, 'Init New Season - Assigned Jersey Numbers');
 
   await create_new_players_and_player_team_seasons(common, world_id, new_season, team_seasons, ["HS SR"]);
 
@@ -5175,6 +5179,84 @@ const class_is_in_college = (class_name) => {
   }
 
   return class_map[class_name] || false;
+}
+
+const assign_player_jersey_numbers = async(common, season) => {
+  const db = common.db;
+
+  common.stopwatch(common, 'Assigning jersey numbers - starting')
+  let player_team_seasons = await db.player_team_season.where({season: season}).toArray();
+  let player_team_seasons_by_team_season_id = index_group_sync(player_team_seasons, 'group', 'team_season_id')
+
+  common.stopwatch(common, 'Assigning jersey numbers - fetched PTSs')
+  
+  let player_ids = player_team_seasons.map(pts => pts.player_id)
+  let players = await db.player.bulkGet(player_ids);
+  let players_by_player_id = index_group_sync(players, 'index', 'player_id');
+
+  common.stopwatch(common, 'Assigning jersey numbers - Fetched Players')
+
+  let player_team_seasons_to_save = [];
+  let players_to_save = [];
+
+  var url = "/static/data/import_json/position_numbers.json";
+  var json_data = await fetch(url);
+  var all_position_numbers = await json_data.json();
+
+  common.stopwatch(common, 'Assigning jersey numbers - Fetched default jersey nums')
+
+  for (let [team_season_id, team_player_team_seasons] of Object.entries(player_team_seasons_by_team_season_id)){
+    
+    let chosen_numbers = new Set(team_player_team_seasons.map(pts => players_by_player_id[pts.player_id].jersey_number).filter(num => num));
+    let available_numbers = new Set(Array(99).fill(1).map((x, y) => x + y));
+    chosen_numbers.forEach(function(num){
+      available_numbers.delete(num);
+    })
+
+    team_player_team_seasons = team_player_team_seasons.sort((pts_a, pts_b) => pts_b.ratings.overall.overall - pts_a.ratings.overall.overall);
+    team_player_team_seasons.forEach(function(pts) {
+      let this_player = players_by_player_id[pts.player_id]
+
+      let chosen_number = this_player.jersey_number;
+      let loop_count = 0;
+      while(chosen_number == null && loop_count < 100){
+        let try_chosen_number = -1;
+        if (loop_count > 50){
+          try_chosen_number = weighted_random_choice(available_numbers, null);
+        }
+        else {
+          try_chosen_number = weighted_random_choice(all_position_numbers[pts.position], null);
+        }
+
+        if (try_chosen_number && available_numbers.has(try_chosen_number)){
+          chosen_number = try_chosen_number;
+        }
+
+        loop_count +=1;
+      }
+
+      pts.jersey_number = chosen_number;
+      this_player.jersey_number = chosen_number;
+
+      player_team_seasons_to_save.push(pts);
+      players_to_save.push(this_player);
+
+      chosen_numbers.add(chosen_number);
+      available_numbers.delete(chosen_number)
+    })
+  }
+
+  common.stopwatch(common, 'Assigning jersey numbers - Assigned all numbers')
+
+  console.log({player_team_seasons_to_save:player_team_seasons_to_save, players_to_save:players_to_save, players_by_player_id:players_by_player_id});
+
+  await db.player_team_season.bulkPut(player_team_seasons_to_save);
+  await db.player.bulkPut(players_to_save);
+
+  common.stopwatch(common, 'Assigning jersey numbers - Saved & done')
+
+  debugger;
+
 }
 
 const assign_players_to_teams = async (common, world_id, season, team_seasons) => {
@@ -7509,7 +7591,7 @@ const calculate_game_score = (
       );
 
       player_team_season.season_stats.games.game_score = round_decimal(
-        player_team_season.season_stats.games.game_score + game_score_value,
+        (player_team_season.season_stats.games.game_score || 0) + (game_score_value || 0),
         0
       );
       player_team_season.season_stats.top_stats.push({
@@ -7574,7 +7656,7 @@ const calculate_game_score = (
   }
 
   player_team_season.season_stats.games.weighted_game_score +=
-    player_team_game.game_stats.games.weighted_game_score;
+    (player_team_game.game_stats.games.weighted_game_score || 0);
   player_team_season.season_stats.top_12_weighted_game_scores.push(
     player_team_game.game_stats.games.weighted_game_score
   );
@@ -13459,7 +13541,7 @@ const uniform_random_choice = (options) => {
   return options[Math.floor(Math.random() * options.length)];
 };
 
-const weighted_random_choice = (options, default_val) => {
+const weighted_random_choice = (options, default_val, choice_count = 1) => {
   var total = 0;
 
   if (!options){
@@ -13481,9 +13563,20 @@ const weighted_random_choice = (options, default_val) => {
     total += opt[1];
     opt.push(total);
   });
-  let r = Math.floor(Math.random() * total);
-  let chosen_obj =  data.find(opt => opt[2] >= r) || [default_val];
-  let chosen_value = chosen_obj[0]
+
+  let chosen_value_list = []
+  while(choice_count > 0){
+    let r = Math.floor(Math.random() * total);
+    let chosen_obj =  data.find(opt => opt[2] >= r) || [default_val];
+    let chosen_value = chosen_obj[0]
+    chosen_value_list.push(chosen_value)
+
+    choice_count -= 1;
+  }
+
+  if (chosen_value_list.length == 1){
+    return chosen_value_list[0]
+  }
 
   return chosen_value;
 };
@@ -15555,6 +15648,7 @@ const new_world_action = async (common, database_suffix) => {
   let a = [  
     {stage: 'Creating schedule', stage_row_id: 'create-world-table-create-schedule'},]
 
+  await assign_player_jersey_numbers(common, season);
 
   await update_create_world_modal('create-world-table-assign-players', 'create-world-table-depth-charts')
   await populate_all_depth_charts(common);
@@ -15578,8 +15672,8 @@ const new_world_action = async (common, database_suffix) => {
   await calculate_national_rankings(this_week, all_weeks, common);
   await calculate_conference_rankings(this_week, all_weeks, common);
 
-    await update_create_world_modal('create-world-table-rankings', 'create-world-table-create-schedule')
-    await create_schedule({
+  await update_create_world_modal('create-world-table-rankings', 'create-world-table-create-schedule')
+  await create_schedule({
     common: common,
     season: season,
     world_id: world_id,

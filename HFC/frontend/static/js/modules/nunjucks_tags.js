@@ -40,6 +40,17 @@ function get_nunjucks_env() {
     return BackgroundColor;
   });
 
+  env.addFilter("LightenColor", function (color) {
+    if (color == undefined) {
+      color = "FFFFFF";
+    }
+    var r = Math.min(parseInt(color.slice(0, 2), 16) + 48, 255);
+    var g = Math.min(parseInt(color.slice(2, 4), 16) + 48, 255);
+    var b = Math.min(parseInt(color.slice(4, 6), 16) + 48, 255);
+    
+    return `rgba(${r},${g},${b},1)`;;
+  });
+
   env.addFilter("DefaultIfTooLight", function (first_color, second_color) {
     var R = parseInt(first_color.slice(0, 2), 16);
     var G = parseInt(first_color.slice(2, 4), 16);

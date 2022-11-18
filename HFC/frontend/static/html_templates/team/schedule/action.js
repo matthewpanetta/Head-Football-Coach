@@ -149,7 +149,7 @@
 
       let show_season = common.params.season && common.params.season < common.season;
       let season_to_show = common.params.season;
-      common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
+      common.page = {PrimaryColor: team.team_color_primary_hex, SecondaryColor: team.secondary_color_display,OriginalSecondaryColor: team.team_color_secondary_hex, NavBarLinks:NavBarLinks, TeamHeaderLinks: TeamHeaderLinks};
       var render_content = {
                             page:     common.page,
                             world_id: common.params['world_id'],

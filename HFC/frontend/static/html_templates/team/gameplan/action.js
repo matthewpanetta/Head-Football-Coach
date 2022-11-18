@@ -456,6 +456,7 @@ const getHtml = async (common) => {
   common.page = {
     PrimaryColor: team.team_color_primary_hex,
     SecondaryColor: team.secondary_color_display,
+    OriginalSecondaryColor: team.team_color_secondary_hex,
     NavBarLinks: NavBarLinks,
     TeamHeaderLinks: TeamHeaderLinks,
   };

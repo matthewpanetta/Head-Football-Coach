@@ -1157,7 +1157,7 @@ div button.w3-bar-item.btn.selected-bar-button {
 }
 
 
-.w3-row-padding.space-between {
+.space-between {
   justify-content: space-between;
 }
 
@@ -2604,6 +2604,10 @@ table.table tr {
   gap: 0.75rem;
 }
 
+.gap-0 {
+  gap: 0;
+}
+
 .column-flex>* {
   flex: 1;
 }
@@ -3278,4 +3282,24 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
 
 #nav-tabContent {
   margin-top: .75rem;
+}
+
+.slight-skew-parent{
+  transform: skewX(-5deg)
+}
+
+.slight-skew-child{
+  transform: skewX(5deg)
+}
+
+.z-1{
+  z-index: 1;
+}
+
+.z-2{
+  z-index: 2;
+}
+
+.z-3{
+  z-index: 3;
 }

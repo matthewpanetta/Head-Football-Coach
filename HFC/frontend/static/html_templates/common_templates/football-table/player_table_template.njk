@@ -441,6 +441,9 @@
             </td>
             <td style='width: 9.375rem; left: 1.875rem;'class='left-text sticky-column'>
               <a href="{{player.player_href}}">{{player.full_name}}</a>
+              {% if player.jersey_number%}
+              <span class='font10'>#{{player.jersey_number}}</span>
+              {% endif %}
             </td>
             <td>
               <div class='position-badge position-badge-{{player.position}} inline-block'>

@@ -1061,6 +1061,7 @@ const getHtml = async (common) => {
   common.page = {
     PrimaryColor: current_team.team_color_primary_hex,
     SecondaryColor: current_team.secondary_color_display,
+    OriginalSecondaryColor: current_team.team_color_secondary_hex,
     NavBarLinks: NavBarLinks,
     page_title: "Player Profile - " + player.full_name,
     page_icon: current_team.team_logo,

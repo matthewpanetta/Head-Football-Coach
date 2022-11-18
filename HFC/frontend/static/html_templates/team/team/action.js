@@ -453,6 +453,7 @@ const getHtml = async (common) => {
     page_icon: team.team_logo,
     PrimaryColor: team.team_color_primary_hex,
     SecondaryColor: team.secondary_color_display,
+    OriginalSecondaryColor: team.team_color_secondary_hex,
     NavBarLinks: NavBarLinks,
     TeamHeaderLinks: TeamHeaderLinks,
   };
@@ -738,6 +739,8 @@ const action = async (common) => {
       "player_id",
       "player"
     );
+    common.current_team_season.team = common.render_content.team
+    player_team_seasons.forEach(pts => pts.team_season = common.current_team_season)
 
     const conference_standings = await common.conference_standings(
       team.team_season.conference_season_id,

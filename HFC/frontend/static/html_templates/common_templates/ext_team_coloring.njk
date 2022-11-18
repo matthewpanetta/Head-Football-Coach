@@ -66,6 +66,10 @@
       border: 0.0625rem solid #{{page.PrimaryColor|DefaultIfTooLight(page.SecondaryColor)|DefaultIfTooLight('000')}} !important;
     }
 
+    .team-secondary-color-border{
+      border-color: {{(page.OriginalSecondaryColor or page.SecondaryColor)|DefaultIfTooLight(page.PrimaryColor|LightenColor)}} !important;
+    }
+
     .team-primary-background {
       background-color: #{{page.PrimaryColor}} !important;
       color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;

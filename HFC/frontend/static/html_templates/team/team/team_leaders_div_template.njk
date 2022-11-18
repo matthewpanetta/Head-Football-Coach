@@ -1,38 +1,54 @@
 {% if team_leaders|length > 0%}
 
-  <div class="card margin-bottom-24">
+  <style>
+    .team-color-border {
+      border-color: 
+    }
+  </style>
+  <div class="card margin-bottom-24 hidden-overflow">
     <div class="w3-bar team-primary-background-bar">
         Team Leaders
       </div>
 
-    <table class="table table-striped table-hover ">
+    <div class="">
+      {{team_leaders|log}}
       {% for team_leader in team_leaders %}
-        <tr class='team-secondary-table-row bold'>
-          <td class=''></td>
-          <td>{{team_leader.display}}</td>
-        </tr>
-        <tr>
-          <td class="w3-col center-text padding-left-8" style='background-color:#{{page.PrimaryColor}};'>
-            <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{team_leader.player_team_season.player_id}}' style='border-color:#{{page.SecondaryColor}}; background-color:white;' id="teamTeamLeaderBoxCoachFace{{loop.index}}"  ></div>
-          </td>
-          <td>
-            <ul class='no-list-style'>
-              <li>
-                <span class='bold'>
-                  <a href="{{team_leader.player_team_season.player.player_href}}">{{team_leader.player_team_season.player.full_name}}</a>
-                </span>
-                <span class='teamScheduleGameDashboardGameDisplayBoxScorePlayerPosition'>{{team_leader.player_team_season.position}}</span>
-              </li>
-              <li>
-                {%for stat in team_leader.player_team_season.season_stats.top_stats%}
-                  {%if loop.index > 1%}, {%endif%}
-                    <span class=''>{{stat.display}}</span>{%endfor%}
-                  </li>
-                </ul>
-              </td>
-            </tr>
+        {{team_leader|log}}
+        <div class='flex gap-0 mb-1' style='place-items: flex-end;'>
+          <div class='height100 z-3'>
+            <img class='logo logo-60 align-bottom inline-block' src='{{team_leader.player_team_season.team_season.team.team_logo}}'/>
+            <div class="PlayerFace-90 PlayerFace-Headshot inline-block align-middle" player_id='{{team_leader.player_team_season.player_id}}' style='margin-left: -2rem; border: none;' id="teamTeamLeaderBoxCoachFace{{loop.index}}"  ></div>
+          </div>
+          <div class='white-text slight-skew-parent flex-2' style='margin-left: -1rem' >
+            <div class='flex space-between gap-0 z-3'>
+              <div class='top-box flex gap-0 z-3 team-secondary-color-border'  style='background-color: #{{team_leader.player_team_season.team_season.team.team_color_primary_hex}}; border: 0.125rem solid;'>
+                <div class='px-2 font10 opacity-1' style='height: fit-content; border-right: 1px solid white; align-self: center;'>
+                  <div>{{team_leader.player_team_season.class.class_name}}</div>
+                  <div>{{team_leader.player_team_season.position}}</div>
+                </div>
+                <div class='px-2'>
+                  <a href='{{team_leader.player_team_season.player.player_href}}'>
+                    <div>{{team_leader.player_team_season.player.name.first}}</div>
+                    <div>{{team_leader.player_team_season.player.name.last}}</div>
+                  </a>
+                </div>
+              </div>
+              <div class='right-box right-text flex-2 font10 opacity-1 my-1 p-1 me-1 z-2 team-secondary-color-border' style='margin-left: -10px; height: fit-content; align-self: flex-end; background-color: #{{team_leader.player_team_season.team_season.team.team_color_primary_hex}};  border: 0.125rem solid;'>
+                {{team_leader.display}} This Season
+                  </div>
+            </div>
+            <div class='bottom-box flex font10 opacity-1 pb-1 pt-3 me-3 z-1 team-secondary-color-border' style='background-color: #{{team_leader.player_team_season.team_season.team.team_color_primary_hex}};  border: 0.125rem solid; margin-top: -0.75rem;'>
+              {% for top_stat in team_leader.player_team_season.season_stats.top_stats%}
+                {% if top_stat.season_score_value > (team_leader.player_team_season.season_stats.games.game_score * 0.05)%}
+                  <div class='flex-1 center-text'>
+                    {{top_stat.display}}</div>
+                {% endif %}
+                {%endfor%}
+              </div>
+            </div>
+          </div>
 
-          {% endfor %}
-        </table>
+        {% endfor %}
       </div>
-    {% endif %}
+    </div>
+  {% endif %}
