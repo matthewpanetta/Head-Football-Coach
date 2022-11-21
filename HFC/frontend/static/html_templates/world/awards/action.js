@@ -709,7 +709,6 @@ const last_action = async (common) => {
 
   function face_in_view() {
     $('.PlayerFace-Headshot[face_drawn="false"]:visible').each(function () {
-      //console.log($(this), isScrolledIntoView($(this)));
       if (isScrolledIntoView($(this))) {
         draw_faces(common, "#" + $(this).parent().attr("id"));
         $(this).attr("face_drawn", "true");

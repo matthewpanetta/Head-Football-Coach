@@ -24,7 +24,7 @@ const get_from_dict = (obj, key) => {
   let iter_obj = obj;
   let loop_count = 0;
   let max_loop = key_parts.length;
-  for (key_part of key_parts) {
+  for (let key_part of key_parts) {
     loop_count += 1;
     if (loop_count == max_loop) {
       if (key_part in iter_obj) {
@@ -116,7 +116,7 @@ class award {
         award_name = `${this.week.week_name}, ${this.week.season}`;
       } else if (this.award_timeframe == "regular season") {
         if (this.award_group == "individual") {
-          award_name = `${this.season} ${this.award_group_type}`;
+          award_name = `${this.season} ${this.award_group_type} Trophy`;
         } else {
           award_name = `${this.season}`;
         }
@@ -315,6 +315,17 @@ class player_team_game {
   }
 
   get completion_percentage() {
+    if (this.game_stats.passing.attempts) {
+      return round_decimal(
+        (this.game_stats.passing.completions * 100) /
+          this.game_stats.passing.attempts,
+        1
+      );
+    }
+    return 0;
+  }
+
+  get passing_completion_percentage() {
     if (this.game_stats.passing.attempts) {
       return round_decimal(
         (this.game_stats.passing.completions * 100) /
@@ -2773,7 +2784,7 @@ const nav_bar_links = async (params) => {
   const LinkGroups = [
     {
       GroupName: "Action",
-      GroupDisplay: `${current_week.week_name}, ${season} TASKS`,
+      GroupDisplay: `${current_week.week_name}, ${season}`,
       GroupLinks: user_actions,
     },
     {
@@ -3389,8 +3400,7 @@ const create_team_season = async (data) => {
     team_season_stats_tocreate: team_season_stats_tocreate,
   });
 
-  await db.team_season.bulkPut(team_seasons_tocreate);
-  await db.team_season_stats.bulkPut(team_season_stats_tocreate);
+  await Promise.all([db.team_season.bulkPut(team_seasons_tocreate), db.team_season_stats.bulkPut(team_season_stats_tocreate)])
 
 };
 
@@ -3623,9 +3633,10 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     team_seasons_to_update.push(team_season);
   }
 
-  await db.team_season.bulkPut(team_seasons_to_update);
-  console.log('Updating player_team_seasons in create_team_seasons', player_team_seasons_to_update)
-  await db.player_team_season.bulkPut(player_team_seasons_to_update);
+  await Promise.all([
+     db.team_season.bulkPut(team_seasons_to_update),
+     db.player_team_season.bulkPut(player_team_seasons_to_update)
+  ])
 };
 
 const create_conference_seasons = async (data) => {
@@ -4319,9 +4330,10 @@ const create_schedule = async (data) => {
 
   team_seasons_to_update = Object.values(team_seasons);
 
-  //const games_created = await db.game.bulkAdd(games_to_create, games_to_create_ids);
-  const games_created = await db.game.bulkAdd(games_to_create);
-  const team_games_created = await db.team_game.bulkAdd(team_games_to_create);
+  await Promise.all([
+    db.game.bulkAdd(games_to_create),
+    db.team_game.bulkAdd(team_games_to_create)
+  ])
 };
 
 const advance_player_team_seasons = async (data) => {
@@ -4526,8 +4538,10 @@ const advance_player_team_seasons = async (data) => {
     player_team_season_stats_tocreate: player_team_season_stats_tocreate,
   });
 
-  await db.player_team_season.bulkPut(player_team_seasons_tocreate);
-  await db.player_team_season_stats.bulkPut(player_team_season_stats_tocreate);
+  await Promise.all([
+     db.player_team_season.bulkPut(player_team_seasons_tocreate),
+     db.player_team_season_stats.bulkPut(player_team_season_stats_tocreate)
+  ])
 };
 
 
@@ -5159,12 +5173,14 @@ const create_recruiting_class = async (common) => {
 
   stopwatch(common, `Stopwatch RTS - Cleaning up data before saving`)
 
-  await db.player_team_season.bulkPut(player_team_seasons);
-  await db.team_season.bulkPut(team_seasons);
-  await db.recruit_team_season.bulkPut(recruit_team_seasons_to_save);
 
-  stopwatch(common, `Stopwatch RTS - Saved all RTSs`)
-  debugger;
+  await Promise.all([
+     db.player_team_season.bulkPut(player_team_seasons),
+     db.team_season.bulkPut(team_seasons),
+     db.recruit_team_season.bulkPut(recruit_team_seasons_to_save)
+  ])
+  stopwatch(common, `Stopwatch RTS - Saved all RTSs WITH PROMISE`)
+
 };
 
 const class_is_in_college = (class_name) => {
@@ -5248,14 +5264,13 @@ const assign_player_jersey_numbers = async(common, season) => {
 
   common.stopwatch(common, 'Assigning jersey numbers - Assigned all numbers')
 
-  console.log({player_team_seasons_to_save:player_team_seasons_to_save, players_to_save:players_to_save, players_by_player_id:players_by_player_id});
 
-  await db.player_team_season.bulkPut(player_team_seasons_to_save);
-  await db.player.bulkPut(players_to_save);
+  await Promise.all([
+    await db.player_team_season.bulkPut(player_team_seasons_to_save),
+    await db.player.bulkPut(players_to_save)
+  ])
 
   common.stopwatch(common, 'Assigning jersey numbers - Saved & done')
-
-  debugger;
 
 }
 
@@ -5451,7 +5466,6 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
   }
 
   console.log({ player_team_seasons_tocreate: player_team_seasons_tocreate });
-  debugger;
   await db.player_team_season.bulkPut(player_team_seasons_tocreate);
 };
 
@@ -5891,10 +5905,11 @@ const create_new_players_and_player_team_seasons = async (
     players_tocreate: players_tocreate,
     player_team_seasons_tocreate: player_team_seasons_tocreate,
   });
-  await db.player.bulkAdd(players_tocreate);
-  await db.player_team_season.bulkAdd(player_team_seasons_tocreate);
-  await db.player_team_season_stats.bulkAdd(player_team_season_stats_tocreate);
-  debugger;
+  await Promise.all([
+    db.player.bulkAdd(players_tocreate),
+    db.player_team_season.bulkAdd(player_team_seasons_tocreate),
+    db.player_team_season_stats.bulkAdd(player_team_season_stats_tocreate)
+  ])
 };
 
 const create_phase = async (season, common) => {
@@ -6294,8 +6309,10 @@ const populate_names = async (ddb) => {
     }
   });
 
-  await ddb.first_names.bulkAdd(first_names_to_add);
-  await ddb.last_names.bulkAdd(last_names_to_add);
+  await Promise.all([
+    ddb.last_names.bulkAdd(last_names_to_add),
+    ddb.first_names.bulkAdd(first_names_to_add)
+  ])
 };
 
 const populate_cities = async (ddb) => {
@@ -6931,6 +6948,7 @@ const common_functions = async (route_pattern) => {
     world_object: world_object,
     params: params,
     season: world_object.current_season,
+    get_from_storage: get_from_storage,
     conference_standings: conference_standings,
     create_player_face: create_player_face,
     create_coach_face:create_coach_face,
@@ -9188,13 +9206,12 @@ const sim_week_games = async (this_week, common) => {
   var team_season_ids_playing_this_week = team_games_this_week.map(
     (tg) => tg.team_season_id
   );
-  var team_seasons = await db.team_season.bulkGet(
-    team_season_ids_playing_this_week
-  );
 
-  var team_season_stats = await db.team_season_stats.bulkGet(
-    team_season_ids_playing_this_week
-  );
+  let [team_seasons, team_season_stats] = await Promise.all([
+    db.team_season.bulkGet(team_season_ids_playing_this_week), 
+    db.team_season_stats.bulkGet(team_season_ids_playing_this_week)
+  ])
+
   const team_season_stats_by_team_season_id = index_group_sync(
     team_season_stats,
     "index",
@@ -9210,19 +9227,19 @@ const sim_week_games = async (this_week, common) => {
   let user_team_season = team_seasons.find(ts => ts.is_user_team)
   let user_team_season_id = user_team_season ? user_team_season.team_season_id : 0;
 
-  var team_seasons_by_team_season_id = await index_group(
+  var team_seasons_by_team_season_id = index_group_sync(
     team_seasons,
     "index",
     "team_season_id"
   );
-  var teams = await db.team.where("team_id").above(0).toArray();
-  var teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
-  var player_team_seasons = await db.player_team_season
-    .where("team_season_id")
-    .anyOf(team_season_ids_playing_this_week)
-    .toArray();
-  var player_team_seasons_by_team_season_id = await index_group(
+  let [teams, player_team_seasons] = await Promise.all([
+    db.team.where("team_id").above(0).toArray(),
+    db.player_team_season.where("team_season_id").anyOf(team_season_ids_playing_this_week).toArray()
+  ])
+
+  var teams_by_team_id = index_group_sync(teams, "index", "team_id");
+  var player_team_seasons_by_team_season_id = index_group_sync(
     player_team_seasons,
     "group",
     "team_season_id"
@@ -9249,15 +9266,16 @@ const sim_week_games = async (this_week, common) => {
     "season_stats"
   );
 
+  let [players, games_this_week] = await Promise.all([
+    db.player.bulkGet(player_ids),
+    db.game.where({ week_id: this_week.week_id }).toArray()
+  ]);
   const players_by_player_id = index_group_sync(
-    await db.player.bulkGet(player_ids),
+    players,
     "index",
     "player_id"
   );
 
-  let games_this_week = await db.game
-    .where({ week_id: this_week.week_id })
-    .toArray();
   games_this_week = games_this_week.filter((g) => g.was_played == false);
   games_this_week = games_this_week.sort(function(g_a, g_b){
     if (g_a.home_team_season_id == user_team_season_id || g_a.away_team_season_id == user_team_season_id){
@@ -9302,16 +9320,15 @@ const sim_week_games = async (this_week, common) => {
 
   var game_dicts_this_week = [];
 
-  const last_player_team_game = await db.player_team_game
-    .orderBy("player_team_game_id")
-    .last();
+  let [last_player_team_game, last_headline] = await Promise.all([
+    db.player_team_game.orderBy("player_team_game_id").last(), 
+    db.headline.orderBy("headline_id").last()
+  ]);
 
   var player_team_game_id_counter = 1;
   if (last_player_team_game != undefined) {
     player_team_game_id_counter = last_player_team_game.player_team_game_id + 1;
   }
-
-  const last_headline = await db.headline.orderBy("headline_id").last();
 
   var headline_id_counter = 1;
   if (last_headline != undefined) {
@@ -9322,7 +9339,7 @@ const sim_week_games = async (this_week, common) => {
 
   for (const game of games_this_week) {
     game_dict = { game: game };
-    team_games = team_games_by_game_id[game.game_id].sort(function (a, b) {
+    let team_games = team_games_by_game_id[game.game_id].sort(function (a, b) {
       if (a.is_home_team) return 1;
       if (b.is_home_team) return -1;
       return 0;
@@ -9330,8 +9347,8 @@ const sim_week_games = async (this_week, common) => {
 
     team_seasons = [];
     teams = [];
-    var player_team_seasons = [];
-    var players = [],
+    player_team_seasons = [];
+    players = [],
       players_list = [],
       player_team_games = {};
 
@@ -9496,26 +9513,16 @@ const sim_week_games = async (this_week, common) => {
 
   common.stopwatch(common, "Done compiling stats");
 
-  const updated_games = await db.game.bulkPut(games_to_save);
-  const updated_team_games = await db.team_game.bulkPut(team_games_to_save);
-  const updated_team_seasons = await db.team_season.bulkPut(
-    team_seasons_to_save
-  );
-  const updated_team_season_stats = await db.team_season_stats.bulkPut(
-    team_season_stats_to_save
-  );
-  const updated_player_team_season_stats =
-    await db.player_team_season_stats.bulkPut(player_team_season_stats_to_save);
-    console.log('Updating player_team_seasons in sim_week_games', player_team_seasons_to_save)
-    const updated_player_team_seasons = await db.player_team_season.bulkPut(
-    player_team_seasons_to_save
-  );
-  const saved_player_team_games = await db.player_team_game.bulkAdd(
-    player_team_games_to_save
-  );
-  const saved_headlines = await db.headline.bulkAdd(headlines_to_save);
-
-  console.log({ updated_games: updated_games });
+  await Promise.all([
+      db.game.bulkPut(games_to_save),
+      db.team_game.bulkPut(team_games_to_save),
+      db.team_season.bulkPut(team_seasons_to_save),
+      db.team_season_stats.bulkPut(team_season_stats_to_save),
+      db.player_team_season_stats.bulkPut(player_team_season_stats_to_save),
+      db.player_team_season.bulkPut(player_team_seasons_to_save),
+      db.player_team_game.bulkAdd(player_team_games_to_save),
+      db.headline.bulkAdd(headlines_to_save)
+  ])
 
   common.stopwatch(common, "Done compiling stats");
 
@@ -9565,9 +9572,13 @@ const calculate_team_needs = async (common) => {
 
   const class_map = {
     SR: 0,
+    'SR (RS)': 0,
     JR: 1,
+    'JR (RS)': 1,
     SO: 2,
+    'SO (RS)': 2,
     FR: 3,
+    'FR (RS)': 3,
     "HS SR": 4,
   };
 
@@ -9870,6 +9881,14 @@ const calculate_primetime_games = async (this_week, all_weeks, common) => {
   const db = common.db;
   const season = common.season;
 
+  let next_week = await db.week.get({week_id: this_week.week_id + 1})
+
+  if (!next_week){
+    return null;
+  }
+
+  let games = await db.game.where({week_id: next_week.week_id}).toArray()
+
   let teams = await db.team.toArray();
   let teams_by_team_id = index_group_sync(teams, 'index', 'team_id')
 
@@ -9878,9 +9897,6 @@ const calculate_primetime_games = async (this_week, all_weeks, common) => {
 
   let team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
 
-  let next_week = await db.week.get({week_id: this_week.week_id + 1})
-
-  let games = await db.game.where({week_id: next_week.week_id}).toArray()
 
   games.filter(g => g.home_team_season_id > 0).forEach(function(g){
     g.home_team_season = team_seasons_by_team_season_id[g.home_team_season_id]
@@ -10297,8 +10313,11 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     delete team_season.srs;
     delete team_season.conference_season;
   }
-  await db.team_season.bulkPut(sorted_team_seasons);
-  await db.headline.bulkPut(ranking_headlines);
+
+  await Promise.all([
+    db.team_season.bulkPut(sorted_team_seasons),
+    db.headline.bulkPut(ranking_headlines)
+  ])
 };
 
 const calculate_conference_rankings = async (this_week, all_weeks, common) => {
@@ -10818,12 +10837,6 @@ const weekly_recruiting = async (common) => {
   player_team_seasons.forEach((pts) => delete pts.recruiting);
   player_team_seasons.forEach((pts) => delete pts.player);
 
-  console.log('Updating player_team_seasons in weekly_recruiting', player_team_seasons)
-  await db.player_team_season.bulkPut(player_team_seasons);
-  await db.player_team_season_recruiting.bulkPut(
-    player_team_season_recruitings_to_put
-  );
-
   const team_season_recruitings_to_put = team_seasons.map(
     (ts) => ts.recruiting
   );
@@ -10837,8 +10850,14 @@ const weekly_recruiting = async (common) => {
   console.log({
     team_season_recruitings_to_put: team_season_recruitings_to_put,
   });
-  await db.team_season.bulkPut(team_seasons);
-  await db.team_season_recruiting.bulkPut(team_season_recruitings_to_put);
+
+  await Promise.all([
+    db.player_team_season.bulkPut(player_team_seasons),
+    db.player_team_season_recruiting.bulkPut(player_team_season_recruitings_to_put ),
+    db.team_season.bulkPut(team_seasons),
+    db.team_season_recruiting.bulkPut(team_season_recruitings_to_put)
+  ])
+
   console.log("Done putting on 5789");
 
   var endTime = performance.now();
@@ -12136,7 +12155,7 @@ const sim_action = async (duration, common) => {
       //await choose_all_americans
     }
 
-    if (this_week.week_name == "Plan for Season") {
+    if (this_week.week_name == "National Signing Day") {
       await initialize_new_season(this_week, common);
     }
 
@@ -12456,10 +12475,12 @@ const assign_conference_champions = async (this_week, common) => {
 
   conference_seasons.forEach(cs => delete cs.conference);
 
-  await db.team_season.bulkPut(winning_team_seasons);
-  await db.team_season.bulkPut(losing_team_seasons);
-  await db.team_season.bulkPut(championship_gameless_team_season_champs);
-  await db.conference_season.bulkPut(conference_seasons_to_put);
+  await Promise.all([
+    db.team_season.bulkPut(winning_team_seasons),
+    db.team_season.bulkPut(losing_team_seasons),
+    db.team_season.bulkPut(championship_gameless_team_season_champs),
+    db.conference_season.bulkPut(conference_seasons_to_put)
+  ])
 };
 
 const schedule_conference_championships = async (
@@ -12590,8 +12611,10 @@ const schedule_conference_championships = async (
     next_team_game_id += 2;
   });
 
-  const games_created = await db.game.bulkAdd(games_to_create);
-  const team_games_created = await db.team_game.bulkAdd(team_games_to_create);
+  await Promise.all([
+    db.game.bulkAdd(games_to_create),
+    db.team_game.bulkAdd(team_games_to_create)
+  ])
 };
 
 const process_bowl_results = async (common) => {
@@ -12854,10 +12877,12 @@ const process_bowl_results = async (common) => {
     }
   }
 
-  await db.game.bulkAdd(games_to_create);
-  await db.team_game.bulkAdd(team_games_to_create);
-  await db.team_season.bulkPut(team_seasons_to_save);
-  await db.league_season.put(current_league_season);
+  await Promise.all([
+    db.game.bulkAdd(games_to_create),
+    db.team_game.bulkAdd(team_games_to_create),
+    db.team_season.bulkPut(team_seasons_to_save),
+    db.league_season.put(current_league_season)
+  ])
 };
 
 const schedule_bowl_season = async (all_weeks, common) => {
@@ -13257,10 +13282,12 @@ const schedule_bowl_season = async (all_weeks, common) => {
     next_team_game_id += 2;
   });
 
-  const games_created = await db.game.bulkAdd(games_to_create);
-  const team_games_created = await db.team_game.bulkAdd(team_games_to_create);
-  await db.league_season.put(current_league_season);
-  await db.team_season.bulkPut(playoff_bound_team_seasons);
+  await Promise.all([
+    db.game.bulkAdd(games_to_create),
+    db.team_game.bulkAdd(team_games_to_create),
+    db.league_season.put(current_league_season),
+    db.team_season.bulkPut(playoff_bound_team_seasons)
+  ])
 
 };
 
@@ -15150,13 +15177,18 @@ const tier_placement = (tiers, population_size, distribution, rank_place) => {
 };
 
 const get = (obj, key) => {
-  const keys = key.split(".");
-  var drill_obj = obj;
-  for (var new_key of keys) {
-    drill_obj = drill_obj[new_key];
-  }
+  // console.log({
+  //   obj:obj, key:key
+  // })
+  // const keys = key.split(".");
+  // var drill_obj = obj;
+  // for (var new_key of keys) {
+  //   drill_obj = drill_obj[new_key];
+  // }
 
-  return drill_obj;
+  // return drill_obj;
+
+  return get_from_dict(obj, key)
 };
 
 const set = (obj, key, val) => {
@@ -15767,23 +15799,30 @@ const new_world_action = async (common, database_suffix) => {
 
 
 Array.prototype.add_element_sorted_list = function(elem, compare_func){
-  let insert_index = this.findIndex(e => compare_func(e, elem) >= 0);
-
-  if (insert_index == -1){
+  if (this.length == 0){
     this.push(elem)
   }
   else {
-    this.splice(insert_index, 0, elem)
+    let insert_index = this.findIndex(e => compare_func(e, elem) >= 0);
+
+    if (insert_index == -1){
+      this.push(elem)
+    }
+    else {
+      this.splice(insert_index, 0, elem)
+    }  
   }
+
 }
 
 Array.prototype.top_sort = function(top_n, compare_func){
   if (this.length == 0){
     return []
   }
-  let top_list = [this[0]]
+
+  let top_list = []
   this.forEach(function(elem){
-    if (compare_func(elem, top_list[top_list.length - 1])){
+    if ((top_list.length < top_n) || (compare_func(elem, top_list[top_list.length - 1]))){
       top_list.add_element_sorted_list(elem, compare_func);
 
       if (top_list.length > top_n){
@@ -15793,4 +15832,9 @@ Array.prototype.top_sort = function(top_n, compare_func){
   });
 
   return top_list;
+}
+
+
+const get_from_storage = (key) => {
+  return localStorage.getItem(key);
 }

@@ -151,7 +151,7 @@ const action = async (common) => {
   );
 
   player_team_seasons.forEach(function(pts){
-      pts.class_sort_order = class_sort_order_map[pts.class.class_name];
+      pts.class_sort_order = class_sort_order_map[pts.class_name];
       pts.position_sort_order = position_sort_order_map[pts.position];
       pts.position_group = position_group_map[pts.position];
   })

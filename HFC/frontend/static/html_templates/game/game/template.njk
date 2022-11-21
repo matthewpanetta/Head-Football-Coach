@@ -681,7 +681,7 @@
           <div class='w3-container'>
             {% for stat_grouping in box_score_stat_groupings %}
 
-            <div class='w3-row-padding'>
+            <div class='flex'>
               {% for team_game_obj in [ {'home_or_away': 'away', 'team_game': game.away_team_game}, {'home_or_away': 'home', 'team_game': game.home_team_game}]%}
               <div class='flex-2 gamePlayerBoxStats card margin-bottom-12 height100 no-padding'>
                 <div class="w3-bar {{team_game_obj.home_or_away}}-team-primary-background-bar">

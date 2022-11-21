@@ -11,15 +11,13 @@
       </div>
 
     <div class="">
-      {{team_leaders|log}}
       {% for team_leader in team_leaders %}
-        {{team_leader|log}}
         <div class='flex gap-0 mb-1' style='place-items: flex-end;'>
           <div class='height100 z-3'>
             <img class='logo logo-60 align-bottom inline-block' src='{{team_leader.player_team_season.team_season.team.team_logo}}'/>
-            <div class="PlayerFace-90 PlayerFace-Headshot inline-block align-middle" player_id='{{team_leader.player_team_season.player_id}}' style='margin-left: -2rem; border: none;' id="teamTeamLeaderBoxCoachFace{{loop.index}}"  ></div>
+            <div class="PlayerFace-90 PlayerFace-Headshot inline-block align-middle" player_id='{{team_leader.player_team_season.player_id}}' style='margin-left: -15%; border: none;' id="teamTeamLeaderBoxCoachFace{{loop.index}}"  ></div>
           </div>
-          <div class='white-text slight-skew-parent flex-2' style='margin-left: -1rem' >
+          <div class='white-text slight-skew-parent flex-2' style='margin-left: -10%;' >
             <div class='flex space-between gap-0 z-3'>
               <div class='top-box flex gap-0 z-3 team-secondary-color-border'  style='background-color: #{{team_leader.player_team_season.team_season.team.team_color_primary_hex}}; border: 0.125rem solid;'>
                 <div class='px-2 font10 opacity-1' style='height: fit-content; border-right: 1px solid white; align-self: center;'>
@@ -33,11 +31,11 @@
                   </a>
                 </div>
               </div>
-              <div class='right-box right-text flex-2 font10 opacity-1 my-1 p-1 me-1 z-2 team-secondary-color-border' style='margin-left: -10px; height: fit-content; align-self: flex-end; background-color: #{{team_leader.player_team_season.team_season.team.team_color_primary_hex}};  border: 0.125rem solid;'>
+              <div class='right-box right-text flex-2 font10 opacity-1 my-1 p-1 me-1 z-2 team-secondary-color-border' style='margin-left: -5%; height: fit-content; align-self: flex-end; background-color: #{{team_leader.player_team_season.team_season.team.team_color_primary_hex}};  border: 0.125rem solid;'>
                 {{team_leader.display}} This Season
                   </div>
             </div>
-            <div class='bottom-box flex font10 opacity-1 pb-1 pt-3 me-3 z-1 team-secondary-color-border' style='background-color: #{{team_leader.player_team_season.team_season.team.team_color_primary_hex}};  border: 0.125rem solid; margin-top: -0.75rem;'>
+            <div class='bottom-box flex font10 opacity-1 pb-1 pt-3 me-3 z-1 team-secondary-color-border' style='background-color: #{{team_leader.player_team_season.team_season.team.team_color_primary_hex}};  border: 0.125rem solid; margin-top: -3%;'>
               {% for top_stat in team_leader.player_team_season.season_stats.top_stats%}
                 {% if top_stat.season_score_value > (team_leader.player_team_season.season_stats.games.game_score * 0.05)%}
                   <div class='flex-1 center-text'>

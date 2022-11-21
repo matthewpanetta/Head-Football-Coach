@@ -139,7 +139,7 @@ const getHtml = async (common) => {
       player_team_season_games[player_team_season.player_team_season_id];
 
     player_team_season.class_sort_order =
-      class_sort_order_map[player_team_season.class.class_name];
+      class_sort_order_map[player_team_season.class_name];
     player_team_season.position_sort_order =
       position_sort_order_map[player_team_season.position];
     player_team_season.position_group =

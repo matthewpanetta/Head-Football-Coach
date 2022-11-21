@@ -120,7 +120,7 @@
 
       </tr>
       <tr class='football-table-column-headers unselectable primary-color-row' style=' height: 1.875rem; '>
-        <th style='width: 7.5rem;' sort-order='sort-asc'>Week</th>
+        <th style='width: 7.5rem;' sort-order='sort-desc'>Week</th>
         <th>Opp</th>
         <th style='width: 6.25rem;' class='col-group'>
             Result
@@ -202,6 +202,7 @@
 
           <td style='width: 7.5rem; color: white; background-color: #{{player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}}' value='{{player_team_game.team_game.game.week.week_id}}'>
             {{player_team_game.team_game.game.week.week_name}}
+            {% if all_seasons|length > 1%}, {{player_team_game.team_game.game.week.season}}{%endif%}
           </td>
           <td style='color: white; background-color: #{{player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}}' value='{{player_team_game.team_game.opponent_team_season.team.school_name}}'>
             <a href='{{player_team_game.team_game.opponent_team_season.team.team_href}}'>

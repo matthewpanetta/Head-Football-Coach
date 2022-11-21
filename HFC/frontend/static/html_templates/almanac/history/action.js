@@ -76,22 +76,20 @@
         season.links.push({'display': 'Team Stats', 'href': `/World/${world_id}/TeamStats/${season.season}`});
 
         var season_team_seasons = team_seasons_by_season[season.season]
-        season.preseason_number_1 = season_team_seasons.filter(ts => ts.rankings.national_rank[ts.rankings.national_rank.length - 1] == 1)[0]
 
         if (season.is_current_season && !(this_week.week_name == 'Season Recap')){
-          season.final_four_runner_ups = [null,null,null]
+          season.season_end_top_five = [null,null,null, null,null]
           continue;
         }
 
-
         season.awards = awards_by_season[season.season]
 
-        season.heisman_winner = season.awards.filter(a => a.award_group_type == 'Heisman')[0];
+        season.heisman_winner = season.awards.find(a => a.award_group_type == 'Heisman');
 
-        season.national_champion = season_team_seasons.filter(ts => ts.results.national_champion)[0]
+        season.national_champion = season_team_seasons.find(ts => ts.results.national_champion)
 
-        season.final_four_runner_ups = season_team_seasons.filter(ts => ts.results.final_four && !(ts.results.national_champion))
-        season.final_four_runner_ups = season.final_four_runner_ups.sort((ts_a, ts_b) => ts_b.results.bowl.game_id - ts_a.results.bowl.game_id)
+        season.season_end_top_five = season_team_seasons.filter(ts => ts.rankings.national_rank[0] <= 5).sort((ts_a, ts_b) => ts_a.rankings.national_rank[0] - ts_b.rankings.national_rank[0])
+        season.season_start_top_five = season_team_seasons.filter(ts => ts.rankings.national_rank[ts.rankings.national_rank.length - 1] <= 5).sort((ts_a, ts_b) => ts_a.rankings.national_rank[ts_a.rankings.national_rank.length - 1] - ts_b.rankings.national_rank[ts_b.rankings.national_rank.length - 1])
         
         season.team_seasons = season_team_seasons;
 

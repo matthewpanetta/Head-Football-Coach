@@ -23,8 +23,8 @@
       <div class="tab-content show active" style="display:block;"  id="nav-overview">
         <div class="">
           <div class="w3-row-padding"></div>
-          <div class="flex p-2">
-            <div class="flex-2 m-2">
+          <div class="flex px-2">
+            <div class="flex-3 m-2">
               <div class="card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
                   <div class="">Top 25</div>
@@ -98,7 +98,7 @@
                   </table>
                 </div>
               </div>
-              <div class="flex-2 m-2" id='info-col'>
+              <div class="flex-3 m-2" id='info-col'>
                 {% if this_week_games | length > 0 %}
                   {% include "../../static/html_templates/world/world/info_col_season.njk" %}
                 {% elif current_week.week_name == 'Season Recap' %}
@@ -219,7 +219,7 @@
                         </div>
                       {% endif %}
                     </div>
-                    <div class='flex-1 m-2'>
+                    <div class='flex-2 m-2'>
                       <div class="card w3-margin-bottom">
                         <div class="w3-bar team-primary-background-bar">
                           <div class="">Headlines</div>

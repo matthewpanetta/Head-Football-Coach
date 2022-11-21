@@ -1,0 +1,68 @@
+<style>
+    .football-table-column-headers th {
+        background-color: #{{page.SecondaryColor}};
+    }
+
+    .football-table-column-headers.primary-color-row th {
+        background-color: #{{page.PrimaryColor}};
+    }
+</style>
+
+<div  style='max-width: 100%; width:100%; overflow-x: scroll;'>
+  <table class='table table-striped football-table-content font14' id='player-stats-game-high-table' style='table-layout: fixed; max-width: 100%; width:100%; '>
+    <tbody class='football-table-body center-text vertical-align-middle' style=' min-height: 100%; width: 100%; max-width: 100%;'>
+      {% if game_highs|length == 0%}
+        <tr class='football-table-row left-text vertical-align-middle' style='height: 3.125rem;'>
+          <td colspan="2">No games to display</td>
+        </tr>
+      {% endif %}
+      {% for stat_group in game_highs%}
+      <tr class='football-table-column-headers'>
+        <th colspan='4' class=' white-text'>{{stat_group.stat_group}} Career Highs</th>
+      </tr>
+        {% for stat_obj in stat_group.stats%}
+        {% if loop.index % 2 == 1%}
+        <tr>
+        {% endif %}
+          <td class='no-width no-wrap'>
+            {{stat_obj.top_5_vals[0]}} {{stat_group.stat_group}} {{stat_obj.display}}
+            <div class=''>
+              {{stat_obj.player_team_game.team_game.game.week.week_name}}, {{stat_obj.player_team_game.team_game.game.week.season}}
+            </div>
+            <div class="">
+              <span class='{{stat_obj.player_team_game.team_game.game_outcome_letter}} bold'>{{stat_obj.player_team_game.team_game.game_outcome_letter}}
+              </span>
+              <a href='{{stat_obj.player_team_game.team_game.game.game_href}}'>{{stat_obj.player_team_game.team_game.game_stats.team.points}}-{{stat_obj.player_team_game.team_game.opponent_game_stats.team.points}}
+              </a>
+              vs.
+              {% if stat_obj.player_team_game.team_game.opponent_team_season.team.is_user_team%}
+                  <span class='opacity-1' style='color: #{{stat_obj.player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}};'>
+                      <i class="fa fa-user"></i>
+                  </span>
+                  {%endif%}
+              <a href='{{stat_obj.player_team_game.team_game.opponent_team_season.team.team_href}}'>{{stat_obj.player_team_game.team_game.opponent_team_season.team.team_abbreviation}}</a>
+            </div>
+          </td>
+
+          <td class='white-text font10 opacity-1 col-group'>
+            {% for player_team_game in stat_obj.top_5_player_team_games%}
+            <div class="px-2 flex space-between team-color-background no-wrap" style="margin-bottom: 1px; min-height: 1.5rem; line-height: 1.5rem; width:  {{player_team_game|get(stat_obj.stat_key) * 100.0 / stat_obj.player_team_game|get(stat_obj.stat_key)}}%;">
+                <span class=''>
+                  <a href='{{player_team_game.team_game.game.game_href}}'>
+                    {{player_team_game.team_game.game.week.week_name}}, {{player_team_game.team_game.game.week.season}}
+                  </a>
+                </span>
+                <span class=''>{{player_team_game|get(stat_obj.stat_key)}}</span>
+            </div>
+            {% endfor %}
+          </td>
+
+        {% if (loop.index % 2 == 0) or loop.last%}
+        </tr>
+        {% endif %}
+        
+        {%endfor%}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

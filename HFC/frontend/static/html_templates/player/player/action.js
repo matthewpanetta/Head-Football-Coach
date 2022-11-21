@@ -107,14 +107,18 @@ const populate_player_stats = async (common) => {
   const db = await common.db;
   const player = common.render_content.player;
   const current_player_team_season = player.current_player_team_season;
+  let player_team_season_ids = player.player_team_seasons.map((pts) => pts.player_team_season_id);
 
-  const all_seasons = player.player_team_seasons.map(pts => pts.season);
+  const all_seasons = player.player_team_seasons
+    .filter((pts) => pts.team_season_id > 0)
+    .map((pts) => pts.season);
 
-  const weeks = await db.week.where('season').anyOf(all_seasons).toArray();
+  const weeks = await db.week.where("season").anyOf(all_seasons).toArray();
   const weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
 
   var player_team_games = await db.player_team_game
-    .where({ player_team_season_id: current_player_team_season.player_team_season_id })
+    .where("player_team_season_id")
+    .anyOf(player_team_season_ids)
     .toArray();
   const team_game_ids = player_team_games.map((ptg) => ptg.team_game_id);
   var team_games = await db.team_game.bulkGet(team_game_ids);
@@ -123,7 +127,8 @@ const populate_player_stats = async (common) => {
   var games = await db.game.bulkGet(game_ids);
 
   var team_seasons = await db.team_season
-    .where('season').anyOf(all_seasons)
+    .where("season")
+    .anyOf(all_seasons)
     .and((ts) => ts.team_id > 0)
     .toArray();
 
@@ -200,25 +205,35 @@ const populate_player_stats = async (common) => {
   const primary_stat_show = player_stats_show_position_map[player.position];
   const player_season_stat = player.current_player_team_season.season_stats;
 
-  player.player_team_seasons = player.player_team_seasons.filter(pts => pts.season_stats);
+  player.player_team_seasons = player.player_team_seasons.filter((pts) => pts.season_stats);
 
   for (const player_team_season of player.player_team_seasons) {
     console.log({ player_team_season: player_team_season });
 
-    if (player_team_season.season_stats.passing.attempts > 0) {player_stats_show["Passing"] = true;}
-    if (player_team_season.season_stats.rushing.carries > 0) {player_stats_show["Rushing"] = true;}
-    if (player_team_season.season_stats.receiving.targets > 0)
-      {player_stats_show["Receiving"] = true;}
-    if (player_team_season.season_stats.blocking.blocks > 0) {player_stats_show["Blocking"] = true;}
+    if (player_team_season.season_stats.passing.attempts > 0) {
+      player_stats_show["Passing"] = true;
+    }
+    if (player_team_season.season_stats.rushing.carries > 0) {
+      player_stats_show["Rushing"] = true;
+    }
+    if (player_team_season.season_stats.receiving.targets > 0) {
+      player_stats_show["Receiving"] = true;
+    }
+    if (player_team_season.season_stats.blocking.blocks > 0) {
+      player_stats_show["Blocking"] = true;
+    }
     if (
       (player_team_season.season_stats.defense.tackles || 0) +
         (player_team_season.season_stats.defense.ints || 0) +
         (player_team_season.season_stats.fumbles.forced || 0) +
         (player_team_season.season_stats.defense.deflections || 0) >
       0
-    )
-      {player_stats_show["Defense"] = true;}
-    if (player_team_season.season_stats.kicking.fga > 0) {player_stats_show["Kicking"] = true;}
+    ) {
+      player_stats_show["Defense"] = true;
+    }
+    if (player_team_season.season_stats.kicking.fga > 0) {
+      player_stats_show["Kicking"] = true;
+    }
   }
 
   player.career_stats = {};
@@ -253,12 +268,95 @@ const populate_player_stats = async (common) => {
     player_team_season: current_player_team_season,
     player_stats_show: player_stats_show,
     player_team_games: player_team_games,
+    all_seasons: all_seasons,
   });
 
   $("#player-stats-game-log-div").empty();
   $("#player-stats-game-log-div").html(renderedHtml);
 
   init_basic_table_sorting(common, "#player-stats-game-log-div", 0);
+
+  var url = "/static/html_templates/player/player/player_stats_career_high_table_template.njk";
+  var html = await fetch(url);
+  html = await html.text();
+
+  let game_highs = [
+    {
+      stat_group: "Passing",
+      stats: [
+        { display: "Yards", stat_key: "game_stats.passing.yards" },
+        { display: "Completion %", stat_key: "passing_completion_percentage" },
+        { display: "Attempts", stat_key: "game_stats.passing.attempts" },
+        { display: "Completions", stat_key: "game_stats.passing.completions" },
+        { display: "TDs", stat_key: "game_stats.passing.tds" },
+        { display: "INTs", stat_key: "game_stats.passing.ints" },
+      ],
+    },
+    {
+      stat_group: "Rushing",
+      stats: [
+        { display: "Yards", stat_key: "game_stats.rushing.yards" },
+        { display: "TDs", stat_key: "game_stats.rushing.tds" },
+        { display: "Carries", stat_key: "game_stats.rushing.carries" },
+        { display: "YPC", stat_key: "rushing_yards_per_carry" },
+      ],
+    },
+    {
+      stat_group: "Receiving",
+      stats: [
+        { display: "Yards", stat_key: "game_stats.receiving.yards" },
+        { display: "TDs", stat_key: "game_stats.receiving.tds" },
+        { display: "Receptions", stat_key: "game_stats.receiving.receptions" },
+        { display: "YPC", stat_key: "receiving_yards_per_catch" },
+      ],
+    },
+  ];
+
+  game_highs.forEach(function(game_high_stat_group_obj){
+    let stat_group = game_high_stat_group_obj.stat_group;
+
+    game_high_stat_group_obj.stats.forEach(function(stat_obj){
+      
+      stat_obj.player_team_games = player_team_games.filter(ptg => get(ptg, stat_obj.stat_key) > 0)
+
+      stat_obj.top_5_player_team_games = stat_obj.player_team_games.top_sort(5, function(ptg_a, ptg_b){ 
+        return (get(ptg_b, stat_obj.stat_key) || 0) - (get(ptg_a, stat_obj.stat_key) || 0);
+      })
+
+      console.log({
+        game_high_stat_group_obj:game_high_stat_group_obj, 
+        stat_obj:stat_obj,
+        player_team_games:player_team_games, 
+        stat_group:stat_group,
+        'stat_obj.top_5_player_team_games': stat_obj.top_5_player_team_games
+      })
+
+      debugger;
+
+      if (stat_obj.top_5_player_team_games.length){
+        stat_obj.top_5_vals = stat_obj.top_5_player_team_games.map(ptg => get(ptg, stat_obj.stat_key));
+        stat_obj.player_team_game = stat_obj.top_5_player_team_games[0]
+      }
+    })
+
+    game_high_stat_group_obj.stats = game_high_stat_group_obj.stats.filter(s => s.top_5_player_team_games.length);
+  })
+
+  game_highs = game_highs.filter(sg => sg.stats.length)
+
+  console.log({
+    game_highs:game_highs
+  })
+
+  var renderedHtml = await common.nunjucks_env.renderString(html, {
+    page: common.page,
+    player_team_season: current_player_team_season,
+    player_stats_show: player_stats_show,
+    game_highs:game_highs
+  });
+
+  $("#player-stats-career-high-div").empty();
+  $("#player-stats-career-high-div").html(renderedHtml);
 
   var url = "/static/html_templates/player/player/player_stats_season_stats_table_template.njk";
   var html = await fetch(url);
@@ -373,7 +471,9 @@ const getHtml = async (common) => {
   player.player_team_seasons = player_team_seasons;
   player.current_player_team_season = player_team_seasons[player_team_seasons.length - 1];
 
-  let all_seasons = player.player_team_seasons.map(pts => pts.season);
+  let all_seasons = player.player_team_seasons
+    .filter((pts) => pts.team_season_id > 0)
+    .map((pts) => pts.season);
 
   var team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
   var team_seasons = await db.team_season.bulkGet(team_season_ids);
@@ -389,7 +489,8 @@ const getHtml = async (common) => {
   });
 
   player.player_team_seasons = player_team_seasons;
-  player.current_player_team_season = player.player_team_seasons[player.player_team_seasons.length - 1];
+  player.current_player_team_season =
+    player.player_team_seasons[player.player_team_seasons.length - 1];
   var current_team = player.current_player_team_season.team_season.team;
 
   console.log({
@@ -406,7 +507,8 @@ const getHtml = async (common) => {
     var team_season = null;
 
     var team_seasons = await db.team_season
-      .where('season').anyOf(all_seasons)
+      .where("season")
+      .anyOf(all_seasons)
       .and((ts) => ts.team_id > 0)
       .toArray();
 

@@ -29,7 +29,7 @@
       <div class="tab-content" style="display:block;"  id="nav-ncaa-history" >
         <div class='w3-display-container' >
           <div class="w3-row-padding">
-            <div class="w3-col s10">
+            <div class="w3-col">
               <div class="card">
                 <div class="w3-bar team-primary-background-bar">
                 <span class='hide-small'>Yearly Results</span>
@@ -39,14 +39,15 @@
                     <tr class='team-secondary-table-row'>
                       <th>Season</th>
                       <th class='col-group'>Champion</th>
-                      <th class='col-group' colspan="3">Final 4 Runner-Ups</th>
-                      <th class='col-group'>Pre-Season #1</th>
+                      <th class='col-group' colspan="1">Final Top 5</th>
+                      <th class='col-group'>Pre-Season Top 5</th>
 
                       <th class='col-group' colspan='3'>Heisman Winner</th>
                       <th></th>
                     </tr>
                   </thead>
                     {% for season in seasons%}
+                    {{season|log}}
                     <tr>
                       {% if season.national_champion%}
                       <td class='font16' style='color:white; background-color: #{{season.national_champion.team.team_color_primary_hex}}'>{{season.season}}</td>
@@ -62,22 +63,40 @@
                       <td class='font16'>{{season.season}}</td>
                       <td></td>
                       {% endif %}
-                      {% for team_season in season.final_four_runner_ups %}
-                      {% if team_season%}
-                      <td class='center-text' style='background-color: #{{team_season.team.team_color_primary_hex}}'>
+                      <td class='p-0'>
+                        <div class='mb-0'>
+                        {% for team_season in season.season_end_top_five%}
+                        <div class='white-text p-1' style='background-color: #{{team_season.team.team_color_primary_hex}};'>
                           <a href="{{team_season.team_season_href}}">
-                            <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-50'>
+                            <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-24'>
                           </a>
+                          <span>
+                            <a href="{{team_season.team_season_href}}">
+                              {{team_season.team.full_name}}
+                            </a>
+                          </span>
+                        </div>
+                        {% endfor %}
+                        </div>
                       </td>
-                      {% else%}
-                      <td></td>
-                      {% endif %}
-                      {% endfor %}
-                      <td class='center-text col-group colgroup-border-left'  style='background-color: #{{season.preseason_number_1.team.team_color_primary_hex}}'>
-                        <a href="{{season.preseason_number_1.team_season_href}}">
-                          <img src="{{season.preseason_number_1.team.team_logo}}" alt="" class='logo logo-50'>
-                        </a>
+                      
+                      <td class='p-0'>
+                        <div class='mb-0'>
+                        {% for team_season in season.season_start_top_five%}
+                        <div class='white-text p-1' style='background-color: #{{team_season.team.team_color_primary_hex}};'>
+                          <a href="{{team_season.team_season_href}}">
+                            <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-24'>
+                          </a>
+                          <span>
+                            <a href="{{team_season.team_season_href}}">
+                              {{team_season.team.full_name}}
+                            </a>
+                          </span>
+                        </div>
+                        {% endfor %}
+                        <div>
                       </td>
+                      
 
                       {% if season.heisman_winner%}
                       <td  class='center-text' style="background-color: #{{season.heisman_winner.player_team_season.team_season.team.team_color_primary_hex}}">
