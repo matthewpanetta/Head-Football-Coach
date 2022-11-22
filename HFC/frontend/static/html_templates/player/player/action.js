@@ -323,16 +323,6 @@ const populate_player_stats = async (common) => {
         return (get(ptg_b, stat_obj.stat_key) || 0) - (get(ptg_a, stat_obj.stat_key) || 0);
       })
 
-      console.log({
-        game_high_stat_group_obj:game_high_stat_group_obj, 
-        stat_obj:stat_obj,
-        player_team_games:player_team_games, 
-        stat_group:stat_group,
-        'stat_obj.top_5_player_team_games': stat_obj.top_5_player_team_games
-      })
-
-      debugger;
-
       if (stat_obj.top_5_player_team_games.length){
         stat_obj.top_5_vals = stat_obj.top_5_player_team_games.map(ptg => get(ptg, stat_obj.stat_key));
         stat_obj.player_team_game = stat_obj.top_5_player_team_games[0]
@@ -344,9 +334,6 @@ const populate_player_stats = async (common) => {
 
   game_highs = game_highs.filter(sg => sg.stats.length)
 
-  console.log({
-    game_highs:game_highs
-  })
 
   var renderedHtml = await common.nunjucks_env.renderString(html, {
     page: common.page,
@@ -472,32 +459,42 @@ const getHtml = async (common) => {
   player.current_player_team_season = player_team_seasons[player_team_seasons.length - 1];
 
   let all_seasons = player.player_team_seasons
-    .filter((pts) => pts.team_season_id > 0)
+    .filter((pts) => pts.team_season_id >= 0)
     .map((pts) => pts.season);
 
   var team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
-  var team_seasons = await db.team_season.bulkGet(team_season_ids);
+  var team_seasons = await db.team_season.where('team_season_id').anyOf(team_season_ids).toArray();
 
   var player_team_ids = team_seasons.map((ts) => ts.team_id);
-  var player_teams = await db.team.bulkGet(player_team_ids);
+  var player_teams = await db.team.where('team_id').anyOf(player_team_ids).toArray();
+  let player_teams_by_team_id = index_group_sync(player_teams, 'index', 'team_id');
 
-  var c = 0;
-  $.each(player_team_seasons, function (ind, pts) {
-    pts.team_season = team_seasons[c];
-    pts.team_season.team = player_teams[c];
-    c += 1;
-  });
+  console.log({
+    player_teams_by_team_id:player_teams_by_team_id, player_teams:player_teams
+  })
+
+  team_seasons = nest_children(team_seasons, player_teams_by_team_id, 'team_id', 'team');
+  let player_team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+  console.log({
+    team_seasons:team_seasons, 
+    player_team_seasons_by_team_season_id:player_team_seasons_by_team_season_id
+  })
+
+  player_team_seasons = nest_children(player_team_seasons, player_team_seasons_by_team_season_id, 'team_season_id', 'team_season')
+
+  console.log({
+    team_seasons:team_seasons,
+    team_season_ids:team_season_ids,
+    player_team_seasons:player_team_seasons
+  })
+
 
   player.player_team_seasons = player_team_seasons;
   player.current_player_team_season =
     player.player_team_seasons[player.player_team_seasons.length - 1];
   var current_team = player.current_player_team_season.team_season.team;
 
-  console.log({
-    current_team: current_team,
-    current_player_team_season: player.current_player_team_season,
-    player_team_seasons: player.player_team_seasons,
-  });
 
   if (player.player_face == undefined) {
     player.player_face = await common.create_player_face("single", player.player_id, db);
@@ -573,6 +570,7 @@ const getHtml = async (common) => {
       (rts_a, rts_b) => rts_b.match_rating - rts_a.match_rating
     );
   } else {
+    console.log('in else')
     const season_stat_groupings = [
       {
         StatGroupName: "Passing",
@@ -881,7 +879,7 @@ const getHtml = async (common) => {
     var teams = await db.team.where("team_id").above(0).toArray();
     var teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
-    var team_seasons = await db.team_season.bulkGet(team_season_ids);
+    var team_seasons = await db.team_season.where('team_season_id').anyOf(team_season_ids).toArray();
     team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
 
     var team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");

@@ -51,13 +51,15 @@ const getHtml = async (common) => {
     P: "Special Teams",
   };
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Player Stats",
-    group_name: "Almanac",
-    db: db,
-  });
+  let [NavBarLinks, teams, conference_seasons, conferences, team_seasons, player_team_seasons] = await Promise.all([
+    common.nav_bar_links({ path: "Player Stats", group_name: "Almanac",db: db}),
+    db.team.where("team_id").above(0).toArray(),
+    db.conference_season.where({ season: season }).toArray(),
+    db.conference.toArray(),
+    db.team_season.where({ season: season }).toArray(),
+    db.player_team_season.where({ season: season }).and((pts) => pts.team_season_id > 0).toArray()
+  ])
 
-  var teams = await db.team.where("team_id").above(0).toArray();
   teams = teams.sort(function (teamA, teamB) {
     if (teamA.school_name < teamB.school_name) {
       return -1;
@@ -69,14 +71,10 @@ const getHtml = async (common) => {
   });
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
-  var conference_seasons = await db.conference_season.where({ season: season }).toArray();
-  var conferences = await db.conference.toArray();
-
   var conferences_by_conference_id = index_group_sync(conferences, 'index', 'conference_id');
-  var conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference');
+  conference_seasons = nest_children(conference_seasons, conferences_by_conference_id, 'conference_id', 'conference');
   var conference_seasons_by_conference_season_id = index_group_sync(conference_seasons, 'index', 'conference_season_id')
 
-  var team_seasons = await db.team_season.where({ season: season }).toArray();
   team_seasons = nest_children(
     team_seasons,
     teams_by_team_id,
@@ -95,18 +93,12 @@ const getHtml = async (common) => {
     "team_season_id"
   );
 
-  var player_team_seasons = await db.player_team_season
-    .where({ season: season })
-    .and((pts) => pts.team_season_id > 0)
-    .toArray();
   player_team_seasons = nest_children(
     player_team_seasons,
     team_seasons_by_team_season_id,
     "team_season_id",
     "team_season"
   );
-  console.log({team_seasons_by_team_season_id:team_seasons_by_team_season_id, player_team_seasons: player_team_seasons,conference_seasons:conference_seasons, conferences:conferences,  conference_seasons_by_conference_season_id:conference_seasons_by_conference_season_id, conferences_by_conference_id:conferences_by_conference_id});
-  // const player_team_seasons = await db.player_team_season.toArray();
   const player_team_season_ids = player_team_seasons.map(
     (pts) => pts.player_team_season_id
   );
@@ -114,7 +106,6 @@ const getHtml = async (common) => {
   let player_team_season_stats = await db.player_team_season_stats.bulkGet(
     player_team_season_ids
   );
-  console.log({ player_team_season_stats: player_team_season_stats });
   player_team_season_stats = player_team_season_stats.filter(
     (pts) => pts != undefined
   );
@@ -161,8 +152,6 @@ const getHtml = async (common) => {
     player_counter += 1;
   });
 
-  console.log({ player_team_seasons: player_team_seasons });
-
   let classes = ["All", "SR", "JR", "SO", "FR"];
   let position_groups = ["All", "Offense", "Defense", "Special Teams"];
 
@@ -178,12 +167,6 @@ const getHtml = async (common) => {
         ).length,
         starters: 0,
       };
-      console.log({
-        player_team_seasons: player_team_seasons,
-        player_class: player_class,
-        position_group: position_group,
-        summary: roster_summary[player_class][position_group],
-      });
     }
   }
 
@@ -300,11 +283,9 @@ const draw_player_leaders = async (common, players) => {
       $("#player-stat-leader-container").append(renderedHtml);
 
       var player_to_draw = stat_category.players[0].player;
-      console.log({player_to_draw:player_to_draw})
       if (player_to_draw.player_face == undefined){
         player_to_draw.player_face = await common.create_player_face('single', player_to_draw.player_id, db);
       }
-      console.log({player_to_draw:player_to_draw})
 
       common.display_player_face(player_to_draw.player_face, {jersey: player_to_draw.player_team_season.team_season.team.jersey, teamColors: player_to_draw.player_team_season.team_season.team.jersey.teamColors}, `player-stat-leaders-face-${player_to_draw.player_id}-${stat_category_index}-1`);
       stat_category_index +=1;

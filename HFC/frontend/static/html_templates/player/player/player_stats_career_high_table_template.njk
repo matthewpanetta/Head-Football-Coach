@@ -24,30 +24,33 @@
         {% if loop.index % 2 == 1%}
         <tr>
         {% endif %}
-          <td class='no-width no-wrap'>
-            {{stat_obj.top_5_vals[0]}} {{stat_group.stat_group}} {{stat_obj.display}}
-            <div class=''>
-              {{stat_obj.player_team_game.team_game.game.week.week_name}}, {{stat_obj.player_team_game.team_game.game.week.season}}
-            </div>
-            <div class="">
-              <span class='{{stat_obj.player_team_game.team_game.game_outcome_letter}} bold'>{{stat_obj.player_team_game.team_game.game_outcome_letter}}
-              </span>
-              <a href='{{stat_obj.player_team_game.team_game.game.game_href}}'>{{stat_obj.player_team_game.team_game.game_stats.team.points}}-{{stat_obj.player_team_game.team_game.opponent_game_stats.team.points}}
-              </a>
-              vs.
-              {% if stat_obj.player_team_game.team_game.opponent_team_season.team.is_user_team%}
-                  <span class='opacity-1' style='color: #{{stat_obj.player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}};'>
-                      <i class="fa fa-user"></i>
-                  </span>
-                  {%endif%}
-              <a href='{{stat_obj.player_team_game.team_game.opponent_team_season.team.team_href}}'>{{stat_obj.player_team_game.team_game.opponent_team_season.team.team_abbreviation}}</a>
+          <td class='no-width no-wrap width-max-content'>
+            <div class='width-max-content'>
+              <div>{{stat_obj.top_5_vals[0]}} {{stat_group.stat_group}} {{stat_obj.display}}</div>
+              <div class=''>
+                {{stat_obj.player_team_game.team_game.game.week.week_name}}, {{stat_obj.player_team_game.team_game.game.week.season}}
+              </div>
+              <div class="">
+                <span class='{{stat_obj.player_team_game.team_game.game_outcome_letter}} bold'>{{stat_obj.player_team_game.team_game.game_outcome_letter}}
+                </span>
+                <a href='{{stat_obj.player_team_game.team_game.game.game_href}}'>{{stat_obj.player_team_game.team_game.game_stats.team.points}}-{{stat_obj.player_team_game.team_game.opponent_game_stats.team.points}}
+                </a>
+                vs.
+                {% if stat_obj.player_team_game.team_game.opponent_team_season.team.is_user_team%}
+                    <span class='opacity-1' style='color: #{{stat_obj.player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}};'>
+                        <i class="fa fa-user"></i>
+                    </span>
+                    {%endif%}
+                <a href='{{stat_obj.player_team_game.team_game.opponent_team_season.team.team_href}}'>{{stat_obj.player_team_game.team_game.opponent_team_season.team.team_abbreviation}}</a>
+              </div>
             </div>
           </td>
 
-          <td class='white-text font10 opacity-1 col-group'>
+          <td class='white-text font10 opacity-1 col-group width100'>
             {% for player_team_game in stat_obj.top_5_player_team_games%}
             <div class="px-2 flex space-between team-color-background no-wrap" style="margin-bottom: 1px; min-height: 1.5rem; line-height: 1.5rem; width:  {{player_team_game|get(stat_obj.stat_key) * 100.0 / stat_obj.player_team_game|get(stat_obj.stat_key)}}%;">
                 <span class=''>
+                  <span class='bold'>{{player_team_game.team_game.game_outcome_letter}} -</span>
                   <a href='{{player_team_game.team_game.game.game_href}}'>
                     {{player_team_game.team_game.game.week.week_name}}, {{player_team_game.team_game.game.week.season}}
                   </a>

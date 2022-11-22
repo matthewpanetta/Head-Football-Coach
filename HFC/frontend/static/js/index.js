@@ -633,6 +633,16 @@ class team_game {
     this.opponent_game_stats = deep_copy(this.game_stats);
   }
 
+  get game_outcome_letter(){
+    if (this.is_winning_team){
+      return 'W'
+    }
+    else if(this.is_winning_team == false){
+      return 'L'
+    }
+    return '';
+  }
+
   get record_display(){
     return `${this.record.wins} - ${this.record.losses}`
   }
@@ -12125,6 +12135,7 @@ const sim_action = async (duration, common) => {
 
     if (this_week.week_name == "Conference Championships") {
       await assign_conference_champions(this_week, common);
+      await choose_all_americans(this_week, common);
     }
 
     if (this_week.phase.phase_name == "Bowl Season") {
@@ -12142,7 +12153,6 @@ const sim_action = async (duration, common) => {
     }
 
     if (this_week.week_name == "Bowl Week 4") {
-      await choose_all_americans(this_week, common);
       await close_out_season(this_week, common);
     }
 
@@ -12152,7 +12162,6 @@ const sim_action = async (duration, common) => {
 
     if (this_week.week_name == "Early Signing Day") {
       await schedule_bowl_season(all_weeks, common);
-      //await choose_all_americans
     }
 
     if (this_week.week_name == "National Signing Day") {

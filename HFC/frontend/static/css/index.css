@@ -3303,3 +3303,7 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
 .z-3{
   z-index: 3;
 }
+
+.width-max-content{
+  width: max-content;
+}
