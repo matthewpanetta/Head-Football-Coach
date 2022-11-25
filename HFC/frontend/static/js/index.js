@@ -824,8 +824,7 @@ class team {
           this.school_name +
           "_" +
           this.team_name +
-          size_suffix +
-          ".png";
+          size_suffix;
       }
 
       path = path
@@ -833,7 +832,10 @@ class team {
         .replaceAll(" ", "_")
         .replaceAll("&", "_")
         .replaceAll("'", "")
+        .replaceAll(".", "")
         .replaceAll("-", "_");
+
+      path = path + '.png'
 
       return path;
       }
@@ -3017,10 +3019,17 @@ const distance_from_home = (city_a, city_b, distance_tracking_map) => {
   return distance_from_home_val;
 };
 
-const distance_between_cities = (city_a, city_b, distance_tracking_map) => {
+const distance_between_cities = (city_a, city_b, distance_tracking_map = {}) => {
+  console.log({
+    city_a:city_a, city_b:city_b
+  })
   let city_a_str = `${Math.round(city_a.lat, 1)},${Math.round(city_a.long, 1)}`;
   let city_b_str = `${Math.round(city_b.lat, 1)},${Math.round(city_b.long, 1)}`;
-  let city_arr = [city_a_str, city_b_str] ? city_a_str < city_b_str : [city_b_str, city_a_str];
+  let city_arr = [city_a_str, city_b_str].sort();
+
+  console.log({
+    city_arr:city_arr, city_a:city_a, city_b:city_b, distance_tracking_map:distance_tracking_map
+  })
 
   // Serialize the locations and short-circuit if we've already calculated the disance.
   if (distance_tracking_map[city_arr[0]] && distance_tracking_map[city_arr[0]][city_arr[1]]){
@@ -3699,7 +3708,13 @@ const create_schedule = async (data) => {
   var team_season_schedule_tracker = {};
   const games_per_team = 12;
 
-  team_seasons = await db.team_season
+  let cities = await ddb.cities.toArray();
+  console.log({cities:cities})
+  cities.forEach(c => c.city_state = c.city + ',' + c.state);
+  let cities_by_city_state = index_group_sync(cities, 'index', 'city_state');
+  console.log({cities_by_city_state:cities_by_city_state})
+
+  let team_seasons = await db.team_season
     .where({ season: season })
     .and((ts) => ts.team_id > 0)
     .toArray();
@@ -3749,6 +3764,15 @@ const create_schedule = async (data) => {
     quadrant: num,
     max_national_rank: Math.floor((num * num_teams) / 4.0),
   }));
+  if (num_teams >= 100){
+    team_quadrant_cutoffs = [
+      {quadrant: 1, max_national_rank: 25},
+      {quadrant: 2, max_national_rank: 50},
+      {quadrant: 3, max_national_rank: 75},
+      {quadrant: 4, max_national_rank: num_teams},
+    ]
+  }
+  
 
   for (let team_season of team_seasons) {
     team_season_rivals =
@@ -3790,12 +3814,13 @@ const create_schedule = async (data) => {
       },
       non_conference: {
         games_to_schedule:
-          games_per_team -
+          (team_conference.schedule_format.number_games || games_per_team) -
           team_conference.schedule_format.number_conference_games,
         games_scheduled: 0,
         home_games: 0,
         away_games: 0,
         net_home_games: 0,
+        max_ooc_travel_distance: team_conference.schedule_format.max_ooc_travel_distance || 1000000
       },
       weeks_scheduled: new Set(),
       available_week_ids: new Set(all_week_ids),
@@ -3804,10 +3829,18 @@ const create_schedule = async (data) => {
       division_name: team_season.division_name,
       rivals: team_season_rivals,
       team: teams_by_team_id[team_season.team_id],
+      city: cities_by_city_state[teams_by_team_id[team_season.team_id].location.city + ',' + teams_by_team_id[team_season.team_id].location.state],
       team_quadrant: team_quadrant_cutoffs.find(
         (quadrant) => team_season.national_rank <= quadrant.max_national_rank
       ).quadrant,
     };
+
+    if (!team_season_schedule_tracker[team_season.team_season_id].city || !team_season_schedule_tracker[team_season.team_season_id].city.lat || !team_season_schedule_tracker[team_season.team_season_id].city.long){
+      console.log('BLANK CITY', {
+        'team_season_schedule_tracker[team_season.team_season_id]': team_season_schedule_tracker[team_season.team_season_id]
+      })
+      debugger;
+    }
 
     let games_per_quadrant = Math.ceil(
       team_season_schedule_tracker[team_season.team_season_id].non_conference
@@ -3927,7 +3960,7 @@ const create_schedule = async (data) => {
       ) {
         game_type = "conference";
       }
-      game_scheduled = common.schedule_game(
+      game_scheduled = schedule_game(
         common,
         scheduling_dict,
         team_set,
@@ -4001,12 +4034,13 @@ const create_schedule = async (data) => {
         zipped_set = zip(team_set_a, team_set_b);
         //console.log('zipped_set', zipped_set)
         $.each(zipped_set, function (ind, team_set) {
-          common.schedule_game(
+          schedule_game(
             common,
             scheduling_dict,
             team_set,
             "conference",
-            null
+            null, 
+            attempt_counter
           );
         });
       }
@@ -4017,7 +4051,7 @@ const create_schedule = async (data) => {
         team_season_schedule_tracker[team_id].conference.games_to_schedule > 0
     );
 
-    scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 200;
+    scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 800;
 
     attempt_counter += 1;
     team_set_a = [];
@@ -4107,7 +4141,7 @@ const create_schedule = async (data) => {
     });
 
     for (let pair of quadrant_pairing) {
-      for (let iter_ind = 0; iter_ind <= 10; iter_ind++) {
+      for (let iter_ind = 0; iter_ind <= 100; iter_ind++) {
         let quadrant_a = pair[0];
         let quadrant_b = pair[1];
         console.log({
@@ -4161,12 +4195,13 @@ const create_schedule = async (data) => {
         console.log("zipped_set", zipped_set);
 
         $.each(zipped_set, function (ind, team_set) {
-          common.schedule_game(
+          schedule_game(
             common,
             scheduling_dict,
             team_set,
             "non_conference",
-            null
+            null,
+            iter_ind
           );
         });
       }
@@ -4303,7 +4338,7 @@ const create_schedule = async (data) => {
         });
         return true;
       }
-      common.schedule_game(
+      schedule_game(
         common,
         scheduling_dict,
         team_set,
@@ -4898,11 +4933,12 @@ const create_recruiting_class = async (common) => {
     // }
 
     for (const team_season of team_seasons) {
-      let close_to_home_rating = distance_from_home(
-                                    player.hometown,
-                                    team_season.team.location,
-                                    location_tracker_map
-                                  )
+      // let close_to_home_rating = distance_from_home(
+      //                               player.hometown,
+      //                               team_season.team.location,
+      //                               location_tracker_map
+      //                             )      
+      let close_to_home_rating = 100; // TODO change back!!!
 
       recruit_team_season_id += 1;
       let rts = new recruit_team_season({
@@ -4969,14 +5005,14 @@ const create_recruiting_class = async (common) => {
         },
       });
 
-      console.log({
-        team_season:team_season,
-        rts:rts,
-        player_team_season:player_team_season,
-        'player_team_season.position': player_team_season.position,
-        'team_season.recruiting.position_needs[player_team_season.position]':team_season.recruiting.position_needs[player_team_season.position],
-        'rts.scouted_ratings.overall.overall': rts.scouted_ratings.overall.overall
-      })
+      // console.log({
+      //   team_season:team_season,
+      //   rts:rts,
+      //   player_team_season:player_team_season,
+      //   'player_team_season.position': player_team_season.position,
+      //   'team_season.recruiting.position_needs[player_team_season.position]':team_season.recruiting.position_needs[player_team_season.position],
+      //   'rts.scouted_ratings.overall.overall': rts.scouted_ratings.overall.overall
+      // })
 
       rts.match_ratings.playing_time.team =
         team_season.recruiting.position_needs[player_team_season.position].find(
@@ -5062,11 +5098,6 @@ const create_recruiting_class = async (common) => {
   }
 
   stopwatch(common, `Stopwatch RTS - Teams did first calls`)
-
-  console.log({
-    team_seasons_call_order: team_seasons_call_order,
-    team_seasons_call_order_prep: team_seasons_call_order_prep,
-  });
 
   var player_team_seasons_by_player_team_season_id = index_group_sync(
     player_team_seasons,
@@ -6332,7 +6363,7 @@ const populate_cities = async (ddb) => {
 
   var url = "/static/data/import_json/cities_2.json";
   var data = await fetch(url);
-  const city_dimension_2 = await data.json();
+  let city_dimension_2 = await data.json();
 
   var url = "/static/data/import_json/states.json";
   var data = await fetch(url);
@@ -6347,85 +6378,95 @@ const populate_cities = async (ddb) => {
   const states = {};
   const state_counts = {};
 
-  $.each(city_dimension, function (ind, city) {
-    if (!(city.state in states)) {
-      states[city.state] = {};
+  city_dimension_2.forEach(c => c.city_state = c.city + ',' + c.state);
+  let city_dimension_2_by_city_state = index_group_sync(city_dimension_2, 'index', 'city_state');
+
+  city_dimension.forEach(function(c){
+    let city_2 = city_dimension_2_by_city_state[c.city + ',' + c.state]
+    if (city_2){
+      c.occurance = city_2.player_count;
     }
-    if (city.city in states[city.state]) {
-      console.log("duplicate of ", city);
-    }
-    states[city.state][city.city] = city;
-  });
-
-  var missing_cities = [];
-  player_state_counts = { all_count: 0, match_count: 0 };
-
-  $.each(city_dimension_2, function (ind, city) {
-    //console.log('city', city)
-    city.state_name = state_map[city.state_abbreviation].state_name;
-
-    if (!(city.state_name in state_counts)) {
-      state_counts[city.state_name] = { all_count: 0, match_count: 0 };
+    else {
+      c.occurance = 1;
     }
 
-    state_counts[city.state_name].all_count += city.player_count;
-    player_state_counts.all_count += city.player_count;
+    delete c.population;
+    delete c.time_zone;
+  })
 
-    if (!(city.city_name in states[city.state_name])) {
-      //console.log('DONT HAVE ', city.city_name, city.state_name, city)
+  // $.each(city_dimension, function (ind, city) {
+  //   if (!(city.state in states)) {
+  //     states[city.state] = {};
+  //   }
+  //   if (city.city in states[city.state]) {
+  //     console.log("duplicate of ", city);
+  //   }
+  //   states[city.state][city.city] = city;
+  // });
 
-      missing_cities.push({
-        city: city.city_name,
-        state: city.state_name,
-        player_count: city.player_count,
-        population: null,
-        lat: null,
-        long: null,
-        timezone: null,
-      });
-    } else {
-      player_state_counts.match_count += city.player_count;
-      state_counts[city.state_name].match_count += city.player_count;
-      states[city.state_name][city.city_name].player_count = city.player_count;
-    }
-  });
+  // var missing_cities = [];
 
-  missing_cities = missing_cities.sort(function (a, b) {
-    if (a.player_count > b.player_count) return -1;
-    return 1;
-  });
+  // $.each(city_dimension_2, function (ind, city) {
+  //   //console.log('city', city)
+  //   city.state_name = state_map[city.state_abbreviation].state_name;
 
-  $.each(state_counts, function (ind, state) {
-    state.all_count_ratio = Math.floor(
-      (state.all_count / player_state_counts.all_count) * 9600
-    );
-    state.match_count_ratio = Math.floor(
-      (state.match_count / player_state_counts.match_count) * 9600
-    );
-  });
+  //   if (!(city.state_name in state_counts)) {
+  //     state_counts[city.state_name] = { all_count: 0, match_count: 0 };
+  //   }
 
-  var cities_to_add = [],
-    city_start = 0,
-    new_city_obj = null;
+  //   state_counts[city.state_name].all_count += city.player_count;
+  //   player_state_counts.all_count += city.player_count;
 
-  $.each(city_dimension, function (ind, city_obj) {
-    //console.log('city_obj', city_obj)
-    new_city_obj = states[city_obj.state][city_obj.city];
-    if (!(new_city_obj.player_count == undefined)) {
-      new_city_obj.occurance = new_city_obj.player_count;
-      if (new_city_obj.occurance > 0){
-        cities_to_add.push({
-          city: new_city_obj.city,
-          state: new_city_obj.state,
-          lat: new_city_obj.lat,
-          long: new_city_obj.long,
-          occurance: new_city_obj.occurance,
-        });
-      }  
-    }
-  });
+  //   if (!(city.city_name in states[city.state_name])) {
+  //     //console.log('DONT HAVE ', city.city_name, city.state_name, city)
 
-  await ddb.cities.bulkAdd(cities_to_add);
+  //     missing_cities.push({
+  //       city: city.city_name,
+  //       state: city.state_name,
+  //       player_count: city.player_count,
+  //       population: null,
+  //       lat: null,
+  //       long: null,
+  //       timezone: null,
+  //     });
+  //   } else {
+  //     player_state_counts.match_count += city.player_count;
+  //     state_counts[city.state_name].match_count += city.player_count;
+  //     states[city.state_name][city.city_name].player_count = city.player_count;
+  //   }
+  // });
+
+  // missing_cities = missing_cities.sort(function (a, b) {
+  //   if (a.player_count > b.player_count) return -1;
+  //   return 1;
+  // });
+
+  // console.log('missing_cities', {missing_cities:missing_cities})
+  // debugger;
+
+
+  // var cities_to_add = [],
+  //   city_start = 0,
+  //   new_city_obj = null;
+
+  // $.each(city_dimension, function (ind, city_obj) {
+  //   //console.log('city_obj', city_obj)
+  //   new_city_obj = states[city_obj.state][city_obj.city];
+  //   if (!(new_city_obj.player_count == undefined)) {
+  //     new_city_obj.occurance = new_city_obj.player_count;
+  //     if (new_city_obj.occurance > 0){
+  //       cities_to_add.push({
+  //         city: new_city_obj.city,
+  //         state: new_city_obj.state,
+  //         lat: new_city_obj.lat,
+  //         long: new_city_obj.long,
+  //         occurance: new_city_obj.occurance,
+  //       });
+  //     }  
+  //   }
+  // });
+
+  await ddb.cities.bulkAdd(city_dimension);
 };
 
 const populate_driver = async (ddb) => {
@@ -6976,7 +7017,6 @@ const common_functions = async (route_pattern) => {
     index_group: index_group,
     index_group_sync: index_group_sync,
     recent_games: recent_games,
-    schedule_game: schedule_game,
     distinct: distinct,
     union: union,
     set_union: set_union,
@@ -9276,9 +9316,11 @@ const sim_week_games = async (this_week, common) => {
     "season_stats"
   );
 
-  let [players, games_this_week] = await Promise.all([
+  let [players, games_this_week, last_player_team_game, last_headline] = await Promise.all([
     db.player.bulkGet(player_ids),
-    db.game.where({ week_id: this_week.week_id }).toArray()
+    db.game.where({ week_id: this_week.week_id }).toArray(),
+    db.player_team_game.orderBy("player_team_game_id").last(), 
+    db.headline.orderBy("headline_id").last()
   ]);
   const players_by_player_id = index_group_sync(
     players,
@@ -9296,44 +9338,8 @@ const sim_week_games = async (this_week, common) => {
     }
     else { return g_a.summed_national_rank - g_b.summed_national_rank}
   });
-  //games_this_week = games_this_week.filter((g) => g.home_team_season_id > 0 && g.away_team_season_id > 0);
-  //games_this_week = games_this_week.filter(g => g.was_played == false);
-
-  console.log({
-    games_this_week: games_this_week,
-    team_games_this_week: team_games_this_week,
-  });
-
-  //   games_this_week = games_this_week.sort(function (game_a, game_b) {
-  //     var game_a_total_rank =
-  //       team_seasons_by_team_season_id[game_a.home_team_season_id].rankings.national_rank[0] +
-  //       team_seasons_by_team_season_id[game_a.away_team_season_id].rankings.national_rank[0] +
-  //       Math.min(
-  //         team_seasons_by_team_season_id[game_a.home_team_season_id].rankings.national_rank[0],
-  //         team_seasons_by_team_season_id[game_a.away_team_season_id].rankings.national_rank[0]
-  //       );
-  //     var game_b_total_rank =
-  //       team_seasons_by_team_season_id[game_b.home_team_season_id].rankings.national_rank[0] +
-  //       team_seasons_by_team_season_id[game_b.away_team_season_id].rankings.national_rank[0] +
-  //       Math.min(
-  //         team_seasons_by_team_season_id[game_b.home_team_season_id].rankings.national_rank[0],
-  //         team_seasons_by_team_season_id[game_b.away_team_season_id].rankings.national_rank[0]
-  //       );
-  // 	//   console.log({game_a:game_a, game_b:game_b, team_seasons_by_team_season_id:team_seasons_by_team_season_id, game_a_total_rank:game_a_total_rank, game_b_total_rank:game_b_total_rank})
-  //     return game_a_total_rank - game_b_total_rank;
-  //   });
-
-  console.log({
-    games_this_week: games_this_week,
-    team_seasons_by_team_season_id: team_seasons_by_team_season_id,
-  });
 
   var game_dicts_this_week = [];
-
-  let [last_player_team_game, last_headline] = await Promise.all([
-    db.player_team_game.orderBy("player_team_game_id").last(), 
-    db.headline.orderBy("headline_id").last()
-  ]);
 
   var player_team_game_id_counter = 1;
   if (last_player_team_game != undefined) {
@@ -9347,7 +9353,7 @@ const sim_week_games = async (this_week, common) => {
 
   common.headline_id_counter = headline_id_counter;
 
-  for (const game of games_this_week) {
+  for (const game of games_this_week){
     game_dict = { game: game };
     let team_games = team_games_by_game_id[game.game_id].sort(function (a, b) {
       if (a.is_home_team) return 1;
@@ -9357,10 +9363,6 @@ const sim_week_games = async (this_week, common) => {
 
     team_seasons = [];
     teams = [];
-    player_team_seasons = [];
-    players = [],
-      players_list = [],
-      player_team_games = {};
 
     for (let tg of team_games) {
       team_seasons.push(team_seasons_by_team_season_id[tg.team_season_id]);
@@ -9370,8 +9372,27 @@ const sim_week_games = async (this_week, common) => {
       teams.push(teams_by_team_id[ts.team_id]);
     }
 
+    game_dict.team_games = team_games;
+    game_dict.team_seasons = team_seasons;
+    game_dict.teams = teams;
+
+    game_dicts_this_week.push(game_dict);
+
+    console.log({game_dict:game_dict})
+
+    let renderedHtml = common.nunjucks_env.renderString(html, game_dict);
+    $(".modal-body").append(renderedHtml);
+
+  }
+
+  for (const game_dict of game_dicts_this_week) {
     var ind = 0;
-    for (let team_season of team_seasons) {
+    player_team_seasons = [];
+    players = [];
+    players_list = [];
+    player_team_games = {};
+
+    for (let team_season of game_dict.team_seasons) {
       var player_team_seasons_to_add = index_group_sync(
         player_team_seasons_by_team_season_id[team_season.team_season_id],
         "index",
@@ -9388,7 +9409,7 @@ const sim_week_games = async (this_week, common) => {
         pts.team_games_played += 1;
         let new_player_team_game = new player_team_game(
           player_team_game_id_counter,
-          team_games[ind].team_game_id,
+          game_dict.team_games[ind].team_game_id,
           pts.player_team_season_id
         );
 
@@ -9406,21 +9427,10 @@ const sim_week_games = async (this_week, common) => {
       ind += 1;
     }
 
-    game_dict.team_games = team_games;
-    game_dict.team_seasons = team_seasons;
-    game_dict.teams = teams;
     game_dict.player_team_seasons = player_team_seasons;
     game_dict.players = players;
     game_dict.player_team_games = player_team_games;
     game_dict.headlines = [];
-
-    game_dicts_this_week.push(game_dict);
-
-    console.log({game_dict:game_dict})
-
-    let renderedHtml = common.nunjucks_env.renderString(html, game_dict);
-    $(".modal-body").append(renderedHtml);
-  
   }
 
   var completed_games = [],
@@ -12306,15 +12316,7 @@ const add_listeners = async (common) => {
   $(".sim-action:not(.w3-disabled)").click(async function (e) {
     $("#SimDayModal").css({ display: "block" });
 
-    $(window).on("click", function (event) {
-      if ($(event.target)[0] == $("#SimDayModal")[0]) {
-        $("#SimDayModal").css({ display: "none" });
-        $(window).unbind();
-      }
-    });
-
     var sim_duration = SimMap[$(this).attr("id")];
-    //console.log($(this), sim_duration);
 
     await sim_action(sim_duration, common);
 
@@ -13305,7 +13307,8 @@ const schedule_game = (
   scheduling_dict,
   team_set,
   game_type,
-  rival_obj
+  rival_obj, 
+  loop_count = 0
 ) => {
   var team_a = team_set[0],
     team_b = team_set[1];
@@ -13358,6 +13361,15 @@ const schedule_game = (
   } else {
     keep_game = false;
   }
+
+  window.distance_tracking_map = window.distance_tracking_map || {};
+  if (keep_game){
+    let distance_between_schools = distance_between_cities(scheduling_dict.team_season_schedule_tracker[team_a].city, scheduling_dict.team_season_schedule_tracker[team_b].city, window.distance_tracking_map);
+    if ((distance_between_schools > (scheduling_dict.team_season_schedule_tracker[team_a].non_conference.max_ooc_travel_distance + (loop_count * 2))) || (distance_between_schools > (scheduling_dict.team_season_schedule_tracker[team_b].non_conference.max_ooc_travel_distance + (loop_count * 2)))){
+      keep_game = false;
+    }
+  }
+
 
   if (keep_game) {
     var available_weeks = common.set_intersect(
@@ -13477,8 +13489,16 @@ const schedule_game = (
       ].opponents_scheduled.add(team_a);
 
       if (!is_conference_game){
-        scheduling_dict.team_season_schedule_tracker[team_b].non_conference.schedule_team_quadrants[scheduling_dict.team_season_schedule_tracker[team_a].team_quadrant] -= 1;
-        scheduling_dict.team_season_schedule_tracker[team_a].non_conference.schedule_team_quadrants[scheduling_dict.team_season_schedule_tracker[team_b].team_quadrant] -= 1;
+        for (let team_combos of [[team_a, team_b], [team_b, team_a]]){
+          let team_ind = team_combos[0]
+          let other_team_ind = team_combos[1];
+          let other_team_quadrant = scheduling_dict.team_season_schedule_tracker[other_team_ind].team_quadrant;
+          let team_schedule_obj = scheduling_dict.team_season_schedule_tracker[team_ind]
+
+          other_team_quadrant = other_team_quadrant + ([0,-1].find(m => team_schedule_obj.non_conference.schedule_team_quadrants[other_team_quadrant + m] > 0 ) || 0)
+
+          team_schedule_obj.non_conference.schedule_team_quadrants[other_team_quadrant] -= 1;
+        }
         // console.log({scheduling_dict:scheduling_dict, team_a:team_a, team_b:team_b, 'scheduling_dict.team_season_schedule_tracker[team_b]': scheduling_dict.team_season_schedule_tracker[team_b]})
       }
 

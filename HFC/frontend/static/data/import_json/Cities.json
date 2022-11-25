@@ -30128,6 +30128,14 @@
    "timezone": "E"
  },
  {
+   "city": "Orono",
+   "state": "Maine",
+   "lat": 44.88,
+   "long": -68.67,
+   "population": 18730,
+   "timezone": "E"
+ },
+ {
    "city": "Aberdeen",
    "state": "Maryland",
    "lat": 39.5146,
@@ -42260,6 +42268,14 @@
    "state": "New Hampshire",
    "lat": 44.4869,
    "long": -71.2599,
+   "population": 11351,
+   "timezone": "E"
+ },
+ {
+   "city": "Durham",
+   "state": "New Hampshire",
+   "lat": 43.08,
+   "long": -70.55,
    "population": 11351,
    "timezone": "E"
  },
@@ -63868,6 +63884,14 @@
    "state": "Rhode Island",
    "lat": 42.001,
    "long": -71.4993,
+   "population": 41759,
+   "timezone": "E"
+ },
+ {
+   "city": "Kingston",
+   "state": "Rhode Island",
+   "lat": 41.29,
+   "long": -71.32,
    "population": 41759,
    "timezone": "E"
  },

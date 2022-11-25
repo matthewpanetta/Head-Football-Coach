@@ -6345,5 +6345,1381 @@
       "bad": [],
       "location": []
     }
+  },
+  {
+    "school_name": "Illinois State",
+    "team_name": "Redbirds",
+    "team_abbreviation": "ILST",
+    "team_color_primary_hex": "ce142b",
+    "team_color_secondary_hex": "000000",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Normal",
+      "state": "Illinois"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "North Dakota State",
+    "team_name": "Bison",
+    "team_abbreviation": "NDSU",
+    "team_color_primary_hex": "005643",
+    "team_color_secondary_hex": "ffc82e",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 10,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Fargo",
+      "state": "North Dakota"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "North Dakota",
+    "team_name": "Fighting Hawks",
+    "team_abbreviation": "NDU",
+    "team_color_primary_hex": "009a44",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Grand Forks",
+      "state": "North Dakota"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Youngstown State",
+    "team_name": "Penguins",
+    "team_abbreviation": "YNGS",
+    "team_color_primary_hex": "c8102e",
+    "team_color_secondary_hex": "000000",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Youngstown",
+      "state": "Ohio"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "South Dakota",
+    "team_name": "Coyotes",
+    "team_abbreviation": "SDU",
+    "team_color_primary_hex": "ad0000",
+    "team_color_secondary_hex": "000000",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Vermillion",
+      "state": "South Dakota"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "South Dakota State",
+    "team_name": "Jackrabbits",
+    "team_abbreviation": "SDS",
+    "team_color_primary_hex": "0033a0",
+    "team_color_secondary_hex": "ffd700",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Brookings",
+      "state": "South Dakota"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Northern Iowa",
+    "team_name": "Panthers",
+    "team_abbreviation": "NIU",
+    "team_color_primary_hex": "4b116f",
+    "team_color_secondary_hex": "f0c000",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Cedar Falls",
+      "state": "Iowa"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "St. Thomas",
+    "team_name": "Tommies",
+    "team_abbreviation": "ST.T",
+    "team_color_primary_hex": "3E0062",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Saint Paul",
+      "state": "Minnesota"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "New Hampshire",
+    "team_name": "Wildcats",
+    "team_abbreviation": "UNH",
+    "team_color_primary_hex": "001d52",
+    "team_color_secondary_hex": "a3a9ac",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Durham",
+      "state": "New Hampshire"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Maine",
+    "team_name": "Black Bears",
+    "team_abbreviation": "MAINE",
+    "team_color_primary_hex": "77b5e6",
+    "team_color_secondary_hex": "4c443f",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Orono",
+      "state": "Maine"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Villanova",
+    "team_name": "Wildcats",
+    "team_abbreviation": "NOVA",
+    "team_color_primary_hex": "002664",
+    "team_color_secondary_hex": "3db7e4",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Philadelphia",
+      "state": "Pennsylvania"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Richmond",
+    "team_name": "Spiders",
+    "team_abbreviation": "RICH",
+    "team_color_primary_hex": "c32032",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Richmond",
+      "state": "Virginia"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Rhode Island",
+    "team_name": "Rams",
+    "team_abbreviation": "RHODE",
+    "team_color_primary_hex": "68abe8",
+    "team_color_secondary_hex": "041E42",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Kingston",
+      "state": "Rhode Island"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "William & Mary",
+    "team_name": "Tribe",
+    "team_abbreviation": "W&M",
+    "team_color_primary_hex": "115740",
+    "team_color_secondary_hex": "f0b323",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Williamsburg",
+      "state": "Virginia"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Delaware",
+    "team_name": "Fightin' Blue Hens",
+    "team_abbreviation": "DEL",
+    "team_color_primary_hex": "00539f",
+    "team_color_secondary_hex": "ffd200",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Newark",
+      "state": "Delaware"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Holy Cross",
+    "team_name": "Crusaders",
+    "team_abbreviation": "HC",
+    "team_color_primary_hex": "602d89",
+    "team_color_secondary_hex": "000000",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Worcester",
+      "state": "Massachusetts"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Jackson State",
+    "team_name": "Tigers",
+    "team_abbreviation": "JSU",
+    "team_color_primary_hex": "002147",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Jackson",
+      "state": "Mississippi"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Grambling State",
+    "team_name": "Tigers",
+    "team_abbreviation": "GSU",
+    "team_color_primary_hex": "ecaa00",
+    "team_color_secondary_hex": "000000",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Grambling",
+      "state": "Louisiana"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Florida A&M",
+    "team_name": "Rattlers",
+    "team_abbreviation": "FAMU",
+    "team_color_primary_hex": "EA6218",
+    "team_color_secondary_hex": "107532",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Tallahassee",
+      "state": "Florida"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Samford",
+    "team_name": "Bulldogs",
+    "team_abbreviation": "SAMF",
+    "team_color_primary_hex": "0c2340",
+    "team_color_secondary_hex": "c1c6c8",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Birmingham",
+      "state": "Alabama"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Abilene Christian",
+    "team_name": "Wildcats",
+    "team_abbreviation": "ACU",
+    "team_color_primary_hex": "512773",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Abilene",
+      "state": "Texas"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Stephen F Austin",
+    "team_name": "Lumberjacks",
+    "team_abbreviation": "SFA",
+    "team_color_primary_hex": "5f259f",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Nacogdoches",
+      "state": "Texas"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Incarnate Word",
+    "team_name": "Cardinals",
+    "team_abbreviation": "SFA",
+    "team_color_primary_hex": "cb333b",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "San Antonio",
+      "state": "Texas"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "The Citadel",
+    "team_name": "Bulldogs",
+    "team_abbreviation": "CIT",
+    "team_color_primary_hex": "4d90cd",
+    "team_color_secondary_hex": "1f3a60",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Charleston",
+      "state": "South Carolina"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Eastern Washington",
+    "team_name": "Eagles",
+    "team_abbreviation": "EWU",
+    "team_color_primary_hex": "a10022",
+    "team_color_secondary_hex": "000000",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Cheney",
+      "state": "Washington"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Idaho",
+    "team_name": "Vandals",
+    "team_abbreviation": "ID",
+    "team_color_primary_hex": "f1b300",
+    "team_color_secondary_hex": "000000",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Moscow",
+      "state": "Idaho"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Montana",
+    "team_name": "Grizzlies",
+    "team_abbreviation": "MONT",
+    "team_color_primary_hex": "600030",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Missoula",
+      "state": "Montana"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Montana State",
+    "team_name": "Bobcats",
+    "team_abbreviation": "MSU",
+    "team_color_primary_hex": "1d2758",
+    "team_color_secondary_hex": "bf995b",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Bozeman",
+      "state": "Montana"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Sacramento State",
+    "team_name": "Hornets",
+    "team_abbreviation": "SSU",
+    "team_color_primary_hex": "004e38",
+    "team_color_secondary_hex": "c4b681",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Sacramento",
+      "state": "California"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "UC Davis",
+    "team_name": "Aggies",
+    "team_abbreviation": "UCD",
+    "team_color_primary_hex": "00264f",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Davis",
+      "state": "California"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Portland State",
+    "team_name": "Vikings",
+    "team_abbreviation": "PSU",
+    "team_color_primary_hex": "154734",
+    "team_color_secondary_hex": "FFFFFF",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Portland",
+      "state": "Oregon"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
+    "school_name": "Northern Arizona",
+    "team_name": "Lumberjacks",
+    "team_abbreviation": "NAU",
+    "team_color_primary_hex": "003466",
+    "team_color_secondary_hex": "ffd200",
+    "team_logo_url": "",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 3,
+        "pass_tendency": 50,
+        "playcall_aggressiveness": 3
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 1,
+      "academic_quality": 2,
+      "facilities": 1,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Flagstaff",
+      "state": "Arizona"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
   }
 ]

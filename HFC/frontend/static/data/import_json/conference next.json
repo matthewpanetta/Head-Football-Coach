@@ -512,7 +512,7 @@
     "conference_abbreviation": "FCS N",
     "prestige": 1,
     "is_independent": 0,
-    "conference_logo_url": "/static/img/conference_logos/fcs.png",
+    "conference_logo_url": "/static/img/conference_logos/NCAA.png",
     "conference_color_primary_hex": "09452E",
     "conference_color_secondary_hex": "FFFFFF",
     "schedule_format": {
@@ -545,7 +545,7 @@
     "conference_abbreviation": "FCS E",
     "prestige": 1,
     "is_independent": 0,
-    "conference_logo_url": "/static/img/conference_logos/fcs.png",
+    "conference_logo_url": "/static/img/conference_logos/NCAA.png",
     "conference_color_primary_hex": "09452E",
     "conference_color_secondary_hex": "FFFFFF",
     "schedule_format": {
@@ -582,7 +582,7 @@
     "conference_abbreviation": "FCS S",
     "prestige": 1,
     "is_independent": 0,
-    "conference_logo_url": "/static/img/conference_logos/fcs.png",
+    "conference_logo_url": "/static/img/conference_logos/NCAA.png",
     "conference_color_primary_hex": "09452E",
     "conference_color_secondary_hex": "FFFFFF",
     "schedule_format": {
@@ -609,17 +609,17 @@
           "Abilene Christian",
           "Stephen F Austin",
           "Incarnate Word",
-          "The Citadel"
+          "Citadel"
         ]
       }
     ]
   },
   {
     "conference_name": "FCS West",
-    "conference_abbreviation": "FCS W",
+    "conference_abbreviation": "Ivy",
     "prestige": 1,
     "is_independent": 0,
-    "conference_logo_url": "/static/img/conference_logos/fcs.png",
+    "conference_logo_url": "/static/img/conference_logos/NCAA.png",
     "conference_color_primary_hex": "09452E",
     "conference_color_secondary_hex": "FFFFFF",
     "schedule_format": {
