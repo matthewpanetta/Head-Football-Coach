@@ -9353,7 +9353,7 @@ const sim_week_games = async (this_week, common) => {
 
   common.headline_id_counter = headline_id_counter;
 
-  for (const game of games_this_week){
+   games_this_week.forEach( function(game){
     game_dict = { game: game };
     let team_games = team_games_by_game_id[game.game_id].sort(function (a, b) {
       if (a.is_home_team) return 1;
@@ -9382,8 +9382,8 @@ const sim_week_games = async (this_week, common) => {
 
     let renderedHtml = common.nunjucks_env.renderString(html, game_dict);
     $(".modal-body").append(renderedHtml);
+  });
 
-  }
 
   for (const game_dict of game_dicts_this_week) {
     var ind = 0;

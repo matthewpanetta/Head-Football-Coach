@@ -66,17 +66,22 @@ const routes = [
   { route: "/*", path: "url" },
 ];
 
-const seconds_per_day = 1000 * 60 * 60 * 24;
-const cacheTime = seconds_per_day * 7;
+const seconds_per_minute = 1000 * 60;
+const seconds_per_day = seconds_per_minute * 60 * 24;
+
+const is_prod = (process.env.NODE_ENV === 'prod')
+
+let cache_time = seconds_per_minute * 10;
+
+if (is_prod){
+  cache_time = seconds_per_day * 7;
+}
 
 routes.forEach(function (route) {
   app.get(route.route, (req, res) => {
-    console.log("routing to ", route.route, req.url);
+    console.log("routing to", process.env.NODE_ENV, route.route, req.url, `cache_time:${cache_time}`);
 
-    // if (req.url.includes('png') || req.url.includes('modules') || req.url.includes('css')){
-    // if (req.url.includes('png')){
-    //     res.set("Cache-Control", `public, max-age=${cacheTime}`);
-    // }
+    res.set("Cache-Control", `public, max-age=${cache_time}`);
 
     var url = req.url.split("?")[0];
     if (route.path == "url") {

@@ -20,6 +20,14 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIAL_JSON }}'
 
+    - id: remove
+      uses: Reviewable/appengine-remove-action@v2.1.2
+      with:
+        limit: 1
+        apply_limit_after_days: 7
+        project_id: ${{ secrets.GCP_PROJECT }}
+        credentials_json: '${{ secrets.GCP_CREDENTIAL_JSON }}'
+
     - id: 'deploy'
       name: 'deploy'
       uses: 'google-github-actions/deploy-appengine@v0'
