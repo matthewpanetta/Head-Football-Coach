@@ -12307,12 +12307,6 @@ const add_listeners = async (common) => {
     SimThisPhase: "SimPhase",
   };
 
-  $("#SimDayModalCloseButton").on("click", function () {
-    console.log("Clicked on indexCreateWorldModalCloseButton!!", this);
-    $("#SimDayModal").css({ display: "none" });
-    $(window).unbind();
-  });
-
   $(".sim-action:not(.w3-disabled)").click(async function (e) {
     $("#SimDayModal").css({ display: "block" });
 
@@ -15331,8 +15325,24 @@ const geo_marker_action = async(common) => {
 
     let location = await ddb.cities.get({city: city, state:state})
 
+    let color = ''
+    console.log({
+      common: common, 
+      this: $(this),
+      t: this
+    })
+
+    let modal_config = common.page;
+
+    if (!modal_config){
+      modal_config = {
+        PrimaryColor:  $(this).closest('tr').attr('primary-color'),
+        SecondaryColor: $(this).closest('tr').attr('secondary-color')
+      }
+    }
+
     const icon = L.divIcon({
-      html: `<i class="fa fa-map-marker-alt" style="font-size: 40px; color: #${common.page.PrimaryColor};"></i>`,
+      html: `<i class="fa fa-map-marker-alt" style="font-size: 40px; color: ${modal_config.PrimaryColor};"></i>`,
       iconSize: [40,40],
       iconAnchor: [15, 40],
   });
@@ -15340,9 +15350,8 @@ const geo_marker_action = async(common) => {
     var modal_url = "/static/html_templates/common_templates/geography_modal_template.njk";
     var html = await fetch(modal_url);
     html = await html.text();
-    let page = common.page;
     var renderedHtml = await common.nunjucks_env.renderString(html, {
-      page: page,
+      page: modal_config,
       location:location
     });
     console.log({ renderedHtml: renderedHtml });
@@ -15779,6 +15788,11 @@ const new_world_action = async (common, database_suffix) => {
   $(".choose-team-table").html(renderedHtml);
   $('.create-progress-table').addClass('w3-hide');
   $('.choose-team-table').removeClass('w3-hide');
+
+  geo_marker_action(common);
+  init_basic_table_sorting(common, '#choose-team-table', 0)
+  $('.modal-dialog').css('max-width', '85%');
+  $('.modal-dialog').css('width', '85%');
 
   const current_league_season = await db.league_season
     .where({ season: season })

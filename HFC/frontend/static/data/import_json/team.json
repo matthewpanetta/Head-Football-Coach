@@ -6414,13 +6414,13 @@
     },
     "team_ratings": {
       "location": 1,
-      "fan_support": 1,
+      "fan_support": 6,
       "academic_quality": 2,
-      "facilities": 1,
-      "program_history": 1,
-      "team_competitiveness": 1,
-      "brand": 1,
-      "pro_pipeline": 1
+      "facilities": 3,
+      "program_history": 6,
+      "team_competitiveness": 6,
+      "brand": 5,
+      "pro_pipeline": 5
     },
     "location": {
       "city": "Fargo",
@@ -6457,12 +6457,12 @@
     },
     "team_ratings": {
       "location": 1,
-      "fan_support": 1,
-      "academic_quality": 2,
-      "facilities": 1,
+      "fan_support": 3,
+      "academic_quality": 1,
+      "facilities": 2,
       "program_history": 1,
       "team_competitiveness": 1,
-      "brand": 1,
+      "brand": 2,
       "pro_pipeline": 1
     },
     "location": {
@@ -6499,13 +6499,13 @@
       }
     },
     "team_ratings": {
-      "location": 1,
-      "fan_support": 1,
+      "location": 2,
+      "fan_support": 2,
       "academic_quality": 2,
-      "facilities": 1,
+      "facilities": 2,
       "program_history": 1,
       "team_competitiveness": 1,
-      "brand": 1,
+      "brand": 2,
       "pro_pipeline": 1
     },
     "location": {
@@ -6588,10 +6588,10 @@
       "location": 1,
       "fan_support": 1,
       "academic_quality": 2,
-      "facilities": 1,
+      "facilities": 2,
       "program_history": 1,
-      "team_competitiveness": 1,
-      "brand": 1,
+      "team_competitiveness": 3,
+      "brand": 2,
       "pro_pipeline": 1
     },
     "location": {
@@ -6628,14 +6628,14 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 2,
       "fan_support": 1,
       "academic_quality": 2,
       "facilities": 1,
-      "program_history": 1,
+      "program_history": 2,
       "team_competitiveness": 1,
-      "brand": 1,
-      "pro_pipeline": 1
+      "brand": 3,
+      "pro_pipeline": 4
     },
     "location": {
       "city": "Cedar Falls",
@@ -6671,12 +6671,12 @@
       }
     },
     "team_ratings": {
-      "location": 1,
-      "fan_support": 1,
-      "academic_quality": 2,
-      "facilities": 1,
-      "program_history": 1,
-      "team_competitiveness": 1,
+      "location": 9,
+      "fan_support": 5,
+      "academic_quality": 11,
+      "facilities": 4,
+      "program_history": 2,
+      "team_competitiveness": 3,
       "brand": 1,
       "pro_pipeline": 1
     },
@@ -6714,14 +6714,14 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 5,
       "fan_support": 1,
-      "academic_quality": 2,
-      "facilities": 1,
+      "academic_quality": 8,
+      "facilities": 2,
       "program_history": 1,
       "team_competitiveness": 1,
       "brand": 1,
-      "pro_pipeline": 1
+      "pro_pipeline": 2
     },
     "location": {
       "city": "Durham",
@@ -6757,9 +6757,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
-      "fan_support": 1,
-      "academic_quality": 2,
+      "location": 6,
+      "fan_support": 2,
+      "academic_quality": 7,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -6800,14 +6800,14 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 10,
       "fan_support": 1,
-      "academic_quality": 2,
-      "facilities": 1,
-      "program_history": 1,
-      "team_competitiveness": 1,
-      "brand": 1,
-      "pro_pipeline": 1
+      "academic_quality": 12,
+      "facilities": 6,
+      "program_history": 3,
+      "team_competitiveness": 3,
+      "brand": 9,
+      "pro_pipeline": 4
     },
     "location": {
       "city": "Philadelphia",
@@ -6843,10 +6843,10 @@
       }
     },
     "team_ratings": {
-      "location": 1,
-      "fan_support": 1,
-      "academic_quality": 2,
-      "facilities": 1,
+      "location": 6,
+      "fan_support": 2,
+      "academic_quality": 3,
+      "facilities": 2,
       "program_history": 1,
       "team_competitiveness": 1,
       "brand": 1,
@@ -6886,9 +6886,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 5,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 5,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -6929,9 +6929,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
-      "fan_support": 1,
-      "academic_quality": 2,
+      "location": 7,
+      "fan_support": 3,
+      "academic_quality": 8,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -6972,8 +6972,8 @@
       }
     },
     "team_ratings": {
-      "location": 1,
-      "fan_support": 1,
+      "location": 4,
+      "fan_support": 4,
       "academic_quality": 2,
       "facilities": 1,
       "program_history": 1,
@@ -7015,9 +7015,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 3,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 6,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -7059,12 +7059,12 @@
     },
     "team_ratings": {
       "location": 1,
-      "fan_support": 1,
-      "academic_quality": 2,
+      "fan_support": 3,
+      "academic_quality": 1,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
-      "brand": 1,
+      "brand": 7,
       "pro_pipeline": 1
     },
     "location": {
@@ -7102,10 +7102,10 @@
     },
     "team_ratings": {
       "location": 1,
-      "fan_support": 1,
-      "academic_quality": 2,
+      "fan_support": 2,
+      "academic_quality": 1,
       "facilities": 1,
-      "program_history": 1,
+      "program_history": 2,
       "team_competitiveness": 1,
       "brand": 1,
       "pro_pipeline": 1
@@ -7146,11 +7146,11 @@
     "team_ratings": {
       "location": 1,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 1,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
-      "brand": 1,
+      "brand": 3,
       "pro_pipeline": 1
     },
     "location": {
@@ -7187,9 +7187,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 2,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 7,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -7275,7 +7275,7 @@
     "team_ratings": {
       "location": 1,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 1,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -7316,9 +7316,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 6,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 1,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -7359,11 +7359,11 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 8,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 8,
       "facilities": 1,
-      "program_history": 1,
+      "program_history": 5,
       "team_competitiveness": 1,
       "brand": 1,
       "pro_pipeline": 1
@@ -7404,11 +7404,11 @@
     "team_ratings": {
       "location": 1,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 1,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
-      "brand": 1,
+      "brand": 3,
       "pro_pipeline": 1
     },
     "location": {
@@ -7447,7 +7447,7 @@
     "team_ratings": {
       "location": 1,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 1,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -7488,9 +7488,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 3,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 1,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -7531,9 +7531,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 3,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 1,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -7574,7 +7574,7 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 4,
       "fan_support": 1,
       "academic_quality": 2,
       "facilities": 1,
@@ -7617,7 +7617,7 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 3,
       "fan_support": 1,
       "academic_quality": 2,
       "facilities": 1,
@@ -7660,9 +7660,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 10,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 4,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,
@@ -7703,9 +7703,9 @@
       }
     },
     "team_ratings": {
-      "location": 1,
+      "location": 5,
       "fan_support": 1,
-      "academic_quality": 2,
+      "academic_quality": 1,
       "facilities": 1,
       "program_history": 1,
       "team_competitiveness": 1,

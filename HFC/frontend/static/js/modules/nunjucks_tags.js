@@ -107,7 +107,7 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("NumberToGradeBadge", function (NumberValue, scale) {
-    NumberValue = Math.floor(NumberValue / (scale / 20));
+    NumberValue = Math.floor(NumberValue * 1.0 / (scale * 1.0 / 20));
     let grade_letter = NumberToGrade(NumberValue);
     let badge_class = grade_letter.replace("-", "-Minus").replace("+", "-Plus");
 

@@ -513,8 +513,8 @@
     "prestige": 1,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/fcs.png",
-    "conference_color_primary_hex": "09452E",
-    "conference_color_secondary_hex": "FFFFFF",
+    "conference_color_primary_hex": "1D3339",
+    "conference_color_secondary_hex": "979078",
     "schedule_format": {
       "hold_conference_championship_game": false,
       "number_conference_games": 7,
@@ -546,8 +546,8 @@
     "prestige": 1,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/fcs.png",
-    "conference_color_primary_hex": "09452E",
-    "conference_color_secondary_hex": "FFFFFF",
+    "conference_color_primary_hex": "1D3339",
+    "conference_color_secondary_hex": "979078",
     "schedule_format": {
       "hold_conference_championship_game": false,
       "number_conference_games": 7,
@@ -583,8 +583,8 @@
     "prestige": 1,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/fcs.png",
-    "conference_color_primary_hex": "09452E",
-    "conference_color_secondary_hex": "FFFFFF",
+    "conference_color_primary_hex": "1D3339",
+    "conference_color_secondary_hex": "979078",
     "schedule_format": {
       "hold_conference_championship_game": false,
       "number_conference_games": 7,
@@ -620,8 +620,8 @@
     "prestige": 1,
     "is_independent": 0,
     "conference_logo_url": "/static/img/conference_logos/fcs.png",
-    "conference_color_primary_hex": "09452E",
-    "conference_color_secondary_hex": "FFFFFF",
+    "conference_color_primary_hex": "1D3339",
+    "conference_color_secondary_hex": "979078",
     "schedule_format": {
       "hold_conference_championship_game": false,
       "number_conference_games": 7,

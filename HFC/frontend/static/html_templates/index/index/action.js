@@ -98,6 +98,10 @@ const getHtml = async (common) => {
     world_list: world_list,
     world_options: world_options,
     progress_table_rows: progress_table_rows,
+    page: {
+      PrimaryColor: '1763B2',
+      SecondaryColor: '333333'
+    }
   };
 
   console.log("render_content", render_content);

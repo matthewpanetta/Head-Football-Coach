@@ -81,6 +81,10 @@ routes.forEach(function (route) {
   app.get(route.route, (req, res) => {
     console.log("routing to", process.env.NODE_ENV, route.route, req.url, `cache_time:${cache_time}`);
 
+    if ( (!is_prod) && (req.url.includes('modules') || req.url.includes('css'))){
+      cache_time = 1;
+    }
+
     res.set("Cache-Control", `public, max-age=${cache_time}`);
 
     var url = req.url.split("?")[0];
