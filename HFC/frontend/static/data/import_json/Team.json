@@ -6003,6 +6003,49 @@
     }
   },
   {
+    "school_name": "Kennesaw State",
+    "team_name": "Owls",
+    "team_abbreviation": "KSU",
+    "team_color_primary_hex": "000000",
+    "team_color_secondary_hex": "fdbb30",
+    "team_logo_url": "https://upload.wikimedia.org/wikipedia/en/d/de/SHSU_athletics_logo.svg",
+    "jersey": {
+      "invert": false
+    },
+    "starting_tendencies": {
+      "offense": {
+        "playbook": "Spread",
+        "playclock_urgency": 4,
+        "pass_tendency": 10,
+        "playcall_aggressiveness": 4
+      },
+      "defense": {
+        "playbook": "4-3",
+        "blitz_tendency": 4,
+        "man_coverage_tendency": 4
+      }
+    },
+    "team_ratings": {
+      "location": 1,
+      "fan_support": 4,
+      "academic_quality": 2,
+      "facilities": 3,
+      "program_history": 1,
+      "team_competitiveness": 1,
+      "brand": 1,
+      "pro_pipeline": 1
+    },
+    "location": {
+      "city": "Kennesaw",
+      "state": "Georgia"
+    },
+    "sayings": {
+      "good": [],
+      "bad": [],
+      "location": []
+    }
+  },
+  {
     "school_name": "Dartmouth",
     "team_name": "Big Green",
     "team_abbreviation": "DART",

@@ -1560,5 +1560,239 @@
     "rivalry_relevance":7,
     "rivalry_name": "Battle for the Ol' School Bell",
     "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Brown",
+    "team_name_2": "Rhode Island",
+    "rivalry_relevance":3,
+    "rivalry_name": "Brown-Rhode Island",
+    "trophy_name": "Governor's Cup",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Columbia",
+    "team_name_2": "Cornell",
+    "rivalry_relevance":3,
+    "rivalry_name": "Empire State Bowl",
+    "trophy_name": "Empire Cup",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Cornell",
+    "team_name_2": "Dartmouth",
+    "rivalry_relevance":3,
+    "rivalry_name": "Cornell-Dartmouth",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Cornell",
+    "team_name_2": "Penn",
+    "rivalry_relevance":3,
+    "rivalry_name": "Cornell-Penn",
+    "trophy_name": "Trustee's Cup",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Dartmouth",
+    "team_name_2": "Harvard",
+    "rivalry_relevance":3,
+    "rivalry_name": "Dartmouth-Harvard",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Dartmouth",
+    "team_name_2": "New Hampshire",
+    "rivalry_relevance":4,
+    "rivalry_name": "Granite Bowl",
+    "trophy_name": "Granite Bowl",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Delaware",
+    "team_name_2": "Villanova",
+    "rivalry_relevance":3,
+    "rivalry_name": "Battle of the Blue",
+    "trophy_name": "Battle of the Blue Cup",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Delaware",
+    "team_name_2": "William & Mary",
+    "rivalry_relevance":3,
+    "rivalry_name": "Delaware-William & Mary",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Eastern Washington",
+    "team_name_2": "Portland State",
+    "rivalry_relevance":3,
+    "rivalry_name": "Eastern Washington-Portland State",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Eastern Washington",
+    "team_name_2": "Montana",
+    "rivalry_relevance":3,
+    "rivalry_name": "EWU-UM Govenors Cup",
+    "trophy_name": "The Govenor's Cup",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Harvard",
+    "team_name_2": "Penn",
+    "rivalry_relevance":3,
+    "rivalry_name": "Harvard-Penn",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Harvard",
+    "team_name_2": "Princeton",
+    "rivalry_relevance":3,
+    "rivalry_name": "Harvard-Princeton",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Harvard",
+    "team_name_2": "Yale",
+    "rivalry_relevance":15,
+    "rivalry_name": "The Game",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Idaho",
+    "team_name_2": "Montana",
+    "rivalry_relevance":3,
+    "rivalry_name": "Idaho-Montana",
+    "trophy_name": "Little Brown Stein",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Jacksonville State",
+    "team_name_2": "Samford",
+    "rivalry_relevance":3,
+    "rivalry_name": "Jacksonville State-Samford",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Maine",
+    "team_name_2": "New Hampshire",
+    "rivalry_relevance":3,
+    "rivalry_name": "Battle for the Brice-Cowell Musket",
+    "trophy_name": "Brice-Cowell Musket",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Montana",
+    "team_name_2": "Montana State",
+    "rivalry_relevance":3,
+    "rivalry_name": "Brawl of the Wild",
+    "trophy_name": "The Great Divide Trophy",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "North Dakota",
+    "team_name_2": "North Dakota State",
+    "rivalry_relevance":3,
+    "rivalry_name": "North Dakota-North Dakota State",
+    "trophy_name": "Nickel Trophy",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "North Dakota",
+    "team_name_2": "South Dakota",
+    "rivalry_relevance":3,
+    "rivalry_name": "North Dakota-South Dakota",
+    "trophy_name": "Sitting Bull Trophy",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "North Dakota State",
+    "team_name_2": "South Dakota State",
+    "rivalry_relevance":3,
+    "rivalry_name": "North Dakota State-South Dakota State",
+    "trophy_name": "Dakota Marker",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Penn",
+    "team_name_2": "Princeton",
+    "rivalry_relevance":3,
+    "rivalry_name": "Princeton-Penn",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Princeton",
+    "team_name_2": "Yale",
+    "rivalry_relevance":3,
+    "rivalry_name": "Princeton-Yale",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Richmond",
+    "team_name_2": "William & Mary",
+    "rivalry_relevance":3,
+    "rivalry_name": "Capital Cup",
+    "trophy_name": "Capital Cup",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Sacramento State",
+    "team_name_2": "UC Davis",
+    "rivalry_relevance":3,
+    "rivalry_name": "Causeway Classic",
+    "trophy_name": "Causeway Trophy",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Sam Houston State",
+    "team_name_2": "Stephen F Austin",
+    "rivalry_relevance":3,
+    "rivalry_name": "Battle of the Piney Woods",
+    "trophy_name": "Piney Woods Trophy",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "South Dakota",
+    "team_name_2": "South Dakota State",
+    "rivalry_relevance":3,
+    "rivalry_name": "South Dakota Showdown Series",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Akron",
+    "team_name_2": "Youngstown State",
+    "rivalry_relevance":3,
+    "rivalry_name": "Akron-Youngstown State",
+    "trophy_name": "Steel Tire",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Idaho",
+    "team_name_2": "Washington State",
+    "rivalry_relevance":3,
+    "rivalry_name": "Battle of the Palouse",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Boston College",
+    "team_name_2": "Holy Cross",
+    "rivalry_relevance":3,
+    "rivalry_name": "Boston College-Holy Cross",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Rhode Island",
+    "team_name_2": "UConn",
+    "rivalry_relevance":3,
+    "rivalry_name": "Rhode Island-UConn",
+    "preferred_week_number": null
+  },
+  {
+    "team_name_1": "Temple",
+    "team_name_2": "Villanova",
+    "rivalry_relevance":3,
+    "rivalry_name": "Temple-Villanova",
+    "trophy_name": "Mayor's Cup",
+    "preferred_week_number": null
   }
 ]
