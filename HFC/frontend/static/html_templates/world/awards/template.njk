@@ -50,7 +50,13 @@
                   {% for conference_season in conference_seasons%}
                     {% set conference_loop = loop %}
                     <tr class='team-primary-background-bar'>
-                      <th colspan="10">{{conference_season.conference.conference_name}}</th>
+                      <th colspan="10">
+                        {{conference_season.conference.conference_name}}
+
+                        {% if conference_season.conference.conference_name != 'National' %}
+                        <a href='{{conference_season.conference.conference_href}}'>link</a>
+                        {%endif%}
+                      </th>
                     </tr>
                     <tr class='team-secondary-table-row'>
                       <th class='column-shrink'>POS</th>

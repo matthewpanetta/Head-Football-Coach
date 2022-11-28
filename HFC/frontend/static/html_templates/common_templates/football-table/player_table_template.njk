@@ -538,71 +538,71 @@
             {% if column_controls.Ratings.overall.shown %}
               <!-- THROWING RATINGS -->
               <td>{{player.player_team_season.ratings.overall.overall|NumberToGradeBadge(100)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.overall.awareness|NumberToGradeBadge(20)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.overall.awareness|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.passing.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.passing.throwing_power|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.passing.short_throw_accuracy|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.passing.medium_throw_accuracy|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.passing.deep_throw_accuracy|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.passing.throw_under_pressure|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.passing.throw_on_run|NumberToGradeBadge(20)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.passing.play_action|NumberToGradeBadge(20)|safe}}</td>
+              <td>{{player.player_team_season.ratings.passing.throwing_power|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.passing.short_throw_accuracy|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.passing.medium_throw_accuracy|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.passing.deep_throw_accuracy|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.passing.throw_under_pressure|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.passing.throw_on_run|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.passing.play_action|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.rushing.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.rushing.carrying|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.rushing.elusiveness|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.rushing.break_tackle|NumberToGradeBadge(20)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.rushing.ball_carrier_vision|NumberToGradeBadge(20)|safe}}</td>
+              <td>{{player.player_team_season.ratings.rushing.carrying|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.rushing.elusiveness|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.rushing.break_tackle|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.rushing.ball_carrier_vision|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.receiving.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.receiving.catching|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.receiving.route_running|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.receiving.catch_in_traffic|NumberToGradeBadge(20)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.receiving.release|NumberToGradeBadge(20)|safe}}</td>
+              <td>{{player.player_team_season.ratings.receiving.catching|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.receiving.route_running|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.receiving.catch_in_traffic|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.receiving.release|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.blocking.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.blocking.pass_block|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.blocking.run_block|NumberToGradeBadge(20)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.blocking.impact_block|NumberToGradeBadge(20)|safe}}</td>
+              <td>{{player.player_team_season.ratings.blocking.pass_block|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.blocking.run_block|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.blocking.impact_block|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.athleticism.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.athleticism.speed|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.athleticism.acceleration|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.athleticism.agility|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.athleticism.jumping|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.athleticism.strength|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.athleticism.stamina|NumberToGradeBadge(20)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.athleticism.injury|NumberToGradeBadge(20)|safe}}</td>
+              <td>{{player.player_team_season.ratings.athleticism.speed|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.athleticism.acceleration|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.athleticism.agility|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.athleticism.jumping|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.athleticism.strength|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.athleticism.stamina|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.athleticism.injury|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.defense.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.defense.tackle|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.defense.hit_power|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.defense.block_shedding|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.defense.pursuit|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.defense.play_recognition|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.defense.man_coverage|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.defense.zone_coverage|NumberToGradeBadge(20)|safe}}</td>
-              <td>{{player.player_team_season.ratings.defense.press|NumberToGradeBadge(20)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.defense.pass_rush|NumberToGradeBadge(20)|safe}}</td>
+              <td>{{player.player_team_season.ratings.defense.tackle|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.defense.hit_power|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.defense.block_shedding|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.defense.pursuit|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.defense.play_recognition|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.defense.man_coverage|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.defense.zone_coverage|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.defense.press|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.defense.pass_rush|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.kicking.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.kicking.kick_power|NumberToGradeBadge(20)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.kicking.kick_accuracy|NumberToGradeBadge(20)|safe}}</td>
+              <td>{{player.player_team_season.ratings.kicking.kick_power|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.kicking.kick_accuracy|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
 

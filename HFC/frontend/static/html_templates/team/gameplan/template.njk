@@ -117,13 +117,13 @@
 
                             {# {% for rating in all_pos_rating_list%}
                       <td  class='{%if loop.last%}col-group{%endif%}' style='font-weight: {{pts|get(rating.key) * 50}};'>
-                        {{pts|get(rating.key)|NumberToGradeBadge(20)|safe}}
+                        {{pts|get(rating.key)|NumberToGradeBadge(100)|safe}}
                       </td>
                       {% endfor %} #}
 
                             {% for rating in position_obj.rating_list%}
                               <td class='{%if loop.last%}col-group{%endif%}' style='font-weight: {{pts|get(rating.key) * 50}};'>
-                                {{pts|get(rating.key)|NumberToGradeBadge(20)|safe}}
+                                {{pts|get(rating.key)|NumberToGradeBadge(100)|safe}}
                               </td>
                             {% endfor %}
 

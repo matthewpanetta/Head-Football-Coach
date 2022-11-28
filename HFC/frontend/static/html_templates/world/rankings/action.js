@@ -83,7 +83,7 @@
         }
       }
 
-      var render_content = {page: {PrimaryColor: common.primary_color, SecondaryColor: common.secondary_color, NavBarLinks: NavBarLinks},
+      var render_content = {page: {PrimaryColor: common.primary_color, SecondaryColor: common.secondary_color, NavBarLinks: NavBarLinks, page_title: 'Top 25'},
                             team_list: [],
                             world_id: common.params['world_id'],
                             team_seasons: team_seasons,

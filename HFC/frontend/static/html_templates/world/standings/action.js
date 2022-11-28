@@ -206,6 +206,7 @@ const getHtml = async (common) => {
       PrimaryColor: common.primary_color,
       SecondaryColor: common.secondary_color,
       NavBarLinks: NavBarLinks,
+      page_title: 'Conference Standings'
     },
     world_id: common.params["world_id"],
     team_list: [],

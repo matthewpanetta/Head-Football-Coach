@@ -545,6 +545,7 @@ const getHtml = async (common) => {
     PrimaryColor: common.primary_color,
     SecondaryColor: common.secondary_color,
     NavBarLinks: NavBarLinks,
+    page_title: 'Player Awards'
   };
 
   var display_options = {

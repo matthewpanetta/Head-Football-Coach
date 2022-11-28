@@ -277,6 +277,7 @@ const getHtml = async (common) => {
     PrimaryColor: common.primary_color,
     SecondaryColor: common.secondary_color,
     NavBarLinks: NavBarLinks,
+    page_title: 'Head Football Coach'
   };
   var render_content = {
     team_list: [],

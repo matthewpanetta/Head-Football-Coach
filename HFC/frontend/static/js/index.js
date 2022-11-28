@@ -1929,11 +1929,11 @@ class coach {
     }
 
     this.personality = {
-      leadership: round_decimal(normal_trunc(10, 3, 1, 20), 0),
-      work_ethic: round_decimal(normal_trunc(10, 3, 1, 20), 0),
-      desire_for_winner: round_decimal(normal_trunc(10, 3, 1, 20), 0),
-      loyalty: round_decimal(normal_trunc(10, 3, 1, 20), 0),
-      desire_for_playtime: round_decimal(normal_trunc(10, 3, 1, 20), 0),
+      leadership: round_decimal(normal_trunc(10, 3, 1, 100), 0),
+      work_ethic: round_decimal(normal_trunc(10, 3, 1, 100), 0),
+      desire_for_winner: round_decimal(normal_trunc(10, 3, 1, 100), 0),
+      loyalty: round_decimal(normal_trunc(10, 3, 1, 100), 0),
+      desire_for_playtime: round_decimal(normal_trunc(10, 3, 1, 100), 0),
     };
   }
 
@@ -1980,11 +1980,11 @@ class player {
     this.jersey_number = null;
 
     this.personality = {
-      leadership: round_decimal(normal_trunc(10, 3, 1, 20), 0),
-      work_ethic: round_decimal(normal_trunc(10, 3, 1, 20), 0),
-      desire_for_winner: round_decimal(normal_trunc(10, 3, 1, 20), 0),
-      loyalty: round_decimal(normal_trunc(10, 3, 1, 20), 0),
-      desire_for_playtime: round_decimal(normal_trunc(10, 3, 1, 20), 0),
+      leadership: round_decimal(normal_trunc(10, 3, 1, 100), 0),
+      work_ethic: round_decimal(normal_trunc(10, 3, 1, 100), 0),
+      desire_for_winner: round_decimal(normal_trunc(10, 3, 1, 100), 0),
+      loyalty: round_decimal(normal_trunc(10, 3, 1, 100), 0),
+      desire_for_playtime: round_decimal(normal_trunc(10, 3, 1, 100), 0),
     };
   }
 
@@ -2453,9 +2453,9 @@ class player_team_season {
       ((10 * this.season_stats.average_weighted_game_score) +
       (1 * this.ratings.overall.overall) +      
       (0.5 * this.team_season.team.team_ratings.brand)) *
-      ((1 / this.team_season.national_rank) ** .05) *
-      ((1 / (this.team_season_average_weighted_game_score_rank || 1)) ** .1) *
-      ((1 / (this.team_season_overall_rank || 1)) ** .05) *
+      ((1 / this.team_season.national_rank) ** .03) *
+      ((1 / (this.team_season_average_weighted_game_score_rank || 1)) ** .05) *
+      ((1 / (this.team_season_overall_rank || 1)) ** .03) *
       (1 + (position_overall_map[this.position]))
     );
   }
@@ -4686,8 +4686,8 @@ const age_in_rating = (rating_group, rating, value) => {
   }
   
 
-  if (value > 20) {
-    return 20;
+  if (value > 100) {
+    return 100;
   }
 
   return round_decimal(value, 0);
@@ -5668,10 +5668,10 @@ const generate_player_ratings = async(common, world_id, season) => {
       pts.potential_ratings[rating_group_key] = {};
       for (const rating_key in rating_group) {
         var rating_obj = rating_group[rating_key];
-        var rating_mean = rating_obj.rating_mean / 5;
+        var rating_mean = rating_obj.rating_mean;
 
         var rating_value = pts.ratings[rating_group_key][rating_key] || round_decimal(
-          normal_trunc(rating_mean, rating_mean / 10, 1, 20),
+          normal_trunc(rating_mean, rating_mean / 10, 1, 100),
           0
         );
 
@@ -5709,7 +5709,7 @@ const generate_player_ratings = async(common, world_id, season) => {
       var rating_group = position_archetype[rating_group_key];
       for (const rating_key in rating_group) {
         var rating_obj = rating_group[rating_key];
-        var rating_mean = rating_obj.rating_mean / 5;
+        var rating_mean = rating_obj.rating_mean;
         var rating_overall_impact = rating_obj.overall_impact;
 
         overall_impact +=
@@ -5751,32 +5751,44 @@ const generate_player_ratings = async(common, world_id, season) => {
 
 
   var goal_overall_max = 99;
-  var goal_overall_min = 30;
+  var goal_overall_min = 10;
   var goal_overall_range = goal_overall_max - goal_overall_min;
 
   for (const pts of player_team_seasons) {
+    let original_overall = pts.ratings.overall.overall;
+    let original_potential = pts.ratings.overall.potential;
+
     pts.ratings.overall.overall = Math.floor(
-      ((pts.ratings.overall.overall -
-        position_overall_min[pts.position]) *
-        goal_overall_range) /
+      ((((pts.ratings.overall.overall -
+        position_overall_min[pts.position])) /
         (position_overall_max[pts.position] -
-          position_overall_min[pts.position]) +
-        goal_overall_min
-    );
+          position_overall_min[pts.position])) ** 1.5) 
+          * goal_overall_range 
+          + goal_overall_min);
 
     pts.ratings.overall.potential = Math.floor(
-      ((pts.ratings.overall.potential -
-        position_overall_min[pts.position]) *
-        goal_overall_range) /
+      ((((pts.ratings.overall.potential -
+        position_overall_min[pts.position])) /
         (position_overall_max[pts.position] -
-          position_overall_min[pts.position]) +
-        goal_overall_min
-    );  
+          position_overall_min[pts.position])) ** 1.5) 
+          * goal_overall_range 
+          + goal_overall_min);
 
+    if (!pts.ratings.overall.potential || !pts.ratings.overall.overall){
+      console.log('broken overall',{ pts: pts, 
+        'pts.ratings.overall.potential ':pts.ratings.overall.potential , 'pts.ratings.overall.overall': pts.ratings.overall.overall,
+        goal_overall_range:goal_overall_range, 'pts.position': pts.position, goal_overall_min:goal_overall_min,
+        'position_overall_min[pts.position]': position_overall_min[pts.position], ' position_overall_max[pts.position]':  position_overall_max[pts.position], 
+        original_overall:original_overall, original_potential:original_potential
+      })
+      debugger;
+    }
+  
     delete pts.potential_ratings;
   }
 
   console.log('setting ratings', {player_team_seasons:player_team_seasons})
+  // debugger;
   await db.player_team_season.bulkPut(player_team_seasons);
 
 }
@@ -5797,17 +5809,17 @@ const create_new_players_and_player_team_seasons = async (
   const position_ethnicity =
     //numbers normalized from https://theundefeated.com/features/the-nfls-racial-divide/
     {
-      QB: { white: 75, black: 15, hispanic: 5, asian: 5 },
-      RB: { white: 15, black: 80, hispanic: 10, asian: 5 },
+      QB: { white: 65, black: 25, hispanic: 5, asian: 5 },
+      RB: { white: 25, black: 65, hispanic: 10, asian: 5 },
       FB: { white: 50, black: 50, hispanic: 15, asian: 2 },
-      WR: { white: 10, black: 85, hispanic: 5, asian: 5 },
+      WR: { white: 25, black: 65, hispanic: 5, asian: 5 },
       TE: { white: 50, black: 50, hispanic: 15, asian: 2 },
       OT: { white: 45, black: 55, hispanic: 15, asian: 1 },
       IOL: { white: 40, black: 50, hispanic: 15, asian: 1 },
       EDGE: { white: 20, black: 80, hispanic: 10, asian: 1 },
       DL: { white: 10, black: 80, hispanic: 10, asian: 1 },
       LB: { white: 25, black: 75, hispanic: 10, asian: 1 },
-      CB: { white: 2, black: 100, hispanic: 10, asian: 2 },
+      CB: { white: 10, black: 100, hispanic: 10, asian: 2 },
       S: { white: 15, black: 80, hispanic: 10, asian: 5 },
       K: { white: 70, black: 10, hispanic: 25, asian: 25 },
       P: { white: 70, black: 10, hispanic: 25, asian: 25 },
@@ -9860,7 +9872,7 @@ const calculate_team_overalls = async (common) => {
   }
 
   var goal_overall_max = 99;
-  var goal_overall_min = 60;
+  var goal_overall_min = 10;
   var goal_overall_range = goal_overall_max - goal_overall_min;
 
   for (const team_season of team_seasons) {
@@ -14903,16 +14915,13 @@ const change_archetypes = () => {
 };
 
 function NumberToGrade(number_value, scale) {
-  if (!(scale)){
-    if (number_value > 20){
-      scale = 100
-    }
-    else {
-      scale = scale || 20;
-    }
-  }
+  console.log('index js NumberToGrade', {
+    number_value:number_value, scale:scale
+  })
+  scale = scale || 100;
+  
 
-  let adj_number_value = Math.floor(number_value / ((scale) / 20));
+  let adj_number_value = Math.floor(number_value * 1.0 / ((scale) / 20));
   let grade_value_map = {
     20: 'Elite',
     19: 'A++',
@@ -14922,19 +14931,23 @@ function NumberToGrade(number_value, scale) {
     15: 'B+',
     14: 'B',
     13: 'B-',
-    12: 'C+',
-    11: 'C',
-    10: 'C-',
-    9: 'D+',
-    8: 'D',
-    7: 'D-',
-    6: 'F',
+    12: 'B-',
+    11: 'C+',
+    10: 'C',
+    9: 'C-',
+    8: 'D+',
+    7: 'D',
+    6: 'D-',
     5: 'F',
     4: 'F-',
     3: 'F-',
     2: 'F--',
     1: 'F--',
   }
+
+  console.log({
+    adj_number_value:adj_number_value, 'grade_value_map[adj_number_value]': grade_value_map[adj_number_value], number_value:number_value, scale:scale
+  })
 
   return grade_value_map[adj_number_value] || 'Elite';
 }

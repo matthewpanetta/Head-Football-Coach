@@ -51,14 +51,51 @@ const getHtml = async (common) => {
     P: "Special Teams",
   };
 
-  let [NavBarLinks, teams, conference_seasons, conferences, team_seasons, player_team_seasons] = await Promise.all([
+  let [NavBarLinks] = await Promise.all([
     common.nav_bar_links({ path: "Player Stats", group_name: "Almanac",db: db}),
+  ])
+
+  
+  common.page = {
+    PrimaryColor: common.primary_color,
+    SecondaryColor: common.secondary_color,
+    NavBarLinks: NavBarLinks,
+    page_title: 'Player Stats'
+  };
+
+  var render_content = {
+    page: common.page,
+    world_id: common.params["world_id"],
+    team_id: team_id,
+    // players: players,
+    // teams: teams,
+    // roster_summary: roster_summary,
+  };
+
+  common.render_content = render_content;
+
+  console.log("render_content", render_content);
+
+  var url = "/static/html_templates/almanac/player_stats/template.njk";
+  var html = await fetch(url);
+  html = await html.text();
+
+  var renderedHtml = await common.nunjucks_env.renderString(
+    html,
+    render_content
+  );
+
+  $("#body").html(renderedHtml);
+
+
+  let [teams, conference_seasons, conferences, team_seasons, player_team_seasons] = await Promise.all([
     db.team.where("team_id").above(0).toArray(),
     db.conference_season.where({ season: season }).toArray(),
     db.conference.toArray(),
     db.team_season.where({ season: season }).toArray(),
     db.player_team_season.where({ season: season }).and((pts) => pts.team_season_id > 0).toArray()
   ])
+
 
   teams = teams.sort(function (teamA, teamB) {
     if (teamA.school_name < teamB.school_name) {
@@ -170,36 +207,10 @@ const getHtml = async (common) => {
     }
   }
 
-  common.page = {
-    PrimaryColor: common.primary_color,
-    SecondaryColor: common.secondary_color,
-    NavBarLinks: NavBarLinks,
-    page_title: 'Player Stats'
-  };
 
-  var render_content = {
-    page: common.page,
-    world_id: common.params["world_id"],
-    team_id: team_id,
-    players: players,
-    teams: teams,
-    roster_summary: roster_summary,
-  };
-
-  common.render_content = render_content;
-
-  console.log("render_content", render_content);
-
-  var url = "/static/html_templates/almanac/player_stats/template.njk";
-  var html = await fetch(url);
-  html = await html.text();
-
-  var renderedHtml = await common.nunjucks_env.renderString(
-    html,
-    render_content
-  );
-
-  $("#body").html(renderedHtml);
+  common.render_content.players = players;
+  common.render_content.teams = teams;
+  common.render_content.roster_summary = roster_summary;
 };
 
 const GetPlayerStats = async (common) => {

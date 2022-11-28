@@ -1059,11 +1059,12 @@ const getHtml = async (common) => {
         conference_players: { value_sum: 0, value_count: 0, value: 0 },
       };
 
-      if (rating_obj.rating == "Overall") {
-        rating_obj.bar_width = rating_obj.player_value;
-      } else {
-        rating_obj.bar_width = rating_obj.player_value * 5;
-      }
+      rating_obj.bar_width = rating_obj.player_value;
+      // if (rating_obj.rating == "Overall") {
+      //   rating_obj.bar_width = rating_obj.player_value;
+      // } else {
+      //   rating_obj.bar_width = rating_obj.player_value * 5;
+      // }
 
       for (const player_team_season of all_player_team_season_starters_at_position) {
         rating_obj.all_players.value_count += 1;

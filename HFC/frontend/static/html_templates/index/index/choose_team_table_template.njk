@@ -29,28 +29,28 @@
         </td>
         <td value='{{team.conference.conference_name}}'>{{team.conference.conference_name}}</td>
         <td value='{{team.team_ratings.academic_quality}}'>
-            <span class='rating-badge rating-badge-{{team.team_ratings.academic_quality}}'>{{team.team_ratings.academic_quality|NumberToGrade(20)}}</span>
+            {{team.team_ratings.academic_quality|NumberToRatingBadge(100)|safe}}
         </td>
         <td value='{{team.team_ratings.brand}}'>
-            <span class='rating-badge rating-badge-{{team.team_ratings.brand}}'>{{team.team_ratings.brand|NumberToGrade(20)}}</span>
+            {{team.team_ratings.brand|NumberToRatingBadge(100)|safe}}
         </td>
         <td value='{{team.team_ratings.program_history}}'>
-            <span class='rating-badge rating-badge-{{team.team_ratings.program_history}}'>{{team.team_ratings.program_history|NumberToGrade(20)}}</span>
+            {{team.team_ratings.program_history|NumberToRatingBadge(100)|safe}}
         </td>
         <td value='{{team.team_ratings.facilities}}'>
-            <span class='rating-badge rating-badge-{{team.team_ratings.facilities}}'>{{team.team_ratings.facilities|NumberToGrade(20)}}</span>
+            {{team.team_ratings.facilities|NumberToRatingBadge(100)|safe}}
         </td>
         <td value='{{team.team_ratings.fan_support}}'>
-            <span class='rating-badge rating-badge-{{team.team_ratings.fan_support}}'>{{team.team_ratings.fan_support|NumberToGrade(20)}}</span>
+            {{team.team_ratings.fan_support|NumberToRatingBadge(100)|safe}}
         </td>
         <td value='{{team.team_ratings.location}}'>
-            <span class='rating-badge rating-badge-{{team.team_ratings.location}}'>{{team.team_ratings.location|NumberToGrade(20)}}</span>
+            {{team.team_ratings.location|NumberToRatingBadge(100)|safe}}
         </td>
         <td value='{{team.team_ratings.pro_pipeline}}'>
-            <span class='rating-badge rating-badge-{{team.team_ratings.pro_pipeline}}'>{{team.team_ratings.pro_pipeline|NumberToGrade(20)}}</span>
+            {{team.team_ratings.pro_pipeline|NumberToRatingBadge(100)|safe}}
         </td>
         <td value='{{team.team_ratings.team_competitiveness}}'>
-            <span class='rating-badge rating-badge-{{team.team_ratings.team_competitiveness}}'>{{team.team_ratings.team_competitiveness|NumberToGrade(20)}}</span>
+            {{team.team_ratings.team_competitiveness|NumberToRatingBadge(100)|safe}}
         </td>
 
                     

@@ -255,6 +255,7 @@ const getHtml = async (common) => {
       PrimaryColor: common.primary_color,
       SecondaryColor: common.secondary_color,
       NavBarLinks: NavBarLinks,
+      page_title: `${common.season} Schedule`
     },
     team_list: [],
     world_id: common.params["world_id"],

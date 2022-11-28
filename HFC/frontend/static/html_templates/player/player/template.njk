@@ -150,7 +150,7 @@
                               {% if skill.rating == 'Overall'%}
                               <td style='width:20%;' class='font20 center-text'>{{skill.player_value}}</td>
                               {%else %}
-                              <td style='width:20%' class='font20 center-text'>{{skill.player_value|NumberToGradeBadge(20)|safe}}</td>
+                              <td style='width:20%' class='font20 center-text'>{{skill.player_value|NumberToGradeBadge(100)|safe}}</td>
                               {%endif%}
                             </tr>
 
