@@ -7,8 +7,6 @@ function ResArrowSize() {
 
   var team_color = $(".SelectedGameBox").css("background-color");
 
-  //console.log('team_color', team_color, $('.SelectedGameBox'))
-
   var styleAdd = "";
   styleAdd += `border-left-width: ${side_length}px;`;
   styleAdd += `border-right-width: ${side_length}px;`;
@@ -36,12 +34,6 @@ function AddBoxScoreListeners() {
   var SelectedTeamID = $(InitialBoxScore).attr("TeamID");
 
   $("button.boxscore-tab").on("click", function (event, target) {
-    console.log({
-      target: $(event.currentTarget),
-      event: event,
-      SelectedTeamID: SelectedTeamID,
-      InitialBoxScore: InitialBoxScore,
-    });
     var ClickedTab = $(event.currentTarget);
     var ClickedTabParent = ClickedTab.closest(".boxscore-bar").attr("id");
     var SelectedTeamID = ClickedTab.attr("TeamID");
@@ -208,12 +200,9 @@ const getHtml = async (common) => {
 
   common.stopwatch(common, "Time after fetching games");
 
-  console.log("team_games", team_games);
-
   const opponent_team_game_ids = team_games.map(
     (team_game) => team_game.opponent_team_game_id
   );
-  //console.log('opponent_team_game_ids', opponent_team_game_ids)
   const opponent_team_games = await db.team_game.bulkGet(
     opponent_team_game_ids
   );
@@ -271,7 +260,6 @@ const getHtml = async (common) => {
     }
   }
 
-  console.log('opponent_teams', {opponent_teams:opponent_teams, opponent_team_seasons:opponent_team_seasons, opponent_team_games:opponent_team_games})
   var counter_games = 0;
   var selected_game_chosen = false;
   var selected_game_id = 0;
@@ -285,7 +273,6 @@ const getHtml = async (common) => {
     selected_game_chosen = true;
     selected_game_id = games[games.length - 1].game_id;
   }
-  //console.log('games_played', games_played, games.length, selected_game_chosen, selected_game_id, games)
 
   var team_game_ids = opponent_team_game_ids.concat(
     team_games.map((tg) => tg.team_game_id)
@@ -423,7 +410,6 @@ const getHtml = async (common) => {
       game.opponent_rank_string = game.opponent_team_game.national_rank_display;
     }
 
-    console.log({counter_games:counter_games})
     counter_games += 1;
   });
 
@@ -446,8 +432,6 @@ const getHtml = async (common) => {
 
   let show_season = common.params.season && common.params.season < common.season;
   let season_to_show = common.params.season;
-  console.log({ signed_player_team_seasons: signed_player_team_seasons });
-  //console.log('games', games)
   common.page = {
     page_title: team.full_name,
     page_icon: team.team_logo,
@@ -493,7 +477,6 @@ const draw_faces = async (common) => {
   const db = common.db;
   const season = common.season;
   const index_group_sync = common.index_group_sync;
-  //console.log('PlayerFace-Headshot', $('.PlayerFace-Headshot'));
 
   const player_ids = [];
   const face_div_by_player_id = {};
@@ -502,7 +485,6 @@ const draw_faces = async (common) => {
     if ($(elem).find("svg").length > 0) {
       return true;
     }
-    //console.log('ind, elem', ind, elem)
     player_ids.push(parseInt($(elem).attr("player_id")));
     if (!(parseInt($(elem).attr("player_id")) in face_div_by_player_id)) {
       face_div_by_player_id[parseInt($(elem).attr("player_id"))] = [];
@@ -511,7 +493,6 @@ const draw_faces = async (common) => {
     face_div_by_player_id[parseInt($(elem).attr("player_id"))].push(elem);
   });
 
-  console.log({ face_div_by_player_id: face_div_by_player_id });
 
   const players = await db.player.bulkGet(player_ids);
   var player_team_seasons = await db.player_team_season
@@ -527,10 +508,6 @@ const draw_faces = async (common) => {
     "player_id"
   );
 
-  console.log({
-    player_team_seasons_by_player_id: player_team_seasons_by_player_id,
-  });
-
   const team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
   const team_seasons = await db.team_season.bulkGet(team_season_ids);
   const team_seasons_by_team_season_id = index_group_sync(
@@ -542,8 +519,6 @@ const draw_faces = async (common) => {
   const team_ids = team_seasons.map((ts) => ts.team_id);
   const teams = await db.team.bulkGet(team_ids);
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
-
-  //console.log('player_ids', player_ids, 'players', players, 'player_team_seasons_by_player_id', player_team_seasons_by_player_id, 'team_seasons_by_team_season_id', team_seasons_by_team_season_id, 'teams_by_team_id', teams_by_team_id)
 
   for (var player of players) {
     var elems = face_div_by_player_id[player.player_id];
@@ -560,8 +535,6 @@ const draw_faces = async (common) => {
         db
       );
     }
-
-    //console.log( $(elem).attr('id'))
 
     for (var elem of elems) {
       common.display_player_face(
@@ -581,7 +554,6 @@ const draw_coach_faces = async (common) => {
   const db = common.db;
   const season = common.season;
   const index_group_sync = common.index_group_sync;
-  //console.log('coachFace-Headshot', $('.coachFace-Headshot'));
 
   const coach_ids = [];
   const face_div_by_coach_id = {};
@@ -590,7 +562,6 @@ const draw_coach_faces = async (common) => {
     if ($(elem).find("svg").length > 0) {
       return true;
     }
-    //console.log('ind, elem', ind, elem)
     coach_ids.push(parseInt($(elem).attr("coach_id")));
     if (!(parseInt($(elem).attr("coach_id")) in face_div_by_coach_id)) {
       face_div_by_coach_id[parseInt($(elem).attr("coach_id"))] = [];
@@ -598,8 +569,6 @@ const draw_coach_faces = async (common) => {
 
     face_div_by_coach_id[parseInt($(elem).attr("coach_id"))].push(elem);
   });
-
-  console.log({ face_div_by_coach_id: face_div_by_coach_id });
 
   const coaches = await db.coach.bulkGet(coach_ids);
   var coach_team_seasons = await db.coach_team_season
@@ -615,10 +584,6 @@ const draw_coach_faces = async (common) => {
     "coach_id"
   );
 
-  console.log({
-    coach_team_seasons_by_coach_id: coach_team_seasons_by_coach_id,
-  });
-
   const team_season_ids = coach_team_seasons.map((pts) => pts.team_season_id);
   const team_seasons = await db.team_season.bulkGet(team_season_ids);
   const team_seasons_by_team_season_id = index_group_sync(
@@ -630,8 +595,6 @@ const draw_coach_faces = async (common) => {
   const team_ids = team_seasons.map((ts) => ts.team_id);
   const teams = await db.team.bulkGet(team_ids);
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
-
-  //console.log('coach_ids', coach_ids, 'coaches', coaches, 'coach_team_seasons_by_coach_id', coach_team_seasons_by_coach_id, 'team_seasons_by_team_season_id', team_seasons_by_team_season_id, 'teams_by_team_id', teams_by_team_id)
 
   for (var coach of coaches) {
     var elems = face_div_by_coach_id[coach.coach_id];
@@ -648,8 +611,6 @@ const draw_coach_faces = async (common) => {
         db
       );
     }
-
-    //console.log( $(elem).attr('id'))
 
     for (var elem of elems) {
       common.display_player_face(
@@ -676,7 +637,6 @@ const action = async (common) => {
 
   var stats_first_click = false;
   $("#nav-team-stats-tab").on("click", async function () {
-    //console.log({stats_first_click:stats_first_click})
     if (stats_first_click) {
       return false;
     }
@@ -686,12 +646,6 @@ const action = async (common) => {
     var season = common.season;
     var index_group_sync = common.index_group_sync;
     var current_team_season = common.current_team_season;
-
-    console.log({
-      common: common,
-      season: season,
-      player_team_season: player_team_season,
-    });
 
     var team = common.render_content.team;
     var player_team_seasons = await db.player_team_season
@@ -719,14 +673,6 @@ const action = async (common) => {
       "player_id"
     );
 
-    console.log({
-      player_team_season_stats: player_team_season_stats,
-      player_team_seasons: player_team_seasons,
-      current_team_season: current_team_season,
-      player_team_season_stats_by_player_team_season_id:
-        player_team_season_stats_by_player_team_season_id,
-    });
-
     player_team_seasons = nest_children(
       player_team_seasons,
       player_team_season_stats_by_player_team_season_id,
@@ -751,7 +697,7 @@ const action = async (common) => {
     player_team_seasons = player_team_seasons.filter(
       (pts) => pts.team_season_id == team.team_season.team_season_id
     );
-    console.log({player_team_seasons:player_team_seasons})
+
     const team_leaders = [];
     const team_leaders_raw = [
       { stat_group: "passing", stat: "yards", display: "Leading Passer" },
@@ -768,11 +714,6 @@ const action = async (common) => {
           (pts_a.season_stats[stat_detail.stat_group][stat_detail.stat] || 0)
         );
       });
-
-      console.log({
-        'player_team_seasons[0]': player_team_seasons[0],
-        stat_detail:stat_detail, 'player_team_seasons[0].season_stats[stat_detail.stat_group][stat_detail.stat]': player_team_seasons[0].season_stats[stat_detail.stat_group][stat_detail.stat]
-      })
 
       if (
         player_team_seasons[0].season_stats[stat_detail.stat_group][
@@ -1081,9 +1022,6 @@ const action = async (common) => {
     let rivals = team.rivals;
     let rival_team_ids = new Set(rivals.map((r) => r.opponent_team_id));
 
-    console.log({rivals:rivals, rival_team_ids:rival_team_ids})
-    debugger;
-
     let team_seasons = await db.team_season
       .where({ team_id: team.team_id })
       .toArray();
@@ -1201,7 +1139,6 @@ const action = async (common) => {
 
       let streak_list = [];
       rivalry.team_games.forEach(function (tg) {
-        console.log({ tg: tg });
         if (tg.game.was_played) {
           rivalry.record.games_played += 1;
           rivalry.record.points_scored += tg.points;
@@ -1314,7 +1251,6 @@ const action = async (common) => {
       percentPosition: true,
       gutter: '.gutter-sizer',
     });
-    console.log({ mason: mason });
   });
 };
 
@@ -1339,11 +1275,6 @@ function rankings_trend_chart(team, common) {
   var team_ranking_trend_chart_div = document.getElementById(
     "team_ranking_trend_chart"
   );
-
-  console.log({
-    rank_trends: rank_trends,
-    team_ranking_trend_chart_div: team_ranking_trend_chart_div,
-  });
 
   var height = 300,
     width = team_ranking_trend_chart_div.clientWidth * 0.75,
@@ -1956,7 +1887,6 @@ function conference_bar_chart(raw_data, common) {
       .data(data)
       .join("image")
       .attr("xlink:href", function (d) {
-        //console.log(d);
         return d.logo;
       })
       .attr("width", image_width)
@@ -2209,8 +2139,6 @@ function conference_bar_chart(raw_data, common) {
     }
     html += "</select>";
 
-    //console.log('columns, html', columns, html)
-
     document.getElementById("selector").innerHTML = html;
 
     $("#stat_select").on("change", function (a, b, c) {
@@ -2267,7 +2195,6 @@ const draw_map = async (common) => {
     .where("player_id")
     .anyOf(player_ids)
     .toArray();
-  console.log({ players: players });
   players.forEach(
     (p) => (p.city_state = `${p.hometown.city}, ${p.hometown.state}`)
   );
@@ -2336,10 +2263,8 @@ const draw_map = async (common) => {
       .bindTooltip(renderedHtml)
       .openTooltip();
     markers.addLayer(marker).addTo(map);
-    console.log({ marker: marker, markers: markers });
   });
 
-  console.log({ cities: cities, map: map, school_location: school_location });
 };
 
 $(document).ready(async function () {

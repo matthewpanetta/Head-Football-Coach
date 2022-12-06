@@ -1,7 +1,8 @@
 <style >  
-.end-zone-fill{
+.end-zone-fill {
     fill:#{{team.team_color_primary_hex}};
-  }</style>
+}
+</style>
 <div style='width:100%;'>
     <svg width="100%" height="100%" viewBox="0 0 697 324" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2; width: 100%;">
         <defs>
@@ -43,6 +44,697 @@
                     <g id="End-Zones" serif:id="End Zones">
                         <rect id="End-Zone-Right" class='end-zone-fill' serif:id="End Zone Right" x="648.5" y="143.5" width="59.2" height="320.6"/>
                         <rect id="End-Zone-Left" class='end-zone-fill' serif:id="End Zone Left" x="14.2" y="143.5" width="58.9" height="320.6"/>
+                        {% if team.field.endzones.style == 'stripes' %}
+                        <g id="EndZoneStripes">
+                            <g id="EndZoneStripesRight" transform="matrix(1,0,0,1,-2,-3)">
+                                <g id="End-Zone-Right1" serif:id="End Zone Right" transform="matrix(1,0,0,1,2,3)">
+                                    <rect x="648.5" y="143.5" width="59.2" height="320.6" style="fill:rgb(64,122,33);"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,131.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,228.702)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,196.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,163.702)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,1.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,98.702)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,66.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,33.702)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,261.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                            </g>
+                            <g id="EndZoneStripesLeft" transform="matrix(1,0,0,1,-638,-3)">
+                                <g id="End-Zone-Left1" serif:id="End Zone Left" transform="matrix(1,0,0,1,638,3)">
+                                    <rect x="14.2" y="143.5" width="58.9" height="320.6" style="fill:rgb(64,122,33);"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,131.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,228.702)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,196.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,163.702)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,1.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,98.702)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,66.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,33.702)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                                <g transform="matrix(0.480673,0.480673,-0.415194,0.415194,672.351,261.202)">
+                                    <rect x="187.551" y="155.939" width="5.884" height="85.154" style="fill:#FFFFFF;"/>
+                                </g>
+                            </g>
+                        </g>
+                        {% elif team.field.endzones.style == 'checkers' %}
+                        <g id="EndZoneCheckers">
+                            <g id="EndZoneCheckersLeft" transform="matrix(1,0,0,1,-634.519,0)">
+                                <g transform="matrix(1,0,0,1,0,-14.5631)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-43.6893)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-29.1262)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-72.8155)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-58.2524)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-101.942)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-87.3785)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-131.068)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-116.505)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-160.194)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-145.631)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-189.32)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-174.757)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-218.446)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-203.883)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-247.573)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-233.009)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-276.699)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-262.136)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-305.825)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-291.262)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                            </g>
+                            <g id="EndZoneCheckersRight">
+                                <g transform="matrix(1,0,0,1,0,-14.5631)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-43.6893)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-29.1262)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-72.8155)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-58.2524)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-101.942)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-87.3785)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-131.068)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-116.505)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-160.194)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-145.631)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-189.32)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-174.757)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-218.446)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-203.883)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-247.573)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-233.009)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-276.699)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-262.136)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-305.825)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                </g>
+                                <g transform="matrix(1,0,0,1,0,-291.262)">
+                                    <g transform="matrix(1.26582,0,0,1.3972,-120.582,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-135.386,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-150.19,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" class='end-zone-fill'/>
+                                    </g>
+                                    <g transform="matrix(1.26582,0,0,1.3972,-164.993,38.0001)">
+                                        <rect x="642.674" y="294.393" width="11.692" height="10.593" style="fill:#FFFFFF;"/>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                        {% endif %}
                     </g>
                 </g>
                 <g id="Hashes">
@@ -231,6 +923,20 @@
                             <path d="M229.1,415.2L229.1,410.1L221.1,412.6L229.1,415.2Z" style="fill:white;fill-rule:nonzero;"/>
                         </g>
                         <g>
+                            <g transform="matrix(1,0,0,1,-115,0)">
+                                <path d="M416.2,420.5C415.7,420.5 415,420.5 414.5,420.3C414.2,420.3 414,420 414,419.6L414,417.4L416.6,417.4L416.6,415.7L414,415.7L414,406.8C414.2,405.9 414.2,405.3 414.2,404.4L412.5,404.4L403.4,415.6L403.4,417.3L410.1,417.3L410.1,419.2C410.1,419.5 410.3,420.1 409.9,420.2C409.9,420.2 409.9,420.4 409.7,420.4C409.4,420.6 409.2,420.6 409,420.6L407.8,420.6L407.8,422L416.2,422L416.2,420.5ZM410,415.7L404.9,415.7L410,409.3L410,415.7Z" style="fill:white;fill-rule:nonzero;"/>
+                            </g>
+                            <path d="M311.7,404.4C309.8,404.4 307.9,405.9 306.9,407.5C305.7,409.2 305.4,411.3 305.4,413.3C305.4,415.2 305.7,417.4 306.8,419C307.3,419.9 308,420.7 308.9,421.2C309.6,421.9 310.8,422.2 312.2,422.2C314.3,422.2 315.8,421 317,419.3C318.2,417.6 318.5,415.4 318.5,413.3C318.5,411.1 318.2,409.4 317,407.5C315.6,405.8 313.9,404.4 311.7,404.4ZM313.7,417.3C313.5,417.8 313.5,419 313.4,419.5C313.2,420.4 312.5,421 311.7,421C309.8,421 309.8,418.6 309.6,417.2C309.4,415.8 309.4,414.6 309.4,413.3C309.4,411.8 309.4,410.4 309.6,408.8C309.8,407.6 309.9,405.5 311.7,405.5C313.4,405.5 313.6,407.4 313.8,408.8C314,410.5 314,412.4 314,414.1C313.9,415.2 313.7,416.2 313.7,417.3Z" style="fill:white;fill-rule:nonzero;"/>
+                            <path d="M286.3,415.2L286.3,410.1L278.2,412.6L286.3,415.2Z" style="fill:white;fill-rule:nonzero;"/>
+                        </g>
+                        <g>
+                            <path d="M311.7,188.6C311.7,188.3 311.5,187.7 311.9,187.6C311.9,187.6 311.9,187.4 312.1,187.4C312.4,187.2 312.6,187.2 312.8,187.2L314,187.2L314,185.8L305.6,185.8L305.6,187.2C306.1,187.2 306.8,187.2 307.3,187.4C307.6,187.4 307.8,187.7 307.8,188.1L307.8,190.3L305.2,190.3L305.2,192L307.8,192L307.8,201C307.6,201.9 307.6,202.5 307.6,203.4L309.3,203.4L318.4,192.2L318.4,190.3L311.7,190.3L311.7,188.6ZM316.7,192.1L311.6,198.5L311.6,192.1L316.7,192.1Z" style="fill:white;fill-rule:nonzero;"/>
+                            <g transform="matrix(1,0,0,1,58,0)">
+                                <path d="M237.5,203.4C239.4,203.4 241.3,201.9 242.3,200.3C243.5,198.6 243.8,196.5 243.8,194.5C243.8,192.6 243.5,190.4 242.4,188.8C241.9,187.9 241.2,187.1 240.3,186.6C239.6,186.1 238.2,185.6 237,185.6C234.9,185.6 233.4,186.8 232.2,188.5C231,190.2 230.7,192.4 230.7,194.5C230.7,196.7 231,198.4 232.2,200.3C233.6,202 235.3,203.4 237.5,203.4ZM235.3,190.5C235.5,190 235.5,188.8 235.6,188.3C235.8,187.4 236.5,186.8 237.3,186.8C239.2,186.8 239.2,189.2 239.4,190.6C239.6,192 239.6,193.2 239.6,194.5C239.6,196 239.6,197.4 239.4,199C239.4,200.2 239.1,202.3 237.3,202.3C235.6,202.3 235.4,200.4 235.2,199C235,197.3 235,195.4 235,193.7C235.1,192.6 235.3,191.6 235.3,190.5Z" style="fill:white;fill-rule:nonzero;"/>
+                            </g>
+                            <path d="M286.3,192.6L278.2,195.2L286.3,197.7L286.3,192.6Z" style="fill:white;fill-rule:nonzero;"/>
+                        </g>
+                        <g>
                             <path d="M301.4,420.5C300.9,420.5 18.75rem.2,420.5 299.7,420.3C299.4,420.3 299.2,420 299.2,419.6L299.2,417.4L301.8,417.4L301.8,415.7L299.2,415.7L299.2,406.8C299.4,405.9 299.4,405.3 299.4,404.4L297.7,404.4L288.6,415.6L288.6,417.3L295.3,417.3L295.3,419.2C295.3,419.5 295.5,420.1 295.1,420.2C295.1,420.2 295.1,420.4 294.9,420.4C294.6,420.6 294.4,420.6 294.2,420.6L293,420.6L293,422L301.4,422L301.4,420.5ZM295.4,415.7L290.3,415.7L295.4,409.3L295.4,415.7Z" style="fill:white;fill-rule:nonzero;"/>
                             <path d="M311.7,404.4C309.8,404.4 307.9,405.9 306.9,407.5C305.7,409.2 305.4,411.3 305.4,413.3C305.4,415.2 305.7,417.4 306.8,419C307.3,419.9 308,420.7 308.9,421.2C309.6,421.9 310.8,422.2 312.2,422.2C314.3,422.2 315.8,421 317,419.3C318.2,417.6 318.5,415.4 318.5,413.3C318.5,411.1 318.2,409.4 317,407.5C315.6,405.8 313.9,404.4 311.7,404.4ZM313.7,417.3C313.5,417.8 313.5,419 313.4,419.5C313.2,420.4 312.5,421 311.7,421C309.8,421 309.8,418.6 309.6,417.2C309.4,415.8 309.4,414.6 309.4,413.3C309.4,411.8 309.4,410.4 309.6,408.8C309.8,407.6 309.9,405.5 311.7,405.5C313.4,405.5 313.6,407.4 313.8,408.8C314,410.5 314,412.4 314,414.1C313.9,415.2 313.7,416.2 313.7,417.3Z" style="fill:white;fill-rule:nonzero;"/>
                             <path d="M286.3,415.2L286.3,410.1L278.2,412.6L286.3,415.2Z" style="fill:white;fill-rule:nonzero;"/>
@@ -322,6 +1028,7 @@
                         </g>
                     </g>
                 </g>
+                {% if team.field.endzones.style == 'text' %}
                 <g id="EndZoneText">
                     <rect id="End-Zone-Left1" serif:id="End Zone Left" x="14.2" y="143.5" width="58.9" height="320.6" style="fill:none;"/>
                     <text text-anchor="middle" alignment-baseline="central" x="-306.4" y="47.7" transform="rotate(-90)" style="font-family:'CollegiateBlackFLF';font-weight:500;font-size:2.25rem;fill:white; stroke: #{{team.team_color_secondary_hex|TeamSecondaryColor}}; stroke-width: 1.5px;text-transform: uppercase;">
@@ -360,6 +1067,7 @@
                         {% endif %}
                     </g>
                 </g>
+                {% endif %}
             </g>
         </svg>
     </div>

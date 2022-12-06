@@ -742,6 +742,15 @@
       "brand": 100,
       "pro_pipeline": 90
     },
+    "field": {
+      "endzones": {
+        "style": "text",
+        "endzone_color": "",
+        "text": "CLEMSON",
+        "text_color": "#F06014",
+        "text_border_color": "#FFFFFF"
+      }
+    },
     "location": { "city": "Clemson", "state": "South Carolina" },
     "sayings": { "good": [], "bad": [], "location": [] }
   },
@@ -1991,6 +2000,12 @@
       "team_competitiveness": 90,
       "brand": 90,
       "pro_pipeline": 80
+    },
+    "field": {
+      "endzones": {
+        "style": "stripes",
+        "endzone_color": "none"
+      }
     },
     "location": { "city": "South Bend", "state": "Indiana" },
     "sayings": { "good": [], "bad": [], "location": [] }
@@ -3612,6 +3627,12 @@
       "team_competitiveness": 60,
       "brand": 10,
       "pro_pipeline": 60
+    },
+    "field": {
+      "endzones": {
+        "style": "checkers",
+        "endzone_color": "none"
+      }
     },
     "location": { "city": "Knoxville", "state": "Tennessee" },
     "sayings": { "good": [], "bad": [], "location": [] }

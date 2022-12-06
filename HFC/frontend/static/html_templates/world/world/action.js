@@ -95,22 +95,22 @@ const getHtml = async (common) => {
   const recent_games = await common.recent_games(common);
   common.stopwatch(common, "Time after recent_games");
 
-  var teams = await db.team.where("team_id").above(0).toArray();
-  var team_seasons = await db.team_season
-    .where({ season: season })
-    .and((ts) => ts.team_id > 0)
-    .toArray();
+  let [teams, team_seasons, conferences, conference_seasons, this_week_team_games, this_week_games, headlines] = await Promise.all([
+    db.team.where("team_id").above(0).toArray(),
+    db.team_season.where({ season: season }).and((ts) => ts.team_id > 0).toArray(),
+    db.conference.toArray(),
+    db.conference_season.where({ season: season }).toArray(),
+    db.team_game.where({ week_id: current_week.week_id }).toArray(),
+    db.game.where({ week_id: current_week.week_id }).toArray(),
+    db.headline.where({week_id: current_week.week_id - 1}).toArray()
+  ])
 
-  let conferences = await db.conference.toArray();
   var conferences_by_conference_id = index_group_sync(
     conferences,
     "index",
     "conference_id"
   );
 
-  let conference_seasons = await db.conference_season
-    .where({ season: season })
-    .toArray();
   var conference_seasons_by_conference_season_id = index_group_sync(
     conference_seasons,
     "index",
@@ -167,9 +167,6 @@ const getHtml = async (common) => {
 
   common.stopwatch(common, "Time after sorting team seasons");
 
-  let this_week_team_games = await db.team_game
-    .where({ week_id: current_week.week_id })
-    .toArray();
   var this_week_team_games_by_team_game_id = index_group_sync(
     this_week_team_games,
     "index",
@@ -177,10 +174,6 @@ const getHtml = async (common) => {
   );
 
   common.stopwatch(common, "Time after fetching team games");
-
-  var this_week_games = await db.game
-    .where({ week_id: current_week.week_id })
-    .toArray();
 
   common.stopwatch(common, "Time after fetching games");
 
@@ -264,7 +257,6 @@ const getHtml = async (common) => {
     'ranking': 'AP Top 25',
     'recruiting': '247 Recruiting'
   }
-  let headlines = await db.headline.where({week_id: current_week.week_id - 1}).toArray();
   headlines.forEach(function(h){
     h.headline_type_display = headline_type_map[h.headline_type];
     h.team_seasons = h.team_season_ids.map(ts_id => team_seasons_by_team_season_id[ts_id]);
@@ -312,11 +304,12 @@ const getHtml = async (common) => {
     // TODO filter out backups
     preseason_info.conference_favorites = [];
 
-    var team_seasons = await db.team_season
-      .where('season').between(common.season - 1, common.season, true, true)
-      .and((ts) => ts.team_id > 0)
-      .toArray();
-    var all_teams = await db.team.toArray();
+    let [team_seasons, all_teams, player_team_seasons] = await Promise.all([
+      db.team_season.where('season').between(common.season - 1, common.season, true, true).and((ts) => ts.team_id > 0).toArray(),
+      db.team.toArray(),
+      db.player_team_season.where('season').between(common.season - 1, common.season, true, true).toArray()
+    ])
+
     const teams_by_team_id = index_group_sync(all_teams, "index", "team_id");
 
     team_seasons = nest_children(
@@ -334,9 +327,6 @@ const getHtml = async (common) => {
 
     common.stopwatch(common, "Time after fetching pre season team_seasons");
 
-    var player_team_seasons = await db.player_team_season
-      .where('season').between(common.season - 1, common.season, true, true)
-      .toArray();
     player_team_seasons = player_team_seasons.filter(
       (pts) => pts.team_season_id > 0
     );
@@ -345,10 +335,15 @@ const getHtml = async (common) => {
     );
 
     common.stopwatch(common, "Time after fetching pre season pts");
+    const player_ids = distinct(player_team_seasons.map((pts) => pts.player_id));
 
-    const player_team_season_stats = await db.player_team_season_stats.bulkGet(
-      player_team_season_ids
-    );
+    let [player_team_season_stats, players, conferences, conference_seasons] = await Promise.all([
+      db.player_team_season_stats.bulkGet(player_team_season_ids),
+      db.player.bulkGet(player_ids),
+      db.conference.toArray(),
+      db.conference_season.where({ season: season }).toArray()
+    ])
+
     const player_team_season_stats_by_player_team_season_id = index_group_sync(
       player_team_season_stats,
       "index",
@@ -356,8 +351,6 @@ const getHtml = async (common) => {
     );
     common.stopwatch(common, "Time after fetching pre season ptss");
 
-    const player_ids = distinct(player_team_seasons.map((pts) => pts.player_id));
-    var players = await db.player.bulkGet(player_ids);
     const players_by_player_id = index_group_sync(
       players,
       "index",
@@ -406,15 +399,11 @@ const getHtml = async (common) => {
 
     common.stopwatch(common, "Time after sorting pre season pts");
 
-    let conferences = await db.conference.toArray();
     let conferences_by_conference_id = index_group_sync(
       conferences,
       "index",
       "conference_id"
     );
-    let conference_seasons = await db.conference_season
-      .where({ season: season })
-      .toArray();
     conference_seasons = nest_children(
       conference_seasons,
       conferences_by_conference_id,
@@ -467,10 +456,13 @@ const getHtml = async (common) => {
     let player_team_seasons = await db.player_team_season.bulkGet(player_team_season_ids);
 
     let player_ids = player_team_seasons.map(pts => pts.player_id);
-    let players = await db.player.bulkGet(player_ids)
-    let players_by_player_id = index_group_sync(players, 'index', 'player_id')
 
-    let player_team_season_stats = await db.player_team_season_stats.bulkGet(player_team_season_ids);
+    let [players, player_team_season_stats] = await Promise.all([
+      db.player.bulkGet(player_ids),
+      db.player_team_season_stats.bulkGet(player_team_season_ids)
+    ])
+
+    let players_by_player_id = index_group_sync(players, 'index', 'player_id')
     let player_team_season_stats_by_player_team_season_id = index_group_sync(player_team_season_stats, 'index', 'player_team_season_id');
     player_team_seasons = nest_children(player_team_seasons, player_team_season_stats_by_player_team_season_id, 'player_team_season_id', 'season_stats');
 
