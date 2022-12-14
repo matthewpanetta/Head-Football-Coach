@@ -8756,6 +8756,10 @@ fieldset:disabled .btn {
     padding: 0 !important
 }
 
+.p-05 {
+    padding: .125rem !important
+}
+
 .p-1 {
     padding: .25rem !important
 }

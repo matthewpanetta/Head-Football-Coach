@@ -66,10 +66,8 @@
                       <td class='p-0'>
                         <div class='mb-0'>
                         {% for team_season in season.season_end_top_five%}
-                        <div class='white-text p-1' style='background-color: #{{team_season.team.team_color_primary_hex}};'>
-                          <a href="{{team_season.team_season_href}}">
-                            <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-24'>
-                          </a>
+                        <div class='white-text p-05'  style='color: #{{team_season.team.team_color_primary_hex}};'>
+                          <span>{{loop.index}}.</span>
                           <span>
                             <a href="{{team_season.team_season_href}}">
                               {{team_season.team.full_name}}
@@ -83,10 +81,8 @@
                       <td class='p-0'>
                         <div class='mb-0'>
                         {% for team_season in season.season_start_top_five%}
-                        <div class='white-text p-1' style='background-color: #{{team_season.team.team_color_primary_hex}};'>
-                          <a href="{{team_season.team_season_href}}">
-                            <img src="{{team_season.team.team_logo}}" alt="" class='logo logo-24'>
-                          </a>
+                        <div class='white-text p-05'   style='color: #{{team_season.team.team_color_primary_hex}};'>
+                          <span>{{loop.index}}.</span>
                           <span>
                             <a href="{{team_season.team_season_href}}">
                               {{team_season.team.full_name}}

@@ -31,6 +31,8 @@ const routes = [
   { route: "/World/:world_id/History", path: "almanac/history/base.html" },
   { route: "/World/:world_id/PlayerRecords", path: "almanac/player_records/base.html" },
   { route: "/World/:world_id/TeamRecords", path: "almanac/team_records/base.html" },
+  { route: "/World/:world_id/CoachStats", path: "almanac/coach_stats/base.html" },
+  { route: "/World/:world_id/Shortlists", path: "almanac/shortlists/base.html" },
   { route: "/World/:world_id/AmazingStats", path: "almanac/amazing_stats/base.html" },
   {
     route: "/World/:world_id/AmazingStats/Season/:season/",

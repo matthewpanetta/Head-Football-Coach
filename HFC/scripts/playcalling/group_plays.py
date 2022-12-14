@@ -14,87 +14,93 @@ def serialize_play(play):
         quarter_seconds_remaining_desc = 'any_time'
     elif play['qtr'] == '2':
         if play['quarter_seconds_remaining'] <= 60:
-            quarter_seconds_remaining_desc = 'last_min'
+            quarter_seconds_remaining_desc = '<1m'
         elif play['quarter_seconds_remaining'] <= 180:
-            quarter_seconds_remaining_desc = 'last_3_mins'
+            quarter_seconds_remaining_desc = '<3m'
         else:
-            quarter_seconds_remaining_desc = 'more_than_3_mins'
+            quarter_seconds_remaining_desc = '+3m'
     elif play['qtr'] == '3':
         if play['quarter_seconds_remaining'] <= 360:
-            quarter_seconds_remaining_desc = 'last_6_mins'
+            quarter_seconds_remaining_desc = '<6m'
         else:
-            quarter_seconds_remaining_desc = 'more_than_6_mins'
+            quarter_seconds_remaining_desc = '+6m'
 
     elif play['quarter_seconds_remaining'] <= 60:
-        quarter_seconds_remaining_desc = 'last_min'
+        quarter_seconds_remaining_desc = '<1m'
     elif play['quarter_seconds_remaining'] <= 120:
-        quarter_seconds_remaining_desc = 'last_2_mins'
+        quarter_seconds_remaining_desc = '<2m'
     elif play['quarter_seconds_remaining'] <= 300:
-        quarter_seconds_remaining_desc = 'last_5_mins'
+        quarter_seconds_remaining_desc = '<5m'
     elif play['quarter_seconds_remaining'] <= 600:
-        quarter_seconds_remaining_desc = 'between_5_10_mins'
+        quarter_seconds_remaining_desc = '5-10m'
     else:
-        quarter_seconds_remaining_desc = 'between_10_15_mins'
+        quarter_seconds_remaining_desc = '10-15m'
 
     score_diff_desc = ''
     if play['score_differential'] == 'NA':
         score_diff_desc = 'NA'
     elif int(play['score_differential']) >= 25:
-        score_diff_desc = 'leading_4_score'
+        score_diff_desc = '+4sc'
     elif int(play['score_differential']) >= 17:
-        score_diff_desc = 'leading_3_score'
+        score_diff_desc = '+3sc'
+    elif int(play['score_differential']) >= 12:
+        score_diff_desc = '+2td'
     elif int(play['score_differential']) >= 9:
-        score_diff_desc = 'leading_2_score'
+        score_diff_desc = '+2sc'
+    elif int(play['score_differential']) >= 4:
+        score_diff_desc = '+1td'
     elif int(play['score_differential']) > 0:
-        score_diff_desc = 'leading_1_score'
+        score_diff_desc = '+1sc'
     elif int(play['score_differential']) <= -25:
-        score_diff_desc = 'trailing_4_score'
+        score_diff_desc = '-4sc'
     elif int(play['score_differential']) <= -17:
-        score_diff_desc = 'trailing_3_score'
+        score_diff_desc = '-3sc'
+    elif int(play['score_differential']) <= -12:
+        score_diff_desc = '-2td'
     elif int(play['score_differential']) <= -9:
-        score_diff_desc = 'trailing_2_score'
+        score_diff_desc = '-2sc'
+    elif int(play['score_differential']) <= -4:
+        score_diff_desc = '-1td'
     elif int(play['score_differential']) < 0:
-        score_diff_desc = 'trailing_1_score'
+        score_diff_desc = '-1sc'
     else:
         score_diff_desc = 'tie'
 
     yard_desc = ''
     if int(play['yardline_100']) <= 5:
-        yard_desc = 'inside_5'
+        yard_desc = '<5'
     elif int(play['yardline_100']) <= 10:
-        yard_desc = 'inside_10'
+        yard_desc = '<10'
     elif int(play['yardline_100']) <= 20:
-        yard_desc = 'inside_20'
+        yard_desc = '<20'
     elif int(play['yardline_100']) <= 30:
-        yard_desc = 'inside_30'
+        yard_desc = '<30'
     elif int(play['yardline_100']) <= 40:
-        yard_desc = 'inside_40'
+        yard_desc = '<40'
     elif int(play['yardline_100']) <= 50:
-        yard_desc = 'inside_50'
+        yard_desc = '<50'
     elif int(play['yardline_100']) <= 60:
-        yard_desc = 'own_40'
+        yard_desc = '<60'
     elif int(play['yardline_100']) <= 70:
-        yard_desc = 'own_30'
+        yard_desc = '<70'
     elif int(play['yardline_100']) <= 80:
-        yard_desc = 'own_20'
-    elif int(play['yardline_100']) <= 90:
-        yard_desc = 'own_10'
+        yard_desc = '<80'
     elif int(play['yardline_100']) <= 100:
-        yard_desc = 'own_goalline'
+        yard_desc = '<100'
     else:
         yard_desc = 'NA'
 
     yards_to_go_desc = ''
     if int(play['ydstogo']) <= 2:
-        yards_to_go_desc = '1_or_2'
+        yards_to_go_desc = '1-2'
     elif int(play['ydstogo']) <= 5:
-        yards_to_go_desc = '3_to_5'
+        yards_to_go_desc = '3-5'
     elif int(play['ydstogo']) <= 9:
-        yards_to_go_desc = '6_to_9'
+        yards_to_go_desc = '6-9'
     elif int(play['ydstogo']) <= 14:
-        yards_to_go_desc = '10_to_13'
+        yards_to_go_desc = '10-13'
     else:
-        yards_to_go_desc = 'long'
+        yards_to_go_desc = '13+'
 
     qtr_desc = 'OT' if int(play['qtr']) > 4 else 'q'+play['qtr']
 
@@ -127,14 +133,17 @@ def group_data(plays):
         for play_type, play_count in  play_count_obj.items():
             if play_type == 'total':
                 continue
-            grouped_data[serial_key][play_type] = round(100.0 * grouped_data[serial_key][play_type] / grouped_data[serial_key]['total'], 1)
+            grouped_data[serial_key][play_type] = int(100.0 * grouped_data[serial_key][play_type] / grouped_data[serial_key]['total'])
+        
+        del  grouped_data[serial_key]['total']
 
         # del play_count_obj['total']
         #Comment above line to keep 'total' field in output
 
-    w = open(os.path.join(os.path.dirname(
-        sys.argv[0]), 'play_results.json'), 'w')
-    w.write(json.dumps(grouped_data, indent=2))
+    # w = open(os.path.join(os.path.dirname(
+    #     sys.argv[0]), 'play_results.json'), 'w')
+    w = open('frontend/static/data/import_json/playcall.json', 'w')
+    w.write(json.dumps(grouped_data, indent=0))
     w.close()
     print(json.dumps(grouped_data, indent=2))
     print(len(grouped_data), 'groups', len(json.dumps(grouped_data, indent=0)),

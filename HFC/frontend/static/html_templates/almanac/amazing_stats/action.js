@@ -178,8 +178,8 @@ const getHtml = async (common) => {
       g.winning_team_game.national_rank - g.losing_team_game.national_rank;
 
     g.upset_value = Math.floor(
-      (g.winning_team_game.national_rank + 5) ** 2 /
-        (g.losing_team_game.national_rank + 5) ** 2 +
+      (g.winning_team_game.national_rank + 5) ** 2.5 /
+        (g.losing_team_game.national_rank + 5) ** 2.5 +
         (g.winning_team_game.national_rank - g.losing_team_game.national_rank)
     );
 
@@ -384,7 +384,7 @@ const draw_maps = async (common) => {
   teams.forEach(function (t) {
     t.county_middle_points = [];
     t.county_srs_middle_points = [];
-    t.srs = t.team_season.rankings.srs_ratings[0] ** 1.5;
+    t.srs = (t.team_season.rankings.srs_ratings[0] ** 2) || 1;
     t.conquered_team_ids = [t.team_id];
   });
 
@@ -416,8 +416,11 @@ const draw_maps = async (common) => {
 
     let all_lats = all_coords.map((c) => c[1]);
     let all_longs = all_coords.map((c) => c[0]);
-    let middle_lat = (Math.min(...all_lats) + Math.max(...all_lats)) / 2;
-    let middle_long = (Math.min(...all_longs) + Math.max(...all_longs)) / 2;
+    // let middle_lat = (Math.min(...all_lats) + Math.max(...all_lats)) / 2;
+    // let middle_long = (Math.min(...all_longs) + Math.max(...all_longs)) / 2;
+    console.log({all_lats:all_lats, all_longs:all_longs})
+    let middle_lat = average(all_lats);
+    let middle_long = average(all_longs);
 
     if (isNaN(middle_lat)) {
       console.log("Didnt work", {
@@ -438,6 +441,7 @@ const draw_maps = async (common) => {
 
     let closest_distance = 1000000;
     let closest_distance_srs = 1000000;
+    let baseline_distance = 100;
     let closest_team = null;
     let closest_team_srs = null;
     for (let team of teams) {
@@ -445,15 +449,17 @@ const draw_maps = async (common) => {
         [team.city.lat, team.city.long],
         [middle_lat, middle_long]
       );
-      let team_distance_srs = team_distance / team.srs;
-      closest_distance = Math.min(team_distance, closest_distance);
-      closest_distance_srs = Math.min(team_distance_srs, closest_distance_srs);
-      if (closest_distance == team_distance) {
+      closest_distance = Math.min(Math.max(team_distance, baseline_distance), closest_distance);
+      if (team_distance <= closest_distance) {
         county.properties.closest_team_color = team.team_color_primary_hex;
         closest_team = team;
       }
 
-      if (closest_distance_srs == team_distance_srs) {
+      let team_distance_srs = Math.max(team_distance, baseline_distance) / team.srs;
+      closest_distance_srs = Math.min(Math.max(team_distance, baseline_distance), closest_distance_srs);
+      
+      if (team_distance_srs < closest_distance_srs) {
+        closest_distance_srs = team_distance_srs;
         county.properties.closest_srs_team_color = team.team_color_primary_hex;
         closest_team_srs = team;
       }
@@ -526,15 +532,22 @@ const draw_maps = async (common) => {
   teams.forEach(function (t) {
     let all_lats = t.county_middle_points.map((c) => c[1]);
     let all_longs = t.county_middle_points.map((c) => c[0]);
-    t.middle_lat = (Math.min(...all_lats) + Math.max(...all_lats)) / 2;
-    t.middle_long = (Math.min(...all_longs) + Math.max(...all_longs)) / 2;
+    // t.middle_lat = (Math.min(...all_lats) + Math.max(...all_lats)) / 2;
+    // t.middle_long = (Math.min(...all_longs) + Math.max(...all_longs)) / 2;
+    console.log({all_lats:all_lats, all_longs:all_longs})
+    t.middle_lat = average(all_lats);
+    t.middle_long = average(all_longs);
 
     let srs_all_lats = t.county_srs_middle_points.map((c) => c[1]);
     let srs_all_longs = t.county_srs_middle_points.map((c) => c[0]);
-    t.srs_middle_lat =
-      (Math.min(...srs_all_lats) + Math.max(...srs_all_lats)) / 2;
-    t.srs_middle_long =
-      (Math.min(...srs_all_longs) + Math.max(...srs_all_longs)) / 2;
+    // t.srs_middle_lat =
+    //   (Math.min(...srs_all_lats) + Math.max(...srs_all_lats)) / 2;
+    // t.srs_middle_long =
+    //   (Math.min(...srs_all_longs) + Math.max(...srs_all_longs)) / 2;
+    console.log({srs_all_lats:srs_all_lats, srs_all_longs:srs_all_longs})
+    t.srs_middle_lat = average(srs_all_lats);
+    t.srs_middle_long = average(srs_all_longs);
+
   });
 
   console.log({ teams: teams, counties: counties });
@@ -566,7 +579,7 @@ const draw_maps = async (common) => {
       iconAnchor: [10, 10],
     });
 
-    let marker = L.marker([team.city.lat, team.city.long], {
+    let marker = L.marker([team.middle_long, team.middle_lat], {
       icon: school_icon,
     });
     marker_list.push(marker);
@@ -630,8 +643,13 @@ const draw_maps = async (common) => {
       iconAnchor: [10, 10],
     });
 
-    let marker = L.marker([team.city.lat, team.city.long], {
-      icon: school_icon,
+    console.log({
+      team:team, '[team.srs_middle_long, team.srs_middle_lat]': [team.srs_middle_long, team.srs_middle_lat]
+    })
+
+    // let marker = L.marker([team.city.lat, team.city.long], {
+    let marker = L.marker([team.srs_middle_long, team.srs_middle_lat], {
+        icon: school_icon,
     });
     srs_marker_list.push(marker);
     marker.addTo(srs_map);

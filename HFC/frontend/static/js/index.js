@@ -2955,6 +2955,12 @@ const nav_bar_links = async (params) => {
           ClassName: "",
         },
         {
+          LinkDisplay: "Shortlists",
+          id: "",
+          Href: `/World/${world_id}/Shortlists`,
+          ClassName: "",
+        },
+        {
           LinkDisplay: "Search",
           id: "nav-search",
           Href: "#",
@@ -5744,7 +5750,7 @@ const generate_player_ratings = async(common, world_id, season) => {
 
 
   var goal_overall_max = 99;
-  var goal_overall_min = 10;
+  var goal_overall_min = 40;
   var goal_overall_range = goal_overall_max - goal_overall_min;
 
   for (const pts of player_team_seasons) {
@@ -7466,7 +7472,13 @@ const pick_players_on_field = (
   return player_list;
 };
 
-const average = (arr) => arr.reduce((acc, v) => acc + v) / arr.length;
+
+const average = (arr) => {
+  if (arr.length == 0){
+    return 0;
+  }
+  return sum(arr) / arr.length;
+} 
 
 const calculate_game_score = (
   player_team_game,
@@ -8107,113 +8119,182 @@ const game_sim_determine_go_for_two = (offensive_point_differential, period, sec
   }
 }
 
+const play_call_serialize = (play) => {
+  let quarter_seconds_remaining_desc = "";
+
+  if (play.period == 1) {
+    quarter_seconds_remaining_desc = "any_time";
+  } else if (play.period == 2) {
+    if (play.seconds_left_in_period <= 60) {
+      quarter_seconds_remaining_desc = "<1m";
+    } else if (play.seconds_left_in_period <= 180) {
+      quarter_seconds_remaining_desc = "<3m";
+    } else if (play.seconds_left_in_period <= 180) {
+      quarter_seconds_remaining_desc = "+3m";
+    }
+  } else if (play.period == 3) {
+    if (play.seconds_left_in_period <= 360) {
+      quarter_seconds_remaining_desc = "<6m";
+    } else {
+      quarter_seconds_remaining_desc = "+6m";
+    }
+  } else if (play.seconds_left_in_period <= 60) {
+    quarter_seconds_remaining_desc = "<1m";
+  } else if (play.seconds_left_in_period <= 120) {
+    quarter_seconds_remaining_desc = "<2m";
+  } else if (play.seconds_left_in_period <= 300) {
+    quarter_seconds_remaining_desc = "<5m";
+  } else if (play.seconds_left_in_period <= 600) {
+    quarter_seconds_remaining_desc = "<10m";
+  } else {
+    quarter_seconds_remaining_desc = "10-15m";
+  }
+
+  let score_diff_desc = "";
+  if (play.offensive_point_differential == "NA") {
+    score_diff_desc = "NA";
+  } else if (play.offensive_point_differential >= 25) {
+    score_diff_desc = "+4sc";
+  } else if (play.offensive_point_differential >= 17) {
+    score_diff_desc = "+3sc";
+  } else if (play.offensive_point_differential >= 12) {
+    score_diff_desc = "+2td";
+  } else if (play.offensive_point_differential >= 9) {
+    score_diff_desc = "+2sc";
+  } else if (play.offensive_point_differential >= 4) {
+    score_diff_desc = "+1td";
+  } else if (play.offensive_point_differential >= 0) {
+    score_diff_desc = "+1sc";
+  } else if (play.offensive_point_differential <= -25) {
+    score_diff_desc = "-4sc";
+  } else if (play.offensive_point_differential <= -17) {
+    score_diff_desc = "-3sc";
+  } else if (play.offensive_point_differential <= -12) {
+    score_diff_desc = "-2td";
+  } else if (play.offensive_point_differential <= -9) {
+    score_diff_desc = "-2sc";
+  } else if (play.offensive_point_differential <= -4) {
+    score_diff_desc = "-1td";
+  } else if (play.offensive_point_differential < 0) {
+    score_diff_desc = "-1sc";
+  } else {
+    score_diff_desc = "tie";
+  }
+
+  let yard_desc = "";
+  if (play.ball_spot <= 5) {
+    yard_desc = "<5";
+  } else if (play.ball_spot <= 10) {
+    yard_desc = "<10";
+  } else if (play.ball_spot <= 20) {
+    yard_desc = "<20";
+  } else if (play.ball_spot <= 30) {
+    yard_desc = "<30";
+  } else if (play.ball_spot <= 40) {
+    yard_desc = "<40";
+  } else if (play.ball_spot <= 50) {
+    yard_desc = "<50";
+  } else if (play.ball_spot <= 60) {
+    yard_desc = "<60";
+  } else if (play.ball_spot <= 70) {
+    yard_desc = "<70";
+  } else if (play.ball_spot <= 80) {
+    yard_desc = "<80";
+  } else if (play.ball_spot <= 100) {
+    yard_desc = "<100";
+  } else {
+    yard_desc = "NA";
+  }
+
+  let yards_to_go_desc = "";
+  if (play.yards_to_go <= 2) {
+    yards_to_go_desc = "1-2";
+  } else if (play.yards_to_go <= 5) {
+    yards_to_go_desc = "3-5";
+  } else if (play.yards_to_go <= 9) {
+    yards_to_go_desc = "6-9";
+  } else if (play.yards_to_go <= 14) {
+    yards_to_go_desc = "10-13";
+  } else {
+    yards_to_go_desc = "13+";
+  }
+
+  let qtr_desc = "";
+  if (play.period > 4) {
+    qtr_desc = "OT";
+  } else {
+    qtr_desc = "q" + play.period;
+  }
+
+  return [
+    qtr_desc,
+    quarter_seconds_remaining_desc,
+    "d" + play["down"],
+    yards_to_go_desc,
+    yard_desc,
+    score_diff_desc,
+  ].join("|");
+};
+
 const game_sim_play_call_options = (down, yards_to_go, ball_spot, period, offensive_point_differential, seconds_left_in_period, is_close_game, is_late_game, half_end_period, final_period) => {
     let playclock_urgency = 4
     let play_choice_options = {'run': 50,'pass': 50,'punt': 0,'field goal': 0}
 
-    if (period == 4){
-      if (offensive_point_differential > 0){
-        playclock_urgency = 1;
-      }
-      else {
-        playclock_urgency = 7;
-      }
+    let play = {
+      yards_to_go: yards_to_go,
+      down:down,
+      ball_spot:ball_spot,
+      period:period,
+      offensive_point_differential:offensive_point_differential,
+      seconds_left_in_period:seconds_left_in_period
     }
+    
+    
 
-    if (Math.abs(offensive_point_differential) >= 40){
-      if (down == 4){
-        return {'playclock_urgency': 1, 'play_choice_options': {'punt': 5}}
-      }
-      else if (down == 3){
-        return {'playclock_urgency': 1, 'play_choice_options': {'pass': 30, 'run': 70}}
-      }
-      else {
-        return {'playclock_urgency': 1, 'play_choice_options': {'run': 70}}
-      }
-    }
+   let playcall_str = play_call_serialize(play)
 
-    if (down == 4){
-      if (period <= 3) {
-        //inside own 40
-        if (ball_spot < 40){
-          play_choice_options = {'punt': 100};
-        }
-        //outside opp. 40
-        else if (ball_spot < 60){
-          if (yards_to_go >= 3){
-            play_choice_options = {'punt': 100};
-          }
-          else {
-            play_choice_options = {'punt': 60, 'pass': 20, 'run': 20};
-          }
-        }
-        // inside 30
-        else if (ball_spot > 70){
-          if (yards_to_go >= 8){
-            play_choice_options = {'field goal': 100};
-          }
-          else if (yards_to_go >= 4){
-            play_choice_options = {'field goal': 92, 'pass': 8};
-          }
-          else if (yards_to_go == 1){
-            play_choice_options = {'field goal': 45, 'pass': 10, 'run': 45};
-          }
-          // 2 or 3 yards to go
-          else {
-            play_choice_options = {'field goal': 70, 'pass': 20, 'run': 10};
-          }
-        }
-        //between 30 and 40
-        else {
-          if (yards_to_go >= 4){
-            play_choice_options = {'field goal': 100};
-          }
-          else {
-            play_choice_options = {'field goal': 60, 'pass': 20, 'run': 20};
-          }
+    if (!window.playcall[playcall_str]){
+      let playcall_iteration_options = [
+        {field: 'yards_to_go', option_set: [1, 4, 7, 10, 15]},
+        {field: 'offensive_point_differential', option_set: [1, 0, -1, 9, -9, 17, -17, 25, -25]},
+        {field: 'ball_spot', option_set: [5, 15, 25, 35, 45, 55, 65, 75, 85, 95]},
+        {field: 'period', option_set: [1, 2, 3, 4, 5]},
+        {field: 'seconds_left_in_period', option_set: [30, 90, 150, 450, 600, 900]},
+        {field: 'down', option_set: [1, 2, 3, 4]},
+      ]
+
+      playcall_iteration_options.forEach(function(opt){
+        opt.option_set = opt.option_set.sort((val_a, val_b) => Math.abs(val_a - play[opt.field]) - Math.abs(val_b - play[opt.field]))
+      })
+      // console.log('COULDNT FIND PLAY',{
+      //   playcall_iteration_options:playcall_iteration_options, play: play, playcall_str:playcall_str, 'window.playcall': window.playcall
+      // })
+
+      for (let i = 0; i< (3 ** playcall_iteration_options.length); i++){
+        let b = i.toString(3);
+        b = b.padStart(6, '0')
+        let s = b.split('');
+        let adjusted_play = {};
+        s.forEach(function(ch, ind){
+          adjusted_play[playcall_iteration_options[ind].field] = playcall_iteration_options[ind].option_set[parseInt(ch)]
+        });
+
+        playcall_str = play_call_serialize(adjusted_play)
+        
+        // console.log({i:i, b:b, s:s, adjusted_play:adjusted_play, playcall_str:playcall_str, 'window.playcall[playcall_str]': window.playcall[playcall_str] })
+        if (window.playcall[playcall_str]){
+          // console.log('found play')
+          break;
         }
       }
-      else if (period == 4){
-        //FG makes a difference
-        if (ball_spot >= 70){
-          if ([-19, -18, -17, -11, -10, -9].includes(offensive_point_differential) || offensive_point_differential >= -3){
-            play_choice_options = {'field goal': 100};
-          }
-          else if ([-16, -15, -14, -13, -12, -8, -7, -6, -5, -4].includes(offensive_point_differential)){
-            if (yards_to_go <= 3){
-              play_choice_options = {'run': 70, 'pass': 30, };
-            }
-            else {
-              play_choice_options = {'pass': 30, };
-            }
-          }
-          else {
-            if (yards_to_go <= 4) {
-              play_choice_options = {'field goal': 50, 'pass': 50, 'run': 50};
-            }
-            else {
-              play_choice_options = {'field goal': 50};
-            }
-          }
-        }
-        else if (ball_spot >= 40){
-          play_choice_options = {'pass': 55, 'run': 45,};
-        }
-        else {
-          if (down == 4){
-            play_choice_options = {'punt': 2};
-          }
-          else {
-            play_choice_options = {'pass': 50, 'run': 50,};
-          }
-        }
+
+      if (!window.playcall[playcall_str]){
+        console.log('STILL COULDNT FIND PLAY', play)
+        debugger;
       }
-      else {
-        play_choice_options = {'pass': 50, 'run': 50,};
-      }
-    }
-    else {
-      play_choice_options = {'pass': 50, 'run': 50,};
+
+      window.playcall[playcall_str] = window.playcall[playcall_str] || play_choice_options
+      
     }
 
     return {'playclock_urgency': playclock_urgency, 'play_choice_options': play_choice_options}
@@ -9261,6 +9342,12 @@ const sim_week_games = async (this_week, common) => {
   var html = await fetch(url);
   html = await html.text();
 
+  if (!window.playcall){
+    var playcall_url = "/static/data/import_json/playcall.json";
+    var playcall_html = await fetch(playcall_url);
+    window.playcall = await playcall_html.json();
+  }
+
   const db = await common.db;
   var startTime = performance.now();
   common.startTime = startTime;
@@ -9872,7 +9959,7 @@ const calculate_team_overalls = async (common) => {
   }
 
   var goal_overall_max = 99;
-  var goal_overall_min = 10;
+  var goal_overall_min = 40;
   var goal_overall_range = goal_overall_max - goal_overall_min;
 
   for (const team_season of team_seasons) {
