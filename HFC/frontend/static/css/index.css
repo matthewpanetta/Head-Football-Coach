@@ -2977,7 +2977,8 @@ table {
 
 #football-chart-modal,
 #player-info-modal,
-#geography-modal {
+#geography-modal,
+.modal {
   display: none;
   position: fixed;
   z-index: 2000;
@@ -2992,7 +2993,8 @@ table {
 
 #football-chart-modal.shown,
 #player-info-modal.shown,
-#geography-modal.shown {
+#geography-modal.shown,
+.modal.shown {
   display: block;
 }
 
@@ -3013,6 +3015,12 @@ table {
   margin: 2% auto;
   width: 70vw;
   max-height: 90vh;
+}
+
+.modal .modal-content {
+  margin: 2% auto;
+  width: 70vw;
+  height: 90vh;
 }
 
 .close {

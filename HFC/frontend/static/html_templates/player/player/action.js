@@ -1195,6 +1195,7 @@ const getHtml = async (common) => {
 };
 
 const action = async (common) => {
+  const db = common.db;
   common.display_player_face(
     common.render_content.player.player_face,
     {
@@ -1206,6 +1207,34 @@ const action = async (common) => {
   );
   await populate_player_stats(common);
   await common.geo_marker_action(common);
+
+  $('.edit-player-button').on('click', async function(){
+    console.log('Clicked edit players')
+    $("#edit-player-modal").addClass("shown");
+    $("#edit-player-modal").removeClass("hidden");
+
+    let player_to_edit = await db.player.get(common.render_content.player.player_id);
+    let pts_to_edit = await db.player_team_season.where({player_id:common.render_content.player.player_id, season:common.season}).first();
+    player_to_edit.player_team_season = pts_to_edit;
+    // let edit_string = JSON.stringify(player_to_edit, null, 2);
+
+    await init_json_edit(common, player_to_edit, 'edit-player-body');
+
+    console.log({
+      player_to_edit:player_to_edit,
+      // edit_string:edit_string
+    })
+
+    // $("#edit-player-body").html(edit_string);
+
+    $(window).on("click", function (event) {
+      if ($(event.target)[0] == $("#edit-player-modal")[0]) {
+        $("#edit-player-modal").removeClass("shown");
+        $("#edit-player-modal").addClass("hidden");
+        $(window).unbind();
+      }
+    });
+  })
 };
 
 $(document).ready(async function () {

@@ -15017,6 +15017,9 @@ const set = (obj, key, val) => {
 
   for (var i = 0; i < keys.length; i++) {
     var new_key = keys[i];
+    console.log({
+      new_key: new_key, drill_obj:drill_obj, keys:keys, i:i, obj:obj, val: val, key:key
+    })
     if (!(new_key in drill_obj)) {
       if (i == keys.length - 1) {
         drill_obj[new_key] = null;

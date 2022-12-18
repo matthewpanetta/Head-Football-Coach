@@ -126,6 +126,9 @@
   content: "\f35d";
 }
 
+.fa-pencil::before {
+  content: "\f303"; }
+
 .fa-caret-up::before {
   content: "\f0d8";
 }

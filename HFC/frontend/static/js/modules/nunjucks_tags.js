@@ -1,30 +1,35 @@
 function complex_get(val) {
-  let html = ''
+  let html = "";
   if (Array.isArray(val)) {
-    html += '<table class="table">'
-    for (let row of val){
-      html += '<tr class="children-align-middle"><td class="left-text">'+complex_get(row)+'</td></tr>'
+    html += '<table class="table">';
+    for (let row of val) {
+      html +=
+        '<tr class="children-align-middle"><td class="left-text">' +
+        complex_get(row) +
+        "</td></tr>";
     }
-    html += '</table>'
-  } 
-  else if (typeof val === "object" && !Array.isArray(val) && val !== null) {
-    html += '<table class="table children-align-middle">'
-    for (let [field, value] of Object.entries(val)){
-      html += '<tr class="children-align-middle"><th class="left-text">'+field+'</th><td class="left-text">'+complex_get(value)+'</td></tr>'
+    html += "</table>";
+  } else if (typeof val === "object" && !Array.isArray(val) && val !== null) {
+    html += '<table class="table children-align-middle">';
+    for (let [field, value] of Object.entries(val)) {
+      html +=
+        '<tr class="children-align-middle"><th class="left-text">' +
+        field +
+        '</th><td class="left-text">' +
+        complex_get(value) +
+        "</td></tr>";
     }
-    html += '</table>'
-  }
-  else {
+    html += "</table>";
+  } else {
     html = val;
   }
-  console.log('complex_get', {val:val, html:html})
+  console.log("complex_get", { val: val, html: html });
   return html;
 }
 
 function get_nunjucks_env() {
-
   const env = new nunjucks.Environment();
-  
+
   env.addFilter("TeamBackgroundFontColorBlack", function (BackgroundColor) {
     if (BackgroundColor == undefined) {
       BackgroundColor = "FFFFFF";
@@ -47,8 +52,8 @@ function get_nunjucks_env() {
     var r = Math.min(parseInt(color.slice(0, 2), 16) + 48, 255);
     var g = Math.min(parseInt(color.slice(2, 4), 16) + 48, 255);
     var b = Math.min(parseInt(color.slice(4, 6), 16) + 48, 255);
-    
-    return `rgba(${r},${g},${b},1)`;;
+
+    return `rgba(${r},${g},${b},1)`;
   });
 
   env.addFilter("DefaultIfTooLight", function (first_color, second_color) {
@@ -58,7 +63,7 @@ function get_nunjucks_env() {
 
     var Luma = (0.299 * R ** 2 + 0.587 * G ** 2 + 0.114 * B ** 2) ** 0.5;
 
-    console.log({first_color:first_color, second_color:second_color, Luma:Luma})
+    console.log({ first_color: first_color, second_color: second_color, Luma: Luma });
 
     if (Luma > 200) {
       return second_color;
@@ -72,7 +77,7 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("complex_get", function (obj, key) {
-    console.log('filter', {obj:obj, key:key})
+    console.log("filter", { obj: obj, key: key });
     return complex_get(get(obj, key));
   });
 
@@ -107,7 +112,7 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("NumberToRatingBadge", function (NumberValue, scale) {
-    NumberValue = Math.floor(NumberValue * 1.0 / (scale * 1.0 / 20));
+    NumberValue = Math.floor((NumberValue * 1.0) / ((scale * 1.0) / 20));
     let grade_letter = NumberToGrade(NumberValue, 20);
     let badge_class = grade_letter.replace("-", "-Minus").replace("+", "-Plus");
 
@@ -115,7 +120,7 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("NumberToGradeBadge", function (NumberValue, scale) {
-    NumberValue = Math.floor(NumberValue * 1.0 / (scale * 1.0 / 20));
+    NumberValue = Math.floor((NumberValue * 1.0) / ((scale * 1.0) / 20));
     let grade_letter = NumberToGrade(NumberValue, 20);
     let badge_class = grade_letter.replace("-", "-Minus").replace("+", "-Plus");
 
@@ -124,9 +129,7 @@ function get_nunjucks_env() {
   });
 
   env.addFilter("NumberToGradeClass", function (NumberValue, scale) {
-    return NumberToGrade(NumberValue, scale)
-      .replace("-", "-Minus")
-      .replace("+", "-Plus");
+    return NumberToGrade(NumberValue, scale).replace("-", "-Minus").replace("+", "-Plus");
   });
 
   env.addFilter("RoundDown", function (NumberValue) {
@@ -181,13 +184,15 @@ function get_nunjucks_env() {
         { letter_grade: "F-", lower_bound: -1000, upper_bound: 30 },
       ];
       const letter_grade = grade_value_map.find(
-        (grade) =>
-          grade.lower_bound <= number_value && grade.upper_bound >= number_value
+        (grade) => grade.lower_bound <= number_value && grade.upper_bound >= number_value
       ).letter_grade;
 
-      console.log('NumberToGrade', {
-        grade_value_map:grade_value_map, letter_grade:letter_grade, number_value:number_value, scale:scale
-      })
+      console.log("NumberToGrade", {
+        grade_value_map: grade_value_map,
+        letter_grade: letter_grade,
+        number_value: number_value,
+        scale: scale,
+      });
 
       return letter_grade;
     }
@@ -204,7 +209,7 @@ function get_nunjucks_env() {
 
     var Luma = (0.299 * R ** 2 + 0.587 * G ** 2 + 0.114 * B ** 2) ** 0.5;
 
-    console.log({Color:Color, Luma:Luma})
+    console.log({ Color: Color, Luma: Luma });
 
     if (Luma > 230) {
       return "000";
@@ -248,6 +253,21 @@ function get_nunjucks_env() {
 
   env.addFilter("coalesce", function (val_a, val_b) {
     return val_a ?? val_b;
+  });
+
+  env.addFilter("element_type", function (elem) {
+    var type = Object.prototype.toString.call(elem);
+    if (type === "[object Object]") {
+      return "Object";
+    } else if (type === "[object Array]") {
+      return "Array";
+    } else if (type === "[object Boolean]") {
+      return "Boolean";
+    } else if (type === "[object Number]") {
+      return "Number";
+    } else {
+      return "String";
+    }
   });
 
   return env;
