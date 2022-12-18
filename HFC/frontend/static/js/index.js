@@ -5750,7 +5750,7 @@ const generate_player_ratings = async(common, world_id, season) => {
     let position_archetype = deep_copy(
       position_archetypes[pts.position]["Balanced"]
     );
-    console.log({pts:pts})
+    // console.log({pts:pts})
     for (const rating_group_key in position_archetype) {
       var rating_group = position_archetype[rating_group_key];
       for (const rating_key in rating_group) {
@@ -9729,20 +9729,29 @@ const sim_week_games = async (this_week, common) => {
   console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms`);
 };
 
-const calculate_team_needs = async (common) => {
+const calculate_team_needs = async (common, team_season_ids = null) => {
   var startTime = performance.now();
 
   const db = await common.db;
   const season = common.season;
-  let team_seasons = await db.team_season
-    .where({ season: season })
-    .and((ts) => ts.team_id > 0)
-    .toArray();
 
-  let team_season_ids = team_seasons.map((ts) => ts.team_season_id);
+  let team_seasons = []
+
+  if (!team_season_ids) {
+     team_seasons = await db.team_season
+      .where({ season: season })
+      .and((ts) => ts.team_id > 0)
+      .toArray();
+
+    team_season_ids = team_seasons.map((ts) => ts.team_season_id);
+  }
+  else {
+     team_seasons = await db.team_season.where('team_season_id').anyOf(team_season_ids).toArray();
+  }
 
   const player_team_seasons = await db.player_team_season
-    .where({ season: season })
+    .where('team_season_id')
+    .anyOf(team_season_ids)
     .toArray();
   const player_team_seasons_by_player_team_season_id = index_group_sync(
     player_team_seasons,
@@ -9771,13 +9780,13 @@ const calculate_team_needs = async (common) => {
 
   const class_map = {
     SR: 0,
-    'SR (RS)': 0,
+    "SR (RS)": 0,
     JR: 1,
-    'JR (RS)': 1,
+    "JR (RS)": 1,
     SO: 2,
-    'SO (RS)': 2,
+    "SO (RS)": 2,
     FR: 3,
-    'FR (RS)': 3,
+    "FR (RS)": 3,
     "HS SR": 4,
   };
 
@@ -9788,16 +9797,9 @@ const calculate_team_needs = async (common) => {
     )) {
       team_season.recruiting.position_needs[position] = [];
       let position_player_overalls = player_team_season_ids.map((pts_id) => ({
-        class_val:
-          class_map[
-            player_team_seasons_by_player_team_season_id[pts_id].class
-              .class_name
-          ],
-        class:
-          player_team_seasons_by_player_team_season_id[pts_id].class.class_name,
-        overall:
-          player_team_seasons_by_player_team_season_id[pts_id].ratings.overall
-            .overall,
+        class_val: class_map[player_team_seasons_by_player_team_season_id[pts_id].class.class_name],
+        class: player_team_seasons_by_player_team_season_id[pts_id].class.class_name,
+        overall: player_team_seasons_by_player_team_season_id[pts_id].ratings.overall.overall,
       }));
       position_player_overalls = position_player_overalls.filter(
         (pts_obj) => pts_obj.class_val > 0
@@ -9815,13 +9817,10 @@ const calculate_team_needs = async (common) => {
           if (overall_index == -1) {
             overall_index = year_position_player_overalls.length;
           }
-          let overall_playtime_modifier =
-            position_starters_map[position][overall_index] || 0;
+          let overall_playtime_modifier = position_starters_map[position][overall_index] || 0;
           overall_obj.playing_time_val += overall_playtime_modifier;
         }
-        overall_obj.playing_time_val = Math.ceil(
-          overall_obj.playing_time_val * 5
-        );
+        overall_obj.playing_time_val = Math.ceil(overall_obj.playing_time_val * 5);
         team_season.recruiting.position_needs[position].push(overall_obj);
       }
     }
@@ -9832,9 +9831,7 @@ const calculate_team_needs = async (common) => {
   await db.team_season.bulkPut(team_seasons);
 
   var endTime = performance.now();
-  console.log(
-    `Time taken to calculate_team_needs: ${parseInt(endTime - startTime)} ms`
-  );
+  console.log(`Time taken to calculate_team_needs: ${parseInt(endTime - startTime)} ms`);
 };
 
 const calculate_team_overalls = async (common) => {

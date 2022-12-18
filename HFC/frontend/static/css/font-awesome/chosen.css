@@ -141,6 +141,9 @@
   content: "\f0d9";
 }
 
+.fa-caret-down::before {
+  content: "\f0d7"; }
+
 .fa-external-link-square-alt:before {
   content: "\f360";
 }

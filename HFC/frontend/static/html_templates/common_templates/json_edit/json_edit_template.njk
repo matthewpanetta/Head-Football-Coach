@@ -1,5 +1,9 @@
 {% macro populate_object(json, offset, prev_key, disabled_keys) %}
     {% if json | element_type == 'Object' %}
+        <span style='font-style: italic;'>
+            <i class='fas fa-caret-down clickable' />
+            object
+        </span>
         <ul class="list-group  collapsible">
             {% for key, value in json %}
                 <li class='list-group-item' key='{{key}}'>
@@ -11,6 +15,10 @@
             {% endfor %}
         </ul>
     {% elif json | element_type == 'Array' %}
+        <span style='font-style: italic;'>
+            <i class='fas fa-caret-down clickable' />
+            list
+        </span>
         <ol class="list-group  collapsible">
             {% for value in json %}
                 <li class='list-group-item' {%if key in disabled_keys %}disabled{%endif%}>
