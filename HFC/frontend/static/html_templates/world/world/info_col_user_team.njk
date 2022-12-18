@@ -1,0 +1,152 @@
+{{user_team_overview_data|log}}
+<div class="w3-bar team-primary-background-bar" style='
+            background-color: #{{user_team_overview_data.user_team.team_color_primary_hex}} !important;
+            color: #{{user_team_overview_data.user_team.team_color_primary_hex|TeamBackgroundFontColor}} !important;
+            border-top: 0.25rem solid #{{user_team_overview_data.user_team.team_color_secondary_hex}} !important;
+        '>
+    <a href='{{user_team_overview_data.user_team.full_name.team_logo}}'>
+        <img class='logo logo-18' src='{{user_team_overview_data.user_team.team_logo}}'/>
+    </a>
+    <span class="">
+        <a href='{{user_team_overview_data.user_team.team_href}}'>
+            {{user_team_overview_data.user_team.full_name}}
+        </a>
+        Overview
+    </span>
+</div>
+<table class='table table-striped overflow-hidden'>
+    {% if user_team_overview_data.this_week_game %}
+        <tr class='team-secondary-table-row'>
+            <td>This Week - <a href='{{user_team_overview_data.this_week_game.game_href}}'>Preview</a></td>
+        </tr>
+        <tr>
+            <td class='p-0'>
+                <div class='flex width100 white-text' style='gap:0; width: 120%; margin-left: -10%;'>
+                    <div class='flex-1 py-1' style='padding-left:10%;background-color: #{{user_team_overview_data.this_week_game.team_games[0].team_season.team.team_color_primary_hex}}; border-right: 20px solid #{{user_team_overview_data.this_week_game.team_games[0].team_season.team.team_color_secondary_hex}};transform: skewX(-45deg);'>
+                        <div style='transform: skewX(45deg);' class='flex'>
+                            <div class='flex-1'>
+                                <div>
+                                    <a href='{{user_team_overview_data.this_week_game.team_games[0].team_season.team.team_href}}'>
+                                        {{user_team_overview_data.this_week_game.team_games[0].team_season.team.team_abbreviation}}
+                                    </a>
+                                </div>
+                                <div class='font10'>{{user_team_overview_data.this_week_game.team_games[0].team_season.record_display}}</div>
+                            </div>
+                            <div class='flex-1'>
+                                <a href='{{user_team_overview_data.this_week_game.team_games[0].team_season.team.team_href}}'>
+                                    <img class='logo logo-30' src='{{user_team_overview_data.this_week_game.team_games[0].team_season.team.team_logo}}'/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='flex-1 py-1' style='padding-right:10%;background-color: #{{user_team_overview_data.this_week_game.team_games[1].team_season.team.team_color_primary_hex}}; border-left: 20px solid #{{user_team_overview_data.this_week_game.team_games[1].team_season.team.team_color_secondary_hex}};transform: skewX(-45deg);'>
+                        <div style='transform: skewX(45deg);' class='flex'>
+                            <div class='flex-1'>
+                                <a href='{{user_team_overview_data.this_week_game.team_games[1].team_season.team.team_href}}'>
+                                    <img class='logo logo-30' src='{{user_team_overview_data.this_week_game.team_games[1].team_season.team.team_logo}}'/>
+                                </a>
+                            </div>
+                           <div class='flex-1'>
+                                <div>
+                                    <a href='{{user_team_overview_data.this_week_game.team_games[1].team_season.team.team_href}}'>
+                                        {{user_team_overview_data.this_week_game.team_games[1].team_season.team.team_abbreviation}}
+                                    </a>
+                                </div>
+                                <div class='font10'>{{user_team_overview_data.this_week_game.team_games[1].team_season.record_display}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    {% else %}
+        <tr class='team-secondary-table-row'>
+            <td>No game this week</td>
+        </tr>
+    {% endif %}
+
+    {% if user_team_overview_data.last_week_game %}
+        <tr class='team-secondary-table-row'>
+            <td>Last Week - 
+                <a href='{{user_team_overview_data.last_week_game.game_href}}'>Recap</a>
+            </td>
+        </tr>
+        <tr>
+            <td class='p-0'>
+                <div class='flex width100 white-text' style='gap:0; width: 120%; margin-left: -10%;'>
+                    <div class='flex-1 py-1' style='padding-left:10%;background-color: #{{user_team_overview_data.last_week_game.team_games[0].team_season.team.team_color_primary_hex}}; border-right: 20px solid #{{user_team_overview_data.last_week_game.team_games[0].team_season.team.team_color_secondary_hex}};transform: skewX(-45deg);'>
+                        <div style='transform: skewX(45deg);' class='flex align-middle'>
+                            <div class='flex-1'>
+                                <div>
+                                    <a href='{{user_team_overview_data.last_week_game.team_games[0].team_season.team.team_href}}'>
+                                        {{user_team_overview_data.last_week_game.team_games[0].team_season.team.team_abbreviation}}
+                                    </a>
+                                </div>
+                                <div class='font10'>{{user_team_overview_data.last_week_game.team_games[0].team_season.record_display}}</div>
+                            </div>
+                            <div class='flex-1'>
+                                <a href='{{user_team_overview_data.last_week_game.team_games[0].team_season.team.team_href}}'>
+                                    <img class='logo logo-30' src='{{user_team_overview_data.last_week_game.team_games[0].team_season.team.team_logo}}'/>
+                                </a>
+                            </div>
+                            <div class='flex-1 font20 no-wrap'>
+                                {{user_team_overview_data.last_week_game.team_games[0].points}}
+                                {% if user_team_overview_data.last_week_game.team_games[0].is_winning_team%}
+                                <i class="fas fa-caret-left" style='margin-right: -1rem;'></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class='flex-1 py-1' style='padding-right:10%;background-color: #{{user_team_overview_data.last_week_game.team_games[1].team_season.team.team_color_primary_hex}}; border-left: 20px solid #{{user_team_overview_data.last_week_game.team_games[1].team_season.team.team_color_secondary_hex}};transform: skewX(-45deg);'>
+                        <div style='transform: skewX(45deg);' class='flex align-middle'>
+                            
+                            <div class='flex-1 font20 no-wrap'>
+                                {% if user_team_overview_data.last_week_game.team_games[1].is_winning_team%}
+                                <i class="fas fa-caret-right" style='margin-left: -1rem;'></i>
+                                {% endif %}
+                                {{user_team_overview_data.last_week_game.team_games[1].points}}
+                            </div>
+                            <div class='flex-1'>
+                                <a href='{{user_team_overview_data.last_week_game.team_games[1].team_season.team.team_href}}'>
+                                    <img class='logo logo-30' src='{{user_team_overview_data.last_week_game.team_games[1].team_season.team.team_logo}}'/>
+                                </a>
+                            </div>
+                           <div class='flex-1'>
+                                <div>
+                                    <a href='{{user_team_overview_data.last_week_game.team_games[1].team_season.team.team_href}}'>
+                                        {{user_team_overview_data.last_week_game.team_games[1].team_season.team.team_abbreviation}}
+                                    </a>
+                                </div>
+                                <div class='font10'>{{user_team_overview_data.last_week_game.team_games[1].team_season.record_display}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    {% else %}
+         <tr class='team-secondary-table-row'>
+            <td>No game last week</td>
+        </tr>
+    {% endif %}
+
+    {% if user_team_overview_data.preseason_all_american|length > 0 or user_team_overview_data.preseason_all_conference|length > 0%}
+        <tr>
+            <td>
+                <a href='/World/{{world_id}}/Awards/'>
+                    {{user_team_overview_data.preseason_all_american|length}} Pre-Season All-{{"American"|pluralize(user_team_overview_data.preseason_all_american|length)}}, {{user_team_overview_data.preseason_all_conference|length}} Pre-Season All-{{user_team_overview_data.user_team.team_season.conference_season.conference.conference_abbreviation|pluralize(user_team_overview_data.preseason_all_conference|length)}}
+                </a>
+            </td>
+        </tr>
+    {% endif %}
+    {% if preseason %}
+        <tr>
+            <td>
+                <a href='{{user_team_overview_data.user_team.team_season.conference_season.conference.conference_href}}'>
+                    {{user_team_overview_data.user_team.team_season.conference_season.conference.conference_abbreviation}} projected finish: {{user_team_overview_data.user_team.team_season.rankings.division_rank[0]}}
+                </a>
+            </td>
+        </tr>
+        {% endif%}
+
+    </table>

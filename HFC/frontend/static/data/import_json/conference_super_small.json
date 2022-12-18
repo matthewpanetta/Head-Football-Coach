@@ -20,17 +20,16 @@
     },
     "divisions": [
       {
-        "division_name": "East",
+        "division_name": "All",
         "teams": [
           "Maryland",
-          "Michigan"
-        ]
-      },
-      {
-        "division_name": "West",
-        "teams": [
-          "Purdue",
-          "Illinois"
+          "Michigan",
+          "Alabama",
+          "UAB",
+          "USC",
+          "Oregon State",
+          "SMU",
+          "Oklahoma"
         ]
       }
     ]

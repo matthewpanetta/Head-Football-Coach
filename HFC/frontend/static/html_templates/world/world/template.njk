@@ -35,7 +35,7 @@
                     <col span="1">
                     <col span="1">
                   </colgroup>
-                  {% for team in teams %}
+                  {% for team in teams.slice(0,25) %}
                     <tr>
                       <td class="worldOverviewTop25TeamLineRank  w3-cell center-text" style='background-color:  #{{team.team_color_primary_hex}}; color: white;'>
                         <div class='Top25RankNumberw3-display-middle '>{{ team.team_season.rankings.national_rank[0] }}</div>
@@ -220,6 +220,9 @@
                       {% endif %}
                     </div>
                     <div class='flex-2 m-2'>
+                      <div class="card w3-margin-bottom" id='user-team-overview'>
+
+                      </div>
                       <div class="card w3-margin-bottom">
                         <div class="w3-bar team-primary-background-bar">
                           <div class="">Headlines</div>

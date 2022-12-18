@@ -3026,16 +3026,9 @@ const distance_from_home = (city_a, city_b, distance_tracking_map) => {
 };
 
 const distance_between_cities = (city_a, city_b, distance_tracking_map = {}) => {
-  console.log({
-    city_a:city_a, city_b:city_b
-  })
   let city_a_str = `${Math.round(city_a.lat, 1)},${Math.round(city_a.long, 1)}`;
   let city_b_str = `${Math.round(city_b.lat, 1)},${Math.round(city_b.long, 1)}`;
   let city_arr = [city_a_str, city_b_str].sort();
-
-  console.log({
-    city_arr:city_arr, city_a:city_a, city_b:city_b, distance_tracking_map:distance_tracking_map
-  })
 
   // Serialize the locations and short-circuit if we've already calculated the disance.
   if (distance_tracking_map[city_arr[0]] && distance_tracking_map[city_arr[0]][city_arr[1]]){
@@ -3059,6 +3052,12 @@ const distance_between_cities = (city_a, city_b, distance_tracking_map = {}) => 
     distance_tracking_map[city_arr[0]] = {}
   }
   distance_tracking_map[city_arr[0]][city_arr[1]] = d;
+
+  if (!distance_tracking_map[city_arr[1]]){
+    distance_tracking_map[city_arr[1]] = {}
+  }
+  distance_tracking_map[city_arr[1]][city_arr[0]] = d;
+
   return d;
 };
 
@@ -5328,6 +5327,12 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
     .filter((pts) => class_is_in_college(pts.class.class_name))
     .toArray();
 
+  let player_ids = player_team_seasons.map(pts => pts.player_id);
+
+  let players = await db.player.bulkGet(player_ids);
+  let players_by_player_id = index_group_sync(players, 'index', 'player_id');
+  player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player');
+
   team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
 
   const team_seasons_by_team_id = index_group_sync(team_seasons, "index", "team_id");
@@ -5433,6 +5438,14 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
     max_prestige = Math.max(max_prestige, team_season.team_prestige);
   }
 
+  let distance_tracking_map = {};
+  player_team_seasons.forEach(function(pts){
+    pts.team_distances = {}
+    team_seasons.forEach(function(ts){
+      pts.team_distances[ts.team_season_id] = distance_between_cities(ts.team.location, pts.player.hometown, distance_tracking_map)
+    });
+  })
+
   max_prestige += 3;
 
   for (const team_season of team_seasons) {
@@ -5447,10 +5460,11 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
     "group",
     "position"
   );
-  console.log({
+  console.log('player_team_seasons',{
     player_team_seasons_by_position: player_team_seasons_by_position,
     player_team_seasons:player_team_seasons
   });
+  debugger;
   let player_team_seasons_tocreate = [];
 
   for (const position in player_team_seasons_by_position) {
@@ -5471,30 +5485,58 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
       position_team_season_ids = shuffle(position_team_season_ids);
     }
 
+    console.log({position_team_season_ids:position_team_season_ids, position_player_team_seasons:position_player_team_seasons})
+    debugger;
+
     for (const team_season_id of position_team_season_ids) {
       var team_season = team_seasons_by_team_season_id[team_season_id];
 
       var prestige_slice_lower_bound =
-        position_player_team_seasons.length * team_season.prestige_lower_slice_ratio;
+        Math.floor(position_player_team_seasons.length * team_season.prestige_lower_slice_ratio);
       var prestige_slice_upper_bound =
-        position_player_team_seasons.length * team_season.prestige_upper_slice_ratio;
+        Math.ceil(position_player_team_seasons.length * team_season.prestige_upper_slice_ratio);
 
       var prestige_slice_gap = prestige_slice_upper_bound - prestige_slice_lower_bound;
-      var r = Math.random();
-      var player_team_season_index = Math.floor(
-        prestige_slice_lower_bound + (r * prestige_slice_gap)
-      );
+      // var r = Math.random();
+      // var player_team_season_index = Math.floor(
+      //   prestige_slice_lower_bound + (r * prestige_slice_gap)
+      // );
 
-      var chosen_player_team_season = position_player_team_seasons.splice(
-        player_team_season_index,
-        1
-      );
-      chosen_player_team_season = chosen_player_team_season[0];
-      if (chosen_player_team_season != undefined) {
+      // var chosen_player_team_season = position_player_team_seasons.splice(
+      //   player_team_season_index,
+      //   1
+      // );
+
+      console.log({
+        team_season:team_season,
+        position_player_team_seasons:position_player_team_seasons,
+        'team_season.prestige_upper_slice_ratio': team_season.prestige_upper_slice_ratio,
+        'team_season.prestige_lower_slice_ratio': team_season.prestige_lower_slice_ratio,
+        prestige_slice_gap:prestige_slice_gap,
+        prestige_slice_upper_bound:prestige_slice_upper_bound, 
+        prestige_slice_lower_bound:prestige_slice_lower_bound
+      })
+      let available_position_player_team_seasons = position_player_team_seasons.slice(prestige_slice_lower_bound, prestige_slice_upper_bound);
+      let available_position_player_team_seasons_tuples = available_position_player_team_seasons.map(function(pts){
+        let dist_val = 800 - pts.team_distances[team_season_id]
+        if (!(dist_val > 0)){
+          dist_val = 1;
+        }
+        return [pts, dist_val ** 2]
+      });
+      let chosen_player_team_season = weighted_random_choice(available_position_player_team_seasons_tuples)
+      // console.log({available_position_player_team_seasons_tuples:available_position_player_team_seasons_tuples, chosen_player_team_season:chosen_player_team_season})
+
+      if (chosen_player_team_season) {
         chosen_player_team_season.team_season_id = team_season_id;
-
         player_team_seasons_tocreate.push(chosen_player_team_season);
       }
+      else {
+        console.log('Didnt match player')
+        debugger;
+      }
+
+      position_player_team_seasons = position_player_team_seasons.filter(pts => pts != chosen_player_team_season);
     }
 
     console.log({
@@ -5504,6 +5546,11 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
       player_team_seasons_tocreate:player_team_seasons_tocreate
     });
   }
+
+  player_team_seasons_tocreate.forEach(function(pts){
+    delete pts.player;
+    delete pts.team_distances;
+  })
 
   console.log({ player_team_seasons_tocreate: player_team_seasons_tocreate });
   await db.player_team_season.bulkPut(player_team_seasons_tocreate);
@@ -8181,26 +8228,27 @@ const play_call_serialize = (play) => {
     score_diff_desc = "tie";
   }
 
+  let yards_to_goal_line = 100 - play.ball_spot;
   let yard_desc = "";
-  if (play.ball_spot <= 5) {
+  if (yards_to_goal_line <= 5) {
     yard_desc = "<5";
-  } else if (play.ball_spot <= 10) {
+  } else if (yards_to_goal_line <= 10) {
     yard_desc = "<10";
-  } else if (play.ball_spot <= 20) {
+  } else if (yards_to_goal_line <= 20) {
     yard_desc = "<20";
-  } else if (play.ball_spot <= 30) {
+  } else if (yards_to_goal_line <= 30) {
     yard_desc = "<30";
-  } else if (play.ball_spot <= 40) {
+  } else if (yards_to_goal_line <= 40) {
     yard_desc = "<40";
-  } else if (play.ball_spot <= 50) {
+  } else if (yards_to_goal_line <= 50) {
     yard_desc = "<50";
-  } else if (play.ball_spot <= 60) {
+  } else if (yards_to_goal_line <= 60) {
     yard_desc = "<60";
-  } else if (play.ball_spot <= 70) {
+  } else if (yards_to_goal_line <= 70) {
     yard_desc = "<70";
-  } else if (play.ball_spot <= 80) {
+  } else if (yards_to_goal_line <= 80) {
     yard_desc = "<80";
-  } else if (play.ball_spot <= 100) {
+  } else if (yards_to_goal_line <= 100) {
     yard_desc = "<100";
   } else {
     yard_desc = "NA";
@@ -8237,8 +8285,7 @@ const play_call_serialize = (play) => {
 };
 
 const game_sim_play_call_options = (down, yards_to_go, ball_spot, period, offensive_point_differential, seconds_left_in_period, is_close_game, is_late_game, half_end_period, final_period) => {
-    let playclock_urgency = 4
-    let play_choice_options = {'run': 50,'pass': 50,'punt': 0,'field goal': 0}
+    let default_play_choice_options = {'run': 50,'pass': 50,'punt': 0,'field_goal': 0}
 
     let play = {
       yards_to_go: yards_to_go,
@@ -8248,56 +8295,76 @@ const game_sim_play_call_options = (down, yards_to_go, ball_spot, period, offens
       offensive_point_differential:offensive_point_differential,
       seconds_left_in_period:seconds_left_in_period
     }
-    
-    
 
    let playcall_str = play_call_serialize(play)
 
+   let play_choice_options = window.playcall[playcall_str];
+
     if (!window.playcall[playcall_str]){
       let playcall_iteration_options = [
-        {field: 'yards_to_go', option_set: [1, 4, 7, 10, 15]},
-        {field: 'offensive_point_differential', option_set: [1, 0, -1, 9, -9, 17, -17, 25, -25]},
-        {field: 'ball_spot', option_set: [5, 15, 25, 35, 45, 55, 65, 75, 85, 95]},
-        {field: 'period', option_set: [1, 2, 3, 4, 5]},
-        {field: 'seconds_left_in_period', option_set: [30, 90, 150, 450, 600, 900]},
         {field: 'down', option_set: [1, 2, 3, 4]},
+        {field: 'seconds_left_in_period', option_set: [30, 90, 150, 450, 600, 900]},
+        {field: 'period', option_set: [1, 2, 3, 4, 5]},
+        {field: 'ball_spot', option_set: [5, 15, 25, 35, 45, 55, 65, 75, 85, 95]},
+        {field: 'offensive_point_differential', option_set: [1, 0, -1, 6, -6, 9, -9, 17, -17, 25, -25]},
+        {field: 'yards_to_go', option_set: [1, 4, 7, 10, 15]},
       ]
 
       playcall_iteration_options.forEach(function(opt){
-        opt.option_set = opt.option_set.sort((val_a, val_b) => Math.abs(val_a - play[opt.field]) - Math.abs(val_b - play[opt.field]))
+        opt.option_set = opt.option_set.sort((val_a, val_b) => Math.abs(val_a - play[opt.field]) - Math.abs(val_b - play[opt.field]) || Math.abs(val_a) - Math.abs(val_b))
       })
-      // console.log('COULDNT FIND PLAY',{
-      //   playcall_iteration_options:playcall_iteration_options, play: play, playcall_str:playcall_str, 'window.playcall': window.playcall
-      // })
 
-      for (let i = 0; i< (3 ** playcall_iteration_options.length); i++){
-        let b = i.toString(3);
-        b = b.padStart(6, '0')
-        let s = b.split('');
-        let adjusted_play = {};
-        s.forEach(function(ch, ind){
-          adjusted_play[playcall_iteration_options[ind].field] = playcall_iteration_options[ind].option_set[parseInt(ch)]
-        });
-
-        playcall_str = play_call_serialize(adjusted_play)
-        
-        // console.log({i:i, b:b, s:s, adjusted_play:adjusted_play, playcall_str:playcall_str, 'window.playcall[playcall_str]': window.playcall[playcall_str] })
+      for (let radix = 2; radix < 6; radix++){
         if (window.playcall[playcall_str]){
-          // console.log('found play')
-          break;
+          continue;
         }
+        for (let i = 0; i< (radix ** playcall_iteration_options.length); i++){
+          let b = i.toString(radix);
+          b = b.padStart(6, '0')
+          let s = b.split('');
+          let adjusted_play = {};
+          s.forEach(function(ch, ind){
+            adjusted_play[playcall_iteration_options[ind].field] = playcall_iteration_options[ind].option_set[parseInt(ch)]
+          });
+  
+          playcall_str = play_call_serialize(adjusted_play)
+        }     
       }
 
-      if (!window.playcall[playcall_str]){
-        console.log('STILL COULDNT FIND PLAY', play)
-        debugger;
-      }
-
-      window.playcall[playcall_str] = window.playcall[playcall_str] || play_choice_options
+      play_choice_options = window.playcall[playcall_str] || play_choice_options
       
     }
 
-    return {'playclock_urgency': playclock_urgency, 'play_choice_options': play_choice_options}
+    let playclock_urgency = 4
+    if (period == 2){
+      if (seconds_left_in_period < 120){
+        playclock_urgency = 6;
+      }
+    }
+    else if ((period == 3 && seconds_left_in_period < 360) || (period == 4 && seconds_left_in_period > 360)){
+      if (offensive_point_differential <= -12){
+        playclock_urgency = 5;
+      }
+      else if (offensive_point_differential >= 12){
+        playclock_urgency = 3;
+      }
+      else if (offensive_point_differential >= 17){
+        playclock_urgency = 2;
+      }
+      else if (offensive_point_differential >= 25){
+        playclock_urgency = 1;
+      }
+    }
+    else if (period == 4 && seconds_left_in_period < 360){
+      if (offensive_point_differential < 0){
+        playclock_urgency = 7;
+      }
+      else {
+        playclock_urgency = 1;
+      }
+    }
+
+    return {'playclock_urgency': playclock_urgency, 'play_choice_options': play_choice_options || default_play_choice_options}
 }
 
 const update_player_energy = (game_dict, players_on_field, bench_players, plays_since_last_sub, is_home_team) => {
@@ -8531,7 +8598,6 @@ const sim_game = (game_dict, common) => {
         plays_since_last_sub = 0;
       }
 
-
       first_down = false;
       clock_running = true;
       yards_this_play = 0;
@@ -8545,6 +8611,9 @@ const sim_game = (game_dict, common) => {
       play_choice_options.run = parseInt((play_choice_options.run || 0) * ((100 - game_dict.team_seasons[offensive_team_index].gameplan.offense.pass_tendency) / 50.0));
       playclock_urgency = playcall_obj.playclock_urgency;
       play_choice = weighted_random_choice(play_choice_options);
+      if (play_choice == 'qb_kneel'){
+        play_choice = 'run';
+      }
 
       play_details.play_choice = play_choice;
 
@@ -8734,7 +8803,7 @@ const sim_game = (game_dict, common) => {
             chosen_players.Runner.player_team_game.game_stats.rushing.lng,
             yards_this_play
           );
-      } else if (play_choice == "field goal") {
+      } else if (play_choice == "field_goal") {
         drive_end = true;
         kick_distance = 117 - field_position;
 
@@ -9326,9 +9395,11 @@ const sim_game = (game_dict, common) => {
   $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-home-score`).text(scoring.final[1])
   $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-away-score`).text(scoring.final[0])
 
+  
   let modal_winning_team_suffix = game_dict.team_games[winning_team_index].is_home_team ? 'home' : 'away';
 
   $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-${modal_winning_team_suffix}-team-name`).addClass('bold');
+  $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-${modal_winning_team_suffix}-score`).prepend(`<i class="fas fa-caret-right" style="padding-right: .25rem; color:#${game_dict.teams[winning_team_index].team_color_primary_hex};"></i>`);
   $(`#game-modal-result-table-${game_dict.game.game_id} .game-modal-result-table-${modal_winning_team_suffix}-score`).addClass('bold');
 
   return game_dict;
@@ -15230,6 +15301,11 @@ const new_world_action = async (common, database_suffix) => {
     "football-two-stripe",
   ];
 
+  let cities = await ddb.cities.toArray();
+  console.log({cities:cities})
+  cities.forEach(c => c.city_state = c.city + ',' + c.state);
+  let cities_by_city_state = index_group_sync(cities, 'index', 'city_state');
+
   teams_from_json = teams_from_json.sort((t_a, t_b) => t_a.school_name > t_b.school_name ? 1 : -1)
 
   var team_id_counter = 1;
@@ -15291,6 +15367,9 @@ const new_world_action = async (common, database_suffix) => {
       conferences_by_school_name: conferences_by_school_name,
       team: team,
     });
+
+    team.location.lat = cities_by_city_state[team.location.city+','+team.location.state].lat;
+    team.location.long = cities_by_city_state[team.location.city+','+team.location.state].long;
 
     teams.push({
       team_id: team_id_counter,
