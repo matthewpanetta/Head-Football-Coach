@@ -38,7 +38,12 @@
                     <table class='table table-striped width100 conference-standings-table' id='teamOverviewConferenceStandings-{{conference_season.conference.conference_id}}'>
                       <thead>
                         <tr class='center-text-row' style='background-color: #{{page.PrimaryColor}};border-top: 0.1875rem solid black; color: white;'>
-                          <th colspan="3" class='col-group left-text'>{{conference_season.conference.conference_name}}</th>
+                          <th colspan="3" class='col-group left-text'>
+                            {{conference_season.conference.conference_name}}
+                            <a href='{{conference_season.conference.conference_href}}'>
+                              <i class="fa fa-external-link-alt"></i>
+                            </a>
+                          </th>
                           <th colspan="5" class='col-group'>Conference</th>
                           <th colspan="5" class='col-group'>Overall</th>
                           <th colspan="2">Trends</th>

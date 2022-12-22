@@ -13067,109 +13067,10 @@ const process_bowl_results = async (common) => {
 };
 
 const schedule_bowl_season = async (all_weeks, common) => {
-  var bowls = [
-    {
-      bowl_name: "Rose Bowl",
-      bowl_prestige: 10,
-      bowl_week_name: "Bowl Week 3",
-    },
-    {
-      bowl_name: "Sugar Bowl",
-      bowl_prestige: 9,
-      bowl_week_name: "Bowl Week 3",
-    },
-    {
-      bowl_name: "Fiesta Bowl",
-      bowl_prestige: 9,
-      bowl_week_name: "Bowl Week 3",
-    },
-    {
-      bowl_name: "Orange Bowl",
-      bowl_prestige: 9,
-      bowl_week_name: "Bowl Week 3",
-    },
-    {
-      bowl_name: "Cotton Bowl",
-      bowl_prestige: 9,
-      bowl_week_name: "Bowl Week 2",
-    },
-    {
-      bowl_name: "Peach Bowl",
-      bowl_prestige: 8,
-      bowl_week_name: "Bowl Week 2",
-    },
-    {
-      bowl_name: "Alamo Bowl",
-      bowl_prestige: 6,
-      bowl_week_name: "Bowl Week 2",
-    },
-    {
-      bowl_name: "Citrus Bowl",
-      bowl_prestige: 6,
-      bowl_week_name: "Bowl Week 2",
-    },
-    {
-      bowl_name: "Gasparilla Bowl",
-      bowl_prestige: 5,
-      bowl_week_name: "Bowl Week 2",
-    },
-    { bowl_name: "Sun Bowl", bowl_prestige: 5, bowl_week_name: "Bowl Week 2" },
-    {
-      bowl_name: "Texas Bowl",
-      bowl_prestige: 5,
-      bowl_week_name: "Bowl Week 2",
-    },
-    {
-      bowl_name: "Las Vegas Bowl",
-      bowl_prestige: 5,
-      bowl_week_name: "Bowl Week 1",
-    },
-    {
-      bowl_name: "Liberty Bowl",
-      bowl_prestige: 4,
-      bowl_week_name: "Bowl Week 1",
-    },
-    {
-      bowl_name: "Independence Bowl",
-      bowl_prestige: 4,
-      bowl_week_name: "Bowl Week 1",
-    },
-    {
-      bowl_name: "Hawaii Bowl",
-      bowl_prestige: 4,
-      bowl_week_name: "Bowl Week 1",
-    },
-    {
-      bowl_name: "Gator Bowl",
-      bowl_prestige: 4,
-      bowl_week_name: "Bowl Week 1",
-    },
-    {
-      bowl_name: "First Responder Bowl",
-      bowl_prestige: 3,
-      bowl_week_name: "Bowl Week 1",
-    },
-    {
-      bowl_name: "Myrtle Beach Bowl",
-      bowl_prestige: 2,
-      bowl_week_name: "Bowl Week 1",
-    },
-    {
-      bowl_name: "Birmingham Bowl",
-      bowl_prestige: 1,
-      bowl_week_name: "Bowl Week 1",
-    },
-    {
-      bowl_name: "Arizona Bowl",
-      bowl_prestige: 1,
-      bowl_week_name: "Bowl Week 1",
-    },
-    {
-      bowl_name: "Frisco Bowl",
-      bowl_prestige: 1,
-      bowl_week_name: "Bowl Week 1",
-    },
-  ];
+  let bowl_url = `/static/data/import_json/bowls.json`;
+  let bowl_json = await fetch(bowl_url);
+  let bowls = await bowl_json.json();
+
   const db = await common.db;
 
   var current_league_season = await db.league_season
@@ -13210,8 +13111,6 @@ const schedule_bowl_season = async (all_weeks, common) => {
       return 1;
     return 0;
   });
-
-  
 
   let number_guaranteed_conference_champions_in_playoff = 6;
   let top_playoff_seeds_saved_for_conference_champions = 4;
