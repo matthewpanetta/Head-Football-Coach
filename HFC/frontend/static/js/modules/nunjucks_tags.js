@@ -63,8 +63,6 @@ function get_nunjucks_env() {
 
     var Luma = (0.299 * R ** 2 + 0.587 * G ** 2 + 0.114 * B ** 2) ** 0.5;
 
-    console.log({ first_color: first_color, second_color: second_color, Luma: Luma });
-
     if (Luma > 200) {
       return second_color;
     }
@@ -208,8 +206,6 @@ function get_nunjucks_env() {
     var B = parseInt(Color.slice(4, 6), 16);
 
     var Luma = (0.299 * R ** 2 + 0.587 * G ** 2 + 0.114 * B ** 2) ** 0.5;
-
-    console.log({ Color: Color, Luma: Luma });
 
     if (Luma > 230) {
       return "000";

@@ -1,8 +1,11 @@
 {
   "scripts": {
-    "start": "NODE_ENV='prod' node server.js"
+    "start": "NODE_ENV='prod' node server.js",
+    "rollup": "rollup"
   },
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "rollup": "^3.8.0",
+    "webpack": "^5.75.0"
   }
 }

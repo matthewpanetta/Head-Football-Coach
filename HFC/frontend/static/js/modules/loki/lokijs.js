@@ -1734,12 +1734,11 @@
       function makeLoader(coll) {
         var collOptions = options[coll.name];
         var inflater;
-
         if (collOptions.proto) {
           inflater = collOptions.inflate || Utils.copyProperties;
 
           return function (data) {
-            var collObj = new (collOptions.proto)();
+            var collObj = Object.create(collOptions.proto);
             inflater(data, collObj);
             return collObj;
           };
@@ -2721,6 +2720,18 @@
         }
       }, options);
     };
+
+    Loki.prototype.loadDatabaseAsync = function(options) {
+      return new Promise((resolve, reject) => this.loadDatabase(options, err => err ? reject(err) : resolve(null)))
+    }
+    
+    Loki.prototype.saveDatabaseAsync = function() {
+      return new Promise((resolve, reject) => this.saveDatabase(err => err ? reject(err) : resolve(null)))
+    }
+    
+    Loki.prototype.closeAsync = function() {
+      return new Promise((resolve, reject) => this.close(err => err ? reject(err) : resolve(null)))
+    }
 
     /**
      * Internal save logic, decoupled from save throttling logic
@@ -7302,6 +7313,17 @@
      */
     Collection.prototype.min = function (field) {
       return Math.min.apply(null, this.extract(field));
+    };
+
+    /**
+     * @memberof Collection
+     */
+    Collection.prototype.nextId = function (field) {
+      let max_val = Math.max.apply(null, this.extract(field));
+      if (!max_val || max_val == -Infinity){
+        return 1
+      }
+      return max_val + 1;
     };
 
     /**
