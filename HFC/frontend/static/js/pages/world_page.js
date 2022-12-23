@@ -1,8 +1,22 @@
+import {
+    index_group_sync,
+    get,
+    set,
+    distinct,
+    sum,
+    nest_children,
+    intersect,
+    set_intersect,
+    union,
+    set_union,
+    except,
+    set_except,
+    get_from_dict
+  } from "../utils.js";
+
 export const page_world = async (common) => {
   const db = common.db;
-  const ddb = common.ddb;
   nunjucks.configure({ autoescape: true });
-  var index_group = common.index_group;
   const season = common.season;
 
   console.log({
@@ -121,24 +135,6 @@ export const page_world = async (common) => {
       game.home_team_game.team_season.national_rank +
       game.away_team_game.team_season.national_rank +
       min_national_rank;
-
-    // game.world_page_filter_attributes = "AllGame=1 ";
-    // if (
-    //   game.away_team_game.team_season.national_rank <= 25 ||
-    //   game.home_team_game.team_season.national_rank <= 25
-    // ) {
-    //   game.world_page_filter_attributes += "Top25Game=1 ";
-    // } else {
-    //   game.world_page_filter_attributes += "Top25Game=0 ";
-    // }
-
-    // if (game.is_primetime_game) {
-    //   game.world_page_filter_attributes += "primetimegame=1 ";
-    //   game.classes = "";
-    // } else {
-    //   game.world_page_filter_attributes += "primetimegame=0 ";
-    //   game.classes = "w3-hide";
-    // }
   });
 
   this_week_games = this_week_games.sort(function (g_a, g_b) {
@@ -195,7 +191,6 @@ export const page_world = async (common) => {
 
   $("#body").empty();
   $("#body").append(renderedHtml);
-  // $('#body .show.active').css('display', 'block');
 
   console.log({
     teams: teams,
@@ -542,7 +537,6 @@ export const page_world = async (common) => {
 export const page_world_standings = async (common) => {
   const db = common.db;
   nunjucks.configure({ autoescape: true });
-  var index_group = common.index_group;
   const season = common.season;
 
   const conference_id = common.params.conference_id;
