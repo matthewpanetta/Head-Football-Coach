@@ -198,8 +198,15 @@
      */
     LokiIndexedAdapter.prototype.deleteDatabase = function(dbname, callback)
     {
+
       var appName = this.app;
       var adapter = this;
+
+      console.log('Attempting to delete DB', {
+        dbname:dbname,
+        adapter:adapter,
+        appName:appName
+      })
 
       // lazy open/create db reference and pass callback ahead
       if (this.catalog === null || this.catalog.db === null) {
@@ -277,7 +284,7 @@
 
       // catalog already initialized
       // get all keys for current appName, and transpose results so just string array
-      this.catalog.getAppKeys(appName, function(results) {
+      let names = this.catalog.getAppKeys(appName, function(results) {
         var names = [];
 
         for(var idx = 0; idx < results.length; idx++) {
@@ -294,6 +301,19 @@
         }
       });
     };
+
+    LokiIndexedAdapter.prototype.getDatabaseListAsync = function() {
+      return new Promise((resolve, reject) => this.getDatabaseList(function(results) {
+        return resolve(results);
+      }))
+    }
+
+    LokiIndexedAdapter.prototype.deleteDatabaseAsync = function(dbname) {
+      return new Promise((resolve, reject) => this.deleteDatabase(dbname, function(result){
+        console.log('LokiIndexedAdapter.prototype.deleteDatabaseAsync result', result)
+        return resolve(result);
+      }))
+    }
 
     // alias
     LokiIndexedAdapter.prototype.getKeyList = LokiIndexedAdapter.prototype.getDatabaseList;

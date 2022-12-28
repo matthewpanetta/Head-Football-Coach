@@ -1,19 +1,26 @@
-import { page_world, page_world_standings, page_world_rankings, page_world_awards } from "./pages/world_pages.js";
+import {
+  page_world,
+  page_world_standings,
+  page_world_rankings,
+  page_world_awards,
+} from "./pages/world_pages.js";
 import { page_team } from "./pages/team_pages.js";
+import { page_index } from "./pages/index_pages";
 import {
   index_group_sync,
-    get,
-    set,
-    distinct,
-    sum,
-    nest_children,
-    intersect,
-    set_intersect,
-    union,
-    set_union,
-    except,
-    set_except,
-    get_from_dict, deep_copy
+  get,
+  set,
+  distinct,
+  sum,
+  nest_children,
+  intersect,
+  set_intersect,
+  union,
+  set_union,
+  except,
+  set_except,
+  get_from_dict,
+  deep_copy,
 } from "./utils.js";
 import {
   headline,
@@ -37,9 +44,7 @@ import {
   conference,
   conference_season,
 } from "./schema.js";
-
-
-
+import { driver_db, resolve_db, create_new_db } from "./database.js";
 
 const nav_bar_links = async (params) => {
   const path = params.path;
@@ -3676,8 +3681,6 @@ const get_conferences = async (conference_version) => {
   return conferences;
 };
 
-
-
 const populate_names = async (ddb) => {
   console.log("in populate_names");
   var url = "/static/data/import_json/names.json";
@@ -3826,25 +3829,6 @@ const populate_cities = async (ddb) => {
   ddb.cities.insert(city_dimension);
 };
 
-const populate_driver = async (ddb) => {
-  console.log("populate_driver", {
-    ddb: ddb,
-  });
-  stopwatch({}, "in populate driver");
-
-  const first_name_count = ddb.first_names.count();
-  const last_name_count = ddb.last_names.count();
-  const city_count = ddb.cities.count();
-
-  if (first_name_count == 0 || last_name_count == 0) {
-    await populate_names(ddb);
-  }
-
-  if (city_count == 0) {
-    await populate_cities(ddb);
-  }
-};
-
 const random_name = async (ddb, num_names) => {
   var name_list = [];
 
@@ -3881,167 +3865,6 @@ const random_city = async (ddb, num_cities) => {
     chosen_city_list.push(chosen_city);
   }
   return chosen_city_list;
-};
-
-let clone_method = "shallow-assign";
-window.driver_collection_list = [
-  {
-    collection_name: "world",
-    options: { proto: world, unique: ["world_id"], clone: true, cloneMethod: clone_method },
-  },
-  {
-    collection_name: "first_names",
-    options: { unique: ["name"], clone: true, cloneMethod: clone_method },
-  },
-  {
-    collection_name: "last_names",
-    options: { unique: ["name"], clone: true, cloneMethod: clone_method },
-  },
-  {
-    collection_name: "cities",
-    options: {
-      unique: ["city_state"],
-      indices: ["city", "state"],
-      clone: true,
-      cloneMethod: clone_method,
-    },
-  },
-];
-
-window.db_collection_list = [
-  {
-    collection_name: "league_season",
-    options: { proto: league_season, unique: ["season"], indices: [] },
-  },
-  { collection_name: "team", options: { proto: team, unique: ["team_id"], indices: [] } },
-  {
-    collection_name: "team_season",
-    options: { proto: team_season, unique: ["team_season_id"], indices: ["team_id", "season"] },
-  },
-  {
-    collection_name: "team_season_stats",
-    options: { proto: team_season_stats, unique: ["team_season_id"] },
-  },
-  { collection_name: "coach", options: { proto: coach, unique: ["coach_id"], indices: [] } },
-  {
-    collection_name: "coach_team_season",
-    options: {
-      proto: coach_team_season,
-      unique: ["coach_team_season_id"],
-      indices: ["coach_id", "team_season_id", "season"],
-    },
-  },
-  { collection_name: "player", options: { proto: player, unique: ["player_id"], indices: [] } },
-  {
-    collection_name: "player_team_season",
-    options: {
-      proto: player_team_season,
-      unique: ["player_team_season_id"],
-      indices: ["player_id", "team_season_id", "season"],
-    },
-  },
-  {
-    collection_name: "player_team_season_stats",
-    options: { proto: player_team_season_stats, unique: ["player_team_season_id"], indices: [] },
-  },
-  {
-    collection_name: "recruit_team_season",
-    options: {
-      proto: recruit_team_season,
-      unique: ["recruit_team_season_id"],
-      indices: ["player_team_season_id", "team_season_id"],
-    },
-  },
-  {
-    collection_name: "conference",
-    options: { proto: conference, unique: ["conference_id"], indices: [] },
-  },
-  {
-    collection_name: "conference_season",
-    options: {
-      proto: conference_season,
-      unique: ["conference_season_id"],
-      indices: ["conference_id", "season"],
-    },
-  },
-  {
-    collection_name: "phase",
-    options: { proto: phase, unique: ["phase_id"], indices: ["season"] },
-  },
-  { collection_name: "week", options: { proto: week, unique: ["week_id"], indices: ["season"] } },
-  {
-    collection_name: "team_game",
-    options: {
-      proto: team_game,
-      unique: ["team_game_id"],
-      indices: ["game_id", "team_season_id", "week_id"],
-    },
-  },
-  {
-    collection_name: "player_team_game",
-    options: {
-      proto: player_team_game,
-      unique: ["player_team_game_id"],
-      indices: ["team_game_id", "player_team_season_id"],
-    },
-  },
-  { collection_name: "game", options: { proto: game, unique: ["game_id"], indices: ["week_id"] } },
-  {
-    collection_name: "award",
-    options: {
-      proto: award,
-      unique: ["award_id"],
-      indices: ["player_team_season_id", "week_id", "season"],
-    },
-  },
-  {
-    collection_name: "headline",
-    options: { proto: headline, unique: ["headline_id"], indices: ["week_id"] },
-  },
-];
-
-const initialize_driver_db = async (ddb) => {
-  window.driver_collection_list.forEach(function (col_obj) {
-    ddb[col_obj.collection_name] =
-      ddb.getCollection(col_obj.collection_name) ||
-      ddb.addCollection(col_obj.collection_name, (options = col_obj.options));
-  });
-
-  await populate_driver(ddb);
-  await ddb.saveDatabaseAsync();
-};
-
-const driver_db = async () => {
-  console.log("Fetching window ddb", {
-    "window.ddb": window.ddb,
-  });
-
-  if (window.ddb) {
-    return window.ddb;
-  }
-
-  var dbname = "driver";
-  let cloneMethod = "shallow-assign";
-
-  let idbAdapter = new LokiIndexedAdapter("driver");
-  // var paAdapter = new loki.LokiPartitioningAdapter(idbAdapter, { paging: true});
-
-  let ddb = new loki(dbname, {
-    verbose: true,
-    env: "BROWSER",
-    autosave: true,
-    adapter: idbAdapter,
-    persistenceAdapter: idbAdapter,
-    persistenceMethod: "adapter",
-    clone: true,
-    cloneMethod: cloneMethod,
-  });
-
-  await ddb.loadDatabaseAsync({});
-  await initialize_driver_db(ddb);
-
-  window.ddb = ddb;
-  return ddb;
 };
 
 function hashCode(s) {
@@ -4112,149 +3935,6 @@ const rename_keys = (obj, key_map) => {
   }
 
   return obj;
-};
-
-const initialize_db = async (db) => {
-  let clone_method = "shallow-assign";
-
-  window.db_collection_list.forEach(function (col_obj) {
-    col_obj.options.clone = true;
-    col_obj.options.cloneMethod = clone_method;
-    db[col_obj.collection_name] =
-      db.getCollection(col_obj.collection_name) ||
-      db.addCollection(col_obj.collection_name, (options = col_obj.options));
-  });
-
-  await db.saveDatabaseAsync();
-};
-
-const get_db = async (world_obj) => {
-  var dbname = "";
-  if ("database_id" in world_obj) {
-    dbname = "headfootballcoach" + world_obj.database_id.toString();
-  } else if ("database_name" in world_obj) {
-    dbname = world_obj.database_name;
-  } else {
-    console.error(
-      "get_db not called correctly. Include either database_name or database_id",
-      world_obj
-    );
-    return null;
-  }
-
-  let cloneMethod = "shallow-assign";
-
-  let idbAdapter = new LokiIndexedAdapter("hfc");
-  let db = new loki(dbname, {
-    verbose: true,
-    env: "BROWSER",
-    autosave: true,
-    adapter: idbAdapter,
-    persistenceAdapter: idbAdapter,
-    persistenceMethod: "adapter",
-    clone: true,
-    cloneMethod: cloneMethod,
-  });
-
-  let schema_options = {};
-
-  window.db_collection_list.forEach(function (coll) {
-    schema_options[coll.collection_name] = {
-      proto: coll.options.proto.prototype,
-    };
-  });
-
-  await db.loadDatabaseAsync(schema_options);
-  await initialize_db(db);
-
-  return db;
-};
-
-const create_db = async (world_id) => {
-  return get_db({ database_id: world_id });
-};
-
-const create_new_db = async () => {
-  ddb = await driver_db();
-  let world_id = ddb.world.nextId("world_id");
-
-  const new_season_info = {
-    world_id: world_id,
-    database_name: "headfootballcoach" + world_id,
-    date_created: Date.now(),
-    date_last_updated: Date.now(),
-    user_team: {
-      team_name: null,
-      school_name: null,
-      team_logo_url: null,
-      team_record: null,
-    },
-    current_season: 2022,
-    current_week: "Week 1",
-  };
-  console.log({
-    new_season_info: new_season_info,
-  });
-  ddb.world.insert(new_season_info);
-
-  db = await create_db(world_id);
-  return { db: db, new_season_info: new_season_info };
-};
-
-const get_databases_references = async () => {
-  const ddb = await driver_db();
-  //const databases = await Dexie.getDatabaseNames();
-  console.log({
-    ddb: ddb,
-    // world: ddb.world
-  });
-  const databases = ddb.world.find();
-  var database_list = [];
-  var db_obj = {};
-  var world_id = 0;
-  $.each(databases, function (ind, obj) {
-    db_obj = obj;
-    db_obj["db"] = get_db({ database_name: obj });
-    database_list.push(db_obj);
-  });
-  return database_list;
-};
-
-const resolve_db = async (world_obj) => {
-  var dbname = "";
-  console.log("resolve_db", {
-    world_obj: world_obj,
-    ddb: ddb,
-    "window.ddb": window.ddb,
-  });
-  if ("database_id" in world_obj && world_obj["database_id"]) {
-    dbname = "headfootballcoach" + world_obj.database_id;
-  } else if ("database_name" in world_obj) {
-    dbname = world_obj.database_name;
-  } else {
-    console.error(
-      "resolve_db not called correctly. Include either database_name or database_id",
-      world_obj
-    );
-    return null;
-  }
-
-  return get_db({ database_name: dbname });
-
-  // TODO do DB checking for correct ids
-  const databases = await ddb.getDatabaseList();
-
-  console.log({
-    databases: databases,
-    dbname: dbname,
-  });
-
-  if (databases.includes(dbname)) {
-    return get_db({ database_name: dbname });
-  } else {
-    console.error("No database under this name", dbname);
-    return null;
-  }
 };
 
 const route_path = async (pathname, routes) => {
@@ -4328,7 +4008,7 @@ const resolve_route_parameters = async (pathname) => {
       path: "almanac/amazing_stats/base.html",
     },
 
-    { route: "/World/:world_id/Team/:team_id/", f: page_team},
+    { route: "/World/:world_id/Team/:team_id/", f: page_team },
     { route: "/World/:world_id/Team/:team_id/Season/:season/", path: "team/team/base.html" },
     { route: "/World/:world_id/Team/:team_id/Schedule", path: "team/schedule/base.html" },
     {
@@ -4441,8 +4121,8 @@ const common_functions = async (path) => {
   });
 
   var world_object = {};
+  const ddb = await driver_db();
   if (world_id != undefined) {
-    const ddb = await driver_db();
     world_object = ddb.world.findOne({ world_id: world_id });
   }
 
@@ -4452,18 +4132,17 @@ const common_functions = async (path) => {
     env: get_nunjucks_env(),
   });
 
-  var db = await resolve_db({ database_id: world_id });
-  window.db = db;
+  let db = null;
+  if (world_id){
+    db = await resolve_db({ database_id: world_id });
+    window.db = db;
+  }
 
   return {
     winning_route: winning_route,
-    create_new_db: create_new_db,
-    get_db: get_db,
     get_teams: get_teams,
     get_rivalries: get_rivalries,
     get_conferences: get_conferences,
-    get_databases_references: get_databases_references,
-    driver_db: driver_db,
     new_world_action: new_world_action,
     nunjucks_env: get_nunjucks_env(),
     create_phase: create_phase,
@@ -4493,15 +4172,7 @@ const common_functions = async (path) => {
     random_city: random_city,
     body_from_position: body_from_position,
     generate_face: generate_face,
-    add_listeners: add_listeners,
     recent_games: recent_games,
-    distinct: distinct,
-    union: union,
-    set_union: set_union,
-    except: except,
-    set_except: set_except,
-    intersect: intersect,
-    set_intersect: set_intersect,
     all_teams: all_teams,
     all_seasons: all_seasons,
     initialize_scoreboard: initialize_scoreboard,
@@ -4521,8 +4192,6 @@ const common_functions = async (path) => {
 
     stopwatch: stopwatch,
     ordinal: ordinal,
-    deep_copy: deep_copy,
-
     choose_all_americans: choose_all_americans,
     primary_color: "1763B2",
     secondary_color: "333333",
@@ -9457,7 +9126,7 @@ const choose_all_americans = async (this_week, common) => {
 
 const advance_to_next_week = async (this_week, common) => {
   const db = await common.db;
-  const ddb = await common.driver_db();
+  const ddb = await driver_db();
   const world = await ddb.world.get({ world_id: common.world_id });
   const all_weeks = await db.week.where("season").aboveOrEqual(common.season).toArray();
   const all_weeks_by_week_id = index_group_sync(all_weeks, "index", "week_id");
@@ -11169,8 +10838,6 @@ const create_coach_face = async (many_or_single, coach_ids, db) => {
   }
 };
 
-
-
 function download(filename, text, type = "text/json") {
   // Create an invisible A element
   const a = document.createElement("a");
@@ -11521,8 +11188,6 @@ const tier_placement = (tiers, population_size, distribution, rank_place) => {
   return placement;
 };
 
-
-
 const change_archetypes = () => {
   for (const position in a) {
     var archetypes = a[position];
@@ -11733,7 +11398,11 @@ const new_world_action = async (common, database_suffix) => {
   const conferences_by_conference_name = index_group_sync(conferences, "index", "conference_name");
   const conferences_by_school_name = {};
 
-  for ([school_name, conference_name] of Object.entries(conference_name_by_school_name)) {
+  console.log({
+    conference_name_by_school_name: conference_name_by_school_name,
+  });
+
+  for (let [school_name, conference_name] of Object.entries(conference_name_by_school_name)) {
     conferences_by_school_name[school_name] =
       conferences_by_conference_name[conference_name_by_school_name[school_name]];
     console.log({
@@ -12173,10 +11842,10 @@ $(document).ready(async function () {
 
   $(document).on("click", async function (event) {
     const target = $(event.target);
-    const parent_link = $(target).closest('[href]');
-    const href = parent_link.attr('href')
+    const parent_link = $(target).closest("[href]");
+    const href = parent_link.attr("href");
 
-    if (href){
+    if (href) {
       event.preventDefault();
       history.pushState({ path: href }, "", href);
       await page(href);
@@ -12188,7 +11857,6 @@ $(document).ready(async function () {
 
   window.onpopstate = async function () {
     await page(location.pathname);
-
   };
 
   // await action(common);
@@ -12215,256 +11883,4 @@ const page = async (path) => {
   await add_listeners(common);
   var endTime = performance.now();
   console.log(`Time taken to render ${path}: ${parseInt(endTime - startTime)} ms`);
-};
-
-const page_index_action = async (common) => {
-  const ddb = await common.driver_db();
-
-  $(".idb-export").on("click", async function () {
-    console.log("idb export click", $(this).attr("id"));
-    var db_name = $(this).attr("id");
-
-    const db = await new Dexie(db_name);
-
-    await db.version(20).stores({
-      league_season: "season",
-      team: "team_id",
-      team_season: "team_season_id, team_id, season",
-      team_season_stats: "team_season_id, team_id, season",
-      coach: "coach_id",
-      coach_team_season: "coach_team_season_id, coach_id, team_season_id, season",
-      player: "player_id",
-      player_team_season: "player_team_season_id, player_id, team_season_id, season",
-      player_team_season_stats: "player_team_season_id",
-      recruit_team_season: "recruit_team_season_id, player_team_season_id, team_season_id",
-      conference: "conference_id",
-      conference_season: "conference_season_id, conference_id, season, [conference_id+season]",
-      phase: "phase_id, season",
-      week: "week_id, season, [phase_id+season]",
-      team_game: "team_game_id, game_id, team_season_id, week_id",
-      player_team_game: "player_team_game_id, team_game_id, player_team_season_id",
-      game: "game_id, week_id",
-      award: "award_id, player_team_season_id, week_id, season",
-      headline: "headline_id, week_id",
-      world: "",
-    });
-
-    console.log("db", db);
-
-    db.open()
-      .then(function () {
-        const idbDatabase = db.backendDB(); // get native IDBDatabase object from Dexie wrapper
-
-        // export to JSON, clear database, and import from JSON
-        exportToJsonString(idbDatabase, function (err, jsonString) {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log("Exported as JSON: " + jsonString);
-            download(`${db_name}.json`, jsonString);
-          }
-        });
-      })
-      .catch(function (e) {
-        console.error("Could not connect. " + e);
-      });
-  });
-
-  $("#truncate-world-row").on("click", async function () {
-    const get_databases_references = common.get_databases_references;
-
-    var database_refs = await get_databases_references();
-    var db = undefined;
-    $.each(database_refs, async function (ind, db_obj) {
-      console.log("db", db, db_obj);
-      await Dexie.delete(db_obj.database_name);
-    });
-
-    const driver_db = await common.driver_db();
-
-    const driver_worlds = await driver_db.world.toArray();
-    const world_ids = driver_worlds.map((world) => world.world_id);
-    await driver_db.world.bulkDelete(world_ids);
-
-    location.reload();
-    return false;
-  });
-
-  $("#import-world-row").on("click", async function () {
-    $("#file-input-button").click();
-  });
-
-  $("#file-input-button").on("change", async function (event) {
-    console.log({
-      event_target: event.target,
-      event: event,
-      files: event.target.files,
-    });
-
-    const curFiles = event.target.files;
-    console.log({ curFiles: curFiles, t: $(event.target).first() });
-    for (const file of curFiles) {
-      let url = URL.createObjectURL(file);
-
-      var json_response = await fetch(url);
-      let json_text = await json_response.text();
-      let world_obj = JSON.parse(json_text);
-
-      const new_db = await common.create_new_db();
-      const db = await new_db["db"];
-      const ddb = await common.driver_db();
-
-      for (let [table, rows] of Object.entries(world_obj)) {
-        rows.forEach((r) => (r.world_id = new_db.new_season_info.world_id));
-        await db[table].bulkPut(rows);
-      }
-
-      let world = await ddb.world
-        .filter((w) => w.database_name == new_db.new_season_info.database_name)
-        .first();
-
-      const user_team = await db.team.filter((t) => t.is_user_team).first();
-
-      //TODO - test this with world with multiple years
-      //  I *THINK* this will sort by pk, being team_season_id, which is what I want. Need to confirm that.
-      const user_team_season = await db.team_season
-        .where({
-          team_id: user_team.team_id,
-        })
-        .last();
-
-      world.user_team.team_name = user_team.team_name;
-      world.user_team.school_name = user_team.school_name;
-      world.user_team.team_logo_url = user_team.team_logo;
-      world.user_team.team_record = user_team_season.record_display;
-      world.user_team.team_id = user_team.team_id;
-
-      await ddb.world.put(world);
-      location.reload();
-    }
-  });
-
-  //Create new db if clicked 'continue'
-  $(".create-world-play-button").on("click", async function () {
-    let database_suffix = $(this).attr("database-suffix");
-    console.log({ this: $(this), database_suffix: database_suffix });
-    await common.new_world_action(common, database_suffix);
-  });
-};
-
-const page_index = async (common) => {
-  nunjucks.configure({ autoescape: true });
-  const nunjucks_env = await get_nunjucks_env();
-
-  let ddb = await common.driver_db();
-
-  const db_list = await common.get_databases_references();
-  let world_list = [];
-  console.log({ db_list: db_list, ddb: ddb, common: common });
-  for (let db of db_list) {
-    if (db.user_team.team_name == null) {
-      // await Dexie.delete(db.database_name);
-      // await ddb.world.where({ world_id: db.world_id }).delete();
-      world_list.push(db);
-    } else {
-      world_list.push(db);
-    }
-  }
-
-  let world_options = [
-    {
-      display: "Full Modern World",
-      description: "All conferences and teams as of 2022",
-      database_suffix: "",
-    },
-    {
-      display: "Small Modern World",
-      description:
-        "Conferences and teams as of 2022, including SEC, Pac-12, AAC, MAC, and Independents",
-      database_suffix: "_small",
-    },
-    {
-      display: "Super Small Modern World",
-      description: "Conferences and teams as of 2022, including SEC, B10",
-      database_suffix: "_super_small",
-    },
-    {
-      display: "Full World - 2024",
-      description:
-        "All conferences and teams as of 2024, including notable upcoming conference changes",
-      database_suffix: "_2024",
-    },
-    {
-      display: "Full World - 2010",
-      description: "All conferences and teams, as they existed in 2010",
-      database_suffix: "_2010",
-    },
-  ];
-
-  let progress_table_rows = [
-    {
-      stage: "Creating new world",
-      stage_row_id: "create-world-table-new-world",
-    },
-    { stage: "Create teams", stage_row_id: "create-world-table-create-teams" },
-    {
-      stage: "Creating coaches",
-      stage_row_id: "create-world-table-create-coaches",
-    },
-    {
-      stage: "Add coaches to teams",
-      stage_row_id: "create-world-table-assign-coaches",
-    },
-    {
-      stage: "Creating players",
-      stage_row_id: "create-world-table-create-players",
-    },
-    {
-      stage: "Generate player ratings",
-      stage_row_id: "create-world-table-player-ratings",
-    },
-    {
-      stage: "Add players to teams",
-      stage_row_id: "create-world-table-assign-players",
-    },
-    {
-      stage: "Populate depth charts",
-      stage_row_id: "create-world-table-depth-charts",
-    },
-    {
-      stage: "Evaluate team talent",
-      stage_row_id: "create-world-table-team-talent",
-    },
-    {
-      stage: "Creating recruits",
-      stage_row_id: "create-world-table-recruiting-class",
-    },
-    { stage: "Creating rankings", stage_row_id: "create-world-table-rankings" },
-    {
-      stage: "Creating schedule",
-      stage_row_id: "create-world-table-create-schedule",
-    },
-  ];
-
-  var render_content = {
-    world_list: world_list,
-    world_options: world_options,
-    progress_table_rows: progress_table_rows,
-    page: {
-      PrimaryColor: "1763B2",
-      SecondaryColor: "333333",
-    },
-  };
-
-  console.log("render_content", render_content);
-
-  var url = "/static/html_templates/index/index/template.njk";
-  var html = await fetch(url);
-  html = await html.text();
-
-  const renderedHtml = nunjucks_env.renderString(html, render_content);
-
-  $("#body").html(renderedHtml);
-
-  await page_index_action(common);
 };

@@ -2729,6 +2729,10 @@
       return new Promise((resolve, reject) => this.saveDatabase(err => err ? reject(err) : resolve(null)))
     }
     
+    Loki.prototype.deleteDatabaseAsync = function() {
+      return new Promise((resolve, reject) => this.deleteDatabase(err => err ? reject(err) : resolve(null)))
+    }
+    
     Loki.prototype.closeAsync = function() {
       return new Promise((resolve, reject) => this.close(err => err ? reject(err) : resolve(null)))
     }
