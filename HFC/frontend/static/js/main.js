@@ -1,14 +1,15 @@
 'use strict';
 
-const index_group_sync$1 = (query_list, query_type, key) => {
+const index_group_sync$1 = (data, group_type, key) => {
   var dict = {};
-  if (query_type == "many_to_one" || query_type == "group") {
-    query_list.forEach(function (elem) {
+  data = data || [];
+  if (group_type == "group") {
+    data.forEach(function (elem) {
       dict[get(elem, key)] = dict[get(elem, key)] || [];
       dict[get(elem, key)].push(elem);
     });
-  } else if (query_type == "one_to_one" || query_type == "index") {
-    query_list.forEach((elem) => (dict[get(elem, key)] = elem));
+  } else if (group_type == "index") {
+    data.forEach((elem) => (dict[get(elem, key)] = elem));
   }
 
   return dict;
@@ -107,6 +108,456 @@ const deep_copy$1 = (obj) => {
   const set_except = (a, b) => {
     return new Set([...a].filter((x) => !b.has(x)));
   };
+
+const position_order_map = {
+  QB: 1,
+  RB: 2,
+  FB: 3,
+  WR: 4,
+  TE: 5,
+  OT: 6,
+  IOL: 7,
+
+  EDGE: 8,
+  DL: 9,
+  LB: 10,
+  CB: 11,
+  S: 12,
+  
+  K: 13,
+  P: 14,
+};
+
+const position_group_map = {
+  QB: "Offense",
+  RB: "Offense",
+  FB: "Offense",
+  WR: "Offense",
+  TE: "Offense",
+  OT: "Offense",
+  IOL: "Offense",
+
+  EDGE: "Defense",
+  DL: "Defense",
+  LB: "Defense",
+  CB: "Defense",
+  S: "Defense",
+
+  K: "Offense",
+  P: "Defense",
+};
+
+const draw_player_faces = async (common) => {
+  const db = common.db;
+  common.season;
+
+  const player_ids = [];
+  const face_div_by_player_id = {};
+
+  $(".PlayerFace-Headshot").each(function (ind, elem) {
+    if ($(elem).find("svg").length > 0) {
+      return true;
+    }
+    player_ids.push(parseInt($(elem).attr("player_id")));
+    if (!(parseInt($(elem).attr("player_id")) in face_div_by_player_id)) {
+      face_div_by_player_id[parseInt($(elem).attr("player_id"))] = [];
+    }
+
+    face_div_by_player_id[parseInt($(elem).attr("player_id"))].push(elem);
+  });
+
+  const players = db.player.find({ player_id: { $in: player_ids } });
+  var player_team_seasons = db.player_team_season.find({ player_id: { $in: player_ids } });
+  const player_team_seasons_by_player_id = index_group_sync$1(
+    player_team_seasons,
+    "index",
+    "player_id"
+  );
+
+  const team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
+  const team_seasons = db.team_season.find({ team_season_id: { $in: team_season_ids } });
+  const team_seasons_by_team_season_id = index_group_sync$1(team_seasons, "index", "team_season_id");
+
+  const team_ids = team_seasons.map((ts) => ts.team_id);
+  const teams = db.team.find({ team_id: { $in: team_ids } });
+  const teams_by_team_id = index_group_sync$1(teams, "index", "team_id");
+
+  for (var player of players) {
+    var elems = face_div_by_player_id[player.player_id];
+    player.player_team_season = player_team_seasons_by_player_id[player.player_id];
+    player.team_season = team_seasons_by_team_season_id[player.player_team_season.team_season_id];
+    player.team = teams_by_team_id[player.team_season.team_id];
+
+    if (player.player_face == undefined) {
+      player.player_face = await common.create_player_face("single", player.player_id, db);
+    }
+
+    for (var elem of elems) {
+      display_player_face(
+        player.player_face,
+        {
+          jersey: player.team.jersey,
+          teamColors: player.team.jersey.teamColors,
+        },
+        $(elem).attr("id")
+      );
+    }
+  }
+};
+
+const draw_coach_faces = async (common) => {
+  const db = common.db;
+  const season = common.season;
+
+  const coach_ids = [];
+  const face_div_by_coach_id = {};
+
+  $(".PlayerFace-Headshot").each(function (ind, elem) {
+    if ($(elem).find("svg").length > 0) {
+      return true;
+    }
+    coach_ids.push(parseInt($(elem).attr("coach_id")));
+    if (!(parseInt($(elem).attr("coach_id")) in face_div_by_coach_id)) {
+      face_div_by_coach_id[parseInt($(elem).attr("coach_id"))] = [];
+    }
+
+    face_div_by_coach_id[parseInt($(elem).attr("coach_id"))].push(elem);
+  });
+
+  const coaches = await db.coach.bulkGet(coach_ids);
+  var coach_team_seasons = await db.coach_team_season.where("coach_id").anyOf(coach_ids).toArray();
+  coach_team_seasons = coach_team_seasons.filter((pts) => pts.season == season);
+  const coach_team_seasons_by_coach_id = index_group_sync$1(coach_team_seasons, "index", "coach_id");
+
+  const team_season_ids = coach_team_seasons.map((pts) => pts.team_season_id);
+  const team_seasons = await db.team_season.bulkGet(team_season_ids);
+  const team_seasons_by_team_season_id = index_group_sync$1(team_seasons, "index", "team_season_id");
+
+  const team_ids = team_seasons.map((ts) => ts.team_id);
+  const teams = await db.team.bulkGet(team_ids);
+  const teams_by_team_id = index_group_sync$1(teams, "index", "team_id");
+
+  for (var coach of coaches) {
+    var elems = face_div_by_coach_id[coach.coach_id];
+    coach.coach_team_season = coach_team_seasons_by_coach_id[coach.coach_id];
+    coach.team_season = team_seasons_by_team_season_id[coach.coach_team_season.team_season_id];
+    coach.team = teams_by_team_id[coach.team_season.team_id];
+
+    if (coach.coach_face == undefined) {
+      coach.coach_face = await common.create_coach_face("single", coach.coach_id, db);
+    }
+
+    for (var elem of elems) {
+      display_player_face(
+        coach.coach_face,
+        {
+          jersey: { id: "suit" },
+          teamColors: coach.team.jersey.teamColors,
+        },
+        $(elem).attr("id")
+      );
+    }
+  }
+};
+
+const display_player_face = async (face, overrides, dom_id) => {
+  if ("jersey" in overrides && overrides.jersey.id == "suit") {
+    overrides["accessories"] = { id: "none" };
+    face.glasses.id = "none";
+  }
+
+  face = override(face, overrides);
+
+  const container_element = $("#" + dom_id);
+
+  $(container_element).html("");
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("version", "1.2");
+  svg.setAttribute("baseProfile", "tiny");
+  svg.setAttribute("width", "100%");
+  svg.setAttribute("height", "100%");
+  svg.setAttribute("viewBox", "0 0 400 600");
+  svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
+
+  // Needs to be in the DOM here so getBBox will work
+  $(container_element).append(svg);
+
+  const featureInfos = [
+    {
+      name: "hairBg",
+      positions: [null],
+      scaleFatness: true,
+    },
+    {
+      name: "body",
+      positions: [null],
+    },
+    {
+      name: "jersey",
+      positions: [null],
+    },
+    {
+      name: "ear",
+      positions: [
+        [55, 325],
+        [345, 325],
+      ],
+      scaleFatness: true,
+    },
+    {
+      name: "head",
+      positions: [null], // Meaning it just gets placed into the SVG with no translation
+      scaleFatness: true,
+    },
+    {
+      name: "eyeLine",
+      positions: [null],
+    },
+    {
+      name: "smileLine",
+      positions: [
+        [150, 435],
+        [250, 435],
+      ],
+    },
+    {
+      name: "miscLine",
+      positions: [null],
+    },
+    {
+      name: "facialHair",
+      positions: [null],
+      scaleFatness: true,
+    },
+    {
+      name: "eye",
+      positions: [
+        [140, 310],
+        [260, 310],
+      ],
+    },
+    {
+      name: "eyebrow",
+      positions: [
+        [140, 270],
+        [260, 270],
+      ],
+    },
+    {
+      name: "mouth",
+      positions: [[200, 440]],
+    },
+    {
+      name: "nose",
+      positions: [[200, 370]],
+    },
+    {
+      name: "hair",
+      positions: [null],
+      scaleFatness: true,
+    },
+    {
+      name: "glasses",
+      positions: [null],
+      scaleFatness: true,
+    },
+    {
+      name: "accessories",
+      positions: [null],
+      scaleFatness: true,
+    },
+  ];
+
+  if (!window.svgs) {
+    var url = `/static/data/import_json/svgs.json`;
+    var html = await fetch(url);
+    window.svgs = await html.json();
+  }
+
+  featureInfos.forEach(function (info) {
+    drawFeature(svg, face, info);
+  });
+};
+
+const override = (face, overrides) => {
+  $.each(overrides, function (key, val) {
+    face[key] = val;
+  });
+
+  return face;
+};
+
+const addWrapper = (svgString) => {
+  return `<g>${svgString}</g>`;
+};
+
+const addTransform = (element, newTransform) => {
+  const oldTransform = $(element).attr("transform");
+  element.setAttribute("transform", `${oldTransform ? `${oldTransform} ` : ""}${newTransform}`);
+};
+
+const rotateCentered = (element, angle) => {
+  const bbox = element.getBBox();
+  const cx = bbox.x + bbox.width / 2;
+  const cy = bbox.y + bbox.height / 2;
+
+  addTransform(element, `rotate(${angle} ${cx} ${cy})`);
+};
+
+const scaleStrokeWidthAndChildren = (element, factor) => {
+  const strokeWidth = $(element).attr("stroke-width");
+  if (strokeWidth) {
+    element.setAttribute("stroke-width", String(parseFloat(strokeWidth) / factor));
+  }
+  const children = element.childNodes;
+  for (let i = 0; i < children.length; i++) {
+    scaleStrokeWidthAndChildren(children[i], factor);
+  }
+};
+
+// Scale relative to the center of bounding box of element e, like in Raphael.
+// Set x and y to 1 and this does nothing. Higher = bigger, lower = smaller.
+const scaleCentered = (element, x, y) => {
+  const bbox = element.getBBox();
+  const cx = bbox.x + bbox.width / 2;
+  const cy = bbox.y + bbox.height / 2;
+  const tx = (cx * (1 - x)) / x;
+  const ty = (cy * (1 - y)) / y;
+
+  addTransform(element, `scale(${x} ${y}) translate(${tx} ${ty})`);
+
+  // Keep apparent stroke width constant, similar to how Raphael does it (I think)
+  if (Math.abs(x) !== 1 || Math.abs(y) !== 1 || Math.abs(x) + Math.abs(y) !== 2) {
+    const factor = (Math.abs(x) + Math.abs(y)) / 2;
+    scaleStrokeWidthAndChildren(element, factor);
+  }
+};
+
+// Translate element such that its center is at (x, y). Specifying xAlign and yAlign can instead make (x, y) the left/right and top/bottom.
+const translate = (element, x, y, xAlign = "center", yAlign = "center") => {
+  const bbox = element.getBBox();
+  var cx;
+  var cy;
+  if (xAlign === "left") {
+    cx = bbox.x;
+  } else if (xAlign === "right") {
+    cx = bbox.x + bbox.width;
+  } else {
+    cx = bbox.x + bbox.width / 2;
+  }
+  if (yAlign === "top") {
+    cy = bbox.y;
+  } else if (yAlign === "bottom") {
+    cy = bbox.y + bbox.height;
+  } else {
+    cy = bbox.y + bbox.height / 2;
+  }
+
+  addTransform(element, `translate(${x - cx} ${y - cy})`);
+};
+
+// Defines the range of fat/skinny, relative to the original width of the default head.
+const fatScale = (fatness) => 0.8 + 0.2 * fatness;
+
+const drawFeature = async (svg, face, info) => {
+  const feature = face[info.name];
+  if (!feature) {
+    return;
+  }
+
+  var featureSVGString = window.svgs[info.name][feature.id];
+
+  if (!featureSVGString) {
+    return;
+  }
+
+  // @ts-ignore
+  if (feature.shave) {
+    // @ts-ignore
+    featureSVGString = featureSVGString.replace("$[faceShave]", feature.shave);
+  }
+
+  // @ts-ignore
+  if (feature.shave) {
+    // @ts-ignore
+    featureSVGString = featureSVGString.replace("$[headShave]", feature.shave);
+  }
+
+  const player_id = $(svg).parent().attr("player_id") || $(svg).parent().attr("coach_id");
+
+  featureSVGString = featureSVGString.replaceAll("$[player_id]", `${player_id}-${info.name}`);
+  featureSVGString = featureSVGString.replace("$[skinColor]", face.body.color);
+  featureSVGString = featureSVGString.replace(/\$\[hairColor\]/g, face.hair.color);
+  featureSVGString = featureSVGString.replace(/\$\[primary\]/g, face.teamColors[0]);
+  featureSVGString = featureSVGString.replace(/\$\[secondary\]/g, face.teamColors[1]);
+  featureSVGString = featureSVGString.replace(/\$\[accent\]/g, face.teamColors[2]);
+  featureSVGString = featureSVGString.replace(
+    /\$\[jersey-lettering-text\]/g,
+    face.jersey.lettering || ""
+  );
+  featureSVGString = featureSVGString.replace(
+    /\$\[jersey-lettering-color\]/g,
+    face.jersey.lettering_color
+  );
+  if (face.jersey.lettering) {
+    let font_size = Math.floor(80 - 5 * face.jersey.lettering.length);
+    featureSVGString = featureSVGString.replace(/\$\[font-size\]/g, font_size);
+
+    let font_y_pos = Math.floor(645 - 5 * face.jersey.lettering.length);
+    featureSVGString = featureSVGString.replace(/\$\[font-y-pos\]/g, font_y_pos);
+  } else {
+    featureSVGString = featureSVGString.replace(/\$\[font-y-pos\]/g, 0);
+  }
+
+  for (let i = 0; i < info.positions.length; i++) {
+    svg.insertAdjacentHTML("beforeend", addWrapper(featureSVGString));
+
+    const position = info.positions[i];
+
+    if (position !== null) {
+      // Special case, for the pinocchio nose it should not be centered but should stick out to the left or right
+      var xAlign;
+      if (feature.id === "nose4" || feature.id === "pinocchio") {
+        // @ts-ignore
+        xAlign = feature.flip ? "right" : "left";
+      } else {
+        xAlign = "center";
+      }
+
+      translate(svg.lastChild, position[0], position[1], xAlign);
+    }
+
+    if (feature.hasOwnProperty("angle")) {
+      // @ts-ignore
+      rotateCentered(svg.lastChild, (i === 0 ? 1 : -1) * feature.angle);
+    }
+
+    // Flip if feature.flip is specified or if this is the second position (for eyes and eyebrows). Scale if feature.size is specified.
+    // @ts-ignore
+    const scale = feature.hasOwnProperty("size") ? feature.size : 1;
+    // @ts-ignore
+    if (feature.flip || i === 1) {
+      // @ts-ignore
+      scaleCentered(svg.lastChild, -scale, scale);
+    } else if (scale !== 1) {
+      // @ts-ignore
+      scaleCentered(svg.lastChild, scale, scale);
+    }
+
+    if (info.scaleFatness && info.positions[0] !== null) {
+      // Scale individual feature relative to the edge of the head. If fatness is 1, then there are 47 pixels on each side. If fatness is 0, then there are 78 pixels on each side.
+      const distance = (78 - 47) * (1 - face.fatness);
+      // @ts-ignore
+      translate(svg.lastChild, distance, 0, "left", "top");
+    }
+  }
+
+  if (info.scaleFatness && info.positions.length === 1 && info.positions[0] === null) {
+    // @ts-ignore
+    scaleCentered(svg.lastChild, fatScale(face.fatness), 1);
+  }
+};
 
 const page_world = async (common) => {
   const db = common.db;
@@ -831,61 +1282,836 @@ const page_world_standings = async (common) => {
   $(`#nav-${conference_seasons[0].conference_id}-tab`).click();
 };
 
-const draw_coach_faces = async (common) => {
-    const db = common.db;
-    const season = common.season;
-    const index_group_sync = common.index_group_sync;
-  
-    const coach_ids = [];
-    const face_div_by_coach_id = {};
-  
-    $(".PlayerFace-Headshot").each(function (ind, elem) {
-      if ($(elem).find("svg").length > 0) {
-        return true;
-      }
-      coach_ids.push(parseInt($(elem).attr("coach_id")));
-      if (!(parseInt($(elem).attr("coach_id")) in face_div_by_coach_id)) {
-        face_div_by_coach_id[parseInt($(elem).attr("coach_id"))] = [];
-      }
-  
-      face_div_by_coach_id[parseInt($(elem).attr("coach_id"))].push(elem);
-    });
-  
-    const coaches = await db.coach.bulkGet(coach_ids);
-    var coach_team_seasons = await db.coach_team_season.where("coach_id").anyOf(coach_ids).toArray();
-    coach_team_seasons = coach_team_seasons.filter((pts) => pts.season == season);
-    const coach_team_seasons_by_coach_id = index_group_sync(coach_team_seasons, "index", "coach_id");
-  
-    const team_season_ids = coach_team_seasons.map((pts) => pts.team_season_id);
-    const team_seasons = await db.team_season.bulkGet(team_season_ids);
-    const team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
-  
-    const team_ids = team_seasons.map((ts) => ts.team_id);
-    const teams = await db.team.bulkGet(team_ids);
-    const teams_by_team_id = index_group_sync(teams, "index", "team_id");
-  
-    for (var coach of coaches) {
-      var elems = face_div_by_coach_id[coach.coach_id];
-      coach.coach_team_season = coach_team_seasons_by_coach_id[coach.coach_id];
-      coach.team_season = team_seasons_by_team_season_id[coach.coach_team_season.team_season_id];
-      coach.team = teams_by_team_id[coach.team_season.team_id];
-  
-      if (coach.coach_face == undefined) {
-        coach.coach_face = await common.create_coach_face("single", coach.coach_id, db);
-      }
-  
-      for (var elem of elems) {
-        common.display_player_face(
-          coach.coach_face,
-          {
-            jersey: { id: "suit" },
-            teamColors: coach.team.jersey.teamColors,
-          },
-          $(elem).attr("id")
+const page_world_rankings = async (common) => {
+  const db = common.db;
+  nunjucks.configure({ autoescape: true });
+  const season = common.season;
+
+  const current_league_season = db.league_season.findOne({ season: season });
+
+  const NavBarLinks = await common.nav_bar_links({
+    path: "Rankings",
+    group_name: "World",
+    db: db,
+  });
+
+  var teams = db.team.find({ team_id: { $gt: 0 } });
+  var teams_by_team_id = index_group_sync$1(teams, "index", "team_id");
+
+  var conferences = db.conference.find();
+  var conferences_by_conference_id = index_group_sync$1(conferences, "index", "conference_id");
+
+  var conference_seasons = db.conference_season.find({ season: season });
+  conference_seasons = nest_children$1(
+    conference_seasons,
+    conferences_by_conference_id,
+    "conference_id",
+    "conference"
+  );
+
+  var conference_seasons_by_conference_season_id = index_group_sync$1(
+    conference_seasons,
+    "index",
+    "conference_season_id"
+  );
+
+  var team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
+  team_seasons = nest_children$1(
+    team_seasons,
+    conference_seasons_by_conference_season_id,
+    "conference_season_id",
+    "conference_season"
+  );
+  team_seasons = nest_children$1(team_seasons, teams_by_team_id, "team_id", "team");
+  var team_seasons_by_team_season_id = index_group_sync$1(team_seasons, "index", "team_season_id");
+
+  const games = db.game
+    .find()
+    .filter((g) => g.season == season && g.bowl != null && g.bowl.is_playoff == true);
+  const games_by_game_id = index_group_sync$1(games, "index", "game_id");
+  const game_ids = games.map((g) => g.game_id);
+
+  const team_games = db.team_game.find({ game_id: { $in: game_ids } });
+  const team_games_by_team_game_id = index_group_sync$1(team_games, "index", "team_game_id");
+
+  console.log({
+    team_seasons: team_seasons,
+    team_seasons_by_team_season_id: team_seasons_by_team_season_id,
+    teams_by_team_id: teams_by_team_id,
+  });
+
+  let dropped_teams = team_seasons.filter(
+    (ts) => ts.rankings.national_rank[0] > 25 && ts.rankings.national_rank[1] <= 25
+  );
+  let bubble_teams = team_seasons.filter(
+    (ts) => ts.rankings.national_rank[0] > 25 && ts.rankings.national_rank[0] < 29
+  );
+
+  team_seasons = team_seasons.filter((ts) => ts.rankings.national_rank[0] <= 25);
+
+  team_seasons.sort(function (ts_a, ts_b) {
+    if (ts_a.rankings.national_rank[0] < ts_b.rankings.national_rank[0]) return -1;
+    if (ts_a.rankings.national_rank[0] > ts_b.rankings.national_rank[0]) return 1;
+    return 0;
+  });
+
+  const recent_games = await common.recent_games(common);
+
+  const playoffs = current_league_season.playoffs;
+
+  if (playoffs.playoffs_started) {
+    for (const playoff_round of playoffs.playoff_rounds) {
+      for (const playoff_game of playoff_round.playoff_games) {
+        console.log({ playoff_game: playoff_game });
+        playoff_game.game = games_by_game_id[playoff_game.game_id];
+        playoff_game.team_objs = nest_children$1(
+          playoff_game.team_objs,
+          team_seasons_by_team_season_id,
+          "team_season_id",
+          "team_season"
+        );
+        playoff_game.team_objs = nest_children$1(
+          playoff_game.team_objs,
+          team_games_by_team_game_id,
+          "team_game_id",
+          "team_game"
         );
       }
     }
+  } else {
+    var projected_playoff_teams = team_seasons.slice(0, playoffs.number_playoff_teams);
+    console.log({
+      playoffs: playoffs,
+      projected_playoff_teams: projected_playoff_teams,
+      number_playoff_teams: playoffs.number_playoff_teams,
+    });
+    for (var playoff_round of playoffs.playoff_rounds) {
+      console.log({ playoff_round: playoff_round });
+      playoff_round.round_of = 2 * playoff_round.playoff_games.length;
+      for (var playoff_game of playoff_round.playoff_games) {
+        for (var team_obj of playoff_game.team_objs) {
+          team_obj.team_season = projected_playoff_teams[team_obj.seed - 1];
+          console.log({
+            team_obj: team_obj,
+            playoff_game: playoff_game,
+            playoff_round: playoff_round,
+          });
+        }
+      }
+    }
+  }
+
+  var render_content = {
+    page: {
+      PrimaryColor: common.primary_color,
+      SecondaryColor: common.secondary_color,
+      NavBarLinks: NavBarLinks,
+      page_title: "Top 25",
+    },
+    team_list: [],
+    world_id: common.params["world_id"],
+    team_seasons: team_seasons,
+    recent_games: recent_games,
+    dropped_teams: dropped_teams,
+    bubble_teams: bubble_teams,
+    playoffs: playoffs,
   };
+  common.render_content = render_content;
+  console.log("render_content", render_content);
+
+  var url = "/static/html_templates/world/rankings/template.njk";
+  var html = await fetch(url);
+  html = await html.text();
+
+  const renderedHtml = common.nunjucks_env.renderString(html, render_content);
+
+  $("#body").html(renderedHtml);
+
+  await PopulateTop25(common);
+};
+
+const PopulateTop25 = async (common) => {
+  const db = common.db;
+  common.index_group;
+  const season = common.season;
+
+  common.ordinal;
+
+  var this_week = db.week.find({ season: season });
+  console.log("this_week", this_week);
+  this_week = this_week.filter((week) => week.is_current)[0];
+  const this_week_id = this_week.week_id;
+  const last_week_id = this_week_id - 1;
+
+  var team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
+  team_seasons = team_seasons.sort(function (a, b) {
+    if (a.rankings.national_rank[0] < b.rankings.national_rank[0]) return -1;
+    if (a.rankings.national_rank[0] > b.rankings.national_rank[0]) return 1;
+    return 0;
+  });
+  const team_ids = team_seasons.map((ts) => ts.team_id);
+  db.team.find({ team_id: { $in: team_ids } });
+
+  let this_week_team_games = db.team_game.find({ week_id: this_week_id });
+  let last_week_team_games = db.team_game.find({ week_id: last_week_id });
+
+  const total_team_games = Object.values(this_week_team_games).concat(
+    Object.values(last_week_team_games)
+  );
+  const total_team_game_ids = total_team_games.map((team_game) => team_game.game_id);
+
+  let games = db.game.find({ game_id: { $in: total_team_game_ids } });
+  const games_by_game_id = index_group_sync$1(games, "index", "game_id");
+
+  let all_teams = db.team.find({ team_id: { $gt: 0 } });
+  const teams_by_team_id = index_group_sync$1(all_teams, "index", "team_id");
+  team_seasons = nest_children$1(team_seasons, teams_by_team_id, "team_id", "team");
+
+  const team_seasons_by_team_season_id = index_group_sync$1(team_seasons, "index", "team_season_id");
+
+  last_week_team_games = nest_children$1(last_week_team_games, games_by_game_id, "game_id", "game");
+  this_week_team_games = nest_children$1(this_week_team_games, games_by_game_id, "game_id", "game");
+
+  last_week_team_games = nest_children$1(
+    last_week_team_games,
+    team_seasons_by_team_season_id,
+    "team_season_id",
+    "team_season"
+  );
+  this_week_team_games = nest_children$1(
+    this_week_team_games,
+    team_seasons_by_team_season_id,
+    "team_season_id",
+    "team_season"
+  );
+
+  const last_week_team_games_by_team_season_id = index_group_sync$1(
+    last_week_team_games,
+    "index",
+    "team_season_id"
+  );
+  const this_week_team_games_by_team_season_id = index_group_sync$1(
+    this_week_team_games,
+    "index",
+    "team_season_id"
+  );
+
+  let all_team_games = db.team_game.find({ week_id: { $in: [this_week_id, last_week_id] } });
+  index_group_sync$1(all_team_games, "index", "team_game_id");
+
+  let conference_seasons = db.conference_season.find({ season: season });
+  let conferences = db.conference.find();
+
+  const conferences_by_conference_id = index_group_sync$1(conferences, "index", "conference_id");
+
+  conference_seasons = nest_children$1(
+    conference_seasons,
+    conferences_by_conference_id,
+    "conference_id",
+    "conference"
+  );
+  const conference_seasons_by_conference_season_id = index_group_sync$1(
+    conference_seasons,
+    "index",
+    "conference_season_id"
+  );
+
+  team_seasons = nest_children$1(
+    team_seasons,
+    conference_seasons_by_conference_season_id,
+    "conference_season_id",
+    "conference_season"
+  );
+  team_seasons = nest_children$1(
+    team_seasons,
+    last_week_team_games_by_team_season_id,
+    "team_season_id",
+    "last_week_team_game"
+  );
+  team_seasons = nest_children$1(
+    team_seasons,
+    this_week_team_games_by_team_season_id,
+    "team_season_id",
+    "this_week_team_game"
+  );
+
+  let top_25_team_seasons = team_seasons.slice(0, 25);
+
+  console.log("In PopulateTopTeams!", top_25_team_seasons);
+
+  let table_template_url = "/static/html_templates/world/rankings/ranking_table_template.njk";
+  let table_html = await fetch(table_template_url);
+  let table_html_text = await table_html.text();
+
+  var renderedHtml = await common.nunjucks_env.renderString(table_html_text, {
+    top_25_team_seasons: top_25_team_seasons,
+  });
+  console.log({ renderedHtml: renderedHtml, top_25_team_seasons: top_25_team_seasons });
+  $("#Top25Table-body").empty();
+  $("#Top25Table-body").append(renderedHtml);
+
+  init_basic_table_sorting(common, "#Top25Table", null);
+};
+
+const page_world_awards = async (common) => {
+  const db = common.db;
+  nunjucks.configure({ autoescape: true });
+
+  common.stopwatch(common, "awards - start of gethtml");
+
+  const NavBarLinks = await common.nav_bar_links({
+    path: "Awards & Races",
+    group_name: "World",
+    db: db,
+  });
+  var player_team_season_ids = [];
+  common.stopwatch(common, "awards - after navbarlinks");
+
+  const awards = db.award.find({ season: common.season });
+  common.stopwatch(common, "awards - after award fetch");
+
+  var weekly_awards = awards.filter(
+    (a) => a.award_timeframe == "week" && a.player_team_game_id != null
+  );
+  var preseason_awards = awards.filter((a) => a.award_timeframe == "pre-season");
+  var regular_season_first_team_all_american_awards = awards.filter(
+    (a) =>
+      a.award_timeframe == "regular season" &&
+      a.award_team == "First" &&
+      a.award_group == "position"
+  );
+  var regular_season_second_team_all_american_awards = awards.filter(
+    (a) =>
+      a.award_timeframe == "regular season" &&
+      a.award_team == "Second" &&
+      a.award_group == "position"
+  );
+  var regular_season_freshman_team_all_american_awards = awards.filter(
+    (a) =>
+      a.award_timeframe == "regular season" &&
+      a.award_team == "Freshman" &&
+      a.award_group == "position"
+  );
+  var trophies = awards.filter(
+    (a) => a.award_group == "individual" && a.award_team_set == "national"
+  );
+
+  player_team_season_ids = player_team_season_ids.concat(
+    weekly_awards.map((a) => a.player_team_season_id)
+  );
+  player_team_season_ids = player_team_season_ids.concat(
+    preseason_awards.map((a) => a.player_team_season_id)
+  );
+  player_team_season_ids = player_team_season_ids.concat(
+    regular_season_first_team_all_american_awards.map((a) => a.player_team_season_id)
+  );
+  player_team_season_ids = player_team_season_ids.concat(
+    regular_season_second_team_all_american_awards.map((a) => a.player_team_season_id)
+  );
+  player_team_season_ids = player_team_season_ids.concat(
+    regular_season_freshman_team_all_american_awards.map((a) => a.player_team_season_id)
+  );
+  if (trophies.length > 0) {
+    player_team_season_ids.concat(trophies.map((a) => a.player_team_season_id));
+  }
+
+  const player_team_game_ids = weekly_awards.map((a) => a.player_team_game_id);
+
+  var conference_seasons = db.conference_season.find({ season: common.season });
+
+  const conference_ids = conference_seasons.map((cs) => cs.conference_id);
+  var conferences = db.conference.find({conference_id:{'$in': conference_ids}});
+  const conferences_by_conference_id = index_group_sync$1(conferences, "index", "conference_id");
+  conference_seasons = nest_children$1(
+    conference_seasons,
+    conferences_by_conference_id,
+    "conference_id",
+    "conference"
+  );
+
+  common.stopwatch(common, "awards - after cinferences");
+
+  var weeks = db.week.find({ season: common.season });
+  const weeks_by_week_id = index_group_sync$1(weeks, "index", "week_id");
+
+  weekly_awards = nest_children$1(weekly_awards, weeks_by_week_id, "week_id", "week");
+
+  common.stopwatch(common, "awards - weeks");
+
+  var player_team_games = db.player_team_game.find({player_team_game_id: {'$in': player_team_game_ids}});
+  var team_game_ids = player_team_games.map((ptg) => ptg.team_game_id);
+  team_game_ids = common.distinct(team_game_ids);
+  var team_games = db.team_game.find({team_game_id: {'$in': team_game_ids}});
+
+  common.stopwatch(common, "awards - after player team games");
+
+  var game_ids = team_games.map((tg) => tg.game_id);
+  game_ids = common.distinct(game_ids);
+  const games = db.game.find({game_id: {'$in': game_ids}});
+  const games_by_game_id = index_group_sync$1(games, "index", "game_id");
+  team_games = nest_children$1(team_games, games_by_game_id, "game_id", "game");
+
+  common.stopwatch(common, "awards - after games");
+
+  var team_seasons = db.team_season.find({season: common.season, team_id: {'$gt': 0}});
+
+  const team_ids = team_seasons.map((ts) => ts.team_id);
+  var teams = db.team.find({team_id: {'$in': team_ids}});
+  const teams_by_team_id = index_group_sync$1(teams, "index", "team_id");
+
+  team_seasons = nest_children$1(team_seasons, teams_by_team_id, "team_id", "team");
+  const team_seasons_by_team_season_id = index_group_sync$1(team_seasons, "index", "team_season_id");
+
+  team_games.forEach(function (tg) {
+    tg.opponent_team_season =
+      team_seasons_by_team_season_id[tg.opponent_team_season_id];
+  });
+
+  common.stopwatch(common, "awards - after teamgames");
+
+  let team_games_by_team_game_id = index_group_sync$1(team_games, "index", "team_game_id");
+  player_team_games = nest_children$1(
+    player_team_games,
+    team_games_by_team_game_id,
+    "team_game_id",
+    "team_game"
+  );
+
+  player_team_season_ids = common.distinct(player_team_season_ids);
+  var player_team_seasons = db.player_team_season.find({player_team_season_id: {'$in': player_team_season_ids}});
+  var previous_player_team_seasons = db.player_team_season
+    .find({ season: common.season - 1 });
+
+  common.stopwatch(common, "awards - after pts");
+
+  const player_team_season_stats = db.player_team_season_stats.find(
+    {player_team_season_id: {'$in': player_team_season_ids}}
+  );
+  const player_team_season_stats_by_player_team_season_id = index_group_sync$1(
+    player_team_season_stats,
+    "index",
+    "player_team_season_id"
+  );
+
+  common.stopwatch(common, "awards - after pts_stat");
+
+  const player_ids = player_team_seasons.map((pts) => pts.player_id);
+  var players = db.player.find({player_id: {'$in': player_ids}});
+  const players_by_player_id = index_group_sync$1(players, "index", "player_id");
+  const previous_player_team_seasons_by_player_id = index_group_sync$1(
+    previous_player_team_seasons,
+    "index",
+    "player_id"
+  );
+
+  common.stopwatch(common, "awards - after player fetch");
+
+  player_team_seasons = nest_children$1(
+    player_team_seasons,
+    team_seasons_by_team_season_id,
+    "team_season_id",
+    "team_season"
+  );
+  player_team_seasons = nest_children$1(
+    player_team_seasons,
+    players_by_player_id,
+    "player_id",
+    "player"
+  );
+  player_team_seasons = nest_children$1(
+    player_team_seasons,
+    previous_player_team_seasons_by_player_id,
+    "player_id",
+    "previous_player_team_season"
+  );
+  player_team_seasons = nest_children$1(
+    player_team_seasons,
+    player_team_season_stats_by_player_team_season_id,
+    "player_team_season_id",
+    "season_stats"
+  );
+
+  common.stopwatch(common, "awards - after nest");
+
+  const player_team_seasons_by_player_team_season_id = index_group_sync$1(
+    player_team_seasons,
+    "index",
+    "player_team_season_id"
+  );
+  player_team_games = nest_children$1(
+    player_team_games,
+    player_team_seasons_by_player_team_season_id,
+    "player_team_season_id",
+    "player_team_season"
+  );
+  player_team_games = nest_children$1(
+    player_team_games,
+    team_games_by_team_game_id,
+    "team_game_id",
+    "team_game"
+  );
+  const player_team_games_by_player_team_game_id = index_group_sync$1(
+    player_team_games,
+    "index",
+    "player_team_game_id"
+  );
+
+  common.stopwatch(common, "awards - after pts index");
+
+  weekly_awards = nest_children$1(
+    weekly_awards,
+    player_team_games_by_player_team_game_id,
+    "player_team_game_id",
+    "player_team_game"
+  );
+
+  weekly_awards = index_group_sync$1(weekly_awards, "group", "conference_season_id");
+
+  preseason_awards = nest_children$1(
+    preseason_awards,
+    player_team_seasons_by_player_team_season_id,
+    "player_team_season_id",
+    "player_team_season"
+  );
+  let preseason_awards_by_conference_season_id = index_group_sync$1(
+    preseason_awards,
+    "group",
+    "conference_season_id"
+  );
+
+  regular_season_first_team_all_american_awards = nest_children$1(
+    regular_season_first_team_all_american_awards,
+    player_team_seasons_by_player_team_season_id,
+    "player_team_season_id",
+    "player_team_season"
+  );
+  let regular_season_first_team_all_american_awards_by_conference_season_id = index_group_sync$1(
+    regular_season_first_team_all_american_awards,
+    "group",
+    "conference_season_id"
+  );
+
+  regular_season_second_team_all_american_awards = nest_children$1(
+    regular_season_second_team_all_american_awards,
+    player_team_seasons_by_player_team_season_id,
+    "player_team_season_id",
+    "player_team_season"
+  );
+  let regular_season_second_team_all_american_awards_by_conference_season_id = index_group_sync$1(
+    regular_season_second_team_all_american_awards,
+    "group",
+    "conference_season_id"
+  );
+
+  regular_season_freshman_team_all_american_awards = nest_children$1(
+    regular_season_freshman_team_all_american_awards,
+    player_team_seasons_by_player_team_season_id,
+    "player_team_season_id",
+    "player_team_season"
+  );
+  let regular_season_freshman_team_all_american_awards_by_conference_season_id = index_group_sync$1(
+    regular_season_freshman_team_all_american_awards,
+    "group",
+    "conference_season_id"
+  );
+
+  // console.log({player_team_seasons:player_team_seasons, player_team_seasons_by_player_team_season_id:player_team_seasons_by_player_team_season_id, regular_season_all_american_awards:regular_season_all_american_awards, preseason_awards:preseason_awards, weekly_awards:weekly_awards})
+
+  trophies = nest_children$1(
+    trophies,
+    player_team_seasons_by_player_team_season_id,
+    "player_team_season_id",
+    "player_team_season"
+  );
+
+  console.log({
+    weekly_awards: weekly_awards,
+    conference_seasons: conference_seasons,
+    preseason_awards: preseason_awards,
+  });
+
+  conference_seasons.unshift({
+    conference_season_id: null,
+    conference: { conference_name: "National" },
+  });
+
+  conference_seasons = nest_children$1(
+    conference_seasons,
+    weekly_awards,
+    "conference_season_id",
+    "weekly_awards"
+  );
+
+  conference_seasons = conference_seasons.map(function (conference_season) {
+    let award_weeks = deep_copy$1(weeks);
+
+    conference_season.weekly_awards = index_group_sync$1(
+      conference_season.weekly_awards,
+      "group",
+      "week_id"
+    );
+    conference_season.weekly_awards = nest_children$1(
+      award_weeks,
+      conference_season.weekly_awards,
+      "week_id",
+      "awards"
+    );
+
+    conference_season.weekly_awards = conference_season.weekly_awards.filter(
+      (w) => w.awards != undefined && w.awards.length > 0
+    );
+
+    var this_conference_preseason_awards = preseason_awards_by_conference_season_id[
+      conference_season.conference_season_id
+    ].sort(
+      (award_a, award_b) =>
+        position_order_map[award_a.award_group_type] - position_order_map[award_b.award_group_type]
+    );
+    console.log({
+      this_conference_preseason_awards: this_conference_preseason_awards,
+    });
+    this_conference_preseason_awards.forEach(function (award) {
+      award.position_group = position_group_map[award.player_team_season.position];
+    });
+    var this_conference_preseason_awards_by_position_group = index_group_sync$1(
+      this_conference_preseason_awards,
+      "group",
+      "position_group"
+    );
+
+    conference_season.preseason_awards = [];
+
+    for (var i = 0; i < this_conference_preseason_awards_by_position_group.Offense.length; i++) {
+      conference_season.preseason_awards.push({
+        Offense: this_conference_preseason_awards_by_position_group.Offense[i],
+        Defense: this_conference_preseason_awards_by_position_group.Defense[i],
+      });
+    }
+
+    conference_season.regular_season_first_team_all_american_awards = [];
+    conference_season.regular_season_other_team_all_american_awards = [];
+    if (
+      conference_season.conference_season_id in
+      regular_season_first_team_all_american_awards_by_conference_season_id
+    ) {
+      var this_conference_regular_season_first_team_all_american_awards =
+        regular_season_first_team_all_american_awards_by_conference_season_id[
+          conference_season.conference_season_id
+        ].sort(
+          (award_a, award_b) =>
+            position_order_map[award_a.award_group_type] -
+            position_order_map[award_b.award_group_type]
+        );
+      this_conference_regular_season_first_team_all_american_awards.forEach(function (award) {
+          award.position_group = position_group_map[award.player_team_season.position];
+        });
+      var this_conference_regular_season_first_team_all_american_awards_by_position_group =
+        index_group_sync$1(
+          this_conference_regular_season_first_team_all_american_awards,
+          "group",
+          "position_group"
+        );
+
+      for (
+        var i = 0;
+        i <
+        this_conference_regular_season_first_team_all_american_awards_by_position_group.Offense
+          .length;
+        i++
+      ) {
+        conference_season.regular_season_first_team_all_american_awards.push({
+          Offense:
+            this_conference_regular_season_first_team_all_american_awards_by_position_group.Offense[
+              i
+            ],
+          Defense:
+            this_conference_regular_season_first_team_all_american_awards_by_position_group.Defense[
+              i
+            ],
+        });
+      }
+
+      var this_conference_regular_season_second_team_all_american_awards =
+        regular_season_second_team_all_american_awards_by_conference_season_id[
+          conference_season.conference_season_id
+        ].sort(
+          (award_a, award_b) =>
+            position_order_map[award_a.award_group_type] -
+            position_order_map[award_b.award_group_type]
+        );
+
+      console.log({
+        regular_season_freshman_team_all_american_awards_by_conference_season_id:
+          regular_season_freshman_team_all_american_awards_by_conference_season_id,
+        conference_season: conference_season,
+        regular_season_freshman_team_all_american_awards:
+          regular_season_freshman_team_all_american_awards,
+        awards: awards,
+      });
+      var this_conference_regular_season_freshman_team_all_american_awards = (
+        regular_season_freshman_team_all_american_awards_by_conference_season_id[
+          conference_season.conference_season_id
+        ] || []
+      ).sort(
+        (award_a, award_b) =>
+          position_order_map[award_a.award_group_type] -
+          position_order_map[award_b.award_group_type]
+      );
+
+      for (
+        var i = 0;
+        i < this_conference_regular_season_second_team_all_american_awards.length;
+        i++
+      ) {
+        conference_season.regular_season_other_team_all_american_awards.push({
+          Second: this_conference_regular_season_second_team_all_american_awards[i],
+          Freshman: this_conference_regular_season_freshman_team_all_american_awards[i],
+        });
+      }
+    }
+
+    console.log({ conference_season: conference_season });
+    return conference_season;
+  });
+
+  console.log({
+    weekly_awards: weekly_awards,
+    conference_seasons: conference_seasons,
+    trophies: trophies,
+  });
+
+  var heisman_race = player_team_seasons.sort(
+    (pts_a, pts_b) => pts_b.player_award_rating - pts_a.player_award_rating
+  );
+
+  heisman_race = heisman_race.slice(0, 10);
+
+  const recent_games = await common.recent_games(common);
+
+  var page = {
+    PrimaryColor: common.primary_color,
+    SecondaryColor: common.secondary_color,
+    NavBarLinks: NavBarLinks,
+    page_title: "Player Awards",
+  };
+
+  var display_options = {
+    preseason: { display: "none" },
+    trophies: { display: "none" },
+    heisman_race: { display: "none" },
+    potw: { display: "none" },
+    season: { display: "none" },
+  };
+  var display_items = [];
+  //Preseason & week 1
+  if (Object.keys(weekly_awards).length == 0) {
+    //pre-season AA first
+    //heisman race
+    display_items = [
+      {
+        div_id: "preseason",
+        display: "Preseason AAs",
+        classes: " selected-tab",
+        other_attrs: `style='background-color: #${page.SecondaryColor}'`,
+      },
+      {
+        div_id: "heisman-race",
+        display: "Heisman Race",
+        classes: "",
+        other_attrs: "",
+      },
+    ];
+
+    display_options.preseason.display = "block";
+  } else if (trophies.length > 0) {
+    display_items = [
+      {
+        div_id: "trophies",
+        display: "Award Winners",
+        classes: " selected-tab",
+        other_attrs: `style='background-color: #${page.SecondaryColor}'`,
+      },
+      {
+        div_id: "all-americans",
+        display: "All Americans",
+        classes: "",
+        other_attrs: "",
+      },
+      { div_id: "weekly", display: "POTW", classes: "", other_attrs: "" },
+      {
+        div_id: "preseason",
+        display: "Preseason AAs",
+        classes: "",
+        other_attrs: ``,
+      },
+    ];
+
+    display_options.trophies.display = "block";
+  } else {
+    display_items = [
+      {
+        div_id: "weekly",
+        display: "POTW",
+        classes: " selected-tab",
+        other_attrs: `style='background-color: #${page.SecondaryColor}'`,
+      },
+      {
+        div_id: "heisman-race",
+        display: "Heisman Race",
+        classes: "",
+        other_attrs: ``,
+      },
+      {
+        div_id: "preseason",
+        display: "Preseason AAs",
+        classes: "",
+        other_attrs: ``,
+      },
+    ];
+
+    display_options.potw.display = "block";
+  }
+
+  var render_content = {
+    page: page,
+    team_list: [],
+    world_id: common.params["world_id"],
+    recent_games: recent_games,
+    conference_seasons: conference_seasons,
+    heisman_race: heisman_race,
+    trophies: trophies,
+    display_items: display_items,
+    display_options: display_options,
+  };
+  common.render_content = render_content;
+  console.log("render_content", render_content);
+
+  var url = "/static/html_templates/world/awards/template.njk";
+  var html = await fetch(url);
+  html = await html.text();
+
+  const renderedHtml = common.nunjucks_env.renderString(html, render_content);
+
+  $("#body").html(renderedHtml);
+
+  await draw_player_faces(common);
+
+  $("#nav-heisman-race-tab").on("click", async function () {
+    var url = "/static/html_templates/world/awards/heisman_race_table_template.njk";
+    var html = await fetch(url);
+    html = await html.text();
+
+    const renderedHtml = common.nunjucks_env.renderString(html, render_content);
+    console.log({ this: this, renderedHtml: renderedHtml });
+    $("#nav-heisman-race").html(renderedHtml);
+
+    $("#nav-heisman-race .player-profile-popup-icon").on("click", async function () {
+      await common.populate_player_modal(common, this);
+    });
+
+    await draw_player_faces(common);
+  });
+};
 
 const conference_standings = async (conference_season_id, relevant_team_season_ids, common) => {
     const db = common.db;
@@ -1378,8 +2604,6 @@ const team_action = async (common) => {
 
     var db = common.db;
     var season = common.season;
-    var index_group_sync = common.index_group_sync;
-    common.current_team_season;
 
     var team = common.render_content.team;
     var player_team_seasons = await db.player_team_season
@@ -1393,13 +2617,13 @@ const team_action = async (common) => {
     );
     let players = await db.player.bulkGet(player_ids);
 
-    const player_team_season_stats_by_player_team_season_id = index_group_sync(
+    const player_team_season_stats_by_player_team_season_id = index_group_sync$1(
       player_team_season_stats,
       "index",
       "player_team_season_id"
     );
 
-    const players_by_player_id = index_group_sync(players, "index", "player_id");
+    const players_by_player_id = index_group_sync$1(players, "index", "player_id");
 
     player_team_seasons = nest_children$1(
       player_team_seasons,
@@ -1493,7 +2717,7 @@ const team_action = async (common) => {
       .toArray();
     const team_season_ids = all_team_seasons.map((ts) => ts.team_season_id);
     const team_season_stats = await db.team_season_stats.bulkGet(team_season_ids);
-    const team_season_stats_by_team_season_id = index_group_sync(
+    const team_season_stats_by_team_season_id = index_group_sync$1(
       team_season_stats,
       "index",
       "team_season_id"
@@ -3474,6 +4698,14 @@ class team_game {
 
   get game_href() {
     return `World/${this.world_id}/Game/${this.game_id}`
+  }
+
+  get game_location(){
+    return this.is_home_team ? 'home' : 'away';
+  }
+
+  get game_location_char(){
+    return this.is_home_team ? 'vs.' : '@';
   }
 
   get game_outcome_letter() {
@@ -9221,367 +10453,6 @@ function hashCode(s) {
 
   return h;
 }
-window.table_key_list = [
-  "award_group",
-  "award_team_set",
-  "award_group_type",
-  "award_timeframe",
-  "award_team",
-  "name",
-  "first",
-  "last",
-  "hometown",
-  "city",
-  "state",
-  "long",
-  "occurance",
-  "coaching_position",
-  "ethnicity",
-  "body",
-  "height_inches",
-  "weight",
-  "height",
-  "tendencies",
-  "pass",
-  "playclock_urgency",
-  "personality",
-  "leadership",
-  "work_ethic",
-  "desire_for_winner",
-  "loyalty",
-  "desire_for_playtime",
-  "post_season_movement",
-  "ratings",
-  "conference_abbreviation",
-  "prestige",
-  "is_independent",
-  "conference_logo_url",
-  "conference_color_primary_hex",
-  "conference_color_secondary_hex",
-  "schedule_format",
-  "hold_conference_championship_game",
-  "number_conference_games",
-  "round_robin_in_division",
-  "conference_championship_selection_method",
-  "schedule_pattern",
-  "division",
-  "number_of_teams",
-  "cycle",
-  "teams_per_year",
-  "fixed_matchups",
-  "divisions",
-  "conference_name",
-  "game_time",
-  "was_played",
-  "outcome",
-  "home_team_score",
-  "away_team_score",
-  "rivalry",
-  "opponent_name",
-  "preferred_week_number",
-  "rivalry_name",
-  "bowl",
-  "is_conference_game",
-  "broadcast",
-  "regional_broadcast",
-  "national_broadcast",
-  "headline_text",
-  "href",
-  "is_season_complete",
-  "playoffs",
-  "playoffs_started",
-  "playoffs_complete",
-  "number_playoff_rounds",
-  "number_playoff_teams",
-  "playoff_rounds",
-  "preseason_tasks",
-  "user_cut_players",
-  "user_set_gameplan",
-  "user_set_depth_chart",
-  "is_current_season",
-  "captains_per_team",
-  "players_per_team",
-  "phase_name",
-  "is_current",
-  "position",
-  "redshirt",
-  "previous",
-  "current",
-  "jersey_number",
-  "game_stats",
-  "games",
-  "game_score",
-  "weighted_game_score",
-  "games_played",
-  "team_games_played",
-  "points",
-  "passing",
-  "rushing",
-  "carries",
-  "yards",
-  "receiving",
-  "targets",
-  "receptions",
-  "blocking",
-  "defense",
-  "fumbles",
-  "kicking",
-  "punting",
-  "returning",
-  "top_stats",
-  "is_recruit",
-  "is_captain",
-  "athleticism",
-  "strength",
-  "agility",
-  "speed",
-  "acceleration",
-  "stamina",
-  "jumping",
-  "injury",
-  "throwing_power",
-  "short_throw_accuracy",
-  "medium_throw_accuracy",
-  "deep_throw_accuracy",
-  "throw_on_run",
-  "throw_under_pressure",
-  "play_action",
-  "elusiveness",
-  "ball_carrier_vision",
-  "break_tackle",
-  "carrying",
-  "catching",
-  "catch_in_traffic",
-  "route_running",
-  "release",
-  "hit_power",
-  "tackle",
-  "pass_rush",
-  "block_shedding",
-  "pursuit",
-  "play_recognition",
-  "man_coverage",
-  "zone_coverage",
-  "press",
-  "pass_block",
-  "run_block",
-  "impact_block",
-  "kick_power",
-  "kick_accuracy",
-  "overall",
-  "awareness",
-  "class",
-  "class_name",
-  "redshirted",
-  "depth_chart_rank",
-  "stars",
-  "signed",
-  "stage",
-  "rank",
-  "national",
-  "position_rank",
-  "weeks",
-  "recruit_team_seasons",
-  "interests",
-  "location",
-  "fan_support",
-  "academic_quality",
-  "facilities",
-  "program_history",
-  "team_competitiveness",
-  "brand",
-  "pro_pipeline",
-  "program_stability",
-  "playing_time",
-  "close_to_home",
-  "games_started",
-  "plays_on_field",
-  "top_12_weighted_game_scores",
-  "completions",
-  "attempts",
-  "ints",
-  "sacks",
-  "sack_yards",
-  "over_20",
-  "broken_tackles",
-  "yards_after_contact",
-  "yards_after_catch",
-  "drops",
-  "sacks_allowed",
-  "pancakes",
-  "blocks",
-  "lost",
-  "recovered",
-  "forced",
-  "return_yards",
-  "return_tds",
-  "fga_29",
-  "fgm_29",
-  "fga_39",
-  "fgm_39",
-  "fga_49",
-  "fgm_49",
-  "fga_50",
-  "fgm_50",
-  "kickoffs",
-  "touchbacks",
-  "punts",
-  "within_20",
-  "kr_returns",
-  "kr_yards",
-  "kr_tds",
-  "kr_lng",
-  "pr_returns",
-  "pr_yards",
-  "pr_tds",
-  "pr_lng",
-  "tackles",
-  "solo_tackles",
-  "tackles_for_loss",
-  "deflections",
-  "qb_hits",
-  "int_yards",
-  "int_tds",
-  "safeties",
-  "school_name",
-  "team_name",
-  "team_abbreviation",
-  "team_color_primary_hex",
-  "team_color_secondary_hex",
-  "rivals",
-  "jersey",
-  "invert",
-  "teamColors",
-  "team_ratings",
-  "conference",
-  "is_home_team",
-  "is_winning_team",
-  "team",
-  "time_of_possession",
-  "possessions",
-  "turnovers",
-  "biggest_lead",
-  "down_efficiency",
-  "total",
-  "field_position",
-  "total_drives",
-  "total_start_yard",
-  "drive_efficiency",
-  "total_trips",
-  "scores",
-  "total_points",
-  "downs",
-  "first_downs",
-  "penalty",
-  "third_downs",
-  "conversions",
-  "fourth_downs",
-  "two_points",
-  "net_yards",
-  "opponent_game_stats",
-  "record",
-  "wins",
-  "losses",
-  "conference_wins",
-  "conference_losses",
-  "national_rank",
-  "is_user_team",
-  "scholarships_to_offer",
-  "recruiting_class_rank",
-  "points_per_week",
-  "class_points",
-  "signed_player_stars",
-  "stars_1",
-  "stars_2",
-  "stars_3",
-  "stars_4",
-  "stars_5",
-  "position_needs",
-  "EDGE",
-  "season_stats",
-  "opponent_season_stats",
-  "week_name",
-  "schedule_week_number",
-  "week_updates",
-  "user_actions",
-  "recruiting_actions_used",
-  "phase",
-  "lettering",
-  "lettering_color",
-  "team_logo_url",
-  "headlines",
-  "depth_chart",
-  "depth_chart_with_recruits",
-  "division_name",
-  "playoff",
-  "rankings",
-  "division_rank",
-  "national_rank_delta",
-  "national_rank_delta_abs",
-  "stat_rankings",
-  "offense",
-  "defense",
-  "results",
-  "conference_champion",
-  "final_four",
-  "national_champion",
-  "teams",
-  "fixed",
-  "winning_team",
-  "losing_team",
-  "is_primetime_game",
-  "scoring",
-  "drives",
-  "final",
-  "periods",
-  "drive_end",
-  "plays",
-  "away_team_points",
-  "drive_description",
-  "home_team_points",
-  "is_scoring_drive",
-  "period",
-  "play_description",
-  "play_type",
-  "seconds_in_to_game",
-  "period_number",
-  "summed_national_rank",
-  "player_face",
-  "accessories",
-  "ear",
-  "eye",
-  "eyeLine",
-  "eyebrow",
-  "facialHair",
-  "fatness",
-  "glasses",
-  "hair",
-  "color",
-  "flip",
-  "shave",
-  "head",
-  "miscLine",
-  "mouth",
-  "nose",
-  "smileLine",
-  "display",
-  "abs_game_score_value",
-  "game_score_value",
-  "abs_season_score_value",
-  "season_score_value",
-  "game_outcome_letter",
-  "success",
-  "conference_net_wins",
-  "conference_gb",
-  "defeated_teams",
-  "net_wins",
-  "win_streak",
-  "division_champion",
-  "by_position_group",
-  "by_position",
-  "by_position_unit",
-  "playing_time_val",
-];
 window.table_key_map = null;
 window.reverse_table_key_map = null;
 
@@ -9722,14 +10593,14 @@ const resolve_route_parameters = async (pathname) => {
 
     { route: "/World/:world_id/", f: page_world },
     // { route: "/World/:world_id/Week/:short_name/", f: page_world_week },
-    // { route: "/World/:world_id/Rankings/", f: page_world_rankings },
+    { route: "/World/:world_id/Rankings/", f: page_world_rankings },
     { route: "/World/:world_id/Standings/", f: page_world_standings },
     {
       route: "/World/:world_id/Standings/Conference/:conference_id",
       path: "world/standings/base.html",
     },
     { route: "/World/:world_id/Schedule/", path: "world/schedule/base.html" },
-    { route: "/World/:world_id/Awards/", path: "world/awards/base.html" },
+    { route: "/World/:world_id/Awards/", f: page_world_awards },
 
     {
       route: "/World/:world_id/Conference/:conference_id",
@@ -9920,7 +10791,6 @@ const common_functions = async (path) => {
     random_city: random_city,
     body_from_position: body_from_position,
     generate_face: generate_face,
-    display_player_face: display_player_face,
     add_listeners: add_listeners,
     recent_games: recent_games,
     distinct: distinct,
@@ -15070,16 +15940,7 @@ const add_listeners = async (common) => {
 
   $("#nav-team-dropdown-container .conference-button").on("click", function (event, target) {
     var conference_selected = $(event.currentTarget).attr("conference-button-val");
-    console.log({
-      conference_selected: conference_selected,
-      event: event,
-      target: event.currentTarget,
-      teams: $(
-        '#nav-team-dropdown-container .team-link[conference-button-val="' +
-          conference_selected +
-          '"]'
-      ),
-    });
+
     if (conference_selected == "All") {
       $("#nav-team-dropdown-container .team-link").removeClass("w3-hide");
     } else {
@@ -16480,306 +17341,7 @@ const create_coach_face = async (many_or_single, coach_ids, db) => {
   }
 };
 
-const addWrapper = (svgString) => {
-  return `<g>${svgString}</g>`;
-};
 
-const addTransform = (element, newTransform) => {
-  const oldTransform = $(element).attr("transform");
-  element.setAttribute("transform", `${oldTransform ? `${oldTransform} ` : ""}${newTransform}`);
-};
-
-const rotateCentered = (element, angle) => {
-  const bbox = element.getBBox();
-  const cx = bbox.x + bbox.width / 2;
-  const cy = bbox.y + bbox.height / 2;
-
-  addTransform(element, `rotate(${angle} ${cx} ${cy})`);
-};
-
-const scaleStrokeWidthAndChildren = (element, factor) => {
-  const strokeWidth = $(element).attr("stroke-width");
-  if (strokeWidth) {
-    element.setAttribute("stroke-width", String(parseFloat(strokeWidth) / factor));
-  }
-  const children = element.childNodes;
-  for (let i = 0; i < children.length; i++) {
-    scaleStrokeWidthAndChildren(children[i], factor);
-  }
-};
-
-// Scale relative to the center of bounding box of element e, like in Raphael.
-// Set x and y to 1 and this does nothing. Higher = bigger, lower = smaller.
-const scaleCentered = (element, x, y) => {
-  const bbox = element.getBBox();
-  const cx = bbox.x + bbox.width / 2;
-  const cy = bbox.y + bbox.height / 2;
-  const tx = (cx * (1 - x)) / x;
-  const ty = (cy * (1 - y)) / y;
-
-  addTransform(element, `scale(${x} ${y}) translate(${tx} ${ty})`);
-
-  // Keep apparent stroke width constant, similar to how Raphael does it (I think)
-  if (Math.abs(x) !== 1 || Math.abs(y) !== 1 || Math.abs(x) + Math.abs(y) !== 2) {
-    const factor = (Math.abs(x) + Math.abs(y)) / 2;
-    scaleStrokeWidthAndChildren(element, factor);
-  }
-};
-
-// Translate element such that its center is at (x, y). Specifying xAlign and yAlign can instead make (x, y) the left/right and top/bottom.
-const translate = (element, x, y, xAlign = "center", yAlign = "center") => {
-  const bbox = element.getBBox();
-  var cx;
-  var cy;
-  if (xAlign === "left") {
-    cx = bbox.x;
-  } else if (xAlign === "right") {
-    cx = bbox.x + bbox.width;
-  } else {
-    cx = bbox.x + bbox.width / 2;
-  }
-  if (yAlign === "top") {
-    cy = bbox.y;
-  } else if (yAlign === "bottom") {
-    cy = bbox.y + bbox.height;
-  } else {
-    cy = bbox.y + bbox.height / 2;
-  }
-
-  addTransform(element, `translate(${x - cx} ${y - cy})`);
-};
-
-// Defines the range of fat/skinny, relative to the original width of the default head.
-const fatScale = (fatness) => 0.8 + 0.2 * fatness;
-
-const drawFeature = async (svg, face, info) => {
-  const feature = face[info.name];
-  if (!feature) {
-    return;
-  }
-
-  var featureSVGString = window.svgs[info.name][feature.id];
-
-  if (!featureSVGString) {
-    return;
-  }
-
-  // @ts-ignore
-  if (feature.shave) {
-    // @ts-ignore
-    featureSVGString = featureSVGString.replace("$[faceShave]", feature.shave);
-  }
-
-  // @ts-ignore
-  if (feature.shave) {
-    // @ts-ignore
-    featureSVGString = featureSVGString.replace("$[headShave]", feature.shave);
-  }
-
-  const player_id = $(svg).parent().attr("player_id") || $(svg).parent().attr("coach_id");
-
-  featureSVGString = featureSVGString.replaceAll("$[player_id]", `${player_id}-${info.name}`);
-  featureSVGString = featureSVGString.replace("$[skinColor]", face.body.color);
-  featureSVGString = featureSVGString.replace(/\$\[hairColor\]/g, face.hair.color);
-  featureSVGString = featureSVGString.replace(/\$\[primary\]/g, face.teamColors[0]);
-  featureSVGString = featureSVGString.replace(/\$\[secondary\]/g, face.teamColors[1]);
-  featureSVGString = featureSVGString.replace(/\$\[accent\]/g, face.teamColors[2]);
-  featureSVGString = featureSVGString.replace(
-    /\$\[jersey-lettering-text\]/g,
-    face.jersey.lettering || ""
-  );
-  featureSVGString = featureSVGString.replace(
-    /\$\[jersey-lettering-color\]/g,
-    face.jersey.lettering_color
-  );
-  if (face.jersey.lettering) {
-    let font_size = Math.floor(80 - 5 * face.jersey.lettering.length);
-    featureSVGString = featureSVGString.replace(/\$\[font-size\]/g, font_size);
-
-    let font_y_pos = Math.floor(645 - 5 * face.jersey.lettering.length);
-    featureSVGString = featureSVGString.replace(/\$\[font-y-pos\]/g, font_y_pos);
-  } else {
-    featureSVGString = featureSVGString.replace(/\$\[font-y-pos\]/g, 0);
-  }
-
-  //console.log('featureSVGString', info, feature, featureSVGString)
-
-  for (let i = 0; i < info.positions.length; i++) {
-    svg.insertAdjacentHTML("beforeend", addWrapper(featureSVGString));
-
-    const position = info.positions[i];
-
-    if (position !== null) {
-      // Special case, for the pinocchio nose it should not be centered but should stick out to the left or right
-      var xAlign;
-      if (feature.id === "nose4" || feature.id === "pinocchio") {
-        // @ts-ignore
-        xAlign = feature.flip ? "right" : "left";
-      } else {
-        xAlign = "center";
-      }
-
-      translate(svg.lastChild, position[0], position[1], xAlign);
-    }
-
-    if (feature.hasOwnProperty("angle")) {
-      // @ts-ignore
-      rotateCentered(svg.lastChild, (i === 0 ? 1 : -1) * feature.angle);
-    }
-
-    // Flip if feature.flip is specified or if this is the second position (for eyes and eyebrows). Scale if feature.size is specified.
-    // @ts-ignore
-    const scale = feature.hasOwnProperty("size") ? feature.size : 1;
-    // @ts-ignore
-    if (feature.flip || i === 1) {
-      // @ts-ignore
-      scaleCentered(svg.lastChild, -scale, scale);
-    } else if (scale !== 1) {
-      // @ts-ignore
-      scaleCentered(svg.lastChild, scale, scale);
-    }
-
-    if (info.scaleFatness && info.positions[0] !== null) {
-      // Scale individual feature relative to the edge of the head. If fatness is 1, then there are 47 pixels on each side. If fatness is 0, then there are 78 pixels on each side.
-      const distance = (78 - 47) * (1 - face.fatness);
-      // @ts-ignore
-      translate(svg.lastChild, distance, 0, "left", "top");
-    }
-  }
-
-  if (info.scaleFatness && info.positions.length === 1 && info.positions[0] === null) {
-    // @ts-ignore
-    scaleCentered(svg.lastChild, fatScale(face.fatness), 1);
-  }
-};
-
-const override = (face, overrides) => {
-  $.each(overrides, function (key, val) {
-    face[key] = val;
-  });
-
-  return face;
-};
-
-const display_player_face = async (face, overrides, dom_id) => {
-  if ("jersey" in overrides && overrides.jersey.id == "suit") {
-    overrides["accessories"] = { id: "none" };
-    face.glasses.id = "none";
-  }
-
-  face = override(face, overrides);
-
-  const container_element = $("#" + dom_id);
-
-  $(container_element).html("");
-
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("version", "1.2");
-  svg.setAttribute("baseProfile", "tiny");
-  svg.setAttribute("width", "100%");
-  svg.setAttribute("height", "100%");
-  svg.setAttribute("viewBox", "0 0 400 600");
-  svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
-
-  // Needs to be in the DOM here so getBBox will work
-  $(container_element).append(svg);
-
-  const featureInfos = [
-    {
-      name: "hairBg",
-      positions: [null],
-      scaleFatness: true,
-    },
-    {
-      name: "body",
-      positions: [null],
-    },
-    {
-      name: "jersey",
-      positions: [null],
-    },
-    {
-      name: "ear",
-      positions: [
-        [55, 325],
-        [345, 325],
-      ],
-      scaleFatness: true,
-    },
-    {
-      name: "head",
-      positions: [null], // Meaning it just gets placed into the SVG with no translation
-      scaleFatness: true,
-    },
-    {
-      name: "eyeLine",
-      positions: [null],
-    },
-    {
-      name: "smileLine",
-      positions: [
-        [150, 435],
-        [250, 435],
-      ],
-    },
-    {
-      name: "miscLine",
-      positions: [null],
-    },
-    {
-      name: "facialHair",
-      positions: [null],
-      scaleFatness: true,
-    },
-    {
-      name: "eye",
-      positions: [
-        [140, 310],
-        [260, 310],
-      ],
-    },
-    {
-      name: "eyebrow",
-      positions: [
-        [140, 270],
-        [260, 270],
-      ],
-    },
-    {
-      name: "mouth",
-      positions: [[200, 440]],
-    },
-    {
-      name: "nose",
-      positions: [[200, 370]],
-    },
-    {
-      name: "hair",
-      positions: [null],
-      scaleFatness: true,
-    },
-    {
-      name: "glasses",
-      positions: [null],
-      scaleFatness: true,
-    },
-    {
-      name: "accessories",
-      positions: [null],
-      scaleFatness: true,
-    },
-  ];
-
-  if (!window.svgs) {
-    var url = `/static/data/import_json/svgs.json`;
-    var html = await fetch(url);
-    window.svgs = await html.json();
-  }
-
-  $.each(featureInfos, async function (ind, info) {
-    drawFeature(svg, face, info);
-  });
-};
 
 function download(filename, text, type = "text/json") {
   // Create an invisible A element
@@ -17717,22 +18279,12 @@ $(document).ready(async function () {
   var startTime = performance.now();
 
   $(document).on("click", async function (event) {
-    event.preventDefault();
     const target = $(event.target);
     const parent_link = $(target).closest('[href]');
+    const href = parent_link.attr('href');
 
-    console.log({
-      href: target.attr("href"),
-      target: target,
-      event: event,
-      parent_link:parent_link.attr('href')
-    });
-
-    if (parent_link.attr('href')) {
-      // Navigate to clicked url
-      const href = parent_link.attr('href');
-      // const path = href.substr(href.lastIndexOf('/'));      
-      // router.navigateTo(path);
+    if (href){
+      event.preventDefault();
       history.pushState({ path: href }, "", href);
       await page(href);
     }
@@ -17743,6 +18295,7 @@ $(document).ready(async function () {
 
   window.onpopstate = async function () {
     await page(location.pathname);
+
   };
 
   // await action(common);
@@ -17764,7 +18317,9 @@ const page = async (path) => {
     "common.winning_route.f": common.winning_route.f,
   });
 
-  common.winning_route.f(common);
+  await common.winning_route.f(common);
+
+  await add_listeners(common);
   var endTime = performance.now();
   console.log(`Time taken to render ${path}: ${parseInt(endTime - startTime)} ms`);
 };

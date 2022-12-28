@@ -1,12 +1,13 @@
-export const index_group_sync = (query_list, query_type, key) => {
+export const index_group_sync = (data, group_type, key) => {
   var dict = {};
-  if (query_type == "many_to_one" || query_type == "group") {
-    query_list.forEach(function (elem) {
+  data = data || [];
+  if (group_type == "group") {
+    data.forEach(function (elem) {
       dict[get(elem, key)] = dict[get(elem, key)] || [];
       dict[get(elem, key)].push(elem);
     });
-  } else if (query_type == "one_to_one" || query_type == "index") {
-    query_list.forEach((elem) => (dict[get(elem, key)] = elem));
+  } else if (group_type == "index") {
+    data.forEach((elem) => (dict[get(elem, key)] = elem));
   }
 
   return dict;

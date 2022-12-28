@@ -549,6 +549,14 @@ export class team_game {
     return `World/${this.world_id}/Game/${this.game_id}`
   }
 
+  get game_location(){
+    return this.is_home_team ? 'home' : 'away';
+  }
+
+  get game_location_char(){
+    return this.is_home_team ? 'vs.' : '@';
+  }
+
   get game_outcome_letter() {
     if (this.is_winning_team) {
       return "W";

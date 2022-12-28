@@ -123,7 +123,7 @@ const getHtml = async (common) => {
     await db.player_team_game
       .where({ player_team_season_id: player_team_season_ids })
       .toArray(),
-    "many_to_one",
+    "group",
     "player_team_season_id"
   );
 

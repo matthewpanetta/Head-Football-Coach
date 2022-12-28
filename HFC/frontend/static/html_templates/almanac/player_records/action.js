@@ -277,7 +277,6 @@
     const draw_faces = async (common) => {
       const db = common.db;
       const season = common.season;
-      const index_group_sync = common.index_group_sync;
 
       const player_ids = [];
       const face_div_by_player_id = {};

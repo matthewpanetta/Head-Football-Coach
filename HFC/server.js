@@ -27,6 +27,7 @@ const mimeTypes = {
 };
 
 const static_suffix = new Set([
+	'.json',
 	'.css',
 	'.js',
 	'.png',
@@ -71,7 +72,7 @@ const send_index = (req, res) => {
 app.get('*', (req, res) => {
 	console.log('req.url', req.url)
 	
-	let url_suffix_list = [3,4,5].map(len => req.url.substring(req.url.length - len))
+	let url_suffix_list = [3,4,5,6].map(len => req.url.substring(req.url.length - len))
 
 	if (url_suffix_list.some(suffix_option => static_suffix.has(suffix_option))) {
 		send_url(req, res);

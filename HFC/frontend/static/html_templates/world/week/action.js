@@ -1,6 +1,5 @@
 const getHtml = async (common) => {
   const db = common.db;
-  const index_group_sync = common.index_group_sync;
   nunjucks.configure({ autoescape: true });
   var index_group = common.index_group;
   const season = common.season;

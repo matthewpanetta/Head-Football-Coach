@@ -456,8 +456,6 @@ const team_action = async (common) => {
 
     var db = common.db;
     var season = common.season;
-    var index_group_sync = common.index_group_sync;
-    var current_team_season = common.current_team_season;
 
     var team = common.render_content.team;
     var player_team_seasons = await db.player_team_season

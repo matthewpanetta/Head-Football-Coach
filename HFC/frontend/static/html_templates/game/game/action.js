@@ -1032,7 +1032,6 @@ $(document).ready(async function () {
 const draw_faces = async (common, parent_div) => {
   const db = common.db;
   const season = common.season;
-  const index_group_sync = common.index_group_sync;
 
   console.log({common:common})
 

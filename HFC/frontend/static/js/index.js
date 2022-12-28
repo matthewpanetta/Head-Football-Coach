@@ -1,4 +1,4 @@
-import { page_world, page_world_standings } from "./pages/world_pages.js";
+import { page_world, page_world_standings, page_world_rankings, page_world_awards } from "./pages/world_pages.js";
 import { page_team } from "./pages/team_pages.js";
 import {
   index_group_sync,
@@ -4050,367 +4050,6 @@ function hashCode(s) {
 
   return h;
 }
-window.table_key_list = [
-  "award_group",
-  "award_team_set",
-  "award_group_type",
-  "award_timeframe",
-  "award_team",
-  "name",
-  "first",
-  "last",
-  "hometown",
-  "city",
-  "state",
-  "long",
-  "occurance",
-  "coaching_position",
-  "ethnicity",
-  "body",
-  "height_inches",
-  "weight",
-  "height",
-  "tendencies",
-  "pass",
-  "playclock_urgency",
-  "personality",
-  "leadership",
-  "work_ethic",
-  "desire_for_winner",
-  "loyalty",
-  "desire_for_playtime",
-  "post_season_movement",
-  "ratings",
-  "conference_abbreviation",
-  "prestige",
-  "is_independent",
-  "conference_logo_url",
-  "conference_color_primary_hex",
-  "conference_color_secondary_hex",
-  "schedule_format",
-  "hold_conference_championship_game",
-  "number_conference_games",
-  "round_robin_in_division",
-  "conference_championship_selection_method",
-  "schedule_pattern",
-  "division",
-  "number_of_teams",
-  "cycle",
-  "teams_per_year",
-  "fixed_matchups",
-  "divisions",
-  "conference_name",
-  "game_time",
-  "was_played",
-  "outcome",
-  "home_team_score",
-  "away_team_score",
-  "rivalry",
-  "opponent_name",
-  "preferred_week_number",
-  "rivalry_name",
-  "bowl",
-  "is_conference_game",
-  "broadcast",
-  "regional_broadcast",
-  "national_broadcast",
-  "headline_text",
-  "href",
-  "is_season_complete",
-  "playoffs",
-  "playoffs_started",
-  "playoffs_complete",
-  "number_playoff_rounds",
-  "number_playoff_teams",
-  "playoff_rounds",
-  "preseason_tasks",
-  "user_cut_players",
-  "user_set_gameplan",
-  "user_set_depth_chart",
-  "is_current_season",
-  "captains_per_team",
-  "players_per_team",
-  "phase_name",
-  "is_current",
-  "position",
-  "redshirt",
-  "previous",
-  "current",
-  "jersey_number",
-  "game_stats",
-  "games",
-  "game_score",
-  "weighted_game_score",
-  "games_played",
-  "team_games_played",
-  "points",
-  "passing",
-  "rushing",
-  "carries",
-  "yards",
-  "receiving",
-  "targets",
-  "receptions",
-  "blocking",
-  "defense",
-  "fumbles",
-  "kicking",
-  "punting",
-  "returning",
-  "top_stats",
-  "is_recruit",
-  "is_captain",
-  "athleticism",
-  "strength",
-  "agility",
-  "speed",
-  "acceleration",
-  "stamina",
-  "jumping",
-  "injury",
-  "throwing_power",
-  "short_throw_accuracy",
-  "medium_throw_accuracy",
-  "deep_throw_accuracy",
-  "throw_on_run",
-  "throw_under_pressure",
-  "play_action",
-  "elusiveness",
-  "ball_carrier_vision",
-  "break_tackle",
-  "carrying",
-  "catching",
-  "catch_in_traffic",
-  "route_running",
-  "release",
-  "hit_power",
-  "tackle",
-  "pass_rush",
-  "block_shedding",
-  "pursuit",
-  "play_recognition",
-  "man_coverage",
-  "zone_coverage",
-  "press",
-  "pass_block",
-  "run_block",
-  "impact_block",
-  "kick_power",
-  "kick_accuracy",
-  "overall",
-  "awareness",
-  "class",
-  "class_name",
-  "redshirted",
-  "depth_chart_rank",
-  "stars",
-  "signed",
-  "stage",
-  "rank",
-  "national",
-  "position_rank",
-  "weeks",
-  "recruit_team_seasons",
-  "interests",
-  "location",
-  "fan_support",
-  "academic_quality",
-  "facilities",
-  "program_history",
-  "team_competitiveness",
-  "brand",
-  "pro_pipeline",
-  "program_stability",
-  "playing_time",
-  "close_to_home",
-  "games_started",
-  "plays_on_field",
-  "top_12_weighted_game_scores",
-  "completions",
-  "attempts",
-  "ints",
-  "sacks",
-  "sack_yards",
-  "over_20",
-  "broken_tackles",
-  "yards_after_contact",
-  "yards_after_catch",
-  "drops",
-  "sacks_allowed",
-  "pancakes",
-  "blocks",
-  "lost",
-  "recovered",
-  "forced",
-  "return_yards",
-  "return_tds",
-  "fga_29",
-  "fgm_29",
-  "fga_39",
-  "fgm_39",
-  "fga_49",
-  "fgm_49",
-  "fga_50",
-  "fgm_50",
-  "kickoffs",
-  "touchbacks",
-  "punts",
-  "within_20",
-  "kr_returns",
-  "kr_yards",
-  "kr_tds",
-  "kr_lng",
-  "pr_returns",
-  "pr_yards",
-  "pr_tds",
-  "pr_lng",
-  "tackles",
-  "solo_tackles",
-  "tackles_for_loss",
-  "deflections",
-  "qb_hits",
-  "int_yards",
-  "int_tds",
-  "safeties",
-  "school_name",
-  "team_name",
-  "team_abbreviation",
-  "team_color_primary_hex",
-  "team_color_secondary_hex",
-  "rivals",
-  "jersey",
-  "invert",
-  "teamColors",
-  "team_ratings",
-  "conference",
-  "is_home_team",
-  "is_winning_team",
-  "team",
-  "time_of_possession",
-  "possessions",
-  "turnovers",
-  "biggest_lead",
-  "down_efficiency",
-  "total",
-  "field_position",
-  "total_drives",
-  "total_start_yard",
-  "drive_efficiency",
-  "total_trips",
-  "scores",
-  "total_points",
-  "downs",
-  "first_downs",
-  "penalty",
-  "third_downs",
-  "conversions",
-  "fourth_downs",
-  "two_points",
-  "net_yards",
-  "opponent_game_stats",
-  "record",
-  "wins",
-  "losses",
-  "conference_wins",
-  "conference_losses",
-  "national_rank",
-  "is_user_team",
-  "scholarships_to_offer",
-  "recruiting_class_rank",
-  "points_per_week",
-  "class_points",
-  "signed_player_stars",
-  "stars_1",
-  "stars_2",
-  "stars_3",
-  "stars_4",
-  "stars_5",
-  "position_needs",
-  "EDGE",
-  "season_stats",
-  "opponent_season_stats",
-  "week_name",
-  "schedule_week_number",
-  "week_updates",
-  "user_actions",
-  "recruiting_actions_used",
-  "phase",
-  "lettering",
-  "lettering_color",
-  "team_logo_url",
-  "headlines",
-  "depth_chart",
-  "depth_chart_with_recruits",
-  "division_name",
-  "playoff",
-  "rankings",
-  "division_rank",
-  "national_rank_delta",
-  "national_rank_delta_abs",
-  "stat_rankings",
-  "offense",
-  "defense",
-  "results",
-  "conference_champion",
-  "final_four",
-  "national_champion",
-  "teams",
-  "fixed",
-  "winning_team",
-  "losing_team",
-  "is_primetime_game",
-  "scoring",
-  "drives",
-  "final",
-  "periods",
-  "drive_end",
-  "plays",
-  "away_team_points",
-  "drive_description",
-  "home_team_points",
-  "is_scoring_drive",
-  "period",
-  "play_description",
-  "play_type",
-  "seconds_in_to_game",
-  "period_number",
-  "summed_national_rank",
-  "player_face",
-  "accessories",
-  "ear",
-  "eye",
-  "eyeLine",
-  "eyebrow",
-  "facialHair",
-  "fatness",
-  "glasses",
-  "hair",
-  "color",
-  "flip",
-  "shave",
-  "head",
-  "miscLine",
-  "mouth",
-  "nose",
-  "smileLine",
-  "display",
-  "abs_game_score_value",
-  "game_score_value",
-  "abs_season_score_value",
-  "season_score_value",
-  "game_outcome_letter",
-  "success",
-  "conference_net_wins",
-  "conference_gb",
-  "defeated_teams",
-  "net_wins",
-  "win_streak",
-  "division_champion",
-  "by_position_group",
-  "by_position",
-  "by_position_unit",
-  "playing_time_val",
-];
 window.table_key_map = null;
 window.reverse_table_key_map = null;
 
@@ -4656,14 +4295,14 @@ const resolve_route_parameters = async (pathname) => {
 
     { route: "/World/:world_id/", f: page_world },
     // { route: "/World/:world_id/Week/:short_name/", f: page_world_week },
-    // { route: "/World/:world_id/Rankings/", f: page_world_rankings },
+    { route: "/World/:world_id/Rankings/", f: page_world_rankings },
     { route: "/World/:world_id/Standings/", f: page_world_standings },
     {
       route: "/World/:world_id/Standings/Conference/:conference_id",
       path: "world/standings/base.html",
     },
     { route: "/World/:world_id/Schedule/", path: "world/schedule/base.html" },
-    { route: "/World/:world_id/Awards/", path: "world/awards/base.html" },
+    { route: "/World/:world_id/Awards/", f: page_world_awards },
 
     {
       route: "/World/:world_id/Conference/:conference_id",
@@ -4854,7 +4493,6 @@ const common_functions = async (path) => {
     random_city: random_city,
     body_from_position: body_from_position,
     generate_face: generate_face,
-    display_player_face: display_player_face,
     add_listeners: add_listeners,
     recent_games: recent_games,
     distinct: distinct,
@@ -10121,16 +9759,7 @@ const add_listeners = async (common) => {
 
   $("#nav-team-dropdown-container .conference-button").on("click", function (event, target) {
     var conference_selected = $(event.currentTarget).attr("conference-button-val");
-    console.log({
-      conference_selected: conference_selected,
-      event: event,
-      target: event.currentTarget,
-      teams: $(
-        '#nav-team-dropdown-container .team-link[conference-button-val="' +
-          conference_selected +
-          '"]'
-      ),
-    });
+
     if (conference_selected == "All") {
       $("#nav-team-dropdown-container .team-link").removeClass("w3-hide");
     } else {
@@ -11540,306 +11169,7 @@ const create_coach_face = async (many_or_single, coach_ids, db) => {
   }
 };
 
-const addWrapper = (svgString) => {
-  return `<g>${svgString}</g>`;
-};
 
-const addTransform = (element, newTransform) => {
-  const oldTransform = $(element).attr("transform");
-  element.setAttribute("transform", `${oldTransform ? `${oldTransform} ` : ""}${newTransform}`);
-};
-
-const rotateCentered = (element, angle) => {
-  const bbox = element.getBBox();
-  const cx = bbox.x + bbox.width / 2;
-  const cy = bbox.y + bbox.height / 2;
-
-  addTransform(element, `rotate(${angle} ${cx} ${cy})`);
-};
-
-const scaleStrokeWidthAndChildren = (element, factor) => {
-  const strokeWidth = $(element).attr("stroke-width");
-  if (strokeWidth) {
-    element.setAttribute("stroke-width", String(parseFloat(strokeWidth) / factor));
-  }
-  const children = element.childNodes;
-  for (let i = 0; i < children.length; i++) {
-    scaleStrokeWidthAndChildren(children[i], factor);
-  }
-};
-
-// Scale relative to the center of bounding box of element e, like in Raphael.
-// Set x and y to 1 and this does nothing. Higher = bigger, lower = smaller.
-const scaleCentered = (element, x, y) => {
-  const bbox = element.getBBox();
-  const cx = bbox.x + bbox.width / 2;
-  const cy = bbox.y + bbox.height / 2;
-  const tx = (cx * (1 - x)) / x;
-  const ty = (cy * (1 - y)) / y;
-
-  addTransform(element, `scale(${x} ${y}) translate(${tx} ${ty})`);
-
-  // Keep apparent stroke width constant, similar to how Raphael does it (I think)
-  if (Math.abs(x) !== 1 || Math.abs(y) !== 1 || Math.abs(x) + Math.abs(y) !== 2) {
-    const factor = (Math.abs(x) + Math.abs(y)) / 2;
-    scaleStrokeWidthAndChildren(element, factor);
-  }
-};
-
-// Translate element such that its center is at (x, y). Specifying xAlign and yAlign can instead make (x, y) the left/right and top/bottom.
-const translate = (element, x, y, xAlign = "center", yAlign = "center") => {
-  const bbox = element.getBBox();
-  var cx;
-  var cy;
-  if (xAlign === "left") {
-    cx = bbox.x;
-  } else if (xAlign === "right") {
-    cx = bbox.x + bbox.width;
-  } else {
-    cx = bbox.x + bbox.width / 2;
-  }
-  if (yAlign === "top") {
-    cy = bbox.y;
-  } else if (yAlign === "bottom") {
-    cy = bbox.y + bbox.height;
-  } else {
-    cy = bbox.y + bbox.height / 2;
-  }
-
-  addTransform(element, `translate(${x - cx} ${y - cy})`);
-};
-
-// Defines the range of fat/skinny, relative to the original width of the default head.
-const fatScale = (fatness) => 0.8 + 0.2 * fatness;
-
-const drawFeature = async (svg, face, info) => {
-  const feature = face[info.name];
-  if (!feature) {
-    return;
-  }
-
-  var featureSVGString = window.svgs[info.name][feature.id];
-
-  if (!featureSVGString) {
-    return;
-  }
-
-  // @ts-ignore
-  if (feature.shave) {
-    // @ts-ignore
-    featureSVGString = featureSVGString.replace("$[faceShave]", feature.shave);
-  }
-
-  // @ts-ignore
-  if (feature.shave) {
-    // @ts-ignore
-    featureSVGString = featureSVGString.replace("$[headShave]", feature.shave);
-  }
-
-  const player_id = $(svg).parent().attr("player_id") || $(svg).parent().attr("coach_id");
-
-  featureSVGString = featureSVGString.replaceAll("$[player_id]", `${player_id}-${info.name}`);
-  featureSVGString = featureSVGString.replace("$[skinColor]", face.body.color);
-  featureSVGString = featureSVGString.replace(/\$\[hairColor\]/g, face.hair.color);
-  featureSVGString = featureSVGString.replace(/\$\[primary\]/g, face.teamColors[0]);
-  featureSVGString = featureSVGString.replace(/\$\[secondary\]/g, face.teamColors[1]);
-  featureSVGString = featureSVGString.replace(/\$\[accent\]/g, face.teamColors[2]);
-  featureSVGString = featureSVGString.replace(
-    /\$\[jersey-lettering-text\]/g,
-    face.jersey.lettering || ""
-  );
-  featureSVGString = featureSVGString.replace(
-    /\$\[jersey-lettering-color\]/g,
-    face.jersey.lettering_color
-  );
-  if (face.jersey.lettering) {
-    let font_size = Math.floor(80 - 5 * face.jersey.lettering.length);
-    featureSVGString = featureSVGString.replace(/\$\[font-size\]/g, font_size);
-
-    let font_y_pos = Math.floor(645 - 5 * face.jersey.lettering.length);
-    featureSVGString = featureSVGString.replace(/\$\[font-y-pos\]/g, font_y_pos);
-  } else {
-    featureSVGString = featureSVGString.replace(/\$\[font-y-pos\]/g, 0);
-  }
-
-  //console.log('featureSVGString', info, feature, featureSVGString)
-
-  for (let i = 0; i < info.positions.length; i++) {
-    svg.insertAdjacentHTML("beforeend", addWrapper(featureSVGString));
-
-    const position = info.positions[i];
-
-    if (position !== null) {
-      // Special case, for the pinocchio nose it should not be centered but should stick out to the left or right
-      var xAlign;
-      if (feature.id === "nose4" || feature.id === "pinocchio") {
-        // @ts-ignore
-        xAlign = feature.flip ? "right" : "left";
-      } else {
-        xAlign = "center";
-      }
-
-      translate(svg.lastChild, position[0], position[1], xAlign);
-    }
-
-    if (feature.hasOwnProperty("angle")) {
-      // @ts-ignore
-      rotateCentered(svg.lastChild, (i === 0 ? 1 : -1) * feature.angle);
-    }
-
-    // Flip if feature.flip is specified or if this is the second position (for eyes and eyebrows). Scale if feature.size is specified.
-    // @ts-ignore
-    const scale = feature.hasOwnProperty("size") ? feature.size : 1;
-    // @ts-ignore
-    if (feature.flip || i === 1) {
-      // @ts-ignore
-      scaleCentered(svg.lastChild, -scale, scale);
-    } else if (scale !== 1) {
-      // @ts-ignore
-      scaleCentered(svg.lastChild, scale, scale);
-    }
-
-    if (info.scaleFatness && info.positions[0] !== null) {
-      // Scale individual feature relative to the edge of the head. If fatness is 1, then there are 47 pixels on each side. If fatness is 0, then there are 78 pixels on each side.
-      const distance = (78 - 47) * (1 - face.fatness);
-      // @ts-ignore
-      translate(svg.lastChild, distance, 0, "left", "top");
-    }
-  }
-
-  if (info.scaleFatness && info.positions.length === 1 && info.positions[0] === null) {
-    // @ts-ignore
-    scaleCentered(svg.lastChild, fatScale(face.fatness), 1);
-  }
-};
-
-const override = (face, overrides) => {
-  $.each(overrides, function (key, val) {
-    face[key] = val;
-  });
-
-  return face;
-};
-
-const display_player_face = async (face, overrides, dom_id) => {
-  if ("jersey" in overrides && overrides.jersey.id == "suit") {
-    overrides["accessories"] = { id: "none" };
-    face.glasses.id = "none";
-  }
-
-  face = override(face, overrides);
-
-  const container_element = $("#" + dom_id);
-
-  $(container_element).html("");
-
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("version", "1.2");
-  svg.setAttribute("baseProfile", "tiny");
-  svg.setAttribute("width", "100%");
-  svg.setAttribute("height", "100%");
-  svg.setAttribute("viewBox", "0 0 400 600");
-  svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
-
-  // Needs to be in the DOM here so getBBox will work
-  $(container_element).append(svg);
-
-  const featureInfos = [
-    {
-      name: "hairBg",
-      positions: [null],
-      scaleFatness: true,
-    },
-    {
-      name: "body",
-      positions: [null],
-    },
-    {
-      name: "jersey",
-      positions: [null],
-    },
-    {
-      name: "ear",
-      positions: [
-        [55, 325],
-        [345, 325],
-      ],
-      scaleFatness: true,
-    },
-    {
-      name: "head",
-      positions: [null], // Meaning it just gets placed into the SVG with no translation
-      scaleFatness: true,
-    },
-    {
-      name: "eyeLine",
-      positions: [null],
-    },
-    {
-      name: "smileLine",
-      positions: [
-        [150, 435],
-        [250, 435],
-      ],
-    },
-    {
-      name: "miscLine",
-      positions: [null],
-    },
-    {
-      name: "facialHair",
-      positions: [null],
-      scaleFatness: true,
-    },
-    {
-      name: "eye",
-      positions: [
-        [140, 310],
-        [260, 310],
-      ],
-    },
-    {
-      name: "eyebrow",
-      positions: [
-        [140, 270],
-        [260, 270],
-      ],
-    },
-    {
-      name: "mouth",
-      positions: [[200, 440]],
-    },
-    {
-      name: "nose",
-      positions: [[200, 370]],
-    },
-    {
-      name: "hair",
-      positions: [null],
-      scaleFatness: true,
-    },
-    {
-      name: "glasses",
-      positions: [null],
-      scaleFatness: true,
-    },
-    {
-      name: "accessories",
-      positions: [null],
-      scaleFatness: true,
-    },
-  ];
-
-  if (!window.svgs) {
-    var url = `/static/data/import_json/svgs.json`;
-    var html = await fetch(url);
-    window.svgs = await html.json();
-  }
-
-  $.each(featureInfos, async function (ind, info) {
-    drawFeature(svg, face, info);
-  });
-};
 
 function download(filename, text, type = "text/json") {
   // Create an invisible A element
@@ -12842,22 +12172,12 @@ $(document).ready(async function () {
   var startTime = performance.now();
 
   $(document).on("click", async function (event) {
-    event.preventDefault();
     const target = $(event.target);
     const parent_link = $(target).closest('[href]');
+    const href = parent_link.attr('href')
 
-    console.log({
-      href: target.attr("href"),
-      target: target,
-      event: event,
-      parent_link:parent_link.attr('href')
-    });
-
-    if (parent_link.attr('href')) {
-      // Navigate to clicked url
-      const href = parent_link.attr('href');
-      // const path = href.substr(href.lastIndexOf('/'));      
-      // router.navigateTo(path);
+    if (href){
+      event.preventDefault();
       history.pushState({ path: href }, "", href);
       await page(href);
     }
@@ -12868,6 +12188,7 @@ $(document).ready(async function () {
 
   window.onpopstate = async function () {
     await page(location.pathname);
+
   };
 
   // await action(common);
@@ -12889,7 +12210,9 @@ const page = async (path) => {
     "common.winning_route.f": common.winning_route.f,
   });
 
-  common.winning_route.f(common);
+  await common.winning_route.f(common);
+
+  await add_listeners(common);
   var endTime = performance.now();
   console.log(`Time taken to render ${path}: ${parseInt(endTime - startTime)} ms`);
 };
