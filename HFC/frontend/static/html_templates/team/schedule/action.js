@@ -17,8 +17,8 @@
       const team = await db.team.get({team_id: team_id})
       const team_season = await db.team_season.get({team_id: team_id, season: season});
 
-      const conference_seasons_by_conference_season_id = await index_group(await db.conference_season.where({season: season}).toArray(), 'index', 'conference_season_id');
-      const conference_by_conference_id = await index_group(await db.conference.toArray(), 'index', 'conference_id');
+      const conference_seasons_by_conference_season_id = index_group_sync(await db.conference_season.where({season: season}).toArray(), 'index', 'conference_season_id');
+      const conference_by_conference_id = index_group_sync(await db.conference.toArray(), 'index', 'conference_id');
 
       team.team_season = team_season;
       team.team_season.conference_season = conference_seasons_by_conference_season_id[team.team_season.conference_season_id];

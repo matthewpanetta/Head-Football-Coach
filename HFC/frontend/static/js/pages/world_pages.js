@@ -11,7 +11,7 @@ import {
     set_union,
     except,
     set_except,
-    get_from_dict
+    get_from_dict, deep_copy
   } from "../utils.js";
 
 export const page_world = async (common) => {

@@ -1,17 +1,19 @@
-import { page_world, page_world_standings } from "./pages/world_page.js";
+import { page_world, page_world_standings } from "./pages/world_pages.js";
+import { page_team } from "./pages/team_pages.js";
 import {
   index_group_sync,
-  get,
-  set,
-  distinct,
-  sum,
-  nest_children,
-  intersect,
-  set_intersect,
-  union,
-  set_union,
-  except,
-  set_except, deep_copy, get_from_dict, increment_parent
+    get,
+    set,
+    distinct,
+    sum,
+    nest_children,
+    intersect,
+    set_intersect,
+    union,
+    set_union,
+    except,
+    set_except,
+    get_from_dict, deep_copy
 } from "./utils.js";
 import {
   headline,
@@ -37,70 +39,7 @@ import {
 } from "./schema.js";
 
 
-const team_header_links = async (params) => {
-  const path = params.path;
-  const season = params.season;
-  const db = params.db;
-  const team = params.team;
 
-  const all_paths = [
-    { href_extension: "", Display: "Overview" },
-    { href_extension: "Roster", Display: "Roster" },
-    { href_extension: "Gameplan", Display: "Gameplan" },
-    { href_extension: "Schedule", Display: "Schedule" },
-    { href_extension: "History", Display: "History" },
-  ];
-
-  const link_paths = all_paths.filter((link) => link.Display != path);
-
-  for (let path_obj of all_paths) {
-    if (path_obj.Display == "History") {
-      path_obj.href = team.team_href + "/" + path_obj.href_extension;
-    } else if (path_obj.Display == "Overview") {
-      if (season) {
-        path_obj.href = team.team_href + `/Season/${season}/`;
-      } else {
-        path_obj.href = team.team_href;
-      }
-    } else {
-      if (season) {
-        path_obj.href = team.team_href + "/" + path_obj.href_extension + `/Season/${season}/`;
-      } else {
-        path_obj.href = team.team_href + "/" + path_obj.href_extension;
-      }
-    }
-  }
-
-  let path_obj = all_paths.find((link) => link.Display == path);
-
-  var seasons = await db.league_season.toArray();
-  if (season != undefined) {
-    seasons = seasons.map((ls) => ({
-      season: ls.season,
-      season_href: team.team_href + "/" + path_obj.href_extension + `/Season/${ls.season}/`,
-    }));
-  } else {
-    seasons = seasons.map((ls) => ({
-      season: ls.season,
-      season_href: `Season/${ls.season}/`,
-    }));
-  }
-  console.log({ season: season, seasons: seasons, path: path });
-
-  var return_links = all_paths[0];
-  for (let path_obj of all_paths) {
-    if (path_obj.Display == path) {
-      return_links = {
-        link_paths: link_paths,
-        external_paths: path_obj,
-        seasons: seasons,
-      };
-    }
-  }
-  console.log({ return_links: return_links, all_paths: all_paths });
-
-  return return_links;
-};
 
 const nav_bar_links = async (params) => {
   const path = params.path;
@@ -4750,7 +4689,7 @@ const resolve_route_parameters = async (pathname) => {
       path: "almanac/amazing_stats/base.html",
     },
 
-    { route: "/World/:world_id/Team/:team_id/", path: "team/team/base.html" },
+    { route: "/World/:world_id/Team/:team_id/", f: page_team},
     { route: "/World/:world_id/Team/:team_id/Season/:season/", path: "team/team/base.html" },
     { route: "/World/:world_id/Team/:team_id/Schedule", path: "team/schedule/base.html" },
     {
@@ -4793,12 +4732,6 @@ const resolve_route_parameters = async (pathname) => {
   routes = routes.filter(function (route) {
     route.params = {};
     for (let ind = 0; ind < route.route_parts.length; ind++) {
-      console.log({
-        ind: ind,
-        route: route,
-        "route.route_parts": route.route_parts,
-        route_params: route_params,
-      });
       if (route.route_parts[ind] != route_params[ind] && !route.route_parts[ind].includes(":")) {
         return false;
       } else if (route.route_parts[ind].includes(":")) {
@@ -4904,14 +4837,12 @@ const common_functions = async (path) => {
     create_conference_seasons: create_conference_seasons,
     calculate_team_overalls: calculate_team_overalls,
     nav_bar_links: nav_bar_links,
-    team_header_links: team_header_links,
     db: db,
     ddb: ddb,
     world_id: world_id,
     world_object: world_object,
     params: params,
     season: world_object.current_season,
-    conference_standings: conference_standings,
     create_player_face: create_player_face,
     create_coach_face: create_coach_face,
     weighted_random_choice: weighted_random_choice,
@@ -4969,64 +4900,6 @@ const stopwatch = async (common, message) => {
     )} ms`
   );
   window.lastStopwatch = currentTime;
-};
-
-const conference_standings = async (conference_season_id, relevant_team_season_ids, common) => {
-  const db = common.db;
-  var conference_season = await db.conference_season.get({
-    conference_season_id: conference_season_id,
-  });
-  const season = conference_season.season;
-  var conference = await db.conference.get({
-    conference_id: conference_season.conference_id,
-  });
-
-  var team_seasons_in_conference = await db.team_season.find({
-    season: season,
-    team_id: { $gt: 0 },
-    conference_season_id: conference_season_id,
-  });
-
-  const team_season_stats = await db.team_season_stats.where({ season: season }).toArray();
-  const team_season_stats_by_team_season_id = index_group_sync(
-    team_season_stats,
-    "index",
-    "team_season_id"
-  );
-
-  const teams = await db.team.toArray();
-  const teams_by_team_id = index_group_sync(teams, "index", "team_id");
-
-  team_seasons_in_conference = nest_children(
-    team_seasons_in_conference,
-    team_season_stats_by_team_season_id,
-    "team_season_id",
-    "season_stats"
-  );
-  team_seasons_in_conference = nest_children(
-    team_seasons_in_conference,
-    teams_by_team_id,
-    "team_id",
-    "team"
-  );
-
-  team_seasons_in_conference.forEach(function (ts) {
-    if (relevant_team_season_ids.includes(ts.team_season_id)) {
-      ts.bold = "bold";
-    }
-  });
-
-  for (const division of conference_season.divisions) {
-    division.division_standings = team_seasons_in_conference
-      .filter((ts) => ts.division_name == division.division_name)
-      .sort(function (teamA, teamB) {
-        return teamA.rankings.division_rank[0] - teamB.rankings.division_rank[0];
-      });
-    console.log({ division: division, team_seasons_in_conference: team_seasons_in_conference });
-  }
-  conference_season.conference = conference;
-  console.log({ conference: conference, conference_season: conference_season });
-  return conference_season;
 };
 
 function roughSizeOfObject(object) {
@@ -12262,139 +12135,6 @@ const initialize_scoreboard = () => {
   });
 };
 
-const initialize_headlines = () => {
-  if ($(".MultiCarousel-inner").children().length == 0) {
-    $(".headline-slideshow").remove();
-    return 0;
-  }
-  var itemsMainDiv = ".MultiCarousel";
-  var itemsDiv = ".MultiCarousel-inner";
-  var itemWidth = "";
-  var initialOffset = 20;
-  $(".leftLst, .rightLst").click(function () {
-    var condition = $(this).hasClass("leftLst");
-    if (condition) click(0, this);
-    else click(1, this);
-  });
-
-  ResCarouselSize();
-
-  $(window).resize(function () {
-    ResCarouselSize();
-  });
-
-  //this function define the size of the items
-  function ResCarouselSize() {
-    var incno = 0;
-    var dataItems = "data-items";
-    var itemClass = ".headline-carousel-item";
-    var id = 0;
-    var btnParentSb = "";
-    var itemsSplit = "";
-    var sampwidth = $(itemsMainDiv).width();
-    var bodyWidth = $("body").width();
-    $(itemsDiv).each(function () {
-      id = id + 1;
-      var itemNumbers = $(this).find(itemClass).length;
-      btnParentSb = $(this).parent().attr(dataItems);
-      itemsSplit = btnParentSb.split(",");
-      $(this)
-        .parent()
-        .attr("id", "MultiCarousel" + id);
-
-      incno = 5;
-      itemWidth = sampwidth / incno;
-      if (bodyWidth >= 1200) {
-        incno = itemsSplit[3];
-        itemWidth = sampwidth / incno;
-      } else if (bodyWidth >= 992) {
-        incno = itemsSplit[2];
-        itemWidth = sampwidth / incno;
-      } else if (bodyWidth >= 768) {
-        incno = itemsSplit[1];
-        itemWidth = sampwidth / incno;
-      } else {
-        incno = itemsSplit[0];
-        itemWidth = sampwidth / incno;
-      }
-      incno = 4;
-      itemWidth = sampwidth / incno;
-      console.log({
-        this: this,
-        itemClass: itemClass,
-        width: itemWidth * itemNumbers,
-        itemWidth: itemWidth,
-        itemNumbers: itemNumbers,
-        bodyWidth: bodyWidth,
-        incno: incno,
-        sampwidth: sampwidth,
-        itemsMainDiv: $(itemsMainDiv),
-        "$(itemsMainDiv).width()": $(itemsMainDiv).width(),
-      });
-      $(this).css({
-        transform: "translateX(" + initialOffset + "px)",
-        width: itemWidth * (itemNumbers + 1),
-      });
-      $(this)
-        .find(itemClass)
-        .each(function () {
-          $(this).outerWidth(itemWidth);
-          $(this).height(itemWidth * 2 * 0.67 + 0);
-        });
-
-      $(this)
-        .find(`${itemClass}:first`)
-        .each(function () {
-          $(this).outerWidth(itemWidth * 2);
-          $(this).height(itemWidth * 2 * 0.67 + 10);
-        });
-
-      $(".leftLst").addClass("over");
-      $(".rightLst").removeClass("over");
-    });
-  }
-
-  //this function used to move the items
-  function ResCarousel(e, el, s) {
-    var leftBtn = ".leftLst";
-    var rightBtn = ".rightLst";
-    var translateXval = "";
-    var divStyle = $(el + " " + itemsDiv).css("transform");
-    var values = divStyle.match(/-?[\d\.]+/g);
-    var xds = Math.abs(values[4]);
-    if (e == 0) {
-      translateXval = parseInt(xds) - parseInt(itemWidth * s);
-      $(el + " " + rightBtn).removeClass("over");
-
-      if (translateXval <= itemWidth / 2) {
-        translateXval = -1 * initialOffset;
-        $(el + " " + leftBtn).addClass("over");
-      }
-    } else if (e == 1) {
-      var itemsCondition = $(el).find(itemsDiv).width() - $(el).width();
-      translateXval = parseInt(xds) + parseInt(itemWidth * s);
-      $(el + " " + leftBtn).removeClass("over");
-
-      if (translateXval >= itemsCondition - itemWidth / 2) {
-        translateXval = itemsCondition + initialOffset;
-        $(el + " " + rightBtn).addClass("over");
-      }
-    }
-    $(el + " " + itemsDiv).css("transform", "translateX(" + -translateXval + "px)");
-  }
-
-  //It is used to get some elements from btn
-  function click(ell, ee) {
-    var Parent = "#" + $(ee).parent().attr("id");
-    var slide = $(Parent).attr("data-slide");
-    ResCarousel(ell, Parent, slide);
-  }
-
-  $(".headline-carousel-item.w3-hide").each(function (ind, obj) {
-    $(obj).removeClass("w3-hide");
-  });
-};
-
 const tier_placement = (tiers, population_size, distribution, rank_place) => {
   console.log({
     tiers: tiers,
@@ -13104,21 +12844,22 @@ $(document).ready(async function () {
   $(document).on("click", async function (event) {
     event.preventDefault();
     const target = $(event.target);
+    const parent_link = $(target).closest('[href]');
 
-    if (target.attr("href")) {
+    console.log({
+      href: target.attr("href"),
+      target: target,
+      event: event,
+      parent_link:parent_link.attr('href')
+    });
+
+    if (parent_link.attr('href')) {
       // Navigate to clicked url
-      const href = target.attr("href");
-      // const path = href.substr(href.lastIndexOf('/'));
-      const path = href;
-      console.log({
-        path: path,
-        href: href,
-        target: target,
-        event: event,
-      });
+      const href = parent_link.attr('href');
+      // const path = href.substr(href.lastIndexOf('/'));      
       // router.navigateTo(path);
-      history.pushState({ path: path }, "", path);
-      await page(path);
+      history.pushState({ path: href }, "", href);
+      await page(href);
     }
 
     $(".item").removeClass("active");

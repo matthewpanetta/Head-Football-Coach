@@ -13,7 +13,7 @@ const mimeTypes = {
 	".css": "text/css",
 	".gif": "image/gif",
 	".html": "text/html",
-	".ico": "image/x-icon",
+	// ".ico": "image/x-icon",
 	".jpeg": "image/jpeg",
 	".jpg": "image/jpeg",
 	".js": "text/javascript",
@@ -25,10 +25,23 @@ const mimeTypes = {
 	".woff": "font/woff",
 	".woff2": "font/woff2",
 };
-const sendFile = (res, filename) => {
+
+const static_suffix = new Set([
+	'.css',
+	'.js',
+	'.png',
+	'.njk',
+	'.css',
+	'.woff',
+	'.woff2',
+	'.eot',
+	'.ttf',
+]);
+
+const send_file = (res, filename) => {
 	// const filePath = path.join("build", filename);
 	const filePath = filename;
-	console.log('filename', filename)
+	// console.log('filename', filename)
 	if (fs.existsSync(filePath)) {
 		const ext = path.extname(filename);
 		if (mimeTypes[ext]) {
@@ -47,37 +60,23 @@ const sendFile = (res, filename) => {
 	}
 };
 
-const showStatic = (req, res) => {
+const send_url = (req, res) => {
 	res.set("Cache-Control", `public, max-age=${cache_time}`);
-	sendFile(res, __dirname + "/frontend/" + req.url.substr(1));
+	send_file(res, __dirname + "/frontend/" + req.url.substr(1));
 };
-const showIndex = (req, res) => {
-	sendFile(res, __dirname + "/frontend/static/html_templates/index/index/base.html");
-};
-
-const startsWith = (url, prefixes) => {
-	for (const prefix of prefixes) {
-		if (url.indexOf(prefix) === 0) {
-			return true;
-		}
-	}
-	return false;
+const send_index = (req, res) => {
+	send_file(res, __dirname + "/frontend/static/html_templates/index/index/base.html");
 };
 
 app.get('*', (req, res) => {
 	console.log('req.url', req.url)
-	const prefixesStatic = [
-		'.css',
-		'.js',
-		'.png',
-		'.njk',
-		'.css',
-	];
+	
+	let url_suffix_list = [3,4,5].map(len => req.url.substring(req.url.length - len))
 
-	if (prefixesStatic.some(prefix => req.url.includes(prefix))) {
-		showStatic(req, res);
+	if (url_suffix_list.some(suffix_option => static_suffix.has(suffix_option))) {
+		send_url(req, res);
 	} else {
-		showIndex(req, res);
+		send_index(req, res);
 	}
 });
 

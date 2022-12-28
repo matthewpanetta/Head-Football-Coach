@@ -19,9 +19,9 @@ const getHtml = async (common) => {
   const week_ids = weeks.map((week) => week.week_id);
 
   let teams = await db.team.where("team_id").above(0).toArray();
-  var teams_by_team_id = await index_group(teams, "index", "team_id");
+  var teams_by_team_id = index_group_sync(teams, "index", "team_id");
   let conferences = await db.conference.toArray();
-  var conferences_by_conference_id = await index_group(
+  var conferences_by_conference_id = index_group_sync(
     conferences,
     "index",
     "conference_id"
@@ -36,7 +36,7 @@ const getHtml = async (common) => {
   var distinct_team_seasons = [];
 
   let games = await db.game.where("week_id").anyOf(week_ids).toArray();
-  var games_by_game_id = await index_group(games, "index", "game_id");
+  var games_by_game_id = index_group_sync(games, "index", "game_id");
   var team_games = await db.team_game
     .where("week_id")
     .anyOf(week_ids)
@@ -44,12 +44,12 @@ const getHtml = async (common) => {
   team_games = nest_children(team_games, games_by_game_id, "game_id", "game");
 
   team_games = team_games.filter((tg) => tg.game.was_played == true);
-  var team_games_by_team_season_id = await index_group(
+  var team_games_by_team_season_id = index_group_sync(
     team_games,
     "group",
     "team_season_id"
   );
-  var team_games_by_team_game_id = await index_group(
+  var team_games_by_team_game_id = index_group_sync(
     team_games,
     "index",
     "team_game_id"
