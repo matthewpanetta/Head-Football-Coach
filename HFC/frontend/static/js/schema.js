@@ -1,3 +1,5 @@
+import { deep_copy, round_decimal, normal_trunc } from "./utils";
+
 export class headline {
   constructor(headline_id, week_id, headline_text, headline_type, headline_relevance) {
     this.headline_id = headline_id;
@@ -668,6 +670,11 @@ export class team_game {
 }
 
 export class team {
+  constructor(init_data){
+    for (let key in init_data){
+      this[key] = init_data[key]
+    }
+  }
   build_team_logo(size_obj) {
     var folder_prefix = "/static/img/team_logos/";
     var size_suffix = "";

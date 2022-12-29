@@ -3017,11 +3017,11 @@ table {
   max-height: 90vh;
 }
 
-.modal .modal-content {
+/* .modal .modal-content {
   margin: 2% auto;
   width: 70vw;
   height: 90vh;
-}
+} */
 
 .close {
   color: #aaa;

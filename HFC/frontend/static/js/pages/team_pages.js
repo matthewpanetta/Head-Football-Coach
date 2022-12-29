@@ -14,6 +14,7 @@ import {
   get_from_dict,
   deep_copy,
 } from "../utils.js";
+import {nunjucks_env} from '../modules/nunjucks_tags.js'
 import { draw_player_faces, draw_coach_faces } from "../faces.js";
 import { conference_standings } from "../widgets.js";
 
@@ -234,6 +235,8 @@ export const page_team = async (common) => {
     }
   }
 
+  games = games.sort((g_a, g_b) => g_a.week_id - g_b.week_id )
+
   var counter_games = 0;
   var selected_game_chosen = false;
   var selected_game_id = 0;
@@ -251,8 +254,6 @@ export const page_team = async (common) => {
   var team_game_ids = opponent_team_game_ids.concat(team_games.map((tg) => tg.team_game_id));
 
   common.stopwatch(common, "Time after fetching players");
-
-  games = games.sort((g_a, g_b) => g_a.week_id - g_b.week_id )
 
   console.log({
     games:games
@@ -368,7 +369,7 @@ export const page_team = async (common) => {
   var html = await fetch(url);
   html = await html.text();
 
-  var renderedHtml = await common.nunjucks_env.renderString(html, render_content);
+  var renderedHtml = nunjucks_env.renderString(html, render_content);
 
   $("#body").html(renderedHtml);
 
@@ -646,7 +647,7 @@ const team_action = async (common) => {
 
     console.log({ conference_standings: conference_standings });
 
-    var renderedHtml = await common.nunjucks_env.renderString(html, {
+    var renderedHtml = nunjucks_env.renderString(html, {
       conference_standings: conference_standings,
     });
     console.log({ renderedHtml: renderedHtml });
@@ -657,7 +658,7 @@ const team_action = async (common) => {
     var html = await fetch(url);
     html = await html.text();
 
-    var renderedHtml = await common.nunjucks_env.renderString(html, {
+    var renderedHtml = nunjucks_env.renderString(html, {
       page: common.render_content.page,
       team_leaders: team_leaders,
     });
@@ -671,7 +672,7 @@ const team_action = async (common) => {
     var html = await fetch(url);
     html = await html.text();
 
-    var renderedHtml = await common.nunjucks_env.renderString(html, {
+    var renderedHtml = nunjucks_env.renderString(html, {
       team_stats: team_stats,
     });
     console.log({ renderedHtml: renderedHtml });
@@ -740,7 +741,7 @@ const team_action = async (common) => {
     var html = await fetch(url);
     html = await html.text();
 
-    var renderedHtml = await common.nunjucks_env.renderString(html, {
+    var renderedHtml = nunjucks_env.renderString(html, {
       team: team,
     });
     console.log({ renderedHtml: renderedHtml });
@@ -801,7 +802,7 @@ const team_action = async (common) => {
     var html = await fetch(url);
     html = await html.text();
 
-    var renderedHtml = await common.nunjucks_env.renderString(html, render_content);
+    var renderedHtml = nunjucks_env.renderString(html, render_content);
     console.log({ renderedHtml: renderedHtml, render_content: render_content });
 
     $("#nav-coaches").append(renderedHtml);
@@ -1003,7 +1004,7 @@ const team_action = async (common) => {
     var html = await fetch(url);
     html = await html.text();
 
-    var renderedHtml = await common.nunjucks_env.renderString(html, {
+    var renderedHtml = nunjucks_env.renderString(html, {
       rivals: rivals,
       team: team,
     });
@@ -1949,7 +1950,7 @@ const draw_map = async (common) => {
     `;
 
   cities.forEach(async function (city) {
-    var renderedHtml = await common.nunjucks_env.renderString(tooltip_template, { city: city });
+    var renderedHtml = nunjucks_env.renderString(tooltip_template, { city: city });
     renderedHtml = renderedHtml.replace("\n", "");
     let marker = L.marker([city.lat, city.long], { icon: player_icon })
       .bindTooltip(renderedHtml)

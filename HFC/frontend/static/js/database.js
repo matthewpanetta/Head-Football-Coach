@@ -21,6 +21,9 @@ import {
   conference_season,
 } from "./schema.js";
 
+export const clone_method = "shallow-assign";
+
+
 export const prune_orphaned_databases = async () => {
   const ddb = await driver_db();
   let databases = ddb.world.find();
@@ -29,6 +32,32 @@ export const prune_orphaned_databases = async () => {
     if (!world_obj.user_team || !world_obj.user_team.team_name) {
       await ddb.world.findAndRemove({ world_id: world_obj.world_id });
     }
+  }
+
+  await ddb.saveDatabaseAsync();
+
+  databases = ddb.world.find();
+  let database_name_list = databases.map((db) => db.database_name);
+  database_name_list.push("driver");
+
+  let hfc_idbAdapter = new LokiIndexedAdapter("hfc");
+  let loki_catalog = await hfc_idbAdapter.getDatabaseListAsync();
+
+  console.log({ loki_catalog: loki_catalog, databases: databases });
+  for (let db_name of loki_catalog) {
+    console.log({ db_name: db_name });
+    if (!database_name_list.includes(db_name)) {
+      await hfc_idbAdapter.deleteDatabaseAsync(db_name);
+    }
+  }
+};
+
+export const truncate_databases = async () => {
+  const ddb = await driver_db();
+  let databases = ddb.world.find();
+
+  for (let world_obj of databases) {
+    await ddb.world.findAndRemove({ world_id: world_obj.world_id });
   }
 
   await ddb.saveDatabaseAsync();
@@ -77,21 +106,6 @@ export const resolve_db = async (world_obj) => {
   }
 
   return get_db({ database_name: dbname });
-
-  // TODO do DB checking for correct ids
-  const databases = await ddb.getDatabaseList();
-
-  console.log({
-    databases: databases,
-    dbname: dbname,
-  });
-
-  if (databases.includes(dbname)) {
-    return get_db({ database_name: dbname });
-  } else {
-    console.error("No database under this name", dbname);
-    return null;
-  }
 };
 
 export const initialize_db = async (db) => {
@@ -120,10 +134,19 @@ export const get_db = async (world_obj) => {
     return null;
   }
 
+  window.stored_dbs = window.stored_dbs || {};
+  let db = window.stored_dbs[dbname];
+
+  if (db){
+    console.log('Found db. returning', {db:db, 'window.stored_dbs': window.stored_dbs, dbname:dbname})
+    return db;
+  }
+  console.log('Did not find db in stored', {db:db, 'window.stored_dbs': window.stored_dbs, dbname:dbname})
+
   let cloneMethod = "shallow-assign";
 
   let idbAdapter = new LokiIndexedAdapter("hfc");
-  let db = new loki(dbname, {
+  db = new loki(dbname, {
     verbose: true,
     env: "BROWSER",
     autosave: true,
@@ -145,6 +168,7 @@ export const get_db = async (world_obj) => {
   await db.loadDatabaseAsync(schema_options);
   await initialize_db(db);
 
+  window.stored_dbs[dbname] = db;
   return db;
 };
 
@@ -179,7 +203,6 @@ export const create_new_db = async () => {
   return { db: db, new_season_info: new_season_info };
 };
 
-export const clone_method = "shallow-assign";
 export const driver_collection_list = [
   {
     collection_name: "world",

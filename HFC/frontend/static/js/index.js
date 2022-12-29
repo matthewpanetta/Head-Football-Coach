@@ -6,6 +6,7 @@ import {
 } from "./pages/world_pages.js";
 import { page_team } from "./pages/team_pages.js";
 import { page_index } from "./pages/index_pages";
+import {nunjucks_env} from './modules/nunjucks_tags.js'
 import {
   index_group_sync,
   get,
@@ -21,6 +22,12 @@ import {
   set_except,
   get_from_dict,
   deep_copy,
+  round_decimal,
+  normal_trunc,
+  normal_trunc_bounce,
+  shuffle,
+  weighted_random_choice,
+  uniform_random_choice,
 } from "./utils.js";
 import {
   headline,
@@ -1186,8 +1193,8 @@ const create_schedule = async (data) => {
     week.phase = phases[week.phase_id];
   });
   weeks = weeks.filter((week) => week.phase.phase_name == "Regular Season");
-  all_week_ids = new Set(weeks.map((w) => w.week_id));
-  all_weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
+  let all_week_ids = new Set(weeks.map((w) => w.week_id));
+  let all_weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
 
   const weeks_by_week_name = index_group_sync(weeks, "index", "week_name");
 
@@ -1211,7 +1218,7 @@ const create_schedule = async (data) => {
       team_rivalries_by_team_season_id[ts_a.team_season_id].rivals.length
   );
   for (let team_season of team_seasons) {
-    team_season_rivals = team_rivalries_by_team_season_id[team_season.team_season_id].rivals;
+    let team_season_rivals = team_rivalries_by_team_season_id[team_season.team_season_id].rivals;
     for (let rival_obj of team_season_rivals) {
       rival_obj.preferred_week_id = undefined;
       if (rival_obj.preferred_week_number != null) {
@@ -1229,7 +1236,7 @@ const create_schedule = async (data) => {
       rival_obj.opponent_team_season_id =
         team_seasons_by_team_id[rival_obj.opponent_team_id.toString()].team_season_id;
     }
-    team_conference =
+    let team_conference =
       conferences_by_conference_id[
         conference_seasons_by_conference_season_id[team_season.conference_season_id].conference_id
       ];
@@ -1330,7 +1337,7 @@ const create_schedule = async (data) => {
     "index",
     "team_id"
   );
-  team_seasons_by_conference_season_id = index_group_sync(
+  let team_seasons_by_conference_season_id = index_group_sync(
     db.team_season.find({ season: season, team_id: { $gt: 0 } }),
     "group",
     "conference_season_id"
@@ -1357,7 +1364,7 @@ const create_schedule = async (data) => {
 
     zipped_set = [];
     $.each(team_season_id_list, function (ind, team_season_id) {
-      rival_list = team_season_schedule_tracker[team_season_id].rivals;
+      let rival_list = team_season_schedule_tracker[team_season_id].rivals;
       $.each(rival_list, function (ind, rival_obj) {
         zipped_set.push([
           team_season_id,
@@ -1405,11 +1412,11 @@ const create_schedule = async (data) => {
     );
 
     $.each(team_seasons_by_conference_season_id, function (conference_season_id, team_seasons) {
-      conference_team_season_id_list = team_seasons.map((ts) => ts.team_season_id.toString());
+      let conference_team_season_id_list = team_seasons.map((ts) => ts.team_season_id.toString());
       conference_team_season_id_list = conference_team_season_id_list.filter((ts) =>
         team_season_id_list.has(ts)
       );
-      conference_team_season_id_list = common.shuffle(conference_team_season_id_list);
+      conference_team_season_id_list = shuffle(conference_team_season_id_list);
 
       for (var team_id of conference_team_season_id_list) {
         team_season_schedule_tracker[team_id].first_available_week_id = Math.min(
@@ -1419,7 +1426,7 @@ const create_schedule = async (data) => {
 
       if (attempt_counter % 5 == 4) {
         //Just random shuffle
-        conference_team_season_id_list = common.shuffle(conference_team_season_id_list);
+        conference_team_season_id_list = shuffle(conference_team_season_id_list);
       } else if (attempt_counter % 5 < 4) {
         //Sort by number of conference games needed
         conference_team_season_id_list = conference_team_season_id_list.sort(
@@ -1566,15 +1573,15 @@ const create_schedule = async (data) => {
                 iter_ind > 3)
           );
 
-          quadrant_a_teams = common.shuffle(quadrant_a_teams);
-          quadrant_b_teams = common.shuffle(quadrant_b_teams);
+          quadrant_a_teams = shuffle(quadrant_a_teams);
+          quadrant_b_teams = shuffle(quadrant_b_teams);
           console.log({
             quadrant_a_teams: quadrant_a_teams,
             quadrant_b_teams: quadrant_b_teams,
           });
         } else {
           let quadrant_all_teams = team_season_ids_by_quadrant[quadrant_a];
-          quadrant_all_teams = common.shuffle(quadrant_all_teams);
+          quadrant_all_teams = shuffle(quadrant_all_teams);
           quadrant_all_teams = quadrant_all_teams.filter(
             (ts_id) =>
               team_season_schedule_tracker[ts_id].non_conference.schedule_team_quadrants[
@@ -1628,7 +1635,7 @@ const create_schedule = async (data) => {
 
     //One out of ten times, or any attempt past #50, just go wild & full random
     if (attempt_counter % 10 == 9 || attempt_counter > 50) {
-      team_season_id_list = common.shuffle(team_season_id_list);
+      team_season_id_list = shuffle(team_season_id_list);
       $.each(team_season_id_list, function (ind, obj) {
         if (ind % 2 == 0) {
           team_set_a.push(obj);
@@ -1739,7 +1746,7 @@ const create_schedule = async (data) => {
     }
   }
 
-  team_seasons_to_update = Object.values(team_seasons);
+  let team_seasons_to_update = Object.values(team_seasons);
 
   db.game.insert(games_to_create);
   db.team_game.insert(team_games_to_create);
@@ -2435,7 +2442,7 @@ const create_recruiting_class = async (common) => {
         player_team_seasons_by_player_team_season_id[player_called.player_team_season_id];
       var player_called_player_team_season_id =
         player_called_player_team_season.player_team_season_id;
-      player_call_options = player_call_tracker[player_called_player_team_season_id];
+      let player_call_options = player_call_tracker[player_called_player_team_season_id];
 
       // console.log({
       //   player_called_player_team_season_id:
@@ -2804,7 +2811,7 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
       (pts_a, pts_b) => pts_b.ratings.overall.potential - pts_a.ratings.overall.potential
     );
 
-    position_team_season_ids = team_seasons
+    let position_team_season_ids = team_seasons
       .map((ts) => Array(ts.team_position_option[position]).fill([ts.team_season_id]).flat())
       .flat();
 
@@ -2924,9 +2931,9 @@ const create_coaches = async (data) => {
 
   for (let team_season of data.team_seasons) {
     for (const coaching_position of positions) {
-      body = common.body_from_position("coach");
-      ethnicity = common.weighted_random_choice(ethnicity_map);
-      let alma_mater_team_id = common.weighted_random_choice(team_brand_weights);
+      let body = common.body_from_position("coach");
+      let ethnicity = weighted_random_choice(ethnicity_map);
+      let alma_mater_team_id = weighted_random_choice(team_brand_weights);
       var coach_obj = {
         coach_id: coach_id_counter,
         name: coach_names[coach_counter],
@@ -3236,7 +3243,7 @@ const create_new_players_and_player_team_seasons = async (
 
     for (let position_count = 0; position_count < players_for_position; position_count++) {
       let body = common.body_from_position(position);
-      let ethnicity = common.weighted_random_choice(position_ethnicity[position]);
+      let ethnicity = weighted_random_choice(position_ethnicity[position]);
       let player_class = classes[Math.floor(Math.random() * classes.length)];
 
       if (player_counter > player_names.length || player_counter > player_cities.length) {
@@ -3835,8 +3842,8 @@ const random_name = async (ddb, num_names) => {
   const first_name_list = ddb.first_names.find();
   const last_name_list = ddb.last_names.find();
 
-  final_first_name_obj = first_name_list[first_name_list.length - 1];
-  final_last_name_obj = last_name_list[last_name_list.length - 1];
+  let final_first_name_obj = first_name_list[first_name_list.length - 1];
+  let final_last_name_obj = last_name_list[last_name_list.length - 1];
 
   for (var i = 0; i <= num_names; i++) {
     const r_first = Math.floor(Math.random() * final_first_name_obj.stop);
@@ -4114,28 +4121,15 @@ const common_functions = async (path) => {
   const params = winning_route.params;
   const world_id = params.world_id;
 
-  console.log({
-    world_id: world_id,
-    params: params,
-    env: get_nunjucks_env(),
-  });
-
   var world_object = {};
   const ddb = await driver_db();
   if (world_id != undefined) {
     world_object = ddb.world.findOne({ world_id: world_id });
   }
 
-  console.log({
-    world_object: world_object,
-    params: params,
-    env: get_nunjucks_env(),
-  });
-
   let db = null;
-  if (world_id){
-    db = await resolve_db({ database_id: world_id });
-    window.db = db;
+  if (world_id) {
+     db = await resolve_db({ database_id: world_id });
   }
 
   return {
@@ -4144,9 +4138,7 @@ const common_functions = async (path) => {
     get_rivalries: get_rivalries,
     get_conferences: get_conferences,
     new_world_action: new_world_action,
-    nunjucks_env: get_nunjucks_env(),
     create_phase: create_phase,
-    hashCode: hashCode,
     create_week: create_week,
     create_coaches: create_coaches,
     populate_all_depth_charts: populate_all_depth_charts,
@@ -4163,11 +4155,6 @@ const common_functions = async (path) => {
     season: world_object.current_season,
     create_player_face: create_player_face,
     create_coach_face: create_coach_face,
-    weighted_random_choice: weighted_random_choice,
-    uniform_random_choice: uniform_random_choice,
-    shuffle: shuffle,
-    normal_trunc: normal_trunc,
-    normal_trunc_bounce: normal_trunc_bounce,
     random_name: random_name,
     random_city: random_city,
     body_from_position: body_from_position,
@@ -4187,11 +4174,9 @@ const common_functions = async (path) => {
     calculate_team_needs: calculate_team_needs,
     populate_player_modal: populate_player_modal,
     geo_marker_action: geo_marker_action,
-    team_season: team_season,
     tier_placement: tier_placement,
 
     stopwatch: stopwatch,
-    ordinal: ordinal,
     choose_all_americans: choose_all_americans,
     primary_color: "1763B2",
     secondary_color: "333333",
@@ -4916,7 +4901,7 @@ const generate_ranking_headlines = async (common, team_seasons, this_week, headl
       );
       let ts_headline = ts_headline_options[Math.floor(Math.random() * ts_headline_options.length)];
 
-      var headline_text = common.nunjucks_env.renderString(ts_headline.text, {
+      var headline_text = nunjucks_env.renderString(ts_headline.text, {
         team_season: ts,
       });
 
@@ -4965,7 +4950,7 @@ const generate_ranking_headlines = async (common, team_seasons, this_week, headl
       );
       let conf_headline = headline_options[Math.floor(Math.random() * headline_options.length)];
 
-      var headline_text = common.nunjucks_env.renderString(conf_headline.text, {
+      var headline_text = nunjucks_env.renderString(conf_headline.text, {
         conference_obj: conference_obj,
       });
 
@@ -5164,7 +5149,7 @@ const generate_headlines = (game_dict, common) => {
   game_headlines = game_headlines.filter((h) => h.headline_relevance == max_headline_relevance);
   game_headline = game_headlines[Math.floor(Math.random() * game_headlines.length)];
 
-  var headline_text = common.nunjucks_env.renderString(game_headline.text, game_dict);
+  var headline_text = nunjucks_env.renderString(game_headline.text, game_dict);
 
   const headline_obj = new headline(
     common.headline_id_counter,
@@ -6611,7 +6596,7 @@ const sim_week_games = async (this_week, common) => {
 
     console.log({ game_dict: game_dict });
 
-    let renderedHtml = common.nunjucks_env.renderString(html, game_dict);
+    let renderedHtml = nunjucks_env.renderString(html, game_dict);
     $(".modal-body").append(renderedHtml);
   });
 
@@ -7458,7 +7443,7 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
     return 0;
   });
 
-  rank_counter = 1;
+  let rank_counter = 1;
 
   for (var team_season of sorted_team_seasons) {
     team_season.rankings.national_rank.unshift(rank_counter);
@@ -7575,7 +7560,7 @@ const calculate_conference_rankings = async (this_week, all_weeks, common) => {
   const db = await common.db;
   const all_weeks_by_week_id = index_group_sync(all_weeks, "index", "week_id");
 
-  next_week = all_weeks_by_week_id[this_week.week_id + 1];
+  let next_week = all_weeks_by_week_id[this_week.week_id + 1];
   const conference_seasons = db.conference_season.find({ season: common.season });
 
   const team_seasons = db.team_season.find({ season: this_week.phase.season, team_id: { $gt: 0 } });
@@ -7625,7 +7610,7 @@ const calculate_conference_rankings = async (this_week, all_weeks, common) => {
       });
 
       rank_counter = 1;
-      top_conference_net_wins = sorted_team_seasons[0].record.conference_net_wins;
+      let top_conference_net_wins = sorted_team_seasons[0].record.conference_net_wins;
       for (var team_season of sorted_team_seasons) {
         team_season.record.conference_gb =
           (top_conference_net_wins - team_season.record.conference_net_wins) / 2;
@@ -9133,7 +9118,7 @@ const advance_to_next_week = async (this_week, common) => {
 
   console.log({ all_weeks: all_weeks });
 
-  next_week = all_weeks_by_week_id[this_week.week_id + 1];
+  let next_week = all_weeks_by_week_id[this_week.week_id + 1];
 
   this_week.is_current = false;
   next_week.is_current = true;
@@ -9276,8 +9261,6 @@ const sim_action = async (duration, common) => {
     console.log("Ready to refresh_page");
   }
 
-  await ddb.saveDatabaseAsync();
-  await db.saveDatabaseAsync();
   await refresh_page(next_week);
 };
 
@@ -9334,7 +9317,7 @@ const populate_player_modal = async (common, target) => {
   var modal_url = "/static/html_templates/common_templates/player_info_modal_template.njk";
   var html = await fetch(modal_url);
   html = await html.text();
-  var renderedHtml = await common.nunjucks_env.renderString(html, {
+  var renderedHtml = await nunjucks_env.renderString(html, {
     page: page,
     player: player,
   });
@@ -10242,7 +10225,7 @@ const schedule_game = (common, scheduling_dict, team_set, game_type, rival_obj, 
   }
 
   if (keep_game) {
-    var available_weeks = common.set_intersect(
+    var available_weeks = set_intersect(
       scheduling_dict.team_season_schedule_tracker[team_a].available_week_ids,
       scheduling_dict.team_season_schedule_tracker[team_b].available_week_ids
     );
@@ -10264,7 +10247,7 @@ const schedule_game = (common, scheduling_dict, team_set, game_type, rival_obj, 
           ];
         });
         dict_for_random = Object.fromEntries(dict_for_random);
-        chosen_home_team = common.weighted_random_choice(dict_for_random);
+        chosen_home_team = weighted_random_choice(dict_for_random);
         chosen_away_team = [team_a, team_b].find((team_id) => team_id != chosen_home_team);
 
         team_a = chosen_home_team;
@@ -10305,7 +10288,7 @@ const schedule_game = (common, scheduling_dict, team_set, game_type, rival_obj, 
         ];
       });
       available_weeks = Object.fromEntries(available_weeks);
-      var chosen_week_id = parseInt(common.weighted_random_choice(available_weeks));
+      var chosen_week_id = parseInt(weighted_random_choice(available_weeks));
 
       if (rival_obj != null) {
         if (rival_obj.preferred_week_id != undefined) {
@@ -10433,61 +10416,6 @@ const schedule_game = (common, scheduling_dict, team_set, game_type, rival_obj, 
     });
     return "Issue with teams already playing";
   }
-};
-
-const shuffle = (a) => {
-  var j, x, i;
-  for (i = a.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1));
-    x = a[i];
-    a[i] = a[j];
-    a[j] = x;
-  }
-  return a;
-};
-
-const uniform_random_choice = (options) => {
-  return options[Math.floor(Math.random() * options.length)];
-};
-
-const weighted_random_choice = (options, default_val, choice_count = 1) => {
-  var total = 0;
-
-  if (!options) {
-    return default_val;
-  }
-
-  if (!Array.isArray(options)) {
-    options = Object.entries(options);
-  }
-
-  let data = options;
-
-  data = data.filter((opt) => opt[1] > 0);
-  if (data.length == 0) {
-    return default_val;
-  }
-
-  data.forEach(function (opt) {
-    total += opt[1];
-    opt.push(total);
-  });
-
-  let chosen_value_list = [];
-  while (choice_count > 0) {
-    let r = Math.floor(Math.random() * total);
-    let chosen_obj = data.find((opt) => opt[2] >= r) || [default_val];
-    let chosen_value = chosen_obj[0];
-    chosen_value_list.push(chosen_value);
-
-    choice_count -= 1;
-  }
-
-  if (chosen_value_list.length == 1) {
-    return chosen_value_list[0];
-  }
-
-  return chosen_value;
 };
 
 const random_facial_feature = (feature) => {
@@ -10688,11 +10616,6 @@ const random_facial_feature = (feature) => {
   return weighted_random_choice(features[feature]);
 };
 
-const round_decimal = (val, places) => {
-  var factor = 10 ** places;
-  return Math.round(val * 1.0 * factor) / factor;
-};
-
 const generate_face = (ethnicity, weight) => {
   const colors = {
     white: {
@@ -10857,53 +10780,6 @@ function download(filename, text, type = "text/json") {
   window.URL.revokeObjectURL(a.href);
   document.body.removeChild(a);
 }
-
-const real_gauss = (mean, sigma) => {
-  let radius = 0;
-  let z1;
-  let z2;
-
-  do {
-    z1 = 2 * Math.random() - 1;
-    z2 = 2 * Math.random() - 1;
-    radius = z1 * z1 + z2 * z2;
-  } while (radius >= 1 || radius === 0); // only use inside the unit circle
-
-  const marsaglia = Math.sqrt((-2 * Math.log(radius)) / radius);
-  return z1 * marsaglia * sigma + mean;
-};
-
-const normal_trunc = (mean, sigma, min, max) => {
-  var r = min;
-  var loop_count = 0;
-  while ((r <= min || r >= max) && loop_count < 100) {
-    r = real_gauss(mean, sigma);
-    loop_count += 1;
-  }
-
-  if (loop_count >= 100) {
-    r = mean;
-    if (r > max) {
-      r = max;
-    } else if (r < min) {
-      r = min;
-    }
-  }
-
-  return r;
-};
-
-const normal_trunc_bounce = (mean, sigma, min, max) => {
-  var r = real_gauss(mean, sigma);
-
-  if (r > max) {
-    r = max;
-  } else if (r < min) {
-    r = min;
-  }
-
-  return r;
-};
 
 const inches_to_height = (all_inches) => {
   var feet = Math.floor(all_inches / 12);
@@ -11204,53 +11080,6 @@ const change_archetypes = () => {
   }
 };
 
-function NumberToGrade(number_value, scale) {
-  console.log("index js NumberToGrade", {
-    number_value: number_value,
-    scale: scale,
-  });
-  scale = scale || 100;
-
-  let adj_number_value = Math.floor((number_value * 1.0) / (scale / 20));
-  let grade_value_map = {
-    20: "Elite",
-    19: "A++",
-    18: "A+",
-    17: "A",
-    16: "A-",
-    15: "B+",
-    14: "B",
-    13: "B-",
-    12: "B-",
-    11: "C+",
-    10: "C",
-    9: "C-",
-    8: "D+",
-    7: "D",
-    6: "D-",
-    5: "F",
-    4: "F-",
-    3: "F-",
-    2: "F--",
-    1: "F--",
-  };
-
-  console.log({
-    adj_number_value: adj_number_value,
-    "grade_value_map[adj_number_value]": grade_value_map[adj_number_value],
-    number_value: number_value,
-    scale: scale,
-  });
-
-  return grade_value_map[adj_number_value] || "Elite";
-}
-
-const ordinal = (num) => {
-  var s = ["th", "st", "nd", "rd"],
-    v = num % 100;
-  return num + (s[(v - 20) % 10] || s[v] || s[0]);
-};
-
 const geo_marker_action = async (common) => {
   console.log("Adding geo_marker_action");
   const db = common.ddb;
@@ -11285,7 +11114,7 @@ const geo_marker_action = async (common) => {
     var modal_url = "/static/html_templates/common_templates/geography_modal_template.njk";
     var html = await fetch(modal_url);
     html = await html.text();
-    var renderedHtml = await common.nunjucks_env.renderString(html, {
+    var renderedHtml = nunjucks_env.renderString(html, {
       page: modal_config,
       location: location,
     });
@@ -11440,36 +11269,36 @@ const new_world_action = async (common, database_suffix) => {
   );
 
   var team_id_counter = 1;
-  for (let team of teams_from_json) {
-    if (team.jersey.invert) {
-      team.jersey.teamColors = [
+  for (let t of teams_from_json) {
+    if (t.jersey.invert) {
+      t.jersey.teamColors = [
         "#FFFFFF",
         `#${team.team_color_primary_hex}`,
         `#${team.team_color_secondary_hex}`,
       ];
-    } else if (team.jersey.flip_primaries) {
-      team.jersey.teamColors = [
-        `#${team.team_color_secondary_hex}`,
-        `#${team.team_color_primary_hex}`,
+    } else if (t.jersey.flip_primaries) {
+      t.jersey.teamColors = [
+        `#${t.team_color_secondary_hex}`,
+        `#${t.team_color_primary_hex}`,
         "#FFFFFF",
       ];
     } else {
-      team.jersey.teamColors = [
-        `#${team.team_color_primary_hex}`,
-        `#${team.team_color_secondary_hex}`,
+      t.jersey.teamColors = [
+        `#${t.team_color_primary_hex}`,
+        `#${t.team_color_secondary_hex}`,
         "#FFFFFF",
       ];
     }
 
-    if (team.jersey.lettering) {
-      team.jersey.lettering_color = team.jersey.lettering_color || "FFFFFF";
+    if (t.jersey.lettering) {
+      t.jersey.lettering_color = t.jersey.lettering_color || "FFFFFF";
     }
 
-    team.jersey.id =
-      team.jersey.id || jersey_options[Math.floor(Math.random() * jersey_options.length)];
+    t.jersey.id =
+    t.jersey.id || jersey_options[Math.floor(Math.random() * jersey_options.length)];
 
     rivals_team_1 = rivalries
-      .filter((r) => r.team_name_1 == team.school_name)
+      .filter((r) => r.team_name_1 == t.school_name)
       .map(function (r) {
         return {
           opponent_name: r.team_name_2,
@@ -11479,7 +11308,7 @@ const new_world_action = async (common, database_suffix) => {
         };
       });
     rivals_team_2 = rivalries
-      .filter((r) => r.team_name_2 == team.school_name)
+      .filter((r) => r.team_name_2 == t.school_name)
       .map(function (r) {
         return {
           opponent_name: r.team_name_1,
@@ -11493,37 +11322,37 @@ const new_world_action = async (common, database_suffix) => {
 
     console.log({
       conferences_by_school_name: conferences_by_school_name,
-      team: team,
+      t: t,
     });
 
-    team.location.lat = cities_by_city_state[team.location.city + ", " + team.location.state].lat;
-    team.location.long = cities_by_city_state[team.location.city + ", " + team.location.state].long;
+    t.location.lat = cities_by_city_state[t.location.city + ", " + t.location.state].lat;
+    t.location.long = cities_by_city_state[t.location.city + ", " + t.location.state].long;
 
-    teams.push({
+    teams.push(new team({
       team_id: team_id_counter,
-      school_name: team.school_name,
-      team_name: team.team_name,
+      school_name: t.school_name,
+      team_name: t.team_name,
       world_id: world_id,
-      team_logo_url: team.team_logo_url,
-      team_abbreviation: team.team_abbreviation,
-      team_color_primary_hex: team.team_color_primary_hex,
-      team_color_secondary_hex: team.team_color_secondary_hex,
+      team_logo_url: t.team_logo_url,
+      team_abbreviation: t.team_abbreviation,
+      team_color_primary_hex: t.team_color_primary_hex,
+      team_color_secondary_hex: t.team_color_secondary_hex,
       rivals: rivals,
-      jersey: team.jersey,
-      field: team.field,
-      team_ratings: team.team_ratings,
-      location: team.location,
-      starting_tendencies: team.starting_tendencies,
+      jersey: t.jersey,
+      field: t.field,
+      team_ratings: t.team_ratings,
+      location: t.location,
+      starting_tendencies: t.starting_tendencies,
       conference: {
-        conference_id: conferences_by_school_name[team.school_name].conference_id,
-        conference_name: conferences_by_school_name[team.school_name].conference_name,
+        conference_id: conferences_by_school_name[t.school_name].conference_id,
+        conference_name: conferences_by_school_name[t.school_name].conference_name,
       },
-    });
+    }));
 
     team_id_counter += 1;
   }
 
-  teams.push({
+  teams.push(new team({
     team_id: -1,
     school_name: "Available",
     team_name: "Players",
@@ -11543,9 +11372,9 @@ const new_world_action = async (common, database_suffix) => {
       state: "DC",
     },
     conference: {},
-  });
+  }));
 
-  teams.push({
+  teams.push(new team({
     team_id: -2,
     school_name: season,
     team_name: "Recruits",
@@ -11565,9 +11394,11 @@ const new_world_action = async (common, database_suffix) => {
       state: "DC",
     },
     conference: {},
-  });
+  }));
 
   const teams_by_team_name = index_group_sync(teams, "index", "school_name");
+
+  console.log({teams:teams})
 
   let city_names = {};
   $.each(teams, function (ind, team) {
@@ -11728,7 +11559,7 @@ const new_world_action = async (common, database_suffix) => {
     }
     return 0;
   });
-  console.log({ teams: teams });
+  console.log({ teams: teams, 'common.nunjucks_env': nunjucks_env });
   var url = "/static/html_templates/index/index/choose_team_table_template.njk";
   var html = await fetch(url);
   html = await html.text();
@@ -11737,7 +11568,7 @@ const new_world_action = async (common, database_suffix) => {
     teams: teams,
   };
 
-  const renderedHtml = common.nunjucks_env.renderString(html, render_content);
+  const renderedHtml = nunjucks_env.renderString(html, render_content);
 
   $(".choose-team-table").html(renderedHtml);
   $(".create-progress-table").addClass("w3-hide");
@@ -11773,6 +11604,7 @@ const new_world_action = async (common, database_suffix) => {
       current_league_season: current_league_season,
       team_id: team_id,
       teams: teams,
+      c: teams[0].constructor,
       this: $(this),
     });
 
@@ -11792,15 +11624,7 @@ const new_world_action = async (common, database_suffix) => {
     db.team_season.update(user_team_season);
     db.team.update(user_team);
 
-    // console.log({
-    //   db:db, ddb:ddb
-    // })
-    // debugger;
-
-    await ddb.saveDatabaseAsync();
-    await db.saveDatabaseAsync();
-
-    window.location.href = `/World/${world_id}`;
+    await navigate_to_href(`/World/${world_id}`);
   });
 };
 
@@ -11837,6 +11661,12 @@ Array.prototype.top_sort = function (top_n, compare_func) {
   return top_list;
 };
 
+const navigate_to_href = async (href) => {
+  // event.preventDefault();
+  history.pushState({ path: href }, "", href);
+  await page(href);
+}
+
 $(document).ready(async function () {
   var startTime = performance.now();
 
@@ -11847,8 +11677,7 @@ $(document).ready(async function () {
 
     if (href) {
       event.preventDefault();
-      history.pushState({ path: href }, "", href);
-      await page(href);
+      await navigate_to_href(href)
     }
 
     $(".item").removeClass("active");
@@ -11856,12 +11685,14 @@ $(document).ready(async function () {
   });
 
   window.onpopstate = async function () {
-    await page(location.pathname);
+    await navigate_to_href(location.pathname)
+    //await page(location.pathname);
   };
 
   // await action(common);
 
-  await page(location.pathname);
+  //await page(location.pathname);
+  await navigate_to_href(location.pathname)
 
   var endTime = performance.now();
   console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms`);

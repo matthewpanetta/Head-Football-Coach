@@ -1,5 +1,6 @@
 import { world_options } from "../metadata.js";
-import { get_databases_references, create_new_db, prune_orphaned_databases } from "../database.js";
+import {nunjucks_env} from '../modules/nunjucks_tags.js'
+import { get_databases_references, create_new_db, prune_orphaned_databases, truncate_databases } from "../database.js";
 
 export const page_index_action = async (common) => {
   const ddb = await common.ddb;
@@ -55,20 +56,8 @@ export const page_index_action = async (common) => {
   });
 
   $("#truncate-world-row").on("click", async function () {
-
-    var database_refs = await get_databases_references();
-    var db = undefined;
-    $.each(database_refs, async function (ind, db_obj) {
-      console.log("db", db, db_obj);
-      await Dexie.delete(db_obj.database_name);
-    });
-
-    const driver_worlds = await ddb.world.toArray();
-    const world_ids = driver_worlds.map((world) => world.world_id);
-    await ddb.world.bulkDelete(world_ids);
-
+    await truncate_databases();
     location.reload();
-    return false;
   });
 
   $("#import-world-row").on("click", async function () {
@@ -135,7 +124,6 @@ export const page_index_action = async (common) => {
 
 export const page_index = async (common) => {
   nunjucks.configure({ autoescape: true });
-  const nunjucks_env = await get_nunjucks_env();
 
   let ddb = await common.ddb;
 
