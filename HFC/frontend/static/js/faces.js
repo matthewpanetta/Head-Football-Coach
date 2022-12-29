@@ -1,6 +1,7 @@
-import { index_group_sync } from "./utils.js";
+import { index_group_sync } from "/static/js/utils.js";
 
 export const draw_player_faces = async (common) => {
+  console.log('in draw_player_faces', common)
   const db = common.db;
   const season = common.season;
 
@@ -18,6 +19,11 @@ export const draw_player_faces = async (common) => {
 
     face_div_by_player_id[parseInt($(elem).attr("player_id"))].push(elem);
   });
+
+  console.log({
+    face_div_by_player_id:face_div_by_player_id, 
+    player_ids:player_ids
+  })
 
   const players = db.player.find({ player_id: { $in: player_ids } });
   var player_team_seasons = db.player_team_season.find({ player_id: { $in: player_ids } });

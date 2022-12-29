@@ -19,7 +19,7 @@ import {
   game,
   conference,
   conference_season,
-} from "./schema.js";
+} from "/static/js/schema.js";
 
 export const clone_method = "shallow-assign";
 

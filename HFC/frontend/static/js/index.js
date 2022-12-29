@@ -1,12 +1,4 @@
-import {
-  page_world,
-  page_world_standings,
-  page_world_rankings,
-  page_world_awards,
-} from "./pages/world_pages.js";
-import { page_team } from "./pages/team_pages.js";
-import { page_index } from "./pages/index_pages";
-import {nunjucks_env} from './modules/nunjucks_tags.js'
+import {nunjucks_env} from '/static/js/modules/nunjucks_tags.js';
 import {
   index_group_sync,
   get,
@@ -28,7 +20,7 @@ import {
   shuffle,
   weighted_random_choice,
   uniform_random_choice,
-} from "./utils.js";
+} from "/static/js/utils.js";
 import {
   headline,
   award,
@@ -50,8 +42,18 @@ import {
   game,
   conference,
   conference_season,
-} from "./schema.js";
-import { driver_db, resolve_db, create_new_db } from "./database.js";
+} from "/static/js/schema.js";
+import { driver_db, resolve_db, create_new_db } from "/static/js/database.js";
+import {
+  page_world,
+  page_world_schedule,
+  page_world_standings,
+  page_world_rankings,
+  page_world_awards,
+} from "/static/js/pages/world_pages.js";
+import { page_team } from "/static/js/pages/team_pages.js";
+import { page_index } from "/static/js/pages/index_pages.js";
+
 
 const nav_bar_links = async (params) => {
   const path = params.path;

@@ -13,10 +13,10 @@ import {
   set_except,
   get_from_dict,
   deep_copy,
-} from "../utils.js";
-import {nunjucks_env} from '../modules/nunjucks_tags.js'
-import { draw_player_faces, draw_coach_faces } from "../faces.js";
-import { conference_standings } from "../widgets.js";
+} from "/static/js/utils.js";
+import {nunjucks_env} from '/static/js/modules/nunjucks_tags.js'
+import { draw_player_faces, draw_coach_faces } from "/static/js/faces.js";
+import { conference_standings } from "/static/js/widgets.js";
 
 function ResArrowSize() {
   $("#addedStyle").remove();

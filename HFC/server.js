@@ -13,7 +13,7 @@ const mimeTypes = {
 	".css": "text/css",
 	".gif": "image/gif",
 	".html": "text/html",
-	// ".ico": "image/x-icon",
+	".ico": "image/x-icon",
 	".jpeg": "image/jpeg",
 	".jpg": "image/jpeg",
 	".js": "text/javascript",
@@ -46,6 +46,7 @@ const send_file = (res, filename) => {
 	if (fs.existsSync(filePath)) {
 		const ext = path.extname(filename);
 		if (mimeTypes[ext]) {
+			console.log('Mime type:', mimeTypes[ext])
 			res.writeHead(200, { "Content-Type": mimeTypes[ext] });
 		} else {
 			console.log(`Unknown mime type for extension ${ext}`);
@@ -70,7 +71,7 @@ const send_index = (req, res) => {
 };
 
 app.get('*', (req, res) => {
-	console.log('req.url', req.url)
+	console.log('req.url', req.url, 'from', __dirname)
 	
 	let url_suffix_list = [3,4,5,6].map(len => req.url.substring(req.url.length - len))
 
@@ -81,6 +82,15 @@ app.get('*', (req, res) => {
 	}
 });
 
-app.listen(process.env.PORT || 5515, () =>
-  console.log("Server running on port", process.env.PORT || 5515, " from ", __dirname)
+app.listen(process.env.PORT || port, () =>
+  console.log("Server running on port", process.env.PORT || port, " from ", __dirname)
 );
+
+fs.readdir(__dirname, (err, files) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+
+  console.log(files);
+});

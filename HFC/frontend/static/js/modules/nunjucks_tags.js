@@ -1,4 +1,4 @@
-import { NumberToGrade, ordinal } from "../utils.js";
+import { NumberToGrade, ordinal } from "/static/js/utils.js";
 
 const complex_get = (val) => {
   let html = "";
