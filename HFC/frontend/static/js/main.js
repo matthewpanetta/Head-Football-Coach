@@ -2,7 +2,7 @@ import { nunjucks_env } from '../../../../../../../../static/js/modules/nunjucks
 import { round_decimal, index_group_sync, nest_children, weighted_random_choice, get, distinct, deep_copy, normal_trunc, shuffle, sum, normal_trunc_bounce, set_intersect } from '../../../../../../../../static/js/utils.js';
 import { award, team_game, league_season, team, team_season, team_season_stats, recruit_team_season, coach, coach_team_season, player, player_team_season, player_team_season_stats, headline, player_team_game } from '../../../../../../../../static/js/schema.js';
 import { driver_db, resolve_db, create_new_db } from '../../../../../../../../static/js/database.js';
-import { page_world, page_world_rankings, page_world_standings, page_world_awards } from '../../../../../../../../static/js/pages/world_pages.js';
+import { page_world, page_world_rankings, page_world_standings, page_world_schedule, page_world_awards } from '../../../../../../../../static/js/pages/world_pages.js';
 import { page_team, page_team_schedule, page_team_roster } from '../../../../../../../../static/js/pages/team_pages.js';
 import { page_index } from '../../../../../../../../static/js/pages/index_pages.js';
 
@@ -3647,7 +3647,7 @@ const resolve_route_parameters = async (pathname) => {
       route: "/World/:world_id/Standings/Conference/:conference_id",
       path: "world/standings/base.html",
     },
-    { route: "/World/:world_id/Schedule/", path: "world/schedule/base.html" },
+    { route: "/World/:world_id/Schedule/", f: page_world_schedule },
     { route: "/World/:world_id/Awards/", f: page_world_awards },
 
     {
@@ -3675,7 +3675,7 @@ const resolve_route_parameters = async (pathname) => {
     },
 
     { route: "/World/:world_id/Team/:team_id/", f: page_team },
-    { route: "/World/:world_id/Team/:team_id/Season/:season/", path: "team/team/base.html" },
+    { route: "/World/:world_id/Team/:team_id/Season/:season/", f: page_team },
     { route: "/World/:world_id/Team/:team_id/Schedule", f: page_team_schedule },
     {
       route: "/World/:world_id/Team/:team_id/Schedule/Season/:season/",

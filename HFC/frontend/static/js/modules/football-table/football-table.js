@@ -25,11 +25,11 @@ export const init_basic_table_sorting = (common, table_id, initial_sort_index) =
         sort_direction = "sort-desc";
       }
 
-      console.log({
-        clicked_th: clicked_th,
-        so: clicked_th.attr("sort-order"),
-        sort_direction: sort_direction,
-      });
+      // console.log({
+      //   clicked_th: clicked_th,
+      //   so: clicked_th.attr("sort-order"),
+      //   sort_direction: sort_direction,
+      // });
 
       var sort_direction_multiplier = -1;
       if (sort_direction == "sort-desc") {
@@ -41,11 +41,6 @@ export const init_basic_table_sorting = (common, table_id, initial_sort_index) =
       clicked_th.addClass(sort_direction);
 
       const th_index = clicked_th.index();
-      console.log({
-        clicked_th: clicked_th,
-        sort_direction: sort_direction,
-        th_index: th_index,
-      });
 
       var data_rows = $(table_id).find("tbody tr").toArray();
       data = data_rows.map((tr) => ({
@@ -757,15 +752,11 @@ const add_filter_listeners = async (common, table_config) => {
       ).removeClass("selected");
     }
 
-    console.log({ clicked_button: clicked_button });
-
     table_config.column_control.column_controls = find_column_controls(
       common,
       clicked_button,
       table_config
     );
-
-    console.log({ table_config: table_config });
 
     await create_football_table(common, table_config);
   });
@@ -911,20 +902,20 @@ const find_filtered_columns = (table_config) => {
       filtered_columns_obj[filter_field].length
     );
 
-    console.log("showing filter count", {
-      filtered_columns: filtered_columns,
-      "filtered_columns.length": filtered_columns.length,
-      filter_field: filter_field,
-      a: $('[field="' + filter_field + '"] .filter-button-count-span'),
-      q: '[field="' + filter_field + '"] .filter-button-count-span',
-    });
+    // console.log("showing filter count", {
+    //   filtered_columns: filtered_columns,
+    //   "filtered_columns.length": filtered_columns.length,
+    //   filter_field: filter_field,
+    //   a: $('[field="' + filter_field + '"] .filter-button-count-span'),
+    //   q: '[field="' + filter_field + '"] .filter-button-count-span',
+    // });
   }
 
-  console.log({
-    filtered_columns_obj: filtered_columns_obj,
-    filtered_columns: filtered_columns,
-    values: values,
-  });
+  // console.log({
+  //   filtered_columns_obj: filtered_columns_obj,
+  //   filtered_columns: filtered_columns,
+  //   values: values,
+  // });
 
   // $(".football-table-filters-active-count").text(total_selected_options);
 
@@ -934,17 +925,17 @@ const find_filtered_columns = (table_config) => {
 const find_column_controls = (common, clicked_button, table_config) => {
   var column_controls = table_config.column_control.column_controls;
 
-  console.log({
-    "table_config.dom.column_control_dom_selector": table_config.dom.column_control_dom_selector,
-    s: $(".football-table-column-control-option"),
-  });
+  // console.log({
+  //   "table_config.dom.column_control_dom_selector": table_config.dom.column_control_dom_selector,
+  //   s: $(".football-table-column-control-option"),
+  // });
   $(".football-table-column-control-option").each(function (ind, column_option) {
-    console.log({
-      b: $(column_option),
-      a: $(column_option).attr("table_columnn_control_option"),
-      column_controls: column_controls,
-      gd: get_from_dict(column_controls, $(column_option).attr("table_columnn_control_option")),
-    });
+    // console.log({
+    //   b: $(column_option),
+    //   a: $(column_option).attr("table_columnn_control_option"),
+    //   column_controls: column_controls,
+    //   gd: get_from_dict(column_controls, $(column_option).attr("table_columnn_control_option")),
+    // });
     get_from_dict(
       // column_controls[column_control_group],
       column_controls,
@@ -952,11 +943,11 @@ const find_column_controls = (common, clicked_button, table_config) => {
     ).shown = $(column_option).hasClass("selected");
   });
 
-  console.log({
-    column_controls: column_controls,
-    clicked_button: clicked_button,
-    table_config: table_config,
-  });
+  // console.log({
+  //   column_controls: column_controls,
+  //   clicked_button: clicked_button,
+  //   table_config: table_config,
+  // });
 
   return column_controls;
 };

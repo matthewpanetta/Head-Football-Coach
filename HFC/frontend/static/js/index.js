@@ -3990,7 +3990,7 @@ const resolve_route_parameters = async (pathname) => {
       route: "/World/:world_id/Standings/Conference/:conference_id",
       path: "world/standings/base.html",
     },
-    { route: "/World/:world_id/Schedule/", path: "world/schedule/base.html" },
+    { route: "/World/:world_id/Schedule/", f: page_world_schedule },
     { route: "/World/:world_id/Awards/", f: page_world_awards },
 
     {
@@ -4018,7 +4018,7 @@ const resolve_route_parameters = async (pathname) => {
     },
 
     { route: "/World/:world_id/Team/:team_id/", f: page_team },
-    { route: "/World/:world_id/Team/:team_id/Season/:season/", path: "team/team/base.html" },
+    { route: "/World/:world_id/Team/:team_id/Season/:season/", f: page_team },
     { route: "/World/:world_id/Team/:team_id/Schedule", f: page_team_schedule },
     {
       route: "/World/:world_id/Team/:team_id/Schedule/Season/:season/",
