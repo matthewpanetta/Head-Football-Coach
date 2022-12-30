@@ -1,4 +1,4 @@
-import {nunjucks_env} from '/static/js/modules/nunjucks_tags.js';
+import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
 import {
   index_group_sync,
   get,
@@ -52,9 +52,13 @@ import {
   page_world_rankings,
   page_world_awards,
 } from "/static/js/pages/world_pages.js";
-import { page_team, page_team_schedule, page_team_roster } from "/static/js/pages/team_pages.js";
+import {
+  page_team,
+  page_team_schedule,
+  page_team_roster,
+  page_team_history,
+} from "/static/js/pages/team_pages.js";
 import { page_index } from "/static/js/pages/index_pages.js";
-
 
 const nav_bar_links = async (params) => {
   const path = params.path;
@@ -1104,13 +1108,15 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     team_seasons_to_update.push(team_season);
   }
 
-    db.team_season.update(team_seasons_to_update);
-    db.player_team_season.update(player_team_seasons_to_update);
+  db.team_season.update(team_seasons_to_update);
+  db.player_team_season.update(player_team_seasons_to_update);
 
-    console.log({
-      player_team_seasons_to_update:player_team_seasons_to_update, team_seasons_to_update:team_seasons_to_update, db:db
-    })
-    // debugger;
+  console.log({
+    player_team_seasons_to_update: player_team_seasons_to_update,
+    team_seasons_to_update: team_seasons_to_update,
+    db: db,
+  });
+  // debugger;
 };
 
 const create_conference_seasons = async (data) => {
@@ -2353,8 +2359,8 @@ const create_recruiting_class = async (common) => {
     }
 
     player_count += 1;
-    if (player_count % 1000 == 0){
-      console.log('showing player_count', {player_count:player_count})
+    if (player_count % 1000 == 0) {
+      console.log("showing player_count", { player_count: player_count });
     }
   }
 
@@ -3690,8 +3696,6 @@ const get_conferences = async (conference_version) => {
   return conferences;
 };
 
-
-
 const random_name = async (ddb, num_names) => {
   var name_list = [];
 
@@ -3876,19 +3880,19 @@ const resolve_route_parameters = async (pathname) => {
     { route: "/World/:world_id/Team/:team_id/Schedule", f: page_team_schedule },
     {
       route: "/World/:world_id/Team/:team_id/Schedule/Season/:season/",
-      path: "team/schedule/base.html",
+      f: page_team_schedule,
     },
     { route: "/World/:world_id/Team/:team_id/Roster", f: page_team_roster },
     {
       route: "/World/:world_id/Team/:team_id/Roster/Season/:season",
-      path: "team/roster/base.html",
+      f: page_team_roster,
     },
     { route: "/World/:world_id/Team/:team_id/Gameplan", path: "team/gameplan/base.html" },
     {
       route: "/World/:world_id/Team/:team_id/Gameplan/Season/:season",
       path: "team/gameplan/base.html",
     },
-    { route: "/World/:world_id/Team/:team_id/History", path: "team/history/base.html" },
+    { route: "/World/:world_id/Team/:team_id/History", f: page_team_history },
 
     { route: "/World/:world_id/Player/:player_id/", path: "player/player/base.html" },
     { route: "/World/:world_id/Coach/:coach_id/", path: "coach/coach/base.html" },
@@ -3985,7 +3989,7 @@ const common_functions = async (path) => {
 
   let db = null;
   if (world_id) {
-     db = await resolve_db({ database_id: world_id });
+    db = await resolve_db({ database_id: world_id });
   }
 
   return {
@@ -11042,7 +11046,7 @@ const new_world_action = async (common, database_suffix) => {
       conference_name_by_school_name[school_name] = conf_data.conference_name;
     }
 
-    conferences_to_save.push( new conference(conf_data))
+    conferences_to_save.push(new conference(conf_data));
   });
 
   console.log("adding", { db: db, "db.conference": db.conference, conferences_to_save });
@@ -11153,8 +11157,7 @@ const new_world_action = async (common, database_suffix) => {
       t.jersey.lettering_color = t.jersey.lettering_color || "FFFFFF";
     }
 
-    t.jersey.id =
-    t.jersey.id || jersey_options[Math.floor(Math.random() * jersey_options.length)];
+    t.jersey.id = t.jersey.id || jersey_options[Math.floor(Math.random() * jersey_options.length)];
 
     rivals_team_1 = rivalries
       .filter((r) => r.team_name_1 == t.school_name)
@@ -11187,77 +11190,83 @@ const new_world_action = async (common, database_suffix) => {
     t.location.lat = cities_by_city_state[t.location.city + ", " + t.location.state].lat;
     t.location.long = cities_by_city_state[t.location.city + ", " + t.location.state].long;
 
-    teams.push(new team({
-      team_id: team_id_counter,
-      school_name: t.school_name,
-      team_name: t.team_name,
-      world_id: world_id,
-      team_logo_url: t.team_logo_url,
-      team_abbreviation: t.team_abbreviation,
-      team_color_primary_hex: t.team_color_primary_hex,
-      team_color_secondary_hex: t.team_color_secondary_hex,
-      rivals: rivals,
-      jersey: t.jersey,
-      field: t.field,
-      team_ratings: t.team_ratings,
-      location: t.location,
-      starting_tendencies: t.starting_tendencies,
-      conference: {
-        conference_id: conferences_by_school_name[t.school_name].conference_id,
-        conference_name: conferences_by_school_name[t.school_name].conference_name,
-      },
-    }));
+    teams.push(
+      new team({
+        team_id: team_id_counter,
+        school_name: t.school_name,
+        team_name: t.team_name,
+        world_id: world_id,
+        team_logo_url: t.team_logo_url,
+        team_abbreviation: t.team_abbreviation,
+        team_color_primary_hex: t.team_color_primary_hex,
+        team_color_secondary_hex: t.team_color_secondary_hex,
+        rivals: rivals,
+        jersey: t.jersey,
+        field: t.field,
+        team_ratings: t.team_ratings,
+        location: t.location,
+        starting_tendencies: t.starting_tendencies,
+        conference: {
+          conference_id: conferences_by_school_name[t.school_name].conference_id,
+          conference_name: conferences_by_school_name[t.school_name].conference_name,
+        },
+      })
+    );
 
     team_id_counter += 1;
   }
 
-  teams.push(new team({
-    team_id: -1,
-    school_name: "Available",
-    team_name: "Players",
-    world_id: world_id,
-    team_abbreviation: "AVAIL",
-    team_color_primary_hex: "1763B2",
-    team_color_secondary_hex: "FFFFFF",
-    rivals: [],
-    jersey: {
-      invert: false,
-      id: "football-standard",
-      teamColors: ["#1763B2", "#000000", "#FFFFFF"],
-    },
-    team_ratings: {},
-    location: {
-      city: "Washington",
-      state: "DC",
-    },
-    conference: {},
-  }));
+  teams.push(
+    new team({
+      team_id: -1,
+      school_name: "Available",
+      team_name: "Players",
+      world_id: world_id,
+      team_abbreviation: "AVAIL",
+      team_color_primary_hex: "1763B2",
+      team_color_secondary_hex: "FFFFFF",
+      rivals: [],
+      jersey: {
+        invert: false,
+        id: "football-standard",
+        teamColors: ["#1763B2", "#000000", "#FFFFFF"],
+      },
+      team_ratings: {},
+      location: {
+        city: "Washington",
+        state: "DC",
+      },
+      conference: {},
+    })
+  );
 
-  teams.push(new team({
-    team_id: -2,
-    school_name: season,
-    team_name: "Recruits",
-    world_id: world_id,
-    team_abbreviation: "RECRUIT",
-    team_color_primary_hex: "1763B2",
-    team_color_secondary_hex: "FFFFFF",
-    rivals: [],
-    jersey: {
-      invert: false,
-      id: "football-standard",
-      teamColors: ["#1763B2", "#000000", "#FFFFFF"],
-    },
-    team_ratings: {},
-    location: {
-      city: "Washington",
-      state: "DC",
-    },
-    conference: {},
-  }));
+  teams.push(
+    new team({
+      team_id: -2,
+      school_name: season,
+      team_name: "Recruits",
+      world_id: world_id,
+      team_abbreviation: "RECRUIT",
+      team_color_primary_hex: "1763B2",
+      team_color_secondary_hex: "FFFFFF",
+      rivals: [],
+      jersey: {
+        invert: false,
+        id: "football-standard",
+        teamColors: ["#1763B2", "#000000", "#FFFFFF"],
+      },
+      team_ratings: {},
+      location: {
+        city: "Washington",
+        state: "DC",
+      },
+      conference: {},
+    })
+  );
 
   const teams_by_team_name = index_group_sync(teams, "index", "school_name");
 
-  console.log({teams:teams})
+  console.log({ teams: teams });
 
   let city_names = {};
   $.each(teams, function (ind, team) {
@@ -11418,7 +11427,7 @@ const new_world_action = async (common, database_suffix) => {
     }
     return 0;
   });
-  console.log({ teams: teams, 'common.nunjucks_env': nunjucks_env });
+  console.log({ teams: teams, "common.nunjucks_env": nunjucks_env });
   var url = "/static/html_templates/index/index/choose_team_table_template.njk";
   var html = await fetch(url);
   html = await html.text();
@@ -11524,7 +11533,7 @@ const navigate_to_href = async (href) => {
   // event.preventDefault();
   history.pushState({ path: href }, "", href);
   await page(href);
-}
+};
 
 $(document).ready(async function () {
   var startTime = performance.now();
@@ -11536,19 +11545,19 @@ $(document).ready(async function () {
 
     if (href) {
       event.preventDefault();
-      await navigate_to_href(href)
+      await navigate_to_href(href);
     }
   });
 
   window.onpopstate = async function () {
-    await navigate_to_href(location.pathname)
+    await navigate_to_href(location.pathname);
     //await page(location.pathname);
   };
 
   // await action(common);
 
   //await page(location.pathname);
-  await navigate_to_href(location.pathname)
+  await navigate_to_href(location.pathname);
 
   var endTime = performance.now();
   console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms`);
