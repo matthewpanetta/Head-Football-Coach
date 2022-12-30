@@ -23,15 +23,6 @@ export const set = (obj, key, val) => {
 
   for (var i = 0; i < keys.length; i++) {
     var new_key = keys[i];
-    console.log({
-      new_key: new_key,
-      drill_obj: drill_obj,
-      keys: keys,
-      i: i,
-      obj: obj,
-      val: val,
-      key: key,
-    });
     if (!(new_key in drill_obj)) {
       if (i == keys.length - 1) {
         drill_obj[new_key] = null;
@@ -94,6 +85,13 @@ export const get_from_dict = (obj, key) => {
     loop_count += 1;
     if (loop_count == max_loop) {
       if (key_part in iter_obj) {
+        console.log("found key in dict", {
+          obj: obj,
+          key: key,
+          iter_obj: iter_obj,
+          key_part: key_part,
+          "iter_obj[key_part]": iter_obj[key_part],
+        });
         return iter_obj[key_part];
       }
       return null;
@@ -264,12 +262,7 @@ export const weighted_random_choice = (options, default_val, choice_count = 1) =
   return chosen_value;
 };
 
-export 
-function NumberToGrade(number_value, scale) {
-  console.log("index js NumberToGrade", {
-    number_value: number_value,
-    scale: scale,
-  });
+export function NumberToGrade(number_value, scale) {
   scale = scale || 100;
 
   let adj_number_value = Math.floor((number_value * 1.0) / (scale / 20));
@@ -295,13 +288,6 @@ function NumberToGrade(number_value, scale) {
     2: "F--",
     1: "F--",
   };
-
-  console.log({
-    adj_number_value: adj_number_value,
-    "grade_value_map[adj_number_value]": grade_value_map[adj_number_value],
-    number_value: number_value,
-    scale: scale,
-  });
 
   return grade_value_map[adj_number_value] || "Elite";
 }

@@ -65,3 +65,17 @@ export const world_options = [
     database_suffix: "_2010",
   },
 ];
+
+export const class_order_map = {
+  FR: 1,
+  "FR (RS)": 1.5,
+  SO: 2,
+  "SO (RS)": 2.5,
+  JR: 3,
+  "JR (RS)": 3.5,
+  SR: 4,
+  "SR (RS)": 4.5,
+};
+
+export const classes = ["All", "SR", "JR", "SO", "FR"];
+export const position_groups = ["All", "Offense", "Defense", "Special Teams"];

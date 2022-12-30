@@ -51,7 +51,7 @@ import {
   page_world_rankings,
   page_world_awards,
 } from "/static/js/pages/world_pages.js";
-import { page_team } from "/static/js/pages/team_pages.js";
+import { page_team, page_team_schedule, page_team_roster } from "/static/js/pages/team_pages.js";
 import { page_index } from "/static/js/pages/index_pages.js";
 
 
@@ -1388,7 +1388,7 @@ const create_schedule = async (data) => {
 
     $.each(zipped_set, function (ind, team_set) {
       //check if confernece, pass to next
-      [team_a, team_b, rival_obj] = team_set;
+      let [team_a, team_b, rival_obj] = team_set;
       game_type = "non_conference";
       if (
         team_season_schedule_tracker[team_a].conference_season_id ==
@@ -4019,12 +4019,12 @@ const resolve_route_parameters = async (pathname) => {
 
     { route: "/World/:world_id/Team/:team_id/", f: page_team },
     { route: "/World/:world_id/Team/:team_id/Season/:season/", path: "team/team/base.html" },
-    { route: "/World/:world_id/Team/:team_id/Schedule", path: "team/schedule/base.html" },
+    { route: "/World/:world_id/Team/:team_id/Schedule", f: page_team_schedule },
     {
       route: "/World/:world_id/Team/:team_id/Schedule/Season/:season/",
       path: "team/schedule/base.html",
     },
-    { route: "/World/:world_id/Team/:team_id/Roster", path: "team/roster/base.html" },
+    { route: "/World/:world_id/Team/:team_id/Roster", f: page_team_roster },
     {
       route: "/World/:world_id/Team/:team_id/Roster/Season/:season",
       path: "team/roster/base.html",
@@ -10241,7 +10241,7 @@ const schedule_game = (common, scheduling_dict, team_set, game_type, rival_obj, 
           [team_a, team_b] = [team_b, team_a];
         }
       } else {
-        dict_for_random = [team_a, team_b].map(function (team_id) {
+        let dict_for_random = [team_a, team_b].map(function (team_id) {
           return [
             team_id,
             scheduling_dict.team_season_schedule_tracker[team_id].team.team_ratings
@@ -10249,8 +10249,8 @@ const schedule_game = (common, scheduling_dict, team_set, game_type, rival_obj, 
           ];
         });
         dict_for_random = Object.fromEntries(dict_for_random);
-        chosen_home_team = weighted_random_choice(dict_for_random);
-        chosen_away_team = [team_a, team_b].find((team_id) => team_id != chosen_home_team);
+        let chosen_home_team = weighted_random_choice(dict_for_random);
+        let chosen_away_team = [team_a, team_b].find((team_id) => team_id != chosen_home_team);
 
         team_a = chosen_home_team;
         team_b = chosen_away_team;
@@ -11681,9 +11681,6 @@ $(document).ready(async function () {
       event.preventDefault();
       await navigate_to_href(href)
     }
-
-    $(".item").removeClass("active");
-    target.addClass("active");
   });
 
   window.onpopstate = async function () {

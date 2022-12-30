@@ -57,3 +57,67 @@ export const conference_standings = async (conference_season_id, relevant_team_s
     return conference_season;
   };
   
+
+
+  export const team_header_links = (params) => {
+    const path = params.path;
+    const season = params.season;
+    const db = params.db;
+    const team = params.team;
+  
+    const all_paths = [
+      { href_extension: "", Display: "Overview" },
+      { href_extension: "Roster", Display: "Roster" },
+      { href_extension: "Gameplan", Display: "Gameplan" },
+      { href_extension: "Schedule", Display: "Schedule" },
+      { href_extension: "History", Display: "History" },
+    ];
+  
+    const link_paths = all_paths.filter((link) => link.Display != path);
+  
+    for (let path_obj of all_paths) {
+      if (path_obj.Display == "History") {
+        path_obj.href = team.team_href + "/" + path_obj.href_extension;
+      } else if (path_obj.Display == "Overview") {
+        if (season) {
+          path_obj.href = team.team_href + `/Season/${season}/`;
+        } else {
+          path_obj.href = team.team_href;
+        }
+      } else {
+        if (season) {
+          path_obj.href = team.team_href + "/" + path_obj.href_extension + `/Season/${season}/`;
+        } else {
+          path_obj.href = team.team_href + "/" + path_obj.href_extension;
+        }
+      }
+    }
+  
+    let path_obj = all_paths.find((link) => link.Display == path);
+  
+    var seasons = db.league_season.find();
+    if (season != undefined) {
+      seasons = seasons.map((ls) => ({
+        season: ls.season,
+        season_href: team.team_href + "/" + path_obj.href_extension + `/Season/${ls.season}/`,
+      }));
+    } else {
+      seasons = seasons.map((ls) => ({
+        season: ls.season,
+        season_href: `Season/${ls.season}/`,
+      }));
+    }
+  
+    var return_links = all_paths[0];
+    for (let path_obj of all_paths) {
+      if (path_obj.Display == path) {
+        return_links = {
+          link_paths: link_paths,
+          external_paths: path_obj,
+          seasons: seasons,
+        };
+      }
+    }
+  
+    return return_links;
+  };
