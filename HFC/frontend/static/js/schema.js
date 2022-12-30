@@ -2307,6 +2307,13 @@ export class game {
 export class conference_season {}
 
 export class conference {
+
+  constructor(init_data){
+    for (let key in init_data){
+      this[key] = init_data[key]
+    }
+  }
+
   get conference_href() {
     return `/World/${this.world_id}/Conference/${this.conference_id}`;
   }

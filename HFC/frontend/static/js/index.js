@@ -21,6 +21,7 @@ import {
   weighted_random_choice,
   uniform_random_choice,
 } from "/static/js/utils.js";
+import { init_basic_table_sorting } from "/static/js/modules/football-table/football-table.js";
 import {
   headline,
   award,
@@ -1103,10 +1104,13 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     team_seasons_to_update.push(team_season);
   }
 
-  await Promise.all([
-    db.team_season.update(team_seasons_to_update),
-    db.player_team_season.update(player_team_seasons_to_update),
-  ]);
+    db.team_season.update(team_seasons_to_update);
+    db.player_team_season.update(player_team_seasons_to_update);
+
+    console.log({
+      player_team_seasons_to_update:player_team_seasons_to_update, team_seasons_to_update:team_seasons_to_update, db:db
+    })
+    // debugger;
 };
 
 const create_conference_seasons = async (data) => {
@@ -2343,19 +2347,15 @@ const create_recruiting_class = async (common) => {
         rts.match_ratings.playing_time.team +
         (rts.match_ratings.close_to_home.team * 4) / rts.match_ratings.brand.team;
 
-      console.log({
-        player_team_season: player_team_season,
-        "player_team_season.recruiting.team_season_buckets":
-          player_team_season.recruiting.team_season_buckets,
-        "player_team_season.recruiting.team_season_buckets.dream":
-          player_team_season.recruiting.team_season_buckets.dream,
-      });
       // player_team_season.recruiting.team_season_buckets.dream.add(1);
       //TODO bring back
       recruit_team_seasons_by_team_season_id[team_season.team_season_id].push(rts);
     }
 
     player_count += 1;
+    if (player_count % 1000 == 0){
+      console.log('showing player_count', {player_count:player_count})
+    }
   }
 
   stopwatch(common, `Stopwatch RTS - Processed ${players_to_update.length} players`);
@@ -2464,18 +2464,18 @@ const create_recruiting_class = async (common) => {
         );
 
         if (!(call_time > 0)) {
-          console.log({
-            sorted_call_topics: sorted_call_topics,
-            call_time: call_time,
-            player_call_tracker: player_call_tracker[player_called_player_team_season_id],
-            "team_season_recruit_team_seasons_by_player_team_season_id[player_called_player_team_season.player_team_season_id]":
-              team_season_recruit_team_seasons_by_player_team_season_id[
-                player_called_player_team_season.player_team_season_id
-              ],
-            team_season_recruit_team_seasons_by_player_team_season_id:
-              team_season_recruit_team_seasons_by_player_team_season_id,
-            recruit_team_seasons_by_team_season_id: recruit_team_seasons_by_team_season_id,
-          });
+          // console.log({
+          //   sorted_call_topics: sorted_call_topics,
+          //   call_time: call_time,
+          //   player_call_tracker: player_call_tracker[player_called_player_team_season_id],
+          //   "team_season_recruit_team_seasons_by_player_team_season_id[player_called_player_team_season.player_team_season_id]":
+          //     team_season_recruit_team_seasons_by_player_team_season_id[
+          //       player_called_player_team_season.player_team_season_id
+          //     ],
+          //   team_season_recruit_team_seasons_by_player_team_season_id:
+          //     team_season_recruit_team_seasons_by_player_team_season_id,
+          //   recruit_team_seasons_by_team_season_id: recruit_team_seasons_by_team_season_id,
+          // });
         }
 
         for (const call_topic of sorted_call_topics.slice(0, call_time)) {
@@ -2483,17 +2483,17 @@ const create_recruiting_class = async (common) => {
             player_called_player_team_season.recruiting.interests[call_topic.topic],
             call_topic.team
           );
-          console.log({
-            val: val,
-            "team_season_recruit_team_seasons_by_player_team_season_id[player_called_player_team_season.player_team_season_id]":
-              team_season_recruit_team_seasons_by_player_team_season_id[
-                player_called_player_team_season.player_team_season_id
-              ],
-            "team_season_recruit_team_seasons_by_player_team_season_id[player_called_player_team_season.player_team_season_id].match_rating":
-              team_season_recruit_team_seasons_by_player_team_season_id[
-                player_called_player_team_season.player_team_season_id
-              ].match_rating,
-          });
+          // console.log({
+          //   val: val,
+          //   "team_season_recruit_team_seasons_by_player_team_season_id[player_called_player_team_season.player_team_season_id]":
+          //     team_season_recruit_team_seasons_by_player_team_season_id[
+          //       player_called_player_team_season.player_team_season_id
+          //     ],
+          //   "team_season_recruit_team_seasons_by_player_team_season_id[player_called_player_team_season.player_team_season_id].match_rating":
+          //     team_season_recruit_team_seasons_by_player_team_season_id[
+          //       player_called_player_team_season.player_team_season_id
+          //     ].match_rating,
+          // });
           team_season_recruit_team_seasons_by_player_team_season_id[
             player_called_player_team_season.player_team_season_id
           ].match_rating += val;
@@ -3690,153 +3690,7 @@ const get_conferences = async (conference_version) => {
   return conferences;
 };
 
-const populate_names = async (ddb) => {
-  console.log("in populate_names");
-  var url = "/static/data/import_json/names.json";
-  var data = await fetch(url);
-  var name_dimension = await data.json();
 
-  ddb.first_names.removeDataOnly();
-  ddb.last_names.removeDataOnly();
-
-  var first_names_to_add = [],
-    last_names_to_add = [],
-    first_name_start = 0,
-    last_name_start = 0;
-
-  $.each(name_dimension, function (ind, name_obj) {
-    if (name_obj.is_first_name) {
-      first_names_to_add.push({
-        stop: first_name_start + name_obj.occurance - 1,
-        name: name_obj.name,
-      });
-      first_name_start += name_obj.occurance;
-    } else if (name_obj.is_last_name) {
-      last_names_to_add.push({
-        stop: last_name_start + name_obj.occurance - 1,
-        name: name_obj.name,
-      });
-      last_name_start += name_obj.occurance;
-    }
-  });
-
-  ddb.last_names.insert(last_names_to_add);
-  ddb.first_names.insert(first_names_to_add);
-
-  console.log({
-    ddb: ddb,
-  });
-};
-
-const populate_cities = async (ddb) => {
-  console.log("in populate_cities");
-  var url = "/static/data/import_json/cities.json";
-  var data = await fetch(url);
-  const city_dimension = await data.json();
-
-  var url = "/static/data/import_json/cities_2.json";
-  var data = await fetch(url);
-  let city_dimension_2 = await data.json();
-
-  var url = "/static/data/import_json/states.json";
-  var data = await fetch(url);
-  const state_dimension = await data.json();
-
-  const state_map = index_group_sync(state_dimension, "index", "state_abbreviation");
-
-  const states = {};
-  const state_counts = {};
-
-  city_dimension.forEach((c) => (c.city_state = c.city + ", " + c.state));
-  city_dimension_2.forEach((c) => (c.city_state = c.city + ", " + c.state));
-  let city_dimension_2_by_city_state = index_group_sync(city_dimension_2, "index", "city_state");
-
-  city_dimension.forEach(function (c) {
-    let city_2 = city_dimension_2_by_city_state[c.city + ", " + c.state];
-    if (city_2) {
-      c.occurance = city_2.player_count;
-    } else {
-      c.occurance = 1;
-    }
-
-    delete c.population;
-    delete c.time_zone;
-    delete c.timezone;
-  });
-
-  // $.each(city_dimension, function (ind, city) {
-  //   if (!(city.state in states)) {
-  //     states[city.state] = {};
-  //   }
-  //   if (city.city in states[city.state]) {
-  //     console.log("duplicate of ", city);
-  //   }
-  //   states[city.state][city.city] = city;
-  // });
-
-  // var missing_cities = [];
-
-  // $.each(city_dimension_2, function (ind, city) {
-  //   //console.log('city', city)
-  //   city.state_name = state_map[city.state_abbreviation].state_name;
-
-  //   if (!(city.state_name in state_counts)) {
-  //     state_counts[city.state_name] = { all_count: 0, match_count: 0 };
-  //   }
-
-  //   state_counts[city.state_name].all_count += city.player_count;
-  //   player_state_counts.all_count += city.player_count;
-
-  //   if (!(city.city_name in states[city.state_name])) {
-  //     //console.log('DONT HAVE ', city.city_name, city.state_name, city)
-
-  //     missing_cities.push({
-  //       city: city.city_name,
-  //       state: city.state_name,
-  //       player_count: city.player_count,
-  //       population: null,
-  //       lat: null,
-  //       long: null,
-  //       timezone: null,
-  //     });
-  //   } else {
-  //     player_state_counts.match_count += city.player_count;
-  //     state_counts[city.state_name].match_count += city.player_count;
-  //     states[city.state_name][city.city_name].player_count = city.player_count;
-  //   }
-  // });
-
-  // missing_cities = missing_cities.sort(function (a, b) {
-  //   if (a.player_count > b.player_count) return -1;
-  //   return 1;
-  // });
-
-  // console.log('missing_cities', {missing_cities:missing_cities})
-  //
-
-  // var cities_to_add = [],
-  //   city_start = 0,
-  //   new_city_obj = null;
-
-  // $.each(city_dimension, function (ind, city_obj) {
-  //   //console.log('city_obj', city_obj)
-  //   new_city_obj = states[city_obj.state][city_obj.city];
-  //   if (!(new_city_obj.player_count == undefined)) {
-  //     new_city_obj.occurance = new_city_obj.player_count;
-  //     if (new_city_obj.occurance > 0){
-  //       cities_to_add.push({
-  //         city: new_city_obj.city,
-  //         state: new_city_obj.state,
-  //         lat: new_city_obj.lat,
-  //         long: new_city_obj.long,
-  //         occurance: new_city_obj.occurance,
-  //       });
-  //     }
-  //   }
-  // });
-
-  ddb.cities.insert(city_dimension);
-};
 
 const random_name = async (ddb, num_names) => {
   var name_list = [];
@@ -11175,21 +11029,24 @@ const new_world_action = async (common, database_suffix) => {
   var school_names_to_include = [];
   const conference_name_by_school_name = {};
 
-  $.each(conferences_from_json, function (ind, conference) {
-    conference.world_id = world_id;
-    conference.conference_id = ind + 1;
+  let conferences_to_save = [];
+  $.each(conferences_from_json, function (ind, conf_data) {
+    conf_data.world_id = world_id;
+    conf_data.conference_id = ind + 1;
 
-    let school_names = conference.divisions.map((d) => d.teams);
+    let school_names = conf_data.divisions.map((d) => d.teams);
     school_names = school_names.flat();
     school_names_to_include = school_names_to_include.concat(school_names);
 
     for (var school_name of school_names) {
-      conference_name_by_school_name[school_name] = conference.conference_name;
+      conference_name_by_school_name[school_name] = conf_data.conference_name;
     }
+
+    conferences_to_save.push( new conference(conf_data))
   });
 
-  console.log("adding", { db: db, "db.conference": db.conference, conferences_from_json });
-  const conferences_added = db.conference.insert(conferences_from_json);
+  console.log("adding", { db: db, "db.conference": db.conference, conferences_to_save });
+  const conferences_added = db.conference.insert(conferences_to_save);
   var conferences = db.conference.find();
 
   teams_from_json = teams_from_json.filter((t) => school_names_to_include.includes(t.school_name));

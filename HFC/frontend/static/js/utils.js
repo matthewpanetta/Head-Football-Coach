@@ -85,13 +85,6 @@ export const get_from_dict = (obj, key) => {
     loop_count += 1;
     if (loop_count == max_loop) {
       if (key_part in iter_obj) {
-        console.log("found key in dict", {
-          obj: obj,
-          key: key,
-          iter_obj: iter_obj,
-          key_part: key_part,
-          "iter_obj[key_part]": iter_obj[key_part],
-        });
         return iter_obj[key_part];
       }
       return null;

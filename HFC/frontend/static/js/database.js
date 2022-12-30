@@ -20,9 +20,8 @@ import {
   conference,
   conference_season,
 } from "/static/js/schema.js";
-
+import { index_group_sync } from "/static/js/utils.js";
 export const clone_method = "shallow-assign";
-
 
 export const prune_orphaned_databases = async () => {
   const ddb = await driver_db();
@@ -137,21 +136,33 @@ export const get_db = async (world_obj) => {
   window.stored_dbs = window.stored_dbs || {};
   let db = window.stored_dbs[dbname];
 
-  if (db){
-    console.log('Found db. returning', {db:db, 'window.stored_dbs': window.stored_dbs, dbname:dbname})
+  if (db) {
+    console.log("Found db. returning", {
+      db: db,
+      "window.stored_dbs": window.stored_dbs,
+      dbname: dbname,
+    });
     return db;
   }
-  console.log('Did not find db in stored', {db:db, 'window.stored_dbs': window.stored_dbs, dbname:dbname})
+  console.log("Did not find db in stored", {
+    db: db,
+    "window.stored_dbs": window.stored_dbs,
+    dbname: dbname,
+  });
 
   let cloneMethod = "shallow-assign";
 
   let idbAdapter = new LokiIndexedAdapter("hfc");
+  let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
+    pageSize: 20 * 1024 * 1024,
+    paging: true,
+  });
   db = new loki(dbname, {
     verbose: true,
     env: "BROWSER",
     autosave: true,
-    adapter: idbAdapter,
-    persistenceAdapter: idbAdapter,
+    adapter: parAdapter,
+    persistenceAdapter: parAdapter,
     persistenceMethod: "adapter",
     clone: true,
     cloneMethod: cloneMethod,
@@ -343,14 +354,16 @@ export const driver_db = async () => {
   let cloneMethod = "shallow-assign";
 
   let idbAdapter = new LokiIndexedAdapter("driver");
-  // var paAdapter = new loki.LokiPartitioningAdapter(idbAdapter, { paging: true});
-
+  let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
+    pageSize: 20 * 1024 * 1024,
+    paging: true,
+  });
   let ddb = new loki(dbname, {
     verbose: true,
     env: "BROWSER",
     autosave: true,
-    adapter: idbAdapter,
-    persistenceAdapter: idbAdapter,
+    adapter: parAdapter,
+    persistenceAdapter: parAdapter,
     persistenceMethod: "adapter",
     clone: true,
     cloneMethod: cloneMethod,
@@ -379,4 +392,152 @@ const populate_driver = async (ddb) => {
   if (city_count == 0) {
     await populate_cities(ddb);
   }
+};
+
+const populate_names = async (ddb) => {
+  console.log("in populate_names");
+  var url = "/static/data/import_json/names.json";
+  var data = await fetch(url);
+  var name_dimension = await data.json();
+
+  ddb.first_names.removeDataOnly();
+  ddb.last_names.removeDataOnly();
+
+  var first_names_to_add = [],
+    last_names_to_add = [],
+    first_name_start = 0,
+    last_name_start = 0;
+
+  $.each(name_dimension, function (ind, name_obj) {
+    if (name_obj.is_first_name) {
+      first_names_to_add.push({
+        stop: first_name_start + name_obj.occurance - 1,
+        name: name_obj.name,
+      });
+      first_name_start += name_obj.occurance;
+    } else if (name_obj.is_last_name) {
+      last_names_to_add.push({
+        stop: last_name_start + name_obj.occurance - 1,
+        name: name_obj.name,
+      });
+      last_name_start += name_obj.occurance;
+    }
+  });
+
+  ddb.last_names.insert(last_names_to_add);
+  ddb.first_names.insert(first_names_to_add);
+
+  console.log({
+    ddb: ddb,
+  });
+};
+
+const populate_cities = async (ddb) => {
+  console.log("in populate_cities");
+  var url = "/static/data/import_json/cities.json";
+  var data = await fetch(url);
+  const city_dimension = await data.json();
+
+  var url = "/static/data/import_json/cities_2.json";
+  var data = await fetch(url);
+  let city_dimension_2 = await data.json();
+
+  var url = "/static/data/import_json/states.json";
+  var data = await fetch(url);
+  const state_dimension = await data.json();
+
+  const state_map = index_group_sync(state_dimension, "index", "state_abbreviation");
+
+  const states = {};
+  const state_counts = {};
+
+  city_dimension.forEach((c) => (c.city_state = c.city + ", " + c.state));
+  city_dimension_2.forEach((c) => (c.city_state = c.city + ", " + c.state));
+  let city_dimension_2_by_city_state = index_group_sync(city_dimension_2, "index", "city_state");
+
+  city_dimension.forEach(function (c) {
+    let city_2 = city_dimension_2_by_city_state[c.city + ", " + c.state];
+    if (city_2) {
+      c.occurance = city_2.player_count;
+    } else {
+      c.occurance = 1;
+    }
+
+    delete c.population;
+    delete c.time_zone;
+    delete c.timezone;
+  });
+
+  // $.each(city_dimension, function (ind, city) {
+  //   if (!(city.state in states)) {
+  //     states[city.state] = {};
+  //   }
+  //   if (city.city in states[city.state]) {
+  //     console.log("duplicate of ", city);
+  //   }
+  //   states[city.state][city.city] = city;
+  // });
+
+  // var missing_cities = [];
+
+  // $.each(city_dimension_2, function (ind, city) {
+  //   //console.log('city', city)
+  //   city.state_name = state_map[city.state_abbreviation].state_name;
+
+  //   if (!(city.state_name in state_counts)) {
+  //     state_counts[city.state_name] = { all_count: 0, match_count: 0 };
+  //   }
+
+  //   state_counts[city.state_name].all_count += city.player_count;
+  //   player_state_counts.all_count += city.player_count;
+
+  //   if (!(city.city_name in states[city.state_name])) {
+  //     //console.log('DONT HAVE ', city.city_name, city.state_name, city)
+
+  //     missing_cities.push({
+  //       city: city.city_name,
+  //       state: city.state_name,
+  //       player_count: city.player_count,
+  //       population: null,
+  //       lat: null,
+  //       long: null,
+  //       timezone: null,
+  //     });
+  //   } else {
+  //     player_state_counts.match_count += city.player_count;
+  //     state_counts[city.state_name].match_count += city.player_count;
+  //     states[city.state_name][city.city_name].player_count = city.player_count;
+  //   }
+  // });
+
+  // missing_cities = missing_cities.sort(function (a, b) {
+  //   if (a.player_count > b.player_count) return -1;
+  //   return 1;
+  // });
+
+  // console.log('missing_cities', {missing_cities:missing_cities})
+  //
+
+  // var cities_to_add = [],
+  //   city_start = 0,
+  //   new_city_obj = null;
+
+  // $.each(city_dimension, function (ind, city_obj) {
+  //   //console.log('city_obj', city_obj)
+  //   new_city_obj = states[city_obj.state][city_obj.city];
+  //   if (!(new_city_obj.player_count == undefined)) {
+  //     new_city_obj.occurance = new_city_obj.player_count;
+  //     if (new_city_obj.occurance > 0){
+  //       cities_to_add.push({
+  //         city: new_city_obj.city,
+  //         state: new_city_obj.state,
+  //         lat: new_city_obj.lat,
+  //         long: new_city_obj.long,
+  //         occurance: new_city_obj.occurance,
+  //       });
+  //     }
+  //   }
+  // });
+
+  ddb.cities.insert(city_dimension);
 };

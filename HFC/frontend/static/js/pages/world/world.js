@@ -322,6 +322,9 @@ import {
         );
       });
       preseason_info.heisman_hopefuls = heisman_race.slice(0, 5);
+
+      console.log({conferences:conferences, db:db, preseason_info:preseason_info, player_team_seasons:player_team_seasons, heisman_race:heisman_race})
+      // debugger;
   
       common.stopwatch(common, "Time after sorting pre season pts");
   
