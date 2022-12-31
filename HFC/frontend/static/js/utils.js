@@ -290,3 +290,364 @@ export const ordinal = (num) => {
     v = num % 100;
   return num + (s[(v - 20) % 10] || s[v] || s[0]);
 };
+
+export const quarter_seconds_to_time = (seconds) => {
+  var seconds_in_quarter = 60 * 15;
+  return seconds_to_time(seconds_in_quarter - (seconds % seconds_in_quarter));
+};
+
+export const seconds_to_time = (seconds) => {
+  var seconds_left = `${seconds % 60}`;
+  if (seconds_left.length < 2) {
+    seconds_left = "0" + seconds_left;
+  }
+  return `${Math.floor(seconds / 60)}:${seconds_left}`;
+};
+
+export const average = (arr) => {
+  if (arr.length == 0) {
+    return 0;
+  }
+  return sum(arr) / arr.length;
+};
+
+export const calculate_game_score = (
+  player_team_game,
+  player_team_season,
+  team_game,
+  team_season,
+  opponent_team_game
+) => {
+  var game_score_map = [
+    {
+      stat_group: "rushing",
+      stat: "yards",
+      point_to_stat_ratio: 1.0 / 10,
+      display: " rush yards",
+    },
+    {
+      stat_group: "rushing",
+      stat: "carries",
+      point_to_stat_ratio: -1.0 / 10,
+      display: " carries",
+    },
+    {
+      stat_group: "rushing",
+      stat: "tds",
+      point_to_stat_ratio: 6.0 / 1,
+      display: " rush TDs",
+    },
+
+    {
+      stat_group: "passing",
+      stat: "yards",
+      point_to_stat_ratio: 1.0 / 15,
+      display: " pass yards",
+    },
+    {
+      stat_group: "passing",
+      stat: "tds",
+      point_to_stat_ratio: 4.0 / 1,
+      display: " pass TDs",
+    },
+    {
+      stat_group: "passing",
+      stat: "completions",
+      point_to_stat_ratio: 0.0 / 10,
+      display: " comp",
+    },
+    {
+      stat_group: "passing",
+      stat: "attempts",
+      point_to_stat_ratio: -1.0 / 5,
+      display: " att",
+    },
+    {
+      stat_group: "passing",
+      stat: "ints",
+      point_to_stat_ratio: -10.0 / 1,
+      display: " picks",
+    },
+    {
+      stat_group: "passing",
+      stat: "sacks",
+      point_to_stat_ratio: -1.0 / 5.0,
+      display: " sacked",
+    },
+
+    {
+      stat_group: "receiving",
+      stat: "receptions",
+      point_to_stat_ratio: 1.0 / 2,
+      display: " rec.",
+    },
+    {
+      stat_group: "receiving",
+      stat: "yards",
+      point_to_stat_ratio: 1.0 / 15,
+      display: " rec. yards",
+    },
+    {
+      stat_group: "receiving",
+      stat: "tds",
+      point_to_stat_ratio: 5.0 / 1,
+      display: " rec. TDs",
+    },
+
+    {
+      stat_group: "defense",
+      stat: "sacks",
+      point_to_stat_ratio: 4.5 / 1.0,
+      display: " sacks",
+    },
+    {
+      stat_group: "defense",
+      stat: "tackles",
+      point_to_stat_ratio: 1.0 / 2.0,
+      display: " tackles",
+    },
+    {
+      stat_group: "defense",
+      stat: "tackles_for_loss",
+      point_to_stat_ratio: 2.0 / 1.0,
+      display: " TFLs",
+    },
+    {
+      stat_group: "defense",
+      stat: "deflections",
+      point_to_stat_ratio: 2.5 / 1.0,
+      display: " defl",
+    },
+    {
+      stat_group: "defense",
+      stat: "ints",
+      point_to_stat_ratio: 6.0 / 1,
+      display: " INTS",
+    },
+    {
+      stat_group: "defense",
+      stat: "tds",
+      point_to_stat_ratio: 6.0 / 1,
+      display: " def TDs",
+    },
+
+    {
+      stat_group: "fumbles",
+      stat: "fumbles",
+      point_to_stat_ratio: -3.0 / 1,
+      display: " fumbles",
+    },
+    {
+      stat_group: "fumbles",
+      stat: "forced",
+      point_to_stat_ratio: 6.0 / 1,
+      display: " fumb frcd",
+    },
+    {
+      stat_group: "fumbles",
+      stat: "recovered",
+      point_to_stat_ratio: 1.0 / 1,
+      display: " fumb rec.",
+    },
+
+    {
+      stat_group: "blocking",
+      stat: "sacks_allowed",
+      point_to_stat_ratio: -3.0 / 1,
+      display: " sacks alwd.",
+    },
+    {
+      stat_group: "blocking",
+      stat: "blocks",
+      point_to_stat_ratio: 1.0 / 10,
+      display: " blocks",
+    },
+
+    {
+      stat_group: "kicking",
+      stat: "fga",
+      point_to_stat_ratio: -2.0 / 1,
+      display: " FGA",
+    },
+    {
+      stat_group: "kicking",
+      stat: "fgm",
+      point_to_stat_ratio: 5.0 / 1,
+      display: " FGM",
+    },
+  ];
+
+  var game_score_value = 0;
+  var season_score_value = 0;
+  var weighted_game_score_value = 0;
+  player_team_season.season_stats.top_stats = [];
+
+  for (var stat_detail of game_score_map) {
+    game_score_value = 0;
+    season_score_value = 0;
+    if (!player_team_game.game_stats[stat_detail.stat_group][stat_detail.stat]) {
+    } else {
+      game_score_value = round_decimal(
+        player_team_game.game_stats[stat_detail.stat_group][stat_detail.stat] *
+          stat_detail.point_to_stat_ratio,
+        1
+      );
+
+      player_team_game.game_stats.games.game_score = round_decimal(
+        player_team_game.game_stats.games.game_score + game_score_value,
+        0
+      );
+      player_team_game.top_stats.push({
+        display:
+          player_team_game.game_stats[stat_detail.stat_group][stat_detail.stat].toLocaleString(
+            "en-US"
+          ) + stat_detail.display,
+        game_score_value: game_score_value,
+        abs_game_score_value: Math.abs(game_score_value),
+      });
+    }
+
+    if (!player_team_season.season_stats[stat_detail.stat_group][stat_detail.stat]) {
+    } else {
+      season_score_value = round_decimal(
+        player_team_season.season_stats[stat_detail.stat_group][stat_detail.stat] *
+          stat_detail.point_to_stat_ratio,
+        1
+      );
+
+      player_team_season.season_stats.games.game_score = round_decimal(
+        (player_team_season.season_stats.games.game_score || 0) + (game_score_value || 0),
+        0
+      );
+      player_team_season.season_stats.top_stats.push({
+        display:
+          player_team_season.season_stats[stat_detail.stat_group][stat_detail.stat].toLocaleString(
+            "en-US"
+          ) + stat_detail.display,
+        season_score_value: season_score_value,
+        abs_season_score_value: Math.abs(season_score_value),
+      });
+      // console.log('player_team_season.top_stats', {
+      //   player_team_season:player_team_season, 'player_team_season.top_stats': player_team_season.top_stats,
+      //   season_score_value: season_score_value,
+      //   abs_season_score_value: Math.abs(season_score_value), 'stat_detail.display': stat_detail.display,
+      //   'stat_detail.stat_group': stat_detail.stat_group, 'stat_detail.stat': stat_detail.stat, 'player_team_season.season_stats[stat_detail.stat_group][stat_detail.stat]': player_team_season.season_stats[stat_detail.stat_group][
+      //     stat_detail.stat
+      //   ]
+      // })
+      //
+    }
+  }
+
+  player_team_game.game_stats.games.weighted_game_score =
+    player_team_game.game_stats.games.game_score;
+  if (team_game.is_winning_team) {
+    if (opponent_team_game.national_rank <= 5) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.45;
+    } else if (opponent_team_game.national_rank <= 10) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.325;
+    } else if (opponent_team_game.national_rank <= 15) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.25;
+    } else if (opponent_team_game.national_rank <= 20) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.2;
+    } else if (opponent_team_game.national_rank <= 30) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.15;
+    } else if (opponent_team_game.national_rank <= 40) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.01;
+    } else if (opponent_team_game.national_rank <= 50) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.075;
+    } else if (opponent_team_game.national_rank <= 65) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.05;
+    } else if (opponent_team_game.national_rank <= 85) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.025;
+    } else if (opponent_team_game.national_rank <= 105) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.01;
+    }
+  } else {
+    if (opponent_team_game.national_rank <= 5) {
+      player_team_game.game_stats.games.weighted_game_score *= 1.1;
+    } else if (opponent_team_game.national_rank <= 15) {
+      player_team_game.game_stats.games.weighted_game_score *= 1;
+    } else if (opponent_team_game.national_rank <= 25) {
+      player_team_game.game_stats.games.weighted_game_score *= 0.95;
+    } else if (opponent_team_game.national_rank <= 40) {
+      player_team_game.game_stats.games.weighted_game_score *= 0.9;
+    } else if (opponent_team_game.national_rank <= 65) {
+      player_team_game.game_stats.games.weighted_game_score *= 0.75;
+    } else {
+      player_team_game.game_stats.games.weighted_game_score *= 0.6;
+    }
+  }
+
+  player_team_season.season_stats.games.weighted_game_score +=
+    player_team_game.game_stats.games.weighted_game_score || 0;
+  player_team_season.season_stats.top_12_weighted_game_scores.push(
+    player_team_game.game_stats.games.weighted_game_score
+  );
+  player_team_season.season_stats.top_12_weighted_game_scores =
+    player_team_season.season_stats.top_12_weighted_game_scores
+      .sort((wgs_a, wgs_b) => wgs_b - wgs_a)
+      .slice(0, 12);
+
+  player_team_game.top_stats = player_team_game.top_stats
+    .filter((s) => s.abs_game_score_value != 0)
+    .sort(function (stat_a, stat_b) {
+      return stat_b.abs_game_score_value - stat_a.abs_game_score_value;
+    })
+    .slice(0, 4);
+
+  player_team_season.season_stats.top_stats = player_team_season.season_stats.top_stats.filter(
+    (s) => s.abs_game_score_value != 0
+  );
+  player_team_season.season_stats.top_stats = player_team_season.season_stats.top_stats.sort(
+    (stat_a, stat_b) => stat_b.abs_season_score_value - stat_a.abs_season_score_value
+  );
+
+  player_team_season.season_stats.top_stats = player_team_season.season_stats.top_stats.slice(0, 4);
+  player_team_season.season_stats.top_stats = player_team_season.season_stats.top_stats.sort(
+    (stat_a, stat_b) => stat_b.season_score_value - stat_a.season_score_value
+  );
+
+  // player_team_season.top_stats.forEach(function(ts){
+  //   delete ts.abs_season_score_value;
+  //   delete ts.season_score_value;
+  // })
+
+  // player_team_game.top_stats.forEach(function(ts){
+  //   delete ts.abs_game_score_value;
+  //   delete ts.game_score_value;
+  // })
+
+  team_game.top_stats.push({
+    player_team_game_id: player_team_game.player_team_game_id,
+    game_score: player_team_game.game_stats.games.game_score,
+    top_stats: player_team_game.top_stats,
+  });
+  team_game.top_stats = team_game.top_stats
+    .sort(function (player_team_game_a, player_team_game_b) {
+      return player_team_game_b.game_score - player_team_game_a.game_score;
+    })
+    .slice(0, 4);
+
+  team_season.top_stats.push({
+    player_team_season_id: player_team_season.player_team_season_id,
+    game_score: player_team_season.season_stats.games.game_score,
+    top_stats: player_team_season.top_stats,
+  });
+  team_season.top_stats = team_season.top_stats
+    .sort(function (player_team_season_a, player_team_season_b) {
+      return player_team_season_b.game_score - player_team_season_a.game_score;
+    })
+    .slice(0, 4);
+};
+
+export const elem_in = (elem, list) => {
+  if (list instanceof Set){
+    return list.has(elem)
+  }
+  else if (Array.isArray(list)){
+    return list.includes(elem)
+  }
+
+  return false
+}

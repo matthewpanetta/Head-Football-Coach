@@ -2180,10 +2180,6 @@
       var keyname = this.dbname + "." + partition;
       var self = this;
 
-      console.log('LokiPartitioningAdapter.prototype.loadNextPartition', {
-        this:this, partition:partition, keyname:keyname, callback:callback
-      })
-
       if (this.options.paging === true) {
         this.pageIterator.pageIndex = 0;
         this.loadNextPage(callback);
@@ -2191,12 +2187,6 @@
       }
 
       this.adapter.loadDatabase(keyname, function (result) {
-        console.log('this.adapter.loadDatabase', {
-          keyname:keyname,
-          self:self,
-          result:result,
-          'self.dbref': self.dbref
-        })
         var data = self.dbref.deserializeCollection(result, { delimited: true, collectionIndex: partition });
         self.dbref.collections[partition].data = data;
 
@@ -2222,9 +2212,6 @@
       // load whatever page is next in sequence
       this.adapter.loadDatabase(keyname, function (result) {
         var data = result ? result.split(self.options.delimiter) : [""];
-        console.log('in loadDatabase', {
-          keyname:keyname, result:result, data:data
-        })
         if (data.length == 0){
           debugger;
         }
@@ -3609,6 +3596,11 @@
       // opportunistically speed up $in searches from O(n*m) to O(n*log m)
       if (!searchByIndex && operator === '$in' && Array.isArray(value) && typeof Set !== 'undefined') {
         value = new Set(value);
+        operator = '$inSet';
+      }
+
+      // opportunistically speed up $in searches from O(n*m) to O(n*log m)
+      if (!searchByIndex && operator === '$in' && value instanceof Set) {
         operator = '$inSet';
       }
 
