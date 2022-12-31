@@ -9,7 +9,7 @@ import { page_index } from '../../../../../../../../static/js/pages/index_pages.
 import { position_group_map } from '../../../../../../../../static/js/metadata.js';
 import { generate_ranking_headlines } from '../../../../../../../../static/js/headlines.js';
 import { sim_game } from '../../../../../../../../static/js/sim_game.js';
-import { create_player_face } from '../../../../../../../../static/js/faces.js';
+import { create_player_face, draw_player_faces } from '../../../../../../../../static/js/faces.js';
 
 const nav_bar_links = async (params) => {
   const path = params.path;
@@ -928,6 +928,10 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
 
     player_team_season_list = player_team_season_list.sort(
       (pts_a, pts_b) => pts_b.ratings.overall.overall - pts_a.ratings.overall.overall
+    );
+
+    player_team_season_list.forEach(
+      (pts, ind) => (pts.player_team_overall_rank = ind + 1)
     );
 
     player_team_season_list_with_recruits = player_team_season_list_with_recruits.sort(
@@ -6692,6 +6696,11 @@ const search_input_action = () => {
   }
 };
 
+const change_dom_display = async (elem, display) => {
+  $(elem).css('display', display);
+  $(window).scrollTop(0);
+};
+
 const populate_player_modal = async (common, target) => {
   var db = common.db;
   var player_id = parseInt($(target).closest("*[player_id]").attr("player_id"));
@@ -6752,7 +6761,7 @@ const populate_player_modal = async (common, target) => {
   });
 
   if (player.player_face == undefined) {
-    player.player_face = await create_player_face("single", player.player_id, db);
+    player.player_face = create_player_face("single", player.player_id, db);
   }
 
   common.display_player_face(
@@ -6796,7 +6805,7 @@ const add_listeners = async (common) => {
     // );
   });
 
-  $(".nav-tab-button").on("click", function (event, target) {
+  $(".nav-tab-button").on("click", async function (event, target) {
     if ($(this).attr("id") == "nav-sidebar-tab") {
       $("#sidebar").addClass("sidebar-open");
       $(".sidebar-fade").addClass("sidebar-fade-open");
@@ -6821,11 +6830,15 @@ const add_listeners = async (common) => {
 
     var NewTabContent = $("#" + $(this).attr("id").replace("-tab", ""))[0];
 
-    $.each($(".tab-content"), function (index, OldTabContent) {
-      $(OldTabContent).css("display", "none");
+    $.each($(".tab-content"), async function (index, OldTabContent) {
+      await change_dom_display($(OldTabContent), 'none');
     });
 
-    $(NewTabContent).css("display", "block");
+    await change_dom_display($(NewTabContent), 'block');
+    setTimeout(function(){
+      draw_player_faces(common);
+    }, 1000);
+    
   });
 
   $("#nav-team-dropdown-container .conference-button").on("click", function (event, target) {

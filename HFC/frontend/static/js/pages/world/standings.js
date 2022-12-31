@@ -85,7 +85,7 @@ export const page_world_standings = async (common) => {
     ts.delta_conference_rank = ts.final_conference_rank - ts.first_conference_rank;
     ts.delta_conference_rank_abs = Math.abs(ts.delta_conference_rank);
 
-    for (tg of ts.team_games) {
+    for (let tg of ts.team_games) {
       tg.opponent_team_game = team_games_by_team_game_id[tg.opponent_team_game_id];
       ts.overall_outcomes.games_played += 1;
       ts.overall_outcomes.points_for += tg.points;

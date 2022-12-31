@@ -642,12 +642,31 @@ export const calculate_game_score = (
 };
 
 export const elem_in = (elem, list) => {
-  if (list instanceof Set){
-    return list.has(elem)
-  }
-  else if (Array.isArray(list)){
-    return list.includes(elem)
+  if (list instanceof Set) {
+    return list.has(elem);
+  } else if (Array.isArray(list)) {
+    return list.includes(elem);
   }
 
-  return false
+  return false;
+};
+
+export function isScrolledIntoView(elem) {
+  var docViewTop = $(window).scrollTop();
+  var docViewBottom = docViewTop + document.body.clientHeight;
+
+  var elemTop = $(elem).offset().top;
+  var elemBottom = elemTop + $(elem).outerHeight();
+
+  console.log({
+    t: $(elem),
+    elemTop:elemTop, 
+    elemBottom:elemBottom, 
+    docViewTop:docViewTop,
+    docViewBottom:docViewBottom,
+    v: $(elem).is(":visible"), 
+    r: $(elem).is(":visible") && elemTop <= docViewBottom && elemBottom >= docViewTop
+  })
+
+  return $(elem).is(":visible") && elemTop <= docViewBottom && elemBottom >= docViewTop;
 }

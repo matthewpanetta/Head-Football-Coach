@@ -16,18 +16,24 @@ import {
   set_except,
   get_from_dict,
   deep_copy,
+  isScrolledIntoView,
 } from "/static/js/utils.js";
 
-export const draw_player_faces = async (common) => {
-  console.log("in draw_player_faces", common);
+export const draw_player_faces = (common, dom_id = "") => {
+  console.log("in draw_player_faces", dom_id, common);
   const db = common.db;
   const season = common.season;
 
   const player_ids = [];
   const face_div_by_player_id = {};
 
-  $(".PlayerFace-Headshot").each(function (ind, elem) {
-    if ($(elem).find("svg").length > 0) {
+  $(".PlayerFace-Headshot:not([face_drawn='true']):visible").each(function (ind, elem) {
+    console.log({
+      elem: elem,
+      iss: isScrolledIntoView(elem),
+      l: $(elem).find("svg").length,
+    });
+    if ($(elem).find("svg").length > 0 || !isScrolledIntoView(elem)) {
       return true;
     }
     player_ids.push(parseInt($(elem).attr("player_id")));
@@ -36,12 +42,23 @@ export const draw_player_faces = async (common) => {
     }
 
     face_div_by_player_id[parseInt($(elem).attr("player_id"))].push(elem);
+    $(elem).attr("face_drawn", "true");
+
+    console.log({
+      face_div_by_player_id: face_div_by_player_id,
+      player_ids: player_ids,
+    });
   });
 
-  console.log({
-    face_div_by_player_id: face_div_by_player_id,
-    player_ids: player_ids,
-  });
+  // console.log({
+  //   face_div_by_player_id: face_div_by_player_id,
+  //   player_ids: player_ids,
+  //   a: $(".PlayerFace-Headshot"),
+  //   b: $(".PlayerFace-Headshot:not([face_drawn='true'])"),
+  //   c: $(".PlayerFace-Headshot:visible"),
+  //   d: $(".PlayerFace-Headshot:not([face_drawn='true']):visible"),
+  // });
+  // debugger;
 
   const players = db.player.find({ player_id: { $in: player_ids } });
   var player_team_seasons = db.player_team_season.find({ player_id: { $in: player_ids } });
@@ -66,7 +83,7 @@ export const draw_player_faces = async (common) => {
     player.team = teams_by_team_id[player.team_season.team_id];
 
     if (player.player_face == undefined) {
-      player.player_face = await create_player_face("single", player.player_id, db);
+      player.player_face = create_player_face("single", player.player_id, db);
     }
 
     for (var elem of elems) {
@@ -436,7 +453,7 @@ const drawFeature = async (svg, face, info) => {
   }
 };
 
-export const create_player_face = async (many_or_single, player_ids, db) => {
+export const create_player_face = (many_or_single, player_ids, db) => {
   if (many_or_single == "many") {
     const players = db.player.find({ player_id: { $in: player_ids } });
 
@@ -445,7 +462,7 @@ export const create_player_face = async (many_or_single, player_ids, db) => {
     }
 
     db.player.update(players);
-    await db.saveDatabaseAsync();
+    // await db.saveDatabaseAsync();
 
     return players;
   } else {
@@ -777,4 +794,35 @@ const random_facial_feature = (feature) => {
   };
 
   return weighted_random_choice(features[feature]);
+};
+
+export const player_face_listeners = (common) => {
+  draw_player_faces(common);
+
+  // $(window).scroll(async function () {
+  //   draw_player_faces(common);
+  // });
+
+  let previousScrollPosition = 0;
+
+  $(window).on("scroll", function () {
+    const currentScrollPosition = $(this).scrollTop();
+    console.log("scrolling", {
+      currentScrollPosition: currentScrollPosition,
+      previousScrollPosition: previousScrollPosition,
+      m: currentScrollPosition === previousScrollPosition,
+    });
+    if (currentScrollPosition != previousScrollPosition) {
+      draw_player_faces(common);
+    }
+    previousScrollPosition = currentScrollPosition;
+  });
+
+  // $("").on("stylechange", async function (event) {
+  //   console.log("style change to ", event);
+  //   debugger;
+  //   if (event.originalEvent.propertyName === "display") {
+  //     draw_player_faces(common);
+  //   }
+  // });
 };

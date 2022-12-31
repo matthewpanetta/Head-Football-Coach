@@ -16,7 +16,7 @@ import {
     ordinal,
   } from "/static/js/utils.js";
   import {nunjucks_env} from '/static/js/modules/nunjucks_tags.js'
-  import { draw_player_faces } from "/static/js/faces.js";
+  import { draw_player_faces , player_face_listeners} from "/static/js/faces.js";
   
   export const page_world = async (common) => {
     const db = common.db;
@@ -540,6 +540,6 @@ import {
     $("#user-team-overview").html(user_team_rendered_html);
   
   
-    await draw_player_faces(common, "#body");
+    await player_face_listeners(common)
   
   };

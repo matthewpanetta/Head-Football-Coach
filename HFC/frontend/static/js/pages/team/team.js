@@ -16,7 +16,7 @@ import {
   elem_in,
 } from "/static/js/utils.js";
 import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
-import { draw_player_faces, draw_coach_faces } from "/static/js/faces.js";
+import { draw_player_faces,player_face_listeners, draw_coach_faces } from "/static/js/faces.js";
 import { conference_standings, team_header_links } from "/static/js/widgets.js";
 
 function ResArrowSize() {
@@ -623,8 +623,6 @@ const team_action = async (common) => {
 
     $("#team_leaders").append(renderedHtml);
 
-    await draw_player_faces(common);
-
     var url = "/static/html_templates/team/team/team_stats_div_template.njk";
     var html = await fetch(url);
     html = await html.text();
@@ -636,7 +634,7 @@ const team_action = async (common) => {
 
     $("#team_stats").append(renderedHtml);
 
-    await draw_player_faces(common);
+    await player_face_listeners(common);
 
     console.log({
       "conference_standings.conference_standings,": conf_standings.conference_standings,

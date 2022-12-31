@@ -15,6 +15,10 @@ export const position_order_map = {
 
   K: 13,
   P: 14,
+
+  Offense: 101,
+  Defense: 102,
+  "Special Teams": 103,
 };
 
 export const position_group_map = {

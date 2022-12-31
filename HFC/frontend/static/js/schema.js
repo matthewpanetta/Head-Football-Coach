@@ -1,4 +1,4 @@
-import { deep_copy, round_decimal, normal_trunc } from "/static/js/utils.js";
+import { deep_copy, round_decimal, normal_trunc, sum } from "/static/js/utils.js";
 
 export class headline {
   constructor(headline_id, week_id, headline_text, headline_type, headline_relevance) {
@@ -548,15 +548,15 @@ export class team_game {
   }
 
   get game_href() {
-    return `World/${this.world_id}/Game/${this.game_id}`
+    return `World/${this.world_id}/Game/${this.game_id}`;
   }
 
-  get game_location(){
-    return this.is_home_team ? 'home' : 'away';
+  get game_location() {
+    return this.is_home_team ? "home" : "away";
   }
 
-  get game_location_char(){
-    return this.is_home_team ? 'vs.' : '@';
+  get game_location_char() {
+    return this.is_home_team ? "vs." : "@";
   }
 
   get game_outcome_letter() {
@@ -670,9 +670,9 @@ export class team_game {
 }
 
 export class team {
-  constructor(init_data){
-    for (let key in init_data){
-      this[key] = init_data[key]
+  constructor(init_data) {
+    for (let key in init_data) {
+      this[key] = init_data[key];
     }
   }
   build_team_logo(size_obj) {
@@ -2286,9 +2286,10 @@ export class player_team_season {
         1 * this.ratings.overall.overall +
         0.5 * this.team_season.team.team_ratings.brand) *
       (1 / this.team_season.national_rank) ** 0.03 *
-      (1 / (this.team_season_average_weighted_game_score_rank || 1)) ** 0.05 *
-      (1 / (this.team_season_overall_rank || 1)) ** 0.03 *
-      (1 + position_overall_map[this.position])
+      // (1 / (this.team_season_average_weighted_game_score_rank || 1)) ** 0.05 *
+      // (1 / (this.team_season_overall_rank || 1)) ** 0.03 *
+      (1 + position_overall_map[this.position]) *
+      (1 - 0.01 * ((this.player_team_overall_rank || 1) - 1)) ** 1.5
     );
   }
 }
@@ -2307,10 +2308,9 @@ export class game {
 export class conference_season {}
 
 export class conference {
-
-  constructor(init_data){
-    for (let key in init_data){
-      this[key] = init_data[key]
+  constructor(init_data) {
+    for (let key in init_data) {
+      this[key] = init_data[key];
     }
   }
 
