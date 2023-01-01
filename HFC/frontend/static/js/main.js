@@ -6,6 +6,7 @@ import { driver_db, resolve_db, create_new_db } from '../../../../../../../../st
 import { page_world, page_world_rankings, page_world_standings, page_world_schedule, page_world_awards } from '../../../../../../../../static/js/pages/world_pages.js';
 import { page_team, page_team_schedule, page_team_roster, page_team_history } from '../../../../../../../../static/js/pages/team_pages.js';
 import { page_player } from '../../../../../../../../static/js/pages/player_pages.js';
+import { page_game } from '../../../../../../../../static/js/pages/game_pages.js';
 import { page_index } from '../../../../../../../../static/js/pages/index_pages.js';
 import { position_group_map } from '../../../../../../../../static/js/metadata.js';
 import { generate_ranking_headlines } from '../../../../../../../../static/js/headlines.js';
@@ -3692,7 +3693,7 @@ const resolve_route_parameters = async (pathname) => {
     { route: "/World/:world_id/Player/:player_id/", f: page_player },
     { route: "/World/:world_id/Coach/:coach_id/", path: "coach/coach/base.html" },
 
-    { route: "/World/:world_id/Game/:game_id/", path: "game/game/base.html" },
+    { route: "/World/:world_id/Game/:game_id/", f: page_game },
 
     { route: "/World/:world_id/Search/:search_keyword/", path: "search/search/base.html" },
 
@@ -5684,7 +5685,7 @@ const choose_preseason_all_americans = async (common) => {
     EDGE: 2,
     DL: 2,
     LB: 3,
-    CB: 2,
+    CB: 3,
     S: 2,
 
     K: 1,
@@ -5960,7 +5961,7 @@ const choose_all_americans = async (this_week, common) => {
     EDGE: 2,
     DL: 2,
     LB: 3,
-    CB: 2,
+    CB: 3,
     S: 2,
 
     K: 1,

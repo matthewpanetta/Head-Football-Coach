@@ -698,7 +698,7 @@
                   </thead>
                   <tbody>
                     {% for player_team_game in team_game_obj.team_game.player_team_games%}
-                      {% if common.get_from_dict(player_team_game, stat_grouping.filter_key) > 0%}
+                      {% if player_team_game|get(stat_grouping.filter_key) > 0%}
                       <tr class='center-text-row' player_id='{{player_team_game.player_team_season.player.player_id}}'>
                         <td value='{{player_team_game.player_team_season.player.name.last}},{{player_team_game.player_team_season.player.name.first}}' class='left-text padding-left-8'>
                           <i class="fa fa-address-card player-profile-popup-icon"></i>
@@ -708,7 +708,7 @@
                           <span class='font10'>{{player_team_game.player_team_season.position}}<span>
                         </td>
                         {% for column in stat_grouping.columns%}
-                        {% set value = common.get_from_dict(player_team_game, column.data)%}
+                        {% set value = player_team_game|get(column.data)%}
                         <td value='{{value|OrZero}}'>{{value|OrZero}}</td>
                         {% endfor %}
 

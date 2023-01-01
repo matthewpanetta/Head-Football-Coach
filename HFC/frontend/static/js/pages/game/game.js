@@ -1,4 +1,18 @@
-const getHtml = async (common) => {
+import {
+  index_group_sync,
+  get,
+  nest_children,
+  increment_parent,
+  deep_copy,intersect,
+  round_decimal,seconds_to_time,quarter_seconds_to_time
+} from "/static/js/utils.js";
+import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+import { init_basic_table_sorting } from "/static/js/modules/football-table/football-table.js";
+import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
+import { init_json_edit } from "/static/js/modules/json-edit/json-edit.js";
+import { conference_standings } from "/static/js/widgets.js";
+
+export const page_game = async (common) => {
   nunjucks.configure({ autoescape: true });
 
   var world_obj = {};
@@ -7,46 +21,37 @@ const getHtml = async (common) => {
   const query_to_dict = common.query_to_dict;
   const index_group = common.index_group;
 
-  var game = await db.game.get({ game_id: game_id });
+  var game = db.game.findOne({ game_id: game_id });
   const season = game.season;
 
-  game.week = await db.week.get({ week_id: game.week_id });
+  game.week = db.week.findOne({ week_id: game.week_id });
 
-  game.home_team_game = await db.team_game.get({
+  game.home_team_game = db.team_game.findOne({
     team_game_id: game.home_team_game_id,
   });
-  game.away_team_game = await db.team_game.get({
+  game.away_team_game = db.team_game.findOne({
     team_game_id: game.away_team_game_id,
   });
 
-  var team_seasons = await db.team_season.bulkGet([
+  var team_seasons = db.team_season.find({team_season_id: {'$in': [
     game.home_team_game.team_season_id,
     game.away_team_game.team_season_id,
-  ]);
+  ]}});
   var team_season_ids = team_seasons.map((ts) => ts.team_season_id);
   var team_ids = team_seasons.map((ts) => ts.team_id);
 
-  const team_season_stats = await db.team_season_stats.bulkGet(team_season_ids);
+  const team_season_stats = db.team_season_stats.find({team_season_id:{'$in':team_season_ids}});
   const team_season_stats_by_team_season_id = index_group_sync(
     team_season_stats,
     "index",
     "team_season_id"
   );
 
-  var team_seasons_by_team_season_id = index_group_sync(
-    team_seasons,
-    "index",
-    "team_season_id"
-  );
-  const teams = await db.team.bulkGet(team_ids);
+  var team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
+  const teams = db.team.find({team_id: {'$in': team_ids}});
   var teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
-  team_seasons = nest_children(
-    team_seasons,
-    teams_by_team_id,
-    "team_id",
-    "team"
-  );
+  team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
   team_seasons = nest_children(
     team_seasons,
     team_season_stats_by_team_season_id,
@@ -74,14 +79,10 @@ const getHtml = async (common) => {
     }
   }
 
-  var player_team_games = await db.player_team_game
-    .where("team_game_id")
-    .anyOf([game.home_team_game_id, game.away_team_game_id])
-    .toArray();
+  var player_team_games = db.player_team_game
+    .find({"team_game_id": {'$in': [game.home_team_game_id, game.away_team_game_id]}});
 
-  var player_team_seasons = await db.player_team_season
-    .where({ season: season })
-    .toArray();
+  var player_team_seasons = db.player_team_season.find({ season: season });
   var player_ids = player_team_seasons.map((pts) => pts.player_id);
 
   var player_team_seasons_by_team_season_id = index_group_sync(
@@ -89,24 +90,18 @@ const getHtml = async (common) => {
     "index",
     "player_team_season_id"
   );
-  let players = await db.player.where("player_id").anyOf(player_ids).toArray();
+  let players = db.player.find({"player_id": {'$in': player_ids}});
   var players_by_player_id = index_group_sync(players, "index", "player_id");
 
-  $.each(
-    player_team_seasons_by_team_season_id,
-    function (ind, player_team_season) {
-      player_team_season.player =
-        players_by_player_id[player_team_season.player_id];
-      player_team_season.team_season =
-        team_seasons_by_team_season_id[player_team_season.team_season_id];
-    }
-  );
+  $.each(player_team_seasons_by_team_season_id, function (ind, player_team_season) {
+    player_team_season.player = players_by_player_id[player_team_season.player_id];
+    player_team_season.team_season =
+      team_seasons_by_team_season_id[player_team_season.team_season_id];
+  });
 
   for (var player_team_game of player_team_games) {
     player_team_game.player_team_season =
-      player_team_seasons_by_team_season_id[
-        player_team_game.player_team_season_id
-      ];
+      player_team_seasons_by_team_season_id[player_team_game.player_team_season_id];
   }
 
   const player_team_games_by_team_game_id = index_group_sync(
@@ -117,11 +112,9 @@ const getHtml = async (common) => {
 
   for (var team_game_id in player_team_games_by_team_game_id) {
     if (team_game_id == game.home_team_game.team_game_id) {
-      game.home_team_game.player_team_games =
-        player_team_games_by_team_game_id[team_game_id];
+      game.home_team_game.player_team_games = player_team_games_by_team_game_id[team_game_id];
     } else {
-      game.away_team_game.player_team_games =
-        player_team_games_by_team_game_id[team_game_id];
+      game.away_team_game.player_team_games = player_team_games_by_team_game_id[team_game_id];
     }
   }
 
@@ -157,19 +150,13 @@ const getHtml = async (common) => {
       game.outcome_left_arrow = '<i class="fas fa-angle-left"></i>';
     }
 
-    let overtime_periods = game.scoring.periods.filter(
-      (p) => p.period_number > 4
-    );
+    let overtime_periods = game.scoring.periods.filter((p) => p.period_number > 4);
 
     console.log({ game: game });
 
     for (const drive of game.scoring.drives) {
-      drive.drive_end.display_team =
-        teams_by_team_id[drive.drive_end.display_team_id];
-      if (
-        drive.drive_end.display_team.team_id ==
-        game.home_team_game.team_season.team_id
-      ) {
+      drive.drive_end.display_team = teams_by_team_id[drive.drive_end.display_team_id];
+      if (drive.drive_end.display_team.team_id == game.home_team_game.team_season.team_id) {
         drive.home_or_away = "home";
       } else {
         drive.home_or_away = "away";
@@ -181,8 +168,7 @@ const getHtml = async (common) => {
       ) {
         var seconds_left_in_period = 0;
       } else {
-        var seconds_left_in_period =
-          15 * 60 - (drive.drive_end.seconds_in_to_game % (15 * 60));
+        var seconds_left_in_period = 15 * 60 - (drive.drive_end.seconds_in_to_game % (15 * 60));
       }
 
       var display_time = seconds_to_time(seconds_left_in_period);
@@ -190,19 +176,17 @@ const getHtml = async (common) => {
 
       if (drive.drive_end.play_player_ids) {
         for (let i = 0; i < drive.drive_end.play_player_ids.length; i++) {
-          let this_player =
-            players_by_player_id[drive.drive_end.play_player_ids[i]];
+          let this_player = players_by_player_id[drive.drive_end.play_player_ids[i]];
           console.log({
             players_by_player_id: players_by_player_id,
             "drive.drive_end.play_player_ids": drive.drive_end.play_player_ids,
             i: i,
             this_player: this_player,
           });
-          drive.drive_end.play_description =
-            drive.drive_end.play_description.replace(
-              "{player_" + i +'}',
-              `<a href="${this_player.player_href}">${this_player.full_name}</a>`
-            );
+          drive.drive_end.play_description = drive.drive_end.play_description.replace(
+            "{player_" + i + "}",
+            `<a href="${this_player.player_href}">${this_player.full_name}</a>`
+          );
         }
       }
 
@@ -243,14 +227,12 @@ const getHtml = async (common) => {
 
     for (const stat of player_stat_box) {
       stat.home_player_team_game = game.home_team_game.player_team_games.sort(
-        (ptg_a, ptg_b) =>
-          (get(ptg_b, stat.attribute) || 0) - (get(ptg_a, stat.attribute) || 0)
+        (ptg_a, ptg_b) => (get(ptg_b, stat.attribute) || 0) - (get(ptg_a, stat.attribute) || 0)
       )[0];
       stat.home_player_value = get(stat.home_player_team_game, stat.attribute) || 0;
 
       stat.away_player_team_game = game.away_team_game.player_team_games.sort(
-        (ptg_a, ptg_b) =>
-          (get(ptg_b, stat.attribute) || 0) - (get(ptg_a, stat.attribute) || 0)
+        (ptg_a, ptg_b) => (get(ptg_b, stat.attribute) || 0) - (get(ptg_a, stat.attribute) || 0)
       )[0];
       stat.away_player_value = get(stat.away_player_team_game, stat.attribute) || 0;
     }
@@ -394,7 +376,7 @@ const getHtml = async (common) => {
   } else {
     $.each(positions_to_display, function (pos, count) {
       for (var ind = 0; ind < count; ind++) {
-        position_count = { position: pos };
+        let position_count = { position: pos };
 
         position_count.home_player_team_season_id =
           game.home_team_game.team_season.depth_chart[pos][ind];
@@ -402,13 +384,9 @@ const getHtml = async (common) => {
           game.away_team_game.team_season.depth_chart[pos][ind];
 
         position_count.home_player_team_season =
-          player_team_seasons_by_team_season_id[
-            position_count.home_player_team_season_id
-          ];
+          player_team_seasons_by_team_season_id[position_count.home_player_team_season_id];
         position_count.away_player_team_season =
-          player_team_seasons_by_team_season_id[
-            position_count.away_player_team_season_id
-          ];
+          player_team_seasons_by_team_season_id[position_count.away_player_team_season_id];
 
         if (
           position_count.home_player_team_season.ratings.overall.overall >
@@ -451,43 +429,30 @@ const getHtml = async (common) => {
     });
 
     //BLOCK OF CODE FOR PAST GAMES
-    var all_home_team_seasons = await db.team_season
-      .where({ team_id: game.home_team_game.team_season.team_id })
-      .toArray();
-    var all_home_team_season_ids = all_home_team_seasons.map(
-      (ts) => ts.team_season_id
-    );
-    var all_home_team_games = await db.team_game
-      .where("team_season_id")
-      .anyOf(all_home_team_season_ids)
-      .toArray();
+    var all_home_team_seasons = db.team_season
+      .find({ team_id: game.home_team_game.team_season.team_id })
+    var all_home_team_season_ids = all_home_team_seasons.map((ts) => ts.team_season_id);
+    var all_home_team_games = db.team_game
+      .find({"team_season_id": {'$in': all_home_team_season_ids}})
+      
     var all_home_game_ids = all_home_team_games.map((tg) => tg.game_id);
 
-    var all_away_team_seasons = await db.team_season
-      .where({ team_id: game.away_team_game.team_season.team_id })
-      .toArray();
-    var all_away_team_season_ids = all_away_team_seasons.map(
-      (ts) => ts.team_season_id
-    );
-    var all_away_team_games = await db.team_game
-      .where("team_season_id")
-      .anyOf(all_away_team_season_ids)
-      .toArray();
+    var all_away_team_seasons = db.team_season
+      .find({ team_id: game.away_team_game.team_season.team_id })
+    var all_away_team_season_ids = all_away_team_seasons.map((ts) => ts.team_season_id);
+    var all_away_team_games = db.team_game
+      .find({"team_season_id": {'$in': all_away_team_season_ids}})
     var all_away_game_ids = all_away_team_games.map((tg) => tg.game_id);
 
     var past_game_ids = intersect(all_home_game_ids, all_away_game_ids);
 
-    var last_team_meetings = await db.game.bulkGet(past_game_ids);
+    var last_team_meetings = db.game.find({game_id: {'$in':past_game_ids}});
     last_team_meetings = last_team_meetings
       .filter((g) => g.was_played)
       .sort((g_a, g_b) => g_b.week_id - g_a.week_id);
 
-    const last_team_meetings_week_ids = last_team_meetings.map(
-      (g) => g.week_id
-    );
-    const last_team_meetings_weeks = await db.week.bulkGet(
-      last_team_meetings_week_ids
-    );
+    const last_team_meetings_week_ids = last_team_meetings.map((g) => g.week_id);
+    const last_team_meetings_weeks = db.week.find({week_id:{'$in':last_team_meetings_week_ids}});
     const last_team_meetings_weeks_by_week_id = index_group_sync(
       last_team_meetings_weeks,
       "index",
@@ -502,8 +467,7 @@ const getHtml = async (common) => {
     );
 
     for (const game of last_team_meetings) {
-      game.outcome.winning_team.team =
-        teams_by_team_id[game.outcome.winning_team.team_id];
+      game.outcome.winning_team.team = teams_by_team_id[game.outcome.winning_team.team_id];
     }
 
     if (
@@ -574,16 +538,12 @@ const getHtml = async (common) => {
         game.away_team_game.team_season.stats,
         season_stat.attribute
       );
-      season_stat.max_val = Math.max(
-        season_stat.home_team_value,
-        season_stat.away_team_value
-      );
+      season_stat.max_val = Math.max(season_stat.home_team_value, season_stat.away_team_value);
 
       if (
         (season_stat.home_team_value > season_stat.away_team_value &&
           season_stat.better == "high") ||
-        (season_stat.home_team_value < season_stat.away_team_value &&
-          season_stat.better == "low")
+        (season_stat.home_team_value < season_stat.away_team_value && season_stat.better == "low")
       ) {
         season_stat.better_team_for_stat = game.home_team_game.team_season.team;
         season_stat.left_arrow = '<i class="fas fa-angle-left"></i>';
@@ -600,7 +560,7 @@ const getHtml = async (common) => {
     db: db,
   });
 
-  const conference_standings = [];
+  const conf_standings = [];
 
   for (const conference_season_id of [
     ...new Set([
@@ -608,13 +568,13 @@ const getHtml = async (common) => {
       game.home_team_game.team_season.conference_season_id,
     ]),
   ]) {
-    var this_conference_standings = await common.conference_standings(
+    var this_conference_standings = await conference_standings(
       conference_season_id,
       [game.home_team_game.team_season_id, game.away_team_game.team_season_id],
       common
     );
 
-    conference_standings.push(this_conference_standings);
+    conf_standings.push(this_conference_standings);
   }
 
   const box_score_stat_groupings = [
@@ -679,7 +639,7 @@ const getHtml = async (common) => {
     world_id: common.params.world_id,
     game: game,
     player_talent_comparison: player_talent_comparison,
-    conference_standings: conference_standings,
+    conference_standings: conf_standings,
     show_stat_box: show_stat_box,
     team_stat_box: team_stat_box,
     box_score_stat_groupings: box_score_stat_groupings,
@@ -697,412 +657,321 @@ const getHtml = async (common) => {
   var html = await fetch(url);
   html = await html.text();
 
-  var renderedHtml = await common.nunjucks_env.renderString(
-    html,
-    render_content
-  );
+  var renderedHtml = nunjucks_env.renderString(html, render_content);
 
   $("#body").html(renderedHtml);
 
   common.calculate_team_overalls(common);
+
+  await action(common)
+  AddScoringSummaryListeners()
 };
 
 const action = async (common) => {
-  $(".player-profile-popup-icon").on("click", async function () {
-    await common.populate_player_modal(common, this);
-  });
-
-  $(".gamePlayerBoxStats table").each(function () {
-    var table_id = $(this).attr("id");
-    init_basic_table_sorting(common, "#" + table_id, 1);
-  });
-
-  if (common.render_content.game.was_played) {
-    var drives = common.render_content.game.scoring.drives;
-
-    const game = common.render_content.game;
-
-    for (const drive of drives) {
-      drive.drive_end.team_drives = [
+    $(".player-profile-popup-icon").on("click", async function () {
+      await common.populate_player_modal(common, this);
+    });
+  
+    $(".gamePlayerBoxStats table").each(function () {
+      var table_id = $(this).attr("id");
+      init_basic_table_sorting(common, "#" + table_id, 1);
+    });
+  
+    if (common.render_content.game.was_played) {
+      var drives = common.render_content.game.scoring.drives;
+  
+      const game = common.render_content.game;
+  
+      for (const drive of drives) {
+        drive.drive_end.team_drives = [
+          {
+            seconds_in_to_game: drive.drive_end.seconds_in_to_game,
+            points: drive.drive_end.home_team_points,
+            team: game.home_team_game.team_season.team,
+          },
+          {
+            seconds_in_to_game: drive.drive_end.seconds_in_to_game,
+            points: drive.drive_end.away_team_points,
+            team: game.away_team_game.team_season.team,
+          },
+        ];
+      }
+  
+      var scoring_data = [
         {
-          seconds_in_to_game: drive.drive_end.seconds_in_to_game,
-          points: drive.drive_end.home_team_points,
-          team: game.home_team_game.team_season.team,
+          name: game.home_team_game.team_season.team.school_name,
+          show: true,
+          color:
+            "#" + game.home_team_game.team_season.team.team_color_primary_hex,
+          final_score: game.home_team_game.points,
+          drives: drives.map((d) => d.drive_end.team_drives[0]),
         },
         {
-          seconds_in_to_game: drive.drive_end.seconds_in_to_game,
-          points: drive.drive_end.away_team_points,
-          team: game.away_team_game.team_season.team,
+          name: game.away_team_game.team_season.team.school_name,
+          show: true,
+          color:
+            "#" + game.away_team_game.team_season.team.team_color_primary_hex,
+          final_score: game.away_team_game.points,
+          drives: drives.map((d) => d.drive_end.team_drives[1]),
         },
       ];
-    }
-
-    var scoring_data = [
-      {
-        name: game.home_team_game.team_season.team.school_name,
-        show: true,
-        color:
-          "#" + game.home_team_game.team_season.team.team_color_primary_hex,
-        final_score: game.home_team_game.points,
-        drives: drives.map((d) => d.drive_end.team_drives[0]),
-      },
-      {
-        name: game.away_team_game.team_season.team.school_name,
-        show: true,
-        color:
-          "#" + game.away_team_game.team_season.team.team_color_primary_hex,
-        final_score: game.away_team_game.points,
-        drives: drives.map((d) => d.drive_end.team_drives[1]),
-      },
-    ];
-
-    var max_time = drives
-      .map((d) => d.drive_end.seconds_in_to_game)
-      .reduce((acc, val) => Math.max(acc, val), 0);
-    max_time = Math.ceil(max_time / (15 * 60)) * (15 * 60);
-    var max_points = drives
-      .map((d) =>
-        Math.max(d.drive_end.away_team_points, d.drive_end.home_team_points)
-      )
-      .reduce((acc, val) => Math.max(acc, val), 0);
-    max_points = Math.ceil((max_points + 0.01) / 5) * 5;
-
-    for (var team_index of [0, 1]) {
-      scoring_data[team_index].drives.unshift({
-        seconds_in_to_game: 0,
-        points: 0,
-        team: scoring_data[team_index].drives[0].team,
-      });
-
-      var previous_points = 0;
-      var drive_index = 0;
-      var drives_to_add = [];
-      for (var drive of scoring_data[team_index].drives) {
-        if (!(previous_points == drive.points)) {
-          drives_to_add.push({
-            seconds_in_to_game: drive.seconds_in_to_game,
-            points: previous_points,
-            team: drive.team,
-          });
+  
+      var max_time = drives
+        .map((d) => d.drive_end.seconds_in_to_game)
+        .reduce((acc, val) => Math.max(acc, val), 0);
+      max_time = Math.ceil(max_time / (15 * 60)) * (15 * 60);
+      var max_points = drives
+        .map((d) =>
+          Math.max(d.drive_end.away_team_points, d.drive_end.home_team_points)
+        )
+        .reduce((acc, val) => Math.max(acc, val), 0);
+      max_points = Math.ceil((max_points + 0.01) / 5) * 5;
+  
+      for (var team_index of [0, 1]) {
+        scoring_data[team_index].drives.unshift({
+          seconds_in_to_game: 0,
+          points: 0,
+          team: scoring_data[team_index].drives[0].team,
+        });
+  
+        var previous_points = 0;
+        var drive_index = 0;
+        var drives_to_add = [];
+        for (var drive of scoring_data[team_index].drives) {
+          if (!(previous_points == drive.points)) {
+            drives_to_add.push({
+              seconds_in_to_game: drive.seconds_in_to_game,
+              points: previous_points,
+              team: drive.team,
+            });
+          }
+  
+          previous_points = drive.points;
         }
-
-        previous_points = drive.points;
+        scoring_data[team_index].drives =
+          scoring_data[team_index].drives.concat(drives_to_add);
+        scoring_data[team_index].drives = scoring_data[team_index].drives.sort(
+          (d_a, d_b) =>
+            d_a.seconds_in_to_game - d_b.seconds_in_to_game ||
+            d_a.points - d_b.points
+        );
       }
-      scoring_data[team_index].drives =
-        scoring_data[team_index].drives.concat(drives_to_add);
-      scoring_data[team_index].drives = scoring_data[team_index].drives.sort(
-        (d_a, d_b) =>
-          d_a.seconds_in_to_game - d_b.seconds_in_to_game ||
-          d_a.points - d_b.points
-      );
-    }
-
-    var quarters = [1, 2, 3, 4];
-    quarters = quarters.map((q) => q * 15 * 60);
-
-    function drawChart() {
-      // Define margins, dimensions, and some line colors
-      const margin = { top: 20, right: 0, bottom: 30, left: 40 };
-      const width = $("#GameFlowChart").width() - margin.left - margin.right;
-      const height = 400 - margin.top - margin.bottom;
-
-      // Define the scales and tell D3 how to draw the line
-      const x = d3.scaleLinear().domain([0, max_time]).range([0, width]);
-      const y = d3.scaleLinear().domain([0, max_points]).range([height, 0]);
-      const line = d3
-        .line()
-        .x(function (d, ind) {
-          return x(d.seconds_in_to_game);
-        })
-        .y(function (d, ind) {
-          return y(d.points);
-        });
-
-      const chart = d3
-        .select("#GameFlowChart")
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-      const tooltip = d3.select("#tooltip");
-      const tooltipLine = chart.append("line");
-
-      var tipBox = chart
-        .append("rect")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("opacity", 0)
-        .on("mousemove", drawTooltip)
-        .on("mouseout", removeTooltip);
-
-      // Add the axes and a title
-      const xAxis = d3.axisBottom(x).tickFormat(quarter_seconds_to_time);
-      const yAxis = d3.axisLeft(y).tickFormat(d3.format(""));
-      chart.append("g").call(yAxis);
-      chart
-        .append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-
-      chart
-        .selectAll()
-        .data(quarters)
-        .enter()
-        .append("line")
-        .attr("stroke", "#aaa")
-        .attr("x1", (q) => x(q))
-        .attr("x2", (q) => x(q))
-        .attr("y1", 0)
-        .attr("y2", height)
-        .attr("stroke-width", 1);
-
-      var legend = chart
-        .selectAll()
-        .data([
-          game.home_team_game.team_season.team,
-          game.away_team_game.team_season.team,
-        ])
-        .enter()
-        .append("g")
-        .attr("class", "legend");
-
-      legend
-        .append("rect")
-        .attr("x", 10)
-        .attr("y", function (d, i) {
-          return i * 20;
-        })
-        .attr("width", 10)
-        .attr("height", 10)
-        .style("fill", function (d) {
-          return `#${d.team_color_primary_hex}`;
-        });
-
-      legend
-        .append("text")
-        .attr("x", 22)
-        .attr("y", function (d, i) {
-          return i * 20 + 9;
-        })
-        .text(function (d) {
-          return d.school_name;
-        });
-
-      chart
-        .selectAll()
-        .data(scoring_data)
-        .enter()
-        .append("path")
-        .attr("fill", "none")
-        .attr("stroke", (d) => d.color)
-        .attr("stroke-width", 3)
-        .datum(function (d) {
-          return d.drives;
-        })
-        .attr("d", line);
-
-      function removeTooltip() {
-        if (tooltip) tooltip.style("display", "none");
-        if (tooltipLine) tooltipLine.attr("stroke", "none");
-      }
-
-      function drawTooltip(mouse_event) {
-        var xPosition = x.invert(mouse_event.offsetX - margin.left);
-        let tooltip_parent = $("#tooltip").parent();
-
-        var sorted_drives = drives.sort((drive_a, drive_b) => {
-          return (
-            Math.abs(drive_a.drive_end.seconds_in_to_game - xPosition) -
-            Math.abs(drive_b.drive_end.seconds_in_to_game - xPosition)
-          );
-        });
-
-        var highlighted_drive = sorted_drives[0];
-
-        tooltipLine
-          .attr("stroke", "#888")
-          .attr("x1", x(highlighted_drive.drive_end.seconds_in_to_game))
-          .attr("x2", x(highlighted_drive.drive_end.seconds_in_to_game))
+  
+      var quarters = [1, 2, 3, 4];
+      quarters = quarters.map((q) => q * 15 * 60);
+  
+      function drawChart() {
+        // Define margins, dimensions, and some line colors
+        const margin = { top: 20, right: 0, bottom: 30, left: 40 };
+        const width = $("#GameFlowChart").width() - margin.left - margin.right;
+        const height = 400 - margin.top - margin.bottom;
+  
+        // Define the scales and tell D3 how to draw the line
+        const x = d3.scaleLinear().domain([0, max_time]).range([0, width]);
+        const y = d3.scaleLinear().domain([0, max_points]).range([height, 0]);
+        const line = d3
+          .line()
+          .x(function (d, ind) {
+            return x(d.seconds_in_to_game);
+          })
+          .y(function (d, ind) {
+            return y(d.points);
+          });
+  
+        const chart = d3
+          .select("#GameFlowChart")
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
+        const tooltip = d3.select("#tooltip");
+        const tooltipLine = chart.append("line");
+  
+        var tipBox = chart
+          .append("rect")
+          .attr("width", width)
+          .attr("height", height)
+          .attr("opacity", 0)
+          .on("mousemove", drawTooltip)
+          .on("mouseout", removeTooltip);
+  
+        // Add the axes and a title
+        const xAxis = d3.axisBottom(x).tickFormat(quarter_seconds_to_time);
+        const yAxis = d3.axisLeft(y).tickFormat(d3.format(""));
+        chart.append("g").call(yAxis);
+        chart
+          .append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+  
+        chart
+          .selectAll()
+          .data(quarters)
+          .enter()
+          .append("line")
+          .attr("stroke", "#aaa")
+          .attr("x1", (q) => x(q))
+          .attr("x2", (q) => x(q))
           .attr("y1", 0)
           .attr("y2", height)
-          .attr("stroke-width", 2);
-
-        tooltip
-          .html(
-            `<span class='bold'>Quarter ${highlighted_drive.drive_end.period}</span> - <span>${highlighted_drive.drive_end.display_time}</span>`
-          )
-          .style("display", "block")
-          .style("left", $(tooltip_parent).position().left)
-          .style("top", $(tooltip_parent).position().top)
+          .attr("stroke-width", 1);
+  
+        var legend = chart
           .selectAll()
-          .data(highlighted_drive.drive_end.team_drives)
+          .data([
+            game.home_team_game.team_season.team,
+            game.away_team_game.team_season.team,
+          ])
           .enter()
-          .append("div")
-          //.style('color', d => d.color)
-          .html(
-            (d) =>
-              `<i class="fas fa-square" style='margin-right: 4px; color: #${d.team.team_color_primary_hex};'></i>${d.team.school_name} - ${d.points}`
-          );
-
-        // console.log({xPosition:xPosition, mouse_event:mouse_event, tooltip:tooltip, tooltipLine:tooltipLine, highlighted_drive:highlighted_drive, drives:drives})
+          .append("g")
+          .attr("class", "legend");
+  
+        legend
+          .append("rect")
+          .attr("x", 10)
+          .attr("y", function (d, i) {
+            return i * 20;
+          })
+          .attr("width", 10)
+          .attr("height", 10)
+          .style("fill", function (d) {
+            return `#${d.team_color_primary_hex}`;
+          });
+  
+        legend
+          .append("text")
+          .attr("x", 22)
+          .attr("y", function (d, i) {
+            return i * 20 + 9;
+          })
+          .text(function (d) {
+            return d.school_name;
+          });
+  
+        chart
+          .selectAll()
+          .data(scoring_data)
+          .enter()
+          .append("path")
+          .attr("fill", "none")
+          .attr("stroke", (d) => d.color)
+          .attr("stroke-width", 3)
+          .datum(function (d) {
+            return d.drives;
+          })
+          .attr("d", line);
+  
+        function removeTooltip() {
+          if (tooltip) tooltip.style("display", "none");
+          if (tooltipLine) tooltipLine.attr("stroke", "none");
+        }
+  
+        function drawTooltip(mouse_event) {
+          var xPosition = x.invert(mouse_event.offsetX - margin.left);
+          let tooltip_parent = $("#tooltip").parent();
+  
+          var sorted_drives = drives.sort((drive_a, drive_b) => {
+            return (
+              Math.abs(drive_a.drive_end.seconds_in_to_game - xPosition) -
+              Math.abs(drive_b.drive_end.seconds_in_to_game - xPosition)
+            );
+          });
+  
+          var highlighted_drive = sorted_drives[0];
+  
+          tooltipLine
+            .attr("stroke", "#888")
+            .attr("x1", x(highlighted_drive.drive_end.seconds_in_to_game))
+            .attr("x2", x(highlighted_drive.drive_end.seconds_in_to_game))
+            .attr("y1", 0)
+            .attr("y2", height)
+            .attr("stroke-width", 2);
+  
+          tooltip
+            .html(
+              `<span class='bold'>Quarter ${highlighted_drive.drive_end.period}</span> - <span>${highlighted_drive.drive_end.display_time}</span>`
+            )
+            .style("display", "block")
+            .style("left", $(tooltip_parent).position().left)
+            .style("top", $(tooltip_parent).position().top)
+            .selectAll()
+            .data(highlighted_drive.drive_end.team_drives)
+            .enter()
+            .append("div")
+            //.style('color', d => d.color)
+            .html(
+              (d) =>
+                `<i class="fas fa-square" style='margin-right: 4px; color: #${d.team.team_color_primary_hex};'></i>${d.team.school_name} - ${d.points}`
+            );
+  
+          // console.log({xPosition:xPosition, mouse_event:mouse_event, tooltip:tooltip, tooltipLine:tooltipLine, highlighted_drive:highlighted_drive, drives:drives})
+        }
       }
+      drawChart();
+  
+    } else {
+      var team_seasons = [
+        common.render_content.game.home_team_game.team_season,
+        common.render_content.game.away_team_game.team_season,
+      ];
+      var radar_data = team_seasons.map((ts, ind) =>
+        [{ axis: "OVR", value: ts.rating.overall, ind: ind }].concat(
+          Object.entries(ts.rating.by_position_unit).map((e) => ({
+            axis: e[0],
+            value: e[1],
+            ind: ind,
+          }))
+        )
+      );
+  
+      var margin = { top: 50, right: 50, bottom: 50, left: 50 },
+        width =
+          Math.min(700, $("#team-ratings-chart").parent().width() - 10) -
+          margin.left -
+          margin.right,
+        height = 280;
+  
+      var color = d3
+        .scaleOrdinal()
+        .range(team_seasons.map((ts) => `#${ts.team.team_color_primary_hex}`)); // CODE FROM http://bl.ocks.org/nbremer/21746a9668ffdf6d8242
+      var radarChartOptions = {
+        w: width,
+        h: height,
+        margin: margin,
+        maxValue: 100,
+        levels: 10,
+        roundStrokes: true,
+        color: color,
+      };
+  
+      RadarChart("#team-ratings-chart", radar_data, radarChartOptions);
     }
-    drawChart();
 
-    draw_faces(common, "#team-leaders-table");
-  } else {
-    var team_seasons = [
-      common.render_content.game.home_team_game.team_season,
-      common.render_content.game.away_team_game.team_season,
-    ];
-    var radar_data = team_seasons.map((ts, ind) =>
-      [{ axis: "OVR", value: ts.rating.overall, ind: ind }].concat(
-        Object.entries(ts.rating.by_position_unit).map((e) => ({
-          axis: e[0],
-          value: e[1],
-          ind: ind,
-        }))
-      )
-    );
+    player_face_listeners(common);
 
-    var margin = { top: 50, right: 50, bottom: 50, left: 50 },
-      width =
-        Math.min(700, $("#team-ratings-chart").parent().width() - 10) -
-        margin.left -
-        margin.right,
-      height = 280;
-
-    var color = d3
-      .scaleOrdinal()
-      .range(team_seasons.map((ts) => `#${ts.team.team_color_primary_hex}`)); // CODE FROM http://bl.ocks.org/nbremer/21746a9668ffdf6d8242
-    var radarChartOptions = {
-      w: width,
-      h: height,
-      margin: margin,
-      maxValue: 100,
-      levels: 10,
-      roundStrokes: true,
-      color: color,
-    };
-
-    RadarChart("#team-ratings-chart", radar_data, radarChartOptions);
-  }
-};
-
-function AddScoringSummaryListeners() {
-  //  DriveEndingEvent-All
-  //  DriveEndingEvent-Score
-
-  $(".drive-event-bar button").on("click", function (event, target) {
-    var ClickedTab = $(event.target);
-    var ClickedTabParent = ClickedTab.attr("id");
-    var SelectedEventSelection = ClickedTabParent.replace("-tab", "");
-
-    if (!$(ClickedTab).hasClass("selected-bar-button")) {
-      $(".selected-bar-button").each(function (ind, obj) {
-        $(obj).removeClass("selected-bar-button");
+  };
+  
+  function AddScoringSummaryListeners() {
+    //  DriveEndingEvent-All
+    //  DriveEndingEvent-Score
+  
+    $(".drive-event-bar button").on("click", function (event, target) {
+      var ClickedTab = $(event.target);
+      var ClickedTabParent = ClickedTab.attr("id");
+      var SelectedEventSelection = ClickedTabParent.replace("-tab", "");
+  
+      if (!$(ClickedTab).hasClass("selected-bar-button")) {
+        $(".selected-bar-button").each(function (ind, obj) {
+          $(obj).removeClass("selected-bar-button");
+        });
+        $(ClickedTab).addClass("selected-bar-button");
+      }
+  
+      $(".DriveEndingEvent-All").each(function (ind, obj) {
+        $(obj).addClass("hidden");
       });
-      $(ClickedTab).addClass("selected-bar-button");
-    }
-
-    $(".DriveEndingEvent-All").each(function (ind, obj) {
-      $(obj).addClass("hidden");
+  
+      $("." + SelectedEventSelection).each(function (ind, obj) {
+        $(obj).removeClass("hidden");
+      });
     });
-
-    $("." + SelectedEventSelection).each(function (ind, obj) {
-      $(obj).removeClass("hidden");
-    });
-  });
-}
-
-$(document).ready(async function () {
-  var startTime = performance.now();
-
-  const common = await common_functions("/World/:world_id/Game/:game_id/");
-  common.startTime = startTime;
-
-  await getHtml(common);
-  await action(common);
-  await common.add_listeners(common);
-  await AddScoringSummaryListeners();
-
-  var endTime = performance.now();
-  console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms`);
-});
-
-const draw_faces = async (common, parent_div) => {
-  const db = common.db;
-  const season = common.season;
-
-  console.log({common:common})
-
-  const player_ids = [];
-  const face_div_by_player_id = {};
-
-  $(parent_div + " .PlayerFace-Headshot").each(function (ind, elem) {
-    if ($(elem).find("svg").length > 0) {
-      return true;
-    }
-
-    if (!(parseInt($(elem).attr("player_id")) in face_div_by_player_id)) {
-      face_div_by_player_id[parseInt($(elem).attr("player_id"))] = [];
-
-      player_ids.push(parseInt($(elem).attr("player_id")));
-    }
-
-    face_div_by_player_id[parseInt($(elem).attr("player_id"))].push(elem);
-  });
-
-  const players = await db.player.bulkGet(player_ids);
-  var player_team_seasons = await db.player_team_season
-    .where("player_id")
-    .anyOf(player_ids)
-    .toArray();
-  player_team_seasons = player_team_seasons.filter(
-    (pts) => pts.season == common.render_content.game.season
-  );
-  const player_team_seasons_by_player_id = index_group_sync(
-    player_team_seasons,
-    "index",
-    "player_id"
-  );
-
-  const team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
-  const team_seasons = await db.team_season.bulkGet(team_season_ids);
-  const team_seasons_by_team_season_id = index_group_sync(
-    team_seasons,
-    "index",
-    "team_season_id"
-  );
-
-  const team_ids = team_seasons.map((ts) => ts.team_id);
-  const teams = await db.team.bulkGet(team_ids);
-  const teams_by_team_id = index_group_sync(teams, "index", "team_id");
-
-  for (var player of players) {
-    var elems = face_div_by_player_id[player.player_id];
-    player.player_team_season =
-      player_team_seasons_by_player_id[player.player_id];
-    player.team_season =
-      team_seasons_by_team_season_id[player.player_team_season.team_season_id];
-    player.team = teams_by_team_id[player.team_season.team_id];
-
-    if (player.player_face == undefined) {
-      player.player_face = await common.create_player_face(
-        "single",
-        player.player_id,
-        db
-      );
-    }
-
-    for (var elem of elems) {
-      common.display_player_face(
-        player.player_face,
-        {
-          jersey: player.team.jersey,
-          teamColors: player.team.jersey.teamColors,
-        },
-        $(elem).attr("id")
-      );
-    }
   }
-};

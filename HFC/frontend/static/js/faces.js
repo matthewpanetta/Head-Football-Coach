@@ -20,7 +20,7 @@ import {
 } from "/static/js/utils.js";
 
 export const draw_player_faces = (common, dom_id = "") => {
-  console.log("in draw_player_faces", dom_id, common);
+  // console.log("in draw_player_faces", dom_id, common);
   const db = common.db;
   const season = common.season;
 
@@ -77,8 +77,6 @@ export const draw_player_faces = (common, dom_id = "") => {
       );
     }
   }
-
-  console.log('Drew players', players)
 
   return players;
 };
@@ -791,11 +789,11 @@ export const player_face_listeners = (common) => {
 
   $(window).on("scroll", function () {
     const currentScrollPosition = $(this).scrollTop();
-    console.log("scrolling", {
-      currentScrollPosition: currentScrollPosition,
-      previousScrollPosition: previousScrollPosition,
-      m: currentScrollPosition != previousScrollPosition,
-    });
+    // console.log("scrolling", {
+    //   currentScrollPosition: currentScrollPosition,
+    //   previousScrollPosition: previousScrollPosition,
+    //   m: currentScrollPosition != previousScrollPosition,
+    // });
     if (currentScrollPosition != previousScrollPosition) {
       draw_player_faces(common);
     }

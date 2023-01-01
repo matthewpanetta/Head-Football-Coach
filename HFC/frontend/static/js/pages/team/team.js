@@ -16,7 +16,7 @@ import {
   elem_in,
 } from "/static/js/utils.js";
 import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
-import { draw_player_faces,player_face_listeners, draw_coach_faces } from "/static/js/faces.js";
+import { draw_player_faces, player_face_listeners, draw_coach_faces } from "/static/js/faces.js";
 import { conference_standings, team_header_links } from "/static/js/widgets.js";
 
 function ResArrowSize() {
@@ -642,7 +642,7 @@ const team_action = async (common) => {
 
     if (team_leaders.length > 0) {
       // conference_bar_chart(conf_standings.conference_standings, common);
-      // rankings_trend_chart(team, common);
+      rankings_trend_chart(team, common);
       // TODO fix these
     }
   });
@@ -1003,6 +1003,8 @@ function rankings_trend_chart(team, common) {
     });
   }
 
+  console.log({ rank_trends: rank_trends });
+
   var team_ranking_trend_chart_div = document.getElementById("team_ranking_trend_chart");
 
   var height = 300,
@@ -1014,101 +1016,100 @@ function rankings_trend_chart(team, common) {
       left: 50,
     };
 
-  // append the svg object to the body of the page
+  /* Set the ranges */
+  var x = d3.scaleLinear().range([0, width]);
+  var y = d3.scaleLinear().range([height, 0]);
+
+  /* Define the line */
+  var valueline = d3
+    .line()
+    .x(function (d) {
+      console.log({ d: d, v: d.week });
+      return x(d.week);
+    })
+    .y(function (d) {
+      console.log({ d: d, v: d.ranks.national_rank });
+      return y(d.ranks.national_rank);
+    });
+
+  /* Add the SVG element */
   var svg = d3
-    .select(team_ranking_trend_chart_div)
+    .select("#team_ranking_trend_chart")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  var x = d3
-    .scaleLinear()
-    .domain(
-      d3.extent(rank_trends, function (d) {
-        return d.week;
-      })
-    )
-    .range([0, width]);
+  /* Set the color of the line */
+  var lineColor = "#" + team.team_color_primary_hex;
 
-  const xAxisTicks = x.ticks().filter((tick) => Number.isInteger(tick));
+  svg
+    .append("path")
+    .datum(rank_trends)
+    .attr("class", "line")
+    .style("stroke", lineColor)
+    .style("stroke-width", "2px")
+    .style("stroke-linecap", "round")
+    // .attr("d", valueline)
+    .attr(
+      "d",
+      d3
+        .line()
+        .x(function (d) {
+          return x(d.week);
+        })
+        .y(function (d) {
+          return y(d.ranks.national_rank);
+        })
+    );
 
+  /* Scale the range of the data */
+  x.domain(
+    d3.extent(rank_trends, function (d) {
+      return d.week;
+    })
+  );
+  y.domain([Math.max(...rank_trends.map((r) => r.ranks.national_rank)) + 5, 1]);
+
+  /* Add the valueline path */
+
+  console.log({
+    svg: svg,
+    valueline: valueline,
+    rank_trends: rank_trends,
+    lineColor: lineColor,
+  });
+
+  /* Add the X Axis */
   svg
     .append("g")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
 
-  // Add Y axis
-  var y_left_conference = d3
-    .scaleLinear()
-    .domain([
-      Math.max(
-        10,
-        d3.max(rank_trends, function (d) {
-          return d.ranks.conference_rank;
-        })
-      ),
-      1,
-    ])
-    .range([height, 0]);
-  svg.append("g").call(d3.axisLeft(y_left_conference));
+  /* Add the Y Axis */
+  svg.append("g").call(d3.axisLeft(y));
 
-  // Add Y axis
-  var y_right_national = d3
-    .scaleLinear()
-    .domain([
-      Math.max(
-        25,
-        d3.max(rank_trends, function (d) {
-          return d.ranks.national_rank;
-        })
-      ),
-      1,
-    ])
-    .range([height, 0]);
-  svg
-    .append("g")
-    .attr("transform", "translate(" + width + " ,0)")
-    .call(d3.axisRight(y_right_national));
+  /* Update the graph on window resize */
+  window.addEventListener("resize", function () {
+    /* Get the new window dimensions */
+    width = parseInt(d3.select("body").style("width"), 10);
+    width = width - margin.left - margin.right;
+    height = parseInt(d3.select("body").style("height"), 10);
+    height = height - margin.top - margin.bottom;
 
-  // Add the line
-  svg
-    .append("path")
-    .datum(rank_trends)
-    .attr("fill", "none")
-    .attr("stroke", "#" + common.page.PrimaryColor)
-    .attr("stroke-width", 3.5)
-    .attr(
-      "d",
-      d3
-        .line()
-        .x(function (d) {
-          return x(d.week);
-        })
-        .y(function (d) {
-          return y_left_conference(d.ranks.conference_rank);
-        })
-    );
-
-  // Add the line
-  svg
-    .append("path")
-    .datum(rank_trends)
-    .attr("fill", "none")
-    .attr("stroke", "#" + common.page.SecondaryColor)
-    .attr("stroke-width", 3.5)
-    .attr(
-      "d",
-      d3
-        .line()
-        .x(function (d) {
-          return x(d.week);
-        })
-        .y(function (d) {
-          return y_right_national(d.ranks.national_rank);
-        })
-    );
+    /* Update the ranges and the line function */
+    x.range([0, width]);
+    y.range([height, 0]);
+    valueline.x(function (d) {
+      console.log({ d: d, v: d.week });
+      return x(d.week);
+    });
+    valueline.y(function (d) {
+      console.log({ d: d, v: d.ranks.national_rank });
+      return y(d.ranks.national_rank);
+    });
+  });
 }
 
 function conference_bar_chart(raw_data, common) {

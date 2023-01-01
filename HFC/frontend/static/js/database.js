@@ -155,18 +155,18 @@ export const get_db = async (world_obj) => {
   let cloneMethod = "shallow-assign";
 
   let idbAdapter = new LokiIndexedAdapter("hfc");
-  // let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
-  //   pageSize: 20 * 1024 * 1024,
-  //   paging: true,
-  // });
+  let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
+    pageSize: 20 * 1024 * 1024,
+    paging: true,
+  });
   db = new loki(dbname, {
     verbose: true,
     env: "BROWSER",
     autosave: true,
-    // adapter: parAdapter,
-    // persistenceAdapter: parAdapter,
-    adapter: idbAdapter,
-    persistenceAdapter: idbAdapter,
+    adapter: parAdapter,
+    persistenceAdapter: parAdapter,
+    // adapter: idbAdapter,
+    // persistenceAdapter: idbAdapter,
     persistenceMethod: "adapter",
     clone: true,
     cloneMethod: cloneMethod,
@@ -358,18 +358,18 @@ export const driver_db = async () => {
   let cloneMethod = "shallow-assign";
 
   let idbAdapter = new LokiIndexedAdapter("driver");
-  // let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
-  //   pageSize: 20 * 1024 * 1024,
-  //   paging: true,
-  // });
+  let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
+    pageSize: 20 * 1024 * 1024,
+    paging: true,
+  });
   let ddb = new loki(dbname, {
     verbose: true,
     env: "BROWSER",
     autosave: true,
-    // adapter: parAdapter,
-    // persistenceAdapter: parAdapter,
-    adapter: idbAdapter,
-    persistenceAdapter: idbAdapter,
+    adapter: parAdapter,
+    persistenceAdapter: parAdapter,
+    // adapter: idbAdapter,
+    // persistenceAdapter: idbAdapter,
     persistenceMethod: "adapter",
     clone: true,
     cloneMethod: cloneMethod,

@@ -62,6 +62,9 @@ import {
 import {
   page_player,
 } from "/static/js/pages/player_pages.js";
+import {
+  page_game,
+} from "/static/js/pages/game_pages.js";
 import { page_index } from "/static/js/pages/index_pages.js";
 import {
   class_order_map,
@@ -3915,7 +3918,7 @@ const resolve_route_parameters = async (pathname) => {
     { route: "/World/:world_id/Player/:player_id/", f: page_player },
     { route: "/World/:world_id/Coach/:coach_id/", path: "coach/coach/base.html" },
 
-    { route: "/World/:world_id/Game/:game_id/", path: "game/game/base.html" },
+    { route: "/World/:world_id/Game/:game_id/", f: page_game },
 
     { route: "/World/:world_id/Search/:search_keyword/", path: "search/search/base.html" },
 
@@ -5970,7 +5973,7 @@ const choose_preseason_all_americans = async (common) => {
     EDGE: 2,
     DL: 2,
     LB: 3,
-    CB: 2,
+    CB: 3,
     S: 2,
 
     K: 1,
@@ -6246,7 +6249,7 @@ const choose_all_americans = async (this_week, common) => {
     EDGE: 2,
     DL: 2,
     LB: 3,
-    CB: 2,
+    CB: 3,
     S: 2,
 
     K: 1,
