@@ -593,6 +593,10 @@ export const page_world_awards = async (common) => {
   });
 
   await last_action(common);
+
+  $(".player-profile-popup-icon").on("click", async function () {
+    await common.populate_player_modal(common, this);
+  });
 };
 
 const last_action = async (common) => {

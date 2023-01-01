@@ -28,11 +28,6 @@ export const draw_player_faces = (common, dom_id = "") => {
   const face_div_by_player_id = {};
 
   $(".PlayerFace-Headshot:not([face_drawn='true']):visible").each(function (ind, elem) {
-    console.log({
-      elem: elem,
-      iss: isScrolledIntoView(elem),
-      l: $(elem).find("svg").length,
-    });
     if ($(elem).find("svg").length > 0 || !isScrolledIntoView(elem)) {
       return true;
     }
@@ -43,22 +38,7 @@ export const draw_player_faces = (common, dom_id = "") => {
 
     face_div_by_player_id[parseInt($(elem).attr("player_id"))].push(elem);
     $(elem).attr("face_drawn", "true");
-
-    console.log({
-      face_div_by_player_id: face_div_by_player_id,
-      player_ids: player_ids,
-    });
   });
-
-  // console.log({
-  //   face_div_by_player_id: face_div_by_player_id,
-  //   player_ids: player_ids,
-  //   a: $(".PlayerFace-Headshot"),
-  //   b: $(".PlayerFace-Headshot:not([face_drawn='true'])"),
-  //   c: $(".PlayerFace-Headshot:visible"),
-  //   d: $(".PlayerFace-Headshot:not([face_drawn='true']):visible"),
-  // });
-  // debugger;
 
   const players = db.player.find({ player_id: { $in: player_ids } });
   var player_team_seasons = db.player_team_season.find({ player_id: { $in: player_ids } });
@@ -97,6 +77,10 @@ export const draw_player_faces = (common, dom_id = "") => {
       );
     }
   }
+
+  console.log('Drew players', players)
+
+  return players;
 };
 
 export const draw_coach_faces = async (common) => {
@@ -154,7 +138,7 @@ export const draw_coach_faces = async (common) => {
   }
 };
 
-const display_player_face = async (face, overrides, dom_id) => {
+export const display_player_face = async (face, overrides, dom_id) => {
   if ("jersey" in overrides && overrides.jersey.id == "suit") {
     overrides["accessories"] = { id: "none" };
     face.glasses.id = "none";
@@ -810,7 +794,7 @@ export const player_face_listeners = (common) => {
     console.log("scrolling", {
       currentScrollPosition: currentScrollPosition,
       previousScrollPosition: previousScrollPosition,
-      m: currentScrollPosition === previousScrollPosition,
+      m: currentScrollPosition != previousScrollPosition,
     });
     if (currentScrollPosition != previousScrollPosition) {
       draw_player_faces(common);

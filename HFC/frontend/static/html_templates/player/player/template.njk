@@ -4,70 +4,70 @@
 
 <body>
   <div class='PageContent'>
-    <div class='PlayerHeader'>
+    <div class='PlayerHeader flex space-between'>
       <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
-      <a href='{{player.current_player_team_season.team_season.team.team_href}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 11.25rem;' {% endif %}{% endif %}>
-        <div class='page-header-logo-div'>
-          {% if player.current_player_team_season.team_season.team.team_logo %}
-            <img class='playerTeamLogo' src='{{player.current_player_team_season.team_season.team.team_logo}}' alt="My image">
-          {%elif SignedTeam.LogoURL%}
-            <img class='playerTeamLogo' src='{{SignedTeam.LogoURL}}' alt="My image">
-          {% endif %}
-        </div>
-      </a>
-      <div class="PlayerFace" id='PlayerFace'>
-        {{player.PlayerFaceSVG|safe}}
-      </div>
-      <div class='inline-block ms-4' style='vertical-align: middle;'>
-        <div class='teamTeamName'>
-          <span class='font20 thin-font'>#{{player.jersey_number}}</span>
-          <span>{{player.name.first}}</span>
-          <span class='minor-bold'>{{player.name.last}}</span>
-        </div>
-        <div class='playerOverviewInfo'>
-          <span>
-            {% if player.current_player_team_season.is_recruit %}
-              {%if SignedTeam.LogoURL%}
-                <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit, Signed</a>
-              {% else %}
-                <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
-              {% endif %}
-            {% else %}
-              {% if current_team.is_user_team %}
-                <span style='color: #{{current_team.team_color_primary_hex}};'>
-                  <i class="fa fa-user"></i>
-                </span>
-              {% endif %}
-              <a href="{{current_team.team_href}}">{{current_team.school_name}}
-                {{current_team.team_name}}
-              </a>
+      <div class='flex align-middle' style='flex-grow: 1; justify-content: left;'>
+        <a href='{{player.current_player_team_season.team_season.team.team_href}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 11.25rem;' {% endif %}{% endif %}>
+          <div class='page-header-logo-div'>
+            {% if player.current_player_team_season.team_season.team.team_logo %}
+              <img class='playerTeamLogo' src='{{player.current_player_team_season.team_season.team.team_logo}}' alt="My image">
+            {%elif SignedTeam.LogoURL%}
+              <img class='playerTeamLogo' src='{{SignedTeam.LogoURL}}' alt="My image">
             {% endif %}
-          </span>
+          </div>
+        </a>
+        <div class="PlayerFace-Headshot PlayerFace-150 inline-block no-border" style='margin-left: -4rem;margin-right: -2rem;border-radius: unset;' id='PlayerFace' player_id='{{player.player_id}}'></div>
+        <div class='inline-block ms-4' style='vertical-align: middle; height: max-content;'>
+          <div class='teamTeamName'>
+            <span class='font20 thin-font'>#{{player.jersey_number}}</span>
+            <span>{{player.name.first}}</span>
+            <span class='minor-bold'>{{player.name.last}}</span>
+          </div>
+          <div class='playerOverviewInfo'>
+            <span>
+              {% if player.current_player_team_season.is_recruit %}
+                {%if SignedTeam.LogoURL%}
+                  <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit, Signed</a>
+                {% else %}
+                  <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
+                {% endif %}
+              {% else %}
+                {% if current_team.is_user_team %}
+                  <span style='color: #{{current_team.team_color_primary_hex}};'>
+                    <i class="fa fa-user"></i>
+                  </span>
+                {% endif %}
+                <a href="{{current_team.team_href}}">{{current_team.school_name}}
+                  {{current_team.team_name}}
+                </a>
+              {% endif %}
+            </span>
             |
             <span class=''>{{player.position}}</span>
             |
           <span>
-            {{player.current_player_team_season.class.class_name}}
-            {% if player.redshirt.current %}
-              <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
-            {% endif %}
-          </span>
-        </div>
-        <div class='playerOverviewInfo'>
-          <span>
-            <i class="fa fa-map-marker-alt geo-marker" style="color: #{{page.PrimaryColor}};" city="{{player.hometown.city}}" state="{{player.hometown.state}}"></i>
-            {{player.hometown_and_state}}
-          </span>
+              {{player.current_player_team_season.class.class_name}}
+              {% if player.redshirt.current %}
+                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
+              {% endif %}
+            </span>
+          </div>
+          <div class='playerOverviewInfo'>
+            <span>
+              <i class="fa fa-map-marker-alt geo-marker" style="color: #{{page.PrimaryColor}};" city="{{player.hometown.city}}" state="{{player.hometown.state}}"></i>
+              {{player.hometown_and_state}}
+            </span>
           |
           <span>
-            {{player.body.height}}, {{player.body.weight}} lbs
+              {{player.body.height}}, {{player.body.weight}} lbs
           </span>
-        </div>
-        <div class='playerOverviewInfo edit-player-button clickable'>
-          <i class="fas fa-pencil" style="color: #{{page.PrimaryColor}};"></i>
+          </div>
+          <div class='playerOverviewInfo edit-player-button clickable'>
+            <i class="fas fa-pencil" style="color: #{{page.PrimaryColor}};"></i>
           Edit player
         </div>
 
+        </div>
       </div>
 
       <div class="team-header-color-right hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
@@ -440,8 +440,7 @@
               <span class='hide-small'>Edit {{player.full_name}}</span>
               <span class='clickable' id='edit-player-modal-save'>Save changes</span>
             </div>
-            <div class='player-modal-header p-3 height100' id='edit-player-body' style='font-size: .8rem;overflow-y: scroll;'>
-            </div>
+            <div class='player-modal-header p-3 height100' id='edit-player-body' style='font-size: .8rem;overflow-y: scroll;'></div>
           </div>
-          
+
         </div>

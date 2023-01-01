@@ -658,15 +658,15 @@ export function isScrolledIntoView(elem) {
   var elemTop = $(elem).offset().top;
   var elemBottom = elemTop + $(elem).outerHeight();
 
-  console.log({
-    t: $(elem),
-    elemTop:elemTop, 
-    elemBottom:elemBottom, 
-    docViewTop:docViewTop,
-    docViewBottom:docViewBottom,
-    v: $(elem).is(":visible"), 
-    r: $(elem).is(":visible") && elemTop <= docViewBottom && elemBottom >= docViewTop
-  })
+  // console.log({
+  //   t: $(elem),
+  //   elemTop:elemTop, 
+  //   elemBottom:elemBottom, 
+  //   docViewTop:docViewTop,
+  //   docViewBottom:docViewBottom,
+  //   v: $(elem).is(":visible"), 
+  //   r: $(elem).is(":visible") && elemTop <= docViewBottom && elemBottom >= docViewTop
+  // })
 
   return $(elem).is(":visible") && elemTop <= docViewBottom && elemBottom >= docViewTop;
 }

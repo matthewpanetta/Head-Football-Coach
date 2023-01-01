@@ -1,4 +1,7 @@
-const init_json_edit = async (common, data, dom_id = "", schema = {}) => {
+import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+import { set } from "/static/js/utils.js";
+
+export const init_json_edit = async (common, data, dom_id = "", schema = {}) => {
   let template_url = "/static/html_templates/common_templates/json_edit/json_edit_template.njk";
   let template_html = await fetch(template_url);
 
@@ -33,7 +36,7 @@ const refresh_icon_listeners = () => {
 };
 
 const populate_object = async (common, obj, dom_id, template, schema = {}) => {
-  let renderedHtml = await common.nunjucks_env.renderString(template, {
+  let renderedHtml = nunjucks_env.renderString(template, {
     obj: obj,
     disabled_keys: [
       "team_games_played",
@@ -133,8 +136,8 @@ const write_player_data = async (common, dom_id, original_player) => {
 
   delete player_edited.player_team_season;
 
-  await db.player.put(player_edited);
-  await db.player_team_season.put(pts_edited);
+  db.player.update(player_edited);
+  db.player_team_season.update(pts_edited);
 
   let has_rating_change = false;
 

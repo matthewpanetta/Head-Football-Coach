@@ -5,11 +5,12 @@ import { award, team_game, conference, league_season, team, team_season, team_se
 import { driver_db, resolve_db, create_new_db } from '../../../../../../../../static/js/database.js';
 import { page_world, page_world_rankings, page_world_standings, page_world_schedule, page_world_awards } from '../../../../../../../../static/js/pages/world_pages.js';
 import { page_team, page_team_schedule, page_team_roster, page_team_history } from '../../../../../../../../static/js/pages/team_pages.js';
+import { page_player } from '../../../../../../../../static/js/pages/player_pages.js';
 import { page_index } from '../../../../../../../../static/js/pages/index_pages.js';
 import { position_group_map } from '../../../../../../../../static/js/metadata.js';
 import { generate_ranking_headlines } from '../../../../../../../../static/js/headlines.js';
 import { sim_game } from '../../../../../../../../static/js/sim_game.js';
-import { create_player_face, draw_player_faces } from '../../../../../../../../static/js/faces.js';
+import { player_face_listeners, draw_player_faces } from '../../../../../../../../static/js/faces.js';
 
 const nav_bar_links = async (params) => {
   const path = params.path;
@@ -3688,7 +3689,7 @@ const resolve_route_parameters = async (pathname) => {
     },
     { route: "/World/:world_id/Team/:team_id/History", f: page_team_history },
 
-    { route: "/World/:world_id/Player/:player_id/", path: "player/player/base.html" },
+    { route: "/World/:world_id/Player/:player_id/", f: page_player },
     { route: "/World/:world_id/Coach/:coach_id/", path: "coach/coach/base.html" },
 
     { route: "/World/:world_id/Game/:game_id/", path: "game/game/base.html" },
@@ -6711,17 +6712,17 @@ const populate_player_modal = async (common, target) => {
   });
   var season = common.season;
 
-  var player = await db.player.get({ player_id: player_id });
-  var player_team_seasons = await db.player_team_season.where({ player_id: player_id }).toArray();
+  var player = db.player.findOne({ player_id: player_id });
+  var player_team_seasons = db.player_team_season.find({ player_id: player_id });
   player_team_seasons.map((pts) => pts.player_team_season_id);
   player.player_team_seasons = player_team_seasons;
   player.current_player_team_season = player_team_seasons.filter((pts) => pts.season == season)[0];
 
   var team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
-  var team_seasons = await db.team_season.bulkGet(team_season_ids);
+  var team_seasons = db.team_season.find({team_season_id: {'$in': team_season_ids}});
 
   var player_team_ids = team_seasons.map((ts) => ts.team_id);
-  var player_teams = await db.team.bulkGet(player_team_ids);
+  var player_teams = db.team.find({team_id: {'$in': player_team_ids}});
 
   var c = 0;
   $.each(player_team_seasons, function (ind, pts) {
@@ -6731,12 +6732,25 @@ const populate_player_modal = async (common, target) => {
   });
 
   player.player_team_seasons = player_team_seasons;
-  player.current_player_team_season = player.player_team_seasons.filter(
+  player.current_player_team_season = player.player_team_seasons.find(
     (pts) => pts.season == season
-  )[0];
+  );
   var current_team = player.current_player_team_season.team_season.team;
 
-  page = {
+  console.log({
+    current_team:current_team,
+    player:player,
+    player_teams:player_teams,
+    player_team_ids:player_team_ids,
+    team_seasons:team_seasons,
+    team_season_ids:team_season_ids,
+    player_team_seasons:player_team_seasons,
+    player:player,
+    season:season,
+    player_id:player_id
+  });
+
+  var modal_page = {
     PrimaryColor: current_team.team_color_primary_hex,
     SecondaryColor: current_team.secondary_color_display,
   };
@@ -6746,7 +6760,7 @@ const populate_player_modal = async (common, target) => {
   var html = await fetch(modal_url);
   html = await html.text();
   var renderedHtml = await nunjucks_env.renderString(html, {
-    page: page,
+    page: modal_page,
     player: player,
   });
   console.log({ renderedHtml: renderedHtml });
@@ -6757,21 +6771,23 @@ const populate_player_modal = async (common, target) => {
     if ($(event.target)[0] == $("#player-info-modal")[0]) {
       $("#player-info-modal").removeClass("shown");
       $(window).unbind();
+      player_face_listeners(common);
     }
   });
 
-  if (player.player_face == undefined) {
-    player.player_face = create_player_face("single", player.player_id, db);
-  }
+  draw_player_faces(common);
+  // if (player.player_face == undefined) {
+  //   player.player_face = create_player_face("single", player.player_id, db);
+  // }
 
-  common.display_player_face(
-    player.player_face,
-    {
-      jersey: player.current_player_team_season.team_season.team.jersey,
-      teamColors: player.current_player_team_season.team_season.team.jersey.teamColors,
-    },
-    "player-modal-player-face"
-  );
+  // display_player_face(
+  //   player.player_face,
+  //   {
+  //     jersey: player.current_player_team_season.team_season.team.jersey,
+  //     teamColors: player.current_player_team_season.team_season.team.jersey.teamColors,
+  //   },
+  //   "player-modal-player-face"
+  // );
 };
 
 const add_listeners = async (common) => {
@@ -8126,16 +8142,17 @@ const tier_placement = (tiers, population_size, distribution, rank_place) => {
 
 const geo_marker_action = async (common) => {
   console.log("Adding geo_marker_action");
-  common.ddb;
+  const ddb = common.ddb;
   $(".geo-marker").on("click", async function () {
     let city = $(this).attr("city");
     let state = $(this).attr("state");
 
-    let location = await ddb.cities.get({ city: city, state: state });
+    let location = ddb.cities.findOne({ city: city, state: state });
     console.log({
       common: common,
       this: $(this),
       t: this,
+      location:location
     });
 
     let modal_config = common.page;
@@ -8175,6 +8192,7 @@ const geo_marker_action = async (common) => {
       if ($(event.target)[0] == $("#geography-modal")[0]) {
         $("#geography-modal").removeClass("shown");
         $(window).unbind();
+        player_face_listeners(common);
       }
     });
   });
@@ -8722,8 +8740,11 @@ $(document).ready(async function () {
     const parent_link = $(target).closest("[href]");
     const href = parent_link.attr("href");
 
+    console.log(event);
+
     if (href) {
       event.preventDefault();
+
       await navigate_to_href(href);
     }
   });
