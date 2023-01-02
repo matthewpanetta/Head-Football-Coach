@@ -62,6 +62,7 @@ import {
 import {
   page_player,
 } from "/static/js/pages/player_pages.js";
+import {page_almanac_history, page_almanac_player_stats} from "/static/js/pages/almanac_pages.js";
 import {
   page_game,
 } from "/static/js/pages/game_pages.js";
@@ -550,29 +551,18 @@ const getParams = (match) => {
 const initialize_new_season = async (this_week, common) => {
   const db = common.db;
   const current_season = this_week.season;
-  var current_league_season = await db.league_season.get({ season: current_season });
+  var current_league_season = db.league_season.findOne({ season: current_season });
 
   const new_season = current_season + 1;
 
   stopwatch(common, "Init New Season - Starting");
-
-  await db.team_season.where({ season: new_season }).delete();
-  await db.league_season.where({ season: new_season }).delete();
-  await db.conference_season.where({ season: new_season }).delete();
-  await db.player_team_season.where({ season: new_season }).delete();
-  await db.league_season.delete(new_season);
-  await db.phase.where({ season: new_season }).delete();
-  await db.week.where({ season: new_season }).delete();
-  await db.team_season.where({ season: new_season }).delete();
-  await db.player_team_season.where({ season: new_season }).delete();
-  // await db.recruit_team_season.where({season: new_season}).delete();
 
   stopwatch(common, "Init New Season - Deleted existing data");
 
   common.season = new_season;
   const world_id = common.world_id;
 
-  const teams = await db.team.where("team_id").above(0).toArray();
+  const teams = db.team.find({"team_id": {'$gt': 0}});
 
   const num_teams = teams.length;
 
@@ -589,9 +579,7 @@ const initialize_new_season = async (this_week, common) => {
   stopwatch(common, "Init New Season - New season info");
 
   console.log({ new_season_obj: new_season_obj });
-  await db.league_season.insert(new_season_obj);
-  // current_league_season.is_current_season = false;
-  // await db.league_season.put(current_league_season);
+  db.league_season.insert(new_season_obj);
 
   const phases_created = await create_phase(new_season, common);
   await create_week(phases_created, common, world_id, new_season);
@@ -606,7 +594,7 @@ const initialize_new_season = async (this_week, common) => {
     world_id: world_id,
   });
   var conference_seasons = index_group_sync(
-    await db.conference_season.where({ season: new_season }).toArray(),
+     db.conference_season.find({ season: new_season }),
     "index",
     "conference_id"
   );
@@ -660,10 +648,8 @@ const initialize_new_season = async (this_week, common) => {
   let previous_player_team_season_ids = previous_player_team_seasons.map(
     (pts) => pts.player_team_season_id
   );
-  const previous_player_team_season_stats = await db.player_team_season_stats
-    .where("player_team_season_id")
-    .anyOf(previous_player_team_season_ids)
-    .toArray();
+  const previous_player_team_season_stats = db.player_team_season_stats
+    .find({"player_team_season_id": {'$in': previous_player_team_season_ids}});
 
   let previous_player_team_season_stats_by_player_team_season_id = index_group_sync(
     previous_player_team_season_stats,
@@ -1168,7 +1154,7 @@ const create_conference_seasons = async (data) => {
     conference_seasons_to_create: conference_seasons_to_create,
   });
 
-  const conference_seasons_added = await db.conference_season.insert(conference_seasons_to_create);
+  const conference_seasons_added = db.conference_season.insert(conference_seasons_to_create);
 };
 
 const zip = (a, b) => {
@@ -2025,7 +2011,7 @@ const create_new_coach_team_seasons = async (data) => {
     coach_team_season_id_counter += 1;
   }
 
-  var coach_team_seasons_tocreate_added = await db.coach_team_season.update(
+  var coach_team_seasons_tocreate_added = db.coach_team_season.update(
     coach_team_seasons_tocreate
   );
 };
@@ -2931,7 +2917,7 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
   });
 
   console.log({ player_team_seasons_tocreate: player_team_seasons_tocreate });
-  await db.player_team_season.update(player_team_seasons_tocreate);
+  db.player_team_season.update(player_team_seasons_tocreate);
 };
 
 const create_coaches = async (data) => {
@@ -3046,7 +3032,7 @@ const create_coach_team_seasons = async (data) => {
     }
   }
 
-  await db.coach_team_season.insert(coach_team_seasons_tocreate);
+  db.coach_team_season.insert(coach_team_seasons_tocreate);
 };
 
 const generate_player_ratings = async (common, world_id, season) => {
@@ -3881,11 +3867,11 @@ const resolve_route_parameters = async (pathname) => {
 
     {
       route: "/World/:world_id/PlayerStats/Season/:season",
-      path: "almanac/player_stats/base.html",
+      f: page_almanac_player_stats
     },
     { route: "/World/:world_id/TeamStats/Season/:season", path: "almanac/team_stats/base.html" },
 
-    { route: "/World/:world_id/History", path: "almanac/history/base.html" },
+    { route: "/World/:world_id/History", f: page_almanac_history },
     { route: "/World/:world_id/PlayerRecords", path: "almanac/player_records/base.html" },
     { route: "/World/:world_id/TeamRecords", path: "almanac/team_records/base.html" },
     { route: "/World/:world_id/CoachStats", path: "almanac/coach_stats/base.html" },
@@ -3990,7 +3976,7 @@ const all_teams = async (common, link_suffix) => {
 
 const all_seasons = async (common, link) => {
   const db = await common.db;
-  var season_list = await db.league_season.toArray();
+  var season_list = db.league_season.find();
 
   season_list = season_list.map((s) => Object.assign(s, { href: link + s.season }));
   console.log({ link: link, season_list: season_list });
@@ -5372,20 +5358,18 @@ const weekly_recruiting = async (common) => {
 
   const db = common.db;
   const season = common.season;
-  const this_week = await db.week
-    .where({ season: season })
-    .and((w) => w.is_current)
-    .first();
+  const this_week = db.week
+    .findOne({ season: season, is_current: true });
 
   console.log({ this_week: this_week, season: season, db: db });
 
   var this_week_id = this_week.week_id;
 
-  const teams = await db.team.where("team_id").above(0).toArray();
+  const teams = db.team.find({"team_id": {$gt: 0}});
   var team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
 
   const team_season_ids = team_seasons.map((ts) => ts.team_season_id);
-  const team_season_recruitings = await db.team_season_recruiting.bulkGet(team_season_ids);
+  const team_season_recruitings = db.team_season_recruiting.find({team_season_id: {team_season_ids}});
   const team_season_recruitings_by_team_season_id = index_group_sync(
     team_season_recruitings,
     "index",
@@ -5413,13 +5397,11 @@ const weekly_recruiting = async (common) => {
     team_season.recruiting.weeks[this_week_id] = [];
   }
 
-  var player_team_seasons = await db.player_team_season
-    .where({ season: season })
-    .and((pts) => pts.team_season_id < -1)
-    .toArray();
+  var player_team_seasons = db.player_team_season
+    .find({ season: season, team_season_id: {$lt: -1} });
   const player_team_season_ids = player_team_seasons.map((pts) => pts.player_team_season_id);
-  const player_team_season_recruitings = await db.player_team_season_recruiting.bulkGet(
-    player_team_season_ids
+  const player_team_season_recruitings = db.player_team_season_recruiting.find(
+    {player_team_season_id: {$in:player_team_season_ids}}
   );
   const player_team_season_recruitings_by_player_team_season_id = index_group_sync(
     player_team_season_recruitings,
@@ -5428,7 +5410,7 @@ const weekly_recruiting = async (common) => {
   );
 
   var player_ids = player_team_seasons.map((pts) => pts.player_id);
-  var players = await db.player.where("player_id").anyOf(player_ids).toArray();
+  var players = db.player.find({"player_id": {$in: player_ids}});
   var players_by_player_id = index_group_sync(players, "index", "player_id");
 
   player_team_seasons = nest_children(
@@ -6285,10 +6267,10 @@ const choose_all_americans = async (this_week, common) => {
   stopwatch(common, "Fetched Players");
 
   const team_season_ids = distinct(player_team_seasons.map((pts) => pts.team_season_id));
-  var team_seasons = await db.team_season.bulkGet(team_season_ids);
+  var team_seasons = db.team_season.find({team_season_id:{$in:team_season_ids}});
 
   const team_ids = team_seasons.map((ts) => ts.team_id);
-  var teams = await db.team.find({ team_id: { $in: team_ids } });
+  var teams = db.team.find({ team_id: { $in: team_ids } });
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
   stopwatch(common, "Fetched TSs and Teams");
@@ -6821,7 +6803,7 @@ const choose_all_americans = async (this_week, common) => {
 
   stopwatch(common, "Conference awards chosed");
 
-  await db.award.insert(awards_to_save);
+   db.award.insert(awards_to_save);
 
   console.log({
     awards_to_save: awards_to_save,
@@ -7417,9 +7399,9 @@ const process_bowl_results = async (common) => {
   var team_seasons = db.team_season.find({ season: common.season, team_id: { $gt: 0 } });
   var team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
 
-  var games_this_week = await db.game.where({ week_id: this_week.week_id }).toArray();
+  var games_this_week = db.game.find({ week_id: this_week.week_id });
   var team_games_by_game_id = index_group_sync(
-    await db.team_game.where({ week_id: this_week.week_id }).toArray(),
+     db.team_game.find({ week_id: this_week.week_id }),
     "group",
     "game_id"
   );
@@ -7625,19 +7607,19 @@ const schedule_bowl_season = async (all_weeks, common) => {
 
   const db = await common.db;
 
-  var current_league_season = await db.league_season.where({ season: common.season }).toArray();
+  var current_league_season = db.league_season.find({ season: common.season });
   current_league_season = current_league_season[0];
 
   var number_playoff_teams = current_league_season.playoffs.number_playoff_teams;
 
-  var team_seasons = await db.team_season.find({ season: common.season, team_id: { $gt: 0 } });
+  var team_seasons = db.team_season.find({ season: common.season, team_id: { $gt: 0 } });
   var teams_by_team_id = index_group_sync(
-    await db.team.where("team_id").above(0).toArray(),
+   db.team.find({"team_id": {$gt:0}}),
     "index",
     "team_id"
   );
 
-  var num_teams = await db.team.where("team_id").above(0).count();
+  var num_teams = db.team.find({"team_id": {$gt:0}}).length;
 
   var max_bowl_bound_teams = num_teams - number_playoff_teams;
   var max_bowls = Math.floor(max_bowl_bound_teams / 2);
@@ -8824,7 +8806,7 @@ const new_world_action = async (common, database_suffix) => {
   }
 
   console.log({ teams: teams, city_names: city_names });
-  var teams_added = await db.team.insert(teams);
+  var teams_added = db.team.insert(teams);
 
   await update_create_world_modal(
     "create-world-table-new-world",

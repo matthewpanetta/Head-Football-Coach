@@ -281,17 +281,15 @@ const get_initial_filter_options = (subject, table_config, common) => {
           options: [],
         };
 
-        let conference_teams = common
-          .distinct(
-            table_config.original_data
-              .filter(
-                (p) =>
-                  p.player_team_season.team_season.conference_season.conference
-                    .conference_abbreviation == conference
-              )
-              .map((p) => get_from_dict(p, "player_team_season.team_season.team.school_name"))
-          )
-          .sort();
+        let conference_teams = distinct(
+          table_config.original_data
+            .filter(
+              (p) =>
+                p.player_team_season.team_season.conference_season.conference
+                  .conference_abbreviation == conference
+            )
+            .map((p) => get_from_dict(p, "player_team_season.team_season.team.school_name"))
+        ).sort();
 
         conference_obj.options = conference_teams.map((ct) => ({
           display: ct,
@@ -840,18 +838,18 @@ const adjust_button_text = async (common, table_config) => {
   //$(".football-table-filter-option");
 
   console.log({
-    table_config:table_config,
-    'table_config.filters.filter_options': table_config.filters.filter_options
-  })
+    table_config: table_config,
+    "table_config.filters.filter_options": table_config.filters.filter_options,
+  });
 
   for (let table_filter_obj of table_config.filters.filter_options) {
     // var table_filter_obj = table_config.filters.filter_options[table_filter_field];
     console.log({
-      table_filter_field:table_filter_field,
-      'table_config.filters.filter_options': table_config.filters.filter_options,
-      table_filter_obj:table_filter_obj,
-      'table_filter_obj.options': table_filter_obj.options
-    })
+      table_filter_field: table_filter_field,
+      "table_config.filters.filter_options": table_config.filters.filter_options,
+      table_filter_obj: table_filter_obj,
+      "table_filter_obj.options": table_filter_obj.options,
+    });
 
     var filter_group_count = 0;
     for (let filter_option of table_filter_obj.options) {
