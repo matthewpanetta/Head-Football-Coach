@@ -62,7 +62,7 @@ import {
 import {
   page_player,
 } from "/static/js/pages/player_pages.js";
-import {page_almanac_history, page_almanac_player_stats} from "/static/js/pages/almanac_pages.js";
+import {page_almanac_history, page_almanac_player_stats, page_almanac_player_records} from "/static/js/pages/almanac_pages.js";
 import {
   page_game,
 } from "/static/js/pages/game_pages.js";
@@ -188,6 +188,7 @@ const nav_bar_links = async (params) => {
 
       if (save_ls) {
         db.league_season.update(current_league_season);
+        await db.saveDatabaseAsync();
       }
     } else if (current_week.phase.phase_name == "Season Recap") {
       user_actions.push({
@@ -581,6 +582,8 @@ const initialize_new_season = async (this_week, common) => {
   console.log({ new_season_obj: new_season_obj });
   db.league_season.insert(new_season_obj);
 
+  await db.saveDatabaseAsync();
+
   const phases_created = await create_phase(new_season, common);
   await create_week(phases_created, common, world_id, new_season);
 
@@ -868,6 +871,9 @@ const create_team_season = async (data) => {
     db.team_season.insert(team_seasons_tocreate),
     db.team_season_stats.insert(team_season_stats_tocreate),
   ]);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const populate_all_depth_charts = async (common, team_season_ids) => {
@@ -1118,6 +1124,8 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
   db.team_season.update(team_seasons_to_update);
   db.player_team_season.update(player_team_seasons_to_update);
 
+  await db.saveDatabaseAsync();
+
   console.log({
     player_team_seasons_to_update: player_team_seasons_to_update,
     team_seasons_to_update: team_seasons_to_update,
@@ -1155,6 +1163,8 @@ const create_conference_seasons = async (data) => {
   });
 
   const conference_seasons_added = db.conference_season.insert(conference_seasons_to_create);
+  await db.saveDatabaseAsync();
+
 };
 
 const zip = (a, b) => {
@@ -1263,6 +1273,7 @@ const create_schedule = async (data) => {
     console.log({
       team_quadrant_cutoffs: team_quadrant_cutoffs,
       "team_season.national_rank": team_season.national_rank,
+      team_season:team_season
     });
 
     team_season_schedule_tracker[team_season.team_season_id] = {
@@ -1769,6 +1780,8 @@ const create_schedule = async (data) => {
 
   db.game.insert(games_to_create);
   db.team_game.insert(team_games_to_create);
+  await db.saveDatabaseAsync();
+
 };
 
 const advance_player_team_seasons = async (data) => {
@@ -1965,6 +1978,9 @@ const advance_player_team_seasons = async (data) => {
     db.player_team_season.update(player_team_seasons_tocreate),
     db.player_team_season_stats.update(player_team_season_stats_tocreate),
   ]);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const create_new_coach_team_seasons = async (data) => {
@@ -2014,6 +2030,9 @@ const create_new_coach_team_seasons = async (data) => {
   var coach_team_seasons_tocreate_added = db.coach_team_season.update(
     coach_team_seasons_tocreate
   );
+
+  await db.saveDatabaseAsync();
+
 };
 
 const age_in_rating = (rating_group, rating, value) => {
@@ -2552,6 +2571,8 @@ const create_recruiting_class = async (common) => {
   db.player_team_season.update(player_team_seasons);
   db.team_season.update(team_seasons);
   db.recruit_team_season.insert(recruit_team_seasons_to_save);
+
+  await db.saveDatabaseAsync();
   stopwatch(common, `Stopwatch RTS - Saved all RTSs WITH PROMISE`);
 };
 
@@ -2657,6 +2678,8 @@ const assign_player_jersey_numbers = async (common, season) => {
 
   db.player_team_season.update(player_team_seasons_to_save);
   db.player.update(players_to_save);
+
+  await db.saveDatabaseAsync();
 
   common.stopwatch(common, "Assigning jersey numbers - Saved & done");
 };
@@ -2918,6 +2941,8 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
 
   console.log({ player_team_seasons_tocreate: player_team_seasons_tocreate });
   db.player_team_season.update(player_team_seasons_tocreate);
+
+  await db.saveDatabaseAsync();
 };
 
 const create_coaches = async (data) => {
@@ -2968,6 +2993,9 @@ const create_coaches = async (data) => {
   }
   console.log({ coaches_tocreate: coaches_tocreate });
   var coaches_tocreate_added = db.coach.insert(coaches_tocreate);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const create_coach_team_seasons = async (data) => {
@@ -3033,6 +3061,9 @@ const create_coach_team_seasons = async (data) => {
   }
 
   db.coach_team_season.insert(coach_team_seasons_tocreate);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const generate_player_ratings = async (common, world_id, season) => {
@@ -3188,6 +3219,8 @@ const generate_player_ratings = async (common, world_id, season) => {
   console.log("setting ratings", { player_team_seasons: player_team_seasons });
   //
   db.player_team_season.update(player_team_seasons);
+  await db.saveDatabaseAsync();
+
 };
 
 const create_new_players_and_player_team_seasons = async (
@@ -3354,6 +3387,9 @@ const create_new_players_and_player_team_seasons = async (
     db.player_team_season.insert(player_team_seasons_tocreate),
     db.player_team_season_stats.insert(player_team_season_stats_tocreate),
   ]);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const create_phase = async (season, common) => {
@@ -3375,6 +3411,8 @@ const create_phase = async (season, common) => {
     phase_id += 1;
   }
   const phases_to_create_added = db.phase.insert(phases_to_create);
+  await db.saveDatabaseAsync();
+
   let phases = db.phase.find({ season: season });
   const phases_by_phase_name = index_group_sync(phases, "index", "phase_name");
   console.log({
@@ -3638,6 +3676,8 @@ const create_week = async (phases, common, world_id, season) => {
   }
 
   db.week.insert(weeks_to_create);
+  await db.saveDatabaseAsync();
+
   return weeks_to_create;
 };
 
@@ -3872,7 +3912,7 @@ const resolve_route_parameters = async (pathname) => {
     { route: "/World/:world_id/TeamStats/Season/:season", path: "almanac/team_stats/base.html" },
 
     { route: "/World/:world_id/History", f: page_almanac_history },
-    { route: "/World/:world_id/PlayerRecords", path: "almanac/player_records/base.html" },
+    { route: "/World/:world_id/PlayerRecords", f: page_almanac_player_records },
     { route: "/World/:world_id/TeamRecords", path: "almanac/team_records/base.html" },
     { route: "/World/:world_id/CoachStats", path: "almanac/coach_stats/base.html" },
     { route: "/World/:world_id/Shortlists", path: "almanac/shortlists/base.html" },
@@ -4483,6 +4523,9 @@ const sim_week_games = async (this_week, common) => {
     db.headline.insert(headlines_to_save),
   ]);
 
+  await db.saveDatabaseAsync();
+
+
   common.stopwatch(common, "Done compiling stats");
 
   var endTime = performance.now();
@@ -4583,6 +4626,9 @@ const calculate_team_needs = async (common, team_season_ids = null) => {
   // team_seasons.forEach((ts) => delete ts.recruiting);
 
   db.team_season.update(team_seasons);
+
+  await db.saveDatabaseAsync();
+
 
   var endTime = performance.now();
   console.log(`Time taken to calculate_team_needs: ${parseInt(endTime - startTime)} ms`);
@@ -4807,6 +4853,8 @@ const calculate_team_overalls = async (common) => {
   }
 
   db.team_season.update(team_seasons);
+  await db.saveDatabaseAsync();
+
 };
 
 const calculate_primetime_games = async (this_week, all_weeks, common) => {
@@ -4891,6 +4939,8 @@ const calculate_primetime_games = async (this_week, all_weeks, common) => {
   }
 
   db.game.update(games);
+  await db.saveDatabaseAsync();
+
 };
 
 const calculate_national_rankings = async (this_week, all_weeks, common) => {
@@ -5282,6 +5332,9 @@ const calculate_national_rankings = async (this_week, all_weeks, common) => {
 
   db.team_season.update(sorted_team_seasons);
   db.headline.insert(ranking_headlines);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const calculate_conference_rankings = async (this_week, all_weeks, common) => {
@@ -5351,6 +5404,8 @@ const calculate_conference_rankings = async (this_week, all_weeks, common) => {
   }
 
   db.team_season.update(team_seasons_to_save);
+  await db.saveDatabaseAsync();
+
 };
 
 const weekly_recruiting = async (common) => {
@@ -5760,6 +5815,9 @@ const weekly_recruiting = async (common) => {
     db.team_season_recruiting.update(team_season_recruitings_to_put),
   ]);
 
+  await db.saveDatabaseAsync();
+
+
   console.log("Done putting on 5789");
 
   var endTime = performance.now();
@@ -5920,6 +5978,8 @@ const choose_players_of_the_week = async (this_week, common) => {
 
   db.award.insert(awards_to_save);
 
+  await db.saveDatabaseAsync();
+
   console.log({
     player_team_games: player_team_games,
     player_team_games_by_conference_season_id: player_team_games_by_conference_season_id,
@@ -5935,6 +5995,9 @@ const close_out_season = async (this_week, common) => {
   league_season.is_season_complete = true;
 
   db.league_season.update(league_season);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const choose_preseason_all_americans = async (common) => {
@@ -6212,6 +6275,8 @@ const choose_preseason_all_americans = async (common) => {
   }
 
   db.award.insert(awards_to_save);
+  await db.saveDatabaseAsync();
+
 };
 
 const choose_all_americans = async (this_week, common) => {
@@ -6804,6 +6869,8 @@ const choose_all_americans = async (this_week, common) => {
   stopwatch(common, "Conference awards chosed");
 
    db.award.insert(awards_to_save);
+   await db.saveDatabaseAsync();
+
 
   console.log({
     awards_to_save: awards_to_save,
@@ -6854,6 +6921,9 @@ const advance_to_next_week = async (this_week, common) => {
   world.user_team.team_record = current_team_season.record_display;
 
   ddb.world.update(world);
+
+  await db.saveDatabaseAsync();
+  await ddb.saveDatabaseAsync();
 
   return next_week;
 };
@@ -7044,15 +7114,15 @@ const populate_player_modal = async (common, target) => {
   $("#player-info-modal").html(renderedHtml);
   $("#player-info-modal").addClass("shown");
 
-  $(window).on("click", function (event) {
+  $(window).on("click", async function (event) {
     if ($(event.target)[0] == $("#player-info-modal")[0]) {
       $("#player-info-modal").removeClass("shown");
       $(window).unbind();
-      player_face_listeners(common)
+      await player_face_listeners(common)
     }
   });
 
-  draw_player_faces(common);
+  await draw_player_faces(common);
   // if (player.player_face == undefined) {
   //   player.player_face = create_player_face("single", player.player_id, db);
   // }
@@ -7128,8 +7198,8 @@ const add_listeners = async (common) => {
     });
 
     await change_dom_display($(NewTabContent), 'block')
-    setTimeout(function(){
-      draw_player_faces(common);
+    setTimeout(async function(){
+      await draw_player_faces(common);
     }, 1000);
     
   });
@@ -7242,6 +7312,9 @@ const assign_conference_champions = async (this_week, common) => {
   db.team_season.update(losing_team_seasons);
   db.team_season.update(championship_gameless_team_season_champs);
   db.conference_season.update(conference_seasons_to_put);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const schedule_conference_championships = async (this_week, common) => {
@@ -7366,6 +7439,9 @@ const schedule_conference_championships = async (this_week, common) => {
 
   db.game.insert(games_to_create);
   db.team_game.insert(team_games_to_create);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const process_bowl_results = async (common) => {
@@ -7596,8 +7672,11 @@ const process_bowl_results = async (common) => {
     db.game.insert(games_to_create),
     db.team_game.insert(team_games_to_create),
     db.team_season.update(team_seasons_to_save),
-    db.league_season.put(current_league_season),
+    db.league_season.update(current_league_season),
   ]);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const schedule_bowl_season = async (all_weeks, common) => {
@@ -7876,9 +7955,12 @@ const schedule_bowl_season = async (all_weeks, common) => {
   await Promise.all([
     db.game.insert(games_to_create),
     db.team_game.insert(team_games_to_create),
-    db.league_season.put(current_league_season),
+    db.league_season.update(current_league_season),
     db.team_season.update(playoff_bound_team_seasons),
   ]);
+
+  await db.saveDatabaseAsync();
+
 };
 
 const schedule_game = (common, scheduling_dict, team_set, game_type, rival_obj, loop_count = 0) => {
@@ -8512,11 +8594,11 @@ const geo_marker_action = async (common) => {
     }).addTo(map);
     let marker = L.marker([location.lat, location.long], { icon: icon }).addTo(map);
 
-    $(window).on("click", function (event) {
+    $(window).on("click", async function (event) {
       if ($(event.target)[0] == $("#geography-modal")[0]) {
         $("#geography-modal").removeClass("shown");
         $(window).unbind();
-        player_face_listeners(common);
+        await player_face_listeners(common);
       }
     });
   });
@@ -8575,6 +8657,8 @@ const new_world_action = async (common, database_suffix) => {
 
   console.log("adding", { db: db, "db.conference": db.conference, conferences_to_save });
   const conferences_added = db.conference.insert(conferences_to_save);
+  await db.saveDatabaseAsync();
+
   var conferences = db.conference.find();
 
   teams_from_json = teams_from_json.filter((t) => school_names_to_include.includes(t.school_name));
@@ -8590,6 +8674,8 @@ const new_world_action = async (common, database_suffix) => {
   const new_season = new league_season(season_data, undefined);
   console.log({ new_season: new_season });
   db.league_season.insert(new_season);
+  await db.saveDatabaseAsync();
+
 
   console.log({ season: season, common: common, db: db, new_season_info: new_season_info });
   const phases_created = await create_phase(season, common);
@@ -8807,6 +8893,8 @@ const new_world_action = async (common, database_suffix) => {
 
   console.log({ teams: teams, city_names: city_names });
   var teams_added = db.team.insert(teams);
+  await db.saveDatabaseAsync();
+
 
   await update_create_world_modal(
     "create-world-table-new-world",
@@ -9015,6 +9103,9 @@ const new_world_action = async (common, database_suffix) => {
     db.league_season.update(current_league_season);
     db.team_season.update(user_team_season);
     db.team.update(user_team);
+
+    await db.saveDatabaseAsync();
+    await ddb.saveDatabaseAsync();
 
     await navigate_to_href(`/World/${world_id}`);
   });

@@ -40,15 +40,16 @@ export const prune_orphaned_databases = async () => {
   database_name_list.push("driver");
 
   let hfc_idbAdapter = new LokiIndexedAdapter("hfc");
-  let loki_catalog = await hfc_idbAdapter.getDatabaseListAsync();
+  //let hfc_idbAdapter = new IncrementalIndexedDBAdapter("hfc");
+  // let loki_catalog = await hfc_idbAdapter.getDatabaseListAsync();
 
-  console.log({ loki_catalog: loki_catalog, databases: databases });
-  for (let db_name of loki_catalog) {
-    console.log({ db_name: db_name });
-    if (!database_name_list.includes(db_name)) {
-      await hfc_idbAdapter.deleteDatabaseAsync(db_name);
-    }
-  }
+  // console.log({ loki_catalog: loki_catalog, databases: databases });
+  // for (let db_name of loki_catalog) {
+  //   console.log({ db_name: db_name });
+  //   if (!database_name_list.includes(db_name)) {
+  //     await hfc_idbAdapter.deleteDatabaseAsync(db_name);
+  //   }
+  // }
 };
 
 export const truncate_databases = async () => {
@@ -110,12 +111,13 @@ export const resolve_db = async (world_obj) => {
 };
 
 export const initialize_db = async (db) => {
-  db_collection_list.forEach(function (col_obj) {
+  db_collection_list.forEach( function (col_obj) {
     col_obj.options.clone = true;
     col_obj.options.cloneMethod = clone_method;
+    col_obj.options.lazyLoad = false;
     db[col_obj.collection_name] =
-      db.getCollection(col_obj.collection_name) ||
-      db.addCollection(col_obj.collection_name, col_obj.options);
+      ( db.getCollection(col_obj.collection_name)) ||
+      ( db.addCollection(col_obj.collection_name, col_obj.options));
   });
 
   await db.saveDatabaseAsync();
@@ -154,24 +156,6 @@ export const get_db = async (world_obj) => {
 
   let cloneMethod = "shallow-assign";
 
-  let idbAdapter = new LokiIndexedAdapter("hfc");
-  let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
-    pageSize: 20 * 1024 * 1024,
-    paging: true,
-  });
-  db = new loki(dbname, {
-    verbose: true,
-    env: "BROWSER",
-    autosave: true,
-    adapter: parAdapter,
-    persistenceAdapter: parAdapter,
-    // adapter: idbAdapter,
-    // persistenceAdapter: idbAdapter,
-    persistenceMethod: "adapter",
-    clone: true,
-    cloneMethod: cloneMethod,
-  });
-
   let schema_options = {};
 
   db_collection_list.forEach(function (coll) {
@@ -179,6 +163,29 @@ export const get_db = async (world_obj) => {
       proto: coll.options.proto.prototype,
     };
   });
+
+  let idbAdapter = new LokiIndexedAdapter("hfc");
+  //let idbAdapter = new IncrementalIndexedDBAdapter("hfc", {
+    //lazyCollections: db_collection_list.map(coll => coll.collection_name)
+  //});
+  // let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
+  //   pageSize: 20 * 1024 * 1024,
+  //   paging: true,
+  // });
+  db = new loki(dbname, {
+    verbose: true,
+    env: "BROWSER",
+    // autosave: true,
+    // autosaveInterval: 10000,
+    autosave: false,
+    adapter: idbAdapter,
+    persistenceAdapter: idbAdapter,
+    persistenceMethod: "adapter",
+    clone: true,
+    cloneMethod: cloneMethod,
+  });
+
+  db.schema_options = schema_options;
 
   await db.loadDatabaseAsync(schema_options);
   await initialize_db(db);
@@ -213,6 +220,7 @@ export const create_new_db = async () => {
     new_season_info: new_season_info,
   });
   ddb.world.insert(new_season_info);
+  await ddb.saveDatabaseAsync();
 
   let db = await create_db(world_id);
   return { db: db, new_season_info: new_season_info };
@@ -221,15 +229,15 @@ export const create_new_db = async () => {
 export const driver_collection_list = [
   {
     collection_name: "world",
-    options: { proto: world, unique: ["world_id"], clone: true, cloneMethod: clone_method },
+    options: { proto: world, unique: ["world_id"], clone: true, cloneMethod: clone_method, lazyLoad: true },
   },
   {
     collection_name: "first_names",
-    options: { unique: ["name"], clone: true, cloneMethod: clone_method },
+    options: { unique: ["name"], clone: true, cloneMethod: clone_method, lazyLoad: true },
   },
   {
     collection_name: "last_names",
-    options: { unique: ["name"], clone: true, cloneMethod: clone_method },
+    options: { unique: ["name"], clone: true, cloneMethod: clone_method, lazyLoad: true },
   },
   {
     collection_name: "cities",
@@ -237,7 +245,7 @@ export const driver_collection_list = [
       unique: ["city_state"],
       indices: ["city", "state"],
       clone: true,
-      cloneMethod: clone_method,
+      cloneMethod: clone_method, lazyLoad: true
     },
   },
 ];
@@ -335,12 +343,32 @@ export const db_collection_list = [
 ];
 
 export const initialize_driver_db = async (ddb) => {
-  driver_collection_list.forEach(function (col_obj) {
-    ddb[col_obj.collection_name] =
-      ddb.getCollection(col_obj.collection_name) ||
-      ddb.addCollection(col_obj.collection_name, col_obj.options);
+  console.log({
+    ddb: ddb,
+    driver_collection_list: driver_collection_list,
   });
 
+   driver_collection_list.forEach(async function (col_obj) {
+    ddb[col_obj.collection_name] =
+      ( ddb.getCollection(col_obj.collection_name)) ||
+      ( ddb.addCollection(col_obj.collection_name, col_obj.options));
+
+    console.log({
+      col_obj: col_obj,
+      "ddb[col_obj.collection_name]": ddb[col_obj.collection_name],
+    });
+
+    return ddb[col_obj.collection_name];
+  });
+
+
+  console.log({
+    ddb: ddb,
+    driver_collection_list: driver_collection_list,
+  });
+  // debugger;
+
+  await ddb.saveDatabaseAsync();
   await populate_driver(ddb);
   await ddb.saveDatabaseAsync();
 };
@@ -358,18 +386,22 @@ export const driver_db = async () => {
   let cloneMethod = "shallow-assign";
 
   let idbAdapter = new LokiIndexedAdapter("driver");
-  let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
-    pageSize: 20 * 1024 * 1024,
-    paging: true,
-  });
+  // let idbAdapter = new IncrementalIndexedDBAdapter("driver",{
+  //   lazyCollections: driver_collection_list.map(coll => coll.collection_name)
+  // });
+
+  // let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
+  //   pageSize: 20 * 1024 * 1024,
+  //   paging: true,
+  // });
   let ddb = new loki(dbname, {
     verbose: true,
     env: "BROWSER",
-    autosave: true,
-    adapter: parAdapter,
-    persistenceAdapter: parAdapter,
-    // adapter: idbAdapter,
-    // persistenceAdapter: idbAdapter,
+    // autosave: true,
+    // autosaveInterval: 10000,
+    autosave: false,
+    adapter: idbAdapter,
+    persistenceadapter: idbAdapter,
     persistenceMethod: "adapter",
     clone: true,
     cloneMethod: cloneMethod,
@@ -433,6 +465,8 @@ const populate_names = async (ddb) => {
   ddb.last_names.insert(last_names_to_add);
   ddb.first_names.insert(first_names_to_add);
 
+  await ddb.saveDatabaseAsync();
+
   console.log({
     ddb: ddb,
   });
@@ -474,76 +508,6 @@ const populate_cities = async (ddb) => {
     delete c.timezone;
   });
 
-  // $.each(city_dimension, function (ind, city) {
-  //   if (!(city.state in states)) {
-  //     states[city.state] = {};
-  //   }
-  //   if (city.city in states[city.state]) {
-  //     console.log("duplicate of ", city);
-  //   }
-  //   states[city.state][city.city] = city;
-  // });
-
-  // var missing_cities = [];
-
-  // $.each(city_dimension_2, function (ind, city) {
-  //   //console.log('city', city)
-  //   city.state_name = state_map[city.state_abbreviation].state_name;
-
-  //   if (!(city.state_name in state_counts)) {
-  //     state_counts[city.state_name] = { all_count: 0, match_count: 0 };
-  //   }
-
-  //   state_counts[city.state_name].all_count += city.player_count;
-  //   player_state_counts.all_count += city.player_count;
-
-  //   if (!(city.city_name in states[city.state_name])) {
-  //     //console.log('DONT HAVE ', city.city_name, city.state_name, city)
-
-  //     missing_cities.push({
-  //       city: city.city_name,
-  //       state: city.state_name,
-  //       player_count: city.player_count,
-  //       population: null,
-  //       lat: null,
-  //       long: null,
-  //       timezone: null,
-  //     });
-  //   } else {
-  //     player_state_counts.match_count += city.player_count;
-  //     state_counts[city.state_name].match_count += city.player_count;
-  //     states[city.state_name][city.city_name].player_count = city.player_count;
-  //   }
-  // });
-
-  // missing_cities = missing_cities.sort(function (a, b) {
-  //   if (a.player_count > b.player_count) return -1;
-  //   return 1;
-  // });
-
-  // console.log('missing_cities', {missing_cities:missing_cities})
-  //
-
-  // var cities_to_add = [],
-  //   city_start = 0,
-  //   new_city_obj = null;
-
-  // $.each(city_dimension, function (ind, city_obj) {
-  //   //console.log('city_obj', city_obj)
-  //   new_city_obj = states[city_obj.state][city_obj.city];
-  //   if (!(new_city_obj.player_count == undefined)) {
-  //     new_city_obj.occurance = new_city_obj.player_count;
-  //     if (new_city_obj.occurance > 0){
-  //       cities_to_add.push({
-  //         city: new_city_obj.city,
-  //         state: new_city_obj.state,
-  //         lat: new_city_obj.lat,
-  //         long: new_city_obj.long,
-  //         occurance: new_city_obj.occurance,
-  //       });
-  //     }
-  //   }
-  // });
-
   ddb.cities.insert(city_dimension);
+  await ddb.saveDatabaseAsync();
 };

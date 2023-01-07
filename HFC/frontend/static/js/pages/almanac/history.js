@@ -178,5 +178,5 @@ export const page_almanac_history = async (common) => {
 const action = async (common) => {
   const db = common.db;
 
-  player_face_listeners(common, "");
+  await player_face_listeners(common, "");
 };

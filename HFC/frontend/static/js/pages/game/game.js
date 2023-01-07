@@ -946,7 +946,7 @@ const action = async (common) => {
       RadarChart("#team-ratings-chart", radar_data, radarChartOptions);
     }
 
-    player_face_listeners(common);
+    await player_face_listeners(common);
 
   };
   

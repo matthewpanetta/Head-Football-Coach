@@ -14,7 +14,8 @@
     "use strict";
 
     /* jshint -W030 */
-    var DEBUG = typeof window !== 'undefined' && !!window.__loki_incremental_idb_debug;
+    var DEBUG = true;
+    // var DEBUG = typeof window !== 'undefined' && !!window.__loki_incremental_idb_debug;
 
     /**
      * An improved Loki persistence adapter for IndexedDB (not compatible with LokiIndexedAdapter)
@@ -506,7 +507,7 @@
 
           var isLazy = lazyCollections.includes(name);
           var lokiDeserializeCollectionChunks = function () {
-            DEBUG && isLazy && console.log("lazy loading " + name);
+            console.log("lazy loading " + name);
             var data = [];
             var dataChunks = chunkCollection.dataChunks;
             dataChunks.forEach(function populateChunk(chunk, i) {

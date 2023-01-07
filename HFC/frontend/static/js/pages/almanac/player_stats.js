@@ -265,7 +265,7 @@ const draw_player_leaders = async (common, players) => {
     stat_category_index += 1;
   }
 
-  player_face_listeners(common);
+  await player_face_listeners(common);
 
   $(".player-profile-popup-icon").on("click", async function () {
     await common.populate_player_modal(common, this);
