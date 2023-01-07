@@ -1,6 +1,5 @@
 const getHtml = async (common) => {
   const db = common.db;
-  const index_group_sync = common.index_group_sync;
   nunjucks.configure({ autoescape: true });
   var index_group = common.index_group;
   const season = common.season;
@@ -22,7 +21,7 @@ const getHtml = async (common) => {
   let teams = await db.team.where("team_id").above(0).toArray();
   var teams_by_team_id = index_group_sync(teams, "index", "team_id");
   let conferences = await db.conference.toArray();
-  var conferences_by_conference_id = await index_group(conferences, "index", "conference_id");
+  var conferences_by_conference_id = index_group_sync(conferences, "index", "conference_id");
   var conference_seasons = await db.conference_season.where({ season: season }).toArray();
   var team_seasons = await db.team_season
     .where({ season: season })
@@ -34,7 +33,7 @@ const getHtml = async (common) => {
   let user_team_season_id = user_team_season.team_season_id;
 
   let games = await db.game.where({ week_id: this_week.week_id }).toArray();
-  // var games_by_game_id = await index_group(games, "index", "game_id");
+  // var games_by_game_id = index_group_sync(games, "index", "game_id");
   var team_games = await db.team_game.where({ week_id: this_week.week_id }).toArray();
   // team_games = nest_children(team_games, games_by_game_id, "game_id", "game");
   let team_games_by_game_id = index_group_sync(team_games, 'group', 'game_id')

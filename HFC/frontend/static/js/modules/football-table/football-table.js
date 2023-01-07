@@ -1,4 +1,7 @@
-const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
+import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+import { get_from_dict, distinct, index_group_sync } from "/static/js/utils.js";
+
+export const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
   var data = [];
   const table = $(table_id);
 
@@ -22,11 +25,11 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
         sort_direction = "sort-desc";
       }
 
-      console.log({
-        clicked_th: clicked_th,
-        so: clicked_th.attr("sort-order"),
-        sort_direction: sort_direction,
-      });
+      // console.log({
+      //   clicked_th: clicked_th,
+      //   so: clicked_th.attr("sort-order"),
+      //   sort_direction: sort_direction,
+      // });
 
       var sort_direction_multiplier = -1;
       if (sort_direction == "sort-desc") {
@@ -38,11 +41,6 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
       clicked_th.addClass(sort_direction);
 
       const th_index = clicked_th.index();
-      console.log({
-        clicked_th: clicked_th,
-        sort_direction: sort_direction,
-        th_index: th_index,
-      });
 
       var data_rows = $(table_id).find("tbody tr").toArray();
       data = data_rows.map((tr) => ({
@@ -50,10 +48,7 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
         val: $(tr).find(`td:eq(${th_index})`).attr("value"),
       }));
       data = data.sort(function (elem_a, elem_b) {
-        if (
-          (Number(elem_b.val) || elem_b.val) <
-          (Number(elem_a.val) || elem_a.val)
-        ) {
+        if ((Number(elem_b.val) || elem_b.val) < (Number(elem_a.val) || elem_a.val)) {
           return -1 * sort_direction_multiplier;
         }
         return 1 * sort_direction_multiplier;
@@ -65,16 +60,13 @@ const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
     });
   console.log({
     table_id: table_id,
-    "$(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`)":
-      $(table_id).find(
-        `tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`
-      ),
+    "$(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`)": $(
+      table_id
+    ).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`),
     initial_sort_index: initial_sort_index,
     "tr:not(.football-table-column-groups) th:eq(${initial_sort_index})": `tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`,
   });
-  $(table_id)
-    .find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`)
-    .click();
+  $(table_id).find(`tr:not(.football-table-column-groups) th:eq(${initial_sort_index})`).click();
 };
 
 const get_initial_column_controls = (subject) => {
@@ -120,8 +112,7 @@ const get_initial_column_controls = (subject) => {
         personal: { shown: true, display: "Personal" },
       },
     };
-  } 
-  else if (subject == "world team stats") {
+  } else if (subject == "world team stats") {
     return {
       Team: {
         games: { shown: false, display: "Games" },
@@ -197,13 +188,9 @@ const get_initial_search_filters = (subject) => {
       "full_name",
     ];
   } else if (subject == "recruiting") {
-    search_filters.search_filter_fields = [
-      "full_name",
-    ];
+    search_filters.search_filter_fields = ["full_name"];
   } else if (subject == "world team stats") {
-    search_filters.search_filter_fields = [
-      "player_team_season.team_season.team.full_name",
-    ];
+    search_filters.search_filter_fields = ["player_team_season.team_season.team.full_name"];
   }
 
   return search_filters;
@@ -264,10 +251,8 @@ const get_initial_filter_options = (subject, table_config, common) => {
     ];
 
     if (subject == "world player stats") {
-      let teams = common.distinct(
-        table_config.original_data.map(
-          (p) => p.player_team_season.team_season.team
-        )
+      let teams = distinct(
+        table_config.original_data.map((p) => p.player_team_season.team_season.team)
       );
       let teams_by_team_name = index_group_sync(teams, "index", "school_name");
 
@@ -278,10 +263,10 @@ const get_initial_filter_options = (subject, table_config, common) => {
       });
 
       let conference_obj_list = [];
-      let conferences = common.distinct(
+      let conferences = distinct(
         table_config.original_data
           .map((p) =>
-            common.get_from_dict(
+            get_from_dict(
               p,
               "player_team_season.team_season.conference_season.conference.conference_abbreviation"
             )
@@ -296,22 +281,15 @@ const get_initial_filter_options = (subject, table_config, common) => {
           options: [],
         };
 
-        let conference_teams = common
-          .distinct(
-            table_config.original_data
-              .filter(
-                (p) =>
-                  p.player_team_season.team_season.conference_season.conference
-                    .conference_abbreviation == conference
-              )
-              .map((p) =>
-                common.get_from_dict(
-                  p,
-                  "player_team_season.team_season.team.school_name"
-                )
-              )
-          )
-          .sort();
+        let conference_teams = distinct(
+          table_config.original_data
+            .filter(
+              (p) =>
+                p.player_team_season.team_season.conference_season.conference
+                  .conference_abbreviation == conference
+            )
+            .map((p) => get_from_dict(p, "player_team_season.team_season.team.school_name"))
+        ).sort();
 
         conference_obj.options = conference_teams.map((ct) => ({
           display: ct,
@@ -328,8 +306,8 @@ const get_initial_filter_options = (subject, table_config, common) => {
         options: conference_obj_list,
       });
     }
-  } else if (subject == 'recruiting'){
-    let states = common.distinct(table_config.original_data.map(p => p.hometown.state)).sort();
+  } else if (subject == "recruiting") {
+    let states = distinct(table_config.original_data.map((p) => p.hometown.state)).sort();
     var table_filters = [
       {
         count: 0,
@@ -385,7 +363,7 @@ const get_initial_filter_options = (subject, table_config, common) => {
       {
         count: 0,
         display: "State",
-        options: states.map(s => ({display: s, field: 'hometown.state'})),
+        options: states.map((s) => ({ display: s, field: "hometown.state" })),
       },
     ];
   } else if (subject == "world team stats") {
@@ -393,14 +371,9 @@ const get_initial_filter_options = (subject, table_config, common) => {
       "conference_season.conference.conference_abbreviation": {
         count: 0,
         display: "Conference",
-        options: common.distinct(
+        options: distinct(
           table_config.original_data
-            .map((ts) =>
-              common.get_from_dict(
-                ts,
-                "conference_season.conference.conference_abbreviation"
-              )
-            )
+            .map((ts) => get_from_dict(ts, "conference_season.conference.conference_abbreviation"))
             .sort()
         ),
       },
@@ -421,14 +394,11 @@ async function create_football_filters(common, table_config) {
   table_config.filters.filter_options =
     table_config.filters.filter_options ||
     get_initial_filter_options(table_config.subject, table_config, common);
-  table_config.filters.filtered_columns =
-    table_config.filters.filtered_columns || [];
+  table_config.filters.filtered_columns = table_config.filters.filtered_columns || [];
   table_config.filters.search_filters =
-    table_config.filters.search_filters ||
-    get_initial_search_filters(table_config.subject);
+    table_config.filters.search_filters || get_initial_search_filters(table_config.subject);
 
-  table_config.templates.filter_template_url =
-    table_config.templates.filter_template_url;
+  table_config.templates.filter_template_url = table_config.templates.filter_template_url;
 
   table_config.column_control = table_config.column_control || {};
 
@@ -446,14 +416,9 @@ async function create_football_filters(common, table_config) {
   };
   console.log("filter_render_content", render_content);
 
-  var filter_template_html = await fetch(
-    table_config.templates.filter_template_url
-  );
+  var filter_template_html = await fetch(table_config.templates.filter_template_url);
   var filter_template_html_text = await filter_template_html.text();
-  var renderedHtml = await common.nunjucks_env.renderString(
-    filter_template_html_text,
-    render_content
-  );
+  var renderedHtml = nunjucks_env.renderString(filter_template_html_text, render_content);
   table_config.dom.filter_dom_selector =
     table_config.dom.filter_dom_selector || "#player-stats-table-filter";
   $(table_config.dom.filter_dom_selector).empty();
@@ -464,39 +429,30 @@ async function create_football_filters(common, table_config) {
 
 async function create_football_table(common, table_config) {
   table_config.data = table_config.original_data;
-  table_config.templates.table_template_url =
-    table_config.templates.table_template_url;
+  table_config.templates.table_template_url = table_config.templates.table_template_url;
   //TODO only fetch if havent fetched before
-  var table_template_html = await fetch(
-    table_config.templates.table_template_url
-  );
+  var table_template_html = await fetch(table_config.templates.table_template_url);
   var table_template_html_text = await table_template_html.text();
 
   table_template_html_text = table_template_html_text.replaceAll("  ", " ");
 
   table_config.sorted_columns =
-    table_config.sorted_columns ||
-    get_initial_sorted_columns(table_config.subject);
+    table_config.sorted_columns || get_initial_sorted_columns(table_config.subject);
   table_config.data = await data_filterer(common, table_config);
   table_config.data = await data_sorter(common, table_config);
 
   table_config.pagination = table_config.pagination || {};
   table_config.pagination.page_size = table_config.pagination.page_size || 75;
-  table_config.pagination.current_page =
-    table_config.pagination.current_page || 1;
+  table_config.pagination.current_page = table_config.pagination.current_page || 1;
 
   table_config.pagination.max_pages = Math.ceil(
     table_config.data.length / table_config.pagination.page_size
   );
   table_config.pagination.pagination_index_start =
-    table_config.pagination.page_size *
-    (table_config.pagination.current_page - 1);
+    table_config.pagination.page_size * (table_config.pagination.current_page - 1);
   table_config.pagination.pagination_index_end =
-    table_config.pagination.pagination_index_start +
-    table_config.pagination.page_size;
-  table_config.pagination.available_page_navigation = [
-    table_config.pagination.current_page,
-  ];
+    table_config.pagination.pagination_index_start + table_config.pagination.page_size;
+  table_config.pagination.available_page_navigation = [table_config.pagination.current_page];
 
   // The ideal pagination button display is to always display 5 buttons, the current button in the middle, with the preceding 2 and trailing 2 behind.
   // For Page 1, it would be [*1*, 2, 3, 4, 5] , with stars indicating selected page
@@ -512,10 +468,7 @@ async function create_football_table(common, table_config) {
           table_config.pagination.current_page - step
         );
       }
-      if (
-        table_config.pagination.current_page + step <=
-        table_config.pagination.max_pages
-      ) {
+      if (table_config.pagination.current_page + step <= table_config.pagination.max_pages) {
         table_config.pagination.available_page_navigation.push(
           table_config.pagination.current_page + step
         );
@@ -531,16 +484,13 @@ async function create_football_table(common, table_config) {
     table_config.pagination.pagination_index_end
   );
 
-  var renderedHtml = await common.nunjucks_env.renderString(
-    table_template_html_text,
-    {
-      column_controls: table_config.column_control.column_controls,
-      display_team: table_config.display_team || false,
-      pagination: table_config.pagination,
-      page: common.page,
-      data: table_config.display_data,
-    }
-  );
+  var renderedHtml = nunjucks_env.renderString(table_template_html_text, {
+    column_controls: table_config.column_control.column_controls,
+    display_team: table_config.display_team || false,
+    pagination: table_config.pagination,
+    page: common.page,
+    data: table_config.display_data,
+  });
 
   table_config.dom.table_dom_selector =
     table_config.dom.table_dom_selector || "#player-stats-table-container";
@@ -549,10 +499,8 @@ async function create_football_table(common, table_config) {
   $(table_config.dom.table_dom_selector).append(renderedHtml);
 
   let column_counter = 1;
-  $(
-    table_config.dom.table_dom_selector + " .football-table-column-headers th"
-  ).each(function () {
-    for (sort_column_obj of table_config.sorted_columns) {
+  $(table_config.dom.table_dom_selector + " .football-table-column-headers th").each(function () {
+    for (let sort_column_obj of table_config.sorted_columns) {
       if ($(this).attr("value-key") == sort_column_obj.key) {
         $(this).addClass(sort_column_obj.sort_direction);
 
@@ -574,13 +522,11 @@ async function create_football_table(common, table_config) {
   await add_table_listeners(common, table_config);
 }
 
-async function initialize_football_table(common, table_config) {
-  const get_from_dict = common.get_from_dict;
-
+export const initialize_football_table = async (common, table_config) => {
   await create_football_filters(common, table_config);
   // await create_football_controls(common, table_config);
   await create_football_table(common, table_config);
-}
+};
 
 const refresh_table = async (common, table_config) => {
   table_config.filters.filtered_columns = find_filtered_columns(table_config);
@@ -588,7 +534,7 @@ const refresh_table = async (common, table_config) => {
   table_config.pagination.current_page = 1;
 
   await create_football_table(common, table_config);
-  await adjust_button_text(common, table_config);
+  // await adjust_button_text(common, table_config);
 };
 
 const add_filter_listeners = async (common, table_config) => {
@@ -616,25 +562,23 @@ const add_filter_listeners = async (common, table_config) => {
       );
 
       $(this).addClass("selected");
-      $(
-        `.football-table-filter-option[parent-filter-value="${filter_value}"]`
-      ).addClass("selected");
+      $(`.football-table-filter-option[parent-filter-value="${filter_value}"]`).addClass(
+        "selected"
+      );
     } else {
       removed_filters = removed_filters.concat([this]);
       removed_filters = removed_filters.concat(
-        $(
-          `.football-table-filter-option[parent-filter-value="${filter_value}"].selected`
-        ).toArray()
+        $(`.football-table-filter-option[parent-filter-value="${filter_value}"].selected`).toArray()
       );
       // removed_filters.concat($( `.football-table-filter-option[filter-value="${parent_filter_value}"]`))
       $(this).removeClass("selected");
-      $(
-        `.football-table-filter-option[parent-filter-value="${filter_value}"]`
-      ).removeClass("selected");
+      $(`.football-table-filter-option[parent-filter-value="${filter_value}"]`).removeClass(
+        "selected"
+      );
 
-      $(
-        `.football-table-filter-option[filter-value="${parent_filter_value}"]`
-      ).removeClass("selected");
+      $(`.football-table-filter-option[filter-value="${parent_filter_value}"]`).removeClass(
+        "selected"
+      );
     }
 
     for (let add_elem of added_filters) {
@@ -644,9 +588,7 @@ const add_filter_listeners = async (common, table_config) => {
         filter_badge.attr("id", "");
         filter_badge.attr("filter-value", $(add_elem).attr("filter-value"));
         filter_badge.attr("filter-field", $(add_elem).attr("filter-field"));
-        filter_badge
-          .find(".filter-value")
-          .text($(add_elem).attr("filter-value"));
+        filter_badge.find(".filter-value").text($(add_elem).attr("filter-value"));
         $("#filter-badge-template").parent().append(filter_badge);
         console.log({ add_elem: add_elem, filter_badge: filter_badge });
       }
@@ -677,20 +619,17 @@ const add_filter_listeners = async (common, table_config) => {
 
   $(".badge-container").on("click", ".filter-badge", async function () {
     let filter_value = $(this).attr("filter-value");
-    $(
-      '.football-table-filter-option.selected[filter-value="' +
-        filter_value +
-        '"]'
-    ).removeClass("selected");
-    $(
-      '.football-table-filter-option[filter-value="' + filter_value + '"]'
-    ).each(function (ind, elem) {
+    $('.football-table-filter-option.selected[filter-value="' + filter_value + '"]').removeClass(
+      "selected"
+    );
+    $('.football-table-filter-option[filter-value="' + filter_value + '"]').each(function (
+      ind,
+      elem
+    ) {
       let parent_filter_value = $(elem).attr("parent-filter-value");
-      $(
-        '.football-table-filter-option[filter-value="' +
-          parent_filter_value +
-          '"]'
-      ).removeClass("selected");
+      $('.football-table-filter-option[filter-value="' + parent_filter_value + '"]').removeClass(
+        "selected"
+      );
     });
 
     if ($(this).attr("filter-field") == "name-search") {
@@ -726,7 +665,7 @@ const add_filter_listeners = async (common, table_config) => {
 
   $("#football-table-filter-show-button").on("click", function () {
     $("#football-table-filter-modal").addClass("shown");
-    adjust_button_text(common, table_config);
+    // adjust_button_text(common, table_config);
 
     $(window).on("click", function (event) {
       if ($(event.target)[0] == $("#football-table-filter-modal")[0]) {
@@ -746,19 +685,14 @@ const add_filter_listeners = async (common, table_config) => {
   });
 
   $(".football-table-search-text-button").on("click", async function () {
-    table_config.filters.search_filters.search_text = $(
-      ".football-table-search-text"
-    ).val();
+    table_config.filters.search_filters.search_text = $(".football-table-search-text").val();
 
     $('.filter-badge[filter-field="name-search"]').remove();
 
     let filter_badge = $("#filter-badge-template").clone();
     filter_badge.removeClass("hidden");
     filter_badge.attr("id", "");
-    filter_badge.attr(
-      "filter-value",
-      table_config.filters.search_filters.search_text
-    );
+    filter_badge.attr("filter-value", table_config.filters.search_filters.search_text);
     filter_badge.attr("filter-field", "name-search");
     filter_badge
       .find(".filter-value")
@@ -770,18 +704,13 @@ const add_filter_listeners = async (common, table_config) => {
 
   $(".football-table-search-text").on("keypress", async function (e) {
     if (e.which === 13) {
-      table_config.filters.search_filters.search_text = $(
-        ".football-table-search-text"
-      ).val();
+      table_config.filters.search_filters.search_text = $(".football-table-search-text").val();
       $('.filter-badge[filter-field="name-search"]').remove();
 
       let filter_badge = $("#filter-badge-template").clone();
       filter_badge.removeClass("hidden");
       filter_badge.attr("id", "");
-      filter_badge.attr(
-        "filter-value",
-        table_config.filters.search_filters.search_text
-      );
+      filter_badge.attr("filter-value", table_config.filters.search_filters.search_text);
       filter_badge.attr("filter-field", "name-search");
       filter_badge
         .find(".filter-value")
@@ -806,7 +735,6 @@ const add_filter_listeners = async (common, table_config) => {
     let parent_filter_value = $(this).attr("parent_table_columnn_control_option");
 
     if (!$(this).hasClass("selected")) {
-
       $(this).addClass("selected");
       $(
         `.football-table-column-control-option[parent_table_columnn_control_option="${filter_value}"]`
@@ -822,15 +750,11 @@ const add_filter_listeners = async (common, table_config) => {
       ).removeClass("selected");
     }
 
-    console.log({ clicked_button: clicked_button });
-
     table_config.column_control.column_controls = find_column_controls(
       common,
       clicked_button,
       table_config
     );
-
-    console.log({ table_config: table_config });
 
     await create_football_table(common, table_config);
   });
@@ -858,55 +782,52 @@ const add_filter_listeners = async (common, table_config) => {
 const add_table_listeners = async (common, table_config) => {
   let football_table_body = $(".football-table-body").eq(0);
   let football_table_rows_map = {};
-  $(table_config.dom.table_dom_selector + ".football-table-row").each(function (
-    ind,
-    row
-  ) {
+  $(table_config.dom.table_dom_selector + ".football-table-row").each(function (ind, row) {
     football_table_rows_map[$(row).attr("player_id")] = row;
   });
 
-  $(
-    table_config.dom.table_dom_selector + " .football-table-column-headers th"
-  ).on("click", async function (e) {
-    table_config.pagination.current_page = 1;
-    let target_new_class = $(e.target).attr("sort-order") || "sort-desc";
-    if ($(e.target).hasClass("sort-desc")) {
-      target_new_class = "sort-asc";
-    } else if ($(e.target).hasClass("sort-asc")) {
-      target_new_class = "sort-desc";
+  $(table_config.dom.table_dom_selector + " .football-table-column-headers th").on(
+    "click",
+    async function (e) {
+      table_config.pagination.current_page = 1;
+      let target_new_class = $(e.target).attr("sort-order") || "sort-desc";
+      if ($(e.target).hasClass("sort-desc")) {
+        target_new_class = "sort-asc";
+      } else if ($(e.target).hasClass("sort-asc")) {
+        target_new_class = "sort-desc";
+      }
+
+      if (!e.shiftKey) {
+        table_config.sorted_columns = [];
+        $(table_config.dom.table_dom_selector + " .football-table-column-headers th").removeClass(
+          "sort-desc"
+        );
+        $(table_config.dom.table_dom_selector + " .football-table-column-headers th").removeClass(
+          "sort-asc"
+        );
+      }
+
+      let sort_direction = target_new_class;
+      $(e.target).addClass(sort_direction);
+      table_config.sorted_columns.push({
+        key: $(e.target).attr("value-key"),
+        sort_direction: sort_direction,
+      });
+
+      await create_football_table(common, table_config);
     }
-
-    if (!e.shiftKey) {
-      table_config.sorted_columns = [];
-      $(
-        table_config.dom.table_dom_selector +
-          " .football-table-column-headers th"
-      ).removeClass("sort-desc");
-      $(
-        table_config.dom.table_dom_selector +
-          " .football-table-column-headers th"
-      ).removeClass("sort-asc");
-    }
-
-    let sort_direction = target_new_class;
-    $(e.target).addClass(sort_direction);
-    table_config.sorted_columns.push({
-      key: $(e.target).attr("value-key"),
-      sort_direction: sort_direction,
-    });
-
-    await create_football_table(common, table_config);
-  });
+  );
 
   await common.geo_marker_action(common);
 
-  $(
-    table_config.dom.table_dom_selector + " .football-table-pagination button"
-  ).on("click", async function () {
-    var page_destination = $(this).attr("pagination-action");
-    table_config.pagination.current_page = parseInt(page_destination);
-    await create_football_table(common, table_config);
-  });
+  $(table_config.dom.table_dom_selector + " .football-table-pagination button").on(
+    "click",
+    async function () {
+      var page_destination = $(this).attr("pagination-action");
+      table_config.pagination.current_page = parseInt(page_destination);
+      await create_football_table(common, table_config);
+    }
+  );
 
   $(".player-profile-popup-icon").on("click", async function () {
     await common.populate_player_modal(common, this);
@@ -916,19 +837,30 @@ const add_table_listeners = async (common, table_config) => {
 const adjust_button_text = async (common, table_config) => {
   //$(".football-table-filter-option");
 
-  for (table_filter_field in table_config.filters.filter_options) {
-    var table_filter_obj =
-      table_config.filters.filter_options[table_filter_field];
+  console.log({
+    table_config: table_config,
+    "table_config.filters.filter_options": table_config.filters.filter_options,
+  });
+
+  for (let table_filter_obj of table_config.filters.filter_options) {
+    // var table_filter_obj = table_config.filters.filter_options[table_filter_field];
+    console.log({
+      table_filter_field: table_filter_field,
+      "table_config.filters.filter_options": table_config.filters.filter_options,
+      table_filter_obj: table_filter_obj,
+      "table_filter_obj.options": table_filter_obj.options,
+    });
 
     var filter_group_count = 0;
-    for (filter_option of table_filter_obj.options) {
+    for (let filter_option of table_filter_obj.options) {
       var count_value = table_config.data.filter(
         (elem) => get_from_dict(elem, table_filter_field) == filter_option
       ).length;
       filter_group_count += count_value;
-      $(
-        '.football-table-filter-option[filter_value="' + filter_option + '"]'
-      ).attr("count_value", count_value);
+      $('.football-table-filter-option[filter_value="' + filter_option + '"]').attr(
+        "count_value",
+        count_value
+      );
       $(
         '.football-table-filter-option[filter_value="' +
           filter_option +
@@ -946,10 +878,7 @@ const find_filtered_columns = (table_config) => {
 
   let total_selected_options = 0;
 
-  $(".football-table-filter-option.selected").each(function (
-    ind,
-    filter_option
-  ) {
+  $(".football-table-filter-option.selected").each(function (ind, filter_option) {
     let filter_field = $(filter_option).attr("filter-field");
     let filter_value = $(filter_option).attr("filter-value");
 
@@ -958,7 +887,7 @@ const find_filtered_columns = (table_config) => {
     }
   });
 
-  $('.filter-button-count-span').text('')
+  $(".filter-button-count-span").text("");
 
   let filtered_columns_obj = index_group_sync(values, "group", "field");
   for (let filter_field in filtered_columns_obj) {
@@ -967,22 +896,24 @@ const find_filtered_columns = (table_config) => {
       values: filtered_columns_obj[filter_field].map((elem) => elem.value),
     });
 
-    $('[field="'+filter_field+'"] .filter-button-count-span').text(filtered_columns_obj[filter_field].length)
+    $('[field="' + filter_field + '"] .filter-button-count-span').text(
+      filtered_columns_obj[filter_field].length
+    );
 
-    console.log('showing filter count', {
-      filtered_columns:filtered_columns,
-      'filtered_columns.length': filtered_columns.length,
-      filter_field:filter_field,
-      a: $('[field="'+filter_field+'"] .filter-button-count-span'),
-      q: '[field="'+filter_field+'"] .filter-button-count-span'
-    })
+    // console.log("showing filter count", {
+    //   filtered_columns: filtered_columns,
+    //   "filtered_columns.length": filtered_columns.length,
+    //   filter_field: filter_field,
+    //   a: $('[field="' + filter_field + '"] .filter-button-count-span'),
+    //   q: '[field="' + filter_field + '"] .filter-button-count-span',
+    // });
   }
 
-  console.log({
-    filtered_columns_obj: filtered_columns_obj,
-    filtered_columns: filtered_columns,
-    values: values,
-  });
+  // console.log({
+  //   filtered_columns_obj: filtered_columns_obj,
+  //   filtered_columns: filtered_columns,
+  //   values: values,
+  // });
 
   // $(".football-table-filters-active-count").text(total_selected_options);
 
@@ -992,36 +923,29 @@ const find_filtered_columns = (table_config) => {
 const find_column_controls = (common, clicked_button, table_config) => {
   var column_controls = table_config.column_control.column_controls;
 
-  console.log({
-    "table_config.dom.column_control_dom_selector":
-      table_config.dom.column_control_dom_selector,
-    s: $(".football-table-column-control-option"),
-  });
-  $(".football-table-column-control-option").each(function (
-    ind,
-    column_option
-  ) {
-    console.log({
-      b: $(column_option),
-      a: $(column_option).attr("table_columnn_control_option"),
-      column_controls: column_controls,
-      gd: common.get_from_dict(
-        column_controls,
-        $(column_option).attr("table_columnn_control_option")
-      ),
-    });
-    common.get_from_dict(
+  // console.log({
+  //   "table_config.dom.column_control_dom_selector": table_config.dom.column_control_dom_selector,
+  //   s: $(".football-table-column-control-option"),
+  // });
+  $(".football-table-column-control-option").each(function (ind, column_option) {
+    // console.log({
+    //   b: $(column_option),
+    //   a: $(column_option).attr("table_columnn_control_option"),
+    //   column_controls: column_controls,
+    //   gd: get_from_dict(column_controls, $(column_option).attr("table_columnn_control_option")),
+    // });
+    get_from_dict(
       // column_controls[column_control_group],
       column_controls,
       $(column_option).attr("table_columnn_control_option")
     ).shown = $(column_option).hasClass("selected");
   });
 
-  console.log({
-    column_controls: column_controls,
-    clicked_button: clicked_button,
-    table_config: table_config,
-  });
+  // console.log({
+  //   column_controls: column_controls,
+  //   clicked_button: clicked_button,
+  //   table_config: table_config,
+  // });
 
   return column_controls;
 };
@@ -1030,23 +954,17 @@ const data_filterer = (common, table_config) => {
   var data = table_config.original_data;
   for (var filtered_column of table_config.filters.filtered_columns) {
     data = data.filter((elem) =>
-      filtered_column.values.includes(
-        get_from_dict(elem, filtered_column.field)
-      )
+      filtered_column.values.includes(get_from_dict(elem, filtered_column.field))
     );
   }
 
   if (table_config.filters.search_filters.search_text.length > 0) {
     data = data.filter(function (elem) {
-      return table_config.filters.search_filters.search_filter_fields.some(
-        function (field) {
-          return get_from_dict(elem, field)
-            .toLowerCase()
-            .includes(
-              table_config.filters.search_filters.search_text.toLowerCase()
-            );
-        }
-      );
+      return table_config.filters.search_filters.search_filter_fields.some(function (field) {
+        return get_from_dict(elem, field)
+          .toLowerCase()
+          .includes(table_config.filters.search_filters.search_text.toLowerCase());
+      });
     });
   }
 
@@ -1063,45 +981,33 @@ const data_sorter = (common, table_config) => {
 
   data = data.map((elem) =>
     Object.assign(elem, {
-      sort_value: common.get_from_dict(
-        elem,
-        table_config.sorted_columns[0].key
-      ),
+      sort_value: get_from_dict(elem, table_config.sorted_columns[0].key),
     })
   );
-  for (elem of data) {
+  for (let elem of data) {
     elem.sort_vals = {};
-    for (sort_column_obj of table_config.sorted_columns) {
-      elem.sort_vals[sort_column_obj.key] = common.get_from_dict(
-        elem,
-        sort_column_obj.key
-      );
+    for (let sort_column_obj of table_config.sorted_columns) {
+      elem.sort_vals[sort_column_obj.key] = get_from_dict(elem, sort_column_obj.key);
     }
   }
 
   data = data.sort(function (elem_a, elem_b) {
-    for (sort_column_obj of table_config.sorted_columns) {
-      if (
-        elem_b.sort_vals[sort_column_obj.key] !=
-        elem_a.sort_vals[sort_column_obj.key]
-      ) {
-        if (sort_column_obj.sort_direction == "sort-asc") {
-          return elem_b.sort_vals[sort_column_obj.key] <
-            elem_a.sort_vals[sort_column_obj.key]
-            ? 1
-            : -1;
-        } else {
-          return elem_b.sort_vals[sort_column_obj.key] >
-            elem_a.sort_vals[sort_column_obj.key]
-            ? 1
-            : -1;
-        }
+    for (let sort_column_obj of table_config.sorted_columns) {
+      if (elem_b.sort_vals[sort_column_obj.key] != elem_a.sort_vals[sort_column_obj.key]) {
+        let sort_mult = sort_column_obj.sort_direction == "sort-asc" ? 1 : -1;
+        return (
+          sort_mult *
+          (elem_b.sort_vals[sort_column_obj.key] < elem_a.sort_vals[sort_column_obj.key] ? 1 : -1)
+        );
       }
     }
     return 0;
   });
 
-  console.log({ data: data });
+  console.log("Sorted data", {
+    data: data,
+    "table_config.sorted_columns": table_config.sorted_columns,
+  });
 
   return data;
 };

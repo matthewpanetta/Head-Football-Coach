@@ -9,9 +9,9 @@
     "conference_color_secondary_hex": "000000",
     "schedule_format": {
       "hold_conference_championship_game": true,
-      "number_conference_games": 8,
+      "number_conference_games": 9,
       "round_robin_in_division": true,
-      "conference_championship_selection_method": "division winners",
+      "conference_championship_selection_method": "top 2",
       "schedule_pattern": {
         "division": { "number_of_teams": 6 },
         "cycle": { "number_of_teams": 7, "teams_per_year": 2 }
@@ -26,10 +26,49 @@
           "Michigan",
           "Alabama",
           "UAB",
+          "Liberty",
+          "Miami",
+          "Florida State",
+          "Virginia Tech",
+          "Auburn",
+          "Boston College"
+        ]
+      }
+    ]
+  },
+  {
+    "conference_name": "Big 12",
+    "conference_abbreviation": "Big 12",
+    "prestige": 8,
+    "is_independent": 0,
+    "conference_logo_url": "/static/img/conference_logos/Big_12_Conference.png",
+    "conference_color_primary_hex": "FC2929",
+    "conference_color_secondary_hex": "B6BABE",
+    "schedule_format": {
+      "hold_conference_championship_game": true,
+      "number_conference_games": 9,
+      "round_robin_in_division": true,
+      "conference_championship_selection_method": "top 2",
+      "schedule_pattern": {
+        "division": { "number_of_teams": 6 },
+        "cycle": { "number_of_teams": 7, "teams_per_year": 2 }
+      },
+      "fixed_matchups": []
+    },
+    "divisions": [
+      {
+        "division_name": "All",
+        "teams": [
           "USC",
           "Oregon State",
           "SMU",
-          "Oklahoma"
+          "Oklahoma",
+          "Washington",
+          "San Jose State",
+          "Nevada",
+          "BYU",
+          "UTSA",
+          "Texas"
         ]
       }
     ]

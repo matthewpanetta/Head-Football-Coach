@@ -22,8 +22,8 @@
         <img class='player-modal-team-logo logo logo-120' src='{{SignedTeam.LogoURL}}' alt="My image">
       {% endif %}
     </a>
-    <div class="PlayerFace PlayerFace-120" id='player-modal-player-face'>
-      {{player.PlayerFaceSVG|safe}}
+    <div class="PlayerFace-Headshot PlayerFace-120 inline-block no-border" style='z-index: 3; position: relative; border-radius: unset;' id='player-modal-player-face' player_id ='{{player.player_id}}'>
+      {# {{player.PlayerFaceSVG|safe}} #}
     </div>
     <div class='inline-block align-bottom' style='padding-bottom: 0.9375rem;'>
       <div class='playerHeaderInfo'>

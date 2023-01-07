@@ -6,7 +6,6 @@ const getHtml = async (common) => {
   const db = common.db;
   const query_to_dict = common.query_to_dict;
   const season = common.season;
-  const index_group_sync = common.index_group_sync;
 
   const NavBarLinks = await common.nav_bar_links({
     path: "coach",

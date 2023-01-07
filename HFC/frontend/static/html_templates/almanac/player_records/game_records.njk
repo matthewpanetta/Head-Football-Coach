@@ -17,7 +17,7 @@
           </td>
           <td class="">
             <div class="inline-block">
-              <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{stat_category.player_team_games[0].player_team_game.player_team_season.player_id}}' style='border-color:#{{stat_category.player_team_games[0].player_team_game.player_team_season.team_season.team.team_color_primary_hex}};' id="player-stat-leaders-face-{{stat_category.player_team_games[0].player_team_game.player_team_season.player_id}}-{{loop.index}}-{{stat_category.player_team_games[0].value_rank}}"  ></div>
+              <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{stat_category.player_team_games[0].player_team_game.player_team_season.player_id}}' style='border-color:#{{stat_category.player_team_games[0].player_team_game.player_team_season.team_season.team.team_color_primary_hex}};' id="player-game-leaders-face-{{stat_category.player_team_games[0].player_team_game.player_team_season.player_id}}-{{loop.index}}-{{stat_category.player_team_games[0].value_rank}}"  ></div>
             </div>
 
           </td>
@@ -126,4 +126,6 @@
       </tbody>
     </table>
   </div>
+{%else%}
+<div>No games played yet</div>
 {% endfor %}

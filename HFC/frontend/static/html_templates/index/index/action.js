@@ -2,6 +2,8 @@ const getHtml = async (common) => {
   nunjucks.configure({ autoescape: true });
   const nunjucks_env = await get_nunjucks_env();
 
+  console.log({nunjucks_env:nunjucks_env})
+
   let ddb = await common.driver_db();
 
   const db_list = await common.get_databases_references();

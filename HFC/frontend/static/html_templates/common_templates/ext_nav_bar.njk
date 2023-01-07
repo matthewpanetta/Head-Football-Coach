@@ -24,7 +24,7 @@
       <button type="submit" id='{{Link.id}}' class='btn team-color-button' style='width: 1.875rem; margin-left: -2.5rem; vertical-align: baseline; padding: 0.5rem; margin-right: 0rem;'><i class="fa fa-search"></i></button>
     </li>
     {% else %}
-    <li><a href="{{Link.Href}}" id='{{Link.id}}' class="w3-bar-item btn team-color-button SideNavItem w3-padding-small {{Link.ClassName}}">{{Link.LinkDisplay}}</a></li>
+    <li><a {% if Link.Href%}href="{{Link.Href}}"{%endif%} id='{{Link.id}}' class="w3-bar-item btn team-color-button SideNavItem w3-padding-small {{Link.ClassName}}">{{Link.LinkDisplay}}</a></li>
     {% endif %}
     {% endfor %}
   </ul>

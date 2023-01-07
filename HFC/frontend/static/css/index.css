@@ -334,7 +334,7 @@ body {
   justify-content: center;
   height: 9.375rem;
   width: 9.375rem;
-  margin-left: 6.25rem;
+  margin-left: -6.25rem;
   vertical-align: top;
 }
 
@@ -1246,6 +1246,12 @@ div button.w3-bar-item.btn.selected-bar-button {
   border: 0.3125rem solid;
 }
 
+.PlayerFace-Headshot.PlayerFace-120,
+.CoachFace-Headshot.CoachFace-120 {
+  border: 0.3125rem solid;
+  width: 7.5rem;
+}
+
 .PlayerFace-Headshot.PlayerFace-90,
 .CoachFace-Headshot.CoachFace-90 {
   border: 0.1875rem solid;
@@ -1824,7 +1830,7 @@ tfoot td {
   width: 15.75rem;
   margin-left: -6.25rem;
   height: inherit;
-  position: absolute;
+  /* position: absolute; */
   z-index: -100;
   transform: skewX(-45deg);
   border-right: 1.875rem solid;
@@ -3017,11 +3023,11 @@ table {
   max-height: 90vh;
 }
 
-.modal .modal-content {
+/* .modal .modal-content {
   margin: 2% auto;
   width: 70vw;
   height: 90vh;
-}
+} */
 
 .close {
   color: #aaa;
@@ -3262,15 +3268,19 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
 }
 
 .flex-3 {
-  flex: 3;
+  flex: 3 3 auto;
 }
 
 .flex-2 {
-  flex: 2;
+  flex: 2 2 auto;
 }
 
 .flex-1 {
-  flex: 1;
+  flex: 1 1 auto;
+}
+
+.basis-25 {
+  flex-basis: 25%;
 }
 
 #nav-tabContent {

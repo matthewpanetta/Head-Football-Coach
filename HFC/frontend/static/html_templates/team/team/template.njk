@@ -4,13 +4,6 @@
   id='PageDataPassthru'></div>
 
 <head>
-  <style id="addedStyle">
-    .SelectedGameBox::after {
-      border-left-width: 2.1875rem;
-      border-right-width: 2.1875rem;
-      border-width: 0.9375rem 2.1875rem 0;}
-
-  </style>
 </head>
 
 {% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
@@ -46,28 +39,28 @@
 
                   <div class="w3-row teamScheduleBar w3-white equal-sized-item-container">
                     {% for game in games %}
-                    <div BoxScoreGameID="{{game.game_id}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.selected_game_box}}" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>
-                      <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.opponent_team.team_color_primary_hex}}'>
+                    <div BoxScoreGameID="{{game.game_id}}" class="equal-sized-item teamScheduleGameBox w3-display-container {{game.selected_game_box}}" style='background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}}'>
+                      <div class="teamScheduleGameBoxShortDate ellipsis" style='background-color: #{{game.opponent_team_games.team_season.team.team_color_primary_hex}}'>
                         <span class='ellipsis'>{{game.week_name}}</span>
 
                       </div>
                       <div class="equal-sized-item-container centered-item" >
-                        <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team.team_logo}}' />
+                        <img class='teamScheduleOpponentLogo centered-item' src='{{game.opponent_team_game.team_season.team.team_logo}}' />
                       </div>
 
                       <div class="width100 white-text" style='color: white;'>
-                        <a href="{{game.opponent_team.team_href}}">
+                        <a href="{{game.opponent_team_game.team_season.team.team_href}}">
                           <div class='teamScheduleGameBoxVsString hide-small white-text'>
                             <span>{{game.game_location_char}}</span>
                             <span class='font10'>{{game.opponent_rank_string}} </span>
-                            {% if game.opponent_team.is_user_team %}
+                            {% if game.opponent_team_game.team_season.team.is_user_team %}
                             <span>
-                              <i class="fa fa-user"></i>
+                              <i class="fa fas fa-user"></i>
                             </span>
                             {% endif %}
-                            <span>{{game['opponent_team']['team_abbreviation']}}</span>
+                            <span>{{game.opponent_team_game.team_season.team.team_abbreviation}}</span>
                           </div>
-                          <div class='teamScheduleGameBoxVsString show-small white-text'>{{game['opponent_team']['team_abbreviation']}}</div>
+                          <div class='teamScheduleGameBoxVsString show-small white-text'>{{game.opponent_team_game.team_season.team.team_abbreviation}}</div>
                         </a>
                         <div class="teamScheduleGameBoxResult">
                           <div class="teamGameResultLetter{{game.game_result_letter}} white-text bold" >{{game.game_result_letter}}</div>
@@ -119,7 +112,7 @@
                                   </span>
                                   {% if game.away_team_season.is_user_team%}
                                   <span style='color: #{{game.away_team.team_color_primary_hex}};'>
-                                      <i class="fa fa-user"></i>
+                                      <i class="fa fas fa-user"></i>
                                   </span>
                                   {%endif%}
 
@@ -147,7 +140,7 @@
                                   </span>
                                   {% if game.home_team_season.is_user_team%}
                                   <span style='color: #{{game.home_team.team_color_primary_hex}};'>
-                                      <i class="fa fa-user"></i>
+                                      <i class="fa fas fa-user"></i>
                                   </span>
                                   {%endif%}
                                   <a href="{{game.home_team.team_href}}" class='font17 {{game.home_team_winning_game_bold}}'>

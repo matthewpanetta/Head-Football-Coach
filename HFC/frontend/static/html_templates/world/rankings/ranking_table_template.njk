@@ -29,12 +29,12 @@
         </div>
           {% if  team_season.results.conference_champion %}
           <div class="font10 bold opacity-1">
-            <a class='' href='{{team_season.conference.conference_href}}'>{{team_season.conference.conference_abbreviation}} </a> Champions
+            <a class='' href='{{team_season.conference_season.conference.conference_href}}'>{{team_season.conference_season.conference.conference_abbreviation}} </a> Champions
           </div>
           {% else %}
           <div class="font10">
             {{team_season.rankings.division_rank[0]|ordinal}} in 
-            <a href='{{team_season.conference.conference_href}}'>{{team_season.conference.conference_abbreviation}}</a> 
+            <a href='{{team_season.conference_season.conference.conference_href}}'>{{team_season.conference_season.conference.conference_abbreviation}}</a> 
             {% if team_season.division_name != 'All'%}
             {{team_season.division_name}}
             {% endif %}

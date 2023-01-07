@@ -1,3 +1,9 @@
+import { index_group_sync, get, nest_children, increment_parent, deep_copy, round_decimal } from "/static/js/utils.js";
+import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+import { init_basic_table_sorting } from "/static/js/modules/football-table/football-table.js";
+import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
+import {init_json_edit} from '/static/js/modules/json-edit/json-edit.js';
+
 const clean_rating_string = (str) => {
   return str
     .replace(/_/g, " ")
@@ -113,26 +119,21 @@ const populate_player_stats = async (common) => {
     .filter((pts) => pts.team_season_id > 0)
     .map((pts) => pts.season);
 
-  const weeks = await db.week.where("season").anyOf(all_seasons).toArray();
+  const weeks = db.week.find({ season: { $in: all_seasons } });
   const weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
 
-  var player_team_games = await db.player_team_game
-    .where("player_team_season_id")
-    .anyOf(player_team_season_ids)
-    .toArray();
+  var player_team_games = db.player_team_game.find({
+    player_team_season_id: { $in: player_team_season_ids },
+  });
   const team_game_ids = player_team_games.map((ptg) => ptg.team_game_id);
-  var team_games = await db.team_game.bulkGet(team_game_ids);
+  var team_games = db.team_game.find({ team_game_id: { $in: team_game_ids } });
 
   const game_ids = team_games.map((tg) => tg.game_id);
-  var games = await db.game.bulkGet(game_ids);
+  var games = db.game.find({ game_id: { $in: game_ids } });
 
-  var team_seasons = await db.team_season
-    .where("season")
-    .anyOf(all_seasons)
-    .and((ts) => ts.team_id > 0)
-    .toArray();
+  var team_seasons = db.team_season.find({ season: { $in: all_seasons }, team_id: { $gt: 0 } });
 
-  const teams = await db.team.where("team_id").above(0).toArray();
+  const teams = db.team.find({ team_id: { $gt: 0 } });
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
   games = nest_children(games, weeks_by_week_id, "week_id", "week");
@@ -247,7 +248,7 @@ const populate_player_stats = async (common) => {
   var html = await fetch(url);
   html = await html.text();
 
-  var renderedHtml = await common.nunjucks_env.renderString(html, {
+  var renderedHtml = nunjucks_env.renderString(html, {
     page: common.page,
     player_team_season: current_player_team_season,
     player_stats_show: player_stats_show,
@@ -263,7 +264,7 @@ const populate_player_stats = async (common) => {
   var html = await fetch(url);
   html = await html.text();
 
-  var renderedHtml = await common.nunjucks_env.renderString(html, {
+  var renderedHtml = nunjucks_env.renderString(html, {
     page: common.page,
     player_team_season: current_player_team_season,
     player_stats_show: player_stats_show,
@@ -312,34 +313,41 @@ const populate_player_stats = async (common) => {
     },
   ];
 
-  game_highs.forEach(function(game_high_stat_group_obj){
+  game_highs.forEach(function (game_high_stat_group_obj) {
     let stat_group = game_high_stat_group_obj.stat_group;
 
-    game_high_stat_group_obj.stats.forEach(function(stat_obj){
-      
-      stat_obj.player_team_games = player_team_games.filter(ptg => get(ptg, stat_obj.stat_key) > 0)
+    game_high_stat_group_obj.stats.forEach(function (stat_obj) {
+      stat_obj.player_team_games = player_team_games.filter(
+        (ptg) => get(ptg, stat_obj.stat_key) > 0
+      );
 
-      stat_obj.top_5_player_team_games = stat_obj.player_team_games.top_sort(5, function(ptg_a, ptg_b){ 
-        return (get(ptg_b, stat_obj.stat_key) || 0) - (get(ptg_a, stat_obj.stat_key) || 0);
-      })
+      stat_obj.top_5_player_team_games = stat_obj.player_team_games.top_sort(
+        5,
+        function (ptg_a, ptg_b) {
+          return (get(ptg_b, stat_obj.stat_key) || 0) - (get(ptg_a, stat_obj.stat_key) || 0);
+        }
+      );
 
-      if (stat_obj.top_5_player_team_games.length){
-        stat_obj.top_5_vals = stat_obj.top_5_player_team_games.map(ptg => get(ptg, stat_obj.stat_key));
-        stat_obj.player_team_game = stat_obj.top_5_player_team_games[0]
+      if (stat_obj.top_5_player_team_games.length) {
+        stat_obj.top_5_vals = stat_obj.top_5_player_team_games.map((ptg) =>
+          get(ptg, stat_obj.stat_key)
+        );
+        stat_obj.player_team_game = stat_obj.top_5_player_team_games[0];
       }
-    })
+    });
 
-    game_high_stat_group_obj.stats = game_high_stat_group_obj.stats.filter(s => s.top_5_player_team_games.length);
-  })
+    game_high_stat_group_obj.stats = game_high_stat_group_obj.stats.filter(
+      (s) => s.top_5_player_team_games.length
+    );
+  });
 
-  game_highs = game_highs.filter(sg => sg.stats.length)
+  game_highs = game_highs.filter((sg) => sg.stats.length);
 
-
-  var renderedHtml = await common.nunjucks_env.renderString(html, {
+  var renderedHtml = nunjucks_env.renderString(html, {
     page: common.page,
     player_team_season: current_player_team_season,
     player_stats_show: player_stats_show,
-    game_highs:game_highs
+    game_highs: game_highs,
   });
 
   $("#player-stats-career-high-div").empty();
@@ -349,7 +357,7 @@ const populate_player_stats = async (common) => {
   var html = await fetch(url);
   html = await html.text();
 
-  var renderedHtml = await common.nunjucks_env.renderString(html, {
+  var renderedHtml = nunjucks_env.renderString(html, {
     page: common.page,
     player: player,
     player_team_season: current_player_team_season,
@@ -394,7 +402,7 @@ const populate_player_stats = async (common) => {
   }
 };
 
-const getHtml = async (common) => {
+export const page_player = async (common) => {
   nunjucks.configure({ autoescape: true });
 
   var world_obj = {};
@@ -402,7 +410,6 @@ const getHtml = async (common) => {
   const db = common.db;
   const query_to_dict = common.query_to_dict;
   const season = common.season;
-  const index_group_sync = common.index_group_sync;
 
   const NavBarLinks = await common.nav_bar_links({
     path: "Player",
@@ -410,29 +417,27 @@ const getHtml = async (common) => {
     db: db,
   });
 
-  const player = await db.player.get(player_id);
-  var player_team_seasons = await db.player_team_season.where({ player_id: player_id }).toArray();
+  const player = db.player.findOne({player_id: player_id});
+  var player_team_seasons = db.player_team_season.find({ player_id: player_id });
   var player_team_season_ids = player_team_seasons.map((pts) => pts.player_team_season_id);
 
   console.log({
     player_team_season_ids: player_team_season_ids,
     player_team_seasons: player_team_seasons,
+    player:player, 
+    player_id:player_id
   });
 
-  let recruit_team_seasons = await db.recruit_team_season
-    .where("player_team_season_id")
-    .anyOf(player_team_season_ids)
-    .toArray();
+  let recruit_team_seasons = db.recruit_team_season
+    .find({"player_team_season_id": {'$in': player_team_season_ids}});
   const recruit_team_seasons_by_player_team_season_id = index_group_sync(
     recruit_team_seasons,
     "group",
     "player_team_season_id"
   );
 
-  const player_team_season_stats = await db.player_team_season_stats
-    .where("player_team_season_id")
-    .anyOf(player_team_season_ids)
-    .toArray();
+  const player_team_season_stats = db.player_team_season_stats
+    .find({"player_team_season_id": {'$in': player_team_season_ids}});
   console.log({
     player_team_season_stats: player_team_season_stats,
   });
@@ -463,53 +468,53 @@ const getHtml = async (common) => {
     .map((pts) => pts.season);
 
   var team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
-  var team_seasons = await db.team_season.where('team_season_id').anyOf(team_season_ids).toArray();
+  var team_seasons = db.team_season.find({"team_season_id": {'$in': team_season_ids}});
 
   var player_team_ids = team_seasons.map((ts) => ts.team_id);
-  var player_teams = await db.team.where('team_id').anyOf(player_team_ids).toArray();
-  let player_teams_by_team_id = index_group_sync(player_teams, 'index', 'team_id');
+  var player_teams = db.team.find({"team_id": {'$in': player_team_ids}});
+  let player_teams_by_team_id = index_group_sync(player_teams, "index", "team_id");
 
   console.log({
-    player_teams_by_team_id:player_teams_by_team_id, player_teams:player_teams
-  })
+    player_teams_by_team_id: player_teams_by_team_id,
+    player_teams: player_teams,
+  });
 
-  team_seasons = nest_children(team_seasons, player_teams_by_team_id, 'team_id', 'team');
-  let player_team_seasons_by_team_season_id = index_group_sync(team_seasons, 'index', 'team_season_id');
-
-  console.log({
-    team_seasons:team_seasons, 
-    player_team_seasons_by_team_season_id:player_team_seasons_by_team_season_id
-  })
-
-  player_team_seasons = nest_children(player_team_seasons, player_team_seasons_by_team_season_id, 'team_season_id', 'team_season')
+  team_seasons = nest_children(team_seasons, player_teams_by_team_id, "team_id", "team");
+  let player_team_seasons_by_team_season_id = index_group_sync(
+    team_seasons,
+    "index",
+    "team_season_id"
+  );
 
   console.log({
-    team_seasons:team_seasons,
-    team_season_ids:team_season_ids,
-    player_team_seasons:player_team_seasons
-  })
+    team_seasons: team_seasons,
+    player_team_seasons_by_team_season_id: player_team_seasons_by_team_season_id,
+  });
 
+  player_team_seasons = nest_children(
+    player_team_seasons,
+    player_team_seasons_by_team_season_id,
+    "team_season_id",
+    "team_season"
+  );
+
+  console.log({
+    team_seasons: team_seasons,
+    team_season_ids: team_season_ids,
+    player_team_seasons: player_team_seasons,
+  });
 
   player.player_team_seasons = player_team_seasons;
   player.current_player_team_season =
     player.player_team_seasons[player.player_team_seasons.length - 1];
   var current_team = player.current_player_team_season.team_season.team;
 
-
-  if (player.player_face == undefined) {
-    player.player_face = await common.create_player_face("single", player.player_id, db);
-  }
-
   if (player.current_player_team_season.is_recruit) {
     var team_season = null;
 
-    var team_seasons = await db.team_season
-      .where("season")
-      .anyOf(all_seasons)
-      .and((ts) => ts.team_id > 0)
-      .toArray();
-
-    var teams = await db.team.where("team_id").above(0).toArray();
+    var team_seasons = db.team_season
+      .find({"season": {'$in': all_seasons}, team_id: {'$gt': 0}});
+    var teams = db.team.find({"team_id": {'$gt': 0}});
     var teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
     team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
@@ -570,7 +575,7 @@ const getHtml = async (common) => {
       (rts_a, rts_b) => rts_b.match_rating - rts_a.match_rating
     );
   } else {
-    console.log('in else')
+    console.log("in else");
     const season_stat_groupings = [
       {
         StatGroupName: "Passing",
@@ -842,7 +847,7 @@ const getHtml = async (common) => {
       },
     ];
 
-    var all_teams = await db.team.where("team_id").above(0).toArray();
+    var all_teams = db.team.find({"team_id": {'$gt': 0}});
     all_teams = all_teams.sort(function (teamA, teamB) {
       if (teamA.school_name < teamB.school_name) {
         return -1;
@@ -858,28 +863,25 @@ const getHtml = async (common) => {
     );
     const team_season_ids = player.player_team_seasons.map((pts) => pts.team_season_id);
     const seasons = player.player_team_seasons.map((pts) => pts.season);
-    var player_awards = await db.award
-      .where("player_team_season_id")
-      .anyOf(player_team_season_ids)
-      .toArray();
+    var player_awards = db.award
+      .find({"player_team_season_id": {'$in': player_team_season_ids}})
     var award_set = {};
 
-    var player_team_games = await db.player_team_game
-      .where("player_team_season_id")
-      .anyOf(player_team_season_ids)
-      .toArray();
+    var player_team_games = db.player_team_game
+      .find({"player_team_season_id": {'$in': player_team_season_ids}});
     var team_game_ids = player_team_games.map((ptg) => ptg.team_game_id);
-    var team_games = await db.team_game.bulkGet(team_game_ids);
+    var team_games = db.team_game.find({team_game_id: {'$in': team_game_ids}});
 
     var game_ids = team_games.map((tg) => tg.game_id);
-    var games = await db.game.bulkGet(game_ids);
+    var games = db.game.find({game_id: {'$in': game_ids}});
 
     var games_by_game_id = index_group_sync(games, "index", "game_id");
 
-    var teams = await db.team.where("team_id").above(0).toArray();
+    var teams = db.team.find({"team_id": {'$gt': 0}});
     var teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
-    var team_seasons = await db.team_season.where('team_season_id').anyOf(team_season_ids).toArray();
+    var team_seasons = db.team_season
+      .find({"team_season_id": {'$in': team_season_ids}});
     team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
 
     var team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
@@ -913,7 +915,7 @@ const getHtml = async (common) => {
       "player_team_game_id"
     );
 
-    const weeks = await db.week.where("season").anyOf(seasons).toArray();
+    const weeks = db.week.find({"season": {'$in': seasons}});
     const weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
 
     if (player_awards.length > 0) {
@@ -929,16 +931,12 @@ const getHtml = async (common) => {
         .map((a) => a.conference_season_id)
         .filter((cs_id) => cs_id != null)
         .map((cs_id) => parseInt(cs_id));
-      var conference_seasons = await db.conference_season
-        .where("conference_season_id")
-        .anyOf(conference_season_ids)
-        .toArray();
-
+      var conference_seasons = db.conference_season
+        .find({"conference_season_id": {'$in': conference_season_ids}});
       const conference_ids = conference_seasons.map((cs) => cs.conference_id);
-      const conferences = await db.conference
-        .where("conference_id")
-        .anyOf(conference_ids)
-        .toArray();
+      const conferences = db.conference
+        .find({"conference_id": {'$in': conference_ids}});
+        
       const conferences_by_conference_id = index_group_sync(conferences, "index", "conference_id");
 
       conference_seasons = nest_children(
@@ -1009,14 +1007,13 @@ const getHtml = async (common) => {
   };
 
   const all_player_team_seasons_by_player_team_season_id = index_group_sync(
-    await db.player_team_season.where({ season: season }).toArray(),
+     db.player_team_season.find({ season: season }),
     "index",
     "player_team_season_id"
   );
-  const all_team_seasons = await db.team_season
-    .where({ season: season })
-    .and((ts) => ts.team_id > 0)
-    .toArray();
+  const all_team_seasons = db.team_season
+    .find({ season: season, team_id: {'$gt': 0} });
+    
   const all_team_seasons_in_conference = all_team_seasons.filter(function (ts) {
     if (player.current_player_team_season.is_recruit) return false;
     return (
@@ -1113,16 +1110,15 @@ const getHtml = async (common) => {
   };
 
   let current_team_season = player.current_player_team_season.team_season;
-  let all_player_team_seasons = await db.player_team_season
-    .where({ team_season_id: current_team_season.team_season_id })
-    .toArray();
+  let all_player_team_seasons = db.player_team_season
+    .find({ team_season_id: current_team_season.team_season_id });
   let player_team_seasons_by_player_id = index_group_sync(
     all_player_team_seasons,
     "index",
     "player_id"
   );
   let player_ids = all_player_team_seasons.map((pts) => pts.player_id);
-  let players = await db.player.bulkGet(player_ids);
+  let players = db.player.find({player_id: {'$in':player_ids}});
 
   players = nest_children(
     players,
@@ -1158,7 +1154,6 @@ const getHtml = async (common) => {
       all_player_team_season_ids_starters_at_position,
   });
 
-  //var player_team_games = await db.player_team_game.where({player_team_season_id: player.current_player_team_season.player_team_season_id}).toArray()
   common.page = {
     PrimaryColor: current_team.team_color_primary_hex,
     SecondaryColor: current_team.secondary_color_display,
@@ -1189,22 +1184,12 @@ const getHtml = async (common) => {
   var html = await fetch(url);
   html = await html.text();
 
-  var renderedHtml = await common.nunjucks_env.renderString(html, render_content);
+  var renderedHtml = nunjucks_env.renderString(html, render_content);
 
   $("#body").html(renderedHtml);
-};
 
-const action = async (common) => {
-  const db = common.db;
-  common.display_player_face(
-    common.render_content.player.player_face,
-    {
-      jersey: common.render_content.player.current_player_team_season.team_season.team.jersey,
-      teamColors:
-        common.render_content.player.current_player_team_season.team_season.team.jersey.teamColors,
-    },
-    "PlayerFace"
-  );
+  draw_player_faces(common)
+
   await populate_player_stats(common);
   await common.geo_marker_action(common);
 
@@ -1213,8 +1198,8 @@ const action = async (common) => {
     $("#edit-player-modal").addClass("shown");
     $("#edit-player-modal").removeClass("hidden");
 
-    let player_to_edit = await db.player.get(common.render_content.player.player_id);
-    let pts_to_edit = await db.player_team_season.where({player_id:common.render_content.player.player_id, season:common.season}).first();
+    let player_to_edit = db.player.findOne({player_id:common.render_content.player.player_id});
+    let pts_to_edit = db.player_team_season.findOne({player_id:common.render_content.player.player_id, season:common.season});
     player_to_edit.player_team_season = pts_to_edit;
     // let edit_string = JSON.stringify(player_to_edit, null, 2);
 
@@ -1235,18 +1220,5 @@ const action = async (common) => {
       }
     });
   })
+
 };
-
-$(document).ready(async function () {
-  var startTime = performance.now();
-
-  const common = await common_functions("/World/:world_id/Player/:player_id/");
-  common.startTime = startTime;
-
-  await getHtml(common);
-  await action(common);
-  await common.add_listeners(common);
-
-  var endTime = performance.now();
-  console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms`);
-});

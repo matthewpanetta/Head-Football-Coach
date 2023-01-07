@@ -16,7 +16,7 @@ def nested_pixel_array(im, width, height):
     
     return pixels
 
-team_logo_dir_path = '/Users/tom/Code/Head-Football-Coach/HFC/frontend/static/img/team_logos'
+team_logo_dir_path = '/Users/tom/Code/Head-Football-Coach/HFC/static/img/team_logos'
 file_list = os.listdir(team_logo_dir_path)
 
 for file_name in file_list:
