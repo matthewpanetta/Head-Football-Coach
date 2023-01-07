@@ -811,8 +811,8 @@ export const sim_game = (game_dict, common) => {
   game_dict.team_games[0].points = scoring.final[0];
   game_dict.team_games[1].points = scoring.final[1];
 
-  game_dict.team_games[0].national_rank = game_dict.team_seasons[0].rankings.national_rank[0];
-  game_dict.team_games[1].national_rank = game_dict.team_seasons[1].rankings.national_rank[0];
+  // game_dict.team_games[0].national_rank = game_dict.team_seasons[0].rankings.national_rank[0];
+  // game_dict.team_games[1].national_rank = game_dict.team_seasons[1].rankings.national_rank[0];
 
   const is_conference_game =
     game_dict.team_seasons[0].conference_season_id ==

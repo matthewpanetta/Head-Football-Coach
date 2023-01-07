@@ -3279,8 +3279,12 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
   flex: 1 1 auto;
 }
 
-.basis-25 {
+.fb-25 {
   flex-basis: 25%;
+}
+
+.fb-50 {
+  flex-basis: 50%;
 }
 
 #nav-tabContent {

@@ -175,6 +175,8 @@ export const page_team = async (common) => {
     conference_by_conference_id[team.team_season.conference_season.conference_id];
 
   var team_games = db.team_game.find({ team_season_id: team_season.team_season_id });
+  team_games.forEach(tg => tg.team_season = team_season);
+  team_games.forEach(tg => tg.team_season.team = team);
   let team_games_by_game_id = index_group_sync(team_games, "index", "game_id");
 
   const game_ids = team_games.map((game) => parseInt(game.game_id));
@@ -221,6 +223,7 @@ export const page_team = async (common) => {
 
   let opponent_team_games_by_game_id = index_group_sync(opponent_team_games, "index", "game_id");
 
+  games = nest_children(games, team_games_by_game_id, "game_id", "team_game");
   games = nest_children(games, opponent_team_games_by_game_id, "game_id", "opponent_team_game");
   games = nest_children(games, weeks_by_week_id, "week_id", "week");
 
@@ -347,6 +350,9 @@ export const page_team = async (common) => {
     counter_games += 1;
   }
 
+  let this_week_game = games.find(g => g.week.is_current);
+  let last_week_game = games.find(g => g.week.week_id == this_week_game.week.week_id - 1);
+
   var signed_player_team_season_ids = []; //TODO
   var signed_player_team_seasons = db.player_team_season.find({
     player_team_season_id: { $in: signed_player_team_season_ids },
@@ -374,6 +380,8 @@ export const page_team = async (common) => {
     team_id: team_id,
     team: team,
     games: games,
+    this_week_game:this_week_game,
+    last_week_game:last_week_game,
     teams: teams,
     all_teams: await common.all_teams(common, ""),
     conference_standings: conference_standings,

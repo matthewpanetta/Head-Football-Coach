@@ -4,12 +4,12 @@
             color: #{{user_team_overview_data.user_team.team_color_primary_hex|TeamBackgroundFontColor}} !important;
             border-top: 0.25rem solid #{{user_team_overview_data.user_team.team_color_secondary_hex}} !important;
         '>
-    <a href='{{user_team_overview_data.user_team.full_name.team_logo}}'>
+    <a href='{{user_team_overview_data.user_team.team_href}}'>
         <img class='logo logo-18' src='{{user_team_overview_data.user_team.team_logo}}'/>
     </a>
     <span class="">
         <a href='{{user_team_overview_data.user_team.team_href}}'>
-            {{user_team_overview_data.user_team.full_name}}
+            {{user_team_overview_data.user_team.team_name}}
         </a>
         Overview
     </span>
