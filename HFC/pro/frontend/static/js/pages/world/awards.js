@@ -15,8 +15,8 @@ import {
   deep_copy,
   ordinal,
   isScrolledIntoView,
-} from "/static/js/utils.js";
-import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+} from "/common/js/utils.js";
+import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { position_order_map, position_group_map } from "/static/js/metadata.js";
 import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
 

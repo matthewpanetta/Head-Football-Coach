@@ -14,8 +14,8 @@ import {
   get_from_dict,
   deep_copy,
   ordinal,
-} from "/static/js/utils.js";
-import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+} from "/common/js/utils.js";
+import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 
 export const page_world_standings = async (common) => {
   const db = common.db;

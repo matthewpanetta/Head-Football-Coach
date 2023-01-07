@@ -1,4 +1,4 @@
-import { init_basic_table_sorting } from "/static/js/modules/football-table/football-table.js";
+import { init_basic_table_sorting } from "/common/js/football-table/football-table.js";
 import {
   index_group_sync,
   get,
@@ -14,8 +14,8 @@ import {
   set_except,
   get_from_dict,
   deep_copy,
-} from "/static/js/utils.js";
-import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+} from "/common/js/utils.js";
+import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { draw_player_faces, draw_coach_faces } from "/static/js/faces.js";
 import { conference_standings, team_header_links } from "/static/js/widgets.js";
 

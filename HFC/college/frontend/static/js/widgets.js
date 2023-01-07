@@ -13,7 +13,7 @@ import {
   set_except,
   get_from_dict,
   deep_copy,
-} from "/static/js/utils.js";
+} from "/common/js/utils.js";
 
 export const conference_standings = async (
   conference_season_id,

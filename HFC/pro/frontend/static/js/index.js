@@ -1,4 +1,4 @@
-import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import {
   index_group_sync,
   get,
@@ -21,8 +21,8 @@ import {
   shuffle,
   weighted_random_choice,
   uniform_random_choice,
-} from "/static/js/utils.js";
-import { init_basic_table_sorting } from "/static/js/modules/football-table/football-table.js";
+} from "/common/js/utils.js";
+import { init_basic_table_sorting } from "/common/js/football-table/football-table.js";
 import {
   headline,
   award,

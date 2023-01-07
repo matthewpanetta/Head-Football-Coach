@@ -1,6 +1,6 @@
-import { nunjucks_env } from '../../../../../../../../../static/js/modules/nunjucks_tags.js';
-import { round_decimal, index_group_sync, nest_children, average, weighted_random_choice, get, distinct, deep_copy, normal_trunc, shuffle, sum, normal_trunc_bounce, set_intersect } from '../../../../../../../../../static/js/utils.js';
-import { init_basic_table_sorting } from '../../../../../../../../../static/js/modules/football-table/football-table.js';
+import { nunjucks_env } from '../../../../../../../../../common/js/nunjucks_tags.js';
+import { round_decimal, index_group_sync, nest_children, average, weighted_random_choice, get, distinct, deep_copy, normal_trunc, shuffle, sum, normal_trunc_bounce, set_intersect } from '../../../../../../../../../common/js/utils.js';
+import { init_basic_table_sorting } from '../../../../../../../../../common/js/football-table/football-table.js';
 import { award, team_game, conference, league_season, team, team_season, team_season_stats, recruit_team_season, coach, coach_team_season, player, player_team_season, player_team_season_stats, player_team_game } from '../../../../../../../../../static/js/schema.js';
 import { driver_db, resolve_db, create_new_db } from '../../../../../../../../../static/js/database.js';
 import { page_world, page_world_rankings, page_world_standings, page_world_schedule, page_world_awards } from '../../../../../../../../../static/js/pages/world_pages.js';

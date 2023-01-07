@@ -14,9 +14,9 @@ import {
     get_from_dict,
     deep_copy,
     ordinal,
-  } from "/static/js/utils.js";
-  import {init_basic_table_sorting} from "/static/js/modules/football-table/football-table.js"
-  import {nunjucks_env} from '/static/js/modules/nunjucks_tags.js'
+  } from "/common/js/utils.js";
+  import {init_basic_table_sorting} from "/common/js/football-table/football-table.js"
+  import {nunjucks_env} from '/common/js/nunjucks_tags.js'
     
   export const page_world_rankings = async (common) => {
     const db = common.db;

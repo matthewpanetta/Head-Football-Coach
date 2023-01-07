@@ -1,5 +1,5 @@
 import { world_options } from "/static/js/metadata.js";
-import {nunjucks_env} from '/static/js/modules/nunjucks_tags.js'
+import {nunjucks_env} from '/common/js/nunjucks_tags.js'
 import { get_databases_references, create_new_db, prune_orphaned_databases, truncate_databases } from "/static/js/database.js";
 
 export const page_index_action = async (common) => {

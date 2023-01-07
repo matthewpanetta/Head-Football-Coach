@@ -17,7 +17,7 @@ import {
   get_from_dict,
   deep_copy,
   isScrolledIntoView,
-} from "/static/js/utils.js";
+} from "/common/js/utils.js";
 
 export const draw_player_faces = async (common, dom_id = "") => {
   // console.log("in draw_player_faces", dom_id, common);

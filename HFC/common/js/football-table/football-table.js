@@ -1,5 +1,5 @@
-import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
-import { get_from_dict, distinct, index_group_sync } from "/static/js/utils.js";
+import { nunjucks_env } from "/common/js/nunjucks_tags.js";
+import { get_from_dict, distinct, index_group_sync } from "../utils.js";
 
 export const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
   var data = [];

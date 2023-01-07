@@ -15,6 +15,7 @@ const mimeTypes = {
 	".css": "text/css",
 	".gif": "image/gif",
 	".html": "text/html",
+	".njk": "text/html",
 	".ico": "image/x-icon",
 	".jpeg": "image/jpeg",
 	".jpg": "image/jpeg",
@@ -48,7 +49,7 @@ const send_file = (res, filename) => {
 	if (fs.existsSync(filePath)) {
 		const ext = path.extname(filename);
 		if (mimeTypes[ext]) {
-			console.log('Mime type:', mimeTypes[ext])
+			// console.log('Mime type:', mimeTypes[ext])
 			res.writeHead(200, { "Content-Type": mimeTypes[ext] });
 		} else {
 			console.log(`Unknown mime type for extension ${ext}`);
@@ -65,14 +66,22 @@ const send_file = (res, filename) => {
 };
 
 const send_url = (req, res, level) => {
+	console.log('in send_url', 'req.url.substr(1)', req.url.substr(1))
 	res.set("Cache-Control", `public, max-age=${cache_time}`);
-	send_file(res, __dirname + `/${level}/frontend/` + req.url.substr(1));
+	if (req.url.substr(1).includes('common/')){
+		send_file(res, __dirname + `/` + req.url.substr(1));
+	}
+	else {
+		send_file(res, __dirname + `/${level}/frontend/` + req.url.substr(1));
+	}
 };
 const send_index = (req, res, level) => {
+	console.log('in send_index')
 	send_file(res, __dirname + `/${level}/frontend/static/html_templates/index/index/base.html`);
 };
 
 pro_app.get('*', (req, res) => {
+	console.log()
 	console.log('req.url', req.url, 'from', __dirname)
 	
 	let url_suffix_list = [3,4,5,6].map(len => req.url.substring(req.url.length - len))
@@ -85,6 +94,7 @@ pro_app.get('*', (req, res) => {
 });
 
 college_app.get('*', (req, res) => {
+	console.log()
 	console.log('req.url', req.url, 'from', __dirname)
 	
 	let url_suffix_list = [3,4,5,6].map(len => req.url.substring(req.url.length - len))

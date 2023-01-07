@@ -20,7 +20,7 @@ import {
   average,
   seconds_to_time,
   increment_parent,
-} from "/static/js/utils.js";
+} from "/common/js/utils.js";
 
 export const sim_game = (game_dict, common) => {
   common.stopwatch(common, `Stopwatch game ${game_dict.game.game_id}`);

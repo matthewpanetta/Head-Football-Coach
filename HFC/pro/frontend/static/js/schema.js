@@ -1,4 +1,4 @@
-import { deep_copy, round_decimal, normal_trunc, sum } from "/static/js/utils.js";
+import { deep_copy, round_decimal, normal_trunc, sum } from "/common/js/utils.js";
 
 export class headline {
   constructor(headline_id, week_id, headline_text, headline_type, headline_relevance) {

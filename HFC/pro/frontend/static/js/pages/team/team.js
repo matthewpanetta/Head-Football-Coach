@@ -14,8 +14,8 @@ import {
   get_from_dict,
   deep_copy,
   elem_in,
-} from "/static/js/utils.js";
-import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+} from "/common/js/utils.js";
+import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { draw_player_faces, player_face_listeners, draw_coach_faces } from "/static/js/faces.js";
 import { conference_standings, team_header_links } from "/static/js/widgets.js";
 

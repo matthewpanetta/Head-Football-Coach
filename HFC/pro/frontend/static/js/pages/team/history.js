@@ -1,5 +1,5 @@
-import { index_group_sync, nest_children } from "/static/js/utils.js";
-import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+import { index_group_sync, nest_children } from "/common/js/utils.js";
+import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { team_header_links } from "/static/js/widgets.js";
 
 export const page_team_history = async (common) => {

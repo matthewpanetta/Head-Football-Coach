@@ -1,8 +1,8 @@
-import { index_group_sync, nest_children } from "/static/js/utils.js";
-import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
+import { index_group_sync, nest_children } from "/common/js/utils.js";
+import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { draw_player_faces, draw_coach_faces } from "/static/js/faces.js";
 import { conference_standings, team_header_links } from "/static/js/widgets.js";
-import { initialize_football_table } from "/static/js/modules/football-table/football-table.js";
+import { initialize_football_table } from "/common/js/football-table/football-table.js";
 import {
   class_order_map,
   position_order_map,

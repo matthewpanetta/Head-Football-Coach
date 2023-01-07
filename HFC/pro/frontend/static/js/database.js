@@ -20,7 +20,7 @@ import {
   conference,
   conference_season,
 } from "/static/js/schema.js";
-import { index_group_sync } from "/static/js/utils.js";
+import { index_group_sync } from "/common/js/utils.js";
 export const clone_method = "shallow-assign";
 
 export const prune_orphaned_databases = async () => {

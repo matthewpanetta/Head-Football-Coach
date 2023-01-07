@@ -5,9 +5,9 @@ import {
   increment_parent,
   deep_copy,
   round_decimal, distinct
-} from "/static/js/utils.js";
-import { nunjucks_env } from "/static/js/modules/nunjucks_tags.js";
-import { init_basic_table_sorting, initialize_football_table } from "/static/js/modules/football-table/football-table.js";
+} from "/common/js/utils.js";
+import { nunjucks_env } from "/common/js/nunjucks_tags.js";
+import { init_basic_table_sorting, initialize_football_table } from "/common/js/football-table/football-table.js";
 import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
 import { class_order_map, position_order_map, position_group_map } from "/static/js/metadata.js";
 
