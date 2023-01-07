@@ -30560,6 +30560,14 @@
    "timezone": "E"
  },
  {
+   "city": "Landover",
+   "state": "Maryland",
+   "lat": 38.56,
+   "long": -76.54,
+   "population": 25000,
+   "timezone": "E"
+ },
+ {
    "city": "Laurel",
    "state": "Maryland",
    "lat": 39.095,
@@ -31037,6 +31045,14 @@
    "lat": 42.2126,
    "long": -72.6411,
    "population": 40341,
+   "timezone": "E"
+ },
+ {
+   "city": "Foxborough",
+   "state": "Massachusetts",
+   "lat": 42.0355,
+   "long": -72.1454,
+   "population": 18500,
    "timezone": "E"
  },
  {

@@ -41,15 +41,15 @@ export const prune_orphaned_databases = async () => {
 
   let hfc_idbAdapter = new LokiIndexedAdapter("hfc");
   //let hfc_idbAdapter = new IncrementalIndexedDBAdapter("hfc");
-  // let loki_catalog = await hfc_idbAdapter.getDatabaseListAsync();
+  let loki_catalog = await hfc_idbAdapter.getDatabaseListAsync();
 
-  // console.log({ loki_catalog: loki_catalog, databases: databases });
-  // for (let db_name of loki_catalog) {
-  //   console.log({ db_name: db_name });
-  //   if (!database_name_list.includes(db_name)) {
-  //     await hfc_idbAdapter.deleteDatabaseAsync(db_name);
-  //   }
-  // }
+  console.log({ loki_catalog: loki_catalog, databases: databases });
+  for (let db_name of loki_catalog) {
+    console.log({ db_name: db_name });
+    if (!database_name_list.includes(db_name)) {
+      await hfc_idbAdapter.deleteDatabaseAsync(db_name);
+    }
+  }
 };
 
 export const truncate_databases = async () => {

@@ -18,7 +18,6 @@
       <col>
       <col>
       <col>
-      <col>
 
       {% if column_controls.Personal.personal.shown %}
         <!-- PERSONAL -->
@@ -159,7 +158,7 @@
           <th colspan='2' style='width: 9.375rem;' class='center-text col-group'>Team</th>
           {% endif %}
 
-          <th colspan='6' style='width: 25.625rem;' class='center-text col-group'>Player</th>
+          <th colspan='5' style='width: 25.625rem;' class='center-text col-group'>Player</th>
 
           {% if column_controls.Personal.personal.shown %}
             <!-- PERSONAL -->
@@ -257,7 +256,6 @@
           <th style='width: 1.875rem; left: 0rem;' class='sticky-column'></th>
           <th style='width: 9.375rem; left: 1.875rem;' class='left-text sticky-column' value-key='full_name' sort-order='sort-asc'>Name</th>
           <th value-key='player_team_season.position_sort_order' sort-order='sort-asc'>Pos</th>
-          <th value-key='player_team_season.class_sort_order'>Class</th>
           <th value-key='body.height_inches'>Ht</th>
           <th class='col-group' value-key='body.weight'>Wt</th>
 
@@ -450,7 +448,6 @@
                 {{player.position}}
               </div>
             </td>
-            <td>{{player.player_team_season.class_name}}</td>
             <td>{{player.body.height}}</td>
             <td class='col-group'>{{player.body.weight}}</td>
 

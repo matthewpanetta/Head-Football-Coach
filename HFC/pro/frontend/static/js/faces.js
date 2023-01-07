@@ -788,9 +788,6 @@ export const player_face_listeners = async (common) => {
   $(window).off("scroll");
 
   $(window).on("scroll", async function () {
-    console.log("scrolling", {
-      listener_start_time: listener_start_time,
-    });
     await draw_player_faces(common);
   });
 };

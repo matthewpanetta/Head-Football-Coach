@@ -17,13 +17,13 @@ export const generate_game_headlines = (game_dict, common) => {
   game_dict.losing_team_season = game_dict.team_seasons[game_dict.losing_team_index];
 
   let base_headline_relevance = 0;
-  if (game_dict.losing_team_season.national_rank < 10) {
+  if (game_dict.losing_team_season.power_rank < 10) {
     base_headline_relevance = 10;
-  } else if (game_dict.losing_team_season.national_rank < 20) {
+  } else if (game_dict.losing_team_season.power_rank < 20) {
     base_headline_relevance = 8;
-  } else if (game_dict.losing_team_season.national_rank < 40) {
+  } else if (game_dict.losing_team_season.power_rank < 40) {
     base_headline_relevance = 6;
-  } else if (game_dict.losing_team_season.national_rank < 80) {
+  } else if (game_dict.losing_team_season.power_rank < 80) {
     base_headline_relevance = 4;
   }
 
@@ -117,12 +117,12 @@ export const generate_game_headlines = (game_dict, common) => {
   }
 
   if (
-    (game_dict.winning_team_season.national_rank - game_dict.losing_team_season.national_rank >
+    (game_dict.winning_team_season.power_rank - game_dict.losing_team_season.power_rank >
       25 &&
-      game_dict.losing_team_season.national_rank <= 10) ||
-    (game_dict.winning_team_season.national_rank - game_dict.losing_team_season.national_rank >
+      game_dict.losing_team_season.power_rank <= 10) ||
+    (game_dict.winning_team_season.power_rank - game_dict.losing_team_season.power_rank >
       50 &&
-      game_dict.losing_team_season.national_rank <= 20)
+      game_dict.losing_team_season.power_rank <= 20)
   ) {
     game_headlines = game_headlines.concat([
       {
@@ -153,7 +153,7 @@ export const generate_game_headlines = (game_dict, common) => {
       if (game_dict.winning_team_season.playoff.seed >= 9) {
         game_headlines = [
           {
-            text: "Cinderella {{winning_team_season.national_rank_display}} {{winning_team.team_name}} to play for a shot at the title next week",
+            text: "Cinderella {{winning_team_season.power_rank_display}} {{winning_team.team_name}} to play for a shot at the title next week",
             headline_relevance: 10,
           },
         ];
@@ -215,56 +215,56 @@ export const generate_ranking_headlines = async (
       ts.conference_season.conference.conference_abbreviation
     ] || { top_5: 0, top_10: 0, top_15: 0, conference_season: ts.conference_season };
 
-    if (ts.rankings.national_rank[0] < 15) {
+    if (ts.rankings.power_rank[0] < 15) {
       conference_sums[ts.conference_season.conference.conference_abbreviation].top_15 += 1;
     }
-    if (ts.rankings.national_rank[0] < 10) {
+    if (ts.rankings.power_rank[0] < 10) {
       conference_sums[ts.conference_season.conference.conference_abbreviation].top_10 += 1;
     }
-    if (ts.rankings.national_rank[0] < 5) {
+    if (ts.rankings.power_rank[0] < 5) {
       conference_sums[ts.conference_season.conference.conference_abbreviation].top_5 += 1;
     }
 
     let ts_headline_options = [];
-    if (ts.rankings.national_rank[0] == 1 && ts.rankings.national_rank[1] == 1) {
+    if (ts.rankings.power_rank[0] == 1 && ts.rankings.power_rank[1] == 1) {
       ts_headline_options.push({
         headline_relevance: 3,
         text: "{{team_season.team.school_name}} remains at #1",
       });
     }
 
-    if (ts.rankings.national_rank[0] == 1 && ts.rankings.national_rank[1] > 1) {
+    if (ts.rankings.power_rank[0] == 1 && ts.rankings.power_rank[1] > 1) {
       ts_headline_options.push({
         headline_relevance: 4,
         text: "{{team_season.team.school_name}} moves into #1 spot",
       });
     }
 
-    if (ts.rankings.national_rank[0] <= 25 && ts.rankings.national_rank[1] > 25) {
+    if (ts.rankings.power_rank[0] <= 25 && ts.rankings.power_rank[1] > 25) {
       ts_headline_options.push({
         headline_relevance: 4,
         text: "{{team_season.team.school_name}} cracks top 25",
       });
     }
 
-    if (ts.rankings.national_rank[1] <= 25 && ts.rankings.national_rank_delta < -6) {
+    if (ts.rankings.power_rank[1] <= 25 && ts.rankings.power_rank_delta < -6) {
       ts_headline_options.push({
         headline_relevance: 3,
-        text: "{{team_season.team.school_name}} stumbles from {{team_season.rankings.national_rank[1]}} to {{team_season.rankings.national_rank[0]}}",
+        text: "{{team_season.team.school_name}} stumbles from {{team_season.rankings.power_rank[1]}} to {{team_season.rankings.power_rank[0]}}",
       });
     }
 
-    if (ts.rankings.national_rank[1] <= 25 && ts.rankings.national_rank_delta < -12) {
+    if (ts.rankings.power_rank[1] <= 25 && ts.rankings.power_rank_delta < -12) {
       ts_headline_options.push({
         headline_relevance: 4,
-        text: "{{team_season.team.school_name}} stumbles from {{team_season.rankings.national_rank[1]}} to {{team_season.rankings.national_rank[0]}}",
+        text: "{{team_season.team.school_name}} stumbles from {{team_season.rankings.power_rank[1]}} to {{team_season.rankings.power_rank[0]}}",
       });
     }
 
-    if (ts.rankings.national_rank[1] <= 25 && ts.rankings.national_rank_delta < -18) {
+    if (ts.rankings.power_rank[1] <= 25 && ts.rankings.power_rank_delta < -18) {
       ts_headline_options.push({
         headline_relevance: 5,
-        text: "{{team_season.team.school_name}} stumbles from {{team_season.rankings.national_rank[1]}} to {{team_season.rankings.national_rank[0]}}",
+        text: "{{team_season.team.school_name}} stumbles from {{team_season.rankings.power_rank[1]}} to {{team_season.rankings.power_rank[0]}}",
       });
     }
 

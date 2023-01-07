@@ -25,30 +25,7 @@ const getHtml = async (common) => {
       display: "Full Modern World",
       description: "All conferences and teams as of 2022",
       database_suffix: "",
-    },
-    {
-      display: "Small Modern World",
-      description:
-        "Conferences and teams as of 2022, including SEC, Pac-12, AAC, MAC, and Independents",
-      database_suffix: "_small",
-    },
-    {
-      display: "Super Small Modern World",
-      description:
-        "Conferences and teams as of 2022, including SEC, B10",
-      database_suffix: "_super_small",
-    },
-    {
-      display: "Full World - 2024",
-      description:
-        "All conferences and teams as of 2024, including notable upcoming conference changes",
-      database_suffix: "_2024",
-    },
-    {
-      display: "Full World - 2010",
-      description: "All conferences and teams, as they existed in 2010",
-      database_suffix: "_2010",
-    },
+    }
   ];
 
   let progress_table_rows = [

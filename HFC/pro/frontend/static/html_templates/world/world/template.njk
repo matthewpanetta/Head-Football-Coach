@@ -27,7 +27,7 @@
             <div class="flex-3 m-2">
               <div class="card w3-margin-bottom">
                 <div class="w3-bar team-primary-background-bar">
-                  <div class="">Top 25</div>
+                  <div class="">Power Rankings</div>
                 </div>
                 <table class='table table-striped'>
                   <colgroup>
@@ -35,7 +35,7 @@
                     <col span="1">
                     <col span="1">
                   </colgroup>
-                  {% for team in teams.slice(0,25) %}
+                  {% for team in teams %}
                     <tr>
                       <td class="worldOverviewTop25TeamLineRank  w3-cell center-text" style='background-color:  #{{team.team_color_primary_hex}}; color: white;'>
                         <div class='Top25RankNumberw3-display-middle '>{{ team.team_season.rankings.national_rank[0] }}</div>
@@ -60,8 +60,8 @@
                               </span>
                               <a  class='font14' href="/World/{{world_id}}/Team/{{ team.team_id }}/">
 
-                                <span>{{ team.school_name }}
-                                  <span class='hide-small'>{{ team.team_name }}</span></span>
+                                <span>{{ team.team_location_name }}
+                                  <span class='hide-small'>{{ team.team_nickname }}</span></span>
                               </a>
                             </li>
                             {% if team.team_season.results.national_champion %}

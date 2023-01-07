@@ -66,7 +66,7 @@ const send_file = (res, filename) => {
 };
 
 const send_url = (req, res, level) => {
-	console.log('in send_url', 'req.url.substr(1)', req.url.substr(1))
+	console.log('in send_url', level, 'req.url.substr(1)', req.url.substr(1))
 	res.set("Cache-Control", `public, max-age=${cache_time}`);
 	if (req.url.substr(1).includes('common/')){
 		send_file(res, __dirname + `/` + req.url.substr(1));

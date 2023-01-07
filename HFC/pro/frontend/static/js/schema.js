@@ -354,6 +354,15 @@ export class player_team_game {
   }
 }
 
+export class day {
+  constructor() {}
+
+  get world_href() {
+    return `/World/${this.world_id}/`;
+  }
+
+}
+
 export class week {
   constructor() {}
 
@@ -392,7 +401,6 @@ export class team_game {
       conference_wins: 0,
       conference_losses: 0,
     };
-    this.national_rank = null;
     this.top_stats = [];
 
     this.game_stats = {
@@ -607,12 +615,12 @@ export class team_game {
     );
   }
 
-  get national_rank_display() {
-    if (this.national_rank == null) {
+  get power_rank_display() {
+    if (this.power_rank == null) {
       return null;
     }
-    if (this.national_rank <= 25) {
-      return `(${this.national_rank})`;
+    if (this.power_rank <= 25) {
+      return `(${this.power_rank})`;
     }
     return "";
   }
@@ -675,6 +683,7 @@ export class team {
       this[key] = init_data[key];
     }
   }
+
   build_team_logo(size_obj) {
     var folder_prefix = "/static/img/team_logos/";
     var size_suffix = "";
@@ -683,9 +692,9 @@ export class team {
     }
 
     if (this.team_id < 0) {
-      var path = folder_prefix + "ncaa.png";
+      var path = folder_prefix + "nfl.png";
     } else {
-      var path = folder_prefix + this.school_name + "_" + this.team_name + size_suffix + ".png";
+      var path = folder_prefix + this.team_name + "_" + this.team_nickname + size_suffix + ".png";
     }
 
     path = path
@@ -699,27 +708,27 @@ export class team {
   }
 
   get team_field_a_text() {
-    if (this.school_name.length > 12) {
+    if (this.team_name.length > 12) {
+      if (this.team_nickname.length > 10) {
+        return this.team_abbreviation;
+      }
+      return this.team_nickname;
+    }
+    return this.team_name;
+  }
+
+  get team_field_b_text() {
+    if (this.team_nickname.length > 12) {
       if (this.team_name.length > 10) {
         return this.team_abbreviation;
       }
       return this.team_name;
     }
-    return this.school_name;
+    return this.team_nickname;
   }
 
-  get team_field_b_text() {
-    if (this.team_name.length > 12) {
-      if (this.school_name.length > 10) {
-        return this.team_abbreviation;
-      }
-      return this.school_name;
-    }
-    return this.team_name;
-  }
-
-  get full_name() {
-    return `${this.school_name} ${this.team_name}`;
+  get team_name() {
+    return `${this.team_location_name} ${this.team_nickname}`;
   }
 
   get team_href() {
@@ -739,7 +748,7 @@ export class team {
       if (this.team_id < 0) {
         var path = folder_prefix + "ncaa.png";
       } else {
-        var path = folder_prefix + this.school_name + "_" + this.team_name + size_suffix;
+        var path = folder_prefix + this.team_location_name + "_" + this.team_nickname + size_suffix;
       }
 
       path = path
@@ -788,133 +797,133 @@ export class league_season {
       playoffs_complete: false,
       number_playoff_rounds: 4,
       number_playoff_teams: 12,
-      playoff_rounds: [
-        {
-          playoff_round_number: 1,
-          is_current_round: false,
-          is_championship: false,
-          week_name: "Bowl Week 1",
-          next_week_name: "Bowl Week 2",
-          round_name: "National Quarterfinals",
-          playoff_games: [
-            {
-              team_objs: [{ seed: 1, team_game_id: null, team_season_id: null }],
-              bye_game: true,
-              seeds_set: true,
-              game_id: null,
-            },
-            {
-              team_objs: [
-                { seed: 8, team_game_id: null, team_season_id: null },
-                { seed: 9, team_game_id: null, team_season_id: null },
-              ],
-              bye_game: false,
-              seeds_set: true,
-              game_id: null,
-            },
-            {
-              team_objs: [{ seed: 4, team_game_id: null, team_season_id: null }],
-              bye_game: true,
-              seeds_set: true,
-              game_id: null,
-            },
-            {
-              team_objs: [
-                { seed: 5, team_game_id: null, team_season_id: null },
-                { seed: 12, team_game_id: null, team_season_id: null },
-              ],
-              bye_game: false,
-              seeds_set: true,
-              game_id: null,
-            },
-            {
-              team_objs: [{ seed: 2, team_game_id: null, team_season_id: null }],
-              bye_game: true,
-              seeds_set: true,
-              game_id: null,
-            },
-            {
-              team_objs: [
-                { seed: 7, team_game_id: null, team_season_id: null },
-                { seed: 10, team_game_id: null, team_season_id: null },
-              ],
-              bye_game: false,
-              seeds_set: true,
-              game_id: null,
-            },
-            {
-              team_objs: [{ seed: 3, team_game_id: null, team_season_id: null }],
-              bye_game: true,
-              seeds_set: true,
-              game_id: null,
-            },
-            {
-              team_objs: [
-                { seed: 6, team_game_id: null, team_season_id: null },
-                { seed: 11, team_game_id: null, team_season_id: null },
-              ],
-              bye_game: false,
-              seeds_set: true,
-              game_id: null,
-            },
-          ],
-        },
-        {
-          playoff_round_number: 2,
-          is_current_round: false,
-          is_championship: false,
-          week_name: "Bowl Week 2",
-          next_week_name: "Bowl Week 3",
-          round_name: "National Quarterfinals",
-          playoff_games: [
-            {
-              team_objs: [],
-              bye_game: false,
-              seeds_set: false,
-              game_id: null,
-            },
-            {
-              team_objs: [],
-              bye_game: false,
-              seeds_set: false,
-              game_id: null,
-            },
-            {
-              team_objs: [],
-              bye_game: false,
-              seeds_set: false,
-              game_id: null,
-            },
-            {
-              team_objs: [],
-              bye_game: false,
-              seeds_set: false,
-              game_id: null,
-            },
-          ],
-        },
-        {
-          playoff_round_number: 3,
-          is_current_round: false,
-          is_championship: false,
-          week_name: "Bowl Week 3",
-          next_week_name: "Bowl Week 4",
-          round_name: "National Semifinals",
-          playoff_games: [
-            { team_objs: [], bye_game: false, seeds_set: false, game_id: null },
-            { team_objs: [], bye_game: false, seeds_set: false, game_id: null },
-          ],
-        },
-        {
-          playoff_round_number: 4,
-          is_current_round: false,
-          is_championship: true,
-          week_name: "Bowl Week 4",
-          next_week_name: null,
-          round_name: "National Championship",
-          playoff_games: [{ team_objs: [], bye_game: false, seeds_set: false, game_id: null }],
-        },
-      ],
+      // playoff_rounds: [
+      //   {
+      //     playoff_round_number: 1,
+      //     is_current_round: false,
+      //     is_championship: false,
+      //     week_name: "Bowl Week 1",
+      //     next_week_name: "Bowl Week 2",
+      //     round_name: "National Quarterfinals",
+      //     playoff_games: [
+      //       {
+      //         team_objs: [{ seed: 1, team_game_id: null, team_season_id: null }],
+      //         bye_game: true,
+      //         seeds_set: true,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [
+      //           { seed: 8, team_game_id: null, team_season_id: null },
+      //           { seed: 9, team_game_id: null, team_season_id: null },
+      //         ],
+      //         bye_game: false,
+      //         seeds_set: true,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [{ seed: 4, team_game_id: null, team_season_id: null }],
+      //         bye_game: true,
+      //         seeds_set: true,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [
+      //           { seed: 5, team_game_id: null, team_season_id: null },
+      //           { seed: 12, team_game_id: null, team_season_id: null },
+      //         ],
+      //         bye_game: false,
+      //         seeds_set: true,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [{ seed: 2, team_game_id: null, team_season_id: null }],
+      //         bye_game: true,
+      //         seeds_set: true,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [
+      //           { seed: 7, team_game_id: null, team_season_id: null },
+      //           { seed: 10, team_game_id: null, team_season_id: null },
+      //         ],
+      //         bye_game: false,
+      //         seeds_set: true,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [{ seed: 3, team_game_id: null, team_season_id: null }],
+      //         bye_game: true,
+      //         seeds_set: true,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [
+      //           { seed: 6, team_game_id: null, team_season_id: null },
+      //           { seed: 11, team_game_id: null, team_season_id: null },
+      //         ],
+      //         bye_game: false,
+      //         seeds_set: true,
+      //         game_id: null,
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     playoff_round_number: 2,
+      //     is_current_round: false,
+      //     is_championship: false,
+      //     week_name: "Bowl Week 2",
+      //     next_week_name: "Bowl Week 3",
+      //     round_name: "National Quarterfinals",
+      //     playoff_games: [
+      //       {
+      //         team_objs: [],
+      //         bye_game: false,
+      //         seeds_set: false,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [],
+      //         bye_game: false,
+      //         seeds_set: false,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [],
+      //         bye_game: false,
+      //         seeds_set: false,
+      //         game_id: null,
+      //       },
+      //       {
+      //         team_objs: [],
+      //         bye_game: false,
+      //         seeds_set: false,
+      //         game_id: null,
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     playoff_round_number: 3,
+      //     is_current_round: false,
+      //     is_championship: false,
+      //     week_name: "Bowl Week 3",
+      //     next_week_name: "Bowl Week 4",
+      //     round_name: "National Semifinals",
+      //     playoff_games: [
+      //       { team_objs: [], bye_game: false, seeds_set: false, game_id: null },
+      //       { team_objs: [], bye_game: false, seeds_set: false, game_id: null },
+      //     ],
+      //   },
+      //   {
+      //     playoff_round_number: 4,
+      //     is_current_round: false,
+      //     is_championship: true,
+      //     week_name: "Bowl Week 4",
+      //     next_week_name: null,
+      //     round_name: "National Championship",
+      //     playoff_games: [{ team_objs: [], bye_game: false, seeds_set: false, game_id: null }],
+      //   },
+      // ],
     };
 
     this.preseason_tasks = {
@@ -1646,10 +1655,10 @@ export class team_season {
       };
       this.rankings = {
         division_rank: [],
-        national_rank: [],
+        power_rank: [],
         srs_ratings: [],
-        national_rank_delta: 0,
-        national_rank_delta_abs: 0,
+        power_rank_delta: 0,
+        power_rank_delta_abs: 0,
         stat_rankings: { offense: [], defense: [], overall: [] },
       };
       this.games = [];
@@ -1659,24 +1668,10 @@ export class team_season {
         regional_broadcast: 0,
       };
       this.results = {
+        made_playoff: false,
+        division_champion: false,
         conference_champion: false,
-        national_champion: false,
-        final_four: false,
-        bowl: null,
-      };
-      this.recruiting = {
-        scholarships_to_offer: 25,
-        recruiting_class_rank: 1,
-        points_per_week: 100,
-        class_points: 0,
-        signed_player_stars: {
-          stars_1: 0,
-          stars_2: 0,
-          stars_3: 0,
-          stars_4: 0,
-          stars_5: 0,
-        },
-        signed_player_team_season_ids: [],
+        league_champion: false,
       };
       this.headlines = [];
       this.top_stats = [];
@@ -1692,40 +1687,40 @@ export class team_season {
   }
 
   get best_rank() {
-    return Math.min(...this.rankings.national_rank);
+    return Math.min(...this.rankings.power_rank);
   }
 
   get worst_rank() {
-    return Math.max(...this.rankings.national_rank);
+    return Math.max(...this.rankings.power_rank);
   }
 
   get first_rank() {
-    return this.rankings.national_rank[this.rankings.national_rank.length - 1];
+    return this.rankings.power_rank[this.rankings.power_rank.length - 1];
   }
 
   get weeks_ranked_1() {
-    return this.rankings.national_rank.filter((rank) => rank == 1).length;
+    return this.rankings.power_rank.filter((rank) => rank == 1).length;
   }
 
   get weeks_ranked_top_5() {
-    return this.rankings.national_rank.filter((rank) => rank <= 5).length;
+    return this.rankings.power_rank.filter((rank) => rank <= 5).length;
   }
 
   get weeks_ranked_top_10() {
-    return this.rankings.national_rank.filter((rank) => rank <= 10).length;
+    return this.rankings.power_rank.filter((rank) => rank <= 10).length;
   }
 
   get weeks_ranked_top_25() {
-    return this.rankings.national_rank.filter((rank) => rank <= 25).length;
+    return this.rankings.power_rank.filter((rank) => rank <= 25).length;
   }
 
-  get national_rank() {
-    return this.rankings.national_rank[0];
+  get power_rank() {
+    return this.rankings.power_rank[0];
   }
 
-  get national_rank_display() {
-    if (this.rankings.national_rank[0] <= 25) {
-      return `(${this.rankings.national_rank[0]})`;
+  get power_rank_display() {
+    if (this.rankings.power_rank[0] <= 25) {
+      return `(${this.rankings.power_rank[0]})`;
     }
     return "";
   }
@@ -1776,7 +1771,6 @@ export class coach {
     this.ethnicity = init_data.ethnicity;
     this.body = init_data.body;
     this.team_id = init_data.team_id;
-    this.alma_mater_team_id = init_data.alma_mater_team_id;
 
     let pass_tendency = round_decimal(normal_trunc(50, 50, 1, 100), 0);
     this.tendencies = {
@@ -1833,7 +1827,6 @@ export class player {
     this.body = init_data.body;
     this.team_id = init_data.team_id;
 
-    this.redshirt = { previous: false, current: false };
     this.jersey_number = null;
 
     this.personality = {
@@ -2285,7 +2278,7 @@ export class player_team_season {
       (10 * this.season_stats.average_weighted_game_score +
         1 * this.ratings.overall.overall +
         0.5 * this.team_season.team.team_ratings.brand) *
-      (1 / this.team_season.national_rank) ** 0.03 *
+      (1 / this.team_season.power_rank) ** 0.03 *
       // (1 / (this.team_season_average_weighted_game_score_rank || 1)) ** 0.05 *
       // (1 / (this.team_season_overall_rank || 1)) ** 0.03 *
       (1 + position_overall_map[this.position]) *

@@ -70,7 +70,7 @@ export const init_basic_table_sorting = (common, table_id, initial_sort_index) =
 };
 
 const get_initial_column_controls = (subject) => {
-  if (subject == "player stats" || subject == "world player stats") {
+  if (subject == "college player stats" || subject == "college world player stats" || subject == "pro player stats" || subject == "pro world player stats") {
     return {
       Stats: {
         games: { shown: false, display: "Games" },
@@ -181,7 +181,7 @@ const get_initial_sorted_columns = (subject) => {
 const get_initial_search_filters = (subject) => {
   let search_filters = { search_text: "" };
 
-  if (subject == "player stats" || subject == "world player stats") {
+  if (subject == "college player stats" || subject == "college world player stats" || subject == "pro player stats" || subject == "pro world player stats") {
     search_filters.search_filter_fields = [
       "player_team_season.team_season.team.full_name",
       // "hometown_and_state",
@@ -198,7 +198,7 @@ const get_initial_search_filters = (subject) => {
 
 const get_initial_filter_options = (subject, table_config, common) => {
   console.log({ table_config: table_config });
-  if (subject == "player stats" || subject == "world player stats") {
+  if (subject == "college player stats" || subject == "college world player stats" || subject == "pro player stats" || subject == "pro world player stats") {
     var table_filters = [
       {
         count: 0,
@@ -238,7 +238,11 @@ const get_initial_filter_options = (subject, table_config, common) => {
           },
         ],
       },
-      {
+      ,
+    ];
+
+    if (subject == "college player stats" || subject == "college world player stats"){
+      table_filters.unshift({
         count: 0,
         display: "Class",
         options: [
@@ -247,8 +251,8 @@ const get_initial_filter_options = (subject, table_config, common) => {
           { display: "JR", field: "player_team_season.class.class_name" },
           { display: "SR", field: "player_team_season.class.class_name" },
         ],
-      },
-    ];
+      });
+    }
 
     if (subject == "world player stats") {
       let teams = distinct(

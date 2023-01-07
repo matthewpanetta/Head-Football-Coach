@@ -76,7 +76,9 @@
                 {% for team_game in game.team_games %}
                     <tr class=" w3-margin" style='border-bottom: 0.0625rem solid #ddd;'>
                         <td class='center-text hide-small' colspan='2' style='background-color: #{{team_game.team_season.team.team_color_primary_hex}}; width: 1%;'>
+                            <a href='{{team_game.team_season.team.team_href}}'>
                             <img class="logo logo-30"  loading="lazy" src="{{team_game.team_season.team.team_logo}}" alt="">
+                            </a>
                         </td>
                         <td class=' padding-left-8 left-text' colspan='4'>
                             <div class='margin0'>
@@ -87,7 +89,7 @@
                                 </span>
                                 {%endif%}
                                 <a href="{{team_game.team_season.team.team_href}}" class='font16'>
-                                    {{team_game.team_season.team.school_name}}
+                                    {{team_game.team_season.team.team_name}}
                                 </a>
                             </div>
                             <div class="">

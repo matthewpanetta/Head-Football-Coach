@@ -76,9 +76,9 @@ import {
     });
   
     teams.sort(function (a, b) {
-      if (a.team_season.rankings.national_rank[0] < b.team_season.rankings.national_rank[0])
+      if (a.team_season.rankings.power_rank[0] < b.team_season.rankings.power_rank[0])
         return -1;
-      if (a.team_season.rankings.national_rank[0] > b.team_season.rankings.national_rank[0]) return 1;
+      if (a.team_season.rankings.power_rank[0] > b.team_season.rankings.power_rank[0]) return 1;
       return 0;
     });
   
@@ -94,7 +94,7 @@ import {
   
     common.stopwatch(common, "Time after fetching games");
   
-    var min_national_rank = 0;
+    var min_power_rank = 0;
     $.each(this_week_games, function (ind, game) {
       game.game_headline_display = "";
       if (game.bowl != null) {
@@ -131,14 +131,14 @@ import {
   
       game.team_games = [game.away_team_game, game.home_team_game];
   
-      min_national_rank = Math.min(
-        game.home_team_game.team_season.national_rank,
-        game.away_team_game.team_season.national_rank
+      min_power_rank = Math.min(
+        game.home_team_game.team_season.power_rank,
+        game.away_team_game.team_season.power_rank
       );
-      game.summed_national_rank =
-        game.home_team_game.team_season.national_rank +
-        game.away_team_game.team_season.national_rank +
-        min_national_rank;
+      game.summed_power_rank =
+        game.home_team_game.team_season.power_rank +
+        game.away_team_game.team_season.power_rank +
+        min_power_rank;
     });
   
     this_week_games = this_week_games.sort(function (g_a, g_b) {
@@ -146,8 +146,8 @@ import {
         return -1;
       if (g_b.team_games[0].team_season.is_user_team || g_b.team_games[1].team_season.is_user_team)
         return 1;
-      if (g_a.summed_national_rank < g_b.summed_national_rank) return -1;
-      if (g_a.summed_national_rank > g_b.summed_national_rank) return 1;
+      if (g_a.summed_power_rank < g_b.summed_power_rank) return -1;
+      if (g_a.summed_power_rank > g_b.summed_power_rank) return 1;
       return 0;
     });
   
@@ -349,7 +349,7 @@ import {
         team_seasons_for_conference = team_seasons_for_conference.sort(function (ts_a, ts_b) {
           return (
             ts_a.rankings.division_rank[0] - ts_b.rankings.division_rank[0] ||
-            ts_a.national_rank - ts_b.national_rank
+            ts_a.power_rank - ts_b.power_rank
           );
         });
   

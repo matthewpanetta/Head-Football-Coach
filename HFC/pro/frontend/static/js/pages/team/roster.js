@@ -4,10 +4,8 @@ import { draw_player_faces, draw_coach_faces } from "/static/js/faces.js";
 import { conference_standings, team_header_links } from "/static/js/widgets.js";
 import { initialize_football_table } from "/common/js/football-table/football-table.js";
 import {
-  class_order_map,
   position_order_map,
   position_group_map,
-  classes,
   position_groups,
 } from "/static/js/metadata.js";
 
@@ -87,7 +85,6 @@ export const page_team_roster = async (common) => {
     pts.season_stats = player_team_season_stats_by_player_team_season_id[pts.player_team_season_id];
     pts.player_team_games = player_team_games_by_player_team_season_id[pts.player_team_season_id];
 
-    pts.class_sort_order = class_order_map[pts.class_name];
     pts.position_sort_order = position_order_map[pts.position];
     pts.position_group = position_group_map[pts.position];
 
@@ -99,25 +96,6 @@ export const page_team_roster = async (common) => {
   players = nest_children(players, player_team_seasons_by_player_id, 'player_id', 'player_team_season')
 
   let roster_summary = {};
-  for (let player_class of classes) {
-    roster_summary[player_class] = {};
-    for (let position_group of position_groups) {
-      roster_summary[player_class][position_group] = {
-        players: player_team_seasons.filter(
-          (pts) =>
-            (pts.class.class_name == player_class || player_class == "All") &&
-            (pts.position_group == position_group || position_group == "All")
-        ).length,
-        starters: 0,
-      };
-      console.log({
-        player_team_seasons: player_team_seasons,
-        player_class: player_class,
-        position_group: position_group,
-        summary: roster_summary[player_class][position_group],
-      });
-    }
-  }
 
   const NavBarLinks = await common.nav_bar_links({
     path: "Roster",
@@ -176,7 +154,7 @@ const GetPlayerStats = async (common) => {
 
   var table_config = {
     original_data: players,
-    subject: "player stats",
+    subject: "pro player stats",
     templates: {
       table_template_url:
         "/static/html_templates/common_templates/football-table/player_table_template.njk",
