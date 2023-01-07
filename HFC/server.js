@@ -2,11 +2,13 @@ const fs = require("fs");
 const path = require("path");
 
 const express = require("express");
-const app = express();
+const college_app = express();
+const pro_app = express();
 
 const cache_time = 1;
 
-const port = 5515;
+const college_port = 5515;
+const pro_port = 1151;
 
 const mimeTypes = {
 	".bmp": "image/bmp",
@@ -62,28 +64,44 @@ const send_file = (res, filename) => {
 	}
 };
 
-const send_url = (req, res) => {
+const send_url = (req, res, level) => {
 	res.set("Cache-Control", `public, max-age=${cache_time}`);
-	send_file(res, __dirname + "/frontend/" + req.url.substr(1));
+	send_file(res, __dirname + `/${level}/frontend/` + req.url.substr(1));
 };
-const send_index = (req, res) => {
-	send_file(res, __dirname + "/frontend/static/html_templates/index/index/base.html");
+const send_index = (req, res, level) => {
+	send_file(res, __dirname + `/${level}/frontend/static/html_templates/index/index/base.html`);
 };
 
-app.get('*', (req, res) => {
+pro_app.get('*', (req, res) => {
 	console.log('req.url', req.url, 'from', __dirname)
 	
 	let url_suffix_list = [3,4,5,6].map(len => req.url.substring(req.url.length - len))
 
 	if (url_suffix_list.some(suffix_option => static_suffix.has(suffix_option))) {
-		send_url(req, res);
+		send_url(req, res, 'pro');
 	} else {
-		send_index(req, res);
+		send_index(req, res, 'pro');
 	}
 });
 
-app.listen(process.env.PORT || port, () =>
-  console.log("Server running on port", process.env.PORT || port, " from ", __dirname)
+college_app.get('*', (req, res) => {
+	console.log('req.url', req.url, 'from', __dirname)
+	
+	let url_suffix_list = [3,4,5,6].map(len => req.url.substring(req.url.length - len))
+
+	if (url_suffix_list.some(suffix_option => static_suffix.has(suffix_option))) {
+		send_url(req, res, 'college');
+	} else {
+		send_index(req, res, 'college');
+	}
+});
+
+pro_app.listen(pro_port, () =>
+  console.log("Pro server running on port", pro_port, " from ", __dirname)
+);
+
+college_app.listen(college_port, () =>
+  console.log("College server running on port", college_port, " from ", __dirname)
 );
 
 fs.readdir(__dirname, (err, files) => {

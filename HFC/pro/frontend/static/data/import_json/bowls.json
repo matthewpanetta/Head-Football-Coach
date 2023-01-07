@@ -1,0 +1,198 @@
+[
+  {
+    "bowl_name": "Rose Bowl",
+    "bowl_prestige": 10,
+    "bowl_week_name": "Bowl Week 3"
+  },
+  {
+    "bowl_name": "Sugar Bowl",
+    "bowl_prestige": 9,
+    "bowl_week_name": "Bowl Week 3"
+  },
+  {
+    "bowl_name": "Fiesta Bowl",
+    "bowl_prestige": 9,
+    "bowl_week_name": "Bowl Week 3"
+  },
+  {
+    "bowl_name": "Orange Bowl",
+    "bowl_prestige": 9,
+    "bowl_week_name": "Bowl Week 3"
+  },
+  {
+    "bowl_name": "Cotton Bowl",
+    "bowl_prestige": 9,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Peach Bowl",
+    "bowl_prestige": 8,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Alamo Bowl",
+    "bowl_prestige": 6,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Citrus Bowl",
+    "bowl_prestige": 6,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Gasparilla Bowl",
+    "bowl_prestige": 5,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  { "bowl_name": "Sun Bowl", "bowl_prestige": 5, "bowl_week_name": "Bowl Week 2" },
+  {
+    "bowl_name": "Texas Bowl",
+    "bowl_prestige": 5,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Las Vegas Bowl",
+    "bowl_prestige": 5,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Liberty Bowl",
+    "bowl_prestige": 6,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Independence Bowl",
+    "bowl_prestige": 4,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Hawaii Bowl",
+    "bowl_prestige": 4,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Gator Bowl",
+    "bowl_prestige": 4,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "First Responder Bowl",
+    "bowl_prestige": 3,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Myrtle Beach Bowl",
+    "bowl_prestige": 2,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Birmingham Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Arizona Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Frisco Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Bahamas Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Outback Bowl",
+    "bowl_prestige": 2,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Cure Bowl",
+    "bowl_prestige": 2,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Pinstripe Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Fenway Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "LA Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "LendingTree Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "New Mexico Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Famous Idaho Potato Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Boca Raton Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "New Orleans Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Armed Forces Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Quick Lane Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Camellia Bowl",
+    "bowl_prestige": 1,
+    "bowl_week_name": "Bowl Week 1"
+  },
+  {
+    "bowl_name": "Cactus Bowl",
+    "bowl_prestige": 5,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Military Bowl",
+    "bowl_prestige": 5,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Holiday Bowl",
+    "bowl_prestige": 6,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Duke's Mayo Bowl",
+    "bowl_prestige": 4,
+    "bowl_week_name": "Bowl Week 2"
+  },
+  {
+    "bowl_name": "Music City Bowl",
+    "bowl_prestige": 3,
+    "bowl_week_name": "Bowl Week 2"
+  }
+]

@@ -1,0 +1,114 @@
+{% for team_season in top_25_team_seasons %}
+  <tr teamid="{{team_season.team_id}}" class="center-text football-table-column-headers unselectable">
+    <td
+      class="center-text Top25RankNumber"
+      style="background-color: #{{team_season.team.team_color_primary_hex}}; color: white; width: 0.1875rem;"
+      value='{{team_season.rankings.national_rank[0]}}'  
+    >
+      <div>{{team_season.rankings.national_rank[0]}}</div>
+    </td>
+    <td class='center-text' style="background-color: #{{team_season.team.team_color_primary_hex}}; color: white; width: 4.375rem" value='{{team_season.team.school_name}}'  >
+      <a href="{{team_season.team.team_href}}"
+        ><img
+          class="logo logo-50"
+          src="{{team_season.team.team_logo}}"
+/></a>
+    </td>
+    <td class="column-med" value='{{team_season.team.school_name}}'  >
+      <div class="no-list-style">
+        <div>
+          {% if team_season.is_user_team%}
+          <span style='color: #{{team_season.team.team_color_primary_hex}};'>
+            <i class="fa fa-user"></i>
+          </span>
+          {%endif%}
+          <a class="font14" href="{{team_season.team.team_href}}">
+            <span>{{team_season.team.school_name}}
+            <span class="hide-small">{{team_season.team.team_name}}</span></span>
+          </a>
+        </div>
+          {% if  team_season.results.conference_champion %}
+          <div class="font10 bold opacity-1">
+            <a class='' href='{{team_season.conference_season.conference.conference_href}}'>{{team_season.conference_season.conference.conference_abbreviation}} </a> Champions
+          </div>
+          {% else %}
+          <div class="font10">
+            {{team_season.rankings.division_rank[0]|ordinal}} in 
+            <a href='{{team_season.conference_season.conference.conference_href}}'>{{team_season.conference_season.conference.conference_abbreviation}}</a> 
+            {% if team_season.division_name != 'All'%}
+            {{team_season.division_name}}
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </ul>
+    </td>
+    <td class="center-text hide-small"  value='{{team_season.rankings.national_rank_delta}}'>
+      {% if team_season.rankings.national_rank_delta > 0 %}
+        <div class="font14 W">
+          <span>
+            <i class="fas fa-angle-up"></i>
+          </span>
+          {{team_season.rankings.national_rank_delta_abs}}
+        </div>
+        <div class='font10'>Prev: <span class='bold'>{{team_season.rankings.national_rank[1]}}</span></div>
+      {% elseif team_season.rankings.national_rank_delta < 0%}
+        <div class="font14 L">
+          <span>
+            <i class="fas fa-angle-down"></i>
+          </span>
+          {{team_season.rankings.national_rank_delta_abs}}
+        </div>
+        <div class='font10'>Prev: <span class='bold'>{{team_season.rankings.national_rank[1]}}</span></div>
+      {% else %}
+      -
+      {% endif %}
+    </td>
+    <td class="center-text hide-small" value='{{team_season.net_wins}}'>
+      <div class="font14">{{team_season.record_display}}</div>
+    </td>
+    <td class="column-med no-sort no-wrap">
+      {% if team_season.last_week_team_game == null %}
+      BYE
+      {% else %}
+        <div class="inline-block" style="width: 15%">
+          <span class="W-L-badge {{team_season.last_week_team_game.game_outcome_letter}}">{{team_season.last_week_team_game.game_outcome_letter}}</span>
+        </div>
+        <div class="inline-block" style="width: 75%">
+          <a href="{{team_season.last_week_team_game.game.game_href}}">{{team_season.last_week_team_game.points}} - {{team_season.last_week_team_game.opponent_team_game.points}}</a>
+          <span class="hide-small">
+            {{team_season.last_week_team_game.game_location_char}}
+          </span
+        >
+          <span class='font10'>{{team_season.last_week_team_game.opponent_team_game.national_rank_display}}</span>
+          {% if team_season.last_week_team_game.opponent_team.is_user_team%}
+          <span style='color: #{{team_season.last_week_team_game.opponent_team.team_color_primary_hex}};'>
+            <i class="fa fa-user"></i>
+          </span>
+          {%endif%}
+          <a class="hide-small" href="{{team_season.last_week_team_game.opponent_team.team_href}}">
+            {{team_season.last_week_team_game.opponent_team.school_name}}</a>
+        </div>
+      {% endif %}
+    </td>
+    <td class="hide-small column-med no-wrap">
+      {% if team_season.this_week_team_game == null%}
+      BYE
+      {% else %}
+        <span class="hide-small">
+          {{team_season.this_week_team_game.game_location_char}}
+        </span>
+        {% if team_season.this_week_team_game.opponent_team.is_user_team%}
+          <span style='color: #{{team_season.this_week_team_game.opponent_team.team_color_primary_hex}};'>
+            <i class="fa fa-user"></i>
+          </span>
+          {%endif%}
+        <a class="hide-small" href="{{team_season.this_week_team_game.opponent_team.team_href}}">{{team_season.this_week_team_game.opponent_team_season.national_rank_display}}
+          {{team_season.this_week_team_game.opponent_team.school_name}}</a>
+      {% endif %}
+    </td>
+    {# <td class="center-text hide-small" value='{{team_season.rankings.sos.unplayed_opponents_sos_ranking[0]}}'>
+      <div class="font14">{{team_season.rankings.sos.unplayed_opponents_sos_ranking[0]}}</div>
+    </td> #}
+  </tr>
+{% endfor %}

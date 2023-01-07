@@ -1,0 +1,76 @@
+  <head>
+    <title>{{page.page_title}}</title>
+    <link rel="icon"
+       href="{{page.page_icon}}"/>
+    <meta charset="utf-8">
+  </head>
+
+
+<div WorldID="{{page.WorldID}}" PrimaryColor="{{page.PrimaryColor}}" SecondaryColor="{{page.SecondaryColor}}" style='display:none;' id='DataPassthru'></div>
+<div class="sidebar-fade"></div>
+<div class="w3-sidebar w3-bar-block hide-small" id='sidebar' style="border-left: 0.25rem solid #{{page.PrimaryColor}};">
+  {% for Group in page.NavBarLinks.LinkGroups%}
+  <h3 class='SideNavGroup w3-margin-left'>
+
+    <div class="">
+      {{Group.GroupDisplay|safe}}
+    </div>
+  </h3>
+  <ul class='no-list-style w3-margin-bottom'>
+    {% for Link in Group.GroupLinks%}
+    {% if Link.id == 'nav-search'%}
+    <li>
+      <input worldid="{{Link.world_id}}" type="text" class='w3-input' name="" value="" id='nav-search-input' placeholder="Search" style='padding:0.5rem; width: 90%;'>
+      <button type="submit" id='{{Link.id}}' class='btn team-color-button' style='width: 1.875rem; margin-left: -2.5rem; vertical-align: baseline; padding: 0.5rem; margin-right: 0rem;'><i class="fa fa-search"></i></button>
+    </li>
+    {% else %}
+    <li><a {% if Link.Href%}href="{{Link.Href}}"{%endif%} id='{{Link.id}}' class="w3-bar-item btn team-color-button SideNavItem w3-padding-small {{Link.ClassName}}">{{Link.LinkDisplay}}</a></li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+  {% endfor %}
+</div>
+
+<div class="w3-modal" tabindex="-1" role="dialog" id='SimDayModal' style='padding-top: 0.625rem; z-index: 1042;'>
+  <div class="s8">
+    <div class="card w3-modal-content">
+      <div class="w3-bar team-primary-background-bar-generic" style='background-color: #{{page.PrimaryColor}}; color:white; border-top: 0.25rem solid #{{page.SecondaryColor}};'>
+        <span class='hide-small'>Simulating...</span>
+      </div>
+      <div class="modal-body w3-row-padding flex-start">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="w3-modal" tabindex="-1" role="dialog" id='WeekUpdateModal'>
+  <div class="s8">
+    <div class="w3-modal-content w3-container">
+      <div class="modal-body w3-row-padding">
+        <table class='table table-striped table-hover' style='width: 100%;'>
+
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-close" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="player-info-modal"></div>
+<div id="geography-modal"></div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="toast-template" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    {# <div class="toast-header">
+      <img src="..." class="rounded me-2" alt="...">
+      <strong class="me-auto">Bootstrap</strong>
+      <small>11 mins ago</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div> #}
+    <div class="toast-body">
+      
+    </div>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+<style>
+    .player-primary-background-bar {
+    background-color: #{{page.PrimaryColor}} !important;
+    color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
+    border-top: 0.25rem solid #{{page.SecondaryColor}} !important;
+  }
+</style>
+
+<div class="card modal-content">
+  <div class="w3-bar team-primary-background-bar-generic player-primary-background-bar">
+    <span class='hide-small'>{{player.full_name}}</span>
+    <a class='no-hover margin-left-12' href="{{player.player_href}}">
+      <i class="fa fa-external-link-alt"></i>
+    </a>
+  </div>
+  <div class='player-modal-header'>
+    <div class="team-modal-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
+    <a href='{{player.current_player_team_season.team_season.team.team_href}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 11.25rem;' {% endif %}{% endif %}>
+      {% if player.current_player_team_season.team_season.team.team_logo %}
+        <img class='player-modal-team-logo logo logo-120' src='{{player.current_player_team_season.team_season.team.team_logo}}' alt="My image">
+      {%elif SignedTeam.LogoURL%}
+        <img class='player-modal-team-logo logo logo-120' src='{{SignedTeam.LogoURL}}' alt="My image">
+      {% endif %}
+    </a>
+    <div class="PlayerFace-Headshot PlayerFace-120 inline-block no-border" style='z-index: 3; position: relative; border-radius: unset;' id='player-modal-player-face' player_id ='{{player.player_id}}'>
+      {# {{player.PlayerFaceSVG|safe}} #}
+    </div>
+    <div class='inline-block align-bottom' style='padding-bottom: 0.9375rem;'>
+      <div class='playerHeaderInfo'>
+        <span class='playerFirstName'>
+          {{player.name.first}}
+        </span>
+        <span class='playerLastName'>
+          {{player.name.last}}
+        </span>
+        <div class='playerOverviewInfo'>
+          {% if player.current_player_team_season.is_recruit %}
+            {%if SignedTeam.LogoURL%}
+              <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit, Signed</a>
+            {% else %}
+              <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
+            {% endif %}
+          {% else %}
+            <a href="{{player.current_player_team_season.team_season.team.team_href}}">{{player.current_player_team_season.team_season.team.school_name}}
+              {{player.current_player_team_season.team_season.team.team_name}}</a>
+          {% endif %}
+            | #{{player.jersey_number}} | {{player.position}}
+        </div>
+        <div  class='playerOverviewInfo player-captain'>
+          {% if TeamCaptain%}
+            <i class="fas fa-crown w3-text-green"></i>
+            <span class='italic'>Team Captain</span>
+          {% endif %}
+        </div>
+      </div>
+      <table class='playerHeaderBio mx-3' style='border-color:#{{page.PrimaryColor}}; margin-bottom: 0;'>
+          <tr>
+            <td>
+            <div>
+              {{player.hometown_and_state}}
+            </div>
+            <div class='font10'>HOMETOWN</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            <div>{{player.body.height}}, {{player.body.weight}} lbs</div>
+            <div class='font10'>HT/WT</div>
+            </td>
+          </tr>          
+          <tr>
+            <td>
+            <div>
+              {{player.current_player_team_season.class.class_name}}
+              {% if player.redshirt.current %}
+                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
+              {% endif %}
+            </div>
+            <div class='font10'>CLASS</div>
+            </td>
+          </tr>
+        </table>
+    </div>
+  </div>
+</div>

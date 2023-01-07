@@ -1,0 +1,45 @@
+<table id='' class='table table-striped table-hover width100 '>
+  {% for division in conference_standings.divisions%}
+  <thead>
+    <tr class='team-secondary-table-row'>
+      {% if division.division_name %}
+        <th colspan='2'>{{division.division_name}}</th>
+      {% else %}
+        <th class='padding-left-8'>#</th>
+        {%endif%}
+        <th colspan="1">Team</th>
+        <th class='center-text'>Conf</th>
+        <th class='hide-small center-text'>GB</th>
+        <th class='center-text'>Record</th>
+      </tr>
+    </thead>
+    <tbody id='conference_standings_tbody'>
+      {% for team_season in division.division_standings %}
+        <tr class='center-text-row {{team_season.bold}}'>
+          <td class=' white-text padding-left-8' style='background-color: #{{team_season.team.team_color_primary_hex}};'>
+            {{team_season.rankings.division_rank[0]}}
+          </td>
+          <td style=' width: 0.625rem; padding: 0.5rem; background-color: #{{team_season.team.team_color_primary_hex}}' >
+            <a href="{{team_season.team.team_href}}">
+              <img class='logo logo-30' src="{{team_season.team.team_logo}}"/>
+            </a>
+          </td>
+          <td class='left-text'>
+            <a href="{{team_season.team.team_href}}">
+
+              <span  class='hide-small font10'>{{team_season.national_rank_display}}
+              </span>
+              <span  class='hide-small'>{{team_season.team.school_name }}</span>
+            </a>
+          </td>
+          <td>{{team_season.conference_record_display}}</td>
+          <td class='hide-small'>
+            {{team_season.record.conference_gb}}</td>
+          <td>{{team_season.record_display}}</td>
+        </tr>
+      {% endfor %}
+
+    </tbody>
+    {% endfor %}
+
+  </table>

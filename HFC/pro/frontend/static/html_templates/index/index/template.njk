@@ -1,0 +1,159 @@
+{% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
+
+<div class="w3-row-padding ">
+  <div class=" w3-col s10 w3-padding">
+    <div class="card">
+      <table class='table table-striped table-hover width100'>
+        <thead>
+          <tr class='team-primary-background-bar center-text-row' style='border-top: 0.25rem solid #333333;'>
+            <th class='left-text'>Dynasty Name</th>
+            <th colspan='1'>Team</th>
+            <th></th>
+            <th>Year</th>
+            <th>Date started</th>
+            <th>Date last played</th>
+            <th>Play!</th>
+            <th>Export</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for World in world_list %}
+          <tr class='center-text-row'>
+            <td class='left-text'>{{World.database_name}}</td>
+            <td>
+              <img src="{{World.user_team.team_logo_url}}" alt="" class='logo logo-50'>
+            </td>
+            <td class='left-text'>
+              <div class="">
+                <div class=" font14">
+                  <span class='bold'>{{World.user_team.school_name}}</span> 
+                </div>
+                <div class=" font14">
+                  <span>{{World.user_team.team_name}}</span>
+                </div>
+                <div class="font10">
+                  {{World.user_team.team_record}}
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="bold font14">
+                {{World.current_season}}
+              </div>
+              <div class="font10">
+                {{World.current_week}}
+              </div>
+            </td>
+            <td>
+              <div class=" font14">
+                {{World.date_created|toLocaleDateString}}
+              </div>
+              <div class="font10">
+                {{World.date_created|toLocaleTimeString}}
+              </div>
+            </td>            <td>
+              <div class=" font14">
+                {{World.date_last_updated|toLocaleDateString}}
+              </div>
+              <div class="font10">
+                {{World.date_last_updated|toLocaleTimeString}}
+              </div>
+            </td>
+            <td>
+              <a href="/World/{{World.world_id}}">
+                <button class='no-link-link btn team-color-button default-coloring width100'>Continue</button>
+              </a>
+            </td>
+            <td>
+              <button id='headfootballcoach{{World.world_id}}' class="btn team-color-button default-coloring width100 idb-export" style='border-radius: 0.3125rem;'>
+                Export
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td colspan='6'>Create new game!</td>
+            <td colspan='2'>
+              <button id='create-world-row' class="btn team-color-button default-coloring width100" style='border-radius: 0.3125rem;'  data-bs-toggle="modal" data-bs-target="#indexCreateWorldModal">
+                New Game
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td colspan='6'>Import saved game</td>
+            <td colspan='2'>
+              <button id='import-world-row' class="btn team-color-button default-coloring width100" style='border-radius: 0.3125rem;'>
+                Import File
+              </button>
+              <input type="file" class='hidden' id="file-input-button" accept=".json">
+            </td>
+          </tr> 
+          <tr>
+            <td colspan='6'>Delete existing leagues</td>
+            <td colspan='2'>
+              <div id='truncate-world-row' class="btn w3-red width100" style='border-radius: 0.3125rem;'>
+                DELETE ALL
+              </div>
+            </td>
+          </tr>      
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<div id="geography-modal"></div>
+<div class="modal fade" id="indexCreateWorldModal" tabindex="-1" aria-labelledby="indexCreateWorldModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style='width: 65%;'>
+    <div class="modal-content card">
+      <div class="card-header team-primary-background-bar" style='font-size: 0.7825rem; padding: 0.5rem 1rem; border-top: 0.25rem solid #333333; font-weight: bold;'>
+        <span class="modal-title" id="indexCreateWorldModalLabel">Create new college football world</span>
+      </div>
+      <div class="modal-body">
+        <table class='table conference-select-table'>
+        {% for option in world_options %}
+        <tr class=''>
+          <td>
+          <div class='bold'>{{option.display}}</div>
+          <div>{{option.description}}</div>
+          </td>
+          <td>
+            <button class='btn team-color-button team-primary-background-bar create-world-play-button' database-suffix="{{option.database_suffix}}">Play!</button>
+          </td>
+        </tr>
+        {% endfor %}
+        </table>
+        <table class='table create-progress-table w3-hide'>
+          <thead>
+            <tr>
+            <th>Stage</th>
+            <th class='center-text'>Progress</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in progress_table_rows%}
+            <tr>
+              <td>{{row.stage}}</td>
+              <td class='center-text' id='{{row.stage_row_id}}'>
+                {% if loop.count == 1%} 
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                {%endif%}
+              </td>
+            </tr>
+            {%endfor%}
+          </tbody>
+        </table>
+        <table id='choose-team-table' class='table table-striped choose-team-table w3-hide'>
+
+        </table>
+      </div>
+      {# <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div> #}
+    </div>
+  </div>
+</div>

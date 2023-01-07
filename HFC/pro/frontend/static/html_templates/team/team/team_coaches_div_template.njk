@@ -1,0 +1,35 @@
+<div class='w3-display-container'>
+  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-col l12 mw800">
+      <div class="card">
+        <div class="team-primary-background-bar">
+          Coaching Staff
+        </div>
+        <table class='table table-striped table-hover width100 ' id='TeamInfo' style='width: 100%;'>
+          <thead>
+            <tr class='team-secondary-table-row'>
+              <th class='no-width'></th>
+              <th class=''>Coach</th>
+              <th class=''>Position</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for coach_team_season in coach_team_seasons%}
+            <tr>
+              <td class='center-text no-width'>
+                <div class="PlayerFace-60 PlayerFace-Headshot inline-block" coach_id='{{coach_team_season.coach_id}}' style='border-color:#{{page.PrimaryColor}}; background-color:white;' id="teamTeamLeaderBoxPlayerFace{{loop.index}}"  ></div>
+              </td>
+              <td>
+                <a href='{{coach_team_season.coach.coach_href}}'>
+                  {{coach_team_season.coach.full_name}}
+                </a>
+              </td>
+              <td>{{coach_team_season.coaching_position_info.full_name}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="dropdown float-end">
+  <button class="btn dropdown-toggle no-border w3-bar-item" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Teams
+  </button>
+  <table class='table dropdown-menu no-padding width100' style='min-width: 250px; max-height: 40vw; overflow-y: scroll;'>
+    <tbody>
+    {% for team in all_teams.all_teams %}
+    <tr class=''>
+      <td style='background-color: #{{team.team_color_primary_hex}};'>
+        <a href="{{team.adjusted_team_href}}" class="team-link">
+          <img src="{{team.team_logo}}" class="logo logo-24" alt=""/>
+        </a>
+      </td>
+      <td>
+        <a href="{{team.adjusted_team_href}}" class="team-link">
+
+          <span class='padding-left-8'>{{team.full_name}}</span>
+        </a>
+      </td>
+    </tr>
+    {%endfor%}
+    </tbody>
+  </table>
+</div>
+
+{% if page.TeamHeaderLinks.seasons|length > 1 %}
+<div class="dropdown float-end">
+  <button class="btn dropdown-toggle no-border w3-bar-item" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Seasons
+  </button>
+  <table class='table dropdown-menu  no-padding' style='min-width: 5rem;'>
+    <tbody>
+    {% for season in page.TeamHeaderLinks.seasons%}
+    <tr class=''>
+      <td class="">
+        <a href='{{season.season_href}}'>
+          {{season.season}} Season
+        </a>
+      </td>
+    </tr>
+    {%endfor%}
+    </tbody>
+  </table>
+</div>
+{%endif%}

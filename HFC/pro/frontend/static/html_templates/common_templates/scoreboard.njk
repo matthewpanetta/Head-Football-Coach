@@ -1,0 +1,50 @@
+
+
+{% if recent_games %}
+<div class="scoreboard-slideshow">
+  <div class="scoreboard-slideshow-row">
+    <div class="MultiCarousel">
+      <div class="MultiCarousel-inner">
+        {% for game in recent_games%}
+        <div class="inline-block table-cell scoreboard-carousel-item card">
+          <table style='width: 135px;' BoxScoreGameID="{{game.GameID}}" {{game.WorldPageFilterAttributes}} class=" background-white height-70">
+            <thead>
+              <th class="" colspan="1">
+                <span class='font10'></span>
+              </th>
+              <th class="right-text" colspan="2">
+                <span class='font10 px-1'><a href="{{game.game_href}}">Recap</a></span>
+              </th>
+            </thead>
+            {% for team_game in game.team_games.reverse() %}
+            <tr class="{{team_game.TeamWinningGameBold}}">
+              <td class='center-text'>
+                <img class="logo logo-24 margin-right-4" src="{{team_game.team_season.team.team_logo}}" alt="">
+              </td>
+              <td class='min-width-50 left-text '>
+                <div class='margin0'>
+                  <span class='font10'>{{team_game.national_rank_display}}</span> 
+                  {% if team_game.team_season.is_user_team %}
+                  <span style='color: #{{team_game.team_season.team.team_color_primary_hex}};'>
+                    <i class="fa fa-user"></i>
+                  </span> 
+                  {% endif %}
+                  <a href="{{team_game.team_season.team.team_href}}" class='font14'>
+                    {{team_game.team_season.team.team_abbreviation}}
+                  </a>
+                </div>
+              </td>
+              <td class='right-text font14 p-1 {%if team_game.is_winning_team%} bold W{% endif%}'>
+                {{team_game.points}}
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

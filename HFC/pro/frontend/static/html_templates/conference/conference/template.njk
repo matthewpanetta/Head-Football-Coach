@@ -1,0 +1,348 @@
+{% include "../../static/html_templates/common_templates/ext_nav_bar.njk" %}
+{% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
+
+<head>
+  <style media="screen"></style>
+</head>
+<body>
+  <div class='PageContent'>
+
+    <div class='TeamHeader' style='height: 9.375rem;'>
+      <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
+      <div class='page-header-logo-div'>
+        <img class='teamTeamLogo' src='{{conference.conference_logo}}' alt="My image">
+      </div>
+      <div class='teamHeaderInfo'>
+        <span class='teamSchoolName'>
+          {{ conference.conference_name }}
+        </span>
+        <div class='teamOverviewInfo'>
+          {{conference.current_conference_season.team_seasons|length}} active teams
+        </div>
+      </div>
+      <div class="team-header-color-right align-middle hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
+    </div>
+
+    <div class="">
+      <div class="">
+        <nav>
+          <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
+            <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+              <i class="fas fa-bars"></i>
+            </button>
+            <button class="w3-bar-item btn tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+            <button class="w3-bar-item btn tab nav-tab-button"  id="nav-history-tab">History</button>
+            <div class="w3-dropdown-hover w3-right" style="margin-right: 1.25rem" id='nav-team-dropdown-container'>
+
+              <div class="dropdown float-end">
+                <button class="btn dropdown-toggle no-border w3-bar-item" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Conferences
+                </button>
+                <div class='dropdown-menu no-padding' style='min-width: 7.5rem;'>
+                  <table class='table width100 no-padding'>
+                    <tbody>
+                      {% for conference in all_conferences%}
+                        <tr class=''>
+                          <td style='background-color: #{{conference.conference_color_primary_hex}};'>
+                            <a href='{{conference.conference_href}}'>
+                              <img class='logo logo-24' src='{{conference.conference_logo}}'/>
+                            </a>
+                          </td>
+                          <td class="">
+                            <a href='{{conference.conference_href}}'>
+                              {{conference.conference_abbreviation}}
+                            </a>
+                          </td>
+                        </tr>
+                        {%endfor%}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nav>
+          <div class="" id="nav-tabContent">
+            <div class="tab-pane show active tab-content" id="nav-overview">
+              <div class="w3-display-container">
+                <div class="w3-row-padding">
+                  <div class='w3-col s6'>
+                    <div class='card'>
+                      <div class="w3-bar team-primary-background-bar">
+                      Conference Map
+                    </div>
+                      <div id='conference-map' style='height: 25rem;'></div>
+                    </div>
+                  </div>
+                  <div class='w3-col s6'>
+                    <div class='card'>
+                      <div class="w3-bar team-primary-background-bar">
+                        {{season}}
+                        {{conference.conference_name}} Standings
+                    </div>
+                      <div>
+                        <table id='' class='table table-striped table-hover width100 '>
+                          {% for division in conference_standings.divisions%}
+                            <thead>
+                              <tr class='team-secondary-table-row'>
+                                {% if division.division_name %}
+                                  <th colspan='2'>{{division.division_name}}</th>
+                                {% else %}
+                                  <th class='padding-left-8'>#</th>
+                                  {%endif%}
+                                  <th colspan="1">Team</th>
+                                  <th class='center-text'>Conf</th>
+                                  <th class='hide-small center-text'>GB</th>
+                                  <th class='center-text'>Record</th>
+                                </tr>
+                              </thead>
+                              <tbody id='conference_standings_tbody'>
+                                {% for team_season in division.division_standings %}
+                                  <tr class='center-text-row {{team_season.bold}}'>
+                                    <td class=' white-text padding-left-8' style='background-color: #{{team_season.team.team_color_primary_hex}};'>
+                                      {{team_season.rankings.division_rank[0]}}
+                                    </td>
+                                    <td style=' width: 0.625rem; padding: 0.5rem; background-color: #{{team_season.team.team_color_primary_hex}}' >
+                                      <a href="{{team_season.team.team_href}}">
+                                        <img class='logo logo-30' src="{{team_season.team.team_logo}}"/>
+                                      </a>
+                                    </td>
+                                    <td class='left-text'>
+                                      <a href="{{team_season.team.team_href}}">
+
+                                        <span  class='hide-small font10'>{{team_season.national_rank_display}}
+                                        </span>
+                                        <span  class='hide-small'>{{team_season.team.school_name }}</span>
+                                      </a>
+                                    </td>
+                                    <td>{{team_season.conference_record_display}}</td>
+                                    <td class='hide-small'>
+                                      {{team_season.record.conference_gb}}</td>
+                                    <td>{{team_season.record_display}}</td>
+                                  </tr>
+                                {% endfor %}
+
+                              </tbody>
+                            {% endfor %}
+
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane show active tab-content" style='display:none;'  id="nav-history">
+              <div class="w3-display-container">
+                <div class="w3-row-padding">
+                  <div class='w3-col s12'>
+                    <div class='card margin-bottom-24'>
+                      <div class="w3-bar team-primary-background-bar w3-row-padding space-between">
+                        {{conference.conference_name}} Yearly Results
+                      <span class='' style='margin: auto 0;'>
+                          <i class="fa fa-chart-line football-chart-icon" id='yearly-results-football-chart-icon'></i>
+                        </span>
+                      </div>
+                      <div>
+                        <table id='' class='table table-striped table-hover width100 '>
+                          <thead>
+                            <tr class='team-secondary-table-row center-text-row'>
+                              <th class='center-text col-group' colspan='2'>Season</th>
+                              <th class='center-text col-group' colspan='2'>Overall</th>
+                              <th class='center-text col-group' colspan='2'>OOC</th>
+                              <th class='center-text col-group' colspan='2'>EOY</th>
+                              <th class='center-text' colspan='4'>Accolades</th>
+                            </tr>
+                            <tr class='team-primary-table-row center-text-row'>
+                              <th >Year</th>
+                              <th >Teams</th>
+                              <th class='center-text'>Record</th>
+                              <th class='center-text col-group'>Win %</th>
+                              <th class='center-text'>Record</th>
+                              <th class='center-text col-group'>Win %</th>
+                              <th class='center-text'>Top 25</th>
+                              <th class='center-text col-group'>Playoffs</th>
+                              <th class='left-text'>Champion</th>
+                              <th class='left-text'>Runner Ups</th>
+                              <th colspan='2' class='left-text'>Player of the Year</th>
+                            </tr>
+                          </thead>
+                          <tbody id='conference_standings_tbody'>
+                            {% for conference_season in conference.conference_seasons%}
+                              <tr class='center-text-row {{team_season.bold}}'>
+                                <td class='padding-left-8'>
+                                  {{conference_season.season}}
+                                </td>
+                                <td class='col-group'>
+                                  {{conference_season.team_seasons|length}}
+                                </td>
+                                <td>{{conference_season.record.wins}} - {{conference_season.record.losses}}</td>
+                                <td class='col-group'>{{conference_season.record.winning_percentage}}%</td>
+                                <td>{{conference_season.record.out_of_conference_wins}} - {{conference_season.record.out_of_conference_losses}}</td>
+                                <td class='col-group'>{{conference_season.record.out_of_conference_winning_percentage}}%</td>
+                                <td>{{conference_season.record.top_25_teams}}</td>
+                                <td class='col-group'>{{conference_season.record.playoff_teams}}</td>
+                                {% if conference_season.conference_champion%}
+                                  <td class='left-text white-text ' style='background-color: #{{conference_season.conference_champion.team.team_color_primary_hex}};'>
+                                      <div class='w3-row-padding flex-start'>
+                                      <a>
+                                        <img class='logo logo-24' src='{{conference_season.conference_champion.team.team_logo}}'/>
+                                      </a>
+                                      <div class='inline-block ms-2'>
+                                        <div>
+                                          <a class='' href='{{conference_season.conference_champion.team.team_href}}'>
+                                            {{conference_season.conference_champion.team.full_name}}
+                                          </a>
+                                        </div>
+                                        {% if conference_season.conference_champion.results.national_champion%}
+                                        <div class='font10 opacity-1 bold'>National Champions</div>
+                                        {%else%}
+                                        <div class='font10'>{{conference_season.conference_champion.results.bowl.bowl_name}}</div>
+                                        {%endif%}
+                                      </div>
+                                      </div>
+                                    </td>
+                                  {%else%}
+                                  <td></td>
+                                  {%endif%}
+                                  {% if conference_season.runner_up%}
+                                    <td class='left-text white-text flex-start' style='background-color: #{{conference_season.runner_up.team.team_color_primary_hex}};'>
+                                      <div class='w3-row-padding flex-start'>
+                                      <a>
+                                        <img class='logo logo-24' src='{{conference_season.runner_up.team.team_logo}}'/>
+                                      </a>
+                                      <div class='inline-block ms-2'>
+                                        <div>
+                                          <a class='' href='{{conference_season.runner_up.team.team_href}}'>
+                                            {{conference_season.runner_up.team.full_name}}
+                                          </a>
+                                        </div>
+                                        {% if conference_season.runner_up.results.national_champion%}
+                                        <div class='font10 opacity-1 bold'>National Champions</div>
+                                        {%else%}
+                                        <div class='font10'>{{conference_season.runner_up.results.bowl.bowl_name}}</div>
+                                        {%endif%}     
+                                      </div>
+                                      </div>
+                                    </td>
+                                    {%else%}
+                                    <td></td>
+                                    {%endif%}
+                                    {% if conference_season.poty_award%}
+                                      <td  class='center-text' style="background-color: #{{conference_season.poty_award.player_team_season.team_season.team.team_color_primary_hex}}">
+                                        <div style='display: flex;'>
+                                          <div class='inline-block'>
+                                            <a href="{{conference_season.poty_award.player_team_season.team_season.team.team_href}}">
+                                              <img src="{{conference_season.poty_award.player_team_season.team_season.team.team_logo}}" class='logo logo-30' alt="">
+                                            </a>
+                                          </div>
+                                          <div id='heisman-face-{{loop.index}}-{{conference_season.poty_award.player_team_season.player_id}}' player_id='{{conference_season.poty_award.player_team_season.player_id}}'  class='PlayerFace-30 PlayerFace-Headshot inline-block' style='background-color: rgba(255,255,255,0); border-color: #{{season_recap.heisman_player_team_season.team_season.team.team_color_secondary_hex}}; margin-left: -0.9375rem;margin-right: -0.9375rem;'></div>
+                                        </div>
+                                      </td>
+                                      <td class='left-text' playerid = '{{conference_season.poty_award.player_team_season.player_id}}'>
+                                        <div class="">
+                                          <a href="{{conference_season.poty_award.player_team_season.player.player_href}}">
+                                            {{conference_season.poty_award.player_team_season.player.full_name}}
+                                          </a>
+                                        </div>
+                                        {# <div class='font10'>
+                                          <a href='{{conference_season.poty_award.player_team_season.team_season.team.team_href}}'>
+                                            {{conference_season.poty_award.player_team_season.team_season.team.full_name}}
+                                          </a>
+                                        </div> #}
+                                        <div class="font10">
+                                          <i class="fa fa-address-card player-profile-popup-icon"></i>
+                              &#183;
+                              <span>{{conference_season.poty_award.player_team_season.position}}</span>
+                              &#183;
+                              <span>{{conference_season.poty_award.player_team_season.class.class_name}}</span>
+                                        </div>
+                                      </td>
+                                      {%else%}
+                                      <td></td>
+                                      <td></td>
+                                      {%endif%}
+                                    </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                          <div class='card margin-bottom-24'>
+                            <div class="w3-bar team-primary-background-bar w3-row-padding space-between">
+                              {{conference.conference_name}} Team Results
+                              <span class='' style='margin: auto 0;'>
+                                <i class="fa fa-chart-line football-chart-icon" id='team-results-football-chart-icon'></i>
+                              </span>
+                            </div>
+                            <div>
+                              <table id='conference-team-history' class='table table-striped table-hover width100 '>
+                                <thead>
+                                  <tr class='team-secondary-table-row center-text-row no-wrap-row football-table-column-groups football-table-column-headers'>
+                                    <th colspan='2' class='col-group'>Team</th>
+                                    <th colspan='2' class='col-group'>Years</th>
+                                    <th colspan='3' class='col-group'>Overall Record</th>
+                                    <th colspan='3' class='col-group'>Conf Record</th>
+                                    <th colspan='4' class='col-group'>Champs</th>
+                                  </tr>
+                                  <tr class='team-primary-table-row center-text-row no-wrap-row football-table-column-headers'>
+                                    <th></th>
+                                    <th class='col-group'>Team</th>
+                                    <th>Years</th>
+                                    <th class='col-group'>Span</th>
+                                    <th>GP</th>
+                                    <th>Record</th>
+                                    <th class='col-group'>Win %</th>
+                                    <th>GP</th>
+                                    <th>Record</th>
+                                    <th class='col-group'>Win %</th>
+                                    <th>Playoff App.</th>
+                                    <th>Div Champs</th>
+                                    <th>Conf Champs</th>
+                                    <th class='col-group'>Nat. Champs</th>
+                                  </tr>
+                                </thead>
+                                <tbody id='conference_standings_tbody'>
+                                  {% for team in conference.all_teams%}
+                                    <tr class='center-text-row no-wrap-row'>
+                                      <td value='{{team.full_name}}' style='background-color: #{{team.team_color_primary_hex}}'>
+                                        <a href='{{team.team_href}}'>
+                                          <img class='logo logo-30' src="{{team.team_logo}}"/>
+                                        </a>
+                                      </td>
+                                      <td value='{{team.full_name}}' class='white-text left-text col-group' style='background-color: #{{team.team_color_primary_hex}}'>
+                                        <a href='{{team.team_href}}'>
+                                          {{team.full_name}}
+                                        </a>
+                                      </td>
+                                      <td value='{{team.season_count}}'>{{team.season_count}}</td>
+                                      <td value='{{team.first_season}}' class='col-group'>{{team.first_season}} - {{team.last_season}}</td>
+                                      <td value='{{team.record.games_played}}'>{{team.record.games_played}}</td>
+                                      <td value='{{team.record.wins}}'>{{team.record.wins}} - {{team.record.losses}}</td>
+                                      <td value='{{team.record.win_percentage}}' class='col-group'>
+                                        {%if team.record.games_played%}{{team.record.win_percentage}}%
+                                {%endif%}</td>
+
+                                        <td value='{{team.record.conference_games_played}}'>{{team.record.conference_games_played}}</td>
+                                        <td value='{{team.record.conference_wins}}'>{{team.record.conference_wins}} - {{team.record.conference_losses}}</td>
+                                        <td value='{{team.record.conference_win_percentage}}' class='col-group'>
+                                          {%if team.record.conference_games_played%}{{team.record.conference_win_percentage}}%{%endif%}</td>
+                                          <td value='{{team.playoff_appearance_count}}'>{{team.playoff_appearance_count}}</td>
+                                          <td value='{{team.division_championship_count}}'>{{team.division_championship_count}}</td>
+                                          <td value='{{team.conference_championship_count}}'>{{team.conference_championship_count}}</td>
+                                          <td value='{{team.national_championship_count}}' class='col-group'>{{team.national_championship_count}}</td>
+                                        </tr>
+                                      {% endfor %}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </body>

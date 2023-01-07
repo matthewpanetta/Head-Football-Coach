@@ -1,0 +1,22 @@
+<thead>
+    <tr>
+        <th class='right-text'>Team</th>
+        <th>{{field.display}}</th>
+    </tr>
+</thead>
+    <tbody>
+{% for row in data%}
+
+        <tr>
+            <td class='right-text no-width no-wrap'>{{row|get(display_name_field)}}</td>
+            <td class='white-text p-1'>
+                <div class='right-text px-2' style='min-height: 1.5rem; line-height: 1.5rem; width: {{row.value_width}}%; background-color: #{{row|get(display_color_field)}};'>
+                    {{row.value}}
+                </div>
+                {# <div class='right-text px-2' style='min-height: 1.5rem; line-height: 1.5rem; width: {{row.value_width}}%; background: linear-gradient(45deg, {{row|get(display_color_field)|HexToRGBA(".5")}}, {{row|get(display_color_field)|HexToRGBA(1)}});'>
+                    {{row.value}}
+                </div> #}               
+            </td>
+        </tr>
+    {%endfor%}
+        </tbody>
