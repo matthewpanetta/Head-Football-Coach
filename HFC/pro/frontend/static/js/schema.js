@@ -1,4 +1,5 @@
 import { deep_copy, round_decimal, normal_trunc, sum } from "/common/js/utils.js";
+import {day_of_week_map} from "./metadata.js";
 
 export class headline {
   constructor(headline_id, week_id, headline_text, headline_type, headline_relevance) {
@@ -355,12 +356,17 @@ export class player_team_game {
 }
 
 export class day {
-  constructor() {}
+  constructor(date) {
+    
+    this.date = new Date(date);
+    this.date_display = this.date.toISOString().slice(0,10)
+    this.day_of_week = day_of_week_map[this.date.getDay()];
+    this.day_of_week_short = day_of_week_map[this.date.getDay()].slice(0,3);
 
-  get world_href() {
-    return `/World/${this.world_id}/`;
+    let next_date = new Date(this.date)
+    next_date.setDate(next_date.getDate() + 1);
+    this.next_date_display = next_date.toISOString().slice(0,10);
   }
-
 }
 
 export class week {
@@ -398,8 +404,13 @@ export class team_game {
     this.record = {
       wins: 0,
       losses: 0,
+      ties: 0,
       conference_wins: 0,
       conference_losses: 0,
+      conference_ties: 0,
+      division_wins: 0,
+      division_losses: 0,
+      division_ties: 0,
     };
     this.top_stats = [];
 
@@ -577,6 +588,9 @@ export class team_game {
   }
 
   get record_display() {
+    if (this.record.ties){
+      return `${this.record.wins} - ${this.record.losses} - ${this.record.ties}`;
+    }
     return `${this.record.wins} - ${this.record.losses}`;
   }
 
@@ -1645,11 +1659,18 @@ export class team_season {
       this.record = {
         wins: 0,
         losses: 0,
+        ties: 0,
         conference_wins: 0,
         conference_losses: 0,
+        conference_ties: 0,
+        division_wins: 0,
+        division_losses: 0,
+        division_ties: 0,
         conference_net_wins: 0,
+        division_net_wins: 0,
         games_played: 0,
         conference_gb: 0,
+        division_gb: 0,
         win_streak: 0,
         defeated_teams: [],
       };
@@ -1726,6 +1747,9 @@ export class team_season {
   }
 
   get record_display() {
+    if (this.record.ties){
+      return `${this.record.wins} - ${this.record.losses} - ${this.record.ties}`;
+    }
     return `${this.record.wins} - ${this.record.losses}`;
   }
 

@@ -318,8 +318,8 @@
     "team_location_name": "Las Vegas",
     "team_nickname": "Raiders",
     "team_abbreviation": "KC",
-    "team_color_primary_hex": "#a5acaf",
-    "team_color_secondary_hex": "#000000",
+    "team_color_primary_hex": "#000000",
+    "team_color_secondary_hex": "#a5acaf",
     "team_color_tertiary_hex": "#ffffff",
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {

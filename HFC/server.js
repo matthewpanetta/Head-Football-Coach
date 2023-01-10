@@ -66,17 +66,19 @@ const send_file = (res, filename) => {
 };
 
 const send_url = (req, res, level) => {
-	console.log('in send_url', level, 'req.url.substr(1)', req.url.substr(1))
+	// console.log('in send_url', level, 'req.url.substr(1)', req.url.substr(1))
 	res.set("Cache-Control", `public, max-age=${cache_time}`);
 	if (req.url.substr(1).includes('common/')){
+		console.log('Sending file', __dirname + `/` + req.url.substr(1))
 		send_file(res, __dirname + `/` + req.url.substr(1));
 	}
 	else {
+		console.log('Sending file', `/${level}/frontend/` + req.url.substr(1))
 		send_file(res, __dirname + `/${level}/frontend/` + req.url.substr(1));
 	}
 };
 const send_index = (req, res, level) => {
-	console.log('in send_index')
+	console.log('sending file', __dirname + `/${level}/frontend/static/html_templates/index/index/base.html`)
 	send_file(res, __dirname + `/${level}/frontend/static/html_templates/index/index/base.html`);
 };
 

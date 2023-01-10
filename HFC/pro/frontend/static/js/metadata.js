@@ -61,3 +61,14 @@ export const class_order_map = {
 
 export const classes = ["All", "SR", "JR", "SO", "FR"];
 export const position_groups = ["All", "Offense", "Defense", "Special Teams"];
+
+
+export const day_of_week_map = {
+  0: 'Sunday',
+  1: 'Monday',
+  2: 'Tuesday',
+  3: 'Wednesday',
+  4: 'Thursday',
+  5: 'Friday',
+  6: 'Saturday',
+}

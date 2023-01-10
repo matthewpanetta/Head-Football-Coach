@@ -10,6 +10,7 @@ import {
   league_season,
   team_season_stats,
   team_season,
+  day,
   coach,
   coach_team_season,
   player,
@@ -111,13 +112,13 @@ export const resolve_db = async (world_obj) => {
 };
 
 export const initialize_db = async (db) => {
-  db_collection_list.forEach( function (col_obj) {
+  db_collection_list.forEach(function (col_obj) {
     col_obj.options.clone = true;
     col_obj.options.cloneMethod = clone_method;
     col_obj.options.lazyLoad = false;
     db[col_obj.collection_name] =
-      ( db.getCollection(col_obj.collection_name)) ||
-      ( db.addCollection(col_obj.collection_name, col_obj.options));
+      db.getCollection(col_obj.collection_name) ||
+      db.addCollection(col_obj.collection_name, col_obj.options);
   });
 
   await db.saveDatabaseAsync();
@@ -166,7 +167,7 @@ export const get_db = async (world_obj) => {
 
   let idbAdapter = new LokiIndexedAdapter("hfc");
   //let idbAdapter = new IncrementalIndexedDBAdapter("hfc", {
-    //lazyCollections: db_collection_list.map(coll => coll.collection_name)
+  //lazyCollections: db_collection_list.map(coll => coll.collection_name)
   //});
   // let parAdapter = new loki.LokiPartitioningAdapter(idbAdapter, {
   //   pageSize: 20 * 1024 * 1024,
@@ -229,7 +230,13 @@ export const create_new_db = async () => {
 export const driver_collection_list = [
   {
     collection_name: "world",
-    options: { proto: world, unique: ["world_id"], clone: true, cloneMethod: clone_method, lazyLoad: true },
+    options: {
+      proto: world,
+      unique: ["world_id"],
+      clone: true,
+      cloneMethod: clone_method,
+      lazyLoad: true,
+    },
   },
   {
     collection_name: "first_names",
@@ -245,7 +252,8 @@ export const driver_collection_list = [
       unique: ["city_state"],
       indices: ["city", "state"],
       clone: true,
-      cloneMethod: clone_method, lazyLoad: true
+      cloneMethod: clone_method,
+      lazyLoad: true,
     },
   },
 ];
@@ -256,6 +264,7 @@ export const db_collection_list = [
     options: { proto: league_season, unique: ["season"], indices: [] },
   },
   { collection_name: "team", options: { proto: team, unique: ["team_id"], indices: [] } },
+  { collection_name: "day", options: { proto: day, unique: ["date_display"], indices: [] } },
   {
     collection_name: "team_season",
     options: { proto: team_season, unique: ["team_season_id"], indices: ["team_id", "season"] },
@@ -348,10 +357,10 @@ export const initialize_driver_db = async (ddb) => {
     driver_collection_list: driver_collection_list,
   });
 
-   driver_collection_list.forEach(async function (col_obj) {
+  driver_collection_list.forEach(async function (col_obj) {
     ddb[col_obj.collection_name] =
-      ( ddb.getCollection(col_obj.collection_name)) ||
-      ( ddb.addCollection(col_obj.collection_name, col_obj.options));
+      ddb.getCollection(col_obj.collection_name) ||
+      ddb.addCollection(col_obj.collection_name, col_obj.options);
 
     console.log({
       col_obj: col_obj,
@@ -360,7 +369,6 @@ export const initialize_driver_db = async (ddb) => {
 
     return ddb[col_obj.collection_name];
   });
-
 
   console.log({
     ddb: ddb,
@@ -473,41 +481,11 @@ const populate_names = async (ddb) => {
 };
 
 const populate_cities = async (ddb) => {
-  console.log("in populate_cities");
   var url = "/static/data/import_json/cities.json";
   var data = await fetch(url);
   const city_dimension = await data.json();
 
-  var url = "/static/data/import_json/cities_2.json";
-  var data = await fetch(url);
-  let city_dimension_2 = await data.json();
-
-  var url = "/static/data/import_json/states.json";
-  var data = await fetch(url);
-  const state_dimension = await data.json();
-
-  const state_map = index_group_sync(state_dimension, "index", "state_abbreviation");
-
-  const states = {};
-  const state_counts = {};
-
   city_dimension.forEach((c) => (c.city_state = c.city + ", " + c.state));
-  city_dimension_2.forEach((c) => (c.city_state = c.city + ", " + c.state));
-  let city_dimension_2_by_city_state = index_group_sync(city_dimension_2, "index", "city_state");
-
-  city_dimension.forEach(function (c) {
-    let city_2 = city_dimension_2_by_city_state[c.city + ", " + c.state];
-    if (city_2) {
-      c.occurance = city_2.player_count;
-    } else {
-      c.occurance = 1;
-    }
-
-    delete c.population;
-    delete c.time_zone;
-    delete c.timezone;
-  });
-
   ddb.cities.insert(city_dimension);
   await ddb.saveDatabaseAsync();
 };

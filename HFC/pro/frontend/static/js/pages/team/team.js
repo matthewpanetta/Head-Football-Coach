@@ -350,8 +350,9 @@ export const page_team = async (common) => {
     counter_games += 1;
   }
 
-  let this_week_game = games.find(g => g.week.is_current);
-  let last_week_game = games.find(g => g.week.week_id == this_week_game.week.week_id - 1);
+  let current_week = weeks.find(w => w.is_current);
+  let this_week_game = games.find(g => g.week.week_id == current_week.week_id);
+  let last_week_game = games.find(g => g.week.week_id == current_week.week_id - 1);
 
   var signed_player_team_season_ids = []; //TODO
   var signed_player_team_seasons = db.player_team_season.find({

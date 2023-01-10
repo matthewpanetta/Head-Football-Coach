@@ -67,6 +67,7 @@ export const page_team_schedule = async (common) => {
   const query_to_dict = common.query_to_dict;
 
   var teams = db.team.find({ team_id: { $gt: 0 } });
+  var team_seasons = db.team_season.find({ team_id: { $gt: 0 }, season: season });
   teams = teams.sort((team_a, team_b) => team_a.school_name - team_b.school_name);
 
   const weeks = db.week.find({ season: season });
@@ -74,6 +75,9 @@ export const page_team_schedule = async (common) => {
 
   const team = db.team.findOne({ team_id: team_id });
   const team_season = db.team_season.findOne({ team_id: team_id, season: season });
+
+  let teams_by_team_id = index_group_sync(teams, 'index', 'team_id');
+  team_seasons = nest_children(team_seasons, teams_by_team_id, 'team_id', 'team')
 
   const conference_seasons = db.conference_season.find({ season: season });
   const conference_seasons_by_conference_season_id = index_group_sync(
@@ -95,25 +99,39 @@ export const page_team_schedule = async (common) => {
   team_games = team_games.sort((tg_a, tg_b) => tg_a.week_id - tg_b.week_id);
   const game_ids = team_games.map((game) => parseInt(game.game_id));
 
+  let team_seasons_by_team_season_ids = index_group_sync(team_seasons, 'index', 'team_season_id');
+
+  team_games = nest_children( team_games,team_seasons_by_team_season_ids , 'team_season_id', 'team_season')
+  let team_games_by_game_id = index_group_sync(team_games, 'index', 'team_game_id')
+
   var games = db.game.find({ game_id: { $in: game_ids } });
   games = nest_children(games, weeks_by_week_id, "week_id", "week");
+  games = nest_children(games, team_games_by_game_id, "game_id", "team_game");
 
   const opponent_team_game_ids = team_games.map((team_game) => team_game.opponent_team_game_id);
 
   const all_team_game_ids = opponent_team_game_ids.concat(team_game_ids);
-  const opponent_team_games = db.team_game.find({ team_game_id: { $in: opponent_team_game_ids } });
+  let opponent_team_games = db.team_game.find({ team_game_id: { $in: opponent_team_game_ids } });
 
   const opponent_team_season_ids = opponent_team_games.map((team_game) =>
     parseInt(team_game.team_season_id)
   );
-  const opponent_team_seasons = db.team_season.find({
+  let opponent_team_seasons = db.team_season.find({
     team_season_id: { $in: opponent_team_season_ids },
   });
 
   const opponent_team_ids = opponent_team_seasons.map((team_season) =>
     parseInt(team_season.team_id)
   );
-  const opponent_teams = db.team.find({ team_id: { $in: opponent_team_ids } });
+  let opponent_teams = db.team.find({ team_id: { $in: opponent_team_ids } });
+  let opponent_teams_by_team_id = index_group_sync(opponent_teams, 'index', 'team_id');
+  opponent_team_seasons = nest_children(opponent_team_seasons, opponent_teams_by_team_id, 'team_id', 'team');
+  let opponent_teams_seasons_by_team_season_id = index_group_sync(opponent_team_seasons, 'index', 'team_season_id')
+  opponent_team_games = nest_children(opponent_team_games, opponent_teams_seasons_by_team_season_id, 'team_season_id', 'team_season')
+  let opponent_team_games_by_game_id = index_group_sync(opponent_team_games, 'index', 'game_id')
+
+  games = nest_children(games, opponent_team_games_by_game_id, "game_id", "opponent_team_game");
+
 
   var player_team_games = db.player_team_game.find({ team_game_id: { $in: all_team_game_ids } });
 
@@ -152,55 +170,47 @@ export const page_team_schedule = async (common) => {
   );
 
   var counter_games = 0;
-  const pop_games = await $.each(games, async function (ind, game) {
-    game.team_game = team_games[counter_games];
-    game.team_game.team_season = team.team_season;
-    game.team_game.team_season.team = team;
-    game.opponent_team_game = opponent_team_games[counter_games];
-    game.opponent_team_game.team_season = opponent_team_seasons[counter_games];
-    game.opponent_team_game.team_season.team = opponent_teams[counter_games];
+  for(let g of games){
 
-    game.game_display = "Preview";
-    game.game_outcome_letter = "";
-    game.overtime_display = "";
-    if (game.was_played) {
-      game.game_display = game.score_display;
+    g.game_display = "Preview";
+    g.game_outcome_letter = "";
+    g.overtime_display = "";
+    if (g.was_played) {
+      g.game_display = g.score_display;
 
-      if (game.home_team_score > game.away_team_score) {
-        game.game_outcome_letter = "W";
+      if (g.home_team_score > g.away_team_score) {
+        g.game_outcome_letter = "W";
       }
 
-      for (var top_stat of game.team_game.top_stats) {
+      for (var top_stat of g.team_game.top_stats) {
         top_stat.player_team_game =
           player_team_games_by_player_team_game_id[top_stat.player_team_game_id];
       }
-      for (var top_stat of game.opponent_team_game.top_stats) {
+      for (var top_stat of g.opponent_team_game.top_stats) {
         top_stat.player_team_game =
           player_team_games_by_player_team_game_id[top_stat.player_team_game_id];
       }
     }
 
-    if (game.home_team_season_id == team.team_season.team_season_id) {
-      game.game_location = "home";
-      game.game_location_char = "vs.";
-      game.home_team_game = game.team_game;
-      game.away_team_game = game.opponent_team_game;
+    if (g.home_team_season_id == team.team_season.team_season_id) {
+      g.game_location = "home";
+      g.game_location_char = "vs.";
+      g.home_team_game = g.team_game;
+      g.away_team_game = g.opponent_team_game;
     } else {
-      game.game_location = "away";
-      game.game_location_char = "@";
-      game.away_team_game = game.team_game;
-      game.home_team_game = game.opponent_team_game;
+      g.game_location = "away";
+      g.game_location_char = "@";
+      g.away_team_game = g.team_game;
+      g.home_team_game = g.opponent_team_game;
     }
 
-    game.selected_game_box = "";
+    g.selected_game_box = "";
     if (counter_games == 0) {
-      game.selected_game_box = "SelectedGameBox";
+      g.selected_game_box = "SelectedGameBox";
     }
-
-    game.opponent_rank_string = game.opponent_team_game.team_season.national_rank_display;
 
     counter_games += 1;
-  });
+  }
 
   var conference_season = db.conference_season.findOne({
     conference_season_id: team.team_season.conference_season_id,

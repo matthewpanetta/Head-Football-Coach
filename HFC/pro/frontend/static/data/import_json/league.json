@@ -1,0 +1,13 @@
+{
+  "league_name": "National Football League",
+  "league_abbreviation": "NFL",
+  "schedule": {
+    "games_per_team": 16,
+    "schedule_format": [
+        {"type": "same_division", "rounds": 2},
+        {"type": "same_conference_division", "rounds": 1},
+        {"type": "other_conference_division", "rounds": 1},
+        {"type": "same_conference_same_seed", "rounds": 1}
+    ]
+  }
+}
