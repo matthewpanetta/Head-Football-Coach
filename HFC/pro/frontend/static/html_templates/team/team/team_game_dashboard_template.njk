@@ -3,17 +3,16 @@
         {{game|log}}
         <div BoxScoreGameID="{{game.game_id}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col l12 mw400 w3-display-container w3-white w3-border w3-border-grey w3-hide">
             <div class="w3-col l12 height100 w3-display-container">
-                <div class="  height100 ">
-                <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container ">
-                  <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{this_week_game.away_team.team_color_primary_hex}}'></div>
-                  <div class="  "></div>
-                <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoTop LogoTop ' src='{{this_week_game.away_team.team_logo}}'/>
-              </div>
-              <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container ">
-                  <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{this_week_game.home_team.team_color_primary_hex}}'></div>
-                  <div class="  "></div>
-              <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoBottom LogoBottom ' src='{{this_week_game.home_team.team_logo}}'/>
-            </div>
+                <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+                    <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.away_team.team_color_primary_hex}}'></div>
+                    <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
+                    <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.away_team.team_logo}}'/>
+                </div>
+                <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+                    <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.home_team.team_color_primary_hex}}'></div>
+                    <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
+                    <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo}}'/>
+                </div>
                 <div class="teamScheduleGameDashboardGameDisplayTeams w3-col s12 w3-display-container w3-display-topmiddle">
                     <table class='width100 left-text'>
                         <tbody>

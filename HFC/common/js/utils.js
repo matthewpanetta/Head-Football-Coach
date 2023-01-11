@@ -239,10 +239,11 @@ export const weighted_random_choice = (options, default_val, choice_count = 1) =
   });
 
   let chosen_value_list = [];
+  let chosen_value = null;
   while (choice_count > 0) {
     let r = Math.floor(Math.random() * total);
     let chosen_obj = data.find((opt) => opt[2] >= r) || [default_val];
-    let chosen_value = chosen_obj[0];
+    chosen_value = chosen_obj[0];
     chosen_value_list.push(chosen_value);
 
     choice_count -= 1;
@@ -251,8 +252,12 @@ export const weighted_random_choice = (options, default_val, choice_count = 1) =
   if (chosen_value_list.length == 1) {
     return chosen_value_list[0];
   }
+  else {
+    console.log({chosen_value:chosen_value, options:options, choice_count:choice_count})
+    return chosen_value_list;
+  }
 
-  return chosen_value;
+  
 };
 
 export function NumberToGrade(number_value, scale) {

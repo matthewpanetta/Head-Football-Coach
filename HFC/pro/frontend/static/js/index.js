@@ -2834,6 +2834,7 @@ const create_new_players_and_player_team_seasons = async (
 
   const player_names = await common.random_name(ddb, num_players_to_create);
   const player_cities = await common.random_city(ddb, num_players_to_create);
+  const player_colleges = await random_college(ddb, num_players_to_create);
 
   var player_counter = 0;
 
@@ -2860,6 +2861,7 @@ const create_new_players_and_player_team_seasons = async (
         name: player_names[player_counter],
         world_id: world_id,
         hometown: player_cities[player_counter],
+        college: player_colleges[player_counter],
         ethnicity: ethnicity,
         body: body,
         world_id: world_id,
@@ -3292,6 +3294,18 @@ const random_name = async (ddb, num_names) => {
     name_list.push({ first: chosen_first.name, last: chosen_last.name });
   }
   return name_list;
+};
+
+const random_college = async (ddb, num_colleges) => {
+  var playcall_url = "/static/data/import_json/colleges.json";
+  var playcall_html = await fetch(playcall_url);
+  let college_list = await playcall_html.json();
+
+  let college_weights = college_list.map(co => [co.team, co.players ** 2.1]);
+
+  let chosen_college_list = weighted_random_choice(college_weights, 'None', num_colleges);
+
+  return chosen_college_list;
 };
 
 const random_city = async (ddb, num_cities) => {
@@ -8546,11 +8560,8 @@ $(document).ready(async function () {
     const parent_link = $(target).closest("[href]");
     const href = parent_link.attr("href");
 
-    console.log(event);
-
     if (href) {
       event.preventDefault();
-
       await navigate_to_href(href);
     }
   });

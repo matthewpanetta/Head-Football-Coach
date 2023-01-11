@@ -250,7 +250,7 @@
         <tr class='football-table-column-headers unselectable' style=' height: 1.875rem; '>
           {% if display_team %}
           <th style='width: 3.125rem; left: 0rem;' class='sticky-column' value-key='player_team_season.team_season.team.full_name' sort-order='sort-asc'></th>
-          <th style='width: 5.625rem; left: 1.875rem;' class='left-text sticky-column col-group' value-key='player_team_season.team_season.team.school_name' sort-order='sort-asc'>Team</th>
+          <th style='width: 5.625rem; left: 1.875rem;' class='left-text sticky-column col-group' value-key='player_team_season.team_season.team.team_location_name' sort-order='sort-asc'>Team</th>
           {% endif %}
 
           <!-- BASELINE -->
@@ -263,8 +263,8 @@
 
           {% if column_controls.Personal.personal.shown %}
             <!-- PERSONAL -->
-            <th style='width:  7.5rem;' class='col-group left-text' value-key='hometown_and_state'>
-              Hometown
+            <th style='width:  7.5rem;' class='col-group left-text' value-key='college'>
+              College
             </th>
           {% endif %}
 
@@ -431,7 +431,7 @@
             </td>
             <td style='width: 5.625rem; left: 1.875rem; color:white; background-color: #{{player.player_team_season.team_season.team.team_color_primary_hex}};' class='col-group left-text sticky-column'>
               <a href='{{player.player_team_season.team_season.team.team_href}}'>
-                {{player.player_team_season.team_season.team.school_name}}
+                {{player.player_team_season.team_season.team.team_location_name}}
               </a>
             </td>
             {% endif %}
@@ -457,8 +457,8 @@
             {% if column_controls.Personal.personal.shown %}
               <!-- PERSONAL -->
               <td style='width:  7.5rem;' class="col-group left-text">
-                <i class="fa fa-map-marker-alt geo-marker" style='padding-right: 0.5rem;' city='{{player.hometown.city}}' state='{{player.hometown.state}}'></i>
-                <span>{{player.hometown_and_state}}</span>
+                <i class="fa fa-map-marker-alt geo-marker" style='padding-right: 0.5rem;' city='{{player.college}}' state='{{player.college}}'></i>
+                <span>{{player.college}}</span>
               </td>
             {% endif %}
 

@@ -132,7 +132,6 @@ export const page_almanac_player_stats = async (common) => {
     player_team_season.player_team_games =
       player_team_games_by_player_team_season_id[player_team_season.player_team_season_id];
 
-    player_team_season.class_sort_order = class_order_map[player_team_season.class_name];
     player_team_season.position_sort_order = position_order_map[player_team_season.position];
     player_team_season.position_group = position_group_map[player_team_season.position];
 
@@ -144,23 +143,9 @@ export const page_almanac_player_stats = async (common) => {
   let player_team_seasons_by_player_id = index_group_sync(player_team_seasons, 'index', 'player_id');
   players = nest_children(players, player_team_seasons_by_player_id, 'player_id', 'player_team_season')
 
-  let classes = ["All", "SR", "JR", "SO", "FR"];
   let position_groups = ["All", "Offense", "Defense", "Special Teams"];
 
   let roster_summary = {};
-  for (let player_class of classes) {
-    roster_summary[player_class] = {};
-    for (let position_group of position_groups) {
-      roster_summary[player_class][position_group] = {
-        players: player_team_seasons.filter(
-          (pts) =>
-            (pts.class.class_name == player_class || player_class == "ALL") &&
-            (pts.position_group == position_group || position_group == "ALL")
-        ).length,
-        starters: 0,
-      };
-    }
-  }
 
   common.render_content.players = players;
   common.render_content.teams = teams;
@@ -175,7 +160,7 @@ const GetPlayerStats = async (common) => {
 
   var table_config = {
     original_data: players,
-    subject: "world player stats",
+    subject: "pro world player stats",
     display_team: true,
     templates: {
       table_template_url:

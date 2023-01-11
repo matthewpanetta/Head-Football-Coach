@@ -1846,14 +1846,9 @@ export class coach_team_season {
 
 export class player {
   constructor(init_data) {
-    this.player_id = init_data.player_id;
-    this.name = init_data.name;
-    this.world_id = init_data.world_id;
-    this.hometown = init_data.hometown;
-    this.position = init_data.position;
-    this.ethnicity = init_data.ethnicity;
-    this.body = init_data.body;
-    this.team_id = init_data.team_id;
+    for (let key in init_data){
+      this[key] = init_data[key]
+    }
 
     this.jersey_number = null;
 

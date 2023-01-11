@@ -46,16 +46,14 @@
             <span class=''>{{player.position}}</span>
             |
           <span>
-              {{player.current_player_team_season.class.class_name}}
-              {% if player.redshirt.current %}
-                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
-              {% endif %}
+              {{player.current_player_team_season.years_of_experience}} YOE
             </span>
           </div>
           <div class='playerOverviewInfo'>
             <span>
-              <i class="fa fa-map-marker-alt geo-marker" style="color: #{{page.PrimaryColor}};" city="{{player.hometown.city}}" state="{{player.hometown.state}}"></i>
-              {{player.hometown_and_state}}
+              {# <i class="fa fa-map-marker-alt geo-marker" style="color: #{{page.PrimaryColor}};" city="{{player.hometown.city}}" state="{{player.hometown.state}}"></i>
+              {{player.hometown_and_state}} #}
+              {{player.college}}
             </span>
           |
           <span>
