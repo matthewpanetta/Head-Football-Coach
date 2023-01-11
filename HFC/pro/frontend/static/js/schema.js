@@ -1739,6 +1739,10 @@ export class team_season {
     return this.rankings.power_rank[0];
   }
 
+  get division_rank() {
+    return this.rankings.division_rank[0];
+  }
+
   get power_rank_display() {
     if (this.rankings.power_rank[0] <= 25) {
       return `(${this.rankings.power_rank[0]})`;
