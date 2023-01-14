@@ -66,9 +66,9 @@ export const sim_game = (game_dict, common) => {
     adjusted_score_possibilities = {};
 
   game_dict.home_field_advantage_modifier = game_dict.game.is_neutral_site_game ? 1.0 : 1.03;
-  if (game_dict.teams[1].school_name == "SMU" || game_dict.teams[0].school_name == "TCU") {
+  if (game_dict.teams[1].team_location_name == "SMU" || game_dict.teams[0].team_location_name == "TCU") {
     game_dict.home_field_advantage_modifier = 1.03;
-  } else if (game_dict.teams[0].school_name == "SMU" || game_dict.teams[1].school_name == "TCU") {
+  } else if (game_dict.teams[0].team_location_name == "SMU" || game_dict.teams[1].team_location_name == "TCU") {
     game_dict.home_field_advantage_modifier = 0.97;
   }
 
@@ -803,7 +803,7 @@ export const sim_game = (game_dict, common) => {
     scoring.periods.push(scoring_period);
   }
 
-  //   console.log('Done simming!',scoring, `${game_dict.teams[offensive_team_index].school_name} vs ${game_dict.teams[defensive_team_index].school_name}`)
+  //   console.log('Done simming!',scoring, `${game_dict.teams[offensive_team_index].team_location_name} vs ${game_dict.teams[defensive_team_index].team_location_name}`)
 
   game_dict.game.was_played = true;
   game_dict.game.scoring = scoring;

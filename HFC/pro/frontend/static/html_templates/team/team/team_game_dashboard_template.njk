@@ -45,7 +45,7 @@
                                                 {%endif%}
 
                                                 <a class='font17  {{game.away_team_winning_game_bold}}' href="{{game.away_team.team_href}}">
-                                                    {{game.away_team.school_name}}
+                                                    {{game.away_team.team_location_name}}
                                                 </a>
                                                 <span class='font10'>
                                                     {% if game.was_played%}
@@ -72,7 +72,7 @@
                                                             </span>
                                                             {%endif%}
                                                             <a href="{{game.home_team.team_href}}" class='font17 {{game.home_team_winning_game_bold}}'>
-                                                                {{game.home_team.school_name}}
+                                                                {{game.home_team.team_location_name}}
                                                             </a>
                                                             <span class='font10'>
                                                                 {% if game.was_played%}

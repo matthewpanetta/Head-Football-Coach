@@ -20,10 +20,10 @@ export const page_team_roster = async (common) => {
 
   var teams = db.team.find({ team_id: { $gt: 0 } });
   teams = teams.sort(function (teamA, teamB) {
-    if (teamA.school_name < teamB.school_name) {
+    if (teamA.team_location_name < teamB.team_location_name) {
       return -1;
     }
-    if (teamA.school_name > teamB.school_name) {
+    if (teamA.team_location_name > teamB.team_location_name) {
       return 1;
     }
     return 0;
@@ -97,11 +97,8 @@ export const page_team_roster = async (common) => {
 
   let roster_summary = {};
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Roster",
-    group_name: "Team",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
+
 
   const TeamHeaderLinks = await team_header_links({
     path: "Roster",

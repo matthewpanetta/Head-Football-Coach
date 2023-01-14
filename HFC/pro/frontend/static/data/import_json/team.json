@@ -89,7 +89,7 @@
     "team_abbreviation": "NYJ",
     "team_color_primary_hex": "#115740",
     "team_color_secondary_hex": "#ffffff",
-    "helmet": { "background": "#115740", "facemask": "#000000" },
+    "helmet": { "background": "#115740", "facemask": "#222222", "design":"separate logo" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -110,7 +110,7 @@
     "team_abbreviation": "BAL",
     "team_color_primary_hex": "#24135f",
     "team_color_secondary_hex": "#9a7611",
-    "helmet": { "background": "#000000", "facemask": "#000000" },
+    "helmet": { "background": "#222222", "facemask": "#222222" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -131,7 +131,7 @@
     "team_abbreviation": "CIN",
     "team_color_primary_hex": "#fb4f14",
     "team_color_secondary_hex": "#000000",
-    "helmet": { "background": "#fb4f14", "facemask": "#000000", "design": null },
+    "helmet": { "background": "#fb4f14", "facemask": "#222222", "design": "none" },
     "jersey": {
       "invert": false,
       "id": "football-sparta",
@@ -157,7 +157,7 @@
     "team_abbreviation": "CLE",
     "team_color_primary_hex": "#311d00",
     "team_color_secondary_hex": "#f03000",
-    "helmet": { "background": "#f03000", "facemask": "#311d00", "design": null },
+    "helmet": { "background": "#f03000", "facemask": "#311d00", "design": "none" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -178,7 +178,7 @@
     "team_abbreviation": "PIT",
     "team_color_primary_hex": "#000000",
     "team_color_secondary_hex": "#eead1e",
-    "helmet": { "background": "#000000", "facemask": "#000000" },
+    "helmet": { "background": "#222222", "facemask": "#222222" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -241,7 +241,7 @@
     "team_abbreviation": "JAX",
     "team_color_primary_hex": "#006778",
     "team_color_secondary_hex": "#9f792c",
-    "helmet": { "background": "#000000", "facemask": "#000000" },
+    "helmet": { "background": "#222222", "facemask": "#222222" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -388,7 +388,7 @@
     "team_abbreviation": "NYG",
     "team_color_primary_hex": "#1F256B",
     "team_color_secondary_hex": "#a71930",
-    "helmet": { "background": "#1F256B", "facemask": "#bbbbbb" },
+    "helmet": { "background": "#1F256B", "facemask": "#bbbbbb", "design":"separate logo" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -409,7 +409,7 @@
     "team_abbreviation": "PHI",
     "team_color_primary_hex": "#004851",
     "team_color_secondary_hex": "#a2aaad",
-    "helmet": { "background": "#004851", "facemask": "#000000" },
+    "helmet": { "background": "#004851", "facemask": "#222222", "design":"separate logo" },
     "jersey": { "invert": false, "id": "football-standard", "lettering": "EAGLES" },
     "starting_tendencies": {
       "offense": {
@@ -514,7 +514,7 @@
     "team_abbreviation": "MIN",
     "team_color_primary_hex": "#4f2683",
     "team_color_secondary_hex": "#ffc62f",
-    "helmet": { "background": "#4f2683", "facemask": "#4f2683" },
+    "helmet": { "background": "#4f2683", "facemask": "#4f2683", "design": "separate logo" },
     "jersey": { "invert": false, "id": "football-standard", "lettering": "VIKINGS" },
     "starting_tendencies": {
       "offense": {
@@ -535,7 +535,7 @@
     "team_abbreviation": "ATL",
     "team_color_primary_hex": "#a71930",
     "team_color_secondary_hex": "#000000",
-    "helmet": { "background": "#000000", "facemask": "#ffffff" },
+    "helmet": { "background": "#222222", "facemask": "#ffffff" },
     "jersey": { "invert": false, "id": "football-standard", "flip_primaries": true },
     "starting_tendencies": {
       "offense": {
@@ -556,7 +556,7 @@
     "team_abbreviation": "CAR",
     "team_color_primary_hex": "#0085ca",
     "team_color_secondary_hex": "#000000",
-    "helmet": { "background": "#B0BAC7", "facemask": "#000000" },
+    "helmet": { "background": "#B0BAC7", "facemask": "#222222" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -577,7 +577,7 @@
     "team_abbreviation": "NO",
     "team_color_primary_hex": "#d3bc8d",
     "team_color_secondary_hex": "#000000",
-    "helmet": { "background": "#d3bc8d", "facemask": "#000000" },
+    "helmet": { "background": "#d3bc8d", "facemask": "#222222", "design":"separate logo" },
     "jersey": { "invert": false, "id": "football-standard", "flip_primaries": true },
     "starting_tendencies": {
       "offense": {

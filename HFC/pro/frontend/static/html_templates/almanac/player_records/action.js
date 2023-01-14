@@ -58,7 +58,7 @@
 
       
 
-      const recent_games = await common.recent_games(common);
+      const recent_games = await recent_games(common);
 
       var render_content = {page: {PrimaryColor: common.primary_color, SecondaryColor: common.secondary_color, NavBarLinks: NavBarLinks, page_title: 'Player Records'},
                             team_list: [],

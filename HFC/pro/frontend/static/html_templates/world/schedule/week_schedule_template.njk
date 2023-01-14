@@ -59,7 +59,7 @@
                 <tr class=' center-text-row'>
                   <td class='left-text'>
                     <span class='font10'>{{game.away_team_game.national_rank_display|coalesce( game.away_team_game.team_season.national_rank_display)}}</span>
-                    <a href="{{game.away_team_game.team_season.team.team_href}}" class='{{game.away_team_game.bold}}'>{{game.away_team_game.team_season.team.school_name}}</a>
+                    <a href="{{game.away_team_game.team_season.team.team_href}}" class='{{game.away_team_game.bold}}'>{{game.away_team_game.team_season.team.team_location_name}}</a>
                     <span class='font10'>{{game.away_team_game.record_display}}</span>
                   </td>
                   {% if game.was_played %}
@@ -72,7 +72,7 @@
                 <tr class=' center-text-row'>
                   <td class='left-text '>
                     <span class='font10'>{{game.home_team_game.national_rank_display|coalesce( game.home_team_game.team_season.national_rank_display)}}</span>
-                    <a href="{{game.home_team_game.team_season.team.team_href}}" class='{{game.home_team_game.bold}}'>{{game.home_team_game.team_season.team.school_name}}</a>
+                    <a href="{{game.home_team_game.team_season.team.team_href}}" class='{{game.home_team_game.bold}}'>{{game.home_team_game.team_season.team.team_location_name}}</a>
                     <span class='font10'>{{game.home_team_game.record_display}}</span>
                   </td>
                   {% if game.was_played %}

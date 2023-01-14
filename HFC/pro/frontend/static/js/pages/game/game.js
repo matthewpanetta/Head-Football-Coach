@@ -554,11 +554,8 @@ export const page_game = async (common) => {
     }
   }
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Game",
-    group_name: "Game",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
+
 
   const conf_standings = [];
 
@@ -699,7 +696,7 @@ const action = async (common) => {
   
       var scoring_data = [
         {
-          name: game.home_team_game.team_season.team.school_name,
+          name: game.home_team_game.team_season.team.team_location_name,
           show: true,
           color:
             "#" + game.home_team_game.team_season.team.team_color_primary_hex,
@@ -707,7 +704,7 @@ const action = async (common) => {
           drives: drives.map((d) => d.drive_end.team_drives[0]),
         },
         {
-          name: game.away_team_game.team_season.team.school_name,
+          name: game.away_team_game.team_season.team.team_location_name,
           show: true,
           color:
             "#" + game.away_team_game.team_season.team.team_color_primary_hex,
@@ -844,7 +841,7 @@ const action = async (common) => {
             return i * 20 + 9;
           })
           .text(function (d) {
-            return d.school_name;
+            return d.team_location_name;
           });
   
         chart
@@ -900,7 +897,7 @@ const action = async (common) => {
             //.style('color', d => d.color)
             .html(
               (d) =>
-                `<i class="fas fa-square" style='margin-right: 4px; color: #${d.team.team_color_primary_hex};'></i>${d.team.school_name} - ${d.points}`
+                `<i class="fas fa-square" style='margin-right: 4px; color: #${d.team.team_color_primary_hex};'></i>${d.team.team_location_name} - ${d.points}`
             );
   
           // console.log({xPosition:xPosition, mouse_event:mouse_event, tooltip:tooltip, tooltipLine:tooltipLine, highlighted_drive:highlighted_drive, drives:drives})

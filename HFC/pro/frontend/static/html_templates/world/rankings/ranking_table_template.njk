@@ -7,14 +7,14 @@
     >
       <div>{{team_season.rankings.national_rank[0]}}</div>
     </td>
-    <td class='center-text' style="background-color: #{{team_season.team.team_color_primary_hex}}; color: white; width: 4.375rem" value='{{team_season.team.school_name}}'  >
+    <td class='center-text' style="background-color: #{{team_season.team.team_color_primary_hex}}; color: white; width: 4.375rem" value='{{team_season.team.team_location_name}}'  >
       <a href="{{team_season.team.team_href}}"
         ><img
           class="logo logo-50"
           src="{{team_season.team.team_logo}}"
 /></a>
     </td>
-    <td class="column-med" value='{{team_season.team.school_name}}'  >
+    <td class="column-med" value='{{team_season.team.team_location_name}}'  >
       <div class="no-list-style">
         <div>
           {% if team_season.is_user_team%}
@@ -23,7 +23,7 @@
           </span>
           {%endif%}
           <a class="font14" href="{{team_season.team.team_href}}">
-            <span>{{team_season.team.school_name}}
+            <span>{{team_season.team.team_location_name}}
             <span class="hide-small">{{team_season.team.team_name}}</span></span>
           </a>
         </div>
@@ -87,7 +87,7 @@
           </span>
           {%endif%}
           <a class="hide-small" href="{{team_season.last_week_team_game.opponent_team.team_href}}">
-            {{team_season.last_week_team_game.opponent_team.school_name}}</a>
+            {{team_season.last_week_team_game.opponent_team.team_location_name}}</a>
         </div>
       {% endif %}
     </td>
@@ -104,7 +104,7 @@
           </span>
           {%endif%}
         <a class="hide-small" href="{{team_season.this_week_team_game.opponent_team.team_href}}">{{team_season.this_week_team_game.opponent_team_season.national_rank_display}}
-          {{team_season.this_week_team_game.opponent_team.school_name}}</a>
+          {{team_season.this_week_team_game.opponent_team.team_location_name}}</a>
       {% endif %}
     </td>
     {# <td class="center-text hide-small" value='{{team_season.rankings.sos.unplayed_opponents_sos_ranking[0]}}'>

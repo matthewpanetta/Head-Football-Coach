@@ -92,7 +92,7 @@
                   {{game.away_team_game.team_season.national_rank_display}}
                   {%endif%}
                 </span>
-                <span class='bold'>{{game.away_team_game.team_season.team.school_name}}</span>
+                <span class='bold'>{{game.away_team_game.team_season.team.team_location_name}}</span>
               </div>
               <div class="gameHeaderTeamContainerName">
                 {{game.away_team_game.team_season.team.team_name}}
@@ -197,7 +197,7 @@
                   {{game.home_team_game.team_season.national_rank_display}}
                   {%endif%}
                 </span> 
-                <span class='bold'>{{game.home_team_game.team_season.team.school_name}}</span>
+                <span class='bold'>{{game.home_team_game.team_season.team.team_location_name}}</span>
               </div>
               <div class="gameHeaderTeamContainerName">
                 {{game.home_team_game.team_season.team.team_name}}
@@ -492,7 +492,7 @@
                 </div>
                 <div  class='card w3-margin-bottom'>
                   <div class='team-primary-background-bar'>
-                    {{game.away_team_game.team_season.team.school_name}} @ {{game.home_team_game.team_season.team.school_name}}
+                    {{game.away_team_game.team_season.team.team_location_name}} @ {{game.home_team_game.team_season.team.team_location_name}}
 
                   </div>
                   <div class="" style='height: 25rem;'>
@@ -575,11 +575,11 @@
                     <thead>
                       <tr class=' team-primary-background-bar'>
                         <th class='right-text '>OVR</th>
-                        <th class='right-text '>{{game.away_team_game.team_season.team.school_name}}</th>
+                        <th class='right-text '>{{game.away_team_game.team_season.team.team_location_name}}</th>
                         <th class='center-text '></th>
                         <th class='center-text '>Pos</th>
                         <th class='center-text '></th>
-                        <th class=' '>{{game.home_team_game.team_season.team.school_name}}</th>
+                        <th class=' '>{{game.home_team_game.team_season.team.team_location_name}}</th>
                         <th class=' '>OVR</th>
                       </tr>
                     </thead>
@@ -685,7 +685,7 @@
               {% for team_game_obj in [ {'home_or_away': 'away', 'team_game': game.away_team_game}, {'home_or_away': 'home', 'team_game': game.home_team_game}]%}
               <div class='flex-2 gamePlayerBoxStats card margin-bottom-12 height100 no-padding'>
                 <div class="w3-bar {{team_game_obj.home_or_away}}-team-primary-background-bar">
-                  <span>{{team_game_obj.team_game.team_season.team.school_name}} {{stat_grouping.stat_group_name}}</span>
+                  <span>{{team_game_obj.team_game.team_season.team.team_location_name}} {{stat_grouping.stat_group_name}}</span>
                 </div>
                 <table id='{{team_game_obj.home_or_away}}-box-score-{{stat_grouping.stat_group_name}}' class='table table-striped table-hover  width100'>
                   <thead>

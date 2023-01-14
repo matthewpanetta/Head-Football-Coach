@@ -10,12 +10,13 @@ import {
   union,
   set_union,
   except,
-  set_except,
+  set_except,round_decimal,
   get_from_dict,
   deep_copy,
   ordinal,
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
+import { recent_games} from "/static/js/widgets.js";
 
 export const page_world_standings = async (common) => {
   const db = common.db;
@@ -27,11 +28,7 @@ export const page_world_standings = async (common) => {
 
   var world_obj = {};
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Standings",
-    group_name: "World",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
 
   const weeks = db.week.find({ season: season });
   const week_ids = weeks.map((week) => week.week_id);
@@ -99,15 +96,15 @@ export const page_world_standings = async (common) => {
     }
 
     if (ts.overall_outcomes.games_played > 0) {
-      ts.overall_outcomes.ppg = common.round_decimal(
+      ts.overall_outcomes.ppg = round_decimal(
         ts.overall_outcomes.points_for / ts.overall_outcomes.games_played,
         1
       );
-      ts.overall_outcomes.papg = common.round_decimal(
+      ts.overall_outcomes.papg = round_decimal(
         ts.overall_outcomes.points_against / ts.overall_outcomes.games_played,
         1
       );
-      ts.overall_outcomes.mov = common.round_decimal(
+      ts.overall_outcomes.mov = round_decimal(
         ts.overall_outcomes.ppg - ts.overall_outcomes.papg,
         1
       );
@@ -120,15 +117,15 @@ export const page_world_standings = async (common) => {
     }
 
     if (ts.conference_outcomes.games_played > 0) {
-      ts.conference_outcomes.ppg = common.round_decimal(
+      ts.conference_outcomes.ppg = round_decimal(
         ts.conference_outcomes.points_for / ts.conference_outcomes.games_played,
         1
       );
-      ts.conference_outcomes.papg = common.round_decimal(
+      ts.conference_outcomes.papg = round_decimal(
         ts.conference_outcomes.points_against / ts.conference_outcomes.games_played,
         1
       );
-      ts.conference_outcomes.mov = common.round_decimal(
+      ts.conference_outcomes.mov = round_decimal(
         ts.conference_outcomes.ppg - ts.conference_outcomes.papg,
         1
       );
@@ -185,8 +182,6 @@ export const page_world_standings = async (common) => {
     return 1;
   });
 
-  const recent_games = await common.recent_games(common);
-
   var render_content = {
     page: {
       PrimaryColor: common.primary_color,
@@ -196,7 +191,7 @@ export const page_world_standings = async (common) => {
     },
     world_id: common.params["world_id"],
     team_list: [],
-    recent_games: recent_games,
+    recent_games: await recent_games(common),
     conference_seasons: conference_seasons,
   };
 

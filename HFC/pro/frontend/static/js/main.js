@@ -1,8 +1,9 @@
 import { nunjucks_env } from '../../../../../../../../../common/js/nunjucks_tags.js';
-import { index_group_sync, round_decimal, nest_children, weighted_random_choice, get, distinct, deep_copy, normal_trunc, shuffle, sum, average, set_intersect } from '../../../../../../../../../common/js/utils.js';
-import { init_basic_table_sorting } from '../../../../../../../../../common/js/football-table/football-table.js';
-import { award, team_game, conference, league_season, team, team_season, team_season_stats, coach, coach_team_season, player, player_team_season, player_team_season_stats, day, player_team_game } from '../../../../../../../../../static/js/schema.js';
-import { driver_db, resolve_db, create_new_db } from '../../../../../../../../../static/js/database.js';
+import { index_group_sync, distance_between_coordinates, nest_children, weighted_random_choice, distinct, get, deep_copy, round_decimal, normal_trunc, sum, average, shuffle, set_intersect } from '../../../../../../../../../common/js/utils.js';
+import '../../../../../../../../../common/js/football-table/football-table.js';
+import { award, team_game, league_season, team_season, team_season_stats, player_team_season, player_team_season_stats, coach_team_season, player, day, player_team_game } from '../../../../../../../../../static/js/schema.js';
+import { driver_db, resolve_db } from '../../../../../../../../../static/js/database.js';
+import { populate_player_modal } from '../../../../../../../../../static/js/modals.js';
 import { page_world, page_world_rankings, page_world_standings, page_world_schedule, page_world_awards } from '../../../../../../../../../static/js/pages/world_pages.js';
 import { page_team, page_team_schedule, page_team_roster, page_team_history } from '../../../../../../../../../static/js/pages/team_pages.js';
 import { page_player } from '../../../../../../../../../static/js/pages/player_pages.js';
@@ -12,12 +13,12 @@ import { page_index } from '../../../../../../../../../static/js/pages/index_pag
 import { position_group_map } from '../../../../../../../../../static/js/metadata.js';
 import { generate_ranking_headlines } from '../../../../../../../../../static/js/headlines.js';
 import { sim_game } from '../../../../../../../../../static/js/sim_game.js';
-import { player_face_listeners, draw_player_faces } from '../../../../../../../../../static/js/faces.js';
+import { draw_player_faces } from '../../../../../../../../../static/js/faces.js';
 
-const nav_bar_links = async (params) => {
-  const path = params.path;
-  const group_name = params.group_name;
-  const db = params.db;
+const nav_bar_links = async (common, data) => {
+  const path = data.path;
+  const group_name = data.group_name;
+  const db = common.db;
 
   const league_seasons = db.league_season.find();
   const current_league_season = league_seasons.find((ls) => ls.is_current_season);
@@ -392,62 +393,6 @@ const nav_bar_links = async (params) => {
   return SimActionStatus;
 };
 
-function deg2rad(deg) {
-  return deg * (Math.PI / 180);
-}
-
-const distance_between_cities = (city_a, city_b, distance_tracking_map = {}) => {
-  let city_a_str = `${Math.round(city_a.lat, 1)},${Math.round(city_a.long, 1)}`;
-  let city_b_str = `${Math.round(city_b.lat, 1)},${Math.round(city_b.long, 1)}`;
-  let city_arr = [city_a_str, city_b_str].sort();
-
-  // Serialize the locations and short-circuit if we've already calculated the disance.
-  if (distance_tracking_map[city_arr[0]] && distance_tracking_map[city_arr[0]][city_arr[1]]) {
-    return distance_tracking_map[city_arr[0]][city_arr[1]];
-  }
-
-  var earth_radius = 6371; // Radius of the earth in km
-  var dLat = deg2rad(city_a.lat - city_b.lat); // deg2rad below
-  var dLon = deg2rad(city_a.long - city_b.long);
-  var a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(city_a.lat)) *
-      Math.cos(deg2rad(city_b.lat)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  var d = earth_radius * c; // Distance in km
-  d = d / 1.609344;
-
-  if (!distance_tracking_map[city_arr[0]]) {
-    distance_tracking_map[city_arr[0]] = {};
-  }
-  distance_tracking_map[city_arr[0]][city_arr[1]] = d;
-
-  if (!distance_tracking_map[city_arr[1]]) {
-    distance_tracking_map[city_arr[1]] = {};
-  }
-  distance_tracking_map[city_arr[1]][city_arr[0]] = d;
-
-  return d;
-};
-
-const distance_between_coordinates = (coord_a, coord_b) => {
-  var earth_radius = 6371; // Radius of the earth in km
-  var dLat = deg2rad(coord_a[0] - coord_b[0]); // deg2rad below
-  var dLon = deg2rad(coord_a[1] - coord_b[1]);
-  var a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(coord_a[0])) *
-      Math.cos(deg2rad(coord_b[0])) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  var d = earth_radius * c; // Distance in km
-  d = d / 1.609344;
-  return d;
-};
-
 const initialize_new_season = async (this_week, common) => {
   const db = common.db;
   const current_season = this_week.season;
@@ -490,7 +435,7 @@ const initialize_new_season = async (this_week, common) => {
   stopwatch(common, "Init New Season - Created phases & weeks");
 
   var conferences = db.conference.find();
-  await common.create_conference_seasons({
+  await create_conference_seasons({
     common: common,
     conferences: conferences,
     season: new_season,
@@ -1747,286 +1692,6 @@ const assign_player_jersey_numbers = async (common, season) => {
   common.stopwatch(common, "Assigning jersey numbers - Saved & done");
 };
 
-const assign_players_to_teams = async (common, world_id, season, team_seasons) => {
-  const db = common.db;
-
-  const teams = db.team.find({ team_id: { $gt: 0 } });
-  const teams_by_team_id = index_group_sync(teams, "index", "team_id");
-
-  let player_team_seasons = db.player_team_season.find({ season: season, team_season_id: 0 });
-
-  let player_ids = player_team_seasons.map((pts) => pts.player_id);
-
-  let players = db.player.find({ player_id: { $in: player_ids } });
-  let players_by_player_id = index_group_sync(players, "index", "player_id");
-  player_team_seasons = nest_children(
-    player_team_seasons,
-    players_by_player_id,
-    "player_id",
-    "player"
-  );
-
-  team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
-
-  index_group_sync(team_seasons, "index", "team_id");
-  const team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
-
-  var team_position_options = [
-    {
-      QB: 3,
-      RB: 4,
-      FB: 1,
-      WR: 6,
-      TE: 3,
-      OT: 4,
-      IOL: 6,
-      EDGE: 4,
-      DL: 4,
-      LB: 6,
-      CB: 6,
-      S: 4,
-      K: 1,
-      P: 1,
-    },
-  ];
-
-  for (const team_season of team_seasons) {
-    team_season.team_position_option = deep_copy(
-      team_position_options[Math.floor(Math.random() * team_position_options.length)]
-    );
-  }
-
-  const player_team_seasons_by_position = index_group_sync(
-    player_team_seasons,
-    "group",
-    "position"
-  );
-  console.log("player_team_seasons", {
-    player_team_seasons_by_position: player_team_seasons_by_position,
-    player_team_seasons: player_team_seasons,
-  });
-
-  let player_team_seasons_tocreate = [];
-
-  for (const position in player_team_seasons_by_position) {
-    var position_player_team_seasons = player_team_seasons_by_position[position];
-    position_player_team_seasons = position_player_team_seasons.sort(
-      (pts_a, pts_b) =>
-        pts_b.ratings.overall.potential +
-        pts_b.ratings.overall.OVERALL -
-        (pts_a.ratings.overall.potential + pts_a.ratings.overall.overall)
-    );
-
-    let position_team_season_ids = team_seasons
-      .map((ts) => Array(ts.team_position_option[position]).fill([ts.team_season_id]).flat())
-      .flat();
-
-    if (position == "P" || position == "K") {
-      position_team_season_ids = shuffle(team_seasons.map((ts) => ts.team_season_id));
-      position_team_season_ids = position_team_season_ids.concat(
-        shuffle(team_seasons.map((ts) => ts.team_season_id))
-      );
-    } else {
-      position_team_season_ids = shuffle(position_team_season_ids);
-    }
-
-    console.log({
-      position_team_season_ids: position_team_season_ids,
-      position_player_team_seasons: position_player_team_seasons,
-    });
-
-    for (const team_season_id of position_team_season_ids) {
-      var team_season = team_seasons_by_team_season_id[team_season_id];
-
-      var prestige_slice_lower_bound = Math.floor(
-        position_player_team_seasons.length * team_season.prestige_lower_slice_ratio
-      );
-      var prestige_slice_upper_bound = Math.ceil(
-        position_player_team_seasons.length * team_season.prestige_upper_slice_ratio
-      );
-
-      var prestige_slice_gap = prestige_slice_upper_bound - prestige_slice_lower_bound;
-      // var r = Math.random();
-      // var player_team_season_index = Math.floor(
-      //   prestige_slice_lower_bound + (r * prestige_slice_gap)
-      // );
-
-      // var chosen_player_team_season = position_player_team_seasons.splice(
-      //   player_team_season_index,
-      //   1
-      // );
-
-      console.log({
-        team_season: team_season,
-        position_player_team_seasons: position_player_team_seasons,
-        "team_season.prestige_upper_slice_ratio": team_season.prestige_upper_slice_ratio,
-        "team_season.prestige_lower_slice_ratio": team_season.prestige_lower_slice_ratio,
-        prestige_slice_gap: prestige_slice_gap,
-        prestige_slice_upper_bound: prestige_slice_upper_bound,
-        prestige_slice_lower_bound: prestige_slice_lower_bound,
-      });
-      let available_position_player_team_seasons = position_player_team_seasons.slice(
-        0,
-        position_player_team_seasons.length
-      );
-      let available_position_player_team_seasons_tuples =
-        available_position_player_team_seasons.map(function (pts) {
-          return [pts, pts.ratings.overall.overall + pts.ratings.overall.potential];
-        });
-      let chosen_player_team_season = weighted_random_choice(
-        available_position_player_team_seasons_tuples
-      );
-      // console.log({available_position_player_team_seasons_tuples:available_position_player_team_seasons_tuples, chosen_player_team_season:chosen_player_team_season})
-
-      if (chosen_player_team_season) {
-        chosen_player_team_season.team_season_id = team_season_id;
-        player_team_seasons_tocreate.push(chosen_player_team_season);
-      } else {
-        console.log("Didnt match player");
-      }
-
-      position_player_team_seasons = position_player_team_seasons.filter(
-        (pts) => pts != chosen_player_team_season
-      );
-    }
-
-    console.log({
-      position: position,
-      position_team_season_ids: position_team_season_ids,
-      player_team_seasons: player_team_seasons,
-      player_team_seasons_tocreate: player_team_seasons_tocreate,
-    });
-  }
-
-  player_team_seasons_tocreate.forEach(function (pts) {
-    delete pts.player;
-    delete pts.team_distances;
-  });
-
-  console.log({ player_team_seasons_tocreate: player_team_seasons_tocreate });
-  db.player_team_season.update(player_team_seasons_tocreate);
-
-  await db.saveDatabaseAsync();
-};
-
-const create_coaches = async (data) => {
-  const common = data.common;
-  const db = common.db;
-  var coaches_tocreate = [];
-  var ethnicity_map = { white: 25, black: 25, hispanic: 25, asian: 25 };
-
-  const positions = ["HC", "OC", "DC", "ST"];
-
-  const num_coaches_to_create = positions.length * data.team_seasons.length;
-
-  const coach_names = await common.random_name(ddb, num_coaches_to_create);
-  const coach_cities = await common.random_city(ddb, num_coaches_to_create);
-
-  var coach_counter = 0;
-
-  let teams = db.team.find({ team_id: { $gt: 0 } });
-  let team_brand_weights = teams.map((t) => [
-    t.team_id,
-    Math.floor(t.team_ratings.program_history ** 0.5),
-  ]);
-
-  var coach_id_counter = db.coach.nextId("coach_id");
-
-  for (let team_season of data.team_seasons) {
-    for (const coaching_position of positions) {
-      let body = common.body_from_position("coach");
-      let ethnicity = weighted_random_choice(ethnicity_map);
-      let alma_mater_team_id = weighted_random_choice(team_brand_weights);
-      var coach_obj = {
-        coach_id: coach_id_counter,
-        name: coach_names[coach_counter],
-        world_id: data.world_id,
-        coaching_position: coaching_position,
-        hometown: coach_cities[coach_counter],
-        ethnicity: ethnicity,
-        body: body,
-        alma_mater_team_id: parseInt(alma_mater_team_id),
-      };
-
-      coaches_tocreate.push(new coach(coach_obj));
-
-      coach_counter += 1;
-      coach_id_counter += 1;
-    }
-  }
-  console.log({ coaches_tocreate: coaches_tocreate });
-  db.coach.insert(coaches_tocreate);
-
-  await db.saveDatabaseAsync();
-};
-
-const create_coach_team_seasons = async (data) => {
-  const common = data.common;
-  const db = common.db;
-  common.season;
-
-  const team_seasons = data.team_seasons;
-
-  var coach_team_seasons_tocreate = [];
-  let coach_team_season_id_counter = db.coach_team_season.nextId("coach_team_season_id");
-
-  for (const coach of data.coaches) {
-    var init_data = {
-      coach_id: coach.coach_id,
-      coach_team_season_id: coach_team_season_id_counter,
-      team_season_id: -1,
-      season: data.season,
-      world_id: data.world_id,
-      coaching_position: coach.coaching_position,
-      age: Math.floor(Math.random() * 30) + 30,
-    };
-
-    var new_cts = new coach_team_season(init_data);
-
-    coach_team_seasons_tocreate.push(new_cts);
-    coach_team_season_id_counter += 1;
-  }
-
-  const coach_team_seasons_by_position = index_group_sync(
-    coach_team_seasons_tocreate,
-    "group",
-    "coaching_position"
-  );
-  console.log({
-    coach_team_seasons_tocreate: coach_team_seasons_tocreate,
-    coach_team_seasons_by_position: coach_team_seasons_by_position,
-  });
-  coach_team_seasons_tocreate = [];
-
-  for (const position in coach_team_seasons_by_position) {
-    var coach_team_seasons = coach_team_seasons_by_position[position];
-
-    let ind = 0;
-    for (const team_season of team_seasons) {
-      let chosen_coach_team_season = coach_team_seasons[ind];
-      chosen_coach_team_season.team_season_id = team_season.team_season_id;
-
-      chosen_coach_team_season.contract = {
-        overall_years: 5,
-        years_remaining: Math.floor(Math.random() * 5) + 1,
-        compensation: 1_000_000,
-        goals: {
-          wins_per_season: { value: 6, importance: 10 },
-          final_rank: { value: 25, importance: 8 },
-        },
-      };
-
-      coach_team_seasons_tocreate.push(chosen_coach_team_season);
-
-      ind += 1;
-    }
-  }
-
-  db.coach_team_season.insert(coach_team_seasons_tocreate);
-
-  await db.saveDatabaseAsync();
-};
-
 const generate_player_ratings = async (common, world_id, season) => {
   const db = common.db;
 
@@ -2218,8 +1883,8 @@ const create_new_players_and_player_team_seasons = async (
   const num_players_per_team = sum(Object.values(team_position_counts));
   const num_players_to_create = Math.ceil(num_players_per_team) * team_seasons.length;
 
-  const player_names = await common.random_name(ddb, num_players_to_create);
-  const player_cities = await common.random_city(ddb, num_players_to_create);
+  const player_names = await random_name(ddb, num_players_to_create);
+  const player_cities = await random_city(ddb, num_players_to_create);
   const player_colleges = await random_college(ddb, num_players_to_create);
 
   var player_counter = 0;
@@ -2231,7 +1896,7 @@ const create_new_players_and_player_team_seasons = async (
     let players_for_position = Math.floor(team_position_counts[position] * team_seasons.length);
 
     for (let position_count = 0; position_count < players_for_position; position_count++) {
-      let body = common.body_from_position(position);
+      let body = body_from_position(position);
       let ethnicity = weighted_random_choice(position_ethnicity[position]);
 
       if (player_counter > player_names.length || player_counter > player_cities.length) {
@@ -2334,8 +1999,9 @@ const create_dates = async (common,
 
   let dates = [];
 
+
   while(iter_date <= stop_date){
-    dates.push(new day(iter_date));
+    dates.push(new day(iter_date, is_current = start_date == iter_date));
     iter_date.setDate(iter_date.getDate() + 1);
   }
 
@@ -2599,68 +2265,6 @@ const create_week = async (phases, common, world_id, season) => {
   return weeks_to_create;
 };
 
-const get_rivalries = async (teams) => {
-  const team_names = teams.map((t) => t.team_location_name);
-
-  var url = "/static/data/import_json/rivalries.json";
-  var data = await fetch(url);
-  var rival_dimension = await data.json();
-
-  rival_dimension = rival_dimension.filter(
-    (r) => team_names.includes(r.team_name_1) && team_names.includes(r.team_name_2)
-  );
-
-  rival_dimension = shuffle(rival_dimension);
-  rival_dimension = rival_dimension.sort(function (a, b) {
-    if (a.preferred_week_id == undefined) return 1;
-    if (b.preferred_week_id == undefined) return 0;
-    if (a.preferred_week_id < b.preferred_week_id) return -1;
-    if (a.preferred_week_id > b.preferred_week_id) return 1;
-    return 0;
-  });
-
-  return rival_dimension;
-};
-
-const get_teams = async () => {
-  var url = "/static/data/import_json/team.json";
-  var data = await fetch(url);
-  var teams = await data.json();
-
-  teams.forEach(function (t) {
-    t.team_color_primary_hex = t.team_color_primary_hex.replace("#", "");
-    t.team_color_secondary_hex = t.team_color_secondary_hex.replace("#", "");
-
-    if (t.jersey.lettering_color) {
-      t.jersey.lettering_color = t.jersey.lettering_color.replace("#", "");
-    }
-
-    t.field = t.field || {
-      endzones: {
-        style: "text",
-        endzone_color: "407A21",
-        text: t.team_location_name,
-        text_color: t.team_color_primary_hex,
-        text_border_color: "FFFFFF",
-      },
-    };
-  });
-
-  return teams;
-};
-
-const get_conferences = async (conference_version) => {
-  conference_version = conference_version || "";
-
-  var url = `/static/data/import_json/conference${conference_version}.json`;
-  console.log({ url: url });
-  var data = await fetch(url);
-  var conferences = await data.json();
-  console.log({ conferences: conferences });
-
-  return conferences;
-};
-
 const random_name = async (ddb, num_names) => {
   var name_list = [];
 
@@ -2721,66 +2325,66 @@ const resolve_route_parameters = async (pathname) => {
     { route: "/admin/Database/:database", path: "admin/database/base.html" },
     { route: "/admin/Database/:database/Table/:table", path: "admin/table/base.html" },
 
-    { route: "/World/:world_id/", f: page_world },
+    { route: "/World/:world_id/", f: page_world, group_name: 'World', path: 'Overview' },
     // { route: "/World/:world_id/Week/:short_name/", f: page_world_week },
-    { route: "/World/:world_id/Rankings/", f: page_world_rankings },
-    { route: "/World/:world_id/Standings/", f: page_world_standings },
+    { route: "/World/:world_id/Rankings/", f: page_world_rankings, group_name: 'World', path: 'Rankings' },
+    { route: "/World/:world_id/Standings/", f: page_world_standings, group_name: 'World', path: 'Standings' },
     {
       route: "/World/:world_id/Standings/Conference/:conference_id",
-      path: "world/standings/base.html",
+      path: "world/standings/base.html", group_name: 'World', path: 'Standings'
     },
-    { route: "/World/:world_id/Schedule/", f: page_world_schedule },
-    { route: "/World/:world_id/Awards/", f: page_world_awards },
+    { route: "/World/:world_id/Schedule/", f: page_world_schedule, group_name: 'World', path: 'Schedule' },
+    { route: "/World/:world_id/Awards/", f: page_world_awards, group_name: 'World', path: 'Awards' },
 
     {
       route: "/World/:world_id/Conference/:conference_id",
-      path: "conference/conference/base.html",
+      path: "conference/conference/base.html", group_name: 'Conference', path: 'Overview'
     },
 
-    { route: "/World/:world_id/Recruiting/", path: "world/recruiting/base.html" },
+    { route: "/World/:world_id/Recruiting/", path: "world/recruiting/base.html", group_name: 'World', path: 'Recruiting' },
 
     {
       route: "/World/:world_id/PlayerStats/Season/:season",
-      f: page_almanac_player_stats,
+      f: page_almanac_player_stats, group_name: 'Almanac', path: 'Player Stats'
     },
-    { route: "/World/:world_id/TeamStats/Season/:season", path: "almanac/team_stats/base.html" },
+    { route: "/World/:world_id/TeamStats/Season/:season", path: "almanac/team_stats/base.html", group_name: 'Almanac', path: 'Team Stats' },
 
-    { route: "/World/:world_id/History", f: page_almanac_history },
-    { route: "/World/:world_id/PlayerRecords", f: page_almanac_player_records },
-    { route: "/World/:world_id/TeamRecords", path: "almanac/team_records/base.html" },
-    { route: "/World/:world_id/CoachStats", path: "almanac/coach_stats/base.html" },
-    { route: "/World/:world_id/Shortlists", path: "almanac/shortlists/base.html" },
-    { route: "/World/:world_id/AmazingStats", path: "almanac/amazing_stats/base.html" },
+    { route: "/World/:world_id/History", f: page_almanac_history, group_name: 'Almanac', path: 'History' },
+    { route: "/World/:world_id/PlayerRecords", f: page_almanac_player_records, group_name: 'Almanac', path: 'Player Records' },
+    { route: "/World/:world_id/TeamRecords", path: "almanac/team_records/base.html", group_name: 'Almanac', path: 'Team Records' },
+    { route: "/World/:world_id/CoachStats", path: "almanac/coach_stats/base.html", group_name: 'Almanac', path: 'Coach Stats' },
+    { route: "/World/:world_id/Shortlists", path: "almanac/shortlists/base.html", group_name: 'Almanac', path: 'Shortlist' },
+    { route: "/World/:world_id/AmazingStats", path: "almanac/amazing_stats/base.html", group_name: 'Almanac', path: 'Amazing Stats' },
     {
       route: "/World/:world_id/AmazingStats/Season/:season/",
-      path: "almanac/amazing_stats/base.html",
+      path: "almanac/amazing_stats/base.html", group_name: 'Almanac', path: 'Amazing Stats'
     },
 
-    { route: "/World/:world_id/Team/:team_id/", f: page_team },
-    { route: "/World/:world_id/Team/:team_id/Season/:season/", f: page_team },
-    { route: "/World/:world_id/Team/:team_id/Schedule", f: page_team_schedule },
+    { route: "/World/:world_id/Team/:team_id/", f: page_team, group_name: 'Team', path: 'Overview' },
+    { route: "/World/:world_id/Team/:team_id/Season/:season/", f: page_team, group_name: 'Team', path: 'Overview' },
+    { route: "/World/:world_id/Team/:team_id/Schedule", f: page_team_schedule, group_name: 'Team', path: 'Schedule' },
     {
       route: "/World/:world_id/Team/:team_id/Schedule/Season/:season/",
-      f: page_team_schedule,
+      f: page_team_schedule, group_name: 'Team', path: 'Schedule'
     },
-    { route: "/World/:world_id/Team/:team_id/Roster", f: page_team_roster },
+    { route: "/World/:world_id/Team/:team_id/Roster", f: page_team_roster, group_name: 'Team', path: 'Roster' },
     {
       route: "/World/:world_id/Team/:team_id/Roster/Season/:season",
-      f: page_team_roster,
+      f: page_team_roster, group_name: 'Team', path: 'Roster'
     },
-    { route: "/World/:world_id/Team/:team_id/Gameplan", path: "team/gameplan/base.html" },
+    { route: "/World/:world_id/Team/:team_id/Gameplan", path: "team/gameplan/base.html", group_name: 'Team', path: 'Gameplan' },
     {
       route: "/World/:world_id/Team/:team_id/Gameplan/Season/:season",
-      path: "team/gameplan/base.html",
+      path: "team/gameplan/base.html", group_name: 'Team', path: 'Gameplan'
     },
-    { route: "/World/:world_id/Team/:team_id/History", f: page_team_history },
+    { route: "/World/:world_id/Team/:team_id/History", f: page_team_history, group_name: 'Team', path: 'History' },
 
-    { route: "/World/:world_id/Player/:player_id/", f: page_player },
-    { route: "/World/:world_id/Coach/:coach_id/", path: "coach/coach/base.html" },
+    { route: "/World/:world_id/Player/:player_id/", f: page_player, group_name: 'Player', path: 'Overview' },
+    { route: "/World/:world_id/Coach/:coach_id/", path: "coach/coach/base.html", group_name: 'Coach', path: 'Overview' },
 
-    { route: "/World/:world_id/Game/:game_id/", f: page_game },
+    { route: "/World/:world_id/Game/:game_id/", f: page_game, group_name: 'Game', path: 'Overview' },
 
-    { route: "/World/:world_id/Search/:search_keyword/", path: "search/search/base.html" },
+    { route: "/World/:world_id/Search/:search_keyword/", path: "search/search/base.html", group_name: 'Search', path: 'Overview' },
 
     { route: "/static", path: "static" },
     { route: "*html_templates*", path: "url" },
@@ -2826,37 +2430,6 @@ const resolve_route_parameters = async (pathname) => {
   return winning_route;
 };
 
-const all_teams = async (common, link_suffix) => {
-  const db = await common.db;
-  var team_list = db.team.find({ team_id: { $gt: 0 } });
-  team_list = team_list.sort(function (team_a, team_b) {
-    if (team_a.team_location_name < team_b.team_location_name) return -1;
-    if (team_a.team_location_name > team_b.team_location_name) return 1;
-    return 0;
-  });
-  team_list = team_list.map((t) => Object.assign(t, { conference_id: t.conference.conference_id }));
-
-  var conferences = db.conference.find();
-  var conferences_by_conference_id = index_group_sync(conferences, "index", "conference_id");
-
-  team_list = nest_children(team_list, conferences_by_conference_id, "conference_id", "conference");
-  team_list = team_list.map((t) =>
-    Object.assign(t, { adjusted_team_href: t.team_href + link_suffix })
-  );
-
-  var team_return_obj = { all_teams: team_list, conferences: conferences };
-  return team_return_obj;
-};
-
-const all_seasons = async (common, link) => {
-  const db = await common.db;
-  var season_list = db.league_season.find();
-
-  season_list = season_list.map((s) => Object.assign(s, { href: link + s.season }));
-  console.log({ link: link, season_list: season_list });
-  return season_list;
-};
-
 const common_functions = async (path) => {
   let winning_route = await resolve_route_parameters(path);
   console.log({
@@ -2879,39 +2452,18 @@ const common_functions = async (path) => {
 
   return {
     winning_route: winning_route,
-    get_teams: get_teams,
-    get_rivalries: get_rivalries,
-    get_conferences: get_conferences,
-    new_world_action: new_world_action,
-    create_phase: create_phase,
-    create_week: create_week,
-    create_coaches: create_coaches,
-    choose_preseason_all_americans: choose_preseason_all_americans,
-    create_conference_seasons: create_conference_seasons,
-    calculate_team_overalls: calculate_team_overalls,
-    nav_bar_links: nav_bar_links,
     db: db,
     ddb: ddb,
     world_id: world_id,
     world_object: world_object,
     params: params,
     season: world_object.current_season,
-    random_name: random_name,
-    random_city: random_city,
-    body_from_position: body_from_position,
-    recent_games: recent_games,
-    all_teams: all_teams,
-    all_seasons: all_seasons,
-    initialize_scoreboard: initialize_scoreboard,
-    round_decimal: round_decimal,
-    distance_between_cities: distance_between_cities,
     distance_between_coordinates: distance_between_coordinates,
     schedule_bowl_season: schedule_bowl_season,
     process_bowl_results: process_bowl_results,
     weekly_recruiting: weekly_recruiting,
     calculate_team_needs: calculate_team_needs,
     populate_player_modal: populate_player_modal,
-    geo_marker_action: geo_marker_action,
     tier_placement: tier_placement,
 
     stopwatch: stopwatch,
@@ -2930,66 +2482,6 @@ const stopwatch = async (common, message) => {
     )} ms`
   );
   window.lastStopwatch = currentTime;
-};
-
-const recent_games = (common) => {
-  const season = common.season;
-  const db = common.db;
-  const all_weeks = db.week.find({ season: season });
-  const current_week = all_weeks.filter((w) => w.is_current)[0];
-
-  const all_weeks_by_week_id = index_group_sync(all_weeks, "index", "week_id");
-
-  const previous_week = all_weeks_by_week_id[current_week.week_id - 1];
-
-  if (previous_week == undefined) {
-    return null;
-  }
-
-  var games_in_week = db.game.find({ week_id: previous_week.week_id });
-
-  const team_seasons_b = db.team_season.find({ season: season });
-  const team_seasons = team_seasons_b.filter((ts) => ts.team_id > 0);
-  const team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
-
-  const teams = db.team.find({ team_id: { $gt: 0 } });
-  const teams_by_team_id = index_group_sync(teams, "index", "team_id");
-
-  const team_games = db.team_game.find({ week_id: previous_week.week_id });
-  for (var team_game of team_games) {
-    team_game.team_season = team_seasons_by_team_season_id[team_game.team_season_id];
-    team_game.team_season.team = teams_by_team_id[team_game.team_season.team_id];
-  }
-
-  const team_games_by_game_id = index_group_sync(team_games, "group", "game_id");
-  for (var game of games_in_week) {
-    game.team_games = team_games_by_game_id[game.game_id];
-
-    let max_power_rank = 0;
-
-    if (game.team_games[0].is_winning_team) {
-      max_power_rank = team_seasons_by_team_season_id[game.team_games[1].team_season_id].power_rank;
-    } else {
-      max_power_rank = team_seasons_by_team_season_id[game.team_games[0].team_season_id].power_rank;
-    }
-
-    game.has_user_team = game.team_games.some((tg) => tg.team_season.is_user_team);
-
-    game.summed_power_rank =
-      team_seasons_by_team_season_id[game.team_games[0].team_season_id].power_rank +
-      team_seasons_by_team_season_id[game.team_games[1].team_season_id].power_rank +
-      max_power_rank;
-  }
-
-  games_in_week = games_in_week.sort(function (g_a, g_b) {
-    if (g_a.has_user_team) return -1;
-    if (g_b.has_user_team) return 1;
-    if (g_a.summed_power_rank < g_b.summed_power_rank) return -1;
-    if (g_a.summed_power_rank > g_b.summed_power_rank) return 1;
-    return 0;
-  });
-
-  return games_in_week;
 };
 
 const populate_sim_modal = async (html, game_dict) => {
@@ -4090,76 +3582,6 @@ const calculate_power_rankings = async (this_week, all_weeks, common) => {
   db.team_season.update(sorted_team_seasons);
   db.headline.insert(ranking_headlines);
 
-  await db.saveDatabaseAsync();
-};
-
-const calculate_conference_rankings = async (this_week, all_weeks, common) => {
-  const db = await common.db;
-  const all_weeks_by_week_id = index_group_sync(all_weeks, "index", "week_id");
-
-  all_weeks_by_week_id[this_week.week_id + 1];
-  const conference_seasons = db.conference_season.find({ season: common.season });
-
-  const team_seasons = db.team_season.find({ season: this_week.phase.season, team_id: { $gt: 0 } });
-
-  const team_seasons_by_conference_season_id = index_group_sync(
-    team_seasons,
-    "group",
-    "conference_season_id"
-  );
-
-  var rank_counter = 0,
-    sorted_team_seasons = [],
-    team_seasons_to_save = [];
-
-  for (var conference_season of conference_seasons) {
-    var conference_team_seasons =
-      team_seasons_by_conference_season_id[conference_season.conference_season_id];
-
-    console.log({
-      conference_seasons: conference_seasons,
-      conference_season: conference_season,
-      team_seasons_by_conference_season_id: team_seasons_by_conference_season_id,
-    });
-
-    for (let division of conference_season.divisions) {
-      let division_team_seasons = conference_team_seasons.filter(
-        (ts) => ts.division_name == division.division_name
-      );
-
-      sorted_team_seasons = division_team_seasons.sort(function (a, b) {
-        if (a.results.conference_champion) return -1;
-        if (b.results.conference_champion) return 1;
-
-        if (a.record.conference_net_wins > b.record.conference_net_wins) return -1;
-        if (a.record.conference_net_wins < b.record.conference_net_wins) return 1;
-
-        if (a.record.defeated_teams.includes(b.team_season_id)) return -1;
-        if (b.record.defeated_teams.includes(a.team_season_id)) return 1;
-
-        if (a.record.conference_losses > b.record.conference_losses) return 1;
-        if (a.record.conference_losses < b.record.conference_losses) return -1;
-
-        if (a.rankings.power_rank[0] > b.rankings.power_rank[0]) return 1;
-        if (a.rankings.power_rank[0] < b.rankings.power_rank[0]) return -1;
-
-        return 0;
-      });
-
-      rank_counter = 1;
-      let top_conference_net_wins = sorted_team_seasons[0].record.conference_net_wins;
-      for (var team_season of sorted_team_seasons) {
-        team_season.record.conference_gb =
-          (top_conference_net_wins - team_season.record.conference_net_wins) / 2;
-        team_season.rankings.division_rank.unshift(rank_counter);
-        rank_counter += 1;
-
-        team_seasons_to_save.push(team_season);
-      }
-    }
-  }
-
-  db.team_season.update(team_seasons_to_save);
   await db.saveDatabaseAsync();
 };
 
@@ -5792,93 +5214,6 @@ const change_dom_display = async (elem, display) => {
   $(window).scrollTop(0);
 };
 
-const populate_player_modal = async (common, target) => {
-  var db = common.db;
-  var player_id = parseInt($(target).closest("*[player_id]").attr("player_id"));
-  console.log({
-    player_id: player_id,
-    target: target,
-    p: $(target).closest("*[player_id]"),
-  });
-  var season = common.season;
-
-  var player = db.player.findOne({ player_id: player_id });
-  var player_team_seasons = db.player_team_season.find({ player_id: player_id });
-  player_team_seasons.map((pts) => pts.player_team_season_id);
-  player.player_team_seasons = player_team_seasons;
-  player.current_player_team_season = player_team_seasons.filter((pts) => pts.season == season)[0];
-
-  var team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
-  var team_seasons = db.team_season.find({ team_season_id: { $in: team_season_ids } });
-
-  var player_team_ids = team_seasons.map((ts) => ts.team_id);
-  var player_teams = db.team.find({ team_id: { $in: player_team_ids } });
-
-  var c = 0;
-  $.each(player_team_seasons, function (ind, pts) {
-    pts.team_season = team_seasons[c];
-    pts.team_season.team = player_teams[c];
-    c += 1;
-  });
-
-  player.player_team_seasons = player_team_seasons;
-  player.current_player_team_season = player.player_team_seasons.find(
-    (pts) => pts.season == season
-  );
-  var current_team = player.current_player_team_season.team_season.team;
-
-  console.log({
-    current_team: current_team,
-    player: player,
-    player_teams: player_teams,
-    player_team_ids: player_team_ids,
-    team_seasons: team_seasons,
-    team_season_ids: team_season_ids,
-    player_team_seasons: player_team_seasons,
-    player: player,
-    season: season,
-    player_id: player_id,
-  });
-
-  var modal_page = {
-    PrimaryColor: current_team.team_color_primary_hex,
-    SecondaryColor: current_team.secondary_color_display,
-  };
-  console.log({ player: player, target: target, player_id: player_id });
-
-  var modal_url = "/static/html_templates/common_templates/player_info_modal_template.njk";
-  var html = await fetch(modal_url);
-  html = await html.text();
-  var renderedHtml = await nunjucks_env.renderString(html, {
-    page: modal_page,
-    player: player,
-  });
-  console.log({ renderedHtml: renderedHtml });
-  $("#player-info-modal").html(renderedHtml);
-  $("#player-info-modal").addClass("shown");
-
-  $(window).on("click", async function (event) {
-    if ($(event.target)[0] == $("#player-info-modal")[0]) {
-      $("#player-info-modal").removeClass("shown");
-      $(window).unbind();
-      await player_face_listeners(common);
-    }
-  });
-
-  await draw_player_faces(common);
-  // if (player.player_face == undefined) {
-  //   player.player_face = create_player_face("single", player.player_id, db);
-  // }
-
-  // display_player_face(
-  //   player.player_face,
-  //   {
-  //     jersey: player.current_player_team_season.team_season.team.jersey,
-  //     teamColors: player.current_player_team_season.team_season.team.jersey.teamColors,
-  //   },
-  //   "player-modal-player-face"
-  // );
-};
 
 const add_listeners = async (common) => {
   $("#nav-search").on("click", function () {
@@ -6949,116 +6284,6 @@ const body_from_position = (position) => {
   return body;
 };
 
-const initialize_scoreboard = () => {
-  if ($(".MultiCarousel-inner").children().length == 0) {
-    $(".scoreboard-slideshow").remove();
-    return 0;
-  }
-  var itemsMainDiv = ".MultiCarousel";
-  var itemsDiv = ".MultiCarousel-inner";
-  var itemWidth = "";
-  var initialOffset = 20;
-  $(".leftLst, .rightLst").click(function () {
-    var condition = $(this).hasClass("leftLst");
-    if (condition) click(0, this);
-    else click(1, this);
-  });
-
-  ResCarouselSize();
-
-  $(window).resize(function () {
-    ResCarouselSize();
-  });
-
-  //this function define the size of the items
-  function ResCarouselSize() {
-    var incno = 0;
-    var dataItems = "data-items";
-    var itemClass = ".scoreboard-carousel-item";
-    var id = 0;
-    var btnParentSb = "";
-    var itemsSplit = "";
-    var sampwidth = $(itemsMainDiv).width();
-    var bodyWidth = $("body").width();
-    $(itemsDiv).each(function () {
-      id = id + 1;
-      var itemNumbers = $(this).find(itemClass).length;
-      btnParentSb = $(this).parent().attr(dataItems);
-      console.log({});
-      itemsSplit = btnParentSb.split(",");
-      $(this)
-        .parent()
-        .attr("id", "MultiCarousel" + id);
-
-      if (bodyWidth >= 1200) {
-        incno = itemsSplit[3];
-        itemWidth = sampwidth / incno;
-      } else if (bodyWidth >= 992) {
-        incno = itemsSplit[2];
-        itemWidth = sampwidth / incno;
-      } else if (bodyWidth >= 768) {
-        incno = itemsSplit[1];
-        itemWidth = sampwidth / incno;
-      } else {
-        incno = itemsSplit[0];
-        itemWidth = sampwidth / incno;
-      }
-      $(this).css({
-        transform: "translateX(" + initialOffset + "px)",
-        width: itemWidth * itemNumbers,
-      });
-      $(this)
-        .find(itemClass)
-        .each(function () {
-          $(this).outerWidth(itemWidth);
-        });
-
-      $(".leftLst").addClass("over");
-      $(".rightLst").removeClass("over");
-    });
-  }
-
-  //this function used to move the items
-  function ResCarousel(e, el, s) {
-    var leftBtn = ".leftLst";
-    var rightBtn = ".rightLst";
-    var translateXval = "";
-    var divStyle = $(el + " " + itemsDiv).css("transform");
-    var values = divStyle.match(/-?[\d\.]+/g);
-    var xds = Math.abs(values[4]);
-    if (e == 0) {
-      translateXval = parseInt(xds) - parseInt(itemWidth * s);
-      $(el + " " + rightBtn).removeClass("over");
-
-      if (translateXval <= itemWidth / 2) {
-        translateXval = -1 * initialOffset;
-        $(el + " " + leftBtn).addClass("over");
-      }
-    } else if (e == 1) {
-      var itemsCondition = $(el).find(itemsDiv).width() - $(el).width();
-      translateXval = parseInt(xds) + parseInt(itemWidth * s);
-      $(el + " " + leftBtn).removeClass("over");
-
-      if (translateXval >= itemsCondition - itemWidth / 2) {
-        translateXval = itemsCondition + initialOffset;
-        $(el + " " + rightBtn).addClass("over");
-      }
-    }
-    $(el + " " + itemsDiv).css("transform", "translateX(" + -translateXval + "px)");
-  }
-
-  //It is used to get some elements from btn
-  function click(ell, ee) {
-    var Parent = "#" + $(ee).parent().attr("id");
-    var slide = $(Parent).attr("data-slide");
-    ResCarousel(ell, Parent, slide);
-  }
-
-  $(".scoreboard-carousel-item.w3-hide").each(function (ind, obj) {
-    $(obj).removeClass("w3-hide");
-  });
-};
-
 const tier_placement = (tiers, population_size, distribution, rank_place) => {
   console.log({
     tiers: tiers,
@@ -7115,612 +6340,6 @@ const tier_placement = (tiers, population_size, distribution, rank_place) => {
   return placement;
 };
 
-const geo_marker_action = async (common) => {
-  console.log("Adding geo_marker_action");
-  const ddb = common.ddb;
-  $(".geo-marker").on("click", async function () {
-    let city = $(this).attr("city");
-    let state = $(this).attr("state");
-
-    let location = ddb.cities.findOne({ city: city, state: state });
-    console.log({
-      common: common,
-      this: $(this),
-      t: this,
-      location: location,
-    });
-
-    let modal_config = common.page;
-
-    if (!modal_config) {
-      modal_config = {
-        PrimaryColor: $(this).closest("tr").attr("primary-color"),
-        SecondaryColor: $(this).closest("tr").attr("secondary-color"),
-      };
-    }
-
-    const icon = L.divIcon({
-      html: `<i class="fa fa-map-marker-alt" style="font-size: 40px; color: ${modal_config.PrimaryColor};"></i>`,
-      iconSize: [40, 40],
-      iconAnchor: [15, 40],
-    });
-
-    var modal_url = "/static/html_templates/common_templates/geography_modal_template.njk";
-    var html = await fetch(modal_url);
-    html = await html.text();
-    var renderedHtml = nunjucks_env.renderString(html, {
-      page: modal_config,
-      location: location,
-    });
-    console.log({ renderedHtml: renderedHtml });
-    $("#geography-modal").html(renderedHtml);
-    $("#geography-modal").addClass("shown");
-
-    let map = L.map("map-body").setView([location.lat, location.long], 5);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "© OpenStreetMap",
-    }).addTo(map);
-    L.marker([location.lat, location.long], { icon: icon }).addTo(map);
-
-    $(window).on("click", async function (event) {
-      if ($(event.target)[0] == $("#geography-modal")[0]) {
-        $("#geography-modal").removeClass("shown");
-        $(window).unbind();
-        await player_face_listeners(common);
-      }
-    });
-  });
-};
-
-const update_create_world_modal = async (completed_stage_id, started_stage_id) => {
-  $("#" + completed_stage_id).html(
-    '<i class="fa fa-check-circle" style="color:green; font-size: 20px;"></i>'
-  );
-  $("#" + started_stage_id).html(
-    '<div class="spinner-border spinner-border-sm" role="status"></div>'
-  );
-};
-
-const new_world_action = async (common, database_suffix) => {
-  $(".conference-select-table").addClass("w3-hide");
-  $(".create-progress-table").removeClass("w3-hide");
-
-  await update_create_world_modal(null, "create-world-table-new-world");
-
-  const new_db = await create_new_db();
-
-  const db = await new_db["db"];
-
-  const new_season_info = new_db["new_season_info"];
-
-  const world_id = new_season_info.world_id;
-  const season = new_season_info.current_season;
-
-  common.db = db;
-  common.season = season;
-
-  var teams_from_json = await get_teams();
-
-  var conferences_from_json = await get_conferences(database_suffix);
-  console.log({ conferences_from_json: conferences_from_json });
-
-  var team_names_to_include = [];
-  const conference_name_by_team_name = {};
-
-  let conferences_to_save = [];
-  $.each(conferences_from_json, function (ind, conf_data) {
-    conf_data.world_id = world_id;
-    conf_data.conference_id = ind + 1;
-
-    conf_data.conference_color_primary_hex = conf_data.conference_color_primary_hex.replace(
-      "#",
-      ""
-    );
-    conf_data.conference_color_secondary_hex = conf_data.conference_color_secondary_hex.replace(
-      "#",
-      ""
-    );
-
-    let team_names = conf_data.divisions.map((d) => d.teams);
-    team_names = team_names.flat();
-    team_names_to_include = team_names_to_include.concat(team_names);
-
-    for (var team_name of team_names) {
-      conference_name_by_team_name[team_name] = conf_data.conference_name;
-    }
-
-    conferences_to_save.push(new conference(conf_data));
-  });
-
-  console.log("adding", { db: db, "db.conference": db.conference, conferences_to_save });
-  db.conference.insert(conferences_to_save);
-  await db.saveDatabaseAsync();
-
-  var conferences = db.conference.find();
-
-  teams_from_json = teams_from_json.filter((t) =>
-    team_names_to_include.includes(t.team_location_name + " " + t.team_nickname)
-  );
-  const num_teams = teams_from_json.length;
-
-  const season_data = {
-    season: season,
-    world_id: world_id,
-    captains_per_team: 3,
-    players_per_team: 55,
-    num_teams: num_teams,
-  };
-  const new_season = new league_season(season_data, undefined);
-  console.log({ new_season: new_season });
-  db.league_season.insert(new_season);
-  await db.saveDatabaseAsync();
-
-  console.log({ season: season, common: common, db: db, new_season_info: new_season_info });
-  const phases_created = await create_phase(season, common);
-  await create_week(phases_created, common, world_id, season);
-  await create_dates(common);
-  const rivalries = await get_rivalries(teams_from_json);
-
-  await create_conference_seasons({
-    common: common,
-    conferences: conferences,
-    season: season,
-    world_id: world_id,
-  });
-  var conference_seasons = index_group_sync(db.conference_season.find(), "index", "conference_id");
-
-  conferences = nest_children(
-    conferences,
-    conference_seasons,
-    "conference_id",
-    "conference_season"
-  );
-  const conferences_by_conference_name = index_group_sync(conferences, "index", "conference_name");
-  const conferences_by_team_name = {};
-
-  console.log({
-    conference_name_by_team_name: conference_name_by_team_name,
-  });
-
-  for (let [team_name, conference_name] of Object.entries(conference_name_by_team_name)) {
-    conferences_by_team_name[team_name] =
-      conferences_by_conference_name[conference_name_by_team_name[team_name]];
-    console.log({
-      team_name: team_name,
-      conference_name: conference_name,
-    });
-  }
-
-  console.log({
-    conferences_by_team_name: conferences_by_team_name,
-    conference_name_by_team_name: conference_name_by_team_name,
-    conferences_by_conference_name: conferences_by_conference_name,
-  });
-
-  var teams = [],
-    rivals = [],
-    rivals_team_1 = [],
-    rivals_team_2 = [];
-  const jersey_options = [
-    "football-standard",
-    "football-ponies",
-    "football-sparta",
-    "football-three-stripe",
-    "football-two-stripe",
-  ];
-
-  let cities = ddb.cities.find();
-  console.log({ cities: cities });
-  let cities_by_city_state = index_group_sync(cities, "index", "city_state");
-
-  teams_from_json = teams_from_json.sort((t_a, t_b) =>
-    t_a.team_location_name > t_b.team_location_name ? 1 : -1
-  );
-
-  var team_id_counter = 1;
-  for (let t of teams_from_json) {
-    if (t.jersey.invert) {
-      t.jersey.teamColors = [
-        "#FFFFFF",
-        `#${team.team_color_primary_hex}`,
-        `#${team.team_color_secondary_hex}`,
-      ];
-    } else if (t.jersey.flip_primaries) {
-      t.jersey.teamColors = [
-        `#${t.team_color_secondary_hex}`,
-        `#${t.team_color_primary_hex}`,
-        "#FFFFFF",
-      ];
-    } else {
-      t.jersey.teamColors = [
-        `#${t.team_color_primary_hex}`,
-        `#${t.team_color_secondary_hex}`,
-        "#FFFFFF",
-      ];
-    }
-
-    if (t.helmet){
-      t.helmet.background = t.helmet.background.replace('#', '');
-      t.helmet.facemask = t.helmet.facemask.replace('#', '');
-    }
-
-    if (t.jersey.lettering) {
-      t.jersey.lettering_color = t.jersey.lettering_color || "FFFFFF";
-    }
-
-    t.team_name = t.team_location_name + " " + t.team_nickname;
-
-    t.jersey.id = t.jersey.id || jersey_options[Math.floor(Math.random() * jersey_options.length)];
-
-    rivals_team_1 = rivalries
-      .filter((r) => r.team_name_1 == t.team_name)
-      .map(function (r) {
-        return {
-          opponent_name: r.team_name_2,
-          opponent_team_id: null,
-          preferred_week_number: r.preferred_week_number,
-          rivalry_name: r.rivalry_name,
-        };
-      });
-    rivals_team_2 = rivalries
-      .filter((r) => r.team_name_2 == t.team_name)
-      .map(function (r) {
-        return {
-          opponent_name: r.team_name_1,
-          opponent_team_id: null,
-          preferred_week_number: r.preferred_week_number,
-          rivalry_name: r.rivalry_name,
-        };
-      });
-
-    rivals = rivals_team_1.concat(rivals_team_2);
-
-    console.log({
-      conferences_by_team_name: conferences_by_team_name,
-      t: t,
-    });
-
-    t.location.lat = cities_by_city_state[t.location.city + ", " + t.location.state].lat;
-    t.location.long = cities_by_city_state[t.location.city + ", " + t.location.state].long;
-
-    teams.push(
-      new team({
-        team_id: team_id_counter,
-        team_location_name: t.team_location_name,
-        team_nickname: t.team_nickname,
-        world_id: world_id,
-        team_logo_url: t.team_logo_url,
-        team_abbreviation: t.team_abbreviation,
-        team_color_primary_hex: t.team_color_primary_hex,
-        team_color_secondary_hex: t.team_color_secondary_hex,
-        helmet: t.helmet,
-        rivals: rivals,
-        jersey: t.jersey,
-        field: t.field,
-        team_ratings: t.team_ratings,
-        location: t.location,
-        starting_tendencies: t.starting_tendencies,
-        conference: {
-          conference_id: conferences_by_team_name[t.team_name].conference_id,
-          conference_name: conferences_by_team_name[t.team_name].conference_name,
-        },
-      })
-    );
-
-    team_id_counter += 1;
-  }
-
-  teams.push(
-    new team({
-      team_id: -1,
-      team_location_name: "Available",
-      team_nickname: "Players",
-      world_id: world_id,
-      team_abbreviation: "AVAIL",
-      team_color_primary_hex: "1763B2",
-      team_color_secondary_hex: "FFFFFF",
-      rivals: [],
-      jersey: {
-        invert: false,
-        id: "football-standard",
-        teamColors: ["#1763B2", "#000000", "#FFFFFF"],
-      },
-      team_ratings: {},
-      location: {
-        city: "Washington",
-        state: "DC",
-      },
-      conference: {},
-    })
-  );
-
-  teams.push(
-    new team({
-      team_id: -2,
-      team_location_name: season,
-      team_nickname: "Recruits",
-      world_id: world_id,
-      team_abbreviation: "RECRUIT",
-      team_color_primary_hex: "1763B2",
-      team_color_secondary_hex: "FFFFFF",
-      rivals: [],
-      jersey: {
-        invert: false,
-        id: "football-standard",
-        teamColors: ["#1763B2", "#000000", "#FFFFFF"],
-      },
-      team_ratings: {},
-      location: {
-        city: "Washington",
-        state: "DC",
-      },
-      conference: {},
-    })
-  );
-
-  const teams_by_team_name = index_group_sync(teams, "index", "team_location_name");
-
-  console.log({ teams: teams });
-
-  let city_names = {};
-  $.each(teams, function (ind, team) {
-    $.each(team.rivals, function (ind, rival) {
-      rival.opponent_team_id = teams_by_team_name[rival.opponent_name].team_id;
-    });
-
-    city_names[team.location.city] = (city_names[team.location.city] || 0) + 1;
-  });
-
-  for (let team of teams) {
-    team.headline_metadata = {};
-    team.headline_metadata.unique_city_name = city_names[team.location.city] == 1;
-  }
-
-  console.log({ teams: teams, city_names: city_names });
-  db.team.insert(teams);
-  await db.saveDatabaseAsync();
-
-  await update_create_world_modal(
-    "create-world-table-new-world",
-    "create-world-table-create-teams"
-  );
-
-  await create_team_season({
-    common: common,
-    season: season,
-    world_id: world_id,
-    conferences_by_conference_name: conferences_by_conference_name,
-  });
-
-  var team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
-
-  teams = db.team.find({ team_id: { $gt: 0 } });
-  // teams.forEach(t => delete t.starting_tendencies);
-  // await db.team.update(teams);
-
-  const teams_by_team_id = index_group_sync(teams, "index", "team_id");
-
-  await update_create_world_modal(
-    "create-world-table-create-teams",
-    "create-world-table-create-coaches"
-  );
-
-  await create_coaches({
-    common: common,
-    team_seasons: team_seasons,
-    teams_by_team_id: teams_by_team_id,
-    world_id: world_id,
-    season: season,
-  });
-
-  await update_create_world_modal(
-    "create-world-table-create-coaches",
-    "create-world-table-assign-coaches"
-  );
-
-  var coaches = db.coach.find();
-  await create_coach_team_seasons({
-    common: common,
-    coaches: coaches,
-    world_id: world_id,
-    team_seasons: team_seasons,
-    season: season,
-  });
-
-  await update_create_world_modal(
-    "create-world-table-assign-coaches",
-    "create-world-table-create-players"
-  );
-
-  await create_new_players_and_player_team_seasons(common, world_id, season, team_seasons);
-
-  await update_create_world_modal(
-    "create-world-table-create-players",
-    "create-world-table-player-ratings"
-  );
-
-  await generate_player_ratings(common, world_id, season);
-
-  await update_create_world_modal(
-    "create-world-table-player-ratings",
-    "create-world-table-assign-players"
-  );
-
-  await assign_players_to_teams(common, world_id, season, team_seasons);
-
-  await assign_player_jersey_numbers(common, season);
-
-  await update_create_world_modal(
-    "create-world-table-assign-players",
-    "create-world-table-depth-charts"
-  );
-  await populate_all_depth_charts(common);
-
-  await update_create_world_modal(
-    "create-world-table-depth-charts",
-    "create-world-table-team-talent"
-  );
-  await calculate_team_overalls(common);
-
-  await update_create_world_modal(
-    "create-world-table-team-talent",
-    "create-world-table-recruiting-class"
-  );
-  // await calculate_team_needs(common);
-  // await create_recruiting_class(common);
-
-  await update_create_world_modal(
-    "create-world-table-recruiting-class",
-    "create-world-table-rankings"
-  );
-  const all_weeks = db.week.find({ season: season });
-  const this_week = all_weeks.filter((w) => w.is_current)[0];
-
-  this_week.phase = db.phase.findOne({ phase_id: this_week.phase_id });
-  this_week.phase.season = season;
-
-  console.log("this_week", this_week, all_weeks, common);
-
-  await calculate_power_rankings(this_week, all_weeks, common);
-  await calculate_conference_rankings(this_week, all_weeks, common);
-
-  await update_create_world_modal(
-    "create-world-table-rankings",
-    "create-world-table-create-schedule"
-  );
-  await save_created_schedule({
-    common: common,
-    season: season,
-    world_id: world_id,
-  });
-
-  // await choose_preseason_all_americans(common);
-
-  await update_create_world_modal("create-world-table-create-schedule", null);
-
-  conferences = db.conference.find();
-  teams = db.team.find({ team_id: { $gt: 0 } });
-  console.log({ teams: teams });
-  teams.sort(function (t_a, t_b) {
-    if (t_b.conference.conference_name > t_a.conference.conference_name) {
-      return -1;
-    } else if (t_b.conference.conference_name < t_a.conference.conference_name) {
-      return 1;
-    } else {
-      if (t_b.team_location_name > t_a.team_location_name) {
-        return -1;
-      } else if (t_b.team_location_name < t_a.team_location_name) {
-        return 1;
-      }
-    }
-    return 0;
-  });
-  console.log({ teams: teams, "common.nunjucks_env": nunjucks_env });
-  var url = "/static/html_templates/index/index/choose_team_table_template.njk";
-  var html = await fetch(url);
-  html = await html.text();
-
-  let render_content = {
-    teams: teams,
-  };
-
-  const renderedHtml = nunjucks_env.renderString(html, render_content);
-
-  $(".choose-team-table").html(renderedHtml);
-  $(".create-progress-table").addClass("w3-hide");
-  $(".choose-team-table").removeClass("w3-hide");
-
-  geo_marker_action(common);
-  init_basic_table_sorting(common, "#choose-team-table", 0);
-  $(".modal-dialog").css("max-width", "85%");
-  $(".modal-dialog").css("width", "85%");
-
-  console.log({
-    db: db,
-    ddb: ddb,
-    world_id: world_id,
-    season: season,
-  });
-  const current_league_season = db.league_season.findOne({ season: season });
-  const world = ddb.world.findOne({ world_id: world_id });
-  world.current_league_season = current_league_season;
-
-  $(".choose-team-table button").on("click", async function () {
-    let team_id = parseInt($(this).closest("[team-id]").attr("team-id"));
-    const user_team = db.team.findOne({ team_id: team_id });
-
-    const user_team_season = db.team_season.findOne({
-      team_id: team_id,
-      season: current_league_season.season,
-    });
-
-    console.log({
-      user_team: user_team,
-      user_team_season: user_team_season,
-      current_league_season: current_league_season,
-      team_id: team_id,
-      teams: teams,
-      c: teams[0].constructor,
-      this: $(this),
-    });
-
-    current_league_season.user_team_id = team_id;
-    user_team_season.is_user_team = true;
-    user_team.is_user_team = true;
-
-    world.user_team = {};
-    world.user_team.team_name = user_team.team_name;
-    world.user_team.team_location_name = user_team.team_location_name;
-    world.user_team.team_logo_url = user_team.team_logo;
-    world.user_team.team_record = "0-0";
-    world.user_team.team_id = user_team.team_id;
-
-    ddb.world.update(world);
-    db.league_season.update(current_league_season);
-    db.team_season.update(user_team_season);
-    db.team.update(user_team);
-
-    await db.saveDatabaseAsync();
-    await ddb.saveDatabaseAsync();
-
-    await navigate_to_href(`/World/${world_id}`);
-  });
-};
-
-Array.prototype.add_element_sorted_list = function (elem, compare_func) {
-  if (this.length == 0) {
-    this.push(elem);
-  } else {
-    let insert_index = this.findIndex((e) => compare_func(e, elem) >= 0);
-
-    if (insert_index == -1) {
-      this.push(elem);
-    } else {
-      this.splice(insert_index, 0, elem);
-    }
-  }
-};
-
-Array.prototype.top_sort = function (top_n, compare_func) {
-  if (this.length == 0) {
-    return [];
-  }
-
-  let top_list = [];
-  this.forEach(function (elem) {
-    if (top_list.length < top_n || compare_func(elem, top_list[top_list.length - 1])) {
-      top_list.add_element_sorted_list(elem, compare_func);
-
-      if (top_list.length > top_n) {
-        top_list.pop();
-      }
-    }
-  });
-
-  return top_list;
-};
-
 const navigate_to_href = async (href) => {
   // event.preventDefault();
   window.onbeforeunload = function () {};
@@ -7767,6 +6386,8 @@ const page = async (path) => {
     winning_route: common.winning_route,
     "common.winning_route.f": common.winning_route.f,
   });
+
+  common.nav_bar_links = await nav_bar_links(common, common.winning_route);
 
   await common.winning_route.f(common);
 

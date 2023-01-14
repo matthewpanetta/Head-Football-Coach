@@ -17,6 +17,7 @@ import {
   } from "/common/js/utils.js";
   import {nunjucks_env} from '/common/js/nunjucks_tags.js'
   import { draw_player_faces , player_face_listeners} from "/static/js/faces.js";
+  import { recent_games} from "/static/js/widgets.js";
   
   export const page_world = async (common) => {
     const db = common.db;
@@ -31,16 +32,8 @@ import {
     var current_week = db.week.find({ season: { $between: [season - 1, season + 1] } });
     current_week = current_week.find((w) => w.is_current);
   
-    const NavBarLinks = await common.nav_bar_links({
-      path: "Overview",
-      group_name: "World",
-      db: db,
-    });
-  
-    common.stopwatch(common, "Time before recent_games");
-    const recent_games = common.recent_games(common);
-    common.stopwatch(common, "Time after recent_games");
-  
+    const NavBarLinks = common.nav_bar_links;
+    
     let teams = db.team.find({ team_id: { $gt: 0 } });
     let team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
     let conferences = db.conference.find();
@@ -175,7 +168,7 @@ import {
       page: page,
       world_id: common.world_id,
       teams: teams,
-      recent_games: recent_games,
+      recent_games: await recent_games(common),
       current_week: current_week,
       headlines_by_headline_type: headlines_by_headline_type,
       this_week_games: this_week_games,
@@ -185,7 +178,6 @@ import {
     window.common = common;
   
     console.log("render_content", render_content);
-    console.log({ recent_games: recent_games });
   
     let url = "/static/html_templates/world/world/template.njk";
     let html = await fetch(url);
@@ -195,20 +187,13 @@ import {
   
     $("#body").empty();
     $("#body").append(renderedHtml);
-  
-    console.log({
-      teams: teams,
-      this_week_games: this_week_games,
-      recent_games: recent_games,
-      db:db
-    });
-  
+
     let user_team_overview_data = {
       user_team: teams.find((t) => t.is_user_team),
       this_week_game: this_week_games.find(
         (g) => g.team_games[0].team_season.is_user_team || g.team_games[1].team_season.is_user_team
       ),
-      last_week_game: recent_games.find(
+      last_week_game: scoreboard_games.find(
         (g) => g.team_games[0].team_season.is_user_team || g.team_games[1].team_season.is_user_team
       ),
     };

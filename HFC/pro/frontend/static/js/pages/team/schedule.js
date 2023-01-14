@@ -68,7 +68,7 @@ export const page_team_schedule = async (common) => {
 
   var teams = db.team.find({ team_id: { $gt: 0 } });
   var team_seasons = db.team_season.find({ team_id: { $gt: 0 }, season: season });
-  teams = teams.sort((team_a, team_b) => team_a.school_name - team_b.school_name);
+  teams = teams.sort((team_a, team_b) => team_a.team_location_name - team_b.team_location_name);
 
   const weeks = db.week.find({ season: season });
   const weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
@@ -244,11 +244,8 @@ export const page_team_schedule = async (common) => {
 
   var all_teams = await common.all_teams(common, "/Schedule/");
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Schedule",
-    group_name: "Team",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
+
 
   const TeamHeaderLinks = await team_header_links({
     path: "Schedule",

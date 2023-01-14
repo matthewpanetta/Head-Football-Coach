@@ -675,3 +675,89 @@ export function isScrolledIntoView(elem) {
 
   return $(elem).is(":visible") && elemTop <= docViewBottom && elemBottom >= docViewTop;
 }
+
+export const distance_between_cities = (city_a, city_b, distance_tracking_map = {}) => {
+  let city_a_str = `${Math.round(city_a.lat, 1)},${Math.round(city_a.long, 1)}`;
+  let city_b_str = `${Math.round(city_b.lat, 1)},${Math.round(city_b.long, 1)}`;
+  let city_arr = [city_a_str, city_b_str].sort();
+
+  // Serialize the locations and short-circuit if we've already calculated the disance.
+  if (distance_tracking_map[city_arr[0]] && distance_tracking_map[city_arr[0]][city_arr[1]]) {
+    return distance_tracking_map[city_arr[0]][city_arr[1]];
+  }
+
+  var earth_radius = 6371; // Radius of the earth in km
+  var dLat = deg2rad(city_a.lat - city_b.lat); // deg2rad below
+  var dLon = deg2rad(city_a.long - city_b.long);
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(city_a.lat)) *
+      Math.cos(deg2rad(city_b.lat)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = earth_radius * c; // Distance in km
+  d = d / 1.609344;
+
+  if (!distance_tracking_map[city_arr[0]]) {
+    distance_tracking_map[city_arr[0]] = {};
+  }
+  distance_tracking_map[city_arr[0]][city_arr[1]] = d;
+
+  if (!distance_tracking_map[city_arr[1]]) {
+    distance_tracking_map[city_arr[1]] = {};
+  }
+  distance_tracking_map[city_arr[1]][city_arr[0]] = d;
+
+  return d;
+};
+
+export const distance_between_coordinates = (coord_a, coord_b) => {
+  var earth_radius = 6371; // Radius of the earth in km
+  var dLat = deg2rad(coord_a[0] - coord_b[0]); // deg2rad below
+  var dLon = deg2rad(coord_a[1] - coord_b[1]);
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(coord_a[0])) *
+      Math.cos(deg2rad(coord_b[0])) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = earth_radius * c; // Distance in km
+  d = d / 1.609344;
+  return d;
+};
+
+
+Array.prototype.add_element_sorted_list = function (elem, compare_func) {
+  if (this.length == 0) {
+    this.push(elem);
+  } else {
+    let insert_index = this.findIndex((e) => compare_func(e, elem) >= 0);
+
+    if (insert_index == -1) {
+      this.push(elem);
+    } else {
+      this.splice(insert_index, 0, elem);
+    }
+  }
+};
+
+Array.prototype.top_sort = function (top_n, compare_func) {
+  if (this.length == 0) {
+    return [];
+  }
+
+  let top_list = [];
+  this.forEach(function (elem) {
+    if (top_list.length < top_n || compare_func(elem, top_list[top_list.length - 1])) {
+      top_list.add_element_sorted_list(elem, compare_func);
+
+      if (top_list.length > top_n) {
+        top_list.pop();
+      }
+    }
+  });
+
+  return top_list;
+};

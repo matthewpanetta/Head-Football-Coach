@@ -237,7 +237,7 @@
         </tr>
         <tr class='football-table-column-headers unselectable' style=' height: 1.875rem; '>
           <th style='width: 3.125rem; left: 0rem;' class='sticky-column' value-key='team_season.team.full_name' sort-order='sort-asc'></th>
-          <th style='width: 9.375rem; left: 3.125rem;' class='col-group left-text sticky-column' value-key='team_season.team.school_name' sort-order='sort-asc'>Team</th>
+          <th style='width: 9.375rem; left: 3.125rem;' class='col-group left-text sticky-column' value-key='team_season.team.team_location_name' sort-order='sort-asc'>Team</th>
 
           {% if column_controls.Team.games.shown %}
             <th style='' class='' value-key='record.games_played'>Games Played</th>
@@ -532,7 +532,7 @@
               </td>
               <td style='width: 5.625rem; left: 3.125rem; color:white; background-color: #{{team_season.team.team_color_primary_hex}};' class='left-text col-group sticky-column'>
                 <a href='{{team_season.team.team_href}}'>
-                  {{team_season.team.school_name}}
+                  {{team_season.team.team_location_name}}
                 </a>
               </td>
 

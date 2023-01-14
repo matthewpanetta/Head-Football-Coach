@@ -19,9 +19,7 @@ export const page_almanac_player_stats = async (common) => {
   const season = common.season;
   const db = common.db;
 
-  let [NavBarLinks] = await Promise.all([
-    common.nav_bar_links({ path: "Player Stats", group_name: "Almanac", db: db }),
-  ]);
+  const NavBarLinks = common.nav_bar_links;
 
   common.page = {
     PrimaryColor: common.primary_color,
@@ -61,10 +59,10 @@ export const page_almanac_player_stats = async (common) => {
     ]);
 
   teams = teams.sort(function (teamA, teamB) {
-    if (teamA.school_name < teamB.school_name) {
+    if (teamA.team_location_name < teamB.team_location_name) {
       return -1;
     }
-    if (teamA.school_name > teamB.school_name) {
+    if (teamA.team_location_name > teamB.team_location_name) {
       return 1;
     }
     return 0;

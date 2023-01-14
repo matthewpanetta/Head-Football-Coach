@@ -71,7 +71,7 @@
         console.log('team_leader_category', {team_leader_category: team_leader_category, team_season_leaders: team_season_leaders})
       }
 
-      const recent_games = await common.recent_games(common);
+      const recent_games = await recent_games(common);
 
       var render_content = {page: {PrimaryColor: common.primary_color, SecondaryColor: common.secondary_color, NavBarLinks: NavBarLinks, page_title: 'Team Records'},
                             team_list: [],

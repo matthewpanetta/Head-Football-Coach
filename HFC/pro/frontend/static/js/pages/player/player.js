@@ -411,11 +411,8 @@ export const page_player = async (common) => {
   const query_to_dict = common.query_to_dict;
   const season = common.season;
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Player",
-    group_name: "Player",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
+
 
   const player = db.player.findOne({player_id: player_id});
   var player_team_seasons = db.player_team_season.find({ player_id: player_id });
@@ -849,10 +846,10 @@ export const page_player = async (common) => {
 
     var all_teams = db.team.find({"team_id": {'$gt': 0}});
     all_teams = all_teams.sort(function (teamA, teamB) {
-      if (teamA.school_name < teamB.school_name) {
+      if (teamA.team_location_name < teamB.team_location_name) {
         return -1;
       }
-      if (teamA.school_name > teamB.school_name) {
+      if (teamA.team_location_name > teamB.team_location_name) {
         return 1;
       }
       return 0;

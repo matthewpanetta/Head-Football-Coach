@@ -34,7 +34,7 @@ const getHtml = async (common) => {
   team_seasons = nest_children(team_seasons, team_season_stats_by_team_season_id, 'team_season_id', 'stats')
 
 
-  const recent_games = await common.recent_games(common);
+  const recent_games = await recent_games(common);
 
   common.page = {
     PrimaryColor: common.primary_color,

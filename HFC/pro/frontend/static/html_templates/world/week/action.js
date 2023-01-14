@@ -44,7 +44,7 @@ const getHtml = async (common) => {
     return g.team_games.some(tg => tg.team_season_id == user_team_season_id);
   })
 
-  const recent_games = await common.recent_games(common);
+  const recent_games = await recent_games(common);
 
   var render_content = {
     page: {

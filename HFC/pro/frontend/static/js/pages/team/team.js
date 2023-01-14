@@ -17,7 +17,8 @@ import {
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { draw_player_faces, player_face_listeners, draw_coach_faces } from "/static/js/faces.js";
-import { conference_standings, team_header_links } from "/static/js/widgets.js";
+import { conference_standings, team_header_links, all_teams } from "/static/js/widgets.js";
+import { geo_marker_action } from "/static/js/modals.js";
 
 function ResArrowSize() {
   $("#addedStyle").remove();
@@ -119,10 +120,10 @@ export const page_team = async (common) => {
 
   var teams = db.team.find({ team_id: { $gt: 0 } });
   teams = teams.sort(function (teamA, teamB) {
-    if (teamA.school_name < teamB.school_name) {
+    if (teamA.team_location_name < teamB.team_location_name) {
       return -1;
     }
-    if (teamA.school_name > teamB.school_name) {
+    if (teamA.team_location_name > teamB.team_location_name) {
       return 1;
     }
     return 0;
@@ -142,11 +143,7 @@ export const page_team = async (common) => {
 
   common.stopwatch(common, "Time after fetching teams");
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Overview",
-    group_name: "Team",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
 
   const TeamHeaderLinks = team_header_links({
     path: "Overview",
@@ -384,7 +381,7 @@ export const page_team = async (common) => {
     this_week_game:this_week_game,
     last_week_game:last_week_game,
     teams: teams,
-    all_teams: await common.all_teams(common, ""),
+    all_teams: await all_teams(common, ""),
     conference_standings: conference_standings,
     headlines: headlines,
     games_played: games_played,
@@ -422,8 +419,10 @@ const draw_helmet = async (common) => {
 
     $(div).append(renderedHtml);
 
+    let i = $(div).find('image')
+
     console.log({
-      team:team, team_id:team_id, renderedHtml:renderedHtml, helmet_svg:helmet_svg, div:div
+      i:i, team:team, team_id:team_id, renderedHtml:renderedHtml, helmet_svg:helmet_svg, div:div
     })
   })
 } 
@@ -436,7 +435,7 @@ const team_action = async (common) => {
   await draw_helmet(common);
 
   initialize_headlines();
-  await common.geo_marker_action(common);
+  await geo_marker_action(common);
 
   var stats_first_click = false;
   $("#nav-team-stats-tab").on("click", async function () {
@@ -1186,7 +1185,7 @@ function conference_bar_chart(raw_data, common) {
       current_stat = selected_field;
       for (var team_season of raw_data) {
         data.push({
-          name: team_season.team.school_name,
+          name: team_season.team.team_location_name,
           value: +get_from_dict(team_season, selected_field),
           highlight: team_season.team_id === team_id,
           color: "#" + team_season.team.team_color_primary_hex,

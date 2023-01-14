@@ -37,8 +37,8 @@
                     <i class="fa fa-user"></i>
                   </span>
                 {% endif %}
-                <a href="{{current_team.team_href}}">{{current_team.school_name}}
-                  {{current_team.team_name}}
+                <a href="{{current_team.team_href}}">{{current_team.team_location_name}}
+                  {{current_team.team_nickname}}
                 </a>
               {% endif %}
             </span>
@@ -218,7 +218,7 @@
                               </td>
                               <td class='white-text column-shrink left-text nowrap' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>
                                 <a href="{{recruit_team_season.team_season.team.team_href}}">
-                                  {{recruit_team_season.team_season.team.school_name}}
+                                  {{recruit_team_season.team_season.team.team_location_name}}
                                 </a>
                               </td>
                               <td>{{recruit_team_season.signed}}</td>

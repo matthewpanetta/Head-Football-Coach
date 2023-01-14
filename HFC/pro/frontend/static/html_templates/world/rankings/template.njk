@@ -69,7 +69,7 @@
                     <td>Others receiving votes:
                       {% for team_season in bubble_teams%}
                         <span>
-                          <a href="{{team_season.team.team_href}}">{{team_season.team.school_name}}</a>
+                          <a href="{{team_season.team.team_href}}">{{team_season.team.team_location_name}}</a>
                           {% if loop.last %}
                           {% else %}, {% endif%}</span>
                         {% endfor %}
@@ -80,7 +80,7 @@
                         <td>Teams dropped from rankings:
                       {% for team_season in dropped_teams%}
                             <span>
-                              <a href="{{team_season.team.team_href}}">{{team_season.team.school_name}}</a> ({{team_season.rankings.national_rank[1]}}) {% if loop.last %}
+                              <a href="{{team_season.team.team_href}}">{{team_season.team.team_location_name}}</a> ({{team_season.rankings.national_rank[1]}}) {% if loop.last %}
                               {% else %}, {% endif%}</span>
                             {% endfor %}
                           </td>
@@ -141,7 +141,7 @@
                                       </td>
                                       <td class='width: 50%; inline-block font16 left-text {%if team_obj.team_game.is_winning_team%}bold{%endif%}'>
                                         <a href="{{team_obj.team_season.team.team_href}}">
-                                         {{team_obj.team_season.team.school_name}}
+                                         {{team_obj.team_season.team.team_location_name}}
                                         </a>
                                       </td>
                                       

@@ -19,6 +19,7 @@ import {
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { position_order_map, position_group_map } from "/static/js/metadata.js";
 import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
+import { recent_games } from "/static/js/widgets.js";
 
 export const page_world_awards = async (common) => {
   const db = common.db;
@@ -26,11 +27,8 @@ export const page_world_awards = async (common) => {
 
   common.stopwatch(common, "awards - start of gethtml");
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Awards & Races",
-    group_name: "World",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
+
   var player_team_season_ids = [];
   common.stopwatch(common, "awards - after navbarlinks");
 
@@ -470,8 +468,6 @@ export const page_world_awards = async (common) => {
 
   heisman_race = heisman_race.slice(0, 10);
 
-  const recent_games = await common.recent_games(common);
-
   var page = {
     PrimaryColor: common.primary_color,
     SecondaryColor: common.secondary_color,
@@ -560,7 +556,7 @@ export const page_world_awards = async (common) => {
     page: page,
     team_list: [],
     world_id: common.params["world_id"],
-    recent_games: recent_games,
+    recent_games: await recent_games(common),
     conference_seasons: conference_seasons,
     heisman_race: heisman_race,
     trophies: trophies,

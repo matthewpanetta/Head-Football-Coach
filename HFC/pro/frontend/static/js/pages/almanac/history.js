@@ -17,11 +17,7 @@ export const page_almanac_history = async (common) => {
   const weeks = db.week.find({ season: common.season });
   const this_week = weeks.filter((w) => w.is_current)[0];
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "History",
-    group_name: "Almanac",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
 
   var awards = db.award.find();
   awards = awards.filter((a) => a.award_group == "individual");
@@ -145,7 +141,7 @@ export const page_almanac_history = async (common) => {
 
   // const player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id')
 
-  const recent_games = await common.recent_games(common);
+  const recent_games = await recent_games(common);
 
   var render_content = {
     page: {

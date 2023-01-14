@@ -356,9 +356,10 @@ export class player_team_game {
 }
 
 export class day {
-  constructor(date) {
+  constructor(date, is_current) {
     
     this.date = new Date(date);
+    this.is_current = is_current;
     this.date_display = this.date.toISOString().slice(0,10)
     this.day_of_week = day_of_week_map[this.date.getDay()];
     this.day_of_week_short = day_of_week_map[this.date.getDay()].slice(0,3);
@@ -777,6 +778,14 @@ export class team {
 
       return path;
     }
+  }
+
+  get team_logo_helmet(){
+    return this.team_logo.replace('.png', '_helmet.png')
+  }
+
+  get team_helmet_svg(){
+    
   }
 
   luma(color) {

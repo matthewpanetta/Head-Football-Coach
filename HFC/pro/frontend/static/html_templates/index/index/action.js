@@ -215,7 +215,7 @@ const action = async (common) => {
         .last();
 
       world.user_team.team_name = user_team.team_name;
-      world.user_team.school_name = user_team.school_name;
+      world.user_team.team_location_name = user_team.team_location_name;
       world.user_team.team_logo_url = user_team.team_logo;
       world.user_team.team_record = user_team_season.record_display;
       world.user_team.team_id = user_team.team_id;

@@ -31,7 +31,7 @@
                                 {% if rival.first_team_game%}
                                     <div class=''>
                                         <a href='{{rival.first_team_game.game.winning_team.team_href}}' class='bold' style='color: #{{rival.first_team_game.game.winning_team.team_color_primary_hex}};'>
-                                            {{rival.first_team_game.game.winning_team.school_name}}
+                                            {{rival.first_team_game.game.winning_team.team_location_name}}
                                         </a>
                                         <span>, 
                                             <a href='{{rival.first_team_game.game.game_href}}'>{{rival.first_team_game.game.score_display}}</a>
@@ -51,7 +51,7 @@
                                 {% if rival.last_team_game%}
                                     <div class=''>
                                         <a href='{{rival.last_team_game.game.winning_team.team_href}}' class='bold' style='color: #{{rival.last_team_game.game.winning_team.team_color_primary_hex}};'>
-                                            {{rival.last_team_game.game.winning_team.school_name}}
+                                            {{rival.last_team_game.game.winning_team.team_location_name}}
                                         </a>
                                         <span>, 
                                             <a href='{{rival.last_team_game.game.game_href}}'>{{rival.last_team_game.game.score_display}}</a>
@@ -73,7 +73,7 @@
                             <td class='no-wrap'>
                                 {% if rival.all_time_series.leader %}
                                     <a class='bold' href='{{rival.all_time_series.leader.team_href}}' style='color: #{{rival.all_time_series.leader.team_color_primary_hex}};'>
-                                        {{rival.all_time_series.leader.school_name}}
+                                        {{rival.all_time_series.leader.team_location_name}}
                                     </a>
                                 ,
                                 {%else%}
@@ -85,7 +85,7 @@
                             <td class='no-wrap'>
                                 {% if rival.all_time_points.leader %}
                                     <a class='bold' href='{{rival.all_time_points.leader.team_href}}' style='color: #{{rival.all_time_points.leader.team_color_primary_hex}};'>
-                                        {{rival.all_time_points.leader.school_name}}
+                                        {{rival.all_time_points.leader.team_location_name}}
                                     </a>
                                 ,
                                 {%else%}
@@ -100,7 +100,7 @@
                                 {%if rival.longest_streak%}
                                     <div class=''>
                                         <a href='{{rival.longest_streak.team.team_href}}' class='bold' style='color: #{{rival.longest_streak.team.team_color_primary_hex}};'>
-                                            {{rival.longest_streak.team.school_name}}
+                                            {{rival.longest_streak.team.team_location_name}}
                                         </a>
                                         <span>
                                         , {{rival.longest_streak.count}}
@@ -120,7 +120,7 @@
                                         {% if rival.latest_streak%}
                                             <div class=''>
                                                 <a href='{{rival.latest_streak.team.team_href}}' class='bold' style='color: #{{rival.latest_streak.team.team_color_primary_hex}};'>
-                                                    {{rival.latest_streak.team.school_name}}
+                                                    {{rival.latest_streak.team.team_location_name}}
                                                 </a>
                                                 <span>
                                         , {{rival.latest_streak.count}}
@@ -165,7 +165,7 @@
 
                                                         <span class='bold'>
                                                             <a href='{{team_game.game.winning_team.team_href}}'>
-                                                                {{team_game.game.winning_team.school_name}}
+                                                                {{team_game.game.winning_team.team_location_name}}
                                                             </a>
                                                         </span>
                                                         <span>

@@ -21,11 +21,8 @@ export const page_almanac_player_records = async (common) => {
 
   var world_obj = {};
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Player Records",
-    group_name: "Almanac",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
+
   let player_leader_categories = [
     { category_name: "Passing Yards", category_abbr: "YRD", stat: "timeframe.passing.yards" },
     { category_name: "Passing Touchdowns", category_abbr: "TDs", stat: "timeframe.passing.tds" },
@@ -130,7 +127,7 @@ export const page_almanac_player_records = async (common) => {
     { category_name: "Extra Points Made", category_abbr: "XPM", stat: "timeframe.kicking.xpm" },
   ];
 
-  const recent_games = await common.recent_games(common);
+  const recent_games = await recent_games(common);
 
   var render_content = {
     page: {

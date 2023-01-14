@@ -139,3 +139,86 @@ export const team_header_links = (params) => {
 
   return return_links;
 };
+
+export const recent_games = (common) => {
+  const season = common.season;
+  const db = common.db;
+  const all_weeks = db.week.find({ season: season });
+  const current_week = all_weeks.filter((w) => w.is_current)[0];
+
+  const all_weeks_by_week_id = index_group_sync(all_weeks, "index", "week_id");
+
+  const previous_week = all_weeks_by_week_id[current_week.week_id - 1];
+
+  if (previous_week == undefined) {
+    return null;
+  }
+
+  var games_in_week = db.game.find({ week_id: previous_week.week_id });
+
+  const team_seasons_b = db.team_season.find({ season: season });
+  const team_seasons = team_seasons_b.filter((ts) => ts.team_id > 0);
+  const team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
+
+  const teams = db.team.find({ team_id: { $gt: 0 } });
+  const teams_by_team_id = index_group_sync(teams, "index", "team_id");
+
+  const team_games = db.team_game.find({ week_id: previous_week.week_id });
+  for (var team_game of team_games) {
+    team_game.team_season = team_seasons_by_team_season_id[team_game.team_season_id];
+    team_game.team_season.team = teams_by_team_id[team_game.team_season.team_id];
+  }
+
+  const team_games_by_game_id = index_group_sync(team_games, "group", "game_id");
+  var min_power_rank = 0;
+  for (var game of games_in_week) {
+    game.team_games = team_games_by_game_id[game.game_id];
+
+    let max_power_rank = 0;
+
+    if (game.team_games[0].is_winning_team) {
+      max_power_rank = team_seasons_by_team_season_id[game.team_games[1].team_season_id].power_rank;
+    } else {
+      max_power_rank = team_seasons_by_team_season_id[game.team_games[0].team_season_id].power_rank;
+    }
+
+    game.has_user_team = game.team_games.some((tg) => tg.team_season.is_user_team);
+
+    game.summed_power_rank =
+      team_seasons_by_team_season_id[game.team_games[0].team_season_id].power_rank +
+      team_seasons_by_team_season_id[game.team_games[1].team_season_id].power_rank +
+      max_power_rank;
+  }
+
+  games_in_week = games_in_week.sort(function (g_a, g_b) {
+    if (g_a.has_user_team) return -1;
+    if (g_b.has_user_team) return 1;
+    if (g_a.summed_power_rank < g_b.summed_power_rank) return -1;
+    if (g_a.summed_power_rank > g_b.summed_power_rank) return 1;
+    return 0;
+  });
+
+  return games_in_week;
+};
+
+export const all_teams = async (common, link_suffix) => {
+  const db = await common.db;
+  var team_list = db.team.find({ team_id: { $gt: 0 } });
+  team_list = team_list.sort(function (team_a, team_b) {
+    if (team_a.team_location_name < team_b.team_location_name) return -1;
+    if (team_a.team_location_name > team_b.team_location_name) return 1;
+    return 0;
+  });
+  team_list = team_list.map((t) => Object.assign(t, { conference_id: t.conference.conference_id }));
+
+  var conferences = db.conference.find();
+  var conferences_by_conference_id = index_group_sync(conferences, "index", "conference_id");
+
+  team_list = nest_children(team_list, conferences_by_conference_id, "conference_id", "conference");
+  team_list = team_list.map((t) =>
+    Object.assign(t, { adjusted_team_href: t.team_href + link_suffix })
+  );
+
+  var team_return_obj = { all_teams: team_list, conferences: conferences };
+  return team_return_obj;
+};

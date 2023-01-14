@@ -45,7 +45,7 @@ const getHtml = async (common) => {
     ]),
   });
 
-  const recent_games = await common.recent_games(common);
+  const recent_games = await recent_games(common);
 
   var render_content = {
     page: {

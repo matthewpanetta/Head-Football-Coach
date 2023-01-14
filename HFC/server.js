@@ -72,9 +72,9 @@ const send_file = (res, filename) => {
 
 const send_url = (req, res, level) => {
 	// console.log('in send_url', level, 'req.url.substr(1)', req.url.substr(1))
-	// if (asset_suffix.some(suffix_option => req.url.substr(1).includes(suffix_option))) {
-	// 	cache_time = 60 * 60;
-	// }
+	if (asset_suffix.some(suffix_option => req.url.substr(1).includes(suffix_option))) {
+		cache_time = 60 * 60;
+	}
 
 	res.set("Cache-Control", `public, max-age=${cache_time}`);
 	if (req.url.substr(1).includes('common/')){

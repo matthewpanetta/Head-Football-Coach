@@ -119,30 +119,30 @@ const getHtml = async (common) => {
     console.log({cts:cts, ind:ind, row_span_tracker:row_span_tracker})
 
     if (cts.coaching_position == 'HC'){
-      head_coaching_record[cts.team_season.team.school_name] = head_coaching_record[cts.team_season.team.school_name] || {team: cts.team_season.team, years:0, games_played:0,conference_games_played:0, wins:0, losses:0,conference_wins:0, conference_losses:0, national_championships:0, conference_championships: 0, division_championships: 0};
-      head_coaching_record[cts.team_season.team.school_name].years += 1;
-      head_coaching_record[cts.team_season.team.school_name].wins += cts.team_season.record.wins;
-      head_coaching_record[cts.team_season.team.school_name].losses += cts.team_season.record.losses;
-      head_coaching_record[cts.team_season.team.school_name].conference_wins += cts.team_season.record.conference_wins;
-      head_coaching_record[cts.team_season.team.school_name].conference_losses += cts.team_season.record.conference_losses;
-      head_coaching_record[cts.team_season.team.school_name].games_played += cts.team_season.record.games_played;
-      head_coaching_record[cts.team_season.team.school_name].conference_games_played += ((cts.team_season.record.conference_wins || 0) + (cts.team_season.record.conference_losses || 0));
+      head_coaching_record[cts.team_season.team.team_location_name] = head_coaching_record[cts.team_season.team.team_location_name] || {team: cts.team_season.team, years:0, games_played:0,conference_games_played:0, wins:0, losses:0,conference_wins:0, conference_losses:0, national_championships:0, conference_championships: 0, division_championships: 0};
+      head_coaching_record[cts.team_season.team.team_location_name].years += 1;
+      head_coaching_record[cts.team_season.team.team_location_name].wins += cts.team_season.record.wins;
+      head_coaching_record[cts.team_season.team.team_location_name].losses += cts.team_season.record.losses;
+      head_coaching_record[cts.team_season.team.team_location_name].conference_wins += cts.team_season.record.conference_wins;
+      head_coaching_record[cts.team_season.team.team_location_name].conference_losses += cts.team_season.record.conference_losses;
+      head_coaching_record[cts.team_season.team.team_location_name].games_played += cts.team_season.record.games_played;
+      head_coaching_record[cts.team_season.team.team_location_name].conference_games_played += ((cts.team_season.record.conference_wins || 0) + (cts.team_season.record.conference_losses || 0));
 
-      if (head_coaching_record[cts.team_season.team.school_name].games_played){
-        head_coaching_record[cts.team_season.team.school_name].win_percentage = Math.floor(head_coaching_record[cts.team_season.team.school_name].wins * 100  / head_coaching_record[cts.team_season.team.school_name].games_played)
+      if (head_coaching_record[cts.team_season.team.team_location_name].games_played){
+        head_coaching_record[cts.team_season.team.team_location_name].win_percentage = Math.floor(head_coaching_record[cts.team_season.team.team_location_name].wins * 100  / head_coaching_record[cts.team_season.team.team_location_name].games_played)
       }
-      if (head_coaching_record[cts.team_season.team.school_name].conference_games_played){
-        head_coaching_record[cts.team_season.team.school_name].conference_win_percentage = Math.floor(head_coaching_record[cts.team_season.team.school_name].conference_wins * 100  / head_coaching_record[cts.team_season.team.school_name].conference_games_played)
+      if (head_coaching_record[cts.team_season.team.team_location_name].conference_games_played){
+        head_coaching_record[cts.team_season.team.team_location_name].conference_win_percentage = Math.floor(head_coaching_record[cts.team_season.team.team_location_name].conference_wins * 100  / head_coaching_record[cts.team_season.team.team_location_name].conference_games_played)
       }
 
       if (cts.team_season.results.national_champion){
-        head_coaching_record[cts.team_season.team.school_name].national_championships +=1;
+        head_coaching_record[cts.team_season.team.team_location_name].national_championships +=1;
         championships['National Champions'] = championships['National Champions'] || [];
         championships['National Champions'].push(cts.team_season)
       }
 
       if (cts.team_season.results.conference_champion){
-        head_coaching_record[cts.team_season.team.school_name].conference_championships +=1;
+        head_coaching_record[cts.team_season.team.team_location_name].conference_championships +=1;
 
         let conference_name = cts.team_season.conference_season.conference.conference_abbreviation + ' Champions';
         championships[conference_name] = championships[conference_name] || [];
@@ -150,7 +150,7 @@ const getHtml = async (common) => {
       }
 
       if (cts.team_season.results.division_champion){
-        head_coaching_record[cts.team_season.team.school_name].division_championships +=1;
+        head_coaching_record[cts.team_season.team.team_location_name].division_championships +=1;
 
         let conference_division_name = cts.team_season.conference_season.conference.conference_abbreviation + ' ' + cts.team_season.division_name + ' Champions';
         championships[conference_division_name] = championships[conference_division_name] || [];

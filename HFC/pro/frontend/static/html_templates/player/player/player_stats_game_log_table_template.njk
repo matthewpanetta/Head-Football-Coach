@@ -204,7 +204,7 @@
             {{player_team_game.team_game.game.week.week_name}}
             {% if all_seasons|length > 1%}, {{player_team_game.team_game.game.week.season}}{%endif%}
           </td>
-          <td style='color: white; background-color: #{{player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}}' value='{{player_team_game.team_game.opponent_team_season.team.school_name}}'>
+          <td style='color: white; background-color: #{{player_team_game.team_game.opponent_team_season.team.team_color_primary_hex}}' value='{{player_team_game.team_game.opponent_team_season.team.team_location_name}}'>
             <a href='{{player_team_game.team_game.opponent_team_season.team.team_href}}'>
               <img class='logo logo-30' src='{{player_team_game.team_game.opponent_team_season.team.team_logo}}'/>
             </a>

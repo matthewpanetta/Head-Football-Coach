@@ -104,11 +104,8 @@ export const page_team_history = async (common) => {
     }
   }
 
-  const NavBarLinks = await common.nav_bar_links({
-    path: "History",
-    group_name: "Team",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
+
 
   const TeamHeaderLinks = team_header_links({
     path: "History",
@@ -123,7 +120,7 @@ export const page_team_history = async (common) => {
   console.log({ TeamHeaderLinks: TeamHeaderLinks });
   common.page = {
     page_icon: team.team_logo,
-    page_title: `HFC - ${team.school_name} History`,
+    page_title: `HFC - ${team.team_location_name} History`,
     PrimaryColor: team.team_color_primary_hex,
     SecondaryColor: team.secondary_color_display,
     OriginalSecondaryColor: team.team_color_secondary_hex,

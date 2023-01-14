@@ -16,6 +16,7 @@ import {
   ordinal,
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
+import { recent_games } from "/static/js/widgets.js";
 
 export const page_world_schedule = async (common) => {
   const db = common.db;
@@ -24,11 +25,8 @@ export const page_world_schedule = async (common) => {
   var world_obj = {};
 
   common.stopwatch(common, "getHtml 1.0");
-  const NavBarLinks = await common.nav_bar_links({
-    path: "Schedule",
-    group_name: "World",
-    db: db,
-  });
+  const NavBarLinks = common.nav_bar_links;
+
 
   common.stopwatch(common, "getHtml 1.1");
   var teams = db.team.find({ team_id: { $gt: 0 } });
@@ -168,12 +166,12 @@ export const page_world_schedule = async (common) => {
     console.log({ conference_obj: conference_obj });
 
     let conference_teams = distinct(
-      conference_team_seasons.map((ts) => ts.team.school_name)
+      conference_team_seasons.map((ts) => ts.team.team_location_name)
     ).sort();
     console.log({ conference_teams: conference_teams });
 
     conference_obj.options = conference_team_seasons.map((ts) => ({
-      display: ts.team.school_name,
+      display: ts.team.team_location_name,
       logo_url: ts.team.team_logo,
     }));
     console.log({ conference_obj: conference_obj });
@@ -227,9 +225,6 @@ export const page_world_schedule = async (common) => {
 
   weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
 
-  const recent_games = await common.recent_games(common);
-  common.stopwatch(common, "getHtml 1.5");
-
   var render_content = {
     page: {
       PrimaryColor: common.primary_color,
@@ -240,7 +235,7 @@ export const page_world_schedule = async (common) => {
     team_list: [],
     world_id: common.params["world_id"],
     weeks: weeks,
-    recent_games: recent_games,
+    recent_games: await recent_games(common),
     filters: filters,
     current_week: current_week,
   };
@@ -431,8 +426,8 @@ const draw_box_scores = async (common) => {
   games = games.filter(function (g) {
     if (filter_values["Team"].length > 0) {
       return (
-        filter_values["Team"].includes(g.team_games[0].team_season.team.school_name) ||
-        filter_values["Team"].includes(g.team_games[1].team_season.team.school_name)
+        filter_values["Team"].includes(g.team_games[0].team_season.team.team_location_name) ||
+        filter_values["Team"].includes(g.team_games[1].team_season.team.team_location_name)
       );
     }
     return true;

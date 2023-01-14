@@ -41,7 +41,7 @@
               <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
             {% endif %}
           {% else %}
-            <a href="{{player.current_player_team_season.team_season.team.team_href}}">{{player.current_player_team_season.team_season.team.school_name}}
+            <a href="{{player.current_player_team_season.team_season.team.team_href}}">{{player.current_player_team_season.team_season.team.team_location_name}}
               {{player.current_player_team_season.team_season.team.team_name}}</a>
           {% endif %}
             | #{{player.jersey_number}} | {{player.position}}
