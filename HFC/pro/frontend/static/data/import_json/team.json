@@ -5,7 +5,7 @@
     "team_abbreviation": "ARI",
     "team_color_primary_hex": "#97233f",
     "team_color_secondary_hex": "#ffffff",
-    "team_color_tertiary_hex": "#ffb612",
+    "helmet": { "background": "#ffffff", "facemask": "#ffffff" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -26,7 +26,7 @@
     "team_abbreviation": "BUF",
     "team_color_primary_hex": "#00338d",
     "team_color_secondary_hex": "#c60c3d",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#ffffff", "facemask": "#ffffff" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -47,7 +47,7 @@
     "team_abbreviation": "MIA",
     "team_color_primary_hex": "#008e97",
     "team_color_secondary_hex": "#fc4c02",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#ffffff", "facemask": "#ffffff" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -68,8 +68,8 @@
     "team_abbreviation": "NE",
     "team_color_primary_hex": "#002040",
     "team_color_secondary_hex": "#c60c30",
-    "team_color_tertiary_hex": "#b0b7bc",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#b0b7bc", "facemask": "#c60c30" },
+    "jersey": { "invert": false, "id": "football-three-stripe", "lettering": "Patriots" },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -89,7 +89,7 @@
     "team_abbreviation": "NYJ",
     "team_color_primary_hex": "#115740",
     "team_color_secondary_hex": "#ffffff",
-    "team_color_tertiary_hex": "#000000",
+    "helmet": { "background": "#115740", "facemask": "#000000" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -110,7 +110,7 @@
     "team_abbreviation": "BAL",
     "team_color_primary_hex": "#24135f",
     "team_color_secondary_hex": "#9a7611",
-    "team_color_tertiary_hex": "#000000",
+    "helmet": { "background": "#000000", "facemask": "#000000" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -131,8 +131,13 @@
     "team_abbreviation": "CIN",
     "team_color_primary_hex": "#fb4f14",
     "team_color_secondary_hex": "#000000",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#fb4f14", "facemask": "#000000", "design": null },
+    "jersey": {
+      "invert": false,
+      "id": "football-sparta",
+      "lettering": "BENGALS",
+      "flip_primaries": true
+    },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -152,7 +157,7 @@
     "team_abbreviation": "CLE",
     "team_color_primary_hex": "#311d00",
     "team_color_secondary_hex": "#f03000",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#f03000", "facemask": "#311d00", "design": null },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -173,7 +178,7 @@
     "team_abbreviation": "PIT",
     "team_color_primary_hex": "#000000",
     "team_color_secondary_hex": "#eead1e",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#000000", "facemask": "#000000" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -194,8 +199,8 @@
     "team_abbreviation": "HOU",
     "team_color_primary_hex": "#03202f",
     "team_color_secondary_hex": "#a71930",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#03202f", "facemask": "#03202f" },
+    "jersey": { "invert": false, "id": "football-sparta" },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -215,8 +220,8 @@
     "team_abbreviation": "IND",
     "team_color_primary_hex": "#013369",
     "team_color_secondary_hex": "#ffffff",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#ffffff", "facemask": "#ffffff" },
+    "jersey": { "invert": false, "id": "football-two-stripe" },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -236,7 +241,7 @@
     "team_abbreviation": "JAX",
     "team_color_primary_hex": "#006778",
     "team_color_secondary_hex": "#9f792c",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#000000", "facemask": "#000000" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -257,7 +262,7 @@
     "team_abbreviation": "TEN",
     "team_color_primary_hex": "#4b92db",
     "team_color_secondary_hex": "#002040",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#002040", "facemask": "#002040" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -278,8 +283,8 @@
     "team_abbreviation": "DEN",
     "team_color_primary_hex": "#0a2343",
     "team_color_secondary_hex": "#fc4c02",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#0a2343", "facemask": "#0a2343" },
+    "jersey": { "invert": false, "id": "football-ponies", "lettering": "BRONCOS" },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -299,7 +304,7 @@
     "team_abbreviation": "KC",
     "team_color_primary_hex": "#e31837",
     "team_color_secondary_hex": "#EEBF0A",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#e31837", "facemask": "#ffffff" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -320,7 +325,7 @@
     "team_abbreviation": "KC",
     "team_color_primary_hex": "#000000",
     "team_color_secondary_hex": "#a5acaf",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#a5acaf", "facemask": "#a5acaf" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -341,7 +346,7 @@
     "team_abbreviation": "LAC",
     "team_color_primary_hex": "#0080c6",
     "team_color_secondary_hex": "#ffc20e",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#ffffff", "facemask": "#ffc20e" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -362,8 +367,8 @@
     "team_abbreviation": "DAL",
     "team_color_primary_hex": "#002244",
     "team_color_secondary_hex": "#A4AAAD",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#A4AAAD", "facemask": "#A4AAAD" },
+    "jersey": { "invert": true, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -381,9 +386,9 @@
     "team_location_name": "New York",
     "team_nickname": "Giants",
     "team_abbreviation": "NYG",
-    "team_color_primary_hex": "#0b2265",
+    "team_color_primary_hex": "#1F256B",
     "team_color_secondary_hex": "#a71930",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#1F256B", "facemask": "#bbbbbb" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -404,8 +409,8 @@
     "team_abbreviation": "PHI",
     "team_color_primary_hex": "#004851",
     "team_color_secondary_hex": "#a2aaad",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#004851", "facemask": "#000000" },
+    "jersey": { "invert": false, "id": "football-standard", "lettering": "EAGLES" },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -425,8 +430,8 @@
     "team_abbreviation": "WAS",
     "team_color_primary_hex": "#5a1414",
     "team_color_secondary_hex": "#ffb612",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#5a1414", "facemask": "#5a1414", "mirror_logo": true },
+    "jersey": { "invert": false, "id": "football-standard", "lettering": "COMMANDERS" },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -446,7 +451,7 @@
     "team_abbreviation": "CHI",
     "team_color_primary_hex": "#0b162a",
     "team_color_secondary_hex": "#e64100",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#0b162a", "facemask": "#0b162a", "mirror_logo": true },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -467,7 +472,7 @@
     "team_abbreviation": "DET",
     "team_color_primary_hex": "#0076b6",
     "team_color_secondary_hex": "#b0b7bc",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#b0b7bc", "facemask": "#b0b7bc" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -488,7 +493,7 @@
     "team_abbreviation": "GB",
     "team_color_primary_hex": "#203731",
     "team_color_secondary_hex": "#ffb612",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#ffb612", "facemask": "#203731", "mirror_logo": true },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -509,8 +514,8 @@
     "team_abbreviation": "MIN",
     "team_color_primary_hex": "#4f2683",
     "team_color_secondary_hex": "#ffc62f",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#4f2683", "facemask": "#4f2683" },
+    "jersey": { "invert": false, "id": "football-standard", "lettering": "VIKINGS" },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -530,8 +535,8 @@
     "team_abbreviation": "ATL",
     "team_color_primary_hex": "#a71930",
     "team_color_secondary_hex": "#000000",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#000000", "facemask": "#ffffff" },
+    "jersey": { "invert": false, "id": "football-standard", "flip_primaries": true },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -551,7 +556,7 @@
     "team_abbreviation": "CAR",
     "team_color_primary_hex": "#0085ca",
     "team_color_secondary_hex": "#000000",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#B0BAC7", "facemask": "#000000" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -572,8 +577,8 @@
     "team_abbreviation": "NO",
     "team_color_primary_hex": "#d3bc8d",
     "team_color_secondary_hex": "#000000",
-    "team_color_tertiary_hex": "#ffffff",
-    "jersey": { "invert": false, "id": "football-standard" },
+    "helmet": { "background": "#d3bc8d", "facemask": "#000000" },
+    "jersey": { "invert": false, "id": "football-standard", "flip_primaries": true },
     "starting_tendencies": {
       "offense": {
         "playbook": "Spread",
@@ -592,8 +597,8 @@
     "team_nickname": "Buccaneers",
     "team_abbreviation": "TB",
     "team_color_primary_hex": "#a71930",
-    "team_color_secondary_hex": "#b1babf",
-    "team_color_tertiary_hex": "#000000",
+    "team_color_secondary_hex": "#312E2E",
+    "helmet": { "background": "#312E2E", "facemask": "#312E2E" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -614,7 +619,7 @@
     "team_abbreviation": "LA",
     "team_color_primary_hex": "#003594",
     "team_color_secondary_hex": "#ffd100",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#003594", "facemask": "#003594" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -635,7 +640,7 @@
     "team_abbreviation": "SF",
     "team_color_primary_hex": "#AA0000",
     "team_color_secondary_hex": "#B3995D",
-    "team_color_tertiary_hex": "#ffffff",
+    "helmet": { "background": "#B3995D", "facemask": "#cccccc" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {
@@ -656,7 +661,7 @@
     "team_abbreviation": "SEA",
     "team_color_primary_hex": "#002040",
     "team_color_secondary_hex": "#a5acaf",
-    "team_color_tertiary_hex": "#69be28",
+    "helmet": { "background": "#002040", "facemask": "#002040" },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {

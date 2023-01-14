@@ -406,11 +406,34 @@ export const page_team = async (common) => {
   await team_action(common);
 };
 
+const draw_helmet = async (common) => {
+  let divs = $('.helmet-div').toArray();
+  let db = common.db;
+
+  var helmet_url = "/static/img/svg/helmet.svg";
+  var helmet_html = await fetch(helmet_url);
+  let helmet_svg = await helmet_html.text();
+
+  divs.forEach(function(div){
+    let team_id = parseInt($(div).attr('team-id'));
+    let team = db.team.findOne({team_id: team_id});
+
+    var renderedHtml = nunjucks_env.renderString(helmet_svg, {team: team});
+
+    $(div).append(renderedHtml);
+
+    console.log({
+      team:team, team_id:team_id, renderedHtml:renderedHtml, helmet_svg:helmet_svg, div:div
+    })
+  })
+} 
+
 const team_action = async (common) => {
   AddScheduleListeners();
   AddBoxScoreListeners();
 
   DrawSchedule();
+  await draw_helmet(common);
 
   initialize_headlines();
   await common.geo_marker_action(common);

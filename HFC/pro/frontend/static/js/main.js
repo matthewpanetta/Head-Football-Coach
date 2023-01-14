@@ -1402,16 +1402,6 @@ const advance_player_team_seasons = async (data) => {
           ].team_season_id;
       }
 
-      let next_class_name = next_class_map[player.previous_player_team_season.class.class_name];
-      let redshirted = false;
-      if (
-        player.previous_player_team_season.season_stats &&
-        (player.previous_player_team_season.season_stats.games.games_played || 0) <= 4 &&
-        !player.previous_player_team_season.class.redshirted
-      ) {
-        redshirted = true;
-        next_class_name = player.previous_player_team_season.class.class_name;
-      }
 
       let new_pts = new player_team_season({
         player_id: player.player_id,
@@ -1420,10 +1410,7 @@ const advance_player_team_seasons = async (data) => {
         season: data.season,
         world_id: data.world_id,
         position: player.position,
-        class: {
-          class_name: next_class_name,
-          redshirted: redshirted,
-        },
+        age: player.previous_player_team_season + 1,
         ratings: deep_copy(player.previous_player_team_season.ratings),
       });
 
@@ -7353,6 +7340,11 @@ const new_world_action = async (common, database_suffix) => {
       ];
     }
 
+    if (t.helmet){
+      t.helmet.background = t.helmet.background.replace('#', '');
+      t.helmet.facemask = t.helmet.facemask.replace('#', '');
+    }
+
     if (t.jersey.lettering) {
       t.jersey.lettering_color = t.jersey.lettering_color || "FFFFFF";
     }
@@ -7402,6 +7394,7 @@ const new_world_action = async (common, database_suffix) => {
         team_abbreviation: t.team_abbreviation,
         team_color_primary_hex: t.team_color_primary_hex,
         team_color_secondary_hex: t.team_color_secondary_hex,
+        helmet: t.helmet,
         rivals: rivals,
         jersey: t.jersey,
         field: t.field,

@@ -108,7 +108,7 @@
                             </a>
                           </div>
                           <div class='font10'>
-                            <span>{{player.player_team_season.class.class_name}} &#183 {{player.player_team_season.position}} &#183 {{player.player_team_season.ratings.overall.overall}} OVR</span>
+                             {{player.player_team_season.position}} &#183 {{player.player_team_season.ratings.overall.overall}} OVR</span>
                           </div>
                         </td>
                       </tr>
@@ -124,7 +124,7 @@
         <div class="tab-content" style='display:block;' id="nav-overview" >
           <div class='w3-container'>
             <div class='flex'>
-              <div class='flex-1 basis-25'>
+              <div class='flex-1 fb-25'>
                 <div class="card margin-bottom-24">
                   <table class='width100 table table-striped table-hover '>
                     {% for skill_group in skills%}
@@ -161,7 +161,7 @@
 
                   </div>
                 </div>
-                <div class='flex-1 basis-25'>
+                <div class='flex-1 fb-25'>
                   {% if playerTeam.IsUserTeam%}
                     {% if Actions%}
                       <div class="card w3-margin-bottom">

@@ -102,7 +102,7 @@ export const page_team_schedule = async (common) => {
   let team_seasons_by_team_season_ids = index_group_sync(team_seasons, 'index', 'team_season_id');
 
   team_games = nest_children( team_games,team_seasons_by_team_season_ids , 'team_season_id', 'team_season')
-  let team_games_by_game_id = index_group_sync(team_games, 'index', 'team_game_id')
+  let team_games_by_game_id = index_group_sync(team_games, 'index', 'game_id')
 
   var games = db.game.find({ game_id: { $in: game_ids } });
   games = nest_children(games, weeks_by_week_id, "week_id", "week");
@@ -170,7 +170,15 @@ export const page_team_schedule = async (common) => {
   );
 
   var counter_games = 0;
+  console.log({
+    games:games,
+    team_games:team_games,
+    team_games_by_game_id:team_games_by_game_id
+  })
   for(let g of games){
+    console.log({
+      g:g
+    })
 
     g.game_display = "Preview";
     g.game_outcome_letter = "";

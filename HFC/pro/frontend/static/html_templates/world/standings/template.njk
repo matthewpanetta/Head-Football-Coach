@@ -81,12 +81,12 @@
                             <td value='{{loop.index}}' style='background-color: #{{team_season.team.team_color_primary_hex}}; color: white; min-width: 3.75rem;' class='Top25RankNumber center-text no-width'>
                               {{loop.index}}
                             </td>
-                            <td value='{{team_season.team.school_name }}' style='background-color: #{{team_season.team.team_color_primary_hex}}' class='no-width'>
+                            <td value='{{team_season.team.team_location_name }}' style='background-color: #{{team_season.team.team_color_primary_hex}}' class='no-width'>
                               <a href="{{ team_season.team.team_href }}">
                                 <img class='logo logo-50' src="{{team_season.team.team_logo}}"/>
                               </a>
                             </td>
-                            <td value='{{team_season.team.school_name }}' class='col-group no-wrap'>
+                            <td value='{{team_season.team.team_location_name }}' class='col-group no-wrap'>
                               <a href="{{ team_season.team.team_href }}">
                                 <span class='font10'>{{team_season.national_rank_display}}</span>
                                 {% if team_season.team.is_user_team%}
@@ -94,7 +94,7 @@
                                     <i class="fa fa-user"></i>
                                 </span>
                                 {%endif%}
-                                <span class='font14 nowrap'>{{team_season.team.school_name }}</span>
+                                <span class='font14 nowrap'>{{team_season.team.team_location_name }}</span>
 
                               </a>
                               {% if team_season.results.conference_champion%}

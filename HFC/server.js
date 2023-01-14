@@ -36,6 +36,7 @@ const static_suffix = new Set([
 	'.png',
 	'.njk',
 	'.css',
+	'.svg',
 	'.woff',
 	'.woff2',
 	'.eot',

@@ -2273,13 +2273,6 @@ export class player_team_season {
     }
   }
 
-  get class_name() {
-    if (this.class.redshirted) {
-      return this.class.class_name + ` (RS)`;
-    }
-    return this.class.class_name;
-  }
-
   get player_award_rating() {
     let position_overall_map = {
       QB: 0,

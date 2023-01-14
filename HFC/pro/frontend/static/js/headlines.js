@@ -30,65 +30,65 @@ export const generate_game_headlines = (game_dict, common) => {
   if (score_difference <= 4) {
     game_headlines = game_headlines.concat([
       {
-        text: "Time runs out for {{losing_team.school_name}}, falling to {{winning_team.school_name}}",
+        text: "Time runs out for {{losing_team.team_location_name}}, falling to {{winning_team.team_location_name}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} sneaks by {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} sneaks by {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
     ]);
   } else if (score_difference > 19) {
     game_headlines = game_headlines.concat([
       {
-        text: "{{winning_team.school_name}} blasts {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} blasts {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} OBLITERATES {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} OBLITERATES {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} cold clocks {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} cold clocks {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} banishes {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} banishes {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} hammers {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} hammers {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} brutalizes {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} brutalizes {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} outmatches {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} outmatches {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
     ]);
   } else {
     game_headlines = game_headlines.concat([
       {
-        text: "{{winning_team.school_name}} over {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} over {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} overcomes {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} overcomes {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} beats {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} beats {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} outlasts {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} outlasts {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} overpowers {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} overpowers {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
     ]);
@@ -97,11 +97,11 @@ export const generate_game_headlines = (game_dict, common) => {
   if (game_dict.losing_team.location.unique_city_name && game_dict.losing_team_game.is_home_team) {
     game_headlines = game_headlines.concat([
       {
-        text: "{{winning_team.school_name}} wins in {{losing_team.location.city}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} wins in {{losing_team.location.city}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
       {
-        text: "{{winning_team.school_name}} leaves {{losing_team.location.city}} with a win, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} leaves {{losing_team.location.city}} with a win, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
     ]);
@@ -110,7 +110,7 @@ export const generate_game_headlines = (game_dict, common) => {
   if (game_dict.losing_team_game.is_home_team) {
     game_headlines = game_headlines.concat([
       {
-        text: "{{winning_team.school_name}} beats {{losing_team.school_name}} at home, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} beats {{losing_team.team_location_name}} at home, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance,
       },
     ]);
@@ -126,11 +126,11 @@ export const generate_game_headlines = (game_dict, common) => {
   ) {
     game_headlines = game_headlines.concat([
       {
-        text: "{{winning_team.school_name}} upset {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} upset {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance + 2,
       },
       {
-        text: "{{winning_team.school_name}} pull off the upset over {{losing_team.school_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
+        text: "{{winning_team.team_location_name}} pull off the upset over {{losing_team.team_location_name}}, {{winning_team_game.points}}-{{losing_team_game.points}}",
         headline_relevance: base_headline_relevance + 2,
       },
       {
@@ -143,9 +143,9 @@ export const generate_game_headlines = (game_dict, common) => {
   if (game_dict.game.bowl) {
     if (game_dict.game.bowl.bowl_name == "National Championship") {
       game_headlines = [
-        { text: "{{winning_team.school_name}} crowned champions", headline_relevance: 20 },
+        { text: "{{winning_team.team_location_name}} crowned champions", headline_relevance: 20 },
         {
-          text: "{{winning_team.school_name}} claim {{winning_team_season.season}} championship",
+          text: "{{winning_team.team_location_name}} claim {{winning_team_season.season}} championship",
           headline_relevance: 20,
         },
       ];
@@ -160,11 +160,11 @@ export const generate_game_headlines = (game_dict, common) => {
       } else {
         game_headlines = [
           {
-            text: "{{winning_team.school_name}} advance to National Championship",
+            text: "{{winning_team.team_location_name}} advance to National Championship",
             headline_relevance: 9,
           },
           {
-            text: "{{winning_team.school_name}} takes down {{losing_team.school_name}} to play for championship",
+            text: "{{winning_team.team_location_name}} takes down {{losing_team.team_location_name}} to play for championship",
             headline_relevance: 9,
           },
         ];
@@ -229,42 +229,42 @@ export const generate_ranking_headlines = async (
     if (ts.rankings.power_rank[0] == 1 && ts.rankings.power_rank[1] == 1) {
       ts_headline_options.push({
         headline_relevance: 3,
-        text: "{{team_season.team.school_name}} remains at #1",
+        text: "{{team_season.team.team_location_name}} remains at #1",
       });
     }
 
     if (ts.rankings.power_rank[0] == 1 && ts.rankings.power_rank[1] > 1) {
       ts_headline_options.push({
         headline_relevance: 4,
-        text: "{{team_season.team.school_name}} moves into #1 spot",
+        text: "{{team_season.team.team_location_name}} moves into #1 spot",
       });
     }
 
     if (ts.rankings.power_rank[0] <= 25 && ts.rankings.power_rank[1] > 25) {
       ts_headline_options.push({
         headline_relevance: 4,
-        text: "{{team_season.team.school_name}} cracks top 25",
+        text: "{{team_season.team.team_location_name}} cracks top 25",
       });
     }
 
     if (ts.rankings.power_rank[1] <= 25 && ts.rankings.power_rank_delta < -6) {
       ts_headline_options.push({
         headline_relevance: 3,
-        text: "{{team_season.team.school_name}} stumbles from {{team_season.rankings.power_rank[1]}} to {{team_season.rankings.power_rank[0]}}",
+        text: "{{team_season.team.team_location_name}} stumbles from {{team_season.rankings.power_rank[1]}} to {{team_season.rankings.power_rank[0]}}",
       });
     }
 
     if (ts.rankings.power_rank[1] <= 25 && ts.rankings.power_rank_delta < -12) {
       ts_headline_options.push({
         headline_relevance: 4,
-        text: "{{team_season.team.school_name}} stumbles from {{team_season.rankings.power_rank[1]}} to {{team_season.rankings.power_rank[0]}}",
+        text: "{{team_season.team.team_location_name}} stumbles from {{team_season.rankings.power_rank[1]}} to {{team_season.rankings.power_rank[0]}}",
       });
     }
 
     if (ts.rankings.power_rank[1] <= 25 && ts.rankings.power_rank_delta < -18) {
       ts_headline_options.push({
         headline_relevance: 5,
-        text: "{{team_season.team.school_name}} stumbles from {{team_season.rankings.power_rank[1]}} to {{team_season.rankings.power_rank[0]}}",
+        text: "{{team_season.team.team_location_name}} stumbles from {{team_season.rankings.power_rank[1]}} to {{team_season.rankings.power_rank[0]}}",
       });
     }
 
