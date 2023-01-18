@@ -4698,69 +4698,120 @@ const calculate_conference_rankings = async (this_week, all_weeks, common) => {
   const db = await common.db;
   const all_weeks_by_week_id = index_group_sync(all_weeks, "index", "week_id");
 
-  let next_week = all_weeks_by_week_id[this_week.week_id + 1];
-  const conference_seasons = db.conference_season.find({ season: common.season });
+  let conference_seasons = db.conference_season.find({ season: common.season });
+  let conferences = db.conference.find();
+  let conferences_by_conference_id = index_group_sync(conferences, "index", "conference_id");
 
-  const team_seasons = db.team_season.find({ season: this_week.phase.season, team_id: { $gt: 0 } });
+  conference_seasons = nest_children(
+    conference_seasons,
+    conferences_by_conference_id,
+    "conference_id",
+    "conference"
+  );
+  let conference_seasons_by_conference_season_id = index_group_sync(
+    conference_seasons,
+    "index",
+    "conference_season_id"
+  );
 
-  const team_seasons_by_conference_season_id = index_group_sync(
+  let team_seasons = db.team_season.find({ season: this_week.phase.season, team_id: { $gt: 0 } });
+  team_seasons = nest_children(
+    team_seasons,
+    conference_seasons_by_conference_season_id,
+    "conference_season_id",
+    "conference_season"
+  );
+
+  team_seasons.forEach(function (ts) {
+    ts.full_division_name =
+      ts.conference_season.conference.conference_abbreviation + " " + ts.division_name;
+  });
+
+  let team_seasons_by_conference_season_id = index_group_sync(
     team_seasons,
     "group",
     "conference_season_id"
   );
 
-  var rank_counter = 0,
-    sorted_team_seasons = [],
-    team_seasons_to_save = [];
+  let team_seasons_by_full_division_name = index_group_sync(
+    team_seasons,
+    "group",
+    "full_division_name"
+  );
 
-  for (var conference_season of conference_seasons) {
-    var conference_team_seasons =
-      team_seasons_by_conference_season_id[conference_season.conference_season_id];
+  for (var [division_name, division_team_seasons] of Object.entries(
+    team_seasons_by_full_division_name
+  )) {
+    let sorted_team_seasons = division_team_seasons.sort(function (a, b) {
+      if (a.results.conference_champion) return -1;
+      if (b.results.conference_champion) return 1;
 
-    console.log({
-      conference_seasons: conference_seasons,
-      conference_season: conference_season,
-      team_seasons_by_conference_season_id: team_seasons_by_conference_season_id,
+      if (a.record.net_wins > b.record.net_wins) return -1;
+      if (a.record.net_wins < b.record.net_wins) return 1;
+
+      if (a.record.defeated_teams.includes(b.team_season_id)) return -1;
+      if (b.record.defeated_teams.includes(a.team_season_id)) return 1;
+
+      if (a.record.conference_net_wins > b.record.conference_net_wins) return -1;
+      if (a.record.conference_net_wins < b.record.conference_net_wins) return 1;
+
+      if (a.record.division_losses > b.record.division_losses) return 1;
+      if (a.record.division_losses < b.record.division_losses) return -1;
+
+      if (a.record.conference_losses > b.record.conference_losses) return 1;
+      if (a.record.conference_losses < b.record.conference_losses) return -1;
+
+      if (a.rankings.power_rank[0] > b.rankings.power_rank[0]) return 1;
+      if (a.rankings.power_rank[0] < b.rankings.power_rank[0]) return -1;
+
+      return 0;
     });
 
-    for (let division of conference_season.divisions) {
-      let division_team_seasons = conference_team_seasons.filter(
-        (ts) => ts.division_name == division.division_name
-      );
+    let top_ts_net_wins = sorted_team_seasons[0].record.division_net_wins;
+    sorted_team_seasons.forEach(function (ts, ind) {
+      ts.record.conference_gb = (top_ts_net_wins - ts.record.division_net_wins) / 2;
 
-      sorted_team_seasons = division_team_seasons.sort(function (a, b) {
-        if (a.results.conference_champion) return -1;
-        if (b.results.conference_champion) return 1;
-
-        if (a.record.conference_net_wins > b.record.conference_net_wins) return -1;
-        if (a.record.conference_net_wins < b.record.conference_net_wins) return 1;
-
-        if (a.record.defeated_teams.includes(b.team_season_id)) return -1;
-        if (b.record.defeated_teams.includes(a.team_season_id)) return 1;
-
-        if (a.record.conference_losses > b.record.conference_losses) return 1;
-        if (a.record.conference_losses < b.record.conference_losses) return -1;
-
-        if (a.rankings.power_rank[0] > b.rankings.power_rank[0]) return 1;
-        if (a.rankings.power_rank[0] < b.rankings.power_rank[0]) return -1;
-
-        return 0;
-      });
-
-      rank_counter = 1;
-      let top_conference_net_wins = sorted_team_seasons[0].record.conference_net_wins;
-      for (var team_season of sorted_team_seasons) {
-        team_season.record.conference_gb =
-          (top_conference_net_wins - team_season.record.conference_net_wins) / 2;
-        team_season.rankings.division_rank.unshift(rank_counter);
-        rank_counter += 1;
-
-        team_seasons_to_save.push(team_season);
-      }
-    }
+      ts.rankings.division_rank.unshift(ind + 1);
+    });
   }
 
-  db.team_season.update(team_seasons_to_save);
+  for (var [conference_season_id, conference_team_seasons] of Object.entries(
+    team_seasons_by_conference_season_id
+  )) {
+    let sorted_team_seasons = conference_team_seasons.sort(function (a, b) {
+      if (a.results.conference_champion) return -1;
+      if (b.results.conference_champion) return 1;
+
+      if (a.record.net_wins > b.record.net_wins) return -1;
+      if (a.record.net_wins < b.record.net_wins) return 1;
+
+      if (a.record.defeated_teams.includes(b.team_season_id)) return -1;
+      if (b.record.defeated_teams.includes(a.team_season_id)) return 1;
+
+      if (a.record.division_losses > b.record.division_losses) return 1;
+      if (a.record.division_losses < b.record.division_losses) return -1;
+
+      if (a.record.conference_losses > b.record.conference_losses) return 1;
+      if (a.record.conference_losses < b.record.conference_losses) return -1;
+
+      if (a.rankings.power_rank[0] > b.rankings.power_rank[0]) return 1;
+      if (a.rankings.power_rank[0] < b.rankings.power_rank[0]) return -1;
+
+      return 0;
+    });
+
+    let top_ts_net_wins = sorted_team_seasons[0].record.conference_net_wins;
+    sorted_team_seasons.forEach(function (ts, ind) {
+      ts.record.conference_gb = (top_ts_net_wins - ts.record.conference_net_wins) / 2;
+
+      ts.rankings.conference_rank.unshift(ind + 1);
+    });
+  }
+
+  team_seasons.forEach((ts) => delete ts.conference_season);
+  team_seasons.forEach((ts) => delete ts.full_division_name);
+
+  db.team_season.update(team_seasons);
   await db.saveDatabaseAsync();
 };
 

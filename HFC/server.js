@@ -5,8 +5,6 @@ const express = require("express");
 const college_app = express();
 const pro_app = express();
 
-let cache_time = 1;
-
 const college_port = 5515;
 const pro_port = 1151;
 
@@ -72,17 +70,18 @@ const send_file = (res, filename) => {
 
 const send_url = (req, res, level) => {
 	// console.log('in send_url', level, 'req.url.substr(1)', req.url.substr(1))
+	let cache_time = 1;
 	if (asset_suffix.some(suffix_option => req.url.substr(1).includes(suffix_option))) {
 		cache_time = 60 * 60;
 	}
 
 	res.set("Cache-Control", `public, max-age=${cache_time}`);
 	if (req.url.substr(1).includes('common/')){
-		console.log('Sending file', __dirname + `/` + req.url.substr(1))
+		console.log('Sending file', __dirname + `/` + req.url.substr(1), 'with cache time', cache_time)
 		send_file(res, __dirname + `/` + req.url.substr(1));
 	}
 	else {
-		console.log('Sending file', `/${level}/frontend/` + req.url.substr(1))
+		console.log('Sending file', `/${level}/frontend/` + req.url.substr(1), 'with cache time', cache_time)
 		send_file(res, __dirname + `/${level}/frontend/` + req.url.substr(1));
 	}
 };

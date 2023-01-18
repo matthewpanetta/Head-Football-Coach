@@ -785,7 +785,7 @@ export class team {
   }
 
   get team_helmet_svg(){
-    
+
   }
 
   luma(color) {
@@ -1666,25 +1666,33 @@ export class team_season {
   constructor(init_obj) {
     if (init_obj.team_id > 0) {
       this.record = {
+        games_played: 0,
+        
         wins: 0,
         losses: 0,
         ties: 0,
+
         conference_wins: 0,
         conference_losses: 0,
         conference_ties: 0,
+
         division_wins: 0,
         division_losses: 0,
         division_ties: 0,
+
+        net_wins: 0,
         conference_net_wins: 0,
         division_net_wins: 0,
-        games_played: 0,
+
         conference_gb: 0,
         division_gb: 0,
+
         win_streak: 0,
         defeated_teams: [],
       };
       this.rankings = {
         division_rank: [],
+        conference_rank: [],
         power_rank: [],
         srs_ratings: [],
         power_rank_delta: 0,

@@ -1,7 +1,7 @@
 import { index_group_sync, nest_children } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { draw_player_faces, draw_coach_faces } from "/static/js/faces.js";
-import { conference_standings, team_header_links } from "/static/js/widgets.js";
+import { conference_standings, team_header_links, all_teams } from "/static/js/widgets.js";
 import { initialize_football_table } from "/common/js/football-table/football-table.js";
 import {
   position_order_map,
@@ -123,7 +123,7 @@ export const page_team_roster = async (common) => {
     team_id: team_id,
     team: team,
     players: players,
-    all_teams: await common.all_teams(common, "/Roster/"),
+    all_teams: await all_teams(common, "/Roster/"),
     teams: teams,
     roster_summary: roster_summary,
     show_season: show_season,

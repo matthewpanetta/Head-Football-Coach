@@ -301,9 +301,9 @@ export const sim_game = (game_dict, common) => {
 
         if (r < 0.6) {
           //completion
-          yards_this_play = Math.min(Math.floor(Math.random() * 23), 100 - field_position);
+          yards_this_play = Math.min(Math.floor(Math.random() * 17), 100 - field_position);
 
-          if (r < 0.03) {
+          if (r < 0.02) {
             yards_this_play = 100 - field_position;
           }
 
@@ -643,9 +643,9 @@ export const sim_game = (game_dict, common) => {
       }
 
       if (clock_running) {
-        seconds_this_play = Math.floor(Math.random() * 10) + (33 - playclock_urgency * 4);
+        seconds_this_play = Math.floor(Math.random() * 6) + (40 - (playclock_urgency * 4));
       } else {
-        seconds_this_play = Math.floor(Math.random() * 4) + 1;
+        seconds_this_play = Math.floor(Math.random() * 6) + 1;
       }
 
       seconds_this_play = Math.min(seconds_this_play, seconds_left_in_period);

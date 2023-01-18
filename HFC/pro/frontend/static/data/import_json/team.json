@@ -178,7 +178,7 @@
     "team_abbreviation": "PIT",
     "team_color_primary_hex": "#000000",
     "team_color_secondary_hex": "#eead1e",
-    "helmet": { "background": "#222222", "facemask": "#222222" },
+    "helmet": { "background": "#222222", "facemask": "#222222", "mirror_logo": true },
     "jersey": { "invert": false, "id": "football-standard" },
     "starting_tendencies": {
       "offense": {

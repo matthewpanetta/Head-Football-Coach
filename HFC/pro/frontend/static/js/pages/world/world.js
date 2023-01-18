@@ -155,6 +155,8 @@ import {
     });
     headlines = headlines.sort((h_a, h_b) => h_b.headline_relevance - h_a.headline_relevance);
     let headlines_by_headline_type = index_group_sync(headlines, "group", "headline_type_display");
+
+    let scoreboard_games = await recent_games(common);
   
     common.stopwatch(common, "Time after this_week_games");
     const page = {
@@ -168,7 +170,7 @@ import {
       page: page,
       world_id: common.world_id,
       teams: teams,
-      recent_games: await recent_games(common),
+      recent_games: scoreboard_games,
       current_week: current_week,
       headlines_by_headline_type: headlines_by_headline_type,
       this_week_games: this_week_games,

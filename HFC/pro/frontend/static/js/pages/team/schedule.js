@@ -17,7 +17,7 @@ import {
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { draw_player_faces, draw_coach_faces } from "/static/js/faces.js";
-import { conference_standings, team_header_links } from "/static/js/widgets.js";
+import { conference_standings, team_header_links, all_teams } from "/static/js/widgets.js";
 
 const action = async (common) => {
   const query_to_dict = common.query_to_dict;
@@ -242,8 +242,6 @@ export const page_team_schedule = async (common) => {
     team_counter += 1;
   });
 
-  var all_teams = await common.all_teams(common, "/Schedule/");
-
   const NavBarLinks = common.nav_bar_links;
 
 
@@ -271,7 +269,7 @@ export const page_team_schedule = async (common) => {
     games: games,
     teams: teams,
     season: season,
-    all_teams: all_teams,
+    all_teams: await all_teams(common, "/Schedule/"),
     conference_standings: team_seasons_in_conference,
     show_season: show_season,
     season_to_show: season_to_show,

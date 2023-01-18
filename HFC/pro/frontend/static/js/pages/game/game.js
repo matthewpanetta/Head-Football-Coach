@@ -658,7 +658,7 @@ export const page_game = async (common) => {
 
   $("#body").html(renderedHtml);
 
-  common.calculate_team_overalls(common);
+  // common.calculate_team_overalls(common);
 
   await action(common)
   AddScoringSummaryListeners()
