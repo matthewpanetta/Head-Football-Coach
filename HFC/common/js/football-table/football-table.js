@@ -42,6 +42,15 @@ export const init_basic_table_sorting = (common, table_id, initial_sort_index) =
 
       const th_index = clicked_th.index();
 
+      $('head .col_styling').remove();
+      $('head').append(`
+        <style class='col_styling'>
+          ${table_id} td:nth-child(${th_index + 1}){
+            background-color: #efefef
+          }
+        </style>
+      `);
+
       var data_rows = $(table_id).find("tbody tr").toArray();
       data = data_rows.map((tr) => ({
         tr: $(tr),
@@ -817,6 +826,17 @@ const add_table_listeners = async (common, table_config) => {
         key: $(e.target).attr("value-key"),
         sort_direction: sort_direction,
       });
+
+      let th_index = $(e.target).index() + 1;
+
+      $('head .col_styling').remove();
+      $('head').append(`
+        <style class='col_styling'>
+          td:nth-child(${th_index}){
+            background-color: #efefef
+          }
+        </style>
+      `);
 
       await create_football_table(common, table_config);
     }

@@ -126,7 +126,12 @@ export const get_nunjucks_env = () => {
       let grade_letter = NumberToGrade(NumberValue, 20);
       let badge_class = grade_letter.replace("-", "-Minus").replace("+", "-Plus");
 
-      return `<span class='rating-tag rating-tag-${NumberValue}'>${grade_letter}</span>`;
+      return `
+      <div class='p-1 flex space-evenly gap-0 rating-tag-bg rating-tag-${NumberValue}''>
+        <div class='rating-tag-badge rating-tag-${NumberValue}'></div>
+        <div>${grade_letter}</div>
+      </div>`;
+      // return `<span class='rating-tag rating-tag-${NumberValue}'>${grade_letter}</span>`;
       // return `<span class='rating-badge rating-badge-${NumberValue}'>${grade_letter}</span>`;
     });
 

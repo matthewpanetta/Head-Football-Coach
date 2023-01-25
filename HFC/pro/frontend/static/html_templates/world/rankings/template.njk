@@ -64,29 +64,7 @@
                   </tbody>
                 </table>
 
-                <table class="table"   style="width:100%">
-                  <tr>
-                    <td>Others receiving votes:
-                      {% for team_season in bubble_teams%}
-                        <span>
-                          <a href="{{team_season.team.team_href}}">{{team_season.team.team_location_name}}</a>
-                          {% if loop.last %}
-                          {% else %}, {% endif%}</span>
-                        {% endfor %}
-                      </td>
-                    </tr>
-                    {%if dropped_teams%}
-                      <tr>
-                        <td>Teams dropped from rankings:
-                      {% for team_season in dropped_teams%}
-                            <span>
-                              <a href="{{team_season.team.team_href}}">{{team_season.team.team_location_name}}</a> ({{team_season.rankings.national_rank[1]}}) {% if loop.last %}
-                              {% else %}, {% endif%}</span>
-                            {% endfor %}
-                          </td>
-                        </tr>
-                        {%endif%}
-                      </table>
+                
 
                     </div>
 

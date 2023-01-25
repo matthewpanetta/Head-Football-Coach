@@ -69,6 +69,10 @@ export const page_world_rankings = async (common) => {
   const team_games = db.team_game.find({ game_id: { $in: game_ids } });
   const team_games_by_team_game_id = index_group_sync(team_games, "index", "team_game_id");
 
+  // team_games.forEach(function(tg){
+
+  // });
+
   console.log({
     team_seasons: team_seasons,
     team_seasons_by_team_season_id: team_seasons_by_team_season_id,
@@ -76,13 +80,6 @@ export const page_world_rankings = async (common) => {
   });
 
   var distinct_team_seasons = [];
-
-  let dropped_teams = team_seasons.filter(
-    (ts) => ts.rankings.power_rank[0] > 25 && ts.rankings.power_rank[1] <= 25
-  );
-  let bubble_teams = team_seasons.filter(
-    (ts) => ts.rankings.power_rank[0] > 25 && ts.rankings.power_rank[0] < 29
-  );
 
   team_seasons = team_seasons.filter((ts) => ts.rankings.power_rank[0] <= 25);
 
@@ -147,8 +144,6 @@ export const page_world_rankings = async (common) => {
     world_id: common.params["world_id"],
     team_seasons: team_seasons,
     recent_games: await recent_games(common),
-    dropped_teams: dropped_teams,
-    bubble_teams: bubble_teams,
     playoffs: playoffs,
   };
   common.render_content = render_content;
@@ -218,6 +213,18 @@ const PopulateTop25 = async (common) => {
     "team_season"
   );
 
+  let all_team_games = db.team_game.find({ week_id: { $in: [this_week_id, last_week_id] } });
+  all_team_games = nest_children(all_team_games, team_seasons_by_team_season_id, 'team_season_id', 'team_season')
+  const all_team_games_by_team_game_id = index_group_sync(all_team_games, "index", "team_game_id");
+
+  last_week_team_games.forEach(function(tg){
+    tg.opponent_team_game = all_team_games_by_team_game_id[tg.opponent_team_game_id];
+  })
+
+  this_week_team_games.forEach(function(tg){
+    tg.opponent_team_game = all_team_games_by_team_game_id[tg.opponent_team_game_id];
+  })
+
   const last_week_team_games_by_team_season_id = index_group_sync(
     last_week_team_games,
     "index",
@@ -228,9 +235,6 @@ const PopulateTop25 = async (common) => {
     "index",
     "team_season_id"
   );
-
-  let all_team_games = db.team_game.find({ week_id: { $in: [this_week_id, last_week_id] } });
-  const all_team_games_by_team_game_id = index_group_sync(all_team_games, "index", "team_game_id");
 
   let conference_seasons = db.conference_season.find({ season: season });
   let conferences = db.conference.find();
@@ -268,7 +272,7 @@ const PopulateTop25 = async (common) => {
     "this_week_team_game"
   );
 
-  let top_25_team_seasons = team_seasons.slice(0, 25);
+  let top_25_team_seasons = team_seasons;
 
   console.log("In PopulateTopTeams!", top_25_team_seasons);
 

@@ -265,9 +265,9 @@ export function NumberToGrade(number_value, scale) {
 
   let adj_number_value = Math.floor((number_value * 1.0) / (scale / 20));
   let grade_value_map = {
-    20: "Elite",
-    19: "A++",
-    18: "A+",
+    20: "A++",
+    19: "A+",
+    18: "A",
     17: "A",
     16: "A-",
     15: "B+",
@@ -281,10 +281,11 @@ export function NumberToGrade(number_value, scale) {
     7: "D",
     6: "D-",
     5: "F",
-    4: "F-",
+    4: "F",
     3: "F-",
-    2: "F--",
-    1: "F--",
+    2: "F-",
+    1: "F-",
+    0: "F--",
   };
 
   return grade_value_map[adj_number_value] || "Elite";

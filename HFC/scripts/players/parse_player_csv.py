@@ -32,7 +32,7 @@ with open('scripts/players/Player input - Sheet1.csv', 'r') as f:
         row['current_player_team_season'] = {
             'team_abbreviation': row['team'],
             'age': int_or_null(row['age']),
-            'target_overall': int_or_null(row['target overall'])
+            'target_overall': int_or_null(row['target overall'], 0)
         }
 
         del row['team']
@@ -42,6 +42,7 @@ with open('scripts/players/Player input - Sheet1.csv', 'r') as f:
 
         data.append(row)
 
+data = sorted(data, key=lambda x: x['current_player_team_season']['target_overall'], reverse=True)
 
 with open('pro/frontend/static/data/import_json/players.json', 'w') as file:
     json.dump(data, file, indent=2)

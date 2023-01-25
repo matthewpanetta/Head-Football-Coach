@@ -1,4 +1,4 @@
-team,jersey_number,name,age,position,body.weight,body.height,college,dob,years pro,value,[drafted],puid,ethnicity,target overall
+team,jersey_number,name,age,position,body.weight,body.height,college,dob,years pro,value,drafted,puid,ethnicity,target overall
 PHI,62,Jason Kelce,35,C,295,6-3,Cincinnati,11/5/1987,11,14,Philadelphia Eagles / 6th / 191st pick / 2011,KelcJa00,white,94
 KC,52,Creed Humphrey,23,C,309,6-5,Oklahoma,6/28/1999,1,13,Kansas City Chiefs / 2nd / 63rd pick / 2021,HumpCr00,,89
 DET,77,Frank Ragnow,26,C,311,6-5,Arkansas,5/17/1996,4,11,Detroit Lions / 1st / 20th pick / 2018,RagnFr00,,87
