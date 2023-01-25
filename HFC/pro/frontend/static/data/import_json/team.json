@@ -322,7 +322,7 @@
   {
     "team_location_name": "Las Vegas",
     "team_nickname": "Raiders",
-    "team_abbreviation": "KC",
+    "team_abbreviation": "LV",
     "team_color_primary_hex": "#000000",
     "team_color_secondary_hex": "#a5acaf",
     "helmet": { "background": "#a5acaf", "facemask": "#a5acaf" },
@@ -616,7 +616,7 @@
   {
     "team_location_name": "Los Angeles",
     "team_nickname": "Rams",
-    "team_abbreviation": "LA",
+    "team_abbreviation": "LAR",
     "team_color_primary_hex": "#003594",
     "team_color_secondary_hex": "#ffd100",
     "helmet": { "background": "#003594", "facemask": "#003594" },

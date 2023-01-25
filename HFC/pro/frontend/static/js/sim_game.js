@@ -270,7 +270,9 @@ export const sim_game = (game_dict, common) => {
         var chosen_players = {
           QB: offensive_team_players.by_position["QB"][0],
           OT_List: offensive_team_players.by_position["OT"].concat(
-            offensive_team_players.by_position["IOL"]
+            offensive_team_players.by_position["G"]
+          ).concat(
+            offensive_team_players.by_position["C"]
           ),
         };
 
@@ -386,7 +388,8 @@ export const sim_game = (game_dict, common) => {
       } else if (play_choice == "run") {
         var offensive_front_7_average_overall = average(
           offensive_team_players.by_position["OT"]
-            .concat(offensive_team_players.by_position["IOL"])
+            .concat(offensive_team_players.by_position["G"])
+            .concat(offensive_team_players.by_position["C"])
             .concat(offensive_team_players.by_position["RB"])
             .concat(offensive_team_players.by_position["TE"])
             .map((player_obj) => player_obj.player_team_game.game_attrs.adjusted_overall)
@@ -1246,7 +1249,8 @@ const update_player_energy = (
     WR: 0.015,
     TE: 0.015,
     OT: 0.005,
-    IOL: 0.005,
+    G: 0.005,
+    C: 0.005,
     DL: 0.015,
     EDGE: 0.02,
     LB: 0.015,
@@ -1345,7 +1349,8 @@ const pick_players_on_field = (
       WR: 3,
       TE: 1,
       OT: 2,
-      IOL: 3,
+      G: 2,
+      C: 1,
       K: 1,
       P: 1,
     };
@@ -1356,7 +1361,7 @@ const pick_players_on_field = (
   } else if (side_of_ball == "kickoff receiving") {
     var position_list = { KR: 2, TE: 4, S: 2, LB: 3 };
   } else if (side_of_ball == "punt kicking") {
-    var position_list = { P: 1, OT: 2, IOL: 3, TE: 2, CB: 2, LB: 1 };
+    var position_list = { P: 1, OT: 2, G: 2,C: 1, TE: 2, CB: 2, LB: 1 };
   } else if (side_of_ball == "punt receiving") {
     var position_list = { KR: 1, S: 2, CB: 2, TE: 2, EDGE: 2, DL: 2 };
   } else {
@@ -1366,7 +1371,8 @@ const pick_players_on_field = (
       WR: 3,
       TE: 1,
       OT: 2,
-      IOL: 3,
+      G: 2,
+      C: 1,
       EDGE: 2,
       DL: 2,
       LB: 3,

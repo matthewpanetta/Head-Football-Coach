@@ -849,15 +849,16 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     FB: ["TE", "RB"],
     WR: ["TE", "RB", "CB"],
     TE: ["WR", "FB", "OT"],
-    OT: ["IOL", "TE", "DL", "EDGE"],
-    IOL: ["OT", "DL", "EDGE"],
-    DL: ["EDGE", "LB", "IOL"],
+    OT: ["G", "C", "TE", "DL", "EDGE"],
+    G: ["C", "OT", "DL", "EDGE"],
+    C: ["G", "OT", "DL", "EDGE"],
+    DL: ["EDGE", "LB", "G"],
     EDGE: ["DL", "LB"],
     LB: ["EDGE", "S"],
     CB: ["S", "LB", "WR"],
     S: ["CB", "LB", "RB", "TE"],
-    K: ["P", "IOL", "CB", "S", "DL", "EDGE", "QB", "RB", "WR", "TE", "OT", "LB"],
-    P: ["K", "IOL", "CB", "S", "DL", "EDGE", "QB", "RB", "WR", "TE", "OT", "LB"],
+    K: ["P", "G", "CB", "S", "DL", "EDGE", "QB", "RB", "WR", "TE", "OT", "LB"],
+    P: ["K", "G", "CB", "S", "DL", "EDGE", "QB", "RB", "WR", "TE", "OT", "LB"],
   };
 
   let position_minimum_count = {
@@ -867,7 +868,8 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     WR: 6,
     TE: 3,
     OT: 4,
-    IOL: 4,
+    G: 3,
+    C: 2,
     DL: 4,
     EDGE: 4,
     LB: 5,
@@ -884,7 +886,8 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     WR: 3,
     TE: 1,
     OT: 2,
-    IOL: 2,
+    G: 2,
+    C: 1,
     DL: 2,
     EDGE: 2,
     LB: 3,
@@ -1185,8 +1188,8 @@ const create_schedule = (data) => {
   };
 
   scheduling_dict.schedule_phases = [
-    {type: "intra-conference seed match", num_weeks: 1, constraint: 'early or end of season', schedule_mechanism: "2x1"},
     {type: "intra-division", num_weeks: 3, constraint: 'early or end of season', schedule_mechanism: "1x4"},
+    {type: "intra-conference seed match", num_weeks: 1, constraint: 'early or end of season', schedule_mechanism: "2x1"},
     {type: "intra-division", num_weeks: 4, constraint: 'middle of season', schedule_mechanism: "1x4+BYE"},
     {type: "inter division round", num_weeks: 4, schedule_mechanism: "2x4"},
     {type: "inter division round", num_weeks: 4, schedule_mechanism: "2x4"},
@@ -1458,7 +1461,8 @@ const advance_player_team_seasons = async (data) => {
     WR: 8,
     TE: 5,
     OT: 6,
-    IOL: 6,
+    G: 4,
+    C: 2,
     DL: 6,
     EDGE: 6,
     LB: 6,
@@ -1791,7 +1795,8 @@ const create_recruiting_class = async (common) => {
     WR: -1,
     TE: -4,
     OT: -1,
-    IOL: -4,
+    G: -4,
+    C: -4,
     DL: 0,
     EDGE: 0,
     LB: -2,
@@ -2332,7 +2337,8 @@ const assign_players_to_teams = async (common, world_id, season, team_seasons) =
       WR: 6,
       TE: 3,
       OT: 4,
-      IOL: 6,
+      G: 4,
+      C: 2,
       EDGE: 4,
       DL: 4,
       LB: 6,
@@ -2604,6 +2610,10 @@ const generate_player_ratings = async (common, world_id, season) => {
       pts.potential_ratings = deep_copy(pts.ratings);
     });
   for (let pts of player_team_seasons.filter((pts) => !pts.ratings)) {
+    console.log({
+      pts:pts,
+      position_archetypes:position_archetypes
+    })
     let position_archetype = deep_copy(position_archetypes[pts.position]["Balanced"]);
     pts.ratings = pts.ratings || {};
     pts.potential_ratings = {};
@@ -2724,8 +2734,7 @@ const generate_player_ratings = async (common, world_id, season) => {
 const create_new_players_and_player_team_seasons = async (
   common,
   world_id,
-  season,
-  team_seasons
+  season
 ) => {
   const db = common.db;
 
@@ -2742,7 +2751,8 @@ const create_new_players_and_player_team_seasons = async (
       WR: { white: 25, black: 65, hispanic: 5, asian: 5 },
       TE: { white: 50, black: 50, hispanic: 15, asian: 2 },
       OT: { white: 45, black: 55, hispanic: 15, asian: 1 },
-      IOL: { white: 40, black: 50, hispanic: 15, asian: 1 },
+      G: { white: 40, black: 50, hispanic: 15, asian: 1 },
+      C: { white: 40, black: 50, hispanic: 15, asian: 1 },
       EDGE: { white: 20, black: 80, hispanic: 10, asian: 1 },
       DL: { white: 10, black: 80, hispanic: 10, asian: 1 },
       LB: { white: 25, black: 75, hispanic: 10, asian: 1 },
@@ -2759,7 +2769,8 @@ const create_new_players_and_player_team_seasons = async (
     WR: 6,
     TE: 3,
     OT: 4,
-    IOL: 6,
+    G: 4,
+    C: 2,
     EDGE: 4,
     DL: 5,
     LB: 6,
@@ -2768,6 +2779,18 @@ const create_new_players_and_player_team_seasons = async (
     K: 1,
     P: 1,
   };
+
+  let teams = db.team.find();
+  let team_seasons = db.team_season.find({season: season});
+  let team_seasons_by_team_id = index_group_sync(team_seasons, 'index', 'team_id');
+  teams = nest_children(teams, team_seasons_by_team_id, 'team_id', 'team_season');
+  let teams_by_team_abbreviation = index_group_sync(teams, 'index', 'team_abbreviation');
+
+  if (teams_by_team_abbreviation.length != teams.length){
+    console.error('There may be duplicate team abbreviations :(', {teams:teams, teams_by_team_abbreviation:teams_by_team_abbreviation})
+  }
+
+  console.log({teams_by_team_abbreviation:teams_by_team_abbreviation})
 
   const num_players_per_team = sum(Object.values(team_position_counts));
   const num_players_to_create = Math.ceil(num_players_per_team) * team_seasons.length;
@@ -2781,41 +2804,41 @@ const create_new_players_and_player_team_seasons = async (
   var player_id_counter = db.player.nextId("player_id");
   var player_team_season_id_counter = db.player_team_season.nextId("player_team_season_id");
 
-  for (let position in team_position_counts) {
-    let players_for_position = Math.floor(team_position_counts[position] * team_seasons.length);
+  if (season == 2022){
+    var url = "/static/data/import_json/players.json";
+    var data = await fetch(url);
+    var player_list = await data.json();
 
-    for (let position_count = 0; position_count < players_for_position; position_count++) {
-      let body = body_from_position(position);
-      let ethnicity = weighted_random_choice(position_ethnicity[position]);
+    console.log({
+      player_list:player_list
+    })
 
-      if (player_counter > player_names.length || player_counter > player_cities.length) {
-        console.log("something weird with names?", {
-          player_names: player_names,
-          player_cities: player_cities,
-          player_counter: player_counter,
-        });
-      }
+    for (let p of player_list){
 
       var player_obj = new player({
         player_id: player_id_counter,
-        name: player_names[player_counter],
+        name: p.name,
         world_id: world_id,
-        hometown: player_cities[player_counter],
-        college: player_colleges[player_counter],
-        ethnicity: ethnicity,
-        body: body,
-        world_id: world_id,
-        position: position,
+        hometown: p.hometown,
+        college: p.college,
+        ethnicity: p.ethnicity || weighted_random_choice(position_ethnicity[p.position]),
+        body: p.body,
+        draft_info: p.draft_info,
+        position: p.position,
       });
+
+      console.log({
+        p:p
+      })
 
       let player_team_season_obj = new player_team_season({
         world_id: world_id,
         player_id: player_id_counter,
         player_team_season_id: player_team_season_id_counter,
         season: season,
-        age: Math.floor(Math.random() * 15 + 22),
-        team_season_id: 0,
-        position: position,
+        age: p.current_player_team_season.age,
+        team_season_id: teams_by_team_abbreviation[p.current_player_team_season.team_abbreviation].team_season.team_season_id,
+        position: p.position,
       });
 
       var new_player_team_season_stats = new player_team_season_stats(
@@ -2830,7 +2853,51 @@ const create_new_players_and_player_team_seasons = async (
       player_id_counter += 1;
       player_team_season_id_counter += 1;
     }
+  
   }
+
+  // for (let position in team_position_counts) {
+  //   let players_for_position = Math.floor(team_position_counts[position] * team_seasons.length);
+
+  //   for (let position_count = 0; position_count < players_for_position; position_count++) {
+  //     let body = body_from_position(position);
+  //     let ethnicity = weighted_random_choice(position_ethnicity[position]);
+
+  //     var player_obj = new player({
+  //       player_id: player_id_counter,
+  //       name: player_names[player_counter],
+  //       world_id: world_id,
+  //       hometown: player_cities[player_counter],
+  //       college: player_colleges[player_counter],
+  //       ethnicity: ethnicity,
+  //       body: body,
+  //       world_id: world_id,
+  //       position: position,
+  //     });
+
+  //     let player_team_season_obj = new player_team_season({
+  //       world_id: world_id,
+  //       player_id: player_id_counter,
+  //       player_team_season_id: player_team_season_id_counter,
+  //       season: season,
+  //       age: Math.floor(Math.random() * 15 + 22),
+  //       team_season_id: 0,
+  //       position: position,
+  //     });
+
+  //     var new_player_team_season_stats = new player_team_season_stats(
+  //       player_team_season_id_counter
+  //     );
+  //     player_team_season_stats_tocreate.push(new_player_team_season_stats);
+
+  //     players_tocreate.push(player_obj);
+  //     player_team_seasons_tocreate.push(player_team_season_obj);
+
+  //     player_counter += 1;
+  //     player_id_counter += 1;
+  //     player_team_season_id_counter += 1;
+  //   }
+  // }
 
   console.log({
     players_tocreate: players_tocreate,
@@ -2890,7 +2957,7 @@ const create_dates = async (common,
 
 
   while(iter_date <= stop_date){
-    dates.push(new day(iter_date, is_current = start_date == iter_date))
+    dates.push(new day(iter_date, (start_date == iter_date)))
     iter_date.setDate(iter_date.getDate() + 1)
   }
 
@@ -3521,9 +3588,8 @@ const common_functions = async (path) => {
     calculate_team_needs: calculate_team_needs,
     populate_player_modal: populate_player_modal,
     tier_placement: tier_placement,
-
+    new_world_action:new_world_action,
     stopwatch: stopwatch,
-    choose_all_americans: choose_all_americans,
     primary_color: "1763B2",
     secondary_color: "333333",
   };
@@ -3934,8 +4000,9 @@ const calculate_team_needs = async (common, team_season_ids = null) => {
     FB: [0.2],
     WR: [1, 1, 0.75, 0.25, 0.1],
     TE: [1, 0.5],
-    OT: [1, 1, 0.2],
-    IOL: [1, 1, 1, 0.2],
+    OT: [1, 1, 0.1],
+    G: [1, 1, 0.1],
+    C: [1, 0.1],
     EDGE: [1, 1, 0.5, 0.25],
     DL: [1, 0.9, 0.4, 0.25],
     LB: [1, 1, 1, 0.75, 0.25],
@@ -4017,7 +4084,8 @@ const calculate_team_overalls = async (common) => {
     WR: { group: "Offense", unit: "REC", typical_starters: 2 },
     TE: { group: "Offense", unit: "REC", typical_starters: 1 },
     OT: { group: "Offense", unit: "OL", typical_starters: 2 },
-    IOL: { group: "Offense", unit: "OL", typical_starters: 3 },
+    G: { group: "Offense", unit: "OL", typical_starters: 2 },
+    C: { group: "Offense", unit: "OL", typical_starters: 1 },
 
     EDGE: { group: "Defense", unit: "DL", typical_starters: 2 },
     DL: { group: "Defense", unit: "DL", typical_starters: 2 },
@@ -4052,7 +4120,7 @@ const calculate_team_overalls = async (common) => {
     }
   }
 
-  console.log({ team_seasons: team_seasons });
+  console.log({ team_seasons: team_seasons, position_map:position_map });
   var player_team_season_ids = team_seasons
     .map((ts) =>
       Object.entries(ts.depth_chart)
@@ -5425,7 +5493,8 @@ const choose_preseason_all_americans = async (common) => {
     WR: 3,
     TE: 1,
     OT: 2,
-    IOL: 3,
+    G: 2,
+    C: 1,
 
     EDGE: 2,
     DL: 2,
@@ -5702,7 +5771,8 @@ const choose_all_americans = async (this_week, common) => {
     WR: 3,
     TE: 1,
     OT: 2,
-    IOL: 3,
+    G: 2,
+    C: 1,
 
     EDGE: 2,
     DL: 2,
@@ -5869,7 +5939,7 @@ const choose_all_americans = async (this_week, common) => {
   awards_to_save.push(a);
   award_id += 1;
 
-  const rimington_player_team_seasons = player_team_seasons.filter((pts) => pts.position == "IOL");
+  const rimington_player_team_seasons = player_team_seasons.filter((pts) => pts.position == "G" || pts.position == "C");
   const rimington_player_team_season = rimington_player_team_seasons[0];
   var a = new award(
     award_id,
@@ -5888,7 +5958,7 @@ const choose_all_americans = async (this_week, common) => {
   award_id += 1;
 
   const outland_player_team_seasons = player_team_seasons.filter(
-    (pts) => pts.position == "IOL" || pts.position == "DL"
+    (pts) => pts.position == "G" || pts.position == "C" || pts.position == "DL"
   );
   const outland_player_team_season = outland_player_team_seasons[0];
   var a = new award(
@@ -7487,11 +7557,17 @@ const body_from_position = (position) => {
       weight_avg: 313.74,
       weight_std: 10.95,
     },
-    IOL: {
+    G: {
       height_avg: 76.07,
       height_std: 1.16,
       weight_avg: 314.75,
       weight_std: 11.76,
+    },
+    C: {
+      height_avg: 75,
+      height_std: 1.1,
+      weight_avg: 305,
+      weight_std: 11,
     },
     EDGE: {
       height_avg: 75.83,

@@ -1,8 +1,15 @@
-import { index_group_sync, get, nest_children, increment_parent, deep_copy, round_decimal } from "/common/js/utils.js";
+import {
+  index_group_sync,
+  get,
+  nest_children,
+  increment_parent,
+  deep_copy,
+  round_decimal,
+} from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { init_basic_table_sorting } from "/common/js/football-table/football-table.js";
 import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
-import {init_json_edit} from '/common/js/json-edit/json-edit.js';
+import { init_json_edit } from "/common/js/json-edit/json-edit.js";
 
 const clean_rating_string = (str) => {
   return str
@@ -21,7 +28,8 @@ const combine_starters_for_position = (depth_chart_list, position) => {
     WR: 3,
     TE: 1,
     OT: 2,
-    IOL: 2,
+    G: 2,
+    C: 1,
     EDGE: 2,
     DL: 2,
     LB: 3,
@@ -194,7 +202,8 @@ const populate_player_stats = async (common) => {
     WR: "Receiving",
     TE: "Receiving",
     OT: "Blocking",
-    IOL: "Blocking",
+    G: "Blocking",
+    C: "Blocking",
     DL: "Defense",
     EDGE: "Defense",
     LB: "Defense",
@@ -413,28 +422,29 @@ export const page_player = async (common) => {
 
   const NavBarLinks = common.nav_bar_links;
 
-
-  const player = db.player.findOne({player_id: player_id});
+  const player = db.player.findOne({ player_id: player_id });
   var player_team_seasons = db.player_team_season.find({ player_id: player_id });
   var player_team_season_ids = player_team_seasons.map((pts) => pts.player_team_season_id);
 
   console.log({
     player_team_season_ids: player_team_season_ids,
     player_team_seasons: player_team_seasons,
-    player:player, 
-    player_id:player_id
+    player: player,
+    player_id: player_id,
   });
 
-  let recruit_team_seasons = db.recruit_team_season
-    .find({"player_team_season_id": {'$in': player_team_season_ids}});
+  let recruit_team_seasons = db.recruit_team_season.find({
+    player_team_season_id: { $in: player_team_season_ids },
+  });
   const recruit_team_seasons_by_player_team_season_id = index_group_sync(
     recruit_team_seasons,
     "group",
     "player_team_season_id"
   );
 
-  const player_team_season_stats = db.player_team_season_stats
-    .find({"player_team_season_id": {'$in': player_team_season_ids}});
+  const player_team_season_stats = db.player_team_season_stats.find({
+    player_team_season_id: { $in: player_team_season_ids },
+  });
   console.log({
     player_team_season_stats: player_team_season_stats,
   });
@@ -465,10 +475,10 @@ export const page_player = async (common) => {
     .map((pts) => pts.season);
 
   var team_season_ids = player_team_seasons.map((pts) => pts.team_season_id);
-  var team_seasons = db.team_season.find({"team_season_id": {'$in': team_season_ids}});
+  var team_seasons = db.team_season.find({ team_season_id: { $in: team_season_ids } });
 
   var player_team_ids = team_seasons.map((ts) => ts.team_id);
-  var player_teams = db.team.find({"team_id": {'$in': player_team_ids}});
+  var player_teams = db.team.find({ team_id: { $in: player_team_ids } });
   let player_teams_by_team_id = index_group_sync(player_teams, "index", "team_id");
 
   console.log({
@@ -509,9 +519,8 @@ export const page_player = async (common) => {
   if (player.current_player_team_season.is_recruit) {
     var team_season = null;
 
-    var team_seasons = db.team_season
-      .find({"season": {'$in': all_seasons}, team_id: {'$gt': 0}});
-    var teams = db.team.find({"team_id": {'$gt': 0}});
+    var team_seasons = db.team_season.find({ season: { $in: all_seasons }, team_id: { $gt: 0 } });
+    var teams = db.team.find({ team_id: { $gt: 0 } });
     var teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
     team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
@@ -844,7 +853,7 @@ export const page_player = async (common) => {
       },
     ];
 
-    var all_teams = db.team.find({"team_id": {'$gt': 0}});
+    var all_teams = db.team.find({ team_id: { $gt: 0 } });
     all_teams = all_teams.sort(function (teamA, teamB) {
       if (teamA.team_location_name < teamB.team_location_name) {
         return -1;
@@ -860,25 +869,24 @@ export const page_player = async (common) => {
     );
     const team_season_ids = player.player_team_seasons.map((pts) => pts.team_season_id);
     const seasons = player.player_team_seasons.map((pts) => pts.season);
-    var player_awards = db.award
-      .find({"player_team_season_id": {'$in': player_team_season_ids}})
+    var player_awards = db.award.find({ player_team_season_id: { $in: player_team_season_ids } });
     var award_set = {};
 
-    var player_team_games = db.player_team_game
-      .find({"player_team_season_id": {'$in': player_team_season_ids}});
+    var player_team_games = db.player_team_game.find({
+      player_team_season_id: { $in: player_team_season_ids },
+    });
     var team_game_ids = player_team_games.map((ptg) => ptg.team_game_id);
-    var team_games = db.team_game.find({team_game_id: {'$in': team_game_ids}});
+    var team_games = db.team_game.find({ team_game_id: { $in: team_game_ids } });
 
     var game_ids = team_games.map((tg) => tg.game_id);
-    var games = db.game.find({game_id: {'$in': game_ids}});
+    var games = db.game.find({ game_id: { $in: game_ids } });
 
     var games_by_game_id = index_group_sync(games, "index", "game_id");
 
-    var teams = db.team.find({"team_id": {'$gt': 0}});
+    var teams = db.team.find({ team_id: { $gt: 0 } });
     var teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
-    var team_seasons = db.team_season
-      .find({"team_season_id": {'$in': team_season_ids}});
+    var team_seasons = db.team_season.find({ team_season_id: { $in: team_season_ids } });
     team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
 
     var team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
@@ -912,7 +920,7 @@ export const page_player = async (common) => {
       "player_team_game_id"
     );
 
-    const weeks = db.week.find({"season": {'$in': seasons}});
+    const weeks = db.week.find({ season: { $in: seasons } });
     const weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
 
     if (player_awards.length > 0) {
@@ -928,12 +936,12 @@ export const page_player = async (common) => {
         .map((a) => a.conference_season_id)
         .filter((cs_id) => cs_id != null)
         .map((cs_id) => parseInt(cs_id));
-      var conference_seasons = db.conference_season
-        .find({"conference_season_id": {'$in': conference_season_ids}});
+      var conference_seasons = db.conference_season.find({
+        conference_season_id: { $in: conference_season_ids },
+      });
       const conference_ids = conference_seasons.map((cs) => cs.conference_id);
-      const conferences = db.conference
-        .find({"conference_id": {'$in': conference_ids}});
-        
+      const conferences = db.conference.find({ conference_id: { $in: conference_ids } });
+
       const conferences_by_conference_id = index_group_sync(conferences, "index", "conference_id");
 
       conference_seasons = nest_children(
@@ -982,7 +990,8 @@ export const page_player = async (common) => {
     WR: ["overall", "athleticism", "receiving"],
     TE: ["overall", "athleticism", "receiving", "blocking"],
     OT: ["overall", "athleticism", "blocking"],
-    IOL: ["overall", "athleticism", "blocking"],
+    G: ["overall", "athleticism", "blocking"],
+    C: ["overall", "athleticism", "blocking"],
     EDGE: ["overall", "athleticism", "defense"],
     DL: ["overall", "athleticism", "defense"],
     LB: ["overall", "athleticism", "defense"],
@@ -1004,13 +1013,12 @@ export const page_player = async (common) => {
   };
 
   const all_player_team_seasons_by_player_team_season_id = index_group_sync(
-     db.player_team_season.find({ season: season }),
+    db.player_team_season.find({ season: season }),
     "index",
     "player_team_season_id"
   );
-  const all_team_seasons = db.team_season
-    .find({ season: season, team_id: {'$gt': 0} });
-    
+  const all_team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
+
   const all_team_seasons_in_conference = all_team_seasons.filter(function (ts) {
     if (player.current_player_team_season.is_recruit) return false;
     return (
@@ -1096,7 +1104,8 @@ export const page_player = async (common) => {
     WR: 4,
     TE: 5,
     OT: 6,
-    IOL: 7,
+    G: 7,
+    C: 7.1,
     DL: 8,
     EDGE: 9,
     LB: 10,
@@ -1107,15 +1116,16 @@ export const page_player = async (common) => {
   };
 
   let current_team_season = player.current_player_team_season.team_season;
-  let all_player_team_seasons = db.player_team_season
-    .find({ team_season_id: current_team_season.team_season_id });
+  let all_player_team_seasons = db.player_team_season.find({
+    team_season_id: current_team_season.team_season_id,
+  });
   let player_team_seasons_by_player_id = index_group_sync(
     all_player_team_seasons,
     "index",
     "player_id"
   );
   let player_ids = all_player_team_seasons.map((pts) => pts.player_id);
-  let players = db.player.find({player_id: {'$in':player_ids}});
+  let players = db.player.find({ player_id: { $in: player_ids } });
 
   players = nest_children(
     players,
@@ -1185,27 +1195,30 @@ export const page_player = async (common) => {
 
   $("#body").html(renderedHtml);
 
-  draw_player_faces(common)
+  draw_player_faces(common);
 
   await populate_player_stats(common);
   await common.geo_marker_action(common);
 
-  $('.edit-player-button').on('click', async function(){
-    console.log('Clicked edit players')
+  $(".edit-player-button").on("click", async function () {
+    console.log("Clicked edit players");
     $("#edit-player-modal").addClass("shown");
     $("#edit-player-modal").removeClass("hidden");
 
-    let player_to_edit = db.player.findOne({player_id:common.render_content.player.player_id});
-    let pts_to_edit = db.player_team_season.findOne({player_id:common.render_content.player.player_id, season:common.season});
+    let player_to_edit = db.player.findOne({ player_id: common.render_content.player.player_id });
+    let pts_to_edit = db.player_team_season.findOne({
+      player_id: common.render_content.player.player_id,
+      season: common.season,
+    });
     player_to_edit.player_team_season = pts_to_edit;
     // let edit_string = JSON.stringify(player_to_edit, null, 2);
 
-    await init_json_edit(common, player_to_edit, 'edit-player-body');
+    await init_json_edit(common, player_to_edit, "edit-player-body");
 
     console.log({
-      player_to_edit:player_to_edit,
+      player_to_edit: player_to_edit,
       // edit_string:edit_string
-    })
+    });
 
     // $("#edit-player-body").html(edit_string);
 
@@ -1216,6 +1229,5 @@ export const page_player = async (common) => {
         $(window).unbind();
       }
     });
-  })
-
+  });
 };

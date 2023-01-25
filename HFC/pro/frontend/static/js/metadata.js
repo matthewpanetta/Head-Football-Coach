@@ -5,7 +5,8 @@ export const position_order_map = {
   WR: 4,
   TE: 5,
   OT: 6,
-  IOL: 7,
+  G: 7,
+  C: 7.5,
 
   EDGE: 8,
   DL: 9,
@@ -28,7 +29,8 @@ export const position_group_map = {
   WR: "Offense",
   TE: "Offense",
   OT: "Offense",
-  IOL: "Offense",
+  G: "Offense",
+  C: "Offense",
 
   EDGE: "Defense",
   DL: "Defense",

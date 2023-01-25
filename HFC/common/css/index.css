@@ -2013,8 +2013,13 @@ div.W-L-badge {
   color: 	#00059f;
 }
 
-.position-badge.position-badge-IOL, .position-badge.position-badge-DL {
+.position-badge.position-badge-G, .position-badge.position-badge-DL {
   color: #493267;
+  background-color: #c9c9ff;
+}
+
+.position-badge.position-badge-C, .position-badge.position-badge-DL {
+  color: #220549;
   background-color: #c9c9ff;
 }
 
@@ -2949,7 +2954,7 @@ tr.no-wrap-row td, tr.no-wrap-row th{
 }
 
 .football-table-row:hover {
-  background-color: #ddd;
+  background-color: #dfdfdf;
 
   -webkit-transition: all .3s ease;
   -moz-transition: all .3s ease;
