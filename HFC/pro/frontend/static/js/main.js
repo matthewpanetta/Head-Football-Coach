@@ -20,6 +20,10 @@ const nav_bar_links = async (common, data) => {
   const group_name = data.group_name;
   const db = common.db;
 
+  if (!db){
+    return []
+  }
+
   const league_seasons = db.league_season.find();
   const current_league_season = league_seasons.find((ls) => ls.is_current_season);
   console.log({
@@ -6388,6 +6392,10 @@ const page = async (path) => {
   });
 
   common.nav_bar_links = await nav_bar_links(common, common.winning_route);
+
+  console.log({
+    db: common.db
+  });
 
   await common.winning_route.f(common);
 
