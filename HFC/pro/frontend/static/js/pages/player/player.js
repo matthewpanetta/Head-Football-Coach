@@ -9,6 +9,7 @@ import {
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { init_basic_table_sorting } from "/common/js/football-table/football-table.js";
 import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
+import { geo_marker_action } from "/static/js/modals.js";
 import { init_json_edit } from "/common/js/json-edit/json-edit.js";
 
 const clean_rating_string = (str) => {
@@ -1198,7 +1199,7 @@ export const page_player = async (common) => {
   draw_player_faces(common);
 
   await populate_player_stats(common);
-  await common.geo_marker_action(common);
+  await geo_marker_action(common);
 
   $(".edit-player-button").on("click", async function () {
     console.log("Clicked edit players");
