@@ -129,13 +129,35 @@ for name, group in grouped_df_pos:
     reg.fit(X, y)
 
     coef_mapped = dict(zip(X.columns, reg.coef_))
-    # print(coef_mapped)
     coef_mapped['position'] = position
     coef_mapped['archetype'] = archetype
     coefs_pos.append(coef_mapped)
 
 output_list = []
+saved_keys = ['position', 'archetype']
 for coef in coefs_pos:
+    print(coef)
+    lowest_val = 1
+    for key, val in coef.items():
+        if key in saved_keys:
+            continue
+        print(key, val, lowest_val)
+        if lowest_val is None or val < lowest_val:
+            lowest_val = val
+        
+    if lowest_val < 0:
+        for key, val in coef.items():
+            if key in saved_keys:
+                continue
+            coef[key] += (lowest_val * -1)
+    
+    summed_vals = sum([val for key, val in coef.items() if key not in saved_keys])
+    
+    for key, val in coef.items():
+        if key in saved_keys:
+            continue
+        coef[key] = val / summed_vals
+
     output_obj = {}
     for key in coef:
         insert_to_dict(output_obj, key, coef[key])
@@ -145,4 +167,3 @@ for coef in coefs_pos:
 print(output_list)
 with open('pro/frontend/static/data/import_json/player_overall_coefficients.json', 'w') as file:
     json.dump(output_list, file, indent=2)
-    # file.write(str(output_list))
