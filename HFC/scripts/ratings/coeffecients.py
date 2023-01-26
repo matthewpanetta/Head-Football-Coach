@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LinearRegression
 import os
 import json
 
@@ -123,13 +123,13 @@ for name, group in grouped_df_pos:
     y = group["Overall Rating"]
 
     # Create a linear regression object
-    reg = LogisticRegression()
+    reg = LinearRegression()
 
     # Fit the model using the selected columns
     reg.fit(X, y)
 
     coef_mapped = dict(zip(X.columns, reg.coef_))
-    print(coef_mapped)
+    # print(coef_mapped)
     coef_mapped['position'] = position
     coef_mapped['archetype'] = archetype
     coefs_pos.append(coef_mapped)
@@ -143,6 +143,6 @@ for coef in coefs_pos:
     output_list.append(output_obj)
 
 print(output_list)
-with open('pro/frontend/static/data/import_json/player_overall_coefficients.txt', 'w') as file:
-    # json.dump(output_list, file, indent=2)
-    file.write(str(output_list))
+with open('pro/frontend/static/data/import_json/player_overall_coefficients.json', 'w') as file:
+    json.dump(output_list, file, indent=2)
+    # file.write(str(output_list))
