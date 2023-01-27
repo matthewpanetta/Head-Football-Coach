@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.linear_model import Ridge
 import os
 import json
 
@@ -99,71 +99,104 @@ def insert_to_dict(obj, key, val):
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 # Read the data from the CSV file
-df = pd.read_excel(os.path.join(
-    __location__, "madden_nfl_23_player_ratings.xlsx"))
+df = pd.read_csv(os.path.join(
+    __location__, "Madden NFL 23 Player Ratings.csv"))
 
-df['Position'].replace({"FS": "S", "HB": "RB", "LE": "EDGE", "RE": "EDGE","DT": "DL","SS": "S",
+df['Position'].replace({"FS": "S", "HB": "RB", "LE": "EDGE", "RE": "EDGE", "DT": "DL", "SS": "S",
                        "LG": "G", "RG": "G", "LOLB": "LB", "ROLB": "LB", "MLB": "LB", "LT": "OT", "RT": "OT"}, inplace=True)
+
+df.loc[df['Archetype'] == 'OLB_SpeedRusher', 'Position'] = 'EDGE'
+df.loc[df['Archetype'] == 'OLB_PowerRusher', 'Position'] = 'EDGE'
+
+df.loc[df['Archetype'] == 'DE_PowerRusher', 'Position'] = 'DL'
+df.loc[df['Archetype'] == 'DE_RunStopper', 'Position'] = 'DL'
 
 df.rename(columns=key_map, inplace=True)
 
 # Group the data by the "Position" field
-grouped_df_pos = df.groupby(["position", "archetype"])
+# grouped_df_pos = df.groupby(["position", "archetype"])
+grouped_df_pos = df.groupby("position")
 
-coefs_pos = []
+position_results = []
 
 for name, group in grouped_df_pos:
 
-    position = name[0]
-    archetype = name[1]
+    if type(name) == str:
+        position = name
+        archetype = ''
+    else:
+        position = name[0]
+        archetype = name[1]
 
-    X = group[[col for col in group.columns if col.startswith(tuple(position_skill_group_map[position]))]]
-
+    relevant_skills_x = group[[col for col in group.columns if col.startswith(
+        tuple(position_skill_group_map[position]))]]
+    all_skills_x = group.loc[:, "overall.awareness":"athleticism.injury"]
     # Select the overall rating column as the target variable
     y = group["Overall Rating"]
 
     # Create a linear regression object
-    reg = LinearRegression()
+    reg = Ridge()
 
     # Fit the model using the selected columns
-    reg.fit(X, y)
+    reg.fit(relevant_skills_x, y)
 
-    coef_mapped = dict(zip(X.columns, reg.coef_))
-    coef_mapped['position'] = position
-    coef_mapped['archetype'] = archetype
-    coefs_pos.append(coef_mapped)
+    position_dict = {
+        'position': position,
+        'archetype': archetype,
+        'skills': {}
+    }
+
+    coef_mapped = dict(zip(relevant_skills_x.columns, reg.coef_))
+    mean_mapped = dict(zip(all_skills_x.columns, all_skills_x.mean()))
+    quan_mapped = dict(zip(all_skills_x.columns, all_skills_x.quantile(.25)))
+
+    # How to be more pythonic?
+    for data, key in [(coef_mapped, 'original_ovr_weight'), (mean_mapped, 'mean'), (quan_mapped, '25th_quan')]:
+        for field in data:
+            if field not in position_dict['skills']:
+                position_dict['skills'][field] = {}
+
+            position_dict['skills'][field][key] = round(data[field], 2)
+
+    # print(json.dumps(position_dict, indent=2))
+    position_results.append(position_dict)
 
 output_list = []
 saved_keys = ['position', 'archetype']
-for coef in coefs_pos:
-    print(coef)
-    lowest_val = 1
-    for key, val in coef.items():
-        if key in saved_keys:
-            continue
-        print(key, val, lowest_val)
-        if lowest_val is None or val < lowest_val:
-            lowest_val = val
-        
-    if lowest_val < 0:
-        for key, val in coef.items():
-            if key in saved_keys:
-                continue
-            coef[key] += (lowest_val * -1)
-    
-    summed_vals = sum([val for key, val in coef.items() if key not in saved_keys])
-    
-    for key, val in coef.items():
-        if key in saved_keys:
-            continue
-        coef[key] = val / summed_vals
+for position_dict in position_results:
+    lowest_original_ovr_weight = None
+    for key, skill_dict in position_dict['skills'].items():
+        if 'original_ovr_weight' not in skill_dict:
+            skill_dict['original_ovr_weight'] = 0
+        if lowest_original_ovr_weight is None or (skill_dict['original_ovr_weight'] < lowest_original_ovr_weight):
+            lowest_original_ovr_weight = skill_dict['original_ovr_weight']
+
+    starting_summed_original_ovr_weights = sum(
+        [skill_dict['original_ovr_weight'] for key, skill_dict in position_dict['skills'].items()])
+
+    for key in position_dict['skills']:
+        position_dict['skills'][key]['zero_based_ovr_weight'] = (
+            lowest_original_ovr_weight * -1) + position_dict['skills'][key]['original_ovr_weight']
+
+    ending_summed_original_ovr_weights = sum(
+        [skill_dict['zero_based_ovr_weight'] for key, skill_dict in position_dict['skills'].items()])
+
+    for key in position_dict['skills']:
+        position_dict['skills'][key]['ovr_weight_percentage'] = position_dict['skills'][key]['zero_based_ovr_weight'] * \
+            starting_summed_original_ovr_weights / ending_summed_original_ovr_weights
+        position_dict['skills'][key]['one_based_ovr_weight_percentage'] = position_dict['skills'][key]['zero_based_ovr_weight'] / \
+            ending_summed_original_ovr_weights
 
     output_obj = {}
-    for key in coef:
-        insert_to_dict(output_obj, key, coef[key])
+    for key in position_dict['skills']:
+        insert_to_dict(output_obj, key, position_dict['skills'][key])
 
-    output_list.append(output_obj)
+    position_dict['skills'] = output_obj
+    output_list.append(position_dict)
 
-print(output_list)
-with open('pro/frontend/static/data/import_json/player_overall_coefficients.json', 'w') as file:
+# print(json.dumps(output_list, indent=2))
+out_file_location = 'pro/frontend/static/data/import_json/player_archetype_overall_coefficients.json'
+with open(out_file_location, 'w') as file:
     json.dump(output_list, file, indent=2)
+    print('Writing file for ', len(output_list),
+          'positions + archetypes to ', out_file_location)

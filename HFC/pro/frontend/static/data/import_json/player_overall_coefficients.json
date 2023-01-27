@@ -1,1326 +1,370 @@
-[
-  {
+{
+  "C": {
     "overall": {
-      "awareness": 0.1253621744041259
+      "awareness": 0.18741534161696805
     },
     "athleticism": {
-      "speed": 0.046725188754334186,
-      "acceleration": 0.03208418001258255,
-      "agility": 0.04338252763620157,
-      "jumping": 0.022170855344295717,
-      "strength": 0.10062964973721314,
-      "toughness": 0.020816925183139733,
-      "change_of_direction": 0.024596776793741983,
-      "injury": 0.021225490082330142
+      "speed": 0.03444210042544797,
+      "acceleration": 0.07409622421698402,
+      "agility": 0.05539080478034642,
+      "jumping": 0.0,
+      "strength": 0.19648538887115047,
+      "toughness": 0.0072940112719916605,
+      "change_of_direction": 0.0029296124123916207,
+      "injury": 0.026203264047507228
     },
     "blocking": {
-      "impact_block": 0.04260725975641773,
-      "lead_blocking": 0.058273342506793065,
-      "run_block": 0.10888523148456448,
-      "run_block_power": 0.010053086568941981,
-      "pass_block": 0.09787257604523382,
-      "pass_block_power": 0.0,
-      "pass_block_finesse": 0.11573033564348582,
-      "run_block_finesse": 0.1295844000465981
-    },
-    "position": "C",
-    "archetype": "C_Agile"
+      "impact_block": 0.06621910658220177,
+      "lead_blocking": 0.1190062355702509,
+      "run_block": 0.17314027018701894,
+      "run_block_power": 0.12247554783633327,
+      "pass_block": 0.17183568766752194,
+      "pass_block_power": 0.12480874093331268,
+      "pass_block_finesse": 0.1071055676866277,
+      "run_block_finesse": 0.09305102973054759
+    }
   },
-  {
+  "CB": {
     "overall": {
-      "awareness": 0.07472688467775125
+      "awareness": 0.20377794138574518
     },
     "athleticism": {
-      "speed": 0.05403429445490992,
-      "acceleration": 0.05781516309162716,
-      "agility": 0.03341631264244336,
-      "jumping": 0.019982366875137016,
-      "strength": 0.06358234766422809,
-      "toughness": 0.03852818675551777,
-      "change_of_direction": 0.0,
-      "injury": 0.06188431091564714
-    },
-    "blocking": {
-      "impact_block": 0.06926257303651726,
-      "lead_blocking": 0.05274049254258437,
-      "run_block": 0.0729783533008596,
-      "run_block_power": 0.07136265098351792,
-      "pass_block": 0.08607800813299628,
-      "pass_block_power": 0.06651085781230542,
-      "pass_block_finesse": 0.10097332783897485,
-      "run_block_finesse": 0.07612386927498271
-    },
-    "position": "C",
-    "archetype": "C_PassProtector"
-  },
-  {
-    "overall": {
-      "awareness": 0.09577608459295482
-    },
-    "athleticism": {
-      "speed": 0.04706531912602771,
-      "acceleration": 0.03997300560376093,
-      "agility": 0.0414316908280785,
-      "jumping": 0.03759286855681575,
-      "strength": 0.08967156282111481,
-      "toughness": 0.026248575477912896,
-      "change_of_direction": 0.02728869740547721,
-      "injury": 0.038603979233342044
-    },
-    "blocking": {
-      "impact_block": 0.062226553679171584,
-      "lead_blocking": 0.05497494666590999,
-      "run_block": 0.07556070024038279,
-      "run_block_power": 0.12142057096382963,
-      "pass_block": 0.0,
-      "pass_block_power": 0.13811820974487388,
-      "pass_block_finesse": 0.06299379797667147,
-      "run_block_finesse": 0.04105343708367618
-    },
-    "position": "C",
-    "archetype": "C_Power"
-  },
-  {
-    "overall": {
-      "awareness": 0.09342839686133775
-    },
-    "athleticism": {
-      "speed": 0.17538848655462427,
-      "acceleration": 0.17009855461649268,
-      "agility": 0.031146281310095714,
-      "jumping": 0.026041094642447547,
-      "strength": 0.00966447483587203,
-      "toughness": 0.008118605473264578,
-      "change_of_direction": 0.049902377787014895,
-      "injury": 0.009474663351627163
+      "speed": 0.30973641161265053,
+      "acceleration": 0.2955650284059322,
+      "agility": 0.04813762214919964,
+      "jumping": 0.045880351867473045,
+      "strength": 0.00568823108888787,
+      "toughness": 0.0002857144558418068,
+      "change_of_direction": 0.08912370204963359,
+      "injury": 0.009097485889702462
     },
     "defense": {
-      "finesse_moves": 0.010613321008867601,
-      "play_recognition": 0.056526212716768255,
-      "tackle": 0.03606438772888214,
-      "pursuit": 0.0,
-      "power_moves": 0.007246160732036076,
-      "hit_power": 0.006057837765942807,
-      "block_shedding": 0.012046524101836965,
-      "man_coverage": 0.20557436456033115,
-      "zone_coverage": 0.026751578466170076,
-      "press": 0.0658566774863882
-    },
-    "position": "CB",
-    "archetype": "CB_MantoMan"
-  },
-  {
-    "overall": {
-      "awareness": 0.0366782677009839
-    },
-    "athleticism": {
-      "speed": 0.05095516683034058,
-      "acceleration": 0.15539719857408393,
-      "agility": 0.03714112527839558,
-      "jumping": 0.018858638043479543,
-      "strength": 0.03153999690798086,
-      "toughness": 0.014208993065476537,
-      "change_of_direction": 0.06262131687524017,
-      "injury": 0.03878115350166222
-    },
-    "defense": {
-      "finesse_moves": 0.041973624167151974,
-      "play_recognition": 0.09864630870932302,
-      "tackle": 0.09613716026856753,
-      "pursuit": 0.027557167609008646,
-      "power_moves": 0.012069058586060494,
-      "hit_power": 0.012810061981596628,
-      "block_shedding": 0.02456014436993313,
-      "man_coverage": 0.17653623868382048,
-      "zone_coverage": 0.06352837884689469,
-      "press": 0.0
-    },
-    "position": "CB",
-    "archetype": "CB_Slot"
-  },
-  {
-    "overall": {
-      "awareness": 0.09610388702684927
-    },
-    "athleticism": {
-      "speed": 0.14108497354079833,
-      "acceleration": 0.14198610312859697,
-      "agility": 0.03494440179375088,
-      "jumping": 0.03520784558481151,
-      "strength": 0.011034059930440616,
-      "toughness": 0.018085347564519422,
-      "change_of_direction": 0.050130339219961635,
-      "injury": 0.01649760829470649
-    },
-    "defense": {
-      "finesse_moves": 0.020169047669191822,
-      "play_recognition": 0.07285089617090229,
-      "tackle": 0.05687278266130384,
-      "pursuit": 0.0017318860159006686,
+      "finesse_moves": 0.015525279584155473,
+      "play_recognition": 0.08632257421612939,
+      "tackle": 0.07332392437738405,
+      "pursuit": 0.003940621364994219,
       "power_moves": 0.0,
-      "hit_power": 0.015539473884435393,
-      "block_shedding": 0.02247238363627549,
-      "man_coverage": 0.049776299320658406,
-      "zone_coverage": 0.17186113967312205,
-      "press": 0.04365152488377514
-    },
-    "position": "CB",
-    "archetype": "CB_Zone"
+      "hit_power": 0.00866817658984772,
+      "block_shedding": 0.022641334272260505,
+      "man_coverage": 0.30671715352171264,
+      "zone_coverage": 0.1298326998396009,
+      "press": 0.09672849639399653
+    }
   },
-  {
+  "DL": {
     "overall": {
-      "awareness": 0.07461075233582469
+      "awareness": 0.11615892856255129
     },
     "athleticism": {
-      "speed": 0.03866619775041702,
-      "acceleration": 0.044059875320042574,
-      "agility": 0.02671851480314463,
-      "jumping": 0.023118055574769165,
-      "strength": 0.11341332473862427,
-      "toughness": 0.05861550306262636,
-      "change_of_direction": 0.04109465628004937,
-      "injury": 0.0320054153943279
+      "speed": 0.040881377419575225,
+      "acceleration": 0.11613880325656539,
+      "agility": 0.06471275293182507,
+      "jumping": 0.014066775644332894,
+      "strength": 0.2966181526628403,
+      "toughness": 0.012641345848985745,
+      "change_of_direction": 0.011238601773942593,
+      "injury": 0.018600435137234625
     },
     "defense": {
-      "finesse_moves": 0.020140321690024145,
-      "play_recognition": 0.058491049896746784,
-      "tackle": 0.08223936065157149,
-      "pursuit": 0.04556353128150338,
-      "power_moves": 0.09518518366473327,
-      "hit_power": 0.0894931236659412,
-      "block_shedding": 0.059489609025100046,
+      "finesse_moves": 0.040292499326649356,
+      "play_recognition": 0.1446004256240697,
+      "tackle": 0.25014574966897274,
+      "pursuit": 0.14314106398075552,
+      "power_moves": 0.053283554178206426,
+      "hit_power": 0.06826365478807313,
+      "block_shedding": 0.28114782019143825,
       "man_coverage": 0.0,
-      "zone_coverage": 0.05297864081248273,
-      "press": 0.04411688405207088
-    },
-    "position": "DL",
-    "archetype": "DT_PowerRusher"
+      "zone_coverage": 0.01855146460875213,
+      "press": 0.0033160536601371947
+    }
   },
-  {
+  "EDGE": {
     "overall": {
-      "awareness": 0.045837145374727134
+      "awareness": 0.17310300553426428
     },
     "athleticism": {
-      "speed": 0.044872317260944684,
-      "acceleration": 0.05694075443304204,
-      "agility": 0.03749217522751515,
-      "jumping": 0.013732336330583213,
-      "strength": 0.1585124972245803,
-      "toughness": 0.01404119914090254,
-      "change_of_direction": 0.013337720297700502,
-      "injury": 0.01760200485881357
+      "speed": 0.1148730841550138,
+      "acceleration": 0.11681577197756599,
+      "agility": 0.10344651474678208,
+      "jumping": 0.0386213777961542,
+      "strength": 0.13208768518307357,
+      "toughness": 0.012390750267139618,
+      "change_of_direction": 0.02438659406695466,
+      "injury": 0.03545981576491628
     },
     "defense": {
-      "finesse_moves": 0.01865524853400366,
-      "play_recognition": 0.10044932641325079,
-      "tackle": 0.13056876974396067,
-      "pursuit": 0.08069353730261142,
-      "power_moves": 0.018771885256738643,
-      "hit_power": 0.041663076188932585,
-      "block_shedding": 0.16870147615650938,
-      "man_coverage": 0.0,
-      "zone_coverage": 0.02114602817129544,
-      "press": 0.01698250208388831
-    },
-    "position": "DL",
-    "archetype": "DT_RunStopper"
-  },
-  {
-    "overall": {
-      "awareness": 0.06876465673359482
-    },
-    "athleticism": {
-      "speed": 0.02934858076737526,
-      "acceleration": 0.05951738807337468,
-      "agility": 0.026879527780936486,
-      "jumping": 0.062336318037230116,
-      "strength": 0.0519256270951397,
-      "toughness": 0.02625866131028326,
-      "change_of_direction": 0.0,
-      "injury": 0.038871895342204525
-    },
-    "defense": {
-      "finesse_moves": 0.0993875300887707,
-      "play_recognition": 0.058740224927269116,
-      "tackle": 0.1076740267203735,
-      "pursuit": 0.06329845544445327,
-      "power_moves": 0.0899186915618286,
-      "hit_power": 0.03568955661478915,
-      "block_shedding": 0.06940800535339027,
-      "man_coverage": 0.0415295786094341,
-      "zone_coverage": 0.040312031765154376,
-      "press": 0.03013924377439805
-    },
-    "position": "DL",
-    "archetype": "DT_SpeedRusher"
-  },
-  {
-    "overall": {
-      "awareness": 0.11376590656164283
-    },
-    "athleticism": {
-      "speed": 0.07876743344641376,
-      "acceleration": 0.08673403313185891,
-      "agility": 0.054560698097952685,
-      "jumping": 0.005621227248852685,
-      "strength": 0.14516436771340824,
-      "toughness": 0.002869082926386667,
-      "change_of_direction": 0.011828400052168248,
-      "injury": 0.0037375957786200493
-    },
-    "defense": {
-      "finesse_moves": 0.00916551867313554,
-      "play_recognition": 0.029488684391523103,
-      "tackle": 0.14793785817883393,
-      "pursuit": 0.059943669679928396,
-      "power_moves": 0.20976808075097364,
-      "hit_power": 0.010049372956998062,
-      "block_shedding": 0.011564609800195696,
-      "man_coverage": 0.0,
-      "zone_coverage": 0.01690210198553228,
-      "press": 0.0021313586255753934
-    },
-    "position": "EDGE",
-    "archetype": "DE_PowerRusher"
-  },
-  {
-    "overall": {
-      "awareness": 0.0664710700667689
-    },
-    "athleticism": {
-      "speed": 0.054712364931112485,
-      "acceleration": 0.07784937311289729,
-      "agility": 0.058537982040943654,
-      "jumping": 3.731528997040164e-05,
-      "strength": 0.10992516579074081,
-      "toughness": 0.010077516194234698,
-      "change_of_direction": 0.0,
-      "injury": 0.010305533492522294
-    },
-    "defense": {
-      "finesse_moves": 0.024971737576860772,
-      "play_recognition": 0.0972404490513827,
-      "tackle": 0.15309199751367517,
-      "pursuit": 0.07867584065677193,
-      "power_moves": 0.025474128968160828,
-      "hit_power": 0.03358076434516042,
-      "block_shedding": 0.1671413179677346,
-      "man_coverage": 0.01781155794401057,
-      "zone_coverage": 0.0056294488522915945,
-      "press": 0.008466436204761073
-    },
-    "position": "EDGE",
-    "archetype": "DE_RunStopper"
-  },
-  {
-    "overall": {
-      "awareness": 0.11115982464060507
-    },
-    "athleticism": {
-      "speed": 0.0847744987176205,
-      "acceleration": 0.11356121953369007,
-      "agility": 0.07779245462368266,
-      "jumping": 0.009456129969992507,
-      "strength": 0.05000857628650545,
-      "toughness": 0.008423308662164735,
-      "change_of_direction": 0.02686219804291122,
-      "injury": 0.00819520962949163
-    },
-    "defense": {
-      "finesse_moves": 0.20787673327881945,
-      "play_recognition": 0.02022281740620436,
-      "tackle": 0.1492412581641117,
-      "pursuit": 0.06496872881612588,
-      "power_moves": 0.01827713747862414,
-      "hit_power": 0.03401689148711683,
-      "block_shedding": 0.0011351307161784885,
-      "man_coverage": 0.004686500145734948,
+      "finesse_moves": 0.08775171558235571,
+      "play_recognition": 0.09086394597588862,
+      "tackle": 0.21866155185049554,
+      "pursuit": 0.13420722458331197,
+      "power_moves": 0.08472352267265222,
+      "hit_power": 0.05442942707381136,
+      "block_shedding": 0.08621663827039644,
+      "man_coverage": 0.06611330160825035,
       "zone_coverage": 0.0,
-      "press": 0.009341382400420501
-    },
-    "position": "EDGE",
-    "archetype": "DE_SmallerSpeedRusher"
+      "press": 0.0310523828555237
+    }
   },
-  {
+  "FB": {
     "overall": {
-      "awareness": 0.11730409681734076
-    },
-    "athleticism": {
-      "speed": 0.011175742840108997,
-      "acceleration": 0.06342711479436518,
-      "agility": 0.04431905185395702,
-      "jumping": 0.06311509679057961,
-      "strength": 0.11718307797357305,
-      "toughness": 0.044796059904125156,
-      "change_of_direction": 0.03616503850389027,
-      "injury": 0.0
-    },
-    "rushing": {
-      "ball_carrier_vision": 0.04965163071247056,
-      "carrying": 0.06463542125112172,
-      "break_tackle": 0.05765721716711509,
-      "trucking": 0.027560352989402563,
-      "elusiveness": 0.09093631528055392,
-      "juke_move": 0.120721578411769,
-      "stiff_arm": 0.09135220470962703
-    },
-    "position": "FB",
-    "archetype": "FB_Blocking"
-  },
-  {
-    "overall": {
-      "awareness": 0.09089323774373614
-    },
-    "athleticism": {
-      "speed": 0.049705860368508666,
-      "acceleration": 0.06328075330790028,
-      "agility": 0.042188710049508485,
-      "jumping": 0.06423682032319548,
-      "strength": 0.07970467324438074,
-      "toughness": 0.04360700438865474,
-      "change_of_direction": 0.09037857004176149,
-      "injury": 0.062043190545891254
-    },
-    "rushing": {
-      "ball_carrier_vision": 0.07447186922758886,
-      "carrying": 0.048872255307353354,
-      "break_tackle": 0.06974161602947268,
-      "trucking": 0.08131993233704506,
-      "elusiveness": 0.08433746962262191,
-      "juke_move": 0.0,
-      "stiff_arm": 0.05521803746238074
-    },
-    "position": "FB",
-    "archetype": "FB_Utility"
-  },
-  {
-    "overall": {
-      "awareness": 0.08620811061422921
-    },
-    "athleticism": {
-      "speed": 0.04896740440633529,
-      "acceleration": 0.028890283219810204,
-      "agility": 0.0296884685672411,
-      "jumping": 0.023165988247601115,
-      "strength": 0.11403575704839151,
-      "toughness": 0.02140020213083327,
-      "change_of_direction": 0.017674544118201966,
-      "injury": 0.020326516773892248
-    },
-    "blocking": {
-      "impact_block": 0.05806347520528808,
-      "lead_blocking": 0.06844362459820336,
-      "run_block": 0.10947051961798934,
-      "run_block_power": 0.0007757396350072965,
-      "pass_block": 0.09089290713488953,
-      "pass_block_power": 0.0,
-      "pass_block_finesse": 0.15558697166016924,
-      "run_block_finesse": 0.12640948702191726
-    },
-    "position": "G",
-    "archetype": "G_Agile"
-  },
-  {
-    "overall": {
-      "awareness": 0.03214157909973842
-    },
-    "athleticism": {
-      "speed": 0.11981158346701914,
-      "acceleration": 0.17921529346579942,
-      "agility": 0.16400559071154108,
-      "jumping": 0.013234368794330681,
-      "strength": 0.0,
-      "toughness": 0.06000808127188755,
-      "change_of_direction": 0.0824506156680885,
-      "injury": 0.06506026551501802
-    },
-    "blocking": {
-      "impact_block": 0.011403369620670649,
-      "lead_blocking": 0.07903364868404111,
-      "run_block": 0.008714182590450531,
-      "run_block_power": 0.004222547366792088,
-      "pass_block": 0.03164035673483367,
-      "pass_block_power": 0.023887818517316625,
-      "pass_block_finesse": 0.06991217335694352,
-      "run_block_finesse": 0.05525852513552921
-    },
-    "position": "G",
-    "archetype": "G_PassProtector"
-  },
-  {
-    "overall": {
-      "awareness": 0.10070195007555245
-    },
-    "athleticism": {
-      "speed": 0.03087214741238293,
-      "acceleration": 0.028473247348111196,
-      "agility": 0.02746300666662289,
-      "jumping": 0.007710945698905407,
-      "strength": 0.13598866659095585,
-      "toughness": 0.016307655276144948,
-      "change_of_direction": 0.009000287665550057,
-      "injury": 0.015700849808106713
-    },
-    "blocking": {
-      "impact_block": 0.06980641766181023,
-      "lead_blocking": 0.07845293469101877,
-      "run_block": 0.0779512475066802,
-      "run_block_power": 0.15667954991196947,
-      "pass_block": 0.05807849086821954,
-      "pass_block_power": 0.16622413931096164,
-      "pass_block_finesse": 0.0,
-      "run_block_finesse": 0.020588463507007788
-    },
-    "position": "G",
-    "archetype": "G_Power"
-  },
-  {
-    "overall": {
-      "awareness": 0.0027079149884797703
-    },
-    "kicking": {
-      "kick_power": 0.0,
-      "kick_accuracy": 0.9972920850115201
-    },
-    "position": "K",
-    "archetype": "KP_Accurate"
-  },
-  {
-    "overall": {
-      "awareness": 0.410123067609743
-    },
-    "kicking": {
-      "kick_power": 0.3788380293903288,
-      "kick_accuracy": 0.2110389029999284
-    },
-    "position": "K",
-    "archetype": "KP_Power"
-  },
-  {
-    "overall": {
-      "awareness": 0.05940974278405417
-    },
-    "athleticism": {
-      "speed": 0.06967984775171197,
-      "acceleration": 0.05230745749163142,
-      "agility": 0.041766621863465817,
-      "jumping": 0.00867574285380473,
-      "strength": 0.0895126851322736,
-      "toughness": 0.021030930621671367,
-      "change_of_direction": 0.019013419265067586,
-      "injury": 0.0031350419296709633
-    },
-    "defense": {
-      "finesse_moves": 0.002135168410663929,
-      "play_recognition": 0.1062589363371504,
-      "tackle": 0.16256979379657058,
-      "pursuit": 0.1488163478916607,
-      "power_moves": 0.0032148860058802365,
-      "hit_power": 0.00025279432994017363,
-      "block_shedding": 0.06022272816387579,
-      "man_coverage": 0.05256638257398066,
-      "zone_coverage": 0.09943147279692585,
-      "press": 0.0
-    },
-    "position": "LB",
-    "archetype": "MLB_FieldGeneral"
-  },
-  {
-    "overall": {
-      "awareness": 0.08392896547836728
+      "awareness": 0.12044731043497259
     },
     "athleticism": {
       "speed": 0.0,
-      "acceleration": 0.06829201441571156,
-      "agility": 0.08580820254430657,
-      "jumping": 0.03525097075085095,
-      "strength": 0.033463775560575185,
-      "toughness": 0.034996422614334805,
-      "change_of_direction": 0.06119767511276622,
-      "injury": 0.049842233569498476
+      "acceleration": 0.11939377079143644,
+      "agility": 0.09887192778880627,
+      "jumping": 0.08371315552443996,
+      "strength": 0.07351553229185394,
+      "toughness": 0.05859920254210609,
+      "change_of_direction": 0.0362538638313989,
+      "injury": 0.043755520320065265
     },
-    "defense": {
-      "finesse_moves": 0.038029857378613786,
-      "play_recognition": 0.03574735371282469,
-      "tackle": 0.08692377478025297,
-      "pursuit": 0.06451237362902504,
-      "power_moves": 0.0523999277828806,
-      "hit_power": 0.04063407411619916,
-      "block_shedding": 0.05242612616013417,
-      "man_coverage": 0.08258625310938159,
-      "zone_coverage": 0.044753524702555184,
-      "press": 0.04920647458172177
-    },
-    "position": "LB",
-    "archetype": "MLB_PassCoverage"
+    "rushing": {
+      "ball_carrier_vision": 0.08279061038791646,
+      "carrying": 0.02676300249177479,
+      "break_tackle": 0.07495758720900152,
+      "trucking": 0.09001327187553254,
+      "elusiveness": 0.044876453841150986,
+      "juke_move": 0.08778654795545406,
+      "stiff_arm": 0.07461418766319929
+    }
   },
-  {
+  "G": {
     "overall": {
-      "awareness": 0.06292701606295605
+      "awareness": 0.15154237641333687
     },
     "athleticism": {
-      "speed": 0.04487648856208486,
-      "acceleration": 0.06228390959853403,
-      "agility": 0.03790360035887051,
-      "jumping": 0.007256803173198754,
-      "strength": 0.10902466553260208,
-      "toughness": 0.004721557212918454,
-      "change_of_direction": 0.01927314631178282,
-      "injury": 0.0007080254515255494
-    },
-    "defense": {
-      "finesse_moves": 0.0016062818507675209,
-      "play_recognition": 0.1074244910510831,
-      "tackle": 0.1891127199097705,
-      "pursuit": 0.15856872177435727,
-      "power_moves": 0.0,
-      "hit_power": 0.02163263049284615,
-      "block_shedding": 0.0913286432964422,
-      "man_coverage": 0.022376132709511633,
-      "zone_coverage": 0.05495063594527174,
-      "press": 0.004024530705476788
-    },
-    "position": "LB",
-    "archetype": "MLB_RunStopper"
-  },
-  {
-    "overall": {
-      "awareness": 0.06222150323194627
-    },
-    "athleticism": {
-      "speed": 0.09178866393441487,
-      "acceleration": 0.026833561342435943,
-      "agility": 0.060158345483510275,
+      "speed": 0.035290664566434655,
+      "acceleration": 0.03962258025947444,
+      "agility": 0.028843009557385096,
       "jumping": 0.0,
-      "strength": 0.057718349152373095,
-      "toughness": 0.05024903207946759,
-      "change_of_direction": 0.007409156505036163,
-      "injury": 0.040577853655027876
-    },
-    "defense": {
-      "finesse_moves": 0.04922154915441993,
-      "play_recognition": 0.06737568513146643,
-      "tackle": 0.07298868233401067,
-      "pursuit": 0.08857356096079642,
-      "power_moves": 0.06747483647809295,
-      "hit_power": 0.026670964166167842,
-      "block_shedding": 0.0386379527526471,
-      "man_coverage": 0.09534971802286066,
-      "zone_coverage": 0.05559269328682202,
-      "press": 0.04115789232850388
-    },
-    "position": "LB",
-    "archetype": "OLB_PassCoverage"
-  },
-  {
-    "overall": {
-      "awareness": 0.12050087499983196
-    },
-    "athleticism": {
-      "speed": 0.06220237666425981,
-      "acceleration": 0.08251712879552162,
-      "agility": 0.019909872028173504,
-      "jumping": 0.015878194470502063,
-      "strength": 0.07738246933250814,
-      "toughness": 0.0,
-      "change_of_direction": 0.010226294466270769,
-      "injury": 0.003038420293874161
-    },
-    "defense": {
-      "finesse_moves": 0.018797474026964703,
-      "play_recognition": 0.035755007699432455,
-      "tackle": 0.13279439001209012,
-      "pursuit": 0.1089793952946461,
-      "power_moves": 0.21658472093563588,
-      "hit_power": 0.018314874869295183,
-      "block_shedding": 0.024474044984561558,
-      "man_coverage": 0.023066851604945406,
-      "zone_coverage": 0.0294290528152376,
-      "press": 0.00014855670624913856
-    },
-    "position": "LB",
-    "archetype": "OLB_PowerRusher"
-  },
-  {
-    "overall": {
-      "awareness": 0.046941139315936437
-    },
-    "athleticism": {
-      "speed": 0.066467844507367,
-      "acceleration": 0.07882577913371706,
-      "agility": 0.02569742530907049,
-      "jumping": 0.015484813852074576,
-      "strength": 0.09101839376057318,
-      "toughness": 0.0,
-      "change_of_direction": 0.015874953024971057,
-      "injury": 0.008653695416730518
-    },
-    "defense": {
-      "finesse_moves": 0.005605009436597744,
-      "play_recognition": 0.08771220502863612,
-      "tackle": 0.13569338203238882,
-      "pursuit": 0.1657562327164047,
-      "power_moves": 0.006790594175072038,
-      "hit_power": 0.03095265821317618,
-      "block_shedding": 0.14098481544142197,
-      "man_coverage": 0.011375851597651242,
-      "zone_coverage": 0.057458972247288034,
-      "press": 0.008706234790922782
-    },
-    "position": "LB",
-    "archetype": "OLB_RunStopper"
-  },
-  {
-    "overall": {
-      "awareness": 0.08889485646608672
-    },
-    "athleticism": {
-      "speed": 0.08019330471455993,
-      "acceleration": 0.11960685578405778,
-      "agility": 0.061118180052981974,
-      "jumping": 0.0,
-      "strength": 0.05718036663426292,
-      "toughness": 0.008831791310454988,
-      "change_of_direction": 0.020423112022725398,
-      "injury": 0.0055704794231594
-    },
-    "defense": {
-      "finesse_moves": 0.22582803759406875,
-      "play_recognition": 0.034445694192438675,
-      "tackle": 0.09249902573425592,
-      "pursuit": 0.09893647719667353,
-      "power_moves": 0.022149535505015056,
-      "hit_power": 0.014267889299577835,
-      "block_shedding": 0.003036094759336088,
-      "man_coverage": 0.014909338068694407,
-      "zone_coverage": 0.04155552432813962,
-      "press": 0.010553436913511318
-    },
-    "position": "LB",
-    "archetype": "OLB_SpeedRusher"
-  },
-  {
-    "overall": {
-      "awareness": 0.08046815977458659
-    },
-    "athleticism": {
-      "speed": 0.043384871974313746,
-      "acceleration": 0.03317425937768028,
-      "agility": 0.040504051037414286,
-      "jumping": 0.019495683961291962,
-      "strength": 0.08908900700555965,
-      "toughness": 0.023207156551991712,
-      "change_of_direction": 0.0279634796692928,
-      "injury": 0.028246591836813908
+      "strength": 0.2010174426685054,
+      "toughness": 0.016903300290349983,
+      "change_of_direction": 0.00608753396349373,
+      "injury": 0.023175549355665816
     },
     "blocking": {
-      "impact_block": 0.052593461603774275,
-      "lead_blocking": 0.043264255717723896,
-      "run_block": 0.06552594293499367,
-      "run_block_power": 0.020318818547068542,
-      "pass_block": 0.0,
-      "pass_block_power": 0.05782690229483808,
-      "pass_block_finesse": 0.2044671710952819,
-      "run_block_finesse": 0.17047018661737473
-    },
-    "position": "OT",
-    "archetype": "OT_Agile"
+      "impact_block": 0.1373915383206757,
+      "lead_blocking": 0.10573709646492284,
+      "run_block": 0.1678241653382875,
+      "run_block_power": 0.21069435824652505,
+      "pass_block": 0.07576923511048124,
+      "pass_block_power": 0.13117402797011724,
+      "pass_block_finesse": 0.2104324722924597,
+      "run_block_finesse": 0.011162935135241815
+    }
   },
-  {
+  "K": {
     "overall": {
-      "awareness": 0.0700879780304593
-    },
-    "athleticism": {
-      "speed": 0.05216789994992399,
-      "acceleration": 0.052590403473805815,
-      "agility": 0.052710732780089295,
-      "jumping": 0.05433992651551239,
-      "strength": 0.05547782468320098,
-      "toughness": 0.05173937513091462,
-      "change_of_direction": 0.04913692713451714,
-      "injury": 0.04956050065990165
-    },
-    "blocking": {
-      "impact_block": 0.0586086872681132,
-      "lead_blocking": 0.044489417802154235,
-      "run_block": 0.14549078829184808,
-      "run_block_power": 0.00406171855367886,
-      "pass_block": 0.03203537698360688,
-      "pass_block_power": 0.10975679040355675,
-      "pass_block_finesse": 0.11774565233871678,
-      "run_block_finesse": 0.0
-    },
-    "position": "OT",
-    "archetype": "OT_PassProtector"
-  },
-  {
-    "overall": {
-      "awareness": 0.09518097234343681
-    },
-    "athleticism": {
-      "speed": 0.02983258382433378,
-      "acceleration": 0.02854475880560848,
-      "agility": 0.02548056612885112,
-      "jumping": 0.010458614376361223,
-      "strength": 0.12433578566711545,
-      "toughness": 0.011245039272271455,
-      "change_of_direction": 0.012443595637052073,
-      "injury": 0.010834357466380324
-    },
-    "blocking": {
-      "impact_block": 0.0442502226403597,
-      "lead_blocking": 0.02835155479537435,
-      "run_block": 0.0468835699808925,
-      "run_block_power": 0.23060039594709958,
-      "pass_block": 0.10635802236421577,
-      "pass_block_power": 0.16309264788548233,
-      "pass_block_finesse": 0.0,
-      "run_block_finesse": 0.03210731286516487
-    },
-    "position": "OT",
-    "archetype": "OT_Power"
-  },
-  {
-    "overall": {
-      "awareness": 0.33502423821931493
+      "awareness": 0.4502948492164077
     },
     "kicking": {
-      "kick_power": 0.0,
-      "kick_accuracy": 0.6649757617806851
-    },
-    "position": "P",
-    "archetype": "KP_Accurate"
+      "kick_power": 0.4371142535380087,
+      "kick_accuracy": 0.2595413186311946
+    }
   },
-  {
+  "LB": {
     "overall": {
-      "awareness": 0.3992381324648796
+      "awareness": 0.23141295267968257
+    },
+    "athleticism": {
+      "speed": 0.09176581378214961,
+      "acceleration": 0.19235905040094556,
+      "agility": 0.07912872154077467,
+      "jumping": 0.005959369684667028,
+      "strength": 0.1395400918567033,
+      "toughness": 0.004452560988791683,
+      "change_of_direction": 0.017947175414219346,
+      "injury": 0.01440795965132671
+    },
+    "defense": {
+      "finesse_moves": 0.1172765109458779,
+      "play_recognition": 0.09799186063449684,
+      "tackle": 0.2450876711179179,
+      "pursuit": 0.23773017791203063,
+      "power_moves": 0.04945375444386147,
+      "hit_power": 0.02902675472077936,
+      "block_shedding": 0.09397290336778352,
+      "man_coverage": 0.0,
+      "zone_coverage": 0.1183250822357859,
+      "press": 0.0014171207128610538
+    }
+  },
+  "OT": {
+    "overall": {
+      "awareness": 0.13442545474515502
+    },
+    "athleticism": {
+      "speed": 0.05869622159880557,
+      "acceleration": 0.05057284812469975,
+      "agility": 0.045485976335258096,
+      "jumping": 0.0009428594092992217,
+      "strength": 0.15134024520552133,
+      "toughness": 0.0,
+      "change_of_direction": 0.0038691445205765638,
+      "injury": 0.019628322407481576
+    },
+    "blocking": {
+      "impact_block": 0.08708318612264745,
+      "lead_blocking": 0.04571248967459867,
+      "run_block": 0.07884023373473026,
+      "run_block_power": 0.23936419487622168,
+      "pass_block": 0.022301878621111555,
+      "pass_block_power": 0.21029415951041894,
+      "pass_block_finesse": 0.25403589063598836,
+      "run_block_finesse": 0.10640143938277022
+    }
+  },
+  "P": {
+    "overall": {
+      "awareness": 0.43086684319406526
     },
     "kicking": {
-      "kick_power": 0.3889946695591599,
-      "kick_accuracy": 0.2117671979759604
-    },
-    "position": "P",
-    "archetype": "KP_Power"
+      "kick_power": 0.43211102596404216,
+      "kick_accuracy": 0.2456955043076751
+    }
   },
-  {
+  "QB": {
     "overall": {
-      "awareness": 0.14732758344673605
+      "awareness": 0.2193716948421202
     },
     "athleticism": {
-      "speed": 0.002554073385558777,
-      "acceleration": 0.013547815758626285,
-      "agility": 0.0012347736308411259,
-      "jumping": 0.006706388070688578,
-      "strength": 0.001872808928537662,
-      "toughness": 0.007218235632067848,
-      "change_of_direction": 0.010673070464423333,
-      "injury": 0.007567675606146507
-    },
-    "passing": {
-      "throwing_power": 0.22832394517535867,
-      "short_throw_accuracy": 0.14237831936958678,
-      "medium_throw_accuracy": 0.1622305412332922,
-      "deep_throw_accuracy": 0.10732360159329306,
-      "throw_under_pressure": 0.05067359095754149,
-      "throw_on_run": 0.028841064933927067,
-      "play_action": 0.02678052916884168,
-      "break_sack": 0.008359190097951929
-    },
-    "rushing": {
-      "ball_carrier_vision": 0.008680197293634274,
-      "carrying": 0.0,
-      "break_tackle": 0.006416688909387595,
-      "trucking": 0.007732237989061168,
-      "elusiveness": 0.004467178414491128,
-      "juke_move": 0.011581782323466065,
-      "stiff_arm": 0.007508707616540536
-    },
-    "position": "QB",
-    "archetype": "QB_FieldGeneral"
-  },
-  {
-    "overall": {
-      "awareness": 0.07421507082481878
-    },
-    "athleticism": {
-      "speed": 0.03718229402945323,
-      "acceleration": 0.03428528952765709,
-      "agility": 0.0385219550551463,
-      "jumping": 0.047621369407287215,
-      "strength": 0.05700268047732506,
-      "toughness": 0.05323571031133066,
-      "change_of_direction": 0.03302050764645943,
-      "injury": 0.006102594481474913
-    },
-    "passing": {
-      "throwing_power": 0.06968579237636248,
-      "short_throw_accuracy": 0.035903471621145995,
-      "medium_throw_accuracy": 0.05667898152105562,
-      "deep_throw_accuracy": 0.052691451628434666,
-      "throw_under_pressure": 0.051949178462306074,
-      "throw_on_run": 0.046584478752668516,
-      "play_action": 0.05058518581049943,
-      "break_sack": 0.050207295950847775
-    },
-    "rushing": {
-      "ball_carrier_vision": 0.048246779517547855,
-      "carrying": 0.02953065093392513,
-      "break_tackle": 0.05075276602081289,
-      "trucking": 0.03227311570611971,
-      "elusiveness": 0.043657041198565984,
-      "juke_move": 0.0,
-      "stiff_arm": 6.633873875519244e-05
-    },
-    "position": "QB",
-    "archetype": "QB_Improviser"
-  },
-  {
-    "overall": {
-      "awareness": 0.06302260810897316
-    },
-    "athleticism": {
-      "speed": 0.07438487360662958,
-      "acceleration": 0.01768941613336431,
-      "agility": 0.02861904682320295,
-      "jumping": 0.0,
-      "strength": 0.009335978109765553,
-      "toughness": 0.014965108669279312,
-      "change_of_direction": 0.019863613433967857,
-      "injury": 0.015311096808277818
-    },
-    "passing": {
-      "throwing_power": 0.13784115537094196,
-      "short_throw_accuracy": 0.10531615717393297,
-      "medium_throw_accuracy": 0.06598157263586249,
-      "deep_throw_accuracy": 0.03124756188528193,
-      "throw_under_pressure": 0.06568046663474136,
-      "throw_on_run": 0.09364016363542776,
-      "play_action": 0.03282469896378753,
-      "break_sack": 0.07646572006612275
-    },
-    "rushing": {
-      "ball_carrier_vision": 0.023594048920316534,
-      "carrying": 0.020129811906963908,
-      "break_tackle": 0.009800672863237176,
-      "trucking": 0.01833511586094823,
-      "elusiveness": 0.030089935364761303,
-      "juke_move": 0.02321050133494694,
-      "stiff_arm": 0.022650675689266712
-    },
-    "position": "QB",
-    "archetype": "QB_Scrambler"
-  },
-  {
-    "overall": {
-      "awareness": 0.10347828188762682
-    },
-    "athleticism": {
-      "speed": 0.030660752801853385,
-      "acceleration": 0.025667267905869727,
-      "agility": 0.0007731132529205669,
-      "jumping": 0.047552637160127385,
-      "strength": 0.024418729279643288,
-      "toughness": 0.06778147060308322,
+      "speed": 0.07810710545811683,
+      "acceleration": 0.008959720724990055,
+      "agility": 0.087942151366968,
+      "jumping": 0.011728661483170822,
+      "strength": 0.05280477852186428,
+      "toughness": 0.0005935248116095207,
       "change_of_direction": 0.0,
-      "injury": 0.03228781416001927
+      "injury": 0.04090078739001693
     },
     "passing": {
-      "throwing_power": 0.05201125295673625,
-      "short_throw_accuracy": 0.03510503759475175,
-      "medium_throw_accuracy": 0.07251959381709706,
-      "deep_throw_accuracy": 0.058397461176379985,
-      "throw_under_pressure": 0.02874071398465904,
-      "throw_on_run": 0.06404982344886909,
-      "play_action": 0.03691855962468101,
-      "break_sack": 0.025356910239788318
+      "throwing_power": 0.36204147434267864,
+      "short_throw_accuracy": 0.14931116480200896,
+      "medium_throw_accuracy": 0.31784981385136624,
+      "deep_throw_accuracy": 0.057379480177514784,
+      "throw_under_pressure": 0.10932054228262396,
+      "throw_on_run": 0.11140229439085376,
+      "play_action": 0.10835147247204781,
+      "break_sack": 0.03590201255005994
     },
     "rushing": {
-      "ball_carrier_vision": 0.06563466655258123,
-      "carrying": 0.03692074168528634,
-      "break_tackle": 0.022610372237976958,
-      "trucking": 0.03349553464281894,
-      "elusiveness": 0.053938622765320056,
-      "juke_move": 0.053723194727510463,
-      "stiff_arm": 0.02795744749439952
-    },
-    "position": "QB",
-    "archetype": "QB_StrongArm"
+      "ball_carrier_vision": 0.024292523101376966,
+      "carrying": 0.09405598389630786,
+      "break_tackle": 0.04355309749282688,
+      "trucking": 0.01937892585348413,
+      "elusiveness": 0.029303442710785638,
+      "juke_move": 0.04699105111093811,
+      "stiff_arm": 0.03151530992154529
+    }
   },
-  {
+  "RB": {
     "overall": {
-      "awareness": 0.11484715586959936
+      "awareness": 0.26563012066177544
     },
     "athleticism": {
-      "speed": 0.11725077347265556,
-      "acceleration": 0.12775939741257897,
-      "agility": 0.13053936018641224,
-      "jumping": 0.001868863694264658,
-      "strength": 0.0038477117946023203,
-      "toughness": 0.002054719239402445,
-      "change_of_direction": 0.07188180229657806,
-      "injury": 0.00015203959882862715
+      "speed": 0.3287651209192548,
+      "acceleration": 0.1399668968276002,
+      "agility": 0.24412099942861892,
+      "jumping": 0.07227711855649993,
+      "strength": 0.08704099459734999,
+      "toughness": 0.05142381430448818,
+      "change_of_direction": 0.11556920289363144,
+      "injury": 0.03995985691238815
     },
     "rushing": {
-      "ball_carrier_vision": 0.10615206129745944,
-      "carrying": 0.10524573182947786,
-      "break_tackle": 0.04702190334243585,
+      "ball_carrier_vision": 0.21614752958197805,
+      "carrying": 0.2220977006642349,
+      "break_tackle": 0.22398177366062078,
       "trucking": 0.0,
-      "elusiveness": 0.081726994964706,
-      "juke_move": 0.08683681158018934,
-      "stiff_arm": 0.002814673420809606
-    },
-    "position": "RB",
-    "archetype": "HB_ElusiveBack"
+      "elusiveness": 0.12296282358879396,
+      "juke_move": 0.14679423750695794,
+      "stiff_arm": 0.05844256193653894
+    }
   },
-  {
+  "S": {
     "overall": {
-      "awareness": 0.10195399798479407
+      "awareness": 0.21995293791684006
     },
     "athleticism": {
-      "speed": 0.08508137287425249,
-      "acceleration": 0.07635856726487052,
-      "agility": 0.03156510038091236,
-      "jumping": 0.011178644772624225,
-      "strength": 0.09568005030174251,
-      "toughness": 0.008741215800657499,
-      "change_of_direction": 0.020672597148830046,
-      "injury": 0.017959110557102764
-    },
-    "rushing": {
-      "ball_carrier_vision": 0.09146241116834974,
-      "carrying": 0.1166233386417167,
-      "break_tackle": 0.11192424133176147,
-      "trucking": 0.11678315111718028,
-      "elusiveness": 0.0,
-      "juke_move": 0.01863638778952263,
-      "stiff_arm": 0.09537981286568271
-    },
-    "position": "RB",
-    "archetype": "HB_PowerBack"
-  },
-  {
-    "overall": {
-      "awareness": 0.17230386026738329
-    },
-    "athleticism": {
-      "speed": 0.01775066152003549,
-      "acceleration": 0.010815025180542117,
-      "agility": 0.08525248974319562,
-      "jumping": 0.11749457305914444,
-      "strength": 0.07523833973615292,
-      "toughness": 0.010243327444230066,
-      "change_of_direction": 0.09381791358268385,
-      "injury": 0.0
-    },
-    "rushing": {
-      "ball_carrier_vision": 0.12356135638413128,
-      "carrying": 0.028861303947208306,
-      "break_tackle": 0.07218554084217117,
-      "trucking": 0.013148014581953046,
-      "elusiveness": 0.09909790943082616,
-      "juke_move": 0.04979595384738691,
-      "stiff_arm": 0.030433730432955334
-    },
-    "position": "RB",
-    "archetype": "HB_ReceivingBack"
-  },
-  {
-    "overall": {
-      "awareness": 0.12637134020885257
-    },
-    "athleticism": {
-      "speed": 0.13845699055219488,
-      "acceleration": 0.07524667130692216,
-      "agility": 0.06958089723158385,
-      "jumping": 0.036589415347462705,
-      "strength": 0.02161710797647106,
-      "toughness": 0.005220601840621278,
-      "change_of_direction": 0.04432008986658229,
-      "injury": 0.008185016697048388
+      "speed": 0.22974518539588012,
+      "acceleration": 0.14069528266908202,
+      "agility": 0.15847444785546871,
+      "jumping": 0.06993382729034586,
+      "strength": 0.04130030915256903,
+      "toughness": 0.005844058681397544,
+      "change_of_direction": 0.033945790401718426,
+      "injury": 0.001772595122783745
     },
     "defense": {
       "finesse_moves": 0.0,
-      "play_recognition": 0.07063683953052007,
-      "tackle": 0.10623392099585091,
-      "pursuit": 0.04857396206219195,
-      "power_moves": 0.016103676792612535,
-      "hit_power": 0.009154452274975295,
-      "block_shedding": 0.010968128985781233,
-      "man_coverage": 0.0992581289864439,
-      "zone_coverage": 0.07935467043296698,
-      "press": 0.034128088910918064
-    },
-    "position": "S",
-    "archetype": "S_Hybrid"
+      "play_recognition": 0.17154655379174077,
+      "tackle": 0.19210127573763078,
+      "pursuit": 0.13017157760322132,
+      "power_moves": 0.023160726813151677,
+      "hit_power": 0.015787160071914236,
+      "block_shedding": 0.02579935454736642,
+      "man_coverage": 0.07565869467825681,
+      "zone_coverage": 0.22640895080998016,
+      "press": 0.049319057290224864
+    }
   },
-  {
+  "TE": {
     "overall": {
-      "awareness": 0.07607580127170936
+      "awareness": 0.15021929424491673
     },
     "athleticism": {
-      "speed": 0.09432493076043587,
-      "acceleration": 0.07471229377793952,
-      "agility": 0.06543077551838086,
-      "jumping": 0.032173277477619174,
-      "strength": 0.017046635021782216,
-      "toughness": 0.009951883544558622,
-      "change_of_direction": 0.019869910756888886,
-      "injury": 0.004379361238541429
-    },
-    "defense": {
-      "finesse_moves": 0.007015198732345842,
-      "play_recognition": 0.1576009610042912,
-      "tackle": 0.1482878568857978,
-      "pursuit": 0.08612617709483378,
-      "power_moves": 0.0,
-      "hit_power": 0.04124251522103727,
-      "block_shedding": 0.01847885897594994,
-      "man_coverage": 0.07187060254028686,
-      "zone_coverage": 0.07300124859912616,
-      "press": 0.0024117115784754507
-    },
-    "position": "S",
-    "archetype": "S_RunSupport"
-  },
-  {
-    "overall": {
-      "awareness": 0.17688747100637725
-    },
-    "athleticism": {
-      "speed": 0.13768895283291602,
-      "acceleration": 0.07209357086074004,
-      "agility": 0.05484060253267512,
-      "jumping": 0.03565265260070711,
-      "strength": 0.01878674171803744,
-      "toughness": 0.0068623384291594414,
-      "change_of_direction": 0.04131401449317378,
-      "injury": 0.00460054344981366
-    },
-    "defense": {
-      "finesse_moves": 0.004191966626832154,
-      "play_recognition": 0.03982371381898502,
-      "tackle": 0.09565378903377177,
-      "pursuit": 0.0742023124412357,
-      "power_moves": 0.006679684032112542,
-      "hit_power": 0.008137144191737798,
-      "block_shedding": 0.0,
-      "man_coverage": 0.004269846817947698,
-      "zone_coverage": 0.21221648539029142,
-      "press": 0.006098169723486052
-    },
-    "position": "S",
-    "archetype": "S_Zone"
-  },
-  {
-    "overall": {
-      "awareness": 0.04505749039782234
-    },
-    "athleticism": {
-      "speed": 0.04851600330473721,
-      "acceleration": 0.03448817242004637,
-      "agility": 0.0439778390731683,
-      "jumping": 0.03869996274154092,
-      "strength": 0.03553113666727372,
-      "toughness": 0.040966355629406356,
-      "change_of_direction": 0.038782737264305575,
-      "injury": 0.04075167177006319
+      "speed": 0.040554935108232715,
+      "acceleration": 0.12315317714546525,
+      "agility": 0.11501423114000671,
+      "jumping": 0.08188937251004354,
+      "strength": 0.09313822374967762,
+      "toughness": 0.04416276562180874,
+      "change_of_direction": 0.038457875097209215,
+      "injury": 0.04232486396835657
     },
     "receiving": {
-      "catching": 0.047727936460177506,
-      "catch_in_traffic": 0.0518651637540381,
-      "route_running": 0.0,
-      "medium_route_running": 0.08609514875512839,
-      "deep_route_running": 0.035060493181596604,
-      "spectacular_catch": 0.033000774965307726,
-      "release": 0.03807043057840672
+      "catching": 0.09052444619914993,
+      "catch_in_traffic": 0.15182884723781823,
+      "route_running": 0.05755023729610683,
+      "medium_route_running": 0.09902651609394506,
+      "deep_route_running": 0.15149300426955062,
+      "spectacular_catch": 0.10076753277167881,
+      "release": 0.04752559959980494
     },
     "blocking": {
-      "impact_block": 0.041440325504447435,
-      "lead_blocking": 0.030156345870179995,
-      "run_block": 0.04073668148578314,
-      "run_block_power": 0.04476105292050242,
-      "pass_block": 0.04987158357873033,
-      "pass_block_power": 0.05047731579249673,
-      "pass_block_finesse": 0.05236959022564058,
-      "run_block_finesse": 0.031595787659200125
-    },
-    "position": "TE",
-    "archetype": "TE_Blocking"
+      "impact_block": 0.047079765230272186,
+      "lead_blocking": 0.05837824729068952,
+      "run_block": 0.10397305534888096,
+      "run_block_power": 0.10754719239158114,
+      "pass_block": 0.08262465330019121,
+      "pass_block_power": 0.0,
+      "pass_block_finesse": 0.13988791586452673,
+      "run_block_finesse": 0.07625489916992285
+    }
   },
-  {
+  "WR": {
     "overall": {
-      "awareness": 0.07499148431748831
+      "awareness": 0.15266051235158984
     },
     "athleticism": {
-      "speed": 0.03506673058416888,
-      "acceleration": 0.024387556230880802,
-      "agility": 0.051191633532593164,
-      "jumping": 0.003481993277558355,
-      "strength": 0.04940823967600814,
-      "toughness": 0.012952347577861971,
-      "change_of_direction": 0.012138962390843963,
-      "injury": 0.002598078656599424
-    },
-    "receiving": {
-      "catching": 0.07475925325355215,
-      "catch_in_traffic": 0.1174012254759223,
-      "route_running": 0.1277872624371091,
-      "medium_route_running": 0.01987382214384292,
-      "deep_route_running": 0.04710281921701131,
-      "spectacular_catch": 0.03889965764895567,
-      "release": 0.020264270183580665
-    },
-    "blocking": {
-      "impact_block": 0.003529716023007071,
-      "lead_blocking": 0.039659796332797405,
-      "run_block": 0.0,
-      "run_block_power": 0.06288119647572708,
-      "pass_block": 0.010941675793579988,
-      "pass_block_power": 0.05704088516433862,
-      "pass_block_finesse": 0.045777192533912034,
-      "run_block_finesse": 0.06786420107266063
-    },
-    "position": "TE",
-    "archetype": "TE_Possession"
-  },
-  {
-    "overall": {
-      "awareness": 0.07322578392705435
-    },
-    "athleticism": {
-      "speed": 0.0656633517922449,
-      "acceleration": 0.06806594608535921,
-      "agility": 0.056168903894940246,
-      "jumping": 0.0246960577782544,
-      "strength": 0.029776749627049133,
+      "speed": 0.22131299360915926,
+      "acceleration": 0.1307354050135413,
+      "agility": 0.15405626253565327,
+      "jumping": 0.03491519429441532,
+      "strength": 0.036092094794922966,
       "toughness": 0.0,
-      "change_of_direction": 0.018894382489134953,
-      "injury": 0.003097913231113704
+      "change_of_direction": 0.1105456665080747,
+      "injury": 0.008831653620101671
     },
     "receiving": {
-      "catching": 0.05639868915611978,
-      "catch_in_traffic": 0.11108237350600535,
-      "route_running": 0.04914334001894962,
-      "medium_route_running": 0.07307531053226327,
-      "deep_route_running": 0.07427894557334654,
-      "spectacular_catch": 0.03435204731279479,
-      "release": 0.07208112390514725
-    },
-    "blocking": {
-      "impact_block": 0.02986154495724398,
-      "lead_blocking": 0.012873583434530923,
-      "run_block": 0.03712794776703137,
-      "run_block_power": 0.020236874007972073,
-      "pass_block": 0.008217790275276042,
-      "pass_block_power": 0.02983928669493853,
-      "pass_block_finesse": 0.013965693245973338,
-      "run_block_finesse": 0.03787636078725633
-    },
-    "position": "TE",
-    "archetype": "TE_VerticalThreat"
-  },
-  {
-    "overall": {
-      "awareness": 0.10667456902289042
-    },
-    "athleticism": {
-      "speed": 0.13114450291317603,
-      "acceleration": 0.11042853176033285,
-      "agility": 0.08786889823739835,
-      "jumping": 0.017101467499488234,
-      "strength": 0.0,
-      "toughness": 0.001473530001326682,
-      "change_of_direction": 0.008342871518627643,
-      "injury": 0.002278100576490425
-    },
-    "receiving": {
-      "catching": 0.09416091570339284,
-      "catch_in_traffic": 0.07509824223693062,
-      "route_running": 0.015536687765705303,
-      "medium_route_running": 0.07322726416571573,
-      "deep_route_running": 0.1358735888993344,
-      "spectacular_catch": 0.04753328820540118,
-      "release": 0.09325754149378924
-    },
-    "position": "WR",
-    "archetype": "WR_DeepThreat"
-  },
-  {
-    "overall": {
-      "awareness": 0.06640808108114471
-    },
-    "athleticism": {
-      "speed": 0.022440655731454064,
-      "acceleration": 0.05087311195694395,
-      "agility": 0.04588887284756136,
-      "jumping": 0.07761567874856366,
-      "strength": 0.07237084086931053,
-      "toughness": 0.01968315506110901,
-      "change_of_direction": 0.010043811069702306,
-      "injury": 0.023568196331167374
-    },
-    "receiving": {
-      "catching": 0.10297775494019015,
-      "catch_in_traffic": 0.1207256966774838,
-      "route_running": 0.09365434204212238,
-      "medium_route_running": 0.0,
-      "deep_route_running": 0.03925975992297743,
-      "spectacular_catch": 0.1523554877226043,
-      "release": 0.1021345549976649
-    },
-    "position": "WR",
-    "archetype": "WR_Physical"
-  },
-  {
-    "overall": {
-      "awareness": 0.09622066466310894
-    },
-    "athleticism": {
-      "speed": 0.12876116659964557,
-      "acceleration": 0.06428721692264386,
-      "agility": 0.13243611899233718,
-      "jumping": 0.0,
-      "strength": 0.023804333176011955,
-      "toughness": 0.000474193997144574,
-      "change_of_direction": 0.09074205627133582,
-      "injury": 0.0062347151346196
-    },
-    "receiving": {
-      "catching": 0.06892682463421768,
-      "catch_in_traffic": 0.06840216407819376,
-      "route_running": 0.082718163484235,
-      "medium_route_running": 0.15165981678868598,
-      "deep_route_running": 0.01896594035679374,
-      "spectacular_catch": 0.033952918378914676,
-      "release": 0.03241370652211171
-    },
-    "position": "WR",
-    "archetype": "WR_Playmaker"
-  },
-  {
-    "overall": {
-      "awareness": 0.1144086160818095
-    },
-    "athleticism": {
-      "speed": 0.0492485674543947,
-      "acceleration": 0.09930442239125829,
-      "agility": 0.12401590009242527,
-      "jumping": 0.0,
-      "strength": 0.008190547347302879,
-      "toughness": 0.0181609326813964,
-      "change_of_direction": 0.019851457070436455,
-      "injury": 0.004430277190576245
-    },
-    "receiving": {
-      "catching": 0.1404370069046641,
-      "catch_in_traffic": 0.11870694143760917,
-      "route_running": 0.18038943288518222,
-      "medium_route_running": 0.07034671749194853,
-      "deep_route_running": 0.02634646114604212,
-      "spectacular_catch": 0.004548991451193243,
-      "release": 0.021613728373760823
-    },
-    "position": "WR",
-    "archetype": "WR_Slot"
+      "catching": 0.10491104931403117,
+      "catch_in_traffic": 0.10600433885608831,
+      "route_running": 0.18266211434815152,
+      "medium_route_running": 0.15325996349948198,
+      "deep_route_running": 0.06228121802146209,
+      "spectacular_catch": 0.14675841785383062,
+      "release": 0.07873807183763044
+    }
   }
-]
+}

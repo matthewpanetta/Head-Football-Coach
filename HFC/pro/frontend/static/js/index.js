@@ -2590,15 +2590,19 @@ const create_coach_team_seasons = async (data) => {
 const generate_player_ratings = async (common, world_id, season) => {
   const db = common.db;
 
+  let players = db.player.find();
+  let players_by_player_id = index_group_sync(players, 'index', 'player_id')
   let player_team_seasons = db.player_team_season.find({ season: season });
 
-  var url = "/static/data/import_json/player_archetype.json";
+  player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player')
+
+  var url = "/static/data/import_json/player_overall_coefficients.json";
   var json_data = await fetch(url);
-  var position_archetypes = await json_data.json();
+  var player_overall_coefficients = await json_data.json();
   console.log({
     url: url,
     player_team_seasons: player_team_seasons,
-    position_archetypes: position_archetypes,
+    player_overall_coefficients: player_overall_coefficients,
   });
 
   var position_overall_max = {};
@@ -2609,12 +2613,15 @@ const generate_player_ratings = async (common, world_id, season) => {
     .forEach(function (pts) {
       pts.potential_ratings = deep_copy(pts.ratings);
     });
+
+  console.log({player_team_seasons:player_team_seasons})
+  debugger;
   for (let pts of player_team_seasons.filter((pts) => !pts.ratings)) {
     console.log({
       pts:pts,
-      position_archetypes:position_archetypes
+      player_overall_coefficients:player_overall_coefficients
     })
-    let position_archetype = deep_copy(position_archetypes[pts.position]["Balanced"]);
+    let position_archetype = deep_copy(player_overall_coefficients[pts.position]);
     pts.ratings = pts.ratings || {};
     pts.potential_ratings = {};
     for (const rating_group_key in position_archetype) {
@@ -2647,44 +2654,56 @@ const generate_player_ratings = async (common, world_id, season) => {
   for (let pts of player_team_seasons) {
     let overall_impact = 0;
     let potential_impact = 0;
-    let position_archetype = deep_copy(position_archetypes[pts.position]["Balanced"]);
+    let position_archetype = deep_copy(player_overall_coefficients[pts.position]);
     // console.log({pts:pts})
     for (const rating_group_key in position_archetype) {
       var rating_group = position_archetype[rating_group_key];
       for (const rating_key in rating_group) {
-        var rating_obj = rating_group[rating_key];
-        var rating_mean = rating_obj.rating_mean;
-        var rating_overall_impact = rating_obj.overall_impact;
+        var rating_overall_impact = rating_group[rating_key];
+        // var rating_overall_impact = rating_obj.overall_impact;
 
+        console.log({
+          pts:pts,
+          rating_group_key:rating_group_key,
+          rating_key:rating_key,
+          rating_overall_impact:rating_overall_impact
+        })
         overall_impact +=
-          (pts.ratings[rating_group_key][rating_key] - rating_mean) * rating_overall_impact;
+          (pts.ratings[rating_group_key][rating_key]) * rating_overall_impact;
 
         potential_impact +=
-          (pts.potential_ratings[rating_group_key][rating_key] - rating_mean) *
+          (pts.potential_ratings[rating_group_key][rating_key]) *
           rating_overall_impact;
       }
     }
 
-    pts.ratings.overall.overall = overall_impact;
-    pts.ratings.overall.potential = potential_impact;
+    pts.ratings.overall.overall = overall_impact || 0;
+    pts.ratings.overall.potential = potential_impact || 0;
+
+    console.log({
+      'pts':pts,
+      overall_impact:overall_impact,
+      potential_impact:potential_impact
+    })
+    // debugger;
 
     if (!(pts.position in position_overall_max)) {
-      position_overall_max[pts.position] = pts.ratings.overall.overall;
-      position_overall_min[pts.position] = pts.ratings.overall.overall;
+      position_overall_max[pts.position] = pts.ratings.overall.overall || 0;
+      position_overall_min[pts.position] = pts.ratings.overall.overall || 100;
     }
 
     position_overall_max[pts.position] = Math.max(
       position_overall_max[pts.position],
-      pts.ratings.overall.overall
+      pts.ratings.overall.overall || 0
     );
     position_overall_min[pts.position] = Math.min(
       position_overall_min[pts.position],
-      pts.ratings.overall.overall
+      pts.ratings.overall.overall || 100
     );
   }
 
   var goal_overall_max = 99;
-  var goal_overall_min = 40;
+  var goal_overall_min = 30;
   var goal_overall_range = goal_overall_max - goal_overall_min;
 
   for (const pts of player_team_seasons) {
@@ -2715,11 +2734,13 @@ const generate_player_ratings = async (common, world_id, season) => {
         goal_overall_range: goal_overall_range,
         "pts.position": pts.position,
         goal_overall_min: goal_overall_min,
+        position_overall_min:position_overall_min,
         "position_overall_min[pts.position]": position_overall_min[pts.position],
         " position_overall_max[pts.position]": position_overall_max[pts.position],
         original_overall: original_overall,
         original_potential: original_potential,
       });
+      debugger;
     }
 
     delete pts.potential_ratings;
@@ -2837,6 +2858,7 @@ const create_new_players_and_player_team_seasons = async (
         player_team_season_id: player_team_season_id_counter,
         season: season,
         age: p.current_player_team_season.age,
+        ratings: p.current_player_team_season.ratings,
         team_season_id: teams_by_team_abbreviation[p.current_player_team_season.team_abbreviation].team_season.team_season_id,
         position: p.position,
       });
