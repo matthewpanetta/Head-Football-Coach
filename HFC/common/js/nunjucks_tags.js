@@ -118,17 +118,17 @@ export const get_nunjucks_env = () => {
       let grade_letter = NumberToGrade(NumberValue, 20);
       let badge_class = grade_letter.replace("-", "-Minus").replace("+", "-Plus");
 
-      return `<span class='rating-badge rating-badge-${NumberValue}'>${grade_letter}</span>`;
+      return `<span class='rating-badge rating-badge-${badge_class}'>${grade_letter}</span>`;
     });
 
     nunjucks_env.addFilter("NumberToGradeBadge", function (NumberValue, scale) {
-      NumberValue = Math.floor((NumberValue * 1.0) / ((scale * 1.0) / 20));
-      let grade_letter = NumberToGrade(NumberValue, 20);
+      // NumberValue = Math.floor((NumberValue * 1.0) / ((scale * 1.0) / 20));
+      let grade_letter = NumberToGrade(NumberValue, scale);
       let badge_class = grade_letter.replace("-", "-Minus").replace("+", "-Plus");
 
       return `
-      <div class='p-1 flex space-evenly gap-0 rating-tag-bg rating-tag-${NumberValue}''>
-        <div class='rating-tag-badge rating-tag-${NumberValue}'></div>
+      <div class='p-1 flex space-evenly gap-0 rating-tag-bg rating-tag-${badge_class}''>
+        <div class='rating-tag-badge rating-tag-${badge_class}'></div>
         <div>${grade_letter}</div>
       </div>`;
       // return `<span class='rating-tag rating-tag-${NumberValue}'>${grade_letter}</span>`;
@@ -175,20 +175,21 @@ export const get_nunjucks_env = () => {
         return grade_value_map[number_value];
       } else {
         const grade_value_map = [
-          { letter_grade: "A+", lower_bound: 91, upper_bound: 1000 },
-          { letter_grade: "A", lower_bound: 86, upper_bound: 90 },
-          { letter_grade: "A-", lower_bound: 81, upper_bound: 85 },
-          { letter_grade: "B+", lower_bound: 76, upper_bound: 80 },
-          { letter_grade: "B", lower_bound: 71, upper_bound: 75 },
-          { letter_grade: "B-", lower_bound: 66, upper_bound: 70 },
-          { letter_grade: "C+", lower_bound: 61, upper_bound: 65 },
-          { letter_grade: "C", lower_bound: 56, upper_bound: 60 },
-          { letter_grade: "C-", lower_bound: 51, upper_bound: 55 },
-          { letter_grade: "D+", lower_bound: 46, upper_bound: 50 },
-          { letter_grade: "D", lower_bound: 41, upper_bound: 45 },
-          { letter_grade: "D-", lower_bound: 36, upper_bound: 40 },
-          { letter_grade: "F", lower_bound: 31, upper_bound: 35 },
-          { letter_grade: "F-", lower_bound: -1000, upper_bound: 30 },
+          { letter_grade: "A+", lower_bound: 97, upper_bound: 1000 },
+          { letter_grade: "A", lower_bound: 93, upper_bound: 96 },
+          { letter_grade: "A-", lower_bound: 90, upper_bound: 92 },
+          { letter_grade: "B+", lower_bound: 87, upper_bound: 89 },
+          { letter_grade: "B", lower_bound: 83, upper_bound: 86 },
+          { letter_grade: "B-", lower_bound: 80, upper_bound: 82 },
+          { letter_grade: "C+", lower_bound: 77, upper_bound: 79 },
+          { letter_grade: "C", lower_bound: 73, upper_bound: 76 },
+          { letter_grade: "C-", lower_bound: 70, upper_bound: 72 },
+          { letter_grade: "D+", lower_bound: 67, upper_bound: 69 },
+          { letter_grade: "D", lower_bound: 63, upper_bound: 66 },
+          { letter_grade: "D-", lower_bound: 60, upper_bound: 62 },
+          { letter_grade: "F", lower_bound: 50, upper_bound: 59 },
+          { letter_grade: "F-", lower_bound: 35, upper_bound: 49 },
+          { letter_grade: "F--", lower_bound: -1000, upper_bound: 49 },
         ];
         const letter_grade = grade_value_map.find(
           (grade) => grade.lower_bound <= number_value && grade.upper_bound >= number_value

@@ -148,10 +148,10 @@ for name, group in grouped_df_pos:
 
     coef_mapped = dict(zip(relevant_skills_x.columns, reg.coef_))
     mean_mapped = dict(zip(all_skills_x.columns, all_skills_x.mean()))
-    quan_mapped = dict(zip(all_skills_x.columns, all_skills_x.quantile(.25)))
+    std_mapped = dict(zip(all_skills_x.columns, all_skills_x.std()))
+    # quan_mapped = dict(zip(all_skills_x.columns, all_skills_x.quantile(.25)))
 
-    # How to be more pythonic?
-    for data, key in [(coef_mapped, 'original_ovr_weight'), (mean_mapped, 'mean'), (quan_mapped, '25th_quan')]:
+    for data, key in [(coef_mapped, 'original_ovr_weight'), (mean_mapped, 'mean'), (std_mapped, 'std')]:
         for field in data:
             if field not in position_dict['skills']:
                 position_dict['skills'][field] = {}
@@ -166,26 +166,29 @@ saved_keys = ['position', 'archetype']
 for position_dict in position_results:
     lowest_original_ovr_weight = None
     for key, skill_dict in position_dict['skills'].items():
-        if 'original_ovr_weight' not in skill_dict:
-            skill_dict['original_ovr_weight'] = 0
-        if lowest_original_ovr_weight is None or (skill_dict['original_ovr_weight'] < lowest_original_ovr_weight):
+        # if 'original_ovr_weight' not in skill_dict:
+        #     skill_dict['original_ovr_weight'] = 0
+        if 'original_ovr_weight' in skill_dict and (lowest_original_ovr_weight is None or (skill_dict['original_ovr_weight'] < lowest_original_ovr_weight)):
             lowest_original_ovr_weight = skill_dict['original_ovr_weight']
 
     starting_summed_original_ovr_weights = sum(
-        [skill_dict['original_ovr_weight'] for key, skill_dict in position_dict['skills'].items()])
+        [skill_dict['original_ovr_weight'] for key, skill_dict in position_dict['skills'].items() if 'original_ovr_weight' in skill_dict])
 
-    for key in position_dict['skills']:
-        position_dict['skills'][key]['zero_based_ovr_weight'] = (
-            lowest_original_ovr_weight * -1) + position_dict['skills'][key]['original_ovr_weight']
+    for key, skill_dict in position_dict['skills'].items():
+        if 'original_ovr_weight' in skill_dict:
+            position_dict['skills'][key]['zero_based_ovr_weight'] = (
+                lowest_original_ovr_weight * -1) + position_dict['skills'][key]['original_ovr_weight']
+        else:
+            position_dict['skills'][key]['zero_based_ovr_weight'] = 0
 
     ending_summed_original_ovr_weights = sum(
         [skill_dict['zero_based_ovr_weight'] for key, skill_dict in position_dict['skills'].items()])
 
     for key in position_dict['skills']:
-        position_dict['skills'][key]['ovr_weight_percentage'] = position_dict['skills'][key]['zero_based_ovr_weight'] * \
-            starting_summed_original_ovr_weights / ending_summed_original_ovr_weights
-        position_dict['skills'][key]['one_based_ovr_weight_percentage'] = position_dict['skills'][key]['zero_based_ovr_weight'] / \
-            ending_summed_original_ovr_weights
+        position_dict['skills'][key]['ovr_weight_percentage'] = round(position_dict['skills'][key]['zero_based_ovr_weight'] * \
+            starting_summed_original_ovr_weights / ending_summed_original_ovr_weights, 4)
+        position_dict['skills'][key]['one_based_ovr_weight_percentage'] = round(position_dict['skills'][key]['zero_based_ovr_weight'] / \
+            ending_summed_original_ovr_weights, 4)
 
     output_obj = {}
     for key in position_dict['skills']:
@@ -195,7 +198,7 @@ for position_dict in position_results:
     output_list.append(position_dict)
 
 # print(json.dumps(output_list, indent=2))
-out_file_location = 'pro/frontend/static/data/import_json/player_archetype_overall_coefficients.json'
+out_file_location = 'pro/frontend/static/data/import_json/player_overall_coefficients.json'
 with open(out_file_location, 'w') as file:
     json.dump(output_list, file, indent=2)
     print('Writing file for ', len(output_list),

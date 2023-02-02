@@ -1,4 +1,4 @@
-import { init_basic_table_sorting } from "/common/js/football-table/football-table.js";
+import { init_basic_table_sorting } from "/static/js/football-table/football-table.js";
 import {
   index_group_sync,
   get,

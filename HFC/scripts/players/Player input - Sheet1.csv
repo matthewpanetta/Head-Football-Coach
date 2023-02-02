@@ -501,7 +501,7 @@ NYG,96,Henry Mondeaux,27,DL,280,6-4,Oregon,9/19/1995,2,2,,MondHe00,,
 LAC,96,Breiden Fehoko,26,DL,295,6-2,LSU,10/15/1996,2,2,,FehoBr01,,
 MIN,92,James Lynch,23,DL,295,6-4,Baylor,1/20/1999,2,2,Minnesota Vikings / 4th / 130th pick / 2020,LyncJa00,,
 NE,90,Christian Barmore,23,DL,310,6-4,Alabama,7/28/1999,1,2,New England Patriots / 2nd / 38th pick / 2021,BarmCh00,,
-GB,93,Tedarrell Slaton,25,DL,330,6-4,Florida,10/3/1997,1,2,Green Bay Packers / 5th / 173rd pick / 2021,SlatTe00,,
+GB,93,TJ Slaton,25,DL,330,6-4,Florida,10/3/1997,1,2,Green Bay Packers / 5th / 173rd pick / 2021,SlatTe00,,
 BAL,98,Travis Jones,23,DL,333,6-5,Connecticut,10/15/1999,0,2,Baltimore Ravens / 3rd / 76th pick / 2022,JoneTr00,,
 DAL,95,Johnathan Hankins,30,DL,340,6-3,Ohio State,3/30/1992,9,2,New York Giants / 2nd / 49th pick / 2013,HankJo00,,
 BUF,97,Jordan Phillips,30,DL,341,6-6,Oklahoma,9/21/1992,7,2,Miami Dolphins / 2nd / 52nd pick / 2015,PhilJo01,,
@@ -632,7 +632,7 @@ ATL,9,Lorenzo Carter,27,EDGE,255,6-5,Georgia,12/10/1995,4,8,New York Giants / 3r
 JAX,41,Josh Allen,25,EDGE,262,6-5,Kentucky,7/13/1997,3,8,Jacksonville Jaguars / 1st / 7th pick / 2019,AlleJo03,black,87
 TB,9,Joe Tryon-Shoyinka,23,EDGE,259,6-5,Washington,4/30/1999,1,8,Tampa Bay Buccaneers / 1st / 32nd pick / 2021,TryoJo00,,
 KC,56,George Karlaftis III,21,EDGE,275,6-4,Purdue,4/3/2001,0,7,Kansas City Chiefs / 1st / 30th pick / 2022,KarlGe00,white,83
-BAL,93,Calais Campbell,36,EDGE,300,6-8,Miami,9/1/1986,14,7,Arizona Cardinals / 2nd / 50th pick / 2008,CampCa99,black,
+BAL,93,Calais Campbell,36,DL,300,6-8,Miami,9/1/1986,14,7,Arizona Cardinals / 2nd / 50th pick / 2008,CampCa99,black,
 LV,55,Chandler Jones (IR),32,EDGE,265,6-5,Syracuse,2/27/1990,10,7,New England Patriots / 1st / 21st pick / 2012,JoneCh03,black,
 IND,91,Yannick Ngakoue (IR),27,EDGE,246,6-2,Maryland,3/31/1995,6,7,Jacksonville Jaguars / 3rd / 69th pick / 2016,NgakYa00,black,
 SF,56,Samson Ebukam,27,EDGE,245,6-3,East. Washington,5/9/1995,5,7,Los Angeles Rams / 4th / 125th pick / 2017,EbukSa00,black,
@@ -681,7 +681,7 @@ PIT,98,DeMarvin Leal,22,EDGE,290,6-4,Texas A&M,7/1/2000,0,2,Pittsburgh Steelers 
 SF,95,Drake Jackson,21,EDGE,250,6-4,USC,4/12/2001,0,2,San Francisco 49ers / 2nd / 61st pick / 2022,JackDr01,,
 DAL,54,Sam Williams,23,EDGE,265,6-4,Mississippi,3/31/1999,0,2,Dallas Cowboys / 2nd / 56th pick / 2022,WillSa00,,
 KC,8,Carlos Dunlap,33,EDGE,285,6-6,Florida,2/28/1989,12,2,Cincinnati Bengals / 2nd / 54th pick / 2010,DunlCa99,,
-PIT,94,Tyson Alualu,35,EDGE,304,6-3,California,5/12/1987,12,2,Jacksonville Jaguars / 1st / 10th pick / 2010,AluaTy99,,
+PIT,94,Tyson Alualu,35,DL,304,6-3,California,5/12/1987,12,2,Jacksonville Jaguars / 1st / 10th pick / 2010,AluaTy99,,
 PHI,55,Brandon Graham,34,EDGE,265,6-2,Michigan,4/3/1988,12,2,Philadelphia Eagles / 1st / 13th pick / 2010,GrahBr99,,
 SF,92,Kerry Hyder,31,EDGE,275,6-2,Texas Tech,5/2/1991,8,2,,HydeKe01,,
 MIA,91,Emmanuel Ogbah (IR),29,EDGE,275,6-4,Oklahoma State,11/6/1993,6,2,Cleveland Browns / 2nd / 32nd pick / 2016,OgbaEm00,,
@@ -1204,7 +1204,7 @@ SF,71,Trent Williams,34,OT,320,6-5,Oklahoma,7/19/1988,12,15,Washington Redskins 
 PHI,65,Lane Johnson,32,OT,325,6-6,Oklahoma,5/8/1990,9,15,Philadelphia Eagles / 1st / 4th pick / 2013,JohnLa01,,96
 DET,58,Penei Sewell,22,OT,331,6-5,Oregon,10/9/2000,1,11,Detroit Lions / 1st / 7th pick / 2021,SewePe00,,90
 KC,57,Orlando Brown Jr.,26,OT,363,6-8,Oklahoma,5/2/1996,4,13,Baltimore Ravens / 3rd / 83rd pick / 2018,BrowOr00,,89
-KC,62,Joe Thuney,30,OT,304,6-5,North Carolina State,11/18/1992,6,11,New England Patriots / 3rd / 78th pick / 2016,ThunJo00,white,88
+KC,62,Joe Thuney,30,G,304,6-5,North Carolina State,11/18/1992,6,11,New England Patriots / 3rd / 78th pick / 2016,ThunJo00,white,88
 NYG,78,Andrew Thomas,23,OT,315,6-5,Georgia,1/22/1999,2,12,New York Giants / 1st / 4th pick / 2020,ThomAn02,,86
 CIN,73,Jonah Williams,25,OT,305,6-4,Alabama,11/17/1997,2,11,Cincinnati Bengals / 1st / 11th pick / 2019,WillJo10,,86
 DET,68,Taylor Decker,29,OT,318,6-7,Ohio State,8/23/1993,6,11,Detroit Lions / 1st / 16th pick / 2016,DeckTa00,,85
@@ -1253,7 +1253,7 @@ JAX,69,Tyler Shatley,31,OT,310,6-3,Clemson,5/5/1991,8,7,,ShatTy00,,
 NE,77,Trent Brown,29,OT,380,6-8,Florida,4/13/1993,7,7,San Francisco 49ers / 7th / 244th pick / 2015,BrowTr02,black,
 JAX,74,Cam Robinson (IR),27,OT,320,6-6,Alabama,10/9/1995,5,7,Jacksonville Jaguars / 2nd / 34th pick / 2017,RobiCa00,,
 PIT,76,Chukwuma Okorafor,25,OT,320,6-6,Western Michigan,8/8/1997,4,7,Pittsburgh Steelers / 3rd / 92nd pick / 2018,OkorCh00,,
-IND,56,Quenton Nelson,26,OT,330,6-5,Notre Dame,3/19/1996,4,7,Indianapolis Colts / 1st / 6th pick / 2018,NelsQu00,,
+IND,56,Quenton Nelson,26,G,330,6-5,Notre Dame,3/19/1996,4,7,Indianapolis Colts / 1st / 6th pick / 2018,NelsQu00,,
 PIT,61,Mason Cole,26,OT,298,6-5,Michigan,3/28/1996,4,7,Arizona Cardinals / 3rd / 97th pick / 2018,ColeMa02,,
 PIT,78,James Daniels,25,OT,327,6-4,Iowa,9/13/1997,4,7,Chicago Bears / 2nd / 39th pick / 2018,DaniJa01,,
 DET,63,Evan Brown,26,OT,320,6-3,SMU,9/16/1996,4,7,,BrowEv00,,
@@ -1326,7 +1326,7 @@ TB,72,Josh Wells (IR),31,OT,306,6-6,James Madison,2/14/1991,8,3,,WellJo02,,
 NYJ,76,George Fant (IR),30,OT,322,6-5,Western Kentucky,7/19/1992,6,3,,FantGe00,,
 NE,75,Conor McDermott,30,OT,305,6-8,UCLA,10/19/1992,5,3,New England Patriots / 6th / 211th pick / 2017,McDeCo00,,
 DEN,76,Calvin Anderson,26,OT,300,6-5,Texas,3/25/1996,2,3,,AndeCa00,,
-WAS,76,Samuel Cosmi,23,OT,309,6-6,Texas,2/16/1999,1,3,Washington Football Team / 2nd / 51st pick / 2021,CosmSa00,,
+WAS,76,Sam Cosmi,23,OT,309,6-6,Texas,2/16/1999,1,3,Washington Football Team / 2nd / 51st pick / 2021,CosmSa00,,
 NYJ,61,Max Mitchell (NON),23,OT,297,6-6,Louisiana,10/12/1999,0,2,New York Jets / 4th / 111th pick / 2022,MitcMa02,,
 NE,61,Marcus Cannon (IR),34,OT,335,6-6,TCU,5/6/1988,11,2,New England Patriots / 5th / 138th pick / 2011,CannMa00,,
 ARI,61,Rodney Hudson (IR),33,OT,315,6-2,FSU,7/12/1989,11,2,Kansas City Chiefs / 2nd / 55th pick / 2011,HudsRo00,,
@@ -2215,7 +2215,7 @@ IND,16,Ashton Dulin,25,WR,215,6-1,Malone,5/15/1997,3,1,,DuliAs00,,
 PIT,82,Steven Sims,25,WR,176,5-10,Kansas,3/31/1997,3,1,,SimsSt00,,
 PIT,89,Gunner Olszewski,26,WR,190,6-0,Bemidji State,11/26/1996,3,1,,OlszGu00,,
 DET,85,Tom Kennedy,26,WR,195,5-10,Bryant,7/29/1996,3,1,,KennTo01,,
-TB,10,Scott Miller,25,WR,174,5-9,Bowling Green,7/31/1997,3,1,Tampa Bay Buccaneers / 6th / 208th pick / 2019,MillSc01,,
+TB,10,Scotty Miller,25,WR,174,5-9,Bowling Green,7/31/1997,3,1,Tampa Bay Buccaneers / 6th / 208th pick / 2019,MillSc01,,
 LAC,15,Jalen Guyton (IR),25,WR,212,6-1,North Texas,6/7/1997,3,1,,GuytJa01,,
 NYJ,16,Jeff Smith (IR),25,WR,195,6-1,Boston Col.,4/21/1997,3,1,,SmitJe03,,
 CHI,8,N'Keal Harry,25,WR,225,6-4,Arizona State,12/17/1997,3,1,New England Patriots / 1st / 32nd pick / 2019,HarrNK00,,

@@ -7,7 +7,7 @@ import {
   round_decimal, distinct
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { init_basic_table_sorting, initialize_football_table } from "/common/js/football-table/football-table.js";
+import { init_basic_table_sorting, initialize_football_table } from "/static/js/football-table/football-table.js";
 import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
 import { class_order_map, position_order_map, position_group_map } from "/static/js/metadata.js";
 

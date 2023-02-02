@@ -1,6 +1,6 @@
 import { nunjucks_env } from '../../../../../../../../../common/js/nunjucks_tags.js';
 import { index_group_sync, distance_between_coordinates, nest_children, weighted_random_choice, deep_copy, shuffle, round_decimal, normal_trunc, sum, average, get, distinct, set_intersect } from '../../../../../../../../../common/js/utils.js';
-import { init_basic_table_sorting } from '../../../../../../../../../common/js/football-table/football-table.js';
+import { init_basic_table_sorting } from '../../../../../../../../../static/js/football-table/football-table.js';
 import { team_game, conference, league_season, team, team_season, team_season_stats, coach, coach_team_season, player, player_team_season, player_team_season_stats, day, player_team_game, award } from '../../../../../../../../../static/js/schema.js';
 import { driver_db, resolve_db, create_new_db } from '../../../../../../../../../static/js/database.js';
 import { populate_player_modal, geo_marker_action } from '../../../../../../../../../static/js/modals.js';
@@ -1992,7 +1992,8 @@ const generate_player_ratings = async (common, world_id, season) => {
 
   var url = "/static/data/import_json/player_overall_coefficients.json";
   var json_data = await fetch(url);
-  var player_overall_coefficients = await json_data.json();
+  var player_overall_coefficients_list = await json_data.json();
+  let player_overall_coefficients = index_group_sync(player_overall_coefficients_list, 'index', 'position');
   console.log({
     url: url,
     player_team_seasons: player_team_seasons,
@@ -2011,11 +2012,11 @@ const generate_player_ratings = async (common, world_id, season) => {
   console.log({player_team_seasons:player_team_seasons});
   debugger;
   for (let pts of player_team_seasons.filter((pts) => !pts.ratings)) {
-    console.log({
-      pts:pts,
-      player_overall_coefficients:player_overall_coefficients
-    });
-    let position_archetype = deep_copy(player_overall_coefficients[pts.position]);
+    // console.log({
+    //   pts:pts,
+    //   player_overall_coefficients:player_overall_coefficients
+    // })
+    let position_archetype = deep_copy(player_overall_coefficients[pts.position]['skills']);
     pts.ratings = pts.ratings || {};
     pts.potential_ratings = {};
     for (const rating_group_key in position_archetype) {
@@ -2025,11 +2026,12 @@ const generate_player_ratings = async (common, world_id, season) => {
       pts.potential_ratings[rating_group_key] = {};
       for (const rating_key in rating_group) {
         var rating_obj = rating_group[rating_key];
-        var rating_mean = rating_obj.rating_mean;
+        var rating_mean = rating_obj.mean;
+        var rating_std = rating_obj.std;
 
         var rating_value =
           pts.ratings[rating_group_key][rating_key] ||
-          round_decimal(normal_trunc(rating_mean, rating_mean / 6.0, 1, 100), 0);
+          round_decimal(normal_trunc(rating_mean, rating_std, 1, 100), 0);
 
         pts.potential_ratings[rating_group_key][rating_key] = rating_value;
 
@@ -2048,20 +2050,20 @@ const generate_player_ratings = async (common, world_id, season) => {
   for (let pts of player_team_seasons) {
     let overall_impact = 0;
     let potential_impact = 0;
-    let position_archetype = deep_copy(player_overall_coefficients[pts.position]);
+    let position_archetype = deep_copy(player_overall_coefficients[pts.position]['skills']);
     // console.log({pts:pts})
     for (const rating_group_key in position_archetype) {
       var rating_group = position_archetype[rating_group_key];
       for (const rating_key in rating_group) {
-        var rating_overall_impact = rating_group[rating_key];
-        // var rating_overall_impact = rating_obj.overall_impact;
+        var rating_obj = rating_group[rating_key];
+        var rating_overall_impact = rating_obj.ovr_weight_percentage;
 
-        console.log({
-          pts:pts,
-          rating_group_key:rating_group_key,
-          rating_key:rating_key,
-          rating_overall_impact:rating_overall_impact
-        });
+        // console.log({
+        //   pts:pts,
+        //   rating_group_key:rating_group_key,
+        //   rating_key:rating_key,
+        //   rating_overall_impact:rating_overall_impact
+        // })
         overall_impact +=
           (pts.ratings[rating_group_key][rating_key]) * rating_overall_impact;
 

@@ -7,7 +7,7 @@ import {
   round_decimal,seconds_to_time,quarter_seconds_to_time
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { init_basic_table_sorting } from "/common/js/football-table/football-table.js";
+import { init_basic_table_sorting } from "/static/js/football-table/football-table.js";
 import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
 import { init_json_edit } from "/common/js/json-edit/json-edit.js";
 import { conference_standings } from "/static/js/widgets.js";

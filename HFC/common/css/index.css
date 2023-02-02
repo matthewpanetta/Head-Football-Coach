@@ -2060,71 +2060,71 @@ div.W-L-badge {
   padding: 0.25rem 0.5rem;
 }
 
-.rating-badge.rating-badge-20 {
+.rating-badge.rating-badge-A-Plus {
   background-color: #174ea6;
   box-shadow: 0rem 0rem 0.3125rem #174ea6;
   font-weight: 900;
 }
 
-.rating-badge.rating-badge-19 {
+.rating-badge.rating-badge-A {
   background-color: #5B90B3;
   box-shadow: 0rem 0rem 0.3125rem #5B90B3;
   font-weight: 850;
 }
 
-.rating-badge.rating-badge-18 {
+.rating-badge.rating-badge-A-Minus {
   background-color: #0B5001;
   font-weight: 800;
 }
 
-.rating-badge.rating-badge-17 {
+.rating-badge.rating-badge-B-Plus {
   background-color: #386616;
   font-weight: 750;
 }
 
-.rating-badge.rating-badge-16 {
+.rating-badge.rating-badge-B {
   background-color: #597827;
   font-weight: 700;
 }
 
-.rating-badge.rating-badge-15 {
+.rating-badge.rating-badge-B-Minus {
   background-color: #748533;
   font-weight: 650;
 }
 
-.rating-badge.rating-badge-14 {
+.rating-badge.rating-badge-C-Plus {
   background-color: #8b8e3c;
 }
 
-.rating-badge.rating-badge-13 {
+.rating-badge.rating-badge-C {
   background-color: #9e9141;
 }
 
-.rating-badge.rating-badge-12 {
+.rating-badge.rating-badge-C-Minus {
   background-color: #ab8f43;
 }
 
-.rating-badge.rating-badge-11 {
+.rating-badge.rating-badge-D-Plus {
   background-color: #b48940;
 }
 
-.rating-badge.rating-badge-10 {
+.rating-badge.rating-badge-D {
   background-color: #b87d3a;
 }
 
-.rating-badge.rating-badge-9 {
+.rating-badge.rating-badge-D-Minus {
   background-color: #b66c31;
 }
 
-.rating-badge.rating-badge-8 {
+.rating-badge.rating-badge-F {
   background-color: #af5624;
 }
 
-.rating-badge.rating-badge-7 {
+.rating-badge.rating-badge-F-Minus {
   background-color: #a23914;
 }
 
-.rating-badge.rating-badge-6 {
+.rating-badge.rating-badge-F-Minus-Minus {
   background-color: #8f0600;
 }
 
@@ -2173,63 +2173,63 @@ div.W-L-badge {
   padding: 0.125rem 0.25rem;
 }
 
-.rating-tag-20 {
+.rating-tag-A-Plus {
   background-color: #174ea6;
 }
 
-.rating-tag-19 {
+.rating-tag-A {
   background-color: #5B90B3;
 }
 
-.rating-tag-18 {
+.rating-tag-A-Minus {
   background-color: #0B5001;
 }
 
-.rating-tag-17 {
+.rating-tag-B-Plus {
   background-color: #386616;
 }
 
-.rating-tag-16 {
+.rating-tag-B {
   background-color: #597827;
 }
 
-.rating-tag-15 {
+.rating-tag-B-Minus {
   background-color: #748533;
 }
 
-.rating-tag-14 {
+.rating-tag-C-Plus {
   background-color: #8b8e3c;
 }
 
-.rating-tag-13 {
+.rating-tag-C {
   background-color: #9e9141;
 }
 
-.rating-tag-12 {
+.rating-tag-C-Minus {
   background-color: #ab8f43;
 }
 
-.rating-tag-11 {
+.rating-tag-D-Plus {
   background-color: #b48940;
 }
 
-.rating-tag-10 {
+.rating-tag-D {
   background-color: #b87d3a;
 }
 
-.rating-tag-9 {
+.rating-tag-D-Minus {
   background-color: #b66c31;
 }
 
-.rating-tag-8 {
+.rating-tag-F {
   background-color: #af5624;
 }
 
-.rating-tag-7 {
+.rating-tag-F-Minus {
   background-color: #a23914;
 }
 
-.rating-tag-6 {
+.rating-tag-F-Minus-Minus {
   background-color: #8f0600;
 }
 
@@ -2258,63 +2258,63 @@ div.W-L-badge {
 }
 
 
-.rating-tag-bg.rating-tag-20 {
+.rating-tag-bg.rating-tag-A-Plus {
   background-color: #174ea61b;
 }
 
-.rating-tag-bg.rating-tag-19 {
+.rating-tag-bg.rating-tag-A {
   background-color: #5B90B31b;
 }
 
-.rating-tag-bg.rating-tag-18 {
+.rating-tag-bg.rating-tag-A-Minus {
   background-color: #0B50011b;
 }
 
-.rating-tag-bg.rating-tag-17 {
+.rating-tag-bg.rating-tag-B-Plus {
   background-color: #3866161b;
 }
 
-.rating-tag-bg.rating-tag-16 {
+.rating-tag-bg.rating-tag-B {
   background-color: #5978271b;
 }
 
-.rating-tag-bg.rating-tag-15 {
+.rating-tag-bg.rating-tag-B-Minus {
   background-color: #7485331b;
 }
 
-.rating-tag-bg.rating-tag-14 {
+.rating-tag-bg.rating-tag-C-Plus {
   background-color: #8b8e3c1b;
 }
 
-.rating-tag-bg.rating-tag-13 {
+.rating-tag-bg.rating-tag-C {
   background-color: #9e91411b;
 }
 
-.rating-tag-bg.rating-tag-12 {
+.rating-tag-bg.rating-tag-C-Minus {
   background-color: #ab8f431b;
 }
 
-.rating-tag-bg.rating-tag-11 {
+.rating-tag-bg.rating-tag-D-Plus {
   background-color: #b489401b;
 }
 
-.rating-tag-bg.rating-tag-10 {
+.rating-tag-bg.rating-tag-D {
   background-color: #b87d3a1b;
 }
 
-.rating-tag-bg.rating-tag-9 {
+.rating-tag-bg.rating-tag-D-Minus {
   background-color: #b66c311b;
 }
 
-.rating-tag-bg.rating-tag-8 {
+.rating-tag-bg.rating-tag-F {
   background-color: #af56241b;
 }
 
-.rating-tag-bg.rating-tag-7 {
+.rating-tag-bg.rating-tag-F-Minus {
   background-color: #a239141b;
 }
 
-.rating-tag-bg.rating-tag-6 {
+.rating-tag-bg.rating-tag-F-Minus-Minus {
   background-color: #8f06001b;
 }
 

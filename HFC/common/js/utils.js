@@ -263,32 +263,61 @@ export const weighted_random_choice = (options, default_val, choice_count = 1) =
 export function NumberToGrade(number_value, scale) {
   scale = scale || 100;
 
-  let adj_number_value = Math.floor((number_value * 1.0) / (scale / 20));
-  let grade_value_map = {
-    20: "A++",
-    19: "A+",
-    18: "A",
-    17: "A",
-    16: "A-",
-    15: "B+",
-    14: "B",
-    13: "B-",
-    12: "B-",
-    11: "C+",
-    10: "C",
-    9: "C-",
-    8: "D+",
-    7: "D",
-    6: "D-",
-    5: "F",
-    4: "F",
-    3: "F-",
-    2: "F-",
-    1: "F-",
-    0: "F--",
-  };
+  if (scale == 20){
+    let adj_number_value = Math.floor((number_value * 1.0) / (scale / 20));
+    let grade_value_map = {
+      20: "A++",
+      19: "A+",
+      18: "A",
+      17: "A",
+      16: "A-",
+      15: "B+",
+      14: "B",
+      13: "B-",
+      12: "B-",
+      11: "C+",
+      10: "C",
+      9: "C-",
+      8: "D+",
+      7: "D",
+      6: "D-",
+      5: "F",
+      4: "F",
+      3: "F-",
+      2: "F-",
+      1: "F-",
+      0: "F--",
+    };
 
-  return grade_value_map[adj_number_value] || "Elite";
+    let letter_grade =  grade_value_map[adj_number_value]
+    return letter_grade || "Elite";
+  }
+  else {
+    const grade_value_map = [
+      { letter_grade: "A+", lower_bound: 97, upper_bound: 1000 },
+      { letter_grade: "A", lower_bound: 93, upper_bound: 96 },
+      { letter_grade: "A-", lower_bound: 90, upper_bound: 92 },
+      { letter_grade: "B+", lower_bound: 87, upper_bound: 89 },
+      { letter_grade: "B", lower_bound: 83, upper_bound: 86 },
+      { letter_grade: "B-", lower_bound: 80, upper_bound: 82 },
+      { letter_grade: "C+", lower_bound: 77, upper_bound: 79 },
+      { letter_grade: "C", lower_bound: 73, upper_bound: 76 },
+      { letter_grade: "C-", lower_bound: 70, upper_bound: 72 },
+      { letter_grade: "D+", lower_bound: 67, upper_bound: 69 },
+      { letter_grade: "D", lower_bound: 63, upper_bound: 66 },
+      { letter_grade: "D-", lower_bound: 60, upper_bound: 62 },
+      { letter_grade: "F", lower_bound: 50, upper_bound: 59 },
+      { letter_grade: "F-", lower_bound: 35, upper_bound: 49 },
+      { letter_grade: "F--", lower_bound: -1000, upper_bound: 49 },
+    ];
+    let letter_grade = grade_value_map.find(
+      (grade) => grade.lower_bound <= number_value && grade.upper_bound >= number_value
+    ).letter_grade;
+
+    return letter_grade || "Elite";
+  }
+
+  return "Unk";
 }
 
 export const ordinal = (num) => {

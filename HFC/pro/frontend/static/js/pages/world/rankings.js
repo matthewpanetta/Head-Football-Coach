@@ -15,7 +15,7 @@ import {
   deep_copy,
   ordinal,
 } from "/common/js/utils.js";
-import { init_basic_table_sorting } from "/common/js/football-table/football-table.js";
+import { init_basic_table_sorting } from "/static/js/football-table/football-table.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { recent_games } from "/static/js/widgets.js";
 

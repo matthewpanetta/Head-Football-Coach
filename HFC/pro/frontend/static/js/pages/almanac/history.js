@@ -1,6 +1,6 @@
 import { index_group_sync, get, nest_children, increment_parent, deep_copy, round_decimal } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { init_basic_table_sorting } from "/common/js/football-table/football-table.js";
+import { init_basic_table_sorting } from "/static/js/football-table/football-table.js";
 import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
 
 export const page_almanac_history = async (common) => {
