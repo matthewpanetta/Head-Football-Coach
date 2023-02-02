@@ -140,7 +140,7 @@
         <col>
       {% endif %}
 
-      {% if column_controls.Ratings.kicking.shown %}
+      {% if column_controls.Ratings.special_teams.shown %}
         <!-- KICKING RATINGS -->
         <col>
         <col>
@@ -241,7 +241,7 @@
             <th colspan='9'  style='width: 33.75rem;' class='col-group '>Defense Ratings</th>
           {% endif %}
 
-          {% if column_controls.Ratings.kicking.shown %}
+          {% if column_controls.Ratings.special_teams.shown %}
             <!-- AWRDAS STATS -->
             <th colspan='2'  style='width: 7.5rem;' class='col-group '>Kicking Ratings</th>
           {% endif %}
@@ -344,12 +344,12 @@
           {% if column_controls.Ratings.overall.shown %}
             <!-- AWRDAS STATS -->
             <th value-key='player_team_season.ratings.overall.overall'>Ovr</th>
-            <th class='col-group' value-key='player_team_season.ratings.overall.awareness'>Awr</th>
+            <th class='col-group' value-key='player_team_season.ratings.intangibles.awareness'>Awr</th>
           {% endif %}
 
           {% if column_controls.Ratings.passing.shown %}
             <!-- PASSING RATINGS -->
-            <th value-key='player_team_season.ratings.passing.throwing_power'>ThPw</th>
+            <th value-key='player_team_season.ratings.passing.throw_power'>ThPw</th>
             <th value-key='player_team_season.ratings.passing.short_throw_accuracy'>SAcc</th>
             <th value-key='player_team_season.ratings.passing.medium_throw_accuracy'>MAcc</th>
             <th value-key='player_team_season.ratings.passing.deep_throw_accuracy'>LAcc</th>
@@ -398,17 +398,17 @@
             <th value-key='player_team_season.ratings.defense.hit_power'>HtPw</th>
             <th value-key='player_team_season.ratings.defense.block_shedding'>BlkShd</th>
             <th value-key='player_team_season.ratings.defense.pursuit'>PUR</th>
-            <th value-key='player_team_season.ratings.defense.play_recognition'>PRec</th>
+            <th value-key='player_team_season.ratings.intangibles.play_recognition'>PRec</th>
             <th value-key='player_team_season.ratings.defense.man_coverage'>MCov</th>
             <th value-key='player_team_season.ratings.defense.zone_coverage'>ZCov</th>
             <th value-key='player_team_season.ratings.defense.press'>Prs</th>
-            <th class='col-group' value-key='player_team_season.ratings.defense.pass_rush'>PsRs</th>
+            <th class='col-group' value-key='player_team_season.ratings.defense.pass_rush_finesse'>PsRs</th>
           {% endif %}
 
-          {% if column_controls.Ratings.kicking.shown %}
+          {% if column_controls.Ratings.special_teams.shown %}
             <!-- KICKING RATINGS -->
-            <th value-key='player_team_season.ratings.kicking.kick_power'>KckPw</th>
-            <th class='col-group' value-key='player_team_season.ratings.kicking.kick_accuracy'>KckAcc</th>
+            <th value-key='player_team_season.ratings.special_teams.kick_power'>KckPw</th>
+            <th class='col-group' value-key='player_team_season.ratings.special_teams.kick_accuracy'>KckAcc</th>
           {% endif %}
 
 
@@ -538,12 +538,12 @@
             {% if column_controls.Ratings.overall.shown %}
               <!-- THROWING RATINGS -->
               <td>{{player.player_team_season.ratings.overall.overall|NumberToGradeBadge(100)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.overall.awareness|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.intangibles.awareness|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.passing.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.passing.throwing_power|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.passing.throw_power|NumberToGradeBadge(100)|safe}}</td>
               <td>{{player.player_team_season.ratings.passing.short_throw_accuracy|NumberToGradeBadge(100)|safe}}</td>
               <td>{{player.player_team_season.ratings.passing.medium_throw_accuracy|NumberToGradeBadge(100)|safe}}</td>
               <td>{{player.player_team_season.ratings.passing.deep_throw_accuracy|NumberToGradeBadge(100)|safe}}</td>
@@ -592,17 +592,17 @@
               <td>{{player.player_team_season.ratings.defense.hit_power|NumberToGradeBadge(100)|safe}}</td>
               <td>{{player.player_team_season.ratings.defense.block_shedding|NumberToGradeBadge(100)|safe}}</td>
               <td>{{player.player_team_season.ratings.defense.pursuit|NumberToGradeBadge(100)|safe}}</td>
-              <td>{{player.player_team_season.ratings.defense.play_recognition|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.intangibles.play_recognition|NumberToGradeBadge(100)|safe}}</td>
               <td>{{player.player_team_season.ratings.defense.man_coverage|NumberToGradeBadge(100)|safe}}</td>
               <td>{{player.player_team_season.ratings.defense.zone_coverage|NumberToGradeBadge(100)|safe}}</td>
               <td>{{player.player_team_season.ratings.defense.press|NumberToGradeBadge(100)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.defense.pass_rush|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.defense.pass_rush_finesse|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
-            {% if column_controls.Ratings.kicking.shown %}
+            {% if column_controls.Ratings.special_teams.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.kicking.kick_power|NumberToGradeBadge(100)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.kicking.kick_accuracy|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.special_teams.kick_power|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.special_teams.kick_accuracy|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
 

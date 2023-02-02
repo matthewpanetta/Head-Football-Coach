@@ -1034,7 +1034,6 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     team_seasons_to_update: team_seasons_to_update,
     db: db,
   });
-  // debugger;
 };
 
 const create_conference_seasons = async (data) => {
@@ -2616,12 +2615,7 @@ const generate_player_ratings = async (common, world_id, season) => {
     });
 
   console.log({player_team_seasons:player_team_seasons})
-  debugger;
   for (let pts of player_team_seasons.filter((pts) => !pts.ratings)) {
-    // console.log({
-    //   pts:pts,
-    //   player_overall_coefficients:player_overall_coefficients
-    // })
     let position_archetype = deep_copy(player_overall_coefficients[pts.position]['skills']);
     pts.ratings = pts.ratings || {};
     pts.potential_ratings = {};
@@ -2673,21 +2667,25 @@ const generate_player_ratings = async (common, world_id, season) => {
         overall_impact +=
           (pts.ratings[rating_group_key][rating_key]) * rating_overall_impact;
 
+        if (!pts.ratings[rating_group_key][rating_key]){
+          console.log('Missing rating?',{
+            'pts.ratings[rating_group_key][rating_key]': pts.ratings[rating_group_key][rating_key],
+            rating_key:rating_key,
+            rating_group_key:rating_group_key,
+            pts:pts,
+            'pts.ratings': pts.ratings
+          })
+        }
+
         potential_impact +=
           (pts.potential_ratings[rating_group_key][rating_key]) *
           rating_overall_impact;
       }
     }
 
+    pts.ratings.overall = pts.ratings.overall || {}
     pts.ratings.overall.overall = overall_impact || 0;
     pts.ratings.overall.potential = potential_impact || 0;
-
-    console.log({
-      'pts':pts,
-      overall_impact:overall_impact,
-      potential_impact:potential_impact
-    })
-    // debugger;
 
     if (!(pts.position in position_overall_max)) {
       position_overall_max[pts.position] = pts.ratings.overall.overall || 0;
@@ -2712,18 +2710,20 @@ const generate_player_ratings = async (common, world_id, season) => {
     let original_overall = pts.ratings.overall.overall;
     let original_potential = pts.ratings.overall.potential;
 
-    pts.ratings.overall.overall = Math.floor(
-      ((pts.ratings.overall.overall - position_overall_min[pts.position]) /
-        (position_overall_max[pts.position] - position_overall_min[pts.position])) **
-        1.5 *
-        goal_overall_range +
-        goal_overall_min
-    );
+    if (position_overall_max[pts.position] > goal_overall_max){
+      pts.ratings.overall.overall = Math.floor(
+        ((pts.ratings.overall.overall - position_overall_min[pts.position]) /
+          (position_overall_max[pts.position] - position_overall_min[pts.position])) **
+          1.01 *
+          goal_overall_range +
+          goal_overall_min
+      );
+    }
 
     pts.ratings.overall.potential = Math.floor(
       ((pts.ratings.overall.potential - position_overall_min[pts.position]) /
         (position_overall_max[pts.position] - position_overall_min[pts.position])) **
-        1.5 *
+        1.01 *
         goal_overall_range +
         goal_overall_min
     );
@@ -2742,7 +2742,6 @@ const generate_player_ratings = async (common, world_id, season) => {
         original_overall: original_overall,
         original_potential: original_potential,
       });
-      debugger;
     }
 
     delete pts.potential_ratings;

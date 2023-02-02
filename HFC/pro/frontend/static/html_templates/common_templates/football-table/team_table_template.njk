@@ -447,12 +447,12 @@
           {% if column_controls.Ratings.overall.shown %}
             <!-- AWRDAS STATS -->
             <th value-key='player_team_season.ratings.overall.overall'>Ovr</th>
-            <th class='col-group' value-key='player_team_season.ratings.overall.awareness'>Awr</th>
+            <th class='col-group' value-key='player_team_season.ratings.intangibles.awareness'>Awr</th>
           {% endif %}
 
           {% if column_controls.Ratings.passing.shown %}
             <!-- PASSING RATINGS -->
-            <th value-key='player_team_season.ratings.passing.throwing_power'>ThPw</th>
+            <th value-key='player_team_season.ratings.passing.throw_power'>ThPw</th>
             <th value-key='player_team_season.ratings.passing.short_throw_accuracy'>SAcc</th>
             <th value-key='player_team_season.ratings.passing.medium_throw_accuracy'>MAcc</th>
             <th value-key='player_team_season.ratings.passing.deep_throw_accuracy'>LAcc</th>
@@ -501,17 +501,17 @@
             <th value-key='player_team_season.ratings.defense.hit_power'>HtPw</th>
             <th value-key='player_team_season.ratings.defense.block_shedding'>BlkShd</th>
             <th value-key='player_team_season.ratings.defense.pursuit'>PUR</th>
-            <th value-key='player_team_season.ratings.defense.play_recognition'>PRec</th>
+            <th value-key='player_team_season.ratings.intangibles.play_recognition'>PRec</th>
             <th value-key='player_team_season.ratings.defense.man_coverage'>MCov</th>
             <th value-key='player_team_season.ratings.defense.zone_coverage'>ZCov</th>
             <th value-key='player_team_season.ratings.defense.press'>Prs</th>
-            <th class='col-group' value-key='player_team_season.ratings.defense.pass_rush'>PsRs</th>
+            <th class='col-group' value-key='player_team_season.ratings.defense.pass_rush_finesse'>PsRs</th>
           {% endif %}
 
-          {% if column_controls.Ratings.kicking.shown %}
+          {% if column_controls.Ratings.special_teams.shown %}
             <!-- KICKING RATINGS -->
-            <th value-key='player_team_season.ratings.kicking.kick_power'>KckPw</th>
-            <th class='col-group' value-key='player_team_season.ratings.kicking.kick_accuracy'>KckAcc</th>
+            <th value-key='player_team_season.ratings.special_teams.kick_power'>KckPw</th>
+            <th class='col-group' value-key='player_team_season.ratings.special_teams.kick_accuracy'>KckAcc</th>
           {% endif %}
 
         </tr>
@@ -698,12 +698,12 @@
             {% if column_controls.Ratings.overall.shown %}
               <!-- THROWING RATINGS -->
               <td>{{player.player_team_season.ratings.overall.overall}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.overall.awareness}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.intangibles.awareness}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.passing.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.passing.throwing_power}}</td>
+              <td>{{player.player_team_season.ratings.passing.throw_power}}</td>
               <td>{{player.player_team_season.ratings.passing.short_throw_accuracy}}</td>
               <td>{{player.player_team_season.ratings.passing.medium_throw_accuracy}}</td>
               <td>{{player.player_team_season.ratings.passing.deep_throw_accuracy}}</td>
@@ -752,17 +752,17 @@
               <td>{{player.player_team_season.ratings.defense.hit_power}}</td>
               <td>{{player.player_team_season.ratings.defense.block_shedding}}</td>
               <td>{{player.player_team_season.ratings.defense.pursuit}}</td>
-              <td>{{player.player_team_season.ratings.defense.play_recognition}}</td>
+              <td>{{player.player_team_season.ratings.intangibles.play_recognition}}</td>
               <td>{{player.player_team_season.ratings.defense.man_coverage}}</td>
               <td>{{player.player_team_season.ratings.defense.zone_coverage}}</td>
               <td>{{player.player_team_season.ratings.defense.press}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.defense.pass_rush}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.defense.pass_rush_finesse}}</td>
             {% endif %}
 
-            {% if column_controls.Ratings.kicking.shown %}
+            {% if column_controls.Ratings.special_teams.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.kicking.kick_power}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.kicking.kick_accuracy}}</td>
+              <td>{{player.player_team_season.ratings.special_teams.kick_power}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.special_teams.kick_accuracy}}</td>
             {% endif %}
 
           </tr>

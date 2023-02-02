@@ -42,7 +42,7 @@ const getHtml = async (common) => {
   ];
 
   let all_pos_rating_list = [
-    { display: "Awr", key: "ratings.overall.awareness" },
+    { display: "Awr", key: "ratings.intangibles.awareness" },
     { display: "Spd", key: "ratings.athleticism.speed" },
     { display: "Acc", key: "ratings.athleticism.acceleration" },
     { display: "Agi", key: "ratings.athleticism.agility" },
@@ -65,7 +65,7 @@ const getHtml = async (common) => {
         { display: "Ints", key: "season_stats.passing.ints" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Spd", key: "ratings.athleticism.speed" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
@@ -90,7 +90,7 @@ const getHtml = async (common) => {
         { display: "Brkn Tck", key: "season_stats.rushing.broken_tackles" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Spd", key: "ratings.athleticism.speed" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
@@ -113,7 +113,7 @@ const getHtml = async (common) => {
         { display: "TDs", key: "season_stats.receiving.tds" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Spd", key: "ratings.athleticism.speed" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
@@ -136,7 +136,7 @@ const getHtml = async (common) => {
         { display: "TDs", key: "season_stats.receiving.tds" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Spd", key: "ratings.athleticism.speed" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
@@ -160,7 +160,7 @@ const getHtml = async (common) => {
         { display: "Sack Allowed", key: "season_stats.blocking.sacks_allowed" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
         { display: "Str", key: "ratings.athleticism.strength" },
@@ -178,7 +178,7 @@ const getHtml = async (common) => {
         { display: "Sack Allowed", key: "season_stats.blocking.sacks_allowed" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
         { display: "Str", key: "ratings.athleticism.strength" },
@@ -197,7 +197,7 @@ const getHtml = async (common) => {
         { display: "Sacks", key: "season_stats.defense.sacks" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Spd", key: "ratings.athleticism.speed" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
@@ -206,7 +206,7 @@ const getHtml = async (common) => {
         { display: "Hit Pow", key: "ratings.defense.hit_power" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
         { display: "Purs", key: "ratings.defense.pursuit" },
-        { display: "Play rec", key: "ratings.defense.play_recognition" },
+        { display: "Play rec", key: "ratings.intangibles.play_recognition" },
         { display: "Pass Rush", key: "ratings.defense.pass_rush" },
       ],
     },
@@ -220,7 +220,7 @@ const getHtml = async (common) => {
         { display: "Sacks", key: "season_stats.defense.sacks" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Spd", key: "ratings.athleticism.speed" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
@@ -229,7 +229,7 @@ const getHtml = async (common) => {
         { display: "Hit Pow", key: "ratings.defense.hit_power" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
         { display: "Purs", key: "ratings.defense.pursuit" },
-        { display: "Play rec", key: "ratings.defense.play_recognition" },
+        { display: "Play rec", key: "ratings.intangibles.play_recognition" },
         { display: "Pass Rush", key: "ratings.defense.pass_rush" },
       ],
     },
@@ -245,7 +245,7 @@ const getHtml = async (common) => {
         { display: "Defl", key: "season_stats.defense.deflections" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Spd", key: "ratings.athleticism.speed" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
@@ -255,7 +255,7 @@ const getHtml = async (common) => {
         { display: "Hit Pow", key: "ratings.defense.hit_power" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
         { display: "Purs", key: "ratings.defense.pursuit" },
-        { display: "Play rec", key: "ratings.defense.play_recognition" },
+        { display: "Play rec", key: "ratings.intangibles.play_recognition" },
         { display: "Pass Rush", key: "ratings.defense.pass_rush" },
         { display: "M Cov", key: "ratings.defense.man_coverage" },
         { display: "Z Cov", key: "ratings.defense.zone_coverage" },
@@ -271,7 +271,7 @@ const getHtml = async (common) => {
         { display: "Defl", key: "season_stats.defense.deflections" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Spd", key: "ratings.athleticism.speed" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
@@ -279,7 +279,7 @@ const getHtml = async (common) => {
         { display: "Tckl", key: "ratings.defense.tackle" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
         { display: "Purs", key: "ratings.defense.pursuit" },
-        { display: "Play rec", key: "ratings.defense.play_recognition" },
+        { display: "Play rec", key: "ratings.intangibles.play_recognition" },
         { display: "M Cov", key: "ratings.defense.man_coverage" },
         { display: "Z Cov", key: "ratings.defense.zone_coverage" },
         { display: "Press", key: "ratings.defense.press" },
@@ -295,7 +295,7 @@ const getHtml = async (common) => {
         { display: "Defl", key: "season_stats.defense.deflections" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Spd", key: "ratings.athleticism.speed" },
         { display: "Acc", key: "ratings.athleticism.acceleration" },
         { display: "Agi", key: "ratings.athleticism.agility" },
@@ -305,7 +305,7 @@ const getHtml = async (common) => {
         { display: "Hit Pow", key: "ratings.defense.hit_power" },
         { display: "B Shed", key: "ratings.defense.block_shedding" },
         { display: "Purs", key: "ratings.defense.pursuit" },
-        { display: "Play rec", key: "ratings.defense.play_recognition" },
+        { display: "Play rec", key: "ratings.intangibles.play_recognition" },
         { display: "M Cov", key: "ratings.defense.man_coverage" },
         { display: "Z Cov", key: "ratings.defense.zone_coverage" },
         { display: "Press", key: "ratings.defense.press" },
@@ -320,7 +320,7 @@ const getHtml = async (common) => {
         { display: "FGA", key: "season_stats.kicking.fga" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Kick Pow", key: "ratings.kicking.kick_power" },
         { display: "Kick Acc", key: "ratings.kicking.kick_accuracy" },
       ],
@@ -334,7 +334,7 @@ const getHtml = async (common) => {
         { display: "Within 20", key: "season_stats.punting.within_20" },
       ],
       rating_list: [
-        { display: "Awr", key: "ratings.overall.awareness" },
+        { display: "Awr", key: "ratings.intangibles.awareness" },
         { display: "Kick Pow", key: "ratings.kicking.kick_power" },
         { display: "Kick Acc", key: "ratings.kicking.kick_accuracy" },
       ],

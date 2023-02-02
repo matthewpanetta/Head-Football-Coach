@@ -294,8 +294,9 @@ export function NumberToGrade(number_value, scale) {
   }
   else {
     const grade_value_map = [
-      { letter_grade: "A+", lower_bound: 97, upper_bound: 1000 },
-      { letter_grade: "A", lower_bound: 93, upper_bound: 96 },
+      { letter_grade: "Elt", lower_bound: 99, upper_bound: 1000 },
+      { letter_grade: "A+", lower_bound: 96, upper_bound: 98 },
+      { letter_grade: "A", lower_bound: 93, upper_bound: 95 },
       { letter_grade: "A-", lower_bound: 90, upper_bound: 92 },
       { letter_grade: "B+", lower_bound: 87, upper_bound: 89 },
       { letter_grade: "B", lower_bound: 83, upper_bound: 86 },
@@ -310,11 +311,11 @@ export function NumberToGrade(number_value, scale) {
       { letter_grade: "F-", lower_bound: 35, upper_bound: 49 },
       { letter_grade: "F--", lower_bound: -1000, upper_bound: 49 },
     ];
-    let letter_grade = grade_value_map.find(
+    let letter_grade = get(grade_value_map.find(
       (grade) => grade.lower_bound <= number_value && grade.upper_bound >= number_value
-    ).letter_grade;
+    ) || {letter_grade: 'Unk'}, 'letter_grade');
 
-    return letter_grade || "Elite";
+    return letter_grade || "Unk";
   }
 
   return "Unk";

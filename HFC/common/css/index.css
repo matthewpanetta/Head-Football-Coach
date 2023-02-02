@@ -2060,6 +2060,12 @@ div.W-L-badge {
   padding: 0.25rem 0.5rem;
 }
 
+.rating-badge.rating-badge-Elt {
+  background-color: #8709A8;
+  box-shadow: 0rem 0rem 0.3125rem #8709A8;
+  font-weight: 900;
+}
+
 .rating-badge.rating-badge-A-Plus {
   background-color: #174ea6;
   box-shadow: 0rem 0rem 0.3125rem #174ea6;
@@ -2173,6 +2179,11 @@ div.W-L-badge {
   padding: 0.125rem 0.25rem;
 }
 
+
+.rating-tag-Elt {
+  background-color: #8709A8;
+}
+
 .rating-tag-A-Plus {
   background-color: #174ea6;
 }
@@ -2255,6 +2266,11 @@ div.W-L-badge {
 
 .rating-tag-0 {
   background-color: #8f0600;
+}
+
+
+.rating-tag-bg.rating-tag-Elt {
+  background-color: #8709A81b;
 }
 
 
@@ -2416,6 +2432,10 @@ div.W-L-badge {
   font-weight: 600;
 }
 
+
+.Elt-Fill {
+  background-color: #8709A8;
+}
 
 .A-Plus-Fill {
   background-color: #0B5001;
