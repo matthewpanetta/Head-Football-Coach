@@ -8,6 +8,8 @@ const pro_app = express();
 const college_port = 5515;
 const pro_port = 1151;
 
+//NODE_ENV='dev' node server.js 
+
 const mimeTypes = {
 	".bmp": "image/bmp",
 	".css": "text/css",

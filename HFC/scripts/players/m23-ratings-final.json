@@ -86302,7 +86302,7 @@
     "changeOfDirection_rating": 55,
     "press_rating": 10,
     "throwAccuracyDeep_rating": 6,
-    "archetype": "G_Agile",
+    "archetype": "OT_Agile",
     "runBlockFinesse_rating": 77,
     "agility_rating": 63,
     "age": 24
@@ -129546,7 +129546,7 @@
     "deepRouteRunning_rating": 41,
     "yearsPro": 1,
     "throwAccuracyShort_rating": 77,
-    "position": "QB",
+    "position": "TE",
     "speed_rating": 84,
     "runBlockPower_rating": 43,
     "toughness_rating": 88,
@@ -129563,7 +129563,7 @@
     "changeOfDirection_rating": 79,
     "press_rating": 10,
     "throwAccuracyDeep_rating": 74,
-    "archetype": "QB_StrongArm",
+    "archetype": "TE_VerticalThreat",
     "runBlockFinesse_rating": 48,
     "agility_rating": 78,
     "age": 24
@@ -131360,7 +131360,7 @@
     "changeOfDirection_rating": 51,
     "press_rating": 10,
     "throwAccuracyDeep_rating": 6,
-    "archetype": "C_Agile",
+    "archetype": "OT_Agile",
     "runBlockFinesse_rating": 68,
     "agility_rating": 61,
     "age": 28

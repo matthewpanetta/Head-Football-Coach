@@ -92,7 +92,6 @@ const get_initial_column_controls = (subject) => {
         special_teams: { shown: false, display: "Special Teams" },
       },
       Ratings: {
-        overall: { shown: true, display: "Overall" },
         intangibles: { shown: false, display: "Intangibles" },
         athleticism: { shown: false, display: "Athleticism" },
         passing: { shown: false, display: "Throwing" },
@@ -145,7 +144,7 @@ const get_initial_column_controls = (subject) => {
 };
 
 const get_initial_sorted_columns = (subject) => {
-  if (subject == "player stats" || subject == "world player stats") {
+  if (subject == "pro player stats" || subject == "pro world player stats") {
     return [
       {
         key: "player_team_season.ratings.overall.overall",
@@ -169,12 +168,12 @@ const get_initial_search_filters = (subject) => {
 
   if (subject == "college player stats" || subject == "college world player stats" || subject == "pro player stats" || subject == "pro world player stats") {
     search_filters.search_filter_fields = [
-      "player_team_season.team_season.team.full_name",
+      "player_team_season.team_season.team.team_name",
       // "hometown_and_state",
       "full_name",
     ];
   } else if (subject == "world team stats") {
-    search_filters.search_filter_fields = ["player_team_season.team_season.team.full_name"];
+    search_filters.search_filter_fields = ["player_team_season.team_season.team.team_name"];
   }
 
   return search_filters;
@@ -226,24 +225,12 @@ const get_initial_filter_options = (subject, table_config, common) => {
       ,
     ];
 
-    if (subject == "college player stats" || subject == "college world player stats"){
-      table_filters.unshift({
-        count: 0,
-        display: "Class",
-        options: [
-          { display: "FR", field: "player_team_season.class.class_name" },
-          { display: "SO", field: "player_team_season.class.class_name" },
-          { display: "JR", field: "player_team_season.class.class_name" },
-          { display: "SR", field: "player_team_season.class.class_name" },
-        ],
-      });
-    }
 
-    if (subject == "world player stats") {
+    if (subject == "pro world player stats") {
       let teams = distinct(
         table_config.original_data.map((p) => p.player_team_season.team_season.team)
       );
-      let teams_by_team_name = index_group_sync(teams, "index", "school_name");
+      let teams_by_team_name = index_group_sync(teams, "index", "team_name");
 
       console.log({
         teams: teams,
@@ -277,12 +264,12 @@ const get_initial_filter_options = (subject, table_config, common) => {
                 p.player_team_season.team_season.conference_season.conference
                   .conference_abbreviation == conference
             )
-            .map((p) => get_from_dict(p, "player_team_season.team_season.team.school_name"))
+            .map((p) => get_from_dict(p, "player_team_season.team_season.team.team_name"))
         ).sort();
 
         conference_obj.options = conference_teams.map((ct) => ({
           display: ct,
-          field: "player_team_season.team_season.team.school_name",
+          field: "player_team_season.team_season.team.team_name",
           logo_url: teams_by_team_name[ct].team_logo,
         }));
         conference_obj_list.push(conference_obj);

@@ -38,7 +38,7 @@
                   {% for team in teams %}
                     <tr>
                       <td class="worldOverviewTop25TeamLineRank  w3-cell center-text" style='background-color:  #{{team.team_color_primary_hex}}; color: white;'>
-                        <div class='Top25RankNumberw3-display-middle '>{{ team.team_season.rankings.national_rank[0] }}</div>
+                        <div class='Top25RankNumberw3-display-middle '>{{ team.team_season.rankings.power_rank[0] }}</div>
                         {% if team.NationalRankDelta < 0 %}
                           <div class='worldOverviewTop25TeamLineRankDelta worldOverviewTop25TeamLineRankDeltaRed'>&#8595;{{team.NationalRankDeltaAbs}}</div>
                         {% elif team.NationalRankDelta > 0 %}

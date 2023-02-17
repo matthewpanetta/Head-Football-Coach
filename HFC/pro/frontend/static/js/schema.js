@@ -370,6 +370,18 @@ export class day {
   }
 }
 
+export class period {
+  constructor() {}
+
+  get world_href() {
+    return `/World/${this.world_id}/`;
+  }
+
+  get period_href() {
+    return `/World/${this.world_id}/Period/${this.short_name}`;
+  }
+}
+
 export class week {
   constructor() {}
 

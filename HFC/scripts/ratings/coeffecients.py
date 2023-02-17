@@ -105,7 +105,8 @@ __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 # Read the data from the json file
 
-df_list = [pd.read_json(file_name) for file_name in ['scripts/players/m22-ratings-final.json','scripts/players/m23-ratings-week-1.json','scripts/players/m23-ratings-week-9.json','scripts/players/m23-ratings-final.json']]
+# df_list = [pd.read_json(file_name) for file_name in ['scripts/players/m22-ratings-final.json','scripts/players/m23-ratings-week-1.json','scripts/players/m23-ratings-week-9.json','scripts/players/m23-ratings-final.json']]
+df_list = [pd.read_json(file_name) for file_name in ['../players/m22-ratings-final.json','../players/m23-ratings-week-1.json','../players/m23-ratings-week-9.json','../players/m23-ratings-final.json']]
 df = pd.concat(df_list, ignore_index=True)
 
 df['position'].replace({"FS": "S", "HB": "RB", "LE": "EDGE", "RE": "EDGE", "DT": "DL", "SS": "S",
@@ -117,55 +118,63 @@ df.loc[df['archetype'] == 'OLB_PowerRusher', 'position'] = 'EDGE'
 df.loc[df['archetype'] == 'DE_PowerRusher', 'position'] = 'DL'
 df.loc[df['archetype'] == 'DE_RunStopper', 'position'] = 'DL'
 
+# df.loc[(df['position'] == 'OT') & ~('OT' not in (df['archetype'])), 'archetype'] = 'OT_Agile'
+
 df.rename(columns=key_map, inplace=True)
 
 # Group the data by the "position" field
-# grouped_df_pos = df.groupby(["position", "archetype"])
-grouped_df_pos = df.groupby("position")
+grouped_df_pos = df.groupby(["position", "archetype"])
+grouped_df_pos_null = df.groupby("position")
+
+group_list = [grouped_df_pos, grouped_df_pos_null]
+
+# grouped_df_pos = df.groupby("position")
 
 position_results = []
 
-for name, group in grouped_df_pos:
+for group_df in group_list:
+    for name, group in group_df:
 
-    if type(name) == str:
-        position = name
-        archetype = ''
-    else:
-        position = name[0]
-        archetype = name[1]
+        if type(name) == str:
+            position = name
+            archetype = f'{position}_Balanced'
+        else:
+            position = name[0]
+            archetype = name[1]
 
-    relevant_skills_x = group[[col for col in group.columns if col.startswith(
-        tuple(position_skill_group_map[position]))]]
-    all_skills_x = group[[col for col in group.columns if col.startswith(
-        tuple(all_skill_groups))]]
-    # Select the overall rating column as the target variable
-    y = group["overall_rating"]
+        relevant_skills_x = group[[col for col in group.columns if col.startswith(
+            tuple(position_skill_group_map[position]))]]
+        all_skills_x = group[[col for col in group.columns if col.startswith(
+            tuple(all_skill_groups))]]
+        # Select the overall rating column as the target variable
+        y = group["overall_rating"]
 
-    # Create a linear regression object
-    reg = Ridge()
+        # Create a linear regression object
+        # reg = Ridge()
+        reg = Ridge(alpha=0.65, positive=True)
 
-    # Fit the model using the selected columns
-    reg.fit(relevant_skills_x, y)
+        # Fit the model using the selected columns
+        reg.fit(relevant_skills_x, y)
 
-    position_dict = {
-        'position': position,
-        'archetype': archetype,
-        'skills': {}
-    }
+        position_dict = {
+            'position': position,
+            'archetype': archetype,
+            'skills': {}
+        }
 
-    coef_mapped = dict(zip(relevant_skills_x.columns, reg.coef_))
-    mean_mapped = dict(zip(all_skills_x.columns, all_skills_x.mean()))
-    std_mapped = dict(zip(all_skills_x.columns, all_skills_x.std()))
-    # quan_mapped = dict(zip(all_skills_x.columns, all_skills_x.quantile(.25)))
+        coef_mapped = dict(zip(relevant_skills_x.columns, reg.coef_))
+        mean_mapped = dict(zip(all_skills_x.columns, all_skills_x.mean()))
+        std_mapped = dict(zip(all_skills_x.columns, all_skills_x.std()))
+        # quan_mapped = dict(zip(all_skills_x.columns, all_skills_x.quantile(.25)))
 
-    for data, key in [(coef_mapped, 'original_ovr_weight'), (mean_mapped, 'mean'), (std_mapped, 'std')]:
-        for field in data:
-            if field not in position_dict['skills']:
-                position_dict['skills'][field] = {}
+        for data, key in [(coef_mapped, 'original_ovr_weight'), (mean_mapped, 'mean'), (std_mapped, 'std')]:
+            for field in data:
+                if field not in position_dict['skills']:
+                    position_dict['skills'][field] = {}
 
-            position_dict['skills'][field][key] = round(data[field], 2)
+                position_dict['skills'][field][key] = round(data[field], 2)
 
-    position_results.append(position_dict)
+        position_results.append(position_dict)
 
 output_list = []
 saved_keys = ['position', 'archetype']
@@ -208,7 +217,8 @@ for position_dict in position_results:
     output_list.append(position_dict)
 
 # print(json.dumps(output_list, indent=2))
-out_file_location = 'pro/frontend/static/data/import_json/player_overall_coefficients.json'
+out_file_location = 'pro/frontend/static/data/import_json/player_archetype_overall_coefficients.json'
+out_file_location = '../../pro/frontend/static/data/import_json/player_archetype_overall_coefficients.json'
 with open(out_file_location, 'w') as file:
     json.dump(output_list, file, indent=2)
     # json.dump(output_list, file, separators=(',', ':'))

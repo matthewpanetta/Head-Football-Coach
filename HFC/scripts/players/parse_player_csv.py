@@ -200,6 +200,8 @@ with open('scripts/players/Player input - Sheet1.csv', 'r') as f:
             'ratings': player_pos_obj.get('current_player_team_season', {}).get('ratings')
         }
 
+        row['archetype'] = player_pos_obj.get('archetype', f'{row["position"]}_Balanced')
+
         del row['team']
         del row['age']
         del row['puid']
@@ -213,8 +215,8 @@ with open('scripts/players/Player input - Sheet1.csv', 'r') as f:
 
 missing_players = sorted(
     missing_players, key=lambda p: (int(p['player'].get('draft_info', {}).get('overall_pick', 1000)), -1 * int(p['player']['value'])), reverse=True)
-print(json.dumps([{'name': p['player']['name'], 'position': p['player']['position'], 'years_pro': int(
-    p['player'].get('years pro', 0)), 'player_pos_obj': len(p['player_pos_obj']), 'player_obj_list': len(p['player_obj_list']), 'drafted': p['player'].get('draft_info')} for p in missing_players], indent=2))
+# print(json.dumps([{'name': p['player']['name'], 'position': p['player']['position'], 'years_pro': int(
+#     p['player'].get('years pro', 0)), 'player_pos_obj': len(p['player_pos_obj']), 'player_obj_list': len(p['player_obj_list']), 'drafted': p['player'].get('draft_info')} for p in missing_players], indent=2))
 
 data = sorted(
     data, key=lambda x: x['current_player_team_season']['target_overall'], reverse=True)

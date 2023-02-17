@@ -12,21 +12,22 @@
         <col style='width: 5.625rem;'>
         {% endif %}
 
+      {#
+        Move OVR to player group
+        Create body group from hgt + wgt
+        move awareness to intangibles
+      #}
+
       <!-- BASELINE -->
       <col style='width:  1.875rem;'>
       <col style='width: 9.375rem;'>
       <col>
       <col>
-      <col>
-      <col>
 
       {% if column_controls.Personal.personal.shown %}
         <!-- PERSONAL -->
-        <col style='width: 7.5rem;'>
-      {% endif %}
-
-      {% if column_controls.Personal.recruiting.shown %}
-        <!-- PERSONAL -->
+        <col>
+        <col>
         <col style='width: 7.5rem;'>
       {% endif %}
 
@@ -146,7 +147,7 @@
         <col>
       {% endif %}
 
-      {% if column_controls.Ratings.overall.shown %}
+      {% if column_controls.Ratings.intangibles.shown %}
         <!-- OVERALL RATINGS -->
         <col>
         <col>
@@ -159,16 +160,11 @@
           <th colspan='2' style='width: 9.375rem;' class='center-text col-group'>Team</th>
           {% endif %}
 
-          <th colspan='6' style='width: 25.625rem;' class='center-text col-group'>Player</th>
+          <th colspan='5' style='width: 25.625rem;' class='center-text col-group'>Player</th>
 
           {% if column_controls.Personal.personal.shown %}
             <!-- PERSONAL -->
-            <th colspan='1' style='width:  7.5rem;' class='center-text col-group'>Personal Info</th>
-          {% endif %}
-
-          {% if column_controls.Personal.recruiting.shown %}
-            <!-- PERSONAL -->
-            <th colspan='2' style='width:  7.5rem;' class='col-group'>Recruiting</th>
+            <th colspan='3' style='width:  17.5rem;' class='center-text col-group'>Personal Info</th>
           {% endif %}
 
           {% if column_controls.Stats.games.shown %}
@@ -206,9 +202,9 @@
             <th colspan='4'  style='width: 15rem;' class='col-group '>Kicking Stats</th>
           {% endif %}
 
-          {% if column_controls.Ratings.overall.shown %}
+          {% if column_controls.Ratings.intangibles.shown %}
             <!-- AWRDAS STATS -->
-            <th colspan='2'  style='width: 7.5rem;' class='col-group '>Overall Ratings</th>
+            <th colspan='2'  style='width: 7.5rem;' class='col-group '>Intangible Ratings</th>
           {% endif %}
           
           {% if column_controls.Ratings.passing.shown %}
@@ -257,24 +253,15 @@
           <th style='width: 1.875rem; left: 0rem;' class='sticky-column'></th>
           <th style='width: 9.375rem; left: 1.875rem;' class='left-text sticky-column' value-key='full_name' sort-order='sort-asc'>Name</th>
           <th value-key='player_team_season.position_sort_order' sort-order='sort-asc'>Pos</th>
-          <th value-key='player_team_season.age' sort-order='sort-desc'>Age</th>
-          <th value-key='body.height_inches'>Ht</th>
-          <th class='col-group' value-key='body.weight'>Wt</th>
+          <th value-key='player_team_season.ratings.overall.overall' sort-order='sort-desc'>Ovr</th>
+          <th value-key='player_team_season.age' class='col-group' sort-order='sort-desc'>Age</th>
 
           {% if column_controls.Personal.personal.shown %}
             <!-- PERSONAL -->
+            <th style='width:  5rem;' value-key='body.height_inches'>Hgt</th>
+            <th style='width:  5rem;' value-key='body.weight'>Wt</th>
             <th style='width:  7.5rem;' class='col-group left-text' value-key='college'>
               College
-            </th>
-          {% endif %}
-
-          {% if column_controls.Personal.recruiting.shown %}
-            <!-- PERSONAL -->
-            <th style='width:  3.75rem;' class='' value-key='recruiting.national_rank'>
-              Rank
-            </th>
-            <th style='width:  3.75rem;' class='col-group' value-key='recruiting.national_rank'>
-              Other
             </th>
           {% endif %}
 
@@ -341,10 +328,10 @@
             <th class='col-group' value-key='player_team_season.season_stats.punting.within_20'> W20 </th>
           {% endif %}
 
-          {% if column_controls.Ratings.overall.shown %}
+          {% if column_controls.Ratings.intangibles.shown %}
             <!-- AWRDAS STATS -->
-            <th value-key='player_team_season.ratings.overall.overall'>Ovr</th>
-            <th class='col-group' value-key='player_team_season.ratings.intangibles.awareness'>Awr</th>
+            <th value-key='player_team_season.ratings.intangibles.awareness'>Awr</th>
+            <th class='col-group' value-key='player_team_season.ratings.intangibles.play_recognition'>Rec</th>
           {% endif %}
 
           {% if column_controls.Ratings.passing.shown %}
@@ -450,25 +437,17 @@
                 {{player.position}}
               </div>
             </td>
-            <td>{{player.player_team_season.age}}</td>
-            <td>{{player.body.height}}</td>
-            <td class='col-group'>{{player.body.weight}}</td>
+            <td>{{player.player_team_season.ratings.overall.overall|NumberToGradeBadge(100)|safe}}</td>
+            <td class="col-group">{{player.player_team_season.age}}</td>
+            
 
             {% if column_controls.Personal.personal.shown %}
               <!-- PERSONAL -->
+              <td>{{player.body.height}}</td>
+              <td class='col-group'>{{player.body.weight}}</td>
               <td style='width:  7.5rem;' class="col-group left-text">
                 <i class="fa fa-map-marker-alt geo-marker" style='padding-right: 0.5rem;' city='{{player.college}}' state='{{player.college}}'></i>
                 <span>{{player.college}}</span>
-              </td>
-            {% endif %}
-
-            {% if column_controls.Personal.recruiting.shown %}
-              <!-- PERSONAL -->
-              <td style='width:  3.75rem;' class="">
-                {{player.recruiting.national_rank}}
-              </td>
-              <td style='width:  3.75rem;' class="col-group">
-                Other
               </td>
             {% endif %}
 
@@ -535,10 +514,10 @@
               <td class='col-group'>{{player.player_team_season.season_stats.punting.within_20|OrZero}}</td>
             {% endif %}
 
-            {% if column_controls.Ratings.overall.shown %}
+            {% if column_controls.Ratings.intangibles.shown %}
               <!-- THROWING RATINGS -->
-              <td>{{player.player_team_season.ratings.overall.overall|NumberToGradeBadge(100)|safe}}</td>
-              <td class='col-group'>{{player.player_team_season.ratings.intangibles.awareness|NumberToGradeBadge(100)|safe}}</td>
+              <td>{{player.player_team_season.ratings.intangibles.awareness|NumberToGradeBadge(100)|safe}}</td>
+              <td class='col-group'>{{player.player_team_season.ratings.intangibles.play_recognition|NumberToGradeBadge(100)|safe}}</td>
             {% endif %}
 
             {% if column_controls.Ratings.passing.shown %}

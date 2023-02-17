@@ -7,6 +7,7 @@ import {
   world,
   team_game,
   team,
+  period,
   league_season,
   team_season_stats,
   team_season,
@@ -320,12 +321,13 @@ export const db_collection_list = [
     options: { proto: phase, unique: ["phase_id"], indices: ["season"] },
   },
   { collection_name: "week", options: { proto: week, unique: ["week_id"], indices: ["season"] } },
+  { collection_name: "period", options: { proto: period, unique: ["period_id"], indices: ["season"] } },
   {
     collection_name: "team_game",
     options: {
       proto: team_game,
       unique: ["team_game_id"],
-      indices: ["game_id", "team_season_id", "week_id"],
+      indices: ["game_id", "team_season_id", "period_id"],
     },
   },
   {
@@ -336,18 +338,18 @@ export const db_collection_list = [
       indices: ["team_game_id", "player_team_season_id"],
     },
   },
-  { collection_name: "game", options: { proto: game, unique: ["game_id"], indices: ["week_id"] } },
+  { collection_name: "game", options: { proto: game, unique: ["game_id"], indices: ["period_id"] } },
   {
     collection_name: "award",
     options: {
       proto: award,
       unique: ["award_id"],
-      indices: ["player_team_season_id", "week_id", "season"],
+      indices: ["player_team_season_id", "period_id", "season"],
     },
   },
   {
     collection_name: "headline",
-    options: { proto: headline, unique: ["headline_id"], indices: ["week_id"] },
+    options: { proto: headline, unique: ["headline_id"], indices: ["period_id"] },
   },
 ];
 
