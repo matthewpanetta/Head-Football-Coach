@@ -143,18 +143,18 @@ export const team_header_links = (params) => {
 export const recent_games = (common) => {
   const season = common.season;
   const db = common.db;
-  const all_weeks = db.week.find({ season: season });
-  const current_week = all_weeks.filter((w) => w.is_current)[0];
+  const all_periods = db.period.find({ season: season });
+  const current_period = all_periods.filter((w) => w.is_current)[0];
 
-  const all_weeks_by_week_id = index_group_sync(all_weeks, "index", "week_id");
+  const all_periods_by_period_id = index_group_sync(all_periods, "index", "period_id");
 
-  const previous_week = all_weeks_by_week_id[current_week.week_id - 1];
+  const previous_period = all_periods_by_period_id[current_period.period_id - 1];
 
-  if (previous_week == undefined) {
+  if (previous_period == undefined) {
     return null;
   }
 
-  var games_in_week = db.game.find({ week_id: previous_week.week_id });
+  var games_in_period = db.game.find({ period_id: previous_period.period_id });
 
   const team_seasons_b = db.team_season.find({ season: season });
   const team_seasons = team_seasons_b.filter((ts) => ts.team_id > 0);
@@ -163,7 +163,7 @@ export const recent_games = (common) => {
   const teams = db.team.find({ team_id: { $gt: 0 } });
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
-  const team_games = db.team_game.find({ week_id: previous_week.week_id });
+  const team_games = db.team_game.find({ period_id: previous_period.period_id });
   for (var team_game of team_games) {
     team_game.team_season = team_seasons_by_team_season_id[team_game.team_season_id];
     team_game.team_season.team = teams_by_team_id[team_game.team_season.team_id];
@@ -171,7 +171,7 @@ export const recent_games = (common) => {
 
   const team_games_by_game_id = index_group_sync(team_games, "group", "game_id");
   var min_power_rank = 0;
-  for (var game of games_in_week) {
+  for (var game of games_in_period) {
     game.team_games = team_games_by_game_id[game.game_id];
 
     let max_power_rank = 0;
@@ -190,7 +190,7 @@ export const recent_games = (common) => {
       max_power_rank;
   }
 
-  games_in_week = games_in_week.sort(function (g_a, g_b) {
+  games_in_period = games_in_period.sort(function (g_a, g_b) {
     if (g_a.has_user_team) return -1;
     if (g_b.has_user_team) return 1;
     if (g_a.summed_power_rank < g_b.summed_power_rank) return -1;
@@ -198,7 +198,7 @@ export const recent_games = (common) => {
     return 0;
   });
 
-  return games_in_week;
+  return games_in_period;
 };
 
 export const all_teams = async (common, link_suffix) => {

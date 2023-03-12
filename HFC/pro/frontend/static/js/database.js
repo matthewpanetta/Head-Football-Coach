@@ -2,7 +2,6 @@ import {
   headline,
   award,
   player_team_game,
-  week,
   phase,
   world,
   team_game,
@@ -12,6 +11,7 @@ import {
   team_season_stats,
   team_season,
   day,
+  event,
   coach,
   coach_team_season,
   player,
@@ -265,7 +265,8 @@ export const db_collection_list = [
     options: { proto: league_season, unique: ["season"], indices: [] },
   },
   { collection_name: "team", options: { proto: team, unique: ["team_id"], indices: [] } },
-  { collection_name: "day", options: { proto: day, unique: ["date_display"], indices: [] } },
+  { collection_name: "day", options: { proto: day, unique: ["day_id"], indices: [] } },
+  { collection_name: "event", options: { proto: event, unique: ["event_id"], indices: ['day_id'] } },
   {
     collection_name: "team_season",
     options: { proto: team_season, unique: ["team_season_id"], indices: ["team_id", "season"] },
@@ -320,7 +321,6 @@ export const db_collection_list = [
     collection_name: "phase",
     options: { proto: phase, unique: ["phase_id"], indices: ["season"] },
   },
-  { collection_name: "week", options: { proto: week, unique: ["week_id"], indices: ["season"] } },
   { collection_name: "period", options: { proto: period, unique: ["period_id"], indices: ["season"] } },
   {
     collection_name: "team_game",

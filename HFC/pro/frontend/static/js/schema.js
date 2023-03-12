@@ -355,18 +355,26 @@ export class player_team_game {
   }
 }
 
-export class day {
-  constructor(date, is_current) {
-    
-    this.date = new Date(date);
-    this.is_current = is_current;
-    this.date_display = this.date.toISOString().slice(0,10)
-    this.day_of_week = day_of_week_map[this.date.getDay()];
-    this.day_of_week_short = day_of_week_map[this.date.getDay()].slice(0,3);
+export class event {
+  constructor(event_id, event_name, day_id){
+    this.event_id = event_id;
+    this.event_name = event_name;
+    this.day_id = day_id;
+  }
+}
 
-    let next_date = new Date(this.date)
-    next_date.setDate(next_date.getDate() + 1);
-    this.next_date_display = next_date.toISOString().slice(0,10);
+export class day {
+  constructor(date, season, is_current) {
+    
+    this.date = date;
+    this.season = season;
+    this.is_current = is_current;
+    this.day_id = date.format('YYYY-MM-DD')
+    this.day_of_week = day_of_week_map[date.day()];
+    this.day_of_week_short = day_of_week_map[date.day()].slice(0,3);
+
+    let next_date = date.add(1, 'day')
+    this.next_date_display = next_date.format('YYYY-MM-DD')
   }
 }
 
@@ -379,18 +387,6 @@ export class period {
 
   get period_href() {
     return `/World/${this.world_id}/Period/${this.short_name}`;
-  }
-}
-
-export class week {
-  constructor() {}
-
-  get world_href() {
-    return `/World/${this.world_id}/`;
-  }
-
-  get week_href() {
-    return `/World/${this.world_id}/Week/${this.short_name}`;
   }
 }
 
