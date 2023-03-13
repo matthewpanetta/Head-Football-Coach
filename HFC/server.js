@@ -2,11 +2,9 @@ const fs = require("fs");
 const path = require("path");
 
 const express = require("express");
-const college_app = express();
-const pro_app = express();
+const app = express();
 
-const college_port = 5515;
-const pro_port = 1151;
+const port = 5515;
 
 //NODE_ENV='dev' node server.js 
 
@@ -83,48 +81,32 @@ const send_url = (req, res, level) => {
 		send_file(res, __dirname + `/` + req.url.substr(1));
 	}
 	else {
-		console.log('Sending file', `/${level}/frontend/` + req.url.substr(1), 'with cache time', cache_time)
-		send_file(res, __dirname + `/${level}/frontend/` + req.url.substr(1));
+		console.log('Sending file', `/src/` + req.url.substr(1), 'with cache time', cache_time)
+		send_file(res, __dirname + `/src/` + req.url.substr(1));
 	}
 };
 const send_index = (req, res, level) => {
-	console.log('sending file', __dirname + `/${level}/frontend/static/html_templates/index/index/base.html`)
-	send_file(res, __dirname + `/${level}/frontend/static/html_templates/index/index/base.html`);
+	console.log('sending file', __dirname + `/src/html_templates/index/index/base.html`)
+	send_file(res, __dirname + `/src/html_templates/index/index/base.html`);
 };
 
-pro_app.get('*', (req, res) => {
+app.get('*', (req, res) => {
 	console.log()
 	console.log('req.url', req.url, 'from', __dirname)
 	
 	let url_suffix_list = [3,4,5,6].map(len => req.url.substring(req.url.length - len))
 
 	if (url_suffix_list.some(suffix_option => static_suffix.has(suffix_option))) {
-		send_url(req, res, 'pro');
+		send_url(req, res, 'src');
 	} else {
-		send_index(req, res, 'pro');
+		send_index(req, res, 'src');
 	}
 });
 
-college_app.get('*', (req, res) => {
-	console.log()
-	console.log('req.url', req.url, 'from', __dirname)
-	
-	let url_suffix_list = [3,4,5,6].map(len => req.url.substring(req.url.length - len))
-
-	if (url_suffix_list.some(suffix_option => static_suffix.has(suffix_option))) {
-		send_url(req, res, 'college');
-	} else {
-		send_index(req, res, 'college');
-	}
-});
-
-pro_app.listen(pro_port, () =>
-  console.log("Pro server running on port", pro_port, " from ", __dirname)
+app.listen(port, () =>
+  console.log("Server running on port", port, " from ", __dirname)
 );
 
-college_app.listen(college_port, () =>
-  console.log("College server running on port", college_port, " from ", __dirname)
-);
 
 fs.readdir(__dirname, (err, files) => {
   if (err) {
