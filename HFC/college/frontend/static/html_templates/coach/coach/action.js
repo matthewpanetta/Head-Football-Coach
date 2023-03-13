@@ -215,7 +215,7 @@ const getHtml = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/coach/coach/template.njk";
+  var url = "/html_templates/coach/coach/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

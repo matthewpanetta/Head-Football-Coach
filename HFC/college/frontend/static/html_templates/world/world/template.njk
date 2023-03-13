@@ -1,13 +1,13 @@
 <div class='ext_nav_bar'>
-  {% include "../../static/html_templates/common_templates/ext_nav_bar.njk" %}
+  {% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
 </div>
 
-{% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
 
 <body>
   <div class="PageContent">
     <div class='worldHeader w3-row background-eee'>
-      {% include "../../static/html_templates/common_templates/scoreboard.njk" %}
+      {% include "../../html_templates/common_templates/scoreboard.njk" %}
     </div>
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
@@ -100,7 +100,7 @@
               </div>
               <div class="flex-3 m-2" id='info-col'>
                 {% if this_week_games | length > 0 %}
-                  {% include "../../static/html_templates/world/world/info_col_season.njk" %}
+                  {% include "../../html_templates/world/world/info_col_season.njk" %}
                 {% elif current_week.week_name == 'Season Recap' %}
                   <div class="card margin-bottom-12">
                     <div class="w3-bar team-primary-background-bar">

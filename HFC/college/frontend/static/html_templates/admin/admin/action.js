@@ -12,7 +12,7 @@ const getHtml = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/admin/admin/template.njk";
+  var url = "/html_templates/admin/admin/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

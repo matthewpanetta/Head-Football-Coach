@@ -1,4 +1,4 @@
-import { init_basic_table_sorting } from "/static/js/football-table/football-table.js";
+import { init_basic_table_sorting } from "/js/football-table/football-table.js";
 import {
   index_group_sync,
   get,
@@ -16,8 +16,8 @@ import {
   deep_copy,
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { draw_player_faces, draw_coach_faces } from "/static/js/faces.js";
-import { conference_standings, team_header_links, all_teams } from "/static/js/widgets.js";
+import { draw_player_faces, draw_coach_faces } from "/js/faces.js";
+import { conference_standings, team_header_links, all_teams } from "/js/widgets.js";
 
 const action = async (common) => {
   const query_to_dict = common.query_to_dict;
@@ -35,14 +35,14 @@ const PopulateTeamSchedule = async (common) => {
     original_data: games,
     subject: "team schedule",
     templates: {
-      table_template_url: "/static/html_templates/team/schedule/team_schedule_table_template.njk",
+      table_template_url: "/html_templates/team/schedule/team_schedule_table_template.njk",
     },
     dom: {
       table_dom_selector: "#team-schedule-container",
     },
   };
 
-  var url = "/static/html_templates/team/schedule/team_schedule_table_template.njk";
+  var url = "/html_templates/team/schedule/team_schedule_table_template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -279,7 +279,7 @@ export const page_team_schedule = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/team/schedule/template.njk";
+  var url = "/html_templates/team/schedule/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

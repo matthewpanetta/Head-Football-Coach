@@ -221,9 +221,9 @@ missing_players = sorted(
 data = sorted(
     data, key=lambda x: x['current_player_team_season']['target_overall'], reverse=True)
 
-with open('pro/frontend/static/data/import_json/players.json', 'w') as file:
+with open('pro/frontend/data/import_json/players.json', 'w') as file:
     json.dump(data, file, indent=2)
     # json.dump(data, file, separators=(',', ':'))
 
 print('File with', len(data),
-      'players successfully written to pro/frontend/static/data/import_json/players.json')
+      'players successfully written to pro/frontend/data/import_json/players.json')

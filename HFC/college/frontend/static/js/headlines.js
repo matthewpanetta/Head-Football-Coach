@@ -1,4 +1,4 @@
-import {headline} from '/static/js/schema.js'
+import {headline} from '/js/schema.js'
 
 export const generate_game_headlines = (game_dict, common) => {
   var game_headlines = [];

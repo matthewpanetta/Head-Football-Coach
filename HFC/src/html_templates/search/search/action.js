@@ -66,7 +66,7 @@ const getHtml = async (common) => {
 
   await console.log('render_content', render_content)
 
-  var url = '/static/html_templates/search/search/template.njk'
+  var url = '/html_templates/search/search/template.njk'
   var html = await fetch(url);
   html = await html.text();
 

@@ -19,7 +19,7 @@ import {
   game,
   conference,
   conference_season,
-} from "/static/js/schema.js";
+} from "/js/schema.js";
 import { index_group_sync } from "/common/js/utils.js";
 export const clone_method = "shallow-assign";
 
@@ -434,7 +434,7 @@ const populate_driver = async (ddb) => {
 
 const populate_names = async (ddb) => {
   console.log("in populate_names");
-  var url = "/static/data/import_json/names.json";
+  var url = "/data/import_json/names.json";
   var data = await fetch(url);
   var name_dimension = await data.json();
 
@@ -474,15 +474,15 @@ const populate_names = async (ddb) => {
 
 const populate_cities = async (ddb) => {
   console.log("in populate_cities");
-  var url = "/static/data/import_json/cities.json";
+  var url = "/data/import_json/cities.json";
   var data = await fetch(url);
   const city_dimension = await data.json();
 
-  var url = "/static/data/import_json/cities_2.json";
+  var url = "/data/import_json/cities_2.json";
   var data = await fetch(url);
   let city_dimension_2 = await data.json();
 
-  var url = "/static/data/import_json/states.json";
+  var url = "/data/import_json/states.json";
   var data = await fetch(url);
   const state_dimension = await data.json();
 

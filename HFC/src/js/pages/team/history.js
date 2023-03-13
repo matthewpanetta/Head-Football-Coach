@@ -1,6 +1,6 @@
 import { index_group_sync, nest_children } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { conference_standings, team_header_links, all_teams } from "/static/js/widgets.js";
+import { conference_standings, team_header_links, all_teams } from "/js/widgets.js";
 
 export const page_team_history = async (common) => {
   nunjucks.configure({ autoescape: true });
@@ -143,7 +143,7 @@ export const page_team_history = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/team/history/template.njk";
+  var url = "/html_templates/team/history/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

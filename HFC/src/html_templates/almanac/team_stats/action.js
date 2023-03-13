@@ -57,7 +57,7 @@ const getHtml = async (common) => {
   common.render_content = render_content;
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/almanac/team_stats/template.njk";
+  var url = "/html_templates/almanac/team_stats/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -92,11 +92,11 @@ const draw_team_stats = async (common) => {
     display_team: true,
     templates: {
       table_template_url:
-        "/static/html_templates/common_templates/football-table/team_table_template.njk",
+        "/html_templates/common_templates/football-table/team_table_template.njk",
       filter_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_filter_template.njk",
+        "/html_templates/common_templates/football-table/player_table_filter_template.njk",
       column_control_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_column_control_template.njk",
+        "/html_templates/common_templates/football-table/player_table_column_control_template.njk",
     },
     dom: {
       filter_dom_selector: "#team-stats-table-filter",

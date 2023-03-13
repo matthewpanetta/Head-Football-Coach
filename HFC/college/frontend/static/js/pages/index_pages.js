@@ -1,6 +1,6 @@
-import { world_options } from "/static/js/metadata.js";
+import { world_options } from "/js/metadata.js";
 import {nunjucks_env} from '/common/js/nunjucks_tags.js'
-import { get_databases_references, create_new_db, prune_orphaned_databases, truncate_databases } from "/static/js/database.js";
+import { get_databases_references, create_new_db, prune_orphaned_databases, truncate_databases } from "/js/database.js";
 
 export const page_index_action = async (common) => {
   const ddb = await common.ddb;
@@ -187,7 +187,7 @@ export const page_index = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/index/index/template.njk";
+  var url = "/html_templates/index/index/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

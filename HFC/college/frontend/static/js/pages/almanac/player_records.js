@@ -12,8 +12,8 @@ import {
   init_basic_table_sorting,
   initialize_football_table,
 } from "/common/js/football-table/football-table.js";
-import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
-import { class_order_map, position_order_map, position_group_map } from "/static/js/metadata.js";
+import { draw_player_faces, player_face_listeners } from "/js/faces.js";
+import { class_order_map, position_order_map, position_group_map } from "/js/metadata.js";
 
 export const page_almanac_player_records = async (common) => {
   const db = common.db;
@@ -150,7 +150,7 @@ export const page_almanac_player_records = async (common) => {
   common.render_content = render_content;
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/almanac/player_records/template.njk";
+  var url = "/html_templates/almanac/player_records/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -210,7 +210,7 @@ export const page_almanac_player_records = async (common) => {
     "player_team_season_id"
   );
 
-  var season_url = "/static/html_templates/almanac/player_records/season_records.njk";
+  var season_url = "/html_templates/almanac/player_records/season_records.njk";
   var season_html = await fetch(season_url);
   season_html = await season_html.text();
 
@@ -326,7 +326,7 @@ export const page_almanac_player_records = async (common) => {
     console.log({ player_leader_categories: player_leader_categories });
 
     console.log("CLICKED ON tab");
-    var url = "/static/html_templates/almanac/player_records/game_records.njk";
+    var url = "/html_templates/almanac/player_records/game_records.njk";
     var html = await fetch(url);
     html = await html.text();
 
@@ -414,7 +414,7 @@ export const page_almanac_player_records = async (common) => {
 
     console.log({ players: players });
 
-    var url = "/static/html_templates/almanac/player_records/career_records.njk";
+    var url = "/html_templates/almanac/player_records/career_records.njk";
     var html = await fetch(url);
     html = await html.text();
 

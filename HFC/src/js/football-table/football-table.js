@@ -1,6 +1,6 @@
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { get_from_dict, distinct, index_group_sync } from "/common/js/utils.js";
-import { populate_player_modal, geo_marker_action} from "/static/js/modals.js";
+import { populate_player_modal, geo_marker_action} from "/js/modals.js";
 
 export const init_basic_table_sorting = (common, table_id, initial_sort_index) => {
   var data = [];

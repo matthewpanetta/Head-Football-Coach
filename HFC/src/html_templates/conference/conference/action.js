@@ -247,7 +247,7 @@ const getHtml = async (common) => {
   common.render_content = render_content;
   console.log(render_content);
 
-  var url = "/static/html_templates/conference/conference/template.njk";
+  var url = "/html_templates/conference/conference/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

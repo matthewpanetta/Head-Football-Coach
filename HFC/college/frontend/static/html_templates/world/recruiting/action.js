@@ -61,7 +61,7 @@ const getHtml = async (common) => {
   common.page = render_content.page;
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/world/recruiting/template.njk";
+  var url = "/html_templates/world/recruiting/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -175,11 +175,11 @@ const GetPlayerStats = async (common) => {
     subject: "recruiting",
     templates: {
       table_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_template.njk",
+        "/html_templates/common_templates/football-table/player_table_template.njk",
       filter_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_filter_template.njk",
+        "/html_templates/common_templates/football-table/player_table_filter_template.njk",
       column_control_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_column_control_template.njk",
+        "/html_templates/common_templates/football-table/player_table_column_control_template.njk",
     },
     dom: {
       filter_dom_selector: "#player-stats-table-filter",

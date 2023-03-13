@@ -8,9 +8,9 @@ import {
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { init_basic_table_sorting } from "/common/js/football-table/football-table.js";
-import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
+import { draw_player_faces, player_face_listeners } from "/js/faces.js";
 import { init_json_edit } from "/common/js/json-edit/json-edit.js";
-import { conference_standings } from "/static/js/widgets.js";
+import { conference_standings } from "/js/widgets.js";
 
 export const page_game = async (common) => {
   nunjucks.configure({ autoescape: true });
@@ -653,7 +653,7 @@ export const page_game = async (common) => {
   common.render_content = render_content;
   console.log(render_content);
 
-  var url = "/static/html_templates/game/game/template.njk";
+  var url = "/html_templates/game/game/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

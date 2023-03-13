@@ -246,7 +246,7 @@ export const display_player_face = async (face, overrides, dom_id) => {
   ];
 
   if (!window.svgs) {
-    var url = `/static/data/import_json/svgs.json`;
+    var url = `/data/import_json/svgs.json`;
     var html = await fetch(url);
     window.svgs = await html.json();
   }

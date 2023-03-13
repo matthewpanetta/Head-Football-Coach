@@ -16,8 +16,8 @@ import {
   elem_in,
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { draw_player_faces, player_face_listeners, draw_coach_faces } from "/static/js/faces.js";
-import { conference_standings, team_header_links } from "/static/js/widgets.js";
+import { draw_player_faces, player_face_listeners, draw_coach_faces } from "/js/faces.js";
+import { conference_standings, team_header_links } from "/js/widgets.js";
 
 function ResArrowSize() {
   $("#addedStyle").remove();
@@ -386,7 +386,7 @@ export const page_team = async (common) => {
   common.render_content = render_content;
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/team/team/template.njk";
+  var url = "/html_templates/team/team/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -598,7 +598,7 @@ const team_action = async (common) => {
       }
     }
 
-    var url = "/static/html_templates/team/team/conference_standings_tbody_template.njk";
+    var url = "/html_templates/team/team/conference_standings_tbody_template.njk";
     var html = await fetch(url);
     html = await html.text();
 
@@ -611,7 +611,7 @@ const team_action = async (common) => {
 
     $("#conference_standings_div").append(renderedHtml);
 
-    var url = "/static/html_templates/team/team/team_leaders_div_template.njk";
+    var url = "/html_templates/team/team/team_leaders_div_template.njk";
     var html = await fetch(url);
     html = await html.text();
 
@@ -623,7 +623,7 @@ const team_action = async (common) => {
 
     $("#team_leaders").append(renderedHtml);
 
-    var url = "/static/html_templates/team/team/team_stats_div_template.njk";
+    var url = "/html_templates/team/team/team_stats_div_template.njk";
     var html = await fetch(url);
     html = await html.text();
 
@@ -693,7 +693,7 @@ const team_action = async (common) => {
 
     //console.log({team:team})
 
-    var url = "/static/html_templates/team/team/team_info_div_template.njk";
+    var url = "/html_templates/team/team/team_info_div_template.njk";
     var html = await fetch(url);
     html = await html.text();
 
@@ -754,7 +754,7 @@ const team_action = async (common) => {
       page: common.render_content.page,
     };
 
-    var url = "/static/html_templates/team/team/team_coaches_div_template.njk";
+    var url = "/html_templates/team/team/team_coaches_div_template.njk";
     var html = await fetch(url);
     html = await html.text();
 
@@ -966,7 +966,7 @@ const team_action = async (common) => {
         r_b.record.scheduled_games - r_a.record.scheduled_games
     );
 
-    var url = "/static/html_templates/team/team/team_rivals_div_template.njk";
+    var url = "/html_templates/team/team/team_rivals_div_template.njk";
     var html = await fetch(url);
     html = await html.text();
 

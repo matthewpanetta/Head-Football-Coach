@@ -72,7 +72,7 @@
       common.render_content = render_content;
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/almanac/player_records/template.njk'
+      var url = '/html_templates/almanac/player_records/template.njk'
       var html = await fetch(url);
       html = await html.text();
 
@@ -111,7 +111,7 @@
       const player_team_seasons_by_player_team_season_id = index_group_sync(player_team_seasons, 'index', 'player_team_season_id')
 
 
-      var season_url = '/static/html_templates/almanac/player_records/season_records.njk'
+      var season_url = '/html_templates/almanac/player_records/season_records.njk'
       var season_html = await fetch(season_url);
       season_html = await season_html.text();
 
@@ -192,7 +192,7 @@
         console.log({player_leader_categories:player_leader_categories})
 
         console.log('CLICKED ON tab')
-        var url = '/static/html_templates/almanac/player_records/game_records.njk'
+        var url = '/html_templates/almanac/player_records/game_records.njk'
         var html = await fetch(url);
         html = await html.text();
 
@@ -252,7 +252,7 @@
 
         console.log({players:players})
 
-        var url = '/static/html_templates/almanac/player_records/career_records.njk'
+        var url = '/html_templates/almanac/player_records/career_records.njk'
         var html = await fetch(url);
         html = await html.text();
 

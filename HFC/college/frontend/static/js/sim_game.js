@@ -1,4 +1,4 @@
-import { generate_game_headlines } from "/static/js/headlines.js";
+import { generate_game_headlines } from "/js/headlines.js";
 import {
   index_group_sync,
   get,

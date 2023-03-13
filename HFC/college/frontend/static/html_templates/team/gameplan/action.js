@@ -478,7 +478,7 @@ const getHtml = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/team/gameplan/template.njk";
+  var url = "/html_templates/team/gameplan/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -497,7 +497,7 @@ const getHtml = async (common) => {
     }
     formation_subs_tab_clicked = true;
 
-    var url = "/static/html_templates/team/gameplan/div_formation_subs_template.njk";
+    var url = "/html_templates/team/gameplan/div_formation_subs_template.njk";
     var html = await fetch(url);
     html = await html.text();
 
@@ -589,7 +589,7 @@ const getHtml = async (common) => {
       7: 'Super Aggressive',
     }
 
-    var url = "/static/html_templates/team/gameplan/div_gameplan_template.njk";
+    var url = "/html_templates/team/gameplan/div_gameplan_template.njk";
     var html = await fetch(url);
     html = await html.text();
 

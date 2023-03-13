@@ -84,7 +84,7 @@
       common.render_content = render_content;
       console.log('render_content', render_content)
 
-      var url = '/static/html_templates/almanac/team_records/template.njk'
+      var url = '/html_templates/almanac/team_records/template.njk'
       var html = await fetch(url);
       html = await html.text();
 
@@ -148,7 +148,7 @@
         common.render_content.team_leader_categories = team_leader_categories;
 
         console.log({'common.render_content': common.render_content})
-        var url = '/static/html_templates/almanac/team_records/game_records.njk'
+        var url = '/html_templates/almanac/team_records/game_records.njk'
         var html = await fetch(url);
         html = await html.text();
 

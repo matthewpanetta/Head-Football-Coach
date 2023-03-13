@@ -15,9 +15,9 @@ import {
   deep_copy,
   ordinal,
 } from "/common/js/utils.js";
-import { init_basic_table_sorting } from "/static/js/football-table/football-table.js";
+import { init_basic_table_sorting } from "/js/football-table/football-table.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { recent_games } from "/static/js/widgets.js";
+import { recent_games } from "/js/widgets.js";
 
 export const page_world_rankings = async (common) => {
   const db = common.db;
@@ -149,7 +149,7 @@ export const page_world_rankings = async (common) => {
   common.render_content = render_content;
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/world/rankings/template.njk";
+  var url = "/html_templates/world/rankings/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -276,7 +276,7 @@ const PopulateTop25 = async (common) => {
 
   console.log("In PopulateTopTeams!", top_25_team_seasons);
 
-  let table_template_url = "/static/html_templates/world/rankings/ranking_table_template.njk";
+  let table_template_url = "/html_templates/world/rankings/ranking_table_template.njk";
   let table_html = await fetch(table_template_url);
   let table_html_text = await table_html.text();
 

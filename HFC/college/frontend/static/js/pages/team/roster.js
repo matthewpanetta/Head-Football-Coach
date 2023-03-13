@@ -1,7 +1,7 @@
 import { index_group_sync, nest_children } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { draw_player_faces, draw_coach_faces } from "/static/js/faces.js";
-import { conference_standings, team_header_links } from "/static/js/widgets.js";
+import { draw_player_faces, draw_coach_faces } from "/js/faces.js";
+import { conference_standings, team_header_links } from "/js/widgets.js";
 import { initialize_football_table } from "/common/js/football-table/football-table.js";
 import {
   class_order_map,
@@ -9,7 +9,7 @@ import {
   position_group_map,
   classes,
   position_groups,
-} from "/static/js/metadata.js";
+} from "/js/metadata.js";
 
 export const page_team_roster = async (common) => {
   nunjucks.configure({ autoescape: true });
@@ -159,7 +159,7 @@ export const page_team_roster = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/team/roster/template.njk";
+  var url = "/html_templates/team/roster/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -179,11 +179,11 @@ const GetPlayerStats = async (common) => {
     subject: "player stats",
     templates: {
       table_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_template.njk",
+        "/html_templates/common_templates/football-table/player_table_template.njk",
       filter_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_filter_template.njk",
+        "/html_templates/common_templates/football-table/player_table_filter_template.njk",
       column_control_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_column_control_template.njk",
+        "/html_templates/common_templates/football-table/player_table_column_control_template.njk",
     },
     dom: {
       filter_dom_selector: "#player-stats-table-filter",

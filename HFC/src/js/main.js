@@ -1,19 +1,19 @@
 import { nunjucks_env } from '../../../../../../../common/js/nunjucks_tags.js';
 import { index_group_sync, distance_between_coordinates, nest_children, deep_copy, weighted_random_choice, shuffle, round_decimal, normal_trunc, sum, average, get, distinct, set_intersect } from '../../../../../../../common/js/utils.js';
-import { init_basic_table_sorting } from '../../../../../../../static/js/football-table/football-table.js';
-import { team_game, conference, league_season, team, team_season, team_season_stats, coach, coach_team_season, player, player_team_season, player_team_season_stats, day, award } from '../../../../../../../static/js/schema.js';
-import { driver_db, resolve_db, create_new_db } from '../../../../../../../static/js/database.js';
-import { populate_player_modal, geo_marker_action } from '../../../../../../../static/js/modals.js';
-import { page_world, page_world_rankings, page_world_standings, page_world_schedule, page_world_awards } from '../../../../../../../static/js/pages/world_pages.js';
-import { page_team, page_team_schedule, page_team_roster, page_team_history } from '../../../../../../../static/js/pages/team_pages.js';
-import { page_player } from '../../../../../../../static/js/pages/player_pages.js';
-import { page_almanac_player_stats, page_almanac_history, page_almanac_player_records } from '../../../../../../../static/js/pages/almanac_pages.js';
-import { page_game } from '../../../../../../../static/js/pages/game_pages.js';
-import { page_index } from '../../../../../../../static/js/pages/index_pages.js';
-import { position_group_map } from '../../../../../../../static/js/metadata.js';
-import { generate_ranking_headlines } from '../../../../../../../static/js/headlines.js';
-import '../../../../../../../static/js/sim_game.js';
-import { draw_player_faces } from '../../../../../../../static/js/faces.js';
+import { init_basic_table_sorting } from '../../../../../../../js/football-table/football-table.js';
+import { team_game, conference, league_season, team, team_season, team_season_stats, coach, coach_team_season, player, player_team_season, player_team_season_stats, day, award } from '../../../../../../../js/schema.js';
+import { driver_db, resolve_db, create_new_db } from '../../../../../../../js/database.js';
+import { populate_player_modal, geo_marker_action } from '../../../../../../../js/modals.js';
+import { page_world, page_world_rankings, page_world_standings, page_world_schedule, page_world_awards } from '../../../../../../../js/pages/world_pages.js';
+import { page_team, page_team_schedule, page_team_roster, page_team_history } from '../../../../../../../js/pages/team_pages.js';
+import { page_player } from '../../../../../../../js/pages/player_pages.js';
+import { page_almanac_player_stats, page_almanac_history, page_almanac_player_records } from '../../../../../../../js/pages/almanac_pages.js';
+import { page_game } from '../../../../../../../js/pages/game_pages.js';
+import { page_index } from '../../../../../../../js/pages/index_pages.js';
+import { position_group_map } from '../../../../../../../js/metadata.js';
+import { generate_ranking_headlines } from '../../../../../../../js/headlines.js';
+import '../../../../../../../js/sim_game.js';
+import { draw_player_faces } from '../../../../../../../js/faces.js';
 import { dayjs } from '../../../../../../../common/js/dayjs.js';
 
 const nav_bar_links = async (common, data) => {
@@ -198,7 +198,7 @@ const nav_bar_links = async (common, data) => {
     },
     {
       GroupName: "World",
-      GroupDisplay: '<img src="/static/img/team_logos/ncaa-text.png" class="" alt="">',
+      GroupDisplay: '<img src="/img/team_logos/ncaa-text.png" class="" alt="">',
       GroupLinks: [
         {
           LinkDisplay: "Overview",
@@ -1132,7 +1132,7 @@ const assign_player_jersey_numbers = async (common, season) => {
   let player_team_seasons_to_save = [];
   let players_to_save = [];
 
-  var url = "/static/data/import_json/position_numbers.json";
+  var url = "/data/import_json/position_numbers.json";
   var json_data = await fetch(url);
   var all_position_numbers = await json_data.json();
 
@@ -1494,7 +1494,7 @@ const generate_player_ratings = async (common, world_id, season) => {
 
   player_team_seasons = nest_children(player_team_seasons, players_by_player_id, 'player_id', 'player');
 
-  var url = "/static/data/import_json/player_archetype_overall_coefficients.json";
+  var url = "/data/import_json/player_archetype_overall_coefficients.json";
   var json_data = await fetch(url);
   var player_overall_coefficients_list = await json_data.json();
   let player_overall_coefficients = index_group_sync(player_overall_coefficients_list, 'group', 'position');
@@ -1748,7 +1748,7 @@ const create_new_players_and_player_team_seasons = async (
   var player_team_season_id_counter = db.player_team_season.nextId("player_team_season_id");
 
   if (season == 2022){
-    var url = "/static/data/import_json/players.json";
+    var url = "/data/import_json/players.json";
     var data = await fetch(url);
     var player_list = await data.json();
 
@@ -2009,7 +2009,7 @@ const create_dates = async (common, season,
 const get_rivalries = async (teams) => {
   const team_names = teams.map((t) => t.team_location_name);
 
-  var url = "/static/data/import_json/rivalries.json";
+  var url = "/data/import_json/rivalries.json";
   var data = await fetch(url);
   var rival_dimension = await data.json();
 
@@ -2029,8 +2029,20 @@ const get_rivalries = async (teams) => {
   return rival_dimension;
 };
 
+const get_leagues = async () => {
+  var url = "/data/import_json/league.json";
+  var data = await fetch(url);
+  var leagues = await data.json();
+
+  leagues.forEach(function(l, ind){
+    l.league_id = ind + 1;
+  });
+
+  return leagues;
+};
+
 const get_teams = async () => {
-  var url = "/static/data/import_json/team.json";
+  var url = "/data/import_json/team.json";
   var data = await fetch(url);
   var teams = await data.json();
 
@@ -2059,7 +2071,7 @@ const get_teams = async () => {
 const get_conferences = async (conference_version) => {
   conference_version = conference_version || "";
 
-  var url = `/static/data/import_json/conference${conference_version}.json`;
+  var url = `/data/import_json/conference${conference_version}.json`;
   console.log({ url: url });
   var data = await fetch(url);
   var conferences = await data.json();
@@ -2090,7 +2102,7 @@ const random_name = async (ddb, num_names) => {
 };
 
 const random_college = async (ddb, num_colleges) => {
-  var playcall_url = "/static/data/import_json/colleges.json";
+  var playcall_url = "/data/import_json/colleges.json";
   var playcall_html = await fetch(playcall_url);
   let college_list = await playcall_html.json();
 
@@ -2188,7 +2200,7 @@ const resolve_route_parameters = async (pathname) => {
 
     { route: "/World/:world_id/Search/:search_keyword/", path: "search/search/base.html", group_name: 'Search', path: 'Overview' },
 
-    { route: "/static", path: "static" },
+    { route: "", path: "static" },
     { route: "*html_templates*", path: "url" },
     { route: "*js/modules*", path: "url" },
     { route: "/*", path: "url" },
@@ -4671,7 +4683,7 @@ const process_bowl_results = async (common) => {
 };
 
 const schedule_bowl_season = async (all_periods, common) => {
-  let bowl_url = `/static/data/import_json/bowls.json`;
+  let bowl_url = `/data/import_json/bowls.json`;
   let bowl_json = await fetch(bowl_url);
   let bowls = await bowl_json.json();
 
@@ -5296,6 +5308,11 @@ const new_world_action = async (common, database_suffix) => {
   common.db = db;
   common.season = season;
 
+  let leagues_from_json = await get_leagues();
+  db.league.insert(leagues_from_json);
+
+  let leagues_by_league_name = index_group_sync(leagues_from_json, 'index', 'league_name');
+
   var teams_from_json = await get_teams();
 
   var conferences_from_json = await get_conferences(database_suffix);
@@ -5308,6 +5325,7 @@ const new_world_action = async (common, database_suffix) => {
   $.each(conferences_from_json, function (ind, conf_data) {
     conf_data.world_id = world_id;
     conf_data.conference_id = ind + 1;
+    conf_data.league_id = leagues_by_league_name[conf_data.conference_name].league_id;
 
     conf_data.conference_color_primary_hex = conf_data.conference_color_primary_hex.replace(
       "#",
@@ -5721,7 +5739,7 @@ const new_world_action = async (common, database_suffix) => {
     return 0;
   });
   console.log({ teams: teams, "common.nunjucks_env": nunjucks_env });
-  var url = "/static/html_templates/index/index/choose_team_table_template.njk";
+  var url = "/html_templates/index/index/choose_team_table_template.njk";
   var html = await fetch(url);
   html = await html.text();
 

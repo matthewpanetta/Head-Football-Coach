@@ -676,7 +676,7 @@ export class team {
     }
   }
   build_team_logo(size_obj) {
-    var folder_prefix = "/static/img/team_logos/";
+    var folder_prefix = "/img/team_logos/";
     var size_suffix = "";
     if ("img_size" in size_obj) {
       size_suffix = "_" + size_obj["img_size"];
@@ -733,7 +733,7 @@ export class team {
     if (false && this.team_logo_url && this.team_logo_url.length > 0) {
       return this.team_logo_url;
     } else {
-      var folder_prefix = "/static/img/team_logos/";
+      var folder_prefix = "/img/team_logos/";
       var size_suffix = "";
 
       if (this.team_id < 0) {
@@ -2319,7 +2319,7 @@ export class conference {
   }
 
   get conference_logo() {
-    var folder_prefix = "/static/img/conference_logos/";
+    var folder_prefix = "/img/conference_logos/";
 
     if (this.conference_id < 0) {
       var path = folder_prefix + "ncaa.png";

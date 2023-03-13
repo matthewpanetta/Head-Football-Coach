@@ -1,5 +1,5 @@
 
-i = open('./college/frontend/static/img/team_logos/missouri_tigers.png', 'r')
+i = open('./college/frontend/img/team_logos/missouri_tigers.png', 'r')
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -26,22 +26,22 @@ mapping = {
 }
 
 logos = {
-    "Missouri": "./college/frontend/static/img/team_logos/missouri_tigers.png",
-    "Arkansas": "./college/frontend/static/img/team_logos/arkansas_razorbacks.png",
-    "Texas A&M": "./college/frontend/static/img/team_logos/texas_a_m_aggies.png",
-    "Texas": "./college/frontend/static/img/team_logos/texas_longhorns.png",
-    "Oklahoma": "./college/frontend/static/img/team_logos/oklahoma_sooners.png",
-    "LSU": "./college/frontend/static/img/team_logos/lsu_tigers.png",
-    "Ole Miss": "./college/frontend/static/img/team_logos/ole_miss_rebels.png",
-    "Mississippi State": "./college/frontend/static/img/team_logos/mississippi_state_bulldogs.png",
-    "Alabama": "./college/frontend/static/img/team_logos/alabama_crimson_tide.png",
-    "Auburn": "./college/frontend/static/img/team_logos/auburn_tigers.png",
-    "Vanderbilt": "./college/frontend/static/img/team_logos/vanderbilt_commodores.png",
-    "Tennessee": "./college/frontend/static/img/team_logos/tennessee_volunteers.png",
-    "Kentucky": "./college/frontend/static/img/team_logos/kentucky_wildcats.png",
-    "Georgia": "./college/frontend/static/img/team_logos/georgia_bulldogs.png",
-    "Florida": "./college/frontend/static/img/team_logos/florida_gators.png",
-    "South Carolina": "./college/frontend/static/img/team_logos/south_carolina_gamecocks.png",
+    "Missouri": "./college/frontend/img/team_logos/missouri_tigers.png",
+    "Arkansas": "./college/frontend/img/team_logos/arkansas_razorbacks.png",
+    "Texas A&M": "./college/frontend/img/team_logos/texas_a_m_aggies.png",
+    "Texas": "./college/frontend/img/team_logos/texas_longhorns.png",
+    "Oklahoma": "./college/frontend/img/team_logos/oklahoma_sooners.png",
+    "LSU": "./college/frontend/img/team_logos/lsu_tigers.png",
+    "Ole Miss": "./college/frontend/img/team_logos/ole_miss_rebels.png",
+    "Mississippi State": "./college/frontend/img/team_logos/mississippi_state_bulldogs.png",
+    "Alabama": "./college/frontend/img/team_logos/alabama_crimson_tide.png",
+    "Auburn": "./college/frontend/img/team_logos/auburn_tigers.png",
+    "Vanderbilt": "./college/frontend/img/team_logos/vanderbilt_commodores.png",
+    "Tennessee": "./college/frontend/img/team_logos/tennessee_volunteers.png",
+    "Kentucky": "./college/frontend/img/team_logos/kentucky_wildcats.png",
+    "Georgia": "./college/frontend/img/team_logos/georgia_bulldogs.png",
+    "Florida": "./college/frontend/img/team_logos/florida_gators.png",
+    "South Carolina": "./college/frontend/img/team_logos/south_carolina_gamecocks.png",
 }
 G = nx.Graph()
 

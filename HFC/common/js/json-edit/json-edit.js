@@ -2,7 +2,7 @@ import { nunjucks_env } from "/common/js/nunjucks_tags.js";
 import { set } from "/common/js/utils.js";
 
 export const init_json_edit = async (common, data, dom_id = "", schema = {}) => {
-  let template_url = "/static/html_templates/common_templates/json_edit/json_edit_template.njk";
+  let template_url = "/html_templates/common_templates/json_edit/json_edit_template.njk";
   let template_html = await fetch(template_url);
 
   var template = await template_html.text();

@@ -16,7 +16,7 @@ import {
   ordinal,
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { recent_games} from "/static/js/widgets.js";
+import { recent_games} from "/js/widgets.js";
 
 export const page_world_standings = async (common) => {
   const db = common.db;
@@ -199,7 +199,7 @@ export const page_world_standings = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/world/standings/template.njk";
+  var url = "/html_templates/world/standings/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

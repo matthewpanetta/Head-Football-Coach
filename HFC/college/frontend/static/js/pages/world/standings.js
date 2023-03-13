@@ -204,7 +204,7 @@ export const page_world_standings = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/world/standings/template.njk";
+  var url = "/html_templates/world/standings/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

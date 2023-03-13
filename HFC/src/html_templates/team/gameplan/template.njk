@@ -1,10 +1,10 @@
-{% include "../../static/html_templates/common_templates/ext_nav_bar.njk" %}
+{% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
 
-{% include "../../static/html_templates/common_templates/ext_team_coloring.njk" %}
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
 
 <body>
   <div class="PageContent">
-    {% include "../../static/html_templates/common_templates/ext_team_header.njk" %}
+    {% include "../../html_templates/common_templates/ext_team_header.njk" %}
     <nav>
       <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
         <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
@@ -13,7 +13,7 @@
         <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Depth Chart</button>
         <button class="w3-bar-item btn tab nav-tab-button" id="nav-formation-subs-tab">Formation Subs</button>
         <button class="w3-bar-item btn tab nav-tab-button" id="nav-gameplan-tab">Gameplan</button>
-        {% include "../../static/html_templates/common_templates/ext_team_list.njk" %}
+        {% include "../../html_templates/common_templates/ext_team_list.njk" %}
       </div>
     </nav>
     <div id="nav-tabContent">

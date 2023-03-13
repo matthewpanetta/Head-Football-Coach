@@ -217,8 +217,8 @@ for position_dict in position_results:
     output_list.append(position_dict)
 
 # print(json.dumps(output_list, indent=2))
-out_file_location = 'pro/frontend/static/data/import_json/player_archetype_overall_coefficients.json'
-out_file_location = '../../pro/frontend/static/data/import_json/player_archetype_overall_coefficients.json'
+out_file_location = 'pro/frontend/data/import_json/player_archetype_overall_coefficients.json'
+out_file_location = '../../pro/frontend/data/import_json/player_archetype_overall_coefficients.json'
 with open(out_file_location, 'w') as file:
     json.dump(output_list, file, indent=2)
     # json.dump(output_list, file, separators=(',', ':'))

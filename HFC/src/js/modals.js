@@ -39,7 +39,7 @@ export const populate_player_modal = async (common, target) => {
   };
   console.log({ player: player, target: target, player_id: player_id });
 
-  var modal_url = "/static/html_templates/common_templates/player_info_modal_template.njk";
+  var modal_url = "/html_templates/common_templates/player_info_modal_template.njk";
   var html = await fetch(modal_url);
   html = await html.text();
   var renderedHtml = nunjucks_env.renderString(html, {
@@ -85,7 +85,7 @@ export const geo_marker_action = async (common) => {
       iconAnchor: [15, 40],
     });
 
-    var modal_url = "/static/html_templates/common_templates/geography_modal_template.njk";
+    var modal_url = "/html_templates/common_templates/geography_modal_template.njk";
     var html = await fetch(modal_url);
     html = await html.text();
     var renderedHtml = nunjucks_env.renderString(html, {

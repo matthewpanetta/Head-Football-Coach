@@ -7,9 +7,9 @@ import {
   round_decimal, distinct
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { init_basic_table_sorting, initialize_football_table } from "/static/js/football-table/football-table.js";
-import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
-import { class_order_map, position_order_map, position_group_map } from "/static/js/metadata.js";
+import { init_basic_table_sorting, initialize_football_table } from "/js/football-table/football-table.js";
+import { draw_player_faces, player_face_listeners } from "/js/faces.js";
+import { class_order_map, position_order_map, position_group_map } from "/js/metadata.js";
 
 export const page_almanac_player_stats = async (common) => {
   nunjucks.configure({ autoescape: true });
@@ -41,7 +41,7 @@ export const page_almanac_player_stats = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/almanac/player_stats/template.njk";
+  var url = "/html_templates/almanac/player_stats/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -162,11 +162,11 @@ const GetPlayerStats = async (common) => {
     display_team: true,
     templates: {
       table_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_template.njk",
+        "/html_templates/common_templates/football-table/player_table_template.njk",
       filter_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_filter_template.njk",
+        "/html_templates/common_templates/football-table/player_table_filter_template.njk",
       column_control_template_url:
-        "/static/html_templates/common_templates/football-table/player_table_column_control_template.njk",
+        "/html_templates/common_templates/football-table/player_table_column_control_template.njk",
     },
     dom: {
       filter_dom_selector: "#player-stats-table-filter",
@@ -216,7 +216,7 @@ const draw_player_leaders = async (common, players) => {
     { category_name: "INTs", field: "player_team_season.season_stats.defense.ints" },
   ];
 
-  var url = "/static/html_templates/almanac/player_stats/player_stat_leader_template.njk";
+  var url = "/html_templates/almanac/player_stats/player_stat_leader_template.njk";
   var html_template = await fetch(url);
   html_template = await html_template.text();
 

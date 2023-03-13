@@ -238,7 +238,7 @@ const getHtml = async (common) => {
   common.render_content = render_content;
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/almanac/amazing_stats/template.njk";
+  var url = "/html_templates/almanac/amazing_stats/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -395,7 +395,7 @@ const draw_maps = async (common) => {
   });
 
   common.stopwatch(common, "In Drawmaps");
-  let json_url = "/static/data/import_json/counties_lowres.json";
+  let json_url = "/data/import_json/counties_lowres.json";
   let fetched_json = await fetch(json_url);
   common.stopwatch(common, "Fetches json");
   let json_raw = await fetched_json.text();

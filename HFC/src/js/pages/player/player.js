@@ -7,9 +7,9 @@ import {
   round_decimal,
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { init_basic_table_sorting } from "/static/js/football-table/football-table.js";
-import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
-import { geo_marker_action } from "/static/js/modals.js";
+import { init_basic_table_sorting } from "/js/football-table/football-table.js";
+import { draw_player_faces, player_face_listeners } from "/js/faces.js";
+import { geo_marker_action } from "/js/modals.js";
 import { init_json_edit } from "/common/js/json-edit/json-edit.js";
 
 const clean_rating_string = (str) => {
@@ -254,7 +254,7 @@ const populate_player_stats = async (common) => {
 
   console.log({ player_stats_show: player_stats_show, player: player });
 
-  var url = "/static/html_templates/player/player/player_stats_recent_games_table_template.njk";
+  var url = "/html_templates/player/player/player_stats_recent_games_table_template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -270,7 +270,7 @@ const populate_player_stats = async (common) => {
 
   init_basic_table_sorting(common, "#player-stats-recent-games-table", 0);
 
-  var url = "/static/html_templates/player/player/player_stats_game_log_table_template.njk";
+  var url = "/html_templates/player/player/player_stats_game_log_table_template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -287,7 +287,7 @@ const populate_player_stats = async (common) => {
 
   init_basic_table_sorting(common, "#player-stats-game-log-div", 0);
 
-  var url = "/static/html_templates/player/player/player_stats_career_high_table_template.njk";
+  var url = "/html_templates/player/player/player_stats_career_high_table_template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -363,7 +363,7 @@ const populate_player_stats = async (common) => {
   $("#player-stats-career-high-div").empty();
   $("#player-stats-career-high-div").html(renderedHtml);
 
-  var url = "/static/html_templates/player/player/player_stats_season_stats_table_template.njk";
+  var url = "/html_templates/player/player/player_stats_season_stats_table_template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -1188,7 +1188,7 @@ export const page_player = async (common) => {
 
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/player/player/template.njk";
+  var url = "/html_templates/player/player/template.njk";
   var html = await fetch(url);
   html = await html.text();
 

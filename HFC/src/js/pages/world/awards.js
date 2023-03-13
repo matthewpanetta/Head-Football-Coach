@@ -17,9 +17,9 @@ import {
   isScrolledIntoView,
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { position_order_map, position_group_map } from "/static/js/metadata.js";
-import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
-import { recent_games } from "/static/js/widgets.js";
+import { position_order_map, position_group_map } from "/js/metadata.js";
+import { draw_player_faces, player_face_listeners } from "/js/faces.js";
+import { recent_games } from "/js/widgets.js";
 
 export const page_world_awards = async (common) => {
   const db = common.db;
@@ -566,7 +566,7 @@ export const page_world_awards = async (common) => {
   common.render_content = render_content;
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/world/awards/template.njk";
+  var url = "/html_templates/world/awards/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -575,7 +575,7 @@ export const page_world_awards = async (common) => {
   $("#body").html(renderedHtml);
 
   $("#nav-heisman-race-tab").on("click", async function () {
-    var url = "/static/html_templates/world/awards/heisman_race_table_template.njk";
+    var url = "/html_templates/world/awards/heisman_race_table_template.njk";
     var html = await fetch(url);
     html = await html.text();
 

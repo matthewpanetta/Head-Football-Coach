@@ -142,7 +142,7 @@ def group_data(plays):
 
     # w = open(os.path.join(os.path.dirname(
     #     sys.argv[0]), 'play_results.json'), 'w')
-    w = open('frontend/static/data/import_json/playcall.json', 'w')
+    w = open('frontend/data/import_json/playcall.json', 'w')
     w.write(json.dumps(grouped_data, indent=0))
     w.close()
     print(json.dumps(grouped_data, indent=2))

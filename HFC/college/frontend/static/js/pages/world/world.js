@@ -16,7 +16,7 @@ import {
     ordinal,
   } from "/common/js/utils.js";
   import {nunjucks_env} from '/common/js/nunjucks_tags.js'
-  import { draw_player_faces , player_face_listeners} from "/static/js/faces.js";
+  import { draw_player_faces , player_face_listeners} from "/js/faces.js";
   
   export const page_world = async (common) => {
     const db = common.db;
@@ -187,7 +187,7 @@ import {
     console.log("render_content", render_content);
     console.log({ recent_games: recent_games });
   
-    let url = "/static/html_templates/world/world/template.njk";
+    let url = "/html_templates/world/world/template.njk";
     let html = await fetch(url);
     html = await html.text();
   
@@ -362,7 +362,7 @@ import {
   
       preseason_info.conference_favorites = conference_seasons;
       render_content.preseason_info = preseason_info;
-      url = "/static/html_templates/world/world/info_col_preseason.njk";
+      url = "/html_templates/world/world/info_col_preseason.njk";
   
       let player_team_seasons_by_player_team_season_id = index_group_sync(
         player_team_seasons,
@@ -513,9 +513,9 @@ import {
       season_recap.conference_seasons = conference_seasons;
   
       render_content.season_recap = season_recap;
-      url = "/static/html_templates/world/world/info_col_season_recap.njk";
+      url = "/html_templates/world/world/info_col_season_recap.njk";
     } else {
-      url = "/static/html_templates/world/world/info_col_season.njk";
+      url = "/html_templates/world/world/info_col_season.njk";
     }
   
     common.render_content = render_content;
@@ -529,7 +529,7 @@ import {
   
     $("#info-col").html(renderedHtml);
   
-    let user_team_url = "/static/html_templates/world/world/info_col_user_team.njk";
+    let user_team_url = "/html_templates/world/world/info_col_user_team.njk";
     let user_team__overview_html = await fetch(user_team_url);
     user_team__overview_html = await user_team__overview_html.text();
   

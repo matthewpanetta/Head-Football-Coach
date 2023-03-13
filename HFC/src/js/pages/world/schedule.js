@@ -16,7 +16,7 @@ import {
   ordinal,
 } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { recent_games } from "/static/js/widgets.js";
+import { recent_games } from "/js/widgets.js";
 
 export const page_world_schedule = async (common) => {
   const db = common.db;
@@ -244,7 +244,7 @@ export const page_world_schedule = async (common) => {
   common.stopwatch(common, "getHtml 1.6");
   common.games = games;
 
-  var url = "/static/html_templates/world/schedule/template2.njk";
+  var url = "/html_templates/world/schedule/template2.njk";
   var html = await fetch(url);
   html = await html.text();
 
@@ -253,7 +253,7 @@ export const page_world_schedule = async (common) => {
   $("#body").html(renderedHtml);
   common.stopwatch(common, "getHtml 1.7");
 
-  var url = "/static/html_templates/world/schedule/week_schedule_template.njk";
+  var url = "/html_templates/world/schedule/week_schedule_template.njk";
   var html = await fetch(url);
   var week_html = await html.text();
   $(".week-schedule").on("click", async function () {
@@ -280,7 +280,7 @@ export const page_world_schedule = async (common) => {
 
   $(".selected-tab").click();
 
-  var game_template_url = "/static/html_templates/world/schedule/game_box_score_template.njk";
+  var game_template_url = "/html_templates/world/schedule/game_box_score_template.njk";
   var game_template_html = await fetch(game_template_url);
   var game_template_html_text = await game_template_html.text();
   common.game_template_html_text = game_template_html_text;

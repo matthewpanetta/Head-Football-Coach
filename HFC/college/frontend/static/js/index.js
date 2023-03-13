@@ -44,39 +44,39 @@ import {
   game,
   conference,
   conference_season,
-} from "/static/js/schema.js";
-import { driver_db, resolve_db, create_new_db } from "/static/js/database.js";
+} from "/js/schema.js";
+import { driver_db, resolve_db, create_new_db } from "/js/database.js";
 import {
   page_world,
   page_world_schedule,
   page_world_standings,
   page_world_rankings,
   page_world_awards,
-} from "/static/js/pages/world_pages.js";
+} from "/js/pages/world_pages.js";
 import {
   page_team,
   page_team_schedule,
   page_team_roster,
   page_team_history,
-} from "/static/js/pages/team_pages.js";
+} from "/js/pages/team_pages.js";
 import {
   page_player,
-} from "/static/js/pages/player_pages.js";
-import {page_almanac_history, page_almanac_player_stats, page_almanac_player_records} from "/static/js/pages/almanac_pages.js";
+} from "/js/pages/player_pages.js";
+import {page_almanac_history, page_almanac_player_stats, page_almanac_player_records} from "/js/pages/almanac_pages.js";
 import {
   page_game,
-} from "/static/js/pages/game_pages.js";
-import { page_index } from "/static/js/pages/index_pages.js";
+} from "/js/pages/game_pages.js";
+import { page_index } from "/js/pages/index_pages.js";
 import {
   class_order_map,
   position_order_map,
   position_group_map,
   classes,
   position_groups,
-} from "/static/js/metadata.js";
-import { generate_game_headlines, generate_ranking_headlines } from "/static/js/headlines.js";
-import { sim_game } from "/static/js/sim_game.js";
-import { create_player_face, draw_player_faces, display_player_face, player_face_listeners } from "/static/js/faces.js";
+} from "/js/metadata.js";
+import { generate_game_headlines, generate_ranking_headlines } from "/js/headlines.js";
+import { sim_game } from "/js/sim_game.js";
+import { create_player_face, draw_player_faces, display_player_face, player_face_listeners } from "/js/faces.js";
 
 const nav_bar_links = async (params) => {
   const path = params.path;
@@ -260,7 +260,7 @@ const nav_bar_links = async (params) => {
     },
     {
       GroupName: "World",
-      GroupDisplay: '<img src="/static/img/team_logos/ncaa-text.png" class="" alt="">',
+      GroupDisplay: '<img src="/img/team_logos/ncaa-text.png" class="" alt="">',
       GroupLinks: [
         {
           LinkDisplay: "Overview",
@@ -2612,7 +2612,7 @@ const assign_player_jersey_numbers = async (common, season) => {
   let player_team_seasons_to_save = [];
   let players_to_save = [];
 
-  var url = "/static/data/import_json/position_numbers.json";
+  var url = "/data/import_json/position_numbers.json";
   var json_data = await fetch(url);
   var all_position_numbers = await json_data.json();
 
@@ -3071,7 +3071,7 @@ const generate_player_ratings = async (common, world_id, season) => {
 
   let player_team_seasons = db.player_team_season.find({ season: season });
 
-  var url = "/static/data/import_json/player_archetype.json";
+  var url = "/data/import_json/player_archetype.json";
   var json_data = await fetch(url);
   var position_archetypes = await json_data.json();
   console.log({
@@ -3684,7 +3684,7 @@ const create_week = async (phases, common, world_id, season) => {
 const get_rivalries = async (teams) => {
   const team_names = teams.map((t) => t.school_name);
 
-  var url = "/static/data/import_json/rivalries.json";
+  var url = "/data/import_json/rivalries.json";
   var data = await fetch(url);
   var rival_dimension = await data.json();
 
@@ -3705,7 +3705,7 @@ const get_rivalries = async (teams) => {
 };
 
 const get_teams = async () => {
-  var url = "/static/data/import_json/team.json";
+  var url = "/data/import_json/team.json";
   var data = await fetch(url);
   var teams = await data.json();
 
@@ -3734,7 +3734,7 @@ const get_teams = async () => {
 const get_conferences = async (conference_version) => {
   conference_version = conference_version || "";
 
-  var url = `/static/data/import_json/conference${conference_version}.json`;
+  var url = `/data/import_json/conference${conference_version}.json`;
   console.log({ url: url });
   var data = await fetch(url);
   var conferences = await data.json();
@@ -3948,7 +3948,7 @@ const resolve_route_parameters = async (pathname) => {
 
     { route: "/World/:world_id/Search/:search_keyword/", path: "search/search/base.html" },
 
-    { route: "/static", path: "static" },
+    { route: "", path: "static" },
     { route: "*html_templates*", path: "url" },
     { route: "*js/modules*", path: "url" },
     { route: "/*", path: "url" },
@@ -4234,12 +4234,12 @@ const sim_week_games = async (this_week, common) => {
     `<div class='width100 left-text'>Simulating <span class=''>${this_week.week_name}</span></div>`
   );
 
-  var url = "/static/html_templates/common_templates/sim_game_modal_result_table.njk";
+  var url = "/html_templates/common_templates/sim_game_modal_result_table.njk";
   var html = await fetch(url);
   html = await html.text();
 
   if (!window.playcall) {
-    var playcall_url = "/static/data/import_json/playcall.json";
+    var playcall_url = "/data/import_json/playcall.json";
     var playcall_html = await fetch(playcall_url);
     window.playcall = await playcall_html.json();
   }
@@ -7103,7 +7103,7 @@ const populate_player_modal = async (common, target) => {
   };
   console.log({ player: player, target: target, player_id: player_id });
 
-  var modal_url = "/static/html_templates/common_templates/player_info_modal_template.njk";
+  var modal_url = "/html_templates/common_templates/player_info_modal_template.njk";
   var html = await fetch(modal_url);
   html = await html.text();
   var renderedHtml = await nunjucks_env.renderString(html, {
@@ -7680,7 +7680,7 @@ const process_bowl_results = async (common) => {
 };
 
 const schedule_bowl_season = async (all_weeks, common) => {
-  let bowl_url = `/static/data/import_json/bowls.json`;
+  let bowl_url = `/data/import_json/bowls.json`;
   let bowl_json = await fetch(bowl_url);
   let bowls = await bowl_json.json();
 
@@ -8576,7 +8576,7 @@ const geo_marker_action = async (common) => {
       iconAnchor: [15, 40],
     });
 
-    var modal_url = "/static/html_templates/common_templates/geography_modal_template.njk";
+    var modal_url = "/html_templates/common_templates/geography_modal_template.njk";
     var html = await fetch(modal_url);
     html = await html.text();
     var renderedHtml = nunjucks_env.renderString(html, {
@@ -9040,7 +9040,7 @@ const new_world_action = async (common, database_suffix) => {
     return 0;
   });
   console.log({ teams: teams, "common.nunjucks_env": nunjucks_env });
-  var url = "/static/html_templates/index/index/choose_team_table_template.njk";
+  var url = "/html_templates/index/index/choose_team_table_template.njk";
   var html = await fetch(url);
   html = await html.text();
 

@@ -21,7 +21,7 @@ const initialize_football_chart = async (
   );
 
   var modal_url =
-    "/static/html_templates/common_templates/football-chart/chart-modal.njk";
+    "/html_templates/common_templates/football-chart/chart-modal.njk";
   var html = await fetch(modal_url);
   html = await html.text();
   var renderedHtml = await common.nunjucks_env.renderString(html, {
@@ -108,7 +108,7 @@ const draw_chart = async (
     });
 
     var table_url =
-    "/static/html_templates/common_templates/football-chart/football-chart-table-contents.njk";
+    "/html_templates/common_templates/football-chart/football-chart-table-contents.njk";
     var html = await fetch(table_url);
     html = await html.text();
     var renderedHtml = await common.nunjucks_env.renderString(html, {

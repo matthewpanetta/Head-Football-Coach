@@ -1,7 +1,7 @@
 import { index_group_sync, get, nest_children, increment_parent, deep_copy, round_decimal } from "/common/js/utils.js";
 import { nunjucks_env } from "/common/js/nunjucks_tags.js";
-import { init_basic_table_sorting } from "/static/js/football-table/football-table.js";
-import { draw_player_faces, player_face_listeners } from "/static/js/faces.js";
+import { init_basic_table_sorting } from "/js/football-table/football-table.js";
+import { draw_player_faces, player_face_listeners } from "/js/faces.js";
 
 export const page_almanac_history = async (common) => {
   const db = common.db;
@@ -159,7 +159,7 @@ export const page_almanac_history = async (common) => {
   common.render_content = render_content;
   console.log("render_content", render_content);
 
-  var url = "/static/html_templates/almanac/history/template.njk";
+  var url = "/html_templates/almanac/history/template.njk";
   var html = await fetch(url);
   html = await html.text();
 
