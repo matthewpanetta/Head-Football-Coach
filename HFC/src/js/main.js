@@ -1831,9 +1831,9 @@ const create_phase = async (season, common) => {
       {period_name: 'Supplemental Draft', start_date: 'Year0-07-01'},
       {period_name: 'Training Camp', start_date: 'Year0-07-20', end_date: 'Year0-08-01'},
     ]},
-    { phase_name: "Pre-Season" },
-    { phase_name: "Regular Season"  },    
-    { phase_name: "Playoffs"},
+    { phase_name: "Pre-Season", period_count:4 },
+    { phase_name: "Regular Season", period_count:17  },    
+    { phase_name: "Playoffs", period_count: 5},
     { phase_name: "Season Recap", periods: [
       {period_name: 'Scouting Combine', start_date: 'Year1-02-28', end_date: 'Year1-03-07'},
     ]},
@@ -5325,7 +5325,16 @@ const new_world_action = async (common, database_suffix) => {
   $.each(conferences_from_json, function (ind, conf_data) {
     conf_data.world_id = world_id;
     conf_data.conference_id = ind + 1;
-    conf_data.league_id = leagues_by_league_name[conf_data.conference_name].league_id;
+    let conf_league = leagues_by_league_name[conf_data.league_name];
+    console.log({
+      conf_league:conf_league,
+      leagues_by_league_name:leagues_by_league_name,
+      leagues_from_json:leagues_from_json,
+      conf_data:conf_data,
+      'conf_data.league_name': conf_data.league_name
+    });
+
+    conf_data.league_id = conf_league.league_id;
 
     conf_data.conference_color_primary_hex = conf_data.conference_color_primary_hex.replace(
       "#",

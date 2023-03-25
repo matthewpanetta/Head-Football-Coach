@@ -7,6 +7,7 @@ import {
   team_game,
   team,
   period,
+  league,
   league_season,
   team_season_stats,
   team_season,
@@ -262,11 +263,18 @@ export const driver_collection_list = [
 export const db_collection_list = [
   {
     collection_name: "league_season",
-    options: { proto: league_season, unique: ["season"], indices: [] },
+    options: { proto: league_season, unique: [], indices: ["league_id", "season"] },
+  },
+  {
+    collection_name: "league",
+    options: { proto: league_season, unique: ["league_id"], indices: [] },
   },
   { collection_name: "team", options: { proto: team, unique: ["team_id"], indices: [] } },
   { collection_name: "day", options: { proto: day, unique: ["day_id"], indices: [] } },
-  { collection_name: "event", options: { proto: event, unique: ["event_id"], indices: ['day_id'] } },
+  {
+    collection_name: "event",
+    options: { proto: event, unique: ["event_id"], indices: ["day_id"] },
+  },
   {
     collection_name: "team_season",
     options: { proto: team_season, unique: ["team_season_id"], indices: ["team_id", "season"] },
@@ -321,7 +329,10 @@ export const db_collection_list = [
     collection_name: "phase",
     options: { proto: phase, unique: ["phase_id"], indices: ["season"] },
   },
-  { collection_name: "period", options: { proto: period, unique: ["period_id"], indices: ["season"] } },
+  {
+    collection_name: "period",
+    options: { proto: period, unique: ["period_id"], indices: ["season"] },
+  },
   {
     collection_name: "team_game",
     options: {
@@ -338,7 +349,10 @@ export const db_collection_list = [
       indices: ["team_game_id", "player_team_season_id"],
     },
   },
-  { collection_name: "game", options: { proto: game, unique: ["game_id"], indices: ["period_id"] } },
+  {
+    collection_name: "game",
+    options: { proto: game, unique: ["game_id"], indices: ["period_id"] },
+  },
   {
     collection_name: "award",
     options: {
@@ -483,11 +497,25 @@ const populate_names = async (ddb) => {
 };
 
 const populate_cities = async (ddb) => {
-  var url = "/data/import_json/cities.json";
+  var url = "/data/import_json/cities copy.json";
   var data = await fetch(url);
   const city_dimension = await data.json();
 
   city_dimension.forEach((c) => (c.city_state = c.city + ", " + c.state));
-  ddb.cities.insert(city_dimension);
+
+  let cities_to_add = [];
+  let seen_city_state = new Set();
+  for (let c of city_dimension) {
+    if (!seen_city_state.has(c.city_state)) {
+      cities_to_add.push(c);
+      seen_city_state.add(c.city_state);
+    }
+  }
+
+  ddb.cities.insert(cities_to_add);
+  console.log({
+    cities_to_add: cities_to_add,
+  });
+  debugger;
   await ddb.saveDatabaseAsync();
 };

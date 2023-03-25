@@ -379,7 +379,11 @@ export class day {
 }
 
 export class period {
-  constructor() {}
+  constructor(init_data) {
+    for(let key of init_data){
+      this[key] = init_data[key]
+    }
+  }
 
   get world_href() {
     return `/World/${this.world_id}/`;
