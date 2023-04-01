@@ -1,0 +1,99 @@
+{
+  "NFL": {
+    "phases": [
+      {
+        "phase_name": "Off-Season",
+        "start_date": "03-15",
+        "end_date": "05-31",
+        "periods": [
+          {
+            "period_name": "League Meetings",
+            "start_date": "03-15",
+            "end_date": "03-17"
+          },
+          {
+            "period_name": "Free Agent Contracts Expire",
+            "start_date": "03-18",
+            "end_date": "03-18"
+          },
+          {
+            "period_name": "NFL Draft",
+            "start_date": "04-29",
+            "end_date": "05-01"
+          },
+          {
+            "period_name": "Rookie Minicamp",
+            "start_date": "05-07",
+            "end_date": "05-11"
+          },
+          {
+            "period_name": "Schedule Release",
+            "start_date": "05-12",
+            "end_date": "05-12"
+          },
+          {
+            "period_name": "Rookie Premiere",
+            "start_date": "05-20",
+            "end_date": "05-22"
+          }
+        ]
+      },
+      {
+        "phase_name": "Summer Camps",
+        "start_date": "06-01",
+        "end_date": "07-31",
+        "periods": [
+          {
+            "period_name": "OTAs",
+            "start_date": "06-01",
+            "end_date": "06-11"
+          },
+          {
+            "period_name": "Supplemental Draft",
+            "start_date": "07-01",
+            "end_date": "07-01"
+          },
+          {
+            "period_name": "Training Camp",
+            "start_date": "07-15",
+            "end_date": "07-31"
+          }
+        ]
+      },
+      {
+        "phase_name": "Pre-Season",
+        "start_date": "08-04",
+        "template_week_count": 5,
+        "template_week_length": 7,
+        "period_week_template": {
+          "period_name": "Pre-Season Week {{index}}"
+        }
+      },
+      {
+        "phase_name": "Regular Season",
+        "template_week_count": 17,
+        "template_week_length": 7,
+        "period_week_template": {
+          "period_name": "Week {{index}}"
+        },
+        "additional_events": [
+          { "week_index": 10, "period_name": "Trade Deadline", "day_offset": 1 }
+        ]
+      },
+      {
+        "phase_name": "Playoffs",
+        "periods": [
+            {"period_name": "Wildcard Round", "week_length": 7},
+            {"period_name": "Divisional Round", "week_length": 7},
+            {"period_name": "Conference Championships", "week_length": 7},
+            {"period_name": "Pro Bowl", "week_length": 7},
+            {"period_name": "Super Bowl", "week_length": 7}
+        ]
+      },
+      {
+        "phase_name": "Season Recap"
+      }
+    ]
+  },
+  "NCAA": {}
+}

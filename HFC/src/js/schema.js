@@ -355,14 +355,6 @@ export class player_team_game {
   }
 }
 
-export class event {
-  constructor(event_id, event_name, day_id){
-    this.event_id = event_id;
-    this.event_name = event_name;
-    this.day_id = day_id;
-  }
-}
-
 export class day {
   constructor(date, season, is_current) {
     
@@ -399,7 +391,11 @@ export class phase {
 }
 
 export class world {
-  constructor() {}
+  constructor(init_data) {
+    for (let key of init_data){
+      self[key] = init_data[key]
+    }
+  }
 
   get world_href() {
     return `/World/${this.world_id}/`;

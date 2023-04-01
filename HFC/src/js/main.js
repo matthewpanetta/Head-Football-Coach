@@ -1,5 +1,5 @@
 import { nunjucks_env } from '../../../../../../../common/js/nunjucks_tags.js';
-import { index_group_sync, distance_between_coordinates, nest_children, deep_copy, weighted_random_choice, shuffle, round_decimal, normal_trunc, sum, average, get, distinct, set_intersect } from '../../../../../../../common/js/utils.js';
+import { index_group_sync, distance_between_coordinates, nest_children, deep_copy, weighted_random_choice, shuffle, round_decimal, normal_trunc, sum, add_season_to_date, average, get, distinct, set_intersect } from '../../../../../../../common/js/utils.js';
 import { init_basic_table_sorting } from '../../../../../../../js/football-table/football-table.js';
 import { team_game, conference, league_season, team, team_season, team_season_stats, coach, coach_team_season, player, player_team_season, player_team_season_stats, day, award } from '../../../../../../../js/schema.js';
 import { driver_db, resolve_db, create_new_db } from '../../../../../../../js/database.js';
@@ -1676,11 +1676,7 @@ const generate_player_ratings = async (common, world_id, season) => {
   await db.saveDatabaseAsync();
 };
 
-const create_new_players_and_player_team_seasons = async (
-  common,
-  world_id,
-  season
-) => {
+const create_new_players_and_player_team_seasons = async (common, world_id, season) => {
   const db = common.db;
 
   let players_tocreate = [];
@@ -1725,78 +1721,84 @@ const create_new_players_and_player_team_seasons = async (
     P: 1,
   };
 
-  let teams = db.team.find();
-  let team_seasons = db.team_season.find({season: season});
-  let team_seasons_by_team_id = index_group_sync(team_seasons, 'index', 'team_id');
-  teams = nest_children(teams, team_seasons_by_team_id, 'team_id', 'team_season');
-  let teams_by_team_abbreviation = index_group_sync(teams, 'index', 'team_abbreviation');
+  let leagues = db.league.find();
+  leagues.forEach(async function (leag) {
+    let teams = db.team.find({league_id: leag.league_id});
+    let team_seasons = db.team_season.find({league_id: leag.league_id,  season: season });
+    let team_seasons_by_team_id = index_group_sync(team_seasons, "index", "team_id");
+    teams = nest_children(teams, team_seasons_by_team_id, "team_id", "team_season");
+    let teams_by_team_abbreviation = index_group_sync(teams, "index", "team_abbreviation");
 
-  if (teams_by_team_abbreviation.length != teams.length){
-    console.error('There may be duplicate team abbreviations :(', {teams:teams, teams_by_team_abbreviation:teams_by_team_abbreviation});
-  }
-
-  console.log({teams_by_team_abbreviation:teams_by_team_abbreviation});
-
-  const num_players_per_team = sum(Object.values(team_position_counts));
-  const num_players_to_create = Math.ceil(num_players_per_team) * team_seasons.length;
-
-  await random_name(ddb, num_players_to_create);
-  await random_city(ddb, num_players_to_create);
-  await random_college(ddb, num_players_to_create);
-
-  var player_id_counter = db.player.nextId("player_id");
-  var player_team_season_id_counter = db.player_team_season.nextId("player_team_season_id");
-
-  if (season == 2022){
-    var url = "/data/import_json/players.json";
-    var data = await fetch(url);
-    var player_list = await data.json();
-
-    console.log({
-      player_list:player_list
-    });
-
-    for (let p of player_list){
-
-      let archetype = p.archetype || `${p.position}_Balanced`;
-
-      var player_obj = new player({
-        player_id: player_id_counter,
-        name: p.name,
-        world_id: world_id,
-        hometown: p.hometown,
-        college: p.college,
-        ethnicity: p.ethnicity || weighted_random_choice(position_ethnicity[p.position]),
-        body: p.body,
-        draft_info: p.draft_info,
-        position: p.position,
-        archetype: archetype,
+    if (teams_by_team_abbreviation.length != teams.length) {
+      console.error("There may be duplicate team abbreviations :(", {
+        teams: teams,
+        teams_by_team_abbreviation: teams_by_team_abbreviation,
       });
-
-      let player_team_season_obj = new player_team_season({
-        world_id: world_id,
-        player_id: player_id_counter,
-        player_team_season_id: player_team_season_id_counter,
-        season: season,
-        age: p.current_player_team_season.age,
-        ratings: p.current_player_team_season.ratings,
-        team_season_id: teams_by_team_abbreviation[p.current_player_team_season.team_abbreviation].team_season.team_season_id,
-        position: p.position,
-        archetype: archetype
-      });
-
-      var new_player_team_season_stats = new player_team_season_stats(
-        player_team_season_id_counter
-      );
-      player_team_season_stats_tocreate.push(new_player_team_season_stats);
-
-      players_tocreate.push(player_obj);
-      player_team_seasons_tocreate.push(player_team_season_obj);
-      player_id_counter += 1;
-      player_team_season_id_counter += 1;
     }
-  
-  }
+
+    console.log({ teams_by_team_abbreviation: teams_by_team_abbreviation });
+
+    const num_players_per_team = sum(Object.values(team_position_counts));
+    const num_players_to_create = Math.ceil(num_players_per_team) * team_seasons.length;
+
+    await random_name(ddb, num_players_to_create);
+    await random_city(ddb, num_players_to_create);
+    await random_college(ddb, num_players_to_create);
+
+    var player_id_counter = db.player.nextId("player_id");
+    var player_team_season_id_counter = db.player_team_season.nextId("player_team_season_id");
+
+    if (season == 2022) {
+      var url = "/data/import_json/players.json";
+      var data = await fetch(url);
+      var player_list = await data.json();
+
+      console.log({
+        player_list: player_list,
+      });
+
+      for (let p of player_list) {
+        let archetype = p.archetype || `${p.position}_Balanced`;
+
+        var player_obj = new player({
+          player_id: player_id_counter,
+          name: p.name,
+          world_id: world_id,
+          hometown: p.hometown,
+          college: p.college,
+          ethnicity: p.ethnicity || weighted_random_choice(position_ethnicity[p.position]),
+          body: p.body,
+          draft_info: p.draft_info,
+          position: p.position,
+          archetype: archetype,
+        });
+
+        let player_team_season_obj = new player_team_season({
+          world_id: world_id,
+          player_id: player_id_counter,
+          player_team_season_id: player_team_season_id_counter,
+          season: season,
+          age: p.current_player_team_season.age,
+          ratings: p.current_player_team_season.ratings,
+          team_season_id:
+            teams_by_team_abbreviation[p.current_player_team_season.team_abbreviation].team_season
+              .team_season_id,
+          position: p.position,
+          archetype: archetype,
+        });
+
+        var new_player_team_season_stats = new player_team_season_stats(
+          player_team_season_id_counter
+        );
+        player_team_season_stats_tocreate.push(new_player_team_season_stats);
+
+        players_tocreate.push(player_obj);
+        player_team_seasons_tocreate.push(player_team_season_obj);
+        player_id_counter += 1;
+        player_team_season_id_counter += 1;
+      }
+    }
+  });
 
   console.log({
     players_tocreate: players_tocreate,
@@ -1814,114 +1816,106 @@ const create_new_players_and_player_team_seasons = async (
 const create_phase = async (season, common) => {
   const db = common.db;
 
-  const phases_to_create = [
-    { phase_name: "Off-Season", periods: [
-      {period_name: 'League Meetings', start_date: 'Year0-03-15', end_date: 'Year0-03-17'},
-      {period_name: 'UFA Negotiations', start_date: 'Year0-03-18', end_date: 'Year0-03-20'},
-      {period_name: 'UFA Signing Period Begins', start_date: 'Year0-03-21', end_date: 'Year0-04-28'},
-      {period_name: 'Offseason Workouts', start_date: 'Year0-04-15', end_date: 'Year0-04-28'},
-      {period_name: 'RFA Offer Sheet Deadlone', start_date: 'Year0-04-21'},
-      {period_name: 'NFL Draft', start_date: 'Year0-04-29', end_date: 'Year0-05-01'},
-      {period_name: 'Rookie Minicamps', start_date: 'Year0-05-07', end_date: 'Year0-05-11'},
-      {period_name: 'Schedule Release', start_date: 'Year0-05-12'},
-      {period_name: 'Rookie Premiere', start_date: 'Year0-05-20', end_date: 'Year0-05-22'},
-    ]},
-    { phase_name: "Summer Camp", periods: [
-      {period_name: 'OTAs', start_date: 'Year0-06-01', end_date: 'Year0-06-11'},
-      {period_name: 'Supplemental Draft', start_date: 'Year0-07-01'},
-      {period_name: 'Training Camp', start_date: 'Year0-07-20', end_date: 'Year0-08-01'},
-    ]},
-    { phase_name: "Pre-Season", period_count:4 },
-    { phase_name: "Regular Season", period_count:17  },    
-    { phase_name: "Playoffs", period_count: 5},
-    { phase_name: "Season Recap", periods: [
-      {period_name: 'Scouting Combine', start_date: 'Year1-02-28', end_date: 'Year1-03-07'},
-    ]},
-  ];
-
-  phases_to_create.forEach(function(ph){
-    ph.periods = ph.periods || [];
-    ph.season = season;
-    ph.periods.forEach(function(pe){
-      pe.start_date = pe.start_date ? pe.start_date.replace('Year0', season).replace('Year1', season+1) : null;
-      pe.end_date = pe.end_date ? pe.end_date.replace('Year0', season).replace('Year1', season+1) : null;
-    });
-  });
-
-  let first_period_of_league_year = phases_to_create[0].periods[0];
-  let first_date_of_league_year = first_period_of_league_year.start_date;
-  let starting_month = parseInt(first_date_of_league_year.split('-')[1]);
-  let starting_day = parseInt(first_date_of_league_year.split('-')[2]);
-
-  console.log({
-    phases_to_create:phases_to_create,
-    starting_month:starting_month,
-    starting_day:starting_day,
-    first_date_of_league_year:first_date_of_league_year,
-    first_period_of_league_year:first_period_of_league_year
-  });
-
-  await create_dates(common, 2022, '2022-03-15', '2023-03-14', '2022-07-20');
-  await create_dates(common, 2023, '2023-03-15', '2024-03-14');
-  await create_dates(common, 2024, '2024-03-15', '2025-03-14');
-  await create_dates(common, 2025, '2025-03-15', '2026-03-14');
   let dates = db.day.find();
   let dates_by_day_id = index_group_sync(dates, 'index', 'day_id');
 
-  console.log({
-    dates:dates,
-    dates_by_day_id:dates_by_day_id
-  });
-
-  let pre_season_weeks = 4;
-  let regular_season_weeks = 18;
+  var url = "/data/import_json/calendar.json";
+  var data = await fetch(url);
+  var calendar_dim = await data.json();
 
   let phase_id = db.phase.nextId("phase_id");
   let period_id = db.period.nextId("period_id");
-  db.day.nextId("day_id");
 
-  let last_end_date = '';
+  // This function takes a day_id as input and returns the next date to display
+  const next_date = function(d) {
+    console.log({d:d, dates_by_day_id:dates_by_day_id, 'dates_by_day_id[d]': dates_by_day_id[d]});
+    return dates_by_day_id[d].next_date_display
+  };
+  const date_add = function(iter_day_id, days_to_add){
+    for (let day_index = 0; day_index < days_to_add - 1; day_index++){
+      console.log({
+        day_index:day_index,
+        iter_day_id:iter_day_id,
+        days_to_add:days_to_add
+      });
+      iter_day_id = next_date(iter_day_id);
+    }
+    return iter_day_id;
+  };
 
-  for (let ph of phases_to_create) {
-    ph.phase_id = phase_id;
+  let phases_to_create = [];
 
-    if (ph.phase_name == 'Pre-Season'){
+  Object.entries(calendar_dim).forEach(function(entr){
+    entr[0];
+    let league_calendar_obj = entr[1];
 
-      for (let week_ind = 1; week_ind <= pre_season_weeks; week_ind++) {
-        let next_date = dates_by_day_id[last_end_date];
-        let new_date = next_date.date.add(7, 'day');
+    let phases = league_calendar_obj.phases || [];
 
-        ph.periods.push({
-          period_name: `Pre-Season Week ${week_ind}`, start_date: next_date.next_date_display, end_date: new_date.format('YYYY-MM-DD')
-        });
-        last_end_date = new_date.format('YYYY-MM-DD');
+    let previous_phase_end_date = null;
+
+    phases.forEach(function(ph){
+      ph.season = season;
+      ph.phase_id = phase_id;
+
+      ph.start_date = ph.start_date ? add_season_to_date(season, ph.start_date) : null;
+      ph.end_date = ph.end_date ? add_season_to_date(season, ph.end_date) : null;
+
+      if (!ph.start_date){
+        if (previous_phase_end_date){
+          ph.start_date = next_date(previous_phase_end_date);
+        }
       }
-    }
-    else if (ph.phase_name == 'Regular Season'){
-      for (let week_ind = 1; week_ind <= regular_season_weeks; week_ind++) {
-        let next_date = dates_by_day_id[last_end_date];
-        let new_date = next_date.date.add(7, 'day');
+      let previous_period_end_date = null;
 
-        ph.periods.push({
-          period_name: `Pre-Season Week ${week_ind}`, start_date: next_date.next_date_display, end_date: new_date.format('YYYY-MM-DD')
-        });
-        last_end_date = new_date.format('YYYY-MM-DD');
+      ph.periods = ph.periods || [];
+      console.log({
+        ph:ph
+      });
+      if (ph.periods.length == 0 && ph.period_week_template){
+        for (let template_week_index = 0; template_week_index < ph.template_week_count; template_week_index++){
+          let period_obj = deep_copy(ph.period_week_template);
+
+          period_obj.start_date = previous_period_end_date ? next_date(previous_period_end_date) : ph.start_date;
+
+          period_obj.end_date = date_add(period_obj.start_date, ph.template_week_length);
+
+          previous_period_end_date = period_obj.end_date;
+          period_obj.period_name = period_obj.period_name.replace('{{index}}', template_week_index + 1);
+          ph.periods.push(period_obj);
+        }
       }
-    }
 
-    for (let pe of ph.periods){
-      pe.phase_id = phase_id;
-      pe.period_id = period_id;
+      console.log({
+        'ph.periods': ph.periods,
+        ph:ph
+      });
 
-      pe.end_date = pe.end_date || pe.start_date;
+      ph.periods.forEach(function(pe){
+        pe.season = season;
+        pe.period_id = period_id;
 
-      period_id += 1;
-      pe.season = season;
-      last_end_date = pe.end_date;
-    }
+        pe.start_date = pe.start_date ? add_season_to_date(season, pe.start_date) : next_date(previous_period_end_date || previous_phase_end_date);
+        pe.end_date = pe.end_date ? add_season_to_date(season, pe.end_date) : date_add(pe.start_date, pe.week_length);
 
-    phase_id += 1;
-  }
+        previous_period_end_date = pe.end_date;
+        previous_phase_end_date = previous_period_end_date;
+
+        period_id += 1;
+      });
+
+      if (!ph.end_date){
+        ph.end_date = previous_period_end_date;
+      }
+
+      console.log({
+        ph:ph
+      });
+
+      phase_id += 1;
+
+      phases_to_create.push(ph);
+    });
+  });
 
   let periods_to_create = [];
   let days_to_save = [];
@@ -1932,12 +1926,7 @@ const create_phase = async (season, common) => {
   });
 
   periods_to_create.forEach(function(pe){
-    // let start_date = dayjs(pe.start_date);
-    // let end_date = dayjs(pe.end_date);
-
     console.log({ 
-      // start_date: start_date, 
-      // end_date: end_date, 
       db: db, 
       pe: pe 
     });
@@ -1947,6 +1936,7 @@ const create_phase = async (season, common) => {
 
       period_dates.forEach(function(dt){
         dt.period_id = pe.period_id;
+        dt.phase_id = pe.phase_id;
         dt.season = season;
         days_to_save.push(dt);
       });
@@ -1956,53 +1946,45 @@ const create_phase = async (season, common) => {
 
   db.day.update(days_to_save);
   db.period.insert(periods_to_create);
-  const phases_to_create_added = db.phase.insert(phases_to_create);
+  db.phase.insert(phases_to_create);
   await db.saveDatabaseAsync();
-
-  let phases = db.phase.find({ season: season });
-  const phases_by_phase_name = index_group_sync(phases, "index", "phase_name");
-  console.log({
-    phases_by_phase_name: phases_by_phase_name,
-    phases: phases,
-    db_phases: db.phase,
-    phases_to_create_added: phases_to_create_added,
-    phase_id: phase_id,
-    db:db,
-  });
-  return phases_by_phase_name;
 };
 
-const create_dates = async (common, season,
-  first_date, last_date, current_date
+const create_dates = async (common, season, seasons_in_to_future = 2
 ) => {
   const db = common.db;
 
-  let start_date = dayjs(first_date);
-  let stop_date = dayjs(last_date);
-  let iter_date = start_date.clone();
+  var url = "/data/import_json/world.json";
+  var data = await fetch(url);
+  var world_dim = await data.json();
 
-  let cur_date = dayjs(current_date);
+  let new_dates = [];
+  let existing_dates = db.day.find();
+  let existing_day_ids = new Set(existing_dates.map(d => d.day_id));
 
-  let dates = [];
-
-  console.log({
-    start_date:start_date,
-    stop_date:stop_date,
-    iter_date:iter_date,
-    first_date:first_date,
-    last_date:last_date
-  });
-
-  while(iter_date.isSameOrBefore(stop_date, 'day')){
-    dates.push(new day(iter_date.clone(), season, (cur_date.isSame(iter_date, 'day'))));
-    iter_date = iter_date.add(1, 'day');
+  for (let season_index = 0; season_index < seasons_in_to_future; season_index++){
+    let iter_season = season + season_index;
+    let league_start_date = iter_season + '-' + world_dim.league_start_date;
+    let league_end_date = (iter_season + 1) + '-' + world_dim.league_start_date;
+  
+    let start_date = dayjs(league_start_date);
+    let stop_date = dayjs(league_end_date);
+    let iter_date = start_date.clone();
+  
+    while(iter_date.isBefore(stop_date, 'day')){
+      let day_id = iter_date.format('YYYY-MM-DD');
+      if (! existing_day_ids.has(day_id)){
+        new_dates.push(new day(iter_date.clone(), iter_season, new_dates.length == 0));
+      }
+      iter_date = iter_date.add(1, 'day');
+    }
   }
 
   console.log({
-    dates:dates
+    new_dates:new_dates
   });
 
-  db.day.insert(dates);
+  db.day.insert(new_dates);
   await db.saveDatabaseAsync();
 };
 
@@ -5379,9 +5361,9 @@ const new_world_action = async (common, database_suffix) => {
   db.league_season.insert(new_season);
   await db.saveDatabaseAsync();
 
+  await create_dates(common, season, 4);
   console.log({ season: season, common: common, db: db, new_season_info: new_season_info });
   await create_phase(season, common);
-  // await create_dates(common, '2022-07-01', '2023-06-30');
   const rivalries = await get_rivalries(teams_from_json);
 
   await create_conference_seasons({

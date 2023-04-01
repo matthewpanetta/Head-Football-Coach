@@ -792,3 +792,10 @@ Array.prototype.top_sort = function (top_n, compare_func) {
 
   return top_list;
 };
+
+export const add_season_to_date = (season, date) => {
+  if (date.length < 6){
+    date = season + '-' + date;
+  }
+  return date;
+}

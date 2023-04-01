@@ -1,5 +1,5 @@
 {
-  "league_name": "NCAA",
+  "league_start_date": "03-15",
   "upcoming_ooc_games": {
     "2022": [
       { "home_team_name": "Ohio State", "away_team_name": "Notre Dame", "week_name": "Week 1" },
