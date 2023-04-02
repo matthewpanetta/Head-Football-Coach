@@ -1,0 +1,6042 @@
+[
+  {
+    "position": "C",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.23,
+          "mean": 78.43,
+          "std": 10.27,
+          "zero_based_ovr_weight": 0.26,
+          "ovr_weight_percentage": 0.1966,
+          "one_based_ovr_weight_percentage": 0.1244
+        },
+        "play_recognition": {
+          "original_ovr_weight": -0.02,
+          "mean": 21.48,
+          "std": 8.07,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0076,
+          "one_based_ovr_weight_percentage": 0.0048
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.21,
+          "mean": 85.53,
+          "std": 3.18,
+          "zero_based_ovr_weight": 0.24,
+          "ovr_weight_percentage": 0.1814,
+          "one_based_ovr_weight_percentage": 0.1148
+        },
+        "jumping": {
+          "original_ovr_weight": -0.03,
+          "mean": 71.27,
+          "std": 5.68,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "injury": {
+          "original_ovr_weight": 0.01,
+          "mean": 88.82,
+          "std": 3.6,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0302,
+          "one_based_ovr_weight_percentage": 0.0191
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.04,
+          "mean": 70.98,
+          "std": 7.73,
+          "zero_based_ovr_weight": 0.07,
+          "ovr_weight_percentage": 0.0529,
+          "one_based_ovr_weight_percentage": 0.0335
+        },
+        "speed": {
+          "original_ovr_weight": 0.06,
+          "mean": 64.72,
+          "std": 5.19,
+          "zero_based_ovr_weight": 0.09,
+          "ovr_weight_percentage": 0.068,
+          "one_based_ovr_weight_percentage": 0.0431
+        },
+        "toughness": {
+          "original_ovr_weight": 0.0,
+          "mean": 87.09,
+          "std": 5.31,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0227,
+          "one_based_ovr_weight_percentage": 0.0144
+        },
+        "agility": {
+          "original_ovr_weight": 0.03,
+          "mean": 61.39,
+          "std": 6.18,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.0454,
+          "one_based_ovr_weight_percentage": 0.0287
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "original_ovr_weight": 0.21,
+          "mean": 73.32,
+          "std": 8.02,
+          "zero_based_ovr_weight": 0.24,
+          "ovr_weight_percentage": 0.1814,
+          "one_based_ovr_weight_percentage": 0.1148
+        },
+        "pass_block_finesse": {
+          "original_ovr_weight": 0.13,
+          "mean": 72.12,
+          "std": 7.8,
+          "zero_based_ovr_weight": 0.16,
+          "ovr_weight_percentage": 0.121,
+          "one_based_ovr_weight_percentage": 0.0766
+        },
+        "lead_blocking": {
+          "original_ovr_weight": 0.12,
+          "mean": 80.98,
+          "std": 6.35,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.1134,
+          "one_based_ovr_weight_percentage": 0.0718
+        },
+        "run_block_power": {
+          "original_ovr_weight": 0.12,
+          "mean": 72.35,
+          "std": 7.99,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.1134,
+          "one_based_ovr_weight_percentage": 0.0718
+        },
+        "pass_block_power": {
+          "original_ovr_weight": 0.23,
+          "mean": 71.75,
+          "std": 7.68,
+          "zero_based_ovr_weight": 0.26,
+          "ovr_weight_percentage": 0.1966,
+          "one_based_ovr_weight_percentage": 0.1244
+        },
+        "impact_block": {
+          "original_ovr_weight": 0.06,
+          "mean": 81.89,
+          "std": 4.33,
+          "zero_based_ovr_weight": 0.09,
+          "ovr_weight_percentage": 0.068,
+          "one_based_ovr_weight_percentage": 0.0431
+        },
+        "pass_block": {
+          "original_ovr_weight": 0.09,
+          "mean": 72.02,
+          "std": 7.57,
+          "zero_based_ovr_weight": 0.12,
+          "ovr_weight_percentage": 0.0907,
+          "one_based_ovr_weight_percentage": 0.0574
+        },
+        "run_block_finesse": {
+          "original_ovr_weight": 0.09,
+          "mean": 73.84,
+          "std": 8.36,
+          "zero_based_ovr_weight": 0.12,
+          "ovr_weight_percentage": 0.0907,
+          "one_based_ovr_weight_percentage": 0.0574
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 16.97,
+          "std": 8.58,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 30.08,
+          "std": 7.65,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 15.11,
+          "std": 5.95,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 16.45,
+          "std": 7.01,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 7.76,
+          "std": 5.99,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 17.05,
+          "std": 7.64,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 6.43,
+          "std": 4.51,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 30.45,
+          "std": 7.5,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 15.61,
+          "std": 7.67,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 33.79,
+          "std": 7.1,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 13.99,
+          "std": 3.67,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 28.52,
+          "std": 11.04,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 28.16,
+          "std": 9.15,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 11.96,
+          "std": 2.7,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 18.2,
+          "std": 10.53,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 10.06,
+          "std": 1.02,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 12.32,
+          "std": 5.01,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 24.82,
+          "std": 9.03,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 13.75,
+          "std": 6.8,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 15.56,
+          "std": 8.95,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 19.29,
+          "std": 10.52,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 32.41,
+          "std": 8.0,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 11.44,
+          "std": 7.96,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 52.51,
+          "std": 4.46,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 12.23,
+          "std": 1.42,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 6.18,
+          "std": 2.1,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 12.0,
+          "std": 2.27,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 21.98,
+          "std": 5.6,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 6.01,
+          "std": 0.55,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 6.24,
+          "std": 2.6,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 6.11,
+          "std": 1.47,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 6.11,
+          "std": 1.51,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 18.63,
+          "std": 6.26,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 19.95,
+          "std": 5.98,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 10.04,
+          "std": 0.91,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "CB",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.21,
+          "mean": 72.35,
+          "std": 10.46,
+          "zero_based_ovr_weight": 0.22,
+          "ovr_weight_percentage": 0.1995,
+          "one_based_ovr_weight_percentage": 0.114
+        },
+        "play_recognition": {
+          "original_ovr_weight": 0.11,
+          "mean": 71.61,
+          "std": 10.32,
+          "zero_based_ovr_weight": 0.12,
+          "ovr_weight_percentage": 0.1088,
+          "one_based_ovr_weight_percentage": 0.0622
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": -0.01,
+          "mean": 60.51,
+          "std": 5.92,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "jumping": {
+          "original_ovr_weight": 0.05,
+          "mean": 87.22,
+          "std": 4.74,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.0544,
+          "one_based_ovr_weight_percentage": 0.0311
+        },
+        "injury": {
+          "original_ovr_weight": 0.01,
+          "mean": 87.68,
+          "std": 3.59,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0181,
+          "one_based_ovr_weight_percentage": 0.0104
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.29,
+          "mean": 91.33,
+          "std": 1.96,
+          "zero_based_ovr_weight": 0.3,
+          "ovr_weight_percentage": 0.272,
+          "one_based_ovr_weight_percentage": 0.1554
+        },
+        "speed": {
+          "original_ovr_weight": 0.34,
+          "mean": 90.4,
+          "std": 2.23,
+          "zero_based_ovr_weight": 0.35,
+          "ovr_weight_percentage": 0.3174,
+          "one_based_ovr_weight_percentage": 0.1813
+        },
+        "toughness": {
+          "original_ovr_weight": -0.0,
+          "mean": 80.75,
+          "std": 5.92,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0091,
+          "one_based_ovr_weight_percentage": 0.0052
+        },
+        "agility": {
+          "original_ovr_weight": 0.13,
+          "mean": 87.12,
+          "std": 3.77,
+          "zero_based_ovr_weight": 0.14,
+          "ovr_weight_percentage": 0.1269,
+          "one_based_ovr_weight_percentage": 0.0725
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "original_ovr_weight": 0.0,
+          "mean": 72.4,
+          "std": 4.56,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0091,
+          "one_based_ovr_weight_percentage": 0.0052
+        },
+        "pass_rush_finesse": {
+          "original_ovr_weight": 0.0,
+          "mean": 38.85,
+          "std": 6.78,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0091,
+          "one_based_ovr_weight_percentage": 0.0052
+        },
+        "tackle": {
+          "original_ovr_weight": 0.07,
+          "mean": 57.51,
+          "std": 6.52,
+          "zero_based_ovr_weight": 0.08,
+          "ovr_weight_percentage": 0.0725,
+          "one_based_ovr_weight_percentage": 0.0415
+        },
+        "zone_coverage": {
+          "original_ovr_weight": 0.15,
+          "mean": 73.8,
+          "std": 8.38,
+          "zero_based_ovr_weight": 0.16,
+          "ovr_weight_percentage": 0.1451,
+          "one_based_ovr_weight_percentage": 0.0829
+        },
+        "hit_power": {
+          "original_ovr_weight": 0.01,
+          "mean": 59.03,
+          "std": 9.03,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0181,
+          "one_based_ovr_weight_percentage": 0.0104
+        },
+        "block_shedding": {
+          "original_ovr_weight": 0.01,
+          "mean": 50.03,
+          "std": 5.66,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0181,
+          "one_based_ovr_weight_percentage": 0.0104
+        },
+        "man_coverage": {
+          "original_ovr_weight": 0.29,
+          "mean": 72.88,
+          "std": 8.29,
+          "zero_based_ovr_weight": 0.3,
+          "ovr_weight_percentage": 0.272,
+          "one_based_ovr_weight_percentage": 0.1554
+        },
+        "pass_rush_power": {
+          "original_ovr_weight": -0.0,
+          "mean": 31.91,
+          "std": 6.5,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0091,
+          "one_based_ovr_weight_percentage": 0.0052
+        },
+        "press": {
+          "original_ovr_weight": 0.09,
+          "mean": 74.95,
+          "std": 7.66,
+          "zero_based_ovr_weight": 0.1,
+          "ovr_weight_percentage": 0.0907,
+          "one_based_ovr_weight_percentage": 0.0518
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 55.33,
+          "std": 8.43,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 67.89,
+          "std": 6.36,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 31.42,
+          "std": 10.43,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 29.19,
+          "std": 10.76,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 24.17,
+          "std": 11.19,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 64.79,
+          "std": 6.1,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 19.66,
+          "std": 10.94,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 66.54,
+          "std": 4.95,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 32.43,
+          "std": 8.71,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 74.02,
+          "std": 4.71,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 66.12,
+          "std": 7.23,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 36.51,
+          "std": 8.23,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 60.72,
+          "std": 5.12,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 54.29,
+          "std": 8.22,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 86.65,
+          "std": 4.03,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 32.42,
+          "std": 6.3,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 33.76,
+          "std": 3.38,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 16.24,
+          "std": 3.51,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 34.13,
+          "std": 2.83,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 33.89,
+          "std": 3.27,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 49.27,
+          "std": 5.71,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 31.06,
+          "std": 7.71,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 34.21,
+          "std": 2.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 16.04,
+          "std": 7.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 9.36,
+          "std": 7.67,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 13.83,
+          "std": 5.45,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 28.09,
+          "std": 7.74,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 8.48,
+          "std": 6.09,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 10.83,
+          "std": 9.73,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 10.49,
+          "std": 9.03,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 8.56,
+          "std": 6.63,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 16.66,
+          "std": 5.66,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 18.73,
+          "std": 6.32,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 57.13,
+          "std": 14.98,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "DL",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.14,
+          "mean": 74.03,
+          "std": 10.74,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.1353,
+          "one_based_ovr_weight_percentage": 0.0815
+        },
+        "play_recognition": {
+          "original_ovr_weight": 0.14,
+          "mean": 73.89,
+          "std": 10.9,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.1353,
+          "one_based_ovr_weight_percentage": 0.0815
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.31,
+          "mean": 85.66,
+          "std": 4.81,
+          "zero_based_ovr_weight": 0.32,
+          "ovr_weight_percentage": 0.2887,
+          "one_based_ovr_weight_percentage": 0.1739
+        },
+        "jumping": {
+          "original_ovr_weight": -0.01,
+          "mean": 75.61,
+          "std": 6.28,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "injury": {
+          "original_ovr_weight": 0.01,
+          "mean": 88.53,
+          "std": 3.71,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.018,
+          "one_based_ovr_weight_percentage": 0.0109
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.12,
+          "mean": 77.93,
+          "std": 6.99,
+          "zero_based_ovr_weight": 0.13,
+          "ovr_weight_percentage": 0.1173,
+          "one_based_ovr_weight_percentage": 0.0707
+        },
+        "speed": {
+          "original_ovr_weight": 0.07,
+          "mean": 72.28,
+          "std": 6.79,
+          "zero_based_ovr_weight": 0.08,
+          "ovr_weight_percentage": 0.0722,
+          "one_based_ovr_weight_percentage": 0.0435
+        },
+        "toughness": {
+          "original_ovr_weight": -0.0,
+          "mean": 85.13,
+          "std": 5.22,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.009,
+          "one_based_ovr_weight_percentage": 0.0054
+        },
+        "agility": {
+          "original_ovr_weight": 0.06,
+          "mean": 68.46,
+          "std": 8.18,
+          "zero_based_ovr_weight": 0.07,
+          "ovr_weight_percentage": 0.0632,
+          "one_based_ovr_weight_percentage": 0.038
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "original_ovr_weight": 0.15,
+          "mean": 81.16,
+          "std": 4.4,
+          "zero_based_ovr_weight": 0.16,
+          "ovr_weight_percentage": 0.1443,
+          "one_based_ovr_weight_percentage": 0.087
+        },
+        "pass_rush_finesse": {
+          "original_ovr_weight": 0.03,
+          "mean": 64.2,
+          "std": 9.14,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0361,
+          "one_based_ovr_weight_percentage": 0.0217
+        },
+        "tackle": {
+          "original_ovr_weight": 0.26,
+          "mean": 80.87,
+          "std": 4.64,
+          "zero_based_ovr_weight": 0.27,
+          "ovr_weight_percentage": 0.2436,
+          "one_based_ovr_weight_percentage": 0.1467
+        },
+        "zone_coverage": {
+          "original_ovr_weight": 0.01,
+          "mean": 29.88,
+          "std": 9.11,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.018,
+          "one_based_ovr_weight_percentage": 0.0109
+        },
+        "hit_power": {
+          "original_ovr_weight": 0.01,
+          "mean": 79.34,
+          "std": 3.84,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.018,
+          "one_based_ovr_weight_percentage": 0.0109
+        },
+        "block_shedding": {
+          "original_ovr_weight": 0.22,
+          "mean": 73.88,
+          "std": 6.35,
+          "zero_based_ovr_weight": 0.23,
+          "ovr_weight_percentage": 0.2075,
+          "one_based_ovr_weight_percentage": 0.125
+        },
+        "man_coverage": {
+          "original_ovr_weight": 0.02,
+          "mean": 21.98,
+          "std": 7.66,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0271,
+          "one_based_ovr_weight_percentage": 0.0163
+        },
+        "pass_rush_power": {
+          "original_ovr_weight": 0.12,
+          "mean": 72.35,
+          "std": 7.31,
+          "zero_based_ovr_weight": 0.13,
+          "ovr_weight_percentage": 0.1173,
+          "one_based_ovr_weight_percentage": 0.0707
+        },
+        "press": {
+          "original_ovr_weight": -0.0,
+          "mean": 18.18,
+          "std": 8.16,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.009,
+          "one_based_ovr_weight_percentage": 0.0054
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 22.09,
+          "std": 9.68,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 35.73,
+          "std": 8.66,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 15.78,
+          "std": 6.49,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 17.38,
+          "std": 6.57,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 9.39,
+          "std": 6.96,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 23.39,
+          "std": 10.19,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 6.44,
+          "std": 6.29,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 22.13,
+          "std": 8.85,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 35.43,
+          "std": 9.26,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 25.96,
+          "std": 10.43,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 27.83,
+          "std": 10.97,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 32.84,
+          "std": 9.81,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 37.34,
+          "std": 8.94,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 18.4,
+          "std": 7.34,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 58.79,
+          "std": 6.57,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 45.44,
+          "std": 1.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 45.14,
+          "std": 1.14,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 26.1,
+          "std": 9.85,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 45.45,
+          "std": 1.87,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 45.18,
+          "std": 1.51,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 83.17,
+          "std": 4.01,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 45.25,
+          "std": 1.58,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 45.32,
+          "std": 1.41,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 12.58,
+          "std": 3.04,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 6.88,
+          "std": 3.96,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 13.24,
+          "std": 3.64,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 22.27,
+          "std": 6.59,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 6.58,
+          "std": 2.96,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 7.12,
+          "std": 4.72,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 6.79,
+          "std": 4.09,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 6.67,
+          "std": 3.28,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 16.52,
+          "std": 6.1,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 18.47,
+          "std": 6.58,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 11.46,
+          "std": 6.1,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "EDGE",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.25,
+          "mean": 71.9,
+          "std": 11.87,
+          "zero_based_ovr_weight": 0.28,
+          "ovr_weight_percentage": 0.2122,
+          "one_based_ovr_weight_percentage": 0.1256
+        },
+        "play_recognition": {
+          "original_ovr_weight": 0.03,
+          "mean": 70.28,
+          "std": 11.61,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.0455,
+          "one_based_ovr_weight_percentage": 0.0269
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.13,
+          "mean": 77.97,
+          "std": 4.93,
+          "zero_based_ovr_weight": 0.16,
+          "ovr_weight_percentage": 0.1213,
+          "one_based_ovr_weight_percentage": 0.0717
+        },
+        "jumping": {
+          "original_ovr_weight": -0.02,
+          "mean": 82.58,
+          "std": 5.11,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0076,
+          "one_based_ovr_weight_percentage": 0.0045
+        },
+        "injury": {
+          "original_ovr_weight": 0.01,
+          "mean": 88.23,
+          "std": 3.21,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0303,
+          "one_based_ovr_weight_percentage": 0.0179
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.2,
+          "mean": 86.09,
+          "std": 4.09,
+          "zero_based_ovr_weight": 0.23,
+          "ovr_weight_percentage": 0.1743,
+          "one_based_ovr_weight_percentage": 0.1031
+        },
+        "speed": {
+          "original_ovr_weight": 0.19,
+          "mean": 82.06,
+          "std": 3.88,
+          "zero_based_ovr_weight": 0.22,
+          "ovr_weight_percentage": 0.1667,
+          "one_based_ovr_weight_percentage": 0.0987
+        },
+        "toughness": {
+          "original_ovr_weight": -0.01,
+          "mean": 83.48,
+          "std": 5.8,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0152,
+          "one_based_ovr_weight_percentage": 0.009
+        },
+        "agility": {
+          "original_ovr_weight": 0.04,
+          "mean": 79.76,
+          "std": 4.56,
+          "zero_based_ovr_weight": 0.07,
+          "ovr_weight_percentage": 0.053,
+          "one_based_ovr_weight_percentage": 0.0314
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "original_ovr_weight": 0.23,
+          "mean": 81.58,
+          "std": 4.41,
+          "zero_based_ovr_weight": 0.26,
+          "ovr_weight_percentage": 0.197,
+          "one_based_ovr_weight_percentage": 0.1166
+        },
+        "pass_rush_finesse": {
+          "original_ovr_weight": 0.24,
+          "mean": 72.62,
+          "std": 8.89,
+          "zero_based_ovr_weight": 0.27,
+          "ovr_weight_percentage": 0.2046,
+          "one_based_ovr_weight_percentage": 0.1211
+        },
+        "tackle": {
+          "original_ovr_weight": 0.23,
+          "mean": 79.07,
+          "std": 4.46,
+          "zero_based_ovr_weight": 0.26,
+          "ovr_weight_percentage": 0.197,
+          "one_based_ovr_weight_percentage": 0.1166
+        },
+        "zone_coverage": {
+          "original_ovr_weight": 0.09,
+          "mean": 47.97,
+          "std": 9.13,
+          "zero_based_ovr_weight": 0.12,
+          "ovr_weight_percentage": 0.0909,
+          "one_based_ovr_weight_percentage": 0.0538
+        },
+        "hit_power": {
+          "original_ovr_weight": 0.03,
+          "mean": 79.4,
+          "std": 4.03,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.0455,
+          "one_based_ovr_weight_percentage": 0.0269
+        },
+        "block_shedding": {
+          "original_ovr_weight": -0.03,
+          "mean": 70.08,
+          "std": 6.33,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "original_ovr_weight": -0.03,
+          "mean": 39.64,
+          "std": 9.97,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "original_ovr_weight": 0.12,
+          "mean": 68.73,
+          "std": 8.5,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.1137,
+          "one_based_ovr_weight_percentage": 0.0673
+        },
+        "press": {
+          "original_ovr_weight": -0.01,
+          "mean": 33.05,
+          "std": 11.22,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0152,
+          "one_based_ovr_weight_percentage": 0.009
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 32.34,
+          "std": 12.45,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 47.24,
+          "std": 10.46,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 19.96,
+          "std": 9.44,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 21.64,
+          "std": 8.83,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 13.15,
+          "std": 9.89,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 34.69,
+          "std": 12.07,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 9.85,
+          "std": 8.7,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 35.14,
+          "std": 11.19,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 36.33,
+          "std": 9.2,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 40.89,
+          "std": 11.0,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 38.28,
+          "std": 11.36,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 37.22,
+          "std": 9.32,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 45.55,
+          "std": 10.46,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 25.0,
+          "std": 9.81,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 68.93,
+          "std": 4.23,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 44.86,
+          "std": 1.9,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 44.87,
+          "std": 1.12,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 18.84,
+          "std": 5.54,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 44.95,
+          "std": 0.7,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 44.88,
+          "std": 1.1,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 77.89,
+          "std": 5.61,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 44.93,
+          "std": 1.51,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 44.96,
+          "std": 0.57,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 13.85,
+          "std": 5.73,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 7.34,
+          "std": 5.91,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 13.93,
+          "std": 4.81,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 23.62,
+          "std": 7.27,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 7.08,
+          "std": 5.02,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 7.78,
+          "std": 7.0,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 7.48,
+          "std": 6.5,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 6.98,
+          "std": 4.72,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 17.3,
+          "std": 6.37,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 19.54,
+          "std": 7.18,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 12.19,
+          "std": 7.75,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "FB",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.3,
+          "mean": 69.65,
+          "std": 10.0,
+          "zero_based_ovr_weight": 0.67,
+          "ovr_weight_percentage": 0.0756,
+          "one_based_ovr_weight_percentage": 0.0945
+        },
+        "play_recognition": {
+          "original_ovr_weight": -0.08,
+          "mean": 35.3,
+          "std": 17.64,
+          "zero_based_ovr_weight": 0.29,
+          "ovr_weight_percentage": 0.0327,
+          "one_based_ovr_weight_percentage": 0.0409
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.39,
+          "mean": 76.9,
+          "std": 4.62,
+          "zero_based_ovr_weight": 0.76,
+          "ovr_weight_percentage": 0.0858,
+          "one_based_ovr_weight_percentage": 0.1072
+        },
+        "jumping": {
+          "original_ovr_weight": 0.21,
+          "mean": 81.39,
+          "std": 4.19,
+          "zero_based_ovr_weight": 0.58,
+          "ovr_weight_percentage": 0.0654,
+          "one_based_ovr_weight_percentage": 0.0818
+        },
+        "injury": {
+          "original_ovr_weight": -0.22,
+          "mean": 87.42,
+          "std": 3.15,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.0169,
+          "one_based_ovr_weight_percentage": 0.0212
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.09,
+          "mean": 83.39,
+          "std": 5.66,
+          "zero_based_ovr_weight": 0.46,
+          "ovr_weight_percentage": 0.0519,
+          "one_based_ovr_weight_percentage": 0.0649
+        },
+        "speed": {
+          "original_ovr_weight": -0.21,
+          "mean": 79.87,
+          "std": 4.72,
+          "zero_based_ovr_weight": 0.16,
+          "ovr_weight_percentage": 0.0181,
+          "one_based_ovr_weight_percentage": 0.0226
+        },
+        "toughness": {
+          "original_ovr_weight": -0.1,
+          "mean": 84.18,
+          "std": 5.36,
+          "zero_based_ovr_weight": 0.27,
+          "ovr_weight_percentage": 0.0305,
+          "one_based_ovr_weight_percentage": 0.0381
+        },
+        "agility": {
+          "original_ovr_weight": 0.21,
+          "mean": 78.75,
+          "std": 4.32,
+          "zero_based_ovr_weight": 0.58,
+          "ovr_weight_percentage": 0.0654,
+          "one_based_ovr_weight_percentage": 0.0818
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "original_ovr_weight": -0.24,
+          "mean": 58.81,
+          "std": 6.88,
+          "zero_based_ovr_weight": 0.13,
+          "ovr_weight_percentage": 0.0147,
+          "one_based_ovr_weight_percentage": 0.0183
+        },
+        "trucking": {
+          "original_ovr_weight": 0.16,
+          "mean": 70.94,
+          "std": 7.04,
+          "zero_based_ovr_weight": 0.53,
+          "ovr_weight_percentage": 0.0598,
+          "one_based_ovr_weight_percentage": 0.0748
+        },
+        "juke_move": {
+          "original_ovr_weight": 0.38,
+          "mean": 64.14,
+          "std": 6.44,
+          "zero_based_ovr_weight": 0.75,
+          "ovr_weight_percentage": 0.0846,
+          "one_based_ovr_weight_percentage": 0.1058
+        },
+        "ball_carrier_vision": {
+          "original_ovr_weight": 0.08,
+          "mean": 66.78,
+          "std": 7.93,
+          "zero_based_ovr_weight": 0.45,
+          "ovr_weight_percentage": 0.0508,
+          "one_based_ovr_weight_percentage": 0.0635
+        },
+        "stiff_arm": {
+          "original_ovr_weight": 0.14,
+          "mean": 66.45,
+          "std": 7.99,
+          "zero_based_ovr_weight": 0.51,
+          "ovr_weight_percentage": 0.0575,
+          "one_based_ovr_weight_percentage": 0.0719
+        },
+        "carrying": {
+          "original_ovr_weight": -0.37,
+          "mean": 72.17,
+          "std": 4.0,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "original_ovr_weight": 0.11,
+          "mean": 48.67,
+          "std": 11.14,
+          "zero_based_ovr_weight": 0.48,
+          "ovr_weight_percentage": 0.0542,
+          "one_based_ovr_weight_percentage": 0.0677
+        },
+        "change_of_direction": {
+          "original_ovr_weight": -0.05,
+          "mean": 73.43,
+          "std": 4.31,
+          "zero_based_ovr_weight": 0.32,
+          "ovr_weight_percentage": 0.0361,
+          "one_based_ovr_weight_percentage": 0.0451
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 55.77,
+          "std": 8.62,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 66.96,
+          "std": 4.79,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 57.05,
+          "std": 6.56,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 51.17,
+          "std": 7.88,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 48.57,
+          "std": 6.83,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 53.84,
+          "std": 11.38,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 41.39,
+          "std": 7.69,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 54.63,
+          "std": 13.44,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 34.65,
+          "std": 17.73,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 51.54,
+          "std": 15.53,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 30.51,
+          "std": 16.61,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 52.57,
+          "std": 16.17,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 43.71,
+          "std": 12.97,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 24.66,
+          "std": 15.83,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 35.84,
+          "std": 17.94,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 23.59,
+          "std": 14.45,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 62.64,
+          "std": 4.42,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 45.54,
+          "std": 6.24,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 76.13,
+          "std": 8.61,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 55.46,
+          "std": 5.53,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 48.48,
+          "std": 5.22,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 65.64,
+          "std": 6.85,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 64.86,
+          "std": 4.59,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 53.02,
+          "std": 5.48,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 19.8,
+          "std": 11.26,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 17.17,
+          "std": 14.15,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 19.18,
+          "std": 11.24,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 33.01,
+          "std": 12.49,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 13.52,
+          "std": 13.17,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 20.37,
+          "std": 15.3,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 16.88,
+          "std": 15.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 14.2,
+          "std": 13.95,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 17.87,
+          "std": 5.75,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 21.18,
+          "std": 8.47,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 27.76,
+          "std": 12.89,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "G",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.16,
+          "mean": 76.69,
+          "std": 9.79,
+          "zero_based_ovr_weight": 0.18,
+          "ovr_weight_percentage": 0.1476,
+          "one_based_ovr_weight_percentage": 0.0952
+        },
+        "play_recognition": {
+          "original_ovr_weight": -0.0,
+          "mean": 21.19,
+          "std": 9.54,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0164,
+          "one_based_ovr_weight_percentage": 0.0106
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.2,
+          "mean": 86.39,
+          "std": 3.55,
+          "zero_based_ovr_weight": 0.22,
+          "ovr_weight_percentage": 0.1804,
+          "one_based_ovr_weight_percentage": 0.1164
+        },
+        "jumping": {
+          "original_ovr_weight": -0.01,
+          "mean": 71.09,
+          "std": 5.49,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0082,
+          "one_based_ovr_weight_percentage": 0.0053
+        },
+        "injury": {
+          "original_ovr_weight": 0.01,
+          "mean": 88.36,
+          "std": 3.8,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0246,
+          "one_based_ovr_weight_percentage": 0.0159
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.02,
+          "mean": 71.0,
+          "std": 7.45,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0328,
+          "one_based_ovr_weight_percentage": 0.0212
+        },
+        "speed": {
+          "original_ovr_weight": 0.04,
+          "mean": 65.01,
+          "std": 5.14,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.0492,
+          "one_based_ovr_weight_percentage": 0.0317
+        },
+        "toughness": {
+          "original_ovr_weight": 0.02,
+          "mean": 85.52,
+          "std": 6.12,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0328,
+          "one_based_ovr_weight_percentage": 0.0212
+        },
+        "agility": {
+          "original_ovr_weight": 0.04,
+          "mean": 60.82,
+          "std": 6.68,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.0492,
+          "one_based_ovr_weight_percentage": 0.0317
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "original_ovr_weight": 0.2,
+          "mean": 73.01,
+          "std": 6.92,
+          "zero_based_ovr_weight": 0.22,
+          "ovr_weight_percentage": 0.1804,
+          "one_based_ovr_weight_percentage": 0.1164
+        },
+        "pass_block_finesse": {
+          "original_ovr_weight": 0.18,
+          "mean": 70.46,
+          "std": 7.28,
+          "zero_based_ovr_weight": 0.2,
+          "ovr_weight_percentage": 0.164,
+          "one_based_ovr_weight_percentage": 0.1058
+        },
+        "lead_blocking": {
+          "original_ovr_weight": 0.09,
+          "mean": 80.45,
+          "std": 6.08,
+          "zero_based_ovr_weight": 0.11,
+          "ovr_weight_percentage": 0.0902,
+          "one_based_ovr_weight_percentage": 0.0582
+        },
+        "run_block_power": {
+          "original_ovr_weight": 0.21,
+          "mean": 72.83,
+          "std": 7.12,
+          "zero_based_ovr_weight": 0.23,
+          "ovr_weight_percentage": 0.1886,
+          "one_based_ovr_weight_percentage": 0.1217
+        },
+        "pass_block_power": {
+          "original_ovr_weight": 0.1,
+          "mean": 72.0,
+          "std": 7.47,
+          "zero_based_ovr_weight": 0.12,
+          "ovr_weight_percentage": 0.0984,
+          "one_based_ovr_weight_percentage": 0.0635
+        },
+        "impact_block": {
+          "original_ovr_weight": 0.15,
+          "mean": 82.75,
+          "std": 4.2,
+          "zero_based_ovr_weight": 0.17,
+          "ovr_weight_percentage": 0.1394,
+          "one_based_ovr_weight_percentage": 0.0899
+        },
+        "pass_block": {
+          "original_ovr_weight": 0.16,
+          "mean": 71.27,
+          "std": 7.12,
+          "zero_based_ovr_weight": 0.18,
+          "ovr_weight_percentage": 0.1476,
+          "one_based_ovr_weight_percentage": 0.0952
+        },
+        "run_block_finesse": {
+          "original_ovr_weight": -0.02,
+          "mean": 72.9,
+          "std": 7.38,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 17.67,
+          "std": 8.47,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 29.92,
+          "std": 9.59,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 16.01,
+          "std": 7.65,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 17.07,
+          "std": 7.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 9.29,
+          "std": 7.65,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 17.93,
+          "std": 8.15,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 7.75,
+          "std": 5.79,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 30.16,
+          "std": 8.52,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 17.11,
+          "std": 9.09,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 34.23,
+          "std": 7.73,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 13.09,
+          "std": 3.16,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 31.33,
+          "std": 11.11,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 28.64,
+          "std": 9.71,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 11.63,
+          "std": 1.87,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 21.17,
+          "std": 12.73,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 10.18,
+          "std": 1.16,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 13.58,
+          "std": 5.99,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 27.14,
+          "std": 8.36,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 15.21,
+          "std": 7.83,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 17.78,
+          "std": 9.44,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 21.08,
+          "std": 10.48,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 33.12,
+          "std": 9.24,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 12.85,
+          "std": 9.2,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 52.0,
+          "std": 4.64,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 12.5,
+          "std": 3.45,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 6.68,
+          "std": 3.66,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 11.91,
+          "std": 3.57,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 22.26,
+          "std": 6.5,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 6.49,
+          "std": 2.78,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 6.89,
+          "std": 4.48,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 6.61,
+          "std": 3.64,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 6.48,
+          "std": 2.75,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 17.47,
+          "std": 5.55,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 19.27,
+          "std": 5.67,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 10.14,
+          "std": 0.85,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "K",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.46,
+          "mean": 62.44,
+          "std": 7.21,
+          "zero_based_ovr_weight": 0.46,
+          "ovr_weight_percentage": 0.46,
+          "one_based_ovr_weight_percentage": 0.3802
+        },
+        "play_recognition": {
+          "original_ovr_weight": -0.0,
+          "mean": 16.37,
+          "std": 5.06,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "original_ovr_weight": 0.25,
+          "mean": 80.62,
+          "std": 7.01,
+          "zero_based_ovr_weight": 0.25,
+          "ovr_weight_percentage": 0.25,
+          "one_based_ovr_weight_percentage": 0.2066
+        },
+        "kick_power": {
+          "original_ovr_weight": 0.45,
+          "mean": 94.71,
+          "std": 2.13,
+          "zero_based_ovr_weight": 0.45,
+          "ovr_weight_percentage": 0.45,
+          "one_based_ovr_weight_percentage": 0.3719
+        },
+        "kick_return": {
+          "original_ovr_weight": 0.05,
+          "mean": 9.94,
+          "std": 0.33,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.05,
+          "one_based_ovr_weight_percentage": 0.0413
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "mean": 45.67,
+          "std": 9.66,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "jumping": {
+          "mean": 55.0,
+          "std": 13.31,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "injury": {
+          "mean": 87.15,
+          "std": 4.28,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "acceleration": {
+          "mean": 75.17,
+          "std": 7.7,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "speed": {
+          "mean": 71.86,
+          "std": 5.11,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "toughness": {
+          "mean": 62.7,
+          "std": 8.39,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "agility": {
+          "mean": 61.4,
+          "std": 5.3,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 12.59,
+          "std": 3.86,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 31.5,
+          "std": 7.47,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 12.7,
+          "std": 3.89,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 12.89,
+          "std": 1.47,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 11.89,
+          "std": 2.55,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 15.12,
+          "std": 9.4,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 11.5,
+          "std": 2.34,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 24.84,
+          "std": 7.71,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 10.28,
+          "std": 1.67,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 25.99,
+          "std": 6.12,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 15.67,
+          "std": 3.95,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 15.78,
+          "std": 5.85,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 18.63,
+          "std": 7.33,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 12.6,
+          "std": 2.38,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 10.14,
+          "std": 0.83,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 10.0,
+          "std": 0.0,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 16.02,
+          "std": 9.12,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 13.34,
+          "std": 4.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 17.76,
+          "std": 10.95,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 17.52,
+          "std": 8.56,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 12.83,
+          "std": 6.05,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 36.99,
+          "std": 8.37,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 11.72,
+          "std": 4.99,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 52.01,
+          "std": 3.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 17.81,
+          "std": 3.8,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 14.59,
+          "std": 2.73,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 13.52,
+          "std": 2.4,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 14.4,
+          "std": 2.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 14.87,
+          "std": 2.75,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 14.74,
+          "std": 3.27,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 16.33,
+          "std": 3.09,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 14.67,
+          "std": 3.47,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 15.52,
+          "std": 2.81,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 25.62,
+          "std": 5.68,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 16.77,
+          "std": 4.09,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 32.73,
+          "std": 7.33,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 17.43,
+          "std": 3.11,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 33.57,
+          "std": 2.04,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 18.36,
+          "std": 3.8,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 21.43,
+          "std": 4.45,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "LB",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.16,
+          "mean": 70.8,
+          "std": 10.16,
+          "zero_based_ovr_weight": 0.18,
+          "ovr_weight_percentage": 0.1507,
+          "one_based_ovr_weight_percentage": 0.0814
+        },
+        "play_recognition": {
+          "original_ovr_weight": 0.16,
+          "mean": 70.73,
+          "std": 10.12,
+          "zero_based_ovr_weight": 0.18,
+          "ovr_weight_percentage": 0.1507,
+          "one_based_ovr_weight_percentage": 0.0814
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.17,
+          "mean": 72.87,
+          "std": 5.09,
+          "zero_based_ovr_weight": 0.19,
+          "ovr_weight_percentage": 0.159,
+          "one_based_ovr_weight_percentage": 0.086
+        },
+        "jumping": {
+          "original_ovr_weight": 0.01,
+          "mean": 83.53,
+          "std": 5.1,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0251,
+          "one_based_ovr_weight_percentage": 0.0136
+        },
+        "injury": {
+          "original_ovr_weight": 0.0,
+          "mean": 87.9,
+          "std": 3.83,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0167,
+          "one_based_ovr_weight_percentage": 0.009
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.18,
+          "mean": 87.5,
+          "std": 3.04,
+          "zero_based_ovr_weight": 0.2,
+          "ovr_weight_percentage": 0.1674,
+          "one_based_ovr_weight_percentage": 0.0905
+        },
+        "speed": {
+          "original_ovr_weight": 0.07,
+          "mean": 84.39,
+          "std": 3.19,
+          "zero_based_ovr_weight": 0.09,
+          "ovr_weight_percentage": 0.0753,
+          "one_based_ovr_weight_percentage": 0.0407
+        },
+        "toughness": {
+          "original_ovr_weight": -0.0,
+          "mean": 84.37,
+          "std": 5.28,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0167,
+          "one_based_ovr_weight_percentage": 0.009
+        },
+        "agility": {
+          "original_ovr_weight": 0.1,
+          "mean": 80.79,
+          "std": 4.31,
+          "zero_based_ovr_weight": 0.12,
+          "ovr_weight_percentage": 0.1005,
+          "one_based_ovr_weight_percentage": 0.0543
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "original_ovr_weight": 0.27,
+          "mean": 81.97,
+          "std": 4.81,
+          "zero_based_ovr_weight": 0.29,
+          "ovr_weight_percentage": 0.2428,
+          "one_based_ovr_weight_percentage": 0.1312
+        },
+        "pass_rush_finesse": {
+          "original_ovr_weight": 0.01,
+          "mean": 55.79,
+          "std": 6.82,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0251,
+          "one_based_ovr_weight_percentage": 0.0136
+        },
+        "tackle": {
+          "original_ovr_weight": 0.3,
+          "mean": 81.12,
+          "std": 5.54,
+          "zero_based_ovr_weight": 0.32,
+          "ovr_weight_percentage": 0.2679,
+          "one_based_ovr_weight_percentage": 0.1448
+        },
+        "zone_coverage": {
+          "original_ovr_weight": 0.18,
+          "mean": 63.48,
+          "std": 6.92,
+          "zero_based_ovr_weight": 0.2,
+          "ovr_weight_percentage": 0.1674,
+          "one_based_ovr_weight_percentage": 0.0905
+        },
+        "hit_power": {
+          "original_ovr_weight": 0.05,
+          "mean": 81.93,
+          "std": 4.48,
+          "zero_based_ovr_weight": 0.07,
+          "ovr_weight_percentage": 0.0586,
+          "one_based_ovr_weight_percentage": 0.0317
+        },
+        "block_shedding": {
+          "original_ovr_weight": 0.18,
+          "mean": 68.24,
+          "std": 6.09,
+          "zero_based_ovr_weight": 0.2,
+          "ovr_weight_percentage": 0.1674,
+          "one_based_ovr_weight_percentage": 0.0905
+        },
+        "man_coverage": {
+          "original_ovr_weight": 0.02,
+          "mean": 56.89,
+          "std": 7.17,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0335,
+          "one_based_ovr_weight_percentage": 0.0181
+        },
+        "pass_rush_power": {
+          "original_ovr_weight": -0.02,
+          "mean": 54.59,
+          "std": 7.59,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "original_ovr_weight": 0.01,
+          "mean": 48.81,
+          "std": 8.62,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0251,
+          "one_based_ovr_weight_percentage": 0.0136
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 43.25,
+          "std": 12.16,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 60.8,
+          "std": 7.2,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 23.11,
+          "std": 10.01,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 21.63,
+          "std": 8.81,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 15.25,
+          "std": 11.16,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 46.83,
+          "std": 11.48,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 11.95,
+          "std": 9.5,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 41.57,
+          "std": 11.97,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 41.51,
+          "std": 10.0,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 49.39,
+          "std": 12.5,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 47.72,
+          "std": 12.27,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 42.92,
+          "std": 9.43,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 56.3,
+          "std": 7.47,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 32.9,
+          "std": 12.87,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 74.09,
+          "std": 3.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 44.03,
+          "std": 4.13,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 43.98,
+          "std": 3.05,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 22.32,
+          "std": 7.94,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 44.23,
+          "std": 3.17,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 44.03,
+          "std": 3.05,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 75.37,
+          "std": 6.78,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 43.64,
+          "std": 5.05,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 44.2,
+          "std": 3.08,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 15.82,
+          "std": 8.66,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 9.55,
+          "std": 8.74,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 14.75,
+          "std": 7.09,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 25.87,
+          "std": 7.81,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 9.19,
+          "std": 8.0,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 10.75,
+          "std": 10.49,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 10.34,
+          "std": 10.31,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 8.94,
+          "std": 7.72,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 18.28,
+          "std": 6.64,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 19.95,
+          "std": 8.03,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 16.26,
+          "std": 12.6,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "OT",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.13,
+          "mean": 77.54,
+          "std": 10.8,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.1223,
+          "one_based_ovr_weight_percentage": 0.0815
+        },
+        "play_recognition": {
+          "original_ovr_weight": 0.0,
+          "mean": 21.5,
+          "std": 9.02,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0163,
+          "one_based_ovr_weight_percentage": 0.0109
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.15,
+          "mean": 85.97,
+          "std": 3.64,
+          "zero_based_ovr_weight": 0.17,
+          "ovr_weight_percentage": 0.1386,
+          "one_based_ovr_weight_percentage": 0.0924
+        },
+        "jumping": {
+          "original_ovr_weight": -0.02,
+          "mean": 71.77,
+          "std": 6.35,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "injury": {
+          "original_ovr_weight": 0.02,
+          "mean": 88.27,
+          "std": 4.11,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0326,
+          "one_based_ovr_weight_percentage": 0.0217
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.03,
+          "mean": 71.04,
+          "std": 7.86,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.0408,
+          "one_based_ovr_weight_percentage": 0.0272
+        },
+        "speed": {
+          "original_ovr_weight": 0.05,
+          "mean": 65.76,
+          "std": 6.19,
+          "zero_based_ovr_weight": 0.07,
+          "ovr_weight_percentage": 0.0571,
+          "one_based_ovr_weight_percentage": 0.038
+        },
+        "toughness": {
+          "original_ovr_weight": -0.01,
+          "mean": 84.7,
+          "std": 7.21,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0082,
+          "one_based_ovr_weight_percentage": 0.0054
+        },
+        "agility": {
+          "original_ovr_weight": 0.03,
+          "mean": 62.49,
+          "std": 7.17,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.0408,
+          "one_based_ovr_weight_percentage": 0.0272
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "original_ovr_weight": 0.19,
+          "mean": 73.72,
+          "std": 7.97,
+          "zero_based_ovr_weight": 0.21,
+          "ovr_weight_percentage": 0.1712,
+          "one_based_ovr_weight_percentage": 0.1141
+        },
+        "pass_block_finesse": {
+          "original_ovr_weight": 0.24,
+          "mean": 72.92,
+          "std": 8.9,
+          "zero_based_ovr_weight": 0.26,
+          "ovr_weight_percentage": 0.212,
+          "one_based_ovr_weight_percentage": 0.1413
+        },
+        "lead_blocking": {
+          "original_ovr_weight": 0.03,
+          "mean": 80.9,
+          "std": 5.36,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.0408,
+          "one_based_ovr_weight_percentage": 0.0272
+        },
+        "run_block_power": {
+          "original_ovr_weight": 0.2,
+          "mean": 72.89,
+          "std": 8.12,
+          "zero_based_ovr_weight": 0.22,
+          "ovr_weight_percentage": 0.1793,
+          "one_based_ovr_weight_percentage": 0.1196
+        },
+        "pass_block_power": {
+          "original_ovr_weight": 0.23,
+          "mean": 73.75,
+          "std": 8.76,
+          "zero_based_ovr_weight": 0.25,
+          "ovr_weight_percentage": 0.2038,
+          "one_based_ovr_weight_percentage": 0.1359
+        },
+        "impact_block": {
+          "original_ovr_weight": 0.1,
+          "mean": 82.48,
+          "std": 4.87,
+          "zero_based_ovr_weight": 0.12,
+          "ovr_weight_percentage": 0.0978,
+          "one_based_ovr_weight_percentage": 0.0652
+        },
+        "pass_block": {
+          "original_ovr_weight": 0.1,
+          "mean": 73.42,
+          "std": 8.58,
+          "zero_based_ovr_weight": 0.12,
+          "ovr_weight_percentage": 0.0978,
+          "one_based_ovr_weight_percentage": 0.0652
+        },
+        "run_block_finesse": {
+          "original_ovr_weight": 0.03,
+          "mean": 74.16,
+          "std": 8.3,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.0408,
+          "one_based_ovr_weight_percentage": 0.0272
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 21.11,
+          "std": 12.19,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 32.99,
+          "std": 11.03,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 18.3,
+          "std": 8.66,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 18.55,
+          "std": 9.2,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 10.4,
+          "std": 7.75,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 20.9,
+          "std": 11.36,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 8.08,
+          "std": 5.62,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 30.94,
+          "std": 8.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 18.56,
+          "std": 10.81,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 35.38,
+          "std": 7.79,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 13.9,
+          "std": 3.27,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 33.36,
+          "std": 11.33,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 30.51,
+          "std": 8.87,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 12.02,
+          "std": 2.05,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 22.31,
+          "std": 13.63,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 10.16,
+          "std": 1.0,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 13.55,
+          "std": 7.16,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 27.25,
+          "std": 9.55,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 15.44,
+          "std": 9.0,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 17.51,
+          "std": 9.82,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 21.84,
+          "std": 10.89,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 35.0,
+          "std": 10.25,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 11.92,
+          "std": 7.87,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 52.14,
+          "std": 5.09,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 12.4,
+          "std": 2.83,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 6.58,
+          "std": 4.6,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 11.97,
+          "std": 4.08,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 22.24,
+          "std": 8.42,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 6.29,
+          "std": 3.12,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 6.83,
+          "std": 5.36,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 6.54,
+          "std": 4.57,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 6.41,
+          "std": 4.06,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 17.57,
+          "std": 5.82,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 19.4,
+          "std": 5.24,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 9.98,
+          "std": 0.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "P",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.44,
+          "mean": 61.08,
+          "std": 5.66,
+          "zero_based_ovr_weight": 0.45,
+          "ovr_weight_percentage": 0.4304,
+          "one_based_ovr_weight_percentage": 0.3913
+        },
+        "play_recognition": {
+          "original_ovr_weight": -0.01,
+          "mean": 19.78,
+          "std": 5.79,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "original_ovr_weight": 0.24,
+          "mean": 80.49,
+          "std": 7.24,
+          "zero_based_ovr_weight": 0.25,
+          "ovr_weight_percentage": 0.2391,
+          "one_based_ovr_weight_percentage": 0.2174
+        },
+        "kick_power": {
+          "original_ovr_weight": 0.43,
+          "mean": 93.32,
+          "std": 1.97,
+          "zero_based_ovr_weight": 0.44,
+          "ovr_weight_percentage": 0.4209,
+          "one_based_ovr_weight_percentage": 0.3826
+        },
+        "kick_return": {
+          "original_ovr_weight": 0.0,
+          "mean": 10.0,
+          "std": 0.0,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0096,
+          "one_based_ovr_weight_percentage": 0.0087
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "mean": 51.05,
+          "std": 7.47,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "jumping": {
+          "mean": 62.59,
+          "std": 14.22,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "injury": {
+          "mean": 88.98,
+          "std": 3.86,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "acceleration": {
+          "mean": 76.8,
+          "std": 7.07,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "speed": {
+          "mean": 73.56,
+          "std": 6.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "toughness": {
+          "mean": 69.5,
+          "std": 10.91,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "agility": {
+          "mean": 64.03,
+          "std": 5.79,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 14.68,
+          "std": 5.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 33.8,
+          "std": 9.45,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 13.06,
+          "std": 2.41,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 14.02,
+          "std": 1.53,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 12.86,
+          "std": 2.37,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 17.32,
+          "std": 7.7,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 12.7,
+          "std": 2.58,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 30.41,
+          "std": 11.38,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 10.28,
+          "std": 1.02,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 31.18,
+          "std": 7.48,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 19.86,
+          "std": 6.08,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 24.14,
+          "std": 15.72,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 21.53,
+          "std": 6.67,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 12.89,
+          "std": 2.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 10.22,
+          "std": 0.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 10.15,
+          "std": 0.61,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 15.37,
+          "std": 8.26,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 16.74,
+          "std": 8.68,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 19.41,
+          "std": 13.48,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 19.85,
+          "std": 9.26,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 14.68,
+          "std": 6.6,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 40.19,
+          "std": 8.73,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 14.98,
+          "std": 7.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 53.65,
+          "std": 4.96,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 18.02,
+          "std": 5.74,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 14.51,
+          "std": 4.06,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 15.2,
+          "std": 3.72,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 15.74,
+          "std": 3.24,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 14.97,
+          "std": 4.18,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 18.45,
+          "std": 4.76,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 16.2,
+          "std": 4.73,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 15.63,
+          "std": 3.35,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 19.67,
+          "std": 4.89,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 29.73,
+          "std": 9.2,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 18.54,
+          "std": 6.04,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 42.74,
+          "std": 9.64,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 19.25,
+          "std": 4.69,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 34.41,
+          "std": 10.97,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 22.94,
+          "std": 6.41,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 24.62,
+          "std": 8.3,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "QB",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.26,
+          "mean": 68.59,
+          "std": 10.84,
+          "zero_based_ovr_weight": 0.29,
+          "ovr_weight_percentage": 0.2134,
+          "one_based_ovr_weight_percentage": 0.1021
+        },
+        "play_recognition": {
+          "original_ovr_weight": 0.01,
+          "mean": 18.73,
+          "std": 5.11,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0294,
+          "one_based_ovr_weight_percentage": 0.0141
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.03,
+          "mean": 62.45,
+          "std": 6.78,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.0442,
+          "one_based_ovr_weight_percentage": 0.0211
+        },
+        "jumping": {
+          "original_ovr_weight": -0.02,
+          "mean": 76.81,
+          "std": 6.57,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0074,
+          "one_based_ovr_weight_percentage": 0.0035
+        },
+        "injury": {
+          "original_ovr_weight": 0.03,
+          "mean": 88.8,
+          "std": 3.88,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.0442,
+          "one_based_ovr_weight_percentage": 0.0211
+        },
+        "acceleration": {
+          "original_ovr_weight": -0.03,
+          "mean": 81.97,
+          "std": 7.75,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "speed": {
+          "original_ovr_weight": 0.1,
+          "mean": 79.9,
+          "std": 6.26,
+          "zero_based_ovr_weight": 0.13,
+          "ovr_weight_percentage": 0.0957,
+          "one_based_ovr_weight_percentage": 0.0458
+        },
+        "toughness": {
+          "original_ovr_weight": -0.0,
+          "mean": 88.77,
+          "std": 6.11,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0221,
+          "one_based_ovr_weight_percentage": 0.0106
+        },
+        "agility": {
+          "original_ovr_weight": 0.02,
+          "mean": 79.14,
+          "std": 7.44,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.0368,
+          "one_based_ovr_weight_percentage": 0.0176
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "original_ovr_weight": 0.02,
+          "mean": 56.29,
+          "std": 15.91,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.0368,
+          "one_based_ovr_weight_percentage": 0.0176
+        },
+        "trucking": {
+          "original_ovr_weight": -0.0,
+          "mean": 43.78,
+          "std": 14.79,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0221,
+          "one_based_ovr_weight_percentage": 0.0106
+        },
+        "juke_move": {
+          "original_ovr_weight": 0.04,
+          "mean": 65.48,
+          "std": 12.27,
+          "zero_based_ovr_weight": 0.07,
+          "ovr_weight_percentage": 0.0515,
+          "one_based_ovr_weight_percentage": 0.0246
+        },
+        "ball_carrier_vision": {
+          "original_ovr_weight": -0.01,
+          "mean": 73.14,
+          "std": 13.05,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0147,
+          "one_based_ovr_weight_percentage": 0.007
+        },
+        "stiff_arm": {
+          "original_ovr_weight": -0.01,
+          "mean": 44.84,
+          "std": 14.24,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0147,
+          "one_based_ovr_weight_percentage": 0.007
+        },
+        "carrying": {
+          "original_ovr_weight": 0.08,
+          "mean": 61.93,
+          "std": 4.63,
+          "zero_based_ovr_weight": 0.11,
+          "ovr_weight_percentage": 0.081,
+          "one_based_ovr_weight_percentage": 0.0387
+        },
+        "break_tackle": {
+          "original_ovr_weight": 0.01,
+          "mean": 57.28,
+          "std": 15.74,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0294,
+          "one_based_ovr_weight_percentage": 0.0141
+        },
+        "change_of_direction": {
+          "original_ovr_weight": 0.01,
+          "mean": 76.98,
+          "std": 7.48,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.0294,
+          "one_based_ovr_weight_percentage": 0.0141
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "original_ovr_weight": 0.02,
+          "mean": 68.9,
+          "std": 14.67,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.0368,
+          "one_based_ovr_weight_percentage": 0.0176
+        },
+        "medium_throw_accuracy": {
+          "original_ovr_weight": 0.34,
+          "mean": 78.09,
+          "std": 6.65,
+          "zero_based_ovr_weight": 0.37,
+          "ovr_weight_percentage": 0.2723,
+          "one_based_ovr_weight_percentage": 0.1303
+        },
+        "throw_under_pressure": {
+          "original_ovr_weight": 0.19,
+          "mean": 78.23,
+          "std": 6.48,
+          "zero_based_ovr_weight": 0.22,
+          "ovr_weight_percentage": 0.1619,
+          "one_based_ovr_weight_percentage": 0.0775
+        },
+        "throw_power": {
+          "original_ovr_weight": 0.49,
+          "mean": 86.97,
+          "std": 4.16,
+          "zero_based_ovr_weight": 0.52,
+          "ovr_weight_percentage": 0.3827,
+          "one_based_ovr_weight_percentage": 0.1831
+        },
+        "play_action": {
+          "original_ovr_weight": 0.11,
+          "mean": 80.34,
+          "std": 7.1,
+          "zero_based_ovr_weight": 0.14,
+          "ovr_weight_percentage": 0.103,
+          "one_based_ovr_weight_percentage": 0.0493
+        },
+        "short_throw_accuracy": {
+          "original_ovr_weight": 0.21,
+          "mean": 83.93,
+          "std": 5.46,
+          "zero_based_ovr_weight": 0.24,
+          "ovr_weight_percentage": 0.1766,
+          "one_based_ovr_weight_percentage": 0.0845
+        },
+        "throw_on_run": {
+          "original_ovr_weight": 0.05,
+          "mean": 79.9,
+          "std": 6.73,
+          "zero_based_ovr_weight": 0.08,
+          "ovr_weight_percentage": 0.0589,
+          "one_based_ovr_weight_percentage": 0.0282
+        },
+        "deep_throw_accuracy": {
+          "original_ovr_weight": 0.14,
+          "mean": 77.91,
+          "std": 6.49,
+          "zero_based_ovr_weight": 0.17,
+          "ovr_weight_percentage": 0.1251,
+          "one_based_ovr_weight_percentage": 0.0599
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 24.48,
+          "std": 13.62,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 40.83,
+          "std": 14.13,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 22.08,
+          "std": 10.3,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 19.62,
+          "std": 9.9,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 17.8,
+          "std": 7.85,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 27.31,
+          "std": 15.07,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 14.41,
+          "std": 6.54,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 30.93,
+          "std": 7.55,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 10.5,
+          "std": 4.27,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 28.59,
+          "std": 7.51,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 18.61,
+          "std": 6.61,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 19.05,
+          "std": 9.44,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 23.31,
+          "std": 5.87,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 13.54,
+          "std": 5.24,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 10.44,
+          "std": 3.8,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 11.45,
+          "std": 5.08,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 21.44,
+          "std": 7.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 16.34,
+          "std": 5.53,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 19.83,
+          "std": 8.2,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 18.01,
+          "std": 7.6,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 16.64,
+          "std": 6.11,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 26.44,
+          "std": 8.85,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 17.33,
+          "std": 5.94,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 16.11,
+          "std": 7.22,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 22.96,
+          "std": 10.4,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 26.74,
+          "std": 12.67,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 14.04,
+          "std": 9.59,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "RB",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.32,
+          "mean": 73.8,
+          "std": 9.07,
+          "zero_based_ovr_weight": 0.38,
+          "ovr_weight_percentage": 0.2663,
+          "one_based_ovr_weight_percentage": 0.1114
+        },
+        "play_recognition": {
+          "original_ovr_weight": 0.01,
+          "mean": 20.56,
+          "std": 7.94,
+          "zero_based_ovr_weight": 0.07,
+          "ovr_weight_percentage": 0.0491,
+          "one_based_ovr_weight_percentage": 0.0205
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.08,
+          "mean": 71.92,
+          "std": 6.62,
+          "zero_based_ovr_weight": 0.14,
+          "ovr_weight_percentage": 0.0981,
+          "one_based_ovr_weight_percentage": 0.0411
+        },
+        "jumping": {
+          "original_ovr_weight": 0.04,
+          "mean": 84.33,
+          "std": 4.92,
+          "zero_based_ovr_weight": 0.1,
+          "ovr_weight_percentage": 0.0701,
+          "one_based_ovr_weight_percentage": 0.0293
+        },
+        "injury": {
+          "original_ovr_weight": 0.02,
+          "mean": 87.49,
+          "std": 3.56,
+          "zero_based_ovr_weight": 0.08,
+          "ovr_weight_percentage": 0.0561,
+          "one_based_ovr_weight_percentage": 0.0235
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.14,
+          "mean": 90.39,
+          "std": 2.35,
+          "zero_based_ovr_weight": 0.2,
+          "ovr_weight_percentage": 0.1402,
+          "one_based_ovr_weight_percentage": 0.0587
+        },
+        "speed": {
+          "original_ovr_weight": 0.41,
+          "mean": 88.81,
+          "std": 2.46,
+          "zero_based_ovr_weight": 0.47,
+          "ovr_weight_percentage": 0.3294,
+          "one_based_ovr_weight_percentage": 0.1378
+        },
+        "toughness": {
+          "original_ovr_weight": -0.01,
+          "mean": 84.07,
+          "std": 5.17,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.035,
+          "one_based_ovr_weight_percentage": 0.0147
+        },
+        "agility": {
+          "original_ovr_weight": 0.28,
+          "mean": 85.89,
+          "std": 4.11,
+          "zero_based_ovr_weight": 0.34,
+          "ovr_weight_percentage": 0.2383,
+          "one_based_ovr_weight_percentage": 0.0997
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "original_ovr_weight": 0.09,
+          "mean": 76.42,
+          "std": 4.79,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.1051,
+          "one_based_ovr_weight_percentage": 0.044
+        },
+        "trucking": {
+          "original_ovr_weight": -0.06,
+          "mean": 74.63,
+          "std": 11.03,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "original_ovr_weight": 0.14,
+          "mean": 82.65,
+          "std": 4.54,
+          "zero_based_ovr_weight": 0.2,
+          "ovr_weight_percentage": 0.1402,
+          "one_based_ovr_weight_percentage": 0.0587
+        },
+        "ball_carrier_vision": {
+          "original_ovr_weight": 0.23,
+          "mean": 80.22,
+          "std": 5.1,
+          "zero_based_ovr_weight": 0.29,
+          "ovr_weight_percentage": 0.2033,
+          "one_based_ovr_weight_percentage": 0.085
+        },
+        "stiff_arm": {
+          "original_ovr_weight": 0.04,
+          "mean": 75.59,
+          "std": 8.48,
+          "zero_based_ovr_weight": 0.1,
+          "ovr_weight_percentage": 0.0701,
+          "one_based_ovr_weight_percentage": 0.0293
+        },
+        "carrying": {
+          "original_ovr_weight": 0.26,
+          "mean": 87.54,
+          "std": 4.89,
+          "zero_based_ovr_weight": 0.32,
+          "ovr_weight_percentage": 0.2243,
+          "one_based_ovr_weight_percentage": 0.0938
+        },
+        "break_tackle": {
+          "original_ovr_weight": 0.29,
+          "mean": 79.38,
+          "std": 5.56,
+          "zero_based_ovr_weight": 0.35,
+          "ovr_weight_percentage": 0.2453,
+          "one_based_ovr_weight_percentage": 0.1026
+        },
+        "change_of_direction": {
+          "original_ovr_weight": 0.11,
+          "mean": 84.06,
+          "std": 4.04,
+          "zero_based_ovr_weight": 0.17,
+          "ovr_weight_percentage": 0.1191,
+          "one_based_ovr_weight_percentage": 0.0499
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 54.12,
+          "std": 6.92,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 68.0,
+          "std": 4.53,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 61.89,
+          "std": 7.0,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 53.85,
+          "std": 8.4,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 55.27,
+          "std": 7.43,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 53.64,
+          "std": 7.45,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 47.89,
+          "std": 8.27,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 37.58,
+          "std": 7.74,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 13.57,
+          "std": 7.16,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 34.66,
+          "std": 6.55,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 21.14,
+          "std": 8.4,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 28.36,
+          "std": 9.32,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 29.54,
+          "std": 7.06,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 15.86,
+          "std": 8.75,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 12.97,
+          "std": 5.97,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 17.44,
+          "std": 7.2,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 39.01,
+          "std": 8.84,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 31.46,
+          "std": 5.69,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 38.56,
+          "std": 9.22,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 28.67,
+          "std": 8.29,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 34.35,
+          "std": 6.23,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 40.64,
+          "std": 8.33,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 53.38,
+          "std": 6.42,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 27.84,
+          "std": 7.41,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 25.09,
+          "std": 5.63,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 22.98,
+          "std": 8.2,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 17.21,
+          "std": 5.98,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 32.54,
+          "std": 7.67,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 17.0,
+          "std": 6.32,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 27.83,
+          "std": 8.78,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 22.2,
+          "std": 9.97,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 17.65,
+          "std": 7.29,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 16.57,
+          "std": 5.09,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 19.39,
+          "std": 4.41,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 66.7,
+          "std": 15.89,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "S",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.25,
+          "mean": 73.2,
+          "std": 10.44,
+          "zero_based_ovr_weight": 0.26,
+          "ovr_weight_percentage": 0.2364,
+          "one_based_ovr_weight_percentage": 0.1313
+        },
+        "play_recognition": {
+          "original_ovr_weight": 0.16,
+          "mean": 72.65,
+          "std": 10.28,
+          "zero_based_ovr_weight": 0.17,
+          "ovr_weight_percentage": 0.1545,
+          "one_based_ovr_weight_percentage": 0.0859
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.04,
+          "mean": 64.57,
+          "std": 5.95,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.0455,
+          "one_based_ovr_weight_percentage": 0.0253
+        },
+        "jumping": {
+          "original_ovr_weight": 0.06,
+          "mean": 86.39,
+          "std": 4.33,
+          "zero_based_ovr_weight": 0.07,
+          "ovr_weight_percentage": 0.0636,
+          "one_based_ovr_weight_percentage": 0.0354
+        },
+        "injury": {
+          "original_ovr_weight": -0.0,
+          "mean": 88.5,
+          "std": 3.35,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0091,
+          "one_based_ovr_weight_percentage": 0.0051
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.17,
+          "mean": 90.1,
+          "std": 2.17,
+          "zero_based_ovr_weight": 0.18,
+          "ovr_weight_percentage": 0.1636,
+          "one_based_ovr_weight_percentage": 0.0909
+        },
+        "speed": {
+          "original_ovr_weight": 0.23,
+          "mean": 88.27,
+          "std": 2.49,
+          "zero_based_ovr_weight": 0.24,
+          "ovr_weight_percentage": 0.2182,
+          "one_based_ovr_weight_percentage": 0.1212
+        },
+        "toughness": {
+          "original_ovr_weight": -0.01,
+          "mean": 82.94,
+          "std": 5.74,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "agility": {
+          "original_ovr_weight": 0.18,
+          "mean": 85.02,
+          "std": 3.87,
+          "zero_based_ovr_weight": 0.19,
+          "ovr_weight_percentage": 0.1727,
+          "one_based_ovr_weight_percentage": 0.096
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "original_ovr_weight": 0.13,
+          "mean": 76.46,
+          "std": 5.87,
+          "zero_based_ovr_weight": 0.14,
+          "ovr_weight_percentage": 0.1273,
+          "one_based_ovr_weight_percentage": 0.0707
+        },
+        "pass_rush_finesse": {
+          "original_ovr_weight": -0.01,
+          "mean": 45.29,
+          "std": 8.42,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "original_ovr_weight": 0.19,
+          "mean": 68.2,
+          "std": 5.83,
+          "zero_based_ovr_weight": 0.2,
+          "ovr_weight_percentage": 0.1818,
+          "one_based_ovr_weight_percentage": 0.101
+        },
+        "zone_coverage": {
+          "original_ovr_weight": 0.23,
+          "mean": 73.15,
+          "std": 8.06,
+          "zero_based_ovr_weight": 0.24,
+          "ovr_weight_percentage": 0.2182,
+          "one_based_ovr_weight_percentage": 0.1212
+        },
+        "hit_power": {
+          "original_ovr_weight": 0.01,
+          "mean": 77.29,
+          "std": 9.45,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0182,
+          "one_based_ovr_weight_percentage": 0.0101
+        },
+        "block_shedding": {
+          "original_ovr_weight": 0.02,
+          "mean": 55.37,
+          "std": 6.4,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0273,
+          "one_based_ovr_weight_percentage": 0.0152
+        },
+        "man_coverage": {
+          "original_ovr_weight": 0.1,
+          "mean": 68.59,
+          "std": 7.04,
+          "zero_based_ovr_weight": 0.11,
+          "ovr_weight_percentage": 0.1,
+          "one_based_ovr_weight_percentage": 0.0556
+        },
+        "pass_rush_power": {
+          "original_ovr_weight": 0.01,
+          "mean": 38.93,
+          "std": 9.53,
+          "zero_based_ovr_weight": 0.02,
+          "ovr_weight_percentage": 0.0182,
+          "one_based_ovr_weight_percentage": 0.0101
+        },
+        "press": {
+          "original_ovr_weight": 0.04,
+          "mean": 68.58,
+          "std": 6.52,
+          "zero_based_ovr_weight": 0.05,
+          "ovr_weight_percentage": 0.0455,
+          "one_based_ovr_weight_percentage": 0.0253
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "mean": 54.24,
+          "std": 8.1,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "catching": {
+          "mean": 68.88,
+          "std": 5.7,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "route_running": {
+          "mean": 28.66,
+          "std": 9.95,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "release": {
+          "mean": 25.94,
+          "std": 9.71,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_route_running": {
+          "mean": 21.57,
+          "std": 10.04,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "spectacular_catch": {
+          "mean": 63.81,
+          "std": 4.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_route_running": {
+          "mean": 17.77,
+          "std": 9.12,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 63.36,
+          "std": 5.58,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 40.97,
+          "std": 10.22,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 70.63,
+          "std": 5.86,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 64.95,
+          "std": 7.71,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 43.21,
+          "std": 9.37,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 63.02,
+          "std": 5.59,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 49.11,
+          "std": 9.86,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 82.53,
+          "std": 3.74,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 32.64,
+          "std": 5.89,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 34.59,
+          "std": 1.69,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 18.08,
+          "std": 5.9,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 34.74,
+          "std": 1.74,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 34.61,
+          "std": 1.62,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 58.75,
+          "std": 6.09,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 32.74,
+          "std": 6.33,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 34.72,
+          "std": 1.61,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 16.79,
+          "std": 7.13,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 10.3,
+          "std": 7.16,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 15.48,
+          "std": 5.55,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 27.6,
+          "std": 6.67,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 10.02,
+          "std": 6.02,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 12.42,
+          "std": 8.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 11.98,
+          "std": 8.47,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 9.65,
+          "std": 6.18,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 18.85,
+          "std": 7.75,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 21.06,
+          "std": 9.58,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 51.75,
+          "std": 15.13,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "TE",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.26,
+          "mean": 67.77,
+          "std": 11.05,
+          "zero_based_ovr_weight": 0.42,
+          "ovr_weight_percentage": 0.1434,
+          "one_based_ovr_weight_percentage": 0.072
+        },
+        "play_recognition": {
+          "original_ovr_weight": -0.01,
+          "mean": 26.14,
+          "std": 10.55,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.0512,
+          "one_based_ovr_weight_percentage": 0.0257
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.06,
+          "mean": 72.52,
+          "std": 4.17,
+          "zero_based_ovr_weight": 0.22,
+          "ovr_weight_percentage": 0.0751,
+          "one_based_ovr_weight_percentage": 0.0377
+        },
+        "jumping": {
+          "original_ovr_weight": 0.07,
+          "mean": 80.68,
+          "std": 7.09,
+          "zero_based_ovr_weight": 0.23,
+          "ovr_weight_percentage": 0.0785,
+          "one_based_ovr_weight_percentage": 0.0395
+        },
+        "injury": {
+          "original_ovr_weight": -0.03,
+          "mean": 88.46,
+          "std": 3.7,
+          "zero_based_ovr_weight": 0.13,
+          "ovr_weight_percentage": 0.0444,
+          "one_based_ovr_weight_percentage": 0.0223
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.11,
+          "mean": 82.91,
+          "std": 6.14,
+          "zero_based_ovr_weight": 0.27,
+          "ovr_weight_percentage": 0.0922,
+          "one_based_ovr_weight_percentage": 0.0463
+        },
+        "speed": {
+          "original_ovr_weight": 0.09,
+          "mean": 79.26,
+          "std": 6.17,
+          "zero_based_ovr_weight": 0.25,
+          "ovr_weight_percentage": 0.0853,
+          "one_based_ovr_weight_percentage": 0.0429
+        },
+        "toughness": {
+          "original_ovr_weight": -0.01,
+          "mean": 82.48,
+          "std": 5.93,
+          "zero_based_ovr_weight": 0.15,
+          "ovr_weight_percentage": 0.0512,
+          "one_based_ovr_weight_percentage": 0.0257
+        },
+        "agility": {
+          "original_ovr_weight": 0.15,
+          "mean": 76.95,
+          "std": 6.02,
+          "zero_based_ovr_weight": 0.31,
+          "ovr_weight_percentage": 0.1058,
+          "one_based_ovr_weight_percentage": 0.0532
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "original_ovr_weight": 0.25,
+          "mean": 71.41,
+          "std": 12.5,
+          "zero_based_ovr_weight": 0.41,
+          "ovr_weight_percentage": 0.1399,
+          "one_based_ovr_weight_percentage": 0.0703
+        },
+        "catching": {
+          "original_ovr_weight": 0.14,
+          "mean": 75.75,
+          "std": 11.3,
+          "zero_based_ovr_weight": 0.3,
+          "ovr_weight_percentage": 0.1024,
+          "one_based_ovr_weight_percentage": 0.0515
+        },
+        "route_running": {
+          "original_ovr_weight": -0.1,
+          "mean": 61.34,
+          "std": 11.98,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.0205,
+          "one_based_ovr_weight_percentage": 0.0103
+        },
+        "release": {
+          "original_ovr_weight": -0.03,
+          "mean": 59.45,
+          "std": 16.68,
+          "zero_based_ovr_weight": 0.13,
+          "ovr_weight_percentage": 0.0444,
+          "one_based_ovr_weight_percentage": 0.0223
+        },
+        "medium_route_running": {
+          "original_ovr_weight": 0.18,
+          "mean": 56.93,
+          "std": 12.44,
+          "zero_based_ovr_weight": 0.34,
+          "ovr_weight_percentage": 0.1161,
+          "one_based_ovr_weight_percentage": 0.0583
+        },
+        "spectacular_catch": {
+          "original_ovr_weight": 0.13,
+          "mean": 71.97,
+          "std": 14.11,
+          "zero_based_ovr_weight": 0.29,
+          "ovr_weight_percentage": 0.099,
+          "one_based_ovr_weight_percentage": 0.0497
+        },
+        "deep_route_running": {
+          "original_ovr_weight": 0.23,
+          "mean": 52.39,
+          "std": 12.76,
+          "zero_based_ovr_weight": 0.39,
+          "ovr_weight_percentage": 0.1331,
+          "one_based_ovr_weight_percentage": 0.0669
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "original_ovr_weight": 0.09,
+          "mean": 58.5,
+          "std": 6.95,
+          "zero_based_ovr_weight": 0.25,
+          "ovr_weight_percentage": 0.0853,
+          "one_based_ovr_weight_percentage": 0.0429
+        },
+        "pass_block_finesse": {
+          "original_ovr_weight": 0.21,
+          "mean": 53.05,
+          "std": 7.37,
+          "zero_based_ovr_weight": 0.37,
+          "ovr_weight_percentage": 0.1263,
+          "one_based_ovr_weight_percentage": 0.0635
+        },
+        "lead_blocking": {
+          "original_ovr_weight": 0.0,
+          "mean": 52.68,
+          "std": 6.93,
+          "zero_based_ovr_weight": 0.16,
+          "ovr_weight_percentage": 0.0546,
+          "one_based_ovr_weight_percentage": 0.0274
+        },
+        "run_block_power": {
+          "original_ovr_weight": 0.13,
+          "mean": 54.72,
+          "std": 8.58,
+          "zero_based_ovr_weight": 0.29,
+          "ovr_weight_percentage": 0.099,
+          "one_based_ovr_weight_percentage": 0.0497
+        },
+        "pass_block_power": {
+          "original_ovr_weight": -0.16,
+          "mean": 55.26,
+          "std": 5.46,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "original_ovr_weight": 0.03,
+          "mean": 65.2,
+          "std": 5.79,
+          "zero_based_ovr_weight": 0.19,
+          "ovr_weight_percentage": 0.0649,
+          "one_based_ovr_weight_percentage": 0.0326
+        },
+        "pass_block": {
+          "original_ovr_weight": 0.06,
+          "mean": 58.0,
+          "std": 4.2,
+          "zero_based_ovr_weight": 0.22,
+          "ovr_weight_percentage": 0.0751,
+          "one_based_ovr_weight_percentage": 0.0377
+        },
+        "run_block_finesse": {
+          "original_ovr_weight": 0.14,
+          "mean": 54.75,
+          "std": 10.02,
+          "zero_based_ovr_weight": 0.3,
+          "ovr_weight_percentage": 0.1024,
+          "one_based_ovr_weight_percentage": 0.0515
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 42.62,
+          "std": 11.06,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 20.77,
+          "std": 13.29,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 41.91,
+          "std": 10.59,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 22.11,
+          "std": 8.28,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 36.95,
+          "std": 15.85,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 40.14,
+          "std": 10.31,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 17.21,
+          "std": 7.41,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 20.91,
+          "std": 13.99,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 17.69,
+          "std": 7.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 54.96,
+          "std": 16.16,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 60.6,
+          "std": 14.69,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 60.09,
+          "std": 16.96,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 63.54,
+          "std": 17.98,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 60.06,
+          "std": 14.91,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 71.1,
+          "std": 6.93,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 52.61,
+          "std": 18.61,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 70.62,
+          "std": 5.83,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 19.13,
+          "std": 11.48,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 16.19,
+          "std": 12.98,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 15.47,
+          "std": 10.57,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 33.27,
+          "std": 13.41,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 12.67,
+          "std": 12.39,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 20.33,
+          "std": 14.33,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 16.17,
+          "std": 14.12,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 12.96,
+          "std": 12.76,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 18.68,
+          "std": 7.44,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 21.23,
+          "std": 8.33,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 22.07,
+          "std": 13.72,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  },
+  {
+    "position": "WR",
+    "archetype": "",
+    "skills": {
+      "intangibles": {
+        "awareness": {
+          "original_ovr_weight": 0.16,
+          "mean": 74.09,
+          "std": 10.79,
+          "zero_based_ovr_weight": 0.18,
+          "ovr_weight_percentage": 0.1531,
+          "one_based_ovr_weight_percentage": 0.0841
+        },
+        "play_recognition": {
+          "original_ovr_weight": -0.01,
+          "mean": 21.36,
+          "std": 6.31,
+          "zero_based_ovr_weight": 0.01,
+          "ovr_weight_percentage": 0.0085,
+          "one_based_ovr_weight_percentage": 0.0047
+        }
+      },
+      "athleticism": {
+        "strength": {
+          "original_ovr_weight": 0.02,
+          "mean": 62.47,
+          "std": 8.06,
+          "zero_based_ovr_weight": 0.04,
+          "ovr_weight_percentage": 0.034,
+          "one_based_ovr_weight_percentage": 0.0187
+        },
+        "jumping": {
+          "original_ovr_weight": 0.04,
+          "mean": 87.25,
+          "std": 4.55,
+          "zero_based_ovr_weight": 0.06,
+          "ovr_weight_percentage": 0.051,
+          "one_based_ovr_weight_percentage": 0.028
+        },
+        "injury": {
+          "original_ovr_weight": -0.02,
+          "mean": 87.44,
+          "std": 3.65,
+          "zero_based_ovr_weight": 0.0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "acceleration": {
+          "original_ovr_weight": 0.25,
+          "mean": 91.14,
+          "std": 2.28,
+          "zero_based_ovr_weight": 0.27,
+          "ovr_weight_percentage": 0.2296,
+          "one_based_ovr_weight_percentage": 0.1262
+        },
+        "speed": {
+          "original_ovr_weight": 0.26,
+          "mean": 90.2,
+          "std": 2.91,
+          "zero_based_ovr_weight": 0.28,
+          "ovr_weight_percentage": 0.2381,
+          "one_based_ovr_weight_percentage": 0.1308
+        },
+        "toughness": {
+          "original_ovr_weight": 0.01,
+          "mean": 82.65,
+          "std": 5.77,
+          "zero_based_ovr_weight": 0.03,
+          "ovr_weight_percentage": 0.0255,
+          "one_based_ovr_weight_percentage": 0.014
+        },
+        "agility": {
+          "original_ovr_weight": 0.25,
+          "mean": 87.35,
+          "std": 4.09,
+          "zero_based_ovr_weight": 0.27,
+          "ovr_weight_percentage": 0.2296,
+          "one_based_ovr_weight_percentage": 0.1262
+        }
+      },
+      "receiving": {
+        "catch_in_traffic": {
+          "original_ovr_weight": 0.14,
+          "mean": 81.32,
+          "std": 5.25,
+          "zero_based_ovr_weight": 0.16,
+          "ovr_weight_percentage": 0.1361,
+          "one_based_ovr_weight_percentage": 0.0748
+        },
+        "catching": {
+          "original_ovr_weight": 0.18,
+          "mean": 84.0,
+          "std": 5.24,
+          "zero_based_ovr_weight": 0.2,
+          "ovr_weight_percentage": 0.1701,
+          "one_based_ovr_weight_percentage": 0.0935
+        },
+        "route_running": {
+          "original_ovr_weight": 0.15,
+          "mean": 76.44,
+          "std": 7.14,
+          "zero_based_ovr_weight": 0.17,
+          "ovr_weight_percentage": 0.1446,
+          "one_based_ovr_weight_percentage": 0.0794
+        },
+        "release": {
+          "original_ovr_weight": 0.06,
+          "mean": 72.8,
+          "std": 9.03,
+          "zero_based_ovr_weight": 0.08,
+          "ovr_weight_percentage": 0.068,
+          "one_based_ovr_weight_percentage": 0.0374
+        },
+        "medium_route_running": {
+          "original_ovr_weight": 0.17,
+          "mean": 75.62,
+          "std": 7.18,
+          "zero_based_ovr_weight": 0.19,
+          "ovr_weight_percentage": 0.1616,
+          "one_based_ovr_weight_percentage": 0.0888
+        },
+        "spectacular_catch": {
+          "original_ovr_weight": 0.09,
+          "mean": 83.16,
+          "std": 5.49,
+          "zero_based_ovr_weight": 0.11,
+          "ovr_weight_percentage": 0.0936,
+          "one_based_ovr_weight_percentage": 0.0514
+        },
+        "deep_route_running": {
+          "original_ovr_weight": 0.07,
+          "mean": 74.86,
+          "std": 7.41,
+          "zero_based_ovr_weight": 0.09,
+          "ovr_weight_percentage": 0.0765,
+          "one_based_ovr_weight_percentage": 0.0421
+        }
+      },
+      "defense": {
+        "pursuit": {
+          "mean": 37.23,
+          "std": 8.74,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_finesse": {
+          "mean": 12.22,
+          "std": 5.26,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "tackle": {
+          "mean": 32.14,
+          "std": 8.39,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "zone_coverage": {
+          "mean": 24.9,
+          "std": 8.22,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "hit_power": {
+          "mean": 25.37,
+          "std": 11.45,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "block_shedding": {
+          "mean": 31.56,
+          "std": 8.56,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "man_coverage": {
+          "mean": 18.28,
+          "std": 8.4,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_rush_power": {
+          "mean": 11.42,
+          "std": 3.79,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "press": {
+          "mean": 18.61,
+          "std": 8.6,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "rushing": {
+        "elusiveness": {
+          "mean": 74.76,
+          "std": 5.38,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "trucking": {
+          "mean": 49.03,
+          "std": 13.38,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "juke_move": {
+          "mean": 80.89,
+          "std": 5.76,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "ball_carrier_vision": {
+          "mean": 81.56,
+          "std": 5.91,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "stiff_arm": {
+          "mean": 57.38,
+          "std": 13.63,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "carrying": {
+          "mean": 73.04,
+          "std": 3.14,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "break_tackle": {
+          "mean": 74.58,
+          "std": 5.22,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "change_of_direction": {
+          "mean": 85.05,
+          "std": 5.02,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "blocking": {
+        "run_block": {
+          "mean": 48.96,
+          "std": 6.76,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_finesse": {
+          "mean": 20.42,
+          "std": 5.9,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "lead_blocking": {
+          "mean": 26.54,
+          "std": 6.02,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_power": {
+          "mean": 28.38,
+          "std": 7.19,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block_power": {
+          "mean": 21.52,
+          "std": 6.64,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "impact_block": {
+          "mean": 45.59,
+          "std": 6.26,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "pass_block": {
+          "mean": 34.77,
+          "std": 7.27,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "run_block_finesse": {
+          "mean": 25.56,
+          "std": 7.31,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "passing": {
+        "break_sack": {
+          "mean": 25.4,
+          "std": 7.92,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "medium_throw_accuracy": {
+          "mean": 20.79,
+          "std": 11.83,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_under_pressure": {
+          "mean": 22.6,
+          "std": 7.74,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_power": {
+          "mean": 35.62,
+          "std": 11.74,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "play_action": {
+          "mean": 15.87,
+          "std": 10.75,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "short_throw_accuracy": {
+          "mean": 26.01,
+          "std": 12.32,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "throw_on_run": {
+          "mean": 22.19,
+          "std": 13.38,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "deep_throw_accuracy": {
+          "mean": 16.86,
+          "std": 11.78,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      },
+      "special_teams": {
+        "kick_accuracy": {
+          "mean": 17.64,
+          "std": 6.1,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_power": {
+          "mean": 20.78,
+          "std": 6.63,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        },
+        "kick_return": {
+          "mean": 68.29,
+          "std": 16.22,
+          "zero_based_ovr_weight": 0,
+          "ovr_weight_percentage": 0.0,
+          "one_based_ovr_weight_percentage": 0.0
+        }
+      }
+    }
+  }
+]

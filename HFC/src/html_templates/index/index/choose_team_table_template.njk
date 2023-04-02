@@ -1,0 +1,62 @@
+<thead>
+    <tr class='team-primary-table-row football-table-column-headers white-text center-text-row'>
+        <th class='no-sort'></th>
+        <th sort-order='sort-asc'>Team</th>
+        <th sort-order='sort-asc'>City</th>
+        <th sort-order='sort-asc'>Conference</th>
+        <th>Academics</th>
+        <th>Brand</th>
+        <th>History</th>
+        <th>Facilities</th>
+        <th>Fans</th>
+        <th>Location</th>
+        <th>Pro Pipeline</th>
+        <th>Competitiveness</th>
+        <th class='no-sort'></th>
+    </tr>
+</thead>
+<tbody>
+    {% for team in teams%}
+    {{team|log}}
+    <tr team-id="{{team.team_id}}" class='center-text-row' primary-color='{{team.team_color_primary_hex}}' secondary-color='{{team.team_color_secondary_hex}}'>
+        <td style='background-color: #{{team.team_color_primary_hex}}; color: white;'>
+            <img class='logo logo-30' src='{{team.team_logo}}'/>
+        </td>
+        <td style='background-color: #{{team.team_color_primary_hex}}; color: white;' value='{{team.team_name}}'>{{team.team_name}}</td>
+        <td value='{{team.location.state}},{{team.location.city}}'>
+            <i class="fa fa-map-marker-alt geo-marker" style='color: #{{team.team_color_primary_hex}};' city='{{team.location.city}}' state='{{team.location.state}}'></i>
+            {{team.location.city}}, {{team.location.state}}
+        </td>
+        <td value='{{team.conference.conference_name}}'>{{team.conference.conference_name}}</td>
+        <td value='{{team.team_ratings.academic_quality}}'>
+            {{team.team_ratings.academic_quality|NumberToRatingBadge(100)|safe}}
+        </td>
+        <td value='{{team.team_ratings.brand}}'>
+            {{team.team_ratings.brand|NumberToRatingBadge(100)|safe}}
+        </td>
+        <td value='{{team.team_ratings.program_history}}'>
+            {{team.team_ratings.program_history|NumberToRatingBadge(100)|safe}}
+        </td>
+        <td value='{{team.team_ratings.facilities}}'>
+            {{team.team_ratings.facilities|NumberToRatingBadge(100)|safe}}
+        </td>
+        <td value='{{team.team_ratings.fan_support}}'>
+            {{team.team_ratings.fan_support|NumberToRatingBadge(100)|safe}}
+        </td>
+        <td value='{{team.team_ratings.location}}'>
+            {{team.team_ratings.location|NumberToRatingBadge(100)|safe}}
+        </td>
+        <td value='{{team.team_ratings.pro_pipeline}}'>
+            {{team.team_ratings.pro_pipeline|NumberToRatingBadge(100)|safe}}
+        </td>
+        <td value='{{team.team_ratings.team_competitiveness}}'>
+            {{team.team_ratings.team_competitiveness|NumberToRatingBadge(100)|safe}}
+        </td>
+
+                    
+        <td>
+            <button class='btn default-coloring team-color-button'>Coach team</button>
+        </td>
+    </tr>
+    {%endfor%}
+</tbody>

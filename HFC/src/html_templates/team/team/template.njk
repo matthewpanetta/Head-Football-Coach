@@ -1,0 +1,283 @@
+{% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
+
+<body>
+	<div class="PageContent">
+		{% include "../../html_templates/common_templates/ext_team_header.njk" %}
+		<nav>
+			<div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
+				<button class='w3-bar-item btn tab nav-tab-button show-small' id="nav-sidebar-tab" style="">
+					<i class="fas fa-bars"></i>
+				</button>
+				<button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+				{% if games_played > 0%}
+					<button class="w3-bar-item btn tab nav-tab-button" id="nav-team-stats-tab">Team Stats</button>
+				{% endif %}
+				<button class="w3-bar-item btn tab nav-tab-button" id="nav-info-tab">Team Info</button>
+				<button class="w3-bar-item btn tab nav-tab-button" id="nav-coaches-tab">Coaches</button>
+				<button class="w3-bar-item btn tab nav-tab-button" id="nav-rivals-tab">Rivalries</button>
+				{% include "../../html_templates/common_templates/ext_team_list.njk" %}
+			</div>
+		</nav>
+		<div id="nav-tabContent">
+			<div class="tab-content" style='display:block;' id="nav-overview">
+				<div class='flex px-2'>
+          {% if last_week_game %}
+					<div class='card flex-1'>
+						<div class="w3-bar team-primary-background-bar">
+							<span class='hide-small'>
+								Last Week's Game</span>
+						</div>
+						{{last_week_game|log}}
+						<div boxscoregameid="{{last_week_game.game_id}}" class="teamScheduleGameDashboardGameDisplay w3-white">
+							<div class="height100">
+								<div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+									<div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{last_week_game.away_team_game.team_season.team.team_color_primary_hex}}'></div>
+									<div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
+									<img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{last_week_game.away_team_game.team_season.team.team_logo}}'/>
+								</div>
+								<div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+									<div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{last_week_game.home_team_game.team_season.team.team_color_primary_hex}}'></div>
+									<div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
+									<img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{last_week_game.home_team_game.team_season.team.team_logo}}'/>
+								</div>
+								<div class=" w3-display-container" style='margin-left: 4rem; margin-top: -1rem;'>
+									<table class='width100 left-text'>
+										<tbody>
+											<tr>
+												<td colspan="3" class='font10'>
+													{{last_week_game.week_name}}
+													&#183;
+													<a href="{{last_week_game.game_href}}">
+														{% if last_week_game.was_played%}
+															Box Score
+															{%else%}
+															Preview
+															{%endif%}
+														</a>
+													</td>
+												</td>
+											</tr>
+											<tr>
+												<td class=' {{last_week_game.AwayTeamWinningGameBold}} align-bottom'>
+													{% if last_week_game.away_team_game.team_season.team_season.is_user_team%}
+														<span style='color: #{{last_week_game.away_team_game.team_season.team.team_color_primary_hex}};'>
+															<i class="fa fas fa-user"></i>
+														</span>
+														{%endif%}
+
+														<a class='font17  {{last_week_game.away_team_game.team_season.team_winning_game_bold}}' href="{{last_week_game.away_team_game.team_season.team.team_href}}">
+															{{last_week_game.away_team_game.team_season.team.team_location_name}}
+														</a>
+														<span class='font10'>
+															{% if last_week_game.was_played%}
+																{{last_week_game.away_team_game.record_display}}
+																{%else%}
+																{{last_week_game.away_team_game.team_season.record_display}}
+																{%endif%}
+															</span>
+														</td>
+														<td class='{{last_week_game.away_team_game.team_winning_game_bold}} font16'>{{last_week_game.scoring.final[0]}}</td>
+													</tr>
+												</td>
+											</tr>
+											<tr>
+												<td class=' align-bottom'>
+													{% if last_week_game.home_team_game.team_season.is_user_team%}
+														<span style='color: #{{last_week_game.home_team_game.team_season.team.team_color_primary_hex}};'>
+															<i class="fa fas fa-user"></i>
+														</span>
+														{%endif%}
+														<a href="{{last_week_game.home_team_game.team_season.team.team_href}}" class='font17 {{last_week_game.home_team_game.team_season.team_winning_game_bold}}'>
+															{{last_week_game.home_team_game.team_season.team.team_location_name}}
+														</a>
+														<span class='font10'>
+															{% if last_week_game.was_played%}
+																{{last_week_game.home_team_game.record_display}}
+																{%else%}
+																{{last_week_game.home_team_game.team_season.record_display}}
+																{%endif%}
+															</span>
+														</td>
+														{% for period in last_week_game.periods%}
+															{{period.score}}
+															{%endfor%}
+															<td class='{{last_week_game.home_team_game.team_winning_game_bold}} font16'>{{last_week_game.scoring.final[1]}}</td>
+														</tr>
+														<tr>
+															<td colspan='3'>
+																{%for headline in last_week_game.headlines%}
+																	<div>
+																		{{headline.headline_text}}
+																	</div>
+																	{%endfor%}</td>
+															</td>
+														</tr>
+													</tbody>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+
+					</div>
+          {% endif %}
+          {% if this_week_game %}
+					<div class='card flex-1'>
+						<div class="w3-bar team-primary-background-bar">
+							<span class='hide-small'>
+								This Week's Game</span>
+						</div>
+						{{this_week_game|log}}
+						<div boxscoregameid="{{this_week_game.game_id}}" class="teamScheduleGameDashboardGameDisplay w3-white">
+							<div class="height100">
+								<div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+									<div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{this_week_game.away_team_game.team_season.team.team_color_primary_hex}}'></div>
+									<div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
+									<img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{this_week_game.away_team_game.team_season.team.team_logo}}'/>
+								</div>
+								<div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+									<div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{this_week_game.home_team_game.team_season.team.team_color_primary_hex}}'></div>
+									<div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
+									<img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{this_week_game.home_team_game.team_season.team.team_logo}}'/>
+								</div>
+								<div class=" w3-display-container" style='margin-left: 4rem; margin-top: -1rem;'>
+									<table class='width100 left-text'>
+										<tbody>
+											<tr>
+												<td colspan="3" class='font10'>
+													{{this_week_game.week_name}}
+													&#183;
+													<a href="{{this_week_game.game_href}}">
+														{% if this_week_game.was_played%}
+															Box Score
+															{%else%}
+															Preview
+															{%endif%}
+														</a>
+													</td>
+												</td>
+											</tr>
+											<tr>
+												<td class=' {{this_week_game.AwayTeamWinningGameBold}} align-bottom'>
+													{% if this_week_game.away_team_game.team_season.team_season.is_user_team%}
+														<span style='color: #{{this_week_game.away_team_game.team_season.team.team_color_primary_hex}};'>
+															<i class="fa fas fa-user"></i>
+														</span>
+														{%endif%}
+
+														<a class='font17  {{this_week_game.away_team_game.team_season.team_winning_game_bold}}' href="{{this_week_game.away_team_game.team_season.team.team_href}}">
+															{{this_week_game.away_team_game.team_season.team.team_location_name}}
+														</a>
+														<span class='font10'>
+															{% if this_week_game.was_played%}
+																{{this_week_game.away_team_game.record_display}}
+																{%else%}
+																{{this_week_game.away_team_game.team_season.record_display}}
+																{%endif%}
+															</span>
+														</td>
+														<td class='{{this_week_game.away_team_game.team_winning_game_bold}} font16'>{{this_week_game.scoring.final[0]}}</td>
+													</tr>
+												</td>
+											</tr>
+											<tr>
+												<td class=' align-bottom'>
+													{% if this_week_game.home_team_game.team_season.is_user_team%}
+														<span style='color: #{{this_week_game.home_team_game.team_season.team.team_color_primary_hex}};'>
+															<i class="fa fas fa-user"></i>
+														</span>
+														{%endif%}
+														<a href="{{this_week_game.home_team_game.team_season.team.team_href}}" class='font17 {{this_week_game.home_team_game.team_season.team_winning_game_bold}}'>
+															{{this_week_game.home_team_game.team_season.team.team_location_name}}
+														</a>
+														<span class='font10'>
+															{% if this_week_game.was_played%}
+																{{this_week_game.home_team_game.record_display}}
+																{%else%}
+																{{this_week_game.home_team_game.team_season.record_display}}
+																{%endif%}
+															</span>
+														</td>
+														{% for period in this_week_game.periods%}
+															{{period.score}}
+															{%endfor%}
+															<td class='{{this_week_game.home_team_game.team_winning_game_bold}} font16'>{{this_week_game.scoring.final[1]}}</td>
+														</tr>
+														<tr>
+															<td colspan='3'>
+																{%for headline in this_week_game.headlines%}
+																	<div>
+																		{{headline.headline_text}}
+																	</div>
+																	{%endfor%}</td>
+															</td>
+														</tr>
+													</tbody>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+
+					</div>
+          {% endif %}
+          
+
+				</div>
+			</div>
+			<div class="tab-content" style='display:none;' id="nav-team-stats">
+				<div class=''>
+					<div class="w3-row-padding w3-margin-bottom">
+						<div class=" s4">
+
+							<div class="card w3-margin-bottom">
+								<div class="w3-bar team-primary-background-bar">
+									{{team.team_season.conference_season.conference.conference_name}}
+									<span class='hide-small'>
+										Standings</span>
+								</div>
+								<div id='conference_standings_div'></div>
+
+							</div>
+							<div class='card'>
+								<div class="w3-bar team-primary-background-bar">
+									<span>Ranking Trend</span>
+								</div>
+								<div id='team_ranking_trend_chart'></div>
+
+							</div>
+						</div>
+
+						<div class=" s4">
+							<div class="card w3-margin-bottom">
+								<div class="w3-bar team-primary-background-bar">
+									{{team.team_season.conference_season.conference.conference_name}}
+									<span class='hide-small'>
+										Bar Chart</span>
+								</div>
+								<div id='selector' style='margin-left: 15%; margin-right: 15%; width: 70%;'></div>
+								<div class="w3-padding" id='bar_chart'></div>
+							</div>
+							<div class="card" id='team_leaders'></div>
+
+						</div>
+
+						<div class=" s4">
+							<div class="card w3-margin-bottom" id='team_stats'></div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div class="tab-content" style='display:none;' id="nav-info"></div>
+			<div class="tab-content" style='display:none;' id="nav-coaches"></div>
+			<div class="tab-content" style='display:none;' id="nav-rivals"></div>
+		</div>
+
+	</div>
+</body>

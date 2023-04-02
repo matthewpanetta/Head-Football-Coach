@@ -1,0 +1,190 @@
+<div class='ext_nav_bar'>
+  {% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
+</div>
+<style></style>
+
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "../../html_templates/common_templates/scoreboard.njk" %}
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+          <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">All Players</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-ranking-tab">National Ranking</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-team-needs-tab">Team Needs</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-boxscore-tab">Box Score</button>
+      </div>
+    </nav>
+
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-overview">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding w3-margin-bottom'>
+            <div class='width90p'>
+              <div id='player-stats-table-filter'></div>
+              <div id='player-stats-table-column-control'></div>
+              <div id='player-stats-table-container' class=''></div>
+            </div> 
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-ranking">
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col mw1000 l11">
+              <div class="card">
+
+                <table id='recruitingNationalRankingTable' class='table table-striped table-hover'>
+                  <thead class='center-text-row'>
+                    <th>
+                      Rank
+                    </th>
+                    <th></th>
+                    <th>
+                      Team
+                    </th>
+                    <th>
+                      5*
+                    </th>
+                    <th>
+                      4*
+                    </th>
+                    <th>
+                      3*
+                    </th>
+                    <th>
+                      2*
+                    </th>
+                    <th>
+                      1*
+                    </th>
+                    <th>
+                      Total
+                    </th>
+
+                  </thead>
+                  {% for team in teams %}
+                    <tr class='center-text-row'>
+                      <td class='column-shrink font16' style='color: white; background-color: #{{team.team_color_primary_hex}};'>{{team.team_season.recruiting.recruiting_class_rank}}</td>
+                      <td class='column-shrink' style='background-color: #{{team.team_color_primary_hex}};'>
+                        <a href='{{team.team_href}}'>
+                          <img class='recruitingCommitTeamLogo' src='{{team.team_logo}}' alt=''>
+                        </a>
+                      </td>
+                      <td class='left-text nowrap column-shrink font16' style='color: white; background-color: #{{team.team_color_primary_hex}};'>
+                        <a href="{{team.team_href}}">{{team.full_name}}</a>
+                      </td>
+                      <td style='{{team.team_season.recruiting.signed_players.stars_5}}'>{{team.team_season.recruiting.signed_player_stars.stars_5}}</td>
+                      <td style='{{Team.RecruitsSignedStyle4}}'>{{team.team_season.recruiting.signed_player_stars.stars_4}}</td>
+                      <td style='{{Team.RecruitsSignedStyle3}}'>{{team.team_season.recruiting.signed_player_stars.stars_3}}</td>
+                      <td style='{{Team.RecruitsSignedStyle2}}'>{{team.team_season.recruiting.signed_player_stars.stars_2}}</td>
+                      <td style='{{Team.RecruitsSignedStyle1}}'>{{team.team_season.recruiting.signed_player_stars.stars_1}}</td>
+                      <td>{{team.team_season.recruiting.signed_player_stars.total}}</td>
+                    </tr>
+                  {% endfor %}
+                  <tfoot>
+                    <th>
+                      Rank
+                    </th>
+                    <th>
+                      Team
+                    </th>
+                    <th>
+                      5*
+                    </th>
+                    <th>
+                      4*
+                    </th>
+                    <th>
+                      3*
+                    </th>
+                    <th>
+                      2*
+                    </th>
+                    <th>
+                      1*
+                    </th>
+                    <th>
+                      Total
+                    </th>
+                  </tfoot>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style='display:none;' id="nav-team-needs">
+        <div class="w3-display-container">
+          <div class="w3-row-padding">
+            <div class="w3-col l12 mw800">
+              <div class="card">
+
+                <table id='recruitingTeamNeedsTable' class='table table-striped table-hover'>
+                  <thead>
+                    <tr class='center-text-row'>
+                      <th colspan="6" class=' col-group'>THIS YEAR</th>
+                      <th colspan="5">NEXT YEAR</th>
+                    </tr>
+                    <tr class='center-text-row'>
+                      <th class=' left-text'>Pos</th>
+                      <th>FR</th>
+                      <th>SO</th>
+                      <th>JR</th>
+                      <th>SR</th>
+                      <th class=' col-group'>TOT</th>
+                      <th class=' left-text'>Pos</th>
+                      <th>Returning</th>
+                      <th>Targets</th>
+                      <th>Commits</th>
+                      <th>Need</th>
+                    </tr>
+
+                  </thead>
+                  {% for TSP in TeamNeeds %}
+                    <tr class='center-text-row'>
+                      <td class='bold left-text'>{{TSP.PositionID.PositionAbbreviation}}</td>
+                      <td class='{%if TSP.FreshmanPlayerCount == 0%}opacity-0{%endif%}'>{{TSP.FreshmanPlayerCount}}</td>
+                      <td class='{%if TSP.SophomorePlayerCount == 0%}opacity-0{%endif%}'>{{TSP.SophomorePlayerCount}}</td>
+                      <td class='{%if TSP.JuniorPlayerCount == 0%}opacity-0{%endif%}'>{{TSP.JuniorPlayerCount}}</td>
+                      <td class='{%if TSP.SeniorPlayerCount == 0%}opacity-0{%endif%}'>{{TSP.SeniorPlayerCount}}</td>
+                      <td class='{%if TSP.CurrentPlayerCount == 0%}opacity-0{%endif%} col-group'>{{TSP.CurrentPlayerCount}}</td>
+                      <td class='bold left-text {% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>{{TSP.PositionID.PositionAbbreviation}}</td>
+                      <td class='{% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>{{TSP.Year1PlayersOnRoster}}</td>
+                      <td class='{%if TSP.CurrentPlayerCount == 0%}opacity-0{%endif%} {% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>0</td>
+                      <td class='{%if TSP.CurrentPlayerCount == 0%}opacity-0{%endif%} {% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>{{TSP.CommitCount}}</td>
+                      <td class='{%if TSP.Year1PlayersNeeded == 0%}opacity-0 {%else%} bold {%endif%}  {% if TSP.Year1PlayersNeeded > 0%}alert-row{%endif%}'>{{TSP.Year1PlayersNeeded}}</td>
+                    </tr>
+                  {% endfor %}
+                  <tfoot class='bold center-text-row'>
+                    <tr>
+                      <td class=' left-text'>Totals</td>
+                      <td class='{%if TeamNeedsTotals.FreshmanPlayerCount__sum == 0%}opacity-0{%endif%}'>{{TeamNeedsTotals.FreshmanPlayerCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.SophomorePlayerCount__sum == 0%}opacity-0{%endif%}'>{{TeamNeedsTotals.SophomorePlayerCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.JuniorPlayerCount__sum == 0%}opacity-0{%endif%}'>{{TeamNeedsTotals.JuniorPlayerCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.SeniorPlayerCount__sum == 0%}opacity-0{%endif%}'>{{TeamNeedsTotals.SeniorPlayerCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.CurrentPlayerCount__sum == 0%}opacity-0{%endif%} col-group'>{{TeamNeedsTotals.CurrentPlayerCount__sum}}</td>
+                      <td class='bold left-text'>Needs</td>
+                      <td>{{TeamNeedsTotals.Year1PlayersOnRoster__sum}}</td>
+                      <td class=' '>0</td>
+                      <td class=' '>{{TeamNeedsTotals.CommitCount__sum}}</td>
+                      <td class='{%if TeamNeedsTotals.Year1PlayersNeeded__sum == 0%}opacity-0 {%else%} bold {%endif%}'>{{TeamNeedsTotals.Year1PlayersNeeded__sum}}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

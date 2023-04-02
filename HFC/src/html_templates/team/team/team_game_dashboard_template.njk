@@ -1,0 +1,106 @@
+<div class="w3-row teamScheduleGameDashboard w3-display-container w3-light-grey">
+    {% for game in games%}
+        {{game|log}}
+        <div BoxScoreGameID="{{game.game_id}}" class="teamScheduleGameDashboardGameDisplay w3-display-middle w3-col l12 mw400 w3-display-container w3-white w3-border w3-border-grey w3-hide">
+            <div class="w3-col l12 height100 w3-display-container">
+                <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+                    <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.away_team.team_color_primary_hex}}'></div>
+                    <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
+                    <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.away_team.team_logo}}'/>
+                </div>
+                <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
+                    <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.home_team.team_color_primary_hex}}'></div>
+                    <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
+                    <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo}}'/>
+                </div>
+                <div class="teamScheduleGameDashboardGameDisplayTeams w3-col s12 w3-display-container w3-display-topmiddle">
+                    <table class='width100 left-text'>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" class='font10'>
+                                    {{game.week_name}}
+                                  &#183;
+                                  <a href="{{game.game_href}}">
+                                        {% if game.was_played%}
+                                    Box Score
+                                    {%else%}
+                                    Preview
+                                    {%endif%}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class=' {{game.AwayTeamWinningGameBold}} align-bottom'>
+                                        <span class='font10 align-bottom'>
+                                            {% if game.was_played%}
+                                                {{game.away_team_game.national_rank_display}}
+                                            {% else %}
+                                                {{game.away_team_season.national_rank_display}}
+                                                {% endif%}
+                                            </span>
+                                            {% if game.away_team_season.is_user_team%}
+                                                <span style='color: #{{game.away_team.team_color_primary_hex}};'>
+                                                    <i class="fa fas fa-user"></i>
+                                                </span>
+                                                {%endif%}
+
+                                                <a class='font17  {{game.away_team_winning_game_bold}}' href="{{game.away_team.team_href}}">
+                                                    {{game.away_team.team_location_name}}
+                                                </a>
+                                                <span class='font10'>
+                                                    {% if game.was_played%}
+                                                        {{game.away_team_game.record_display}}
+                                                        {%else%}
+                                                        {{game.away_team_season.record_display}}
+                                                        {%endif%}
+                                                    </span>
+                                                </td>
+                                                <td class='{{game.away_team_winning_game_bold}} font16'>{{game.scoring.final[0]}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class=' align-bottom'>
+                                                    <span class='font10 align-bottom'>
+                                                        {% if game.was_played%}
+                                                            {{game.home_team_game.national_rank_display}}
+                                                        {% else %}
+                                                            {{game.home_team_season.national_rank_display}}
+                                                            {% endif%}
+                                                        </span>
+                                                        {% if game.home_team_season.is_user_team%}
+                                                            <span style='color: #{{game.home_team.team_color_primary_hex}};'>
+                                                                <i class="fa fas fa-user"></i>
+                                                            </span>
+                                                            {%endif%}
+                                                            <a href="{{game.home_team.team_href}}" class='font17 {{game.home_team_winning_game_bold}}'>
+                                                                {{game.home_team.team_location_name}}
+                                                            </a>
+                                                            <span class='font10'>
+                                                                {% if game.was_played%}
+                                                                    {{game.home_team_game.record_display}}
+                                                                    {%else%}
+                                                                    {{game.home_team_season.record_display}}
+                                                                    {%endif%}
+                                                                </span>
+                                                            </td>
+                                                            {% for period in game.periods%}
+                                                                {{period.score}}
+                                                                {%endfor%}
+                                                                <td class='{{game.home_team_winning_game_bold}} font16'>{{game.scoring.final[1]}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan='3'>
+                                                                    {%for headline in game.headlines%}
+                                                                        <div>
+                                                                            {{headline.headline_text}}
+                                                                        </div>
+                                                                        {%endfor%}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        {% endfor %}
+                                    </div>

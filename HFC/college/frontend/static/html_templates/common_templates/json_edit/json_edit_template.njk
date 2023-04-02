@@ -1,0 +1,38 @@
+{% macro populate_object(json, offset, prev_key, disabled_keys) %}
+    {% if json | element_type == 'Object' %}
+        <span style='font-style: italic;'>
+            <i class='fas fa-caret-down clickable' />
+            object
+        </span>
+        <ul class="list-group  collapsible">
+            {% for key, value in json %}
+                <li class='list-group-item' key='{{key}}'>
+                    <span class="collapsible bold inline-block" style='min-width: 60px;'>{{ key }}:</span>
+                    <span class="content">
+                        {{ populate_object(value, offset + 1, key, disabled_keys) }}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% elif json | element_type == 'Array' %}
+        <span style='font-style: italic;'>
+            <i class='fas fa-caret-down clickable' />
+            list
+        </span>
+        <ol class="list-group  collapsible">
+            {% for value in json %}
+                <li class='list-group-item' {%if key in disabled_keys %}disabled{%endif%}>
+                    <span class="content">
+                        {{ populate_object(value, offset + 1, key, disabled_keys) }}
+                    </span>
+                </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <span class='inline-block'>
+            <input style='font-size: .8rem;' type="input" class="form-control" name="{{key}}" value="{{json}}" {%if prev_key in disabled_keys %}disabled{%endif%}/>
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{{populate_object(obj, 0, "", disabled_keys)}}

@@ -1,5 +1,5 @@
 import json
-with open('frontend/static/data/import_json/Team.json', 'r') as file:
+with open('frontend/data/import_json/Team.json', 'r') as file:
     team_json = json.load(file)
 
 # print(json.dumps(team_json, indent=2))
@@ -11,7 +11,7 @@ teams = [
 # print(json.dumps(teams, indent=2))
 
 
-with open('frontend/static/data/import_json/Rivalries.json', 'r') as file:
+with open('frontend/data/import_json/Rivalries.json', 'r') as file:
     rival_json = json.load(file)
 
 # print(json.dumps(rival_json, indent=2))

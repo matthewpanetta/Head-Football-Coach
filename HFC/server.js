@@ -4,15 +4,16 @@ const path = require("path");
 const express = require("express");
 const app = express();
 
-const cache_time = 1;
-
 const port = 5515;
+
+//NODE_ENV='dev' node server.js 
 
 const mimeTypes = {
 	".bmp": "image/bmp",
 	".css": "text/css",
 	".gif": "image/gif",
 	".html": "text/html",
+	".njk": "text/html",
 	".ico": "image/x-icon",
 	".jpeg": "image/jpeg",
 	".jpg": "image/jpeg",
@@ -33,11 +34,16 @@ const static_suffix = new Set([
 	'.png',
 	'.njk',
 	'.css',
+	'.svg',
 	'.woff',
 	'.woff2',
 	'.eot',
 	'.ttf',
 ]);
+
+const asset_suffix = [
+	'png',
+];
 
 const send_file = (res, filename) => {
 	// const filePath = path.join("build", filename);
@@ -46,7 +52,7 @@ const send_file = (res, filename) => {
 	if (fs.existsSync(filePath)) {
 		const ext = path.extname(filename);
 		if (mimeTypes[ext]) {
-			console.log('Mime type:', mimeTypes[ext])
+			// console.log('Mime type:', mimeTypes[ext])
 			res.writeHead(200, { "Content-Type": mimeTypes[ext] });
 		} else {
 			console.log(`Unknown mime type for extension ${ext}`);
@@ -62,29 +68,45 @@ const send_file = (res, filename) => {
 	}
 };
 
-const send_url = (req, res) => {
+const send_url = (req, res, level) => {
+	// console.log('in send_url', level, 'req.url.substr(1)', req.url.substr(1))
+	let cache_time = 1;
+	if (asset_suffix.some(suffix_option => req.url.substr(1).includes(suffix_option))) {
+		cache_time = 60 * 60;
+	}
+
 	res.set("Cache-Control", `public, max-age=${cache_time}`);
-	send_file(res, __dirname + "/frontend/" + req.url.substr(1));
+	if (req.url.substr(1).includes('common/')){
+		console.log('Sending file', __dirname + `/` + req.url.substr(1), 'with cache time', cache_time)
+		send_file(res, __dirname + `/` + req.url.substr(1));
+	}
+	else {
+		console.log('Sending file', `/src/` + req.url.substr(1), 'with cache time', cache_time)
+		send_file(res, __dirname + `/src/` + req.url.substr(1));
+	}
 };
-const send_index = (req, res) => {
-	send_file(res, __dirname + "/frontend/static/html_templates/index/index/base.html");
+const send_index = (req, res, level) => {
+	console.log('sending file', __dirname + `/src/html_templates/index/index/base.html`)
+	send_file(res, __dirname + `/src/html_templates/index/index/base.html`);
 };
 
 app.get('*', (req, res) => {
+	console.log()
 	console.log('req.url', req.url, 'from', __dirname)
 	
 	let url_suffix_list = [3,4,5,6].map(len => req.url.substring(req.url.length - len))
 
 	if (url_suffix_list.some(suffix_option => static_suffix.has(suffix_option))) {
-		send_url(req, res);
+		send_url(req, res, 'src');
 	} else {
-		send_index(req, res);
+		send_index(req, res, 'src');
 	}
 });
 
-app.listen(process.env.PORT || port, () =>
-  console.log("Server running on port", process.env.PORT || port, " from ", __dirname)
+app.listen(port, () =>
+  console.log("Server running on port", port, " from ", __dirname)
 );
+
 
 fs.readdir(__dirname, (err, files) => {
   if (err) {

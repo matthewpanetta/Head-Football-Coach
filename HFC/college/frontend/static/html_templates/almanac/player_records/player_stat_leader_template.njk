@@ -1,0 +1,106 @@
+<div class="card margin-bottom-24 inline-block" style='width: 23.75rem; margin-left: 1.25rem;'>
+    <div class='team-primary-background-bar'>
+        {{stat_category.category_name}}
+    </div>
+
+    <table class='table table-striped table-hover '>
+        <tbody class="">
+            <tr player_id='{{stat_category.players[0].player.player_id}}'>
+                {{}}
+                <td class="center-text bold font20" style='background-color: #{{stat_category.players[0].player.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+                        1
+                      </td>
+                <td class="" style='background-color: #{{stat_category.players[0].player.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+                    <a href="{{stat_category.players[0].player.player_team_season.team_season.team.team_href}}">
+                        <img src="{{stat_category.players[0].player.player_team_season.team_season.team.team_logo}}" alt="" class='logo logo-50'>
+                    </a>
+                </td>
+                <td class="">
+                    <div class="inline-block">
+                        <div class="PlayerFace-60 PlayerFace-Headshot inline-block" player_id='{{stat_category.players[0].player.player_id}}' style='border-color:#{{stat_category.players[0].player.player_team_season.team_season.team.team_color_primary_hex}};' id="player-stat-leaders-face-{{stat_category.players[0].player.player_id}}-{{stat_category.stat_category_index}}-{{stat_category.players[0].value_rank}}"  ></div>
+                    </div>
+
+                </td>
+                <td>
+                    <div class="inline-block">
+                        <div class="font16">
+                            <a href="{{stat_category.players[0].player.player_href}}">
+                                {{stat_category.players[0].player.full_name}}
+                            </a>
+                        </div>
+                        <div class="font10">
+                            <span>
+                                <i class="fa fa-address-card player-profile-popup-icon"></i>
+                            </span>
+                            &#183;
+                            <span>
+                                <a href='{{stat_category.players[0].player.player_team_season.team_season.team.team_href}}'>
+                                    {{stat_category.players[0].player.player_team_season.team_season.team.team_abbreviation}}
+                                </a>
+                            </span>
+                            &#183;
+                            <span>{{stat_category.players[0].player.player_team_season.position}}</span>
+                            &#183;
+                            <span>{{stat_category.players[0].player.player_team_season.class.class_name}}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="center-text">
+                    <div class="font20">
+                        {{stat_category.players[0].value|toLocaleString}}
+                    </div>
+                    <div class="font10">
+                        {{stat_category.category_abbr}}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th class='center-text'>Rank</th>
+                <th colspan='2'>Team</th>
+                <th>Player</th>
+                <th class='center-text'>{{stat_category.category_abbr}}</th>
+            </tr>
+            {% for player in stat_category.players.slice(1,5)%}
+                <tr player_id='{{player.player.player_id}}'>
+                    <td class='center-text bold' style='background-color: #{{player.player.player_team_season.team_season.team.team_color_primary_hex}}; color:white;'>
+                        {{loop.index + 1}}
+                    </td>
+                    <td style='background-color: #{{player.player.player_team_season.team_season.team.team_color_primary_hex}}' class='center-text'>
+                        <a href="{{player.player.player_team_season.team_season.team.team_href}}">
+                            <img src="{{player.player.player_team_season.team_season.team.team_logo}}" alt="" class='logo logo-30'>
+                        </a>
+                    </td>
+                    {# <td>
+                        <a href="{{player.player.player_team_season.team_season.team.team_href}}">
+                            {{player.player.player_team_season.team_season.team.team_abbreviation}}
+                        </a>
+                    </td> #}
+                    <td colspan='2' style='padding-left: 1.5rem;'>
+                        <div>
+                            <span>
+                                <a href="{{player.player.player_href}}">{{player.player.full_name}}</a>
+                            </span>
+                        </div>
+                        <div class='font10'>
+                            <span>
+                                <i class="fa fa-address-card player-profile-popup-icon"></i>
+                            </span>
+                            &#183;
+                            <span>
+                                <a href='{{player.player.player_team_season.team_season.team.team_href}}'>
+                                    {{player.player.player_team_season.team_season.team.team_abbreviation}}
+                                </a>
+                            </span>
+                            &#183;
+                            <span class=''>{{player.player.player_team_season.position}}</span>
+                            &#183;
+                            <span class=''>{{player.player.player_team_season.class.class_name}}</span>
+                        </div>
+
+                    </td>
+                    <td class='center-text'>{{player.value|toLocaleString}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

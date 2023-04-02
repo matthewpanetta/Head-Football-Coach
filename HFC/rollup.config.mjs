@@ -1,8 +1,8 @@
 export default [
   {
-    input:  "frontend/static/js/index.js",
+    input:  "src/js/index.js",
     output: {
-      file: "frontend/static/js/main.js",
+      file: "src/js/main.js",
       format: "es",
       exports: "auto",
     },

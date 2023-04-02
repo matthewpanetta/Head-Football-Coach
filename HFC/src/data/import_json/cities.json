@@ -1,0 +1,3870 @@
+[
+  {
+    "city": "Toronto",
+    "state": "Ontario",
+    "lat": 43.44,
+    "long": -79,
+    "population": 5928000,
+    "metro": "Toronto",
+    "timezone": "E"
+  },
+  {
+    "city": "Huntsville",
+    "state": "Alabama",
+    "lat": 34.6989,
+    "long": -86.6414,
+    "population": 309716,
+    "metro": "Huntsville, AL",
+    "timezone": "C"
+  },
+  {
+    "city": "Birmingham",
+    "state": "Alabama",
+    "lat": 33.5276,
+    "long": -86.7988,
+    "population": 744189,
+    "metro": "Birmingham, AL",
+    "timezone": "C"
+  },
+  {
+    "city": "Tuscaloosa",
+    "state": "Alabama",
+    "lat": 33.2349,
+    "long": -87.5267,
+    "population": 154204,
+    "metro": "Birmingham, AL",
+    "timezone": "C"
+  },
+  {
+    "city": "Montgomery",
+    "state": "Alabama",
+    "lat": 32.347,
+    "long": -86.2663,
+    "population": 255908,
+    "metro": "Montgomery, AL",
+    "timezone": "C"
+  },
+  {
+    "city": "Mobile",
+    "state": "Alabama",
+    "lat": 30.6783,
+    "long": -88.1162,
+    "population": 318084,
+    "metro": "Mobile, AL",
+    "timezone": "C"
+  },
+  {
+    "city": "Anchorage",
+    "state": "Alaska",
+    "lat": 61.1508,
+    "long": -149.1091,
+    "population": 253421,
+    "metro": "Anchorage, AK",
+    "timezone": "A"
+  },
+  {
+    "city": "Peoria",
+    "state": "Arizona",
+    "lat": 33.7844,
+    "long": -112.2989,
+    "population": 168181,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Scottsdale",
+    "state": "Arizona",
+    "lat": 33.6872,
+    "long": -111.865,
+    "population": 249950,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Surprise",
+    "state": "Arizona",
+    "lat": 33.6802,
+    "long": -112.4525,
+    "population": 134085,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Glendale",
+    "state": "Arizona",
+    "lat": 33.5796,
+    "long": -112.2258,
+    "population": 246709,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Phoenix",
+    "state": "Arizona",
+    "lat": 33.5722,
+    "long": -112.0891,
+    "population": 4081849,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Mesa",
+    "state": "Arizona",
+    "lat": 33.4017,
+    "long": -111.7181,
+    "population": 496401,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Tempe",
+    "state": "Arizona",
+    "lat": 33.3881,
+    "long": -111.9318,
+    "population": 185038,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Avondale",
+    "state": "Arizona",
+    "lat": 33.3858,
+    "long": -112.3236,
+    "population": 217192,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Gilbert",
+    "state": "Arizona",
+    "lat": 33.3103,
+    "long": -111.7463,
+    "population": 242354,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Chandler",
+    "state": "Arizona",
+    "lat": 33.2827,
+    "long": -111.8516,
+    "population": 253458,
+    "metro": "Phoenix",
+    "timezone": "M"
+  },
+  {
+    "city": "Yuma",
+    "state": "Arizona",
+    "lat": 32.5991,
+    "long": -114.5488,
+    "population": 138802,
+    "metro": "Mexicali",
+    "timezone": "M"
+  },
+  {
+    "city": "Tucson",
+    "state": "Arizona",
+    "lat": 32.1546,
+    "long": -110.8782,
+    "population": 868391,
+    "metro": "Tucson",
+    "timezone": "M"
+  },
+  {
+    "city": "Fayetteville",
+    "state": "Arkansas",
+    "lat": 36.0713,
+    "long": -94.166,
+    "population": 341890,
+    "metro": "Northern Arkansas",
+    "timezone": "C"
+  },
+  {
+    "city": "Little Rock",
+    "state": "Arkansas",
+    "lat": 34.7255,
+    "long": -92.3581,
+    "population": 442699,
+    "metro": "Little Rock",
+    "timezone": "C"
+  },
+  {
+    "city": "Yuba City",
+    "state": "California",
+    "lat": 39.1357,
+    "long": -121.6381,
+    "population": 120186,
+    "timezone": "P",
+    "metro": "Sacramento"
+  },
+  {
+    "city": "Roseville",
+    "state": "California",
+    "lat": 38.7691,
+    "long": -121.3178,
+    "population": 135329,
+    "timezone": "P",
+    "metro": "Sacramento"
+  },
+  {
+    "city": "Sacramento",
+    "state": "California",
+    "lat": 38.5667,
+    "long": -121.4683,
+    "population": 1854698,
+    "timezone": "P",
+    "metro": "Sacramento"
+  },
+  {
+    "city": "Santa Rosa",
+    "state": "California",
+    "lat": 38.4465,
+    "long": -122.706,
+    "population": 321908,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Elk Grove",
+    "state": "California",
+    "lat": 38.416,
+    "long": -121.384,
+    "population": 171844,
+    "timezone": "P",
+    "metro": "Sacramento"
+  },
+  {
+    "city": "Vacaville",
+    "state": "California",
+    "lat": 38.3592,
+    "long": -121.9686,
+    "population": 100801,
+    "timezone": "P",
+    "metro": "Sacramento"
+  },
+  {
+    "city": "Fairfield",
+    "state": "California",
+    "lat": 38.2594,
+    "long": -122.0319,
+    "population": 147582,
+    "timezone": "P",
+    "metro": "Sacramento"
+  },
+  {
+    "city": "Vallejo",
+    "state": "California",
+    "lat": 38.1133,
+    "long": -122.2359,
+    "population": 173844,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Antioch",
+    "state": "California",
+    "lat": 37.9789,
+    "long": -121.7957,
+    "population": 302885,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Stockton",
+    "state": "California",
+    "lat": 37.9766,
+    "long": -121.3112,
+    "population": 394467,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Concord",
+    "state": "California",
+    "lat": 37.9722,
+    "long": -122.0016,
+    "population": 654770,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Richmond",
+    "state": "California",
+    "lat": 37.9477,
+    "long": -122.339,
+    "population": 110040,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Berkeley",
+    "state": "California",
+    "lat": 37.8723,
+    "long": -122.276,
+    "population": 122324,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Oakland",
+    "state": "California",
+    "lat": 37.7903,
+    "long": -122.2165,
+    "population": 425195,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "San Francisco",
+    "state": "California",
+    "lat": 37.7562,
+    "long": -122.443,
+    "population": 3603761,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Daly City",
+    "state": "California",
+    "lat": 37.6863,
+    "long": -122.4684,
+    "population": 107074,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Modesto",
+    "state": "California",
+    "lat": 37.6374,
+    "long": -121.0028,
+    "population": 381398,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Hayward",
+    "state": "California",
+    "lat": 37.6328,
+    "long": -122.0772,
+    "population": 160500,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "San Mateo",
+    "state": "California",
+    "lat": 37.5522,
+    "long": -122.3122,
+    "population": 104748,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Fremont",
+    "state": "California",
+    "lat": 37.5265,
+    "long": -121.9852,
+    "population": 234962,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Turlock",
+    "state": "California",
+    "lat": 37.5053,
+    "long": -120.8588,
+    "population": 107208,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Sunnyvale",
+    "state": "California",
+    "lat": 37.3835,
+    "long": -122.0257,
+    "population": 153656,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Santa Clara",
+    "state": "California",
+    "lat": 37.3646,
+    "long": -121.9679,
+    "population": 127134,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Merced",
+    "state": "California",
+    "lat": 37.3058,
+    "long": -120.4778,
+    "population": 144117,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "San Jose",
+    "state": "California",
+    "lat": 37.3018,
+    "long": -121.8485,
+    "population": 1821899,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Gilroy",
+    "state": "California",
+    "lat": 37.0047,
+    "long": -121.5843,
+    "population": 116235,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Santa Cruz",
+    "state": "California",
+    "lat": 36.9788,
+    "long": -122.0346,
+    "population": 177556,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Clovis",
+    "state": "California",
+    "lat": 36.8278,
+    "long": -119.6841,
+    "population": 109691,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Fresno",
+    "state": "California",
+    "lat": 36.7834,
+    "long": -119.7941,
+    "population": 698021,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Salinas",
+    "state": "California",
+    "lat": 36.6881,
+    "long": -121.6316,
+    "population": 193590,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Seaside",
+    "state": "California",
+    "lat": 36.6224,
+    "long": -121.8191,
+    "population": 118110,
+    "timezone": "P",
+    "metro": "Bay Area"
+  },
+  {
+    "city": "Visalia",
+    "state": "California",
+    "lat": 36.3273,
+    "long": -119.3264,
+    "population": 234573,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Bakersfield",
+    "state": "California",
+    "lat": 35.353,
+    "long": -119.036,
+    "population": 574362,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Santa Maria",
+    "state": "California",
+    "lat": 34.9333,
+    "long": -120.4432,
+    "population": 140219,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Lancaster",
+    "state": "California",
+    "lat": 34.6934,
+    "long": -118.1753,
+    "population": 349218,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Palmdale",
+    "state": "California",
+    "lat": 34.5944,
+    "long": -118.1057,
+    "population": 157519,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Victorville",
+    "state": "California",
+    "lat": 34.5277,
+    "long": -117.3537,
+    "population": 346948,
+    "timezone": "P",
+    "metro": "Inland Empire"
+  },
+  {
+    "city": "Santa Barbara",
+    "state": "California",
+    "lat": 34.4285,
+    "long": -119.7202,
+    "population": 204034,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Santa Clarita",
+    "state": "California",
+    "lat": 34.4155,
+    "long": -118.4992,
+    "population": 309378,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Simi Valley",
+    "state": "California",
+    "lat": 34.2663,
+    "long": -118.749,
+    "population": 127864,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Oxnard",
+    "state": "California",
+    "lat": 34.1962,
+    "long": -119.1819,
+    "population": 389792,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Thousand Oaks",
+    "state": "California",
+    "lat": 34.1914,
+    "long": -118.8755,
+    "population": 218729,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Burbank",
+    "state": "California",
+    "lat": 34.1879,
+    "long": -118.3234,
+    "population": 104834,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Glendale",
+    "state": "California",
+    "lat": 34.1818,
+    "long": -118.2468,
+    "population": 203054,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Ventura",
+    "state": "California",
+    "player_count": 76,
+    "population": 106000,
+    "lat": 34.16,
+    "long": -119.13,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Pasadena",
+    "state": "California",
+    "lat": 34.1598,
+    "long": -118.139,
+    "population": 142647,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "San Bernardino",
+    "state": "California",
+    "lat": 34.1412,
+    "long": -117.2936,
+    "population": 216995,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Rancho Cucamonga",
+    "state": "California",
+    "lat": 34.1247,
+    "long": -117.5664,
+    "population": 177452,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Los Angeles",
+    "state": "California",
+    "lat": 34.1139,
+    "long": -118.4068,
+    "population": 12815475,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Rialto",
+    "state": "California",
+    "lat": 34.1128,
+    "long": -117.3885,
+    "population": 103562,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Fontana",
+    "state": "California",
+    "lat": 34.0968,
+    "long": -117.4599,
+    "population": 211815,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "El Monte",
+    "state": "California",
+    "lat": 34.074,
+    "long": -118.0291,
+    "population": 116109,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Pomona",
+    "state": "California",
+    "lat": 34.0585,
+    "long": -117.7625,
+    "population": 152939,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "West Covina",
+    "state": "California",
+    "lat": 34.0555,
+    "long": -117.9113,
+    "population": 107598,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Ontario",
+    "state": "California",
+    "lat": 34.0393,
+    "long": -117.6064,
+    "population": 175841,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Inglewood",
+    "state": "California",
+    "lat": 33.9566,
+    "long": -118.3444,
+    "population": 110598,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Riverside",
+    "state": "California",
+    "lat": 33.9381,
+    "long": -117.3948,
+    "population": 2084749,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Downey",
+    "state": "California",
+    "lat": 33.9379,
+    "long": -118.1312,
+    "population": 113092,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Moreno Valley",
+    "state": "California",
+    "lat": 33.9244,
+    "long": -117.2045,
+    "population": 207226,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Norwalk",
+    "state": "California",
+    "lat": 33.9069,
+    "long": -118.0829,
+    "population": 106084,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Fullerton",
+    "state": "California",
+    "lat": 33.8841,
+    "long": -117.9279,
+    "population": 140392,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Corona",
+    "state": "California",
+    "lat": 33.862,
+    "long": -117.5644,
+    "population": 167836,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Anaheim",
+    "state": "California",
+    "lat": 33.839,
+    "long": -117.8572,
+    "population": 352497,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Torrance",
+    "state": "California",
+    "lat": 33.8346,
+    "long": -118.3417,
+    "population": 146758,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Long Beach",
+    "state": "California",
+    "lat": 33.8059,
+    "long": -118.161,
+    "population": 469450,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Orange",
+    "state": "California",
+    "lat": 33.8038,
+    "long": -117.8219,
+    "population": 140560,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Garden Grove",
+    "state": "California",
+    "lat": 33.7787,
+    "long": -117.9601,
+    "population": 174226,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Santa Ana",
+    "state": "California",
+    "lat": 33.7366,
+    "long": -117.8819,
+    "population": 334136,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Indio",
+    "state": "California",
+    "lat": 33.7346,
+    "long": -116.2346,
+    "population": 408097,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Hemet",
+    "state": "California",
+    "lat": 33.7341,
+    "long": -116.9969,
+    "population": 176892,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Huntington Beach",
+    "state": "California",
+    "lat": 33.696,
+    "long": -118.0025,
+    "population": 201874,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Irvine",
+    "state": "California",
+    "lat": 33.6772,
+    "long": -117.7738,
+    "population": 277453,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Costa Mesa",
+    "state": "California",
+    "lat": 33.6667,
+    "long": -117.9135,
+    "population": 113825,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Mission Viejo",
+    "state": "California",
+    "lat": 33.6095,
+    "long": -117.6551,
+    "population": 600474,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Murrieta",
+    "state": "California",
+    "lat": 33.5719,
+    "long": -117.1909,
+    "population": 483681,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Temecula",
+    "state": "California",
+    "lat": 33.4928,
+    "long": -117.1314,
+    "population": 114327,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Oceanside",
+    "state": "California",
+    "lat": 33.2247,
+    "long": -117.3083,
+    "population": 176193,
+    "timezone": "P",
+    "metro": "Los Angeles"
+  },
+  {
+    "city": "Vista",
+    "state": "California",
+    "lat": 33.1895,
+    "long": -117.2387,
+    "population": 101568,
+    "timezone": "P",
+    "metro": "San Diego"
+  },
+  {
+    "city": "Escondido",
+    "state": "California",
+    "lat": 33.1347,
+    "long": -117.0722,
+    "population": 151969,
+    "timezone": "P",
+    "metro": "San Diego"
+  },
+  {
+    "city": "Carlsbad",
+    "state": "California",
+    "lat": 33.1246,
+    "long": -117.2837,
+    "population": 115330,
+    "timezone": "P",
+    "metro": "San Diego"
+  },
+  {
+    "city": "San Diego",
+    "state": "California",
+    "lat": 32.8312,
+    "long": -117.1226,
+    "population": 3210314,
+    "timezone": "P",
+    "metro": "San Diego"
+  },
+  {
+    "city": "El Cajon",
+    "state": "California",
+    "lat": 32.8017,
+    "long": -116.9604,
+    "population": 103894,
+    "timezone": "P",
+    "metro": "San Diego"
+  },
+  {
+    "city": "El Centro",
+    "state": "California",
+    "lat": 32.7873,
+    "long": -115.5579,
+    "population": 112145,
+    "timezone": "P",
+    "metro": "San Diego"
+  },
+  {
+    "city": "Chula Vista",
+    "state": "California",
+    "lat": 32.6281,
+    "long": -117.0145,
+    "population": 270471,
+    "timezone": "P",
+    "metro": "San Diego"
+  },
+  {
+    "city": "Fort Collins",
+    "state": "Colorado",
+    "lat": 40.5479,
+    "long": -105.0658,
+    "population": 303184,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Greeley",
+    "state": "Colorado",
+    "lat": 40.415,
+    "long": -104.7696,
+    "population": 133750,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Boulder",
+    "state": "Colorado",
+    "lat": 40.0249,
+    "long": -105.2523,
+    "population": 126054,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Thornton",
+    "state": "Colorado",
+    "lat": 39.9205,
+    "long": -104.9443,
+    "population": 136978,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Westminster",
+    "state": "Colorado",
+    "lat": 39.8837,
+    "long": -105.0627,
+    "population": 112812,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Arvada",
+    "state": "Colorado",
+    "lat": 39.8321,
+    "long": -105.151,
+    "population": 118807,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Denver",
+    "state": "Colorado",
+    "lat": 39.7621,
+    "long": -104.8759,
+    "population": 2787266,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Aurora",
+    "state": "Colorado",
+    "lat": 39.7084,
+    "long": -104.7274,
+    "population": 366623,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Lakewood",
+    "state": "Colorado",
+    "lat": 39.6978,
+    "long": -105.1168,
+    "population": 154958,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Centennial",
+    "state": "Colorado",
+    "lat": 39.5926,
+    "long": -104.8674,
+    "population": 110250,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Grand Junction",
+    "state": "Colorado",
+    "lat": 39.0878,
+    "long": -108.5673,
+    "population": 136688,
+    "timezone": "M",
+    "metro": "Denver"
+  },
+  {
+    "city": "Colorado Springs",
+    "state": "Colorado",
+    "lat": 38.8674,
+    "long": -104.7606,
+    "population": 623946,
+    "timezone": "M",
+    "metro": "SE Colorado"
+  },
+  {
+    "city": "Pueblo",
+    "state": "Colorado",
+    "lat": 38.2701,
+    "long": -104.6131,
+    "population": 142351,
+    "timezone": "M",
+    "metro": "SE Colorado"
+  },
+  {
+    "city": "Hartford",
+    "state": "Connecticut",
+    "lat": 41.7661,
+    "long": -72.6834,
+    "population": 914751,
+    "timezone": "E",
+    "metro": "Hartford, CT"
+  },
+  {
+    "city": "Waterbury",
+    "state": "Connecticut",
+    "lat": 41.5583,
+    "long": -73.0361,
+    "population": 191484,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Norwich",
+    "state": "Connecticut",
+    "lat": 41.5495,
+    "long": -72.0882,
+    "population": 203916,
+    "timezone": "E",
+    "metro": "Hartford, CT"
+  },
+  {
+    "city": "Danbury",
+    "state": "Connecticut",
+    "lat": 41.4016,
+    "long": -73.471,
+    "population": 177177,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "New Haven",
+    "state": "Connecticut",
+    "lat": 41.3112,
+    "long": -72.9245,
+    "population": 568144,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Bridgeport",
+    "state": "Connecticut",
+    "lat": 41.1909,
+    "long": -73.1958,
+    "population": 938406,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Stamford",
+    "state": "Connecticut",
+    "lat": 41.1036,
+    "long": -73.5583,
+    "population": 130824,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Dover",
+    "state": "Delaware",
+    "lat": 39.1603,
+    "long": -75.5203,
+    "population": 115352,
+    "timezone": "E",
+    "metro": "Philadelphia"
+  },
+  {
+    "city": "Washington",
+    "state": "District of Columbia",
+    "lat": 38.9047,
+    "long": -77.0163,
+    "population": 5289420,
+    "timezone": "E",
+    "metro": "DMV"
+  },
+  {
+    "city": "Tallahassee",
+    "state": "Florida",
+    "lat": 30.455,
+    "long": -84.2526,
+    "population": 253030,
+    "timezone": "E",
+    "metro": "Pensacola"
+  },
+  {
+    "city": "Pensacola",
+    "state": "Florida",
+    "lat": 30.4427,
+    "long": -87.1886,
+    "population": 344400,
+    "timezone": "C",
+    "metro": "Pensacola"
+  },
+  {
+    "city": "Jacksonville",
+    "state": "Florida",
+    "lat": 30.3322,
+    "long": -81.6749,
+    "population": 1156291,
+    "timezone": "E",
+    "metro": "Jacksonville"
+  },
+  {
+    "city": "Panama City",
+    "state": "Florida",
+    "lat": 30.1997,
+    "long": -85.6003,
+    "population": 145239,
+    "timezone": "C",
+    "metro": "Pensacola"
+  },
+  {
+    "city": "Gainesville",
+    "state": "Florida",
+    "lat": 29.6808,
+    "long": -82.3455,
+    "population": 199695,
+    "timezone": "E",
+    "metro": "Gainesville"
+  },
+  {
+    "city": "Palm Coast",
+    "state": "Florida",
+    "lat": 29.5389,
+    "long": -81.246,
+    "population": 401757,
+    "timezone": "E",
+    "metro": "Daytona Beach"
+  },
+  {
+    "city": "Ocala",
+    "state": "Florida",
+    "lat": 29.1803,
+    "long": -82.1495,
+    "population": 164712,
+    "timezone": "E",
+    "metro": "Gainesville"
+  },
+  {
+    "city": "Deltona",
+    "state": "Florida",
+    "lat": 28.905,
+    "long": -81.2136,
+    "population": 194061,
+    "timezone": "E",
+    "metro": "Daytona Beach"
+  },
+  {
+    "city": "Leesburg",
+    "state": "Florida",
+    "lat": 28.7674,
+    "long": -81.8981,
+    "population": 148161,
+    "timezone": "E",
+    "metro": "Central Florida"
+  },
+  {
+    "city": "Orlando",
+    "state": "Florida",
+    "lat": 28.4788,
+    "long": -81.342,
+    "population": 1776841,
+    "timezone": "E",
+    "metro": "Central Florida"
+  },
+  {
+    "city": "Kissimmee",
+    "state": "Florida",
+    "lat": 28.3042,
+    "long": -81.4164,
+    "population": 374231,
+    "timezone": "E",
+    "metro": "Central Florida"
+  },
+  {
+    "city": "Lakeland",
+    "state": "Florida",
+    "lat": 28.0557,
+    "long": -81.9543,
+    "population": 291281,
+    "timezone": "E",
+    "metro": "Central Florida"
+  },
+  {
+    "city": "Winter Haven",
+    "state": "Florida",
+    "lat": 28.0122,
+    "long": -81.7018,
+    "population": 245237,
+    "timezone": "E",
+    "metro": "Central Florida"
+  },
+  {
+    "city": "Tampa",
+    "state": "Florida",
+    "lat": 27.9937,
+    "long": -82.4454,
+    "population": 2804240,
+    "timezone": "E",
+    "metro": "Central Florida"
+  },
+  {
+    "city": "Palm Bay",
+    "state": "Florida",
+    "lat": 27.9861,
+    "long": -80.6628,
+    "population": 489912,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Clearwater",
+    "state": "Florida",
+    "lat": 27.9786,
+    "long": -82.7622,
+    "population": 115513,
+    "timezone": "E",
+    "metro": "Central Florida"
+  },
+  {
+    "city": "Saint Petersburg",
+    "state": "Florida",
+    "lat": 27.793,
+    "long": -82.6652,
+    "population": 263255,
+    "timezone": "E",
+    "metro": "Central Florida"
+  },
+  {
+    "city": "Sarasota",
+    "state": "Florida",
+    "lat": 27.3391,
+    "long": -82.5439,
+    "population": 706245,
+    "timezone": "E",
+    "metro": "Fort Meyers"
+  },
+  {
+    "city": "Port Saint Lucie",
+    "state": "Florida",
+    "lat": 27.2796,
+    "long": -80.3883,
+    "population": 432589,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "North Port",
+    "state": "Florida",
+    "lat": 27.0577,
+    "long": -82.1976,
+    "population": 195992,
+    "timezone": "E",
+    "metro": "Fort Meyers"
+  },
+  {
+    "city": "West Palm Beach",
+    "state": "Florida",
+    "lat": 26.7467,
+    "long": -80.1314,
+    "population": 110222,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Cape Coral",
+    "state": "Florida",
+    "lat": 26.6444,
+    "long": -81.9956,
+    "population": 630134,
+    "timezone": "E",
+    "metro": "Fort Meyers"
+  },
+  {
+    "city": "Bonita Springs",
+    "state": "Florida",
+    "lat": 26.3559,
+    "long": -81.7861,
+    "population": 396220,
+    "timezone": "E",
+    "metro": "Fort Meyers"
+  },
+  {
+    "city": "Coral Springs",
+    "state": "Florida",
+    "lat": 26.2701,
+    "long": -80.2592,
+    "population": 133037,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Pompano Beach",
+    "state": "Florida",
+    "lat": 26.2428,
+    "long": -80.1312,
+    "population": 110473,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Fort Lauderdale",
+    "state": "Florida",
+    "lat": 26.1412,
+    "long": -80.1464,
+    "population": 180072,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Davie",
+    "state": "Florida",
+    "lat": 26.079,
+    "long": -80.287,
+    "population": 105149,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Hollywood",
+    "state": "Florida",
+    "lat": 26.0293,
+    "long": -80.1678,
+    "population": 153627,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Pembroke Pines",
+    "state": "Florida",
+    "lat": 26.0128,
+    "long": -80.3387,
+    "population": 170712,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Miramar",
+    "state": "Florida",
+    "lat": 25.9773,
+    "long": -80.3358,
+    "population": 140328,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Miami Gardens",
+    "state": "Florida",
+    "lat": 25.9433,
+    "long": -80.2425,
+    "population": 113750,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Hialeah",
+    "state": "Florida",
+    "lat": 25.8696,
+    "long": -80.3045,
+    "population": 239673,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Miami",
+    "state": "Florida",
+    "lat": 25.784,
+    "long": -80.2102,
+    "population": 6381966,
+    "timezone": "E",
+    "metro": "Miami"
+  },
+  {
+    "city": "Gainesville",
+    "state": "Georgia",
+    "lat": 34.2901,
+    "long": -83.8301,
+    "population": 156248,
+    "timezone": "E",
+    "metro": "Atlanta"
+  },
+  {
+    "city": "Athens",
+    "state": "Georgia",
+    "lat": 33.9508,
+    "long": -83.3689,
+    "population": 140169,
+    "timezone": "E",
+    "metro": "Atlanta"
+  },
+  {
+    "city": "Sandy Springs",
+    "state": "Georgia",
+    "lat": 33.9366,
+    "long": -84.3703,
+    "population": 106739,
+    "timezone": "E",
+    "metro": "Atlanta"
+  },
+  {
+    "city": "Atlanta",
+    "state": "Georgia",
+    "lat": 33.7626,
+    "long": -84.4228,
+    "population": 5228750,
+    "timezone": "E",
+    "metro": "Atlanta"
+  },
+  {
+    "city": "Augusta",
+    "state": "Georgia",
+    "lat": 33.3645,
+    "long": -82.0708,
+    "population": 389383,
+    "timezone": "E",
+    "metro": "Columbia-Augusta"
+  },
+  {
+    "city": "Warner Robins",
+    "state": "Georgia",
+    "lat": 32.598,
+    "long": -83.6528,
+    "population": 149617,
+    "timezone": "E",
+    "metro": "Macon, GA"
+  },
+  {
+    "city": "Columbus",
+    "state": "Georgia",
+    "lat": 32.51,
+    "long": -84.8771,
+    "population": 259160,
+    "timezone": "E",
+    "metro": "Columbus-Auburn"
+  },
+  {
+    "city": "Macon",
+    "state": "Georgia",
+    "player_count": 34,
+    "population": 153000,
+    "lat": 32.5,
+    "long": -83.39,
+    "timezone": "E",
+    "metro": "Macon, GA"
+  },
+  {
+    "city": "Savannah",
+    "state": "Georgia",
+    "lat": 32.0282,
+    "long": -81.1786,
+    "population": 280082,
+    "timezone": "E",
+    "metro": "Savannah, GA"
+  },
+  {
+    "city": "Honolulu",
+    "state": "Hawaii",
+    "lat": 21.3294,
+    "long": -157.846,
+    "population": 833671,
+    "timezone": "H",
+    "metro": "Hawaii"
+  },
+  {
+    "city": "Kapolei",
+    "state": "Hawaii",
+    "player_count": 24,
+    "population": 107000,
+    "lat": 21.2,
+    "long": -158.04,
+    "timezone": "H",
+    "metro": "Hawaii"
+  },
+  {
+    "city": "Coeur d'Alene",
+    "state": "Idaho",
+    "lat": 47.7039,
+    "long": -116.7933,
+    "population": 112935,
+    "timezone": "P",
+    "metro": "Spokane"
+  },
+  {
+    "city": "Boise",
+    "state": "Idaho",
+    "lat": 43.6006,
+    "long": -116.2316,
+    "population": 385218,
+    "timezone": "M",
+    "metro": "Boise"
+  },
+  {
+    "city": "Nampa",
+    "state": "Idaho",
+    "lat": 43.5843,
+    "long": -116.5626,
+    "population": 173863,
+    "timezone": "M",
+    "metro": "Boise"
+  },
+  {
+    "city": "Round Lake Beach",
+    "state": "Illinois",
+    "lat": 42.3791,
+    "long": -88.0811,
+    "population": 284607,
+    "timezone": "C",
+    "metro": "Chicago"
+  },
+  {
+    "city": "Rockford",
+    "state": "Illinois",
+    "lat": 42.2598,
+    "long": -89.0641,
+    "population": 285562,
+    "timezone": "C",
+    "metro": "Rockford"
+  },
+  {
+    "city": "Elgin",
+    "state": "Illinois",
+    "lat": 42.0385,
+    "long": -88.3229,
+    "population": 112456,
+    "timezone": "C",
+    "metro": "Chicago"
+  },
+  {
+    "city": "Chicago",
+    "state": "Illinois",
+    "lat": 41.8373,
+    "long": -87.6861,
+    "population": 8675982,
+    "timezone": "C",
+    "metro": "Chicago"
+  },
+  {
+    "city": "Aurora",
+    "state": "Illinois",
+    "lat": 41.7638,
+    "long": -88.2901,
+    "population": 200965,
+    "timezone": "C",
+    "metro": "Chicago"
+  },
+  {
+    "city": "Naperville",
+    "state": "Illinois",
+    "lat": 41.7483,
+    "long": -88.1657,
+    "population": 147682,
+    "timezone": "C",
+    "metro": "Chicago"
+  },
+  {
+    "city": "Joliet",
+    "state": "Illinois",
+    "lat": 41.5193,
+    "long": -88.1501,
+    "population": 148462,
+    "timezone": "C",
+    "metro": "Chicago"
+  },
+  {
+    "city": "Peoria",
+    "state": "Illinois",
+    "lat": 40.752,
+    "long": -89.6155,
+    "population": 262010,
+    "timezone": "C",
+    "metro": "Central IL"
+  },
+  {
+    "city": "Bloomington",
+    "state": "Illinois",
+    "lat": 40.4757,
+    "long": -88.9705,
+    "population": 134892,
+    "timezone": "C",
+    "metro": "Central IL"
+  },
+  {
+    "city": "Champaign",
+    "state": "Illinois",
+    "lat": 40.1144,
+    "long": -88.2735,
+    "population": 156794,
+    "timezone": "C",
+    "metro": "Central IL"
+  },
+  {
+    "city": "Springfield",
+    "state": "Illinois",
+    "lat": 39.7712,
+    "long": -89.6539,
+    "population": 159394,
+    "timezone": "C",
+    "metro": "Central IL"
+  },
+  {
+    "city": "Elkhart",
+    "state": "Indiana",
+    "lat": 41.6913,
+    "long": -85.9628,
+    "population": 148131,
+    "timezone": "C",
+    "metro": "South Bend"
+  },
+  {
+    "city": "South Bend",
+    "state": "Indiana",
+    "lat": 41.6771,
+    "long": -86.2692,
+    "population": 281100,
+    "timezone": "C",
+    "metro": "South Bend"
+  },
+  {
+    "city": "Fort Wayne",
+    "state": "Indiana",
+    "lat": 41.0885,
+    "long": -85.1436,
+    "population": 328564,
+    "timezone": "C",
+    "metro": "Fort Wayne"
+  },
+  {
+    "city": "Lafayette",
+    "state": "Indiana",
+    "lat": 40.3991,
+    "long": -86.8594,
+    "population": 159293,
+    "timezone": "C",
+    "metro": "Lafayette"
+  },
+  {
+    "city": "Indianapolis",
+    "state": "Indiana",
+    "lat": 39.7771,
+    "long": -86.1458,
+    "population": 1564699,
+    "timezone": "C",
+    "metro": "Indianapolis"
+  },
+  {
+    "city": "Bloomington",
+    "state": "Indiana",
+    "lat": 39.1637,
+    "long": -86.5256,
+    "population": 114959,
+    "timezone": "C",
+    "metro": "Central IN"
+  },
+  {
+    "city": "Evansville",
+    "state": "Indiana",
+    "lat": 37.9882,
+    "long": -87.5339,
+    "population": 232285,
+    "timezone": "C",
+    "metro": "Central IN"
+  },
+  {
+    "city": "Sioux City",
+    "state": "Iowa",
+    "lat": 42.4959,
+    "long": -96.3901,
+    "population": 106279,
+    "timezone": "C",
+    "metro": "Iowa"
+  },
+  {
+    "city": "Waterloo",
+    "state": "Iowa",
+    "lat": 42.492,
+    "long": -92.3522,
+    "population": 112060,
+    "timezone": "C",
+    "metro": "Iowa"
+  },
+  {
+    "city": "Cedar Rapids",
+    "state": "Iowa",
+    "lat": 41.9667,
+    "long": -91.6782,
+    "population": 186160,
+    "timezone": "C",
+    "metro": "Iowa"
+  },
+  {
+    "city": "Iowa City",
+    "state": "Iowa",
+    "lat": 41.6559,
+    "long": -91.5304,
+    "population": 119091,
+    "timezone": "C",
+    "metro": "Iowa"
+  },
+  {
+    "city": "Des Moines",
+    "state": "Iowa",
+    "lat": 41.5725,
+    "long": -93.6104,
+    "population": 481222,
+    "timezone": "C",
+    "metro": "Des Moines"
+  },
+  {
+    "city": "Davenport",
+    "state": "Iowa",
+    "lat": 41.5563,
+    "long": -90.6052,
+    "population": 287413,
+    "timezone": "C",
+    "metro": "Iowa"
+  },
+  {
+    "city": "Kansas City",
+    "state": "Kansas",
+    "lat": 39.1234,
+    "long": -94.7443,
+    "population": 152938,
+    "timezone": "C",
+    "metro": "Kansas City"
+  },
+  {
+    "city": "Topeka",
+    "state": "Kansas",
+    "lat": 39.0346,
+    "long": -95.6956,
+    "population": 148960,
+    "timezone": "C",
+    "metro": "Kansas City"
+  },
+  {
+    "city": "Overland Park",
+    "state": "Kansas",
+    "lat": 38.887,
+    "long": -94.687,
+    "population": 191278,
+    "timezone": "C",
+    "metro": "Kansas City"
+  },
+  {
+    "city": "Olathe",
+    "state": "Kansas",
+    "lat": 38.8838,
+    "long": -94.8196,
+    "population": 137472,
+    "timezone": "C",
+    "metro": "Kansas City"
+  },
+  {
+    "city": "Wichita",
+    "state": "Kansas",
+    "lat": 37.6897,
+    "long": -97.3442,
+    "population": 483057,
+    "timezone": "C",
+    "metro": "Wichita"
+  },
+  {
+    "city": "Louisville",
+    "state": "Kentucky",
+    "lat": 38.1662,
+    "long": -85.6488,
+    "population": 1011696,
+    "timezone": "E",
+    "metro": "Louisville"
+  },
+  {
+    "city": "Lexington",
+    "state": "Kentucky",
+    "lat": 38.0423,
+    "long": -84.4587,
+    "population": 315939,
+    "timezone": "E",
+    "metro": "Lexington"
+  },
+  {
+    "city": "Monroe",
+    "state": "Louisiana",
+    "lat": 32.5184,
+    "long": -92.0774,
+    "population": 115462,
+    "timezone": "C",
+    "metro": "Northern Louisiana"
+  },
+  {
+    "city": "Shreveport",
+    "state": "Louisiana",
+    "lat": 32.4659,
+    "long": -93.7959,
+    "population": 287432,
+    "timezone": "C",
+    "metro": "Northern Louisiana"
+  },
+  {
+    "city": "Baton Rouge",
+    "state": "Louisiana",
+    "lat": 30.4423,
+    "long": -91.1314,
+    "population": 583613,
+    "timezone": "C",
+    "metro": "New Orleans"
+  },
+  {
+    "city": "Lafayette",
+    "state": "Louisiana",
+    "lat": 30.2083,
+    "long": -92.0322,
+    "population": 265746,
+    "timezone": "C",
+    "metro": "New Orleans"
+  },
+  {
+    "city": "Lake Charles",
+    "state": "Louisiana",
+    "lat": 30.203,
+    "long": -93.215,
+    "population": 153633,
+    "timezone": "C",
+    "metro": "New Orleans"
+  },
+  {
+    "city": "New Orleans",
+    "state": "Louisiana",
+    "lat": 30.0687,
+    "long": -89.9288,
+    "population": 1029123,
+    "timezone": "C",
+    "metro": "New Orleans"
+  },
+  {
+    "city": "Metairie",
+    "state": "Louisiana",
+    "player_count": 43,
+    "population": 138481,
+    "lat": 29.59,
+    "long": -90.1,
+    "timezone": "C",
+    "metro": "New Orleans"
+  },
+  {
+    "city": "Houma",
+    "state": "Louisiana",
+    "lat": 29.5799,
+    "long": -90.7058,
+    "population": 142969,
+    "timezone": "C",
+    "metro": "New Orleans"
+  },
+  {
+    "city": "Portland",
+    "state": "Maine",
+    "lat": 43.6773,
+    "long": -70.2715,
+    "population": 206023,
+    "timezone": "E",
+    "metro": "Portland, ME"
+  },
+  {
+    "city": "Landover",
+    "state": "Maryland",
+    "lat": 38.56,
+    "long": -76.54,
+    "population": 25000,
+    "timezone": "E",
+    "metro": "DMV"
+  },
+  {
+    "city": "Hagerstown",
+    "state": "Maryland",
+    "lat": 39.6401,
+    "long": -77.7217,
+    "population": 185704,
+    "timezone": "E",
+    "metro": "DMV"
+  },
+  {
+    "city": "Frederick",
+    "state": "Maryland",
+    "lat": 39.4335,
+    "long": -77.4157,
+    "population": 154972,
+    "timezone": "E",
+    "metro": "DMV"
+  },
+  {
+    "city": "Baltimore",
+    "state": "Maryland",
+    "lat": 39.3051,
+    "long": -76.6144,
+    "population": 2170504,
+    "timezone": "E",
+    "metro": "DMV"
+  },
+  {
+    "city": "Salisbury",
+    "state": "Maryland",
+    "lat": 38.3755,
+    "long": -75.5867,
+    "population": 106034,
+    "timezone": "E",
+    "metro": "DMV"
+  },
+  {
+    "city": "Lowell",
+    "state": "Massachusetts",
+    "lat": 42.6389,
+    "long": -71.3217,
+    "population": 111346,
+    "timezone": "E",
+    "metro": "Boston"
+  },
+  {
+    "city": "Foxborough",
+    "state": "Massachusetts",
+    "lat": 42.03,
+    "long": -71.13,
+    "population": 18000,
+    "timezone": "E",
+    "metro": "Boston"
+  },
+  {
+    "city": "Leominster",
+    "state": "Massachusetts",
+    "lat": 42.5209,
+    "long": -71.7717,
+    "population": 119400,
+    "timezone": "E",
+    "metro": "Boston"
+  },
+  {
+    "city": "Cambridge",
+    "state": "Massachusetts",
+    "lat": 42.3758,
+    "long": -71.1184,
+    "population": 113630,
+    "timezone": "E",
+    "metro": "Boston"
+  },
+  {
+    "city": "Boston",
+    "state": "Massachusetts",
+    "lat": 42.3188,
+    "long": -71.0846,
+    "population": 4637537,
+    "timezone": "E",
+    "metro": "Boston"
+  },
+  {
+    "city": "Worcester",
+    "state": "Massachusetts",
+    "lat": 42.2705,
+    "long": -71.8079,
+    "population": 498997,
+    "timezone": "E",
+    "metro": "Western Mass"
+  },
+  {
+    "city": "Springfield",
+    "state": "Massachusetts",
+    "lat": 42.1155,
+    "long": -72.5395,
+    "population": 628076,
+    "timezone": "E",
+    "metro": "Western Mass"
+  },
+  {
+    "city": "New Bedford",
+    "state": "Massachusetts",
+    "lat": 41.6697,
+    "long": -70.9428,
+    "population": 149528,
+    "timezone": "E",
+    "metro": "Boston"
+  },
+  {
+    "city": "Muskegon",
+    "state": "Michigan",
+    "lat": 43.2281,
+    "long": -86.2562,
+    "population": 160142,
+    "timezone": "E",
+    "metro": "Michigan"
+  },
+  {
+    "city": "Flint",
+    "state": "Michigan",
+    "lat": 43.0236,
+    "long": -83.6922,
+    "population": 335354,
+    "timezone": "E",
+    "metro": "Detroit"
+  },
+  {
+    "city": "Grand Rapids",
+    "state": "Michigan",
+    "lat": 42.9615,
+    "long": -85.6557,
+    "population": 602694,
+    "timezone": "E",
+    "metro": "Michigan"
+  },
+  {
+    "city": "Holland",
+    "state": "Michigan",
+    "lat": 42.7677,
+    "long": -86.0984,
+    "population": 100885,
+    "timezone": "E",
+    "metro": "Michigan"
+  },
+  {
+    "city": "Lansing",
+    "state": "Michigan",
+    "lat": 42.7142,
+    "long": -84.56,
+    "population": 320928,
+    "timezone": "E",
+    "metro": "Michigan"
+  },
+  {
+    "city": "Sterling Heights",
+    "state": "Michigan",
+    "lat": 42.5809,
+    "long": -83.0305,
+    "population": 132631,
+    "timezone": "E",
+    "metro": "Detroit"
+  },
+  {
+    "city": "Warren",
+    "state": "Michigan",
+    "lat": 42.4934,
+    "long": -83.027,
+    "population": 135022,
+    "timezone": "E",
+    "metro": "Detroit"
+  },
+  {
+    "city": "South Lyon",
+    "state": "Michigan",
+    "lat": 42.4614,
+    "long": -83.6526,
+    "population": 123850,
+    "timezone": "E",
+    "metro": "Detroit"
+  },
+  {
+    "city": "Detroit",
+    "state": "Michigan",
+    "lat": 42.3834,
+    "long": -83.1024,
+    "population": 3522206,
+    "timezone": "E",
+    "metro": "Detroit"
+  },
+  {
+    "city": "Ann Arbor",
+    "state": "Michigan",
+    "lat": 42.2755,
+    "long": -83.7312,
+    "population": 326288,
+    "timezone": "E",
+    "metro": "Detroit"
+  },
+  {
+    "city": "Kalamazoo",
+    "state": "Michigan",
+    "lat": 42.2749,
+    "long": -85.5881,
+    "population": 214083,
+    "timezone": "E",
+    "metro": "Michigan"
+  },
+  {
+    "city": "Duluth",
+    "state": "Minnesota",
+    "lat": 46.7757,
+    "long": -92.1392,
+    "population": 120101,
+    "timezone": "C",
+    "metro": "Greater Minnesota"
+  },
+  {
+    "city": "Saint Cloud",
+    "state": "Minnesota",
+    "lat": 45.5339,
+    "long": -94.1719,
+    "population": 114225,
+    "timezone": "C",
+    "metro": "Twin Cities"
+  },
+  {
+    "city": "Minneapolis",
+    "state": "Minnesota",
+    "lat": 44.9635,
+    "long": -93.2678,
+    "population": 2926757,
+    "timezone": "C",
+    "metro": "Twin Cities"
+  },
+  {
+    "city": "Saint Paul",
+    "state": "Minnesota",
+    "lat": 44.9477,
+    "long": -93.104,
+    "population": 306621,
+    "timezone": "C",
+    "metro": "Twin Cities"
+  },
+  {
+    "city": "Rochester",
+    "state": "Minnesota",
+    "lat": 44.0151,
+    "long": -92.4778,
+    "population": 116713,
+    "timezone": "C",
+    "metro": "Twin Cities"
+  },
+  {
+    "city": "Jackson",
+    "state": "Mississippi",
+    "lat": 32.3163,
+    "long": -90.2124,
+    "population": 338185,
+    "timezone": "C",
+    "metro": "Jackson, MS"
+  },
+  {
+    "city": "Gulfport",
+    "state": "Mississippi",
+    "lat": 30.4271,
+    "long": -89.0703,
+    "population": 221348,
+    "timezone": "C",
+    "metro": "Mobile, AL"
+  },
+  {
+    "city": "Kansas City",
+    "state": "Missouri",
+    "lat": 39.1239,
+    "long": -94.5541,
+    "population": 1615621,
+    "timezone": "C",
+    "metro": "Kansas City"
+  },
+  {
+    "city": "Independence",
+    "state": "Missouri",
+    "lat": 39.0871,
+    "long": -94.3503,
+    "population": 117306,
+    "timezone": "C",
+    "metro": "Kansas City"
+  },
+  {
+    "city": "Columbia",
+    "state": "Missouri",
+    "lat": 38.9478,
+    "long": -92.3258,
+    "population": 139945,
+    "timezone": "C",
+    "metro": "Missouri"
+  },
+  {
+    "city": "Saint Louis",
+    "state": "Missouri",
+    "lat": 38.6358,
+    "long": -90.2451,
+    "population": 2078283,
+    "timezone": "C",
+    "metro": "St Louis"
+  },
+  {
+    "city": "Springfield",
+    "state": "Missouri",
+    "lat": 37.1943,
+    "long": -93.2915,
+    "population": 287222,
+    "timezone": "C",
+    "metro": "Missouri"
+  },
+  {
+    "city": "Billings",
+    "state": "Montana",
+    "lat": 45.7889,
+    "long": -108.5503,
+    "population": 120800,
+    "timezone": "M",
+    "metro": "Montana"
+  },
+  {
+    "city": "Omaha",
+    "state": "Nebraska",
+    "lat": 41.2628,
+    "long": -96.0495,
+    "population": 827786,
+    "timezone": "C",
+    "metro": "Omaha"
+  },
+  {
+    "city": "Lincoln",
+    "state": "Nebraska",
+    "lat": 40.8098,
+    "long": -96.6802,
+    "population": 285118,
+    "timezone": "C",
+    "metro": "Omaha"
+  },
+  {
+    "city": "Sparks",
+    "state": "Nevada",
+    "lat": 39.5729,
+    "long": -119.7157,
+    "population": 100888,
+    "timezone": "P",
+    "metro": "Reno"
+  },
+  {
+    "city": "Reno",
+    "state": "Nevada",
+    "lat": 39.5497,
+    "long": -119.8483,
+    "population": 433271,
+    "timezone": "P",
+    "metro": "Reno"
+  },
+  {
+    "city": "North Las Vegas",
+    "state": "Nevada",
+    "lat": 36.288,
+    "long": -115.0901,
+    "population": 242975,
+    "timezone": "P",
+    "metro": "Las Vegas"
+  },
+  {
+    "city": "Las Vegas",
+    "state": "Nevada",
+    "lat": 36.2291,
+    "long": -115.2607,
+    "population": 2073045,
+    "timezone": "P",
+    "metro": "Las Vegas"
+  },
+  {
+    "city": "Henderson",
+    "state": "Nevada",
+    "lat": 36.0145,
+    "long": -115.0362,
+    "population": 302539,
+    "timezone": "P",
+    "metro": "Las Vegas"
+  },
+  {
+    "city": "Manchester",
+    "state": "New Hampshire",
+    "lat": 42.9848,
+    "long": -71.4447,
+    "population": 160742,
+    "timezone": "E",
+    "metro": "New Hampshire"
+  },
+  {
+    "city": "Nashua",
+    "state": "New Hampshire",
+    "lat": 42.7491,
+    "long": -71.491,
+    "population": 231262,
+    "timezone": "E",
+    "metro": "New Hampshire"
+  },
+  {
+    "city": "Paterson",
+    "state": "New Jersey",
+    "lat": 40.9147,
+    "long": -74.1624,
+    "population": 148678,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "East Rutherford",
+    "state": "New Jersey",
+    "lat": 40.81,
+    "long": -74.08,
+    "population": 10000,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Newark",
+    "state": "New Jersey",
+    "lat": 40.7245,
+    "long": -74.1725,
+    "population": 285154,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Jersey City",
+    "state": "New Jersey",
+    "lat": 40.7161,
+    "long": -74.0682,
+    "population": 270753,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Elizabeth",
+    "state": "New Jersey",
+    "lat": 40.6657,
+    "long": -74.1912,
+    "population": 130215,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Trenton",
+    "state": "New Jersey",
+    "lat": 40.2237,
+    "long": -74.764,
+    "population": 296869,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Atlantic City",
+    "state": "New Jersey",
+    "lat": 39.3797,
+    "long": -74.4527,
+    "population": 241363,
+    "timezone": "E",
+    "metro": "Philadelphia"
+  },
+  {
+    "city": "Santa Fe",
+    "state": "New Mexico",
+    "lat": 35.6619,
+    "long": -105.9819,
+    "population": 110078,
+    "timezone": "M",
+    "metro": "Santa Fe - Albuquerque"
+  },
+  {
+    "city": "Albuquerque",
+    "state": "New Mexico",
+    "lat": 35.1053,
+    "long": -106.6464,
+    "population": 758523,
+    "timezone": "M",
+    "metro": "Santa Fe - Albuquerque"
+  },
+  {
+    "city": "Las Cruces",
+    "state": "New Mexico",
+    "lat": 32.3265,
+    "long": -106.7893,
+    "population": 133988,
+    "timezone": "M",
+    "metro": "El Paso"
+  },
+  {
+    "city": "Rochester",
+    "state": "New York",
+    "lat": 43.168,
+    "long": -77.6162,
+    "population": 711998,
+    "timezone": "E",
+    "metro": "Upstate NY"
+  },
+  {
+    "city": "Utica",
+    "state": "New York",
+    "lat": 43.0961,
+    "long": -75.226,
+    "population": 114318,
+    "timezone": "E",
+    "metro": "Upstate NY"
+  },
+  {
+    "city": "Syracuse",
+    "state": "New York",
+    "lat": 43.0409,
+    "long": -76.1438,
+    "population": 407259,
+    "timezone": "E",
+    "metro": "Upstate NY"
+  },
+  {
+    "city": "Buffalo",
+    "state": "New York",
+    "lat": 42.9017,
+    "long": -78.8487,
+    "population": 926261,
+    "timezone": "E",
+    "metro": "Upstate NY"
+  },
+  {
+    "city": "Albany",
+    "state": "New York",
+    "lat": 42.6664,
+    "long": -73.7987,
+    "population": 597270,
+    "timezone": "E",
+    "metro": "Upstate NY"
+  },
+  {
+    "city": "Binghamton",
+    "state": "New York",
+    "lat": 42.1014,
+    "long": -75.9093,
+    "population": 150747,
+    "timezone": "E",
+    "metro": "Upstate NY"
+  },
+  {
+    "city": "Poughkeepsie",
+    "state": "New York",
+    "lat": 41.6949,
+    "long": -73.921,
+    "population": 396041,
+    "timezone": "E",
+    "metro": "Upstate NY"
+  },
+  {
+    "city": "Yonkers",
+    "state": "New York",
+    "lat": 40.9466,
+    "long": -73.8674,
+    "population": 202019,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Bronx",
+    "state": "New York",
+    "lat": 40.8501,
+    "long": -73.8662,
+    "population": 1455720,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Manhattan",
+    "state": "New York",
+    "lat": 40.7834,
+    "long": -73.9662,
+    "population": 1643734,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Queens",
+    "state": "New York",
+    "lat": 40.7498,
+    "long": -73.7976,
+    "population": 2333054,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "New York",
+    "state": "New York",
+    "lat": 40.6943,
+    "long": -73.9249,
+    "population": 19354922,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Brooklyn",
+    "state": "New York",
+    "lat": 40.6501,
+    "long": -73.9496,
+    "population": 2629150,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Staten Island",
+    "state": "New York",
+    "lat": 40.5834,
+    "long": -74.1496,
+    "population": 476015,
+    "timezone": "E",
+    "metro": "NYC"
+  },
+  {
+    "city": "Winston-Salem",
+    "state": "North Carolina",
+    "lat": 36.1029,
+    "long": -80.261,
+    "population": 416581,
+    "timezone": "E",
+    "metro": "Piedmont Triad"
+  },
+  {
+    "city": "Greensboro",
+    "state": "North Carolina",
+    "lat": 36.0956,
+    "long": -79.8269,
+    "population": 335588,
+    "timezone": "E",
+    "metro": "Piedmont Triad"
+  },
+  {
+    "city": "Burlington",
+    "state": "North Carolina",
+    "lat": 36.0762,
+    "long": -79.4687,
+    "population": 127374,
+    "timezone": "E",
+    "metro": "Piedmont Triad"
+  },
+  {
+    "city": "High Point",
+    "state": "North Carolina",
+    "lat": 35.9902,
+    "long": -79.9938,
+    "population": 177874,
+    "timezone": "E",
+    "metro": "Piedmont Triad"
+  },
+  {
+    "city": "Durham",
+    "state": "North Carolina",
+    "lat": 35.9797,
+    "long": -78.9037,
+    "population": 407575,
+    "timezone": "E",
+    "metro": "Research Triangle"
+  },
+  {
+    "city": "Raleigh",
+    "state": "North Carolina",
+    "lat": 35.8323,
+    "long": -78.6439,
+    "population": 1018336,
+    "timezone": "E",
+    "metro": "Research Triangle"
+  },
+  {
+    "city": "Cary",
+    "state": "North Carolina",
+    "lat": 35.7814,
+    "long": -78.8167,
+    "population": 165904,
+    "timezone": "E",
+    "metro": "Research Triangle"
+  },
+  {
+    "city": "Hickory",
+    "state": "North Carolina",
+    "lat": 35.7427,
+    "long": -81.3233,
+    "population": 215353,
+    "timezone": "E",
+    "metro": "Asheville, NC"
+  },
+  {
+    "city": "Greenville",
+    "state": "North Carolina",
+    "lat": 35.5957,
+    "long": -77.3764,
+    "population": 128385,
+    "timezone": "E",
+    "metro": "Research Triangle"
+  },
+  {
+    "city": "Asheville",
+    "state": "North Carolina",
+    "lat": 35.5706,
+    "long": -82.5537,
+    "population": 309250,
+    "timezone": "E",
+    "metro": "Asheville, NC"
+  },
+  {
+    "city": "Concord",
+    "state": "North Carolina",
+    "lat": 35.3933,
+    "long": -80.636,
+    "population": 250186,
+    "timezone": "E",
+    "metro": "Charlotte"
+  },
+  {
+    "city": "Gastonia",
+    "state": "North Carolina",
+    "lat": 35.2494,
+    "long": -81.1855,
+    "population": 180974,
+    "timezone": "E",
+    "metro": "Charlotte"
+  },
+  {
+    "city": "Charlotte",
+    "state": "North Carolina",
+    "lat": 35.2079,
+    "long": -80.8303,
+    "population": 1467362,
+    "timezone": "E",
+    "metro": "Charlotte"
+  },
+  {
+    "city": "Fayetteville",
+    "state": "North Carolina",
+    "lat": 35.0846,
+    "long": -78.9776,
+    "population": 324700,
+    "timezone": "E",
+    "metro": "Eastern NC"
+  },
+  {
+    "city": "Jacksonville",
+    "state": "North Carolina",
+    "lat": 34.7323,
+    "long": -77.3962,
+    "population": 108872,
+    "timezone": "E",
+    "metro": "Eastern NC"
+  },
+  {
+    "city": "Wilmington",
+    "state": "North Carolina",
+    "lat": 34.21,
+    "long": -77.886,
+    "population": 245910,
+    "timezone": "E",
+    "metro": "Eastern NC"
+  },
+  {
+    "city": "Fargo",
+    "state": "North Dakota",
+    "lat": 46.8653,
+    "long": -96.8292,
+    "population": 204820,
+    "timezone": "C",
+    "metro": "Fargo"
+  },
+  {
+    "city": "Toledo",
+    "state": "Ohio",
+    "lat": 41.6639,
+    "long": -83.5822,
+    "population": 488672,
+    "timezone": "E",
+    "metro": "Toledo"
+  },
+  {
+    "city": "Cleveland",
+    "state": "Ohio",
+    "lat": 41.4767,
+    "long": -81.6805,
+    "population": 1730363,
+    "timezone": "E",
+    "metro": "Cleveland"
+  },
+  {
+    "city": "Lorain",
+    "state": "Ohio",
+    "lat": 41.4409,
+    "long": -82.184,
+    "population": 180239,
+    "timezone": "E",
+    "metro": "Cleveland"
+  },
+  {
+    "city": "Youngstown",
+    "state": "Ohio",
+    "lat": 41.0993,
+    "long": -80.6463,
+    "population": 373728,
+    "timezone": "E",
+    "metro": "Cleveland"
+  },
+  {
+    "city": "Akron",
+    "state": "Ohio",
+    "lat": 41.0802,
+    "long": -81.5219,
+    "population": 565920,
+    "timezone": "E",
+    "metro": "Cleveland"
+  },
+  {
+    "city": "Canton",
+    "state": "Ohio",
+    "lat": 40.8076,
+    "long": -81.3677,
+    "population": 271184,
+    "timezone": "E",
+    "metro": "Cleveland"
+  },
+  {
+    "city": "Columbus",
+    "state": "Ohio",
+    "lat": 39.986,
+    "long": -82.9852,
+    "population": 1528314,
+    "timezone": "E",
+    "metro": "Columbus"
+  },
+  {
+    "city": "Dayton",
+    "state": "Ohio",
+    "lat": 39.7797,
+    "long": -84.1998,
+    "population": 718169,
+    "timezone": "E",
+    "metro": "Columbus"
+  },
+  {
+    "city": "Cincinnati",
+    "state": "Ohio",
+    "lat": 39.1412,
+    "long": -84.5059,
+    "population": 1648254,
+    "timezone": "E",
+    "metro": "Cincinnati"
+  },
+  {
+    "city": "Tulsa",
+    "state": "Oklahoma",
+    "lat": 36.1284,
+    "long": -95.9042,
+    "population": 672054,
+    "timezone": "C",
+    "metro": "Tulsa"
+  },
+  {
+    "city": "Broken Arrow",
+    "state": "Oklahoma",
+    "lat": 36.0365,
+    "long": -95.7808,
+    "population": 108303,
+    "timezone": "C",
+    "metro": "Tulsa"
+  },
+  {
+    "city": "Oklahoma City",
+    "state": "Oklahoma",
+    "lat": 35.4676,
+    "long": -97.5136,
+    "population": 955998,
+    "timezone": "C",
+    "metro": "OKC"
+  },
+  {
+    "city": "Norman",
+    "state": "Oklahoma",
+    "lat": 35.2335,
+    "long": -97.3471,
+    "population": 115065,
+    "timezone": "C",
+    "metro": "OKC"
+  },
+  {
+    "city": "Portland",
+    "state": "Oregon",
+    "lat": 45.5372,
+    "long": -122.65,
+    "population": 2052796,
+    "timezone": "P",
+    "metro": "Portland, OR"
+  },
+  {
+    "city": "Hillsboro",
+    "state": "Oregon",
+    "lat": 45.5271,
+    "long": -122.9358,
+    "population": 106894,
+    "timezone": "P",
+    "metro": "Portland, OR"
+  },
+  {
+    "city": "Gresham",
+    "state": "Oregon",
+    "lat": 45.5023,
+    "long": -122.4414,
+    "population": 111053,
+    "timezone": "P",
+    "metro": "Portland, OR"
+  },
+  {
+    "city": "Salem",
+    "state": "Oregon",
+    "lat": 44.9232,
+    "long": -123.0245,
+    "population": 259816,
+    "timezone": "P",
+    "metro": "Portland, OR"
+  },
+  {
+    "city": "Eugene",
+    "state": "Oregon",
+    "lat": 44.0563,
+    "long": -123.1173,
+    "population": 267568,
+    "timezone": "P",
+    "metro": "Oregon"
+  },
+  {
+    "city": "Bend",
+    "state": "Oregon",
+    "lat": 44.0562,
+    "long": -121.3087,
+    "population": 103349,
+    "timezone": "P",
+    "metro": "Oregon"
+  },
+  {
+    "city": "Medford",
+    "state": "Oregon",
+    "lat": 42.3372,
+    "long": -122.8537,
+    "population": 168219,
+    "timezone": "P",
+    "metro": "Oregon"
+  },
+  {
+    "city": "Erie",
+    "state": "Pennsylvania",
+    "lat": 42.1168,
+    "long": -80.0733,
+    "population": 188079,
+    "timezone": "E",
+    "metro": "Erie"
+  },
+  {
+    "city": "Scranton",
+    "state": "Pennsylvania",
+    "lat": 41.4044,
+    "long": -75.6649,
+    "population": 389022,
+    "timezone": "E",
+    "metro": "Central PA"
+  },
+  {
+    "city": "Allentown",
+    "state": "Pennsylvania",
+    "lat": 40.5961,
+    "long": -75.4756,
+    "population": 682899,
+    "timezone": "E",
+    "metro": "Central PA"
+  },
+  {
+    "city": "Pittsburgh",
+    "state": "Pennsylvania",
+    "lat": 40.4396,
+    "long": -79.9763,
+    "population": 1715297,
+    "timezone": "E",
+    "metro": "Pittsburgh"
+  },
+  {
+    "city": "Reading",
+    "state": "Pennsylvania",
+    "lat": 40.34,
+    "long": -75.9266,
+    "population": 267300,
+    "timezone": "E",
+    "metro": "Central PA"
+  },
+  {
+    "city": "Harrisburg",
+    "state": "Pennsylvania",
+    "lat": 40.2752,
+    "long": -76.8843,
+    "population": 441580,
+    "timezone": "E",
+    "metro": "Central PA"
+  },
+  {
+    "city": "Pottstown",
+    "state": "Pennsylvania",
+    "lat": 40.2508,
+    "long": -75.6445,
+    "population": 109437,
+    "timezone": "E",
+    "metro": "Philadelphia"
+  },
+  {
+    "city": "Lancaster",
+    "state": "Pennsylvania",
+    "lat": 40.0421,
+    "long": -76.3012,
+    "population": 404525,
+    "timezone": "E",
+    "metro": "Central PA"
+  },
+  {
+    "city": "Philadelphia",
+    "state": "Pennsylvania",
+    "lat": 40.0076,
+    "long": -75.134,
+    "population": 5637884,
+    "timezone": "E",
+    "metro": "Philadelphia"
+  },
+  {
+    "city": "York",
+    "state": "Pennsylvania",
+    "lat": 39.9651,
+    "long": -76.7315,
+    "population": 234245,
+    "timezone": "E",
+    "metro": "Philadelphia"
+  },
+  {
+    "city": "Providence",
+    "state": "Rhode Island",
+    "lat": 41.8229,
+    "long": -71.4186,
+    "population": 1206642,
+    "timezone": "E",
+    "metro": "Boston"
+  },
+  {
+    "city": "Spartanburg",
+    "state": "South Carolina",
+    "lat": 34.9437,
+    "long": -81.9257,
+    "population": 183184,
+    "timezone": "E",
+    "metro": "Upstate SC"
+  },
+  {
+    "city": "Rock Hill",
+    "state": "South Carolina",
+    "lat": 34.9413,
+    "long": -81.025,
+    "population": 115963,
+    "timezone": "E",
+    "metro": "Upstate SC"
+  },
+  {
+    "city": "Greenville",
+    "state": "South Carolina",
+    "lat": 34.8363,
+    "long": -82.365,
+    "population": 467894,
+    "timezone": "E",
+    "metro": "Upstate SC"
+  },
+  {
+    "city": "Mauldin",
+    "state": "South Carolina",
+    "lat": 34.7864,
+    "long": -82.2996,
+    "population": 132402,
+    "timezone": "E",
+    "metro": "Upstate SC"
+  },
+  {
+    "city": "Columbia",
+    "state": "South Carolina",
+    "lat": 34.037,
+    "long": -80.9042,
+    "population": 566166,
+    "timezone": "E",
+    "metro": "Upstate SC"
+  },
+  {
+    "city": "Myrtle Beach",
+    "state": "South Carolina",
+    "lat": 33.7096,
+    "long": -78.8843,
+    "population": 260487,
+    "timezone": "E",
+    "metro": "SC Coast"
+  },
+  {
+    "city": "North Charleston",
+    "state": "South Carolina",
+    "lat": 32.9086,
+    "long": -80.0705,
+    "population": 110861,
+    "timezone": "E",
+    "metro": "SC Coast"
+  },
+  {
+    "city": "Charleston",
+    "state": "South Carolina",
+    "lat": 32.8137,
+    "long": -79.9643,
+    "population": 616085,
+    "timezone": "E",
+    "metro": "SC Coast"
+  },
+  {
+    "city": "Sioux Falls",
+    "state": "South Dakota",
+    "lat": 43.5397,
+    "long": -96.7322,
+    "population": 180204,
+    "timezone": "C",
+    "metro": "Sioux Falls"
+  },
+  {
+    "city": "Clarksville",
+    "state": "Tennessee",
+    "lat": 36.5696,
+    "long": -87.3428,
+    "population": 182849,
+    "timezone": "C",
+    "metro": "Nashville"
+  },
+  {
+    "city": "Nashville",
+    "state": "Tennessee",
+    "lat": 36.1714,
+    "long": -86.7844,
+    "population": 1076645,
+    "timezone": "C",
+    "metro": "Nashville"
+  },
+  {
+    "city": "Knoxville",
+    "state": "Tennessee",
+    "lat": 35.9692,
+    "long": -83.9495,
+    "population": 585249,
+    "timezone": "E",
+    "metro": "Knoxville"
+  },
+  {
+    "city": "Murfreesboro",
+    "state": "Tennessee",
+    "lat": 35.8493,
+    "long": -86.4098,
+    "population": 167055,
+    "timezone": "C",
+    "metro": "Nashville"
+  },
+  {
+    "city": "Memphis",
+    "state": "Tennessee",
+    "lat": 35.1047,
+    "long": -89.9773,
+    "population": 1068873,
+    "timezone": "C",
+    "metro": "Memphis"
+  },
+  {
+    "city": "Chattanooga",
+    "state": "Tennessee",
+    "lat": 35.0657,
+    "long": -85.2488,
+    "population": 407182,
+    "timezone": "E",
+    "metro": "Chattanooga"
+  },
+  {
+    "city": "Amarillo",
+    "state": "Texas",
+    "lat": 35.1988,
+    "long": -101.8308,
+    "population": 206072,
+    "timezone": "C",
+    "metro": "West Texas"
+  },
+  {
+    "city": "Lubbock",
+    "state": "Texas",
+    "lat": 33.5643,
+    "long": -101.8871,
+    "population": 262505,
+    "timezone": "C",
+    "metro": "West Texas"
+  },
+  {
+    "city": "Denton",
+    "state": "Texas",
+    "lat": 33.2176,
+    "long": -97.1421,
+    "population": 440146,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "McKinney",
+    "state": "Texas",
+    "lat": 33.2016,
+    "long": -96.6669,
+    "population": 235134,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Frisco",
+    "state": "Texas",
+    "lat": 33.1553,
+    "long": -96.8218,
+    "population": 177286,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Allen",
+    "state": "Texas",
+    "lat": 33.1088,
+    "long": -96.6735,
+    "population": 100685,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Plano",
+    "state": "Texas",
+    "lat": 33.0502,
+    "long": -96.7487,
+    "population": 286143,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Lewisville",
+    "state": "Texas",
+    "lat": 33.0453,
+    "long": -96.9823,
+    "population": 106021,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Carrollton",
+    "state": "Texas",
+    "lat": 32.9886,
+    "long": -96.9,
+    "population": 135710,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Richardson",
+    "state": "Texas",
+    "lat": 32.9717,
+    "long": -96.7092,
+    "population": 116783,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Garland",
+    "state": "Texas",
+    "lat": 32.91,
+    "long": -96.6305,
+    "population": 238002,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Irving",
+    "state": "Texas",
+    "lat": 32.8584,
+    "long": -96.9702,
+    "population": 240373,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Dallas",
+    "state": "Texas",
+    "lat": 32.7937,
+    "long": -96.7662,
+    "population": 5733259,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Fort Worth",
+    "state": "Texas",
+    "lat": 32.7814,
+    "long": -97.3473,
+    "population": 874168,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Mesquite",
+    "state": "Texas",
+    "lat": 32.7622,
+    "long": -96.5889,
+    "population": 143949,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Arlington",
+    "state": "Texas",
+    "lat": 32.6998,
+    "long": -97.125,
+    "population": 396394,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Grand Prairie",
+    "state": "Texas",
+    "lat": 32.6869,
+    "long": -97.0209,
+    "population": 193837,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Abilene",
+    "state": "Texas",
+    "lat": 32.4543,
+    "long": -99.7384,
+    "population": 114964,
+    "timezone": "C",
+    "metro": "West Texas"
+  },
+  {
+    "city": "Tyler",
+    "state": "Texas",
+    "lat": 32.3184,
+    "long": -95.3065,
+    "population": 141116,
+    "timezone": "C",
+    "metro": "DFW"
+  },
+  {
+    "city": "Midland",
+    "state": "Texas",
+    "lat": 32.0249,
+    "long": -102.1137,
+    "population": 144247,
+    "timezone": "C",
+    "metro": "West Texas"
+  },
+  {
+    "city": "Odessa",
+    "state": "Texas",
+    "lat": 31.8831,
+    "long": -102.3407,
+    "population": 147810,
+    "timezone": "C",
+    "metro": "West Texas"
+  },
+  {
+    "city": "El Paso",
+    "state": "Texas",
+    "lat": 31.8479,
+    "long": -106.4309,
+    "population": 845674,
+    "timezone": "M",
+    "metro": "El Paso"
+  },
+  {
+    "city": "Waco",
+    "state": "Texas",
+    "lat": 31.5597,
+    "long": -97.1883,
+    "population": 188448,
+    "timezone": "C",
+    "metro": "Central Texas"
+  },
+  {
+    "city": "Temple",
+    "state": "Texas",
+    "lat": 31.1076,
+    "long": -97.3894,
+    "population": 101876,
+    "timezone": "C",
+    "metro": "Central Texas"
+  },
+  {
+    "city": "Killeen",
+    "state": "Texas",
+    "lat": 31.0754,
+    "long": -97.7293,
+    "population": 247489,
+    "timezone": "C",
+    "metro": "Central Texas"
+  },
+  {
+    "city": "College Station",
+    "state": "Texas",
+    "lat": 30.5852,
+    "long": -96.296,
+    "population": 207308,
+    "timezone": "C",
+    "metro": "Central Texas"
+  },
+  {
+    "city": "Round Rock",
+    "state": "Texas",
+    "lat": 30.5252,
+    "long": -97.6659,
+    "population": 123678,
+    "timezone": "C",
+    "metro": "Austin"
+  },
+  {
+    "city": "Austin",
+    "state": "Texas",
+    "lat": 30.3006,
+    "long": -97.7517,
+    "population": 1638716,
+    "timezone": "C",
+    "metro": "Austin"
+  },
+  {
+    "city": "The Woodlands",
+    "state": "Texas",
+    "player_count": 36,
+    "population": 116000,
+    "lat": 30.1,
+    "long": -95.3,
+    "timezone": "C",
+    "metro": "Houston"
+  },
+  {
+    "city": "Beaumont",
+    "state": "Texas",
+    "lat": 30.0849,
+    "long": -94.1451,
+    "population": 148954,
+    "timezone": "C",
+    "metro": "East Texas"
+  },
+  {
+    "city": "Port Arthur",
+    "state": "Texas",
+    "lat": 29.8554,
+    "long": -93.9264,
+    "population": 157934,
+    "timezone": "C",
+    "metro": "East Texas"
+  },
+  {
+    "city": "Houston",
+    "state": "Texas",
+    "lat": 29.7868,
+    "long": -95.3905,
+    "population": 5446468,
+    "timezone": "C",
+    "metro": "Houston"
+  },
+  {
+    "city": "Pasadena",
+    "state": "Texas",
+    "lat": 29.6584,
+    "long": -95.1499,
+    "population": 153520,
+    "timezone": "C",
+    "metro": "Houston"
+  },
+  {
+    "city": "Cypress",
+    "state": "Texas",
+    "player_count": 59,
+    "population": 182000,
+    "lat": 29.58,
+    "long": -95.41,
+    "timezone": "C",
+    "metro": "Houston"
+  },
+  {
+    "city": "Pearland",
+    "state": "Texas",
+    "lat": 29.5585,
+    "long": -95.3215,
+    "population": 119940,
+    "timezone": "C",
+    "metro": "Houston"
+  },
+  {
+    "city": "League City",
+    "state": "Texas",
+    "lat": 29.4874,
+    "long": -95.1087,
+    "population": 104903,
+    "timezone": "C",
+    "metro": "Houston"
+  },
+  {
+    "city": "San Antonio",
+    "state": "Texas",
+    "lat": 29.4722,
+    "long": -98.5247,
+    "population": 2002530,
+    "timezone": "C",
+    "metro": "San Antonio"
+  },
+  {
+    "city": "Texas City",
+    "state": "Texas",
+    "lat": 29.4128,
+    "long": -94.9658,
+    "population": 114546,
+    "timezone": "C",
+    "metro": "Houston"
+  },
+  {
+    "city": "Corpus Christi",
+    "state": "Texas",
+    "lat": 27.7173,
+    "long": -97.3822,
+    "population": 341435,
+    "timezone": "C",
+    "metro": "South Texas"
+  },
+  {
+    "city": "Laredo",
+    "state": "Texas",
+    "lat": 27.5616,
+    "long": -99.487,
+    "population": 260244,
+    "timezone": "C",
+    "metro": "South Texas"
+  },
+  {
+    "city": "McAllen",
+    "state": "Texas",
+    "lat": 26.2325,
+    "long": -98.2467,
+    "population": 800904,
+    "timezone": "C",
+    "metro": "South Texas"
+  },
+  {
+    "city": "Harlingen",
+    "state": "Texas",
+    "lat": 26.1917,
+    "long": -97.6977,
+    "population": 136968,
+    "timezone": "C",
+    "metro": "South Texas"
+  },
+  {
+    "city": "Brownsville",
+    "state": "Texas",
+    "lat": 25.998,
+    "long": -97.4565,
+    "population": 227883,
+    "timezone": "C",
+    "metro": "South Texas"
+  },
+  {
+    "city": "Logan",
+    "state": "Utah",
+    "lat": 41.7402,
+    "long": -111.8419,
+    "population": 100774,
+    "timezone": "M",
+    "metro": "Salt Lake City"
+  },
+  {
+    "city": "Ogden",
+    "state": "Utah",
+    "lat": 41.228,
+    "long": -111.9677,
+    "population": 573632,
+    "timezone": "M",
+    "metro": "Salt Lake City"
+  },
+  {
+    "city": "Salt Lake City",
+    "state": "Utah",
+    "lat": 40.7774,
+    "long": -111.9301,
+    "population": 1098400,
+    "timezone": "M",
+    "metro": "Salt Lake City"
+  },
+  {
+    "city": "West Valley City",
+    "state": "Utah",
+    "lat": 40.6889,
+    "long": -112.0115,
+    "population": 136170,
+    "timezone": "M",
+    "metro": "Salt Lake City"
+  },
+  {
+    "city": "West Jordan",
+    "state": "Utah",
+    "lat": 40.6024,
+    "long": -112.0008,
+    "population": 113905,
+    "timezone": "M",
+    "metro": "Salt Lake City"
+  },
+  {
+    "city": "Provo",
+    "state": "Utah",
+    "lat": 40.2458,
+    "long": -111.6457,
+    "population": 503695,
+    "timezone": "M",
+    "metro": "Salt Lake City"
+  },
+  {
+    "city": "Burlington",
+    "state": "Vermont",
+    "lat": 44.4877,
+    "long": -73.2314,
+    "population": 108277,
+    "timezone": "E",
+    "metro": "Vermont"
+  },
+  {
+    "city": "Alexandria",
+    "state": "Virginia",
+    "lat": 38.8185,
+    "long": -77.0861,
+    "population": 160035,
+    "timezone": "E",
+    "metro": "DMV"
+  },
+  {
+    "city": "Arlington",
+    "state": "Virginia",
+    "player_count": 16,
+    "population": 236000,
+    "lat": 38.52,
+    "long": -77.06,
+    "timezone": "E",
+    "metro": "DMV"
+  },
+  {
+    "city": "Fredericksburg",
+    "state": "Virginia",
+    "lat": 38.2992,
+    "long": -77.4872,
+    "population": 164976,
+    "timezone": "E",
+    "metro": "Central VA"
+  },
+  {
+    "city": "Charlottesville",
+    "state": "Virginia",
+    "lat": 38.0375,
+    "long": -78.4855,
+    "population": 102016,
+    "timezone": "E",
+    "metro": "Central VA"
+  },
+  {
+    "city": "Richmond",
+    "state": "Virginia",
+    "lat": 37.5295,
+    "long": -77.4756,
+    "population": 1059907,
+    "timezone": "E",
+    "metro": "Central VA"
+  },
+  {
+    "city": "Lynchburg",
+    "state": "Virginia",
+    "lat": 37.4003,
+    "long": -79.1908,
+    "population": 125004,
+    "timezone": "E",
+    "metro": "Central VA"
+  },
+  {
+    "city": "Roanoke",
+    "state": "Virginia",
+    "lat": 37.2785,
+    "long": -79.958,
+    "population": 216177,
+    "timezone": "E",
+    "metro": "Central VA"
+  },
+  {
+    "city": "Newport News",
+    "state": "Virginia",
+    "lat": 37.1051,
+    "long": -76.5185,
+    "population": 179388,
+    "timezone": "E",
+    "metro": "VA Tidewater"
+  },
+  {
+    "city": "Hampton",
+    "state": "Virginia",
+    "lat": 37.0551,
+    "long": -76.3629,
+    "population": 134669,
+    "timezone": "E",
+    "metro": "VA Tidewater"
+  },
+  {
+    "city": "Norfolk",
+    "state": "Virginia",
+    "lat": 36.8945,
+    "long": -76.259,
+    "population": 244703,
+    "timezone": "E",
+    "metro": "VA Tidewater"
+  },
+  {
+    "city": "Virginia Beach",
+    "state": "Virginia",
+    "lat": 36.7335,
+    "long": -76.0435,
+    "population": 1480383,
+    "timezone": "E",
+    "metro": "VA Tidewater"
+  },
+  {
+    "city": "Chesapeake",
+    "state": "Virginia",
+    "lat": 36.6778,
+    "long": -76.3024,
+    "population": 240397,
+    "timezone": "E",
+    "metro": "VA Tidewater"
+  },
+  {
+    "city": "Bellingham",
+    "state": "Washington",
+    "lat": 48.7543,
+    "long": -122.4687,
+    "population": 126015,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Marysville",
+    "state": "Washington",
+    "lat": 48.0809,
+    "long": -122.1558,
+    "population": 166541,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Everett",
+    "state": "Washington",
+    "lat": 47.9524,
+    "long": -122.167,
+    "population": 110079,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Spokane",
+    "state": "Washington",
+    "lat": 47.6671,
+    "long": -117.433,
+    "population": 403043,
+    "timezone": "P",
+    "metro": "Spokane"
+  },
+  {
+    "city": "Seattle",
+    "state": "Washington",
+    "lat": 47.6211,
+    "long": -122.3244,
+    "population": 3643765,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Bellevue",
+    "state": "Washington",
+    "lat": 47.5953,
+    "long": -122.1551,
+    "population": 144444,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Bremerton",
+    "state": "Washington",
+    "lat": 47.5436,
+    "long": -122.7122,
+    "population": 216480,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Renton",
+    "state": "Washington",
+    "lat": 47.4758,
+    "long": -122.1905,
+    "population": 101379,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Kent",
+    "state": "Washington",
+    "lat": 47.3887,
+    "long": -122.2128,
+    "population": 128458,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Tacoma",
+    "state": "Washington",
+    "lat": 47.2431,
+    "long": -122.4531,
+    "population": 213418,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Olympia",
+    "state": "Washington",
+    "lat": 47.0418,
+    "long": -122.8959,
+    "population": 196078,
+    "timezone": "P",
+    "metro": "Seattle"
+  },
+  {
+    "city": "Vancouver",
+    "state": "Washington",
+    "lat": 45.6352,
+    "long": -122.597,
+    "population": 175673,
+    "timezone": "P",
+    "metro": "Portland, OR"
+  },
+  {
+    "city": "Huntington",
+    "state": "West Virginia",
+    "lat": 38.4109,
+    "long": -82.4344,
+    "population": 194155,
+    "timezone": "E",
+    "metro": "West Virginia"
+  },
+  {
+    "city": "Charleston",
+    "state": "West Virginia",
+    "lat": 38.3484,
+    "long": -81.6323,
+    "population": 142858,
+    "timezone": "E",
+    "metro": "West Virginia"
+  },
+  {
+    "city": "Green Bay",
+    "state": "Wisconsin",
+    "lat": 44.515,
+    "long": -87.9896,
+    "population": 208625,
+    "timezone": "C",
+    "metro": "Wisconsin"
+  },
+  {
+    "city": "Appleton",
+    "state": "Wisconsin",
+    "lat": 44.2774,
+    "long": -88.3894,
+    "population": 222222,
+    "timezone": "C",
+    "metro": "Wisconsin"
+  },
+  {
+    "city": "Madison",
+    "state": "Wisconsin",
+    "lat": 43.0808,
+    "long": -89.3922,
+    "population": 439553,
+    "timezone": "C",
+    "metro": "Wisconsin"
+  },
+  {
+    "city": "Milwaukee",
+    "state": "Wisconsin",
+    "lat": 43.064,
+    "long": -87.9669,
+    "population": 1377808,
+    "timezone": "C",
+    "metro": "Wisconsin"
+  },
+  {
+    "city": "Racine",
+    "state": "Wisconsin",
+    "lat": 42.7274,
+    "long": -87.8135,
+    "population": 131467,
+    "timezone": "C",
+    "metro": "Wisconsin"
+  },
+  {
+    "city": "Kenosha",
+    "state": "Wisconsin",
+    "lat": 42.5863,
+    "long": -87.8759,
+    "population": 124888,
+    "timezone": "C",
+    "metro": "Wisconsin"
+  }
+]

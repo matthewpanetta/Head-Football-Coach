@@ -1,0 +1,59 @@
+<div class='TeamHeader flex space-between' style='height: 9.375rem;'>
+	<div class='flex gap-0'>
+		<div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
+		<div class='page-header-logo-div'><img class='teamTeamLogo' src='{{team.team_logo}}'></div>
+		{# <div class='helmet-div py-2' team-id='{{team.team_id}}'></div> #}
+		<div class='teamHeaderInfo'>
+			<div>
+				<span class='thin-font font20'>
+					{% if show_season%}
+						{{season_to_show}}
+						{%else%}
+						{{team.team_season.national_rank_display}}
+					{%endif %}
+				</span>
+				{% if team.is_user_team %}
+					<span class='font20' style='color: #{{team.team_color_primary_hex}};'>
+						<i class="fa fa-user"></i>
+					</span>
+				{% endif %}
+				<span class='teamSchoolName'>
+					{{ team.team_location_name }}
+				</span>
+				<span class='teamTeamName'>
+					{{team.team_nickname}}
+				</span>
+				<span class='teamRecord hide-small'>
+					{{team.team_season.record_display}}
+				</span>
+			</div>
+			<div class='teamOverviewInfo'>
+				<i class="fa fa-map-marker-alt geo-marker" style='color: #{{team.team_color_primary_hex}};' city='{{team.location.city}}' state='{{team.location.state}}'></i>
+				{{team.location.city}},
+				{{team.location.state}}
+				|
+				{{team.team_season.rankings.division_rank[0]|ordinal}}
+				<span class='font10'>in</span>
+				<a href="{{team.team_season.conference_season.conference.conference_href}}">
+					{{team.team_season.conference_season.conference.conference_abbreviation}}
+				</a>
+				{% if team.team_season.division_name != 'All'%}
+					{{team.team_season.division_name}}
+				{% endif %}
+			</div>
+			<div class='teamOverviewInfo'>
+				{% for Link in page.TeamHeaderLinks.link_paths%}
+					<a href="{{Link.href}}">{{Link.Display}}</a>
+					{% if loop.last %}
+						{% else %}
+							|
+							{% endif%}
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+    <div class='flex gap-0'>
+      <div class='helmet-div py-2' team-id='{{team.team_id}}' style='margin-right: -5rem; transform: scaleX(-1);'></div>
+      <div class="team-header-color-right align-middle hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
+    </div>
+	</div>

@@ -1,0 +1,143 @@
+<head>
+  <style id="addedTeamStyle">
+
+
+    .team-color-button-white {
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      border: 0.125rem solid white;
+    } 
+    
+    button.btn.team-color-button {
+      background-color: #{{page.PrimaryColor}} !important;
+      color: white !important;
+      border: 0.125rem solid #{{page.PrimaryColor}} !important;
+    } 
+
+    {# button.btn {
+      background-color: #{{page.PrimaryColor}} !important;
+      color: white !important;
+      border: 0.125rem solid #{{page.PrimaryColor}} !important;
+    }  #}
+
+    button.btn.selected-tab {
+      background-color: #{{page.SecondaryColor}} !important;
+      color: white !important;
+      border: 0.125rem solid #{{page.PrimaryColor}} ;
+    } 
+
+    button.btn.team-color-button:not(.no-hover):hover {
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      border: 0.125rem solid #{{page.PrimaryColor}} ;
+
+      transition: all .25s ease;
+    }
+
+    .team-color-button-white:not(.no-hover):hover {
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      border: 0.125rem solid #{{page.PrimaryColor}} ;
+
+      transition: all .25s ease;
+    }
+
+    nav button.btn:not(.no-hover):hover {
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      border: 0.125rem solid #{{page.PrimaryColor}} ;
+
+      transition: all .25s ease;
+    }
+
+    tr.football-table-filter-option.selected, tr.football-table-column-control-option.selected {
+      background-color: #{{page.PrimaryColor|DefaultIfTooLight(page.SecondaryColor)}} !important;
+    }
+
+    .w3-bar button.w3-bar-item {
+      border: none !important;
+    }
+
+    .team-color-font{
+      color: #{{page.PrimaryColor|DefaultIfTooLight(page.SecondaryColor)|DefaultIfTooLight('000')}} !important;
+    }
+
+    .team-color-border{
+      border: 0.0625rem solid #{{page.PrimaryColor|DefaultIfTooLight(page.SecondaryColor)|DefaultIfTooLight('000')}} !important;
+    }
+
+    .team-secondary-color-border{
+      border-color: {{(page.OriginalSecondaryColor or page.SecondaryColor)|DefaultIfTooLight(page.PrimaryColor|LightenColor)}} !important;
+    }
+
+    .team-primary-background {
+      background-color: #{{page.PrimaryColor}} !important;
+      color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
+      border-top: 0.25rem solid #{{page.SecondaryColor}} !important;
+    }
+
+    .team-primary-background-bar {
+      background-color: #{{page.PrimaryColor}} !important;
+      color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
+      font-size: 0.7825rem;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      border-top: 0.25rem solid #{{page.SecondaryColor}} !important;
+    }
+
+    .team-primary-background-bar-generic {
+      font-size: 0.7825rem;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+    }
+
+    .team-secondary-table-row {
+      background-color: #{{page.SecondaryColor}} !important;
+      color: #{{page.SecondaryColor|TeamBackgroundFontColor}} !important;
+    }
+
+    .team-secondary-background-bar {
+      background-color: #{{page.SecondaryColor}} !important;
+      color: #{{page.SecondaryColor|TeamBackgroundFontColor}} !important;
+      font-size: 0.7825rem;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      border-top: 0.25rem solid #{{page.PrimaryColor}} !important;
+    }
+
+    .team-secondary-table-row td {
+      color: #{{page.SecondaryColor|TeamBackgroundFontColor}} !important;
+    }
+
+    .team-primary-table-row {
+      background-color: #{{page.PrimaryColor}} !important;
+      color: #{{page.PrimaryColor|TeamBackgroundFontColor}} !important;
+    }
+
+    .team-color-background {
+      background-color: #{{page.PrimaryColor}} !important;
+      color: white !important;
+    }
+
+    .form-range::-webkit-slider-thumb { 
+          background-color: #{{page.PrimaryColor}} !important;
+      }
+
+      .form-range::-moz-range-thumb{
+          background-color: #{{page.PrimaryColor}} !important;
+      }
+
+      .form-range::-webkit-slider-thumb:active {
+          background-color: {{page.PrimaryColor|HexToRGBA('.75')}} !important;
+      }
+
+      .form-range:focus::-webkit-slider-thumb {
+          box-shadow: 0 0 0 0.0625rem #fff, 0 0 0 .25rem {{page.PrimaryColor|HexToRGBA('.25')}};
+      }
+
+      .form-range:focus::-moz-range-thumb {
+          box-shadow: 0 0 0 0.0625rem #fff, 0 0 0 .25rem {{page.PrimaryColor|HexToRGBA('.25')}};
+      }
+  </style>
+
+</head>

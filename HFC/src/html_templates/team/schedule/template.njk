@@ -1,0 +1,63 @@
+{% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
+
+
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
+
+<head>
+  <style id="addedStyle">
+    .btn.dt-button {
+      border: 0.125rem solid #{{page.PrimaryColor}} !important;
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      background-image: none !important;
+      font-weight: 500;
+      font-size: .875rem!important;
+    }
+
+    .btn.dt-button:hover {
+      box-shadow: 0rem 0.125rem 0.75rem #{{page.PrimaryColor}};
+      border: 0.1875rem solid #{{page.PrimaryColor}};
+    }
+  </style>
+</head>
+
+
+<body>
+  <div class="PageContent">
+    {% include "../../html_templates/common_templates/ext_team_header.njk" %}
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-league-leaders-tab">Other</button>
+        {% include "../../html_templates/common_templates/ext_team_list.njk" %}
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-schedule">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding w3-margin-bottom'>
+            <div class='w3-col mw1000 l12'>
+              <div class="card ">
+                <div class="w3-bar team-primary-background-bar">
+                  {{season}} {{team.team_location_name}} Schedule
+                </div>
+
+                <div id='team-schedule-container'></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-league-leaders">
+        <div class='w3-display-container'>
+          <div class='w3-row-padding' id='worldLeagueLeaderRow'>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

@@ -1,0 +1,105 @@
+<div class='ext_nav_bar'>
+  {% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
+</div>
+<style></style>
+
+
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "../../html_templates/common_templates/scoreboard.njk" %}
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+          <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-player-stats">
+        <div class='w3-display-container' >
+
+          <div class='w3-row-padding'>
+            <div class='w3-margin-bottom width100 football-table-column-control-bar'>
+              <div class="card w3-light-gray" style='overflow: visible;'>
+                <div class='equal-sized-item-container py-2'>
+                  {% for filter_option_group in filters %}
+                    <div class="dropdown hierarchy-select mx-2" id="example-one" style='flex: 1 1;'>
+                      <button type="button" class="btn team-color-button-white left-text btn-secondary dropdown-toggle width100" id="example-one-button" data-toggle="dropdown" data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class='filter-button-count-span badge team-color-background'></span>
+                        <span>{{filter_option_group.display}}</span>
+                      </button>
+                      <div class="dropdown-menu " aria-labelledby="example-one-button" style='max-height: 60vh; overflow-y: scroll;'>
+                        <div class="hs-menu-inner football-table-filter-option-group" filter_option='{{filter_option_group.display}}'>
+                          {% for filter_option in filter_option_group.options%}
+                            <div class="clickable dropdown-item ps-3 football-table-filter-option {%if filter_option.selected%}selected{%endif%}" filter-field="{{filter_option.field}}" filter-value="{{filter_option.display}}" {% if filter_option.options%}include-in-filter="0"{%else%}include-in-filter="1"{%endif%}>
+                              <span class='football-table-filter-option-value'>{{filter_option.display}}</span>
+                            </div>
+                            {% for filter_option_2 in filter_option.options%}
+                              <div class="clickable dropdown-item ps-5 football-table-filter-option {%if filter_option_2.selected%}selected{%endif%}" filter-field="{{filter_option_2.field}}" parent-filter-field="{{filter_option.field}}" parent-filter-value="{{filter_option.display}}" filter-value="{{filter_option_2.display}}" include-in-filter="1">
+                                {% if filter_option_2.logo_url %}
+                                  <img class='logo logo-24' src='{{filter_option_2.logo_url}}'/>
+                                {% endif %}
+                                <span class='football-table-filter-option-value'>{{filter_option_2.display}}</span>
+                              </div>
+                            {% endfor %}
+                          {% endfor %}
+                        </div>
+                      </div>
+                      {# <input class="d-none" name="example_one" readonly="readonly" aria-hidden="true" type="text"/> #}
+                    </div>
+                  {% endfor %}
+                  {# <button class="btn team-color-button btn-sm btn-outline-secondary football-table-show-button mx-2 px-5" id='football-table-column-show-button'>
+                    <i class="fa fa-search" style='vertical-align:middle; '></i>
+                    <span class='no-wrap' style='vertical-align:middle; '>Search</span>
+                  </button> #}
+                </div>
+                <div class='equal-sized-item-container w3-row-padding space-between py-2' style='border-top: 0.0625rem solid rgba(0,0,0,0.175);'>
+                  <div class='badge-container w3-row-padding' style='flex: 2 1 min-content; justify-content: flex-start;'>
+                    <div id='filter-badge-template' class='filter-badge badge hidden clickable team-color-button-white team-color-font m-1' style='background-color: white;'>
+                      <span class='filter-value'></span>
+                      <i class='fa fa-times-circle'></i>
+                    </div>
+                    {% for filter_option_group in filters %}
+                      {% for filter_option in filter_option_group.options%}
+                        {% if filter_option.selected%}
+                        <div class='filter-badge badge clickable team-color-button-white team-color-font m-1' style='background-color: white;' filter-value='{{filter_option.display}}'>
+                          <span class='filter-value'>{{filter_option.display}}</span>
+                          <i class='fa fa-times-circle'></i>
+                        </div>
+                        {%endif%}
+                        {% for filter_option_2 in filter_option.options%}
+                        {% endfor %}
+                      {% endfor %}
+                  {% endfor %}
+                  </div>
+                  <div class='w3-row-padding' style='flex: 0 1 auto;'>
+                    <div class='football-table-clear-filters badge clickable team-color-button-white team-color-font mx-1' style='background-color: white; height: fit-content;'>
+                      <i class='fa fa-times-circle'></i>
+                      <span>CLEAR FILTERS</span>
+
+                    </div>
+                    {# <div class='badge clickable team-color-button-white team-color-font mx-1' style='background-color: white; height: fit-content;'>
+                      <i class='fa fa-filter'></i>
+                      <span>ALL FILTERS</span>
+                    </div> #}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class='w3-row-padding'>
+          <div class='card width100'>
+            <div class='w3-row-padding background-f1f1f1' id='schedule-box-score-container'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

@@ -1,0 +1,150 @@
+<div class='ext_nav_bar'>
+  {% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
+</div>
+<style>
+  #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
+    border-bottom: 0.125rem solid black;
+  }
+
+      .football-table-column-headers th {
+        background-color: #{{page.PrimaryColor}};
+    }
+</style>
+
+
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "../../html_templates/common_templates/scoreboard.njk" %}
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+          <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-player-stats-tab" style="background-color: #{{page.SecondaryColor}};">Top 25</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-playoff-picture-tab">Playoff Picture</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-player-stats">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding'>
+            <div class='w3-col l10'>
+              <div class="card w3-margin-bottom">
+
+                <table class="table table-striped football-table-content" id='Top25Table'  style="width:100%">
+                  <thead class='football-table-header'>
+                    <tr class='football-table-column-headers team-primary-background-bar'>
+                      <th class='center-text' sort-order='sort-asc'>Rank</th>
+                      <th sort-order='sort-asc'></th>
+                      <th sort-order='sort-asc'>Team</th>
+                      <th class="center-text">Trend</th>
+                      <th class="center-text">Record</th>
+                      <th class='no-sort'>Last Week</th>
+                      <th class='hide-small no-sort'>This Week</th>
+                      {# <th class='center-text'>Rem. SOS</th> #}
+                    </tr>
+                  </thead>
+                  <tbody id="Top25Table-body">
+                    {% for i in range(5)%}
+                      <tr>
+                        <td class="moving-gradient"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        {# <td></td> #}
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+                
+
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="tab-content" style="display:none;"  id="nav-playoff-picture">
+              <div class='w3-display-container'>
+                <div class='w3-row-padding' id='worldLeagueLeaderRow'>
+                  <div class="width100">
+                    <div class="equal-sized-item-container centered-item">
+                      {% for playoff_round in playoffs.playoff_rounds %}
+                        <div class="equal-sized-item centered-item mw300">
+                          <div class="">
+                            {{playoff_round.round_name}}
+                          </div>
+                          <div class="">
+                            {{playoff_round.week_name}}
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+
+                    <div class="equal-sized-item-container centered-item height100 bracket">
+                      {% for playoff_round in playoffs.playoff_rounds %}
+                        <div class="equal-sized-item equal-sized-item-container column-flex height100 mw300 round-of-{{playoff_round.round_of}} padding-left-8" style='width: 12.5rem; justify-content: space-around;'>
+
+                          {% for playoff_game in playoff_round.playoff_games%}
+                            <div class="equal-sized-item width100 height100 w3-margin-bottom " style=' flex: 0 1 0%; '>
+                              <div class='font10 left-text'>
+                                <a href='{{playoff_game.game.game_href}}'>
+                                {% if playoff_game.game.was_played%}
+                                  Box Score
+                                {% elif playoff_game.game %}
+                                  Preview
+                                {%endif%}
+                                </a>
+                              </div>
+                              <div style='' class=' game width100 text-left'>
+                                <table class='table' style='margin-bottom: 0rem;'>
+                                {% for team_obj in playoff_game.team_objs%}
+                                    <tr class='center-text-row'>
+                                      <td class='font16 white-text padding-10' style='width: 10%; background-color: #{{team_obj.team_season.team.team_color_primary_hex}}'>
+                                        {{team_obj.seed}}
+                                      </td>
+                                      <td class=' padding-10' style='width: 3.125rem; background-color: #{{team_obj.team_season.team.team_color_primary_hex}}'>
+                                        <a href="{{team_obj.team_season.team.team_href}}">
+                                          <img class='logo logo-30' src="{{team_obj.team_season.team.team_logo}}" alt="">
+                                        </a>
+                                      </td>
+                                      <td class='width: 50%; inline-block font16 left-text {%if team_obj.team_game.is_winning_team%}bold{%endif%}'>
+                                        <a href="{{team_obj.team_season.team.team_href}}">
+                                         {{team_obj.team_season.team.team_location_name}}
+                                        </a>
+                                      </td>
+                                      
+                                      <td class='inline-block right-text {%if team_obj.team_game.is_winning_team%}bold{%endif%}'>
+                                          {{team_obj.team_game.points}}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                    </tr>
+                                
+                                 
+                                  {% endfor %}
+                                   </table>
+                                </div>
+
+                              </div>
+                            {% endfor %}
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </body>

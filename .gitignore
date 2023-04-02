@@ -40,3 +40,4 @@ ehthumbs.db
 Thumbs.db
 
 secrets.json
+HFC/scripts/face-gen/shape_predictor_68_face_landmarks.dat

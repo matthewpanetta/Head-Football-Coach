@@ -1,0 +1,154 @@
+{% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
+
+
+
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
+
+<body>
+  <div class="PageContent">
+    <div class='worldHeader w3-row background-eee'>
+      {% include "../../html_templates/common_templates/scoreboard.njk" %}
+    </div>
+    <div class='TeamHeader'></div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+          <i class="fas fa-bars"></i>
+        </button>
+        {% for conference_season in conference_seasons%}
+          {% if loop.index == 1%}
+            <button class="w3-bar-item btn tab nav-tab-button selected-tab" conference_id='{{conference_season.conference.conference_id}}' id="nav-{{conference_season.conference.conference_id}}-tab" style="background-color: #{{page.SecondaryColor}};">{{conference_season.conference.conference_abbreviation}}</button>
+          {% else %}
+            <button class="w3-bar-item btn tab nav-tab-button" conference_id='{{conference_season.conference.conference_id}}' id="nav-{{conference_season.conference.conference_id}}-tab">{{conference_season.conference.conference_abbreviation}}</button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      {% for conference_season in conference_seasons%}
+        {% if loop.index == 1%}
+          <div class="tab-content" style='display:block;' id="nav-{{conference_season.conference.conference_id}}">
+          {% else %}
+            <div class="tab-content" style='display:none;' id="nav-{{conference_season.conference.conference_id}}">
+            {% endif %}
+            <div class="w3-display-container">
+              <div class="w3-row-padding">
+                <div class='mw1200 width100'>
+                  <div class="card w3-margin-bottom ">
+                    <table class='table table-striped width100 conference-standings-table' id='teamOverviewConferenceStandings-{{conference_season.conference.conference_id}}'>
+                      <thead>
+                        <tr class='center-text-row' style='background-color: #{{page.PrimaryColor}};border-top: 0.1875rem solid black; color: white;'>
+                          <th colspan="3" class='col-group left-text'>
+                            {{conference_season.conference.conference_name}}
+                            <a href='{{conference_season.conference.conference_href}}'>
+                              <i class="fa fa-external-link-alt"></i>
+                            </a>
+                          </th>
+                          <th colspan="5" class='col-group'>Conference</th>
+                          <th colspan="5" class='col-group'>Overall</th>
+                          <th colspan="2">Trends</th>
+                        </tr>
+                        </thead>
+
+                      {% for division in conference_season.divisions%}
+                      <thead>
+                        <tr class='team-secondary-table-row center-text-row ' style='background-color: #{{page.SecondaryColor}}; color: white;'>
+                          {% if division.division_name == 'All'%}
+                          <th>Rank</th>
+                          <th>Team</th>
+                          <th class='col-group'></th>
+                          {% else %}
+                          <th class='left-text' colspan='3'>{{division.division_name}} Division</th>
+                          {% endif %}
+                          <th  class='center-text'>W-L</th>
+                          <th class='center-text'>GB</th>
+                          <th>PPG</th>
+                          <th>PAPG</th>
+                          <th class='col-group'>MOV</th>
+                          <th  class='center-text'>W-L</th>
+                          <th>PPG</th>
+                          <th>PAPG</th>
+                          <th>MOV</th>
+                          <th class='col-group'>Streak</th>
+                          <th sort-order='sort-asc' class='no-wrap'>Rank Pred.</th>
+                          <th sort-order='sort-asc'>Change</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr></tr>
+                        {% for team_season in division.team_seasons%}
+                          <tr class='{{team_season.BoldTeam}} ' style=''>
+                            <td value='{{loop.index}}' style='background-color: #{{team_season.team.team_color_primary_hex}}; color: white; min-width: 3.75rem;' class='Top25RankNumber center-text no-width'>
+                              {{loop.index}}
+                            </td>
+                            <td value='{{team_season.team.team_location_name }}' style='background-color: #{{team_season.team.team_color_primary_hex}}' class='no-width'>
+                              <a href="{{ team_season.team.team_href }}">
+                                <img class='logo logo-50' src="{{team_season.team.team_logo}}"/>
+                              </a>
+                            </td>
+                            <td value='{{team_season.team.team_location_name }}' class='col-group no-wrap'>
+                              <a href="{{ team_season.team.team_href }}">
+                                <span class='font10'>{{team_season.national_rank_display}}</span>
+                                {% if team_season.team.is_user_team%}
+                                <span style='color: #{{team_season.team.team_color_primary_hex}};'>
+                                    <i class="fa fa-user"></i>
+                                </span>
+                                {%endif%}
+                                <span class='font14 nowrap'>{{team_season.team.team_location_name }}</span>
+
+                              </a>
+                              {% if team_season.results.conference_champion%}
+                                <div class="">
+                                  <span class='font10 nowrap'>Conference Champions</span>
+                                </div>
+                              {% endif %}
+                            </td>
+                            <td value='{{team_season.record.conference_net_wins}}' class='center-text'>{{team_season.conference_outcomes.record}}</td>
+                            <td value='{{team_season.conference_outcomes.gb}}' class='center-text'>{{team_season.conference_outcomes.gb}}</td>
+                            <td value='{{team_season.conference_outcomes.ppg}}' class='center-text'>{{team_season.conference_outcomes.ppg}}</td>
+                            <td value='{{team_season.conference_outcomes.papg}}' class='center-text'>{{team_season.conference_outcomes.papg}}</td>
+                            <td value='{{team_season.conference_outcomes.mov}}' class='center-text col-group {{team_season.conference_outcomes.color}}'>{{team_season.conference_outcomes.mov}}</td>
+
+                            <td value='{{team_season.net_wins}}' class='center-text'>{{team_season.record_display}}</td>
+                            <td value='{{team_season.overall_outcomes.ppg}}' class='center-text'>{{team_season.overall_outcomes.ppg}}</td>
+                            <td value='{{team_season.overall_outcomes.papg}}' class='center-text'>{{team_season.overall_outcomes.papg}}</td>
+                            <td value='{{team_season.overall_outcomes.mov}}' class='center-text {{team_season.overall_outcomes.color}}'>{{team_season.overall_outcomes.mov}}</td>
+                            <td value='{{team_season.record.win_streak}}' class='center-text col-group '>
+                              <span class='{{team_season.win_streak_color}} W-L-Badge' style='float:none;'>{{team_season.win_streak_string}}</span>
+                            </td>
+
+                            <td value='{{team_season.first_conference_rank}}' class='center-text'>{{team_season.first_conference_rank}}</td>
+                            <td value='{{team_season.delta_conference_rank}}' class='center-text'>
+                              {% if team_season.delta_conference_rank < 0 %}
+                              <div class="font14 W">
+                                <span>
+                                  <i class="fas fa-angle-up"></i>
+                                </span>
+                                {{team_season.delta_conference_rank_abs}}
+                              </div>
+                              {% elseif team_season.delta_conference_rank > 0%}
+                                <div class="font14 L">
+                                  <span>
+                                    <i class="fas fa-angle-down"></i>
+                                  </span>
+                                  {{team_season.delta_conference_rank_abs}}
+                                </div>
+                                {# <div class='font10'>Prev: <span class='bold'>{{team_season.rankings.national_rank[1]}}</span></div> #}
+                              {% else %}
+                              -
+                              {% endif %}
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                      {% endfor %}
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>

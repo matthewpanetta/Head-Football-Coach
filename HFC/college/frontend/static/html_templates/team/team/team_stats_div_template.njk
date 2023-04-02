@@ -1,0 +1,37 @@
+{% if team_stats|length > 0%}
+
+  <div class="w3-row margin-bottom-24">
+    <div class="card">
+      <div class="w3-bar team-primary-background-bar">
+        Team Stats
+      </div>
+      <table class="table table-striped table-hover ">
+        {% for stat_detail in team_stats %}
+          <tr class='team-secondary-table-row'>
+            <th class='center-text' colspan="3">{{stat_detail.display}}</th>
+          </tr>
+          <tr class='center-text-row'>
+            {% for stat_side, stat_val in stat_detail.stats%}
+              <td>
+                <div class="">
+                  <div class="font10">
+                    {{stat_side}}
+                  </div>
+                  <div class="font16">
+                    {{stat_detail.stats[stat_side].team_value}}
+                  </div>
+                  <div class="margin-8">
+                    <span class='tiers-7 {{stat_detail.stats[stat_side].tier}}' style='border-radius: 1.25rem; padding: 0.3125rem;'  data-toggle="tooltip" data-html="true" data-placement="bottom" title="<div>{{TeamStat.OffenseRank_Tier}} - {{TeamStat.OffenseRank}} out of {{TotalTeamCount}} teams</div>">
+                      {{stat_detail.stats[stat_side].team_rank|ordinal}}
+                    </span>
+                  </div>
+                </div>
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+{% endif %}

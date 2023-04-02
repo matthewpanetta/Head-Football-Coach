@@ -1,0 +1,446 @@
+{% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
+
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
+
+<body>
+  <div class='PageContent'>
+    <div class='PlayerHeader flex space-between'>
+      <div class="team-header-color-left" style='background-color: #{{page.PrimaryColor}}; border-right-color: #{{page.SecondaryColor}};'></div>
+      <div class='flex align-middle' style='flex-grow: 1; justify-content: left;'>
+        <a href='{{player.current_player_team_season.team_season.team.team_href}}' {% if not player.current_player_team_season.team_season.team.team_logo %}{% if not SignedTeam.LogoURL %} style='margin-left: 11.25rem;' {% endif %}{% endif %}>
+          <div class='page-header-logo-div'>
+            {% if player.current_player_team_season.team_season.team.team_logo %}
+              <img class='playerTeamLogo' src='{{player.current_player_team_season.team_season.team.team_logo}}' alt="My image">
+            {%elif SignedTeam.LogoURL%}
+              <img class='playerTeamLogo' src='{{SignedTeam.LogoURL}}' alt="My image">
+            {% endif %}
+          </div>
+        </a>
+        <div class="PlayerFace-Headshot PlayerFace-150 inline-block no-border" style='margin-left: -4rem;margin-right: -2rem;border-radius: unset;' id='PlayerFace' player_id='{{player.player_id}}'></div>
+        <div class='inline-block ms-4' style='vertical-align: middle; height: max-content;'>
+          <div class='teamTeamName'>
+            <span class='font20 thin-font'>#{{player.jersey_number}}</span>
+            <span>{{player.name.first}}</span>
+            <span class='minor-bold'>{{player.name.last}}</span>
+          </div>
+          <div class='playerOverviewInfo'>
+            <span>
+              {% if player.current_player_team_season.is_recruit %}
+                {%if SignedTeam.LogoURL%}
+                  <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit, Signed</a>
+                {% else %}
+                  <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
+                {% endif %}
+              {% else %}
+                {% if current_team.is_user_team %}
+                  <span style='color: #{{current_team.team_color_primary_hex}};'>
+                    <i class="fa fa-user"></i>
+                  </span>
+                {% endif %}
+                <a href="{{current_team.team_href}}">{{current_team.school_name}}
+                  {{current_team.team_name}}
+                </a>
+              {% endif %}
+            </span>
+            |
+            <span class=''>{{player.position}}</span>
+            |
+          <span>
+              {{player.current_player_team_season.class.class_name}}
+              {% if player.redshirt.current %}
+                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
+              {% endif %}
+            </span>
+          </div>
+          <div class='playerOverviewInfo'>
+            <span>
+              <i class="fa fa-map-marker-alt geo-marker" style="color: #{{page.PrimaryColor}};" city="{{player.hometown.city}}" state="{{player.hometown.state}}"></i>
+              {{player.hometown_and_state}}
+            </span>
+          |
+          <span>
+              {{player.body.height}}, {{player.body.weight}} lbs
+          </span>
+          </div>
+          <div class='playerOverviewInfo edit-player-button clickable'>
+            <i class="fas fa-pencil" style="color: #{{page.PrimaryColor}};"></i>
+          Edit player
+        </div>
+
+        </div>
+      </div>
+
+      <div class="team-header-color-right hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}};'></div>
+
+    </div>
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: {{page.PrimaryColor|TeamBackgroundFontColor}}; ">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+          <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab"  id="nav-overview-tab" style="background-color: #{{page.SecondaryColor}};">Overview</button>
+        <button class="w3-bar-item btn tab nav-tab-button"  id="nav-ratings-tab">Ratings</button>
+        {% if player.current_player_team_season.is_recruit %}
+          <button class="w3-bar-item btn tab nav-tab-button"  id="nav-recruiting-tab">Recruiting</button>
+        {% else %}
+          {% if player_team_games|length > 0%}
+            <button class="w3-bar-item btn tab nav-tab-button"  id="nav-stats-tab">Stats</button>
+            <button class="w3-bar-item btn tab nav-tab-button"  id="nav-game-log-tab">Game Log</button>
+          {% endif %}
+        {% endif %}
+        {% if player_awards | length > 0 %}
+          <button class="w3-bar-item btn tab nav-tab-button"  id="nav-awards-tab">Awards</button>
+          {%endif%}
+          <div class="w3-dropdown-hover w3-right" style="margin-right: 1.25rem" id='nav-team-dropdown-container'>
+            <button class="w3-bar-item btn tab nav-tab-button"  id="nav-team-dropdown" >
+              Players
+            </button>
+
+            <div class="w3-dropdown-content card w3-animate-opacity"  style="right: 1.25rem; max-height: 70vh;" >
+              <div style='display: flex;'>
+                <div class='w3-bar-block width100' style='max-height: 65vh; overflow-y: scroll'>
+                  <table class='table width100'>
+                    {% for player in players %}
+                      <tr>
+                        <td class='padding-left-8'>
+                          <div>
+                            <a href="{{player.player_href}}" class="">
+                              {# <img src="{{team.team_logo}}" class="small-logo" alt="" /> #}
+                              <span>{{player.full_name}}</span>
+                            </a>
+                          </div>
+                          <div class='font10'>
+                            <span>{{player.player_team_season.class.class_name}} &#183 {{player.player_team_season.position}} &#183 {{player.player_team_season.ratings.overall.overall}} OVR</span>
+                          </div>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div class='mt-3' id="nav-tabContent">
+        <div class="tab-content" style='display:block;' id="nav-overview" >
+          <div class='w3-container'>
+            <div class='flex'>
+              <div class='flex-1 basis-25'>
+                <div class="card margin-bottom-24">
+                  <table class='width100 table table-striped table-hover '>
+                    {% for skill_group in skills%}
+                      {% if skill_group.top_show%}
+                        <thead>
+                          <tr  class='team-primary-background'>
+                            <th colspan="3">{{skill_group.rating_group}}</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {% for skill in skill_group.ratings%}
+                            <tr>
+                              <td style='width:20%' class='bold'>
+                                {{skill.rating}}
+                              </td>
+                              <td style='width:60%'>
+                                <div class="w3-border w3-round-xlarge statBar" style='width: 80%; margin-left: 10%; background-color: inherit;'>
+                                  <div class="w3-container w3-round-xlarge {{(skill.bar_width)|NumberToGradeClass}}-Fill" style="width:{{skill.bar_width}}%; height: 0.5rem;"></div>
+                                </div>
+                              </td>
+                              {% if skill.rating == 'Overall'%}
+                                <td style='width:20%;' class='font20 center-text'>{{skill.player_value}}</td>
+                              {%else %}
+                                <td style='width:20%' class='font20 center-text'>{{skill.player_value|NumberToGradeBadge(100)|safe}}</td>
+                                {%endif%}
+                              </tr>
+
+                            {% endfor %}
+                          </tbody>
+                        {% endif %}
+                      {% endfor %}
+                    </table>
+
+                  </div>
+                </div>
+                <div class='flex-1 basis-25'>
+                  {% if playerTeam.IsUserTeam%}
+                    {% if Actions%}
+                      <div class="card w3-margin-bottom">
+                        <div class="w3-bar team-primary-background-bar">
+                  Actions
+                </div>
+                        <table class=' table table-striped table-hover' style='width: 50%;'>
+                          {% for Action in Actions%}
+                            <tr>
+                              <td style='width:10%;'>{{Action.Icon|safe}}</td>
+                              <td confirm-info='{{Action.ConfirmInfo}}' response-type='refresh' background-ajax='{{Action.AjaxLink}}' class="btn {{Action.Class}} text-left">
+                                {{Action.Display}}
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </table>
+
+                      </div>
+                    {% endif %}
+                  {% endif %}
+
+                  {%if player_team_games|length > 0%}
+                    <div class="card w3-margin-bottom">
+                      <div class="w3-bar team-primary-background-bar">
+                  Recent Game Stats
+                </div>
+                      <div id='player-stats-recent-games-div'></div>
+
+                    </div>
+                  {% elseif player.current_player_team_season.is_recruit %}
+                    <div class="card w3-margin-bottom">
+                      <div class="w3-bar team-primary-background-bar">
+                Recruiting Status
+              </div>
+                      <table class="table table-striped table-hover width100 center-text-row" id='recruit_team_seasons' style='width: 100%;'>
+                        <thead>
+                          <tr  >
+                            <th colspan="2" class='center-text col-group'>TEAM</th>
+                            <th>SIGNED</th>
+                            <th>MATCH</th>
+                            {% for interest_key in player.current_player_team_season.recruiting.top_player_interest_entries%}
+                              <th>{{interest_key.display}}</th>
+                            {% endfor %}
+
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for recruit_team_season in recruit_team_seasons.slice(0,10)%}
+                            <tr>
+                              <td class='white-text column-shrink' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>
+                                <a href="{{recruit_team_season.team_season.team.team_href}}">
+                                  <img class='logo logo-30' src="{{recruit_team_season.team_season.team.team_logo}}" alt="">
+                                </a>
+                              </td>
+                              <td class='white-text column-shrink left-text nowrap' style='background-color: #{{recruit_team_season.team_season.team.team_color_primary_hex}};'>
+                                <a href="{{recruit_team_season.team_season.team.team_href}}">
+                                  {{recruit_team_season.team_season.team.school_name}}
+                                </a>
+                              </td>
+                              <td>{{recruit_team_season.signed}}</td>
+                              <td>{{recruit_team_season.match_rating}}</td>
+
+                              {% for interest_obj in recruit_team_season.player_interest_entries%}
+                                <td>
+                                  <span class='rating-badge rating-badge-{{interest_obj}}'>
+                                    {{interest_obj}}
+                                  </span>
+                                </td>
+                              {% endfor %}
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% if player.IsRecruit %}
+            <div class="tab-content"  style='display:none;' id="nav-recruiting" >
+              <div class='w3-container w3-margin-bottom'>
+                <div class='w3-row'>
+                  <div class='w3-col l12'>
+                    <table class="table table-striped table-hover center-text-row" id='playerRecruitingTeamTable'>
+                      <thead>
+                        <tr  class='team-secondary-table-row'>
+                          <th class='teamColorBorder' scope="col">Rank</th>
+                          <th class='teamColorBorder' scope="col">Team</th>
+                          <th class='teamColorBorder' scope="col">Signed?</th>
+                          <th class='teamColorBorder' scope="col">Match</th>
+                          <th class='teamColorBorder' scope="col">Scholarship Offered?</th>
+                          <th class='teamColorBorder' scope="col">Interest Level</th>
+                          <th class='teamColorBorder' scope="col">Actively Recruiting?</th>
+                          <th class='teamColorBorder' scope="col">Team Prestige Rating</th>
+                          <th class='teamColorBorder' scope="col">Distance Match</th>
+                          <th class='teamColorBorder' scope="col">Match 1</th>
+                          <th class='teamColorBorder' scope="col">Match 2</th>
+                          <th class='teamColorBorder' scope="col">Match 3</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for RecruitTeamSeason in RecruitTeamSeasons %}
+                          <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>
+                              <a href="/World/{{page.WorldID}}/Team/{{ RecruitTeamSeason.TeamSeasonID.TeamID.TeamID }}/">
+                                <img class='indexConferenceStandingTeamLogo' src='{{RecruitTeamSeason.TeamSeasonID.TeamID.LogoURL}}' alt="My image">
+                                {{ RecruitTeamSeason.TeamSeasonID.TeamID.Name }}
+                              </a>
+                            </td>
+                            <td>
+                              {{ RecruitTeamSeason.Signed }}
+                            </td>
+                            <td>
+                              {{ RecruitTeamSeason.match_rating }}
+                            </td>
+                            <td>
+                              {{ RecruitTeamSeason.OfferMade }}
+                            </td>
+                            <td>
+                              {{ RecruitTeamSeason.InterestLevel }}
+                            </td>
+                            <td>
+                              {{ RecruitTeamSeason.IsActivelyRecruiting }}
+                            </td>
+                            <td>
+                              {{ RecruitTeamSeason.TeamPrestigeRating }}
+                            </td>
+                            <td>
+                              {{ RecruitTeamSeason.DistanceMatchRating }}
+                            </td>
+                            <td>
+                              {{RecruitTeamSeason.Preference1MatchRating}} - {{RecruitTeamSeason.Preference1Name}}
+                            </td>
+                            <td>
+                              {{RecruitTeamSeason.Preference2MatchRating}} - {{RecruitTeamSeason.Preference2Name}}
+                            </td>
+                            <td>
+                              {{RecruitTeamSeason.Preference3MatchRating}} - {{RecruitTeamSeason.Preference3Name}}
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+                <div class="w3-row">
+                  <div class="" id='RecruitingContainer' style='width: 100%; height: 25rem;'></div>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="tab-content" style='display:none;' id="nav-stats" >
+              <div class='w3-container w3-margin-bottom'>
+                <div class='w3-row-padding'>
+                  <div class='w3-col l10 m12' id='player-stats-season-stat-div'></div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-content" style='display:none;' id="nav-game-log" >
+              <div class='w3-container'>
+                <div class='w3-row-padding '>
+                  <div class="w3-col l10 m12">
+                    <div class="card w3-margin-bottom">
+
+                      <div class="w3-bar team-primary-background-bar">Game Stats</div>
+                      <div id='player-stats-game-log-div'></div>
+
+                    </div>
+                    <div class="card w3-margin-bottom">
+
+                      <div class="w3-bar team-primary-background-bar">Career Highs</div>
+                      <div id='player-stats-career-high-div'></div>
+
+                    </div>
+                  </div>
+                </div>
+                <div class='w3-row-padding'></div>
+
+              </div>
+            </div>
+            <div class="tab-content" style='display:none;' id="nav-analytics" ></div>
+          {% endif %}
+          <div class="tab-content" style='display:none;' id="nav-awards" >
+            <div class='w3-container'>
+              <div class='w3-row-padding'>
+                <div class='w3-col l6 m12'>
+                  <div class="card w3-margin-bottom">
+
+                    <div class='w3-bar team-primary-background-bar'>
+                  Awards
+                </div>
+                    <table class='table table-striped table-hover'>
+                      {% for award_obj in award_list%}
+                        <tr>
+                          <td class='font16 bold'>{{award_obj.award_key}}</td>
+                          <td>
+                            <ul class='no-list-style'>
+                              {% for award in award_obj.awards%}
+                                <li>
+                                  {% if award.award_href|length > 0%}
+                                    <a href="{{award.award_href}}">{{award.award_name}}</a>
+                                  {% else %}
+                                    {{award.award_name}}
+                                    {%endif%}
+                                  </li>
+                                {% endfor %}
+                              </ul>
+                            </td>
+                          </tr>
+                          {%endfor%}
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-content" style='display:none;' id="nav-ratings" >
+                <div class='w3-container'>
+                  <div class='w3-row-padding'>
+                    <div class='w3-col l12 mw1000'>
+                      <div class="card margin-bottom-24">
+                        <table class='width100 table table-striped table-hover '>
+                          {% for skill_group in skills%}
+                            <thead>
+                              <tr class='team-primary-background'>
+                                <th colspan="3">{{skill_group.rating_group}}</th>
+                                <th class=" text-center">Avg {{player.Position}} Starter</th>
+                                {# TODO Fix conference name from action #}
+                                <th class=" text-center">Avg {{current_player_team_season.team_season.DivisionSeasonID.ConferenceSeasonID.ConferenceID.ConferenceAbbreviation}}
+                                  {{player.Position}} Starter</th>
+                              </tr>
+                            </thead>
+
+                            <tbody>
+                              {% for rating in skill_group.ratings%}
+                                <tr>
+                                  <td class='bold'>{{rating.rating}}</td>
+                                  <td style='width:55%'>
+                                    <div class="w3-border w3-round-xlarge statBar" style='width: 100%; background-color: inherit;'>
+                                      <div class="w3-container w3-round-xlarge {{rating.bar_width|NumberToGradeClass}}-Fill" style="width:{{rating.bar_width}}%; height: 0.5rem;"></div>
+                                    </div>
+                                  </td>
+                                  <td class='font20 text-center'>{{rating.player_value}}</td>
+                                  <td class="font20 text-center">
+                                    {{rating.all_players.value}}
+                                  </td>
+                                  <td class="font20 text-center">
+                                    {{rating.conference_players.value}}
+                                  </td>
+                                </tr>
+
+                              {% endfor %}
+                            </tbody>
+                          {% endfor %}
+                        </table>
+
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="" id='face'></div>
+
+        </body>
+        <div id='edit-player-modal' class='modal'>
+          <div class=" card modal-content" style='width: 50vw;'>
+            <div class="w3-bar team-primary-background-bar flex space-between">
+              <span class='hide-small'>Edit {{player.full_name}}</span>
+              <span class='clickable' id='edit-player-modal-save'>Save changes</span>
+            </div>
+            <div class='player-modal-header p-3 height100' id='edit-player-body' style='font-size: .8rem;overflow-y: scroll;'></div>
+          </div>
+
+        </div>

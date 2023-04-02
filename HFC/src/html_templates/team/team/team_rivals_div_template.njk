@@ -1,0 +1,188 @@
+<div class='grid p-2'>
+    <div class="grid-sizer grid-item"></div>
+    <div class='gutter-sizer'></div>
+    {% for rival in rivals%}
+        <div class="card grid-item margin-bottom-24 inline-block width100">
+            <div class="w3-bar team-primary-background-bar left-text" style='color: white !important; background-color: #{{rival.team.team_color_primary_hex}} !important; border-top-color: #{{rival.team.team_color_secondary_hex|TeamSecondaryColor}} !important; '>
+                {% if rival.rivalry_name%}
+                {{rival.rivalry_name}} vs.
+                {%endif%}
+                <a href='{{rival.team.team_href}}'>{{rival.team.full_name}}</a>
+                </div>
+                <div class='hidden-overflow'>
+                    <div class="rivalScheduleGameDashboardGameTeamDisplayContainer w3-display-container" >
+                        <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{rival.team.team_color_primary_hex}}'></div>
+                        <div class="teamScheduleGameDashboardGameTeamDisplayOffsetTop w3-white w3-display-topmiddle"></div>
+                        <a href='{{rival.team.team_href}}'>
+                            <img class='logo logo-40 rivalScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{rival.team.team_logo}}'/>
+                        </a>
+                    </div>
+                    <div class="rivalScheduleGameDashboardGameTeamDisplayContainer w3-display-container" >
+                        <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{team.team_color_primary_hex}}'></div>
+                        <div class="teamScheduleGameDashboardGameTeamDisplayOffsetBottom w3-white w3-display-bottommiddle"></div>
+                        <a href='{{team.team_href}}'>
+                            <img class='logo logo-40 rivalScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{team.team_logo}}'/>
+                        </a>
+                    </div>
+                    <table class='table inline-block' style='margin-left: 5rem; margin-top: -75px; width: calc(100% - 5rem);'>
+                        <tr>
+                            <th>First Meeting</th>
+                            <td class='no-wrap'>
+                                {% if rival.first_team_game%}
+                                    <div class=''>
+                                        <a href='{{rival.first_team_game.game.winning_team.team_href}}' class='bold' style='color: #{{rival.first_team_game.game.winning_team.team_color_primary_hex}};'>
+                                            {{rival.first_team_game.game.winning_team.team_location_name}}
+                                        </a>
+                                        <span>, 
+                                            <a href='{{rival.first_team_game.game.game_href}}'>{{rival.first_team_game.game.score_display}}</a>
+                                        </span>
+                                    </div>
+                                    <div class='font10'>
+                                        <a href='{{rival.first_team_game.game.game_href}}'>
+                                            {{rival.first_team_game.game.week.week_name}}, {{rival.first_team_game.game.week.season}}
+                                        </a>
+                                    </div>
+                                    {%else%}
+                                No games played
+                                {% endif %}
+                            </td>
+                            <th>Last Meeting</th>
+                            <td class='no-wrap'>
+                                {% if rival.last_team_game%}
+                                    <div class=''>
+                                        <a href='{{rival.last_team_game.game.winning_team.team_href}}' class='bold' style='color: #{{rival.last_team_game.game.winning_team.team_color_primary_hex}};'>
+                                            {{rival.last_team_game.game.winning_team.team_location_name}}
+                                        </a>
+                                        <span>, 
+                                            <a href='{{rival.last_team_game.game.game_href}}'>{{rival.last_team_game.game.score_display}}</a>
+                                        </span>
+                                    </div>
+                                    <div class='font10'>
+                                        <a href='{{rival.last_team_game.game.game_href}}'>
+                                            {{rival.last_team_game.game.week.week_name}}, {{rival.last_team_game.game.week.season}}
+                                        </a>
+                                    </div>
+                                    {%else%}
+                                No games played
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <th>All-Time Series</th>
+                            <td class='no-wrap'>
+                                {% if rival.all_time_series.leader %}
+                                    <a class='bold' href='{{rival.all_time_series.leader.team_href}}' style='color: #{{rival.all_time_series.leader.team_color_primary_hex}};'>
+                                        {{rival.all_time_series.leader.team_location_name}}
+                                    </a>
+                                ,
+                                {%else%}
+                                Tied,
+                                {% endif %}
+                                {{rival.all_time_series.wins}} - {{rival.all_time_series.losses}}
+                            </td>
+                            <th>All-Time Points</th>
+                            <td class='no-wrap'>
+                                {% if rival.all_time_points.leader %}
+                                    <a class='bold' href='{{rival.all_time_points.leader.team_href}}' style='color: #{{rival.all_time_points.leader.team_color_primary_hex}};'>
+                                        {{rival.all_time_points.leader.team_location_name}}
+                                    </a>
+                                ,
+                                {%else%}
+                                Tied,
+                                {% endif %}
+                                {{rival.all_time_points.points_for}} - {{rival.all_time_points.points_allowed}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Longest Win Streak</th>
+                            <td class='no-wrap'>
+                                {%if rival.longest_streak%}
+                                    <div class=''>
+                                        <a href='{{rival.longest_streak.team.team_href}}' class='bold' style='color: #{{rival.longest_streak.team.team_color_primary_hex}};'>
+                                            {{rival.longest_streak.team.team_location_name}}
+                                        </a>
+                                        <span>
+                                        , {{rival.longest_streak.count}}
+                                        </span>
+                                    </div>
+                                    <div class='font10'>
+                                        {% if rival.longest_streak.first_season == rival.longest_streak.last_season%}
+                                    ({{rival.longest_streak.last_season}})
+                                    {%else%}
+                                    ({{rival.longest_streak.first_season}} - {{rival.longest_streak.last_season}})
+                                    {%endif%}
+                                        </div>
+                                        {%endif%}
+                                    </td>
+                                    <th>Current Win Streak</th>
+                                    <td class='no-wrap'>
+                                        {% if rival.latest_streak%}
+                                            <div class=''>
+                                                <a href='{{rival.latest_streak.team.team_href}}' class='bold' style='color: #{{rival.latest_streak.team.team_color_primary_hex}};'>
+                                                    {{rival.latest_streak.team.team_location_name}}
+                                                </a>
+                                                <span>
+                                        , {{rival.latest_streak.count}}
+                                                </span>
+                                            </div>
+                                            <div class='font10'>
+                                                {% if rival.latest_streak.first_season == rival.latest_streak.last_season%}
+                                    ({{rival.latest_streak.last_season}})
+                                    {%else%}
+                                    ({{rival.latest_streak.first_season}} - {{rival.latest_streak.last_season}})
+                                    {%endif%}
+                                                </div>
+                                                {%endif%}
+                                            </td>
+                                        </tr>
+                                        {# <tr>
+                            <th>Total Games</th>
+                            <td>
+                                {{rival.record.games_played}}
+                            </td>
+                        </tr> #}
+
+                                    </table>
+                                </div>
+                                {% if rival.record.games_played + rival.record.scheduled_games %}
+                                    <table class="table table-striped table-hover ">
+                                        <tr>
+                                            <th class='center-text' colspan="">Meeting</th>
+                                            <th class='' colspan="">Week</th>
+                                            <th class='' colspan="">Result</th>
+                                        </tr>
+                                        {% for team_game in rival.team_games %}
+                                            <tr class=''>
+                                                <td class='center-text'>{{loop.index}}</td>
+                                                <td>
+                                                    <a href='{{team_game.game.game_href}}'>
+                                                        {{team_game.game.week.week_name}}, {{team_game.game.week.season}}
+                                                    </a>
+                                                </td>
+                                                {% if team_game.game.was_played%}
+                                                    <td style='background-color: #{{team_game.game.winning_team.team_color_primary_hex}}; color: white;'>
+
+                                                        <span class='bold'>
+                                                            <a href='{{team_game.game.winning_team.team_href}}'>
+                                                                {{team_game.game.winning_team.team_location_name}}
+                                                            </a>
+                                                        </span>
+                                                        <span>
+                                                            <a href='{{team_game.game.game_href}}'>
+                                                                {{team_game.game.outcome.winning_team.points}} - {{team_game.game.outcome.losing_team.points}}
+                                                            </a>
+                                                        </span>
+                                                    </td>
+                                                    {%else%}
+                                                    <td>Scheduled</td>
+                                                    {%endif%}
+                                                </tr>
+
+                                            {% endfor %}
+                                        </table>
+                                        {%endif%}
+                                    </div>
+
+                                {% endfor %}
+                            </div>

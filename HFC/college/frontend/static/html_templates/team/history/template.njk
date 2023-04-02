@@ -1,0 +1,176 @@
+{% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
+
+
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
+
+<head>
+  <style id="addedStyle">
+    .btn.dt-button {
+      border: 0.125rem solid #{{page.PrimaryColor}} !important;
+      background-color: white !important;
+      color: #{{page.PrimaryColor}} !important;
+      background-image: none !important;
+      font-weight: 500;
+      font-size: .875rem!important;
+    }
+
+    .btn.dt-button:hover {
+      box-shadow: 0rem 0.125rem 0.75rem #{{page.PrimaryColor}};
+      border: 0.1875rem solid #{{page.PrimaryColor}};
+    }
+  </style>
+</head>
+
+
+
+
+<body>
+  <div class="PageContent">
+    {% include "../../html_templates/common_templates/ext_team_header.njk" %}
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-schedule-tab" style="background-color: #{{page.SecondaryColor}};">Schedule</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-league-leaders-tab">Other</button>
+        {% include "../../html_templates/common_templates/ext_team_list.njk" %}
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:block;"  id="nav-schedule">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding w3-margin-bottom'>
+            <div class='w3-col mw1000 l12'>
+              <div class="card ">
+                <div class="w3-bar team-primary-background-bar">
+                  {{team.school_name}} History
+                </div>
+
+                <table class="table table-striped table-hover" id='TeamSchedule'  style="width:100%">
+                  <thead>
+                    <tr class='team-secondary-table-row center-text-row'>
+                      <th colspan='4' class=' col-group'></th>
+                      <th colspan='3' class='col-group'>Conference</th>
+                      <th colspan='4' class='col-group '>Rankings</th>
+                      <th colspan='3' class=''>Ratings</th>
+                    </tr>
+                    <tr class='team-primary-table-row center-text-row'>
+                      <th class='left-text'>Season</th>
+                      <th>Record</th>
+                      <th class='col-group' colspan='2'>Outcome</th>
+
+                      <th class=''>Conference</th>
+                      <th class=''>W-L (Conf)</th>
+                      <th class='col-group'>Place</th>
+
+                      <th class='hide-small'>Final</th>
+                      <th class='hide-small'>First</th>
+                      <th class='hide-small'>Best</th>
+                      <th class='hide-small col-group'>Worst</th>
+
+                      <th>OVR</th>
+                      <th>OFF</th>
+                      <th>DEF</th>
+                    </tr>
+
+                  </thead>
+                  <tbody>
+                    {%for team_season in team_seasons %}
+                    <tr class='center-text-row'>
+                      <td class='left-text'>
+                        <a href="{{team_season.team_season_href}}">{{team_season.season}}</a>
+                      </td>
+                      <td>{{team_season.record_display}}</td>
+                      <td class='no-width'>
+                        {% if team_season.results.national_champion%}
+                        <div class='W-L-Badge trophy font16' style='color: darkgoldenrod;'>
+                          <i class="fa fa-trophy"></i>
+                        </div>
+                        {% elseif team_season.results.bowl == undefined%}
+                        {% else%}
+                        <div class='W-L-badge {%if team_season.results.bowl.is_winning_team%} W {% else%} L {%endif%}'>{%if team_season.results.bowl.is_winning_team%}W{% else%}L{%endif%}</div>
+                        {%endif%}
+                      </td>
+                      <td class='left-text col-group'>
+                        {%if team_season.league_season.is_season_complete%}
+                          {% if team_season.results.national_champion%}
+                          <div style='color: darkgoldenrod;' class='bold opacity-1'>National Champions</div>
+                          {% if team_season.playoff.seed%}
+                          <div class='font10'>
+                            Playoff Seed: {{team_season.playoff.seed}}
+                          </div>
+                          {%endif%}
+                          {% elseif team_season.results.bowl == undefined%}
+                          <span>No Bowl</span>
+                          {% else%}
+                            
+                            <div class='inline-block left-text'>
+                              <div>
+                                <a href="{{team_season.results.bowl.game.game_href}}">
+                                    {{team_season.results.bowl.bowl_name}}
+                                </a>
+                              </div>
+                              {% if team_season.playoff.seed%}
+                              <div class='font10'>
+                                Playoff Seed: {{team_season.playoff.seed}}
+                              </div>
+                              {%endif%}
+                            
+
+                          </div>
+                          {% endif %}
+                        {% else %}
+                        <span style='' class=''>In Progress</span>
+                        {%endif%}
+                      </td>
+
+
+                      {% if team_season.conference_row_span > 0%}
+                      <td rowspan='{{team_season.conference_row_span}}'>{{team_season.conference_season.conference.conference_name}}</td>
+                      {% endif %}
+                      <td>{{team_season.conference_record_display}}</td>
+                      <td class=' col-group'>
+                        {%if team_season.results.conference_champion %}
+                            <span style='color: darkgoldenrod;' class='bold opacity-1'>
+                              {{team_season.conference_season.conference.conference_abbreviation}} Champs
+                            </span>
+                        {%elif team_season.results.division_champion%}
+                            <span class='bold opacity-1'>
+                              {{team_season.conference_season.conference.conference_abbreviation}} {{team_season.division_name}} Champs
+                            </span>                        
+                        {%else%}
+                            {{team_season.final_conference_rank|ordinal}}
+                        {% endif %}
+
+
+                      </td>
+
+                      <td class='column-shrink'>{{team_season.final_national_rank}}</td>
+                      <td class='column-shrink'>{{team_season.first_national_rank}}</td>
+                      <td class='column-shrink'>{{team_season.best_national_rank}}</td>
+                      <td class='column-shrink col-group'>{{team_season.worst_national_rank}}</td>
+
+                      <td class='column-shrink'>{{team_season.rating.overall|round}}</td>
+                      <td class='column-shrink'>{{team_season.rating.by_position_group['Offense']|round}}</td>
+                      <td class='column-shrink'>{{team_season.rating.by_position_group['Defense']|round}}</td>
+
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" style="display:none;"  id="nav-league-leaders">
+        <div class='w3-display-container'>
+          <div class='w3-row-padding' id='worldLeagueLeaderRow'>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

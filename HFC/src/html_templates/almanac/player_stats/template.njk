@@ -1,0 +1,43 @@
+<div class='ext_nav_bar'>
+  {% include "../../html_templates/common_templates/ext_nav_bar.njk" %}
+</div>
+<style>
+  #Top25Table tr:nth-child({{TeamsInPlayoff}}) td{
+    border-bottom: 0.125rem solid black;
+  }
+</style>
+
+
+{% include "../../html_templates/common_templates/ext_team_coloring.njk" %}
+
+
+<body>
+  <div class="PageContent">
+    <nav>
+      <div class="w3-bar team-bar" id="nav-tab" style="background-color: #{{page.PrimaryColor}}; border-bottom: 0.1875rem solid #{{page.SecondaryColor}}; border-top: 0.1875rem solid #{{page.SecondaryColor}};  color: white; ">
+        <button class='w3-bar-item btn tab nav-tab-button show-small'  id="nav-sidebar-tab" style="">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="w3-bar-item btn tab nav-tab-button selected-tab" id="nav-all-players-tab" style="background-color: #{{page.SecondaryColor}};">All Players</button>
+        <button class="w3-bar-item btn tab nav-tab-button" id="nav-leaders-tab">Leaders</button>
+      </div>
+    </nav>
+    <div id="nav-tabContent">
+      <div class="tab-content" style="display:none;"  id="nav-leaders" >
+        <div class='w3-row-padding' id='player-stat-leader-container' >
+        </div>
+      </div>
+      <div class="tab-content" style="display:block;"  id="nav-all-players">
+        <div class='w3-display-container' >
+          <div class='w3-row-padding w3-margin-bottom'>
+            <div class='width90p'>
+              <div id='player-stats-table-filter'></div>
+              <div id='player-stats-table-column-control'></div>
+              <div id='player-stats-table-container' class=''></div>
+            </div> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

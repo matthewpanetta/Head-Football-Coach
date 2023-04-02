@@ -1,0 +1,17 @@
+<div class="modal-content">
+  <div class="card">
+    <div class="team-primary-background-bar w3-row-padding space-between">
+        {{chart_title}}
+        <select class="form-select" id='football-chart-select' style='line-height: inherit; width: inherit; font-size: inherit; padding: 0 2.25rem 0 .75rem;'>
+            {% for field in field_list%}
+            <option value='{{field.field}}'>{{field.display}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="p-3" style='overflow-y: scroll;'>
+        <table class='table table-hover table-striped width100 football-chart-table'>
+
+        </table>
+    </div>
+</div>
+</div>
