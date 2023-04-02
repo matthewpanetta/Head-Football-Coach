@@ -2386,7 +2386,7 @@ const calculate_team_overalls = async (common) => {
   const team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
 
   const position_map = {
-    QB: { group: "Offense", unit: "QB", typical_starters: 1, overall_weight: 1.0 },
+    QB: { group: "Offense", unit: "QB", typical_starters: 1, overall_weight: 2.0 },
     RB: { group: "Offense", unit: "RB", typical_starters: 1, overall_weight: 0.6 },
     FB: { group: "Offense", unit: "FB", typical_starters: 1, overall_weight: 0.15 },
     WR: { group: "Offense", unit: "REC", typical_starters: 2, overall_weight: 0.75 },
@@ -2401,8 +2401,8 @@ const calculate_team_overalls = async (common) => {
     CB: { group: "Defense", unit: "DB", typical_starters: 2, overall_weight: 0.5 },
     S: { group: "Defense", unit: "DB", typical_starters: 2, overall_weight: 0.4 },
 
-    K: { group: "Special Teams", unit: "ST", typical_starters: 1, overall_weight: 0.2 },
-    P: { group: "Special Teams", unit: "ST", typical_starters: 1, overall_weight: 0.15 },
+    K: { group: "Special Teams", unit: "ST", typical_starters: 1, overall_weight: 0.05 },
+    P: { group: "Special Teams", unit: "ST", typical_starters: 1, overall_weight: 0.05 },
   };
 
   var rating_min_max = {

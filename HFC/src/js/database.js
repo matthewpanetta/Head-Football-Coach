@@ -29,9 +29,11 @@ export const prune_orphaned_databases = async () => {
   const ddb = await driver_db();
   let databases = ddb.world.find();
 
+  console.log({databases: databases})
   for (let world_obj of databases) {
-    if (!world_obj.user_team || !world_obj.user_team.team_name) {
-      await ddb.world.findAndRemove({ world_id: world_obj.world_id });
+    if (!world_obj.user_team || !world_obj.user_team.team_nickname) {
+      alert('deleting world')
+      // await ddb.world.findAndRemove({ world_id: world_obj.world_id });
     }
   }
 

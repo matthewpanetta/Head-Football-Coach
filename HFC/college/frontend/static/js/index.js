@@ -535,8 +535,6 @@ const distance_between_coordinates = (coord_a, coord_b) => {
   return d;
 };
 
-const pathToRegex = (path) =>
-  new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
 const getParams = (match) => {
   const values = match.result.slice(1);
