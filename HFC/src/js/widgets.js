@@ -144,7 +144,7 @@ export const recent_games = (common) => {
   const season = common.season;
   const db = common.db;
   const all_periods = db.period.find({ season: season });
-  const current_period = all_periods.filter((w) => w.is_current)[0];
+  const current_period = all_periods.find((w) => w.is_current) || {};
 
   const all_periods_by_period_id = index_group_sync(all_periods, "index", "period_id");
 

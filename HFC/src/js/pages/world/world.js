@@ -29,8 +29,8 @@ import {
       db: db,
     });
   
-    var current_week = db.week.find({ season: { $between: [season - 1, season + 1] } });
-    current_week = current_week.find((w) => w.is_current);
+    var current_period = db.period.find({ season: { $between: [season - 1, season + 1] } });
+    current_period = current_period.find((w) => w.is_current) || {period_name: "no period"};
   
     const NavBarLinks = common.nav_bar_links;
     
@@ -38,9 +38,9 @@ import {
     let team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
     let conferences = db.conference.find();
     let conference_seasons = db.conference_season.find({ season: season });
-    let this_week_team_games = db.team_game.find({ week_id: current_week.week_id });
-    let this_week_games = db.game.find({ week_id: current_week.week_id });
-    let headlines = db.headline.find({ week_id: current_week.week_id - 1 });
+    let this_period_team_games = db.team_game.find({ period_id: current_period.period_id });
+    let this_period_games = db.game.find({ period_id: current_period.period_id });
+    let headlines = db.headline.find({ period_id: current_period.period_id - 1 });
   
     var conferences_by_conference_id = index_group_sync(conferences, "index", "conference_id");
   
@@ -77,8 +77,8 @@ import {
   
     common.stopwatch(common, "Time after sorting team seasons");
   
-    var this_week_team_games_by_team_game_id = index_group_sync(
-      this_week_team_games,
+    var this_period_team_games_by_team_game_id = index_group_sync(
+      this_period_team_games,
       "index",
       "team_game_id"
     );
@@ -88,7 +88,7 @@ import {
     common.stopwatch(common, "Time after fetching games");
   
     var min_power_rank = 0;
-    $.each(this_week_games, function (ind, game) {
+    $.each(this_period_games, function (ind, game) {
       game.game_headline_display = "";
       if (game.bowl != null) {
         game.game_headline_display = game.bowl.bowl_name;
@@ -100,8 +100,8 @@ import {
         }
       }
   
-      game.home_team_game = this_week_team_games_by_team_game_id[game.home_team_game_id];
-      game.away_team_game = this_week_team_games_by_team_game_id[game.away_team_game_id];
+      game.home_team_game = this_period_team_games_by_team_game_id[game.home_team_game_id];
+      game.away_team_game = this_period_team_games_by_team_game_id[game.away_team_game_id];
   
       game.home_team_game.team_season =
         team_seasons_by_team_season_id[game.home_team_game.team_season_id];
@@ -134,7 +134,7 @@ import {
         min_power_rank;
     });
   
-    this_week_games = this_week_games.sort(function (g_a, g_b) {
+    this_period_games = this_period_games.sort(function (g_a, g_b) {
       if (g_a.team_games[0].team_season.is_user_team || g_a.team_games[1].team_season.is_user_team)
         return -1;
       if (g_b.team_games[0].team_season.is_user_team || g_b.team_games[1].team_season.is_user_team)
@@ -145,7 +145,7 @@ import {
     });
   
     let headline_type_map = {
-      game: "Last Week Games",
+      game: "Last period Games",
       ranking: "AP Top 25",
       recruiting: "247 Recruiting",
     };
@@ -158,7 +158,7 @@ import {
 
     let scoreboard_games = await recent_games(common);
   
-    common.stopwatch(common, "Time after this_week_games");
+    common.stopwatch(common, "Time after this_period_games");
     const page = {
       PrimaryColor: common.primary_color,
       SecondaryColor: common.secondary_color,
@@ -171,9 +171,9 @@ import {
       world_id: common.world_id,
       teams: teams,
       recent_games: scoreboard_games,
-      current_week: current_week,
+      current_period: current_period,
       headlines_by_headline_type: headlines_by_headline_type,
-      this_week_games: this_week_games,
+      this_period_games: this_period_games,
     };
   
     common.render_content = render_content;
@@ -192,10 +192,10 @@ import {
 
     let user_team_overview_data = {
       user_team: teams.find((t) => t.is_user_team),
-      this_week_game: this_week_games.find(
+      this_period_game: this_period_games.find(
         (g) => g.team_games[0].team_season.is_user_team || g.team_games[1].team_season.is_user_team
       ),
-      last_week_game: scoreboard_games.find(
+      last_period_game: scoreboard_games.find(
         (g) => g.team_games[0].team_season.is_user_team || g.team_games[1].team_season.is_user_team
       ),
     };
@@ -205,7 +205,7 @@ import {
     let preseason_info = {};
     let season_recap = {};
     common.stopwatch(common, "Time before pre-season");
-    if (current_week.week_name == "Pre-Season") {
+    if (current_period.period_name == "Pre-Season") {
       // TODO filter out backups
       preseason_info.conference_favorites = [];
   
@@ -217,7 +217,7 @@ import {
       let player_team_seasons = db.player_team_season.find({
         season: { $between: [common.season - 1, common.season] },
       });
-      let all_preseason_awards = db.award.find({ week_id: current_week.week_id });
+      let all_preseason_awards = db.award.find({ period_id: current_period.period_id });
   
       const teams_by_team_id = index_group_sync(all_teams, "index", "team_id");
   
@@ -376,7 +376,7 @@ import {
       user_team_overview_data.preseason_all_american = user_team_preseason_awards.filter(
         (a) => a.award_team_set == "national"
       );
-    } else if (current_week.week_name == "Season Recap") {
+    } else if (current_period.period_name == "Season Recap") {
       team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
       let team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
   

@@ -260,7 +260,7 @@ const nav_bar_links = async (common, data) => {
       user_actions.unshift(sim_action_period);
     }
 
-    const period_updates = current_period.period_updates;
+    const period_updates = current_period.period_updates || [];
     if (period_updates.length > 0) {
       user_actions.push({
         LinkDisplay: `Updates this period ${period_updates.length}`,
@@ -962,7 +962,11 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
     let starter_player_team_season_ids = new Set();
 
     var player_team_season_list = player_team_seasons_by_team_season_id[team_season_id];
-    team_season = team_seasons_by_team_season_id[team_season_id];
+    let ts = team_seasons_by_team_season_id[team_season_id];
+    console.log({
+      ts:ts, team_seasons_by_team_season_id:team_seasons_by_team_season_id, player_team_season_list:player_team_season_list,
+      team_season_id:team_season_id, player_team_seasons_by_team_season_id:player_team_seasons_by_team_season_id
+    })
 
     player_team_season_list = player_team_season_list.sort(
       (pts_a, pts_b) => pts_b.ratings.overall.overall - pts_a.ratings.overall.overall
@@ -970,7 +974,7 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
 
     player_team_season_list.forEach((pts, ind) => (pts.player_team_overall_rank = ind + 1));
 
-    team_season.depth_chart = {};
+    ts.depth_chart = {};
 
     var position_player_team_season_obj = index_group_sync(
       player_team_season_list,
@@ -1029,12 +1033,12 @@ const populate_all_depth_charts = async (common, team_season_ids) => {
       player_team_seasons_to_update = player_team_seasons_to_update.concat(
         position_player_team_season_list
       );
-      team_season.depth_chart[position] = position_player_team_season_list.map(
+      ts.depth_chart[position] = position_player_team_season_list.map(
         (pts) => pts.player_team_season_id
       );
     }
 
-    team_seasons_to_update.push(team_season);
+    team_seasons_to_update.push(ts);
   }
 
   db.team_season.update(team_seasons_to_update);
@@ -1124,7 +1128,7 @@ const create_schedule = (data) => {
     periods:periods,
     db:db, common:common
   })
-  periods = periods.filter((period) => period.phase.phase_name == "Regular Season");
+  periods = periods.filter((period) => period.phase && period.phase.phase_name == "Regular Season");
   let all_period_ids = new Set(periods.map((w) => w.period_id));
   let all_periods_by_period_id = index_group_sync(periods, "index", "period_id");
 
@@ -2214,20 +2218,6 @@ const create_recruiting_class = async (common) => {
   stopwatch(common, `Stopwatch RTS - Saved all RTSs WITH PROMISE`);
 };
 
-const class_is_in_college = (class_name) => {
-  let class_map = {
-    "HS JR": false,
-    "HS SR": false,
-    FR: true,
-    SO: true,
-    JR: true,
-    SR: true,
-    GR: false,
-  };
-
-  return class_map[class_name] || false;
-};
-
 const assign_player_jersey_numbers = async (common, season) => {
   const db = common.db;
 
@@ -2703,7 +2693,6 @@ const generate_player_ratings = async (common, world_id, season) => {
             pts:pts,
             'pts.ratings': pts.ratings
           })
-          debugger;
         }
 
         potential_impact +=
@@ -2875,7 +2864,7 @@ const create_new_players_and_player_team_seasons = async (common, world_id, seas
     let teams = nest_children(leag.teams, team_seasons_by_team_id, "team_id", "team_season");
     let teams_by_team_abbreviation = index_group_sync(teams, "index", "team_abbreviation");
 
-    console.log({ season:season, will_pass: (season == 2022 && leag.league_abbreviation == 'NFL'), teams_by_team_abbreviation: teams_by_team_abbreviation, leag:leag, teams:teams });
+    console.log({ season:season, teams_by_team_abbreviation: teams_by_team_abbreviation, leag:leag, teams:teams });
 
     console.log({
       player_names:player_names,
@@ -2937,111 +2926,12 @@ const create_new_players_and_player_team_seasons = async (common, world_id, seas
         player_team_season_id_counter += 1;
       }
     }
-    else if (leag.type == 'college'){
-      let classes = ['FR', 'SO', 'JR', 'SR'];
-      let num_players_per_team = leag.roster.season_roster_max;
-
-      for (let position in team_position_counts) {
-        let players_for_position = Math.floor(
-          team_position_counts[position] * num_players_per_team * team_seasons.length
-        );
-    
-        for (let position_count = 0; position_count < players_for_position; position_count++) {
-          let body = body_from_position(position);
-          let ethnicity = weighted_random_choice(position_ethnicity[position]);
-          let player_class = classes[Math.floor(Math.random() * classes.length)];
-    
-          if (player_counter > player_names.length || player_counter > player_cities.length) {
-            console.log("something weird with names?", {
-              player_names: player_names,
-              player_cities: player_cities,
-              player_counter: player_counter,
-            });
-          }
-    
-          var player_obj = new player({
-            player_id: player_id_counter,
-            name: player_names[player_counter],
-            world_id: world_id,
-            hometown: player_cities[player_counter],
-            ethnicity: ethnicity,
-            body: body,
-            world_id: world_id,
-            position: position,
-          });
-    
-          let player_team_season_obj = new player_team_season({
-            world_id: world_id,
-            player_id: player_id_counter,
-            player_team_season_id: player_team_season_id_counter,
-            season: season,
-            class: {
-              class_name: player_class,
-              redshirted: false,
-            },
-            team_season_id: 0,
-            position: position,
-          });
-    
-          if (player_class == "HS SR") {
-            player_team_season_obj.team_season_id = -1 * season;
-            player_team_season_obj.is_recruit = true;
-            player_team_season_obj.recruiting = {
-              speed: 1,
-              stars: 4,
-              signed: false,
-              signed_team_season_id: null,
-              stage: null,
-              rank: {
-                national: null,
-                position_rank: null,
-                state: null,
-              },
-              weeks: {},
-              team_season_buckets: {
-                dream: new Set(),
-                favor: new Set(),
-                indifferent: new Set(),
-                hate: new Set(),
-              },
-              interests: {
-                location: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
-                fan_support: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
-                academic_quality: round_decimal(normal_trunc_bounce(2, 10, 1, 7), 0),
-                facilities: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
-                program_history: round_decimal(normal_trunc(2.5, 1.5, 1, 7), 0),
-                team_competitiveness: round_decimal(normal_trunc(3.5, 1.5, 1, 7), 0),
-                brand: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
-                pro_pipeline: round_decimal(normal_trunc(4, 1.5, 1, 7), 0),
-    
-                program_stability: round_decimal(normal_trunc(1.75, 0.1, 1, 7), 0),
-                playing_time: round_decimal(normal_trunc(1.5, 0.1, 1, 7), 0),
-                close_to_home: round_decimal(normal_trunc_bounce(4.5, 3, 1, 7), 0),
-              },
-            };
-          } else {
-            var new_player_team_season_stats = new player_team_season_stats(
-              player_team_season_id_counter
-            );
-            player_team_season_stats_tocreate.push(new_player_team_season_stats);
-          }
-    
-          players_tocreate.push(player_obj);
-          player_team_seasons_tocreate.push(player_team_season_obj);
-    
-          player_counter += 1;
-          player_id_counter += 1;
-          player_team_season_id_counter += 1;
-        }
-      }
-    }
   });
 
   console.log({
     players_tocreate: players_tocreate,
     player_team_seasons_tocreate: player_team_seasons_tocreate,
   });
-  debugger;
   await Promise.all([
     db.player.insert(players_tocreate),
     db.player_team_season.insert(player_team_seasons_tocreate),
@@ -3321,11 +3211,12 @@ const random_name = (ddb, num_names) => {
   return name_list;
 };
 
-const random_college = (db, num_colleges) => {
-  let college_league = db.league.findOne({type: 'college'});
-  let college_list = db.team.find({league_id: college_league.league_id});
+const random_college = async (ddb, num_colleges) => {
+  var college_list_url = "/data/import_json/colleges.json";
+  var college_list_html = await fetch(college_list_url);
+  let college_list = await college_list_html.json();
 
-  let college_weights = college_list.map(co => [co.team, co.team_ratings.pro_pipeline ** 2.1]);
+  let college_weights = college_list.map(co => [co.team, co.players ** 2.1]);
 
   let chosen_college_list = weighted_random_choice(college_weights, 'None', num_colleges);
 
@@ -7500,12 +7391,12 @@ const new_world_action = async (common, database_suffix) => {
 
     t.league_id = conferences_by_team_name[t.team_name].league_id;
     t.world_id = world_id;
+    t.team_id = team_id_counter;
 
     t.conference = {
       conference_id: conferences_by_team_name[t.team_name].conference_id,
       conference_name: conferences_by_team_name[t.team_name].conference_name,
     }
-
 
     teams.push(
       new team(t)
