@@ -750,10 +750,6 @@ export class team {
     return this.team_nickname;
   }
 
-  get team_name() {
-    return `${this.team_location_name} ${this.team_nickname}`;
-  }
-
   get team_href() {
     if (this.team_id == -2) {
       return `/World/${this.world_id}/Recruiting`;

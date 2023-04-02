@@ -2,7 +2,7 @@
   {
     "league_name": "National Football League",
     "league_abbreviation": "NFL",
-    "classification": "pro",
+    "type": "pro",
     "roster": {
       "preseason_roster_max": 75,
       "season_roster_max": 53,
@@ -21,7 +21,7 @@
   {
     "league_name": "NCAA",
     "league_abbreviation": "NCAA",
-    "classification": "college",
+    "type": "college",
     "roster": {
       "preseason_roster_max": 85,
       "season_roster_max": 85,

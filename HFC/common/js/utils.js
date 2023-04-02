@@ -799,3 +799,121 @@ export const add_season_to_date = (season, date) => {
   }
   return date;
 }
+
+export const inches_to_height = (all_inches) => {
+  var feet = Math.floor(all_inches / 12);
+  var inches = Math.floor(all_inches % 12);
+
+  return `${feet}'${inches}"`;
+};
+
+
+export const body_from_position = (position) => {
+  const position_measurables = {
+    coach: {
+      height_avg: 72,
+      height_std: 1,
+      weight_avg: 230,
+      weight_std: 25,
+    },
+    QB: {
+      height_avg: 74.91,
+      height_std: 1.79,
+      weight_avg: 212.94,
+      weight_std: 10.64,
+    },
+    RB: {
+      height_avg: 70.24,
+      height_std: 1.83,
+      weight_avg: 212.94,
+      weight_std: 13.65,
+    },
+    FB: { height_avg: 70, height_std: 2, weight_avg: 220, weight_std: 13.65 },
+    WR: {
+      height_avg: 72.7,
+      height_std: 2.36,
+      weight_avg: 202.91,
+      weight_std: 15.36,
+    },
+    TE: {
+      height_avg: 76.2,
+      height_std: 1.34,
+      weight_avg: 251.48,
+      weight_std: 8.7,
+    },
+    OT: {
+      height_avg: 77.61,
+      height_std: 1.12,
+      weight_avg: 313.74,
+      weight_std: 10.95,
+    },
+    IOL: {
+      height_avg: 76.07,
+      height_std: 1.16,
+      weight_avg: 314.75,
+      weight_std: 11.76,
+    },
+    EDGE: {
+      height_avg: 75.83,
+      height_std: 1.44,
+      weight_avg: 260,
+      weight_std: 14.81,
+    },
+    DL: {
+      height_avg: 74.92,
+      height_std: 1.43,
+      weight_avg: 307.49,
+      weight_std: 15.8,
+    },
+    LB: {
+      height_avg: 73.22,
+      height_std: 1.27,
+      weight_avg: 240.96,
+      weight_std: 6.6,
+    },
+    CB: {
+      height_avg: 71.35,
+      height_std: 1.59,
+      weight_avg: 193.42,
+      weight_std: 8.76,
+    },
+    S: {
+      height_avg: 72.15,
+      height_std: 1.5,
+      weight_avg: 206.38,
+      weight_std: 9.08,
+    },
+    K: { height_avg: 71.89, height_std: 2, weight_avg: 195, weight_std: 17 },
+    P: {
+      height_avg: 74.31,
+      height_std: 1.89,
+      weight_avg: 213,
+      weight_std: 14.6,
+    },
+  };
+
+  var height_inches = Math.floor(
+    normal_trunc(
+      position_measurables[position]["height_avg"],
+      position_measurables[position]["height_std"],
+      66,
+      81
+    )
+  );
+  var body = { height_inches: height_inches };
+
+  var height_variations = 0; //(height_inches - position_measurables[position]['height_avg']) / position_measurables[position]['height_std'];
+  var weight = Math.floor(
+    normal_trunc(
+      position_measurables[position]["weight_avg"] * (1 + height_variations / 4),
+      position_measurables[position]["weight_std"] * 0.8,
+      150,
+      390
+    )
+  );
+
+  body.weight = weight;
+  body.height = inches_to_height(body.height_inches);
+
+  return body;
+};
