@@ -72,6 +72,7 @@ body {
   margin: 0 0 0 var(--nav-width);
   font-family: 'Quicksand', sans-serif;
   font-size: 1.125rem;
+  /* background-image: url(https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/gocrimson.com/images/responsive_2020/bg.jpg); */
 }
 
 .nav {

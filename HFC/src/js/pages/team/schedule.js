@@ -28,7 +28,7 @@ const action = async (common) => {
 const PopulateTeamSchedule = async (common) => {
   var games = common.render_content.games;
 
-  games = games.sort((g_a, g_b) => g_a.week_id - g_b.week_id)
+  games = games.sort((g_a, g_b) => g_a.period_id - g_b.period_id)
   console.log({games:games})
 
   var table_config = {
@@ -70,8 +70,8 @@ export const page_team_schedule = async (common) => {
   var team_seasons = db.team_season.find({ team_id: { $gt: 0 }, season: season });
   teams = teams.sort((team_a, team_b) => team_a.team_location_name - team_b.team_location_name);
 
-  const weeks = db.week.find({ season: season });
-  const weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
+  const periods = db.period.find({ season: season });
+  const periods_by_period_id = index_group_sync(periods, "index", "period_id");
 
   const team = db.team.findOne({ team_id: team_id });
   const team_season = db.team_season.findOne({ team_id: team_id, season: season });
@@ -96,7 +96,7 @@ export const page_team_schedule = async (common) => {
 
   var team_games = db.team_game.find({ team_season_id: team_season.team_season_id });
   var team_game_ids = team_games.map((tg) => tg.team_game_id);
-  team_games = team_games.sort((tg_a, tg_b) => tg_a.week_id - tg_b.week_id);
+  team_games = team_games.sort((tg_a, tg_b) => tg_a.period_id - tg_b.period_id);
   const game_ids = team_games.map((game) => parseInt(game.game_id));
 
   let team_seasons_by_team_season_ids = index_group_sync(team_seasons, 'index', 'team_season_id');
@@ -105,7 +105,7 @@ export const page_team_schedule = async (common) => {
   let team_games_by_game_id = index_group_sync(team_games, 'index', 'game_id')
 
   var games = db.game.find({ game_id: { $in: game_ids } });
-  games = nest_children(games, weeks_by_week_id, "week_id", "week");
+  games = nest_children(games, periods_by_period_id, "period_id", "period");
   games = nest_children(games, team_games_by_game_id, "game_id", "team_game");
 
   const opponent_team_game_ids = team_games.map((team_game) => team_game.opponent_team_game_id);

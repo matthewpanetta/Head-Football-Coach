@@ -368,6 +368,14 @@ export class day {
     let next_date = date.add(1, 'day')
     this.next_date_display = next_date.format('YYYY-MM-DD')
   }
+
+  get MMMM_D(){
+    console.log({
+      this:this,
+      date: this.date
+    })
+    return dayjs(this.date).format('MMMM D')
+  }
 }
 
 export class period {

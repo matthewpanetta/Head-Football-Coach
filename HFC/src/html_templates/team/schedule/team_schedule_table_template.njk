@@ -31,22 +31,16 @@
                 {{game|log}}
                 <tr class='football-table-row  ' style='height: 1.875rem;' game_id='{{game.game_id}}'>
                     <!-- BASELINE -->
-                    <td value='{{game.week.week_id}}' style='color: white; width: 4.375rem; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
-                      <span>{{game.week.week_name}}</span>
+                    <td value='{{game.period.period_id}}' style='color: white; width: 4.375rem; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
+                      <span>{{game.period.period_name}}</span>
                     </td>
-                    <td value='{{game.opponent_team_game.team_season.team.team_location_name}}' style='color: white; width: 0.625rem; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
+                    <td value='{{game.opponent_team_game.team_season.team.team_name}}' style='color: white; width: 0.625rem; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
                       <a href='{{game.opponent_team_game.team_season.team.team_href}}'>
                         <img class='logo logo-50' src='{{game.opponent_team_game.team_season.team.team_logo}}'/>
                       </a>
                     </td>
-                    <td value='{{game.opponent_team_game.team_season.team.team_location_name}}' class='column-med left-text'>
-                      <span class='font10'>
-                        {% if game.was_played%}
-                        {{game.opponent_team_game.national_rank_display}}
-                        {%else%}
-                        {{game.opponent_team_game.team_season.national_rank_display}}
-                        {%endif%}
-                      </span>
+                    <td value='{{game.opponent_team_game.team_season.team.team_name}}' class='column-med left-text'>
+                      <div>
                       {% if game.opponent_team_game.team_season.team.is_user_team %}
                       <span style='color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};'>
                         <i class="fa fa-user"></i>
@@ -56,12 +50,20 @@
                         {{game.opponent_team_game.team_season.team.team_location_name}}
                       </a>
                       <span class="font10">
-                        {% if game.was_played%}
-                        {{game.opponent_team_game.record_display}}
-                        {%else%}
-                        {{game.opponent_team_game.team_season.record_display}}
-                        {%endif%}
-                      </span>
+                          {% if game.was_played%}
+                          {{game.opponent_team_game.record_display}}
+                          {%else%}
+                          {{game.opponent_team_game.team_season.record_display}}
+                          {%endif%}
+                        </span>
+                      
+                      </div>
+                      <div>
+                        <span class='font10'>
+                          {{game.game_location}}
+                        </span>
+                        
+                      </div>
                     </td>
                     <td value='{{game.team_game.game_outcome_letter}},{{game.game_display}}' class='center-text' >
                       {% if game.was_played%}

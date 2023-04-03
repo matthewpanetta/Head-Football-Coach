@@ -165,11 +165,11 @@ const PopulateTop25 = async (common) => {
   const index_group = common.index_group;
   const season = common.season;
 
-  var this_week = db.week.find({ season: season });
-  console.log("this_week", this_week);
-  this_week = this_week.filter((week) => week.is_current)[0];
-  const this_week_id = this_week.week_id;
-  const last_week_id = this_week_id - 1;
+  var this_period = db.period.find({ season: season });
+  console.log("this_period", this_period);
+  this_period = this_period.find((period) => period.is_current) || {};
+  const this_period_id = this_period.period_id;
+  const last_period_id = this_period_id - 1;
 
   var team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
   team_seasons = team_seasons.sort(function (a, b) {
@@ -180,11 +180,11 @@ const PopulateTop25 = async (common) => {
   const team_ids = team_seasons.map((ts) => ts.team_id);
   const teams = db.team.find({ team_id: { $in: team_ids } });
 
-  let this_week_team_games = db.team_game.find({ week_id: this_week_id });
-  let last_week_team_games = db.team_game.find({ week_id: last_week_id });
+  let this_period_team_games = db.team_game.find({ period_id: this_period_id });
+  let last_period_team_games = db.team_game.find({ period_id: last_period_id });
 
-  const total_team_games = Object.values(this_week_team_games).concat(
-    Object.values(last_week_team_games)
+  const total_team_games = Object.values(this_period_team_games).concat(
+    Object.values(last_period_team_games)
   );
   const total_team_game_ids = total_team_games.map((team_game) => team_game.game_id);
 
@@ -197,41 +197,41 @@ const PopulateTop25 = async (common) => {
 
   const team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
 
-  last_week_team_games = nest_children(last_week_team_games, games_by_game_id, "game_id", "game");
-  this_week_team_games = nest_children(this_week_team_games, games_by_game_id, "game_id", "game");
+  last_period_team_games = nest_children(last_period_team_games, games_by_game_id, "game_id", "game");
+  this_period_team_games = nest_children(this_period_team_games, games_by_game_id, "game_id", "game");
 
-  last_week_team_games = nest_children(
-    last_week_team_games,
+  last_period_team_games = nest_children(
+    last_period_team_games,
     team_seasons_by_team_season_id,
     "team_season_id",
     "team_season"
   );
-  this_week_team_games = nest_children(
-    this_week_team_games,
+  this_period_team_games = nest_children(
+    this_period_team_games,
     team_seasons_by_team_season_id,
     "team_season_id",
     "team_season"
   );
 
-  let all_team_games = db.team_game.find({ week_id: { $in: [this_week_id, last_week_id] } });
+  let all_team_games = db.team_game.find({ period_id: { $in: [this_period_id, last_period_id] } });
   all_team_games = nest_children(all_team_games, team_seasons_by_team_season_id, 'team_season_id', 'team_season')
   const all_team_games_by_team_game_id = index_group_sync(all_team_games, "index", "team_game_id");
 
-  last_week_team_games.forEach(function(tg){
+  last_period_team_games.forEach(function(tg){
     tg.opponent_team_game = all_team_games_by_team_game_id[tg.opponent_team_game_id];
   })
 
-  this_week_team_games.forEach(function(tg){
+  this_period_team_games.forEach(function(tg){
     tg.opponent_team_game = all_team_games_by_team_game_id[tg.opponent_team_game_id];
   })
 
-  const last_week_team_games_by_team_season_id = index_group_sync(
-    last_week_team_games,
+  const last_period_team_games_by_team_season_id = index_group_sync(
+    last_period_team_games,
     "index",
     "team_season_id"
   );
-  const this_week_team_games_by_team_season_id = index_group_sync(
-    this_week_team_games,
+  const this_period_team_games_by_team_season_id = index_group_sync(
+    this_period_team_games,
     "index",
     "team_season_id"
   );
@@ -261,15 +261,15 @@ const PopulateTop25 = async (common) => {
   );
   team_seasons = nest_children(
     team_seasons,
-    last_week_team_games_by_team_season_id,
+    last_period_team_games_by_team_season_id,
     "team_season_id",
-    "last_week_team_game"
+    "last_period_team_game"
   );
   team_seasons = nest_children(
     team_seasons,
-    this_week_team_games_by_team_season_id,
+    this_period_team_games_by_team_season_id,
     "team_season_id",
-    "this_week_team_game"
+    "this_period_team_game"
   );
 
   let top_25_team_seasons = team_seasons;

@@ -193,7 +193,7 @@ const nav_bar_links = async (common, data) => {
   const LinkGroups = [
     {
       GroupName: "Action",
-      GroupDisplay: `${current_period.period_name}, ${season}`,
+      GroupDisplay: `${current_period.period_name || current_day.MMMM_D}, ${season}`,
       GroupLinks: user_actions,
     },
     {
@@ -775,6 +775,13 @@ const create_schedule = (data) => {
   let periods_game_scheduled = {};
   all_period_ids.forEach(w_id => periods_game_scheduled[w_id] = 0);
 
+  console.log({
+    all_period_ids:all_period_ids,
+    periods:periods, 
+    all_periods_by_period_id:all_periods_by_period_id
+  });
+  debugger;
+
   index_group_sync(periods, "index", "period_name");
 
   team_seasons.length;
@@ -852,13 +859,13 @@ const create_schedule = (data) => {
       if (schedule_phase.constraint == "early or end of season") {
         period_weights = possible_periods.map((w_id) => [
           w_id,
-          Math.abs((all_period_ids.size / 2) - all_periods_by_period_id[w_id].schedule_period_number) ** 4,
+          Math.abs((all_period_ids.size / 2) - all_periods_by_period_id[w_id].schedule_week_number) ** 4,
         ]);
       } else if (schedule_phase.constraint == "middle of season") {
         period_weights = possible_periods.map((w_id) => [
           w_id,
           (all_period_ids.size -
-            Math.abs((all_period_ids.size / 2) - all_periods_by_period_id[w_id].schedule_period_number) * 2) ** 4,
+            Math.abs((all_period_ids.size / 2) - all_periods_by_period_id[w_id].schedule_week_number) * 2) ** 4,
         ]);
       } else {
         period_weights = possible_periods.map((w_id) => [w_id, 4]);
@@ -866,6 +873,14 @@ const create_schedule = (data) => {
 
       let chosen_period_id = weighted_random_choice(period_weights);
       schedule_phase.periods.push(chosen_period_id);
+      console.log('mid-loop for scheduling_dict phases', {
+        chosen_period_id:chosen_period_id,
+        schedule_phase:schedule_phase,
+        period_weights:period_weights,
+        possible_periods:possible_periods,
+        schedule_phase:schedule_phase,
+        scheduling_dict:scheduling_dict
+      });
       phase_available_periods.delete(chosen_period_id);
     }
   });
@@ -897,21 +912,21 @@ const create_schedule = (data) => {
   ];
 
   let group_pairing_mechanism = {
-    "1x4":[
+    "1x4":[ // Same division, play each other once
       [[0,1], [2,3]],
       [[0,2], [1,3]],
       [[0,3], [1,2]],
     ],
-    "2x1": [
+    "2x1": [ // Two different divisions, pair up by seed
       [[0,4], [1,5], [2,6], [3,7]]
     ],
-    "1x4+BYE":[
+    "1x4+BYE":[ //Same division, play each other once, work in a BYE week
       [[0,1], [2,3]],
       [[0,2]],
       [[1,3]],
       [[0,3], [1,2]],
     ],
-    "2x4":[
+    "2x4":[ // Two divisions, each team plays every team from opposing division
       [[0,4], [1,5], [2,6], [3,7]],
       [[0,5], [1,4], [2,7], [3,6]],
       [[0,6], [1,7], [2,4], [3,5]],
@@ -1067,7 +1082,9 @@ const save_created_schedule = async(data) => {
   console.log("At end of create_schedule", {
     games_to_create: games_to_create,
     team_games_to_create: team_games_to_create,
+    best_scheduling_dict:best_scheduling_dict
   });
+  debugger;
 };
 
 const age_out_rating = (rating_group, rating, value, age) => {
@@ -1738,27 +1755,11 @@ const create_new_players_and_player_team_seasons = async (common, world_id, seas
     let teams = nest_children(leag.teams, team_seasons_by_team_id, "team_id", "team_season");
     let teams_by_team_abbreviation = index_group_sync(teams, "index", "team_abbreviation");
 
-    console.log({ season:season, teams_by_team_abbreviation: teams_by_team_abbreviation, leag:leag, teams:teams });
-
-    console.log({
-      player_names:player_names,
-      player_cities:player_cities,
-      player_colleges:player_colleges,
-      num_players_to_create:num_players_to_create,
-    });
-
     if (season == 2022 && leag.league_abbreviation == 'NFL') {
-      
-      console.log({
-        player_list: player_list,
-      });
 
       for (let p of player_list) {
 
         let archetype = p.archetype || `${p.position}_Balanced`;
-        console.log({
-          p:p, archetype:archetype
-        });
 
         var player_obj = new player({
           player_id: player_id_counter,
@@ -1868,9 +1869,6 @@ const create_phase = async (season, common) => {
       let previous_period_end_date = null;
 
       ph.periods = ph.periods || [];
-      console.log({
-        ph:ph
-      });
       if (ph.periods.length == 0 && ph.period_week_template){
         for (let template_week_index = 0; template_week_index < ph.template_week_count; template_week_index++){
           let period_obj = deep_copy(ph.period_week_template);
@@ -1881,18 +1879,17 @@ const create_phase = async (season, common) => {
 
           previous_period_end_date = period_obj.end_date;
           period_obj.period_name = period_obj.period_name.replace('{{index}}', template_week_index + 1);
+          if (ph.phase_name == 'Regular Season'){
+            period_obj.schedule_week_number = template_week_index + 1;
+          }
           ph.periods.push(period_obj);
         }
       }
 
-      console.log({
-        'ph.periods': ph.periods,
-        ph:ph
-      });
-
       ph.periods.forEach(function(pe){
         pe.season = season;
         pe.period_id = period_id;
+        pe.phase_id = phase_id;
 
         pe.start_date = pe.start_date ? add_season_to_date(season, pe.start_date) : next_date(previous_period_end_date || previous_phase_end_date);
         pe.end_date = pe.end_date ? add_season_to_date(season, pe.end_date) : date_add(pe.start_date, pe.week_length);
@@ -1906,10 +1903,6 @@ const create_phase = async (season, common) => {
       if (!ph.end_date){
         ph.end_date = previous_period_end_date;
       }
-
-      console.log({
-        ph:ph
-      });
 
       phase_id += 1;
 
@@ -1926,13 +1919,8 @@ const create_phase = async (season, common) => {
   });
 
   periods_to_create.forEach(function(pe){
-    console.log({ 
-      db: db, 
-      pe: pe 
-    });
+
     let period_dates = dates.filter(d => d.date.isBetween(pe.start_date, pe.end_date, '[]'));
-    console.log({      db: db, 
-      pe: pe , period_dates:period_dates});
 
       period_dates.forEach(function(dt){
         dt.period_id = pe.period_id;
@@ -2748,7 +2736,7 @@ const calculate_power_rankings = async (blank_var, common) => {
 
   team_games = nest_children(team_games, games_by_game_id, "game_id", "game");
   //team_games = team_games.filter((tg) => tg.game.was_played);
-  // team_games = team_games.filter((tg) => (tg.game.period.schedule_period_number || 2000) <= 1999);
+  // team_games = team_games.filter((tg) => (tg.game.period.schedule_week_number || 2000) <= 1999);
   let team_games_by_team_season_id = index_group_sync(team_games, "group", "team_season_id");
 
   let teams_by_team_id = index_group_sync(teams, "index", "team_id");
@@ -4990,7 +4978,7 @@ const schedule_game = (common, scheduling_dict, team_set) => {
           return [
             period_id,
             Math.ceil(
-              Math.abs(scheduling_dict.all_periods_by_period_id[period_id].schedule_period_number - 9.5) **
+              Math.abs(scheduling_dict.all_periods_by_period_id[period_id].schedule_week_number - 9.5) **
                 4
             ),
           ];

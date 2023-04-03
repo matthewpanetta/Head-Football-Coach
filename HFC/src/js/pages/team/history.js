@@ -67,14 +67,14 @@ export const page_team_history = async (common) => {
   for (const team_season of team_seasons) {
     team_season.final_conference_rank = team_season.rankings.division_rank[0];
 
-    team_season.final_national_rank = team_season.rankings.national_rank[0];
-    team_season.first_national_rank =
-      team_season.rankings.national_rank[team_season.rankings.national_rank.length - 1];
-    team_season.best_national_rank = team_season.rankings.national_rank.reduce(
+    team_season.final_power_rank = team_season.rankings.power_rank[0];
+    team_season.first_power_rank =
+      team_season.rankings.power_rank[team_season.rankings.power_rank.length - 1];
+    team_season.best_power_rank = team_season.rankings.power_rank.reduce(
       (acc, val) => Math.min(acc, val),
       999
     );
-    team_season.worst_national_rank = team_season.rankings.national_rank.reduce(
+    team_season.worst_power_rank = team_season.rankings.power_rank.reduce(
       (acc, val) => Math.max(acc, val),
       1
     );

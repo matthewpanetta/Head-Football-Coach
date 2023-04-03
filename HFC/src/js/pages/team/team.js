@@ -113,10 +113,10 @@ export const page_team = async (common) => {
   const season = common.params.season || common.season;
   common.season = season;
 
-  let weeks = db.week.find({ season: season });
-  let weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
+  let periods = db.period.find({ season: season });
+  let periods_by_period_id = index_group_sync(periods, "index", "period_id");
 
-  common.stopwatch(common, "Time after fetching weeks");
+  common.stopwatch(common, "Time after fetching periods");
 
   var teams = db.team.find({ team_id: { $gt: 0 } });
   teams = teams.sort(function (teamA, teamB) {
@@ -181,6 +181,16 @@ export const page_team = async (common) => {
   let games = db.game.find({ game_id: { $in: game_ids } });
   games = nest_children(games, team_games_by_game_id, "game_id", "team_game");
 
+  console.log({
+    games:games,
+    team_games:team_games,
+    team:team,
+    team_season:team_season,
+    conferences:conferences,
+    season:season,
+    periods:periods
+  })
+
   common.stopwatch(common, "Time after fetching games");
 
   const opponent_team_game_ids = team_games.map((team_game) => team_game.opponent_team_game_id);
@@ -222,14 +232,14 @@ export const page_team = async (common) => {
 
   games = nest_children(games, team_games_by_game_id, "game_id", "team_game");
   games = nest_children(games, opponent_team_games_by_game_id, "game_id", "opponent_team_game");
-  games = nest_children(games, weeks_by_week_id, "week_id", "week");
+  games = nest_children(games, periods_by_period_id, "period_id", "period");
 
   const headline_ids = team.team_season.headlines;
   var headlines = db.headline.find({ headline_id: { $in: headline_ids } });
-  headlines = nest_children(headlines, weeks_by_week_id, "week_id", "week");
+  headlines = nest_children(headlines, periods_by_period_id, "period_id", "period");
   let headlines_by_game_id = index_group_sync(headlines, "group", "game_id");
 
-  headlines = headlines.sort((h_a, h_b) => h_b.week_id - h_a.week_id);
+  headlines = headlines.sort((h_a, h_b) => h_b.period_id - h_a.period_id);
 
   common.stopwatch(common, "Time after fetching headlines");
 
@@ -256,7 +266,7 @@ export const page_team = async (common) => {
     headlines_by_game_id: headlines_by_game_id,
   });
 
-  games = games.sort((g_a, g_b) => g_a.week_id - g_b.week_id);
+  games = games.sort((g_a, g_b) => g_a.period_id - g_b.period_id);
 
   var counter_games = 0;
   var selected_game_chosen = false;
@@ -291,9 +301,9 @@ export const page_team = async (common) => {
       game.selected_game_box = "";
     }
 
-    game.week_name = game.week.week_name;
-    if (game.week_name == "Conference Championships") {
-      game.week_name =
+    game.period_name = game.period.period_name;
+    if (game.period_name == "Conference Championships") {
+      game.period_name =
         team.team_season.conference_season.conference.conference_abbreviation + " Champ";
     }
 
@@ -347,9 +357,9 @@ export const page_team = async (common) => {
     counter_games += 1;
   }
 
-  let current_week = weeks.find(w => w.is_current);
-  let this_week_game = games.find(g => g.week.week_id == current_week.week_id);
-  let last_week_game = games.find(g => g.week.week_id == current_week.week_id - 1);
+  let current_period = periods.find(w => w.is_current) || {};
+  let this_period_game = games.find(g => g.period.period_id == current_period.period_id);
+  let last_period_game = games.find(g => g.period.period_id == current_period.period_id - 1);
 
   var signed_player_team_season_ids = []; //TODO
   var signed_player_team_seasons = db.player_team_season.find({
@@ -378,8 +388,8 @@ export const page_team = async (common) => {
     team_id: team_id,
     team: team,
     games: games,
-    this_week_game:this_week_game,
-    last_week_game:last_week_game,
+    this_period_game:this_period_game,
+    last_period_game:last_period_game,
     teams: teams,
     all_teams: await all_teams(common, ""),
     conference_standings: conference_standings,
@@ -823,8 +833,8 @@ const team_action = async (common) => {
 
     let rival_team_season_ids = rival_team_seasons.map((ts) => ts.team_season_id);
 
-    let weeks = db.week.find();
-    let weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
+    let periods = db.period.find();
+    let periods_by_period_id = index_group_sync(periods, "index", "period_id");
 
     let all_team_season_ids = Array.from(team_season_ids).concat(Array.from(rival_team_season_ids));
     let all_team_season_id_set = new Set(all_team_season_ids);
@@ -841,7 +851,7 @@ const team_action = async (common) => {
     let game_ids = team_games.map((tg) => tg.game_id);
 
     let all_games = db.game.find({ game_id: { $in: game_ids } });
-    all_games = nest_children(all_games, weeks_by_week_id, "week_id", "week");
+    all_games = nest_children(all_games, periods_by_period_id, "period_id", "period");
     let all_games_by_game_id = index_group_sync(all_games, "index", "game_id");
 
     console.log({
@@ -889,7 +899,7 @@ const team_action = async (common) => {
         }
       });
 
-      rivalry.team_games = rivalry.team_games.sort((tg_a, tg_b) => tg_a.week_id - tg_b.week_id);
+      rivalry.team_games = rivalry.team_games.sort((tg_a, tg_b) => tg_a.period_id - tg_b.period_id);
 
       rivalry.played_team_games = rivalry.team_games.filter((tg) => tg.game.was_played);
 
@@ -925,20 +935,20 @@ const team_action = async (common) => {
             streak_list.push({
               team: tg.game.winning_team,
               count: 1,
-              first_season: tg.game.week.season,
-              last_season: tg.game.week.season,
+              first_season: tg.game.period.season,
+              last_season: tg.game.period.season,
             });
           } else {
             let latest_streak_obj = streak_list[streak_list.length - 1];
             if (tg.game.winning_team.team_id == latest_streak_obj.team.team_id) {
               latest_streak_obj.count += 1;
-              latest_streak_obj.last_season = tg.game.week.season;
+              latest_streak_obj.last_season = tg.game.period.season;
             } else {
               streak_list.push({
                 team: tg.game.winning_team,
                 count: 1,
-                first_season: tg.game.week.season,
-                last_season: tg.game.week.season,
+                first_season: tg.game.period.season,
+                last_season: tg.game.period.season,
               });
             }
           }
@@ -1024,12 +1034,12 @@ function rankings_trend_chart(team, common) {
   let rank_trends = [];
   let rank_count = team.team_season.rankings.division_rank.length;
 
-  for (var week_counter = 1; week_counter < rank_count; week_counter++) {
+  for (var period_counter = 1; period_counter < rank_count; period_counter++) {
     rank_trends.push({
-      week: week_counter,
+      period: period_counter,
       ranks: {
-        conference_rank: team.team_season.rankings.division_rank[rank_count - week_counter],
-        national_rank: team.team_season.rankings.national_rank[rank_count - week_counter],
+        conference_rank: team.team_season.rankings.division_rank[rank_count - period_counter],
+        national_rank: team.team_season.rankings.national_rank[rank_count - period_counter],
       },
     });
   }
@@ -1055,8 +1065,8 @@ function rankings_trend_chart(team, common) {
   var valueline = d3
     .line()
     .x(function (d) {
-      console.log({ d: d, v: d.week });
-      return x(d.week);
+      console.log({ d: d, v: d.period });
+      return x(d.period);
     })
     .y(function (d) {
       console.log({ d: d, v: d.ranks.national_rank });
@@ -1088,7 +1098,7 @@ function rankings_trend_chart(team, common) {
       d3
         .line()
         .x(function (d) {
-          return x(d.week);
+          return x(d.period);
         })
         .y(function (d) {
           return y(d.ranks.national_rank);
@@ -1098,7 +1108,7 @@ function rankings_trend_chart(team, common) {
   /* Scale the range of the data */
   x.domain(
     d3.extent(rank_trends, function (d) {
-      return d.week;
+      return d.period;
     })
   );
   y.domain([Math.max(...rank_trends.map((r) => r.ranks.national_rank)) + 5, 1]);
@@ -1133,8 +1143,8 @@ function rankings_trend_chart(team, common) {
     x.range([0, width]);
     y.range([height, 0]);
     valueline.x(function (d) {
-      console.log({ d: d, v: d.week });
-      return x(d.week);
+      console.log({ d: d, v: d.period });
+      return x(d.period);
     });
     valueline.y(function (d) {
       console.log({ d: d, v: d.ranks.national_rank });

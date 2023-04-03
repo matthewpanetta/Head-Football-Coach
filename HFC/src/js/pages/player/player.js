@@ -128,8 +128,8 @@ const populate_player_stats = async (common) => {
     .filter((pts) => pts.team_season_id > 0)
     .map((pts) => pts.season);
 
-  const weeks = db.week.find({ season: { $in: all_seasons } });
-  const weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
+  const periods = db.period.find({ season: { $in: all_seasons } });
+  const periods_by_period_id = index_group_sync(periods, "index", "period_id");
 
   var player_team_games = db.player_team_game.find({
     player_team_season_id: { $in: player_team_season_ids },
@@ -145,7 +145,7 @@ const populate_player_stats = async (common) => {
   const teams = db.team.find({ team_id: { $gt: 0 } });
   const teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
-  games = nest_children(games, weeks_by_week_id, "week_id", "week");
+  games = nest_children(games, periods_by_period_id, "period_id", "period");
   const games_by_game_id = index_group_sync(games, "index", "game_id");
 
   team_seasons = nest_children(team_seasons, teams_by_team_id, "team_id", "team");
@@ -176,7 +176,7 @@ const populate_player_stats = async (common) => {
   console.log({ player_team_games: player_team_games });
 
   player_team_games = player_team_games.sort(
-    (ptg_a, ptg_b) => ptg_a.team_game.game.week_id - ptg_b.team_game.game.week_id
+    (ptg_a, ptg_b) => ptg_a.team_game.game.period_id - ptg_b.team_game.game.period_id
   );
 
   const recent_game_stats_data = player_team_games.slice(-5);
@@ -921,11 +921,11 @@ export const page_player = async (common) => {
       "player_team_game_id"
     );
 
-    const weeks = db.week.find({ season: { $in: seasons } });
-    const weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
+    const periods = db.period.find({ season: { $in: seasons } });
+    const periods_by_period_id = index_group_sync(periods, "index", "period_id");
 
     if (player_awards.length > 0) {
-      player_awards = nest_children(player_awards, weeks_by_week_id, "week_id", "week");
+      player_awards = nest_children(player_awards, periods_by_period_id, "period_id", "period");
       player_awards = nest_children(
         player_awards,
         player_team_games_by_player_team_game_id,
