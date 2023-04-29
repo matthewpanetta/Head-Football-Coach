@@ -42,12 +42,47 @@ export const position_group_map = {
   P: "Defense",
 };
 
+// export const world_options = [
+//   {
+//     display: "Full Modern World",
+//     description: "All conferences and teams as of 2022",
+//     database_suffix: "",
+//   }
+// ];
+
 export const world_options = [
   {
-    display: "Full Modern World",
+    display: "NFL - Full Modern World",
     description: "All conferences and teams as of 2022",
     database_suffix: "",
-  }
+  },
+  {
+    display: "College - Full Modern World",
+    description: "All conferences and teams as of 2022",
+    database_suffix: "_college",
+  },
+  {
+    display: "College - Small Modern World",
+    description:
+      "Conferences and teams as of 2022, including SEC, Pac-12, AAC, MAC, and Independents",
+    database_suffix: "_college_small",
+  },
+  {
+    display: "College - Super Small Modern World",
+    description: "Conferences and teams as of 2022, including SEC, B10",
+    database_suffix: "_college_super_small",
+  },
+  {
+    display: "College - Full World - 2024",
+    description:
+      "All conferences and teams as of 2024, including notable upcoming conference changes",
+    database_suffix: "_college_2024",
+  },
+  // {
+  //   display: "Full World - 2010",
+  //   description: "All conferences and teams, as they existed in 2010",
+  //   database_suffix: "_2010",
+  // },
 ];
 
 export const class_order_map = {

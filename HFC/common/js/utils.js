@@ -45,6 +45,10 @@ export const sum = (arr) => {
   return arr.reduce((a, b) => a + b, 0);
 };
 
+export const deg2rad = (deg) => {
+  return deg * (Math.PI / 180);
+};
+
 export const nest_children = (parent_array, child_dict, join_key, store_key) => {
   if (Array.isArray(child_dict)) {
     console.log("********POTENTIAL BUG************");
@@ -847,7 +851,13 @@ export const body_from_position = (position) => {
       weight_avg: 313.74,
       weight_std: 10.95,
     },
-    IOL: {
+    C: {
+      height_avg: 76.07,
+      height_std: 1.16,
+      weight_avg: 314.75,
+      weight_std: 11.76,
+    },
+    G: {
       height_avg: 76.07,
       height_std: 1.16,
       weight_avg: 314.75,

@@ -1,0 +1,21 @@
+[
+  {
+    "league_name": "NCAA",
+    "league_abbreviation": "NCAA",
+    "type": "college",
+    "roster": {
+      "preseason_roster_max": 75,
+      "season_roster_max": 53,
+      "gameday_roster_max": 46
+    },
+    "schedule": {
+      "games_per_team": 16,
+      "schedule_format": [
+        { "type": "same_division", "rounds": 2 },
+        { "type": "same_conference_division", "rounds": 1 },
+        { "type": "other_conference_division", "rounds": 1 },
+        { "type": "same_conference_same_seed", "rounds": 1 }
+      ]
+    }
+  }
+]

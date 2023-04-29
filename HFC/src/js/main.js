@@ -1,5 +1,5 @@
 import { nunjucks_env } from '../../../../../../../common/js/nunjucks_tags.js';
-import { index_group_sync, distance_between_coordinates, nest_children, deep_copy, weighted_random_choice, shuffle, body_from_position, round_decimal, normal_trunc, sum, add_season_to_date, average, get, distinct, set_intersect } from '../../../../../../../common/js/utils.js';
+import { index_group_sync, distance_between_coordinates, nest_children, deep_copy, weighted_random_choice, shuffle, body_from_position, normal_trunc_bounce, round_decimal, normal_trunc, sum, add_season_to_date, average, get, distinct, set_intersect, distance_between_cities } from '../../../../../../../common/js/utils.js';
 import { init_basic_table_sorting } from '../../../../../../../js/football-table/football-table.js';
 import { team_game, conference, league_season, team, team_season, team_season_stats, coach, coach_team_season, player, player_team_season, player_team_season_stats, day, award } from '../../../../../../../js/schema.js';
 import { driver_db, resolve_db, create_new_db } from '../../../../../../../js/database.js';
@@ -730,321 +730,941 @@ const create_conference_seasons = async (data) => {
   await db.saveDatabaseAsync();
 };
 
+const zip = (a, b) => {
+  var zipped = a.map((elem, ind) => [elem, b[ind]]);
+  return zipped.filter((zip_set) => zip_set[0] && zip_set[1]);
+};
+
 const create_schedule = (data) => {
   const common = data.common;
   const db = common.db;
   const season = data.season;
   const world_id = data.world_id;
+  const leagues = db.league.find();
 
-  const teams = db.team.find({ team_id: { $gt: 0 } });
-  const teams_by_team_id = index_group_sync(teams, "index", "team_id");
+  // Current limitation: only allows for 1 league
+  switch (leagues[0].type) {
+    case 'pro':
+      return create_pro_schedule();
+    case 'college':
+    default:
+      return create_college_schedule();
+  }
 
-  var games_to_create = [],
-    team_games_to_create = [],
-    team_games_to_create_ids = [];
-  var team_season_schedule_tracker = {};
-  const games_per_team = 16;
+  function create_pro_schedule () {
+    const teams = db.team.find({ team_id: { $gt: 0 } });
+    const teams_by_team_id = index_group_sync(teams, "index", "team_id");
 
-  let team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
-  index_group_sync(team_seasons, "index", "team_id");
-  const conferences_by_conference_id = index_group_sync(
-    db.conference.find(),
-    "index",
-    "conference_id"
-  );
-  const conference_seasons_by_conference_season_id = index_group_sync(
-    db.conference_season.find({ season: season }),
-    "index",
-    "conference_season_id"
-  );
+    var games_to_create = [],
+      team_games_to_create = [],
+      team_games_to_create_ids = [];
+    var team_season_schedule_tracker = {};
+    const games_per_team = 16;
 
-  const phases = index_group_sync(db.phase.find({ season: season }), "index", "phase_id");
-  var periods = db.period.find({ season: season });
-  $.each(periods, function (ind, period) {
-    period.phase = phases[period.phase_id];
-  });
-  console.log({
-    phases:phases,
-    periods:periods,
-    db:db, common:common
-  });
-  periods = periods.filter((period) => period.phase && period.phase.phase_name == "Regular Season");
-  let all_period_ids = new Set(periods.map((w) => w.period_id));
-  let all_periods_by_period_id = index_group_sync(periods, "index", "period_id");
+    let team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
+    index_group_sync(team_seasons, "index", "team_id");
+    const conferences_by_conference_id = index_group_sync(
+      db.conference.find(),
+      "index",
+      "conference_id"
+    );
+    const conference_seasons_by_conference_season_id = index_group_sync(
+      db.conference_season.find({ season: season }),
+      "index",
+      "conference_season_id"
+    );
 
-  let periods_game_scheduled = {};
-  all_period_ids.forEach(w_id => periods_game_scheduled[w_id] = 0);
+    const phases = index_group_sync(db.phase.find({ season: season }), "index", "phase_id");
+    var periods = db.period.find({ season: season });
+    $.each(periods, function (ind, period) {
+      period.phase = phases[period.phase_id];
+    });
+    console.log({
+      phases:phases,
+      periods:periods,
+      db:db, common:common
+    });
+    periods = periods.filter((period) => period.phase && period.phase.phase_name == "Regular Season");
+    let all_period_ids = new Set(periods.map((w) => w.period_id));
+    let all_periods_by_period_id = index_group_sync(periods, "index", "period_id");
 
-  console.log({
-    all_period_ids:all_period_ids,
-    periods:periods, 
-    all_periods_by_period_id:all_periods_by_period_id
-  });
-  debugger;
+    let periods_game_scheduled = {};
+    all_period_ids.forEach(w_id => periods_game_scheduled[w_id] = 0);
 
-  index_group_sync(periods, "index", "period_name");
+    console.log({
+      all_period_ids:all_period_ids,
+      periods:periods, 
+      all_periods_by_period_id:all_periods_by_period_id
+    });
+    debugger;
 
-  team_seasons.length;
+    index_group_sync(periods, "index", "period_name");
 
-  for (let team_season of team_seasons) {
-    let team_conference =
-      conferences_by_conference_id[
-        conference_seasons_by_conference_season_id[team_season.conference_season_id].conference_id
-      ];
+    team_seasons.length;
 
-      team_season.conference_season = conference_seasons_by_conference_season_id[team_season.conference_season_id];
-      team_season.conference_season.conference = conferences_by_conference_id[team_season.conference_season.conference_id];
-      team_season.full_division_name = team_season.conference_season.conference.conference_abbreviation + ' ' + team_season.division_name;
+    for (let team_season of team_seasons) {
+      let team_conference =
+        conferences_by_conference_id[
+          conference_seasons_by_conference_season_id[team_season.conference_season_id].conference_id
+        ];
 
-    team_season_schedule_tracker[team_season.team_season_id] = {
-      schedule: {
-        games_to_schedule: games_per_team,
-        games_scheduled: 0,
-        home_games: 0,
-        away_games: 0,
-        net_home_games: 0,
-      },
-      periods_scheduled: new Set(),
-      available_period_ids: new Set(all_period_ids),
-      opponents_scheduled: new Set(),
-      conference_season_id: team_season.conference_season_id,
-      division_name: team_season.division_name,
-      team: teams_by_team_id[team_season.team_id],
-      full_division_name: team_conference.conference_abbreviation + ' ' + team_season.division_name
+        team_season.conference_season = conference_seasons_by_conference_season_id[team_season.conference_season_id];
+        team_season.conference_season.conference = conferences_by_conference_id[team_season.conference_season.conference_id];
+        team_season.full_division_name = team_season.conference_season.conference.conference_abbreviation + ' ' + team_season.division_name;
+
+      team_season_schedule_tracker[team_season.team_season_id] = {
+        schedule: {
+          games_to_schedule: games_per_team,
+          games_scheduled: 0,
+          home_games: 0,
+          away_games: 0,
+          net_home_games: 0,
+        },
+        periods_scheduled: new Set(),
+        available_period_ids: new Set(all_period_ids),
+        opponents_scheduled: new Set(),
+        conference_season_id: team_season.conference_season_id,
+        division_name: team_season.division_name,
+        team: teams_by_team_id[team_season.team_id],
+        full_division_name: team_conference.conference_abbreviation + ' ' + team_season.division_name
+      };
+
+    }
+    var games_to_create_ids = [];
+
+    var next_game_id = db.game.nextId("game_id");
+    var next_team_game_id = db.team_game.nextId("team_game_id");
+
+    index_group_sync(
+      team_seasons,
+      "group",
+      "conference_season_id"
+    );
+
+    var scheduling_dict = {
+      team_season_schedule_tracker: team_season_schedule_tracker,
+      all_period_ids: all_period_ids,
+      periods_game_scheduled:periods_game_scheduled,
+      all_periods_by_period_id: all_periods_by_period_id,
+      world_id: world_id,
+      season: season,
+      next_team_game_id: next_team_game_id,
+      next_game_id: next_game_id,
+      team_games_to_create_ids: team_games_to_create_ids,
+      team_games_to_create: team_games_to_create,
+      games_to_create_ids: games_to_create_ids,
+      games_to_create: games_to_create,
     };
 
-  }
-  var games_to_create_ids = [];
+    scheduling_dict.schedule_phases = [
+      {type: "intra-division", num_periods: 3, constraint: 'early or end of season', schedule_mechanism: "1x4"},
+      {type: "intra-conference seed match", num_periods: 1, constraint: 'early or end of season', schedule_mechanism: "2x1"},
+      {type: "intra-division", num_periods: 4, constraint: 'middle of season', schedule_mechanism: "1x4+BYE"},
+      {type: "inter division round", num_periods: 4, schedule_mechanism: "2x4"},
+      {type: "inter division round", num_periods: 4, schedule_mechanism: "2x4"},
+      {type: "intra-conference seed match", num_periods: 1, schedule_mechanism: "2x1"},
+    ];
 
-  var next_game_id = db.game.nextId("game_id");
-  var next_team_game_id = db.team_game.nextId("team_game_id");
+    let phase_available_periods = new Set(all_period_ids);
+    scheduling_dict.schedule_phases.forEach(function (schedule_phase) {
+      schedule_phase.periods = schedule_phase.periods || [];
+      for (let ind = 0; ind < schedule_phase.num_periods; ind++) {
+        let possible_periods = [...phase_available_periods];
+        let period_weights = [];
 
-  index_group_sync(
-    team_seasons,
-    "group",
-    "conference_season_id"
-  );
+        if (schedule_phase.constraint == "early or end of season") {
+          period_weights = possible_periods.map((w_id) => [
+            w_id,
+            Math.abs((all_period_ids.size / 2) - all_periods_by_period_id[w_id].schedule_week_number) ** 4,
+          ]);
+        } else if (schedule_phase.constraint == "middle of season") {
+          period_weights = possible_periods.map((w_id) => [
+            w_id,
+            (all_period_ids.size -
+              Math.abs((all_period_ids.size / 2) - all_periods_by_period_id[w_id].schedule_week_number) * 2) ** 4,
+          ]);
+        } else {
+          period_weights = possible_periods.map((w_id) => [w_id, 4]);
+        }
 
-  var scheduling_dict = {
-    team_season_schedule_tracker: team_season_schedule_tracker,
-    all_period_ids: all_period_ids,
-    periods_game_scheduled:periods_game_scheduled,
-    all_periods_by_period_id: all_periods_by_period_id,
-    world_id: world_id,
-    season: season,
-    next_team_game_id: next_team_game_id,
-    next_game_id: next_game_id,
-    team_games_to_create_ids: team_games_to_create_ids,
-    team_games_to_create: team_games_to_create,
-    games_to_create_ids: games_to_create_ids,
-    games_to_create: games_to_create,
-  };
-
-  scheduling_dict.schedule_phases = [
-    {type: "intra-division", num_periods: 3, constraint: 'early or end of season', schedule_mechanism: "1x4"},
-    {type: "intra-conference seed match", num_periods: 1, constraint: 'early or end of season', schedule_mechanism: "2x1"},
-    {type: "intra-division", num_periods: 4, constraint: 'middle of season', schedule_mechanism: "1x4+BYE"},
-    {type: "inter division round", num_periods: 4, schedule_mechanism: "2x4"},
-    {type: "inter division round", num_periods: 4, schedule_mechanism: "2x4"},
-    {type: "intra-conference seed match", num_periods: 1, schedule_mechanism: "2x1"},
-  ];
-
-  let phase_available_periods = new Set(all_period_ids);
-  scheduling_dict.schedule_phases.forEach(function (schedule_phase) {
-    schedule_phase.periods = schedule_phase.periods || [];
-    for (let ind = 0; ind < schedule_phase.num_periods; ind++) {
-      let possible_periods = [...phase_available_periods];
-      let period_weights = [];
-
-      if (schedule_phase.constraint == "early or end of season") {
-        period_weights = possible_periods.map((w_id) => [
-          w_id,
-          Math.abs((all_period_ids.size / 2) - all_periods_by_period_id[w_id].schedule_week_number) ** 4,
-        ]);
-      } else if (schedule_phase.constraint == "middle of season") {
-        period_weights = possible_periods.map((w_id) => [
-          w_id,
-          (all_period_ids.size -
-            Math.abs((all_period_ids.size / 2) - all_periods_by_period_id[w_id].schedule_week_number) * 2) ** 4,
-        ]);
-      } else {
-        period_weights = possible_periods.map((w_id) => [w_id, 4]);
+        let chosen_period_id = weighted_random_choice(period_weights);
+        schedule_phase.periods.push(chosen_period_id);
+        console.log('mid-loop for scheduling_dict phases', {
+          chosen_period_id:chosen_period_id,
+          schedule_phase:schedule_phase,
+          period_weights:period_weights,
+          possible_periods:possible_periods,
+          schedule_phase:schedule_phase,
+          scheduling_dict:scheduling_dict
+        });
+        phase_available_periods.delete(chosen_period_id);
       }
+    });
 
-      let chosen_period_id = weighted_random_choice(period_weights);
-      schedule_phase.periods.push(chosen_period_id);
-      console.log('mid-loop for scheduling_dict phases', {
-        chosen_period_id:chosen_period_id,
-        schedule_phase:schedule_phase,
-        period_weights:period_weights,
-        possible_periods:possible_periods,
-        schedule_phase:schedule_phase,
-        scheduling_dict:scheduling_dict
+    console.log({
+      phase_available_periods:phase_available_periods,
+      all_periods_by_period_id:all_periods_by_period_id,
+      all_period_ids:all_period_ids,
+      all_period_ids_l:all_period_ids.length,
+      'scheduling_dict.schedule_phases': scheduling_dict.schedule_phases
+    });
+
+    let inter_division_pairs = {
+      "AFC South": ["NFC South", "AFC West"],
+      "AFC North": ["NFC North", "AFC East"],
+      "NFC East":  ["AFC East",  "NFC North"],
+      "NFC West":  ["AFC West",  "NFC South"]
+    };
+
+    let intra_conference_seed_pairs = {
+      "AFC South": ["AFC East", "AFC North"],
+      "AFC West": ["AFC North", "AFC East"],
+      "NFC South": ["NFC East", "NFC North"],
+      "NFC West": ["NFC North", "NFC East"],
+    };
+
+    let division_list = [
+      "AFC South", "AFC West","AFC North", "AFC East","NFC South", "NFC West","NFC North", "NFC East"
+    ];
+
+    let group_pairing_mechanism = {
+      "1x4":[ // Same division, play each other once
+        [[0,1], [2,3]],
+        [[0,2], [1,3]],
+        [[0,3], [1,2]],
+      ],
+      "2x1": [ // Two different divisions, pair up by seed
+        [[0,4], [1,5], [2,6], [3,7]]
+      ],
+      "1x4+BYE":[ //Same division, play each other once, work in a BYE week
+        [[0,1], [2,3]],
+        [[0,2]],
+        [[1,3]],
+        [[0,3], [1,2]],
+      ],
+      "2x4":[ // Two divisions, each team plays every team from opposing division
+        [[0,4], [1,5], [2,6], [3,7]],
+        [[0,5], [1,4], [2,7], [3,6]],
+        [[0,6], [1,7], [2,4], [3,5]],
+        [[0,7], [1,6], [2,5], [3,4]],
+      ],
+    };
+
+    let team_seasons_by_full_division_name = index_group_sync(team_seasons, 'group', 'full_division_name');
+
+    let team_pairs = [];
+
+    for (let division_name of division_list){
+      let division_team_seasons = team_seasons_by_full_division_name[division_name];
+      let division_team_season_ids = division_team_seasons.map(ts => ts.team_season_id);
+
+      let scheduling_phases = scheduling_dict.schedule_phases.filter(sp => sp.type == 'intra-division');
+
+      scheduling_phases.forEach(function(schedule_phase){
+        division_team_season_ids = shuffle(division_team_season_ids);
+
+        let schedule_mechanism = group_pairing_mechanism[schedule_phase.schedule_mechanism];
+        schedule_mechanism.forEach(function(schedule_period, period_ind){
+          let period_id = schedule_phase.periods[period_ind];
+          schedule_period.forEach(function(pair){
+            let ts_id_a = division_team_season_ids[pair[0]];
+            let ts_id_b = division_team_season_ids[pair[1]];
+            team_pairs.push([ts_id_a, ts_id_b, {period_id: period_id,allow_duplicates: true}]);
+          });
+        });
       });
-      phase_available_periods.delete(chosen_period_id);
     }
-  });
 
-  console.log({
-    phase_available_periods:phase_available_periods,
-    all_periods_by_period_id:all_periods_by_period_id,
-    all_period_ids:all_period_ids,
-    all_period_ids_l:all_period_ids.length,
-    'scheduling_dict.schedule_phases': scheduling_dict.schedule_phases
-  });
+    for (let [division_name_a, mapped_divisions] of Object.entries(inter_division_pairs)){
+      let scheduling_phases = scheduling_dict.schedule_phases.filter(sp => sp.type == 'inter division round');
+      console.log({
+        division_name_a:division_name_a,
+        mapped_divisions:mapped_divisions
+      });
+      mapped_divisions.forEach(function(division_name_b, div_ind){
+        let schedule_phase = scheduling_phases[div_ind];
 
-  let inter_division_pairs = {
-    "AFC South": ["NFC South", "AFC West"],
-    "AFC North": ["NFC North", "AFC East"],
-    "NFC East":  ["AFC East",  "NFC North"],
-    "NFC West":  ["AFC West",  "NFC South"]
-  };
+        let division_a_teams = shuffle(team_seasons_by_full_division_name[division_name_a]);
+        let division_b_teams = shuffle(team_seasons_by_full_division_name[division_name_b]);
 
-  let intra_conference_seed_pairs = {
-    "AFC South": ["AFC East", "AFC North"],
-    "AFC West": ["AFC North", "AFC East"],
-    "NFC South": ["NFC East", "NFC North"],
-    "NFC West": ["NFC North", "NFC East"],
-  };
+        let division_a_team_season_ids = division_a_teams.map(ts => ts.team_season_id);
+        let division_b_team_season_ids = division_b_teams.map(ts => ts.team_season_id);
 
-  let division_list = [
-    "AFC South", "AFC West","AFC North", "AFC East","NFC South", "NFC West","NFC North", "NFC East"
-  ];
+        let all_teams = division_a_team_season_ids.concat(division_b_team_season_ids);
 
-  let group_pairing_mechanism = {
-    "1x4":[ // Same division, play each other once
-      [[0,1], [2,3]],
-      [[0,2], [1,3]],
-      [[0,3], [1,2]],
-    ],
-    "2x1": [ // Two different divisions, pair up by seed
-      [[0,4], [1,5], [2,6], [3,7]]
-    ],
-    "1x4+BYE":[ //Same division, play each other once, work in a BYE week
-      [[0,1], [2,3]],
-      [[0,2]],
-      [[1,3]],
-      [[0,3], [1,2]],
-    ],
-    "2x4":[ // Two divisions, each team plays every team from opposing division
-      [[0,4], [1,5], [2,6], [3,7]],
-      [[0,5], [1,4], [2,7], [3,6]],
-      [[0,6], [1,7], [2,4], [3,5]],
-      [[0,7], [1,6], [2,5], [3,4]],
-    ],
-  };
-
-  let team_seasons_by_full_division_name = index_group_sync(team_seasons, 'group', 'full_division_name');
-
-  let team_pairs = [];
-
-  for (let division_name of division_list){
-    let division_team_seasons = team_seasons_by_full_division_name[division_name];
-    let division_team_season_ids = division_team_seasons.map(ts => ts.team_season_id);
-
-    let scheduling_phases = scheduling_dict.schedule_phases.filter(sp => sp.type == 'intra-division');
-
-    scheduling_phases.forEach(function(schedule_phase){
-      division_team_season_ids = shuffle(division_team_season_ids);
-
-      let schedule_mechanism = group_pairing_mechanism[schedule_phase.schedule_mechanism];
-      schedule_mechanism.forEach(function(schedule_period, period_ind){
-        let period_id = schedule_phase.periods[period_ind];
-        schedule_period.forEach(function(pair){
-          let ts_id_a = division_team_season_ids[pair[0]];
-          let ts_id_b = division_team_season_ids[pair[1]];
-          team_pairs.push([ts_id_a, ts_id_b, {period_id: period_id,allow_duplicates: true}]);
+        let schedule_mechanism = group_pairing_mechanism[schedule_phase.schedule_mechanism];
+        schedule_mechanism.forEach(function(schedule_period, period_ind){
+          let period_id = schedule_phase.periods[period_ind];
+          schedule_period.forEach(function(pair){
+            let ts_id_a = all_teams[pair[0]];
+            let ts_id_b = all_teams[pair[1]];
+            team_pairs.push([ts_id_a, ts_id_b, {period_id: period_id}]);
+          });
         });
       });
-    });
-  }
+    }
 
-  for (let [division_name_a, mapped_divisions] of Object.entries(inter_division_pairs)){
-    let scheduling_phases = scheduling_dict.schedule_phases.filter(sp => sp.type == 'inter division round');
     console.log({
-      division_name_a:division_name_a,
-      mapped_divisions:mapped_divisions
+      team_pairs:team_pairs
     });
-    mapped_divisions.forEach(function(division_name_b, div_ind){
-      let schedule_phase = scheduling_phases[div_ind];
 
-      let division_a_teams = shuffle(team_seasons_by_full_division_name[division_name_a]);
-      let division_b_teams = shuffle(team_seasons_by_full_division_name[division_name_b]);
+    for (let [division_name_a, mapped_divisions] of Object.entries(intra_conference_seed_pairs)){
+      let scheduling_phases = scheduling_dict.schedule_phases.filter(sp => sp.type == 'intra-conference seed match');
+      console.log({
+        division_name_a:division_name_a,
+        mapped_divisions:mapped_divisions
+      });
+      mapped_divisions.forEach(function(division_name_b, div_ind){
+        let schedule_phase = scheduling_phases[div_ind];
 
-      let division_a_team_season_ids = division_a_teams.map(ts => ts.team_season_id);
-      let division_b_team_season_ids = division_b_teams.map(ts => ts.team_season_id);
+        let division_a_teams = team_seasons_by_full_division_name[division_name_a].sort((ts_a, ts_b) => ts_a.division_rank - ts_b.division_rank);
+        let division_b_teams = team_seasons_by_full_division_name[division_name_b].sort((ts_a, ts_b) => ts_a.division_rank - ts_b.division_rank);
 
-      let all_teams = division_a_team_season_ids.concat(division_b_team_season_ids);
+        let division_a_team_season_ids = division_a_teams.map(ts => ts.team_season_id);
+        let division_b_team_season_ids = division_b_teams.map(ts => ts.team_season_id);
 
-      let schedule_mechanism = group_pairing_mechanism[schedule_phase.schedule_mechanism];
-      schedule_mechanism.forEach(function(schedule_period, period_ind){
-        let period_id = schedule_phase.periods[period_ind];
-        schedule_period.forEach(function(pair){
-          let ts_id_a = all_teams[pair[0]];
-          let ts_id_b = all_teams[pair[1]];
-          team_pairs.push([ts_id_a, ts_id_b, {period_id: period_id}]);
+        let all_teams = division_a_team_season_ids.concat(division_b_team_season_ids);
+
+        console.log({
+          schedule_phase:schedule_phase,
+          scheduling_phases:scheduling_phases,
+          div_ind:div_ind,
+          mapped_divisions:mapped_divisions,
+          division_name_b:division_name_b,
+          division_name_a:division_name_a
+        });
+
+        let schedule_mechanism = group_pairing_mechanism[schedule_phase.schedule_mechanism];
+        schedule_mechanism.forEach(function(schedule_period, period_ind){
+          let period_id = schedule_phase.periods[period_ind];
+          schedule_period.forEach(function(pair){
+            let ts_id_a = all_teams[pair[0]];
+            let ts_id_b = all_teams[pair[1]];
+            team_pairs.push([ts_id_a, ts_id_b, {period_id: period_id}]);
+          });
         });
       });
+    }
+
+    // team_pairs = shuffle(team_pairs);
+    for (let team_pair of team_pairs){
+      schedule_game(common, scheduling_dict, team_pair);
+    }
+
+    let total_missing_games = 0;
+    for (var team_season_obj of Object.values(team_season_schedule_tracker)) {
+      total_missing_games += team_season_obj.schedule.games_to_schedule;
+    }
+
+    scheduling_dict.total_missing_games = total_missing_games;
+    return scheduling_dict;
+
+    // let team_seasons_to_update = Object.values(team_seasons);
+  };
+
+  function create_college_schedule () {
+    const teams = db.team.find({ team_id: { $gt: 0 } });
+    const teams_by_team_id = index_group_sync(teams, "index", "team_id");
+
+    var games_to_create = [],
+      team_games_to_create = [],
+      team_games_to_create_ids = [];
+    var team_season_schedule_tracker = {};
+    const games_per_team = 12;
+
+    let cities = ddb.cities.find();
+    console.log({ cities: cities });
+    cities.forEach((c) => (c.city_state = c.city + ", " + c.state));
+    let cities_by_city_state = index_group_sync(cities, "index", "city_state");
+    console.log({ cities_by_city_state: cities_by_city_state });
+
+    let team_seasons = db.team_season.find({ season: season, team_id: { $gt: 0 } });
+    const team_seasons_by_team_id = index_group_sync(team_seasons, "index", "team_id");
+    const team_rivalries_by_team_season_id = index_group_sync(
+      team_seasons.map(function (ts) {
+        return {
+          team_season_id: ts.team_season_id,
+          rivals: teams_by_team_id[ts.team_id].rivals,
+        };
+      }),
+      "index",
+      "team_season_id"
+    );
+    const conferences_by_conference_id = index_group_sync(
+      db.conference.find(),
+      "index",
+      "conference_id"
+    );
+    const conference_seasons_by_conference_season_id = index_group_sync(
+      db.conference_season.find({ season: season }),
+      "index",
+      "conference_season_id"
+    );
+
+    const phases = index_group_sync(db.phase.find({ season: season }), "index", "phase_id");
+    // var weeks = db.week.find({ season: season });
+    // $.each(weeks, function (ind, week) {
+    //   week.phase = phases[week.phase_id];
+    // });
+    // weeks = weeks.filter((week) => week.phase.phase_name == "Regular Season");
+    // let all_week_ids = new Set(weeks.map((w) => w.week_id));
+    // let all_weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
+    // const weeks_by_week_name = index_group_sync(weeks, "index", "week_name");
+
+    var periods = db.period.find({ season: season });
+    $.each(periods, (ind, period) => {
+      period.phase = phases[period.phase_id];
     });
-  }
 
-  console.log({
-    team_pairs:team_pairs
-  });
+    periods = periods.filter((period) => { return period.schedule_week_number !== null; });
+    let all_week_ids = new Set(periods.map((p) => p.period_id));
+    let all_weeks_by_week_id = index_group_sync(periods, "index", "period_id");
+    const weeks_by_week_name = index_group_sync(periods, "index", "period_name");
 
-  for (let [division_name_a, mapped_divisions] of Object.entries(intra_conference_seed_pairs)){
-    let scheduling_phases = scheduling_dict.schedule_phases.filter(sp => sp.type == 'intra-conference seed match');
-    console.log({
-      division_name_a:division_name_a,
-      mapped_divisions:mapped_divisions
-    });
-    mapped_divisions.forEach(function(division_name_b, div_ind){
-      let schedule_phase = scheduling_phases[div_ind];
+    let num_teams = team_seasons.length;
+    let team_quadrant_cutoffs = [1, 2, 3, 4].map((num) => ({
+      quadrant: num,
+      max_national_rank: Math.floor((num * num_teams) / 4.0),
+    }));
+    if (num_teams >= 100) {
+      team_quadrant_cutoffs = [
+        { quadrant: 1, max_national_rank: 25 },
+        { quadrant: 2, max_national_rank: 50 },
+        { quadrant: 3, max_national_rank: 75 },
+        { quadrant: 4, max_national_rank: num_teams },
+      ];
+    }
 
-      let division_a_teams = team_seasons_by_full_division_name[division_name_a].sort((ts_a, ts_b) => ts_a.division_rank - ts_b.division_rank);
-      let division_b_teams = team_seasons_by_full_division_name[division_name_b].sort((ts_a, ts_b) => ts_a.division_rank - ts_b.division_rank);
+    team_seasons = team_seasons.sort(
+      (ts_a, ts_b) =>
+        team_rivalries_by_team_season_id[ts_b.team_season_id].rivals.length -
+        team_rivalries_by_team_season_id[ts_a.team_season_id].rivals.length
+    );
+    for (let team_season of team_seasons) {
+      let team_season_rivals = team_rivalries_by_team_season_id[team_season.team_season_id].rivals;
+      for (let rival_obj of team_season_rivals) {
+        rival_obj.preferred_week_id = undefined;
+        if (rival_obj.preferred_week_number != null) {
+          rival_obj.preferred_week_id =
+            weeks_by_week_name["Week " + rival_obj.preferred_week_number].schedule_week_number;
+        }
 
-      let division_a_team_season_ids = division_a_teams.map(ts => ts.team_season_id);
-      let division_b_team_season_ids = division_b_teams.map(ts => ts.team_season_id);
+        console.log("rivals", {
+          rival_obj: rival_obj,
+          "rival_obj.preferred_week_id": rival_obj.preferred_week_id,
+          "rival_obj.preferred_week_number": rival_obj.preferred_week_number,
+          weeks_by_week_name: weeks_by_week_name,
+        });
 
-      let all_teams = division_a_team_season_ids.concat(division_b_team_season_ids);
+        rival_obj.opponent_team_season_id =
+          team_seasons_by_team_id[rival_obj.opponent_team_id.toString()].team_season_id;
+      }
+      let team_conference =
+        conferences_by_conference_id[
+          conference_seasons_by_conference_season_id[team_season.conference_season_id].conference_id
+        ];
 
       console.log({
-        schedule_phase:schedule_phase,
-        scheduling_phases:scheduling_phases,
-        div_ind:div_ind,
-        mapped_divisions:mapped_divisions,
-        division_name_b:division_name_b,
-        division_name_a:division_name_a
+        team_quadrant_cutoffs: team_quadrant_cutoffs,
+        "team_season.national_rank": team_season.power_rank,
+        team_season:team_season
       });
 
-      let schedule_mechanism = group_pairing_mechanism[schedule_phase.schedule_mechanism];
-      schedule_mechanism.forEach(function(schedule_period, period_ind){
-        let period_id = schedule_phase.periods[period_ind];
-        schedule_period.forEach(function(pair){
-          let ts_id_a = all_teams[pair[0]];
-          let ts_id_b = all_teams[pair[1]];
-          team_pairs.push([ts_id_a, ts_id_b, {period_id: period_id}]);
+      team_season_schedule_tracker[team_season.team_season_id] = {
+        conference: {
+          games_to_schedule: team_conference.schedule_format.number_conference_games,
+          games_scheduled: 0,
+          home_games: 0,
+          away_games: 0,
+          net_home_games: 0,
+        },
+        non_conference: {
+          games_to_schedule:
+            (team_conference.schedule_format.number_games || games_per_team) -
+            team_conference.schedule_format.number_conference_games,
+          games_scheduled: 0,
+          home_games: 0,
+          away_games: 0,
+          net_home_games: 0,
+          max_ooc_travel_distance: team_conference.schedule_format.max_ooc_travel_distance || 1000000,
+        },
+        weeks_scheduled: new Set(),
+        available_week_ids: new Set(all_week_ids),
+        opponents_scheduled: new Set(),
+        conference_season_id: team_season.conference_season_id,
+        division_name: team_season.division_name,
+        rivals: team_season_rivals,
+        team: teams_by_team_id[team_season.team_id],
+        city: cities_by_city_state[
+          teams_by_team_id[team_season.team_id].location.city +
+            ", " +
+            teams_by_team_id[team_season.team_id].location.state
+        ],
+        team_quadrant: team_quadrant_cutoffs.find(
+          (quadrant) => team_season.power_rank <= quadrant.max_national_rank
+        ).quadrant,
+      };
+
+      if (
+        !team_season_schedule_tracker[team_season.team_season_id].city ||
+        !team_season_schedule_tracker[team_season.team_season_id].city.lat ||
+        !team_season_schedule_tracker[team_season.team_season_id].city.long
+      ) {
+        console.log("BLANK CITY", {
+          "team_season_schedule_tracker[team_season.team_season_id]":
+            team_season_schedule_tracker[team_season.team_season_id],
+        });
+      }
+
+      let games_per_quadrant = Math.ceil(
+        team_season_schedule_tracker[team_season.team_season_id].non_conference.games_to_schedule /
+          4.0
+      );
+
+      team_season_schedule_tracker[
+        team_season.team_season_id
+      ].non_conference.schedule_team_quadrants = {
+        1: games_per_quadrant,
+        2: games_per_quadrant,
+        3: games_per_quadrant,
+        4: games_per_quadrant,
+      };
+
+      console.log({
+        team_season: team_season,
+        team_season_schedule_tracker: team_season_schedule_tracker,
+        team_quadrant_cutoffs: team_quadrant_cutoffs,
+      });
+    }
+
+    var scheduling_teams = true;
+    var team_season_id_list = [];
+    var team_set_a = [],
+      team_set_b = [],
+      zipped_set = [],
+      games_to_create_ids = [];
+
+    var game_type = "";
+
+    var next_game_id = db.game.nextId("game_id");
+    var next_team_game_id = db.team_game.nextId("team_game_id");
+
+    team_seasons = index_group_sync(
+      db.team_season.find({ season: season, team_id: { $gt: 0 } }),
+      "index",
+      "team_id"
+    );
+    let team_seasons_by_conference_season_id = index_group_sync(
+      db.team_season.find({ season: season, team_id: { $gt: 0 } }),
+      "group",
+      "conference_season_id"
+    );
+
+    var scheduling_dict = {
+      team_season_schedule_tracker: team_season_schedule_tracker,
+      all_week_ids: all_week_ids,
+      all_weeks_by_week_id: all_weeks_by_week_id,
+      world_id: world_id,
+      season: season,
+      next_team_game_id: next_team_game_id,
+      next_game_id: next_game_id,
+      team_games_to_create_ids: team_games_to_create_ids,
+      team_games_to_create: team_games_to_create,
+      games_to_create_ids: games_to_create_ids,
+      games_to_create: games_to_create,
+    };
+
+    var attempt_counter = 0;
+    //Schedule rival games
+    while (scheduling_teams) {
+      team_season_id_list = Object.keys(team_season_schedule_tracker);
+
+      zipped_set = [];
+      $.each(team_season_id_list, function (ind, team_season_id) {
+        let rival_list = team_season_schedule_tracker[team_season_id].rivals;
+        $.each(rival_list, function (ind, rival_obj) {
+          zipped_set.push([
+            team_season_id,
+            team_seasons_by_team_id[rival_obj.opponent_team_id.toString()].team_season_id.toString(),
+            rival_obj,
+          ]);
         });
       });
+
+      console.log("zipped_set", zipped_set);
+      zipped_set = zipped_set.sort(function (set_a, set_b) {
+        if (set_a[2].preferred_week_id != undefined) {
+          return -1;
+        } else if (set_b[2].preferred_week_id != undefined) {
+          return 1;
+        }
+        return 1;
+      });
+
+      $.each(zipped_set, function (ind, team_set) {
+        //check if confernece, pass to next
+        let [team_a, team_b, rival_obj] = team_set;
+        game_type = "non_conference";
+        if (
+          team_season_schedule_tracker[team_a].conference_season_id ==
+          team_season_schedule_tracker[team_b].conference_season_id
+        ) {
+          game_type = "conference";
+        }
+        schedule_college_game(common, scheduling_dict, team_set, game_type, rival_obj);
+      });
+
+      scheduling_teams = false;
+    }
+
+    attempt_counter = 0;
+    scheduling_teams = true;
+    //Schedule conference games
+    while (scheduling_teams) {
+      team_season_id_list = Object.keys(team_season_schedule_tracker);
+      team_season_id_list = new Set(
+        team_season_id_list.filter(
+          (team_id) => team_season_schedule_tracker[team_id].conference.games_to_schedule > 0
+        )
+      );
+
+      $.each(team_seasons_by_conference_season_id, function (conference_season_id, team_seasons) {
+        let conference_team_season_id_list = team_seasons.map((ts) => ts.team_season_id.toString());
+        conference_team_season_id_list = conference_team_season_id_list.filter((ts) =>
+          team_season_id_list.has(ts)
+        );
+        conference_team_season_id_list = shuffle(conference_team_season_id_list);
+
+        for (var team_id of conference_team_season_id_list) {
+          team_season_schedule_tracker[team_id].first_available_week_id = Math.min(
+            ...team_season_schedule_tracker[team_id].available_week_ids
+          );
+        }
+
+        if (attempt_counter % 5 == 4) {
+          //Just random shuffle
+          conference_team_season_id_list = shuffle(conference_team_season_id_list);
+        } else if (attempt_counter % 5 < 4) {
+          //Sort by number of conference games needed
+          conference_team_season_id_list = conference_team_season_id_list.sort(
+            (team_a, team_b) =>
+              team_season_schedule_tracker[team_a].conference.games_to_schedule -
+                team_season_schedule_tracker[team_b].conference.games_to_schedule ||
+              team_season_schedule_tracker[team_a].first_available_week_id -
+                team_season_schedule_tracker[team_b].first_available_week_id ||
+              Math.random() > 0.5
+          );
+        }
+
+        const half = Math.floor(conference_team_season_id_list.length / 2);
+        team_set_a = conference_team_season_id_list.splice(0, half);
+        team_set_b = conference_team_season_id_list.splice(-half);
+        team_set_b = team_set_b.reverse();
+        // if (attempt_counter % 2 == 0){
+        // 	team_set_b = team_set_b.reverse();
+        // }
+
+        zipped_set = zip(team_set_a, team_set_b);
+        //console.log('zipped_set', zipped_set)
+        $.each(zipped_set, function (ind, team_set) {
+          schedule_college_game(common, scheduling_dict, team_set, "conference", null, attempt_counter);
+        });
+      });
+
+      team_season_id_list = [...team_season_id_list].filter(
+        (team_id) => team_season_schedule_tracker[team_id].conference.games_to_schedule > 0
+      );
+
+      scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 800;
+
+      attempt_counter += 1;
+      team_set_a = [];
+      team_set_b = [];
+    }
+
+    $.each(team_season_schedule_tracker, function (team_id, team_obj) {
+      if (team_obj.conference.games_to_schedule > 0) {
+        console.log("Left over games", {
+          "team_obj.conference.games_to_schedule": team_obj.conference.games_to_schedule,
+          team_obj: team_obj,
+        });
+      }
+      team_obj.non_conference.games_to_schedule += team_obj.conference.games_to_schedule;
     });
-  }
 
-  // team_pairs = shuffle(team_pairs);
-  for (let team_pair of team_pairs){
-    schedule_game(common, scheduling_dict, team_pair);
-  }
+    let quadrant_pairings = [
+      [
+        [1, 1],
+        [2, 2],
+        [3, 3],
+        [4, 4],
+      ],
+      [
+        [1, 3],
+        [2, 4],
+      ],
+      [
+        [1, 4],
+        [2, 3],
+      ],
+      [
+        [1, 2],
+        [3, 4],
+      ],
+    ];
+    let team_season_ids_by_quadrant = {
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+    };
 
-  let total_missing_games = 0;
-  for (var team_season_obj of Object.values(team_season_schedule_tracker)) {
-    total_missing_games += team_season_obj.schedule.games_to_schedule;
-  }
+    Object.entries(team_season_schedule_tracker).forEach(function ([team_season_id, tracker_obj]) {
+      team_season_ids_by_quadrant[tracker_obj.team_quadrant].push(team_season_id);
+      console.log({
+        tracker_obj: tracker_obj,
+        team_season_id: team_season_id,
+        team_season_ids_by_quadrant: team_season_ids_by_quadrant,
+      });
+    });
 
-  scheduling_dict.total_missing_games = total_missing_games;
-  return scheduling_dict;
+    console.log({
+      team_season_ids_by_quadrant: team_season_ids_by_quadrant,
+      team_season_ids_by_quadrant: team_season_ids_by_quadrant,
+      team_season_schedule_tracker: team_season_schedule_tracker,
+    });
 
-  // let team_seasons_to_update = Object.values(team_seasons);
+    //scheduling quadrants
+    for (let quadrant_pairing of quadrant_pairings) {
+      // team_season_id_list = Object.keys(team_season_schedule_tracker);
+      // team_season_id_list = team_season_id_list.filter(
+      //   (team_id) =>
+      //     team_season_schedule_tracker[team_id].non_conference.games_to_schedule >
+      //     0
+      // );
+      // var max_games_to_schedule =
+      //   Math.max(
+      //     ...team_season_id_list.map(
+      //       (team_id) =>
+      //         team_season_schedule_tracker[team_id].non_conference
+      //           .games_to_schedule
+      //     )
+      //   ) - Math.floor(attempt_counter / 5);
 
+      // max_games_to_schedule = Math.max(0, max_games_to_schedule);
+
+      console.log({
+        quadrant_pairing: quadrant_pairing,
+        max_games_to_schedule: max_games_to_schedule,
+        team_season_id_list: team_season_id_list,
+      });
+
+      for (let pair of quadrant_pairing) {
+        for (let iter_ind = 0; iter_ind <= 100; iter_ind++) {
+          let quadrant_a = pair[0];
+          let quadrant_b = pair[1];
+          console.log({
+            pair: pair,
+            quadrant_a: quadrant_a,
+            quadrant_b: quadrant_b,
+          });
+
+          if (quadrant_a != quadrant_b) {
+            var quadrant_a_teams = team_season_ids_by_quadrant[quadrant_a];
+            var quadrant_b_teams = team_season_ids_by_quadrant[quadrant_b];
+
+            quadrant_a_teams = quadrant_a_teams.filter(
+              (ts_id) =>
+                team_season_schedule_tracker[ts_id].non_conference.schedule_team_quadrants[
+                  quadrant_b
+                ] > 0 &&
+                (team_season_schedule_tracker[ts_id].available_week_ids.has(all_week_ids[iter_ind]) ||
+                  iter_ind > 3)
+            );
+            quadrant_b_teams = quadrant_b_teams.filter(
+              (ts_id) =>
+                team_season_schedule_tracker[ts_id].non_conference.schedule_team_quadrants[
+                  quadrant_a
+                ] > 0 &&
+                (team_season_schedule_tracker[ts_id].available_week_ids.has(all_week_ids[iter_ind]) ||
+                  iter_ind > 3)
+            );
+
+            quadrant_a_teams = shuffle(quadrant_a_teams);
+            quadrant_b_teams = shuffle(quadrant_b_teams);
+            console.log({
+              quadrant_a_teams: quadrant_a_teams,
+              quadrant_b_teams: quadrant_b_teams,
+            });
+          } else {
+            let quadrant_all_teams = team_season_ids_by_quadrant[quadrant_a];
+            quadrant_all_teams = shuffle(quadrant_all_teams);
+            quadrant_all_teams = quadrant_all_teams.filter(
+              (ts_id) =>
+                team_season_schedule_tracker[ts_id].non_conference.schedule_team_quadrants[
+                  quadrant_a
+                ] > 0 //&& (team_season_schedule_tracker[ts_id].available_week_ids.has(all_week_ids[iter_ind]) || iter_ind > 3)
+            );
+
+            console.log({ quadrant_all_teams: quadrant_all_teams });
+            var middle_index = Math.floor(quadrant_all_teams.length / 2);
+            var quadrant_a_teams = quadrant_all_teams.slice(0, middle_index);
+            var quadrant_b_teams = quadrant_all_teams.slice(middle_index);
+          }
+
+          console.log({
+            quadrant_a_teams: quadrant_a_teams,
+            quadrant_b_teams: quadrant_b_teams,
+          });
+
+          zipped_set = zip(quadrant_a_teams, quadrant_b_teams);
+          console.log("zipped_set", zipped_set);
+
+          $.each(zipped_set, function (ind, team_set) {
+            schedule_college_game(common, scheduling_dict, team_set, "non_conference", null, iter_ind);
+          });
+        }
+      }
+    }
+
+    scheduling_teams = true;
+    attempt_counter = 1;
+    //Scheduling non_conference
+    while (scheduling_teams) {
+      team_season_id_list = Object.keys(team_season_schedule_tracker);
+      team_season_id_list = team_season_id_list.filter(
+        (team_id) => team_season_schedule_tracker[team_id].non_conference.games_to_schedule > 0
+      );
+      var max_games_to_schedule =
+        Math.max(
+          ...team_season_id_list.map(
+            (team_id) => team_season_schedule_tracker[team_id].non_conference.games_to_schedule
+          )
+        ) - Math.floor(attempt_counter / 5);
+
+      max_games_to_schedule = Math.max(0, max_games_to_schedule);
+
+      for (var team_id of team_season_id_list) {
+        team_season_schedule_tracker[team_id].first_available_week_id = Math.min(
+          ...team_season_schedule_tracker[team_id].available_week_ids
+        );
+      }
+
+      //One out of ten times, or any attempt past #50, just go wild & full random
+      if (attempt_counter % 10 == 9 || attempt_counter > 50) {
+        team_season_id_list = shuffle(team_season_id_list);
+        $.each(team_season_id_list, function (ind, obj) {
+          if (ind % 2 == 0) {
+            team_set_a.push(obj);
+          } else {
+            team_set_b.push(obj);
+          }
+        });
+      } else if (attempt_counter % 10 >= 7) {
+        // 3 out of 10 times, sort by # of opps needed, but flip second half. Sort of a non-perfect match scenario
+        team_season_id_list = team_season_id_list.sort(function (team_id_a, team_id_b) {
+          return (
+            team_season_schedule_tracker[team_id_a].opponents_scheduled.size -
+              team_season_schedule_tracker[team_id_b].opponents_scheduled.size || Math.random() - 0.5
+          );
+        });
+
+        var middle_index = Math.floor(team_season_id_list.length / 2);
+        team_set_a = team_season_id_list.slice(0, middle_index);
+        team_set_b = team_season_id_list.slice(middle_index);
+        team_set_b = team_set_b.reverse();
+      } else if (attempt_counter % 10 >= 5) {
+        // 2 out of 10 times, sort by max week scheduled?
+        team_season_id_list = team_season_id_list.sort(function (team_id_a, team_id_b) {
+          return (
+            Math.max(...team_season_schedule_tracker[team_id_a].weeks_scheduled) -
+              Math.max(...team_season_schedule_tracker[team_id_b].weeks_scheduled) ||
+            Math.random() - 0.5
+          );
+        });
+
+        var middle_index = Math.floor(team_season_id_list.length / 2);
+        team_set_a = team_season_id_list.slice(0, middle_index);
+        team_set_b = team_season_id_list.slice(middle_index);
+        team_set_b = team_set_b.reverse();
+      } else {
+        for (var team_id of team_season_id_list) {
+          team_season_schedule_tracker[team_id].opponent_avg_team_competitiveness =
+            sum(
+              [...team_season_schedule_tracker[team_id].opponents_scheduled].map(
+                (team_id) =>
+                  team_season_schedule_tracker[team_id].team.team_ratings.team_competitiveness
+              )
+            ) / team_season_schedule_tracker[team_id].opponents_scheduled.size;
+        }
+
+        team_season_id_list = team_season_id_list.sort(function (team_id_a, team_id_b) {
+          return (
+            team_season_schedule_tracker[team_id_a].opponent_avg_team_competitiveness -
+              team_season_schedule_tracker[team_id_b].opponent_avg_team_competitiveness ||
+            Math.random() - 0.5
+          );
+        });
+
+        var middle_index = Math.ceil(team_season_id_list.length / 2);
+        team_set_a = team_season_id_list.slice(0, middle_index);
+        team_set_b = team_season_id_list.slice(middle_index);
+
+        if (attempt_counter % 2 == 0) {
+          team_set_b = team_set_b.reverse();
+        }
+      }
+
+      console.log({ team_set_a: team_set_a, team_set_b: team_set_b });
+
+      zipped_set = zip(team_set_a, team_set_b);
+      console.log("zipped_set", zipped_set);
+      $.each(zipped_set, function (ind, team_set) {
+        if (
+          team_season_schedule_tracker[team_set[0]].non_conference.games_to_schedule <
+            max_games_to_schedule &&
+          team_season_schedule_tracker[team_set[1]].non_conference.games_to_schedule <
+            max_games_to_schedule
+        ) {
+          console.log("throwing out game", {
+            team_set: team_set,
+            "team_season_schedule_tracker[team_set[0]].non_conference.games_to_schedule":
+              team_season_schedule_tracker[team_set[0]].non_conference.games_to_schedule,
+            "team_season_schedule_tracker[team_set[1]].non_conference.games_to_schedule":
+              team_season_schedule_tracker[team_set[1]].non_conference.games_to_schedule,
+            max_games_to_schedule: max_games_to_schedule,
+          });
+          return true;
+        }
+        schedule_college_game(common, scheduling_dict, team_set, "non_conference", null);
+      });
+
+      team_season_id_list = Object.keys(team_season_schedule_tracker).filter(
+        (team_id) => team_season_schedule_tracker[team_id].non_conference.games_to_schedule > 0
+      );
+
+      scheduling_teams = team_season_id_list.length > 1 && attempt_counter < 500;
+
+      attempt_counter += 1;
+      team_set_a = [];
+      team_set_b = [];
+    }
+
+    scheduling_dict.total_missing_games = 0;
+
+    for (var team_season_obj of Object.values(team_season_schedule_tracker)) {
+      scheduling_dict.total_missing_games += team_season_obj.non_conference.games_to_schedule;
+    }
+
+    console.log({
+      scheduling_dict: scheduling_dict,
+      team_season_schedule_tracker: team_season_schedule_tracker,
+      games_to_create: games_to_create,
+      team_games_to_create: team_games_to_create,
+    });
+
+    return scheduling_dict;
+  };
 };
 
 
@@ -1722,9 +2342,6 @@ const create_new_players_and_player_team_seasons = async (common, world_id, seas
       P: { white: 70, black: 10, hispanic: 25, asian: 25 },
     };
 
-  var player_id_counter = db.player.nextId("player_id");
-  var player_team_season_id_counter = db.player_team_season.nextId("player_team_season_id");
-
   var url = "/data/import_json/players.json";
   var data = await fetch(url);
   var player_list = await data.json();
@@ -1755,7 +2372,9 @@ const create_new_players_and_player_team_seasons = async (common, world_id, seas
     let teams = nest_children(leag.teams, team_seasons_by_team_id, "team_id", "team_season");
     let teams_by_team_abbreviation = index_group_sync(teams, "index", "team_abbreviation");
 
-    if (season == 2022 && leag.league_abbreviation == 'NFL') {
+    if (season == 2022 && leag.type == 'pro') {
+      let player_id_counter = db.player.nextId("player_id");
+      let player_team_season_id_counter = db.player_team_season.nextId("player_team_season_id");
 
       for (let p of player_list) {
 
@@ -1797,6 +2416,134 @@ const create_new_players_and_player_team_seasons = async (common, world_id, seas
         player_team_seasons_tocreate.push(player_team_season_obj);
         player_id_counter += 1;
         player_team_season_id_counter += 1;
+      }
+    } else {
+      var team_position_counts = {
+        QB: 1.25,
+        RB: 1.5,
+        FB: 0.5,
+        WR: 2,
+        TE: 1.25,
+        OT: 1.25,
+        G: 1.5,
+        C: 1.5,
+        EDGE: 1.5,
+        DL: 1.5,
+        LB: 1.5,
+        CB: 2,
+        S: 1.25,
+        K: 0.5,
+        P: 0.5,
+      };
+
+      const classes = [
+        "HS SR",
+        "FR",
+        "SO",
+        "JR",
+        "SR",
+      ];
+
+      var player_counter = 0;
+      var player_id_counter = db.player.nextId("player_id");
+      var player_team_season_id_counter = db.player_team_season.nextId("player_team_season_id");
+
+      for (let position in team_position_counts) {
+        let players_for_position = Math.floor(
+          team_position_counts[position] * classes.length * team_seasons.length
+        );
+
+        for (let position_count = 0; position_count < players_for_position; position_count++) {
+          let body = body_from_position(position);
+          let ethnicity = weighted_random_choice(position_ethnicity[position]);
+          let player_class = classes[Math.floor(Math.random() * classes.length)];
+
+          if (player_counter > player_names.length || player_counter > player_cities.length) {
+            console.log("something weird with names?", {
+              player_names: player_names,
+              player_cities: player_cities,
+              player_counter: player_counter,
+            });
+          }
+
+          let archetype = `${position}_Balanced`;
+
+          var player_obj = new player({
+            player_id: player_id_counter,
+            name: player_names[player_counter],
+            world_id: world_id,
+            hometown: player_cities[player_counter],
+            ethnicity: ethnicity,
+            body: body,
+            world_id: world_id,
+            position: position,
+            archetype: archetype
+          });
+
+          let player_team_season_obj = new player_team_season({
+            world_id: world_id,
+            player_id: player_id_counter,
+            player_team_season_id: player_team_season_id_counter,
+            season: season,
+            class: {
+              class_name: player_class,
+              redshirted: false,
+            },
+            team_season_id: 0,
+            position: position,
+            archetype: archetype
+          });
+
+          if (player_class == "HS SR") {
+            player_team_season_obj.team_season_id = -1 * season;
+            player_team_season_obj.is_recruit = true;
+            player_team_season_obj.recruiting = {
+              speed: 1,
+              stars: 4,
+              signed: false,
+              signed_team_season_id: null,
+              stage: null,
+              rank: {
+                national: null,
+                position_rank: null,
+                state: null,
+              },
+              weeks: {},
+              team_season_buckets: {
+                dream: new Set(),
+                favor: new Set(),
+                indifferent: new Set(),
+                hate: new Set(),
+              },
+              interests: {
+                location: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
+                fan_support: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
+                academic_quality: round_decimal(normal_trunc_bounce(2, 10, 1, 7), 0),
+                facilities: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
+                program_history: round_decimal(normal_trunc(2.5, 1.5, 1, 7), 0),
+                team_competitiveness: round_decimal(normal_trunc(3.5, 1.5, 1, 7), 0),
+                brand: round_decimal(normal_trunc(3, 1.5, 1, 7), 0),
+                pro_pipeline: round_decimal(normal_trunc(4, 1.5, 1, 7), 0),
+
+                program_stability: round_decimal(normal_trunc(1.75, 0.1, 1, 7), 0),
+                playing_time: round_decimal(normal_trunc(1.5, 0.1, 1, 7), 0),
+                close_to_home: round_decimal(normal_trunc_bounce(4.5, 3, 1, 7), 0),
+              },
+            };
+          } else {
+            var new_player_team_season_stats = new player_team_season_stats(
+              player_team_season_id_counter
+            );
+            player_team_season_stats_tocreate.push(new_player_team_season_stats);
+          }
+
+          players_tocreate.push(player_obj);
+          player_team_seasons_tocreate.push(player_team_season_obj);
+
+          player_counter += 1;
+          player_id_counter += 1;
+          player_team_season_id_counter += 1;
+        }
       }
     }
   });
@@ -1999,8 +2746,8 @@ const get_rivalries = async (teams) => {
   return rival_dimension;
 };
 
-const get_leagues = async () => {
-  var url = "/data/import_json/league.json";
+const get_leagues = async (league_type) => {
+  var url = `/data/import_json/league${league_type}.json`;
   var data = await fetch(url);
   var leagues = await data.json();
 
@@ -5072,6 +5819,268 @@ const schedule_game = (common, scheduling_dict, team_set) => {
   }
 };
 
+const schedule_college_game = (common, scheduling_dict, team_set, game_type, rival_obj, loop_count = 0) => {
+  var team_a = team_set[0],
+    team_b = team_set[1];
+  if (team_b == undefined) {
+    return "No team b";
+  }
+
+  if (Math.random() < 0.5) {
+    [team_a, team_b] = [team_b, team_a];
+  }
+
+  var is_conference_game =
+    scheduling_dict.team_season_schedule_tracker[team_a].conference_season_id ==
+    scheduling_dict.team_season_schedule_tracker[team_b].conference_season_id;
+
+  var keep_game =
+    !scheduling_dict.team_season_schedule_tracker[team_b].opponents_scheduled.has(team_a);
+
+  var schedule_trend_modifier = 1;
+  if (game_type == "conference") {
+    is_conference_game = true;
+    keep_game = keep_game && is_conference_game;
+  } else if (game_type == "non_conference") {
+    keep_game = keep_game && !is_conference_game;
+    schedule_trend_modifier = -16;
+  } else {
+    alert("some fuck up in scheduling");
+  }
+
+  if (
+    keep_game &&
+    is_conference_game &&
+    scheduling_dict.team_season_schedule_tracker[team_a]["conference"].games_to_schedule > 0 &&
+    scheduling_dict.team_season_schedule_tracker[team_b]["conference"].games_to_schedule > 0
+  ) {
+    keep_game = true;
+  } else if (
+    keep_game &&
+    !is_conference_game &&
+    scheduling_dict.team_season_schedule_tracker[team_a]["non_conference"].games_to_schedule > 0 &&
+    scheduling_dict.team_season_schedule_tracker[team_b]["non_conference"].games_to_schedule > 0
+  ) {
+    keep_game = true;
+  } else {
+    keep_game = false;
+  }
+
+  window.distance_tracking_map = window.distance_tracking_map || {};
+  if (keep_game && !is_conference_game) {
+    let distance_between_schools = distance_between_cities(
+      scheduling_dict.team_season_schedule_tracker[team_a].city,
+      scheduling_dict.team_season_schedule_tracker[team_b].city,
+      window.distance_tracking_map
+    );
+    if (
+      distance_between_schools >
+        scheduling_dict.team_season_schedule_tracker[team_a].non_conference
+          .max_ooc_travel_distance +
+          loop_count * 2 ||
+      distance_between_schools >
+        scheduling_dict.team_season_schedule_tracker[team_b].non_conference
+          .max_ooc_travel_distance +
+          loop_count * 2
+    ) {
+      keep_game = false;
+    }
+  }
+
+  if (keep_game) {
+    var available_weeks = set_intersect(
+      scheduling_dict.team_season_schedule_tracker[team_a].available_week_ids,
+      scheduling_dict.team_season_schedule_tracker[team_b].available_week_ids
+    );
+    available_weeks = [...available_weeks];
+    if (available_weeks.length > 0) {
+      if (is_conference_game) {
+        if (
+          scheduling_dict.team_season_schedule_tracker[team_b]["conference"].net_home_games <
+          scheduling_dict.team_season_schedule_tracker[team_a]["conference"].net_home_games
+        ) {
+          [team_a, team_b] = [team_b, team_a];
+        }
+      } else {
+        let dict_for_random = [team_a, team_b].map(function (team_id) {
+          return [
+            team_id,
+            scheduling_dict.team_season_schedule_tracker[team_id].team.team_ratings
+              .program_history ** 2,
+          ];
+        });
+        dict_for_random = Object.fromEntries(dict_for_random);
+        let chosen_home_team = weighted_random_choice(dict_for_random);
+        let chosen_away_team = [team_a, team_b].find((team_id) => team_id != chosen_home_team);
+
+        team_a = chosen_home_team;
+        team_b = chosen_away_team;
+      }
+
+      available_weeks = available_weeks.map(function (week_id) {
+        // console.log({
+        //   week_id:week_id,
+        //   team_a:team_a,
+        //   team_b:team_b,
+        //   scheduling_dict:scheduling_dict,
+        //   'scheduling_dict.team_season_schedule_tracker[team_ind]': scheduling_dict.team_season_schedule_tracker[team_a],
+        //   'scheduling_dict.team_season_schedule_tracker[team_b]': scheduling_dict.team_season_schedule_tracker[team_b],
+        // })
+        let additional_modifier = 1;
+        for (let team_ind of [team_a, team_b]) {
+          for (let adj_ind of [-1, 1]) {
+            if (
+              scheduling_dict.team_season_schedule_tracker[team_ind].available_week_ids.has(
+                week_id + adj_ind
+              ) ||
+              week_id == scheduling_dict.all_week_ids[0] ||
+              week_id == scheduling_dict.all_week_ids[scheduling_dict.all_week_ids.length - 1]
+            ) {
+              additional_modifier += 1;
+            }
+          }
+        }
+
+        return [
+          week_id,
+          Math.abs(
+            (scheduling_dict.all_weeks_by_week_id[week_id].schedule_week_number +
+              schedule_trend_modifier) **
+              (1 * additional_modifier)
+          ),
+        ];
+      });
+      available_weeks = Object.fromEntries(available_weeks);
+      var chosen_week_id = parseInt(weighted_random_choice(available_weeks));
+
+      if (rival_obj != null) {
+        if (rival_obj.preferred_week_id != undefined) {
+          if (rival_obj.preferred_week_id in available_weeks) {
+            chosen_week_id = rival_obj.preferred_week_id;
+          }
+        }
+      }
+
+      scheduling_dict.team_season_schedule_tracker[team_a][game_type].games_to_schedule -= 1;
+      scheduling_dict.team_season_schedule_tracker[team_a][game_type].games_scheduled += 1;
+      scheduling_dict.team_season_schedule_tracker[team_a][game_type].home_games += 1;
+      scheduling_dict.team_season_schedule_tracker[team_a][game_type].net_home_games += 1;
+      scheduling_dict.team_season_schedule_tracker[team_a].weeks_scheduled.add(chosen_week_id);
+      scheduling_dict.team_season_schedule_tracker[team_a].available_week_ids.delete(
+        chosen_week_id
+      );
+      scheduling_dict.team_season_schedule_tracker[team_a].opponents_scheduled.add(team_b);
+
+      scheduling_dict.team_season_schedule_tracker[team_b][game_type].games_to_schedule -= 1;
+      scheduling_dict.team_season_schedule_tracker[team_b][game_type].games_scheduled += 1;
+      scheduling_dict.team_season_schedule_tracker[team_b][game_type].away_games += 1;
+      scheduling_dict.team_season_schedule_tracker[team_b][game_type].net_home_games -= 1;
+      scheduling_dict.team_season_schedule_tracker[team_b].weeks_scheduled.add(chosen_week_id);
+      scheduling_dict.team_season_schedule_tracker[team_b].available_week_ids.delete(
+        chosen_week_id
+      );
+      scheduling_dict.team_season_schedule_tracker[team_b].opponents_scheduled.add(team_a);
+
+      if (!is_conference_game) {
+        for (let team_combos of [
+          [team_a, team_b],
+          [team_b, team_a],
+        ]) {
+          let team_ind = team_combos[0];
+          let other_team_ind = team_combos[1];
+          let other_team_quadrant =
+            scheduling_dict.team_season_schedule_tracker[other_team_ind].team_quadrant;
+          let team_schedule_obj = scheduling_dict.team_season_schedule_tracker[team_ind];
+
+          other_team_quadrant =
+            other_team_quadrant +
+            ([0, -1].find(
+              (m) =>
+                team_schedule_obj.non_conference.schedule_team_quadrants[other_team_quadrant + m] >
+                0
+            ) || 0);
+
+          team_schedule_obj.non_conference.schedule_team_quadrants[other_team_quadrant] -= 1;
+        }
+        // console.log({scheduling_dict:scheduling_dict, team_a:team_a, team_b:team_b, 'scheduling_dict.team_season_schedule_tracker[team_b]': scheduling_dict.team_season_schedule_tracker[team_b]})
+      }
+
+      // console.log({scheduling_dict:scheduling_dict, team_a:team_a, team_b:team_b, 'scheduling_dict.team_season_schedule_tracker[team_b]': scheduling_dict.team_season_schedule_tracker[team_b]})
+
+      var team_game_a = new team_game({
+        world_id: scheduling_dict.world_id,
+        season: scheduling_dict.season,
+        team_game_id: scheduling_dict.next_team_game_id,
+        is_home_team: true,
+        opponent_team_game_id: scheduling_dict.next_team_game_id + 1,
+        week_id: chosen_week_id,
+        game_id: scheduling_dict.next_game_id,
+        is_conference_game: is_conference_game,
+        team_season_id: parseInt(team_a),
+        opponent_team_season_id: parseInt(team_b),
+      });
+      var team_game_b = new team_game({
+        world_id: scheduling_dict.world_id,
+        season: scheduling_dict.season,
+        team_game_id: scheduling_dict.next_team_game_id + 1,
+        is_home_team: false,
+        opponent_team_game_id: scheduling_dict.next_team_game_id,
+        week_id: chosen_week_id,
+        game_id: scheduling_dict.next_game_id,
+        is_conference_game: is_conference_game,
+        team_season_id: parseInt(team_b),
+        opponent_team_season_id: parseInt(team_a),
+      });
+
+      scheduling_dict.team_games_to_create.push(team_game_a);
+      scheduling_dict.team_games_to_create.push(team_game_b);
+
+      scheduling_dict.team_games_to_create_ids.push(scheduling_dict.next_team_game_id);
+      scheduling_dict.team_games_to_create_ids.push(scheduling_dict.next_team_game_id + 1);
+
+      scheduling_dict.games_to_create.push({
+        game_id: scheduling_dict.next_game_id,
+        season: scheduling_dict.season,
+        home_team_season_id: parseInt(team_a),
+        away_team_season_id: parseInt(team_b),
+        home_team_game_id: scheduling_dict.next_team_game_id,
+        away_team_game_id: scheduling_dict.next_team_game_id + 1,
+        week_id: chosen_week_id,
+        game_time: "7:05PM",
+        was_played: false,
+        outcome: {
+          home_team_score: null,
+          away_team_score: null,
+          winning_team_season_id: null,
+          losing_team_season_id: null,
+        },
+        rivalry: rival_obj,
+        bowl: null,
+        broadcast: { regional_broadcast: false, national_broadcast: false },
+        world_id: scheduling_dict.world_id,
+        is_conference_game: is_conference_game,
+      });
+
+      scheduling_dict.games_to_create_ids.push(scheduling_dict.next_game_id);
+
+      scheduling_dict.next_game_id += 1;
+      scheduling_dict.next_team_game_id += 2;
+
+      return "Scheduled";
+    } else {
+      return "No available weeks";
+    }
+  } else {
+    console.log("Issue with teams already playing", {
+      scheduling_dict: scheduling_dict,
+      team_set: team_set,
+      game_type: game_type,
+      rival_obj: rival_obj,
+    });
+    return "Issue with teams already playing";
+  }
+};
+
 const tier_placement = (tiers, population_size, distribution, rank_place) => {
   console.log({
     tiers: tiers,
@@ -5155,7 +6164,7 @@ const new_world_action = async (common, database_suffix) => {
   common.db = db;
   common.season = season;
 
-  let leagues_from_json = await get_leagues();
+  let leagues_from_json = await get_leagues(database_suffix);
   leagues_from_json.forEach((leag, ind) => leag.league_id = ind+1);
   db.league.insert(leagues_from_json);
 
@@ -5343,7 +6352,7 @@ const new_world_action = async (common, database_suffix) => {
         };
       });
 
-    rivals_team_1.concat(rivals_team_2);
+    t.rivals = rivals_team_1.concat(rivals_team_2);
 
     console.log({
       conferences_by_team_name: conferences_by_team_name,

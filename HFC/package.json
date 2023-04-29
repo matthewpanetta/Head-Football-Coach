@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "NODE_ENV='prod' node server.js"
+    "start": "NODE_ENV='prod' node server.js",
+    "start_win": "SET NODE_ENV='prod'&node server.js"
   },
   "dependencies": {
     "express": "^4.16.3",
