@@ -144,10 +144,10 @@ export const recent_games = (common) => {
   const season = common.season;
   const db = common.db;
   const all_periods = db.period.find({ season: season });
-  const current_period = all_periods.find((w) => w.is_current) || {};
-
   const all_periods_by_period_id = index_group_sync(all_periods, "index", "period_id");
-
+  
+  const current_day = db.day.findOne({ season: season, is_current: true });
+  const current_period = all_periods.find((p) => { return p.period_id === current_day.period_id });
   const previous_period = all_periods_by_period_id[current_period.period_id - 1];
 
   if (previous_period == undefined) {
