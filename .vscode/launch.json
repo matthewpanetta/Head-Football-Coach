@@ -5,6 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Electron Main",
+            "program": "${workspaceFolder}/HFC/main.js",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceFolder}/HFC/node_modules/.bin/electron",
+            "runtimeArgs": ["--remote-debugging-port=9223"],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
+            "name": "Electron Renderer",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9223,
+            "webRoot": "${workspaceFolder}/HFC",
+            "timeout": 30000
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Node",
@@ -17,13 +36,20 @@
             "request": "launch",
             "name": "Chrome",
             "url": "http://localhost:5515",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}/HFC",
+            "sourceMapPathOverrides": {
+                "http://localhost:5515/js/*": "${workspaceFolder}/HFC/src/js/*"
+            }
         }
     ],
     "compounds": [
         {
             "name": "Full-stack",
             "configurations": ["Node", "Chrome"]
+        },
+        {
+            "name": "Electron",
+            "configurations": ["Electron Main", "Electron Renderer"]
         }
     ]
 }
