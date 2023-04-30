@@ -2675,7 +2675,7 @@ const create_phase = async (season, common) => {
 
   periods_to_create.forEach(function(pe){
 
-    let period_dates = dates.filter(d => d.date.isBetween(pe.start_date, pe.end_date, '[]'));
+    let period_dates = dates.filter(d => d.date.isBetween(pe.start_date, pe.end_date, 'day', '[]'));
 
       period_dates.forEach(function(dt){
         dt.period_id = pe.period_id;
