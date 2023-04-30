@@ -232,7 +232,7 @@ export const page_team = async (common) => {
 
   games = nest_children(games, team_games_by_game_id, "game_id", "team_game");
   games = nest_children(games, opponent_team_games_by_game_id, "game_id", "opponent_team_game");
-  games = nest_children(games, periods_by_period_id, "period_id", "period");
+  games = nest_children(games, periods_by_period_id, "week_id", "period");
 
   const headline_ids = team.team_season.headlines;
   var headlines = db.headline.find({ headline_id: { $in: headline_ids } });
