@@ -10,6 +10,7 @@ import { page_player } from '../../../../../../../js/pages/player_pages.js';
 import { page_almanac_player_stats, page_almanac_history, page_almanac_player_records } from '../../../../../../../js/pages/almanac_pages.js';
 import { page_game } from '../../../../../../../js/pages/game_pages.js';
 import { page_index } from '../../../../../../../js/pages/index_pages.js';
+import { page_export } from '../../../../../../../js/pages/export_pages.js'
 import { position_group_map } from '../../../../../../../js/metadata.js';
 import { generate_ranking_headlines } from '../../../../../../../js/headlines.js';
 import '../../../../../../../js/sim_game.js';
@@ -364,6 +365,13 @@ const nav_bar_links = async (common, data) => {
           world_id: world_id,
         },
       ],
+    },
+    {
+      GroupName: "Export",
+      GroupDisplay: "Export",
+      GroupLinks: [
+        { LinkDisplay: "Export to Madden...", id: "", Href: `/World/${world_id}/Export`, ClassName: ""}
+      ]
     },
     {
       GroupName: "Game",
@@ -2916,6 +2924,8 @@ const resolve_route_parameters = async (pathname) => {
     { route: "/World/:world_id/Game/:game_id/", f: page_game, group_name: 'Game', path: 'Overview' },
 
     { route: "/World/:world_id/Search/:search_keyword/", path: "search/search/base.html", group_name: 'Search', path: 'Overview' },
+
+    { route: "/World/:world_id/Export", f: page_export, group_name: 'Export', path: 'export/export/base.html' },
 
     { route: "", path: "static" },
     { route: "*html_templates*", path: "url" },

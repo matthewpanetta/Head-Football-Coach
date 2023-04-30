@@ -3,6 +3,9 @@ const path = require("path");
 
 const express = require("express");
 const app = express();
+app.use(express.json());
+
+const { rosterExporter } = require('./server/exporter');
 
 const port = 5515;
 
@@ -89,6 +92,15 @@ const send_index = (req, res, level) => {
 	console.log('sending file', __dirname + `/src/html_templates/index/index/base.html`)
 	send_file(res, __dirname + `/src/html_templates/index/index/base.html`);
 };
+
+app.post('*/export/roster', async (req, res) => {
+	console.log();
+	console.log('request to export roster');
+
+	await rosterExporter(req.body);
+
+	res.end();
+});
 
 app.get('*', (req, res) => {
 	console.log()
