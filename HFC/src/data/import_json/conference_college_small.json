@@ -23,25 +23,25 @@
       {
         "division_name": "East",
         "teams": [
-          "Maryland",
-          "Michigan",
-          "Michigan State",
-          "Ohio State",
-          "Penn State",
-          "Rutgers",
-          "Indiana"
+          "Maryland Terrapins",
+          "Michigan Wolverines",
+          "Michigan State Spartans",
+          "Ohio State Buckeyes",
+          "Penn State Nittany Lions",
+          "Rutgers Scarlet Knights",
+          "Indiana Hoosiers"
         ]
       },
       {
         "division_name": "West",
         "teams": [
-          "Purdue",
-          "Illinois",
-          "Iowa",
-          "Minnesota",
-          "Nebraska",
-          "Northwestern",
-          "Wisconsin"
+          "Purdue Boilermakers",
+          "Illinois Fighting Illini",
+          "Iowa Hawkeyes",
+          "Minnesota Golden Gophers",
+          "Nebraska Cornhuskers",
+          "Northwestern Wildcats",
+          "Wisconsin Badgers"
         ]
       }
     ]
@@ -79,25 +79,25 @@
       {
         "division_name": "East",
         "teams": [
-          "Florida",
-          "Georgia",
-          "Kentucky",
-          "Missouri",
-          "South Carolina",
-          "Tennessee",
-          "Vanderbilt"
+          "Florida Gators",
+          "Georgia Bulldogs",
+          "Kentucky Wildcats",
+          "Missouri Tigers",
+          "South Carolina Gamecocks",
+          "Tennessee Volunteers",
+          "Vanderbilt Commodores"
         ]
       },
       {
         "division_name": "West",
         "teams": [
-          "Alabama",
-          "Arkansas",
-          "Auburn",
-          "LSU",
-          "Mississippi State",
-          "Ole Miss",
-          "Texas A&M"
+          "Alabama Crimson Tide",
+          "Arkansas Razorbacks",
+          "Auburn Tigers",
+          "LSU Tigers",
+          "Mississippi State Bulldogs",
+          "Ole Miss Rebels",
+          "Texas A&M Aggies"
         ]
       }
     ]
@@ -140,23 +140,23 @@
       {
         "division_name": "Mountain",
         "teams": [
-          "Air Force",
-          "Boise State",
-          "Colorado State",
-          "New Mexico",
-          "Utah State",
-          "Wyoming"
+          "Air Force Falcons",
+          "Boise State Broncos",
+          "Colorado State Rams",
+          "New Mexico Lobos",
+          "Utah State Aggies",
+          "Wyoming Cowboys"
         ]
       },
       {
         "division_name": "West",
         "teams": [
-          "Fresno State",
-          "Hawaii",
-          "Nevada",
-          "San Diego State",
-          "San Jose State",
-          "UNLV"
+          "Fresno State Bulldogs",
+          "Hawaii Warriors",
+          "Nevada Wolf Pack",
+          "San Diego State Aztecs",
+          "San Jose State Spartans",
+          "UNLV Rebels"
         ]
       }
     ]
@@ -185,17 +185,24 @@
       {
         "division_name": "North",
         "teams": [
-          "Washington",
-          "Washington State",
-          "California",
-          "Stanford",
-          "Oregon",
-          "Oregon State"
+          "Washington Huskies",
+          "Washington State Cougars",
+          "California Golden Bears",
+          "Stanford Cardinal",
+          "Oregon Ducks",
+          "Oregon State Beavers"
         ]
       },
       {
         "division_name": "South",
-        "teams": ["Arizona", "Arizona State", "Colorado", "UCLA", "USC", "Utah"]
+        "teams": [
+          "Arizona Wildcats",
+          "Arizona State Sun Devils",
+          "Colorado Buffaloes",
+          "UCLA Bruins",
+          "USC Trojans",
+          "Utah Utes"
+        ]
       }
     ]
   },
@@ -222,16 +229,16 @@
       {
         "division_name": "All",
         "teams": [
-          "Appalachian State",
-          "Georgia State",
-          "Georgia Southern",
-          "Coastal Carolina",
-          "Troy",
-          "Arkansas State",
-          "Louisiana",
-          "Louisiana-Monroe",
-          "South Alabama",
-          "Texas State"
+          "Appalachian State Mountaineers",
+          "Georgia State Panthers",
+          "Georgia Southern Eagles",
+          "Coastal Carolina Chanticleers",
+          "Troy Trojans",
+          "Arkansas State Red Wolves",
+          "Louisiana Ragin' Cajuns",
+          "Louisiana-Monroe Warhawks",
+          "South Alabama Jaguars",
+          "Texas State Bobcats"
         ]
       }
     ]
@@ -257,13 +264,13 @@
       {
         "division_name": "All",
         "teams": [
-          "Notre Dame",
-          "New Mexico State",
-          "Liberty",
-          "Army",
-          "BYU",
-          "UConn",
-          "UMass"
+          "Notre Dame Fighting Irish",
+          "New Mexico State Aggies",
+          "Liberty Flames",
+          "Army Black Knights",
+          "BYU Cougars",
+          "UConn Huskies",
+          "UMass Minutemen"
         ]
       }
     ]

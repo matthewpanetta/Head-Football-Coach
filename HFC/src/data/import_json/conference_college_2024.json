@@ -31,25 +31,25 @@
       {
         "division_name": "Atlantic",
         "teams": [
-          "Clemson",
-          "Boston College",
-          "Florida State",
-          "Louisville",
-          "NC State",
-          "Syracuse",
-          "Wake Forest"
+          "Boston College Eagles",
+          "Clemson Tigers",
+          "Florida State Seminoles",
+          "Louisville Cardinals",
+          "NC State Wolfpack",
+          "Syracuse Orange",
+          "Wake Forest Demon Deacons"
         ]
       },
       {
         "division_name": "Coastal",
         "teams": [
-          "Duke",
-          "Georgia Tech",
-          "Miami",
-          "North Carolina",
-          "Pittsburgh",
-          "Virginia",
-          "Virginia Tech"
+          "Duke Blue Devils",
+          "Georgia Tech Yellow Jackets",
+          "Miami Hurricanes",
+          "North Carolina Tar Heels",
+          "Pittsburgh Panthers",
+          "Virginia Cavaliers",
+          "Virginia Tech Hokies"
         ]
       }
     ]
@@ -90,20 +90,20 @@
       {
         "division_name": "All",
         "teams": [
-          "East Carolina",
-          "Memphis",
-          "Navy",
-          "SMU",
-          "USF",
-          "Temple",
-          "Tulane",
-          "Tulsa",
-          "Charlotte",
-          "Florida Atlantic",
-          "UTSA",
-          "Rice",
-          "North Texas",
-          "UAB"
+          "East Carolina Pirates",
+          "Memphis Tigers",
+          "Navy Midshipmen",
+          "SMU Mustangs",
+          "USF Bulls",
+          "Temple Owls",
+          "Tulane Green Wave",
+          "Tulsa Golden Hurricane",
+          "Charlotte 49ers",
+          "Florida Atlantic Owls",
+          "UTSA Roadrunners",
+          "Rice Owls",
+          "North Texas Mean Green",
+          "UAB Blazers"
         ]
       }
     ]
@@ -131,18 +131,18 @@
       {
         "division_name": "All",
         "teams": [
-          "Baylor",
-          "Iowa State",
-          "Kansas",
-          "Kansas State",
-          "Cincinnati",
-          "Houston",
-          "Oklahoma State",
-          "TCU",
-          "Texas Tech",
-          "West Virginia",
-          "UCF",
-          "BYU"
+          "Baylor Bears",
+          "Iowa State Cyclones",
+          "Kansas Jayhawks",
+          "Kansas State Wildcats",
+          "Cincinnati Bearcats",
+          "Houston Cougars",
+          "Oklahoma State Cowboys",
+          "TCU Horned Frogs",
+          "Texas Tech Red Raiders",
+          "West Virginia Mountaineers",
+          "UCF Knights",
+          "BYU Cougars"
         ]
       }
     ]
@@ -171,22 +171,22 @@
       {
         "division_name": "All",
         "teams": [
-          "Maryland",
-          "Michigan",
-          "Michigan State",
-          "Ohio State",
-          "Penn State",
-          "Rutgers",
-          "Indiana",
-          "Purdue",
-          "Illinois",
-          "Iowa",
-          "Minnesota",
-          "Nebraska",
-          "Northwestern",
-          "Wisconsin",
-          "UCLA",
-          "USC"
+          "Maryland Terrapins",
+          "Michigan Wolverines",
+          "Michigan State Spartans",
+          "Ohio State Buckeyes",
+          "Penn State Nittany Lions",
+          "Rutgers Scarlet Knights",
+          "Indiana Hoosiers",
+          "Purdue Boilermakers",
+          "Illinois Fighting Illini",
+          "Iowa Hawkeyes",
+          "Minnesota Golden Gophers",
+          "Nebraska Cornhuskers",
+          "Northwestern Wildcats",
+          "Wisconsin Badgers",
+          "UCLA Bruins",
+          "USC Trojans"
         ]
       }
     ]
@@ -224,22 +224,22 @@
       {
         "division_name": "All",
         "teams": [
-          "Florida",
-          "Auburn",
-          "Georgia",
-          "Kentucky",
-          "Missouri",
-          "South Carolina",
-          "Tennessee",
-          "Vanderbilt",
-          "Alabama",
-          "Arkansas",
-          "LSU",
-          "Mississippi State",
-          "Ole Miss",
-          "Texas A&M",
-          "Oklahoma",
-          "Texas"
+          "Florida Gators",
+          "Auburn Tigers",
+          "Georgia Bulldogs",
+          "Kentucky Wildcats",
+          "Missouri Tigers",
+          "South Carolina Gamecocks",
+          "Tennessee Volunteers",
+          "Vanderbilt Commodores",
+          "Alabama Crimson Tide",
+          "Arkansas Razorbacks",
+          "LSU Tigers",
+          "Mississippi State Bulldogs",
+          "Ole Miss Rebels",
+          "Texas A&M Aggies",
+          "Oklahoma Sooners",
+          "Texas Longhorns"
         ]
       }
     ]
@@ -282,17 +282,24 @@
       {
         "division_name": "Mountain",
         "teams": [
-          "Air Force",
-          "Boise State",
-          "Colorado State",
-          "New Mexico",
-          "Utah State",
-          "Wyoming"
+          "Air Force Falcons",
+          "Boise State Broncos",
+          "Colorado State Rams",
+          "New Mexico Lobos",
+          "Utah State Aggies",
+          "Wyoming Cowboys"
         ]
       },
       {
         "division_name": "West",
-        "teams": ["Fresno State", "Hawaii", "Nevada", "San Diego State", "San Jose State", "UNLV"]
+        "teams": [
+          "Fresno State Bulldogs",
+          "Hawaii Warriors",
+          "Nevada Wolf Pack",
+          "San Diego State Aztecs",
+          "San Jose State Spartans",
+          "UNLV Rebels"
+        ]
       }
     ]
   },
@@ -329,16 +336,16 @@
       {
         "division_name": "All",
         "teams": [
-          "FIU",
-          "Western Kentucky",
-          "Jacksonville State",
-          "Middle Tennessee",
-          "UTEP",
-          "Louisiana Tech",
-          "Sam Houston State",
-          "New Mexico State",
-          "Kennesaw State",
-          "Liberty"
+          "FIU Panthers",
+          "Western Kentucky Hilltoppers",
+          "Jacksonville State Gamecocks",
+          "Middle Tennessee Blue Raiders",
+          "UTEP Miners",
+          "Louisiana Tech Bulldogs",
+          "Sam Houston State Bearkats",
+          "New Mexico State Aggies",
+          "Kennesaw State Owls",
+          "Liberty Flames"
         ]
       }
     ]
@@ -367,16 +374,16 @@
       {
         "division_name": "All",
         "teams": [
-          "Washington",
-          "Washington State",
-          "California",
-          "Stanford",
-          "Oregon",
-          "Oregon State",
-          "Arizona",
-          "Arizona State",
-          "Colorado",
-          "Utah"
+          "Washington Huskies",
+          "Washington State Cougars",
+          "California Golden Bears",
+          "Stanford Cardinal",
+          "Oregon Ducks",
+          "Oregon State Beavers",
+          "Arizona Wildcats",
+          "Arizona State Sun Devils",
+          "Colorado Buffaloes",
+          "Utah Utes"
         ]
       }
     ]
@@ -404,25 +411,25 @@
       {
         "division_name": "East",
         "teams": [
-          "Appalachian State",
-          "Georgia State",
-          "Georgia Southern",
-          "Coastal Carolina",
-          "James Madison",
-          "Marshall",
-          "Old Dominion"
+          "Appalachian State Mountaineers",
+          "Georgia State Panthers",
+          "Georgia Southern Eagles",
+          "Coastal Carolina Chanticleers",
+          "James Madison Dukes",
+          "Marshall Thundering Herd",
+          "Old Dominion Monarchs"
         ]
       },
       {
         "division_name": "West",
         "teams": [
-          "Troy",
-          "Arkansas State",
-          "Louisiana",
-          "Louisiana-Monroe",
-          "South Alabama",
-          "Texas State",
-          "Southern Miss"
+          "Troy Trojans",
+          "Arkansas State Red Wolves",
+          "Louisiana Ragin' Cajuns",
+          "Louisiana-Monroe Warhawks",
+          "South Alabama Jaguars",
+          "Texas State Bobcats",
+          "Southern Miss Golden Eagles"
         ]
       }
     ]
@@ -451,17 +458,24 @@
       {
         "division_name": "West",
         "teams": [
-          "Northern Illinois",
-          "Toledo",
-          "Central Michigan",
-          "Eastern Michigan",
-          "Western Michigan",
-          "Ball State"
+          "Northern Illinois Huskies",
+          "Toledo Rockets",
+          "Central Michigan Chippewas",
+          "Eastern Michigan Eagles",
+          "Western Michigan Broncos",
+          "Ball State Cardinals"
         ]
       },
       {
         "division_name": "East",
-        "teams": ["Akron", "Bowling Green", "Buffalo", "Kent State", "Miami (OH)", "Ohio"]
+        "teams": [
+          "Akron Zips",
+          "Bowling Green Falcons",
+          "Buffalo Bulls",
+          "Kent State Golden Flashes",
+          "Miami (OH) RedHawks",
+          "Ohio Bobcats"
+        ]
       }
     ]
   },
@@ -485,8 +499,11 @@
     "divisions": [
       {
         "division_name": "All",
-        "teams": ["Notre Dame", "Army", "UConn", "UMass"]
-      }
-    ]
+        "teams": [
+          "Notre Dame Fighting Irish",
+          "Army Black Knights",
+          "UConn Huskies",
+          "UMass Minutemen"
+        ]
   }
 ]
