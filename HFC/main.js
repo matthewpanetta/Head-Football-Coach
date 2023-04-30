@@ -1,8 +1,10 @@
 const { app, BrowserWindow } = require('electron');
-const expressServer = require('./server');
+const expressServer = require('./express-server');
+const exportRoute = require('./server/routes/export');
 
 app.whenReady().then(() => {
-    expressServer.startExpressServer();
+    const expressApp = expressServer.startExpressServer();
+    expressApp.use('/export', exportRoute);
 
     mainWindow = new BrowserWindow({
         width: 1280,

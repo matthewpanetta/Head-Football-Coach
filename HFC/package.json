@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start_web_server": "NODE_ENV='prod' node server.js",
-    "start_win_web_server": "SET NODE_ENV='prod'&node server.js",
+    "start_web_server_win": "SET NODE_ENV='prod'&node server.js",
     "start": "electron main.js"
   },
   "dependencies": {
