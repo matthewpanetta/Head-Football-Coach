@@ -63,10 +63,10 @@ export const page_world_schedule = async (common) => {
 
   const team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
 
-  var weeks = db.week.find({ season: common.season });
-  weeks = weeks.sort((w_a, w_b) => w_a.week_id - w_b.week_id);
+  var weeks = db.period.find({ season: common.season });
+  weeks = weeks.sort((w_a, w_b) => w_a.period_id - w_b.period_id);
   let current_week = weeks.find((w) => w.is_current);
-  const week_ids = weeks.map((w) => w.week_id);
+  const week_ids = weeks.map((w) => w.period_id);
 
   var games = db.game.find({ week_id: { $in: week_ids } });
   games = games.sort(game_sorter);
@@ -86,7 +86,7 @@ export const page_world_schedule = async (common) => {
   console.log({ team_games: team_games });
 
   common.stopwatch(common, "getHtml 1.3");
-  let weeks_by_week_id = index_group_sync(weeks, "index", "week_id");
+  let weeks_by_week_id = index_group_sync(weeks, "index", "period_id");
   for (const game of games) {
     game.week = weeks_by_week_id[game.week_id];
 
@@ -131,7 +131,7 @@ export const page_world_schedule = async (common) => {
   const games_by_week_id = index_group_sync(games, "group", "week_id");
 
   for (const week of weeks) {
-    week.games = games_by_week_id[week.week_id] || [];
+    week.games = games_by_week_id[week.period_id] || [];
 
     week.games = week.games.sort(game_sorter);
 
@@ -189,12 +189,12 @@ export const page_world_schedule = async (common) => {
   let any_week_selected = false;
   weeks.forEach(function (w) {
     let week_obj = {
-      display: w.week_name,
-      week_id: w.week_id,
+      display: w.period_name,
+      week_id: w.period_id,
       selected: w.is_current,
     };
 
-    if (games_by_week_id[w.week_id] && games_by_week_id[w.week_id].length) {
+    if (games_by_week_id[w.period_id] && games_by_week_id[w.period_id].length) {
       any_week_selected = any_week_selected || w.is_current;
       week_list.push(week_obj);
     }
@@ -202,10 +202,10 @@ export const page_world_schedule = async (common) => {
 
   console.log({ any_week_selected: any_week_selected });
   if (!any_week_selected) {
-    if (current_week.week_id <= week_list[0].week_id) {
+    if (current_week.period_id <= week_list[0].period_id) {
       week_list[0].selected = true;
     } else {
-      week_list[week_list.length - 1].selected = true;
+      // week_list[week_list.length - 1].selected = true;
     }
   }
 
@@ -416,7 +416,7 @@ const draw_box_scores = async (common) => {
   //Filter by week id
   games = games.filter(function (g) {
     if (filter_values["Week"].length > 0) {
-      return filter_values["Week"].includes(g.week.week_name);
+      return filter_values["Week"].includes(g.week.period_name);
     }
     return true;
   });

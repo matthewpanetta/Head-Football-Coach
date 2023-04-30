@@ -2645,6 +2645,7 @@ const create_phase = async (season, common) => {
         pe.season = season;
         pe.period_id = period_id;
         pe.phase_id = phase_id;
+        pe.is_current = false;
 
         pe.start_date = pe.start_date ? add_season_to_date(season, pe.start_date) : next_date(previous_period_end_date || previous_phase_end_date);
         pe.end_date = pe.end_date ? add_season_to_date(season, pe.end_date) : date_add(pe.start_date, pe.week_length);
@@ -2686,6 +2687,10 @@ const create_phase = async (season, common) => {
   });
 
   console.log({days_to_save:days_to_save});
+
+  const current_day = dates.find(d => d.is_current);
+  const current_period = periods_to_create.find(p => p.period_id === current_day.period_id);
+  current_period.is_current = true;
 
   db.day.update(days_to_save);
   db.period.insert(periods_to_create);
@@ -6249,6 +6254,7 @@ const new_world_action = async (common, database_suffix) => {
   await create_dates(common, season, 4);
   console.log({ season: season, common: common, db: db, new_season_info: new_season_info });
   await create_phase(season, common);
+
   const rivalries = await get_rivalries(teams_from_json);
 
   await create_conference_seasons({

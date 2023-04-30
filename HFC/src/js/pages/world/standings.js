@@ -30,8 +30,8 @@ export const page_world_standings = async (common) => {
 
   const NavBarLinks = common.nav_bar_links;
 
-  const weeks = db.week.find({ season: season });
-  const week_ids = weeks.map((week) => week.week_id);
+  const periods = db.period.find({ season: season });
+  const week_ids = periods.map(p => p.period_id);
 
   let teams = db.team.find({ team_id: { $gt: 0 } });
   var teams_by_team_id = index_group_sync(teams, "index", "team_id");
