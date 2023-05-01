@@ -94,7 +94,7 @@
 
 body::before {
   content: "";
-  background-color: rgba(50, 50, 50, 0.15); /* Adjust the color and opacity as needed */
+  background-color: rgba(30, 30, 30, 0.45); /* Adjust the color and opacity as needed */
   position: fixed;
   top: 0;
   left: 0;
@@ -971,14 +971,14 @@ article>header {
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoTop {
-  left: 2.5rem;
-  top: -1.25rem;
+  left: 2.4rem;
+  top: -0.65rem;
   z-index: 50;
   transform: rotate(52deg);
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
-  left: 3.4325rem;
+  left: 2.4325rem;
   top: -0.625rem;
   z-index: 3;
   transform: rotate(52deg);
@@ -2582,8 +2582,8 @@ div.W-L-badge {
 }
 
 .logo-40 {
-  height: 5.225rem;
-  width: 8.225rem;
+  height: 2.225rem;
+  width: 4.225rem;
 }
 
 .logo-50 {
