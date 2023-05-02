@@ -92,17 +92,6 @@
   --bs-highlight-bg: #fff3cd
 }
 
-body::before {
-  content: "";
-  background-color: rgba(30, 30, 30, 0.45); /* Adjust the color and opacity as needed */
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-}
-
 body {
   --nav-width: 12.5rem;
   margin: 0 0 0 var(--nav-width);
@@ -377,7 +366,7 @@ body {
   justify-content: center;
   height: 9.375rem;
   width: 9.375rem;
-  margin-left: -6.25rem;
+  margin-left: 0.75rem;
   vertical-align: top;
 }
 
@@ -463,15 +452,19 @@ body {
 
 .w3-sidebar {
   /*width: 15%;*/
-  background-color: #eee !important;
+  background-color: rgba(0, 0, 0, 0.368) !important;
   z-index: 1041 !important;
   /*margin-top: 2.375rem;*/
   height: 100%;
   width: 12.5rem;
-  background-color: #fff;
+  background-color: rgba(253, 253, 253, 0.368);
   position: fixed!important;
   z-index: 1;
   overflow: auto;
+  color: white;
+  overflow-y: auto;
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  scrollbar-width: none; 
 }
 
 .nav-tab-button {
@@ -494,8 +487,9 @@ body {
 .SideNavItem {
   padding-top: 0.125rem;
   padding-bottom: 0.125rem;
-  color: #666 !important;
+  color: #fdfdfd !important;
   font-size: 0.875rem;
+  font-variant: small-caps;
 }
 
 .sidebar-open .SideNavItem,
@@ -507,6 +501,16 @@ body {
   color: #111 !important;
   background-color: #ddd;
   font-weight: bold;
+}
+
+.SideNavItem.btn:hover {
+  color: #2486e2 !important;
+  background-color: #ddd;
+  font-weight: bold;
+}
+
+.w3-sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .SideNavGroup img {
@@ -971,15 +975,15 @@ article>header {
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoTop {
-  left: 2.4rem;
-  top: -0.65rem;
+  left: 1.4rem;
+  top: -0.85rem;
   z-index: 50;
   transform: rotate(52deg);
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
-  left: 2.4325rem;
-  top: -0.625rem;
+  left: 1.1325rem;
+  top: -0.325rem;
   z-index: 3;
   transform: rotate(52deg);
 }
@@ -1005,7 +1009,10 @@ img.rivalScheduleGameDashboardGameTeamDisplayLogoBottom {
 
 .font10 {
   font-size: 0.625rem;
-  opacity: 50%;
+  opacity: 100%;
+  color: #4b4b4bd6;
+  font-weight: bold;
+  font-variant: small-caps;
 }
 
 
@@ -1023,7 +1030,10 @@ img.rivalScheduleGameDashboardGameTeamDisplayLogoBottom {
 }
 
 .font14 {
-  font-size: 0.875rem !important;
+  font-size: 0.975rem !important;
+  color: black;
+  font-weight: bold;
+  font-variant: small-caps;
 }
 
 .font16 {
@@ -1608,7 +1618,9 @@ td,
 }
 
 th {
-  font-size: 0.78125rem;
+  font-size: 0.88125rem;
+  color: red;
+  font-variant: small-caps;
 }
 
 .worldLeagueLeaderTeamLogo {
@@ -1807,6 +1819,7 @@ tfoot td {
   padding: 0.5rem;
   width: 100%;
   position: relative;
+  display: none;
 }
 
 .MultiCarousel .MultiCarousel-inner {
@@ -1878,8 +1891,8 @@ tfoot td {
 }
 
 .team-header-color-left {
-  width: 15.75rem;
-  margin-left: -6.25rem;
+  width: 12.75rem;
+  margin-left: 4.75rem;
   height: inherit;
   /* position: absolute; */
   z-index: -100;
@@ -1887,6 +1900,14 @@ tfoot td {
   border-right: 1.875rem solid;
 }
 
+.team-header-color-left2 {
+  width: 9.75rem;
+  margin-left: -17.5rem;
+  height: inherit;
+  /* position: absolute; */
+  z-index: -100;
+  transform: skewX(0deg);
+}
 
 .team-modal-header-color-left {
   width: 15.75rem;
@@ -2558,52 +2579,67 @@ div.W-L-badge {
   object-fit: scale-down;
 }
 .logo-12 {
-  height: 4.75rem;
-  width: 7.75rem;
+  height: 2.805rem;
+  width: 5.525rem;
 }
 .logo-18 {
-  height: 5.125rem;
-  width: 8.125rem;
+  height: 3.205rem;
+  width: 6.205rem;
 }
 
 .logo-24 {
-  height: 5.225rem;
-  width: 8.225rem;
+  height: 3.205rem;
+  width: 6.205rem;
 }
 
 .logo-20 {
-  height: 5.225rem;
-  width: 8.225rem;
+  height: 3.205rem;
+  width: 6.205rem;
 }
 
 .logo-30 {
-  height: 5.225rem;
-  width: 8.225rem;
+  height: 2.805rem;
+  width: 5.525rem;
 }
 
 .logo-40 {
   height: 2.225rem;
-  width: 4.225rem;
+  width: 5.225rem;
 }
 
 .logo-50 {
-  height: 5.225rem;
-  width: 8.225rem;
+  height: 3.205rem;
+  width: 6.205rem;
+}
+
+.cell-with-background-image {
+  position: relative;
+}
+
+.cell-with-background-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .logo-60 {
-  height: 6.75rem;
-  width: 8.75rem;
+  height: 4.805rem;
+  width: 7.525rem;
 }
 
 .logo-90 {
-  height: 7.625rem;
-  width: 9.625rem;
+  height: 6.625rem;
+  width: 8.625rem;
 }
 
 .logo-120 {
-  height: 7.5rem;
-  width: 9.5rem;
+  height: 6.5rem;
+  width: 8.5rem;
 }
 
 .logo-150 {
@@ -2655,6 +2691,27 @@ table.table tr:last-child {
 
 table.table tr {
   border-color: rgba(0, 0, 0, 0.175);
+  background-image: url('./background--polls.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.background-image-cell {
+  position: relative;
+}
+
+.background-image-cell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('path/to/your/image.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2;
+  z-index: -1;
 }
 
 .is-starter {
@@ -3464,4 +3521,4 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
 
 .width-max-content{
   width: max-content;
-}
+} 
