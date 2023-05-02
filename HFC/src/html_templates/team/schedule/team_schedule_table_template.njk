@@ -31,13 +31,16 @@
                 {{game|log}}
                 <tr class='football-table-row  ' style='height: 1.875rem;' game_id='{{game.game_id}}'>
                     <!-- BASELINE -->
-                    <td value='{{game.period.period_id}}' style='color: white; width: 4.375rem; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
-                      <span>{{game.period.period_name}}</span>
+                    <td value='{{game.period.period_id}}' style='position: relative; color: white; width: 4.375rem;' class='center-text'>
+                        <div style="background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}}; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
+                        <img src="../../../../common/css/background--polls5.png" style="width: 200%; height: 100%; object-fit: fill; opacity: 0.335; position: absolute; top: 0; left: 0; z-index: 2;">
+                        <span style="position: relative; z-index: 3;">{{game.period.period_name}}</span>
                     </td>
-                    <td value='{{game.opponent_team_game.team_season.team.team_name}}' style='color: white; width: 0.625rem; background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};' class='center-text'>
-                      <a href='{{game.opponent_team_game.team_season.team.team_href}}'>
-                        <img class='logo logo-50' src='{{game.opponent_team_game.team_season.team.team_logo}}'/>
-                      </a>
+                    <td value='{{game.opponent_team_game.team_season.team.team_name}}' style='position: relative; color: white; width: 0.625rem;' class='center-text'>
+                        <div style="background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}}; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
+                        <a href='{{game.opponent_team_game.team_season.team.team_href}}' style="position: relative; z-index: 3;">
+                            <img class='logo logo-50' src='{{game.opponent_team_game.team_season.team.team_logo}}'/>
+                        </a>
                     </td>
                     <td value='{{game.opponent_team_game.team_season.team.team_name}}' class='column-med left-text'>
                       <div>

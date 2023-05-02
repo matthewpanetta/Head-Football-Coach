@@ -3,7 +3,7 @@
 {{team_season|log}}
 	<tr teamid="{{team_season.team_id}}" class="center-text football-table-column-headers unselectable">
 		<td class="center-text Top25RankNumber" style="background-color: #{{team_season.team.team_color_primary_hex}}; color: white; width: 0.1875rem; position: relative;" value='{{team_season.rankings.power_rank[0]}}'>
-			<img src="../../../common/css/background--polls6.png" style="width: 292%; height: 100%; object-fit: fill; opacity: 0.451; position: absolute; z-index: 1; top: 0; left: 0;">
+			<img src="../../../common/css/background--polls6.png" style="width: 292%; height: 100%; object-fit: fill; opacity: 0.321; position: absolute; z-index: 1; top: 0; left: 0;">
 			<div style="position: relative; z-index: 2;">{{team_season.rankings.power_rank[0]}}</div>
 		</td>
 		<td class='center-text' style="background-color: #{{team_season.team.team_color_primary_hex}}; color: white; width: 4.375rem; position: relative;" value='{{team_season.team.team_location_name}}'>
@@ -19,7 +19,6 @@
 						{%endif%}
 						<a class="font14" href="{{team_season.team.team_href}}">
 							<span>{{team_season.team.team_location_name}}
-								<span class="hide-small">{{team_season.team.team_nickname}}</span>
 							</span>
 						</a>
 					</div>

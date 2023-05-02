@@ -16,11 +16,12 @@
     <tbody id='conference_standings_tbody'>
       {% for team_season in division.division_standings %}
         <tr class='center-text-row {{team_season.bold}}'>
-          <td class=' white-text padding-left-8' style='background-color: #{{team_season.team.team_color_primary_hex}};'>
-            {{team_season.rankings.division_rank[0]}}
+          <td class=' white-text padding-left-8' style='position: relative; background-color: #{{team_season.team.team_color_primary_hex}};'>
+            <img src="../../../../common/css/background--polls5.png" style="width: 520%; height: 100%; object-fit: fill; opacity: 0.345; position: absolute; top: 0; left: 0; z-index: 1;">
+            <div style="position: relative; z-index: 2;">{{team_season.rankings.division_rank[0]}}</div>
           </td>
-          <td style=' width: 0.625rem; padding: 0.5rem; background-color: #{{team_season.team.team_color_primary_hex}}' >
-            <a href="{{team_season.team.team_href}}">
+          <td style='position: relative; width: 0.625rem; padding: 0.5rem; background-color: #{{team_season.team.team_color_primary_hex}}'>
+            <a href="{{team_season.team.team_href}}" style="position: relative; z-index: 2;">
               <img class='logo logo-30' src="{{team_season.team.team_logo}}"/>
             </a>
           </td>
