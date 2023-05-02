@@ -7,8 +7,8 @@ app.whenReady().then(() => {
     expressApp.use('/export', exportRoute);
 
     mainWindow = new BrowserWindow({
-        width: 1280,
-        height: 720,
+        width: 1480,
+        height: 820,
         autoHideMenuBar: true,
         useContentSize: true,
         resizable: true

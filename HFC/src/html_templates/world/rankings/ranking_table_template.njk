@@ -1,4 +1,5 @@
 {% for team_season in top_25_team_seasons %}
+{% if loop.index <= 25 %}
 {{team_season|log}}
 	<tr teamid="{{team_season.team_id}}" class="center-text football-table-column-headers unselectable">
 		<td class="center-text Top25RankNumber" style="background-color: #{{team_season.team.team_color_primary_hex}}; color: white; width: 0.1875rem;" value='{{team_season.rankings.power_rank[0]}}'>
@@ -114,4 +115,5 @@
 			    </td> #}
 		</td>
 	</tr>
+{% endif %}
 {% endfor %}
