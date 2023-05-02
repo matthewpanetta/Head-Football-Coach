@@ -151,7 +151,7 @@ export const recent_games = (common) => {
   const previous_period = all_periods_by_period_id[current_period.period_id - 1];
 
   if (previous_period == undefined) {
-    return null;
+    return [];
   }
 
   var games_in_period = db.game.find({ period_id: previous_period.period_id });

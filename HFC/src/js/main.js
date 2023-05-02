@@ -1,7 +1,7 @@
 import { nunjucks_env } from '../../../../../../../common/js/nunjucks_tags.js';
 import { index_group_sync, distance_between_coordinates, nest_children, deep_copy, weighted_random_choice, shuffle, body_from_position, normal_trunc_bounce, round_decimal, normal_trunc, sum, add_season_to_date, average, get, distinct, set_intersect, distance_between_cities } from '../../../../../../../common/js/utils.js';
 import { init_basic_table_sorting } from '../../../../../../../js/football-table/football-table.js';
-import { team_game, conference, league_season, team, team_season, team_season_stats, coach, coach_team_season, player, player_team_season, player_team_season_stats, day, award } from '../../../../../../../js/schema.js';
+import { team_game, conference, league_season, team, team_season, team_season_stats, coach, coach_team_season, player, player_team_season, player_team_season_stats, day, period, award, player_team_game } from '../../../../../../../js/schema.js';
 import { driver_db, resolve_db, create_new_db } from '../../../../../../../js/database.js';
 import { populate_player_modal, geo_marker_action } from '../../../../../../../js/modals.js';
 import { page_world, page_world_rankings, page_world_standings, page_world_schedule, page_world_awards } from '../../../../../../../js/pages/world_pages.js';
@@ -13,7 +13,7 @@ import { page_index } from '../../../../../../../js/pages/index_pages.js';
 import { page_export } from '../../../../../../../js/pages/export_pages.js'
 import { position_group_map } from '../../../../../../../js/metadata.js';
 import { generate_ranking_headlines } from '../../../../../../../js/headlines.js';
-import '../../../../../../../js/sim_game.js';
+import { sim_game } from '../../../../../../../js/sim_game.js';
 import { draw_player_faces } from '../../../../../../../js/faces.js';
 import { dayjs } from '../../../../../../../common/js/dayjs.js';
 
@@ -1712,7 +1712,7 @@ const save_created_schedule = async(data) => {
     team_games_to_create: team_games_to_create,
     best_scheduling_dict:best_scheduling_dict
   });
-  debugger;
+  // debugger;
 };
 
 const age_out_rating = (rating_group, rating, value, age) => {
@@ -2579,6 +2579,14 @@ const create_phase = async (season, common) => {
   var data = await fetch(url);
   var calendar_dim = await data.json();
 
+  const league = db.league.findOne();
+
+  if (calendar_dim[league.type]) {
+    calendar_dim = calendar_dim[league.type];
+  } else {
+    calendar_dim = calendar_dim[0]
+  }
+
   let phase_id = db.phase.nextId("phase_id");
   let period_id = db.period.nextId("period_id");
 
@@ -2601,27 +2609,41 @@ const create_phase = async (season, common) => {
 
   let phases_to_create = [];
 
-  Object.entries(calendar_dim).forEach(function(entr){
-    entr[0];
-    let league_calendar_obj = entr[1];
+  // Object.entries(calendar_dim).forEach(function(entr){
+    // let league_calendar_obj = entr[1];
 
-    let phases = league_calendar_obj.phases || [];
+    let phases = calendar_dim.phases || [];
 
     let previous_phase_end_date = null;
+    let previous_period_end_date = null;
 
     phases.forEach(function(ph){
+      let year = season;
       ph.season = season;
       ph.phase_id = phase_id;
 
-      ph.start_date = ph.start_date ? add_season_to_date(season, ph.start_date) : null;
-      ph.end_date = ph.end_date ? add_season_to_date(season, ph.end_date) : null;
+      ph.start_date = ph.start_date ? add_season_to_date(year, ph.start_date) : null;
+      ph.end_date = ph.end_date ? add_season_to_date(year, ph.end_date) : null;
 
       if (!ph.start_date){
         if (previous_phase_end_date){
           ph.start_date = next_date(previous_phase_end_date);
         }
       }
-      let previous_period_end_date = null;
+
+      // let dayjsStartDate = dayjs(ph.start_date);
+      // let dayjsEndDate = dayjs(ph.end_date);
+
+      // if (previous_phase_end_date && dayjsStartDate.isBefore(dayjs(previous_phase_end_date))) {
+      //   year += 1;
+      //   dayjsStartDate = dayjsStartDate.add(1, 'year');
+      //   ph.start_date = dayjsStartDate.format('YYYY-MM-DD')
+      // }
+
+      // if (dayjsEndDate.isBefore(dayjsStartDate)) {
+      //   dayjsEndDate = dayjsEndDate.add(1, 'year')
+      //   ph.end_date = dayjsEndDate.format('YYYY-MM-DD')
+      // }
 
       ph.periods = ph.periods || [];
       if (ph.periods.length == 0 && ph.period_week_template){
@@ -2629,7 +2651,6 @@ const create_phase = async (season, common) => {
           let period_obj = deep_copy(ph.period_week_template);
 
           period_obj.start_date = previous_period_end_date ? next_date(previous_period_end_date) : ph.start_date;
-
           period_obj.end_date = date_add(period_obj.start_date, ph.template_week_length);
 
           previous_period_end_date = period_obj.end_date;
@@ -2646,9 +2667,10 @@ const create_phase = async (season, common) => {
         pe.period_id = period_id;
         pe.phase_id = phase_id;
         pe.is_current = false;
+        pe.world_id = common.world_id;
 
-        pe.start_date = pe.start_date ? add_season_to_date(season, pe.start_date) : next_date(previous_period_end_date || previous_phase_end_date);
-        pe.end_date = pe.end_date ? add_season_to_date(season, pe.end_date) : date_add(pe.start_date, pe.week_length);
+        pe.start_date = pe.start_date ? add_season_to_date(year, pe.start_date) : next_date(previous_period_end_date || previous_phase_end_date);
+        pe.end_date = pe.end_date ? add_season_to_date(year, pe.end_date) : date_add(pe.start_date, pe.week_length);
 
         previous_period_end_date = pe.end_date;
         previous_phase_end_date = previous_period_end_date;
@@ -2664,12 +2686,16 @@ const create_phase = async (season, common) => {
 
       phases_to_create.push(ph);
     });
-  });
+  // });
 
   let periods_to_create = [];
   let days_to_save = [];
 
   phases_to_create.forEach(function(ph){
+    ph.periods = ph.periods.map((pe) => {
+      return new period(pe);
+    });
+
     periods_to_create = periods_to_create.concat(ph.periods);
     delete ph.periods;
   });
@@ -3026,6 +3052,315 @@ const stopwatch = async (common, message) => {
     )} ms`
   );
   window.lastStopwatch = currentTime;
+};
+
+const populate_sim_modal = async (html, game_dict) => {
+  let renderedHtml = nunjucks_env.renderString(html, game_dict);
+  $(".modal-body").append(renderedHtml);
+};
+
+const sim_period_games = async (this_week, common) => {
+  $(".modal-body").empty();
+  $(".modal-body").append(
+    `<div class='width100 left-text'>Simulating <span class=''>${this_week.period_name}</span></div>`
+  );
+
+  var url = "/html_templates/common_templates/sim_game_modal_result_table.njk";
+  var html = await fetch(url);
+  html = await html.text();
+
+  if (!window.playcall) {
+    var playcall_url = "/data/import_json/playcall.json";
+    var playcall_html = await fetch(playcall_url);
+    window.playcall = await playcall_html.json();
+  }
+
+  const db = await common.db;
+  var startTime = performance.now();
+  common.startTime = startTime;
+
+  var team_games_this_week = db.team_game.find({ week_id: this_week.period_id });
+  let team_games_by_game_id = index_group_sync(team_games_this_week, "group", "game_id");
+
+  var team_season_ids_playing_this_week = team_games_this_week.map((tg) => tg.team_season_id);
+
+  let [team_seasons, team_season_stats] = await Promise.all([
+    db.team_season.find({ team_season_id: { $in: team_season_ids_playing_this_week } }),
+    db.team_season_stats.find({ team_season_id: { $in: team_season_ids_playing_this_week } }),
+  ]);
+
+  const team_season_stats_by_team_season_id = index_group_sync(
+    team_season_stats,
+    "index",
+    "team_season_id"
+  );
+  team_seasons = nest_children(
+    team_seasons,
+    team_season_stats_by_team_season_id,
+    "team_season_id",
+    "stats"
+  );
+
+  let user_team_season = team_seasons.find((ts) => ts.is_user_team);
+  let user_team_season_id = user_team_season ? user_team_season.team_season_id : 0;
+
+  var team_seasons_by_team_season_id = index_group_sync(team_seasons, "index", "team_season_id");
+
+  let [teams, player_team_seasons] = await Promise.all([
+    db.team.find({ team_id: { $gt: 0 } }),
+    db.player_team_season.find({ team_season_id: { $in: team_season_ids_playing_this_week } }),
+  ]);
+
+  var teams_by_team_id = index_group_sync(teams, "index", "team_id");
+  var player_team_seasons_by_team_season_id = index_group_sync(
+    player_team_seasons,
+    "group",
+    "team_season_id"
+  );
+
+  var player_ids = player_team_seasons.map((pts) => pts.player_id);
+  var player_team_season_ids = player_team_seasons.map((pts) => pts.player_team_season_id);
+
+  console.log({
+    "db.player_team_season_stats": db.player_team_season_stats,
+    player_team_season_ids: player_team_season_ids,
+  });
+  const player_team_season_stats = db.player_team_season_stats.find({
+    player_team_season_id: { $in: player_team_season_ids },
+  });
+  const player_team_season_stats_by_player_team_season_id = index_group_sync(
+    player_team_season_stats,
+    "index",
+    "player_team_season_id"
+  );
+
+  player_team_seasons = nest_children(
+    player_team_seasons,
+    player_team_season_stats_by_player_team_season_id,
+    "player_team_season_id",
+    "season_stats"
+  );
+
+  let player_team_game_id_counter = db.player_team_game.nextId("player_team_game_id");
+  let headline_id_counter = db.headline.nextId("headline_id");
+  let players = db.player.find({ player_id: { $in: player_ids } });
+  let games_this_week = db.game.find({ week_id: this_week.period_id });
+
+  const players_by_player_id = index_group_sync(players, "index", "player_id");
+
+  games_this_week = games_this_week.filter((g) => g.was_played == false);
+  games_this_week = games_this_week.sort(function (g_a, g_b) {
+    if (
+      g_a.home_team_season_id == user_team_season_id ||
+      g_a.away_team_season_id == user_team_season_id
+    ) {
+      return -1;
+    } else if (
+      g_b.home_team_season_id == user_team_season_id ||
+      g_b.away_team_season_id == user_team_season_id
+    ) {
+      return 1;
+    } else {
+      return g_a.summed_national_rank - g_b.summed_national_rank;
+    }
+  });
+
+  var game_dicts_this_week = [];
+  common.headline_id_counter = headline_id_counter;
+
+  await games_this_week.forEach(async function (game) {
+    let game_dict = { game: game };
+    let team_games = team_games_by_game_id[game.game_id].sort(function (a, b) {
+      if (a.is_home_team) return 1;
+      if (b.is_home_team) return -1;
+      return 0;
+    });
+
+    let team_seasons = [];
+    let teams = [];
+
+    for (let tg of team_games) {
+      team_seasons.push(team_seasons_by_team_season_id[tg.team_season_id]);
+    }
+
+    for (let ts of team_seasons) {
+      teams.push(teams_by_team_id[ts.team_id]);
+    }
+
+    game_dict.team_games = team_games;
+    game_dict.team_seasons = team_seasons;
+    game_dict.teams = teams;
+
+    game_dicts_this_week.push(game_dict);
+
+    console.log({ game_dict: game_dict });
+
+    await populate_sim_modal(html, game_dict)
+
+  });
+
+  for (const game_dict of game_dicts_this_week) {
+    var ind = 0;
+    let player_team_seasons = [];
+    let players = [];
+    let players_list = [];
+    let player_team_games = {};
+
+    for (let team_season of game_dict.team_seasons) {
+      var player_team_seasons_to_add = index_group_sync(
+        player_team_seasons_by_team_season_id[team_season.team_season_id],
+        "index",
+        "player_team_season_id"
+      );
+      player_team_seasons = {
+        ...player_team_seasons,
+        ...player_team_seasons_to_add,
+      };
+
+      for (let player_team_season_id in player_team_seasons_to_add) {
+        let pts = player_team_seasons_to_add[player_team_season_id];
+        pts.games_played += 1;
+        pts.team_games_played += 1;
+        let new_player_team_game = new player_team_game(
+          player_team_game_id_counter,
+          game_dict.team_games[ind].team_game_id,
+          pts.player_team_season_id
+        );
+
+        player_team_games[player_team_season_id] = new_player_team_game;
+
+        player_team_game_id_counter += 1;
+      }
+
+      players_list = player_team_seasons_by_team_season_id[team_season.team_season_id].map(
+        (pts) => players_by_player_id[pts.player_id]
+      );
+
+      var players_to_add = index_group_sync(players_list, "index", "player_id");
+      players = { ...players, ...players_to_add };
+      ind += 1;
+    }
+
+    game_dict.player_team_seasons = player_team_seasons;
+    game_dict.players = players;
+    game_dict.player_team_games = player_team_games;
+    game_dict.headlines = [];
+  }
+
+  var completed_games = [],
+    completed_game = undefined;
+
+  for (const game_dict of game_dicts_this_week) {
+    console.log({ game_dict: game_dict });
+    completed_game = sim_game(game_dict, common);
+    completed_games.push(completed_game);
+  }
+
+  common.stopwatch(common, "Done simming games");
+
+  var game_ids_to_save = [];
+  var games_to_save = [];
+
+  var team_game_ids_to_save = [];
+  var team_games_to_save = [];
+
+  var team_seasons_to_save = [];
+  var team_season_stats_to_save = [];
+  var player_team_games_to_save = [];
+  var player_team_seasons_to_save = [];
+  var player_team_season_stats_to_save = [];
+  var headlines_to_save = [];
+
+  for (completed_game of completed_games) {
+    game_ids_to_save.push(completed_game.game_id);
+
+    delete completed_game.game.home_team_season;
+    delete completed_game.game.away_team_season;
+
+    games_to_save.push(completed_game.game);
+
+    for (let tg of completed_game.team_games) {
+      team_game_ids_to_save.push(tg.team_game_id);
+      for (let [game_stat_group_name, game_stat_group] of Object.entries(tg.game_stats)) {
+        for (let [stat_name, stat_value] of Object.entries(game_stat_group)) {
+          if (!stat_value) {
+            delete tg.game_stats[game_stat_group_name][stat_name];
+          }
+        }
+      }
+      for (let [game_stat_group_name, game_stat_group] of Object.entries(tg.opponent_game_stats)) {
+        for (let [stat_name, stat_value] of Object.entries(game_stat_group)) {
+          if (!stat_value) {
+            delete tg.opponent_game_stats[game_stat_group_name][stat_name];
+          }
+        }
+      }
+      team_games_to_save.push(tg);
+    }
+
+    for (let ts of completed_game.team_seasons) {
+      team_season_stats_to_save.push(ts.stats);
+      delete ts.stats;
+      delete ts.team_games;
+      team_seasons_to_save.push(ts);
+    }
+
+    for (let [player_team_game_id, ptg] of Object.entries(completed_game.player_team_games)) {
+      if (ptg.game_stats.games.games_played > 0) {
+        delete ptg.game_attrs;
+        for (let [game_stat_group_name, game_stat_group] of Object.entries(ptg.game_stats)) {
+          for (let [stat_name, stat_value] of Object.entries(game_stat_group)) {
+            if (!stat_value) {
+              // console.log({
+              //   game_stat_group_name:game_stat_group_name, stat_name:stat_name, ptg:ptg, 'ptg.game_stats': ptg.game_stats
+              // })
+              delete ptg.game_stats[game_stat_group_name][stat_name];
+            }
+          }
+        }
+        player_team_games_to_save.push(ptg);
+      }
+    }
+
+    for (let [player_team_season_id, pts] of Object.entries(completed_game.player_team_seasons)) {
+      for (let [game_stat_group_name, game_stat_group] of Object.entries(pts.season_stats)) {
+        for (let [stat_name, stat_value] of Object.entries(game_stat_group)) {
+          if (!stat_value) {
+            delete pts.season_stats[game_stat_group_name][stat_name];
+          }
+        }
+      }
+
+      player_team_season_stats_to_save.push(pts.season_stats);
+      delete pts.season_stats;
+      player_team_seasons_to_save.push(pts);
+    }
+
+    for (let hdl of completed_game.headlines) {
+      headlines_to_save.push(hdl);
+    }
+  }
+
+  common.stopwatch(common, "Done compiling stats");
+
+  await Promise.all([
+    db.game.update(games_to_save),
+    db.team_game.update(team_games_to_save),
+    db.team_season.update(team_seasons_to_save),
+    db.team_season_stats.update(team_season_stats_to_save),
+    db.player_team_season_stats.update(player_team_season_stats_to_save),
+    db.player_team_season.update(player_team_seasons_to_save),
+    db.player_team_game.insert(player_team_games_to_save),
+    db.headline.insert(headlines_to_save),
+  ]);
+
+  await db.saveDatabaseAsync();
+
+
+  common.stopwatch(common, "Done compiling stats");
+
+  var endTime = performance.now();
+  console.log(`Time taken to render HTML: ${parseInt(endTime - startTime)} ms`);
 };
 
 const calculate_team_needs = async (common, team_season_ids = null) => {
@@ -4741,6 +5076,19 @@ const advance_to_next_period = async (this_period, common) => {
   this_period.is_current = false;
   next_period.is_current = true;
 
+  const current_day = db.day.findOne({ is_current: true });
+  const next_period_start_day = db.day.findOne({ day_id: next_period.start_date });
+
+  if (current_day) {
+    current_day.is_current = false;
+  }
+
+  if (next_period_start_day) {
+    next_period_start_day.is_current = true;
+  }
+
+  db.day.update([current_day, next_period_start_day]);
+
   if (this_period.season != next_period.season) {
     const league_seasons = db.league_season.find({ season: { $gte: common.season } });
 
@@ -4808,6 +5156,7 @@ const sim_action = async (duration, common) => {
   const current_period = all_periods.find((w) => w.is_current);
 
   var sim_period_list = [];
+  let next_period = null;
 
   if (duration == "Simperiod") {
     sim_period_list = [current_period];
@@ -4818,6 +5167,9 @@ const sim_action = async (duration, common) => {
   } else {
     sim_period_list = [current_period];
   }
+
+  sim_period_list.sort((a, b) => { return a.period_id - b.period_id; });
+
   for (var this_period of sim_period_list) {
     console.log({ team_game: team_game });
     await sim_period_games(this_period, common);
@@ -4834,14 +5186,13 @@ const sim_action = async (duration, common) => {
     }
 
     if (
-      this_period.period_name != "Playoff period 1" &&
-      this_period.period_name != "Playoff period 2" &&
-      this_period.period_name != "Playoff period 3"
+      this_period.phase.name !== "Postseason" ||
+      this_period.period_name === "Conference Championships"
     ) {
-      await calculate_power_rankings(this_period, all_periods);
+      await calculate_power_rankings(null, common);
     }
 
-    if (this_period.period_name == "Playoff period 4") {
+    if (this_period.period_name == "National Championship") {
       await close_out_season(this_period, common);
     }
 
@@ -4860,7 +5211,7 @@ const sim_action = async (duration, common) => {
     //await populate_all_depth_charts(common);
     //await calculate_team_needs(common);
 
-    var next_period = await advance_to_next_period(this_period, common);
+    next_period = await advance_to_next_period(this_period, common);
     console.log("Ready to refresh_page");
   }
 
@@ -6178,6 +6529,7 @@ const new_world_action = async (common, database_suffix) => {
 
   common.db = db;
   common.season = season;
+  common.world_id = world_id;
 
   let leagues_from_json = await get_leagues(database_suffix);
   leagues_from_json.forEach((leag, ind) => leag.league_id = ind+1);

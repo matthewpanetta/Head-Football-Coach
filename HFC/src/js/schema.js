@@ -380,7 +380,7 @@ export class day {
 
 export class period {
   constructor(init_data) {
-    for(let key of init_data){
+    for(let key in init_data){
       this[key] = init_data[key]
     }
   }
