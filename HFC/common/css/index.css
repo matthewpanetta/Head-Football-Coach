@@ -92,17 +92,6 @@
   --bs-highlight-bg: #fff3cd
 }
 
-body::before {
-  content: "";
-  background-color: rgba(30, 30, 30, 0.45); /* Adjust the color and opacity as needed */
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-}
-
 body {
   --nav-width: 12.5rem;
   margin: 0 0 0 var(--nav-width);
@@ -113,6 +102,17 @@ body {
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+}
+
+::-webkit-scrollbar {
+    width: 0.55rem;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Change the scrollbar appearance when hovering or during an active scroll */
+body:hover::-webkit-scrollbar,
+body:active::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, 0.9);
 }
 
 .nav {
@@ -174,7 +174,7 @@ body {
   display: inline-block;
   padding-top: 2.25rem;
   margin-left: 1.25rem;
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .playerFirstName,
@@ -377,7 +377,7 @@ body {
   justify-content: center;
   height: 9.375rem;
   width: 9.375rem;
-  margin-left: -6.25rem;
+  margin-left: 0.75rem;
   vertical-align: top;
 }
 
@@ -463,15 +463,19 @@ body {
 
 .w3-sidebar {
   /*width: 15%;*/
-  background-color: #eee !important;
+  background-color: rgba(0, 0, 0, 0.368) !important;
   z-index: 1041 !important;
   /*margin-top: 2.375rem;*/
   height: 100%;
   width: 12.5rem;
-  background-color: #fff;
+  background-color: rgba(253, 253, 253, 0.368);
   position: fixed!important;
   z-index: 1;
   overflow: auto;
+  color: white;
+  overflow-y: auto;
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  scrollbar-width: none; 
 }
 
 .nav-tab-button {
@@ -494,8 +498,9 @@ body {
 .SideNavItem {
   padding-top: 0.125rem;
   padding-bottom: 0.125rem;
-  color: #666 !important;
+  color: #fdfdfd !important;
   font-size: 0.875rem;
+  font-variant: small-caps;
 }
 
 .sidebar-open .SideNavItem,
@@ -507,6 +512,16 @@ body {
   color: #111 !important;
   background-color: #ddd;
   font-weight: bold;
+}
+
+.SideNavItem.btn:hover {
+  color: #2486e2 !important;
+  background-color: #ddd;
+  font-weight: bold;
+}
+
+.w3-sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .SideNavGroup img {
@@ -628,6 +643,7 @@ article>header {
 .Top25RankNumber,
 .worldOverviewTop25TeamLineRank {
   font-size: 1.125rem;
+  color: white;
   /*padding: 0rem !important;*/
 }
 
@@ -971,15 +987,15 @@ article>header {
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoTop {
-  left: 2.4rem;
-  top: -0.65rem;
+  left: 1.4rem;
+  top: -0.85rem;
   z-index: 50;
   transform: rotate(52deg);
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
-  left: 2.4325rem;
-  top: -0.625rem;
+  left: 1.1325rem;
+  top: -0.325rem;
   z-index: 3;
   transform: rotate(52deg);
 }
@@ -1005,11 +1021,27 @@ img.rivalScheduleGameDashboardGameTeamDisplayLogoBottom {
 
 .font10 {
   font-size: 0.625rem;
-  opacity: 50%;
+  opacity: 100%;
+  color: #000000d6;
+  font-weight: bold;
+  font-variant: small-caps;
 }
 
 
 .font10-plain {
+  font-size: 0.625rem;
+}
+
+.font10a {
+  font-size: 0.625rem;
+  opacity: 100%;
+  color: #ffffffd6;
+  font-weight: normal;
+  font-variant: small-caps;
+}
+
+
+.font10a-plain {
   font-size: 0.625rem;
 }
 
@@ -1023,7 +1055,10 @@ img.rivalScheduleGameDashboardGameTeamDisplayLogoBottom {
 }
 
 .font14 {
-  font-size: 0.875rem !important;
+  font-size: 0.975rem !important;
+  color: black;
+  font-weight: bold;
+  font-variant: small-caps;
 }
 
 .font16 {
@@ -1602,13 +1637,15 @@ div button.w3-bar-item.btn.selected-bar-button {
 
 td,
 .td-style {
-  color: #6c6d6f;
+  color: #000000;
   font-size: 0.78125rem;
   vertical-align: middle !important;
 }
 
 th {
-  font-size: 0.78125rem;
+  font-size: 0.88125rem;
+  color: rgb(0, 0, 0);
+  font-variant: small-caps;
 }
 
 .worldLeagueLeaderTeamLogo {
@@ -1691,7 +1728,7 @@ td.WorldLeagueLeaderRowCell.NameCell {
 
 
 .margin-bottom-24 {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0rem;
 }
 
 .margin-8 {
@@ -1807,6 +1844,7 @@ tfoot td {
   padding: 0.5rem;
   width: 100%;
   position: relative;
+  display: none;
 }
 
 .MultiCarousel .MultiCarousel-inner {
@@ -1878,8 +1916,8 @@ tfoot td {
 }
 
 .team-header-color-left {
-  width: 15.75rem;
-  margin-left: -6.25rem;
+  width: 12.75rem;
+  margin-left: 4.75rem;
   height: inherit;
   /* position: absolute; */
   z-index: -100;
@@ -1887,6 +1925,14 @@ tfoot td {
   border-right: 1.875rem solid;
 }
 
+.team-header-color-left2 {
+  width: 9.75rem;
+  margin-left: -17.5rem;
+  height: inherit;
+  /* position: absolute; */
+  z-index: -100;
+  transform: skewX(0deg);
+}
 
 .team-modal-header-color-left {
   width: 15.75rem;
@@ -2558,52 +2604,68 @@ div.W-L-badge {
   object-fit: scale-down;
 }
 .logo-12 {
-  height: 4.75rem;
-  width: 7.75rem;
+  height: 2.805rem;
+  width: 5.525rem;
 }
 .logo-18 {
-  height: 5.125rem;
-  width: 8.125rem;
+  height: 3.205rem;
+  width: 6.205rem;
 }
 
 .logo-24 {
-  height: 5.225rem;
-  width: 8.225rem;
+  height: 3.205rem;
+  width: 6.205rem;
 }
 
 .logo-20 {
-  height: 5.225rem;
-  width: 8.225rem;
+  height: 3.205rem;
+  width: 6.205rem;
 }
 
 .logo-30 {
-  height: 5.225rem;
-  width: 8.225rem;
+  height: 2.805rem;
+  width: 5.525rem;
 }
 
 .logo-40 {
   height: 2.225rem;
-  width: 4.225rem;
+  width: 5.225rem;
 }
 
 .logo-50 {
-  height: 5.225rem;
-  width: 8.225rem;
+  height: 3.205rem;
+  width: 6.205rem;
+}
+
+.cell-with-background-image {
+  position: relative;
+}
+
+.cell-with-background-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .logo-60 {
-  height: 6.75rem;
-  width: 8.75rem;
+  height: 3.805rem;
+  width: 5.525rem;
+  vertical-align: center;
 }
 
 .logo-90 {
-  height: 7.625rem;
-  width: 9.625rem;
+  height: 6.625rem;
+  width: 8.625rem;
 }
 
 .logo-120 {
-  height: 7.5rem;
-  width: 9.5rem;
+  height: 6.5rem;
+  width: 8.5rem;
 }
 
 .logo-150 {
@@ -2655,6 +2717,13 @@ table.table tr:last-child {
 
 table.table tr {
   border-color: rgba(0, 0, 0, 0.175);
+  background-image: url('./background--polls.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.background-image-cell {
+  position: relative;
 }
 
 .is-starter {
@@ -2746,6 +2815,14 @@ table.table tr {
 
 .gap-0 {
   gap: 0;
+}
+
+.mb-1 {
+  margin-bottom: .25rem !important
+  border-color: rgba(0, 0, 0, 0.175);
+  background-image: url('./background--polls.png');
+  background-size: cover;
+  background-position: center;
 }
 
 .column-flex>* {
@@ -2968,6 +3045,10 @@ tr.no-wrap-row td, tr.no-wrap-row th{
   margin: 0rem;
   height: 100%;
   border-bottom: 0.0625rem solid var(--bs-card-border-color);
+  border-color: rgba(0, 0, 0, 0.175);
+  background-image: url('./background--polls.png');
+  background-size: cover;
+  background-position: center;
 }
 
 .football-table-row td,
@@ -3228,7 +3309,7 @@ table {
 
 .sticky-column {
   position: sticky;
-  background-color: inherit;
+  background-color: none;
   z-index: 3;
 }
 
@@ -3345,6 +3426,17 @@ button.no-hover:hover {
   margin-bottom: 0rem !important;
 }
 
+.card {
+  --bs-card-bg: rgb(205 205 205 / 15%);
+}
+
+.football-table-column-headers th {
+border-color: rgba(0, 0, 0, 0.175);
+background-image: url('./background--polls.png');
+background-size: cover;
+background-position: center;
+}
+
 .table td {
   padding: 0.5rem 0.5rem;
   display: table-cell;
@@ -3357,6 +3449,7 @@ button.no-hover:hover {
   display: table-cell;
   text-align: left;
   vertical-align: middle;
+  background-color: rgb(112 112 112 / 9%);
 }
 
 table tr:first-child .fa-arrow-alt-circle-up.depth-chart-reorder-icon,
@@ -3464,4 +3557,4 @@ table tr:last-child .fa-arrow-alt-circle-down.depth-chart-reorder-icon {
 
 .width-max-content{
   width: max-content;
-}
+} 
