@@ -17,8 +17,8 @@
       {% for team_season in division.division_standings %}
         <tr class='center-text-row {{team_season.bold}}'>
           <td class=' white-text padding-left-8' style='position: relative; background-color: #{{team_season.team.team_color_primary_hex}};'>
-            <img src="../../../../common/css/background--polls5.png" style="width: 520%; height: 100%; object-fit: fill; opacity: 0.345; position: absolute; top: 0; left: 0; z-index: 1;">
-            <div style="position: relative; z-index: 2;">{{team_season.rankings.division_rank[0]}}</div>
+          <!--  <img src="../../../../common/css/background--polls5.png" style="width: 128px; height: 100%; object-fit: fill; opacity: 0.345; position: absolute; top: 0; left: 0; z-index: 1;">
+            <div style="position: relative; z-index: 2;">-->{{team_season.rankings.division_rank[0]}}</div>
           </td>
           <td style='position: relative; width: 0.625rem; padding: 0.5rem; background-color: #{{team_season.team.team_color_primary_hex}}'>
             <a href="{{team_season.team.team_href}}" style="position: relative; z-index: 2;">
