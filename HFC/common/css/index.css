@@ -173,7 +173,7 @@ body:active::-webkit-scrollbar {
 .teamHeaderInfo {
   display: inline-block;
   padding-top: 2.25rem;
-  margin-left: 1.25rem;
+  margin-left: 9.25rem;
   color: rgb(0, 0, 0);
 }
 
@@ -423,7 +423,7 @@ body:active::-webkit-scrollbar {
 
 .teamTeamName,
 .gameTeamName {
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .teamRecord,
@@ -954,9 +954,9 @@ article>header {
 }
 
 .teamScheduleGameDashboardGameTeamDisplayContainer {
-  height: 2.525rem;
-  width: 4.25rem;
-  margin-left: 62px;
+  height: 3.025rem;
+  width: 4.85rem;
+  margin-left: 57px;
   margin-top: 8px;
   margin-bottom: -0.5rem;
   left: -2.8125rem;
@@ -964,13 +964,13 @@ article>header {
 }
 
 .rivalScheduleGameDashboardGameTeamDisplayContainer {
-  height: 2.525rem;
-  width: 4.25rem;
-  margin-left: 62px;
+  height: 3.025rem;
+  width: 4.85rem;
+  margin-left: 57px;
   margin-top: 8px;
   margin-bottom: -0.5rem;
   left: -2.8125rem;
-  z-index: 0;
+  z-index: 1;
 }
 
 .hidden-overflow {
@@ -993,14 +993,14 @@ article>header {
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoTop {
-  left: 2.1rem;
-  top: 1.25rem;
+  left: 2.5rem;
+  top: 1.49rem;
   z-index: 50;
 }
 
 img.teamScheduleGameDashboardGameTeamDisplayLogoBottom {
-  left: 2.1rem;
-  top: 1.25rem;
+  left: 2.5rem;
+  top: 1.56rem;
   z-index: 3;
 }
 
@@ -1068,7 +1068,7 @@ img.rivalScheduleGameDashboardGameTeamDisplayLogoBottom {
 }
 
 .font16a {
-  font-size: 1rem !important;
+  font-size: 1.2rem !important;
 }
 .font24 {
   font-size: 1.5rem !important;
@@ -2641,6 +2641,11 @@ div.W-L-badge {
 .logo-40 {
   height: 2.225rem;
   width: 5.225rem;
+}
+
+.logo-40a {
+  height: 2.225rem;
+  width: 4.025rem;
 }
 
 .logo-45 {

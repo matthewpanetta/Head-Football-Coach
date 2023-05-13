@@ -13,20 +13,20 @@
 						{{team.team_season.national_rank_display}}
 					{%endif %}
 				</span>
-				{% if team.is_user_team %}
-					<span class='font20' style='color: #{{team.team_color_primary_hex}};'>
-						<i class="fa fa-user"></i>
-					</span>
-				{% endif %}
 				<span class='teamSchoolName'>
 					{{ team.team_location_name }}
 				</span>
 				<span class='teamTeamName'>
 					{{team.team_nickname}}
 				</span>
-				<span class='teamRecord hide-small'>
-					{{team.team_season.record_display}}
+				<span class='font16a hide-small'>
+					({{team.team_season.record_display}})
 				</span>
+				{% if team.is_user_team %}
+					<span class='font20' style='color: #{{team.team_color_primary_hex}};'>
+						<i class="fa fa-user"></i>
+					</span>
+				{% endif %}
 			</div>
 			<div class='teamOverviewInfo'>
 				<i class="fa fa-map-marker-alt geo-marker" style='color: #{{team.team_color_primary_hex}};' city='{{team.location.city}}' state='{{team.location.state}}'></i>
@@ -54,7 +54,7 @@
 			</div>
 		</div>
     <div class='flex gap-0'>
-      <div class='helmet-div py-2' team-id='{{team.team_id}}' style='margin-right: -5rem; transform: scaleX(-1);'></div>
+      <div class='helmet-div py-2' team-id='{{team.team_id}}' style='margin-right: -5rem; transform: scaleX(1);'></div>
       <div class="team-header-color-right align-middle hide-small" style='background-color: #{{page.PrimaryColor}}; border-left-color: #{{page.SecondaryColor}}; opacity: 1;'></div>
     </div>
 	</div>

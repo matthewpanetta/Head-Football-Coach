@@ -77,11 +77,11 @@
                       <div class="w3-col l12 height100 w3-display-container">
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.away_team.team_color_primary_hex}}'></div>
-                          <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.away_team.team_logo}}' />
+                          <img class='logo logo-40a teamScheduleGameDashboardGameTeamDisplayLogoTop w3-display-middle' src='{{game.away_team.team_logo}}' />
                         </div>
                         <div class="teamScheduleGameDashboardGameTeamDisplayContainer w3-display-container">
                           <div class="teamScheduleGameDashboardGameTeamDisplay" style='background-color: #{{game.home_team.team_color_primary_hex}}'></div>
-                          <img class='logo logo-40 teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo}}' />
+                          <img class='logo logo-40a teamScheduleGameDashboardGameTeamDisplayLogoBottom w3-display-middle' src='{{game.home_team.team_logo}}' />
                         </div>
                         <div class="teamScheduleGameDashboardGameDisplayTeams w3-col s12 w3-display-container w3-display-topmiddle">
                           <table class='width100 left-text' style="margin-top: -35px; margin-left: 32px;">
@@ -104,18 +104,18 @@
                                   <a class='font17  {{game.away_team_winning_game_bold}}' href="{{game.away_team.team_href}}">
                                     {{game.away_team.team_location_name}}
                                   </a>
+                                  <span class='font17'>
+                                    {% if game.was_played%}
+                                    ({{game.away_team_game.record_display}})
+                                    {%else%}
+                                    ({{game.away_team_season.record_display}})
+                                    {%endif%}
+                                  </span>
                                   {% if game.away_team_season.is_user_team%}
                                   <span style='color: #{{game.away_team.team_color_primary_hex}};'>
                                       <i class="fa fas fa-user"></i>
                                   </span>
                                   {%endif%}
-                                  <span class='font17'>
-                                    {% if game.was_played%}
-                                    ({{game.away_team_game.record_display}}
-                                    {%else%}
-                                    {{game.away_team_season.record_display}}
-                                    {%endif%})
-                                  </span>
                                 </td>
                                 <td class='{{game.away_team_winning_game_bold}} font16a'>{{game.scoring.final[0]}}</td>
                               </tr>
@@ -131,23 +131,23 @@
                                   <a href="{{game.home_team.team_href}}" class='font17 {{game.home_team_winning_game_bold}}'>
                                     {{game.home_team.team_location_name}}
                                   </a>
+                                  <span class='font17'>
+                                    {% if game.was_played%}
+                                    ({{game.home_team_game.record_display}})
+                                    {%else%}
+                                    ({{game.home_team_season.record_display}})
+                                    {%endif%}
+                                  </span>
                                   {% if game.home_team_season.is_user_team%}
                                   <span style='color: #{{game.home_team.team_color_primary_hex}};'>
                                       <i class="fa fas fa-user"></i>
                                   </span>
                                   {%endif%}
-                                  <span class='font17'>
-                                    {% if game.was_played%}
-                                    ({{game.home_team_game.record_display}}
-                                    {%else%}
-                                    {{game.home_team_season.record_display}}
-                                    {%endif%})
-                                  </span>
                                 </td>
                                 {% for period in game.periods%}
                                 {{period.score}}
                                 {%endfor%}
-                                <td class='{{game.home_team_winning_game_bold}} font16'><br>{{game.scoring.final[1]}}</td>
+                                <td class='{{game.home_team_winning_game_bold}} font16a'><br>{{game.scoring.final[1]}}</td>
                               </tr>
                               <tr>
                                 <td colspan='3'><br>
