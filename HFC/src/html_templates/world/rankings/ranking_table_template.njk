@@ -117,3 +117,23 @@
 	</tr>
 {% endif %}
 {% endfor %}
+
+<!-- Start of the "Other teams receiving votes" row -->
+<tr>
+  <td colspan="7" style="text-align: left;">
+    <strong>Other teams receiving votes:</strong>
+     
+      {% for team_season in top_25_team_seasons %}
+        {% if loop.index > 25 and loop.index <= 39 %}
+            <a class="font13" href="{{team_season.team.team_href}}">
+              <span>{{team_season.team.team_location_name}},</span> </a>
+        {% endif %}
+      {% endfor %}
+      {% for team_season in top_25_team_seasons %}
+        {% if loop.index > 39 and loop.index <= 41 %}
+            <a class="font13" href="{{team_season.team.team_href}}">
+              <span>{{team_season.team.team_location_name}}</span> </a>
+        {% endif %}
+      {% endfor %}
+  </td>
+</tr>

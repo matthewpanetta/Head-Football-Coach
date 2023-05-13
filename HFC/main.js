@@ -8,7 +8,7 @@ app.whenReady().then(() => {
 
     mainWindow = new BrowserWindow({
         width: 1480,
-        height: 820,
+        height: 1020,
         autoHideMenuBar: true,
         useContentSize: true,
         resizable: true

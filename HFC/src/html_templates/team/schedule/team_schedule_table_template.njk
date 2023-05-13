@@ -33,7 +33,7 @@
                     <!-- BASELINE -->
                     <td value='{{game.period.period_id}}' style='position: relative; color: white; width: 4.375rem;' class='center-text'>
                         <div style="background-color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}}; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
-                        <img src="../../../../common/css/background--polls5.png" style="width: 200%; height: 100%; object-fit: fill; opacity: 0.335; position: absolute; top: 0; left: 0; z-index: 2;">
+                        <img src="../../../../../common/css/background--polls5.png" style="width: 200%; height: 100%; object-fit: fill; opacity: 0.335; position: absolute; top: 0; left: 0; z-index: 2;">
                         <span style="position: relative; z-index: 3;">{{game.period.period_name}}</span>
                     </td>
                     <td value='{{game.opponent_team_game.team_season.team.team_name}}' style='position: relative; color: white; width: 0.625rem;' class='center-text'>
@@ -44,28 +44,23 @@
                     </td>
                     <td value='{{game.opponent_team_game.team_season.team.team_name}}' class='column-med left-text'>
                       <div>
-                      {% if game.opponent_team_game.team_season.team.is_user_team %}
-                      <span style='color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};'>
-                        <i class="fa fa-user"></i>
-                      </span>
-                      {% endif %}
-                      <a href='{{game.opponent_team_game.team_season.team.team_href}}'>
-                        {{game.opponent_team_game.team_season.team.team_location_name}}
-                      </a>
-                      <span class="font10">
-                          {% if game.was_played%}
-                          {{game.opponent_team_game.record_display}}
-                          {%else%}
-                          {{game.opponent_team_game.team_season.record_display}}
-                          {%endif%}
-                        </span>
-                      
-                      </div>
-                      <div>
                         <span class='font10'>
-                          {{game.game_location}}
+                          {% if game.game_location == "home" %}
+                            vs 
+                          {% elif game.game_location == "away" %}
+                            @ 
+                          {% else %}
+                            {{game.game_location}}
+                          {% endif %}
                         </span>
-                        
+                        {% if game.opponent_team_game.team_season.team.is_user_team %}
+                          <span style='color: #{{game.opponent_team_game.team_season.team.team_color_primary_hex}};'>
+                            <i class="fa fa-user"></i>
+                          </span>
+                        {% endif %}
+                        <a href='{{game.opponent_team_game.team_season.team.team_href}}'>
+                          {{game.opponent_team_game.team_season.team.team_location_name}}
+                        </a>
                       </div>
                     </td>
                     <td value='{{game.team_game.game_outcome_letter}},{{game.game_display}}' class='center-text' >

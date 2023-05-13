@@ -41,7 +41,7 @@
               <a href="/World/{{page.WorldID}}/Recruiting">{{player.RecruitingStars}}* Recruit</a>
             {% endif %}
           {% else %}
-            <a href="{{player.current_player_team_season.team_season.team.team_href}}">{{player.current_player_team_season.team_season.team.team_location_name}}
+            <a href="{{player.current_player_team_season.team_season.team.team_href}}">{{player.current_player_team_season.team_season.team.school_name}}
               {{player.current_player_team_season.team_season.team.team_name}}</a>
           {% endif %}
             | #{{player.jersey_number}} | {{player.position}}
@@ -71,7 +71,10 @@
           <tr>
             <td>
             <div>
-              {{player.current_player_team_season.age}}
+              {{player.current_player_team_season.class.class_name}}
+              {% if player.redshirt.current %}
+                <i class="fas fa-tshirt player-class-icon" style="color: red; margin-left: 0.25rem;"></i>
+              {% endif %}
             </div>
             <div class='font10'>CLASS</div>
             </td>
